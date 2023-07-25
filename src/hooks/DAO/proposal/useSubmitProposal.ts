@@ -5,7 +5,7 @@ import { BigNumber, Signer } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useProvider, useSigner } from 'wagmi';
+import { useSigner } from 'wagmi';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -17,6 +17,7 @@ import {
   GovernanceSelectionType,
 } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
+import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
 
@@ -79,8 +80,7 @@ export default function useSubmitProposal() {
   }, [fractalModules, signer]);
 
   const lookupModules = useFractalModules();
-  const provider = useProvider();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const signerOrProvider = useSignerOrProvider();
   const { chainId, safeBaseURL } = useNetworkConfig();
 
   useEffect(() => {

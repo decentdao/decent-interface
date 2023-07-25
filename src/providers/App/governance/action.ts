@@ -3,12 +3,13 @@ import { BigNumber } from 'ethers';
 import {
   FractalProposal,
   ProposalVotesSummary,
-  TokenData,
+  ERC20TokenData,
   FractalProposalState,
   VotesData,
   VotingStrategy,
   UnderlyingTokenData,
   GovernanceSelectionType,
+  ERC721TokenData,
 } from '../../../types';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
 
@@ -24,6 +25,7 @@ export enum FractalGovernanceAction {
   UPDATE_VOTING_QUORUM = 'UPDATE_VOTING_QUORUM',
   UPDATE_VOTING_QUORUM_THRESHOLD = 'UPDATE_VOTING_QUORUM_THRESHOLD',
   UPDATE_TIMELOCK_PERIOD = 'UPDATE_TIMELOCK_PERIOD',
+  SET_ERC721_TOKENS_DATA = 'SET_ERC721_TOKENS_DATA',
   SET_TOKEN_DATA = 'SET_TOKEN_DATA',
   SET_TOKEN_ACCOUNT_DATA = 'SET_TOKEN_ACCOUNT_DATA',
   SET_CLAIMING_CONTRACT = 'SET_CLAIMING_CONTRACT',
@@ -80,9 +82,10 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD;
       payload: BigNumber;
     }
+  | { type: FractalGovernanceAction.SET_ERC721_TOKENS_DATA; payload: ERC721TokenData[] }
   | {
       type: FractalGovernanceAction.SET_TOKEN_DATA;
-      payload: TokenData;
+      payload: ERC20TokenData;
     }
   | {
       type: FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA;

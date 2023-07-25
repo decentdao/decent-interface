@@ -1,8 +1,7 @@
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/navigation';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProvider, useSigner } from 'wagmi';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -13,12 +12,11 @@ import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
 } from '../../types';
+import useSignerOrProvider from '../utils/useSignerOrProvider';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 const useDeployAzorius = () => {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const signerOrProvider = useSignerOrProvider();
   const { push } = useRouter();
   const {
     node: { daoAddress, safe },

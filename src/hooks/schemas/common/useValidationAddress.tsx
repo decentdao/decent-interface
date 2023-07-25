@@ -1,12 +1,13 @@
 import { Signer, utils } from 'ethers';
 import { useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProvider, useSigner } from 'wagmi';
+import { useSigner } from 'wagmi';
 import { AnyObject } from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AddressValidationMap, ERC721TokenConfig } from '../../../types';
 import { Providers } from '../../../types/network';
 import { couldBeENS } from '../../../utils/url';
+import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export function validateENSName({ ensName }: { ensName: string }) {
   if (couldBeENS(ensName)) {
@@ -84,9 +85,8 @@ export const useValidationAddress = () => {
    * @dev this is used for any other functions contained within this hook, to lookup resolved addresses in this session without requesting again.
    */
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
-  const provider = useProvider();
   const { data: signer } = useSigner();
-  const signerOrProvider = signer || provider;
+  const signerOrProvider = useSignerOrProvider();
   const { t } = useTranslation(['daoCreate', 'common', 'modals']);
   const {
     node: { safe },

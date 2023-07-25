@@ -77,7 +77,7 @@ export function ProposalAction({
   const hasVoted = useMemo(() => {
     if (dao?.isAzorius) {
       const azoriusProposal = proposal as AzoriusProposal;
-      return !!azoriusProposal.votes.find(vote => vote.voter === user.address);
+      return !!azoriusProposal?.votes.find(vote => vote.voter === user.address);
     } else if (isSnapshotProposal) {
       // Snapshot proposals not tracking votes
       return false;

@@ -8,6 +8,7 @@ import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
 import { useERC721LinearStrategy } from './governance/useERC721LinearStrategy';
+import useERC721Tokens from './governance/useERC721Tokens';
 import { useDAOProposals } from './useProposals';
 
 export const useFractalGovernance = () => {
@@ -25,6 +26,7 @@ export const useFractalGovernance = () => {
   const loadERC20Strategy = useERC20LinearStrategy();
   const loadERC721Strategy = useERC721LinearStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
+  const loadERC721Tokens = useERC721Tokens();
   const ipfsClient = useIPFSClient();
 
   const ONE_MINUTE = 60 * 1000;
@@ -85,6 +87,7 @@ export const useFractalGovernance = () => {
           loadUnderlyingERC20Token();
         } else if (erc721LinearVotingContract) {
           loadERC721Strategy();
+          loadERC721Tokens();
         }
       }
 
@@ -102,5 +105,6 @@ export const useFractalGovernance = () => {
     nodeHierarchy.parentAddress,
     guardContracts.freezeGuardContract,
     loadERC721Strategy,
+    loadERC721Tokens,
   ]);
 };

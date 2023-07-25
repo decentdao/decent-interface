@@ -1,11 +1,12 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20ABI, useProvider, useSigner } from 'wagmi';
+import { erc20ABI, useProvider } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { couldBeENS } from '../../../utils/url';
+import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { validateAddress } from '../common/useValidationAddress';
 
 /**
@@ -20,8 +21,7 @@ export function useDAOCreateTests() {
    */
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
   const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = signer || provider;
+  const signerOrProvider = useSignerOrProvider();
   const { t } = useTranslation(['daoCreate', 'common']);
 
   const minValueValidation = useMemo(

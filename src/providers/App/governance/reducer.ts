@@ -102,6 +102,9 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...action.payload } };
     }
+    case FractalGovernanceAction.SET_ERC721_TOKENS_DATA: {
+      return { ...state, erc721Tokens: action.payload };
+    }
     case FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA: {
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, underlyingTokenData: action.payload } };

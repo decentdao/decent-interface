@@ -2,16 +2,14 @@ import EthersAdapter from '@safe-global/safe-ethers-lib';
 import SafeServiceClient from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
 import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
 export function useSafeService() {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
   const { safeBaseURL } = useNetworkConfig();
+  const signerOrProvider = useSignerOrProvider();
 
   const safeService = useMemo(() => {
-    const signerOrProvider = signer || provider;
     const ethAdapter = new EthersAdapter({
       ethers,
       signerOrProvider,
@@ -21,7 +19,7 @@ export function useSafeService() {
       txServiceUrl: safeBaseURL,
       ethAdapter,
     });
-  }, [provider, signer, safeBaseURL]);
+  }, [signerOrProvider, safeBaseURL]);
 
   return safeService;
 }

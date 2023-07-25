@@ -33,7 +33,7 @@ import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
 import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
-import { VotesTokenData } from './account';
+import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { ProposalTemplate } from './createProposalTemplate';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
@@ -290,6 +290,7 @@ export type FractalGovernance = AzoriusGovernance | SafeMultisigGovernance;
 export interface AzoriusGovernance extends Governance {
   votingStrategy: VotingStrategyAzorius;
   votesToken: VotesTokenData | undefined;
+  erc721Tokens?: ERC721TokenData[];
 }
 export interface SafeMultisigGovernance extends Governance {}
 
