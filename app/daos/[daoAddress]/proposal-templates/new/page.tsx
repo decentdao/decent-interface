@@ -186,6 +186,7 @@ export default function CreateProposalTemplatePage() {
                               <CustomNonceInput
                                 nonce={formikProps.values.nonce}
                                 onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                                align="end"
                               />
                             </Flex>
                             <ProposalTemplateTransactionsForm
