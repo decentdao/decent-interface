@@ -15,6 +15,7 @@
     "optionInitiateFreeze": "Initiate a Freeze",
     "optionInitiateClawback": "Initiate Clawback",
     "optionRemoveTemplate": "Remove Template",
+    "optionForkTemplate": "Fork Template",
     "optionModifyGovernance": "Modify Governance",
     "optionSettings": "Settings"
 }

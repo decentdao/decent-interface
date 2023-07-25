@@ -21,6 +21,7 @@
   "modalContinue": "Continue",
   "modalCancel": "Cancel",
   "addSignerTitle": "Add Signer",
+  "forkProposalTemplate": "Fork Template",
   "addSignerLabel": "Add a new signer to your Safe{Wallet}",
   "addSignerSublabel": "Ethereum wallet address or ENS only",
   "updateThreshold": "Update required signers",
