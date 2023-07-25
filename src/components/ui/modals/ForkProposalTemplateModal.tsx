@@ -12,16 +12,16 @@ import { disconnectedChain } from '../../../providers/NetworkConfig/NetworkConfi
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { InputComponent } from '../forms/InputComponent';
 
-interface ICopyProposalTemplateModalProps {
+interface IForkProposalTemplateModalProps {
   proposalTemplate: ProposalTemplate;
   templateIndex: number;
   onClose: () => void;
 }
 
-export default function CopyProposalTemplateModal({
+export default function ForkProposalTemplateModal({
   templateIndex,
   onClose,
-}: ICopyProposalTemplateModalProps) {
+}: IForkProposalTemplateModalProps) {
   const [inputValue, setInputValue] = useState('');
   const [targetDAOAddress, setTargetDAOAddress] = useState('');
   const [isValidDAOAddress, setIsValidDAOAddress] = useState(false);
@@ -37,7 +37,7 @@ export default function CopyProposalTemplateModal({
     node: { proposalTemplatesHash },
   } = useFractal();
 
-  const { isSafe, isSafeLoading } = useIsSafe(inputValue);
+  const { isSafe, isSafeLoading } = useIsSafe(targetDAOAddress);
   const { getCanUserCreateProposal } = useSubmitProposal();
 
   const handleAddressChange: ChangeEventHandler<HTMLInputElement> = e => {
@@ -58,17 +58,19 @@ export default function CopyProposalTemplateModal({
 
     if (!isValidAddress) {
       setError(t('errorInvalidAddress', { ns: 'common' }));
-    } else if (isSafe) {
-      if (await getCanUserCreateProposal(address)) {
-        setError('');
-        setTargetDAOAddress(address);
+    } else {
+      setTargetDAOAddress(address);
+      if (isSafe) {
+        if (await getCanUserCreateProposal(address)) {
+          setError('');
+        } else {
+          setError(t('errorNotProposer'));
+          return false;
+        }
       } else {
-        setError(t('errorNotProposer'));
+        setError(t('errorFailedSearch', { ns: 'dashboard', chain: chainName }));
         return false;
       }
-    } else {
-      setError(t('errorFailedSearch', { ns: 'dashboard', chain: chainName }));
-      return false;
     }
 
     return isValidAddress;
