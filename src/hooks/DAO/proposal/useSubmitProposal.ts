@@ -117,17 +117,28 @@ export default function useSubmitProposal() {
           return checkIsMultisigOwner(owners);
         } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
           if (ozLinearVotingContract && user.address) {
-            return ozLinearVotingContract?.asSigner.isProposer(user.address);
+            return ozLinearVotingContract.asSigner.isProposer(user.address);
           }
         } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
-          return false; // TODO: When ERC721 contract will be available under governanceContracts through useFractal - correctly retrieve it
+          if (erc721LinearVotingContract) {
+            return erc721LinearVotingContract.asSigner.isProposer(user.address);
+          }
         } else {
           return false;
         }
       }
       return false;
     },
-    [safe, type, user, ozLinearVotingContract, lookupModules, safeService, signerOrProvider]
+    [
+      safe,
+      type,
+      user,
+      ozLinearVotingContract,
+      erc721LinearVotingContract,
+      lookupModules,
+      safeService,
+      signerOrProvider,
+    ]
   );
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
