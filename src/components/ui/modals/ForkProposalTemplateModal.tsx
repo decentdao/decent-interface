@@ -129,7 +129,7 @@ export default function CopyProposalTemplateModal({
         isDisabled={!isValidDAOAddress}
         width="100%"
       >
-        {t('copyTemplateSubmitButton')}
+        {t('forkTemplateSubmitButton')}
       </Button>
     </Box>
   );

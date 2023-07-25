@@ -23,9 +23,8 @@
     "removeTemplateSuccessToastMessage": "Proposal to remove template created. Vote and execute to apply changes.",
     "removeTemplateFailureToastMessage": "Creating proposal for removing proposal template failed.",
     "submitProposalFromTemplate": "Submit and create proposal",
-    "targetDAOAddressLabel": "DAO Address",
-    "targetDAOAddressHelper": "Address of DAO where to copy this template.",
-    "copyTemplateSubmitButton": "Copy Proposal Template",
-    "showParameters": "Show Prefilled Parameters",
-    "hideParameters": "Hide Prefilled Parameters"
+    "targetDAOAddressLabel": "Fractal or Safe address",
+    "targetDAOAddressHelper": "Set the location that will receive this duplicated template",
+    "forkTemplateSubmitButton": "Review Forked Template",
+    "showParameters": "Show All"
 }

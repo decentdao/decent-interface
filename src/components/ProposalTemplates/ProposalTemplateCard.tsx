@@ -34,7 +34,7 @@ export default function ProposalTemplateCard({
   const openProposalForm = useFractalModal(ModalType.CREATE_PROPOSAL_FROM_TEMPLATE, {
     proposalTemplate,
   });
-  const openCopyTemplateForm = useFractalModal(ModalType.COPY_PROPOSAL_TEMPLATE, {
+  const openForkTemplateForm = useFractalModal(ModalType.COPY_PROPOSAL_TEMPLATE, {
     proposalTemplate,
     templateIndex,
   });
@@ -70,9 +70,9 @@ export default function ProposalTemplateCard({
 
   const manageTemplateOptions = useMemo(() => {
     let options = [];
-    const copyTemplateOption = {
-      optionKey: 'optionCopyTemplate',
-      onClick: openCopyTemplateForm,
+    const forkTemplateOption = {
+      optionKey: 'optionForkTemplate',
+      onClick: openForkTemplateForm,
     };
     if (canUserCreateProposal) {
       const removeTemplateOption = {
@@ -82,10 +82,10 @@ export default function ProposalTemplateCard({
       options.push(removeTemplateOption);
     }
 
-    options.push(copyTemplateOption);
+    options.push(forkTemplateOption);
 
     return options;
-  }, [canUserCreateProposal, openCopyTemplateForm, handleRemoveTemplate]);
+  }, [canUserCreateProposal, openForkTemplateForm, handleRemoveTemplate]);
 
   return (
     <ContentBox

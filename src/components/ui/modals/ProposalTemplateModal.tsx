@@ -1,4 +1,13 @@
-import { Box, Button, Divider, Flex, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Divider,
+  Flex,
+  FormControl,
+  FormLabel,
+  Switch,
+  VStack,
+} from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -171,14 +180,20 @@ export default function ProposalTemplateModal({
           {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
         </VStack>
       ))}
-      <Button
-        onClick={() => setShowAll(!showAll)}
-        variant="text"
+      <FormControl
         my="1rem"
-        paddingLeft={0}
+        display="flex"
+        alignItems="center"
       >
-        {t(showAll ? 'hideParameters' : 'showParameters')}
-      </Button>
+        <FormLabel mb={0}>{t('showParameters')}</FormLabel>
+        <Switch
+          isChecked={showAll}
+          onChange={() => setShowAll(!showAll)}
+          colorScheme="gold"
+          bg="grayscale.300"
+          borderRadius="9999px"
+        />
+      </FormControl>
       <Divider color="chocolate.700" />
       <Box marginTop="1.5rem">
         <CustomNonceInput
