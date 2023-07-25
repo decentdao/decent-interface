@@ -1,16 +1,15 @@
 import { Box, Button, Divider } from '@chakra-ui/react';
-import { utils } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetwork, useSigner } from 'wagmi';
+import { useNetwork, useSigner, useProvider } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
+import { validateAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { disconnectedChain } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
-import { couldBeENS } from '../../../utils/url';
 import { InputComponent } from '../forms/InputComponent';
 
 interface ICopyProposalTemplateModalProps {
@@ -25,12 +24,14 @@ export default function CopyProposalTemplateModal({
 }: ICopyProposalTemplateModalProps) {
   const [inputValue, setInputValue] = useState('');
   const [targetDAOAddress, setTargetDAOAddress] = useState('');
+  const [isValidDAOAddress, setIsValidDAOAddress] = useState(false);
   const [error, setError] = useState('');
-  const [isValidAddress, setIsValidDAOAddress] = useState(false);
 
   const { t } = useTranslation('proposalTemplate');
   const { push } = useRouter();
+  const provider = useProvider();
   const { data: signer } = useSigner();
+  const signerOrProvider = signer || provider;
   const { chain } = useNetwork();
   const {
     node: { proposalTemplatesHash },
@@ -51,40 +52,27 @@ export default function CopyProposalTemplateModal({
     }
 
     const chainName = chain ? chain.name : disconnectedChain.name;
-    if (!utils.isAddress(inputValue) && !couldBeENS(inputValue)) {
+    const {
+      validation: { address, isValidAddress },
+    } = await validateAddress({ address: inputValue, signerOrProvider });
+
+    if (!isValidAddress) {
       setError(t('errorInvalidAddress', { ns: 'common' }));
-      return false;
-    } else if (couldBeENS(inputValue)) {
-      const resolvedAddress = await signer!.resolveName(inputValue);
-      if (isSafe) {
-        if (await getCanUserCreateProposal(resolvedAddress)) {
-          setError('');
-          setTargetDAOAddress(resolvedAddress);
-          return true;
-        } else {
-          setError(t('errorNotProposer'));
-          return false;
-        }
+    } else if (isSafe) {
+      if (await getCanUserCreateProposal(address)) {
+        setError('');
+        setTargetDAOAddress(address);
       } else {
-        setError(t('errorFailedSearch', { ns: 'dashboard', chain: chainName }));
+        setError(t('errorNotProposer'));
         return false;
       }
     } else {
-      if (isSafe) {
-        if (await getCanUserCreateProposal(inputValue)) {
-          setError('');
-          setTargetDAOAddress(inputValue);
-          return true;
-        } else {
-          setError(t('errorNotProposer'));
-          return false;
-        }
-      } else {
-        setError(t('errorFailedSearch', { ns: 'dashboard', chain: chainName }));
-        return false;
-      }
+      setError(t('errorFailedSearch', { ns: 'dashboard', chain: chainName }));
+      return false;
     }
-  }, [getCanUserCreateProposal, isSafe, signer, t, inputValue, chain, isSafeLoading]);
+
+    return isValidAddress;
+  }, [getCanUserCreateProposal, isSafe, t, inputValue, chain, isSafeLoading, signerOrProvider]);
 
   const handleSubmit = () => {
     push(
@@ -98,15 +86,15 @@ export default function CopyProposalTemplateModal({
   useEffect(() => {
     const validate = async () => {
       if (!isSafeLoading) {
-        const isValidDAO = await validateDAOAddress();
-        if (isValidDAO !== isValidAddress) {
-          setIsValidDAOAddress(isValidDAO);
+        const isValidAddress = await validateDAOAddress();
+        if (isValidDAOAddress !== isValidAddress) {
+          setIsValidDAOAddress(isValidAddress);
         }
       }
     };
 
     validate();
-  }, [isSafeLoading, validateDAOAddress, isValidAddress]);
+  }, [isSafeLoading, validateDAOAddress, isValidDAOAddress]);
 
   return (
     <Box>
@@ -137,8 +125,8 @@ export default function CopyProposalTemplateModal({
       <Button
         onClick={handleSubmit}
         variant="primary"
-        disabled={!isValidAddress}
-        isDisabled={!isValidAddress}
+        disabled={!isValidDAOAddress}
+        isDisabled={!isValidDAOAddress}
         width="100%"
       >
         {t('copyTemplateSubmitButton')}

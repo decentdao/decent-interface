@@ -131,12 +131,6 @@ export default function ProposalTemplateModal({
         text={description}
       />
       <Divider color="chocolate.700" />
-      <Button
-        onClick={() => setShowAll(!showAll)}
-        variant="text"
-      >
-        {t(showAll ? 'hideParameters' : 'showParameters')}
-      </Button>
       {filledProposalTransactions.map((transaction, transactionIndex) => (
         <VStack key={transactionIndex}>
           {transaction.parameters.map(
@@ -177,6 +171,15 @@ export default function ProposalTemplateModal({
           {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
         </VStack>
       ))}
+      <Button
+        onClick={() => setShowAll(!showAll)}
+        variant="text"
+        my="1rem"
+        paddingLeft={0}
+      >
+        {t(showAll ? 'hideParameters' : 'showParameters')}
+      </Button>
+      <Divider color="chocolate.700" />
       <Box marginTop="1.5rem">
         <CustomNonceInput
           nonce={nonce}

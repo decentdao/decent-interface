@@ -1,6 +1,7 @@
 import { Avatar, Flex, Text } from '@chakra-ui/react';
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/navigation';
+import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import useRemoveProposalTemplate from '../../hooks/DAO/proposal/useRemoveProposalTemplate';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
@@ -38,15 +39,15 @@ export default function ProposalTemplateCard({
     templateIndex,
   });
 
-  const successCallback = () => {
+  const successCallback = useCallback(() => {
     if (daoAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
       push(`/daos/${daoAddress}/proposals`);
     }
-  };
+  }, [push, daoAddress]);
 
   const nonce = safe?.nonce;
-  const handleRemoveTemplate = async () => {
+  const handleRemoveTemplate = useCallback(async () => {
     const proposalData = await prepareRemoveProposalTemplateProposal(templateIndex);
     if (!!proposalData) {
       submitProposal({
@@ -58,23 +59,33 @@ export default function ProposalTemplateCard({
         successCallback,
       });
     }
-  };
+  }, [
+    nonce,
+    prepareRemoveProposalTemplateProposal,
+    submitProposal,
+    successCallback,
+    t,
+    templateIndex,
+  ]);
 
-  const copyTemplateOption = {
-    optionKey: 'optionCopyTemplate',
-    onClick: openCopyTemplateForm,
-  };
-
-  const manageTemplateOptions = [];
-  if (canUserCreateProposal) {
-    const removeTemplateOption = {
-      optionKey: 'optionRemoveTemplate',
-      onClick: handleRemoveTemplate,
+  const manageTemplateOptions = useMemo(() => {
+    let options = [];
+    const copyTemplateOption = {
+      optionKey: 'optionCopyTemplate',
+      onClick: openCopyTemplateForm,
     };
-    manageTemplateOptions.push(removeTemplateOption);
-  }
+    if (canUserCreateProposal) {
+      const removeTemplateOption = {
+        optionKey: 'optionRemoveTemplate',
+        onClick: handleRemoveTemplate,
+      };
+      options.push(removeTemplateOption);
+    }
 
-  manageTemplateOptions.push(copyTemplateOption);
+    options.push(copyTemplateOption);
+
+    return options;
+  }, [canUserCreateProposal, openCopyTemplateForm, handleRemoveTemplate]);
 
   return (
     <ContentBox
@@ -90,19 +101,17 @@ export default function ProposalTemplateCard({
           borderRadius="4px"
           getInitials={(_title: string) => _title.slice(0, 2)}
         />
-        {manageTemplateOptions.length > 0 && canUserCreateProposal && (
-          <OptionMenu
-            trigger={
-              <VEllipsis
-                boxSize="1.5rem"
-                mt="0.25rem"
-              />
-            }
-            titleKey="titleManageProposalTemplate"
-            options={manageTemplateOptions}
-            namespace="menu"
-          />
-        )}
+        <OptionMenu
+          trigger={
+            <VEllipsis
+              boxSize="1.5rem"
+              mt="0.25rem"
+            />
+          }
+          titleKey="titleManageProposalTemplate"
+          options={manageTemplateOptions}
+          namespace="menu"
+        />
       </Flex>
       <Text
         textStyle="text-lg-mono-regular"
