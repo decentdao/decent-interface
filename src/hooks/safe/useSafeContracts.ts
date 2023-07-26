@@ -18,13 +18,14 @@ import {
   ERC721FreezeVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { useProvider } from 'wagmi';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import useSignerOrProvider from '../utils/useSignerOrProvider';
 
 export default function useSafeContracts() {
+  const signerOrProvider = useSignerOrProvider();
   const provider = useProvider();
-  const { data: signer } = useSigner();
 
   const {
     contracts: {
@@ -50,7 +51,6 @@ export default function useSafeContracts() {
   } = useNetworkConfig();
 
   const daoContracts = useMemo(() => {
-    const signerOrProvider = signer || provider;
     const multiSendContract = {
       asSigner: MultiSend__factory.connect(multisend, signerOrProvider),
       asProvider: MultiSend__factory.connect(multisend, provider),
@@ -185,8 +185,8 @@ export default function useSafeContracts() {
     linearVotingERC721MasterCopy,
     erc721FreezeVotingMasterCopy,
     keyValuePairs,
+    signerOrProvider,
     provider,
-    signer,
   ]);
 
   return daoContracts;

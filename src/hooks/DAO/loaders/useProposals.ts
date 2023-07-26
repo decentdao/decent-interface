@@ -18,20 +18,29 @@ export const useDAOProposals = () => {
   const loadSafeMultisigProposals = useSafeMultisigProposals();
   const { setMethodOnInterval } = useUpdateTimer(daoAddress);
   const loadDAOProposals = useCallback(async () => {
-    const { azoriusContract } = governanceContracts;
+    const { azoriusContract, ozLinearVotingContract, erc721LinearVotingContract } =
+      governanceContracts;
 
     if (!!azoriusContract) {
       // load Azorius proposals and strategies
-      try {
-        action.dispatch({
-          type: FractalGovernanceAction.SET_PROPOSALS,
-          payload: {
-            type: GovernanceSelectionType.AZORIUS_ERC20,
-            proposals: await loadAzoriusProposals(),
-          },
-        });
-      } catch (e) {
-        logError(e);
+      let type = ozLinearVotingContract
+        ? GovernanceSelectionType.AZORIUS_ERC20
+        : erc721LinearVotingContract
+        ? GovernanceSelectionType.AZORIUS_ERC721
+        : undefined;
+
+      if (type) {
+        try {
+          action.dispatch({
+            type: FractalGovernanceAction.SET_PROPOSALS,
+            payload: {
+              type,
+              proposals: await loadAzoriusProposals(),
+            },
+          });
+        } catch (e) {
+          logError(e);
+        }
       }
     } else {
       // load mulisig proposals

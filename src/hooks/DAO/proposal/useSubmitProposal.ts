@@ -9,13 +9,14 @@ import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useProvider, useSigner } from 'wagmi';
+import { useSigner } from 'wagmi';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, ProposalExecuteData, GovernanceSelectionType } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
+import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
 
@@ -32,7 +33,7 @@ interface ISubmitProposal {
   safeAddress?: string;
 }
 
-interface ISubmitTokenVotingProposal extends ISubmitProposal {
+interface ISubmitAzoriusProposal extends ISubmitProposal {
   /**
    * @param azoriusContract - provided Azorius contract.
    * Depending on safeAddress it's either picked from global context
@@ -57,7 +58,7 @@ export default function useSubmitProposal() {
     node: { safe, fractalModules },
     baseContracts: { multiSendContract },
     guardContracts: { freezeVotingContract },
-    governanceContracts: { ozLinearVotingContract },
+    governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance: { type },
     clients: { safeService },
     readOnly: { user },
@@ -76,8 +77,7 @@ export default function useSubmitProposal() {
   }, [fractalModules, signer]);
 
   const lookupModules = useFractalModules();
-  const provider = useProvider();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const signerOrProvider = useSignerOrProvider();
   const { chainId, safeBaseURL } = useNetworkConfig();
 
   const getCanUserCreateProposal = useCallback(
@@ -117,17 +117,28 @@ export default function useSubmitProposal() {
           return checkIsMultisigOwner(owners);
         } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
           if (ozLinearVotingContract && user.address) {
-            return ozLinearVotingContract?.asSigner.isProposer(user.address);
+            return ozLinearVotingContract.asSigner.isProposer(user.address);
           }
         } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
-          return false; // TODO: When ERC721 contract will be available under governanceContracts through useFractal - correctly retrieve it
+          if (erc721LinearVotingContract) {
+            return erc721LinearVotingContract.asSigner.isProposer(user.address);
+          }
         } else {
           return false;
         }
       }
       return false;
     },
-    [safe, type, user, ozLinearVotingContract, lookupModules, safeService, signerOrProvider]
+    [
+      safe,
+      type,
+      user,
+      ozLinearVotingContract,
+      erc721LinearVotingContract,
+      lookupModules,
+      safeService,
+      signerOrProvider,
+    ]
   );
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
@@ -231,7 +242,7 @@ export default function useSubmitProposal() {
     [chainId, multiSendContract, safeBaseURL, signerOrProvider, loadDAOProposals]
   );
 
-  const submitTokenVotingProposal = useCallback(
+  const submitAzoriusProposal = useCallback(
     async ({
       proposalData,
       azoriusContract,
@@ -241,7 +252,7 @@ export default function useSubmitProposal() {
       successCallback,
       failedToastMessage,
       safeAddress,
-    }: ISubmitTokenVotingProposal) => {
+    }: ISubmitAzoriusProposal) => {
       if (!proposalData) {
         return;
       }
@@ -322,7 +333,13 @@ export default function useSubmitProposal() {
             safeAddress,
           });
         } else {
-          submitTokenVotingProposal({
+          const azoriusModuleContract = azoriusModule.moduleContract as Azorius;
+          const votingStrategyAddress = await azoriusModuleContract
+            .queryFilter(azoriusModuleContract.filters.EnabledStrategy())
+            .then(strategiesEnabled => {
+              return strategiesEnabled[0].args.strategy;
+            });
+          submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
             successToastMessage,
@@ -331,12 +348,14 @@ export default function useSubmitProposal() {
             successCallback,
             safeAddress,
             azoriusContract: azoriusModule.moduleContract as Azorius,
-            votingStrategyAddress: ozLinearVotingContract?.asSigner.address!,
+            votingStrategyAddress,
           });
         }
       } else {
         const votingStrategyAddress =
-          ozLinearVotingContract?.asSigner.address || freezeVotingContract?.asSigner.address;
+          ozLinearVotingContract?.asSigner.address ||
+          erc721LinearVotingContract?.asSigner.address ||
+          freezeVotingContract?.asSigner.address;
 
         if (!globalAzoriusContract || !votingStrategyAddress) {
           await submitMultisigProposal({
@@ -349,15 +368,15 @@ export default function useSubmitProposal() {
             safeAddress: safe?.address,
           });
         } else {
-          await submitTokenVotingProposal({
+          await submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
             successToastMessage,
             failedToastMessage,
             nonce,
             successCallback,
+            votingStrategyAddress,
             azoriusContract: globalAzoriusContract,
-            votingStrategyAddress: votingStrategyAddress,
             safeAddress: safe?.address,
           });
         }
@@ -370,7 +389,8 @@ export default function useSubmitProposal() {
       lookupModules,
       submitMultisigProposal,
       ozLinearVotingContract,
-      submitTokenVotingProposal,
+      erc721LinearVotingContract,
+      submitAzoriusProposal,
       safeService,
     ]
   );

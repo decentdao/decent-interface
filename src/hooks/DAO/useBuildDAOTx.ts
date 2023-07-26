@@ -1,5 +1,4 @@
-import { useCallback, useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { useCallback } from 'react';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import {
@@ -11,11 +10,10 @@ import {
   AzoriusERC721DAO,
   AzoriusGovernance,
 } from '../../types';
+import useSignerOrProvider from '../utils/useSignerOrProvider';
 
 const useBuildDAOTx = () => {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const signerOrProvider = useSignerOrProvider();
 
   const {
     baseContracts: {

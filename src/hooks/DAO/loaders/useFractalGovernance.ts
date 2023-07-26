@@ -7,6 +7,8 @@ import { FractalGovernanceAction } from '../../../providers/App/governance/actio
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
+import { useERC721LinearStrategy } from './governance/useERC721LinearStrategy';
+import useERC721Tokens from './governance/useERC721Tokens';
 import { useDAOProposals } from './useProposals';
 
 export const useFractalGovernance = () => {
@@ -22,7 +24,9 @@ export const useFractalGovernance = () => {
 
   const loadDAOProposals = useDAOProposals();
   const loadERC20Strategy = useERC20LinearStrategy();
+  const loadERC721Strategy = useERC721LinearStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
+  const loadERC721Tokens = useERC721Tokens();
   const ipfsClient = useIPFSClient();
 
   const ONE_MINUTE = 60 * 1000;
@@ -64,7 +68,8 @@ export const useFractalGovernance = () => {
   });
 
   useEffect(() => {
-    const { isLoaded, azoriusContract } = governanceContracts;
+    const { isLoaded, azoriusContract, erc721LinearVotingContract, ozLinearVotingContract } =
+      governanceContracts;
 
     const newLoadKey =
       daoAddress +
@@ -75,13 +80,18 @@ export const useFractalGovernance = () => {
     if (isLoaded && daoAddress && newLoadKey !== loadKey.current) {
       loadKey.current = newLoadKey;
 
-      loadDAOProposals();
-
       if (azoriusContract) {
-        loadERC20Strategy();
-        loadERC20Token();
-        loadUnderlyingERC20Token();
+        if (ozLinearVotingContract) {
+          loadERC20Strategy();
+          loadERC20Token();
+          loadUnderlyingERC20Token();
+        } else if (erc721LinearVotingContract) {
+          loadERC721Strategy();
+          loadERC721Tokens();
+        }
       }
+
+      loadDAOProposals();
     } else if (!isLoaded) {
       loadKey.current = undefined;
     }
@@ -94,5 +104,7 @@ export const useFractalGovernance = () => {
     loadERC20Token,
     nodeHierarchy.parentAddress,
     guardContracts.freezeGuardContract,
+    loadERC721Strategy,
+    loadERC721Tokens,
   ]);
 };
