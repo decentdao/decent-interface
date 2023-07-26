@@ -47,7 +47,7 @@ const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) =>
     // find the last transaction in the multiSend batch, which *should* be the metadata
     // transaction, which contains the IPFS hash as its data array
     const dataDecoded: DataDecoded = JSON.parse(JSON.stringify(transaction.dataDecoded));
-    const transactions: Transaction[] = dataDecoded.parameters[0].valueDecoded;
+    const transactions: Transaction[] = dataDecoded.parameters[0]?.valueDecoded;
 
     if (!transactions) return;
 

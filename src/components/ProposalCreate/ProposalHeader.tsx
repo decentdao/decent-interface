@@ -22,7 +22,6 @@ export function ProposalHeader({
       <Text textStyle="text-xl-mono-medium">
         {metadataTitle ? metadataTitle : t('proposal', { ns: 'proposal' })}
       </Text>
-      <Spacer />
       {!isAzorius && (
         <Tooltip
           label={t('multisigMetadataWarning')}
