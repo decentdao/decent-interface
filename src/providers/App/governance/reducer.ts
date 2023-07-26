@@ -1,5 +1,5 @@
 import { FractalGovernance, AzoriusProposal, VOTE_CHOICES, SnapshotProposal } from '../../../types';
-import { AzoriusGovernance, GovernanceSelectionType } from './../../../types/fractal';
+import { AzoriusGovernance } from './../../../types/fractal';
 import { FractalGovernanceAction, FractalGovernanceActions } from './action';
 
 export const initialGovernanceState: FractalGovernance = {
@@ -39,8 +39,8 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.SET_STRATEGY: {
       return {
         ...state,
-        type: GovernanceSelectionType.AZORIUS_ERC20,
-        votingStrategy: action.payload,
+        type: action.payload.governanceType,
+        votingStrategy: { ...action.payload.votingStrategy },
       };
     }
     case FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS:
@@ -86,6 +86,10 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       const { votingStrategy } = state as AzoriusGovernance;
       return { ...state, votingStrategy: { ...votingStrategy, votingPeriod: action.payload } };
     }
+    case FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD: {
+      const { votingStrategy } = state as AzoriusGovernance;
+      return { ...state, votingStrategy: { ...votingStrategy, quorumThreshold: action.payload } };
+    }
     case FractalGovernanceAction.UPDATE_VOTING_QUORUM: {
       const { votingStrategy } = state as AzoriusGovernance;
       return { ...state, votingStrategy: { ...votingStrategy, votingQuorum: action.payload } };
@@ -97,6 +101,9 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.SET_TOKEN_DATA: {
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...action.payload } };
+    }
+    case FractalGovernanceAction.SET_ERC721_TOKENS_DATA: {
+      return { ...state, erc721Tokens: action.payload };
     }
     case FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA: {
       const { votesToken } = state as AzoriusGovernance;

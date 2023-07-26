@@ -75,7 +75,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           </LabelComponent>
         ) : (
           <LabelComponent
-            label={t('quorumThreshold')}
+            label={t('quorum', { ns: 'common' })}
             helper={t('helperQuorumThreshold')}
             isRequired
           >

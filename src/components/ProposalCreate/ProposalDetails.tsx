@@ -48,11 +48,14 @@ export function ProposalDetails() {
             <>
               <HStack justifyContent="space-between">
                 <Text color="chocolate.200">{t('labelProposalVotingPeriod')}</Text>
-                <Text>{azoriusGovernance.votingStrategy.votingPeriod?.formatted}</Text>
+                <Text>{azoriusGovernance.votingStrategy?.votingPeriod?.formatted}</Text>
               </HStack>
               <HStack justifyContent="space-between">
                 <Text color="chocolate.200">{t('labelProposalQuorum')}</Text>
-                <Text>{azoriusGovernance.votingStrategy?.quorumPercentage?.formatted}</Text>
+                <Text>
+                  {azoriusGovernance.votingStrategy?.quorumPercentage?.formatted ||
+                    azoriusGovernance.votingStrategy?.quorumThreshold?.formatted}
+                </Text>
               </HStack>
               <HStack justifyContent="space-between">
                 <Text color="chocolate.200">{t('labelProposalTimelock')}</Text>

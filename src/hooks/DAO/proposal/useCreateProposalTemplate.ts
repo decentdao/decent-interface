@@ -1,17 +1,15 @@
 import { BigNumber } from 'ethers';
-import { useCallback, useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { useCallback } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { ProposalExecuteData } from '../../../types';
 import { CreateProposalTemplateForm } from '../../../types/createProposalTemplate';
 import { couldBeENS } from '../../../utils/url';
 import useSafeContracts from '../../safe/useSafeContracts';
+import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export default function useCreateProposalTemplate() {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const signerOrProvider = useSignerOrProvider();
 
   const { keyValuePairsContract } = useSafeContracts();
   const client = useIPFSClient();
