@@ -241,6 +241,7 @@ export interface FractalNode {
   nodeHierarchy: NodeHierarchy;
   isModulesLoaded?: boolean;
   daoSnapshotURL?: string;
+  proposalTemplatesHash?: string;
 }
 
 export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded'> {}

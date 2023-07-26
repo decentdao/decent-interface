@@ -1,5 +1,9 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { Azorius, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
+import {
+  Azorius,
+  BaseStrategy__factory,
+  GnosisSafe__factory,
+} from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
@@ -13,13 +17,12 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
-  FractalModuleType,
   MetaTransaction,
   ProposalExecuteData,
   GovernanceSelectionType,
   ProposalMetadata,
 } from '../../../types';
-import { buildSafeApiUrl } from '../../../utils';
+import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
 
@@ -71,9 +74,7 @@ export default function useSubmitProposal() {
     if (!signer) {
       return undefined;
     }
-    const azoriusModule = fractalModules?.find(
-      module => module.moduleType === FractalModuleType.AZORIUS
-    );
+    const azoriusModule = getAzoriusModuleFromModules(fractalModules);
     if (!azoriusModule) {
       return undefined;
     }
@@ -87,23 +88,61 @@ export default function useSubmitProposal() {
   const { chainId, safeBaseURL } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
 
+  const getCanUserCreateProposal = useCallback(
+    async (safeAddress?: string): Promise<boolean> => {
+      if (!user.address) {
+        return false;
+      }
+
+      const checkIsMultisigOwner = (owners?: string[]) => {
+        return !!owners?.includes(user.address || '');
+      };
+
+      if (safeAddress) {
+        const safeInfo = await safeService.getSafeInfo(utils.getAddress(safeAddress));
+        const safeModules = await lookupModules(safeInfo.modules);
+        const azoriusModule = getAzoriusModuleFromModules(safeModules);
+
+        if (azoriusModule && azoriusModule.moduleContract) {
+          const azoriusContract = azoriusModule.moduleContract as Azorius;
+          const votingContractAddress = await azoriusModule.moduleContract
+            .queryFilter(azoriusContract.filters.EnabledStrategy())
+            .then(strategiesEnabled => {
+              return strategiesEnabled[0].args.strategy;
+            });
+          const votingContract = BaseStrategy__factory.connect(
+            votingContractAddress,
+            signerOrProvider
+          );
+          const isProposer = await votingContract.isProposer(user.address);
+          return isProposer;
+        } else {
+          return checkIsMultisigOwner(safeInfo.owners);
+        }
+      } else {
+        if (type === GovernanceSelectionType.MULTISIG) {
+          const { owners } = safe || {};
+          return checkIsMultisigOwner(owners);
+        } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
+          if (ozLinearVotingContract && user.address) {
+            return ozLinearVotingContract?.asSigner.isProposer(user.address);
+          }
+        } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
+          return false; // TODO: When ERC721 contract will be available under governanceContracts through useFractal - correctly retrieve it
+        } else {
+          return false;
+        }
+      }
+      return false;
+    },
+    [safe, type, user, ozLinearVotingContract, lookupModules, safeService, signerOrProvider]
+  );
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
-      if (type === GovernanceSelectionType.MULTISIG) {
-        const { owners } = safe || {};
-        setCanUserCreateProposal(!!owners?.includes(user.address || ''));
-      } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
-        if (ozLinearVotingContract && user.address) {
-          setCanUserCreateProposal(await ozLinearVotingContract?.asSigner.isProposer(user.address));
-        }
-      } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
-        setCanUserCreateProposal(false); // TODO: When ERC721 contract will be available under governanceContracts through useFractal - correctly retrieve it
-      } else {
-        setCanUserCreateProposal(false);
-      }
+      setCanUserCreateProposal(await getCanUserCreateProposal());
     };
     loadCanUserCreateProposal();
-  }, [safe, type, user, ozLinearVotingContract]);
+  }, [getCanUserCreateProposal]);
 
   const submitMultisigProposal = useCallback(
     async ({
@@ -294,9 +333,7 @@ export default function useSubmitProposal() {
         // Submitting proposal to any DAO out of global context
         const safeInfo = await safeService.getSafeInfo(getAddress(safeAddress));
         const modules = await lookupModules(safeInfo.modules);
-        const azoriusModule = modules.find(
-          module => module.moduleType === FractalModuleType.AZORIUS
-        );
+        const azoriusModule = getAzoriusModuleFromModules(modules);
         if (!azoriusModule) {
           submitMultisigProposal({
             proposalData,
@@ -361,5 +398,5 @@ export default function useSubmitProposal() {
     ]
   );
 
-  return { submitProposal, pendingCreateTx, canUserCreateProposal };
+  return { submitProposal, pendingCreateTx, canUserCreateProposal, getCanUserCreateProposal };
 }
