@@ -34,7 +34,7 @@ import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
 import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
-import { VotesTokenData } from './account';
+import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { ProposalTemplate } from './createProposalTemplate';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
@@ -233,6 +233,7 @@ export interface FractalClients {
 
 export interface FractalGovernanceContracts {
   ozLinearVotingContract: ContractConnection<LinearERC20Voting> | null;
+  erc721LinearVotingContract: ContractConnection<LinearERC721Voting> | null;
   azoriusContract: ContractConnection<Azorius> | null;
   tokenContract: ContractConnection<VotesERC20 | VotesERC20Wrapper> | null;
   lockReleaseContract: ContractConnection<LockRelease> | null;
@@ -292,6 +293,7 @@ export type FractalGovernance = AzoriusGovernance | DecentGovernance | SafeMulti
 export interface AzoriusGovernance extends Governance {
   votingStrategy: VotingStrategyAzorius;
   votesToken: VotesTokenData | undefined;
+  erc721Tokens?: ERC721TokenData[];
 }
 
 export interface DecentGovernance extends AzoriusGovernance {
@@ -313,6 +315,7 @@ export interface VotingStrategyAzorius extends VotingStrategy {
 export interface VotingStrategy<Type = BNFormattedPair> {
   votingPeriod?: Type;
   quorumPercentage?: Type;
+  quorumThreshold?: Type;
   timeLockPeriod?: Type;
 }
 

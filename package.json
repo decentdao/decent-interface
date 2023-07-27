@@ -13,7 +13,7 @@
     "@ethersproject/providers": "^5.7.2",
     "@fontsource/ibm-plex-mono": "^4.5.12",
     "@fontsource/ibm-plex-sans": "^4.5.13",
-    "@fractal-framework/fractal-contracts": "^0.3.4",
+    "@fractal-framework/fractal-contracts": "^0.3.5",
     "@graphprotocol/client-apollo": "^1.0.16",
     "@rainbow-me/rainbowkit": "^0.8.1",
     "@safe-global/safe-deployments": "^1.23.0",

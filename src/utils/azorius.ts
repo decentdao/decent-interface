@@ -1,4 +1,8 @@
-import { Azorius, LinearERC20Voting } from '@fractal-framework/fractal-contracts';
+import {
+  Azorius,
+  LinearERC20Voting,
+  LinearERC721Voting,
+} from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { strategyFractalProposalStates } from '../constants/strategy';
@@ -19,6 +23,7 @@ import {
   FractalModuleData,
   FractalModuleType,
   DecodedTransaction,
+  VotingStrategyType,
 } from '../types';
 import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
@@ -31,33 +36,48 @@ export const getAzoriusProposalState = async (
   return strategyFractalProposalStates[state];
 };
 
+const getQuorum = async (
+  strategyContract: LinearERC20Voting | LinearERC721Voting,
+  strategyType: VotingStrategyType,
+  proposalId: BigNumber
+) => {
+  let quorum;
+
+  if (strategyType === VotingStrategyType.LINEAR_ERC20) {
+    try {
+      quorum = await (strategyContract as LinearERC20Voting).quorumVotes(proposalId);
+    } catch (e) {
+      // For who knows reason - strategy.quorumVotes might give you an error
+      // Seems like occuring when token deployment haven't worked properly
+      logError('Error while getting strategy quorum');
+      quorum = BigNumber.from(0);
+    }
+  } else if (strategyType === VotingStrategyType.LINEAR_ERC721) {
+    quorum = await (strategyContract as LinearERC721Voting).quorumThreshold();
+  } else {
+    quorum = BigNumber.from(0);
+  }
+
+  return quorum;
+};
+
 export const getProposalVotesSummary = async (
-  strategy: LinearERC20Voting,
+  strategy: LinearERC20Voting | LinearERC721Voting,
+  strategyType: VotingStrategyType,
   proposalId: BigNumber
 ): Promise<ProposalVotesSummary> => {
   const { yesVotes, noVotes, abstainVotes } = await strategy.getProposalVotes(proposalId);
-
-  let quorum;
-
-  try {
-    quorum = await strategy.quorumVotes(proposalId);
-  } catch (e) {
-    // For who knows reason - strategy.quorumVotes might give you an error
-    // Seems like occuring when token deployment haven't worked properly
-    logError('Error while getting strategy quorum');
-    quorum = BigNumber.from(0);
-  }
 
   return {
     yes: yesVotes,
     no: noVotes,
     abstain: abstainVotes,
-    quorum,
+    quorum: await getQuorum(strategy, strategyType, proposalId),
   };
 };
 
 export const getProposalVotes = async (
-  strategyContract: LinearERC20Voting,
+  strategyContract: LinearERC20Voting | LinearERC721Voting,
   proposalId: BigNumber
 ): Promise<ProposalVote[]> => {
   const voteEventFilter = strategyContract.filters.Voted();
@@ -72,26 +92,18 @@ export const getProposalVotes = async (
 };
 
 export const mapProposalCreatedEventToProposal = async (
-  strategyContract: LinearERC20Voting,
+  strategyContract: LinearERC20Voting | LinearERC721Voting,
+  strategyType: VotingStrategyType,
   proposalId: BigNumber,
   proposer: string,
   azoriusContract: ContractConnection<Azorius>,
   provider: Providers,
-  chainId: number,
   metaData?: ProposalMetaData
 ) => {
   const { endBlock, startBlock, abstainVotes, yesVotes, noVotes } =
     await strategyContract.getProposalVotes(proposalId);
-  let quorum;
+  const quorum = await getQuorum(strategyContract, strategyType, proposalId);
 
-  try {
-    quorum = await strategyContract.quorumVotes(proposalId);
-  } catch (e) {
-    // For who knows reason - strategy.quorumVotes might give you an error
-    // Seems like occuring when token deployment haven't worked properly
-    logError('Error while getting strategy quorum');
-    quorum = BigNumber.from(0);
-  }
   const deadlineSeconds = await getTimeStamp(endBlock, provider);
   const state = await getAzoriusProposalState(azoriusContract.asSigner, proposalId);
   const votes = await getProposalVotes(strategyContract, proposalId);
@@ -127,7 +139,6 @@ export const mapProposalCreatedEventToProposal = async (
     transactionHash,
     deadlineMs: deadlineSeconds * 1000,
     state,
-    govTokenAddress: await strategyContract.governanceToken(),
     votes,
     votesSummary,
     metaData,

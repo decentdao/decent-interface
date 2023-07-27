@@ -1,6 +1,5 @@
 'use client';
 
-import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AzoriusProposalDetails } from '../../../../../src/components/Proposals/AzoriusDetails';
@@ -21,6 +20,7 @@ export default function ProposalDetailsPage({
   const {
     node: { daoAddress },
     governance: { proposals },
+    readOnly: { dao },
   } = useFractal();
 
   const [proposal, setProposal] = useState<FractalProposal | null>();
@@ -69,12 +69,10 @@ export default function ProposalDetailsPage({
         ]}
       />
       {proposal === undefined ? (
-        <Box>
-          <InfoBoxLoader />
-        </Box>
+        <InfoBoxLoader />
       ) : proposal === null ? (
         <EmptyBox emptyText={t('noProposal')} />
-      ) : azoriusProposal.govTokenAddress ? (
+      ) : dao?.isAzorius ? (
         <AzoriusProposalDetails proposal={azoriusProposal} />
       ) : (
         <MultisigProposalDetails proposal={proposal} />

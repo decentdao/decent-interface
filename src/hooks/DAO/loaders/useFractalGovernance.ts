@@ -7,6 +7,8 @@ import { FractalGovernanceAction } from '../../../providers/App/governance/actio
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
+import { useERC721LinearStrategy } from './governance/useERC721LinearStrategy';
+import useERC721Tokens from './governance/useERC721Tokens';
 import { useLockRelease } from './governance/useLockRelease';
 import { useDAOProposals } from './useProposals';
 
@@ -23,8 +25,10 @@ export const useFractalGovernance = () => {
 
   const loadDAOProposals = useDAOProposals();
   const loadERC20Strategy = useERC20LinearStrategy();
+  const loadERC721Strategy = useERC721LinearStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
   const { loadLockedVotesToken } = useLockRelease({});
+  const loadERC721Tokens = useERC721Tokens();
   const ipfsClient = useIPFSClient();
 
   const ONE_MINUTE = 60 * 1000;
@@ -66,7 +70,13 @@ export const useFractalGovernance = () => {
   });
 
   useEffect(() => {
-    const { isLoaded, azoriusContract, lockReleaseContract } = governanceContracts;
+    const {
+      isLoaded,
+      azoriusContract,
+      lockReleaseContract,
+      erc721LinearVotingContract,
+      ozLinearVotingContract,
+    } = governanceContracts;
 
     const newLoadKey =
       daoAddress +
@@ -77,16 +87,21 @@ export const useFractalGovernance = () => {
     if (isLoaded && daoAddress && newLoadKey !== loadKey.current) {
       loadKey.current = newLoadKey;
 
-      loadDAOProposals();
-
       if (azoriusContract) {
-        loadERC20Strategy();
-        loadERC20Token();
-        loadUnderlyingERC20Token();
-        if (lockReleaseContract) {
-          loadLockedVotesToken();
+        if (ozLinearVotingContract) {
+          loadERC20Strategy();
+          loadERC20Token();
+          loadUnderlyingERC20Token();
+          if (lockReleaseContract) {
+            loadLockedVotesToken();
+          }
+        } else if (erc721LinearVotingContract) {
+          loadERC721Strategy();
+          loadERC721Tokens();
         }
       }
+
+      loadDAOProposals();
     } else if (!isLoaded) {
       loadKey.current = undefined;
     }
@@ -100,5 +115,7 @@ export const useFractalGovernance = () => {
     loadLockedVotesToken,
     nodeHierarchy.parentAddress,
     guardContracts.freezeGuardContract,
+    loadERC721Strategy,
+    loadERC721Tokens,
   ]);
 };

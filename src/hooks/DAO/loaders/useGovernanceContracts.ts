@@ -4,6 +4,7 @@ import {
   LinearERC20Voting,
   VotesERC20,
   VotesERC20Wrapper,
+  LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
@@ -29,6 +30,7 @@ export const useGovernanceContracts = () => {
     baseContracts: {
       zodiacModuleProxyFactoryContract,
       linearVotingMasterCopyContract,
+      linearVotingERC721MasterCopyContract,
       votesTokenMasterCopyContract,
       fractalAzoriusMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
@@ -71,6 +73,7 @@ export const useGovernanceContracts = () => {
         let govTokenAddress: string | undefined = cachedContractAddresses?.govTokenContractAddress;
 
         let ozLinearVotingContract: ContractConnection<LinearERC20Voting> | undefined;
+        let erc721LinearVotingContract: ContractConnection<LinearERC721Voting> | undefined;
         let tokenContract: ContractConnection<VotesERC20 | VotesERC20Wrapper> | undefined;
         let underlyingTokenAddress: string | undefined;
         let lockReleaseContract: ContractConnection<LockRelease> | null = null;
@@ -95,6 +98,16 @@ export const useGovernanceContracts = () => {
           ozLinearVotingContract = {
             asSigner: linearVotingMasterCopyContract.asSigner.attach(votingContractAddress!),
             asProvider: linearVotingMasterCopyContract.asProvider.attach(votingContractAddress!),
+          };
+        } else if (
+          votingContractMasterCopyAddress ===
+          linearVotingERC721MasterCopyContract.asProvider.address
+        ) {
+          erc721LinearVotingContract = {
+            asSigner: linearVotingERC721MasterCopyContract.asSigner.attach(votingContractAddress!),
+            asProvider: linearVotingERC721MasterCopyContract.asProvider.attach(
+              votingContractAddress!
+            ),
           };
         }
         if (ozLinearVotingContract) {
@@ -154,10 +167,27 @@ export const useGovernanceContracts = () => {
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
               ozLinearVotingContract,
+              erc721LinearVotingContract: null,
               azoriusContract,
               tokenContract,
               underlyingTokenAddress,
               lockReleaseContract,
+            },
+          });
+        } else if (!!erc721LinearVotingContract) {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
+            votingContractAddress,
+            votingContractMasterCopyAddress,
+          });
+          currentValidAddress.current = _node.daoAddress;
+          action.dispatch({
+            type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
+            payload: {
+              ozLinearVotingContract: null,
+              erc721LinearVotingContract,
+              azoriusContract,
+              tokenContract: null,
+              underlyingTokenAddress,
             },
           });
         } else {
@@ -166,6 +196,7 @@ export const useGovernanceContracts = () => {
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
               ozLinearVotingContract: null,
+              erc721LinearVotingContract: null,
               azoriusContract: null,
               tokenContract: null,
               lockReleaseContract: null,
@@ -179,6 +210,7 @@ export const useGovernanceContracts = () => {
           payload: {
             ozLinearVotingContract: null,
             azoriusContract: null,
+            erc721LinearVotingContract: null,
             tokenContract: null,
             lockReleaseContract: null,
           },
@@ -197,6 +229,7 @@ export const useGovernanceContracts = () => {
       zodiacModuleProxyFactoryContract,
       fractalAzoriusMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
+      linearVotingERC721MasterCopyContract,
     ]
   );
 

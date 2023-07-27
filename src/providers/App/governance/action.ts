@@ -3,12 +3,13 @@ import { BigNumber } from 'ethers';
 import {
   FractalProposal,
   ProposalVotesSummary,
-  TokenData,
+  ERC20TokenData,
   FractalProposalState,
   VotesData,
   VotingStrategy,
   UnderlyingTokenData,
   GovernanceSelectionType,
+  ERC721TokenData,
 } from '../../../types';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
 
@@ -22,7 +23,9 @@ export enum FractalGovernanceAction {
   UPDATE_PROPOSAL_STATE = 'UPDATE_PROPOSAL_STATE',
   UPDATE_VOTING_PERIOD = 'UPDATE_VOTING_PERIOD',
   UPDATE_VOTING_QUORUM = 'UPDATE_VOTING_QUORUM',
+  UPDATE_VOTING_QUORUM_THRESHOLD = 'UPDATE_VOTING_QUORUM_THRESHOLD',
   UPDATE_TIMELOCK_PERIOD = 'UPDATE_TIMELOCK_PERIOD',
+  SET_ERC721_TOKENS_DATA = 'SET_ERC721_TOKENS_DATA',
   SET_TOKEN_DATA = 'SET_TOKEN_DATA',
   SET_TOKEN_ACCOUNT_DATA = 'SET_TOKEN_ACCOUNT_DATA',
   SET_CLAIMING_CONTRACT = 'SET_CLAIMING_CONTRACT',
@@ -35,8 +38,13 @@ export enum DecentGovernanceAction {
   SET_LOCKED_TOKEN_ACCOUNT_DATA = 'SET_LOCKED_TOKEN_ACCOUNT_DATA',
 }
 
+type SetStrategyPayload = {
+  governanceType: GovernanceSelectionType;
+  votingStrategy: VotingStrategy;
+};
+
 export type FractalGovernanceActions =
-  | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotingStrategy }
+  | { type: FractalGovernanceAction.SET_STRATEGY; payload: SetStrategyPayload }
   | {
       type: FractalGovernanceAction.SET_PROPOSALS;
       payload: { type: GovernanceSelectionType; proposals: FractalProposal[] };
@@ -51,7 +59,6 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
       payload: { state: FractalProposalState; proposalId: string };
     }
-  | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotingStrategy }
   | {
       type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE;
       payload: {
@@ -71,12 +78,17 @@ export type FractalGovernanceActions =
       payload: BigNumber;
     }
   | {
-      type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD;
+      type: FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD;
       payload: BigNumber;
     }
   | {
+      type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD;
+      payload: BigNumber;
+    }
+  | { type: FractalGovernanceAction.SET_ERC721_TOKENS_DATA; payload: ERC721TokenData[] }
+  | {
       type: FractalGovernanceAction.SET_TOKEN_DATA;
-      payload: TokenData;
+      payload: ERC20TokenData;
     }
   | {
       type: FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA;
