@@ -40,7 +40,8 @@ function InvalidSafe() {
 }
 
 function InvalidChain() {
-  const { t } = useTranslation('common');
+  const { t } = useTranslation(['common', 'menu']);
+  const supportedChainNames = supportedChains.map(c => c.name).join(', ');
   return (
     <Center
       padding="3rem"
@@ -54,6 +55,9 @@ function InvalidChain() {
           {t('errorSentryFallbackTitle')}
         </Text>
         <Text paddingBottom="1rem">{t('invalidChain')}</Text>
+        <Text paddingBottom="1rem">
+          {t('toastSwitchChain', { ns: 'menu', chainNames: supportedChainNames })}
+        </Text>
       </VStack>
     </Center>
   );
@@ -70,10 +74,7 @@ export default function DaoPageLayout({
   const loading = useDAOController({ daoAddress });
   const { chain } = useNetwork();
 
-  let supportedChain = false;
-  supportedChains.forEach(_chain => {
-    if (_chain.chainId === chain?.id) supportedChain = true;
-  });
+  const supportedChain = chain && supportedChains.map(c => c.chainId).includes(chain?.id);
 
   let display;
   if (!supportedChain) {

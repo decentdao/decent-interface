@@ -1,6 +1,5 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
 import { Chain, useDisconnect, useNetwork, useProvider } from 'wagmi';
 import { NetworkConfig } from '../../types/network';
 import { isProd } from '../../utils';
@@ -36,16 +35,11 @@ export function NetworkConfigProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const supportedChainIds = supportedChains.map(c => c.chainId);
-    const supportedChainNames = supportedChains.map(c => c.name).join(', ');
-
     if (
       !!chain &&
       !supportedChainIds.includes(chain.id) &&
       !process.env.NEXT_PUBLIC_TESTING_ENVIROMENT
     ) {
-      toast(t('toastSwitchChain', { chainNames: supportedChainNames }), {
-        toastId: 'switchChain',
-      });
       disconnect();
     }
   }, [chain, disconnect, t]);
