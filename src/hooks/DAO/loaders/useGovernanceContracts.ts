@@ -191,6 +191,23 @@ export const useGovernanceContracts = () => {
               underlyingTokenAddress,
             },
           });
+        } else if (!!erc721LinearVotingContract) {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
+            votingContractAddress,
+            votingContractMasterCopyAddress,
+          });
+          currentValidAddress.current = _node.daoAddress;
+          action.dispatch({
+            type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
+            payload: {
+              ozLinearVotingContract: null,
+              erc721LinearVotingContract,
+              azoriusContract,
+              tokenContract: null,
+              underlyingTokenAddress,
+              lockReleaseContract: null,
+            },
+          });
         } else {
           currentValidAddress.current = _node.daoAddress;
           action.dispatch({
