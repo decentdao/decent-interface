@@ -184,6 +184,7 @@ export const useGovernanceContracts = () => {
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
               ozLinearVotingContract: null,
+              lockReleaseContract: null,
               erc721LinearVotingContract,
               azoriusContract,
               tokenContract: null,
