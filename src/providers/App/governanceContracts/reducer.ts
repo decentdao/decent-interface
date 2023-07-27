@@ -6,6 +6,7 @@ export const initialGovernanceContractsState: FractalGovernanceContracts = {
   erc721LinearVotingContract: null,
   azoriusContract: null,
   tokenContract: null,
+  lockReleaseContract: null,
   isLoaded: false,
 };
 

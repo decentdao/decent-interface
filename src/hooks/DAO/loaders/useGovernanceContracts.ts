@@ -6,8 +6,10 @@ import {
   VotesERC20Wrapper,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
+import { ethers } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
-import { useProvider } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
+import { LockRelease, LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
@@ -36,10 +38,11 @@ export const useGovernanceContracts = () => {
     action,
   } = useFractal();
 
+  const provider = useProvider();
+  const { data: signer } = useSigner();
   const {
     network: { chainId },
-  } = useProvider();
-
+  } = provider;
   const { setValue, getValue } = useLocalStorage();
 
   const findAzoriusModule = (fractalModules: FractalModuleData[]): Azorius | undefined => {
@@ -49,6 +52,7 @@ export const useGovernanceContracts = () => {
 
   const loadGovernanceContracts = useCallback(
     async (_node: FractalNode) => {
+      const signerOrProvider = signer || provider;
       const { fractalModules } = _node;
 
       const azoriusModule = findAzoriusModule(fractalModules);
@@ -72,6 +76,7 @@ export const useGovernanceContracts = () => {
         let erc721LinearVotingContract: ContractConnection<LinearERC721Voting> | undefined;
         let tokenContract: ContractConnection<VotesERC20 | VotesERC20Wrapper> | undefined;
         let underlyingTokenAddress: string | undefined;
+        let lockReleaseContract: ContractConnection<LockRelease> | null = null;
 
         if (!votingContractAddress) {
           votingContractAddress = await getEventRPC<Azorius>(azoriusContract, chainId)
@@ -116,8 +121,28 @@ export const useGovernanceContracts = () => {
             // so we catch it and return undefined
             return undefined;
           });
+          const possibleLockRelease = new ethers.Contract(
+            govTokenAddress,
+            LockRelease__factory.abi,
+            signerOrProvider
+          ) as LockRelease;
 
-          if (!underlyingTokenAddress) {
+          const lockedToken = await possibleLockRelease.token().catch(() => {
+            // if the underlying token is not an ERC20Wrapper, this will throw an error,
+            // so we catch it and return undefined
+            return undefined;
+          });
+
+          if (lockedToken) {
+            lockReleaseContract = {
+              asSigner: LockRelease__factory.connect(govTokenAddress, signerOrProvider),
+              asProvider: LockRelease__factory.connect(govTokenAddress, provider),
+            };
+            tokenContract = {
+              asSigner: votesERC20WrapperMasterCopyContract.asSigner.attach(lockedToken),
+              asProvider: votesERC20WrapperMasterCopyContract.asProvider.attach(lockedToken),
+            };
+          } else if (!underlyingTokenAddress) {
             tokenContract = {
               asSigner: votesTokenMasterCopyContract.asSigner.attach(govTokenAddress),
               asProvider: votesTokenMasterCopyContract.asProvider.attach(govTokenAddress),
@@ -146,6 +171,24 @@ export const useGovernanceContracts = () => {
               azoriusContract,
               tokenContract,
               underlyingTokenAddress,
+              lockReleaseContract,
+            },
+          });
+        } else if (!!erc721LinearVotingContract) {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
+            votingContractAddress,
+            votingContractMasterCopyAddress,
+          });
+          currentValidAddress.current = _node.daoAddress;
+          action.dispatch({
+            type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
+            payload: {
+              ozLinearVotingContract: null,
+              lockReleaseContract: null,
+              erc721LinearVotingContract,
+              azoriusContract,
+              tokenContract: null,
+              underlyingTokenAddress,
             },
           });
         } else if (!!erc721LinearVotingContract) {
@@ -162,6 +205,7 @@ export const useGovernanceContracts = () => {
               azoriusContract,
               tokenContract: null,
               underlyingTokenAddress,
+              lockReleaseContract: null,
             },
           });
         } else {
@@ -173,6 +217,7 @@ export const useGovernanceContracts = () => {
               erc721LinearVotingContract: null,
               azoriusContract: null,
               tokenContract: null,
+              lockReleaseContract: null,
             },
           });
         }
@@ -185,6 +230,7 @@ export const useGovernanceContracts = () => {
             azoriusContract: null,
             erc721LinearVotingContract: null,
             tokenContract: null,
+            lockReleaseContract: null,
           },
         });
       }
@@ -194,6 +240,8 @@ export const useGovernanceContracts = () => {
       action,
       getValue,
       setValue,
+      signer,
+      provider,
       linearVotingMasterCopyContract,
       votesTokenMasterCopyContract,
       zodiacModuleProxyFactoryContract,
