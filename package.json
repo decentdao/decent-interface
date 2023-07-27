@@ -79,6 +79,7 @@
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "^2.2.20",
+    "@lido-sdk/contracts": "^3.0.2",
     "@playwright/test": "^1.32.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@types/react": "^18.0.17",

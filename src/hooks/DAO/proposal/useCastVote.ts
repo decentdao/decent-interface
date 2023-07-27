@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceSelectionType } from '../../../types';
+import { AzoriusGovernance, DecentGovernance, GovernanceSelectionType } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
 
 const useCastVote = ({
@@ -23,7 +23,10 @@ const useCastVote = ({
     if (governance.type === GovernanceSelectionType.AZORIUS_ERC20) {
       // TODO ERC721 voting will need to be included here
       const azoriusGovernance = governance as AzoriusGovernance;
-      return azoriusGovernance?.votesToken?.balance?.gt(0);
+      const decentGovernance = governance as DecentGovernance;
+      const hasLockedTokenBalance = decentGovernance?.lockedVotesToken?.balance?.gt(0);
+      const hasVotesTokenBalance = azoriusGovernance?.votesToken?.balance?.gt(0);
+      return hasVotesTokenBalance || hasLockedTokenBalance;
     }
     return false;
   }, [governance]);

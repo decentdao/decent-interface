@@ -60,4 +60,5 @@ export const polygonConfig: NetworkConfig = {
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
+  staking: {},
 };

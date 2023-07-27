@@ -60,4 +60,9 @@ export const mainnetConfig: NetworkConfig = {
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
+  staking: {
+    lido: {
+      rewardsAddress: '',
+    },
+  },
 };

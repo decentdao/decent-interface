@@ -37,4 +37,9 @@ export type NetworkConfig = {
     votesERC20WrapperMasterCopy: string;
     keyValuePairs: string;
   };
+  staking: {
+    lido?: {
+      rewardsAddress: string;
+    };
+  };
 };
