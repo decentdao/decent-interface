@@ -1,6 +1,5 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Chain, useDisconnect, useNetwork, useProvider } from 'wagmi';
+import { Chain, useProvider } from 'wagmi';
 import { NetworkConfig } from '../../types/network';
 import { isProd } from '../../utils';
 import { goerliConfig, mainnetConfig } from './networks';
@@ -24,25 +23,11 @@ const getNetworkConfig = (chainId: number) => {
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   const provider = useProvider();
-  const { chain } = useNetwork();
-  const { t } = useTranslation('menu');
-  const { disconnect } = useDisconnect();
   const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(provider.network.chainId));
 
   useEffect(() => {
     setConfig(getNetworkConfig(provider.network.chainId));
   }, [provider]);
-
-  useEffect(() => {
-    const supportedChainIds = supportedChains.map(c => c.chainId);
-    if (
-      !!chain &&
-      !supportedChainIds.includes(chain.id) &&
-      !process.env.NEXT_PUBLIC_TESTING_ENVIROMENT
-    ) {
-      disconnect();
-    }
-  }, [chain, disconnect, t]);
 
   return <NetworkConfigContext.Provider value={config}>{children}</NetworkConfigContext.Provider>;
 }
