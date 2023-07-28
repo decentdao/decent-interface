@@ -7,7 +7,7 @@ import {
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useProvider, useSigner } from 'wagmi';
 import { LockRelease, LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { getEventRPC } from '../../../helpers';
@@ -43,6 +43,9 @@ export const useGovernanceContracts = () => {
   const {
     network: { chainId },
   } = provider;
+
+  const [lastChainId, setLastChainId] = useState<number>();
+
   const { setValue, getValue } = useLocalStorage();
 
   const findAzoriusModule = (fractalModules: FractalModuleData[]): Azorius | undefined => {
@@ -253,11 +256,13 @@ export const useGovernanceContracts = () => {
 
   useEffect(() => {
     if (
-      !!node.daoAddress &&
-      node.isModulesLoaded !== undefined &&
-      node.daoAddress !== currentValidAddress.current
+      (!!node.daoAddress &&
+        node.isModulesLoaded !== undefined &&
+        node.daoAddress !== currentValidAddress.current) ||
+      lastChainId !== chainId
     ) {
+      setLastChainId(chainId);
       loadGovernanceContracts(node);
     }
-  }, [node, loadGovernanceContracts]);
+  }, [node, loadGovernanceContracts, lastChainId, chainId]);
 };

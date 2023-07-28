@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useEffect, useCallback, useRef } from 'react';
+import { useProvider } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
@@ -8,13 +9,17 @@ import { buildSafeApiUrl } from '../../../utils';
 import { useUpdateTimer } from './../../utils/useUpdateTimer';
 
 export const useFractalTreasury = () => {
-  // tracks the current valid DAO address; helps prevent unnecessary calls
-  const currentValidAddress = useRef<string | null>();
+  // tracks the current valid DAO address / chain; helps prevent unnecessary calls
+  const loadKey = useRef<string | null>();
   const {
     node: { daoAddress },
     clients: { safeService },
     action,
   } = useFractal();
+
+  const {
+    network: { chainId },
+  } = useProvider();
 
   const { safeBaseURL } = useNetworkConfig();
 
@@ -50,11 +55,11 @@ export const useFractalTreasury = () => {
   }, [daoAddress, safeService, safeBaseURL, action]);
 
   useEffect(() => {
-    if (daoAddress && daoAddress !== currentValidAddress.current) {
+    if (daoAddress && chainId + daoAddress !== loadKey.current) {
+      loadKey.current = chainId + daoAddress;
       setMethodOnInterval(loadTreasury);
     }
-    currentValidAddress.current = daoAddress;
-  }, [daoAddress, loadTreasury, setMethodOnInterval]);
+  }, [chainId, daoAddress, loadTreasury, setMethodOnInterval]);
 
   return;
 };

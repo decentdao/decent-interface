@@ -74,15 +74,26 @@ export default function DaoPageLayout({
   const loading = useDAOController({ daoAddress });
   const { chain } = useNetwork();
 
-  const supportedChain = chain && supportedChains.map(c => c.chainId).includes(chain?.id);
-
+  const validSafe = node.safe;
   let display;
-  if (!supportedChain) {
-    display = <InvalidChain />;
-  } else if (loading || node.safe) {
-    display = children;
+
+  if (!chain) {
+    // if we're disconnected
+    if (loading || validSafe) {
+      display = children;
+    } else {
+      display = <InvalidSafe />;
+    }
   } else {
-    display = <InvalidSafe />;
+    // if we're connected
+    const invalidChain = !supportedChains.map(c => c.chainId).includes(chain.id);
+    if (invalidChain) {
+      display = <InvalidChain />;
+    } else if (loading || validSafe) {
+      display = children;
+    } else {
+      display = <InvalidSafe />;
+    }
   }
 
   return (
