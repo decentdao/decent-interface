@@ -4,34 +4,18 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
+import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import { useFractal } from '../../../providers/App/AppProvider';
-import {
-  FractalProposal,
-  AzoriusProposal,
-  FractalProposalState,
-  MultisigProposal,
-  SnapshotProposal,
-} from '../../../types';
+import { FractalProposal, FractalProposalState, SnapshotProposal } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 import { Execute } from './Execute';
 import CastVote from './Vote';
 
-export function ProposalActions({
-  proposal,
-  hasVoted,
-}: {
-  proposal: FractalProposal;
-  hasVoted: boolean;
-}) {
+export function ProposalActions({ proposal }: { proposal: FractalProposal }) {
   switch (proposal.state) {
     case FractalProposalState.ACTIVE:
-      return (
-        <CastVote
-          proposal={proposal}
-          currentUserHasVoted={hasVoted}
-        />
-      );
+      return <CastVote proposal={proposal} />;
     case FractalProposalState.EXECUTABLE:
     case FractalProposalState.TIMELOCKED:
       return <Execute proposal={proposal} />;
@@ -54,6 +38,7 @@ export function ProposalAction({
   const { push } = useRouter();
   const { t } = useTranslation();
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
+  const { canVote } = useCastVote({ proposal });
 
   const showActionButton =
     user.votingWeight.gt(0) &&
@@ -73,19 +58,6 @@ export function ProposalAction({
       push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
     }
   };
-
-  const hasVoted = useMemo(() => {
-    if (dao?.isAzorius) {
-      const azoriusProposal = proposal as AzoriusProposal;
-      return !!azoriusProposal?.votes.find(vote => vote.voter === user.address);
-    } else if (isSnapshotProposal) {
-      // Snapshot proposals not tracking votes
-      return false;
-    } else {
-      const safeProposal = proposal as MultisigProposal;
-      return !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address);
-    }
-  }, [dao, isSnapshotProposal, proposal, user.address]);
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {
@@ -107,13 +79,13 @@ export function ProposalAction({
     }
 
     if (proposal.state === FractalProposalState.ACTIVE) {
-      if (hasVoted) {
+      if (!canVote) {
         return t('details');
       }
       return t(dao?.isAzorius ? 'vote' : 'sign');
     }
     return t('details');
-  }, [isSnapshotProposal, proposal.state, t, hasVoted, dao]);
+  }, [isSnapshotProposal, proposal.state, t, canVote, dao]);
 
   if (!showActionButton) {
     if (!expandedView) {
@@ -143,10 +115,7 @@ export function ProposalAction({
           </Text>
           <ProposalCountdown proposal={proposal} />
         </Flex>
-        <ProposalActions
-          proposal={proposal}
-          hasVoted={hasVoted}
-        />
+        <ProposalActions proposal={proposal} />
       </ContentBox>
     );
   }
@@ -154,7 +123,7 @@ export function ProposalAction({
   return (
     <Button
       onClick={handleClick}
-      variant={showActionButton && !hasVoted ? 'primary' : 'secondary'}
+      variant={showActionButton && canVote ? 'primary' : 'secondary'}
     >
       {label}
     </Button>

@@ -37,6 +37,10 @@ export interface AzoriusProposal extends GovernanceActivity {
   startBlock: BigNumber;
 }
 
+export interface AzoriusERC721Proposal extends AzoriusProposal {
+  votes: ERC721ProposalVote[];
+}
+
 export interface MultisigProposal extends GovernanceActivity {
   confirmations: SafeMultisigConfirmationResponse[];
   signersThreshold?: number;
@@ -64,6 +68,11 @@ export type ProposalVote = {
   choice: typeof VOTE_CHOICES[number];
   weight: BigNumber;
 };
+
+export type ERC721ProposalVote = {
+  tokenAddresses: string[];
+  tokenIds: string[];
+} & ProposalVote;
 
 export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
 

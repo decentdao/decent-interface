@@ -62,6 +62,8 @@
     "proposalAdditionalResourcesHelper": "A link to any discussion or formal documentation",
     "proposalAdditionalResourcesPlaceholder": "https://",
     "votesTitle": "Votes",
+    "nftVotes_one": "{{count}} vote",
+    "nftVotes_other": "{{count}} votes",
     "signTitle": "Sign Transaction",
     "timelockTitle": "Timelock Transaction",
     "executeTitle": "Execute Transaction",

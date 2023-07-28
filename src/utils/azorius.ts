@@ -84,11 +84,14 @@ export const getProposalVotes = async (
   const votes = await strategyContract.queryFilter(voteEventFilter);
   const proposalVotesEvent = votes.filter(voteEvent => proposalId.eq(voteEvent.args.proposalId));
 
-  return proposalVotesEvent.map(({ args }) => ({
-    voter: args.voter,
-    choice: VOTE_CHOICES[args.voteType],
-    weight: args.weight,
-  }));
+  return proposalVotesEvent.map(({ args: { voter, weight, voteType, ...rest } }) => {
+    return {
+      voter,
+      weight,
+      choice: VOTE_CHOICES[voteType],
+      ...rest,
+    };
+  });
 };
 
 export const mapProposalCreatedEventToProposal = async (
