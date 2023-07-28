@@ -5,6 +5,7 @@ import { useNetwork } from 'wagmi';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useSubgraphChainName } from '../../../graphql/utils';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { NodeAction } from '../../../providers/App/node/action';
 import { disconnectedChain } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Node } from '../../../types';
@@ -20,10 +21,8 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   const currentValidSafe = useRef<string>();
   const [nodeLoading, setNodeLoading] = useState<boolean>(true);
 
-  const {
-    clients: { safeService },
-    action,
-  } = useFractal();
+  const { action } = useFractal();
+  const safeAPI = useSafeAPI();
   const { getDaoName } = useLazyDAOName();
 
   const lookupModules = useFractalModules();
@@ -80,7 +79,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
 
   const updateSafeInfo = useCallback(
     async (_daoAddress: string) => {
-      const safeInfo = await safeService.getSafeInfo(utils.getAddress(_daoAddress));
+      const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(_daoAddress));
       if (!safeInfo) return;
 
       action.dispatch({
@@ -93,13 +92,13 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
       });
       return safeInfo;
     },
-    [action, safeService, lookupModules]
+    [action, safeAPI, lookupModules]
   );
 
   const setDAO = useCallback(
     async (_chainId: number, _daoAddress: string) => {
       setNodeLoading(true);
-      if (utils.isAddress(_daoAddress) && safeService) {
+      if (utils.isAddress(_daoAddress) && safeAPI) {
         try {
           const safe = await setMethodOnInterval(() => updateSafeInfo(_daoAddress), ONE_MINUTE);
           if (!safe) {
@@ -120,7 +119,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
       }
       setNodeLoading(false);
     },
-    [action, safeService, setMethodOnInterval, updateSafeInfo]
+    [action, safeAPI, setMethodOnInterval, updateSafeInfo]
   );
 
   const { chain } = useNetwork();

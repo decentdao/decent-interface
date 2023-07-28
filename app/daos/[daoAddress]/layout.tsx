@@ -8,7 +8,10 @@ import ClientOnly from '../../../src/components/ui/utils/ClientOnly';
 import { APP_NAME } from '../../../src/constants/common';
 import useDAOController from '../../../src/hooks/DAO/useDAOController';
 import { useFractal } from '../../../src/providers/App/AppProvider';
-import { supportedChains } from '../../../src/providers/NetworkConfig/NetworkConfigProvider';
+import {
+  disconnectedChain,
+  supportedChains,
+} from '../../../src/providers/NetworkConfig/NetworkConfigProvider';
 
 function InvalidSafe() {
   const { chain } = useNetwork();
@@ -25,7 +28,7 @@ function InvalidSafe() {
         >
           {t('errorSentryFallbackTitle')}
         </Text>
-        <Text>{t('invalidSafe1', { chain: chain?.name })}</Text>
+        <Text>{t('invalidSafe1', { chain: chain ? chain.name : disconnectedChain.name })}</Text>
         <Text paddingBottom="1rem">{t('invalidSafe2')}</Text>
         <Button
           onClick={() => {

@@ -13,6 +13,7 @@ import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MultisigProposal, FractalProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
@@ -27,10 +28,10 @@ export function TxActions({
 }) {
   const {
     node: { safe },
-    clients: { safeService },
     readOnly: { user },
   } = useFractal();
   const signerOrProvider = useSignerOrProvider();
+  const safeAPI = useSafeAPI();
 
   const { chainId } = useNetworkConfig();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
@@ -46,7 +47,7 @@ export function TxActions({
   if (!multisigTx) return null;
 
   const signTransaction = async () => {
-    if (!safeService || !signerOrProvider || !safe?.address) {
+    if (!signerOrProvider || !safe?.address) {
       return;
     }
     try {
@@ -65,7 +66,7 @@ export function TxActions({
         pendingMessage: t('pendingSign'),
         successMessage: t('successSign'),
         successCallback: async (signature: string) => {
-          await safeService.confirmTransaction(proposal.proposalId, signature);
+          await safeAPI.confirmTransaction(proposal.proposalId, signature);
           await loadSafeMultisigProposals();
         },
       });

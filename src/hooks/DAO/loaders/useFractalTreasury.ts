@@ -3,6 +3,7 @@ import { useEffect, useCallback, useRef } from 'react';
 import { useProvider } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { buildSafeApiUrl } from '../../../utils';
@@ -13,9 +14,9 @@ export const useFractalTreasury = () => {
   const loadKey = useRef<string | null>();
   const {
     node: { daoAddress },
-    clients: { safeService },
     action,
   } = useFractal();
+  const safeAPI = useSafeAPI();
 
   const {
     network: { chainId },
@@ -26,11 +27,11 @@ export const useFractalTreasury = () => {
   const { setMethodOnInterval } = useUpdateTimer(daoAddress);
 
   const loadTreasury = useCallback(async () => {
-    if (!daoAddress || !safeService) {
+    if (!daoAddress) {
       return;
     }
     const [assetsFungible, assetsNonFungible, transfers] = await Promise.all([
-      safeService.getUsdBalances(daoAddress).catch(e => {
+      safeAPI.getUsdBalances(daoAddress).catch(e => {
         logError(e);
         return [];
       }),
@@ -52,7 +53,7 @@ export const useFractalTreasury = () => {
       transfers: transfers.data,
     };
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
-  }, [daoAddress, safeService, safeBaseURL, action]);
+  }, [daoAddress, safeAPI, safeBaseURL, action]);
 
   useEffect(() => {
     if (daoAddress && chainId + daoAddress !== loadKey.current) {
