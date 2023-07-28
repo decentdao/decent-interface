@@ -4,9 +4,14 @@ import {
   VOTE_CHOICES,
   SnapshotProposal,
   ERC721ProposalVote,
+  AzoriusGovernance,
+  DecentGovernance,
 } from '../../../types';
-import { AzoriusGovernance } from './../../../types/fractal';
-import { FractalGovernanceAction, FractalGovernanceActions } from './action';
+import {
+  FractalGovernanceAction,
+  FractalGovernanceActions,
+  DecentGovernanceAction,
+} from './action';
 
 export const initialGovernanceState: FractalGovernance = {
   proposals: null,
@@ -155,6 +160,14 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA: {
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...initialVotesTokenAccountData } };
+    }
+    // Decent Governance only
+    case DecentGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA: {
+      const { lockedVotesToken } = state as DecentGovernance;
+      return { ...state, lockedVotesToken: { ...(lockedVotesToken || {}), ...action.payload } };
+    }
+    case DecentGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA: {
+      return { ...state, lockedVotesToken: undefined };
     }
     default:
       return state;

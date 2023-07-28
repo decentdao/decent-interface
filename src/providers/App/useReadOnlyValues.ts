@@ -1,8 +1,15 @@
 import { ERC721__factory } from '@fractal-framework/fractal-contracts';
 import { BigNumber, utils } from 'ethers';
+
 import { useEffect, useState } from 'react';
 import useSignerOrProvider from '../../hooks/utils/useSignerOrProvider';
-import { Fractal, AzoriusGovernance, GovernanceSelectionType, ReadOnlyState } from '../../types';
+import {
+  ReadOnlyState,
+  Fractal,
+  AzoriusGovernance,
+  GovernanceSelectionType,
+  DecentGovernance,
+} from '../../types';
 
 const INITIAL_READ_ONLY_VALUES: ReadOnlyState = {
   user: {
@@ -30,8 +37,10 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
             const isSigner = _account && node.safe?.owners.includes(_account);
             return isSigner ? BigNumber.from(1) : BigNumber.from(0);
           case GovernanceSelectionType.AZORIUS_ERC20:
+            const lockedTokenWeight = (governance as DecentGovernance).lockedVotesToken
+              ?.votingWeight;
             const tokenWeight = azoriusGovernance.votesToken?.votingWeight || BigNumber.from(0);
-            return tokenWeight;
+            return lockedTokenWeight || tokenWeight;
           case GovernanceSelectionType.AZORIUS_ERC721:
             if (!_account || !azoriusGovernance.erc721Tokens) {
               return BigNumber.from(0);

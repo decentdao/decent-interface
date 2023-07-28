@@ -34,6 +34,11 @@ export enum FractalGovernanceAction {
   SET_UNDERLYING_TOKEN_DATA = 'SET_UNDERLYING_TOKEN_DATA',
 }
 
+export enum DecentGovernanceAction {
+  RESET_LOCKED_TOKEN_ACCOUNT_DATA = 'RESET_LOCKED_TOKEN_ACCOUNT_DATA',
+  SET_LOCKED_TOKEN_ACCOUNT_DATA = 'SET_LOCKED_TOKEN_ACCOUNT_DATA',
+}
+
 type SetStrategyPayload = {
   governanceType: GovernanceSelectionType;
   votingStrategy: VotingStrategy;
@@ -72,7 +77,6 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC20_VOTE;
       payload: ERC20VotePayload;
     }
-  // @todo update with proposal state
   | {
       type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
       payload: { state: FractalProposalState; proposalId: string };
@@ -109,4 +113,14 @@ export type FractalGovernanceActions =
   | { type: FractalGovernanceAction.SET_CLAIMING_CONTRACT; payload: ERC20Claim }
   | {
       type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA;
+    }
+  | DecentGovernanceActions;
+
+export type DecentGovernanceActions =
+  | {
+      type: DecentGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA;
+      payload: VotesData;
+    }
+  | {
+      type: DecentGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA;
     };
