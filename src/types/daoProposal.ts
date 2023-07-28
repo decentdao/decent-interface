@@ -31,7 +31,7 @@ export type ProposalMetaData = {
 export interface AzoriusProposal extends GovernanceActivity {
   proposer: string;
   votesSummary: ProposalVotesSummary;
-  votes: ProposalVote[];
+  votes: ProposalVote[] | ERC721ProposalVote[];
   /** The deadline timestamp for the proposal, in milliseconds. */
   deadlineMs: number;
   startBlock: BigNumber;

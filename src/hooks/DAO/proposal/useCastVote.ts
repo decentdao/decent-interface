@@ -54,9 +54,7 @@ const useCastVote = ({
   useEffect(() => {
     const getCanVote = async () => {
       let newCanVote = false;
-      if (!user.address) {
-        newCanVote = false;
-      } else {
+      if (user.address) {
         if (type === GovernanceSelectionType.AZORIUS_ERC20) {
           newCanVote = user.votingWeight.gt(0) && !hasVoted;
         } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {

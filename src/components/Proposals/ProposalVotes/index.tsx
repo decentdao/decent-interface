@@ -12,20 +12,17 @@ import { BigNumber } from 'ethers';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
-  ProposalVote,
   AzoriusProposal,
   GovernanceSelectionType,
   ERC721ProposalVote,
 } from '../../../types';
-import { formatCoin, formatPercentage } from '../../../utils/numberFormats';
-import StatusBox from '../../ui/badges/StatusBox';
 import ContentBox from '../../ui/containers/ContentBox';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
 import ProgressBar from '../../ui/utils/ProgressBar';
+import ProposalERC20VoteItem from './ProposalERC20VoteItem';
 import ProposalERC721VoteItem from './ProposalERC721VoteItem';
 
 function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
@@ -42,52 +39,6 @@ function VotesPercentage({ label, percentage }: { label: string; percentage: num
       </Text>
       <ProgressBar value={percentage} />
     </Flex>
-  );
-}
-
-function ProposalERC20VoteItem({
-  vote,
-  govTokenTotalSupply,
-  govTokenDecimals,
-  govTokenSymbol,
-}: {
-  vote: ProposalVote;
-  govTokenTotalSupply: BigNumber;
-  govTokenDecimals: number;
-  govTokenSymbol: string;
-}) {
-  const { t } = useTranslation();
-  const { displayName } = useDisplayName(vote.voter);
-  const {
-    readOnly: { user },
-  } = useFractal();
-  return (
-    <Grid
-      templateColumns="repeat(4, 1fr)"
-      width="100%"
-    >
-      <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">
-          {displayName}
-          {user.address === vote.voter && t('isMeSuffix')}
-        </Text>
-      </GridItem>
-      <GridItem colSpan={1}>
-        <StatusBox>
-          <Text textStyle="text-sm-mono-semibold">{t(vote.choice)}</Text>
-        </StatusBox>
-      </GridItem>
-      <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">
-          {formatPercentage(vote.weight, govTokenTotalSupply)}
-        </Text>
-      </GridItem>
-      <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">
-          {formatCoin(vote.weight, true, govTokenDecimals, govTokenSymbol)}
-        </Text>
-      </GridItem>
-    </Grid>
   );
 }
 

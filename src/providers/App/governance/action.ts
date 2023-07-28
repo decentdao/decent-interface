@@ -19,7 +19,8 @@ export enum FractalGovernanceAction {
   SET_PROPOSAL_TEMPLATES = 'SET_PROPOSAL_TEMPLATES',
   SET_STRATEGY = 'SET_STRATEGY',
   UPDATE_PROPOSALS_NEW = 'UPDATE_PROPOSALS_NEW',
-  UPDATE_NEW_AZORIUS_VOTE = 'UPDATE_NEW_AZORIUS_VOTE',
+  UPDATE_NEW_AZORIUS_ERC20_VOTE = 'UPDATE_NEW_AZORIUS_ERC20_VOTE',
+  UPDATE_NEW_AZORIUS_ERC721_VOTE = 'UPDATE_NEW_AZORIUS_ERC721_VOTE',
   UPDATE_PROPOSAL_STATE = 'UPDATE_PROPOSAL_STATE',
   UPDATE_VOTING_PERIOD = 'UPDATE_VOTING_PERIOD',
   UPDATE_VOTING_QUORUM = 'UPDATE_VOTING_QUORUM',
@@ -38,6 +39,19 @@ type SetStrategyPayload = {
   votingStrategy: VotingStrategy;
 };
 
+type AzoriusVotePayload = {
+  proposalId: string;
+  voter: string;
+  support: number;
+  votesSummary: ProposalVotesSummary;
+};
+
+export type ERC20VotePayload = { weight: BigNumber } & AzoriusVotePayload;
+export type ERC721VotePayload = {
+  tokenAddresses: string[];
+  tokenIds: string[];
+} & AzoriusVotePayload;
+
 export type FractalGovernanceActions =
   | { type: FractalGovernanceAction.SET_STRATEGY; payload: SetStrategyPayload }
   | {
@@ -49,17 +63,14 @@ export type FractalGovernanceActions =
       payload: FractalProposal[];
     }
   | { type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES; payload: ProposalTemplate[] }
-  // @todo update with proposal type
   | { type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW; payload: FractalProposal }
   | {
-      type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE;
-      payload: {
-        proposalId: string;
-        voter: string;
-        support: number;
-        weight: BigNumber;
-        votesSummary: ProposalVotesSummary;
-      };
+      type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC721_VOTE;
+      payload: ERC721VotePayload;
+    }
+  | {
+      type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC20_VOTE;
+      payload: ERC20VotePayload;
     }
   // @todo update with proposal state
   | {
