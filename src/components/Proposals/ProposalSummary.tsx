@@ -40,10 +40,14 @@ export default function ProposalSummary({
       }
       return voteTotal.div(votesToken.totalSupply.div(100)).toNumber();
     } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
-      if (totalVotesCasted.eq(0)) {
+      if (totalVotesCasted.eq(0) || !erc721Tokens) {
         return 0;
       }
-      return voteTotal.mul(100).div(totalVotesCasted).toNumber();
+      const totalVotingWeight = erc721Tokens.reduce(
+        (prev, curr) => prev.add(curr.totalSupply?.mul(curr.votingWeight) || BigNumber.from(0)),
+        BigNumber.from(0)
+      );
+      return voteTotal.mul(100).div(totalVotingWeight).toNumber();
     }
     return 0;
   };

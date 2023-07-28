@@ -1,51 +1,17 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SettingsSection } from '..';
 import { useFractal } from '../../../../../providers/App/AppProvider';
-import { formatCoin } from '../../../../../utils';
+import { AzoriusGovernance } from '../../../../../types';
 import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
 import { BarLoader } from '../../../../ui/loaders/BarLoader';
 
-type TokenData = {
-  name: string;
-  symbol: string;
-  totalSupply: string;
-  address: string;
-};
-
-export function GovernanceTokenContainer() {
-  const [tokenDetails, setTokenDetails] = useState<TokenData>();
+export default function ERC20TokenContainer() {
   const { t } = useTranslation(['settings']);
-  const {
-    governanceContracts: { tokenContract },
-  } = useFractal();
+  const { governance } = useFractal();
 
-  useEffect(() => {
-    const loadTokenData = async () => {
-      if (!tokenContract) return;
-
-      const tokenContractAsProvider = tokenContract.asProvider;
-      const symbol = await tokenContractAsProvider.symbol();
-      const totalSupply = formatCoin(
-        await tokenContractAsProvider.totalSupply(),
-        false,
-        await tokenContractAsProvider.decimals(),
-        symbol,
-        false
-      );
-
-      const data: TokenData = {
-        address: tokenContract.asProvider.address,
-        name: await tokenContract.asProvider.name(),
-        symbol,
-        totalSupply,
-      };
-      setTokenDetails(data);
-    };
-
-    loadTokenData();
-  }, [tokenContract]);
+  const azoriusGovernance = governance as AzoriusGovernance;
+  const { votesToken } = azoriusGovernance;
 
   return (
     <SettingsSection
@@ -53,7 +19,7 @@ export function GovernanceTokenContainer() {
       descriptionTitle={t('governanceTokenTitle')}
       descriptionText={t('governanceTokenDescription')}
     >
-      {tokenDetails ? (
+      {votesToken ? (
         <Flex
           justifyContent="space-between"
           mt={4}
@@ -66,7 +32,7 @@ export function GovernanceTokenContainer() {
               {t('governanceTokenNameLabel')}
             </Text>
             <Box mt={2}>
-              <DisplayAddress address={tokenDetails.address}>{tokenDetails.name}</DisplayAddress>
+              <DisplayAddress address={votesToken.address}>{votesToken.name}</DisplayAddress>
             </Box>
           </Box>
           <Box>
@@ -81,7 +47,7 @@ export function GovernanceTokenContainer() {
               color="grayscale.100"
               mt={2}
             >
-              {tokenDetails.symbol}
+              {votesToken.symbol}
             </Text>
           </Box>
           <Box>
@@ -96,7 +62,7 @@ export function GovernanceTokenContainer() {
               color="grayscale.100"
               mt={2}
             >
-              {tokenDetails.totalSupply}
+              {votesToken.totalSupply.toString()}
             </Text>
           </Box>
         </Flex>
