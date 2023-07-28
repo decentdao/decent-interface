@@ -4,6 +4,7 @@
   "governanceTokenNameLabel": "Name",
   "governanceTokenSymbolLabel": "Symbol",
   "governanceTokenWeightLabel": "Weight",
+  "governanceTokenTotalWeightLabel": "Total Voting Weight",
   "governanceTokenSupplyLabel": "Total Supply",
   "noModulesAttached": "No Modules Attached",
   "noGuardAttached": "No Guard Attached",

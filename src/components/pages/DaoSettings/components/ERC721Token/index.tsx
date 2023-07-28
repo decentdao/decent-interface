@@ -75,14 +75,14 @@ export default function ERC721TokensContainer() {
                     textStyle="text-sm-mono-regular"
                     color="chocolate.200"
                   >
-                    {t('governanceTokenSupplyLabel')}
+                    {t('governanceTokenTotalWeightLabel')}
                   </Text>
                   <Text
                     textStyle="text-base-sans-regular"
                     color="grayscale.100"
                     mt={2}
                   >
-                    {token.totalSupply.toString()}
+                    {token.totalSupply.mul(token.votingWeight).toString()}
                   </Text>
                 </Box>
               )}
