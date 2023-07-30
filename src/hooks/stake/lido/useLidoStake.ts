@@ -4,7 +4,7 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 
 export default function useLidoStake() {
   const { staking } = useNetworkConfig();
-//   const { submitProposal } = useSubmitProposal();
+  //   const { submitProposal } = useSubmitProposal();
 
   const handleStake = async () => {
     if (!staking.lido) {
