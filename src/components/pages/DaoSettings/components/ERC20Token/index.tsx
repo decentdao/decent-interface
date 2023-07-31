@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { SettingsSection } from '..';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../../../../types';
+import { formatCoin } from '../../../../../utils';
 import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
 import { BarLoader } from '../../../../ui/loaders/BarLoader';
 
@@ -62,7 +63,13 @@ export default function ERC20TokenContainer() {
               color="grayscale.100"
               mt={2}
             >
-              {votesToken.totalSupply.toString()}
+              {formatCoin(
+                votesToken.totalSupply,
+                false,
+                votesToken.decimals,
+                votesToken.symbol,
+                false
+              )}
             </Text>
           </Box>
         </Flex>

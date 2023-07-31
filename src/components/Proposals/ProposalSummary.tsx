@@ -33,6 +33,14 @@ export default function ProposalSummary({
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
   const totalVotesCasted = useMemo(() => yes.add(no).add(abstain), [yes, no, abstain]);
+  const totalVotingWeight = useMemo(
+    () =>
+      erc721Tokens?.reduce(
+        (prev, curr) => prev.add(curr.totalSupply?.mul(curr.votingWeight) || BigNumber.from(0)),
+        BigNumber.from(0)
+      ),
+    [erc721Tokens]
+  );
   const getVotesPercentage = (voteTotal: BigNumber): number => {
     if (type === GovernanceSelectionType.AZORIUS_ERC20) {
       if (!votesToken?.totalSupply || votesToken.totalSupply.eq(0)) {
@@ -40,13 +48,9 @@ export default function ProposalSummary({
       }
       return voteTotal.div(votesToken.totalSupply.div(100)).toNumber();
     } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
-      if (totalVotesCasted.eq(0) || !erc721Tokens) {
+      if (totalVotesCasted.eq(0) || !erc721Tokens || !totalVotingWeight) {
         return 0;
       }
-      const totalVotingWeight = erc721Tokens.reduce(
-        (prev, curr) => prev.add(curr.totalSupply?.mul(curr.votingWeight) || BigNumber.from(0)),
-        BigNumber.from(0)
-      );
       return voteTotal.mul(100).div(totalVotingWeight).toNumber();
     }
     return 0;
@@ -129,6 +133,7 @@ export default function ProposalSummary({
               : '',
             { count: requiredVotesToPass }
           )}
+          valueLabel={isERC721 ? `${yes.toString()}/${totalVotingWeight?.toString()}` : undefined}
           percentage={yesVotesPercentage}
           requiredPercentage={requiredVotesToPass}
           unit={isERC20 ? '%' : ''}
