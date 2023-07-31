@@ -24,7 +24,7 @@ function Vote({ proposal }: { proposal: FractalProposal }) {
     setPending,
   });
 
-  const { canVote, hasVoted } = useVoteContext();
+  const { canVote, canVoteLoading, hasVoted, hasVotedLoading } = useVoteContext();
 
   // if the user is not a signer or has no delegated tokens, don't show anything
   if (!canVote) {
@@ -40,7 +40,11 @@ function Vote({ proposal }: { proposal: FractalProposal }) {
   );
 
   const disabled =
-    pending || proposal.state !== FractalProposalState.ACTIVE || proposalStartBlockNotFinalized;
+    pending ||
+    proposal.state !== FractalProposalState.ACTIVE ||
+    proposalStartBlockNotFinalized ||
+    canVoteLoading ||
+    hasVotedLoading;
 
   return (
     <Tooltip

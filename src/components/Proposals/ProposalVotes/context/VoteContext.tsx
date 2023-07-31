@@ -11,14 +11,18 @@ import {
 
 interface IVoteContext {
   canVote: boolean;
+  canVoteLoading: boolean;
   hasVoted: boolean;
+  hasVotedLoading: boolean;
   getCanVote: (refetchUserTokens?: boolean) => Promise<void>;
   getHasVoted: () => void;
 }
 
 export const VoteContext = createContext<IVoteContext>({
   canVote: false,
+  canVoteLoading: false,
   hasVoted: false,
+  hasVotedLoading: false,
   getCanVote: async () => {},
   getHasVoted: () => {},
 });
@@ -36,7 +40,9 @@ export function VoteContextProvider({
   children: ReactNode;
 }) {
   const [canVote, setCanVote] = useState(false);
+  const [canVoteLoading, setCanVoteLoading] = useState(false);
   const [hasVoted, setHasVoted] = useState(false);
+  const [hasVotedLoading, setHasVotedLoading] = useState(false);
   const [proposalVotesLength, setProposalVotesLength] = useState(0);
   const {
     readOnly: { user, dao },
@@ -50,6 +56,7 @@ export function VoteContextProvider({
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
 
   const getHasVoted = useCallback(() => {
+    setHasVotedLoading(true);
     if (dao?.isAzorius) {
       const azoriusProposal = proposal as AzoriusProposal;
       setHasVoted(!!azoriusProposal?.votes.find(vote => vote.voter === user.address));
@@ -62,10 +69,12 @@ export function VoteContextProvider({
         !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address)
       );
     }
+    setHasVotedLoading(false);
   }, [dao, isSnapshotProposal, proposal, user.address]);
 
   const getCanVote = useCallback(
     async (refetchUserTokens?: boolean) => {
+      setCanVoteLoading(true);
       let newCanVote = false;
       if (user.address) {
         if (type === GovernanceSelectionType.AZORIUS_ERC20) {
@@ -85,6 +94,7 @@ export function VoteContextProvider({
       if (canVote !== newCanVote) {
         setCanVote(newCanVote);
       }
+      setCanVoteLoading(false);
     },
     [user, type, hasVoted, safe, canVote, remainingTokenIds, getUserERC721VotingTokens]
   );
@@ -101,7 +111,9 @@ export function VoteContextProvider({
   }, [proposal, proposalVotesLength]);
 
   return (
-    <VoteContext.Provider value={{ canVote, hasVoted, getHasVoted, getCanVote }}>
+    <VoteContext.Provider
+      value={{ canVote, canVoteLoading, hasVoted, hasVotedLoading, getHasVoted, getCanVote }}
+    >
       {children}
     </VoteContext.Provider>
   );

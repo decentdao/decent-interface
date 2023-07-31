@@ -43,7 +43,7 @@ export default function ProposalSummary({
       if (totalVotesCasted.eq(0)) {
         return 0;
       }
-      return voteTotal.mul(100).div(totalVotesCasted).toNumber();
+      return voteTotal.toNumber();
     }
     return 0;
   };
