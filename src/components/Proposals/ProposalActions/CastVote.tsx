@@ -10,6 +10,7 @@ import {
   FractalProposalState,
   AzoriusVoteChoice,
 } from '../../../types';
+import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 
 function Vote({ proposal }: { proposal: FractalProposal }) {
   const [pending, setPending] = useState<boolean>(false);
@@ -18,10 +19,12 @@ function Vote({ proposal }: { proposal: FractalProposal }) {
 
   const azoriusProposal = proposal as AzoriusProposal;
 
-  const { castVote, canVote, hasVoted } = useCastVote({
+  const { castVote } = useCastVote({
     proposal,
     setPending,
   });
+
+  const { canVote, canVoteLoading, hasVoted, hasVotedLoading } = useVoteContext();
 
   // if the user is not a signer or has no delegated tokens, don't show anything
   if (!canVote) {
@@ -37,7 +40,11 @@ function Vote({ proposal }: { proposal: FractalProposal }) {
   );
 
   const disabled =
-    pending || proposal.state !== FractalProposalState.ACTIVE || proposalStartBlockNotFinalized;
+    pending ||
+    proposal.state !== FractalProposalState.ACTIVE ||
+    proposalStartBlockNotFinalized ||
+    canVoteLoading ||
+    hasVotedLoading;
 
   return (
     <Tooltip

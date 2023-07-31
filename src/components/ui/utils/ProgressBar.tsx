@@ -4,9 +4,11 @@ import { ProgressBarDelimiter } from '@decent-org/fractal-ui';
 export default function ProgressBar({
   value,
   requiredValue,
+  unit = '%',
 }: {
   value: number;
   requiredValue?: number;
+  unit?: string;
 }) {
   return (
     <Box
@@ -29,7 +31,8 @@ export default function ProgressBar({
           top="0"
           left={value > 50 ? `calc(${Math.min(value - 5, 90)}% - 20px)` : value / 2}
         >
-          {Math.min(value, 100)}%
+          {Math.min(value, 100)}
+          {unit}
         </Text>
       )}
       {!!(requiredValue && requiredValue > 0) && (
@@ -53,6 +56,7 @@ interface ExtendedProgressBarProps {
   helperText: string;
   percentage: number;
   requiredPercentage: number;
+  unit?: string;
 }
 
 export function ExtendedProgressBar({
@@ -60,6 +64,7 @@ export function ExtendedProgressBar({
   helperText,
   percentage,
   requiredPercentage,
+  unit,
 }: ExtendedProgressBarProps) {
   return (
     <Flex
@@ -76,6 +81,7 @@ export function ExtendedProgressBar({
       <ProgressBar
         value={Math.min(percentage, 100)}
         requiredValue={requiredPercentage}
+        unit={unit}
       />
       <Text
         textStyle="text-sm-sans-regular"

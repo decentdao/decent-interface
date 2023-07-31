@@ -13,12 +13,12 @@ interface IUseUpdateProposalState {
 }
 
 export default function useUpdateProposalState({
-  governanceContracts: { azoriusContract, ozLinearVotingContract },
+  governanceContracts: { azoriusContract },
   governanceDispatch,
 }: IUseUpdateProposalState) {
   const updateProposalState = useCallback(
     async (proposalId: BigNumber) => {
-      if (!azoriusContract || !ozLinearVotingContract) {
+      if (!azoriusContract) {
         return;
       }
       const newState = await getAzoriusProposalState(azoriusContract.asSigner, proposalId);
@@ -27,7 +27,7 @@ export default function useUpdateProposalState({
         payload: { proposalId: proposalId.toString(), state: newState },
       });
     },
-    [azoriusContract, ozLinearVotingContract, governanceDispatch]
+    [azoriusContract, governanceDispatch]
   );
 
   return updateProposalState;
