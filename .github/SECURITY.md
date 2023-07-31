@@ -6,7 +6,7 @@ If the issue you are reporting is not a security vulnerability, simply [open a n
 
 ## Reporting a Vulnerability
 
-If you would like to disclose a vulnerability in Fractal, please send a new email to [security@decentlabs.io](mailto:security@decentlabs.io).
+If you would like to disclose a vulnerability in Fractal, please send a new email to [security@decent-dao.org](mailto:security@decent-dao.org).
 
 Please include the following information in your email:
 
@@ -19,4 +19,4 @@ Please include the following information in your email:
 
 If you prefer secure communication, please use the following GPG key:
 
-https://keys.openpgp.org/search?q=security%40decentlabs.io
+https://keys.openpgp.org/search?q=security%40decent-dao.org
