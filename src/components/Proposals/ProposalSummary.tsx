@@ -77,9 +77,14 @@ export default function ProposalSummary({
       : isERC721
       ? votingStrategy.quorumThreshold!.value.toNumber()
       : 1;
-  const requiredVotesToPass = Math.max(
-    isERC721 ? no.toNumber() : noVotesPercentage + 1,
-    strategyQuorum
+  const requiredVotesPercentageToPass = Math.max(
+    isERC721
+      ? no
+          .mul(100)
+          .div(totalVotingWeight || 1)
+          .toNumber() + 1
+      : noVotesPercentage + 1,
+    isERC721 ? (strategyQuorum * 100) / totalVotingWeight!.toNumber() : strategyQuorum
   );
 
   return (
@@ -134,11 +139,15 @@ export default function ProposalSummary({
               : isERC721
               ? 'proposalSupportERC721SummaryHelper'
               : '',
-            { count: requiredVotesToPass }
+            {
+              count: isERC721
+                ? Math.max(no.toNumber() || strategyQuorum)
+                : requiredVotesPercentageToPass,
+            }
           )}
           valueLabel={isERC721 ? `${yes.toString()}/${totalVotingWeight?.toString()}` : undefined}
           percentage={yesVotesPercentage}
-          requiredPercentage={requiredVotesToPass}
+          requiredPercentage={requiredVotesPercentageToPass}
           unit={isERC20 ? '%' : ''}
         />
       </Box>
