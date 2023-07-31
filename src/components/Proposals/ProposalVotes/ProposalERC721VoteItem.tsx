@@ -46,10 +46,12 @@ export default function ProposalERC721VoteItem({
       </GridItem>
       {votedTokens && (
         <GridItem colSpan={1}>
-          <Text>{`${votedTokens.map(token => token.symbol).join()} ${t('nftVotes', {
-            count: weight.toNumber(),
-            ns: 'proposal',
-          })}`}</Text>
+          <Text>
+            {t('nftVotes', {
+              count: weight.toNumber(),
+              ns: 'proposal',
+            })}
+          </Text>
         </GridItem>
       )}
     </Grid>

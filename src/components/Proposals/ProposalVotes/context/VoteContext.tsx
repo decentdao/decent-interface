@@ -57,12 +57,14 @@ export function VoteContextProvider({
 
   const getHasVoted = useCallback(() => {
     setHasVotedLoading(true);
-    if (dao?.isAzorius) {
-      const azoriusProposal = proposal as AzoriusProposal;
-      setHasVoted(!!azoriusProposal?.votes.find(vote => vote.voter === user.address));
-    } else if (isSnapshotProposal) {
+    if (isSnapshotProposal) {
       // Snapshot proposals not tracking votes
       setHasVoted(false);
+    } else if (dao?.isAzorius) {
+      const azoriusProposal = proposal as AzoriusProposal;
+      if (azoriusProposal?.votes) {
+        setHasVoted(!!azoriusProposal?.votes.find(vote => vote.voter === user.address));
+      }
     } else {
       const safeProposal = proposal as MultisigProposal;
       setHasVoted(
@@ -105,7 +107,7 @@ export function VoteContextProvider({
 
   useEffect(() => {
     const azoriusProposal = proposal as AzoriusProposal;
-    if (proposalVotesLength !== azoriusProposal.votes.length) {
+    if (azoriusProposal.votes && proposalVotesLength !== azoriusProposal.votes.length) {
       setProposalVotesLength(azoriusProposal.votes.length);
     }
   }, [proposal, proposalVotesLength]);
