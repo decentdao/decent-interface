@@ -1,0 +1,101 @@
+import { Flex, Box, Text } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
+import { SettingsSection } from '..';
+import { useFractal } from '../../../../../providers/App/AppProvider';
+import { AzoriusGovernance } from '../../../../../types';
+import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
+import { BarLoader } from '../../../../ui/loaders/BarLoader';
+
+export default function ERC721TokensContainer() {
+  const { t } = useTranslation(['settings']);
+  const { governance } = useFractal();
+
+  const azoriusGovernance = governance as AzoriusGovernance;
+  const { erc721Tokens } = azoriusGovernance;
+
+  return (
+    <SettingsSection
+      contentTitle={t('governanceERC721TokenTitle')}
+      descriptionTitle={t('governanceERC721TokenTitle')}
+      descriptionText={t('governanceERC721TokenDescription')}
+    >
+      {erc721Tokens ? (
+        <Flex flexWrap="wrap">
+          <Flex
+            justifyContent="space-between"
+            width="100%"
+            mt={4}
+          >
+            <Text
+              textStyle="text-sm-mono-regular"
+              color="chocolate.200"
+            >
+              {t('governanceTokenNameLabel')}
+            </Text>
+            <Text
+              textStyle="text-sm-mono-regular"
+              color="chocolate.200"
+            >
+              {t('governanceTokenSymbolLabel')}
+            </Text>
+            <Text
+              textStyle="text-sm-mono-regular"
+              color="chocolate.200"
+            >
+              {t('governanceTokenWeightLabel')}
+            </Text>
+            <Text
+              textStyle="text-sm-mono-regular"
+              color="chocolate.200"
+            >
+              {t('governanceTokenTotalWeightLabel')}
+            </Text>
+          </Flex>
+          {erc721Tokens.map(token => (
+            <Flex
+              key={token.address}
+              justifyContent="space-between"
+              width="100%"
+              mt={4}
+            >
+              <Box mt={2}>
+                <DisplayAddress address={token.address}>{token.name}</DisplayAddress>
+              </Box>
+              <Text
+                textStyle="text-base-sans-regular"
+                color="grayscale.100"
+                mt={2}
+              >
+                {token.symbol}
+              </Text>
+
+              <Text
+                textStyle="text-base-sans-regular"
+                color="grayscale.100"
+                mt={2}
+              >
+                {token.votingWeight.toString()}
+              </Text>
+              <Text
+                textStyle="text-base-sans-regular"
+                color="grayscale.100"
+                mt={2}
+              >
+                {token.totalSupply ? token.totalSupply.mul(token.votingWeight).toString() : 'n/a'}
+              </Text>
+            </Flex>
+          ))}
+        </Flex>
+      ) : (
+        <Flex
+          width="100%"
+          justifyContent="center"
+          alignItems="center"
+          minHeight="100px"
+        >
+          <BarLoader />
+        </Flex>
+      )}
+    </SettingsSection>
+  );
+}

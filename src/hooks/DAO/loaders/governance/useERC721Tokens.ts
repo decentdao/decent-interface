@@ -1,5 +1,7 @@
 import { ERC721__factory } from '@fractal-framework/fractal-contracts';
+import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
+import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { ERC721TokenData } from '../../../../types';
@@ -24,8 +26,16 @@ export default function useERC721Tokens() {
         const votingWeight = await erc721LinearVotingProviderContract.getTokenWeight(address);
         const name = await tokenContract.name();
         const symbol = await tokenContract.symbol();
-        // TODO - get total supply
-        return { name, symbol, address, votingWeight };
+        let totalSupply = undefined;
+        try {
+          const tokenSentEvents = await tokenContract.queryFilter(
+            tokenContract.filters.Transfer(null, null)
+          );
+          totalSupply = BigNumber.from(tokenSentEvents.length);
+        } catch (e) {
+          logError('Error while getting ERC721 total supply');
+        }
+        return { name, symbol, address, votingWeight, totalSupply };
       })
     );
 
