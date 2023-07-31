@@ -1,24 +1,16 @@
 import { Button } from '@chakra-ui/react';
-import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useCastFreezeVote from '../../hooks/DAO/useCastFreezeVote';
+import { useFractal } from '../../providers/App/AppProvider';
 
-export function FreezeButton({
-  isFrozen,
-  userHasFreezeVoted,
-  userHasVotes,
-  freezeVotingContract,
-}: {
-  isFrozen: boolean;
-  userHasFreezeVoted: boolean;
-  userHasVotes: boolean;
-  freezeVotingContract: ERC20FreezeVoting | MultisigFreezeVoting;
-}) {
+export function FreezeButton() {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['dashboard']);
+  const {
+    guard: { isFrozen, userHasFreezeVoted, userHasVotes },
+  } = useFractal();
   const castFreezeVote = useCastFreezeVote({
-    freezeVotingContract,
     setPending,
   });
 
