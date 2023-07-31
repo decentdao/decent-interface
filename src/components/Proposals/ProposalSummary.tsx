@@ -77,7 +77,10 @@ export default function ProposalSummary({
       : isERC721
       ? votingStrategy.quorumThreshold!.value.toNumber()
       : 1;
-  const requiredVotesToPass = Math.max(noVotesPercentage + 1, strategyQuorum);
+  const requiredVotesToPass = Math.max(
+    isERC721 ? no.toNumber() : noVotesPercentage + 1,
+    strategyQuorum
+  );
 
   return (
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>

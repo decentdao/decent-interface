@@ -1,5 +1,5 @@
 import { ERC721__factory } from '@fractal-framework/fractal-contracts';
-import { BigNumber } from 'ethers';
+import { BigNumber, constants } from 'ethers';
 import { useCallback } from 'react';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -28,10 +28,13 @@ export default function useERC721Tokens() {
         const symbol = await tokenContract.symbol();
         let totalSupply = undefined;
         try {
-          const tokenSentEvents = await tokenContract.queryFilter(
-            tokenContract.filters.Transfer(null, null)
+          const tokenMintEvents = await tokenContract.queryFilter(
+            tokenContract.filters.Transfer(constants.AddressZero, null)
           );
-          totalSupply = BigNumber.from(tokenSentEvents.length);
+          const tokenBurnEvents = await tokenContract.queryFilter(
+            tokenContract.filters.Transfer(null, constants.AddressZero)
+          );
+          totalSupply = BigNumber.from(tokenMintEvents.length - tokenBurnEvents.length);
         } catch (e) {
           logError('Error while getting ERC721 total supply');
         }

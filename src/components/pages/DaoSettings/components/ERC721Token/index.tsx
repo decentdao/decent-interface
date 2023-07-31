@@ -1,4 +1,4 @@
-import { Flex, Box, Text } from '@chakra-ui/react';
+import { Flex, Text, Grid, GridItem } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { SettingsSection } from '..';
 import { useFractal } from '../../../../../providers/App/AppProvider';
@@ -21,69 +21,79 @@ export default function ERC721TokensContainer() {
     >
       {erc721Tokens ? (
         <Flex flexWrap="wrap">
-          <Flex
-            justifyContent="space-between"
+          <Grid
+            templateColumns="repeat(5, 1fr)"
             width="100%"
             mt={4}
           >
-            <Text
-              textStyle="text-sm-mono-regular"
-              color="chocolate.200"
-            >
-              {t('governanceTokenNameLabel')}
-            </Text>
-            <Text
-              textStyle="text-sm-mono-regular"
-              color="chocolate.200"
-            >
-              {t('governanceTokenSymbolLabel')}
-            </Text>
-            <Text
-              textStyle="text-sm-mono-regular"
-              color="chocolate.200"
-            >
-              {t('governanceTokenWeightLabel')}
-            </Text>
-            <Text
-              textStyle="text-sm-mono-regular"
-              color="chocolate.200"
-            >
-              {t('governanceTokenTotalWeightLabel')}
-            </Text>
-          </Flex>
+            <GridItem colSpan={2}>
+              <Text
+                textStyle="text-sm-mono-regular"
+                color="chocolate.200"
+              >
+                {t('governanceTokenNameLabel')}
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1}>
+              <Text
+                textStyle="text-sm-mono-regular"
+                color="chocolate.200"
+              >
+                {t('governanceTokenSymbolLabel')}
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1}>
+              <Text
+                textStyle="text-sm-mono-regular"
+                color="chocolate.200"
+              >
+                {t('governanceTokenWeightLabel')}
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1}>
+              <Text
+                textStyle="text-sm-mono-regular"
+                color="chocolate.200"
+              >
+                {t('governanceTokenTotalWeightLabel')}
+              </Text>
+            </GridItem>
+          </Grid>
           {erc721Tokens.map(token => (
-            <Flex
+            <Grid
               key={token.address}
-              justifyContent="space-between"
               width="100%"
-              mt={4}
+              templateColumns="repeat(5, 1fr)"
+              mt={2}
             >
-              <Box mt={2}>
+              <GridItem colSpan={2}>
                 <DisplayAddress address={token.address}>{token.name}</DisplayAddress>
-              </Box>
-              <Text
-                textStyle="text-base-sans-regular"
-                color="grayscale.100"
-                mt={2}
-              >
-                {token.symbol}
-              </Text>
-
-              <Text
-                textStyle="text-base-sans-regular"
-                color="grayscale.100"
-                mt={2}
-              >
-                {token.votingWeight.toString()}
-              </Text>
-              <Text
-                textStyle="text-base-sans-regular"
-                color="grayscale.100"
-                mt={2}
-              >
-                {token.totalSupply ? token.totalSupply.mul(token.votingWeight).toString() : 'n/a'}
-              </Text>
-            </Flex>
+              </GridItem>
+              <GridItem colSpan={1}>
+                <Text
+                  textStyle="text-base-sans-regular"
+                  color="grayscale.100"
+                >
+                  {token.symbol}
+                </Text>
+              </GridItem>
+              <GridItem colSpan={1}>
+                <Text
+                  textStyle="text-base-sans-regular"
+                  color="grayscale.100"
+                >
+                  {token.votingWeight.toString()}
+                </Text>
+              </GridItem>
+              <GridItem colSpan={1}>
+                <Text
+                  textStyle="text-base-sans-regular"
+                  color="grayscale.100"
+                >
+                  {token.totalSupply ? token.totalSupply.mul(token.votingWeight).toString() : 'n/a'}
+                </Text>
+              </GridItem>
+            </Grid>
           ))}
         </Flex>
       ) : (
