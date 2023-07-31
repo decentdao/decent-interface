@@ -1,18 +1,27 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
+import {
+  ERC20FreezeVoting,
+  ERC721FreezeVoting,
+  Azorius,
+  ModuleProxyFactory,
+} from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState, useEffect } from 'react';
-import { useAccount } from 'wagmi';
+import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useProvider } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
+import { getEventRPC } from '../../../../helpers';
 import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
+import useAddressERC721VotingTokens from '../../../../hooks/DAO/proposal/useAddressERC721VotingTokens';
+import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import {
   FractalGuardContracts,
-  FractalModuleType,
   FractalNode,
   FreezeGuard,
   GovernanceSelectionType,
@@ -46,39 +55,108 @@ export function ManageDAOMenu({
   fractalNode,
 }: IManageDAOMenu) {
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
+  const [governanceType, setGovernanceType] = useState(GovernanceSelectionType.MULTISIG);
+  const {
+    readOnly: { user },
+    node: { safe },
+    governance: { type },
+    baseContracts: {
+      fractalAzoriusMasterCopyContract,
+      zodiacModuleProxyFactoryContract,
+      linearVotingERC721MasterCopyContract,
+      linearVotingMasterCopyContract,
+    },
+  } = useFractal();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { push } = useRouter();
+  const {
+    network: { chainId },
+  } = useProvider();
 
-  const { address: account } = useAccount();
+  const { getCanUserCreateProposal } = useSubmitProposal();
+  const { totalVotingTokenAddresses, totalVotingTokenIds } = useAddressERC721VotingTokens(
+    undefined,
+    user.address
+  );
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeInfo: fractalNode,
   });
   const safeAddress = fractalNode?.daoAddress;
 
-  let governanceType: GovernanceSelectionType = GovernanceSelectionType.MULTISIG;
-  fractalNode?.fractalModules.forEach(_module => {
-    if (_module.moduleType === FractalModuleType.AZORIUS) {
-      governanceType = GovernanceSelectionType.AZORIUS_ERC20;
-    }
-  });
+  useEffect(() => {
+    const loadCanUserCreateProposal = async () => {
+      if (safeAddress) {
+        setCanUserCreateProposal(await getCanUserCreateProposal(safeAddress));
+      }
+    };
+
+    loadCanUserCreateProposal();
+  }, [safeAddress, getCanUserCreateProposal]);
 
   useEffect(() => {
-    if (!fractalNode) {
-      return;
-    }
-    const azoriusModule = getAzoriusModuleFromModules(fractalNode.fractalModules);
-    if (azoriusModule) {
-      setCanUserCreateProposal(true);
-      return;
-    }
-    if (fractalNode.safe && account) {
-      setCanUserCreateProposal(fractalNode.safe.owners.includes(account!));
-    }
-  }, [fractalNode, account]);
+    const loadGovernanceType = async () => {
+      if (safe && safe.address && safe.address === safeAddress && type) {
+        // We already have governance type in global scope
+        setGovernanceType(type);
+      } else {
+        if (fractalNode?.fractalModules) {
+          let result = GovernanceSelectionType.MULTISIG;
+          const azoriusModule = getAzoriusModuleFromModules(fractalNode?.fractalModules);
+          if (!!azoriusModule) {
+            const azoriusContract = {
+              asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(
+                azoriusModule.moduleAddress
+              ),
+              asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(
+                azoriusModule.moduleAddress
+              ),
+            };
+            const votingContractAddress = await getEventRPC<Azorius>(azoriusContract, chainId)
+              .queryFilter((azoriusModule.moduleContract as Azorius).filters.EnabledStrategy())
+              .then(strategiesEnabled => {
+                return strategiesEnabled[0].args.strategy;
+              });
+            const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
+            const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
+            const votingContractMasterCopyAddress = await rpc
+              .queryFilter(filter)
+              .then(proxiesCreated => {
+                return proxiesCreated[0].args.masterCopy;
+              });
 
-  const handleNavigateToSettings = useMemo(
-    () => () => push(DAO_ROUTES.settings.relative(safeAddress)),
+            if (
+              votingContractMasterCopyAddress === linearVotingMasterCopyContract.asProvider.address
+            ) {
+              result = GovernanceSelectionType.AZORIUS_ERC20;
+            } else if (
+              votingContractMasterCopyAddress ===
+              linearVotingERC721MasterCopyContract.asProvider.address
+            ) {
+              result = GovernanceSelectionType.AZORIUS_ERC721;
+            }
+          }
+
+          setGovernanceType(result);
+        }
+      }
+    };
+
+    loadGovernanceType();
+  }, [
+    chainId,
+    fractalAzoriusMasterCopyContract,
+    linearVotingERC721MasterCopyContract,
+    linearVotingMasterCopyContract,
+    fractalNode,
+    safe,
+    safeAddress,
+    type,
+    zodiacModuleProxyFactoryContract,
+  ]);
+
+  const handleNavigateToSettings = useCallback(
+    () => push(DAO_ROUTES.settings.relative(safeAddress)),
     [push, safeAddress]
   );
 
@@ -92,7 +170,19 @@ export function ManageDAOMenu({
 
     const freezeOption = {
       optionKey: 'optionInitiateFreeze',
-      onClick: () => guardContracts?.freezeVotingContract?.asSigner.castFreezeVote(),
+      onClick: () => {
+        const freezeVotingContract = guardContracts?.freezeVotingContract?.asSigner;
+        if (freezeVotingContract) {
+          if (governanceType === GovernanceSelectionType.AZORIUS_ERC20) {
+            (freezeVotingContract as ERC20FreezeVoting).castFreezeVote();
+          } else if (governanceType === GovernanceSelectionType.AZORIUS_ERC721) {
+            (freezeVotingContract as ERC721FreezeVoting)['castFreezeVote(address[],uint256[])'](
+              totalVotingTokenAddresses,
+              totalVotingTokenIds
+            );
+          }
+        }
+      },
     };
 
     const clawBackOption = {
@@ -165,6 +255,8 @@ export function ManageDAOMenu({
     canUserCreateProposal,
     handleModifyGovernance,
     handleNavigateToSettings,
+    totalVotingTokenAddresses,
+    totalVotingTokenIds,
   ]);
 
   return (

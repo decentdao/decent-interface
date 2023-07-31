@@ -4,7 +4,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../../types';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
-export default function useAddressERC721VotingTokens(proposalId: string, address?: string) {
+export default function useAddressERC721VotingTokens(proposalId?: string, address?: string) {
   const [totalVotingTokenIds, setTotalVotingTokenIds] = useState<string[]>([]);
   const [totalVotingTokenAddresses, setTotalVotingTokenAddresses] = useState<string[]>([]);
   const [remainingTokenIds, setRemainingTokenIds] = useState<string[]>([]);
@@ -78,16 +78,18 @@ export default function useAddressERC721VotingTokens(proposalId: string, address
         // Maybe, if we will encounter need to wider support of ERC-1155 - we will bring it and improve this piece of crap as well :D
         await Promise.all(
           [...tokenIdsSet.values()].map(async tokenId => {
-            const tokenVoted = await erc721LinearVotingContract.asSigner.hasVoted(
-              proposalId,
-              tokenAddress,
-              tokenId
-            );
             totalTokenAddresses.push(tokenAddress);
             totalTokenIds.push(tokenId);
-            if (!tokenVoted) {
-              tokenAddresses.push(tokenAddress);
-              tokenIds.push(tokenId);
+            if (proposalId) {
+              const tokenVoted = await erc721LinearVotingContract.asSigner.hasVoted(
+                proposalId,
+                tokenAddress,
+                tokenId
+              );
+              if (!tokenVoted) {
+                tokenAddresses.push(tokenAddress);
+                tokenIds.push(tokenId);
+              }
             }
           })
         );

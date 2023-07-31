@@ -13,6 +13,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGuardAction } from '../../../providers/App/guard/action';
 import { ContractConnection, FractalGuardContracts, FreezeVotingType } from '../../../types';
 import { blocksToSeconds, getTimeStamp } from '../../../utils/contract';
+import useAddressERC721VotingTokens from '../proposal/useAddressERC721VotingTokens';
 import { FreezeGuard } from './../../../types/fractal';
 
 export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
@@ -27,6 +28,7 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
     action,
     readOnly: { user },
   } = useFractal();
+  const { totalVotingTokenAddresses } = useAddressERC721VotingTokens(undefined, user.address);
 
   const account = user.address;
   const provider = useProvider();
@@ -100,6 +102,8 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
             : // freeze is active
               await votesTokenContract.getPastVotes(account || '', freezeCreatedBlock)
         ).gt(0);
+      } else if (freezeVotingType === FreezeVotingType.ERC721) {
+        userHasVotes = totalVotingTokenAddresses.length > 0;
       }
 
       const freeze: FreezeGuard = {
@@ -109,7 +113,13 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
       isFreezeSet.current = true;
       return freeze;
     },
-    [account, provider, safeSingletonContract, votesTokenMasterCopyContract]
+    [
+      account,
+      provider,
+      safeSingletonContract,
+      votesTokenMasterCopyContract,
+      totalVotingTokenAddresses,
+    ]
   );
 
   const setFractalFreezeGuard = useCallback(

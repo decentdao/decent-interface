@@ -268,7 +268,9 @@ export enum FractalModuleType {
 
 export interface FractalGuardContracts {
   freezeGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
-  freezeVotingContract?: ContractConnection<ERC20FreezeVoting | MultisigFreezeVoting>;
+  freezeVotingContract?: ContractConnection<
+    ERC20FreezeVoting | ERC721FreezeVoting | MultisigFreezeVoting
+  >;
   freezeGuardType: FreezeGuardType | null;
   freezeVotingType: FreezeVotingType | null;
 }

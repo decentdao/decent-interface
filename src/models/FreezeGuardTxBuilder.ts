@@ -95,6 +95,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       [
         this.freezeVotingType === ERC20FreezeVoting__factory
           ? this.baseContracts.freezeERC20VotingMasterCopyContract.address
+          : this.freezeVotingType === ERC721FreezeVoting__factory
+          ? this.baseContracts.freezeERC721VotingMasterCopyContract.address
           : this.baseContracts.freezeMultisigVotingMasterCopyContract.address,
         this.freezeVotingCallData,
         this.saltNum,
@@ -118,7 +120,9 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
             subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
             subDaoData.freezeProposalPeriod, // FreezeProposalPeriod
             subDaoData.freezePeriod, // FreezePeriod
-            this.parentTokenAddress ?? this.parentAddress, // Parent Safe or Votes Token
+            this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
+              ? this.strategyAddress
+              : this.parentTokenAddress ?? this.parentAddress, // Parent Safe or Votes Token
           ]
         ),
       ],
@@ -145,7 +149,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
    */
 
   private setFreezeVotingTypeAndCallData() {
-    if (this.parentTokenAddress) {
+    if (this.parentStrategyType) {
       if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
         this.freezeVotingType = ERC20FreezeVoting__factory;
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
@@ -163,7 +167,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       | MultisigFreezeVoting
       | ERC20FreezeVoting
       | ERC721FreezeVoting = this.baseContracts.freezeMultisigVotingMasterCopyContract;
-    if (this.parentTokenAddress) {
+    if (this.parentStrategyType) {
       if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
         freezeVotesMasterCopyContract = this.baseContracts.freezeERC20VotingMasterCopyContract;
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
