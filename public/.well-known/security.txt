@@ -1,6 +1,6 @@
-Contact: mailto:security@decentlabs.io
+Contact: mailto:security@decent-dao.org
 Expires: 2024-01-01T05:00:00.000Z
-Encryption: https://keys.openpgp.org/search?q=security%40decentlabs.io
+Encryption: https://keys.openpgp.org/search?q=security%40decent-dao.org
 Preferred-Languages: en
 Canonical: https://www.fractalframework.xyz/.well-known/security.txt
 Policy: https://github.com/decent-dao/fractal-interface/blob/HEAD/.github/SECURITY.md
