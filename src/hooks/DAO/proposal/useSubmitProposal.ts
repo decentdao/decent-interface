@@ -97,7 +97,7 @@ export default function useSubmitProposal() {
 
         if (azoriusModule && azoriusModule.moduleContract) {
           const azoriusContract = azoriusModule.moduleContract as Azorius;
-          const votingContractAddress = await azoriusModule.moduleContract
+          const votingContractAddress = await azoriusContract
             .queryFilter(azoriusContract.filters.EnabledStrategy())
             .then(strategiesEnabled => {
               return strategiesEnabled[0].args.strategy;

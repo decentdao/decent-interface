@@ -19,7 +19,10 @@ export function useLoadDAOData(fractalNode?: FractalNode) {
 
   const [daoData, setDAOData] = useState<DAOData>();
   const loadFractalGuardContracts = useFractalGuardContracts({ loadOnMount: false });
-  const loadFractalFreezeGuard = useFractalFreeze({ loadOnMount: false });
+  const loadFractalFreezeGuard = useFractalFreeze({
+    loadOnMount: false,
+    safeAddress: fractalNode?.daoAddress,
+  });
 
   const loadDAOData = useCallback(async () => {
     if (!safeService || !fractalNode) {

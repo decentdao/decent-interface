@@ -16,7 +16,13 @@ import { blocksToSeconds, getTimeStamp } from '../../../utils/contract';
 import useAddressERC721VotingTokens from '../proposal/useAddressERC721VotingTokens';
 import { FreezeGuard } from './../../../types/fractal';
 
-export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
+export const useFractalFreeze = ({
+  loadOnMount = true,
+  safeAddress,
+}: {
+  loadOnMount?: boolean;
+  safeAddress?: string | null;
+}) => {
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();
   const isFreezeSet = useRef(false);
@@ -28,7 +34,11 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
     action,
     readOnly: { user },
   } = useFractal();
-  const { totalVotingTokenAddresses } = useAddressERC721VotingTokens(undefined, user.address);
+  const { totalVotingTokenAddresses } = useAddressERC721VotingTokens(
+    undefined,
+    user.address,
+    safeAddress
+  );
 
   const account = user.address;
   const provider = useProvider();

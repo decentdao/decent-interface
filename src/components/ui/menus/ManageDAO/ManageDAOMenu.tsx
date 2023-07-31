@@ -72,17 +72,18 @@ export function ManageDAOMenu({
   const {
     network: { chainId },
   } = useProvider();
+  const safeAddress = fractalNode?.daoAddress;
 
   const { getCanUserCreateProposal } = useSubmitProposal();
   const { totalVotingTokenAddresses, totalVotingTokenIds } = useAddressERC721VotingTokens(
     undefined,
-    user.address
+    user.address,
+    safeAddress
   );
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeInfo: fractalNode,
   });
-  const safeAddress = fractalNode?.daoAddress;
 
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {

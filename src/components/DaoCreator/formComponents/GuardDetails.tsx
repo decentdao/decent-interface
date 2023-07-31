@@ -68,12 +68,26 @@ function GuardDetails(props: ICreationStepProps) {
       switch (type) {
         case GovernanceSelectionType.AZORIUS_ERC20:
         case GovernanceSelectionType.AZORIUS_ERC721:
-          if (!azoriusGovernance || !azoriusGovernance.votesToken) return;
-          const normalized = ethers.utils.formatUnits(
-            azoriusGovernance.votesToken.totalSupply,
-            azoriusGovernance.votesToken.decimals
-          );
-          parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
+          if (
+            !azoriusGovernance ||
+            (!azoriusGovernance.votesToken && !azoriusGovernance.erc721Tokens)
+          )
+            return;
+          if (azoriusGovernance.votesToken) {
+            const normalized = ethers.utils.formatUnits(
+              azoriusGovernance.votesToken.totalSupply,
+              azoriusGovernance.votesToken.decimals
+            );
+
+            parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
+          } else if (azoriusGovernance.erc721Tokens) {
+            parentVotes = azoriusGovernance.erc721Tokens!.reduce(
+              (prev, curr) => curr.votingWeight.add(prev),
+              BigNumber.from(0)
+            );
+          } else {
+            parentVotes = BigNumber.from(1);
+          }
           break;
         case GovernanceSelectionType.MULTISIG:
         default:
