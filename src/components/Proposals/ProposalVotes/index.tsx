@@ -25,7 +25,15 @@ import ProgressBar from '../../ui/utils/ProgressBar';
 import ProposalERC20VoteItem from './ProposalERC20VoteItem';
 import ProposalERC721VoteItem from './ProposalERC721VoteItem';
 
-function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
+function VotesPercentage({
+  label,
+  percentage,
+  unit,
+}: {
+  label: string;
+  percentage: number;
+  unit?: string;
+}) {
   return (
     <Flex
       flexWrap="wrap"
@@ -37,7 +45,10 @@ function VotesPercentage({ label, percentage }: { label: string; percentage: num
       >
         {label}
       </Text>
-      <ProgressBar value={percentage} />
+      <ProgressBar
+        value={percentage}
+        unit={unit}
+      />
     </Flex>
   );
 }
@@ -88,6 +99,8 @@ function ProposalVotes({
   const noVotesPercentage = getVotesPercentage(no);
   const abstainVotesPercentage = getVotesPercentage(abstain);
 
+  const progressUnit = isERC20 ? '%' : '';
+
   return (
     <>
       <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
@@ -131,15 +144,18 @@ function ProposalVotes({
             <VotesPercentage
               label={t('yes')}
               percentage={yesVotesPercentage}
+              unit={progressUnit}
             />
             <VotesPercentage
               label={t('no')}
               percentage={noVotesPercentage}
+              unit={progressUnit}
             />
 
             <VotesPercentage
               label={t('abstain')}
               percentage={abstainVotesPercentage}
+              unit={progressUnit}
             />
           </GridItem>
         </Grid>

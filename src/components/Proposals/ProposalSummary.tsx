@@ -117,9 +117,17 @@ export default function ProposalSummary({
       <Box marginTop={4}>
         <ExtendedProgressBar
           label={t('support')}
-          helperText={t('proposalSupportSummaryHelper', { count: requiredVotesToPass })}
+          helperText={t(
+            isERC20
+              ? 'proposalSupportSummaryHelper'
+              : isERC721
+              ? 'proposalSupportERC721SummaryHelper'
+              : '',
+            { count: requiredVotesToPass }
+          )}
           percentage={yesVotesPercentage}
           requiredPercentage={requiredVotesToPass}
+          unit={isERC20 ? '%' : ''}
         />
       </Box>
     </ContentBox>

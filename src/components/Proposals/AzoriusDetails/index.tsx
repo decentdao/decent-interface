@@ -11,6 +11,7 @@ import { ProposalAction } from '../ProposalActions/ProposalAction';
 import { ProposalInfo } from '../ProposalInfo';
 import ProposalSummary from '../ProposalSummary';
 import ProposalVotes from '../ProposalVotes';
+import { VoteContextProvider } from '../ProposalVotes/context/VoteContext';
 
 export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal }) {
   const [activeTimeout, setActiveTimeout] = useState<NodeJS.Timeout>();
@@ -74,10 +75,12 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
       <GridItem>
         <ProposalSummary proposal={proposal} />
         {user.address && (
-          <ProposalAction
-            proposal={proposal}
-            expandedView
-          />
+          <VoteContextProvider proposal={proposal}>
+            <ProposalAction
+              proposal={proposal}
+              expandedView
+            />
+          </VoteContextProvider>
         )}
       </GridItem>
     </ProposalDetailsGrid>
