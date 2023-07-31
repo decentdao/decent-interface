@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useFractal } from '../../providers/App/AppProvider';
 import { initialGuardState } from '../../providers/App/guard/reducer';
 import { initialGuardContractsState } from '../../providers/App/guardContracts/reducer';
@@ -12,7 +12,7 @@ import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
  * A hook for loading guard and freeze guard contract data for the provided
  * FractalNode.
  */
-export function useLoadDAOData(fractalNode?: FractalNode) {
+export function useLoadDAOData(fractalNode?: FractalNode, parentAddress?: string) {
   const {
     clients: { safeService },
   } = useFractal();
@@ -21,42 +21,41 @@ export function useLoadDAOData(fractalNode?: FractalNode) {
   const loadFractalGuardContracts = useFractalGuardContracts({ loadOnMount: false });
   const loadFractalFreezeGuard = useFractalFreeze({
     loadOnMount: false,
-    safeAddress: fractalNode?.daoAddress,
+    parentSafeAddress: parentAddress,
   });
 
-  const loadDAOData = useCallback(async () => {
-    if (!safeService || !fractalNode) {
-      return;
-    }
-    const { daoAddress, safe, fractalModules } = fractalNode;
-
-    if (!daoAddress || !safe) {
-      return;
-    }
-
-    let freezeGuardContracts: FractalGuardContracts | undefined = await loadFractalGuardContracts(
-      daoAddress,
-      safe,
-      fractalModules
-    );
-    if (!freezeGuardContracts) {
-      freezeGuardContracts = initialGuardContractsState;
-    }
-    let freezeGuard = await loadFractalFreezeGuard(freezeGuardContracts);
-    if (!freezeGuard) {
-      freezeGuard = initialGuardState;
-    }
-    setDAOData({
-      safe,
-      fractalModules,
-      freezeGuardContracts: freezeGuardContracts,
-      freezeGuard,
-    });
-  }, [safeService, fractalNode, loadFractalGuardContracts, loadFractalFreezeGuard]);
-
   useEffect(() => {
+    const loadDAOData = async () => {
+      if (!safeService || !fractalNode) {
+        return;
+      }
+      const { daoAddress, safe, fractalModules } = fractalNode;
+
+      if (!daoAddress || !safe) {
+        return;
+      }
+
+      let freezeGuardContracts: FractalGuardContracts | undefined = await loadFractalGuardContracts(
+        daoAddress,
+        safe,
+        fractalModules
+      );
+      if (!freezeGuardContracts) {
+        freezeGuardContracts = initialGuardContractsState;
+      }
+      let freezeGuard = await loadFractalFreezeGuard(freezeGuardContracts);
+      if (!freezeGuard) {
+        freezeGuard = initialGuardState;
+      }
+      setDAOData({
+        safe,
+        fractalModules,
+        freezeGuardContracts: freezeGuardContracts,
+        freezeGuard,
+      });
+    };
     loadDAOData();
-  }, [loadDAOData]);
+  }, [safeService, fractalNode, loadFractalGuardContracts, loadFractalFreezeGuard]);
 
   return { daoData };
 }

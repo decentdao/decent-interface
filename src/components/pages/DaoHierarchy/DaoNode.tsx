@@ -28,7 +28,7 @@ export function DaoNode({
 }) {
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
-  const { daoData } = useLoadDAOData(fractalNode);
+  const { daoData } = useLoadDAOData(fractalNode, parentAddress);
   const [lastChildDescendants, setLastChildDescendants] = useState<number>(0);
 
   const {
