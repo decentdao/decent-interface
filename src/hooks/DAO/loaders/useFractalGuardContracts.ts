@@ -143,10 +143,10 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   }, [action, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
-    if (daoAddress && daoAddress !== loadKey.current && loadOnMount && isModulesLoaded) {
-      loadKey.current = daoAddress;
+    if (daoAddress && chainId + daoAddress !== loadKey.current && loadOnMount && isModulesLoaded) {
+      loadKey.current = chainId + daoAddress;
       setGuardContracts();
     }
-  }, [setGuardContracts, isModulesLoaded, daoAddress, loadOnMount]);
+  }, [setGuardContracts, isModulesLoaded, daoAddress, loadOnMount, chainId]);
   return loadFractalGuardContracts;
 };

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useFractal } from '../../providers/App/AppProvider';
 import { initialGuardState } from '../../providers/App/guard/reducer';
 import { initialGuardContractsState } from '../../providers/App/guardContracts/reducer';
 import { FractalNode } from '../../types';
@@ -13,10 +12,6 @@ import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
  * FractalNode.
  */
 export function useLoadDAOData(fractalNode?: FractalNode, parentAddress?: string) {
-  const {
-    clients: { safeService },
-  } = useFractal();
-
   const [daoData, setDAOData] = useState<DAOData>();
   const loadFractalGuardContracts = useFractalGuardContracts({ loadOnMount: false });
   const loadFractalFreezeGuard = useFractalFreeze({
@@ -26,7 +21,7 @@ export function useLoadDAOData(fractalNode?: FractalNode, parentAddress?: string
 
   useEffect(() => {
     const loadDAOData = async () => {
-      if (!safeService || !fractalNode) {
+      if (!fractalNode) {
         return;
       }
       const { daoAddress, safe, fractalModules } = fractalNode;
@@ -55,7 +50,7 @@ export function useLoadDAOData(fractalNode?: FractalNode, parentAddress?: string
       });
     };
     loadDAOData();
-  }, [safeService, fractalNode, loadFractalGuardContracts, loadFractalFreezeGuard]);
+  }, [fractalNode, loadFractalGuardContracts, loadFractalFreezeGuard]);
 
   return { daoData };
 }

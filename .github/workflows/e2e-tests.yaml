@@ -79,7 +79,7 @@ jobs:
 
       # Run the webapp Docker container
       - name: Run webapp container
-        run: docker run -d --name webapp -p 3000:3000 -e NEXT_PUBLIC_TESTING_ENVIROMENT=true -e NEXT_PUBLIC_LOCAL_CHAIN_ID=31337 -e NEXT_PUBLIC_LOCAL_PROVIDER_URL=http://0.0.0.0:8545 webapp:latest
+        run: docker run -d --name webapp -p 3000:3000 -e NEXT_PUBLIC_TESTING_ENVIRONMENT=true -e NEXT_PUBLIC_LOCAL_CHAIN_ID=31337 -e NEXT_PUBLIC_LOCAL_PROVIDER_URL=http://0.0.0.0:8545 webapp:latest
 
       # Remove existing package.json and package-lock.json, then create a new package.json
       - name: remove package.json

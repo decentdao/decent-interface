@@ -17,7 +17,7 @@ import {
   ERC721FreezeVoting,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
-import SafeServiceClient, {
+import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
@@ -200,7 +200,6 @@ export interface ITokenAccount {
  */
 export interface FractalStore extends Fractal {
   baseContracts: FractalContracts;
-  clients: FractalClients;
   action: {
     dispatch: Dispatch<FractalActions>;
     resetDAO: () => Promise<void>;
@@ -225,10 +224,6 @@ export interface Fractal {
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
   readOnly: ReadOnlyState;
-}
-
-export interface FractalClients {
-  safeService: SafeServiceClient;
 }
 
 export interface FractalGovernanceContracts {

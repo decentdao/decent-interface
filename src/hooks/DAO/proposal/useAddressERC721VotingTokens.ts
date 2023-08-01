@@ -7,6 +7,7 @@ import { utils, BigNumber } from 'ethers';
 import { useState, useEffect, useCallback } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
@@ -30,9 +31,9 @@ export default function useAddressERC721VotingTokens(
     node: { daoAddress },
     governanceContracts: { erc721LinearVotingContract },
     governance,
-    clients: { safeService },
   } = useFractal();
   const lookupModules = useFractalModules();
+  const safeAPI = useSafeAPI();
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { erc721Tokens } = azoriusGovernance;
@@ -46,7 +47,7 @@ export default function useAddressERC721VotingTokens(
 
     if (safeAddress && daoAddress !== safeAddress) {
       // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
-      const safeInfo = await safeService.getSafeInfo(utils.getAddress(safeAddress));
+      const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(safeAddress));
       const safeModules = await lookupModules(safeInfo.modules);
       const azoriusModule = getAzoriusModuleFromModules(safeModules);
       if (azoriusModule && azoriusModule.moduleContract) {
@@ -164,7 +165,7 @@ export default function useAddressERC721VotingTokens(
     address,
     lookupModules,
     safeAddress,
-    safeService,
+    safeAPI,
     daoAddress,
   ]);
 
