@@ -84,11 +84,13 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
 
         submitProposal({
           proposalData: {
-            title: t('Clawback Proposal', { ns: 'proposalMetadata' }),
-            description: t('Transfer all funds from the targeted subDAO to our own treasury.', {
-              ns: 'proposalMetadata',
-            }),
-            documentationUrl: '',
+            metaData: {
+              title: t('Clawback Proposal', { ns: 'proposalMetadata' }),
+              description: t('Transfer all funds from the targeted subDAO to our own treasury.', {
+                ns: 'proposalMetadata',
+              }),
+              documentationUrl: '',
+            },
             targets: transactions.map(tx => tx.target),
             values: transactions.map(tx => tx.value),
             calldatas: transactions.map(tx => tx.calldata),

@@ -13,9 +13,9 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { CreateProposalMetadata, MetaTransaction, VotingStrategyType } from '../../../../types';
+import { ProposalMetadata, MetaTransaction, VotingStrategyType } from '../../../../types';
 
-import { AzoriusProposal, ProposalMetaData } from '../../../../types/daoProposal';
+import { AzoriusProposal, ProposalData } from '../../../../types/daoProposal';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
 import { useAsyncRetry } from '../../../utils/useAsyncRetry';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
@@ -71,14 +71,16 @@ export const useAzoriusProposals = () => {
 
     const proposals = await Promise.all(
       proposalCreatedEvents.map(async ({ args }) => {
-        let metaData;
+        let proposalData;
         if (args.metadata) {
-          const metaDataEvent: CreateProposalMetadata = JSON.parse(args.metadata);
+          const metadataEvent: ProposalMetadata = JSON.parse(args.metadata);
           const decodedTransactions = await decodeTransactions(args.transactions);
-          metaData = {
-            title: metaDataEvent.title,
-            description: metaDataEvent.description,
-            documentationUrl: metaDataEvent.documentationUrl,
+          proposalData = {
+            metaData: {
+              title: metadataEvent.title,
+              description: metadataEvent.description,
+              documentationUrl: metadataEvent.documentationUrl,
+            },
             transactions: args.transactions,
             decodedTransactions,
           };
@@ -90,7 +92,7 @@ export const useAzoriusProposals = () => {
           args.proposer,
           azoriusContract,
           provider,
-          metaData
+          proposalData
         );
       })
     );
@@ -116,14 +118,16 @@ export const useAzoriusProposals = () => {
       ) {
         return;
       }
-      let metaData: ProposalMetaData | undefined;
+      let proposalData: ProposalData | undefined;
 
       if (_metadata) {
-        const metaDataEvent: CreateProposalMetadata = JSON.parse(_metadata);
-        metaData = {
-          title: metaDataEvent.title,
-          description: metaDataEvent.description,
-          documentationUrl: metaDataEvent.documentationUrl,
+        const metaDataEvent: ProposalMetadata = JSON.parse(_metadata);
+        proposalData = {
+          metaData: {
+            title: metaDataEvent.title,
+            description: metaDataEvent.description,
+            documentationUrl: metaDataEvent.documentationUrl,
+          },
           transactions: transactions,
           decodedTransactions: await decodeTransactions(transactions),
         };
@@ -140,7 +144,7 @@ export const useAzoriusProposals = () => {
           proposer,
           azoriusContract,
           provider,
-          metaData
+          proposalData
         );
       };
       const proposal = await requestWithRetries(func, 5, 7000);

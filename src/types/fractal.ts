@@ -38,12 +38,7 @@ import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { ProposalTemplate } from './createProposalTemplate';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
-import {
-  ProposalMetaData,
-  MultisigProposal,
-  AzoriusProposal,
-  SnapshotProposal,
-} from './daoProposal';
+import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
 import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
 import { BNFormattedPair } from './votingFungibleToken';
@@ -154,7 +149,7 @@ export interface GovernanceActivity extends ActivityBase {
   state: FractalProposalState | null;
   proposalId: string;
   targets: string[];
-  metaData?: ProposalMetaData;
+  data?: ProposalData;
 }
 
 export interface ActivityBase {

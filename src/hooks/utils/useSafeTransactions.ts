@@ -272,7 +272,7 @@ export const useSafeTransactions = () => {
             ? multiSigTransaction.confirmations
             : [];
 
-          const metaData =
+          const data =
             (isMultiSigTransaction || isModuleTransaction) && multiSigTransaction.dataDecoded
               ? {
                   decodedTransactions: parseDecodedData(
@@ -288,8 +288,8 @@ export const useSafeTransactions = () => {
                   ),
                 };
 
-          const targets = metaData
-            ? [...metaData.decodedTransactions.map(tx => tx.target)]
+          const targets = data
+            ? [...data.decodedTransactions.map(tx => tx.target)]
             : [transaction.to];
 
           const activity: Activity = {
@@ -308,7 +308,7 @@ export const useSafeTransactions = () => {
             proposalId: eventSafeTxHash,
             targets,
             transactionHash: multiSigTransaction.transactionHash,
-            metaData,
+            data: data,
             state: null,
             nonce: eventNonce,
           };

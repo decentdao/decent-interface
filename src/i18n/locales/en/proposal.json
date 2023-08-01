@@ -98,6 +98,8 @@
     "paramTypes": "parameter types",
     "paramInputs": "parameter inputs",
     "paramValue": "transaction value",
+    "multisigMetadataMessage": "This transaction contains the proposal's encoded metadata.",
+    "multisigMetadataWarning": "Adding metadata (title, description, url) to a multisig proposal will add execution cost.",
     "decodingFailedMessage": "Unable to decode transaction's data.",
     "customNonce": "Custom Nonce",
     "customNonceTooltip": "Set a custom proposal nonce if necessary to prevent nonce collisions",

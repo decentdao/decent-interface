@@ -10,7 +10,6 @@ import { DEFAULT_TRANSACTION } from './constants';
 
 interface TransactionsFormProps extends FormikProps<CreateProposalForm> {
   isVisible: boolean;
-  showBackButton: boolean;
   pendingTransaction: boolean;
   setFormState: (state: CreateProposalState) => void;
   canUserCreateProposal?: boolean;
@@ -19,7 +18,6 @@ interface TransactionsFormProps extends FormikProps<CreateProposalForm> {
 function TransactionsForm(props: TransactionsFormProps) {
   const {
     isVisible,
-    showBackButton,
     pendingTransaction,
     setFormState,
     setFieldValue,
@@ -73,18 +71,16 @@ function TransactionsForm(props: TransactionsFormProps) {
         </Alert>
         <Divider color="chocolate.700" />
         <Flex>
-          {showBackButton && (
-            <Button
-              variant="text"
-              textStyle="text-md-mono-regular"
-              color="gold.500"
-              cursor="pointer"
-              onClick={() => setFormState(CreateProposalState.METADATA_FORM)}
-              mb={4}
-            >
-              {t('back', { ns: 'common' })}
-            </Button>
-          )}
+          <Button
+            variant="text"
+            textStyle="text-md-mono-regular"
+            color="gold.500"
+            cursor="pointer"
+            onClick={() => setFormState(CreateProposalState.METADATA_FORM)}
+            mb={4}
+          >
+            {t('back', { ns: 'common' })}
+          </Button>
           <Button
             w="100%"
             type="submit"

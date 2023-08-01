@@ -28,6 +28,7 @@ export enum CacheKeys {
   ENS_RESOLVE_PREFIX = 'ens_resolve_', // name.eth -> 0x0 caching
   DAO_NAME_PREFIX = 'dao_name_',
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
+  MULTISIG_METADATA_PREFIX = 'm_m_',
 }
 
 interface IndexedObject {

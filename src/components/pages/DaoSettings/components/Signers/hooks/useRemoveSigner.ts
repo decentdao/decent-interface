@@ -41,9 +41,11 @@ const useRemoveSigner = ({
       targets: [daoAddress!],
       values: [BigNumber.from('0')],
       calldatas: calldatas,
-      title: 'Remove Signers',
-      description: description,
-      documentationUrl: '',
+      metaData: {
+        title: 'Remove Signers',
+        description: description,
+        documentationUrl: '',
+      },
     };
 
     await submitProposal({
