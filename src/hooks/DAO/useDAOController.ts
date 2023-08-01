@@ -22,6 +22,7 @@ export default function useDAOController({ daoAddress }: { daoAddress?: string }
     }
   }, [daoAddress, currentDAOAddress, action]);
 
+  const nodeLoading = useFractalNode({ daoAddress: currentDAOAddress });
   useGovernanceContracts();
   useFractalGuardContracts({});
   useFractalFreeze({});
@@ -29,5 +30,5 @@ export default function useDAOController({ daoAddress }: { daoAddress?: string }
   useFractalTreasury();
   useERC20Claim();
   useSnapshotProposals();
-  return useFractalNode({ daoAddress: currentDAOAddress });
+  return nodeLoading;
 }
