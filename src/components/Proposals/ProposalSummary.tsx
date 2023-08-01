@@ -135,7 +135,7 @@ export default function ProposalSummary({
           label={t('support')}
           helperText={t(
             isERC20
-              ? 'proposalSupportSummaryHelper'
+              ? 'proposalSupportERC20SummaryHelper'
               : isERC721
               ? 'proposalSupportERC721SummaryHelper'
               : '',
