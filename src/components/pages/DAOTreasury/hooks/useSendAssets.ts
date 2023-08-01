@@ -43,9 +43,11 @@ const useSendAssets = ({
       targets: [isEth ? destinationAddress : asset.tokenAddress],
       values: [isEth ? transferAmount : BigNumber.from('0')],
       calldatas: isEth ? ['0x'] : calldatas,
-      title: t(isEth ? 'Send Eth' : 'Send Token', { ns: 'proposalMetadata' }),
-      description: description,
-      documentationUrl: '',
+      metaData: {
+        title: t(isEth ? 'Send Eth' : 'Send Token', { ns: 'proposalMetadata' }),
+        description: description,
+        documentationUrl: '',
+      },
     };
 
     await submitProposal({

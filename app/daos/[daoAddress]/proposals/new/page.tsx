@@ -4,11 +4,11 @@ import { Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import AzoriusMetadata from '../../../../../src/components/ProposalCreate/AzoriusMetadata';
 import { ProposalDetails } from '../../../../../src/components/ProposalCreate/ProposalDetails';
 import { ProposalHeader } from '../../../../../src/components/ProposalCreate/ProposalHeader';
+import ProposalMetadata from '../../../../../src/components/ProposalCreate/ProposalMetadata';
 import TransactionsForm from '../../../../../src/components/ProposalCreate/TransactionsForm';
 import { DEFAULT_PROPOSAL } from '../../../../../src/components/ProposalCreate/constants';
 import { BarLoader } from '../../../../../src/components/ui/loaders/BarLoader';
@@ -42,22 +42,13 @@ export default function ProposalCreatePage() {
   const { push } = useRouter();
   const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
 
-  const [formState, setFormState] = useState(CreateProposalState.LOADING);
+  const [formState, setFormState] = useState(CreateProposalState.METADATA_FORM);
   const isAzorius = useMemo(
     () =>
       type === GovernanceSelectionType.AZORIUS_ERC20 ||
       type === GovernanceSelectionType.AZORIUS_ERC721,
     [type]
   );
-
-  useEffect(() => {
-    if (!type) return;
-    if (isAzorius) {
-      setFormState(CreateProposalState.METADATA_FORM);
-    } else {
-      setFormState(CreateProposalState.TRANSACTIONS_FORM);
-    }
-  }, [isAzorius, type]);
 
   const successCallback = () => {
     if (daoAddress) {
@@ -150,7 +141,7 @@ export default function ProposalCreatePage() {
                           }}
                         />
 
-                        <AzoriusMetadata
+                        <ProposalMetadata
                           isVisible={formState === CreateProposalState.METADATA_FORM}
                           setFormState={setFormState}
                           {...formikProps}
@@ -158,7 +149,6 @@ export default function ProposalCreatePage() {
                         <TransactionsForm
                           isVisible={formState === CreateProposalState.TRANSACTIONS_FORM}
                           setFormState={setFormState}
-                          showBackButton={isAzorius}
                           pendingTransaction={pendingCreateTx}
                           canUserCreateProposal={canUserCreateProposal}
                           {...formikProps}

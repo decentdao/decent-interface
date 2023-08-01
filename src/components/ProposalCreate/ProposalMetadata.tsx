@@ -9,7 +9,7 @@ export interface AzoriusMetadataProps extends FormikProps<CreateProposalForm> {
   setFormState: (state: CreateProposalState) => void;
 }
 
-function AzoriusMetadata(props: AzoriusMetadataProps) {
+function ProposalMetadata(props: AzoriusMetadataProps) {
   const {
     values: { proposalMetadata },
     setFieldValue,
@@ -78,4 +78,4 @@ function AzoriusMetadata(props: AzoriusMetadataProps) {
   );
 }
 
-export default AzoriusMetadata;
+export default ProposalMetadata;

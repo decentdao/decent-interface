@@ -13,6 +13,7 @@ import {
 import { Info } from '@decent-org/fractal-ui';
 import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { DecodedTransaction, FractalProposal } from '../../../types';
 import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
 
@@ -48,6 +49,46 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
 }
 function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) {
   const { t } = useTranslation('proposal');
+  if (
+    transaction.target == ADDRESS_MULTISIG_METADATA &&
+    transaction.value === '0' &&
+    transaction.function === undefined
+  ) {
+    // this is a multisig metadata transaction, alert the user
+    return (
+      <Alert
+        status="info"
+        mt={2}
+      >
+        <Flex
+          width="full"
+          borderRadius="4px"
+          bg="black.600"
+          flexWrap="wrap"
+          padding={4}
+          rowGap={2}
+        >
+          <Flex alignItems="center">
+            <Info boxSize="24px" />
+            <AlertTitle>{t('multisigMetadataMessage')}</AlertTitle>
+          </Flex>
+          <TransactionRow
+            paramKey="paramTarget"
+            value={ADDRESS_MULTISIG_METADATA}
+          />
+          <TransactionRow
+            paramKey="paramFunction"
+            value={'n/a'}
+          />
+          <TransactionRow
+            paramKey="paramValue"
+            value={'0'}
+          />
+        </Flex>
+      </Alert>
+    );
+  }
+
   return (
     <Flex
       width="full"
@@ -92,7 +133,7 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
 
 export default function ProposalExecutableCode({ proposal }: { proposal: FractalProposal }) {
   const { t } = useTranslation('proposal');
-  if (!proposal.metaData) {
+  if (!proposal.data) {
     return null;
   }
   return (
@@ -125,7 +166,7 @@ export default function ProposalExecutableCode({ proposal }: { proposal: Fractal
                   gap={2}
                   flexDirection="column"
                 >
-                  {proposal.metaData?.decodedTransactions.map((tx, i) => (
+                  {proposal.data?.decodedTransactions.map((tx, i) => (
                     <TransactionBlock
                       transaction={tx}
                       key={i}
