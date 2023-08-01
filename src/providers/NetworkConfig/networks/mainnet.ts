@@ -62,7 +62,8 @@ export const mainnetConfig: NetworkConfig = {
   },
   staking: {
     lido: {
-      rewardsAddress: '',
+      rewardsAddress: '0x2884b7Bf17Ca966bB2e4099bf384734a48885Df0', // TODO - Change to Fractal Safe
+      stETHContractAddress: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
     },
   },
 };

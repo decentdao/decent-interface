@@ -39,6 +39,7 @@ export type NetworkConfig = {
   };
   staking: {
     lido?: {
+      stETHContractAddress: string;
       rewardsAddress: string;
     };
   };

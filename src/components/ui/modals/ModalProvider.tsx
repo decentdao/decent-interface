@@ -10,6 +10,7 @@ import ForkProposalTemplateModal from './ForkProposalTemplateModal';
 import { ModalBase } from './ModalBase';
 import ProposalTemplateModal from './ProposalTemplateModal';
 import { SendAssetsModal } from './SendAssetsModal';
+import StakeModal from './Stake';
 import { UnwrapToken } from './UnwrapToken';
 import { WrapToken } from './WrapToken';
 
@@ -17,6 +18,7 @@ export enum ModalType {
   NONE,
   DELEGATE,
   SEND_ASSETS,
+  STAKE,
   WRAP_TOKEN,
   UNWRAP_TOKEN,
   CONFIRM_URL,
@@ -81,6 +83,10 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       case ModalType.SEND_ASSETS:
         ti = t('sendAssetsTitle');
         co = <SendAssetsModal close={cl} />;
+        break;
+      case ModalType.STAKE:
+        ti = t('stakeTitle');
+        co = <StakeModal close={cl} />;
         break;
       case ModalType.WRAP_TOKEN:
         ti = t('wrapTokenTitle');

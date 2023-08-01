@@ -1,0 +1,66 @@
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
+import { BigNumber } from 'ethers';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { DAO_ROUTES } from '../../../constants/routes';
+import useLidoStake from '../../../hooks/stake/lido/useLidoStake';
+import { useFractal } from '../../../providers/App/AppProvider';
+import { BigNumberValuePair } from '../../../types';
+import { BigNumberInput } from '../forms/BigNumberInput';
+
+export default function StakeModal({ close }: { close: () => void }) {
+  const {
+    node: { daoAddress },
+    treasury: { assetsFungible },
+  } = useFractal();
+  const { push } = useRouter();
+  const { t } = useTranslation('stake');
+
+  const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
+
+  const [selectedAsset] = useState<SafeBalanceUsdResponse>(fungibleAssetsWithBalance[0]);
+  const [inputAmount, setInputAmount] = useState<BigNumberValuePair>();
+  const onChangeAmount = (value: BigNumberValuePair) => {
+    setInputAmount(value);
+  };
+
+  const { handleStake } = useLidoStake();
+  const handleSubmit = async () => {
+    if (inputAmount?.bigNumberValue) {
+      await handleStake(inputAmount?.bigNumberValue);
+      close();
+      if (daoAddress) {
+        push(DAO_ROUTES.proposals.relative(daoAddress));
+      }
+    }
+  };
+
+  return (
+    <Box>
+      <Box>
+        <Flex
+          alignItems="center"
+          marginBottom="0.5rem"
+        >
+          <Text>{t('amountLabel')}</Text>
+        </Flex>
+        <BigNumberInput
+          value={inputAmount?.bigNumberValue}
+          onChange={onChangeAmount}
+          decimalPlaces={selectedAsset?.token?.decimals}
+          placeholder="0"
+          maxValue={BigNumber.from(selectedAsset.balance)}
+        />
+      </Box>
+      <Button
+        onClick={handleSubmit}
+        mt={4}
+        width="100%"
+      >
+        {t('submitStakingProposal')}
+      </Button>
+    </Box>
+  );
+}

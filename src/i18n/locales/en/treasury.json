@@ -16,5 +16,6 @@
     "approveToken": "Approve Token",
     "approvalPendingMessage": "Approving tokens...",
     "approvalFailedMessage": "Token approval failed!",
-    "approvalSuccessMessage": "Tokens approved"
+    "approvalSuccessMessage": "Tokens approved",
+    "stake": "Stake"
 }

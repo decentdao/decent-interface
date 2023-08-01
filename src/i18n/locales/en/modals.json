@@ -9,6 +9,7 @@
   "buttonDelegate": "Delegate Voting Tokens",
   "buttonLockedDelegate": "Delegate Locked Voting Tokens",
   "sendAssetsTitle": "Send Assets",
+  "stakeTitle" : "Stake",
   "selectLabel": "Select Asset",
   "selectSublabel": "Available balance {{balance}}",
   "amountLabel": "How much?",

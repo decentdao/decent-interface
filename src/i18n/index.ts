@@ -16,6 +16,7 @@ import PROPOSAL_EN from './locales/en/proposal.json';
 import PROPOSAL_METADATA_EN from './locales/en/proposalMetadata.json';
 import PROPOSAL_TEMPLATE_EN from './locales/en/proposalTemplate.json';
 import SETTINGS_EN from './locales/en/settings.json';
+import STAKE_EN from './locales/en/stake.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
 import BREADCRUMBS_UK from './locales/uk/breadcrumbs.json';
@@ -72,6 +73,7 @@ export const supportedLanguages = {
     modals: MODALS_EN,
     languages: LANGUAGES_EN,
     settings: SETTINGS_EN,
+    stake: STAKE_EN,
     home: HOME_EN,
   },
   uk: {

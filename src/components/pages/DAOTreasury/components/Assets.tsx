@@ -1,12 +1,15 @@
-import { Box, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
 import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
 import EtherscanLinkERC20 from '../../../ui/links/EtherscanLinkERC20';
 import EtherscanLinkERC721 from '../../../ui/links/EtherscanLinkERC721';
+import { ModalType } from '../../../ui/modals/ModalProvider';
+import { useFractalModal } from '../../../ui/modals/useFractalModal';
 import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 
 function CoinHeader() {
@@ -209,10 +212,14 @@ export function Assets() {
     node: { daoAddress },
     treasury: { assetsFungible, assetsNonFungible },
   } = useFractal();
+  const { staking } = useNetworkConfig();
   const { t } = useTranslation('treasury');
   const coinDisplay = useFormatCoins(assetsFungible);
+  const openStakingModal = useFractalModal(ModalType.STAKE);
+
   return (
     <Box>
+      {Object.keys(staking).length > 0 && <Button onClick={openStakingModal}>{t('stake')}</Button>}
       <Text
         textStyle="text-sm-sans-regular"
         color="chocolate.200"
