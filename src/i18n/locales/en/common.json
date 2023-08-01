@@ -94,5 +94,9 @@
     "unwrapToken": "Unwrap Token",
     "max": "max",
     "favoriteTooltip": "Toggle favorite",
-    "isMeSuffix": " (you)"
+    "isMeSuffix": " (you)",
+    "refresh": "Refresh",
+    "invalidSafe1": "We couldn't find a Safe at this address on {{chain}}.",
+    "invalidSafe2": "Try refreshing the page or changing networks in your wallet.",
+    "invalidChain": "Your currently connected chain is not supported."
 }

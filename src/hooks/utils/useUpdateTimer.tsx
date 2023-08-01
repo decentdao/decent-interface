@@ -49,7 +49,7 @@ export const useUpdateTimer = (safeAddress?: string | null) => {
 
   // Clear intervals based on the safeAddress value and testing environment
   useEffect(() => {
-    if (!safeAddress || process.env.NEXT_PUBLIC_TESTING_ENVIROMENT) {
+    if (!safeAddress || process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
       timers.current.forEach(timer => clearInterval(timer));
     }
   }, [safeAddress]);
