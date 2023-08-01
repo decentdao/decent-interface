@@ -1,8 +1,12 @@
 {
   "governanceTokenTitle": "Governance Token",
+  "governanceERC721TokenTitle": "Governance NFT Token(s)",
   "governanceTokenDescription": "A governance token is a digital token that grants holders the right to vote and participate in the decision-making process of the DAO.",
+  "governanceERC721TokenDescription": "A governance NFT token(s) is a digital token(s) based on ERC-721 standard that grants holders the right to vote and participate in the decision-making process of the DAO.",
   "governanceTokenNameLabel": "Name",
   "governanceTokenSymbolLabel": "Symbol",
+  "governanceTokenWeightLabel": "Token Weight",
+  "governanceTokenTotalWeightLabel": "Total Weight",
   "governanceTokenSupplyLabel": "Total Supply",
   "noModulesAttached": "No Modules Attached",
   "noGuardAttached": "No Guard Attached",

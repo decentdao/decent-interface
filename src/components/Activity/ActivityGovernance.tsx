@@ -5,6 +5,7 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { FractalProposal, ActivityEventType, SnapshotProposal } from '../../types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
 import { ProposalAction } from '../Proposals/ProposalActions/ProposalAction';
+import { VoteContextProvider } from '../Proposals/ProposalVotes/context/VoteContext';
 import { Badge } from '../ui/badges/Badge';
 import { ProposalCountdown } from '../ui/proposal/ProposalCountdown';
 
@@ -42,7 +43,9 @@ export function ActivityGovernance({ activity }: { activity: FractalProposal }) 
           alignItems="center"
         >
           <ProposalCountdown proposal={activity} />
-          <ProposalAction proposal={activity} />
+          <VoteContextProvider proposal={activity}>
+            <ProposalAction proposal={activity} />
+          </VoteContextProvider>
         </Flex>
       }
       eventDate={format(activity.eventDate, DEFAULT_DATE_FORMAT)}

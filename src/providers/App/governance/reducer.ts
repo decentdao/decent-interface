@@ -3,12 +3,13 @@ import {
   AzoriusProposal,
   VOTE_CHOICES,
   SnapshotProposal,
+  ERC721ProposalVote,
   AzoriusGovernance,
   DecentGovernance,
 } from '../../../types';
 import {
-  FractalGovernanceActions,
   FractalGovernanceAction,
+  FractalGovernanceActions,
   DecentGovernanceAction,
 } from './action';
 
@@ -56,10 +57,19 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS:
       return { ...state, proposals: [...(proposals || []), ...action.payload] };
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
-      return { ...state, proposals: [...(proposals || []), action.payload] };
-    case FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE: {
-      const { proposalId, voter, support, weight, votesSummary } = action.payload;
-      const updatedProposals = [...(proposals as AzoriusProposal[])].map(proposal => {
+      return {
+        ...state,
+        // TODO - Investigate a better way of avoiding duplicate proposals
+        // It seems like UPDATE_PROPOSALS_NEW dispatched multiple times with the same proposal sometimes
+        // Yet, I'm not sure of the cause :(
+        proposals: [...(proposals || []), action.payload].filter(
+          (proposal, index, array) =>
+            index === array.findIndex(p => p.proposalId === proposal.proposalId)
+        ),
+      };
+    case FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC20_VOTE: {
+      const { proposalId, voter, support, votesSummary, weight } = action.payload;
+      const updatedProposals = (proposals as AzoriusProposal[]).map(proposal => {
         if (proposal.proposalId === proposalId) {
           const foundVote = proposal.votes.find(vote => vote.voter === voter);
           const newProposal: AzoriusProposal = {
@@ -68,6 +78,27 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
             votes: foundVote
               ? [...proposal.votes]
               : [...proposal.votes, { voter, choice: VOTE_CHOICES[support], weight }],
+          };
+          return newProposal;
+        }
+        return proposal;
+      });
+      return { ...state, proposals: updatedProposals };
+    }
+    case FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC721_VOTE: {
+      const { proposalId, voter, support, votesSummary, tokenAddresses, tokenIds } = action.payload;
+      const updatedProposals = (proposals as AzoriusProposal[]).map(proposal => {
+        if (proposal.proposalId === proposalId) {
+          const foundVote = proposal.votes.find(vote => vote.voter === voter);
+          const newProposal: AzoriusProposal = {
+            ...proposal,
+            votesSummary,
+            votes: foundVote
+              ? [...proposal.votes]
+              : ([
+                  ...proposal.votes,
+                  { voter, choice: VOTE_CHOICES[support], tokenAddresses, tokenIds },
+                ] as ERC721ProposalVote[]),
           };
           return newProposal;
         }

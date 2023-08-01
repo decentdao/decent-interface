@@ -3,6 +3,7 @@
 import { Button, Flex, Show, Text } from '@chakra-ui/react';
 import { AddPlus, TokenPlaceholder } from '@decent-org/fractal-ui';
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Proposals from '../../../../src/components/Proposals';
 import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
@@ -10,10 +11,13 @@ import { useFractalModal } from '../../../../src/components/ui/modals/useFractal
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../src/constants/routes';
-import useCastVote from '../../../../src/hooks/DAO/proposal/useCastVote';
 import useSubmitProposal from '../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../src/providers/App/AppProvider';
-import { AzoriusGovernance } from '../../../../src/types';
+import {
+  AzoriusGovernance,
+  DecentGovernance,
+  GovernanceSelectionType,
+} from '../../../../src/types';
 
 export default function ProposalsPage() {
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
@@ -25,7 +29,15 @@ export default function ProposalsPage() {
   const delegate = useFractalModal(ModalType.DELEGATE);
   const wrapTokenOpen = useFractalModal(ModalType.WRAP_TOKEN);
   const unwrapTokenOpen = useFractalModal(ModalType.UNWRAP_TOKEN);
-  const { canDelegate } = useCastVote({});
+  const canDelegate = useMemo(() => {
+    if (azoriusGovernance.type === GovernanceSelectionType.AZORIUS_ERC20) {
+      const decentGovernance = azoriusGovernance as DecentGovernance;
+      const hasLockedTokenBalance = decentGovernance?.lockedVotesToken?.balance?.gt(0);
+      const hasVotesTokenBalance = azoriusGovernance?.votesToken?.balance?.gt(0);
+      return hasVotesTokenBalance || hasLockedTokenBalance;
+    }
+    return false;
+  }, [azoriusGovernance]);
   const { canUserCreateProposal } = useSubmitProposal();
 
   const showWrapTokenButton = !!azoriusGovernance.votesToken?.underlyingTokenData;
