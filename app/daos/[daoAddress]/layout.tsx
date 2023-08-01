@@ -80,7 +80,9 @@ export default function DaoPageLayout({
   const validSafe = node.safe;
   let display;
 
-  if (!chain) {
+  if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
+    display = children;
+  } else if (!chain) {
     // if we're disconnected
     if (loading || validSafe) {
       display = children;
