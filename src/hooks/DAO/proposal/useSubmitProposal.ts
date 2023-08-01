@@ -15,6 +15,7 @@ import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
+import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   MetaTransaction,
@@ -67,9 +68,9 @@ export default function useSubmitProposal() {
     guardContracts: { freezeVotingContract },
     governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance: { type },
-    clients: { safeService },
     readOnly: { user },
   } = useFractal();
+  const safeAPI = useSafeAPI();
 
   const globalAzoriusContract = useMemo(() => {
     if (!signer) {
@@ -99,7 +100,7 @@ export default function useSubmitProposal() {
       };
 
       if (safeAddress) {
-        const safeInfo = await safeService.getSafeInfo(utils.getAddress(safeAddress));
+        const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(safeAddress));
         const safeModules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(safeModules);
 
@@ -144,7 +145,7 @@ export default function useSubmitProposal() {
       ozLinearVotingContract,
       erc721LinearVotingContract,
       lookupModules,
-      safeService,
+      safeAPI,
       signerOrProvider,
     ]
   );
@@ -340,9 +341,9 @@ export default function useSubmitProposal() {
         return;
       }
 
-      if (safeAddress && safeService && isAddress(safeAddress)) {
+      if (safeAddress && isAddress(safeAddress)) {
         // Submitting proposal to any DAO out of global context
-        const safeInfo = await safeService.getSafeInfo(getAddress(safeAddress));
+        const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
         const modules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(modules);
         if (!azoriusModule) {
@@ -414,7 +415,7 @@ export default function useSubmitProposal() {
       ozLinearVotingContract,
       erc721LinearVotingContract,
       submitAzoriusProposal,
-      safeService,
+      safeAPI,
     ]
   );
 

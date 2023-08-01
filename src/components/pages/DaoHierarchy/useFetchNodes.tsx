@@ -6,6 +6,7 @@ import { useSubgraphChainName } from '../../../graphql/utils';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { SafeInfoResponseWithGuard } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
 
@@ -14,13 +15,14 @@ export function useFetchNodes(address?: string) {
 
   const {
     node: { safe, nodeHierarchy },
-    clients: { safeService },
     baseContracts: {
       multisigFreezeGuardMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
       fractalAzoriusMasterCopyContract,
     },
   } = useFractal();
+
+  const safeAPI = useSafeAPI();
 
   const chainName = useSubgraphChainName();
   const { data, error } = useQuery(DAOQueryDocument, {
@@ -85,7 +87,7 @@ export function useFetchNodes(address?: string) {
     const subDAOs: SafeInfoResponseWithGuard[] = [];
     for await (const subDAO of nodes) {
       try {
-        const safeInfo = (await safeService!.getSafeInfo(
+        const safeInfo = (await safeAPI.getSafeInfo(
           getAddress(subDAO.address)
         )) as SafeInfoResponseWithGuard;
         if (safeInfo.guard) {
@@ -105,7 +107,7 @@ export function useFetchNodes(address?: string) {
     }
     // set subDAOs
     setChildNodes(subDAOs);
-  }, [getDAOOwner, safeService, nodeHierarchy, address, data, error, safe]);
+  }, [getDAOOwner, safeAPI, nodeHierarchy, address, data, error, safe]);
 
   useEffect(() => {
     if (address) {

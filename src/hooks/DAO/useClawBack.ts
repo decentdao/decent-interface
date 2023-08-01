@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
-import { useFractal } from '../../providers/App/AppProvider';
+import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { SafeInfoResponseWithGuard, FractalModuleType, FractalNode } from '../../types';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
@@ -19,23 +19,21 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
 
   const { t } = useTranslation(['proposal', 'proposalMetadata']);
   const provider = useProvider();
-  const {
-    clients: { safeService },
-  } = useFractal();
+  const safeAPI = useSafeAPI();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
   useEffect(() => {
     const loadData = async () => {
-      if (safeService && childSafeInfo?.daoAddress) {
+      if (childSafeInfo?.daoAddress) {
         const { getAddress } = ethers.utils;
-        setChildSafeBalance(await safeService.getBalances(getAddress(childSafeInfo.daoAddress)));
+        setChildSafeBalance(await safeAPI.getBalances(getAddress(childSafeInfo.daoAddress)));
         if (parentAddress) {
-          setParentSafeInfo(await safeService.getSafeInfo(getAddress(parentAddress)));
+          setParentSafeInfo(await safeAPI.getSafeInfo(getAddress(parentAddress)));
         }
       }
     };
 
     loadData();
-  }, [childSafeInfo, safeService, parentAddress]);
+  }, [childSafeInfo, safeAPI, parentAddress]);
 
   const handleClawBack = useCallback(async () => {
     if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
