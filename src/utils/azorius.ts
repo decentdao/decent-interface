@@ -24,6 +24,7 @@ import {
   FractalModuleType,
   DecodedTransaction,
   VotingStrategyType,
+  ERC721ProposalVote,
 } from '../types';
 import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
@@ -49,7 +50,7 @@ const getQuorum = async (
     } catch (e) {
       // For who knows reason - strategy.quorumVotes might give you an error
       // Seems like occuring when token deployment haven't worked properly
-      logError('Error while getting strategy quorum');
+      logError('Error while getting strategy quorum', e);
       quorum = BigNumber.from(0);
     }
   } else if (strategyType === VotingStrategyType.LINEAR_ERC721) {
@@ -79,16 +80,18 @@ export const getProposalVotesSummary = async (
 export const getProposalVotes = async (
   strategyContract: LinearERC20Voting | LinearERC721Voting,
   proposalId: BigNumber
-): Promise<ProposalVote[]> => {
+): Promise<ProposalVote[] | ERC721ProposalVote[]> => {
   const voteEventFilter = strategyContract.filters.Voted();
   const votes = await strategyContract.queryFilter(voteEventFilter);
   const proposalVotesEvent = votes.filter(voteEvent => proposalId.eq(voteEvent.args.proposalId));
 
-  return proposalVotesEvent.map(({ args }) => ({
-    voter: args.voter,
-    choice: VOTE_CHOICES[args.voteType],
-    weight: args.weight,
-  }));
+  return proposalVotesEvent.map(({ args: { voter, voteType, ...rest } }) => {
+    return {
+      ...rest,
+      voter,
+      choice: VOTE_CHOICES[voteType],
+    };
+  });
 };
 
 export const mapProposalCreatedEventToProposal = async (
