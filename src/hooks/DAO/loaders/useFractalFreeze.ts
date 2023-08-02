@@ -17,7 +17,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGuardAction } from '../../../providers/App/guard/action';
 import { ContractConnection, FractalGuardContracts, FreezeVotingType } from '../../../types';
 import { blocksToSeconds, getTimeStamp } from '../../../utils/contract';
-import useAddressERC721VotingTokens from '../proposal/useAddressERC721VotingTokens';
+import useUserERC721VotingTokens from '../proposal/useUserERC721VotingTokens';
 import { FreezeGuard } from './../../../types/fractal';
 
 export const useFractalFreeze = ({
@@ -38,11 +38,7 @@ export const useFractalFreeze = ({
     action,
   } = useFractal();
   const { address: account } = useAccount();
-  const { totalVotingTokenAddresses } = useAddressERC721VotingTokens(
-    undefined,
-    account,
-    parentSafeAddress
-  );
+  const { totalVotingTokenAddresses } = useUserERC721VotingTokens(undefined, parentSafeAddress);
   const [userFreezeVoteWeight, setUserFreezeVoteWeight] = useState(
     totalVotingTokenAddresses.length
   );

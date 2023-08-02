@@ -16,8 +16,8 @@ import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
-import useAddressERC721VotingTokens from '../../../../hooks/DAO/proposal/useAddressERC721VotingTokens';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
+import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -59,7 +59,6 @@ export function ManageDAOMenu({
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const [governanceType, setGovernanceType] = useState(GovernanceType.MULTISIG);
   const {
-    readOnly: { user },
     node: { safe },
     governance: { type },
     baseContracts: {
@@ -77,11 +76,7 @@ export function ManageDAOMenu({
   const safeAddress = fractalNode?.daoAddress;
 
   const { getCanUserCreateProposal } = useSubmitProposal();
-  const { totalVotingTokenAddresses, totalVotingTokenIds } = useAddressERC721VotingTokens(
-    undefined,
-    user.address,
-    safeAddress
-  );
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, safeAddress, false);
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeInfo: fractalNode,
@@ -184,9 +179,11 @@ export function ManageDAOMenu({
           ) {
             (freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting).castFreezeVote();
           } else if (freezeVotingType === FreezeVotingType.ERC721) {
-            (freezeVotingContract as ERC721FreezeVoting)['castFreezeVote(address[],uint256[])'](
-              totalVotingTokenAddresses,
-              totalVotingTokenIds
+            getUserERC721VotingTokens(undefined, safeAddress).then(tokensInfo =>
+              (freezeVotingContract as ERC721FreezeVoting)['castFreezeVote(address[],uint256[])'](
+                tokensInfo.totalVotingTokenAddresses,
+                tokensInfo.totalVotingTokenIds
+              )
             );
           }
         }
@@ -264,8 +261,7 @@ export function ManageDAOMenu({
     canUserCreateProposal,
     handleModifyGovernance,
     handleNavigateToSettings,
-    totalVotingTokenAddresses,
-    totalVotingTokenIds,
+    getUserERC721VotingTokens,
   ]);
 
   return (

@@ -4,7 +4,7 @@ import { useVoteContext } from '../../../components/Proposals/ProposalVotes/cont
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance, GovernanceType, FractalProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
-import useAddressERC721VotingTokens from './useAddressERC721VotingTokens';
+import useUserERC721VotingTokens from './useUserERC721VotingTokens';
 
 const useCastVote = ({
   proposal,
@@ -16,7 +16,6 @@ const useCastVote = ({
   const {
     governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance,
-    readOnly: { user },
   } = useFractal();
 
   const azoriusGovernance = useMemo(() => governance as AzoriusGovernance, [governance]);
@@ -24,9 +23,8 @@ const useCastVote = ({
 
   const [contractCallCastVote, contractCallPending] = useTransaction();
 
-  const { remainingTokenIds, remainingTokenAddresses } = useAddressERC721VotingTokens(
-    proposal.proposalId,
-    user.address
+  const { remainingTokenIds, remainingTokenAddresses } = useUserERC721VotingTokens(
+    proposal.proposalId
   );
   const { getCanVote, getHasVoted } = useVoteContext();
 

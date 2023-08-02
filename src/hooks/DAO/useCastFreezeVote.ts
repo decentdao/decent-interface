@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FreezeVotingType } from '../../types';
 import { useTransaction } from '../utils/useTransaction';
-import useAddressERC721VotingTokens from './proposal/useAddressERC721VotingTokens';
+import useUserERC721VotingTokens from './proposal/useUserERC721VotingTokens';
 
 const useCastFreezeVote = ({
   setPending,
@@ -18,16 +18,11 @@ const useCastFreezeVote = ({
   const [contractCallCastFreeze, contractCallPending] = useTransaction();
   const {
     guardContracts: { freezeVotingContract, freezeVotingType },
-    readOnly: { user },
     node: {
       nodeHierarchy: { parentAddress },
     },
   } = useFractal();
-  const { totalVotingTokenAddresses, totalVotingTokenIds } = useAddressERC721VotingTokens(
-    undefined,
-    user.address,
-    parentAddress
-  );
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, undefined, false);
 
   useEffect(() => {
     setPending(contractCallPending);
@@ -39,9 +34,11 @@ const useCastFreezeVote = ({
     contractCallCastFreeze({
       contractFn: () => {
         if (freezeVotingType === FreezeVotingType.ERC721) {
-          return (freezeVotingContract?.asSigner as ERC721FreezeVoting)[
-            'castFreezeVote(address[],uint256[])'
-          ](totalVotingTokenAddresses, totalVotingTokenIds);
+          return getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo =>
+            (freezeVotingContract?.asSigner as ERC721FreezeVoting)[
+              'castFreezeVote(address[],uint256[])'
+            ](tokensInfo.totalVotingTokenAddresses, tokensInfo.totalVotingTokenIds)
+          );
         } else {
           return (
             freezeVotingContract?.asSigner as MultisigFreezeVoting | ERC20FreezeVoting
@@ -57,8 +54,8 @@ const useCastFreezeVote = ({
     t,
     freezeVotingContract,
     freezeVotingType,
-    totalVotingTokenAddresses,
-    totalVotingTokenIds,
+    getUserERC721VotingTokens,
+    parentAddress,
   ]);
   return castFreezeVote;
 };

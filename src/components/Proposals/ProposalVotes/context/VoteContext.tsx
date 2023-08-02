@@ -1,5 +1,5 @@
 import { useContext, useCallback, useEffect, useState, createContext, ReactNode } from 'react';
-import useAddressERC721VotingTokens from '../../../../hooks/DAO/proposal/useAddressERC721VotingTokens';
+import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
   FractalProposal,
@@ -49,9 +49,10 @@ export function VoteContextProvider({
     node: { safe },
     governance: { type },
   } = useFractal();
-  const { remainingTokenIds, getUserERC721VotingTokens } = useAddressERC721VotingTokens(
+  const { remainingTokenIds, getUserERC721VotingTokens } = useUserERC721VotingTokens(
     proposal.proposalId,
-    user.address
+    undefined,
+    true
   );
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
 

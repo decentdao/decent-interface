@@ -5,6 +5,7 @@ import { DAOQueryDocument } from '../../../../.graphclient';
 import { useSubgraphChainName } from '../../../graphql/utils';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
+import { useAsyncRetry } from '../../../hooks/utils/useAsyncRetry';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { SafeInfoResponseWithGuard } from '../../../types';
@@ -23,6 +24,7 @@ export function useFetchNodes(address?: string) {
   } = useFractal();
 
   const safeAPI = useSafeAPI();
+  const { requestWithRetries } = useAsyncRetry();
 
   const chainName = useSubgraphChainName();
   const { data, error } = useQuery(DAOQueryDocument, {
@@ -76,6 +78,14 @@ export function useFetchNodes(address?: string) {
     ]
   );
 
+  const fetchDAOInfo = useCallback(
+    async (safeAddress: string) => {
+      const { getAddress } = ethers.utils;
+      return (await safeAPI.getSafeInfo(getAddress(safeAddress))) as SafeInfoResponseWithGuard;
+    },
+    [safeAPI]
+  );
+
   const fetchSubDAOs = useCallback(async () => {
     const { getAddress } = ethers.utils;
     // @remove
@@ -87,9 +97,7 @@ export function useFetchNodes(address?: string) {
     const subDAOs: SafeInfoResponseWithGuard[] = [];
     for await (const subDAO of nodes) {
       try {
-        const safeInfo = (await safeAPI.getSafeInfo(
-          getAddress(subDAO.address)
-        )) as SafeInfoResponseWithGuard;
+        const safeInfo = await requestWithRetries(() => fetchDAOInfo(subDAO.address), 5, 5000);
         if (safeInfo.guard) {
           if (safeInfo.guard === ethers.constants.AddressZero) {
             subDAOs.push(safeInfo);
@@ -107,7 +115,7 @@ export function useFetchNodes(address?: string) {
     }
     // set subDAOs
     setChildNodes(subDAOs);
-  }, [getDAOOwner, safeAPI, nodeHierarchy, address, data, error, safe]);
+  }, [getDAOOwner, nodeHierarchy, address, data, error, safe, fetchDAOInfo, requestWithRetries]);
 
   useEffect(() => {
     if (address) {
