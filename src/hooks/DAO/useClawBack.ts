@@ -1,11 +1,10 @@
 import { ERC20__factory, FractalModule } from '@fractal-framework/fractal-contracts';
-import { SafeBalanceResponse } from '@safe-global/safe-service-client';
-import { ethers } from 'ethers';
-import { useEffect, useState, useCallback } from 'react';
+import { ethers, utils } from 'ethers';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { SafeInfoResponseWithGuard, FractalModuleType, FractalNode } from '../../types';
+import { FractalModuleType, FractalNode } from '../../types';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
@@ -14,105 +13,86 @@ interface IUseClawBack {
 }
 
 export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBack) {
-  const [parentSafeInfo, setParentSafeInfo] = useState<SafeInfoResponseWithGuard>();
-  const [childSafeBalance, setChildSafeBalance] = useState<SafeBalanceResponse[]>([]);
-
   const { t } = useTranslation(['proposal', 'proposalMetadata']);
   const provider = useProvider();
   const safeAPI = useSafeAPI();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
-  useEffect(() => {
-    const loadData = async () => {
-      if (childSafeInfo?.daoAddress) {
-        const { getAddress } = ethers.utils;
-        setChildSafeBalance(await safeAPI.getBalances(getAddress(childSafeInfo.daoAddress)));
-        if (parentAddress) {
-          setParentSafeInfo(await safeAPI.getSafeInfo(getAddress(parentAddress)));
-        }
-      }
-    };
-
-    loadData();
-  }, [childSafeInfo, safeAPI, parentAddress]);
 
   const handleClawBack = useCallback(async () => {
-    if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
-      const abiCoder = new ethers.utils.AbiCoder();
-      const fractalModule = childSafeInfo.fractalModules!.find(
-        module => module.moduleType === FractalModuleType.FRACTAL
+    if (childSafeInfo && childSafeInfo.daoAddress && parentAddress) {
+      const childSafeBalance = await safeAPI.getBalances(
+        utils.getAddress(childSafeInfo.daoAddress)
       );
-      const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
-      if (fractalModule) {
-        const transactions = childSafeBalance.map(asset => {
-          if (!asset.tokenAddress) {
-            // Seems like we're operating with native coin i.e ETH
-            const txData = abiCoder.encode(
-              ['address', 'uint256', 'bytes', 'uint8'],
-              [parentAddress, asset.balance, '0x', 0]
-            );
-            const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
-              'execTx',
-              [txData]
-            );
-            return {
-              target: fractalModuleContract.address,
-              value: 0,
-              calldata: fractalModuleCalldata,
-            };
-          } else {
-            const tokenContract = ERC20__factory.connect(asset.tokenAddress, provider);
-            const clawBackCalldata = tokenContract.interface.encodeFunctionData('transfer', [
-              parentAddress,
-              asset.balance,
-            ]);
-            const txData = abiCoder.encode(
-              ['address', 'uint256', 'bytes', 'uint8'],
-              [asset.tokenAddress, 0, clawBackCalldata, 0]
-            );
-            const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
-              'execTx',
-              [txData]
-            );
+      const parentSafeInfo = await safeAPI.getSafeInfo(utils.getAddress(parentAddress));
+      if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
+        const abiCoder = new ethers.utils.AbiCoder();
+        const fractalModule = childSafeInfo.fractalModules!.find(
+          module => module.moduleType === FractalModuleType.FRACTAL
+        );
+        const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
+        if (fractalModule) {
+          const transactions = childSafeBalance.map(asset => {
+            if (!asset.tokenAddress) {
+              // Seems like we're operating with native coin i.e ETH
+              const txData = abiCoder.encode(
+                ['address', 'uint256', 'bytes', 'uint8'],
+                [parentAddress, asset.balance, '0x', 0]
+              );
+              const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
+                'execTx',
+                [txData]
+              );
+              return {
+                target: fractalModuleContract.address,
+                value: 0,
+                calldata: fractalModuleCalldata,
+              };
+            } else {
+              const tokenContract = ERC20__factory.connect(asset.tokenAddress, provider);
+              const clawBackCalldata = tokenContract.interface.encodeFunctionData('transfer', [
+                parentAddress,
+                asset.balance,
+              ]);
+              const txData = abiCoder.encode(
+                ['address', 'uint256', 'bytes', 'uint8'],
+                [asset.tokenAddress, 0, clawBackCalldata, 0]
+              );
+              const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
+                'execTx',
+                [txData]
+              );
 
-            return {
-              target: fractalModuleContract.address,
-              value: 0,
-              calldata: fractalModuleCalldata,
-            };
-          }
-        });
+              return {
+                target: fractalModuleContract.address,
+                value: 0,
+                calldata: fractalModuleCalldata,
+              };
+            }
+          });
 
-        submitProposal({
-          proposalData: {
-            metaData: {
-              title: t('Clawback Proposal', { ns: 'proposalMetadata' }),
-              description: t('Transfer all funds from the targeted subDAO to our own treasury.', {
-                ns: 'proposalMetadata',
-              }),
-              documentationUrl: '',
+          submitProposal({
+            proposalData: {
+              metaData: {
+                title: t('Clawback Proposal', { ns: 'proposalMetadata' }),
+                description: t('Transfer all funds from the targeted subDAO to our own treasury.', {
+                  ns: 'proposalMetadata',
+                }),
+                documentationUrl: '',
+              },
+              targets: transactions.map(tx => tx.target),
+              values: transactions.map(tx => tx.value),
+              calldatas: transactions.map(tx => tx.calldata),
             },
-            targets: transactions.map(tx => tx.target),
-            values: transactions.map(tx => tx.value),
-            calldatas: transactions.map(tx => tx.calldata),
-          },
-          nonce: parentSafeInfo.nonce,
-          pendingToastMessage: t('clawBackPendingToastMessage'),
-          failedToastMessage: t('clawBackFailedToastMessage'),
-          successToastMessage: t('clawBackSuccessToastMessage'),
-          safeAddress: parentAddress,
-        });
+            nonce: parentSafeInfo.nonce,
+            pendingToastMessage: t('clawBackPendingToastMessage'),
+            failedToastMessage: t('clawBackFailedToastMessage'),
+            successToastMessage: t('clawBackSuccessToastMessage'),
+            safeAddress: parentAddress,
+          });
+        }
       }
     }
-  }, [
-    canUserCreateProposal,
-    childSafeInfo,
-    childSafeBalance,
-    parentAddress,
-    parentSafeInfo,
-    provider,
-    submitProposal,
-    t,
-  ]);
+  }, [canUserCreateProposal, childSafeInfo, parentAddress, provider, submitProposal, t, safeAPI]);
 
   return { handleClawBack };
 }
