@@ -22,6 +22,7 @@ export const useFractalGovernance = () => {
     governanceContracts,
     action,
     guardContracts,
+    governance: { type },
   } = useFractal();
 
   const loadDAOProposals = useDAOProposals();
@@ -114,8 +115,6 @@ export const useFractalGovernance = () => {
           payload: GovernanceType.MULTISIG,
         });
       }
-
-      loadDAOProposals();
     } else if (!isLoaded) {
       loadKey.current = undefined;
     }
@@ -133,4 +132,13 @@ export const useFractalGovernance = () => {
     loadERC721Tokens,
     action,
   ]);
+
+  useEffect(() => {
+    if (type) {
+      // Since previous hook is the only place where governance type is set - we don't need any additional check
+      // But it's better to be sure that governance type is defined before calling for proposals loading
+      loadDAOProposals();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
 };

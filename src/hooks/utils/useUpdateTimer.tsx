@@ -39,16 +39,6 @@ export const useUpdateTimer = (safeAddress?: string | null) => {
     [isActive]
   );
 
-  const removeMethodInterval = useCallback(async (getMethod: () => Promise<any | undefined>) => {
-    const methodKey = getMethod.toString();
-    const intervalId = timers.current.get(methodKey);
-
-    if (intervalId) {
-      timers.current.delete(methodKey);
-      clearInterval(intervalId);
-    }
-  }, []);
-
   // Clear intervals when the component is unmounted to avoid memory leaks
   useEffect(() => {
     const nodeTimers = timers.current;
@@ -64,5 +54,5 @@ export const useUpdateTimer = (safeAddress?: string | null) => {
     }
   }, [safeAddress]);
 
-  return { setMethodOnInterval, removeMethodInterval };
+  return { setMethodOnInterval };
 };
