@@ -98,7 +98,8 @@ export function ManageDAOMenu({
   useEffect(() => {
     const loadGovernanceType = async () => {
       if (safe && safe.address && safe.address === safeAddress && type) {
-        // We already have governance type in global scope
+        // Since safe.address (global scope DAO address) and safeAddress(Node provided to this component via props)
+        // are the same - we can simply grab governance type from global scope and avoid double-fetching
         setGovernanceType(type);
       } else {
         if (fractalNode?.fractalModules) {

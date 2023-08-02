@@ -13,6 +13,16 @@ import { getAzoriusModuleFromModules } from '../../../utils';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 
+/**
+ * Retrieves list of ERC-721 voting tokens for the supplied `address`(aka `user.address`) param
+ * @param {string} [proposalId] - Proposal ID. When it's provided - calculates `remainingTokenIds` and `remainingTokenAddresses` that user can use for voting on speicific proposal.
+ * @param {string} [address] - ethereum address, for which tokens should be retrieved.
+ * @param {string|null} [safeAddress] - address of Safe{Wallet}, for which voting tokens should be retrieved. If not provided - these are used from global context.
+ * @returns {string[]} `totalVotingTokenIds` - list of all ERC-721 tokens that are held by `address`.
+ * @returns {string[]} `totalVotingTokenAddresses` - list of contract addresses that corresponds to token `totalVotingTokenIds` array. Aka if user holds 3 tokens of from 1 NFT contract - the address of contract will be repeated 3 times.
+ * @returns {string[]} `remainingTokenIds - list of tokens that `address` can use for proposal under `proposalId` param. This covers the case when user already voted for proposal but received more tokens, that weren't used in this proposal.
+ * @returns {string[]} `remainingTokenAddresses` - same as `totalVotingTokenAddresses` - repeats contract address of NFT for each token ID in `remainingTokenIds` array.
+ */
 export default function useAddressERC721VotingTokens(
   proposalId?: string,
   address?: string,
@@ -22,9 +32,6 @@ export default function useAddressERC721VotingTokens(
   const [totalVotingTokenAddresses, setTotalVotingTokenAddresses] = useState<string[]>([]);
   const [remainingTokenIds, setRemainingTokenIds] = useState<string[]>([]);
   const [remainingTokenAddresses, setRemainingTokenAddresses] = useState<string[]>([]);
-  const [tokenIdsByAddressMap, setTokenIdsByAddressMap] = useState<Map<string, Set<string>>>(
-    new Map()
-  );
 
   const signerOrProvider = useSignerOrProvider();
   const {
@@ -156,7 +163,6 @@ export default function useAddressERC721VotingTokens(
     setTotalVotingTokenIds(totalTokenIds);
     setRemainingTokenAddresses(tokenAddresses);
     setRemainingTokenIds(tokenIds);
-    setTokenIdsByAddressMap(userERC721Tokens);
   }, [
     erc721LinearVotingContract,
     proposalId,
@@ -178,7 +184,6 @@ export default function useAddressERC721VotingTokens(
     totalVotingTokenAddresses,
     remainingTokenAddresses,
     remainingTokenIds,
-    tokenIdsByAddressMap,
     getUserERC721VotingTokens,
   };
 }
