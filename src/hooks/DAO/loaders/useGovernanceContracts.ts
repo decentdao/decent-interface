@@ -13,12 +13,8 @@ import { LockRelease, LockRelease__factory } from '../../../assets/typechain-typ
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
-import {
-  ContractConnection,
-  FractalModuleData,
-  FractalModuleType,
-  FractalNode,
-} from '../../../types';
+import { ContractConnection, FractalNode } from '../../../types';
+import { getAzoriusModuleFromModules } from '../../../utils';
 import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 
 const AZORIUS_MODULE_CACHE_KEY = 'azorius_module_gov_';
@@ -48,24 +44,24 @@ export const useGovernanceContracts = () => {
 
   const { setValue, getValue } = useLocalStorage();
 
-  const findAzoriusModule = (fractalModules: FractalModuleData[]): Azorius | undefined => {
-    return fractalModules.find(module => module.moduleType === FractalModuleType.AZORIUS)
-      ?.moduleContract as Azorius | undefined;
-  };
-
   const loadGovernanceContracts = useCallback(
     async (_node: FractalNode) => {
       const signerOrProvider = signer || provider;
       const { fractalModules } = _node;
 
-      const azoriusModule = findAzoriusModule(fractalModules);
+      const azoriusModule = getAzoriusModuleFromModules(fractalModules);
+      const azoriusModuleContract = azoriusModule?.moduleContract as Azorius;
 
-      if (!!azoriusModule) {
+      if (!!azoriusModuleContract) {
         const azoriusContract = {
-          asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(azoriusModule.address),
-          asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(azoriusModule.address),
+          asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(
+            azoriusModuleContract.address
+          ),
+          asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(azoriusModuleContract.address),
         };
-        const cachedContractAddresses = getValue('azorius_module_gov_' + azoriusModule.address);
+        const cachedContractAddresses = getValue(
+          'azorius_module_gov_' + azoriusModuleContract.address
+        );
 
         // if existing cached addresses are found, use them
         let votingContractAddress: string | undefined =
@@ -83,7 +79,7 @@ export const useGovernanceContracts = () => {
 
         if (!votingContractAddress) {
           votingContractAddress = await getEventRPC<Azorius>(azoriusContract, chainId)
-            .queryFilter(azoriusModule.filters.EnabledStrategy())
+            .queryFilter(azoriusModuleContract.filters.EnabledStrategy())
             .then(strategiesEnabled => {
               return strategiesEnabled[0].args.strategy;
             });
@@ -159,7 +155,7 @@ export const useGovernanceContracts = () => {
         }
         if (!!ozLinearVotingContract && !!tokenContract) {
           // cache the addresses for future use, saves on query requests
-          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModuleContract.address, {
             votingContractAddress,
             govTokenAddress,
             underlyingTokenAddress,
@@ -178,7 +174,7 @@ export const useGovernanceContracts = () => {
             },
           });
         } else if (!!erc721LinearVotingContract) {
-          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModuleContract.address, {
             votingContractAddress,
             votingContractMasterCopyAddress,
           });
@@ -195,7 +191,7 @@ export const useGovernanceContracts = () => {
             },
           });
         } else if (!!erc721LinearVotingContract) {
-          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModuleContract.address, {
             votingContractAddress,
             votingContractMasterCopyAddress,
           });
