@@ -10,7 +10,7 @@ import { NodeAction } from '../../../providers/App/node/action';
 import { disconnectedChain } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { useUpdateTimer } from '../../utils/useUpdateTimer';
+import { useAsyncRetry } from '../../utils/useAsyncRetry';
 import { useLazyDAOName } from '../useDAOName';
 import { useFractalModules } from './useFractalModules';
 
@@ -26,7 +26,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   const { getDaoName } = useLazyDAOName();
 
   const lookupModules = useFractalModules();
-  const { setMethodOnInterval } = useUpdateTimer(daoAddress);
+  const { requestWithRetries } = useAsyncRetry();
 
   const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
     if (!result.data) {
@@ -77,35 +77,32 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
     pollInterval: ONE_MINUTE,
   });
 
-  const updateSafeInfo = useCallback(
-    async (_daoAddress: string) => {
-      const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(_daoAddress));
-      if (!safeInfo) return;
-
-      action.dispatch({
-        type: NodeAction.SET_FRACTAL_MODULES,
-        payload: await lookupModules(safeInfo.modules),
-      });
-      action.dispatch({
-        type: NodeAction.SET_SAFE_INFO,
-        payload: safeInfo,
-      });
+  const fetchSafeInfo = useCallback(async () => {
+    if (daoAddress) {
+      const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(daoAddress));
       return safeInfo;
-    },
-    [action, safeAPI, lookupModules]
-  );
+    }
+  }, [safeAPI, daoAddress]);
 
   const setDAO = useCallback(
     async (_chainId: number, _daoAddress: string) => {
       setNodeLoading(true);
       if (utils.isAddress(_daoAddress) && safeAPI) {
         try {
-          const safe = await setMethodOnInterval(() => updateSafeInfo(_daoAddress), ONE_MINUTE);
-          if (!safe) {
+          const safeInfo = await requestWithRetries(fetchSafeInfo, 5);
+          if (!safeInfo) {
             currentValidSafe.current = undefined;
             action.resetDAO();
           } else {
             currentValidSafe.current = _chainId + _daoAddress;
+            action.dispatch({
+              type: NodeAction.SET_FRACTAL_MODULES,
+              payload: await lookupModules(safeInfo.modules),
+            });
+            action.dispatch({
+              type: NodeAction.SET_SAFE_INFO,
+              payload: safeInfo,
+            });
           }
         } catch (e) {
           // network error
@@ -119,7 +116,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
       }
       setNodeLoading(false);
     },
-    [action, safeAPI, setMethodOnInterval, updateSafeInfo]
+    [action, safeAPI, lookupModules, fetchSafeInfo, requestWithRetries]
   );
 
   const { chain } = useNetwork();
