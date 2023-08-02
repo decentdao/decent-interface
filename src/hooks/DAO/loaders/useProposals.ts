@@ -16,7 +16,7 @@ export const useDAOProposals = () => {
 
   const loadAzoriusProposals = useAzoriusProposals();
   const loadSafeMultisigProposals = useSafeMultisigProposals();
-  const { setMethodOnInterval } = useUpdateTimer(daoAddress);
+  const { setMethodOnInterval, removeMethodInterval } = useUpdateTimer(daoAddress);
   const loadDAOProposals = useCallback(async () => {
     const { azoriusContract, ozLinearVotingContract, erc721LinearVotingContract } =
       governanceContracts;
@@ -31,6 +31,7 @@ export const useDAOProposals = () => {
 
       if (type) {
         try {
+          removeMethodInterval(loadSafeMultisigProposals);
           action.dispatch({
             type: FractalGovernanceAction.SET_PROPOSALS,
             payload: {
@@ -52,6 +53,7 @@ export const useDAOProposals = () => {
     action,
     loadSafeMultisigProposals,
     setMethodOnInterval,
+    removeMethodInterval,
   ]);
 
   return loadDAOProposals;
