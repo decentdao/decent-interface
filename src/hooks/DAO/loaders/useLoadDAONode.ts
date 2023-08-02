@@ -44,16 +44,16 @@ export const useLoadDAONode = () => {
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
       if (utils.isAddress(_daoAddress)) {
         try {
-          const safe = await safeAPI.getSafeInfo(_daoAddress);
-          const fractalModules = await lookupModules(safe.modules);
           const graphNodeInfo = formatDAOQuery(
             await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-            safe.address
+            _daoAddress
           );
           if (!graphNodeInfo) {
             logError('graphQL query failed');
             return { error: 'errorFailedSearch' };
           }
+          const safe = await safeAPI.getSafeInfo(_daoAddress);
+          const fractalModules = await lookupModules(safe.modules);
           const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo.daoName);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
