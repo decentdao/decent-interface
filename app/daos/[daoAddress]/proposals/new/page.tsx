@@ -20,11 +20,7 @@ import { usePrepareProposal } from '../../../../../src/hooks/DAO/proposal/usePre
 import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import { useCreateProposalSchema } from '../../../../../src/hooks/schemas/proposalCreate/useCreateProposalSchema';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
-import {
-  CreateProposalForm,
-  CreateProposalState,
-  GovernanceSelectionType,
-} from '../../../../../src/types';
+import { CreateProposalForm, CreateProposalState, GovernanceType } from '../../../../../src/types';
 
 const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
@@ -44,9 +40,7 @@ export default function ProposalCreatePage() {
 
   const [formState, setFormState] = useState(CreateProposalState.METADATA_FORM);
   const isAzorius = useMemo(
-    () =>
-      type === GovernanceSelectionType.AZORIUS_ERC20 ||
-      type === GovernanceSelectionType.AZORIUS_ERC721,
+    () => type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721,
     [type]
   );
 

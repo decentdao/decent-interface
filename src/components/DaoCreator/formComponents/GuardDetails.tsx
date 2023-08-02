@@ -15,7 +15,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
   BigNumberValuePair,
-  GovernanceSelectionType,
+  GovernanceType,
   CreatorSteps,
   AzoriusGovernance,
 } from '../../../types';
@@ -66,8 +66,8 @@ function GuardDetails(props: ICreationStepProps) {
       let parentVotes: BigNumber;
 
       switch (type) {
-        case GovernanceSelectionType.AZORIUS_ERC20:
-        case GovernanceSelectionType.AZORIUS_ERC721:
+        case GovernanceType.AZORIUS_ERC20:
+        case GovernanceType.AZORIUS_ERC721:
           if (
             !azoriusGovernance ||
             (!azoriusGovernance.votesToken && !azoriusGovernance.erc721Tokens)
@@ -89,7 +89,7 @@ function GuardDetails(props: ICreationStepProps) {
             parentVotes = BigNumber.from(1);
           }
           break;
-        case GovernanceSelectionType.MULTISIG:
+        case GovernanceType.MULTISIG:
         default:
           if (!safe) return;
           parentVotes = BigNumber.from(safe.owners.length);
@@ -136,7 +136,7 @@ function GuardDetails(props: ICreationStepProps) {
         flexDirection="column"
         gap={8}
       >
-        {governanceFormType === GovernanceSelectionType.MULTISIG && (
+        {governanceFormType === GovernanceType.MULTISIG && (
           <>
             <ContentBoxTitle>{t('titleProposalSettings')}</ContentBoxTitle>
             <LabelComponent
@@ -277,7 +277,7 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governanceFormType === GovernanceSelectionType.MULTISIG
+            governanceFormType === GovernanceType.MULTISIG
               ? CreatorSteps.MULTISIG_DETAILS
               : CreatorSteps.AZORIUS_DETAILS
           }

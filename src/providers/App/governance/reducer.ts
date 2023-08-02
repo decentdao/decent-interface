@@ -32,12 +32,10 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
   const { proposals } = state;
   switch (action.type) {
     case FractalGovernanceAction.SET_PROPOSALS: {
-      const { type, proposals: newProposals } = action.payload;
       return {
         ...state,
-        type,
         proposals: [
-          ...newProposals,
+          ...action.payload,
           ...(proposals || []).filter(
             proposal => !!(proposal as SnapshotProposal).snapshotProposalId
           ),
@@ -50,8 +48,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.SET_STRATEGY: {
       return {
         ...state,
-        type: action.payload.governanceType,
-        votingStrategy: { ...action.payload.votingStrategy },
+        votingStrategy: action.payload,
       };
     }
     case FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS:

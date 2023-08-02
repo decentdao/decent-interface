@@ -6,7 +6,7 @@ import {
   SnapshotProposal,
   AzoriusProposal,
   MultisigProposal,
-  GovernanceSelectionType,
+  GovernanceType,
 } from '../../../../types';
 
 interface IVoteContext {
@@ -79,14 +79,14 @@ export function VoteContextProvider({
       setCanVoteLoading(true);
       let newCanVote = false;
       if (user.address) {
-        if (type === GovernanceSelectionType.AZORIUS_ERC20) {
+        if (type === GovernanceType.AZORIUS_ERC20) {
           newCanVote = user.votingWeight.gt(0) && !hasVoted;
-        } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
+        } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
             await getUserERC721VotingTokens();
           }
           newCanVote = user.votingWeight.gt(0) && remainingTokenIds.length > 0;
-        } else if (type === GovernanceSelectionType.MULTISIG) {
+        } else if (type === GovernanceType.MULTISIG) {
           newCanVote = !!safe?.owners.includes(user.address);
         } else {
           newCanVote = false;

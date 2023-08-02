@@ -9,7 +9,7 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { GovernanceSelectionType, VotingStrategyType } from '../../../../types';
+import { GovernanceType, VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
@@ -37,7 +37,7 @@ export const useERC20LinearStrategy = () => {
     const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, provider);
     const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, provider);
     const votingData = {
-      governanceType: GovernanceSelectionType.AZORIUS_ERC20,
+      governanceType: GovernanceType.AZORIUS_ERC20,
       votingStrategy: {
         votingPeriod: {
           value: BigNumber.from(votingPeriodValue),

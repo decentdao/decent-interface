@@ -25,7 +25,7 @@ import {
   FractalGuardContracts,
   FractalNode,
   FreezeGuard,
-  GovernanceSelectionType,
+  GovernanceType,
   FreezeVotingType,
 } from '../../../../types';
 import { getAzoriusModuleFromModules } from '../../../../utils';
@@ -38,7 +38,7 @@ interface IManageDAOMenu {
   fractalNode?: FractalNode;
   freezeGuard?: FreezeGuard;
   guardContracts?: FractalGuardContracts;
-  governanceType?: GovernanceSelectionType;
+  governanceType?: GovernanceType;
 }
 
 /**
@@ -57,7 +57,7 @@ export function ManageDAOMenu({
   fractalNode,
 }: IManageDAOMenu) {
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
-  const [governanceType, setGovernanceType] = useState(GovernanceSelectionType.MULTISIG);
+  const [governanceType, setGovernanceType] = useState(GovernanceType.MULTISIG);
   const {
     readOnly: { user },
     node: { safe },
@@ -105,7 +105,7 @@ export function ManageDAOMenu({
         setGovernanceType(type);
       } else {
         if (fractalNode?.fractalModules) {
-          let result = GovernanceSelectionType.MULTISIG;
+          let result = GovernanceType.MULTISIG;
           const azoriusModule = getAzoriusModuleFromModules(fractalNode?.fractalModules);
           if (!!azoriusModule) {
             const azoriusContract = {
@@ -132,12 +132,12 @@ export function ManageDAOMenu({
             if (
               votingContractMasterCopyAddress === linearVotingMasterCopyContract.asProvider.address
             ) {
-              result = GovernanceSelectionType.AZORIUS_ERC20;
+              result = GovernanceType.AZORIUS_ERC20;
             } else if (
               votingContractMasterCopyAddress ===
               linearVotingERC721MasterCopyContract.asProvider.address
             ) {
-              result = GovernanceSelectionType.AZORIUS_ERC721;
+              result = GovernanceType.AZORIUS_ERC721;
             }
           }
 
@@ -225,7 +225,7 @@ export function ManageDAOMenu({
       ) &&
       freezeGuard.userHasVotes
     ) {
-      if (governanceType === GovernanceSelectionType.MULTISIG) {
+      if (governanceType === GovernanceType.MULTISIG) {
         return [createSubDAOOption, freezeOption, modifyGovernanceOption, settingsOption];
       } else {
         return [createSubDAOOption, freezeOption, settingsOption];
@@ -244,9 +244,9 @@ export function ManageDAOMenu({
     ) {
       return [clawBackOption, settingsOption];
     } else {
-      if (governanceType === GovernanceSelectionType.MULTISIG && canUserCreateProposal) {
+      if (governanceType === GovernanceType.MULTISIG && canUserCreateProposal) {
         return [createSubDAOOption, modifyGovernanceOption, settingsOption];
-      } else if (governanceType === GovernanceSelectionType.MULTISIG) {
+      } else if (governanceType === GovernanceType.MULTISIG) {
         return [settingsOption];
       } else {
         return [createSubDAOOption, settingsOption];

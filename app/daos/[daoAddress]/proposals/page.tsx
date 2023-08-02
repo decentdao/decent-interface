@@ -13,11 +13,7 @@ import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../src/constants/routes';
 import useSubmitProposal from '../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../src/providers/App/AppProvider';
-import {
-  AzoriusGovernance,
-  DecentGovernance,
-  GovernanceSelectionType,
-} from '../../../../src/types';
+import { AzoriusGovernance, DecentGovernance, GovernanceType } from '../../../../src/types';
 
 export default function ProposalsPage() {
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
@@ -30,7 +26,7 @@ export default function ProposalsPage() {
   const wrapTokenOpen = useFractalModal(ModalType.WRAP_TOKEN);
   const unwrapTokenOpen = useFractalModal(ModalType.UNWRAP_TOKEN);
   const canDelegate = useMemo(() => {
-    if (azoriusGovernance.type === GovernanceSelectionType.AZORIUS_ERC20) {
+    if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC20) {
       const decentGovernance = azoriusGovernance as DecentGovernance;
       const hasLockedTokenBalance = decentGovernance?.lockedVotesToken?.balance?.gt(0);
       const hasVotesTokenBalance = azoriusGovernance?.votesToken?.balance?.gt(0);

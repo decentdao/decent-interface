@@ -16,7 +16,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
   AzoriusProposal,
-  GovernanceSelectionType,
+  GovernanceType,
   ERC721ProposalVote,
 } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
@@ -58,11 +58,11 @@ function ProposalVotes({
   const totalVotesCasted = useMemo(() => yes.add(no).add(abstain), [yes, no, abstain]);
 
   const isERC20 = useMemo(
-    () => azoriusGovernance.type === GovernanceSelectionType.AZORIUS_ERC20,
+    () => azoriusGovernance.type === GovernanceType.AZORIUS_ERC20,
     [azoriusGovernance.type]
   );
   const isERC721 = useMemo(
-    () => azoriusGovernance.type === GovernanceSelectionType.AZORIUS_ERC721,
+    () => azoriusGovernance.type === GovernanceType.AZORIUS_ERC721,
     [azoriusGovernance.type]
   );
 

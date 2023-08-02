@@ -5,6 +5,7 @@ import { useSubgraphChainName } from '../../../graphql/utils';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
+import { GovernanceType } from '../../../types';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
 import { useERC721LinearStrategy } from './governance/useERC721LinearStrategy';
@@ -89,6 +90,10 @@ export const useFractalGovernance = () => {
 
       if (azoriusContract) {
         if (ozLinearVotingContract) {
+          action.dispatch({
+            type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
+            payload: GovernanceType.AZORIUS_ERC20,
+          });
           loadERC20Strategy();
           loadERC20Token();
           loadUnderlyingERC20Token();
@@ -96,9 +101,18 @@ export const useFractalGovernance = () => {
             loadLockedVotesToken();
           }
         } else if (erc721LinearVotingContract) {
+          action.dispatch({
+            type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
+            payload: GovernanceType.AZORIUS_ERC721,
+          });
           loadERC721Strategy();
           loadERC721Tokens();
         }
+      } else {
+        action.dispatch({
+          type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
+          payload: GovernanceType.MULTISIG,
+        });
       }
 
       loadDAOProposals();
@@ -117,5 +131,6 @@ export const useFractalGovernance = () => {
     guardContracts.freezeGuardContract,
     loadERC721Strategy,
     loadERC721Tokens,
+    action,
   ]);
 };

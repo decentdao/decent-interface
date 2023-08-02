@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
 import {
   CreatorFormState,
-  GovernanceSelectionType,
+  GovernanceType,
   TokenCreationType,
   VotingStrategyType,
 } from '../../types';
@@ -11,7 +11,7 @@ export const DEFAULT_TOKEN_DECIMALS = 18;
 export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
-    governance: GovernanceSelectionType.MULTISIG,
+    governance: GovernanceType.MULTISIG,
     snapshotURL: '',
   },
   erc20Token: {

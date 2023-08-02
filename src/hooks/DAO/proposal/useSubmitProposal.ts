@@ -20,7 +20,7 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import {
   MetaTransaction,
   ProposalExecuteData,
-  GovernanceSelectionType,
+  GovernanceType,
   ProposalMetadata,
 } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
@@ -127,14 +127,14 @@ export default function useSubmitProposal() {
           return checkIsMultisigOwner(safeInfo.owners);
         }
       } else {
-        if (type === GovernanceSelectionType.MULTISIG) {
+        if (type === GovernanceType.MULTISIG) {
           const { owners } = safe || {};
           return checkIsMultisigOwner(owners);
-        } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
+        } else if (type === GovernanceType.AZORIUS_ERC20) {
           if (ozLinearVotingContract && user.address) {
             return ozLinearVotingContract.asSigner.isProposer(user.address);
           }
-        } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
+        } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (erc721LinearVotingContract) {
             return erc721LinearVotingContract.asSigner.isProposer(user.address);
           }

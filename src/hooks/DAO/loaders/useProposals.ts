@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
-import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
-import { GovernanceSelectionType } from '../../../types';
+import { GovernanceType } from '../../../types';
 import { useUpdateTimer } from '../../utils/useUpdateTimer';
 import { useAzoriusProposals } from './governance/useAzoriusProposals';
 import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals';
@@ -10,7 +9,7 @@ import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals'
 export const useDAOProposals = () => {
   const {
     node: { daoAddress },
-    governanceContracts,
+    governance: { type },
     action,
   } = useFractal();
 
@@ -18,37 +17,19 @@ export const useDAOProposals = () => {
   const loadSafeMultisigProposals = useSafeMultisigProposals();
   const { setMethodOnInterval, removeMethodInterval } = useUpdateTimer(daoAddress);
   const loadDAOProposals = useCallback(async () => {
-    const { azoriusContract, ozLinearVotingContract, erc721LinearVotingContract } =
-      governanceContracts;
-
-    if (!!azoriusContract) {
+    if (type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721) {
       // load Azorius proposals and strategies
-      let type = ozLinearVotingContract
-        ? GovernanceSelectionType.AZORIUS_ERC20
-        : erc721LinearVotingContract
-        ? GovernanceSelectionType.AZORIUS_ERC721
-        : undefined;
-
-      if (type) {
-        try {
-          removeMethodInterval(loadSafeMultisigProposals);
-          action.dispatch({
-            type: FractalGovernanceAction.SET_PROPOSALS,
-            payload: {
-              type,
-              proposals: await loadAzoriusProposals(),
-            },
-          });
-        } catch (e) {
-          logError(e);
-        }
-      }
-    } else {
+      removeMethodInterval(loadSafeMultisigProposals);
+      action.dispatch({
+        type: FractalGovernanceAction.SET_PROPOSALS,
+        payload: await loadAzoriusProposals(),
+      });
+    } else if (type === GovernanceType.MULTISIG) {
       // load mulisig proposals
       setMethodOnInterval(loadSafeMultisigProposals);
     }
   }, [
-    governanceContracts,
+    type,
     loadAzoriusProposals,
     action,
     loadSafeMultisigProposals,

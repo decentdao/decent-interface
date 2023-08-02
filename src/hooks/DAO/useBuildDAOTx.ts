@@ -3,7 +3,7 @@ import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import {
   SafeMultisigDAO,
-  GovernanceSelectionType,
+  GovernanceType,
   AzoriusContracts,
   BaseContracts,
   AzoriusERC20DAO,
@@ -69,8 +69,8 @@ const useBuildDAOTx = () => {
       }
 
       if (
-        daoData.governance === GovernanceSelectionType.AZORIUS_ERC20 ||
-        daoData.governance === GovernanceSelectionType.AZORIUS_ERC721
+        daoData.governance === GovernanceType.AZORIUS_ERC20 ||
+        daoData.governance === GovernanceType.AZORIUS_ERC721
       ) {
         if (
           !fractalAzoriusMasterCopyContract ||
@@ -129,8 +129,8 @@ const useBuildDAOTx = () => {
 
       // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx =
-        daoData.governance === GovernanceSelectionType.AZORIUS_ERC20 ||
-        daoData.governance === GovernanceSelectionType.AZORIUS_ERC721
+        daoData.governance === GovernanceType.AZORIUS_ERC20 ||
+        daoData.governance === GovernanceType.AZORIUS_ERC721
           ? await daoTxBuilder.buildAzoriusTx()
           : await daoTxBuilder.buildMultisigTx();
 
