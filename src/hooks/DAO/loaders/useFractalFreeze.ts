@@ -6,7 +6,7 @@ import {
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { FreezeVoteCastEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/ERC20FreezeVoting';
 import { BigNumber, constants } from 'ethers';
-import { useCallback, useEffect, useState, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { useAccount, useProvider } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
 import {
@@ -38,9 +38,10 @@ export const useFractalFreeze = ({
     action,
   } = useFractal();
   const { address: account } = useAccount();
-  const { totalVotingTokenAddresses } = useUserERC721VotingTokens(undefined, parentSafeAddress);
-  const [userFreezeVoteWeight, setUserFreezeVoteWeight] = useState(
-    totalVotingTokenAddresses.length
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(
+    undefined,
+    parentSafeAddress,
+    loadOnMount
   );
 
   const provider = useProvider();
@@ -115,7 +116,11 @@ export const useFractalFreeze = ({
               await votesTokenContract.getPastVotes(account || '', freezeCreatedBlock)
         ).gt(0);
       } else if (freezeVotingType === FreezeVotingType.ERC721) {
-        userHasVotes = userFreezeVoteWeight > 0;
+        const { totalVotingTokenAddresses } = await getUserERC721VotingTokens(
+          undefined,
+          parentSafeAddress
+        );
+        userHasVotes = totalVotingTokenAddresses.length > 0;
       }
 
       const freeze: FreezeGuard = {
@@ -125,7 +130,14 @@ export const useFractalFreeze = ({
       isFreezeSet.current = true;
       return freeze;
     },
-    [account, provider, safeSingletonContract, votesTokenMasterCopyContract, userFreezeVoteWeight]
+    [
+      account,
+      provider,
+      safeSingletonContract,
+      votesTokenMasterCopyContract,
+      getUserERC721VotingTokens,
+      parentSafeAddress,
+    ]
   );
 
   const setFractalFreezeGuard = useCallback(
@@ -137,13 +149,6 @@ export const useFractalFreeze = ({
     },
     [action, loadFractalFreezeGuard]
   );
-
-  useEffect(() => {
-    if (userFreezeVoteWeight !== totalVotingTokenAddresses.length) {
-      setUserFreezeVoteWeight(totalVotingTokenAddresses.length);
-      loadKey.current = undefined; // Unset loadKey.current to force refetching freeze guard details
-    }
-  }, [totalVotingTokenAddresses.length, userFreezeVoteWeight]);
 
   useEffect(() => {
     if (
