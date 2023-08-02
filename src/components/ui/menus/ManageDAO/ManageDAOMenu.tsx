@@ -4,6 +4,7 @@ import {
   ERC721FreezeVoting,
   Azorius,
   ModuleProxyFactory,
+  MultisigFreezeVoting,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/navigation';
@@ -25,6 +26,7 @@ import {
   FractalNode,
   FreezeGuard,
   GovernanceSelectionType,
+  FreezeVotingType,
 } from '../../../../types';
 import { getAzoriusModuleFromModules } from '../../../../utils';
 import { ModalType } from '../../modals/ModalProvider';
@@ -174,10 +176,14 @@ export function ManageDAOMenu({
       optionKey: 'optionInitiateFreeze',
       onClick: () => {
         const freezeVotingContract = guardContracts?.freezeVotingContract?.asSigner;
+        const freezeVotingType = guardContracts?.freezeVotingType;
         if (freezeVotingContract) {
-          if (governanceType === GovernanceSelectionType.AZORIUS_ERC20) {
-            (freezeVotingContract as ERC20FreezeVoting).castFreezeVote();
-          } else if (governanceType === GovernanceSelectionType.AZORIUS_ERC721) {
+          if (
+            freezeVotingType === FreezeVotingType.MULTISIG ||
+            freezeVotingType === FreezeVotingType.ERC20
+          ) {
+            (freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting).castFreezeVote();
+          } else if (freezeVotingType === FreezeVotingType.ERC721) {
             (freezeVotingContract as ERC721FreezeVoting)['castFreezeVote(address[],uint256[])'](
               totalVotingTokenAddresses,
               totalVotingTokenIds
@@ -253,6 +259,7 @@ export function ManageDAOMenu({
     safeAddress,
     governanceType,
     guardContracts?.freezeVotingContract?.asSigner,
+    guardContracts?.freezeVotingType,
     handleClawBack,
     canUserCreateProposal,
     handleModifyGovernance,
