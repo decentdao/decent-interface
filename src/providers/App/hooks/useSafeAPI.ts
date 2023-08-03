@@ -36,34 +36,37 @@ import { SafeMultisigTransactionResponse } from '../../../types';
 import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
 class CachingSafeServiceClient extends SafeServiceClient {
-  CACHED_MINUTES: number = 1;
-  chainId: number;
-  requestCount: number = 0;
-  cacheCount: number = 0;
-  // @todo any way to limit multiple requests?
-  // requestMap = new Map<string, boolean>();
+  readonly CACHED_MINUTES: number = 1;
+  readonly CHAINID: number;
+
+  // holds requests that have yet to return, to avoid calling the same
+  // endpoint more than once
+  requestMap = new Map<string, Promise<any> | null>();
 
   constructor(chainId: number, { txServiceUrl, ethAdapter }: SafeServiceClientConfig) {
     super({ txServiceUrl, ethAdapter });
-    this.chainId = chainId;
+    this.CHAINID = chainId;
   }
 
-  async setCache(key: string, value: any): Promise<void> {
-    await setIndexedDBValue(DBObjectKeys.SAFE_API, key, value, this.chainId, this.CACHED_MINUTES);
+  private async setCache(key: string, value: any): Promise<void> {
+    await setIndexedDBValue(DBObjectKeys.SAFE_API, key, value, this.CHAINID, this.CACHED_MINUTES);
   }
 
-  async getCache<T>(key: string): Promise<T> {
-    const value: T = await getIndexedDBValue(DBObjectKeys.SAFE_API, key, this.chainId);
+  private async getCache<T>(key: string): Promise<T> {
+    const value: T = await getIndexedDBValue(DBObjectKeys.SAFE_API, key, this.CHAINID);
     return value;
   }
 
-  async request<T>(cacheKey: string, endpoint: () => Promise<T>): Promise<T> {
+  private async request<T>(cacheKey: string, endpoint: () => Promise<T>): Promise<T> {
     let value: T = await this.getCache<T>(cacheKey);
-    if (value) {
-      console.log('Safe request cached: ' + this.cacheCount++);
-    } else {
-      value = await endpoint();
-      console.log('Safe request api: ' + this.requestCount++);
+    if (!value) {
+      let call = this.requestMap.get(cacheKey);
+      if (!call) {
+        call = endpoint();
+        this.requestMap.set(cacheKey, call);
+      }
+      value = await call;
+      this.requestMap.set(cacheKey, null);
       await this.setCache(cacheKey, value);
     }
     return value;
