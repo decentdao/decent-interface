@@ -19,6 +19,11 @@ import { disconnectedChain } from '../src/providers/NetworkConfig/NetworkConfigP
 
 const VALUE_PROPS = [
   {
+    iconSrc: '/images/icon-operate.svg',
+    titleKey: 'operate',
+    descKey: 'operateDesc',
+  },
+  {
     iconSrc: '/images/icon-structure.svg',
     titleKey: 'structure',
     descKey: 'structureDesc',
@@ -27,11 +32,6 @@ const VALUE_PROPS = [
     iconSrc: '/images/icon-govern.svg',
     titleKey: 'govern',
     descKey: 'governDesc',
-  },
-  {
-    iconSrc: '/images/icon-operate.svg',
-    titleKey: 'operate',
-    descKey: 'operateDesc',
   },
 ];
 
