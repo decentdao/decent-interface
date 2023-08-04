@@ -1,14 +1,14 @@
 {
-  "Create a subDAO": "Create a subDAO",
-  "Send Token": "Send Token",
-  "Send Eth": "Send Eth",
-  "Clawback Proposal": "Clawback Proposal",
-  "Transfer all funds from the targeted subDAO to our own treasury.": "Transfer all funds from the targeted subDAO to our own treasury.",
-  "Create Proposal Template": "Create Proposal Template",
-  "Execution of this proposal will create a new proposal template, attached to this DAO.": "Execution of this proposal will create a new proposal template, attached to this DAO.",
-  "Remove Proposal Template": "Remove Proposal Template",
-  "Execution of this proposal will remove proposal template, attached to this DAO.": "Execution of this proposal will remove proposal template, attached to this DAO.",
-  "Change governance module to Azorius": "Change governance module to Azorius",
-  "Update DAO Name": "Update DAO Name",
-  "Update DAO Snapshot Space": "Update DAO Snapshot Space"
+    "Create a subDAO": "Create a sub-Safe",
+    "Send Token": "Send Token",
+    "Send Eth": "Send Eth",
+    "Clawback Proposal": "Clawback Proposal",
+    "Transfer all funds from the targeted subDAO to our own treasury.": "Transfer all funds from the targeted sub-Safe to the parent-Safe treasury.",
+    "Create Proposal Template": "Create Proposal Template",
+    "Execution of this proposal will create a new proposal template, attached to this DAO.": "Execution of this proposal will create a new proposal template, attached to this Safe.",
+    "Remove Proposal Template": "Remove Proposal Template",
+    "Execution of this proposal will remove proposal template, attached to this DAO.": "Execution of this proposal will remove proposal template, attached to this Safe.",
+    "Change governance module to Azorius": "Change governance module to Azorius",
+    "Update DAO Name": "Update Safe Name",
+    "Update DAO Snapshot Space": "Update Snapshot Space"
 }
