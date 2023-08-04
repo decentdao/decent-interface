@@ -82,7 +82,7 @@
     "titleSelectToken": "Select Token",
     "titleAddress": "Address",
     "titleAmount": "Amount",
-    "createSubDAOPendingToastMessage": "Creating your subDAO Proposal",
+    "createSubDAOPendingToastMessage": "Creating your sub-Safe Proposal",
     "createSubDAOSuccessToastMessage": "Deployment successful",
     "createSubDAOFailureToastMessage": "Deployment failed",
     "helperAllocations": "Unallocated tokens will be placed in your DAO's treasury",

@@ -1,10 +1,10 @@
 {
     "homeTitle": "Welcome to Fractal",
-    "homeDesc": "We accelerate the decentralized future by offering DAOs the most composable app and framework. Your On-Chain hierarchy!",
+    "homeDesc": "We accelerate the decentralized future by offering Safes the most composable app and framework. Your On-Chain hierarchy!",
     "govern": "Govern",
     "governDesc": "Pick your governance per sub-Safe. Create and authorise proposals. Decentralize on any timeline",
     "structure": "Structure",
-    "structureDesc": "Compose subDAO hierarchies each with their own treasury, governance and permissions",
+    "structureDesc": "Compose Safe hierarchies each with their own treasury, governance and permissions",
     "operate": "Operate",
     "operateDesc": "Unlock sub-team effectiveness with reuseable, streamed and permissioned transactions",
     "featuredTitle": "Featured Organizations",
