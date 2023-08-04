@@ -34,8 +34,8 @@
     "helperChooseGovernance": "What type of governance would you like?",
     "exampleVotingPeriod": "10,080 minutes = 1 week",
     "helperVotingPeriod": "The length of time (in minutes) voting is allowed after proposal creation",
-    "helperQuorum": "The percentage of total possible token votes required to pass a proposal",
-    "helperQuorumThreshold": "How many approval votes out of total NFTs are needed to pass a proposal?",
+    "helperQuorum": "The percentage of total possible token votes required to vote on a proposal to make the result valid",
+    "helperQuorumThreshold": "The required votes out of the available voting weight needed to make the result valid",
     "governanceDescription": "These values can be changed later via a proposal",
     "titleGuardConfig": "Configure Parent Controls",
     "titleFreezeParams": "Freeze Parameters",
@@ -99,5 +99,5 @@
     "tooltipMultisig": "Multisig is useful when you only have a small group of decision makers that all need to sign a transaction for it pass. <1>Learn more</1>",
     "tooltipTokenVoting": "Token Voting is a method to give a larger group of ERC-20 token holders governance power to propose and vote on transactions. <1>Learn more</1>",
     "toastDisconnected": "Connect an account to proceed!",
-    "tooltipNftVoting": "NFT Voting is good practice to give a group ERC-721 (aka NFT) holders to propose and vote on transactions. Multiple NFT addresses might be used. Learn more with <1>Fractal Docs</1>"
+    "tooltipNftVoting": "NFT Voting is good practice to give a group ERC-721 (aka NFT) holders to propose and vote on transactions. Multiple NFT addresses may be used. Learn more with <1>Fractal Docs</1>"
 }

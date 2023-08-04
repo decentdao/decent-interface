@@ -34,7 +34,7 @@
     "stateFreezeInitTip": "The parent has initiated a vote to potentially freeze this sub-Safe.",
     "stateFrozen": "Frozen",
     "stateFrozenTip": "The parent has voted to freeze this DAO.",
-    "stateTimelockable": "The parent has initiated a vote to potentially freeze this sub-Safe.",
+    "stateTimelockable": "Timelockable",
     "stateTimelockableTip": "The proposal can now be timelocked for execution.",
     "stateExpired": "Expired",
     "stateExpiredTip": "The proposal passed but was not executed before the execution period ended.",

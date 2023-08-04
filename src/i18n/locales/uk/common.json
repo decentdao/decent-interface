@@ -27,8 +27,6 @@
     "reload": "Перезавантажити",
     "delegate": "Делегувати",
     "home": "Головна",
-    "labelViewDAO": "Переглянути DAO",
-    "labelDAOFound": "DAO знайдено!",
     "labelEtherscan": "Переглянути на Etherscan",
     "errorInvalidENSAddress": "Некорректне ім'я ENS або адреса",
     "errorInvalidAddress": "Некорректна Ethereum адреса",
@@ -62,6 +60,5 @@
     "selectAll": "Обрати усі",
     "clear": "Очистити",
     "cancel": "Відмінити",
-    "example": "Приклад",
-    "titleNodes": "Ієрархія DAO"
+    "example": "Приклад"
 }
