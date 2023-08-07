@@ -2,7 +2,6 @@ import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDAOProposals } from '../../../../hooks/DAO/loaders/useProposals';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
@@ -21,7 +20,7 @@ const useSendAssets = ({
   const { submitProposal } = useSubmitProposal();
 
   const { t } = useTranslation(['modals', 'proposalMetadata']);
-  const loadDAOProposals = useDAOProposals();
+
   const sendAssets = useCallback(async () => {
     const isEth = !asset.tokenAddress;
     const description = formatCoin(
@@ -52,9 +51,6 @@ const useSendAssets = ({
 
     await submitProposal({
       proposalData,
-      successCallback: () => {
-        loadDAOProposals();
-      },
       nonce,
       pendingToastMessage: t('sendAssetsPendingToastMessage'),
       successToastMessage: t('sendAssetsSuccessToastMessage'),
@@ -66,7 +62,6 @@ const useSendAssets = ({
     asset?.token?.symbol,
     transferAmount,
     destinationAddress,
-    loadDAOProposals,
     t,
     submitProposal,
     nonce,

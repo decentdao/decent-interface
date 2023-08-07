@@ -35,13 +35,16 @@ export function useLoadDAOData(fractalNode?: FractalNode, parentAddress?: string
         safe,
         fractalModules
       );
+
       if (!freezeGuardContracts) {
         freezeGuardContracts = initialGuardContractsState;
       }
       let freezeGuard = await loadFractalFreezeGuard(freezeGuardContracts);
+
       if (!freezeGuard) {
         freezeGuard = initialGuardState;
       }
+
       setDAOData({
         safe,
         fractalModules,

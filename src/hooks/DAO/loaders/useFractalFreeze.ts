@@ -51,10 +51,13 @@ export const useFractalFreeze = ({
 
   const loadFractalFreezeGuard = useCallback(
     async ({ freezeVotingContract, freezeVotingType: freezeVotingType }: FractalGuardContracts) => {
-      if (freezeVotingType == null || !freezeVotingContract) return;
+      if (freezeVotingType == null || !freezeVotingContract || !account) return;
       let userHasVotes: boolean = false;
       const freezeCreatedBlock = await (
-        freezeVotingContract!.asSigner as ERC20FreezeVoting | ERC721FreezeVoting
+        freezeVotingContract!.asSigner as
+          | ERC20FreezeVoting
+          | ERC721FreezeVoting
+          | MultisigFreezeVoting
       ).freezeProposalCreatedBlock();
 
       const freezeVotesThreshold = await freezeVotingContract!.asSigner.freezeVotesThreshold();
@@ -163,8 +166,8 @@ export const useFractalFreeze = ({
   }, [setFractalFreezeGuard, guardContracts, daoAddress, loadOnMount]);
 
   useEffect(() => {
-    const { freezeVotingContract, freezeVotingType: freezeVotingType } = guardContracts;
     if (!loadOnMount) return;
+    const { freezeVotingContract, freezeVotingType: freezeVotingType } = guardContracts;
     let votingRPC: MultisigFreezeVoting | ERC20FreezeVoting | ERC721FreezeVoting;
     const listenerCallback: TypedListener<FreezeVoteCastEvent> = async (
       voter: string,

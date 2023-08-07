@@ -82,7 +82,7 @@ function GuardDetails(props: ICreationStepProps) {
             parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
           } else if (azoriusGovernance.erc721Tokens) {
             parentVotes = azoriusGovernance.erc721Tokens!.reduce(
-              (prev, curr) => curr.votingWeight.add(prev),
+              (prev, curr) => curr.votingWeight.mul(curr.totalSupply || 1).add(prev),
               BigNumber.from(0)
             );
           } else {

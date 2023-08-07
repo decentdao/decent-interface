@@ -160,7 +160,11 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     // subDAO case, add freeze guard
     if (this.parentAddress) {
-      const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder();
+      const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
+        undefined,
+        undefined,
+        this.parentStrategyType
+      );
 
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO

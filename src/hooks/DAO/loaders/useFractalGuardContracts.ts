@@ -122,6 +122,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
           freezeVotingType,
           freezeGuardType,
         };
+
         return contracts;
       }
     },
