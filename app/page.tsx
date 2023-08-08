@@ -24,14 +24,14 @@ const VALUE_PROPS = [
     descKey: 'structureDesc',
   },
   {
-    iconSrc: '/images/icon-govern.svg',
-    titleKey: 'govern',
-    descKey: 'governDesc',
-  },
-  {
     iconSrc: '/images/icon-operate.svg',
     titleKey: 'operate',
     descKey: 'operateDesc',
+  },
+  {
+    iconSrc: '/images/icon-govern.svg',
+    titleKey: 'govern',
+    descKey: 'governDesc',
   },
 ];
 

@@ -18,7 +18,7 @@ export default function useRemoveProposalTemplate() {
         const proposalMetadata = {
           title: 'Remove Proposal Template',
           description:
-            'Execution of this proposal will remove proposal template, attached to this DAO.',
+            'Execution of this proposal will remove proposal template, attached to this Safe.',
           documentationUrl: '',
         };
 
