@@ -157,12 +157,6 @@ class CachingSafeServiceClient extends SafeServiceClient {
     );
     return value;
   }
-  override async getNextNonce(safeAddress: string): Promise<number> {
-    const value = await this.request('getNextNonce' + safeAddress, 1, () => {
-      return super.getNextNonce(safeAddress);
-    });
-    return value;
-  }
   override async getBalances(
     safeAddress: string,
     options?: SafeBalancesOptions | undefined
