@@ -59,8 +59,8 @@ const useCastVote = ({
           successMessage: t('successCastVote'),
           successCallback: () => {
             setTimeout(() => {
-              getCanVote(true);
               getHasVoted();
+              getCanVote(true);
             }, 3000);
           },
         });
