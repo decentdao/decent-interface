@@ -55,7 +55,7 @@ export default function MetadataContainer() {
   const handleEditDAOName = () => {
     const proposalData: ProposalExecuteData = {
       metaData: {
-        title: t('Update DAO Name', { ns: 'proposalMetadata' }),
+        title: t('Update Safe Name', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },
@@ -79,7 +79,7 @@ export default function MetadataContainer() {
   const handleEditDAOSnapshotURL = () => {
     const proposalData: ProposalExecuteData = {
       metaData: {
-        title: t('Update DAO Snapshot Space', { ns: 'proposalMetadata' }),
+        title: t('Update Snapshot Space', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },

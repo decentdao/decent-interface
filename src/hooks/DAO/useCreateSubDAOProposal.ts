@@ -48,7 +48,7 @@ export const useCreateSubDAOProposal = () => {
             ]),
           ],
           metaData: {
-            title: t('Create a subDAO', { ns: 'proposalMetadata' }),
+            title: t('Create a sub-Safe', { ns: 'proposalMetadata' }),
             description: '',
             documentationUrl: '',
           },
