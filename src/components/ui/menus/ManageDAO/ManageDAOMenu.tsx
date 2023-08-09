@@ -179,6 +179,7 @@ export function ManageDAOMenu({
           ) {
             (freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting).castFreezeVote();
           } else if (freezeVotingType === FreezeVotingType.ERC721) {
+            console.log(freezeVotingType, freezeVotingContract);
             getUserERC721VotingTokens(undefined, safeAddress).then(tokensInfo =>
               (freezeVotingContract as ERC721FreezeVoting)['castFreezeVote(address[],uint256[])'](
                 tokensInfo.totalVotingTokenAddresses,

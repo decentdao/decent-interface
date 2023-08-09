@@ -49,6 +49,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private strategyAddress: string | undefined;
 
   private parentStrategyType: VotingStrategyType | undefined;
+  private parentStrategyAddress: string | undefined;
 
   constructor(
     signerOrProvider: any,
@@ -61,7 +62,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     azoriusContracts?: AzoriusContracts,
     azoriusAddress?: string,
     strategyAddress?: string,
-    parentStrategyType?: VotingStrategyType
+    parentStrategyType?: VotingStrategyType,
+    parentStrategyAddress?: string
   ) {
     super(
       signerOrProvider,
@@ -77,6 +79,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.azoriusAddress = azoriusAddress;
     this.strategyAddress = strategyAddress;
     this.parentStrategyType = parentStrategyType;
+    this.parentStrategyAddress = parentStrategyAddress;
 
     this.initFreezeVotesData();
   }
@@ -121,8 +124,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
             subDaoData.freezeProposalPeriod, // FreezeProposalPeriod
             subDaoData.freezePeriod, // FreezePeriod
             this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
-              ? this.strategyAddress
-              : this.parentTokenAddress ?? this.parentAddress, // Parent Safe or Votes Token
+              ? this.parentStrategyAddress
+              : this.parentTokenAddress ?? this.parentAddress, // Parent Votes Token or Parent Safe Address
           ]
         ),
       ],

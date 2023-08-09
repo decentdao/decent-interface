@@ -67,7 +67,10 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.setSafeContract(predictedSafeAddress);
   }
 
-  public createDaoTxBuilder(parentStrategyType?: VotingStrategyType): DaoTxBuilder {
+  public createDaoTxBuilder(
+    parentStrategyType?: VotingStrategyType,
+    parentStrategyAddress?: string
+  ): DaoTxBuilder {
     return new DaoTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
@@ -80,14 +83,16 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this,
       this.parentAddress,
       this.parentTokenAddress,
-      parentStrategyType
+      parentStrategyType,
+      parentStrategyAddress
     );
   }
 
   public createFreezeGuardTxBuilder(
     azoriusAddress?: string,
     strategyAddress?: string,
-    parentStrategyType?: VotingStrategyType
+    parentStrategyType?: VotingStrategyType,
+    parentStrategyAddress?: string // User only with ERC-721 parent
   ): FreezeGuardTxBuilder {
     return new FreezeGuardTxBuilder(
       this.signerOrProvider,
@@ -100,7 +105,8 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.azoriusContracts,
       azoriusAddress,
       strategyAddress,
-      parentStrategyType
+      parentStrategyType,
+      parentStrategyAddress
     );
   }
 

@@ -60,7 +60,7 @@ export default function CreateProposalTemplatePage() {
   const successCallback = () => {
     if (daoAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      push(`/daos/${daoAddress}/proposals`);
+      push(DAO_ROUTES.proposals.relative(daoAddress));
     }
   };
 

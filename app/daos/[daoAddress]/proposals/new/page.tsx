@@ -46,7 +46,7 @@ export default function ProposalCreatePage() {
 
   const successCallback = () => {
     if (daoAddress) {
-      push(`/daos/${daoAddress}/proposals`);
+      push(DAO_ROUTES.proposals.relative(daoAddress));
     }
   };
 
