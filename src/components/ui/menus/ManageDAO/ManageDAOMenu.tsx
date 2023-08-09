@@ -179,13 +179,11 @@ export function ManageDAOMenu({
           ) {
             (freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting).castFreezeVote();
           } else if (freezeVotingType === FreezeVotingType.ERC721) {
-            console.log(freezeVotingType, freezeVotingContract);
-            getUserERC721VotingTokens(undefined, safeAddress).then(tokensInfo =>
-              (freezeVotingContract as ERC721FreezeVoting)['castFreezeVote(address[],uint256[])'](
-                tokensInfo.totalVotingTokenAddresses,
-                tokensInfo.totalVotingTokenIds
-              )
-            );
+            getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo => {
+              return (freezeVotingContract as ERC721FreezeVoting)[
+                'castFreezeVote(address[],uint256[])'
+              ](tokensInfo.totalVotingTokenAddresses, tokensInfo.totalVotingTokenIds);
+            });
           }
         }
       },
@@ -255,6 +253,7 @@ export function ManageDAOMenu({
     currentTime,
     push,
     safeAddress,
+    parentAddress,
     governanceType,
     guardContracts?.freezeVotingContract?.asSigner,
     guardContracts?.freezeVotingType,
