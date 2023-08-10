@@ -17,7 +17,9 @@ import {
   getMultiSendCallOnlyDeployment,
 } from '@safe-global/safe-deployments';
 import { mainnet } from 'wagmi/chains';
+import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
+import { isProd } from '../../../utils';
 
 const CHAIN_ID = 1;
 const SAFE_VERSION = '1.3.0';
@@ -60,4 +62,7 @@ export const mainnetConfig: NetworkConfig = {
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
+  createOptions: isProd()
+    ? [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20]
+    : [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20, GovernanceType.AZORIUS_ERC721],
 };

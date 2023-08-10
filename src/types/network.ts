@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { Chain } from 'wagmi';
+import { GovernanceType } from './fractal';
 
 export type Providers =
   | ethers.providers.Web3Provider
@@ -37,4 +38,5 @@ export type NetworkConfig = {
     votesERC20WrapperMasterCopy: string;
     keyValuePairs: string;
   };
+  createOptions: GovernanceType[];
 };

@@ -6,6 +6,7 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   ICreationStepProps,
   CreatorSteps,
@@ -56,6 +57,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
     setFieldValue('essentials.governance', value);
   };
 
+  const { createOptions } = useNetworkConfig();
+
   return (
     <StepWrapper
       mode={mode}
@@ -94,51 +97,57 @@ export function EstablishEssentials(props: ICreationStepProps) {
             value={values.essentials.governance}
             onChange={handleGovernanceChange}
           >
-            <RadioWithText
-              label={t('labelMultisigGov')}
-              description={t('descMultisigGov')}
-              testId="choose-multisig"
-              value={GovernanceType.MULTISIG}
-              tooltip={
-                <Trans
-                  i18nKey="tooltipMultisig"
-                  ns="daoCreate"
-                >
-                  placeholder
-                  <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
-                </Trans>
-              }
-            />
-            <RadioWithText
-              label={t('labelAzoriusErc20Gov')}
-              description={t('descAzoriusErc20Gov')}
-              testId="choose-azorius"
-              value={GovernanceType.AZORIUS_ERC20}
-              tooltip={
-                <Trans
-                  i18nKey="tooltipTokenVoting"
-                  ns="daoCreate"
-                >
-                  placeholder
-                  <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
-                </Trans>
-              }
-            />
-            <RadioWithText
-              label={t('labelAzoriusErc721Gov')}
-              description={t('descAzoriusErc721Gov')}
-              testId="choose-azorius-erc721"
-              value={GovernanceType.AZORIUS_ERC721}
-              tooltip={
-                <Trans
-                  i18nKey="tooltipNftVoting"
-                  ns="daoCreate"
-                >
-                  placeholder
-                  <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
-                </Trans>
-              }
-            />
+            {createOptions.includes(GovernanceType.MULTISIG) && (
+              <RadioWithText
+                label={t('labelMultisigGov')}
+                description={t('descMultisigGov')}
+                testId="choose-multisig"
+                value={GovernanceType.MULTISIG}
+                tooltip={
+                  <Trans
+                    i18nKey="tooltipMultisig"
+                    ns="daoCreate"
+                  >
+                    placeholder
+                    <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                  </Trans>
+                }
+              />
+            )}
+            {createOptions.includes(GovernanceType.AZORIUS_ERC20) && (
+              <RadioWithText
+                label={t('labelAzoriusErc20Gov')}
+                description={t('descAzoriusErc20Gov')}
+                testId="choose-azorius"
+                value={GovernanceType.AZORIUS_ERC20}
+                tooltip={
+                  <Trans
+                    i18nKey="tooltipTokenVoting"
+                    ns="daoCreate"
+                  >
+                    placeholder
+                    <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                  </Trans>
+                }
+              />
+            )}
+            {createOptions.includes(GovernanceType.AZORIUS_ERC721) && (
+              <RadioWithText
+                label={t('labelAzoriusErc721Gov')}
+                description={t('descAzoriusErc721Gov')}
+                testId="choose-azorius-erc721"
+                value={GovernanceType.AZORIUS_ERC721}
+                tooltip={
+                  <Trans
+                    i18nKey="tooltipNftVoting"
+                    ns="daoCreate"
+                  >
+                    placeholder
+                    <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                  </Trans>
+                }
+              />
+            )}
           </RadioGroup>
         </LabelComponent>
       </Box>

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   SafeMultisigDAO,
   GovernanceType,
@@ -15,6 +16,7 @@ import useSignerOrProvider from '../utils/useSignerOrProvider';
 
 const useBuildDAOTx = () => {
   const signerOrProvider = useSignerOrProvider();
+  const { createOptions } = useNetworkConfig();
 
   const {
     baseContracts: {
@@ -60,7 +62,6 @@ const useBuildDAOTx = () => {
         !multisigFreezeGuardMasterCopyContract ||
         !freezeMultisigVotingMasterCopyContract ||
         !freezeERC20VotingMasterCopyContract ||
-        !freezeERC721VotingMasterCopyContract ||
         !safeFactoryContract ||
         !safeSingletonContract ||
         !claimingMasterCopyContract ||
@@ -71,13 +72,18 @@ const useBuildDAOTx = () => {
       }
 
       if (
+        createOptions.includes(GovernanceType.AZORIUS_ERC721) &&
+        (!freezeERC721VotingMasterCopyContract || !linearVotingERC721MasterCopyContract)
+      ) {
+        return;
+      }
+      if (
         daoData.governance === GovernanceType.AZORIUS_ERC20 ||
         daoData.governance === GovernanceType.AZORIUS_ERC721
       ) {
         if (
           !fractalAzoriusMasterCopyContract ||
           !linearVotingMasterCopyContract ||
-          !linearVotingERC721MasterCopyContract ||
           !votesTokenMasterCopyContract ||
           !azoriusFreezeGuardMasterCopyContract ||
           !claimingMasterCopyContract
@@ -176,6 +182,7 @@ const useBuildDAOTx = () => {
       erc721LinearVotingContract,
       dao,
       governance,
+      createOptions,
     ]
   );
 
