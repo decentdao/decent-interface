@@ -1,7 +1,6 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDAOProposals } from '../../../../../../hooks/DAO/loaders/useProposals';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -9,7 +8,6 @@ import { ProposalExecuteData } from '../../../../../../types';
 const useAddSigner = () => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
-  const loadDAOProposals = useDAOProposals();
   const {
     baseContracts: { safeSingletonContract },
   } = useFractal();
@@ -49,17 +47,14 @@ const useAddSigner = () => {
 
       await submitProposal({
         proposalData,
-        successCallback: () => {
-          close();
-          loadDAOProposals();
-        },
+        successCallback: close,
         nonce,
         pendingToastMessage: t('addSignerPendingToastMessage'),
         successToastMessage: t('addSignerSuccessToastMessage'),
         failedToastMessage: t('addSignerFailureToastMessage'),
       });
     },
-    [safeSingletonContract.asSigner.interface, submitProposal, t, loadDAOProposals]
+    [safeSingletonContract.asSigner.interface, submitProposal, t]
   );
 
   return addSigner;

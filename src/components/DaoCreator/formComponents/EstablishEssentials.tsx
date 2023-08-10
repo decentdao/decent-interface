@@ -10,7 +10,7 @@ import {
   ICreationStepProps,
   CreatorSteps,
   VotingStrategyType,
-  GovernanceSelectionType,
+  GovernanceType,
 } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
@@ -47,9 +47,9 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const snapshotURLDisabled = isEdit && !!daoSnapshotURL;
 
   const handleGovernanceChange = (value: string) => {
-    if (value === GovernanceSelectionType.AZORIUS_ERC20) {
+    if (value === GovernanceType.AZORIUS_ERC20) {
       setFieldValue('azorius.votingStrategyType', VotingStrategyType.LINEAR_ERC20);
-    } else if (value === GovernanceSelectionType.AZORIUS_ERC721) {
+    } else if (value === GovernanceType.AZORIUS_ERC721) {
       setFieldValue('azorius.votingStrategyType', VotingStrategyType.LINEAR_ERC721);
     }
 
@@ -98,7 +98,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
               label={t('labelMultisigGov')}
               description={t('descMultisigGov')}
               testId="choose-multisig"
-              value={GovernanceSelectionType.MULTISIG}
+              value={GovernanceType.MULTISIG}
               tooltip={
                 <Trans
                   i18nKey="tooltipMultisig"
@@ -113,7 +113,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
               label={t('labelAzoriusErc20Gov')}
               description={t('descAzoriusErc20Gov')}
               testId="choose-azorius"
-              value={GovernanceSelectionType.AZORIUS_ERC20}
+              value={GovernanceType.AZORIUS_ERC20}
               tooltip={
                 <Trans
                   i18nKey="tooltipTokenVoting"
@@ -128,7 +128,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
               label={t('labelAzoriusErc721Gov')}
               description={t('descAzoriusErc721Gov')}
               testId="choose-azorius-erc721"
-              value={GovernanceSelectionType.AZORIUS_ERC721}
+              value={GovernanceType.AZORIUS_ERC721}
               tooltip={
                 <Trans
                   i18nKey="tooltipNftVoting"
@@ -171,11 +171,11 @@ export function EstablishEssentials(props: ICreationStepProps) {
         {...props}
         isNextDisabled={
           values.essentials.daoName.length === 0 || // TODO formik should do this, not sure why it's enabled on first pass
-          (isEdit && values.essentials.governance === GovernanceSelectionType.MULTISIG)
+          (isEdit && values.essentials.governance === GovernanceType.MULTISIG)
         }
         isEdit={isEdit}
         nextStep={
-          values.essentials.governance === GovernanceSelectionType.MULTISIG
+          values.essentials.governance === GovernanceType.MULTISIG
             ? CreatorSteps.MULTISIG_DETAILS
             : values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20
             ? CreatorSteps.ERC20_DETAILS

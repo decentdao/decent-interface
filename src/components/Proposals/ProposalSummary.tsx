@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
-import { AzoriusGovernance, AzoriusProposal, GovernanceSelectionType } from '../../types';
+import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
 import { DisplayAddress } from '../ui/links/DisplayAddress';
@@ -42,12 +42,12 @@ export default function ProposalSummary({
     [erc721Tokens]
   );
   const getVotesPercentage = (voteTotal: BigNumber): number => {
-    if (type === GovernanceSelectionType.AZORIUS_ERC20) {
+    if (type === GovernanceType.AZORIUS_ERC20) {
       if (!votesToken?.totalSupply || votesToken.totalSupply.eq(0)) {
         return 0;
       }
       return voteTotal.div(votesToken.totalSupply.div(100)).toNumber();
-    } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
+    } else if (type === GovernanceType.AZORIUS_ERC721) {
       if (totalVotesCasted.eq(0) || !erc721Tokens || !totalVotingWeight) {
         return 0;
       }
@@ -56,8 +56,8 @@ export default function ProposalSummary({
     return 0;
   };
 
-  const isERC20 = type === GovernanceSelectionType.AZORIUS_ERC20;
-  const isERC721 = type === GovernanceSelectionType.AZORIUS_ERC721;
+  const isERC20 = type === GovernanceType.AZORIUS_ERC20;
+  const isERC721 = type === GovernanceType.AZORIUS_ERC721;
   if (
     (isERC20 && (!votesToken || !votesToken.totalSupply)) ||
     (isERC721 && (!erc721Tokens || !votingStrategy.quorumThreshold))

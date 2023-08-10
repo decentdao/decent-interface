@@ -258,7 +258,9 @@ export enum FractalModuleType {
 
 export interface FractalGuardContracts {
   freezeGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
-  freezeVotingContract?: ContractConnection<ERC20FreezeVoting | MultisigFreezeVoting>;
+  freezeVotingContract?: ContractConnection<
+    ERC20FreezeVoting | ERC721FreezeVoting | MultisigFreezeVoting
+  >;
   freezeGuardType: FreezeGuardType | null;
   freezeVotingType: FreezeVotingType | null;
 }
@@ -292,7 +294,7 @@ export interface DecentGovernance extends AzoriusGovernance {
 export interface SafeMultisigGovernance extends Governance {}
 
 export interface Governance {
-  type?: GovernanceSelectionType;
+  type?: GovernanceType;
   proposals: FractalProposal[] | null;
   proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContract?: ERC20Claim;
@@ -309,7 +311,7 @@ export interface VotingStrategy<Type = BNFormattedPair> {
   timeLockPeriod?: Type;
 }
 
-export enum GovernanceSelectionType {
+export enum GovernanceType {
   MULTISIG = 'labelMultisigGov',
   AZORIUS_ERC20 = 'labelAzoriusErc20Gov',
   AZORIUS_ERC721 = 'labelAzoriusErc721Gov',

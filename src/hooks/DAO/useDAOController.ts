@@ -13,7 +13,12 @@ import { useSnapshotProposals } from './loaders/useSnapshotProposals';
 
 export default function useDAOController({ daoAddress }: { daoAddress?: string }) {
   const [currentDAOAddress, setCurrentDAOAddress] = useState<string>();
-  const { action } = useFractal();
+  const {
+    node: {
+      nodeHierarchy: { parentAddress },
+    },
+    action,
+  } = useFractal();
   useEffect(() => {
     if (daoAddress && currentDAOAddress !== daoAddress) {
       action.resetDAO().then(() => {
@@ -25,7 +30,7 @@ export default function useDAOController({ daoAddress }: { daoAddress?: string }
   const nodeLoading = useFractalNode({ daoAddress: currentDAOAddress });
   useGovernanceContracts();
   useFractalGuardContracts({});
-  useFractalFreeze({});
+  useFractalFreeze({ parentSafeAddress: parentAddress });
   useFractalGovernance();
   useFractalTreasury();
   useERC20Claim();

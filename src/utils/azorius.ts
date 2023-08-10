@@ -67,14 +67,28 @@ export const getProposalVotesSummary = async (
   strategyType: VotingStrategyType,
   proposalId: BigNumber
 ): Promise<ProposalVotesSummary> => {
-  const { yesVotes, noVotes, abstainVotes } = await strategy.getProposalVotes(proposalId);
+  try {
+    const { yesVotes, noVotes, abstainVotes } = await strategy.getProposalVotes(proposalId);
 
-  return {
-    yes: yesVotes,
-    no: noVotes,
-    abstain: abstainVotes,
-    quorum: await getQuorum(strategy, strategyType, proposalId),
-  };
+    return {
+      yes: yesVotes,
+      no: noVotes,
+      abstain: abstainVotes,
+      quorum: await getQuorum(strategy, strategyType, proposalId),
+    };
+  } catch (e) {
+    // Sometimes loading DAO proposals called in the moment when proposal was **just** created
+    // Thus, calling `getProposalVotes` for such a proposal reverts with error
+    // This helps to prevent such case, while event listeners still should get proper data
+    logError('Error while retrieving Azorius proposal votes', e);
+    const zero = BigNumber.from(0);
+    return {
+      yes: zero,
+      no: zero,
+      abstain: zero,
+      quorum: zero,
+    };
+  }
 };
 
 export const getProposalVotes = async (

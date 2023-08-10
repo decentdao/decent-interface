@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceSelectionType, FractalProposal } from '../../../types';
+import { AzoriusGovernance, GovernanceType, FractalProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
-import useAddressERC721VotingTokens from './useAddressERC721VotingTokens';
+import useUserERC721VotingTokens from './useUserERC721VotingTokens';
 
 const useCastVote = ({
   proposal,
@@ -16,7 +16,6 @@ const useCastVote = ({
   const {
     governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance,
-    readOnly: { user },
   } = useFractal();
 
   const azoriusGovernance = useMemo(() => governance as AzoriusGovernance, [governance]);
@@ -24,9 +23,8 @@ const useCastVote = ({
 
   const [contractCallCastVote, contractCallPending] = useTransaction();
 
-  const { remainingTokenIds, remainingTokenAddresses } = useAddressERC721VotingTokens(
-    proposal.proposalId,
-    user.address
+  const { remainingTokenIds, remainingTokenAddresses } = useUserERC721VotingTokens(
+    proposal.proposalId
   );
   const { getCanVote, getHasVoted } = useVoteContext();
 
@@ -41,9 +39,9 @@ const useCastVote = ({
   const castVote = useCallback(
     async (vote: number) => {
       let contractFn;
-      if (type === GovernanceSelectionType.AZORIUS_ERC20 && ozLinearVotingContract) {
+      if (type === GovernanceType.AZORIUS_ERC20 && ozLinearVotingContract) {
         contractFn = () => ozLinearVotingContract.asSigner.vote(proposal.proposalId, vote);
-      } else if (type === GovernanceSelectionType.AZORIUS_ERC721 && erc721LinearVotingContract) {
+      } else if (type === GovernanceType.AZORIUS_ERC721 && erc721LinearVotingContract) {
         contractFn = () =>
           erc721LinearVotingContract.asSigner.vote(
             proposal.proposalId,
@@ -61,8 +59,8 @@ const useCastVote = ({
           successMessage: t('successCastVote'),
           successCallback: () => {
             setTimeout(() => {
-              getCanVote(true);
               getHasVoted();
+              getCanVote(true);
             }, 3000);
           },
         });

@@ -7,7 +7,7 @@ import {
   ReadOnlyState,
   Fractal,
   AzoriusGovernance,
-  GovernanceSelectionType,
+  GovernanceType,
   DecentGovernance,
 } from '../../types';
 
@@ -33,15 +33,15 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
       const getVotingWeight = async () => {
         const azoriusGovernance = governance as AzoriusGovernance;
         switch (governance.type) {
-          case GovernanceSelectionType.MULTISIG:
+          case GovernanceType.MULTISIG:
             const isSigner = _account && node.safe?.owners.includes(_account);
             return isSigner ? BigNumber.from(1) : BigNumber.from(0);
-          case GovernanceSelectionType.AZORIUS_ERC20:
+          case GovernanceType.AZORIUS_ERC20:
             const lockedTokenWeight = (governance as DecentGovernance).lockedVotesToken
               ?.votingWeight;
             const tokenWeight = azoriusGovernance.votesToken?.votingWeight || BigNumber.from(0);
             return lockedTokenWeight || tokenWeight;
-          case GovernanceSelectionType.AZORIUS_ERC721:
+          case GovernanceType.AZORIUS_ERC721:
             if (!_account || !azoriusGovernance.erc721Tokens) {
               return BigNumber.from(0);
             }
@@ -69,8 +69,8 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
           ? null // if there is no DAO connected, we return null for this
           : {
               isAzorius:
-                governance.type === GovernanceSelectionType.AZORIUS_ERC20 ||
-                governance.type === GovernanceSelectionType.AZORIUS_ERC721,
+                governance.type === GovernanceType.AZORIUS_ERC20 ||
+                governance.type === GovernanceType.AZORIUS_ERC721,
             },
       });
     };

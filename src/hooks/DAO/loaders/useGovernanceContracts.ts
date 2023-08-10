@@ -8,18 +8,15 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { useProvider } from 'wagmi';
 import { LockRelease, LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
-import {
-  ContractConnection,
-  FractalModuleData,
-  FractalModuleType,
-  FractalNode,
-} from '../../../types';
+import { ContractConnection } from '../../../types';
+import { getAzoriusModuleFromModules } from '../../../utils';
 import { useLocalStorage } from '../../utils/cache/useLocalStorage';
+import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 const AZORIUS_MODULE_CACHE_KEY = 'azorius_module_gov_';
 export const useGovernanceContracts = () => {
@@ -39,7 +36,7 @@ export const useGovernanceContracts = () => {
   } = useFractal();
 
   const provider = useProvider();
-  const { data: signer } = useSigner();
+  const signerOrProvider = useSignerOrProvider();
   const {
     network: { chainId },
   } = provider;
@@ -48,24 +45,23 @@ export const useGovernanceContracts = () => {
 
   const { setValue, getValue } = useLocalStorage();
 
-  const findAzoriusModule = (fractalModules: FractalModuleData[]): Azorius | undefined => {
-    return fractalModules.find(module => module.moduleType === FractalModuleType.AZORIUS)
-      ?.moduleContract as Azorius | undefined;
-  };
+  const loadGovernanceContracts = useCallback(async () => {
+    const { fractalModules } = node;
 
-  const loadGovernanceContracts = useCallback(
-    async (_node: FractalNode) => {
-      const signerOrProvider = signer || provider;
-      const { fractalModules } = _node;
+    const azoriusModule = getAzoriusModuleFromModules(fractalModules);
+    const azoriusModuleContract = azoriusModule?.moduleContract as Azorius;
 
-      const azoriusModule = findAzoriusModule(fractalModules);
-
-      if (!!azoriusModule) {
+    if (node.isModulesLoaded) {
+      if (!!azoriusModuleContract) {
         const azoriusContract = {
-          asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(azoriusModule.address),
-          asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(azoriusModule.address),
+          asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(
+            azoriusModuleContract.address
+          ),
+          asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(azoriusModuleContract.address),
         };
-        const cachedContractAddresses = getValue('azorius_module_gov_' + azoriusModule.address);
+        const cachedContractAddresses = getValue(
+          'azorius_module_gov_' + azoriusModuleContract.address
+        );
 
         // if existing cached addresses are found, use them
         let votingContractAddress: string | undefined =
@@ -83,7 +79,7 @@ export const useGovernanceContracts = () => {
 
         if (!votingContractAddress) {
           votingContractAddress = await getEventRPC<Azorius>(azoriusContract, chainId)
-            .queryFilter(azoriusModule.filters.EnabledStrategy())
+            .queryFilter(azoriusModuleContract.filters.EnabledStrategy())
             .then(strategiesEnabled => {
               return strategiesEnabled[0].args.strategy;
             });
@@ -159,13 +155,13 @@ export const useGovernanceContracts = () => {
         }
         if (!!ozLinearVotingContract && !!tokenContract) {
           // cache the addresses for future use, saves on query requests
-          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModuleContract.address, {
             votingContractAddress,
             govTokenAddress,
             underlyingTokenAddress,
             votingContractMasterCopyAddress,
           });
-          currentValidAddress.current = _node.daoAddress;
+          currentValidAddress.current = node.daoAddress;
           action.dispatch({
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
@@ -178,11 +174,11 @@ export const useGovernanceContracts = () => {
             },
           });
         } else if (!!erc721LinearVotingContract) {
-          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModuleContract.address, {
             votingContractAddress,
             votingContractMasterCopyAddress,
           });
-          currentValidAddress.current = _node.daoAddress;
+          currentValidAddress.current = node.daoAddress;
           action.dispatch({
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
@@ -195,11 +191,11 @@ export const useGovernanceContracts = () => {
             },
           });
         } else if (!!erc721LinearVotingContract) {
-          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModule.address, {
+          setValue(AZORIUS_MODULE_CACHE_KEY + azoriusModuleContract.address, {
             votingContractAddress,
             votingContractMasterCopyAddress,
           });
-          currentValidAddress.current = _node.daoAddress;
+          currentValidAddress.current = node.daoAddress;
           action.dispatch({
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
@@ -212,7 +208,7 @@ export const useGovernanceContracts = () => {
             },
           });
         } else {
-          currentValidAddress.current = _node.daoAddress;
+          currentValidAddress.current = node.daoAddress;
           action.dispatch({
             type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
             payload: {
@@ -225,7 +221,7 @@ export const useGovernanceContracts = () => {
           });
         }
       } else {
-        currentValidAddress.current = _node.daoAddress;
+        currentValidAddress.current = node.daoAddress;
         action.dispatch({
           type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
           payload: {
@@ -237,32 +233,32 @@ export const useGovernanceContracts = () => {
           },
         });
       }
-    },
-    [
-      chainId,
-      action,
-      getValue,
-      setValue,
-      signer,
-      provider,
-      linearVotingMasterCopyContract,
-      votesTokenMasterCopyContract,
-      zodiacModuleProxyFactoryContract,
-      fractalAzoriusMasterCopyContract,
-      votesERC20WrapperMasterCopyContract,
-      linearVotingERC721MasterCopyContract,
-    ]
-  );
+    }
+  }, [
+    chainId,
+    action,
+    getValue,
+    setValue,
+    provider,
+    signerOrProvider,
+    linearVotingMasterCopyContract,
+    votesTokenMasterCopyContract,
+    zodiacModuleProxyFactoryContract,
+    fractalAzoriusMasterCopyContract,
+    votesERC20WrapperMasterCopyContract,
+    linearVotingERC721MasterCopyContract,
+    node,
+  ]);
 
   useEffect(() => {
     if (
       (!!node.daoAddress &&
-        node.isModulesLoaded !== undefined &&
+        node.isModulesLoaded &&
         node.daoAddress !== currentValidAddress.current) ||
       lastChainId !== chainId
     ) {
       setLastChainId(chainId);
-      loadGovernanceContracts(node);
+      loadGovernanceContracts();
     }
   }, [node, loadGovernanceContracts, lastChainId, chainId]);
 };

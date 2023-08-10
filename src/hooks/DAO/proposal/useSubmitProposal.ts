@@ -20,7 +20,7 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import {
   MetaTransaction,
   ProposalExecuteData,
-  GovernanceSelectionType,
+  GovernanceType,
   ProposalMetadata,
 } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
@@ -89,6 +89,12 @@ export default function useSubmitProposal() {
   const { chainId, safeBaseURL } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
 
+  /**
+   * Performs a check whether user has access rights to create proposal for DAO
+   * @param {string} safeAddress - parameter to verify that user can create proposal for this specific DAO.
+   * Otherwise - it is checked for DAO from the global context.
+   * @returns {Promise<boolean>} - whether or not user has rights to create proposal either in global scope either for provided `safeAddress`.
+   */
   const getCanUserCreateProposal = useCallback(
     async (safeAddress?: string): Promise<boolean> => {
       if (!user.address) {
@@ -106,7 +112,7 @@ export default function useSubmitProposal() {
 
         if (azoriusModule && azoriusModule.moduleContract) {
           const azoriusContract = azoriusModule.moduleContract as Azorius;
-          const votingContractAddress = await azoriusModule.moduleContract
+          const votingContractAddress = await azoriusContract
             .queryFilter(azoriusContract.filters.EnabledStrategy())
             .then(strategiesEnabled => {
               return strategiesEnabled[0].args.strategy;
@@ -121,14 +127,14 @@ export default function useSubmitProposal() {
           return checkIsMultisigOwner(safeInfo.owners);
         }
       } else {
-        if (type === GovernanceSelectionType.MULTISIG) {
+        if (type === GovernanceType.MULTISIG) {
           const { owners } = safe || {};
           return checkIsMultisigOwner(owners);
-        } else if (type === GovernanceSelectionType.AZORIUS_ERC20) {
+        } else if (type === GovernanceType.AZORIUS_ERC20) {
           if (ozLinearVotingContract && user.address) {
             return ozLinearVotingContract.asSigner.isProposer(user.address);
           }
-        } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
+        } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (erc721LinearVotingContract) {
             return erc721LinearVotingContract.asSigner.isProposer(user.address);
           }

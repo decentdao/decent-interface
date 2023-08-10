@@ -26,6 +26,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private readonly createSafeTx: SafeTransaction;
   private readonly safeContract: GnosisSafe;
   private readonly parentStrategyType?: VotingStrategyType;
+  private readonly parentStrategyAddress?: string;
 
   // Fractal Module Txs
   private enableFractalModuleTx: SafeTransaction | undefined;
@@ -45,7 +46,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
     txBuilderFactory: TxBuilderFactory,
     parentAddress?: string,
     parentTokenAddress?: string,
-    parentStrategyType?: VotingStrategyType
+    parentStrategyType?: VotingStrategyType,
+    parentStrategyAddress?: string
   ) {
     super(
       signerOrProvider,
@@ -62,6 +64,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.txBuilderFactory = txBuilderFactory;
     this.saltNum = saltNum;
     this.parentStrategyType = parentStrategyType;
+    this.parentStrategyAddress = parentStrategyAddress;
 
     // Prep fractal module txs for setting up subDAOs
     this.setFractalModuleTxs();
@@ -94,10 +97,10 @@ export class DaoTxBuilder extends BaseTxBuilder {
     if (this.parentAddress) {
       const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
         azoriusTxBuilder.azoriusContract!.address,
-        this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
-          ? azoriusTxBuilder.linearERC721VotingContract!.address
-          : azoriusTxBuilder.linearVotingContract!.address,
-        this.parentStrategyType
+        azoriusTxBuilder.linearVotingContract?.address ??
+          azoriusTxBuilder.linearERC721VotingContract?.address,
+        this.parentStrategyType,
+        this.parentStrategyAddress
       );
 
       this.internalTxs = this.internalTxs.concat([
@@ -161,7 +164,12 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     // subDAO case, add freeze guard
     if (this.parentAddress) {
-      const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder();
+      const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
+        undefined,
+        undefined,
+        this.parentStrategyType,
+        this.parentStrategyAddress
+      );
 
       this.internalTxs = this.internalTxs.concat([
         // Enable Fractal Module b/c this a subDAO

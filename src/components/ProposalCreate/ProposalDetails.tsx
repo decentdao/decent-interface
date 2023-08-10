@@ -2,7 +2,7 @@ import { Box, Divider, Flex, HStack, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceSelectionType } from '../../types';
+import { AzoriusGovernance, GovernanceType } from '../../types';
 import ContentBoxTitle from '../ui/containers/ContentBox/ContentBoxTitle';
 import { BarLoader } from '../ui/loaders/BarLoader';
 
@@ -37,7 +37,7 @@ export function ProposalDetails() {
             mt="1rem"
             mb="1rem"
           />
-          {type === GovernanceSelectionType.MULTISIG ? (
+          {type === GovernanceType.MULTISIG ? (
             <HStack justifyContent="space-between">
               <Text color="chocolate.200">{t('labelProposalSigners')}</Text>
               <Text>

@@ -5,7 +5,7 @@ import { FractalGovernanceAction } from '../../../../providers/App/governance/ac
 import { useSafeAPI } from '../../../../providers/App/hooks/useSafeAPI';
 import { ActivityEventType, MultisigProposal } from '../../../../types';
 import { useSafeTransactions } from '../../../utils/useSafeTransactions';
-import { GovernanceSelectionType } from './../../../../types/fractal';
+
 export const useSafeMultisigProposals = () => {
   const {
     node: { daoAddress },
@@ -27,10 +27,7 @@ export const useSafeMultisigProposals = () => {
       );
       action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSALS,
-        payload: {
-          type: GovernanceSelectionType.MULTISIG,
-          proposals: multisendProposals as MultisigProposal[],
-        },
+        payload: multisendProposals as MultisigProposal[],
       });
     } catch (e) {
       logError(e);

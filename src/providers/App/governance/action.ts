@@ -8,12 +8,13 @@ import {
   VotesData,
   VotingStrategy,
   UnderlyingTokenData,
-  GovernanceSelectionType,
+  GovernanceType,
   ERC721TokenData,
 } from '../../../types';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
 
 export enum FractalGovernanceAction {
+  SET_GOVERNANCE_TYPE = 'SET_GOVERNANCE_TYPE',
   SET_PROPOSALS = 'SET_PROPOSALS',
   SET_SNAPSHOT_PROPOSALS = 'SET_SNAPSHOT_PROPOSALS',
   SET_PROPOSAL_TEMPLATES = 'SET_PROPOSAL_TEMPLATES',
@@ -39,11 +40,6 @@ export enum DecentGovernanceAction {
   SET_LOCKED_TOKEN_ACCOUNT_DATA = 'SET_LOCKED_TOKEN_ACCOUNT_DATA',
 }
 
-type SetStrategyPayload = {
-  governanceType: GovernanceSelectionType;
-  votingStrategy: VotingStrategy;
-};
-
 type AzoriusVotePayload = {
   proposalId: string;
   voter: string;
@@ -58,10 +54,11 @@ export type ERC721VotePayload = {
 } & AzoriusVotePayload;
 
 export type FractalGovernanceActions =
-  | { type: FractalGovernanceAction.SET_STRATEGY; payload: SetStrategyPayload }
+  | { type: FractalGovernanceAction.SET_GOVERNANCE_TYPE; payload: GovernanceType }
+  | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotingStrategy }
   | {
       type: FractalGovernanceAction.SET_PROPOSALS;
-      payload: { type: GovernanceSelectionType; proposals: FractalProposal[] };
+      payload: FractalProposal[];
     }
   | {
       type: FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS;

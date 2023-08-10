@@ -1,12 +1,12 @@
 import { useContext, useCallback, useEffect, useState, createContext, ReactNode } from 'react';
-import useAddressERC721VotingTokens from '../../../../hooks/DAO/proposal/useAddressERC721VotingTokens';
+import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
   FractalProposal,
   SnapshotProposal,
   AzoriusProposal,
   MultisigProposal,
-  GovernanceSelectionType,
+  GovernanceType,
 } from '../../../../types';
 
 interface IVoteContext {
@@ -49,9 +49,10 @@ export function VoteContextProvider({
     node: { safe },
     governance: { type },
   } = useFractal();
-  const { remainingTokenIds, getUserERC721VotingTokens } = useAddressERC721VotingTokens(
+  const { remainingTokenIds, getUserERC721VotingTokens } = useUserERC721VotingTokens(
     proposal.proposalId,
-    user.address
+    undefined,
+    true
   );
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
 
@@ -79,14 +80,14 @@ export function VoteContextProvider({
       setCanVoteLoading(true);
       let newCanVote = false;
       if (user.address) {
-        if (type === GovernanceSelectionType.AZORIUS_ERC20) {
+        if (type === GovernanceType.AZORIUS_ERC20) {
           newCanVote = user.votingWeight.gt(0) && !hasVoted;
-        } else if (type === GovernanceSelectionType.AZORIUS_ERC721) {
+        } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
             await getUserERC721VotingTokens();
           }
           newCanVote = user.votingWeight.gt(0) && remainingTokenIds.length > 0;
-        } else if (type === GovernanceSelectionType.MULTISIG) {
+        } else if (type === GovernanceType.MULTISIG) {
           newCanVote = !!safe?.owners.includes(user.address);
         } else {
           newCanVote = false;

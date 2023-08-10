@@ -3,12 +3,13 @@ import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import {
   SafeMultisigDAO,
-  GovernanceSelectionType,
+  GovernanceType,
   AzoriusContracts,
   BaseContracts,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
   AzoriusGovernance,
+  VotingStrategyType,
 } from '../../types';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
 
@@ -38,6 +39,7 @@ const useBuildDAOTx = () => {
     },
     readOnly: { user, dao },
     governance,
+    governanceContracts: { erc721LinearVotingContract },
   } = useFractal();
 
   const buildDao = useCallback(
@@ -69,8 +71,8 @@ const useBuildDAOTx = () => {
       }
 
       if (
-        daoData.governance === GovernanceSelectionType.AZORIUS_ERC20 ||
-        daoData.governance === GovernanceSelectionType.AZORIUS_ERC721
+        daoData.governance === GovernanceType.AZORIUS_ERC20 ||
+        daoData.governance === GovernanceType.AZORIUS_ERC721
       ) {
         if (
           !fractalAzoriusMasterCopyContract ||
@@ -119,18 +121,28 @@ const useBuildDAOTx = () => {
 
       await txBuilderFactory.setupSafeData();
       let parentVotingStrategyType = undefined;
+      let parentVotingStrategyAddress = undefined;
 
       if (dao && dao.isAzorius) {
         const azoriusGovernance = governance as AzoriusGovernance;
         parentVotingStrategyType = azoriusGovernance.votingStrategy.strategyType;
+        if (
+          parentVotingStrategyType === VotingStrategyType.LINEAR_ERC721 &&
+          erc721LinearVotingContract
+        ) {
+          parentVotingStrategyAddress = erc721LinearVotingContract.asSigner.address;
+        }
       }
 
-      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder(parentVotingStrategyType);
+      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder(
+        parentVotingStrategyType,
+        parentVotingStrategyAddress
+      );
 
       // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx =
-        daoData.governance === GovernanceSelectionType.AZORIUS_ERC20 ||
-        daoData.governance === GovernanceSelectionType.AZORIUS_ERC721
+        daoData.governance === GovernanceType.AZORIUS_ERC20 ||
+        daoData.governance === GovernanceType.AZORIUS_ERC721
           ? await daoTxBuilder.buildAzoriusTx()
           : await daoTxBuilder.buildMultisigTx();
 
@@ -161,6 +173,7 @@ const useBuildDAOTx = () => {
       linearVotingERC721MasterCopyContract,
       votesTokenMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
+      erc721LinearVotingContract,
       dao,
       governance,
     ]

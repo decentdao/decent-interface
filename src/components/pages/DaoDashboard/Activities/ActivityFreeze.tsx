@@ -1,8 +1,8 @@
 import { Flex, Text, Tooltip } from '@chakra-ui/react';
-import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
-import { DAOState, FreezeGuard } from '../../../../types';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { DAOState } from '../../../../types';
 import { ActivityCard } from '../../../Activity/ActivityCard';
 import { FreezeButton } from '../../../Activity/FreezeButton';
 import { Badge } from '../../../ui/badges/Badge';
@@ -20,20 +20,17 @@ export function FreezeDescription({ isFrozen }: { isFrozen: boolean }) {
   );
 }
 
-export function ActivityFreeze({
-  freezeGuard,
-  freezeVotingContract,
-}: {
-  freezeGuard: FreezeGuard;
-  freezeVotingContract: ERC20FreezeVoting | MultisigFreezeVoting | undefined;
-}) {
+export function ActivityFreeze() {
   const {
-    freezeProposalCreatedTime,
-    freezeProposalPeriod,
-    freezePeriod,
-    freezeVotesThreshold,
-    freezeProposalVoteCount,
-  } = freezeGuard;
+    guard: {
+      isFrozen,
+      freezeProposalCreatedTime,
+      freezeProposalPeriod,
+      freezePeriod,
+      freezeVotesThreshold,
+      freezeProposalVoteCount,
+    },
+  } = useFractal();
   const { t } = useTranslation('dashboard');
   const freezeProposalDeadlineDate = new Date(
     freezeProposalCreatedTime!.add(freezeProposalPeriod!).mul(1000).toNumber()
@@ -59,11 +56,11 @@ export function ActivityFreeze({
     <ActivityCard
       Badge={
         <Badge
-          labelKey={freezeGuard.isFrozen ? DAOState.frozen : DAOState.freezeInit}
+          labelKey={isFrozen ? DAOState.frozen : DAOState.freezeInit}
           size="base"
         />
       }
-      description={<FreezeDescription isFrozen={freezeGuard.isFrozen} />}
+      description={<FreezeDescription isFrozen={isFrozen} />}
       RightElement={
         <Flex
           color="blue.500"
@@ -71,7 +68,7 @@ export function ActivityFreeze({
           gap="2rem"
         >
           <Text textStyle="text-base-sans-regular">
-            {!freezeGuard.isFrozen && freezeVotesThreshold!.gt(0) && (
+            {!isFrozen && freezeVotesThreshold!.gt(0) && (
               <Tooltip
                 label={t('tipFreeze', { amount: voteToThreshold })}
                 placement="bottom"
@@ -82,17 +79,10 @@ export function ActivityFreeze({
           </Text>
           {!isFreezeProposalDeadlinePassed && !isFreezeDeadlinePassed && (
             <Text textStyle="text-base-sans-regular">
-              {freezeGuard.isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}
+              {isFrozen ? freezePeriodDiffReadable : freezeProposalPeriodDiffReadable}
             </Text>
           )}
-          {!freezeGuard.isFrozen && freezeVotingContract && (
-            <FreezeButton
-              isFrozen={freezeGuard.isFrozen}
-              userHasFreezeVoted={freezeGuard.userHasFreezeVoted}
-              userHasVotes={freezeGuard.userHasVotes}
-              freezeVotingContract={freezeVotingContract}
-            />
-          )}
+          {!isFrozen && <FreezeButton />}
         </Flex>
       }
       boxBorderColor={'blue.500'}

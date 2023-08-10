@@ -3,7 +3,7 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
-import { DAOTrigger, CreatorFormState, GovernanceSelectionType } from '../../types';
+import { DAOTrigger, CreatorFormState, GovernanceType } from '../../types';
 import StepController from './StepController';
 import { initialState } from './constants';
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
@@ -32,7 +32,7 @@ function DaoCreator({
           const choosenGovernance = values.essentials.governance;
           const freezeGuard = isSubDAO ? values.freeze : undefined;
           switch (choosenGovernance) {
-            case GovernanceSelectionType.MULTISIG: {
+            case GovernanceType.MULTISIG: {
               const data = await prepareMultisigFormData({
                 ...values.essentials,
                 ...values.multisig,
@@ -41,7 +41,7 @@ function DaoCreator({
               deployDAO(data);
               return;
             }
-            case GovernanceSelectionType.AZORIUS_ERC20: {
+            case GovernanceType.AZORIUS_ERC20: {
               const data = await prepareAzoriusERC20FormData({
                 ...values.essentials,
                 ...values.azorius,
@@ -51,7 +51,7 @@ function DaoCreator({
               deployDAO(data);
               return;
             }
-            case GovernanceSelectionType.AZORIUS_ERC721: {
+            case GovernanceType.AZORIUS_ERC721: {
               const data = await prepareAzoriusERC721FormData({
                 ...values.essentials,
                 ...values.azorius,

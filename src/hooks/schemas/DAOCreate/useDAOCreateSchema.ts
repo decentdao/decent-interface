@@ -5,7 +5,7 @@ import {
   DAOEssentials,
   BigNumberValuePair,
   TokenCreationType,
-  GovernanceSelectionType,
+  GovernanceType,
 } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
 import { useDAOCreateTests } from './useDAOCreateTests';
@@ -46,7 +46,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
           }),
         }),
         multisig: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) => governance === GovernanceSelectionType.MULTISIG,
+          is: ({ governance }: DAOEssentials) => governance === GovernanceType.MULTISIG,
           then: _schema =>
             _schema.shape({
               trustedAddresses: Yup.array()
@@ -70,8 +70,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             }),
         }),
         erc20Token: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) =>
-            governance === GovernanceSelectionType.AZORIUS_ERC20,
+          is: ({ governance }: DAOEssentials) => governance === GovernanceType.AZORIUS_ERC20,
           then: _schema =>
             _schema.shape({
               tokenName: Yup.string().when('tokenCreationType', {
@@ -119,8 +118,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             }),
         }),
         erc721Token: Yup.object().when('essentials', {
-          is: ({ governance }: DAOEssentials) =>
-            governance === GovernanceSelectionType.AZORIUS_ERC721,
+          is: ({ governance }: DAOEssentials) => governance === GovernanceType.AZORIUS_ERC721,
           then: _schema =>
             _schema.shape({
               nfts: Yup.array()
@@ -142,8 +140,8 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         }),
         azorius: Yup.object().when('essentials', {
           is: ({ governance }: DAOEssentials) =>
-            governance === GovernanceSelectionType.AZORIUS_ERC20 ||
-            governance === GovernanceSelectionType.AZORIUS_ERC721,
+            governance === GovernanceType.AZORIUS_ERC20 ||
+            governance === GovernanceType.AZORIUS_ERC721,
           then: _schema =>
             _schema.shape({
               quorumPercentage: Yup.object().shape({ value: Yup.string().required() }),
