@@ -19,6 +19,7 @@ import {
   getSafeSingletonDeployment,
 } from '@safe-global/safe-deployments';
 import { goerli } from 'wagmi/chains';
+import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 
 const CHAIN_ID = 5;
@@ -62,4 +63,9 @@ export const goerliConfig: NetworkConfig = {
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
+  createOptions: [
+    GovernanceType.MULTISIG,
+    GovernanceType.AZORIUS_ERC20,
+    GovernanceType.AZORIUS_ERC721,
+  ],
 };
