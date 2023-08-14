@@ -42,6 +42,7 @@ export type NetworkConfig = {
     lido?: {
       stETHContractAddress: string;
       rewardsAddress: string;
+      withdrawalQueueContractAddress: string;
     };
   };
   createOptions: GovernanceType[];

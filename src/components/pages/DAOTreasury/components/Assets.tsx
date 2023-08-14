@@ -1,7 +1,11 @@
 import { Box, Button, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
+import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
-import { ethers } from 'ethers';
+import { ethers, BigNumber } from 'ethers';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
+import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
@@ -58,6 +62,13 @@ function CoinRow({
   totalFiat: number;
   asset: TokenDisplayData;
 }) {
+  const { t } = useTranslation('treasury');
+  const { staking } = useNetworkConfig();
+  const { handleUnstake } = useLidoStaking();
+  const handleUnstakeButtonClick = () => {
+    handleUnstake(BigNumber.from(asset.rawValue));
+  };
+
   return (
     <HStack
       align="top"
@@ -96,6 +107,9 @@ function CoinRow({
               </EtherscanLinkERC20>
             )}
           </Text>
+          {staking.lido && asset.address === staking.lido.stETHContractAddress && (
+            <Button onClick={handleUnstakeButtonClick}>{t('unstake')}</Button>
+          )}
         </HStack>
       </Box>
       <Box w="35%">
@@ -165,6 +179,34 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
   const image = asset.imageUri ? asset.imageUri : asset.logoUri;
   const name = asset.name ? asset.name : asset.tokenName;
   const id = asset.id.toString();
+
+  const [isLidoClaimable, setIsLidoClaimable] = useState(false);
+
+  const { t } = useTranslation('treasury');
+  const signerOrProvider = useSignerOrProvider();
+  const { staking } = useNetworkConfig();
+  const { handleClaimUnstakedETH } = useLidoStaking();
+  const handleClickClaimButton = () => {
+    handleClaimUnstakedETH(BigNumber.from(asset.id));
+  };
+
+  useEffect(() => {
+    const getLidoClaimableStatus = async () => {
+      if (!staking.lido?.withdrawalQueueContractAddress) {
+        return;
+      }
+      const withdrawalQueueContract = getWithdrawalQueueContract(
+        staking.lido.withdrawalQueueContractAddress,
+        signerOrProvider
+      );
+      const claimableStatus = (await withdrawalQueueContract.getWithdrawalStatus([asset.id]))[0]; // Since we're checking for the single NFT - we can grab first array element
+      if (claimableStatus.isFinalized !== isLidoClaimable) {
+        setIsLidoClaimable(claimableStatus.isFinalized);
+      }
+    };
+
+    getLidoClaimableStatus();
+  }, [staking, asset.address, isLidoClaimable, asset.id, signerOrProvider]);
   return (
     <HStack marginBottom={isLast ? '0rem' : '1.5rem'}>
       <EtherscanLinkERC721
@@ -203,6 +245,12 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
           #{id}
         </Text>
       </EtherscanLinkERC721>
+      {staking.lido &&
+        (isLidoClaimable ? (
+          <Button onClick={handleClickClaimButton}>{t('claimUnstakedETH')}</Button>
+        ) : (
+          <Text>{t('nonClaimableYet')}</Text>
+        ))}
     </HStack>
   );
 }

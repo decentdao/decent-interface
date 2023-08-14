@@ -12,6 +12,7 @@ export interface TokenDisplayData {
   fiatValue: number;
   fiatDisplayValue: string;
   fiatConversion: string;
+  rawValue: string;
 }
 
 export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
@@ -32,6 +33,7 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
       fiatConversion: `1 ${symbol} = ${formatUSD(Number(asset.fiatConversion))}`,
       fullCoinTotal: formatCoin(asset.balance, false, asset?.token?.decimals, symbol),
       fiatDisplayValue: formatUSD(Number(asset.fiatBalance)),
+      rawValue: asset.balance,
     };
     displayData.push(formatted);
   }

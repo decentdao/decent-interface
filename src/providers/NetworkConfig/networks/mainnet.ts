@@ -66,6 +66,7 @@ export const mainnetConfig: NetworkConfig = {
     lido: {
       rewardsAddress: '0x2884b7Bf17Ca966bB2e4099bf384734a48885Df0', // TODO - Change to Fractal Safe
       stETHContractAddress: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+      withdrawalQueueContractAddress: '0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1',
     },
   },
   createOptions: isProd()

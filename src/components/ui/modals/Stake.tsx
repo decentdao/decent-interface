@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../../constants/routes';
-import useLidoStake from '../../../hooks/stake/lido/useLidoStake';
+import useLidoStaking from '../../../hooks/stake/lido/useLidoStaking';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { BigNumberValuePair } from '../../../types';
 import { BigNumberInput } from '../forms/BigNumberInput';
@@ -26,7 +26,7 @@ export default function StakeModal({ close }: { close: () => void }) {
     setInputAmount(value);
   };
 
-  const { handleStake } = useLidoStake();
+  const { handleStake } = useLidoStaking();
   const handleSubmit = async () => {
     if (inputAmount?.bigNumberValue) {
       await handleStake(inputAmount?.bigNumberValue);
