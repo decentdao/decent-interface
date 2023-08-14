@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceSelectionType } from '../../../../types';
+import { AzoriusGovernance, FreezeGuardType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
@@ -15,7 +15,7 @@ export function InfoGovernance() {
   const {
     node: { daoAddress },
     governance,
-    guardContracts,
+    guardContracts: { freezeGuardType, freezeGuardContract },
     readOnly: { dao },
   } = useFractal();
   const provider = useProvider();
@@ -29,9 +29,9 @@ export function InfoGovernance() {
         const formatBlocks = async (blocks: number): Promise<string | undefined> => {
           return getTimeDuration(await blocksToSeconds(blocks, provider));
         };
-        if (governance.type == GovernanceSelectionType.MULTISIG) {
-          if (guardContracts.freezeGuardContract) {
-            const freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
+        if (freezeGuardType == FreezeGuardType.MULTISIG) {
+          if (freezeGuardContract) {
+            const freezeGuard = freezeGuardContract.asSigner as MultisigFreezeGuard;
             setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
             setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
           }
@@ -54,7 +54,8 @@ export function InfoGovernance() {
     executionPeriod,
     getTimeDuration,
     governance,
-    guardContracts.freezeGuardContract,
+    freezeGuardContract,
+    freezeGuardType,
     provider,
     timelockPeriod,
     dao,

@@ -1,6 +1,6 @@
 import { isAddress } from 'ethers/lib/utils';
 import { useEffect, useState } from 'react';
-import { useFractal } from '../../providers/App/AppProvider';
+import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 
 /**
  * A hook which determines whether the provided Ethereum address is a Safe
@@ -16,26 +16,24 @@ import { useFractal } from '../../providers/App/AppProvider';
 export const useIsSafe = (address: string | undefined) => {
   const [isSafeLoading, setSafeLoading] = useState<boolean>(false);
   const [isSafe, setIsSafe] = useState<boolean | undefined>();
-  const {
-    clients: { safeService },
-  } = useFractal();
+  const safeAPI = useSafeAPI();
 
   useEffect(() => {
     setSafeLoading(true);
     setIsSafe(undefined);
 
-    if (!address || !isAddress(address) || !safeService) {
+    if (!address || !isAddress(address)) {
       setIsSafe(false);
       setSafeLoading(false);
       return;
     }
 
-    safeService
+    safeAPI
       .getSafeCreationInfo(address)
       .then(() => setIsSafe(true))
       .catch(() => setIsSafe(false))
       .finally(() => setSafeLoading(false));
-  }, [address, safeService]);
+  }, [address, safeAPI]);
 
   return { isSafe, isSafeLoading };
 };

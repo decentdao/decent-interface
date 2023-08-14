@@ -9,6 +9,6 @@
     "proposalTemplate": "{{proposalTemplateTitle}}",
     "proposalTemplateNew": "New Proposal Template",
     "modifyGovernance": "Modify Governance",
-    "parentLink": "Parent DAO",
+    "parentLink": "Parent-Safe",
     "settings": "Settings"
 }

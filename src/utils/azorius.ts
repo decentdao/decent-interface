@@ -14,7 +14,7 @@ import {
   ProposalVote,
   VOTE_CHOICES,
   ContractConnection,
-  ProposalMetaData,
+  ProposalData,
   AzoriusProposal,
   ActivityEventType,
   Parameter,
@@ -24,6 +24,7 @@ import {
   FractalModuleType,
   DecodedTransaction,
   VotingStrategyType,
+  ERC721ProposalVote,
 } from '../types';
 import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
@@ -49,7 +50,7 @@ const getQuorum = async (
     } catch (e) {
       // For who knows reason - strategy.quorumVotes might give you an error
       // Seems like occuring when token deployment haven't worked properly
-      logError('Error while getting strategy quorum');
+      logError('Error while getting strategy quorum', e);
       quorum = BigNumber.from(0);
     }
   } else if (strategyType === VotingStrategyType.LINEAR_ERC721) {
@@ -66,29 +67,45 @@ export const getProposalVotesSummary = async (
   strategyType: VotingStrategyType,
   proposalId: BigNumber
 ): Promise<ProposalVotesSummary> => {
-  const { yesVotes, noVotes, abstainVotes } = await strategy.getProposalVotes(proposalId);
+  try {
+    const { yesVotes, noVotes, abstainVotes } = await strategy.getProposalVotes(proposalId);
 
-  return {
-    yes: yesVotes,
-    no: noVotes,
-    abstain: abstainVotes,
-    quorum: await getQuorum(strategy, strategyType, proposalId),
-  };
+    return {
+      yes: yesVotes,
+      no: noVotes,
+      abstain: abstainVotes,
+      quorum: await getQuorum(strategy, strategyType, proposalId),
+    };
+  } catch (e) {
+    // Sometimes loading DAO proposals called in the moment when proposal was **just** created
+    // Thus, calling `getProposalVotes` for such a proposal reverts with error
+    // This helps to prevent such case, while event listeners still should get proper data
+    logError('Error while retrieving Azorius proposal votes', e);
+    const zero = BigNumber.from(0);
+    return {
+      yes: zero,
+      no: zero,
+      abstain: zero,
+      quorum: zero,
+    };
+  }
 };
 
 export const getProposalVotes = async (
   strategyContract: LinearERC20Voting | LinearERC721Voting,
   proposalId: BigNumber
-): Promise<ProposalVote[]> => {
+): Promise<ProposalVote[] | ERC721ProposalVote[]> => {
   const voteEventFilter = strategyContract.filters.Voted();
   const votes = await strategyContract.queryFilter(voteEventFilter);
   const proposalVotesEvent = votes.filter(voteEvent => proposalId.eq(voteEvent.args.proposalId));
 
-  return proposalVotesEvent.map(({ args }) => ({
-    voter: args.voter,
-    choice: VOTE_CHOICES[args.voteType],
-    weight: args.weight,
-  }));
+  return proposalVotesEvent.map(({ args: { voter, voteType, ...rest } }) => {
+    return {
+      ...rest,
+      voter,
+      choice: VOTE_CHOICES[voteType],
+    };
+  });
 };
 
 export const mapProposalCreatedEventToProposal = async (
@@ -98,7 +115,7 @@ export const mapProposalCreatedEventToProposal = async (
   proposer: string,
   azoriusContract: ContractConnection<Azorius>,
   provider: Providers,
-  metaData?: ProposalMetaData
+  data?: ProposalData
 ) => {
   const { endBlock, startBlock, abstainVotes, yesVotes, noVotes } =
     await strategyContract.getProposalVotes(proposalId);
@@ -115,7 +132,7 @@ export const mapProposalCreatedEventToProposal = async (
     quorum,
   };
 
-  const targets = metaData ? metaData.decodedTransactions.map(tx => tx.target) : [];
+  const targets = data ? data.decodedTransactions.map(tx => tx.target) : [];
 
   let transactionHash: string | undefined;
   if (state === FractalProposalState.EXECUTED) {
@@ -141,7 +158,7 @@ export const mapProposalCreatedEventToProposal = async (
     state,
     votes,
     votesSummary,
-    metaData,
+    data,
   };
 
   return proposal;

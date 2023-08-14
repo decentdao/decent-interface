@@ -1,9 +1,13 @@
-import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
+import {
+  ERC20FreezeVoting,
+  ERC721FreezeVoting,
+  MultisigFreezeVoting,
+} from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { FreezeVoteCastEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/ERC20FreezeVoting';
 import { BigNumber, constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
-import { useProvider } from 'wagmi';
+import { useAccount, useProvider } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
 import {
   isWithinFreezeProposalPeriod,
@@ -13,9 +17,16 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGuardAction } from '../../../providers/App/guard/action';
 import { ContractConnection, FractalGuardContracts, FreezeVotingType } from '../../../types';
 import { blocksToSeconds, getTimeStamp } from '../../../utils/contract';
+import useUserERC721VotingTokens from '../proposal/useUserERC721VotingTokens';
 import { FreezeGuard } from './../../../types/fractal';
 
-export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
+export const useFractalFreeze = ({
+  loadOnMount = true,
+  parentSafeAddress,
+}: {
+  loadOnMount?: boolean;
+  parentSafeAddress?: string | null;
+}) => {
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();
   const isFreezeSet = useRef(false);
@@ -25,10 +36,14 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
     baseContracts: { votesTokenMasterCopyContract, safeSingletonContract },
     guardContracts,
     action,
-    readOnly: { user },
   } = useFractal();
+  const { address: account } = useAccount();
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(
+    undefined,
+    parentSafeAddress,
+    loadOnMount
+  );
 
-  const account = user.address;
   const provider = useProvider();
   const {
     network: { chainId },
@@ -36,10 +51,13 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
 
   const loadFractalFreezeGuard = useCallback(
     async ({ freezeVotingContract, freezeVotingType: freezeVotingType }: FractalGuardContracts) => {
-      if (freezeVotingType == null || !freezeVotingContract) return;
+      if (freezeVotingType == null || !freezeVotingContract || !account) return;
       let userHasVotes: boolean = false;
       const freezeCreatedBlock = await (
-        freezeVotingContract!.asSigner as ERC20FreezeVoting
+        freezeVotingContract!.asSigner as
+          | ERC20FreezeVoting
+          | ERC721FreezeVoting
+          | MultisigFreezeVoting
       ).freezeProposalCreatedBlock();
 
       const freezeVotesThreshold = await freezeVotingContract!.asSigner.freezeVotesThreshold();
@@ -100,6 +118,12 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
             : // freeze is active
               await votesTokenContract.getPastVotes(account || '', freezeCreatedBlock)
         ).gt(0);
+      } else if (freezeVotingType === FreezeVotingType.ERC721) {
+        const { totalVotingTokenAddresses } = await getUserERC721VotingTokens(
+          undefined,
+          parentSafeAddress
+        );
+        userHasVotes = totalVotingTokenAddresses.length > 0;
       }
 
       const freeze: FreezeGuard = {
@@ -109,7 +133,14 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
       isFreezeSet.current = true;
       return freeze;
     },
-    [account, provider, safeSingletonContract, votesTokenMasterCopyContract]
+    [
+      account,
+      provider,
+      safeSingletonContract,
+      votesTokenMasterCopyContract,
+      getUserERC721VotingTokens,
+      parentSafeAddress,
+    ]
   );
 
   const setFractalFreezeGuard = useCallback(
@@ -126,8 +157,8 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
     if (
       guardContracts.freezeVotingType !== null &&
       !!guardContracts.freezeVotingContract &&
-      guardContracts.freezeVotingContract.asSigner.address !== loadKey.current &&
-      loadOnMount
+      loadOnMount &&
+      guardContracts.freezeVotingContract.asSigner.address !== loadKey.current
     ) {
       loadKey.current = guardContracts.freezeVotingContract.asSigner.address;
       setFractalFreezeGuard(guardContracts);
@@ -135,9 +166,9 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
   }, [setFractalFreezeGuard, guardContracts, daoAddress, loadOnMount]);
 
   useEffect(() => {
-    const { freezeVotingContract, freezeVotingType: freezeVotingType } = guardContracts;
     if (!loadOnMount) return;
-    let votingRPC: MultisigFreezeVoting | ERC20FreezeVoting;
+    const { freezeVotingContract, freezeVotingType: freezeVotingType } = guardContracts;
+    let votingRPC: MultisigFreezeVoting | ERC20FreezeVoting | ERC721FreezeVoting;
     const listenerCallback: TypedListener<FreezeVoteCastEvent> = async (
       voter: string,
       votesCast
@@ -166,6 +197,13 @@ export const useFractalFreeze = ({ loadOnMount = true }: { loadOnMount?: boolean
       } else if (freezeVotingType === FreezeVotingType.ERC20) {
         votingRPC = getEventRPC<ERC20FreezeVoting>(
           freezeVotingContract as ContractConnection<ERC20FreezeVoting>,
+          chainId
+        );
+        const filter = votingRPC.filters.FreezeVoteCast();
+        votingRPC.on(filter, listenerCallback);
+      } else if (freezeVotingType === FreezeVotingType.ERC721) {
+        votingRPC = getEventRPC<ERC721FreezeVoting>(
+          freezeVotingContract as ContractConnection<ERC721FreezeVoting>,
           chainId
         );
         const filter = votingRPC.filters.FreezeVoteCast();

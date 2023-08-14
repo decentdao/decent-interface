@@ -47,9 +47,11 @@ export const useCreateSubDAOProposal = () => {
               predictedSafeAddress,
             ]),
           ],
-          title: t('Create a subDAO', { ns: 'proposalMetadata' }),
-          description: '',
-          documentationUrl: '',
+          metaData: {
+            title: t('Create a sub-Safe', { ns: 'proposalMetadata' }),
+            description: '',
+            documentationUrl: '',
+          },
         };
         submitProposal({
           proposalData,

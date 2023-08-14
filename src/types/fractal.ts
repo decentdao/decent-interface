@@ -17,7 +17,7 @@ import {
   ERC721FreezeVoting,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
-import SafeServiceClient, {
+import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
@@ -38,12 +38,7 @@ import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { ProposalTemplate } from './createProposalTemplate';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
-import {
-  ProposalMetaData,
-  MultisigProposal,
-  AzoriusProposal,
-  SnapshotProposal,
-} from './daoProposal';
+import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
 import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
 import { BNFormattedPair } from './votingFungibleToken';
@@ -154,7 +149,7 @@ export interface GovernanceActivity extends ActivityBase {
   state: FractalProposalState | null;
   proposalId: string;
   targets: string[];
-  metaData?: ProposalMetaData;
+  data?: ProposalData;
 }
 
 export interface ActivityBase {
@@ -200,7 +195,6 @@ export interface ITokenAccount {
  */
 export interface FractalStore extends Fractal {
   baseContracts: FractalContracts;
-  clients: FractalClients;
   action: {
     dispatch: Dispatch<FractalActions>;
     resetDAO: () => Promise<void>;
@@ -225,10 +219,6 @@ export interface Fractal {
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
   readOnly: ReadOnlyState;
-}
-
-export interface FractalClients {
-  safeService: SafeServiceClient;
 }
 
 export interface FractalGovernanceContracts {
@@ -268,7 +258,9 @@ export enum FractalModuleType {
 
 export interface FractalGuardContracts {
   freezeGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
-  freezeVotingContract?: ContractConnection<ERC20FreezeVoting | MultisigFreezeVoting>;
+  freezeVotingContract?: ContractConnection<
+    ERC20FreezeVoting | ERC721FreezeVoting | MultisigFreezeVoting
+  >;
   freezeGuardType: FreezeGuardType | null;
   freezeVotingType: FreezeVotingType | null;
 }
@@ -302,7 +294,7 @@ export interface DecentGovernance extends AzoriusGovernance {
 export interface SafeMultisigGovernance extends Governance {}
 
 export interface Governance {
-  type?: GovernanceSelectionType;
+  type?: GovernanceType;
   proposals: FractalProposal[] | null;
   proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContract?: ERC20Claim;
@@ -319,7 +311,7 @@ export interface VotingStrategy<Type = BNFormattedPair> {
   timeLockPeriod?: Type;
 }
 
-export enum GovernanceSelectionType {
+export enum GovernanceType {
   MULTISIG = 'labelMultisigGov',
   AZORIUS_ERC20 = 'labelAzoriusErc20Gov',
   AZORIUS_ERC721 = 'labelAzoriusErc721Gov',

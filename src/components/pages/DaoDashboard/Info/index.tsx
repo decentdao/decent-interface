@@ -32,7 +32,7 @@ export function Info() {
         mb="1rem"
       >
         <Box
-          minWidth={{ base: '100%', md: '100%', lg: '33%', xl: '40%' }}
+          width={{ base: '100%', md: '100%', lg: '33%', xl: '40%' }}
           pe={{ base: NONE, lg: PAD }}
           pb={{ sm: PAD, lg: NONE }}
         >
@@ -41,7 +41,7 @@ export function Info() {
           </InfoBox>
         </Box>
         <Box
-          minWidth={{ base: '100%', md: '33.3%', lg: '25%', xl: '20%' }}
+          width={{ base: '100%', md: '33.3%', lg: '25%', xl: '20%' }}
           ps={{ base: NONE, lg: PAD }}
           pe={{ base: NONE, md: PAD }}
           pb={{ sm: PAD, md: NONE }}
@@ -52,7 +52,7 @@ export function Info() {
           </InfoBox>
         </Box>
         <Box
-          minWidth={{ base: '100%', md: '33.3%', lg: '19%', xl: '20%' }}
+          width={{ base: '100%', md: '33.3%', lg: '19%', xl: '20%' }}
           ps={{ base: NONE, md: PAD }}
           pe={{ base: NONE, md: PAD }}
           pb={{ sm: PAD, md: NONE }}
@@ -63,7 +63,7 @@ export function Info() {
           </InfoBox>
         </Box>
         <Box
-          minWidth={{ base: '100%', md: '33.3%', lg: '23%', xl: '20%' }}
+          width={{ base: '100%', md: '33.3%', lg: '23%', xl: '20%' }}
           ps={{ base: NONE, md: PAD }}
           pt={{ sm: PAD, lg: NONE }}
         >

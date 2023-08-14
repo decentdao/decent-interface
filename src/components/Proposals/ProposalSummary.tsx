@@ -1,11 +1,12 @@
 import { Text, Box, Divider, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
-import { AzoriusGovernance, AzoriusProposal } from '../../types';
+import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
 import { DisplayAddress } from '../ui/links/DisplayAddress';
@@ -15,27 +16,52 @@ import { ExtendedProgressBar } from '../ui/utils/ProgressBar';
 import { InfoRow } from './MultisigProposalDetails/TxDetails';
 
 export default function ProposalSummary({
-  proposal: { startBlock, votesSummary, deadlineMs, proposer, transactionHash },
+  proposal: {
+    startBlock,
+    votesSummary: { yes, no, abstain, quorum },
+    deadlineMs,
+    proposer,
+    transactionHash,
+  },
 }: {
   proposal: AzoriusProposal;
 }) {
   const { governance } = useFractal();
 
   const azoriusGovernance = governance as AzoriusGovernance;
+  const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
+  const totalVotesCasted = useMemo(() => yes.add(no).add(abstain), [yes, no, abstain]);
+  const totalVotingWeight = useMemo(
+    () =>
+      erc721Tokens?.reduce(
+        (prev, curr) => prev.add(curr.totalSupply?.mul(curr.votingWeight) || BigNumber.from(0)),
+        BigNumber.from(0)
+      ),
+    [erc721Tokens]
+  );
   const getVotesPercentage = (voteTotal: BigNumber): number => {
-    if (
-      !azoriusGovernance.votesToken?.totalSupply ||
-      azoriusGovernance.votesToken.totalSupply.eq(0)
-    ) {
-      return 0;
+    if (type === GovernanceType.AZORIUS_ERC20) {
+      if (!votesToken?.totalSupply || votesToken.totalSupply.eq(0)) {
+        return 0;
+      }
+      return voteTotal.div(votesToken.totalSupply.div(100)).toNumber();
+    } else if (type === GovernanceType.AZORIUS_ERC721) {
+      if (totalVotesCasted.eq(0) || !erc721Tokens || !totalVotingWeight) {
+        return 0;
+      }
+      return voteTotal.mul(100).div(totalVotingWeight).toNumber();
     }
-
-    return voteTotal.div(azoriusGovernance.votesToken.totalSupply.div(100)).toNumber();
+    return 0;
   };
 
-  if (!azoriusGovernance.votesToken || !azoriusGovernance.votesToken.totalSupply) {
+  const isERC20 = type === GovernanceType.AZORIUS_ERC20;
+  const isERC721 = type === GovernanceType.AZORIUS_ERC721;
+  if (
+    (isERC20 && (!votesToken || !votesToken.totalSupply)) ||
+    (isERC721 && (!erc721Tokens || !votingStrategy.quorumThreshold))
+  ) {
     return (
       <Box mt={4}>
         <InfoBoxLoader />
@@ -43,12 +69,23 @@ export default function ProposalSummary({
     );
   }
 
-  const yesVotesPercentage = getVotesPercentage(votesSummary.yes);
-  const noVotesPercentage = getVotesPercentage(votesSummary.no);
-  const quorum = votesSummary.quorum
-    .div(azoriusGovernance.votesToken.totalSupply.div(100))
-    .toNumber();
-  const requiredVotesToPass = Math.max(noVotesPercentage + 1, quorum);
+  const yesVotesPercentage = getVotesPercentage(yes);
+  const noVotesPercentage = getVotesPercentage(no);
+  const strategyQuorum =
+    votesToken && isERC20
+      ? quorum.div(votesToken.totalSupply.div(100)).toNumber()
+      : isERC721
+      ? votingStrategy.quorumThreshold!.value.toNumber()
+      : 1;
+  const requiredVotesPercentageToPass = Math.max(
+    isERC721
+      ? no
+          .mul(100)
+          .div(totalVotingWeight || 1)
+          .toNumber() + 1
+      : noVotesPercentage + 1,
+    isERC721 ? (strategyQuorum * 100) / totalVotingWeight!.toNumber() : strategyQuorum
+  );
 
   return (
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
@@ -96,9 +133,22 @@ export default function ProposalSummary({
       <Box marginTop={4}>
         <ExtendedProgressBar
           label={t('support')}
-          helperText={t('proposalSupportSummaryHelper', { count: requiredVotesToPass })}
+          helperText={t(
+            isERC20
+              ? 'proposalSupportERC20SummaryHelper'
+              : isERC721
+              ? 'proposalSupportERC721SummaryHelper'
+              : '',
+            {
+              count: isERC721
+                ? Math.max(no.toNumber() || strategyQuorum)
+                : requiredVotesPercentageToPass,
+            }
+          )}
+          valueLabel={isERC721 ? `${yes.toString()}/${totalVotingWeight?.toString()}` : undefined}
           percentage={yesVotesPercentage}
-          requiredPercentage={requiredVotesToPass}
+          requiredPercentage={requiredVotesPercentageToPass}
+          unit={isERC20 ? '%' : ''}
         />
       </Box>
     </ContentBox>

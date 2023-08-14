@@ -29,9 +29,11 @@ export function usePrepareProposal() {
         calldatas: transactionsWithEncoding.map(
           transaction => transaction.encodedFunctionData || ''
         ),
-        title: proposalMetadata.title,
-        description: proposalMetadata.description,
-        documentationUrl: proposalMetadata.documentationUrl,
+        metaData: {
+          title: proposalMetadata.title,
+          description: proposalMetadata.description,
+          documentationUrl: proposalMetadata.documentationUrl,
+        },
       };
     },
     [signer]

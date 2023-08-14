@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { FormikProps } from 'formik';
 import { DAOCreateMode } from '../components/DaoCreator/formComponents/EstablishEssentials';
 import { BigNumberValuePair } from './common';
-import { GovernanceSelectionType, VotingStrategyType } from './fractal';
+import { GovernanceType, VotingStrategyType } from './fractal';
 import { EthAddress } from './utils';
 
 export enum CreatorSteps {
@@ -38,7 +38,7 @@ export interface CreatorFormState<T = BigNumberValuePair> {
 
 export type DAOEssentials = {
   daoName: string;
-  governance: GovernanceSelectionType;
+  governance: GovernanceType;
   snapshotURL: string;
 };
 
@@ -138,5 +138,5 @@ export type CreateDAOFunc = (
 export type DeployDAOSuccessCallback = (daoAddress: string) => void;
 export type DAODetails = {
   daoName: string;
-  governance: GovernanceSelectionType;
+  governance: GovernanceType;
 };

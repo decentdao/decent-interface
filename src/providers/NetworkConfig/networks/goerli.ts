@@ -19,6 +19,7 @@ import {
   getSafeSingletonDeployment,
 } from '@safe-global/safe-deployments';
 import { goerli } from 'wagmi/chains';
+import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 
 const CHAIN_ID = 5;
@@ -68,4 +69,9 @@ export const goerliConfig: NetworkConfig = {
       stETHContractAddress: '0x1643E812aE58766192Cf7D2Cf9567dF2C37e9B7F',
     },
   },
+  createOptions: [
+    GovernanceType.MULTISIG,
+    GovernanceType.AZORIUS_ERC20,
+    GovernanceType.AZORIUS_ERC721,
+  ],
 };

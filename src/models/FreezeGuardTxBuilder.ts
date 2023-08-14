@@ -49,6 +49,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private strategyAddress: string | undefined;
 
   private parentStrategyType: VotingStrategyType | undefined;
+  private parentStrategyAddress: string | undefined;
 
   constructor(
     signerOrProvider: any,
@@ -61,7 +62,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     azoriusContracts?: AzoriusContracts,
     azoriusAddress?: string,
     strategyAddress?: string,
-    parentStrategyType?: VotingStrategyType
+    parentStrategyType?: VotingStrategyType,
+    parentStrategyAddress?: string
   ) {
     super(
       signerOrProvider,
@@ -77,6 +79,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.azoriusAddress = azoriusAddress;
     this.strategyAddress = strategyAddress;
     this.parentStrategyType = parentStrategyType;
+    this.parentStrategyAddress = parentStrategyAddress;
 
     this.initFreezeVotesData();
   }
@@ -95,6 +98,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       [
         this.freezeVotingType === ERC20FreezeVoting__factory
           ? this.baseContracts.freezeERC20VotingMasterCopyContract.address
+          : this.freezeVotingType === ERC721FreezeVoting__factory
+          ? this.baseContracts.freezeERC721VotingMasterCopyContract.address
           : this.baseContracts.freezeMultisigVotingMasterCopyContract.address,
         this.freezeVotingCallData,
         this.saltNum,
@@ -118,7 +123,9 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
             subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
             subDaoData.freezeProposalPeriod, // FreezeProposalPeriod
             subDaoData.freezePeriod, // FreezePeriod
-            this.parentTokenAddress ?? this.parentAddress, // Parent Safe or Votes Token
+            this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
+              ? this.parentStrategyAddress
+              : this.parentTokenAddress ?? this.parentAddress, // Parent Votes Token or Parent Safe Address
           ]
         ),
       ],
@@ -145,7 +152,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
    */
 
   private setFreezeVotingTypeAndCallData() {
-    if (this.parentTokenAddress) {
+    if (this.parentStrategyType) {
       if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
         this.freezeVotingType = ERC20FreezeVoting__factory;
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
@@ -163,7 +170,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       | MultisigFreezeVoting
       | ERC20FreezeVoting
       | ERC721FreezeVoting = this.baseContracts.freezeMultisigVotingMasterCopyContract;
-    if (this.parentTokenAddress) {
+    if (this.parentStrategyType) {
       if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
         freezeVotesMasterCopyContract = this.baseContracts.freezeERC20VotingMasterCopyContract;
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {

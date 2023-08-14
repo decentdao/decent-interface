@@ -17,7 +17,9 @@ import {
   getMultiSendCallOnlyDeployment,
 } from '@safe-global/safe-deployments';
 import { polygon } from 'wagmi/chains';
+import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
+import { isProd } from '../../../utils';
 
 const CHAIN_ID = 137;
 const SAFE_VERSION = '1.3.0';
@@ -61,4 +63,7 @@ export const polygonConfig: NetworkConfig = {
     keyValuePairs: KeyValuePairs.address,
   },
   staking: {},
+  createOptions: isProd()
+    ? [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20]
+    : [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20, GovernanceType.AZORIUS_ERC721],
 };

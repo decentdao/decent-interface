@@ -3,6 +3,7 @@ import { VEllipsis } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/navigation';
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DAO_ROUTES } from '../../constants/routes';
 import useRemoveProposalTemplate from '../../hooks/DAO/proposal/useRemoveProposalTemplate';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -42,7 +43,7 @@ export default function ProposalTemplateCard({
   const successCallback = useCallback(() => {
     if (daoAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      push(`/daos/${daoAddress}/proposals`);
+      push(DAO_ROUTES.proposals.relative(daoAddress));
     }
   }, [push, daoAddress]);
 

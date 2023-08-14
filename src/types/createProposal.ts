@@ -3,7 +3,6 @@ import { BigNumberValuePair } from './common';
 export enum CreateProposalState {
   METADATA_FORM,
   TRANSACTIONS_FORM,
-  LOADING,
 }
 
 export interface CreateProposalTransaction<T = BigNumberValuePair> {
@@ -15,7 +14,7 @@ export interface CreateProposalTransaction<T = BigNumberValuePair> {
   encodedFunctionData?: string;
 }
 
-export type CreateProposalMetadata = {
+export type ProposalMetadata = {
   title: string;
   description: string;
   documentationUrl: string;
@@ -23,6 +22,6 @@ export type CreateProposalMetadata = {
 
 export type CreateProposalForm = {
   transactions: CreateProposalTransaction[];
-  proposalMetadata: CreateProposalMetadata;
+  proposalMetadata: ProposalMetadata;
   nonce?: number;
 };

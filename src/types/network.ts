@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { Chain } from 'wagmi';
+import { GovernanceType } from './fractal';
 
 export type Providers =
   | ethers.providers.Web3Provider
@@ -43,4 +44,5 @@ export type NetworkConfig = {
       rewardsAddress: string;
     };
   };
+  createOptions: GovernanceType[];
 };

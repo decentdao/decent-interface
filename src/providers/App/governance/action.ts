@@ -8,18 +8,20 @@ import {
   VotesData,
   VotingStrategy,
   UnderlyingTokenData,
-  GovernanceSelectionType,
+  GovernanceType,
   ERC721TokenData,
 } from '../../../types';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
 
 export enum FractalGovernanceAction {
+  SET_GOVERNANCE_TYPE = 'SET_GOVERNANCE_TYPE',
   SET_PROPOSALS = 'SET_PROPOSALS',
   SET_SNAPSHOT_PROPOSALS = 'SET_SNAPSHOT_PROPOSALS',
   SET_PROPOSAL_TEMPLATES = 'SET_PROPOSAL_TEMPLATES',
   SET_STRATEGY = 'SET_STRATEGY',
   UPDATE_PROPOSALS_NEW = 'UPDATE_PROPOSALS_NEW',
-  UPDATE_NEW_AZORIUS_VOTE = 'UPDATE_NEW_AZORIUS_VOTE',
+  UPDATE_NEW_AZORIUS_ERC20_VOTE = 'UPDATE_NEW_AZORIUS_ERC20_VOTE',
+  UPDATE_NEW_AZORIUS_ERC721_VOTE = 'UPDATE_NEW_AZORIUS_ERC721_VOTE',
   UPDATE_PROPOSAL_STATE = 'UPDATE_PROPOSAL_STATE',
   UPDATE_VOTING_PERIOD = 'UPDATE_VOTING_PERIOD',
   UPDATE_VOTING_QUORUM = 'UPDATE_VOTING_QUORUM',
@@ -38,16 +40,25 @@ export enum DecentGovernanceAction {
   SET_LOCKED_TOKEN_ACCOUNT_DATA = 'SET_LOCKED_TOKEN_ACCOUNT_DATA',
 }
 
-type SetStrategyPayload = {
-  governanceType: GovernanceSelectionType;
-  votingStrategy: VotingStrategy;
+type AzoriusVotePayload = {
+  proposalId: string;
+  voter: string;
+  support: number;
+  votesSummary: ProposalVotesSummary;
 };
 
+export type ERC20VotePayload = { weight: BigNumber } & AzoriusVotePayload;
+export type ERC721VotePayload = {
+  tokenAddresses: string[];
+  tokenIds: string[];
+} & AzoriusVotePayload;
+
 export type FractalGovernanceActions =
-  | { type: FractalGovernanceAction.SET_STRATEGY; payload: SetStrategyPayload }
+  | { type: FractalGovernanceAction.SET_GOVERNANCE_TYPE; payload: GovernanceType }
+  | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotingStrategy }
   | {
       type: FractalGovernanceAction.SET_PROPOSALS;
-      payload: { type: GovernanceSelectionType; proposals: FractalProposal[] };
+      payload: FractalProposal[];
     }
   | {
       type: FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS;
@@ -56,18 +67,16 @@ export type FractalGovernanceActions =
   | { type: FractalGovernanceAction.SET_PROPOSAL_TEMPLATES; payload: ProposalTemplate[] }
   | { type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW; payload: FractalProposal }
   | {
-      type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
-      payload: { state: FractalProposalState; proposalId: string };
+      type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC721_VOTE;
+      payload: ERC721VotePayload;
     }
   | {
-      type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE;
-      payload: {
-        proposalId: string;
-        voter: string;
-        support: number;
-        weight: BigNumber;
-        votesSummary: ProposalVotesSummary;
-      };
+      type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC20_VOTE;
+      payload: ERC20VotePayload;
+    }
+  | {
+      type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE;
+      payload: { state: FractalProposalState; proposalId: string };
     }
   | {
       type: FractalGovernanceAction.UPDATE_VOTING_PERIOD;

@@ -16,7 +16,7 @@ import {
   DAOTrigger,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
-  GovernanceSelectionType,
+  GovernanceType,
 } from '../../../../../src/types';
 
 export default function ModifyGovernancePage() {
@@ -27,7 +27,7 @@ export default function ModifyGovernancePage() {
   } = useFractal();
   const { t } = useTranslation(['daoEdit', 'common', 'breadcrumbs']);
   const { push } = useRouter();
-  const isMultisig = type === GovernanceSelectionType.MULTISIG;
+  const isMultisig = type === GovernanceType.MULTISIG;
   const isSigner = user.address && safe?.owners.includes(user.address);
   const deployAzorius = useDeployAzorius();
 

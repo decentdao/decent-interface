@@ -1,7 +1,6 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDAOProposals } from '../../../../../../hooks/DAO/loaders/useProposals';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -21,7 +20,6 @@ const useRemoveSigner = ({
 }) => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
-  const loadDAOProposals = useDAOProposals();
   const {
     baseContracts: { safeSingletonContract },
   } = useFractal();
@@ -41,16 +39,15 @@ const useRemoveSigner = ({
       targets: [daoAddress!],
       values: [BigNumber.from('0')],
       calldatas: calldatas,
-      title: 'Remove Signers',
-      description: description,
-      documentationUrl: '',
+      metaData: {
+        title: 'Remove Signers',
+        description: description,
+        documentationUrl: '',
+      },
     };
 
     await submitProposal({
       proposalData,
-      successCallback: () => {
-        loadDAOProposals();
-      },
       nonce,
       pendingToastMessage: t('removeSignerPendingToastMessage'),
       successToastMessage: t('removeSignerSuccessToastMessage'),
@@ -65,7 +62,6 @@ const useRemoveSigner = ({
     submitProposal,
     nonce,
     t,
-    loadDAOProposals,
   ]);
 
   return removeSigner;

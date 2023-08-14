@@ -9,6 +9,7 @@ import { InfoBoxLoader } from '../../../../../src/components/ui/loaders/InfoBoxL
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
+import { useGetMetadata } from '../../../../../src/hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
 import { FractalProposal, AzoriusProposal } from '../../../../../src/types';
 
@@ -24,14 +25,10 @@ export default function ProposalDetailsPage({
   } = useFractal();
 
   const [proposal, setProposal] = useState<FractalProposal | null>();
+  const metaData = useGetMetadata(proposal);
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
   const azoriusProposal = proposal as AzoriusProposal;
-
-  const transactionDescription = t('proposalDescription', {
-    ns: 'dashboard',
-    count: proposal?.targets.length,
-  });
 
   useEffect(() => {
     if (!proposals || !proposals.length || !proposalId) {
@@ -62,7 +59,7 @@ export default function ProposalDetailsPage({
             terminus: t('proposal', {
               ns: 'breadcrumbs',
               proposalId,
-              proposalTitle: proposal?.metaData?.title || transactionDescription,
+              proposalTitle: metaData.title,
             }),
             path: '',
           },

@@ -8,14 +8,12 @@ export const DEFAULT_TRANSACTION = {
   encodedFunctionData: undefined,
 };
 
-export const DEFAULT_META_DATA = {
-  title: '',
-  description: '',
-  documentationUrl: '',
-};
-
 export const DEFAULT_PROPOSAL = {
-  proposalMetadata: DEFAULT_META_DATA,
+  proposalMetadata: {
+    title: '',
+    description: '',
+    documentationUrl: '',
+  },
   transactions: [DEFAULT_TRANSACTION],
   nonce: 0,
 };

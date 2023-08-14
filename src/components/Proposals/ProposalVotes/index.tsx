@@ -9,16 +9,21 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
-import useDisplayName from '../../hooks/utils/useDisplayName';
-import { useFractal } from '../../providers/App/AppProvider';
-import { AzoriusGovernance, ProposalVote, AzoriusProposal } from '../../types';
-import { formatCoin, formatPercentage } from '../../utils/numberFormats';
-import StatusBox from '../ui/badges/StatusBox';
-import ContentBox from '../ui/containers/ContentBox';
-import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
-import ProgressBar from '../ui/utils/ProgressBar';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import { useFractal } from '../../../providers/App/AppProvider';
+import {
+  AzoriusGovernance,
+  AzoriusProposal,
+  GovernanceType,
+  ERC721ProposalVote,
+} from '../../../types';
+import ContentBox from '../../ui/containers/ContentBox';
+import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
+import ProgressBar from '../../ui/utils/ProgressBar';
+import ProposalERC20VoteItem from './ProposalERC20VoteItem';
+import ProposalERC721VoteItem from './ProposalERC721VoteItem';
 
 function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
   return (
@@ -37,54 +42,9 @@ function VotesPercentage({ label, percentage }: { label: string; percentage: num
   );
 }
 
-function ProposalVoteItem({
-  vote,
-  govTokenTotalSupply,
-  govTokenDecimals,
-  govTokenSymbol,
-}: {
-  vote: ProposalVote;
-  govTokenTotalSupply: BigNumber;
-  govTokenDecimals: number;
-  govTokenSymbol: string;
-}) {
-  const { t } = useTranslation();
-  const { displayName } = useDisplayName(vote.voter);
-  const {
-    readOnly: { user },
-  } = useFractal();
-  return (
-    <Grid
-      templateColumns="repeat(4, 1fr)"
-      width="100%"
-    >
-      <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">
-          {displayName}
-          {user.address === vote.voter && t('isMeSuffix')}
-        </Text>
-      </GridItem>
-      <GridItem colSpan={1}>
-        <StatusBox>
-          <Text textStyle="text-sm-mono-semibold">{t(vote.choice)}</Text>
-        </StatusBox>
-      </GridItem>
-      <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">
-          {formatPercentage(vote.weight, govTokenTotalSupply)}
-        </Text>
-      </GridItem>
-      <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">
-          {formatCoin(vote.weight, true, govTokenDecimals, govTokenSymbol)}
-        </Text>
-      </GridItem>
-    </Grid>
-  );
-}
-
 function ProposalVotes({
   proposal: {
+    proposalId,
     votesSummary: { yes, no, abstain },
     votes,
   },
@@ -95,17 +55,28 @@ function ProposalVotes({
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { t } = useTranslation(['common', 'proposal']);
-  const totalVotesCasted = yes.add(no).add(abstain);
+  const totalVotesCasted = useMemo(() => yes.add(no).add(abstain), [yes, no, abstain]);
 
-  const getVotesPercentage = (voteTotal: BigNumber): number => {
-    if (totalVotesCasted.eq(0)) {
-      return 0;
-    }
+  const isERC20 = useMemo(
+    () => azoriusGovernance.type === GovernanceType.AZORIUS_ERC20,
+    [azoriusGovernance.type]
+  );
+  const isERC721 = useMemo(
+    () => azoriusGovernance.type === GovernanceType.AZORIUS_ERC721,
+    [azoriusGovernance.type]
+  );
 
-    return voteTotal.div(totalVotesCasted.div(100)).toNumber();
-  };
+  const getVotesPercentage = useCallback(
+    (voteTotal: BigNumber): number => {
+      if (totalVotesCasted.eq(0)) {
+        return 0;
+      }
+      return voteTotal.mul(100).div(totalVotesCasted).toNumber();
+    },
+    [totalVotesCasted]
+  );
 
-  if (!azoriusGovernance.votesToken) {
+  if ((isERC20 && !azoriusGovernance.votesToken) || (isERC721 && !azoriusGovernance.erc721Tokens)) {
     return (
       <Box mt={4}>
         <InfoBoxLoader />
@@ -185,16 +156,31 @@ function ProposalVotes({
             flexWrap="wrap"
             gap={4}
           >
-            {votes.map(vote => (
-              // TODO ERC721 NFT voting support (defaulting to 0 for total supply if it's not ERC20...)
-              <ProposalVoteItem
-                key={vote.voter}
-                vote={vote}
-                govTokenTotalSupply={azoriusGovernance.votesToken?.totalSupply || BigNumber.from(0)}
-                govTokenDecimals={azoriusGovernance.votesToken?.decimals || 0}
-                govTokenSymbol={azoriusGovernance.votesToken?.symbol || ''}
-              />
-            ))}
+            {votes.map(vote => {
+              if (isERC20) {
+                return (
+                  <ProposalERC20VoteItem
+                    key={vote.voter}
+                    vote={vote}
+                    govTokenTotalSupply={
+                      azoriusGovernance.votesToken?.totalSupply || BigNumber.from(0)
+                    }
+                    govTokenDecimals={azoriusGovernance.votesToken?.decimals || 0}
+                    govTokenSymbol={azoriusGovernance.votesToken?.symbol || ''}
+                  />
+                );
+              } else if (isERC721) {
+                return (
+                  <ProposalERC721VoteItem
+                    key={vote.voter}
+                    vote={vote as ERC721ProposalVote}
+                    proposalId={proposalId}
+                  />
+                );
+              } else {
+                return null;
+              }
+            })}
           </Flex>
         </ContentBox>
       )}

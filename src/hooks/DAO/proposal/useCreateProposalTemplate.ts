@@ -23,7 +23,7 @@ export default function useCreateProposalTemplate() {
         const proposalMetadata = {
           title: 'Create Proposal Template',
           description:
-            'Execution of this proposal will create a new proposal template, attached to this DAO.',
+            'Execution of this proposal will create a new proposal template, attached to this Safe.',
           documentationUrl: '',
         };
 
@@ -55,7 +55,7 @@ export default function useCreateProposalTemplate() {
         const { Hash } = await client.add(JSON.stringify(updatedTemplatesList));
 
         const proposal: ProposalExecuteData = {
-          ...proposalMetadata,
+          metaData: proposalMetadata,
           targets: [keyValuePairsContract.asProvider.address],
           values: [BigNumber.from(0)],
           calldatas: [
