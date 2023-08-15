@@ -4,6 +4,7 @@ import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { ethers, BigNumber } from 'ethers';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
 import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -63,13 +64,15 @@ function CoinRow({
   asset: TokenDisplayData;
 }) {
   const { t } = useTranslation('treasury');
+  const { canUserCreateProposal } = useSubmitProposal();
   const { staking } = useNetworkConfig();
   const { handleUnstake } = useLidoStaking();
   const handleUnstakeButtonClick = () => {
     handleUnstake(asset.rawValue);
   };
 
-  const isStakedEth = staking.lido && asset.address === staking.lido.stETHContractAddress;
+  const showUnstakeButton =
+    staking.lido && asset.address === staking.lido.stETHContractAddress && canUserCreateProposal;
   return (
     <HStack
       align="top"
@@ -137,7 +140,7 @@ function CoinRow({
           </Tooltip>
         </Text>
       </Box>
-      {isStakedEth && (
+      {showUnstakeButton && (
         <Flex
           w="15%"
           justifyContent="flex-end"
@@ -145,7 +148,7 @@ function CoinRow({
           <Button onClick={handleUnstakeButtonClick}>{t('unstake')}</Button>
         </Flex>
       )}
-      <Box w={isStakedEth ? '15%' : '30%'}>
+      <Box w={showUnstakeButton ? '15%' : '30%'}>
         <Text
           align="end"
           textStyle="text-base-sans-regular"
@@ -190,9 +193,15 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
   const signerOrProvider = useSignerOrProvider();
   const { staking } = useNetworkConfig();
   const { handleClaimUnstakedETH } = useLidoStaking();
+  const { canUserCreateProposal } = useSubmitProposal();
   const handleClickClaimButton = () => {
     handleClaimUnstakedETH(BigNumber.from(asset.id));
   };
+
+  const showClaimETHButton =
+    staking.lido &&
+    asset.address === staking.lido?.withdrawalQueueContractAddress &&
+    canUserCreateProposal;
 
   useEffect(() => {
     const getLidoClaimableStatus = async () => {
@@ -249,7 +258,7 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
           #{id}
         </Text>
       </EtherscanLinkERC721>
-      {staking.lido && asset.address === staking.lido?.withdrawalQueueContractAddress && (
+      {showClaimETHButton && (
         <Tooltip label={!isLidoClaimable ? t('nonClaimableYet') : ''}>
           <Button
             isDisabled={!isLidoClaimable}
@@ -268,13 +277,17 @@ export function Assets() {
     node: { daoAddress },
     treasury: { assetsFungible, assetsNonFungible },
   } = useFractal();
+  const { canUserCreateProposal } = useSubmitProposal();
   const { staking } = useNetworkConfig();
   const { t } = useTranslation('treasury');
   const coinDisplay = useFormatCoins(assetsFungible);
   const openStakingModal = useFractalModal(ModalType.STAKE);
   const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
   const showStakingButton =
-    Object.keys(staking).length > 0 && ethAsset && BigNumber.from(ethAsset.balance).gt(0);
+    Object.keys(staking).length > 0 &&
+    ethAsset &&
+    BigNumber.from(ethAsset.balance).gt(0) &&
+    canUserCreateProposal;
 
   return (
     <Box>
