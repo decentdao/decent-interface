@@ -65,7 +65,7 @@ export const goerliConfig: NetworkConfig = {
   },
   staking: {
     lido: {
-      rewardsAddress: '0x2884b7Bf17Ca966bB2e4099bf384734a48885Df0', // TODO - Change to Fractal Goerli Safe address
+      rewardsAddress: '0xD26c85D435F02DaB8B220cd4D2d398f6f646e235',
       stETHContractAddress: '0x1643E812aE58766192Cf7D2Cf9567dF2C37e9B7F',
       withdrawalQueueContractAddress: '0xCF117961421cA9e546cD7f50bC73abCdB3039533',
     },
