@@ -1,4 +1,4 @@
-import { Box, Button, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { ethers, BigNumber } from 'ethers';
@@ -69,6 +69,7 @@ function CoinRow({
     handleUnstake(BigNumber.from(asset.rawValue));
   };
 
+  const isStakedEth = staking.lido && asset.address === staking.lido.stETHContractAddress;
   return (
     <HStack
       align="top"
@@ -107,9 +108,6 @@ function CoinRow({
               </EtherscanLinkERC20>
             )}
           </Text>
-          {staking.lido && asset.address === staking.lido.stETHContractAddress && (
-            <Button onClick={handleUnstakeButtonClick}>{t('unstake')}</Button>
-          )}
         </HStack>
       </Box>
       <Box w="35%">
@@ -139,16 +137,22 @@ function CoinRow({
           </Tooltip>
         </Text>
       </Box>
-      <Box w="30%">
-        {asset.fiatValue / totalFiat > 0.0001 && (
-          <Text
-            align="end"
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
-            {formatPercentage(asset.fiatValue, totalFiat)}
-          </Text>
-        )}
+      {isStakedEth && (
+        <Flex
+          w="15%"
+          justifyContent="flex-end"
+        >
+          <Button onClick={handleUnstakeButtonClick}>{t('unstake')}</Button>
+        </Flex>
+      )}
+      <Box w={isStakedEth ? '15%' : '30%'}>
+        <Text
+          align="end"
+          textStyle="text-base-sans-regular"
+          color="grayscale.100"
+        >
+          {formatPercentage(asset.fiatValue, totalFiat)}
+        </Text>
       </Box>
     </HStack>
   );
@@ -245,12 +249,16 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
           #{id}
         </Text>
       </EtherscanLinkERC721>
-      {staking.lido &&
-        (isLidoClaimable ? (
-          <Button onClick={handleClickClaimButton}>{t('claimUnstakedETH')}</Button>
-        ) : (
-          <Text>{t('nonClaimableYet')}</Text>
-        ))}
+      {staking.lido && (
+        <Tooltip label={!isLidoClaimable ? t('nonClaimableYet') : ''}>
+          <Button
+            isDisabled={!isLidoClaimable}
+            onClick={handleClickClaimButton}
+          >
+            {t('claimUnstakedETH')}
+          </Button>
+        </Tooltip>
+      )}
     </HStack>
   );
 }
@@ -267,7 +275,6 @@ export function Assets() {
 
   return (
     <Box>
-      {Object.keys(staking).length > 0 && <Button onClick={openStakingModal}>{t('stake')}</Button>}
       <Text
         textStyle="text-sm-sans-regular"
         color="chocolate.200"
@@ -283,6 +290,12 @@ export function Assets() {
       >
         {formatUSD(coinDisplay.totalFiatValue)}
       </Text>
+      <Divider
+        color="chocolate.700"
+        marginTop="1.5rem"
+        marginBottom="1.5rem"
+      />
+      {Object.keys(staking).length > 0 && <Button onClick={openStakingModal}>{t('stake')}</Button>}
       {coinDisplay.displayData.length > 0 && <CoinHeader />}
       {coinDisplay.displayData.map((coin, index) => {
         return (
