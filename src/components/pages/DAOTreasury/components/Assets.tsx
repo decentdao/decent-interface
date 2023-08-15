@@ -66,7 +66,7 @@ function CoinRow({
   const { staking } = useNetworkConfig();
   const { handleUnstake } = useLidoStaking();
   const handleUnstakeButtonClick = () => {
-    handleUnstake(BigNumber.from(asset.rawValue));
+    handleUnstake(asset.rawValue);
   };
 
   const isStakedEth = staking.lido && asset.address === staking.lido.stETHContractAddress;
@@ -249,7 +249,7 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
           #{id}
         </Text>
       </EtherscanLinkERC721>
-      {staking.lido && (
+      {staking.lido && asset.address === staking.lido?.withdrawalQueueContractAddress && (
         <Tooltip label={!isLidoClaimable ? t('nonClaimableYet') : ''}>
           <Button
             isDisabled={!isLidoClaimable}
@@ -272,6 +272,9 @@ export function Assets() {
   const { t } = useTranslation('treasury');
   const coinDisplay = useFormatCoins(assetsFungible);
   const openStakingModal = useFractalModal(ModalType.STAKE);
+  const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
+  const showStakingButton =
+    Object.keys(staking).length > 0 && ethAsset && BigNumber.from(ethAsset.balance).gt(0);
 
   return (
     <Box>
@@ -295,7 +298,7 @@ export function Assets() {
         marginTop="1.5rem"
         marginBottom="1.5rem"
       />
-      {Object.keys(staking).length > 0 && <Button onClick={openStakingModal}>{t('stake')}</Button>}
+      {showStakingButton && <Button onClick={openStakingModal}>{t('stake')}</Button>}
       {coinDisplay.displayData.length > 0 && <CoinHeader />}
       {coinDisplay.displayData.map((coin, index) => {
         return (

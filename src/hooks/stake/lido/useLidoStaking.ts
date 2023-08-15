@@ -1,10 +1,11 @@
 import { getSTETHContract, getWithdrawalQueueContract } from '@lido-sdk/contracts';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../types';
+import { formatCoin } from '../../../utils';
 import useSubmitProposal from '../../DAO/proposal/useSubmitProposal';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
@@ -31,8 +32,9 @@ export default function useLidoStaking() {
       const proposalData: ProposalExecuteData = {
         metaData: {
           title: 'Stake ETH with Lido',
-          description: `This proposal will result in staking ${ethers.utils.formatUnits(
+          description: `This proposal will result in staking ${formatCoin(
             value,
+            true,
             18
           )} ETH to Lido`,
           documentationUrl: '',
@@ -53,7 +55,7 @@ export default function useLidoStaking() {
   );
 
   const handleUnstake = useCallback(
-    async (value: BigNumber) => {
+    async (value: string) => {
       if (!lido || !daoAddress) {
         // Means it is not supported on current network
         return;
@@ -67,7 +69,11 @@ export default function useLidoStaking() {
       const proposalData: ProposalExecuteData = {
         metaData: {
           title: 'Unstake stETH',
-          description: `This proposal will result in granting permit for withdrawal contract to use manipulate your stETH and creating withdrawal request for unstaking ${value} stETH from Lido`,
+          description: `This proposal will result in granting permit for withdrawal contract to use manipulate your stETH and creating withdrawal request for unstaking ${formatCoin(
+            value,
+            true,
+            18
+          )} stETH from Lido`,
           documentationUrl: '',
         },
         targets: [lido.stETHContractAddress, lido.withdrawalQueueContractAddress],
@@ -117,7 +123,7 @@ export default function useLidoStaking() {
         calldatas: [
           withdrawalQueueContract.interface.encodeFunctionData('claimWithdrawal', [nftId]),
         ],
-        values: ['0', '0'],
+        values: ['0'],
       };
       await submitProposal({
         proposalData,
