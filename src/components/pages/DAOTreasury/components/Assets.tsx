@@ -73,6 +73,7 @@ function CoinRow({
 
   const showUnstakeButton =
     staking.lido && asset.address === staking.lido.stETHContractAddress && canUserCreateProposal;
+
   return (
     <HStack
       align="top"
