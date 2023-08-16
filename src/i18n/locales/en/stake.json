@@ -1,4 +1,4 @@
 {
-    "amountLabel": "Staking Amount",
+    "stakeAmount": "ETH Amount",
     "submitStakingProposal": "Submit staking proposal"
 }

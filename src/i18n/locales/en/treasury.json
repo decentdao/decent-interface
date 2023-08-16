@@ -20,5 +20,5 @@
     "stake": "Stake",
     "unstake": "Unstake",
     "claimUnstakedETH": "Claim ETH",
-    "nonClaimableYet": "ETH can't be claimed at this moment as request is not finalized yet"
+    "nonClaimableYet": "Your ETH cannot yet be claimed from Lido"
 }

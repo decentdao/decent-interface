@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../types';
-import { formatCoin } from '../../../utils';
 import useSubmitProposal from '../../DAO/proposal/useSubmitProposal';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
@@ -31,13 +30,9 @@ export default function useLidoStaking() {
 
       const proposalData: ProposalExecuteData = {
         metaData: {
-          title: 'Stake ETH with Lido',
-          description: `This proposal will result in staking ${formatCoin(
-            value,
-            true,
-            18
-          )} ETH to Lido`,
-          documentationUrl: '',
+          title: t('Stake ETH with Lido'),
+          description: t('This proposal will stake ETH in Lido, returning stETH to your treasury.'),
+          documentationUrl: 'https://docs.lido.fi/guides/steth-integration-guide#what-is-steth',
         },
         targets: [lido.stETHContractAddress],
         calldatas: [stETHContract.interface.encodeFunctionData('submit', [lido.rewardsAddress])],
@@ -68,13 +63,12 @@ export default function useLidoStaking() {
 
       const proposalData: ProposalExecuteData = {
         metaData: {
-          title: 'Unstake stETH',
-          description: `This proposal will result in granting permit for withdrawal contract to use manipulate your stETH and creating withdrawal request for unstaking ${formatCoin(
-            value,
-            true,
-            18
-          )} stETH from Lido`,
-          documentationUrl: '',
+          title: t('Unstake stETH'),
+          description: t(
+            'This proposal will unstake your stETH from Lido and mint a Lido Withdrawal NFT which can be used to claim your ETH.'
+          ),
+          documentationUrl:
+            'https://docs.lido.fi/guides/steth-integration-guide#request-withdrawal-and-mint-nft',
         },
         targets: [lido.stETHContractAddress, lido.withdrawalQueueContractAddress],
         calldatas: [
@@ -114,10 +108,11 @@ export default function useLidoStaking() {
 
       const proposalData: ProposalExecuteData = {
         metaData: {
-          title: 'Claim unstaked ETH from stETH',
-          description:
-            'This proposal will trigger burning NFT that represents your Lido withdrawal request. All the unstaked ETH will be sent to your Safe.',
-          documentationUrl: '',
+          title: t('Lido Withdrawal'),
+          description: t(
+            'This proposal will burn your Lido Withdrawal NFT and return the ETH to your Safe.'
+          ),
+          documentationUrl: 'https://docs.lido.fi/guides/steth-integration-guide#claiming',
         },
         targets: [lido.withdrawalQueueContractAddress],
         calldatas: [

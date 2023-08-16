@@ -44,7 +44,7 @@ export default function StakeModal({ close }: { close: () => void }) {
           alignItems="center"
           marginBottom="0.5rem"
         >
-          <Text>{t('amountLabel')}</Text>
+          <Text>{t('stakeAmount')}</Text>
         </Flex>
         <BigNumberInput
           value={inputAmount?.bigNumberValue}
