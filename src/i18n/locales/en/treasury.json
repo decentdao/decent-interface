@@ -4,6 +4,7 @@
     "titleTransactions": "Transactions",
     "titleAssets": "Assets",
     "subtitleCoinBalance": "Total Coin Balance",
+    "subtitleStaking": "Lido ETH Staking",
     "columnCoins": "Coins",
     "columnValue": "Value",
     "columnAllocation": "Allocation",

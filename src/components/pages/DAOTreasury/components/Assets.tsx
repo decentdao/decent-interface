@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { ethers, BigNumber } from 'ethers';
@@ -63,17 +63,6 @@ function CoinRow({
   totalFiat: number;
   asset: TokenDisplayData;
 }) {
-  const { t } = useTranslation('treasury');
-  const { canUserCreateProposal } = useSubmitProposal();
-  const { staking } = useNetworkConfig();
-  const { handleUnstake } = useLidoStaking();
-  const handleUnstakeButtonClick = () => {
-    handleUnstake(asset.rawValue);
-  };
-
-  const showUnstakeButton =
-    staking.lido && asset.address === staking.lido.stETHContractAddress && canUserCreateProposal;
-
   return (
     <HStack
       align="top"
@@ -141,15 +130,7 @@ function CoinRow({
           </Tooltip>
         </Text>
       </Box>
-      {showUnstakeButton && (
-        <Flex
-          w="15%"
-          justifyContent="flex-end"
-        >
-          <Button onClick={handleUnstakeButtonClick}>{t('unstake')}</Button>
-        </Flex>
-      )}
-      <Box w={showUnstakeButton ? '15%' : '30%'}>
+      <Box w={'30%'}>
         <Text
           align="end"
           textStyle="text-base-sans-regular"
@@ -187,40 +168,6 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
   const image = asset.imageUri ? asset.imageUri : asset.logoUri;
   const name = asset.name ? asset.name : asset.tokenName;
   const id = asset.id.toString();
-
-  const [isLidoClaimable, setIsLidoClaimable] = useState(false);
-
-  const { t } = useTranslation('treasury');
-  const signerOrProvider = useSignerOrProvider();
-  const { staking } = useNetworkConfig();
-  const { handleClaimUnstakedETH } = useLidoStaking();
-  const { canUserCreateProposal } = useSubmitProposal();
-  const handleClickClaimButton = () => {
-    handleClaimUnstakedETH(BigNumber.from(asset.id));
-  };
-
-  const showClaimETHButton =
-    staking.lido &&
-    asset.address === staking.lido?.withdrawalQueueContractAddress &&
-    canUserCreateProposal;
-
-  useEffect(() => {
-    const getLidoClaimableStatus = async () => {
-      if (!staking.lido?.withdrawalQueueContractAddress) {
-        return;
-      }
-      const withdrawalQueueContract = getWithdrawalQueueContract(
-        staking.lido.withdrawalQueueContractAddress,
-        signerOrProvider
-      );
-      const claimableStatus = (await withdrawalQueueContract.getWithdrawalStatus([asset.id]))[0]; // Since we're checking for the single NFT - we can grab first array element
-      if (claimableStatus.isFinalized !== isLidoClaimable) {
-        setIsLidoClaimable(claimableStatus.isFinalized);
-      }
-    };
-
-    getLidoClaimableStatus();
-  }, [staking, asset.address, isLidoClaimable, asset.id, signerOrProvider]);
   return (
     <HStack marginBottom={isLast ? '0rem' : '1.5rem'}>
       <EtherscanLinkERC721
@@ -259,16 +206,6 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
           #{id}
         </Text>
       </EtherscanLinkERC721>
-      {showClaimETHButton && (
-        <Tooltip label={!isLidoClaimable ? t('nonClaimableYet') : ''}>
-          <Button
-            isDisabled={!isLidoClaimable}
-            onClick={handleClickClaimButton}
-          >
-            {t('claimUnstakedETH')}
-          </Button>
-        </Tooltip>
-      )}
     </HStack>
   );
 }
@@ -282,13 +219,55 @@ export function Assets() {
   const { staking } = useNetworkConfig();
   const { t } = useTranslation('treasury');
   const coinDisplay = useFormatCoins(assetsFungible);
-  const openStakingModal = useFractalModal(ModalType.STAKE);
   const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
-  const showStakingButton =
+  const { handleUnstake, handleClaimUnstakedETH } = useLidoStaking();
+
+  // --- Lido Stake button setup ---
+  const showStakeButton =
+    canUserCreateProposal &&
     Object.keys(staking).length > 0 &&
     ethAsset &&
-    BigNumber.from(ethAsset.balance).gt(0) &&
-    canUserCreateProposal;
+    BigNumber.from(ethAsset.balance).gt(0);
+  const openStakingModal = useFractalModal(ModalType.STAKE);
+
+  // --- Lido Unstake button setup ---
+  const stETHAsset = coinDisplay.displayData.find(
+    asset => asset.address === staking?.lido?.stETHContractAddress
+  );
+  const showUnstakeButton = canUserCreateProposal && staking.lido && stETHAsset;
+  const handleUnstakeButtonClick = () => {
+    handleUnstake(stETHAsset!.rawValue);
+  };
+
+  // --- Lido Claim ETH button setup ---
+  const signerOrProvider = useSignerOrProvider();
+  const [isLidoClaimable, setIsLidoClaimable] = useState(false);
+  const lidoWithdrawelNFT = assetsNonFungible.find(
+    asset => asset.address === staking.lido?.withdrawalQueueContractAddress
+  );
+  const showClaimETHButton = canUserCreateProposal && staking.lido && lidoWithdrawelNFT;
+  useEffect(() => {
+    const getLidoClaimableStatus = async () => {
+      if (!staking.lido?.withdrawalQueueContractAddress) {
+        return;
+      }
+      const withdrawalQueueContract = getWithdrawalQueueContract(
+        staking.lido.withdrawalQueueContractAddress,
+        signerOrProvider
+      );
+      const claimableStatus = (
+        await withdrawalQueueContract.getWithdrawalStatus([lidoWithdrawelNFT!.id])
+      )[0]; // Since we're checking for the single NFT - we can grab first array element
+      if (claimableStatus.isFinalized !== isLidoClaimable) {
+        setIsLidoClaimable(claimableStatus.isFinalized);
+      }
+    };
+
+    getLidoClaimableStatus();
+  }, [staking, isLidoClaimable, signerOrProvider, lidoWithdrawelNFT]);
+  const handleClickClaimButton = () => {
+    handleClaimUnstakedETH(BigNumber.from(lidoWithdrawelNFT!.id));
+  };
 
   return (
     <Box>
@@ -307,12 +286,52 @@ export function Assets() {
       >
         {formatUSD(coinDisplay.totalFiatValue)}
       </Text>
-      <Divider
-        color="chocolate.700"
-        marginTop="1.5rem"
-        marginBottom="1.5rem"
-      />
-      {showStakingButton && <Button onClick={openStakingModal}>{t('stake')}</Button>}
+      {(showStakeButton || showUnstakeButton || showClaimETHButton) && (
+        <>
+          <Divider
+            color="chocolate.700"
+            marginTop="1.5rem"
+            marginBottom="1.5rem"
+          />
+          <Text
+            textStyle="text-sm-sans-regular"
+            color="chocolate.200"
+            marginTop="1.5rem"
+            marginBottom="1rem"
+          >
+            {t('subtitleStaking')}
+          </Text>
+          <HStack>
+            {showStakeButton && (
+              <Button
+                size="sm"
+                onClick={openStakingModal}
+              >
+                {t('stake')}
+              </Button>
+            )}
+            {showUnstakeButton && (
+              <Button
+                size="sm"
+                onClick={handleUnstakeButtonClick}
+              >
+                {t('unstake')}
+              </Button>
+            )}
+            {showClaimETHButton && (
+              <Tooltip label={!isLidoClaimable ? t('nonClaimableYet') : ''}>
+                <Button
+                  size="sm"
+                  isDisabled={!isLidoClaimable}
+                  onClick={handleClickClaimButton}
+                >
+                  {t('claimUnstakedETH')}
+                </Button>
+              </Tooltip>
+            )}
+          </HStack>
+        </>
+      )}
       {coinDisplay.displayData.length > 0 && <CoinHeader />}
       {coinDisplay.displayData.map((coin, index) => {
         return (
