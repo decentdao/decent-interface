@@ -63,6 +63,13 @@ export const goerliConfig: NetworkConfig = {
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
+  staking: {
+    lido: {
+      rewardsAddress: '0xD26c85D435F02DaB8B220cd4D2d398f6f646e235',
+      stETHContractAddress: '0x1643E812aE58766192Cf7D2Cf9567dF2C37e9B7F',
+      withdrawalQueueContractAddress: '0xCF117961421cA9e546cD7f50bC73abCdB3039533',
+    },
+  },
   createOptions: [
     GovernanceType.MULTISIG,
     GovernanceType.AZORIUS_ERC20,

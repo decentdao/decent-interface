@@ -4,6 +4,7 @@
     "titleTransactions": "Transactions",
     "titleAssets": "Assets",
     "subtitleCoinBalance": "Total Coin Balance",
+    "subtitleStaking": "Lido ETH Staking",
     "columnCoins": "Coins",
     "columnValue": "Value",
     "columnAllocation": "Allocation",
@@ -16,5 +17,9 @@
     "approveToken": "Approve Token",
     "approvalPendingMessage": "Approving tokens...",
     "approvalFailedMessage": "Token approval failed!",
-    "approvalSuccessMessage": "Tokens approved"
+    "approvalSuccessMessage": "Tokens approved",
+    "stake": "Stake",
+    "unstake": "Unstake",
+    "claimUnstakedETH": "Claim ETH",
+    "nonClaimableYet": "Your ETH cannot yet be claimed from Lido"
 }

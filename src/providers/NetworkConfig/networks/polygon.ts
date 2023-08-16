@@ -62,6 +62,7 @@ export const polygonConfig: NetworkConfig = {
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
+  staking: {},
   createOptions: isProd()
     ? [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20]
     : [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20, GovernanceType.AZORIUS_ERC721],
