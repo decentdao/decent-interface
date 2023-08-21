@@ -2,8 +2,8 @@ import { Flex, Box, Button } from '@chakra-ui/react';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../constants/routes';
+import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
-import { GovernanceModuleType } from '../../types';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import ProposalTemplateCard from './ProposalTemplateCard';
@@ -11,13 +11,10 @@ import ProposalTemplateCard from './ProposalTemplateCard';
 export default function ProposalTemplates() {
   const { t } = useTranslation('proposalTemplate');
   const {
-    node: { daoAddress, safe },
-    readOnly: { user },
-    governance: { proposalTemplates, type },
+    node: { daoAddress },
+    governance: { proposalTemplates },
   } = useFractal();
-
-  const showCreateButton =
-    type === GovernanceModuleType.AZORIUS ? true : safe?.owners.includes(user.address || '');
+  const { canUserCreateProposal } = useSubmitProposal();
 
   return (
     <Flex
@@ -39,7 +36,7 @@ export default function ProposalTemplates() {
         ))
       ) : (
         <EmptyBox emptyText={t('emptyProposalTemplates')}>
-          {showCreateButton && (
+          {canUserCreateProposal && (
             <Link href={DAO_ROUTES.proposalTemplateNew.relative(daoAddress)}>
               <Button
                 variant="text"

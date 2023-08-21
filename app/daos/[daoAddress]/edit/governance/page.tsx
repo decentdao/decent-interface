@@ -12,7 +12,12 @@ import { DAO_ROUTES } from '../../../../../src/constants/routes';
 import useDeployAzorius from '../../../../../src/hooks/DAO/useDeployAzorius';
 import { createAccountSubstring } from '../../../../../src/hooks/utils/useDisplayName';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
-import { GovernanceModuleType, DAOTrigger, AzoriusGovernanceDAO } from '../../../../../src/types';
+import {
+  DAOTrigger,
+  AzoriusERC20DAO,
+  AzoriusERC721DAO,
+  GovernanceType,
+} from '../../../../../src/types';
 
 export default function ModifyGovernancePage() {
   const {
@@ -22,13 +27,13 @@ export default function ModifyGovernancePage() {
   } = useFractal();
   const { t } = useTranslation(['daoEdit', 'common', 'breadcrumbs']);
   const { push } = useRouter();
-  const isMultisig = type === GovernanceModuleType.MULTISIG;
+  const isMultisig = type === GovernanceType.MULTISIG;
   const isSigner = user.address && safe?.owners.includes(user.address);
   const deployAzorius = useDeployAzorius();
 
   const handleDeployAzorius: DAOTrigger = daoData => {
     deployAzorius(
-      daoData as AzoriusGovernanceDAO,
+      daoData as AzoriusERC20DAO | AzoriusERC721DAO,
       !daoName || createAccountSubstring(daoAddress!) === daoName,
       !daoSnapshotURL && !!daoData.snapshotURL
     );

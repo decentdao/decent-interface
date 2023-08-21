@@ -5,8 +5,12 @@ import { useSubgraphChainName } from '../../../graphql/utils';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import { useAzoriusStrategy } from './governance/useERC20LinearStrategy';
+import { GovernanceType } from '../../../types';
+import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
+import { useERC721LinearStrategy } from './governance/useERC721LinearStrategy';
+import useERC721Tokens from './governance/useERC721Tokens';
+import { useLockRelease } from './governance/useLockRelease';
 import { useDAOProposals } from './useProposals';
 
 export const useFractalGovernance = () => {
@@ -18,11 +22,15 @@ export const useFractalGovernance = () => {
     governanceContracts,
     action,
     guardContracts,
+    governance: { type },
   } = useFractal();
 
   const loadDAOProposals = useDAOProposals();
-  const loadAzoriusStrategy = useAzoriusStrategy();
+  const loadERC20Strategy = useERC20LinearStrategy();
+  const loadERC721Strategy = useERC721LinearStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});
+  const { loadLockedVotesToken } = useLockRelease({});
+  const loadERC721Tokens = useERC721Tokens();
   const ipfsClient = useIPFSClient();
 
   const ONE_MINUTE = 60 * 1000;
@@ -64,7 +72,13 @@ export const useFractalGovernance = () => {
   });
 
   useEffect(() => {
-    const { isLoaded, azoriusContract } = governanceContracts;
+    const {
+      isLoaded,
+      azoriusContract,
+      lockReleaseContract,
+      erc721LinearVotingContract,
+      ozLinearVotingContract,
+    } = governanceContracts;
 
     const newLoadKey =
       daoAddress +
@@ -75,12 +89,31 @@ export const useFractalGovernance = () => {
     if (isLoaded && daoAddress && newLoadKey !== loadKey.current) {
       loadKey.current = newLoadKey;
 
-      loadDAOProposals();
-
       if (azoriusContract) {
-        loadAzoriusStrategy();
-        loadERC20Token();
-        loadUnderlyingERC20Token();
+        if (ozLinearVotingContract) {
+          action.dispatch({
+            type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
+            payload: GovernanceType.AZORIUS_ERC20,
+          });
+          loadERC20Strategy();
+          loadERC20Token();
+          loadUnderlyingERC20Token();
+          if (lockReleaseContract) {
+            loadLockedVotesToken();
+          }
+        } else if (erc721LinearVotingContract) {
+          action.dispatch({
+            type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
+            payload: GovernanceType.AZORIUS_ERC721,
+          });
+          loadERC721Strategy();
+          loadERC721Tokens();
+        }
+      } else {
+        action.dispatch({
+          type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
+          payload: GovernanceType.MULTISIG,
+        });
       }
     } else if (!isLoaded) {
       loadKey.current = undefined;
@@ -90,9 +123,22 @@ export const useFractalGovernance = () => {
     governanceContracts,
     loadDAOProposals,
     loadUnderlyingERC20Token,
-    loadAzoriusStrategy,
+    loadERC20Strategy,
     loadERC20Token,
+    loadLockedVotesToken,
     nodeHierarchy.parentAddress,
     guardContracts.freezeGuardContract,
+    loadERC721Strategy,
+    loadERC721Tokens,
+    action,
   ]);
+
+  useEffect(() => {
+    if (type) {
+      // Since previous hook is the only place where governance type is set - we don't need any additional check
+      // But it's better to be sure that governance type is defined before calling for proposals loading
+      loadDAOProposals();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [type]);
 };

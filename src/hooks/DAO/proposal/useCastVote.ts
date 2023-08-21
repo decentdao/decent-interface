@@ -1,36 +1,32 @@
-import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceModuleType } from '../../../types';
+import { AzoriusGovernance, GovernanceType, FractalProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
+import useUserERC721VotingTokens from './useUserERC721VotingTokens';
 
 const useCastVote = ({
-  proposalId,
+  proposal,
   setPending,
 }: {
-  proposalId?: BigNumber;
+  proposal: FractalProposal;
   setPending?: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const {
-    governanceContracts: { ozLinearVotingContract },
+    governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance,
-    readOnly: { user },
   } = useFractal();
 
-  const [contractCallCastVote, contractCallPending] = useTransaction();
-  const canDelegate = useMemo(() => {
-    if (governance.type === GovernanceModuleType.AZORIUS) {
-      // TODO ERC721 voting will need to be included here
-      const azoriusGovernance = governance as AzoriusGovernance;
-      return azoriusGovernance?.votesToken?.balance?.gt(0);
-    }
-    return false;
-  }, [governance]);
+  const azoriusGovernance = useMemo(() => governance as AzoriusGovernance, [governance]);
+  const { type } = azoriusGovernance;
 
-  const canVote = useMemo(() => {
-    return user.votingWeight.gt(0);
-  }, [user]);
+  const [contractCallCastVote, contractCallPending] = useTransaction();
+
+  const { remainingTokenIds, remainingTokenAddresses } = useUserERC721VotingTokens(
+    proposal.proposalId
+  );
+  const { getCanVote, getHasVoted } = useVoteContext();
 
   useEffect(() => {
     if (setPending) {
@@ -41,21 +37,49 @@ const useCastVote = ({
   const { t } = useTranslation('transaction');
 
   const castVote = useCallback(
-    (vote: number) => {
-      if (!proposalId || vote === undefined || !ozLinearVotingContract) {
-        return;
+    async (vote: number) => {
+      let contractFn;
+      if (type === GovernanceType.AZORIUS_ERC20 && ozLinearVotingContract) {
+        contractFn = () => ozLinearVotingContract.asSigner.vote(proposal.proposalId, vote);
+      } else if (type === GovernanceType.AZORIUS_ERC721 && erc721LinearVotingContract) {
+        contractFn = () =>
+          erc721LinearVotingContract.asSigner.vote(
+            proposal.proposalId,
+            vote,
+            remainingTokenAddresses,
+            remainingTokenIds
+          );
       }
 
-      contractCallCastVote({
-        contractFn: () => ozLinearVotingContract.asSigner.vote(proposalId, vote),
-        pendingMessage: t('pendingCastVote'),
-        failedMessage: t('failedCastVote'),
-        successMessage: t('successCastVote'),
-      });
+      if (contractFn) {
+        contractCallCastVote({
+          contractFn,
+          pendingMessage: t('pendingCastVote'),
+          failedMessage: t('failedCastVote'),
+          successMessage: t('successCastVote'),
+          successCallback: () => {
+            setTimeout(() => {
+              getHasVoted();
+              getCanVote(true);
+            }, 3000);
+          },
+        });
+      }
     },
-    [contractCallCastVote, proposalId, t, ozLinearVotingContract]
+    [
+      contractCallCastVote,
+      t,
+      ozLinearVotingContract,
+      erc721LinearVotingContract,
+      type,
+      proposal,
+      remainingTokenAddresses,
+      remainingTokenIds,
+      getCanVote,
+      getHasVoted,
+    ]
   );
-  return { castVote, canDelegate, canVote };
+  return { castVote };
 };
 
 export default useCastVote;

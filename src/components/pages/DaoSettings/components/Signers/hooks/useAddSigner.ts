@@ -1,7 +1,6 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useDAOProposals } from '../../../../../../hooks/DAO/loaders/useProposals';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -9,9 +8,8 @@ import { ProposalExecuteData } from '../../../../../../types';
 const useAddSigner = () => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
-  const loadDAOProposals = useDAOProposals();
   const {
-    baseContracts: { gnosisSafeSingletonContract },
+    baseContracts: { safeSingletonContract },
   } = useFractal();
   const addSigner = useCallback(
     async ({
@@ -30,7 +28,7 @@ const useAddSigner = () => {
       const description = 'Add Signer';
 
       const calldatas = [
-        gnosisSafeSingletonContract.asSigner.interface.encodeFunctionData('addOwnerWithThreshold', [
+        safeSingletonContract.asSigner.interface.encodeFunctionData('addOwnerWithThreshold', [
           newSigner,
           BigNumber.from(threshold),
         ]),
@@ -40,24 +38,23 @@ const useAddSigner = () => {
         targets: [daoAddress!],
         values: [BigNumber.from('0')],
         calldatas: calldatas,
-        title: 'Add Signer',
-        description: description,
-        documentationUrl: '',
+        metaData: {
+          title: 'Add Signer',
+          description: description,
+          documentationUrl: '',
+        },
       };
 
       await submitProposal({
         proposalData,
-        successCallback: () => {
-          close();
-          loadDAOProposals();
-        },
+        successCallback: close,
         nonce,
         pendingToastMessage: t('addSignerPendingToastMessage'),
         successToastMessage: t('addSignerSuccessToastMessage'),
         failedToastMessage: t('addSignerFailureToastMessage'),
       });
     },
-    [gnosisSafeSingletonContract.asSigner.interface, submitProposal, t, loadDAOProposals]
+    [safeSingletonContract.asSigner.interface, submitProposal, t]
   );
 
   return addSigner;

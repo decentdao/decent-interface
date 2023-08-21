@@ -25,7 +25,6 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       return;
     }
     const tokenAddress = tokenContract.asSigner.address;
-
     const [tokenName, tokenSymbol, tokenDecimals, totalSupply] = await Promise.all([
       tokenContract.asSigner.name(),
       tokenContract.asSigner.symbol(),

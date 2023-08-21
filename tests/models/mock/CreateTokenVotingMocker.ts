@@ -1,4 +1,4 @@
-import { Endpoint, GnosisMocker } from './GnosisMocker';
+import { Endpoint, SafeMocker } from './SafeMocker';
 import {
   createSafeInfo,
   EMPTY_TRANSACTIONS,
@@ -7,7 +7,7 @@ import {
 import { accounts } from './data/testSigners';
 
 // TODO should be Token Voting / Azorius mocked data
-export class CreateTokenVotingMocker extends GnosisMocker {
+export class CreateTokenVotingMocker extends SafeMocker {
   setMocks() {
     this.mock(Endpoint.SAFES_CREATED_LIST, SINGLE_OWNER_MULTISIG_CREATION);
     this.mockWithHandler(Endpoint.SAFE_INFO, request => {

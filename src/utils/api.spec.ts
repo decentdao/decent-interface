@@ -1,26 +1,26 @@
 import { constants } from 'ethers';
-import { buildGnosisApiUrl } from './api';
+import { buildSafeApiUrl } from './api';
 
-describe('Gnosis URL builder tests', () => {
-  test('Creates Gnosis Transaction Service URL, no params', async () => {
-    const gnosisTransactionURL = buildGnosisApiUrl(
+describe('Safe URL builder tests', () => {
+  test('Creates Safe Transaction Service URL, no params', async () => {
+    const safeTransactionURL = buildSafeApiUrl(
       'https://safe-transaction-goerli.safe.global',
       '/about',
       {},
       'v1'
     );
     const EXPECTED_URL = 'https://safe-transaction-Goerli.safe.global/api/v1/about';
-    expect(gnosisTransactionURL).toEqual(EXPECTED_URL);
+    expect(safeTransactionURL).toEqual(EXPECTED_URL);
   });
 
-  test('Creates Gnosis Transaction Service URL, with params', async () => {
-    const gnosisTransactionURL = buildGnosisApiUrl(
+  test('Creates Safe Transaction Service URL, with params', async () => {
+    const safeTransactionURL = buildSafeApiUrl(
       'https://safe-transaction-goerli.safe.global',
       `/safes/${constants.AddressZero}/multisig-transactions`,
       { target: constants.AddressZero },
       'v1'
     );
     const EXPECTED_URL = `https://safe-transaction-Goerli.safe.global/api/v1/safes/${constants.AddressZero}/multisig-transactions?target=${constants.AddressZero}`;
-    expect(gnosisTransactionURL).toEqual(EXPECTED_URL);
+    expect(safeTransactionURL).toEqual(EXPECTED_URL);
   });
 });

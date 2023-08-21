@@ -1,15 +1,20 @@
 import { BigNumber } from 'ethers';
-import { CreatorFormState, GovernanceModuleType, TokenCreationType } from '../../types';
+import {
+  CreatorFormState,
+  GovernanceType,
+  TokenCreationType,
+  VotingStrategyType,
+} from '../../types';
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
 export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
-    governance: GovernanceModuleType.MULTISIG,
+    governance: GovernanceType.MULTISIG,
     snapshotURL: '',
   },
-  token: {
+  erc20Token: {
     tokenCreationType: TokenCreationType.NEW,
     tokenName: '',
     tokenSupply: {
@@ -27,6 +32,20 @@ export const initialState: CreatorFormState = {
     tokenImportAddress: '',
     parentAllocationAmount: {
       value: '',
+    },
+  },
+  erc721Token: {
+    nfts: [
+      {
+        tokenAddress: '',
+        tokenWeight: {
+          value: '',
+        },
+      },
+    ],
+    quorumThreshold: {
+      value: '10',
+      bigNumberValue: BigNumber.from(10),
     },
   },
   /**
@@ -53,6 +72,7 @@ export const initialState: CreatorFormState = {
       value: '2880',
       bigNumberValue: BigNumber.from(2880),
     },
+    votingStrategyType: VotingStrategyType.LINEAR_ERC20,
   },
   freeze: {
     executionPeriod: {

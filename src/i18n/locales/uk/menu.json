@@ -9,7 +9,6 @@
     "network": "Мережа",
     "wallet": "Крипто-гаманець",
     "titleManageDAO": "Керувати DAO",
-    "optionCreateSubDAO": "Створити subDAO",
     "optionInitiateFreeze": "Ініціювати Замороження",
     "optionInitiateClawback": "Ініціювати Повернення Коштів"
 }

@@ -12,33 +12,30 @@ import { BASE_ROUTES, DAO_ROUTES } from '../../src/constants/routes';
 import { useAccountFavorites } from '../../src/hooks/DAO/loaders/useFavorites';
 import useDeployDAO from '../../src/hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../../src/hooks/utils/useAsyncRetry';
-import { useFractal } from '../../src/providers/App/AppProvider';
-import { SafeMultisigDAO, AzoriusGovernanceDAO } from '../../src/types';
+import { useSafeAPI } from '../../src/providers/App/hooks/useSafeAPI';
+import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../src/types';
 
 export default function DaoCreatePage() {
   const { push } = useRouter();
   const { requestWithRetries } = useAsyncRetry();
-  const {
-    clients: { safeService },
-  } = useFractal();
   const { toggleFavorite } = useAccountFavorites();
   const [redirectPending, setRedirectPending] = useState(false);
   const { t } = useTranslation('transaction');
+  const safeAPI = useSafeAPI();
 
   const successCallback = useCallback(
     async (daoAddress: string) => {
-      if (!safeService) return;
       setRedirectPending(true);
       const { getAddress } = ethers.utils;
       const daoFound = await requestWithRetries(
-        () => safeService.getSafeCreationInfo(getAddress(daoAddress)),
+        () => safeAPI.getSafeCreationInfo(getAddress(daoAddress)),
         8
       );
       toggleFavorite(daoAddress);
       if (daoFound) {
         push(DAO_ROUTES.dao.relative(daoAddress));
       } else {
-        toast(t('failedIndexGnosis'), {
+        toast(t('failedIndexSafe'), {
           autoClose: false,
           closeOnClick: true,
           draggable: false,
@@ -48,12 +45,12 @@ export default function DaoCreatePage() {
         push(BASE_ROUTES.landing);
       }
     },
-    [safeService, requestWithRetries, toggleFavorite, push, t]
+    [safeAPI, requestWithRetries, toggleFavorite, push, t]
   );
 
   const [deploy, pending] = useDeployDAO();
 
-  const deployDAO = (daoData: SafeMultisigDAO | AzoriusGovernanceDAO) => {
+  const deployDAO = (daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO) => {
     deploy(daoData, successCallback);
   };
 

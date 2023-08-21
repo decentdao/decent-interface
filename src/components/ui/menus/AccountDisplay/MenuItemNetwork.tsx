@@ -1,12 +1,12 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useNetworkConfg } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 /**
  * Network display for menu
  */
 export function MenuItemNetwork() {
-  const { name, color } = useNetworkConfg();
+  const { name, color } = useNetworkConfig();
   const { t } = useTranslation('menu');
   return (
     <Box

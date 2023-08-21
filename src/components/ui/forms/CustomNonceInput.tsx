@@ -1,76 +1,64 @@
-import { Flex, Text, Input, HStack, VStack } from '@chakra-ui/react';
+import { Text, Input, HStack, VStack, Flex } from '@chakra-ui/react';
 import { Gear } from '@decent-org/fractal-ui';
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { GovernanceModuleType } from '../../../types';
 import SupportTooltip from '../badges/SupportTooltip';
 
 export function CustomNonceInput({
+  align = 'start',
   nonce,
   onChange,
 }: {
+  align?: 'start' | 'end';
   nonce: number | undefined;
   onChange: (nonce?: number) => void;
 }) {
   const {
-    governance,
     node: { safe },
+    readOnly: { dao },
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common']);
   const errorMessage =
     nonce !== undefined && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
   const containerRef = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
-  if (governance.type === GovernanceModuleType.AZORIUS) return null;
+
+  if (dao?.isAzorius) return null;
 
   return revealed ? (
-    <VStack alignItems="start">
-      <HStack
-        fontSize="14px"
-        justifyContent="flex-end"
-        alignSelf="flex-end"
-      >
+    <VStack alignItems={align}>
+      <HStack>
         <Flex
           ref={containerRef}
-          alignItems="center"
-          gap={2}
+          me="0.5rem"
         >
           <Text
+            alignSelf="center"
             textStyle="text-md-sans-regular"
-            whiteSpace="nowrap"
-            me="1"
+            me="0.5rem"
           >
             {t('customNonce', { ns: 'proposal' })}
           </Text>
           <SupportTooltip
             containerRef={containerRef}
             label={t('customNonceTooltip', { ns: 'proposal' })}
-            mx="2"
-            mt="1"
           />
         </Flex>
         <Input
+          w="4.5rem"
           value={nonce}
           onChange={e => onChange(e.target.value ? Number(e.target.value) : undefined)}
           type="number"
-          width="6rem"
         />
       </HStack>
       {errorMessage && (
-        <Flex
-          width="100%"
-          fontSize="14px"
-          mt={2}
+        <Text
+          color="alert-red.normal"
+          textStyle="text-md-sans-regular"
         >
-          <Text
-            color="alert-red.normal"
-            textStyle="text-md-sans-regular"
-            whiteSpace="pre-wrap"
-          >
-            {errorMessage}
-          </Text>
-        </Flex>
+          {errorMessage}
+        </Text>
       )}
     </VStack>
   ) : (

@@ -3,15 +3,16 @@ import {
   BaseContracts,
   AzoriusContracts,
   SafeMultisigDAO,
-  AzoriusGovernanceDAO,
   SubDAO,
+  AzoriusERC20DAO,
+  AzoriusERC721DAO,
 } from '../types';
 
 export class BaseTxBuilder {
   protected readonly signerOrProvider: ethers.Signer | any;
   protected readonly baseContracts: BaseContracts;
   protected readonly azoriusContracts: AzoriusContracts | undefined;
-  protected readonly daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO;
+  protected readonly daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO;
   protected readonly parentAddress?: string;
   protected readonly parentTokenAddress?: string;
 
@@ -19,7 +20,7 @@ export class BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
-    daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO,
+    daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
     parentAddress?: string,
     parentTokenAddress?: string
   ) {

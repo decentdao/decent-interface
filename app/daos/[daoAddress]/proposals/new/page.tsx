@@ -4,11 +4,11 @@ import { Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import AzoriusMetadata from '../../../../../src/components/ProposalCreate/AzoriusMetadata';
 import { ProposalDetails } from '../../../../../src/components/ProposalCreate/ProposalDetails';
 import { ProposalHeader } from '../../../../../src/components/ProposalCreate/ProposalHeader';
+import ProposalMetadata from '../../../../../src/components/ProposalCreate/ProposalMetadata';
 import TransactionsForm from '../../../../../src/components/ProposalCreate/TransactionsForm';
 import { DEFAULT_PROPOSAL } from '../../../../../src/components/ProposalCreate/constants';
 import { BarLoader } from '../../../../../src/components/ui/loaders/BarLoader';
@@ -20,11 +20,7 @@ import { usePrepareProposal } from '../../../../../src/hooks/DAO/proposal/usePre
 import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import { useCreateProposalSchema } from '../../../../../src/hooks/schemas/proposalCreate/useCreateProposalSchema';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
-import {
-  CreateProposalForm,
-  CreateProposalState,
-  GovernanceModuleType,
-} from '../../../../../src/types';
+import { CreateProposalForm, CreateProposalState, GovernanceType } from '../../../../../src/types';
 
 const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
@@ -42,20 +38,15 @@ export default function ProposalCreatePage() {
   const { push } = useRouter();
   const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
 
-  const [formState, setFormState] = useState(CreateProposalState.LOADING);
-
-  useEffect(() => {
-    if (!type) return;
-    if (type === GovernanceModuleType.AZORIUS) {
-      setFormState(CreateProposalState.METADATA_FORM);
-    } else {
-      setFormState(CreateProposalState.TRANSACTIONS_FORM);
-    }
-  }, [type]);
+  const [formState, setFormState] = useState(CreateProposalState.METADATA_FORM);
+  const isAzorius = useMemo(
+    () => type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721,
+    [type]
+  );
 
   const successCallback = () => {
     if (daoAddress) {
-      push(`/daos/${daoAddress}/proposals`);
+      push(DAO_ROUTES.proposals.relative(daoAddress));
     }
   };
 
@@ -131,7 +122,7 @@ export default function ProposalCreatePage() {
                         bg={BACKGROUND_SEMI_TRANSPARENT}
                       >
                         <ProposalHeader
-                          isAzorius={type === GovernanceModuleType.AZORIUS}
+                          isAzorius={isAzorius}
                           metadataTitle={
                             formState === CreateProposalState.TRANSACTIONS_FORM &&
                             !!values.proposalMetadata.title
@@ -144,7 +135,7 @@ export default function ProposalCreatePage() {
                           }}
                         />
 
-                        <AzoriusMetadata
+                        <ProposalMetadata
                           isVisible={formState === CreateProposalState.METADATA_FORM}
                           setFormState={setFormState}
                           {...formikProps}
@@ -152,7 +143,6 @@ export default function ProposalCreatePage() {
                         <TransactionsForm
                           isVisible={formState === CreateProposalState.TRANSACTIONS_FORM}
                           setFormState={setFormState}
-                          showBackButton={type === GovernanceModuleType.AZORIUS}
                           pendingTransaction={pendingCreateTx}
                           canUserCreateProposal={canUserCreateProposal}
                           {...formikProps}

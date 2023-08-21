@@ -14,23 +14,26 @@ import {
   ERC20Claim__factory,
   VotesERC20Wrapper__factory,
   KeyValuePairs__factory,
+  LinearERC721Voting__factory,
+  ERC721FreezeVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { useProvider } from 'wagmi';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
-import { useNetworkConfg } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import useSignerOrProvider from '../utils/useSignerOrProvider';
 
 export default function useSafeContracts() {
+  const signerOrProvider = useSignerOrProvider();
   const provider = useProvider();
-  const { data: signer } = useSigner();
 
   const {
     contracts: {
-      gnosisSafe,
-      gnosisSafeFactory,
+      safe,
+      safeFactory,
       zodiacModuleProxyFactory,
       linearVotingMasterCopy,
-      gnosisMultisend,
+      multisend,
       fractalAzoriusMasterCopy,
       fractalModuleMasterCopy,
       fractalRegistry,
@@ -38,23 +41,24 @@ export default function useSafeContracts() {
       azoriusFreezeGuardMasterCopy,
       multisigFreezeVotingMasterCopy,
       erc20FreezeVotingMasterCopy,
+      erc721FreezeVotingMasterCopy,
       votesERC20MasterCopy,
       claimingMasterCopy,
       votesERC20WrapperMasterCopy,
+      linearVotingERC721MasterCopy,
       keyValuePairs,
     },
-  } = useNetworkConfg();
+  } = useNetworkConfig();
 
   const daoContracts = useMemo(() => {
-    const signerOrProvider = signer || provider;
     const multiSendContract = {
-      asSigner: MultiSend__factory.connect(gnosisMultisend, signerOrProvider),
-      asProvider: MultiSend__factory.connect(gnosisMultisend, provider),
+      asSigner: MultiSend__factory.connect(multisend, signerOrProvider),
+      asProvider: MultiSend__factory.connect(multisend, provider),
     };
 
-    const gnosisSafeFactoryContract = {
-      asSigner: GnosisSafeProxyFactory__factory.connect(gnosisSafeFactory, signerOrProvider),
-      asProvider: GnosisSafeProxyFactory__factory.connect(gnosisSafeFactory, provider),
+    const safeFactoryContract = {
+      asSigner: GnosisSafeProxyFactory__factory.connect(safeFactory, signerOrProvider),
+      asProvider: GnosisSafeProxyFactory__factory.connect(safeFactory, provider),
     };
 
     const fractalAzoriusMasterCopyContract = {
@@ -66,10 +70,14 @@ export default function useSafeContracts() {
       asSigner: LinearERC20Voting__factory.connect(linearVotingMasterCopy, signerOrProvider),
       asProvider: LinearERC20Voting__factory.connect(linearVotingMasterCopy, provider),
     };
+    const linearVotingERC721MasterCopyContract = {
+      asSigner: LinearERC721Voting__factory.connect(linearVotingERC721MasterCopy, signerOrProvider),
+      asProvider: LinearERC721Voting__factory.connect(linearVotingERC721MasterCopy, provider),
+    };
 
-    const gnosisSafeSingletonContract = {
-      asSigner: GnosisSafe__factory.connect(gnosisSafe, signerOrProvider),
-      asProvider: GnosisSafe__factory.connect(gnosisSafe, provider),
+    const safeSingletonContract = {
+      asSigner: GnosisSafe__factory.connect(safe, signerOrProvider),
+      asProvider: GnosisSafe__factory.connect(safe, provider),
     };
 
     const zodiacModuleProxyFactoryContract = {
@@ -113,6 +121,11 @@ export default function useSafeContracts() {
       asProvider: ERC20FreezeVoting__factory.connect(erc20FreezeVotingMasterCopy, provider),
     };
 
+    const freezeERC721VotingMasterCopyContract = {
+      asSigner: ERC721FreezeVoting__factory.connect(erc721FreezeVotingMasterCopy, signerOrProvider),
+      asProvider: ERC721FreezeVoting__factory.connect(erc721FreezeVotingMasterCopy, provider),
+    };
+
     const votesTokenMasterCopyContract = {
       asSigner: VotesERC20__factory.connect(votesERC20MasterCopy, signerOrProvider),
       asProvider: VotesERC20__factory.connect(votesERC20MasterCopy, provider),
@@ -135,10 +148,10 @@ export default function useSafeContracts() {
 
     return {
       multiSendContract,
-      gnosisSafeFactoryContract,
+      safeFactoryContract,
       fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
-      gnosisSafeSingletonContract,
+      safeSingletonContract,
       zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
       fractalRegistryContract,
@@ -146,18 +159,20 @@ export default function useSafeContracts() {
       azoriusFreezeGuardMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
+      freezeERC721VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
       votesERC20WrapperMasterCopyContract,
+      linearVotingERC721MasterCopyContract,
       keyValuePairsContract,
     };
   }, [
-    gnosisSafeFactory,
-    gnosisSafe,
+    safeFactory,
+    safe,
     zodiacModuleProxyFactory,
     linearVotingMasterCopy,
     fractalAzoriusMasterCopy,
-    gnosisMultisend,
+    multisend,
     fractalModuleMasterCopy,
     fractalRegistry,
     multisigFreezeGuardMasterCopy,
@@ -167,9 +182,11 @@ export default function useSafeContracts() {
     votesERC20MasterCopy,
     claimingMasterCopy,
     votesERC20WrapperMasterCopy,
+    linearVotingERC721MasterCopy,
+    erc721FreezeVotingMasterCopy,
     keyValuePairs,
+    signerOrProvider,
     provider,
-    signer,
   ]);
 
   return daoContracts;

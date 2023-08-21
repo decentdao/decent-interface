@@ -19,7 +19,7 @@ import { testWallet } from './testWallet';
 const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
 
 // allows connection to localhost only in development mode.
-if (process.env.NEXT_PUBLIC_TESTING_ENVIROMENT) {
+if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
   supportedWagmiChains.unshift(hardhat);
 }
 
@@ -36,7 +36,7 @@ const defaultWallets = [
   walletConnectWallet({ chains }),
 ];
 // allows connection to localhost only in development mode.
-if (process.env.NEXT_PUBLIC_TESTING_ENVIROMENT) {
+if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
   defaultWallets.unshift(testWallet({ chains }));
 }
 

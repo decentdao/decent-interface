@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import { ICreationStepProps, CreatorSteps } from '../../../types';
+import { ICreationStepProps, CreatorSteps, VotingStrategyType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigNumberInput } from '../../ui/forms/BigNumberInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -56,22 +56,38 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             {t('exampleVotingPeriod')}
           </Text>
         </LabelComponent>
-        <LabelComponent
-          label={t('quorum', { ns: 'common' })}
-          helper={t('helperQuorum')}
-          isRequired
-        >
-          <InputGroup>
+        {values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20 ? (
+          <LabelComponent
+            label={t('quorum', { ns: 'common' })}
+            helper={t('helperQuorum')}
+            isRequired
+          >
+            <InputGroup>
+              <BigNumberInput
+                value={values.azorius.quorumPercentage.bigNumberValue}
+                onChange={valuePair => setFieldValue('azorius.quorumPercentage', valuePair)}
+                max="100"
+                decimalPlaces={0}
+                data-testid="govConfig-quorumPercentage"
+              />
+              <InputRightElement>%</InputRightElement>
+            </InputGroup>
+          </LabelComponent>
+        ) : (
+          <LabelComponent
+            label={t('quorum', { ns: 'common' })}
+            helper={t('helperQuorumThreshold')}
+            isRequired
+          >
             <BigNumberInput
-              value={values.azorius.quorumPercentage.bigNumberValue}
-              onChange={valuePair => setFieldValue('azorius.quorumPercentage', valuePair)}
-              max="100"
+              value={values.erc721Token.quorumThreshold.bigNumberValue}
+              onChange={valuePair => setFieldValue('erc721Token.quorumThreshold', valuePair)}
               decimalPlaces={0}
-              data-testid="govConfig-quorumPercentage"
+              min="1"
+              data-testid="govConfig-quorumThreshold"
             />
-            <InputRightElement>%</InputRightElement>
-          </InputGroup>
-        </LabelComponent>
+          </LabelComponent>
+        )}
         <LabelComponent
           label={t('labelTimelockPeriod')}
           helper={t('helperTimelockPeriod')}
@@ -134,7 +150,11 @@ export function AzoriusGovernance(props: ICreationStepProps) {
         />
         <StepButtons
           {...props}
-          prevStep={CreatorSteps.TOKEN_DETAILS}
+          prevStep={
+            values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20
+              ? CreatorSteps.ERC20_DETAILS
+              : CreatorSteps.ERC721_DETAILS
+          }
           nextStep={CreatorSteps.FREEZE_DETAILS}
           isLastStep={!isSubDAO}
           isEdit={mode === DAOCreateMode.EDIT}

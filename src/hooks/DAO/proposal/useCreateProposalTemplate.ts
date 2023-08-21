@@ -1,17 +1,15 @@
 import { BigNumber } from 'ethers';
-import { useCallback, useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { useCallback } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { ProposalExecuteData } from '../../../types';
 import { CreateProposalTemplateForm } from '../../../types/createProposalTemplate';
 import { couldBeENS } from '../../../utils/url';
 import useSafeContracts from '../../safe/useSafeContracts';
+import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export default function useCreateProposalTemplate() {
-  const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
+  const signerOrProvider = useSignerOrProvider();
 
   const { keyValuePairsContract } = useSafeContracts();
   const client = useIPFSClient();
@@ -25,7 +23,7 @@ export default function useCreateProposalTemplate() {
         const proposalMetadata = {
           title: 'Create Proposal Template',
           description:
-            'Execution of this proposal will create a new proposal template, attached to this DAO.',
+            'Execution of this proposal will create a new proposal template, attached to this Safe.',
           documentationUrl: '',
         };
 
@@ -57,7 +55,7 @@ export default function useCreateProposalTemplate() {
         const { Hash } = await client.add(JSON.stringify(updatedTemplatesList));
 
         const proposal: ProposalExecuteData = {
-          ...proposalMetadata,
+          metaData: proposalMetadata,
           targets: [keyValuePairsContract.asProvider.address],
           values: [BigNumber.from(0)],
           calldatas: [

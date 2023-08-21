@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { logError } from '../../../helpers/errorLogging';
-import { useNetworkConfg } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { CacheExpiry, CACHE_DEFAULTS, IStorageValue, keyInternal } from './cacheDefaults';
 
 /**
@@ -10,13 +10,15 @@ import { CacheExpiry, CACHE_DEFAULTS, IStorageValue, keyInternal } from './cache
  * work handled in onupgradeneeded if the structure of the
  * database changes in anyway.
  */
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 /**
  * Database object keys.
  */
 export enum DBObjectKeys {
   DECODED_TRANSACTIONS = 'DECODED_TRANSACTIONS',
+  MULTISIG_METADATA = 'MULTISIG_METADATA',
+  SAFE_API = 'SAFE_API',
 }
 
 /**
@@ -129,7 +131,7 @@ export const getIndexedDBValue = async (
 };
 
 export const useIndexedDB = (objectStoreName: string) => {
-  const { chainId } = useNetworkConfg();
+  const { chainId } = useNetworkConfig();
 
   const set = useCallback(
     async (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
