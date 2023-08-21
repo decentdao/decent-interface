@@ -20,7 +20,7 @@ export default function useExecuteProposal() {
   const executeProposal = useCallback(
     (proposal: FractalProposal) => {
       const azoriusProposal = proposal as AzoriusProposal;
-      if (!azoriusContract || !azoriusProposal.metaData || !azoriusProposal.metaData.transactions) {
+      if (!azoriusContract || !azoriusProposal.data || !azoriusProposal.data.transactions) {
         return;
       }
 
@@ -29,7 +29,7 @@ export default function useExecuteProposal() {
       const data: string[] = [];
       const operations: number[] = [];
 
-      azoriusProposal.metaData.transactions.forEach(tx => {
+      azoriusProposal.data.transactions.forEach(tx => {
         targets.push(tx.to);
         values.push(tx.value);
         data.push(tx.data);

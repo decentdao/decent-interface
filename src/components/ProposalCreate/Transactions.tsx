@@ -16,7 +16,6 @@ import Transaction from './Transaction';
 
 interface TransactionsProps extends FormikProps<CreateProposalForm> {
   isVisible: boolean;
-  showBackButton: boolean;
   pendingTransaction: boolean;
   expandedIndecies: number[];
   setExpandedIndecies: Dispatch<SetStateAction<number[]>>;

@@ -10,7 +10,6 @@ import {
   AzoriusGovernance,
   FractalProposal,
   FractalProposalState,
-  GovernanceModuleType,
   AzoriusProposal,
   FreezeGuardType,
 } from '../../../types';
@@ -23,6 +22,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
     guardContracts: { freezeGuardContract, freezeGuardType },
     governanceContracts,
     action,
+    readOnly: { dao },
   } = useFractal();
   const provider = useProvider();
 
@@ -57,7 +57,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
           try {
-            if (governance.type === GovernanceModuleType.AZORIUS) {
+            if (dao?.isAzorius) {
               await updateProposalState(BigNumber.from(proposal.proposalId));
             } else {
               await loadDAOProposals();
@@ -79,7 +79,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         clearInterval(updateStateInterval.current);
       }
     };
-  }, [secondsLeft, loadDAOProposals, proposal, updateProposalState, governance.type]);
+  }, [secondsLeft, loadDAOProposals, proposal, updateProposalState, governance.type, dao]);
 
   useEffect(() => {
     let countdownInterval: NodeJS.Timer | undefined;
@@ -103,7 +103,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
       const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
       const isAzoriusGuard = freezeGuardType === FreezeGuardType.AZORIUS;
 
-      const timeLockPeriod = azoriusGovernance.votesStrategy?.timeLockPeriod;
+      const timeLockPeriod = azoriusGovernance.votingStrategy?.timeLockPeriod;
       const votingDeadlineMs = (proposal as AzoriusProposal).deadlineMs;
 
       // If the proposal is active and has a deadline, start the countdown (for Azorius proposals)
@@ -153,7 +153,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
       clearInterval(countdownInterval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proposal.state, azoriusGovernance.votesStrategy, freezeGuardContract, freezeGuardType]);
+  }, [proposal.state, azoriusGovernance.votingStrategy, freezeGuardContract, freezeGuardType]);
 
   return secondsLeft;
 }

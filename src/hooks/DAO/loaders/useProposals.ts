@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
-import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
-import { GovernanceModuleType } from '../../../types';
+import { GovernanceType } from '../../../types';
 import { useUpdateTimer } from '../../utils/useUpdateTimer';
 import { useAzoriusProposals } from './governance/useAzoriusProposals';
 import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals';
@@ -10,7 +9,7 @@ import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals'
 export const useDAOProposals = () => {
   const {
     node: { daoAddress },
-    governanceContracts,
+    governance: { type },
     action,
   } = useFractal();
 
@@ -18,32 +17,17 @@ export const useDAOProposals = () => {
   const loadSafeMultisigProposals = useSafeMultisigProposals();
   const { setMethodOnInterval } = useUpdateTimer(daoAddress);
   const loadDAOProposals = useCallback(async () => {
-    const { azoriusContract } = governanceContracts;
-
-    if (!!azoriusContract) {
+    if (type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721) {
       // load Azorius proposals and strategies
-      try {
-        action.dispatch({
-          type: FractalGovernanceAction.SET_PROPOSALS,
-          payload: {
-            type: GovernanceModuleType.AZORIUS,
-            proposals: await loadAzoriusProposals(),
-          },
-        });
-      } catch (e) {
-        logError(e);
-      }
-    } else {
+      action.dispatch({
+        type: FractalGovernanceAction.SET_PROPOSALS,
+        payload: await loadAzoriusProposals(),
+      });
+    } else if (type === GovernanceType.MULTISIG) {
       // load mulisig proposals
       setMethodOnInterval(loadSafeMultisigProposals);
     }
-  }, [
-    governanceContracts,
-    loadAzoriusProposals,
-    action,
-    loadSafeMultisigProposals,
-    setMethodOnInterval,
-  ]);
+  }, [type, loadAzoriusProposals, action, loadSafeMultisigProposals, setMethodOnInterval]);
 
   return loadDAOProposals;
 };

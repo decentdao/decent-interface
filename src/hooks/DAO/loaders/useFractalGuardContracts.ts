@@ -24,6 +24,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     baseContracts: {
       zodiacModuleProxyFactoryContract,
       freezeERC20VotingMasterCopyContract,
+      freezeERC721VotingMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
       multisigFreezeGuardMasterCopyContract,
@@ -78,9 +79,9 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       } else {
         const hasNoGuard = _safe.guard === constants.AddressZero;
         const guardMasterCopyAddress = await getMasterCopyAddress(guard!);
-        const isGnosisGuard =
+        const isSafeGuard =
           guardMasterCopyAddress === multisigFreezeGuardMasterCopyContract.asSigner.address;
-        if (isGnosisGuard && !hasNoGuard) {
+        if (isSafeGuard && !hasNoGuard) {
           freezeGuardContract = {
             asSigner: multisigFreezeGuardMasterCopyContract.asSigner.attach(guard!),
             asProvider: multisigFreezeGuardMasterCopyContract.asProvider.attach(guard!),
@@ -95,6 +96,8 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         const freezeVotingType =
           votingMasterCopyAddress === freezeMultisigVotingMasterCopyContract.asSigner.address
             ? FreezeVotingType.MULTISIG
+            : votingMasterCopyAddress === freezeERC721VotingMasterCopyContract.asSigner.address
+            ? FreezeVotingType.ERC721
             : FreezeVotingType.ERC20;
 
         const freezeVotingContract =
@@ -102,6 +105,11 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
             ? {
                 asSigner: freezeMultisigVotingMasterCopyContract.asSigner.attach(votingAddress),
                 asProvider: freezeMultisigVotingMasterCopyContract.asProvider.attach(votingAddress),
+              }
+            : freezeVotingType === FreezeVotingType.ERC721
+            ? {
+                asSigner: freezeERC721VotingMasterCopyContract.asSigner.attach(votingAddress),
+                asProvider: freezeERC721VotingMasterCopyContract.asProvider.attach(votingAddress),
               }
             : {
                 asSigner: freezeERC20VotingMasterCopyContract.asSigner.attach(votingAddress),
@@ -114,12 +122,14 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
           freezeVotingType,
           freezeGuardType,
         };
+
         return contracts;
       }
     },
     [
       getMasterCopyAddress,
       freezeERC20VotingMasterCopyContract,
+      freezeERC721VotingMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
       multisigFreezeGuardMasterCopyContract,
@@ -134,10 +144,10 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   }, [action, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
-    if (daoAddress && daoAddress !== loadKey.current && loadOnMount && isModulesLoaded) {
-      loadKey.current = daoAddress;
+    if (daoAddress && chainId + daoAddress !== loadKey.current && loadOnMount && isModulesLoaded) {
+      loadKey.current = chainId + daoAddress;
       setGuardContracts();
     }
-  }, [setGuardContracts, isModulesLoaded, daoAddress, loadOnMount]);
+  }, [setGuardContracts, isModulesLoaded, daoAddress, loadOnMount, chainId]);
   return loadFractalGuardContracts;
 };

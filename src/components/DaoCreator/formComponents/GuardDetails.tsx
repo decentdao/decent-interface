@@ -15,7 +15,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
   BigNumberValuePair,
-  GovernanceModuleType,
+  GovernanceType,
   CreatorSteps,
   AzoriusGovernance,
 } from '../../../types';
@@ -34,9 +34,10 @@ function GuardDetails(props: ICreationStepProps) {
     node: { safe },
     governance,
     governanceContracts: { azoriusContract },
+    readOnly: { dao },
   } = useFractal();
   const { type } = governance;
-  const [showCustomNonce, setShowCustomNonce] = useState(false);
+  const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
   const [totalParentVotes, setTotalParentVotes] = useState<BigNumber>();
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
@@ -50,12 +51,11 @@ function GuardDetails(props: ICreationStepProps) {
   );
 
   useEffect(() => {
-    const isParentAzorius = type === GovernanceModuleType.AZORIUS;
-    if (!isParentAzorius && isSubDAO && safe) {
+    if (showCustomNonce === undefined && !dao?.isAzorius && isSubDAO && safe) {
       setFieldValue('multisig.customNonce', safe.nonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, azoriusContract, type, setFieldValue, safe]);
+  }, [isSubDAO, azoriusContract, type, setFieldValue, safe, dao, showCustomNonce]);
 
   useEffect(() => {
     // set the initial value for freezeGuard.freezeVotesThreshold
@@ -66,15 +66,30 @@ function GuardDetails(props: ICreationStepProps) {
       let parentVotes: BigNumber;
 
       switch (type) {
-        case GovernanceModuleType.AZORIUS:
-          if (!azoriusGovernance || !azoriusGovernance.votesToken) return;
-          const normalized = ethers.utils.formatUnits(
-            azoriusGovernance.votesToken.totalSupply,
-            azoriusGovernance.votesToken.decimals
-          );
-          parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
+        case GovernanceType.AZORIUS_ERC20:
+        case GovernanceType.AZORIUS_ERC721:
+          if (
+            !azoriusGovernance ||
+            (!azoriusGovernance.votesToken && !azoriusGovernance.erc721Tokens)
+          )
+            return;
+          if (azoriusGovernance.votesToken) {
+            const normalized = ethers.utils.formatUnits(
+              azoriusGovernance.votesToken.totalSupply,
+              azoriusGovernance.votesToken.decimals
+            );
+
+            parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
+          } else if (azoriusGovernance.erc721Tokens) {
+            parentVotes = azoriusGovernance.erc721Tokens!.reduce(
+              (prev, curr) => curr.votingWeight.mul(curr.totalSupply || 1).add(prev),
+              BigNumber.from(0)
+            );
+          } else {
+            parentVotes = BigNumber.from(1);
+          }
           break;
-        case GovernanceModuleType.MULTISIG:
+        case GovernanceType.MULTISIG:
         default:
           if (!safe) return;
           parentVotes = BigNumber.from(safe.owners.length);
@@ -121,7 +136,7 @@ function GuardDetails(props: ICreationStepProps) {
         flexDirection="column"
         gap={8}
       >
-        {governanceFormType === GovernanceModuleType.MULTISIG && (
+        {governanceFormType === GovernanceType.MULTISIG && (
           <>
             <ContentBoxTitle>{t('titleProposalSettings')}</ContentBoxTitle>
             <LabelComponent
@@ -262,7 +277,7 @@ function GuardDetails(props: ICreationStepProps) {
         <StepButtons
           {...props}
           prevStep={
-            governanceFormType === GovernanceModuleType.MULTISIG
+            governanceFormType === GovernanceType.MULTISIG
               ? CreatorSteps.MULTISIG_DETAILS
               : CreatorSteps.AZORIUS_DETAILS
           }

@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { Activity } from '../../types';
 
-import { ActivityDescriptionGovernance } from './ActivityDescriptionGovernance';
+import { ProposalTitle } from './ActivityDescriptionGovernance';
 import { ActivityDescriptionTreasury } from './ActivityDescriptionTreasury';
 
 export function ActivityDescription({ activity }: { activity: Activity }) {
@@ -13,7 +13,7 @@ export function ActivityDescription({ activity }: { activity: Activity }) {
       mr="1rem"
       flexWrap="wrap"
     >
-      <ActivityDescriptionGovernance activity={activity} />
+      <ProposalTitle activity={activity} />
       {!!activity.transaction && <ActivityDescriptionTreasury activity={activity} />}
     </Flex>
   );

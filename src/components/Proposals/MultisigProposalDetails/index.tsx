@@ -23,7 +23,7 @@ export function MultisigProposalDetails({ proposal }: { proposal: FractalProposa
         <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <ProposalInfo proposal={proposal} />
           <Box mt={4}>
-            <ProposalCreatedBy proposalProposer={txProposal.confirmations[0].owner} />
+            <ProposalCreatedBy proposer={txProposal.confirmations[0].owner} />
           </Box>
         </ContentBox>
         <SignerDetails proposal={txProposal} />

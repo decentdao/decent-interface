@@ -3,8 +3,10 @@ import { GovernanceContractAction, GovernanceContractActions } from './action';
 
 export const initialGovernanceContractsState: FractalGovernanceContracts = {
   ozLinearVotingContract: null,
+  erc721LinearVotingContract: null,
   azoriusContract: null,
   tokenContract: null,
+  lockReleaseContract: null,
   isLoaded: false,
 };
 

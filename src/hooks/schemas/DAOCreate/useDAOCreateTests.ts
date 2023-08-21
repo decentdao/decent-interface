@@ -1,10 +1,12 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20ABI, useProvider, useSigner } from 'wagmi';
+import { erc20ABI, useProvider } from 'wagmi';
 import { AnyObject } from 'yup';
+import { logError } from '../../../helpers/errorLogging';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { couldBeENS } from '../../../utils/url';
+import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { validateAddress } from '../common/useValidationAddress';
 
 /**
@@ -19,9 +21,24 @@ export function useDAOCreateTests() {
    */
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
   const provider = useProvider();
-  const { data: signer } = useSigner();
-  const signerOrProvider = signer || provider;
+  const signerOrProvider = useSignerOrProvider();
   const { t } = useTranslation(['daoCreate', 'common']);
+
+  const minValueValidation = useMemo(
+    () => (minValue: number) => {
+      return {
+        name: 'Minimum value validation',
+        message: t('errorMinimumValue', { ns: 'common', minValue }),
+        test: function (value: string | undefined) {
+          if (value && Number(value) >= minValue) {
+            return true;
+          }
+          return false;
+        },
+      };
+    },
+    [t]
+  );
 
   const allocationValidationTest = useMemo(() => {
     return {
@@ -88,10 +105,10 @@ export function useDAOCreateTests() {
         if (!value) return false;
 
         const formData: CreatorFormState = context.from.reverse()[0].value;
-        const tokenSupply = formData.token.tokenSupply.bigNumberValue as BigNumber;
-        const tokenAllocations = formData.token.tokenAllocations;
+        const tokenSupply = formData.erc20Token.tokenSupply.bigNumberValue as BigNumber;
+        const tokenAllocations = formData.erc20Token.tokenAllocations;
         const parentAllocationAmount =
-          formData.token.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
+          formData.erc20Token.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
 
         const filteredAllocations = tokenAllocations.filter(
           allocation =>
@@ -135,10 +152,56 @@ export function useDAOCreateTests() {
       },
     };
   }, [provider, t]);
+
+  const validERC721Address = useMemo(() => {
+    return {
+      name: 'ERC721 Address Validation',
+      message: t('errorInvalidERC721Address', { ns: 'common' }),
+      test: async function (address: string | undefined) {
+        if (address && utils.isAddress(address)) {
+          try {
+            // We're using this instead of erc721ABI from wagmi cause that one doesn't have supportsInterface for whatever reason
+            const erc165 = [
+              'function supportsInterface(bytes4 interfaceID) external view returns (bool)',
+            ];
+            const nftContract = new ethers.Contract(address, erc165, provider);
+            const supportsInterface = await nftContract.supportsInterface('0x80ac58cd'); // Exact same check we have in voting strategy contract
+            return supportsInterface;
+          } catch (error) {
+            logError(error);
+            return false;
+          }
+        }
+        return false;
+      },
+    };
+  }, [provider, t]);
+
+  const isBigNumberValidation = useMemo(() => {
+    return {
+      name: 'BigNumber Validation',
+      message: t('errorInvalidBigNumber', { ns: 'common' }),
+      test: (value: string | undefined) => {
+        if (!value) {
+          return false;
+        }
+        try {
+          BigNumber.from(value);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      },
+    };
+  }, [t]);
+
   return {
+    minValueValidation,
     maxAllocationValidation,
     allocationValidationTest,
     uniqueAllocationValidationTest,
     validERC20Address,
+    validERC721Address,
+    isBigNumberValidation,
   };
 }

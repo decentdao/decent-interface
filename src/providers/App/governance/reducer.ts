@@ -1,12 +1,23 @@
-import { FractalGovernance, AzoriusProposal, VOTE_CHOICES, SnapshotProposal } from '../../../types';
-import { AzoriusGovernance, GovernanceModuleType } from './../../../types/fractal';
-import { FractalGovernanceAction, FractalGovernanceActions } from './action';
+import {
+  FractalGovernance,
+  AzoriusProposal,
+  VOTE_CHOICES,
+  SnapshotProposal,
+  ERC721ProposalVote,
+  AzoriusGovernance,
+  DecentGovernance,
+} from '../../../types';
+import {
+  FractalGovernanceAction,
+  FractalGovernanceActions,
+  DecentGovernanceAction,
+} from './action';
 
 export const initialGovernanceState: FractalGovernance = {
   proposals: null,
   proposalTemplates: null,
   type: undefined,
-  votesStrategy: undefined,
+  votingStrategy: undefined,
   votesToken: undefined,
 };
 
@@ -20,13 +31,13 @@ export const initialVotesTokenAccountData = {
 export const governanceReducer = (state: FractalGovernance, action: FractalGovernanceActions) => {
   const { proposals } = state;
   switch (action.type) {
+    case FractalGovernanceAction.SET_GOVERNANCE_TYPE:
+      return { ...state, type: action.payload };
     case FractalGovernanceAction.SET_PROPOSALS: {
-      const { type, proposals: newProposals } = action.payload;
       return {
         ...state,
-        type,
         proposals: [
-          ...newProposals,
+          ...action.payload,
           ...(proposals || []).filter(
             proposal => !!(proposal as SnapshotProposal).snapshotProposalId
           ),
@@ -37,15 +48,27 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposalTemplates: action.payload };
     }
     case FractalGovernanceAction.SET_STRATEGY: {
-      return { ...state, type: GovernanceModuleType.AZORIUS, votesStrategy: action.payload };
+      return {
+        ...state,
+        votingStrategy: action.payload,
+      };
     }
     case FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS:
       return { ...state, proposals: [...(proposals || []), ...action.payload] };
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
-      return { ...state, proposals: [...(proposals || []), action.payload] };
-    case FractalGovernanceAction.UPDATE_NEW_AZORIUS_VOTE: {
-      const { proposalId, voter, support, weight, votesSummary } = action.payload;
-      const updatedProposals = [...(proposals as AzoriusProposal[])].map(proposal => {
+      return {
+        ...state,
+        // TODO - Investigate a better way of avoiding duplicate proposals
+        // It seems like UPDATE_PROPOSALS_NEW dispatched multiple times with the same proposal sometimes
+        // Yet, I'm not sure of the cause :(
+        proposals: [...(proposals || []), action.payload].filter(
+          (proposal, index, array) =>
+            index === array.findIndex(p => p.proposalId === proposal.proposalId)
+        ),
+      };
+    case FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC20_VOTE: {
+      const { proposalId, voter, support, votesSummary, weight } = action.payload;
+      const updatedProposals = (proposals as AzoriusProposal[]).map(proposal => {
         if (proposal.proposalId === proposalId) {
           const foundVote = proposal.votes.find(vote => vote.voter === voter);
           const newProposal: AzoriusProposal = {
@@ -54,6 +77,27 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
             votes: foundVote
               ? [...proposal.votes]
               : [...proposal.votes, { voter, choice: VOTE_CHOICES[support], weight }],
+          };
+          return newProposal;
+        }
+        return proposal;
+      });
+      return { ...state, proposals: updatedProposals };
+    }
+    case FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC721_VOTE: {
+      const { proposalId, voter, support, votesSummary, tokenAddresses, tokenIds } = action.payload;
+      const updatedProposals = (proposals as AzoriusProposal[]).map(proposal => {
+        if (proposal.proposalId === proposalId) {
+          const foundVote = proposal.votes.find(vote => vote.voter === voter);
+          const newProposal: AzoriusProposal = {
+            ...proposal,
+            votesSummary,
+            votes: foundVote
+              ? [...proposal.votes]
+              : ([
+                  ...proposal.votes,
+                  { voter, choice: VOTE_CHOICES[support], tokenAddresses, tokenIds },
+                ] as ERC721ProposalVote[]),
           };
           return newProposal;
         }
@@ -79,20 +123,27 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return { ...state, proposals: updatedProposals };
     }
     case FractalGovernanceAction.UPDATE_VOTING_PERIOD: {
-      const { votesStrategy } = state as AzoriusGovernance;
-      return { ...state, votesStrategy: { ...votesStrategy, votingPeriod: action.payload } };
+      const { votingStrategy } = state as AzoriusGovernance;
+      return { ...state, votingStrategy: { ...votingStrategy, votingPeriod: action.payload } };
+    }
+    case FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD: {
+      const { votingStrategy } = state as AzoriusGovernance;
+      return { ...state, votingStrategy: { ...votingStrategy, quorumThreshold: action.payload } };
     }
     case FractalGovernanceAction.UPDATE_VOTING_QUORUM: {
-      const { votesStrategy } = state as AzoriusGovernance;
-      return { ...state, votesStrategy: { ...votesStrategy, votingQuorum: action.payload } };
+      const { votingStrategy } = state as AzoriusGovernance;
+      return { ...state, votingStrategy: { ...votingStrategy, votingQuorum: action.payload } };
     }
     case FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD: {
-      const { votesStrategy } = state as AzoriusGovernance;
-      return { ...state, votesStrategy: { ...votesStrategy, timelockPeriod: action.payload } };
+      const { votingStrategy } = state as AzoriusGovernance;
+      return { ...state, votingStrategy: { ...votingStrategy, timelockPeriod: action.payload } };
     }
     case FractalGovernanceAction.SET_TOKEN_DATA: {
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...action.payload } };
+    }
+    case FractalGovernanceAction.SET_ERC721_TOKENS_DATA: {
+      return { ...state, erc721Tokens: action.payload };
     }
     case FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA: {
       const { votesToken } = state as AzoriusGovernance;
@@ -108,6 +159,14 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA: {
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...initialVotesTokenAccountData } };
+    }
+    // Decent Governance only
+    case DecentGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA: {
+      const { lockedVotesToken } = state as DecentGovernance;
+      return { ...state, lockedVotesToken: { ...(lockedVotesToken || {}), ...action.payload } };
+    }
+    case DecentGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA: {
+      return { ...state, lockedVotesToken: undefined };
     }
     default:
       return state;

@@ -1,38 +1,30 @@
 import { Button, Tooltip } from '@chakra-ui/react';
 import { CloseX, Check } from '@decent-org/fractal-ui';
-import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
-import { useFractal } from '../../../providers/App/AppProvider';
 import {
   FractalProposal,
   AzoriusProposal,
   FractalProposalState,
   AzoriusVoteChoice,
 } from '../../../types';
+import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 
-function Vote({
-  proposal,
-  currentUserHasVoted,
-}: {
-  proposal: FractalProposal;
-  currentUserHasVoted: boolean;
-}) {
+function Vote({ proposal }: { proposal: FractalProposal }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['common', 'proposal']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
-  const {
-    readOnly: { user },
-  } = useFractal();
 
   const azoriusProposal = proposal as AzoriusProposal;
 
-  const { castVote, canVote } = useCastVote({
-    proposalId: BigNumber.from(proposal.proposalId),
-    setPending: setPending,
+  const { castVote } = useCastVote({
+    proposal,
+    setPending,
   });
+
+  const { canVote, canVoteLoading, hasVoted, hasVotedLoading } = useVoteContext();
 
   // if the user is not a signer or has no delegated tokens, don't show anything
   if (!canVote) {
@@ -50,8 +42,9 @@ function Vote({
   const disabled =
     pending ||
     proposal.state !== FractalProposalState.ACTIVE ||
-    !!azoriusProposal.votes.find(vote => vote.voter === user.address) ||
-    proposalStartBlockNotFinalized;
+    proposalStartBlockNotFinalized ||
+    canVoteLoading ||
+    hasVotedLoading;
 
   return (
     <Tooltip
@@ -59,7 +52,7 @@ function Vote({
       title={
         proposalStartBlockNotFinalized
           ? t('proposalStartBlockNotFinalized', { ns: 'proposal' })
-          : currentUserHasVoted
+          : hasVoted
           ? t('currentUserAlreadyVoted', { ns: 'proposal' })
           : undefined
       }

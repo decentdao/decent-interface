@@ -2,9 +2,10 @@
 
 import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
+import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import ProposalTemplateDetails from '../../../../../src/components/CreateProposalTemplate/ProposalTemplateDetails';
 import ProposalTemplateMetadata from '../../../../../src/components/CreateProposalTemplate/ProposalTemplateMetadata';
@@ -15,13 +16,16 @@ import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader'
 import ClientOnly from '../../../../../src/components/ui/utils/ClientOnly';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../../../src/constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../src/constants/routes';
+import { logError } from '../../../../../src/helpers/errorLogging';
 import useCreateProposalTemplate from '../../../../../src/hooks/DAO/proposal/useCreateProposalTemplate';
 import useSubmitProposal from '../../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import useCreateProposalTemplateSchema from '../../../../../src/hooks/schemas/createProposalTemplate/useCreateProposalTemplateSchema';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
+import useIPFSClient from '../../../../../src/providers/App/hooks/useIPFSClient';
 import {
   CreateProposalTemplateForm,
   CreateProposalTemplateFormState,
+  ProposalTemplate,
 } from '../../../../../src/types/createProposalTemplate';
 
 const templateAreaTwoCol = '"content details"';
@@ -30,8 +34,20 @@ const templateAreaSingleCol = `"content"
 
 export default function CreateProposalTemplatePage() {
   const [formState, setFormState] = useState(CreateProposalTemplateFormState.METADATA_FORM);
+  const [initialProposalTemplate, setInitialProposalTemplate] = useState(DEFAULT_PROPOSAL_TEMPLATE);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
+
   const { push } = useRouter();
+  const searchParams = useSearchParams();
+  const defaultProposalTemplatesHash = useMemo(
+    () => searchParams?.get('templatesHash'),
+    [searchParams]
+  );
+  const defaultProposalTemplateIndex = useMemo(
+    () => searchParams?.get('templateIndex'),
+    [searchParams]
+  );
+
   const {
     node: { daoAddress, safe },
   } = useFractal();
@@ -39,19 +55,52 @@ export default function CreateProposalTemplatePage() {
   const { prepareProposalTemplateProposal } = useCreateProposalTemplate();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
   const { createProposalTemplateValidation } = useCreateProposalTemplateSchema();
+  const ipfsClient = useIPFSClient();
 
   const successCallback = () => {
     if (daoAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      push(`/daos/${daoAddress}/proposals`);
+      push(DAO_ROUTES.proposals.relative(daoAddress));
     }
   };
+
+  useEffect(() => {
+    const loadInitialTemplate = async () => {
+      if (defaultProposalTemplatesHash && defaultProposalTemplateIndex) {
+        try {
+          const proposalTemplates = await ipfsClient.cat(defaultProposalTemplatesHash);
+          const initialTemplate: ProposalTemplate = proposalTemplates[defaultProposalTemplateIndex];
+          if (initialTemplate) {
+            const newInitialValue = {
+              nonce: undefined,
+              proposalTemplateMetadata: {
+                title: initialTemplate.title,
+                description: initialTemplate.description || '',
+              },
+              transactions: initialTemplate.transactions.map(tx => ({
+                ...tx,
+                ethValue: {
+                  value: tx.ethValue.value,
+                  bigNumerValue: BigNumber.from(tx.ethValue.value || 0),
+                },
+              })),
+            };
+            setInitialProposalTemplate(newInitialValue);
+          }
+        } catch (e) {
+          logError('Error while fetching initial template values', e);
+        }
+      }
+    };
+    loadInitialTemplate();
+  }, [defaultProposalTemplatesHash, defaultProposalTemplateIndex, ipfsClient]);
 
   return (
     <ClientOnly>
       <Formik<CreateProposalTemplateForm>
         validationSchema={createProposalTemplateValidation}
-        initialValues={DEFAULT_PROPOSAL_TEMPLATE}
+        initialValues={initialProposalTemplate}
+        enableReinitialize
         onSubmit={async values => {
           if (canUserCreateProposal) {
             const proposalData = await prepareProposalTemplateProposal(values);
@@ -137,6 +186,7 @@ export default function CreateProposalTemplatePage() {
                               <CustomNonceInput
                                 nonce={formikProps.values.nonce}
                                 onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                                align="end"
                               />
                             </Flex>
                             <ProposalTemplateTransactionsForm

@@ -1,12 +1,12 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Govern } from '@decent-org/fractal-ui';
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
-import { useCallback, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useProvider } from 'wagmi';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceModuleType } from '../../../../types';
+import { AzoriusGovernance, FreezeGuardType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 
@@ -15,46 +15,51 @@ export function InfoGovernance() {
   const {
     node: { daoAddress },
     governance,
-    guardContracts,
+    guardContracts: { freezeGuardType, freezeGuardContract },
+    readOnly: { dao },
   } = useFractal();
   const provider = useProvider();
   const { getTimeDuration } = useTimeHelpers();
 
   const [timelockPeriod, setTimelockPeriod] = useState<string>();
   const [executionPeriod, setExecutionPeriod] = useState<string>();
-
-  const setTimelockInfo = useCallback(async () => {
-    if (!timelockPeriod && !executionPeriod) {
-      const formatBlocks = async (blocks: number): Promise<string | undefined> => {
-        return getTimeDuration(await blocksToSeconds(blocks, provider));
-      };
-      if (governance.type == GovernanceModuleType.MULTISIG) {
-        if (guardContracts.freezeGuardContract) {
-          const freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
-          setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
-          setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
+  useEffect(() => {
+    const setTimelockInfo = async () => {
+      if (!timelockPeriod && !executionPeriod) {
+        const formatBlocks = async (blocks: number): Promise<string | undefined> => {
+          return getTimeDuration(await blocksToSeconds(blocks, provider));
+        };
+        if (freezeGuardType == FreezeGuardType.MULTISIG) {
+          if (freezeGuardContract) {
+            const freezeGuard = freezeGuardContract.asSigner as MultisigFreezeGuard;
+            setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
+            setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
+          }
+        } else if (dao?.isAzorius) {
+          const azoriusGovernance = governance as AzoriusGovernance;
+          const timelock = azoriusGovernance.votingStrategy?.timeLockPeriod;
+          if (timelock?.formatted) {
+            setTimelockPeriod(timelock.formatted);
+          }
+          // TODO Azorius execution period
+          // We don't have room to fit a 5th row on this card currently,
+          // so leaving this off until we can have a discussion with design
+          // setExecutionPeriod(await freezeGuard.executionPeriod());
         }
-      } else if (governance.type == GovernanceModuleType.AZORIUS) {
-        const azoriusGovernance = governance as AzoriusGovernance;
-        const timelock = azoriusGovernance.votesStrategy?.timeLockPeriod;
-        if (timelock?.value) {
-          setTimelockPeriod(await formatBlocks(timelock?.value.toNumber()));
-        }
-        // TODO Azorius execution period
-        // We don't have room to fit a 5th row on this card currently,
-        // so leaving this off until we can have a discussion with design
-        // setExecutionPeriod(await freezeGuard.executionPeriod());
       }
-    }
+    };
+
+    setTimelockInfo();
   }, [
     executionPeriod,
     getTimeDuration,
     governance,
-    guardContracts.freezeGuardContract,
+    freezeGuardContract,
+    freezeGuardType,
     provider,
     timelockPeriod,
+    dao,
   ]);
-  setTimelockInfo();
 
   if (!daoAddress || !governance.type) {
     return (
@@ -69,10 +74,7 @@ export function InfoGovernance() {
     );
   }
 
-  const governanceAzorius =
-    governance.type === GovernanceModuleType.AZORIUS
-      ? (governance as AzoriusGovernance)
-      : undefined;
+  const governanceAzorius = dao?.isAzorius ? (governance as AzoriusGovernance) : undefined;
 
   return (
     <Box
@@ -112,7 +114,7 @@ export function InfoGovernance() {
         </Text>
       </Flex>
 
-      {governanceAzorius?.votesStrategy?.votingPeriod && (
+      {governanceAzorius?.votingStrategy?.votingPeriod && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
@@ -128,11 +130,11 @@ export function InfoGovernance() {
             textStyle="text-base-sans-regular"
             color="grayscale.100"
           >
-            {governanceAzorius.votesStrategy.votingPeriod.formatted}
+            {governanceAzorius.votingStrategy?.votingPeriod?.formatted}
           </Text>
         </Flex>
       )}
-      {governanceAzorius?.votesStrategy?.quorumPercentage && (
+      {governanceAzorius?.votingStrategy?.quorumPercentage && (
         <Flex
           alignItems="center"
           justifyContent="space-between"
@@ -148,7 +150,27 @@ export function InfoGovernance() {
             textStyle="text-base-sans-regular"
             color="grayscale.100"
           >
-            {governanceAzorius.votesStrategy.quorumPercentage.formatted}
+            {governanceAzorius.votingStrategy.quorumPercentage.formatted}
+          </Text>
+        </Flex>
+      )}
+      {governanceAzorius?.votingStrategy?.quorumThreshold && (
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          mb="0.25rem"
+        >
+          <Text
+            textStyle="text-base-sans-regular"
+            color="chocolate.200"
+          >
+            {t('titleQuorum')}
+          </Text>
+          <Text
+            textStyle="text-base-sans-regular"
+            color="grayscale.100"
+          >
+            {governanceAzorius.votingStrategy.quorumThreshold.formatted}
           </Text>
         </Flex>
       )}

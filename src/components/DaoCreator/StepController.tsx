@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { ICreationStepProps, CreatorSteps } from '../../types';
 import { AzoriusGovernance } from './formComponents/AzoriusGovernance';
+import AzoriusNFTDetails from './formComponents/AzoriusNFTDetails';
 import { AzoriusTokenDetails } from './formComponents/AzoriusTokenDetails';
 import { EstablishEssentials } from './formComponents/EstablishEssentials';
-import { GnosisMultisig } from './formComponents/GnosisMultisig';
 import GuardDetails from './formComponents/GuardDetails';
+import { Multisig } from './formComponents/Multisig';
 
 function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) {
   const [step, setStepState] = useState<CreatorSteps>(CreatorSteps.ESSENTIALS);
@@ -22,15 +23,7 @@ function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) 
       );
     case CreatorSteps.MULTISIG_DETAILS:
       return (
-        <GnosisMultisig
-          {...props}
-          step={step}
-          updateStep={updateStep}
-        />
-      );
-    case CreatorSteps.TOKEN_DETAILS:
-      return (
-        <AzoriusTokenDetails
+        <Multisig
           {...props}
           step={step}
           updateStep={updateStep}
@@ -39,6 +32,22 @@ function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) 
     case CreatorSteps.AZORIUS_DETAILS:
       return (
         <AzoriusGovernance
+          {...props}
+          step={step}
+          updateStep={updateStep}
+        />
+      );
+    case CreatorSteps.ERC20_DETAILS:
+      return (
+        <AzoriusTokenDetails
+          {...props}
+          step={step}
+          updateStep={updateStep}
+        />
+      );
+    case CreatorSteps.ERC721_DETAILS:
+      return (
+        <AzoriusNFTDetails
           {...props}
           step={step}
           updateStep={updateStep}

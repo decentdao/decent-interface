@@ -6,11 +6,14 @@ import {
   SafeMultisigDAO,
   DAOFreezeGuardConfig,
   BigNumberValuePair,
-  AzoriusGovernanceDAO,
   TokenCreationType,
+  AzoriusERC20DAO,
+  AzoriusERC721DAO,
 } from '../../../types';
 import { getEstimatedNumberOfBlocks } from '../../../utils/contract';
 import { couldBeENS } from '../../../utils/url';
+
+type FreezeGuardConfigParam = { freezeGuard?: DAOFreezeGuardConfig<BigNumberValuePair> };
 
 export function usePrepareFormData() {
   const { data: signer } = useSigner();
@@ -63,7 +66,7 @@ export function usePrepareFormData() {
       trustedAddresses,
       freezeGuard,
       ...rest
-    }: SafeMultisigDAO & { freezeGuard?: DAOFreezeGuardConfig<BigNumberValuePair> }) => {
+    }: SafeMultisigDAO & FreezeGuardConfigParam) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
           if (couldBeENS(inputValue)) {
@@ -86,7 +89,7 @@ export function usePrepareFormData() {
     [signer, prepareFreezeGuardData]
   );
 
-  const prepareAzoriusFormData = useCallback(
+  const prepareAzoriusERC20FormData = useCallback(
     async ({
       tokenSupply,
       tokenAllocations,
@@ -99,9 +102,7 @@ export function usePrepareFormData() {
       tokenImportAddress,
       tokenCreationType,
       ...rest
-    }: AzoriusGovernanceDAO<BigNumberValuePair> & {
-      freezeGuard?: DAOFreezeGuardConfig<BigNumberValuePair>;
-    }): Promise<AzoriusGovernanceDAO> => {
+    }: AzoriusERC20DAO<BigNumberValuePair> & FreezeGuardConfigParam): Promise<AzoriusERC20DAO> => {
       const resolvedTokenAllocations = await Promise.all(
         tokenAllocations.map(async allocation => {
           let address = allocation.address;
@@ -142,5 +143,57 @@ export function usePrepareFormData() {
     },
     [signer, checkVotesToken, provider, prepareFreezeGuardData]
   );
-  return { prepareMultisigFormData, prepareAzoriusFormData, checkVotesToken };
+
+  const prepareAzoriusERC721FormData = useCallback(
+    async ({
+      quorumPercentage,
+      timelock,
+      executionPeriod,
+      votingPeriod,
+      freezeGuard,
+      nfts,
+      quorumThreshold,
+      ...rest
+    }: AzoriusERC721DAO<BigNumberValuePair> &
+      FreezeGuardConfigParam): Promise<AzoriusERC721DAO> => {
+      let freezeGuardData: Partial<DAOFreezeGuardConfig> = {};
+      if (freezeGuard) {
+        freezeGuardData = await prepareFreezeGuardData(freezeGuard);
+      }
+
+      const resolvedNFTs = await Promise.all(
+        nfts.map(async nft => {
+          let address = nft.tokenAddress;
+          if (couldBeENS(address)) {
+            address = await signer!.resolveName(nft.tokenAddress);
+          }
+          return {
+            tokenAddress: address,
+            tokenWeight: nft.tokenWeight.bigNumberValue!,
+          };
+        })
+      );
+
+      return {
+        quorumPercentage: quorumPercentage.bigNumberValue!,
+        timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
+        executionPeriod: await getEstimatedNumberOfBlocks(
+          executionPeriod.bigNumberValue!,
+          provider
+        ),
+        votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
+        nfts: resolvedNFTs,
+        quorumThreshold: quorumThreshold.bigNumberValue!,
+        ...freezeGuardData,
+        ...rest,
+      };
+    },
+    [prepareFreezeGuardData, provider, signer]
+  );
+  return {
+    prepareMultisigFormData,
+    prepareAzoriusERC20FormData,
+    prepareAzoriusERC721FormData,
+    checkVotesToken,
+  };
 }

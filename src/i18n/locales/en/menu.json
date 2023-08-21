@@ -8,13 +8,14 @@
     "toastSwitchChain": "Switch your wallet to a supported chain: {{chainNames}}",
     "network": "Network",
     "wallet": "Wallet",
-    "titleManageDAO": "Manage DAO",
-    "titleViewDAODetails": "View DAO Details",
+    "titleManageDAO": "Manage Safe",
+    "titleViewDAODetails": "View Safe Details",
     "titleManageProposalTemplate": "Manage Template",
-    "optionCreateSubDAO": "Add a subDAO",
+    "optionCreateSubDAO": "Add a sub-Safe",
     "optionInitiateFreeze": "Initiate a Freeze",
     "optionInitiateClawback": "Initiate Clawback",
     "optionRemoveTemplate": "Remove Template",
+    "optionForkTemplate": "Fork Template",
     "optionModifyGovernance": "Modify Governance",
     "optionSettings": "Settings"
 }

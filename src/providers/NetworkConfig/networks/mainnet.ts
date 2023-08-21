@@ -17,7 +17,9 @@ import {
   getMultiSendCallOnlyDeployment,
 } from '@safe-global/safe-deployments';
 import { mainnet } from 'wagmi/chains';
+import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
+import { isProd } from '../../../utils';
 
 const CHAIN_ID = 1;
 const SAFE_VERSION = '1.3.0';
@@ -38,24 +40,36 @@ export const mainnetConfig: NetworkConfig = {
     fractalModuleMasterCopy: FractalModule.address,
     fractalRegistry: FractalRegistry.address,
     votesERC20MasterCopy: VotesERC20.address,
+    linearVotingERC721MasterCopy: '', // TODO - Add actual address once contract is deployed on mainnet
     claimingMasterCopy: ERC20Claim.address,
     azoriusFreezeGuardMasterCopy: AzoriusFreezeGuard.address,
     multisigFreezeVotingMasterCopy: MultisigFreezeVoting.address,
     erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
+    erc721FreezeVotingMasterCopy: '', // TODO - Add actual address once contract is deployed on mainnet
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
-    gnosisSafe: getSafeSingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
+    safe: getSafeSingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
       ?.defaultAddress!,
-    gnosisSafeFactory: getProxyFactoryDeployment({
+    safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
     })?.defaultAddress!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
-    gnosisMultisend: getMultiSendCallOnlyDeployment({
+    multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
     })?.defaultAddress!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
+  staking: {
+    lido: {
+      rewardsAddress: '0x8202E3cBa328CCf3eeA5bF0A11596c5297Cf7525',
+      stETHContractAddress: '0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84',
+      withdrawalQueueContractAddress: '0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1',
+    },
+  },
+  createOptions: isProd()
+    ? [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20]
+    : [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20, GovernanceType.AZORIUS_ERC721],
 };

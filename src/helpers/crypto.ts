@@ -101,7 +101,7 @@ export const safeSignTypedData = async (
 };
 
 export const buildSafeAPIPost = async (
-  gnosisContract: Contract,
+  safeContract: Contract,
   signerOrProvider: Signer & TypedDataSigner,
   chainId: number,
   template: {
@@ -119,18 +119,18 @@ export const buildSafeAPIPost = async (
 ): Promise<SafePostTransaction> => {
   const safeTx = buildSafeTransaction(template);
 
-  const txHash = calculateSafeTransactionHash(gnosisContract, safeTx, chainId);
+  const txHash = calculateSafeTransactionHash(safeContract, safeTx, chainId);
   const sig = [
     await safeSignTypedData(
       signerOrProvider as Signer & TypedDataSigner,
-      gnosisContract,
+      safeContract,
       safeTx,
       chainId
     ),
   ];
   const signatureBytes = buildSignatureBytes(sig);
   return {
-    safe: gnosisContract.address,
+    safe: safeContract.address,
     to: safeTx.to,
     value: safeTx.value,
     data: safeTx.data,

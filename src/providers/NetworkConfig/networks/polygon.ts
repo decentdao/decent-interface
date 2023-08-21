@@ -17,7 +17,9 @@ import {
   getMultiSendCallOnlyDeployment,
 } from '@safe-global/safe-deployments';
 import { polygon } from 'wagmi/chains';
+import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
+import { isProd } from '../../../utils';
 
 const CHAIN_ID = 137;
 const SAFE_VERSION = '1.3.0';
@@ -38,24 +40,30 @@ export const polygonConfig: NetworkConfig = {
     fractalModuleMasterCopy: FractalModule.address,
     fractalRegistry: FractalRegistry.address,
     votesERC20MasterCopy: VotesERC20.address,
+    linearVotingERC721MasterCopy: '',
     claimingMasterCopy: ERC20Claim.address,
     azoriusFreezeGuardMasterCopy: AzoriusFreezeGuard.address,
     multisigFreezeVotingMasterCopy: MultisigFreezeVoting.address,
     erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
+    erc721FreezeVotingMasterCopy: '',
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
-    gnosisSafe: getSafeSingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
+    safe: getSafeSingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
       ?.defaultAddress!,
-    gnosisSafeFactory: getProxyFactoryDeployment({
+    safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
     })?.defaultAddress!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
-    gnosisMultisend: getMultiSendCallOnlyDeployment({
+    multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
     })?.defaultAddress!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
+  staking: {},
+  createOptions: isProd()
+    ? [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20]
+    : [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20, GovernanceType.AZORIUS_ERC721],
 };

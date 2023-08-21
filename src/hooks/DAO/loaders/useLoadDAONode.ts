@@ -4,16 +4,14 @@ import { useCallback } from 'react';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useSubgraphChainName } from '../../../graphql/utils';
 import { logError } from '../../../helpers/errorLogging';
-import { useFractal } from '../../../providers/App/AppProvider';
+import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useLazyDAOName } from '../useDAOName';
 import { useFractalModules } from './useFractalModules';
 
 export const useLoadDAONode = () => {
-  const {
-    clients: { safeService },
-  } = useFractal();
+  const safeAPI = useSafeAPI();
   const { getDaoName } = useLazyDAOName();
   const lookupModules = useFractalModules();
   const chainName = useSubgraphChainName();
@@ -46,16 +44,16 @@ export const useLoadDAONode = () => {
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
       if (utils.isAddress(_daoAddress)) {
         try {
-          const safe = await safeService.getSafeInfo(_daoAddress);
-          const fractalModules = await lookupModules(safe.modules);
           const graphNodeInfo = formatDAOQuery(
             await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-            safe.address
+            _daoAddress
           );
           if (!graphNodeInfo) {
             logError('graphQL query failed');
             return { error: 'errorFailedSearch' };
           }
+          const safe = await safeAPI.getSafeInfo(_daoAddress);
+          const fractalModules = await lookupModules(safe.modules);
           const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo.daoName);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
@@ -77,7 +75,7 @@ export const useLoadDAONode = () => {
         return { error: 'errorFailedSearch' };
       }
     },
-    [safeService, lookupModules, formatDAOQuery, getDAOInfo, getDaoName]
+    [safeAPI, lookupModules, formatDAOQuery, getDAOInfo, getDaoName]
   );
 
   return { loadDao };

@@ -6,6 +6,5 @@ export * from './dev';
 export * from './numberFormats';
 export * from './safeData';
 export * from './signatures';
-export * from './string';
 export * from './time';
 export * from './azorius';

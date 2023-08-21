@@ -13,7 +13,6 @@
     "noActivity": "Нема активності",
     "proposalDescription_one": "Пропозиція виконати {{count}} транзакцію",
     "proposalDescription_other": "Пропозиція виконати {{count}} транзакцій",
-    "frozenDescription": "DAO Заморожено",
     "freezeButton": "Заморозити",
     "noVotesButton": "Користувач на має голосів",
     "tipFreeze": "{{amount}} необхідні голоси замороження",

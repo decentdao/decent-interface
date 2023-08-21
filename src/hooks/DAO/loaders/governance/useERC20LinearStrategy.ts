@@ -9,10 +9,11 @@ import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import { VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
-export const useAzoriusStrategy = () => {
+export const useERC20LinearStrategy = () => {
   const {
     governanceContracts: { ozLinearVotingContract, azoriusContract },
     action,
@@ -23,7 +24,7 @@ export const useAzoriusStrategy = () => {
   } = provider;
   const { getTimeDuration } = useTimeHelpers();
 
-  const loadAzoriusStrategy = useCallback(async () => {
+  const loadERC20Strategy = useCallback(async () => {
     if (!ozLinearVotingContract || !azoriusContract) {
       return {};
     }
@@ -48,6 +49,7 @@ export const useAzoriusStrategy = () => {
         value: BigNumber.from(timeLockPeriodValue),
         formatted: getTimeDuration(timeLockPeriodValue),
       },
+      strategyType: VotingStrategyType.LINEAR_ERC20,
     };
     action.dispatch({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
   }, [ozLinearVotingContract, azoriusContract, getTimeDuration, action, provider]);
@@ -108,5 +110,5 @@ export const useAzoriusStrategy = () => {
     };
   }, [azoriusContract, chainId, action]);
 
-  return loadAzoriusStrategy;
+  return loadERC20Strategy;
 };

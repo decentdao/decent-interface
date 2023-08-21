@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 
-export interface VotesTokenData extends VotesData, TokenData {}
+export interface VotesTokenData extends VotesData, ERC20TokenData {}
 export interface VotesData {
   balance: BigNumber | null;
   delegatee: string | null;
@@ -8,14 +8,22 @@ export interface VotesData {
   isDelegatesSet: boolean | null;
 }
 export type UnderlyingTokenData = Omit<
-  TokenData,
+  ERC20TokenData,
   'totalSupply' | 'decimals' | 'underlyingTokenData'
 >;
-export interface TokenData {
+
+export interface BaseTokenData {
   name: string;
   symbol: string;
-  decimals: number;
   address: string;
+}
+export interface ERC20TokenData extends BaseTokenData {
+  decimals: number;
   totalSupply: BigNumber;
   underlyingTokenData?: UnderlyingTokenData;
+}
+
+export interface ERC721TokenData extends BaseTokenData {
+  totalSupply?: BigNumber;
+  votingWeight: BigNumber;
 }

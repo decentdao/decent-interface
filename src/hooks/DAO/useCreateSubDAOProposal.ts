@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
-import { AzoriusGovernanceDAO, SafeMultisigDAO, AzoriusGovernance } from '../../types';
+import { SafeMultisigDAO, AzoriusGovernance, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { ProposalExecuteData } from '../../types/daoProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 import useBuildDAOTx from './useBuildDAOTx';
@@ -22,7 +22,7 @@ export const useCreateSubDAOProposal = () => {
   const azoriusGovernance = governance as AzoriusGovernance;
   const proposeDao = useCallback(
     (
-      daoData: AzoriusGovernanceDAO | SafeMultisigDAO,
+      daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
       nonce: number | undefined,
       successCallback: (daoAddress: string) => void
     ) => {
@@ -36,7 +36,7 @@ export const useCreateSubDAOProposal = () => {
           return;
         }
 
-        const { safeTx, predictedGnosisSafeAddress } = builtSafeTx;
+        const { safeTx, predictedSafeAddress } = builtSafeTx;
 
         const proposalData: ProposalExecuteData = {
           targets: [multiSendContract.asSigner.address, fractalRegistryContract.asSigner.address],
@@ -44,12 +44,14 @@ export const useCreateSubDAOProposal = () => {
           calldatas: [
             multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [safeTx]),
             fractalRegistryContract.asSigner.interface.encodeFunctionData('declareSubDAO', [
-              predictedGnosisSafeAddress,
+              predictedSafeAddress,
             ]),
           ],
-          title: t('Create a subDAO', { ns: 'proposalMetadata' }),
-          description: '',
-          documentationUrl: '',
+          metaData: {
+            title: t('Create a sub-Safe', { ns: 'proposalMetadata' }),
+            description: '',
+            documentationUrl: '',
+          },
         };
         submitProposal({
           proposalData,
