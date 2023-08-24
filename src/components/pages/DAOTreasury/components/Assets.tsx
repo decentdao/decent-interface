@@ -248,7 +248,7 @@ export function Assets() {
   const showClaimETHButton = canUserCreateProposal && staking.lido && lidoWithdrawelNFT;
   useEffect(() => {
     const getLidoClaimableStatus = async () => {
-      if (!staking.lido?.withdrawalQueueContractAddress) {
+      if (!staking.lido?.withdrawalQueueContractAddress || !lidoWithdrawelNFT) {
         return;
       }
       const withdrawalQueueContract = getWithdrawalQueueContract(
