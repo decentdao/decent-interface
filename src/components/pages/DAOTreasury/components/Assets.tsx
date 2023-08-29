@@ -136,7 +136,7 @@ function CoinRow({
           textStyle="text-base-sans-regular"
           color="grayscale.100"
         >
-          {formatPercentage(asset.fiatValue, totalFiat)}
+          {totalFiat > 0 && formatPercentage(asset.fiatValue, totalFiat)}
         </Text>
       </Box>
     </HStack>
