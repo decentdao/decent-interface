@@ -240,13 +240,15 @@ export function ManageDAOMenu({
     ) {
       return [clawBackOption, settingsOption];
     } else {
-      if (governanceType === GovernanceType.MULTISIG && canUserCreateProposal) {
-        return [createSubDAOOption, modifyGovernanceOption, settingsOption];
-      } else if (governanceType === GovernanceType.MULTISIG) {
-        return [settingsOption];
-      } else {
-        return [createSubDAOOption, settingsOption];
+      const optionsArr = [];
+      if (canUserCreateProposal) {
+        optionsArr.push(createSubDAOOption);
+        if (governanceType === GovernanceType.MULTISIG) {
+          optionsArr.push(modifyGovernanceOption);
+        }
       }
+      optionsArr.push(settingsOption);
+      return optionsArr;
     }
   }, [
     freezeGuard,
