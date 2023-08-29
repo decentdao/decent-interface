@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <meta
           name="description"
-          content="Do More with DAOs. Go farther, faster. Create a hyper-scalable global organization. Fractalize risk and governance."
+          content="Are you outgrowing your Multisig? Fractal extends Safe treasuries into on-chain hierarchies of permissions, token flows, and governance."
         />
         <meta
           name="git-hash"
@@ -61,7 +61,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <meta
           property="og:description"
-          content="Do More with DAOs. Go farther, faster. Create a hyper-scalable global organization. Fractalize risk and governance."
+          content="Are you outgrowing your Multisig? Fractal extends Safe treasuries into on-chain hierarchies of permissions, token flows, and governance."
         />
         <meta
           property="og:type"
