@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Text, Image } from '@chakra-ui/react';
+import { Box, Flex, Text, Image } from '@chakra-ui/react';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { FractalProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
@@ -24,15 +24,19 @@ export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
         <ActivityDescription activity={proposal} />
         <Text my={4}>{metaData.description}</Text>
         {metaData.documentationUrl && (
-          <Button
+          <Text
             onClick={confirmUrl}
-            variant="text"
             color="gold.500"
+            as="b"
+            cursor="pointer"
           >
-            <Flex>
+            <Flex
+              ps="0.5rem"
+              pe="0.5rem"
+            >
               <Image
                 src="/images/external-link.svg"
-                alt={'Test'}
+                alt={''}
                 w="1rem"
                 h="1rem"
                 my={1}
@@ -40,7 +44,7 @@ export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
               />
               {metaData.documentationUrl}
             </Flex>
-          </Button>
+          </Text>
         )}
         <ProposalExecutableCode proposal={proposal} />
       </Box>
