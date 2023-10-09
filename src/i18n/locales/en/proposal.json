@@ -122,5 +122,6 @@
     "singleSnapshotVotingSystem": "Single choice voting",
     "unknownSnapshotVotingSystem": "Unknown voting system",
     "ipfs": "IPFS",
-    "shutterPrivacy": "Shutter"
+    "shutterPrivacy": "Shutter",
+    "shutterQuorumHelper": "Voting results are not exposed untill voting is finalized"
 }

@@ -69,7 +69,7 @@ interface SnapshotPlugin {}
  * Their data model is quite different comparing to our, so there's not much of point to reuse existing
  */
 
-interface SnapshotVote {
+export interface SnapshotVote {
   id: string;
   voter: string;
   votingWeight: number;
@@ -78,8 +78,20 @@ interface SnapshotVote {
   created: number;
   choice: string;
 }
+
+export interface SnapshotVoteBreakdown {
+  // Choice might be dynamically created by proposal's author.
+  // So "For" | "Against" | "Abstain" are not hardcoded/guaranteed
+  // However, it's not a big deal cause we don't need to rely on that
+  [voteChoice: string]: {
+    total: number;
+    votes: SnapshotVote[];
+  };
+}
+
 export interface ExtendedSnapshotProposal extends SnapshotProposal {
   snapshot: number; // Number of block
+  snapshotState: string; // State retrieved from Snapshot
   type: 'basic' | 'single';
   quorum?: number;
   privacy?: string;
@@ -88,6 +100,7 @@ export interface ExtendedSnapshotProposal extends SnapshotProposal {
   choices: string[];
   plugins: SnapshotPlugin[];
   votes: SnapshotVote[];
+  votesBreakdown: SnapshotVoteBreakdown;
 }
 
 export type ProposalVotesSummary = {

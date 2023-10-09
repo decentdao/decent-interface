@@ -1,7 +1,12 @@
 import { gql } from '@apollo/client';
 import { useCallback, useMemo, useState } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { ExtendedSnapshotProposal, FractalProposal, SnapshotProposal } from '../../../../types';
+import {
+  ExtendedSnapshotProposal,
+  FractalProposal,
+  SnapshotProposal,
+  SnapshotVote,
+} from '../../../../types';
 import client from './';
 
 export default function useSnapshotProposal(proposal: FractalProposal | null | undefined) {
@@ -87,9 +92,35 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
           }));
         });
 
+      const votesBreakdown: {
+        [voteChoice: string]: {
+          votes: SnapshotVote[];
+          total: number;
+        };
+      } = {};
+
+      const getVoteWeight = (vote: SnapshotVote) =>
+        vote.votingWeight * vote.votingWeightByStrategy.reduce((prev, curr) => prev + curr, 0);
+
+      votesQueryResult.forEach((vote: SnapshotVote) => {
+        const existingChoiceType = votesBreakdown[vote.choice];
+        if (existingChoiceType) {
+          votesBreakdown[vote.choice] = {
+            total: existingChoiceType.total + getVoteWeight(vote),
+            votes: [...existingChoiceType.votes, vote],
+          };
+        } else {
+          votesBreakdown[vote.choice] = {
+            total: getVoteWeight(vote),
+            votes: [vote],
+          };
+        }
+      });
+
       setExtendedSnapshotProposal({
         ...proposal,
         ...proposalQueryResult,
+        votesBreakdown,
         votes: votesQueryResult,
       } as ExtendedSnapshotProposal);
     }
