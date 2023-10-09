@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AzoriusProposalDetails } from '../../../../../src/components/Proposals/AzoriusDetails';
 import { MultisigProposalDetails } from '../../../../../src/components/Proposals/MultisigProposalDetails';
+import SnapshotProposalDetails from '../../../../../src/components/Proposals/SnapshotProposalDetails';
 import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../../../src/components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
@@ -11,7 +12,7 @@ import ClientOnly from '../../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
 import { useGetMetadata } from '../../../../../src/hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
-import { FractalProposal, AzoriusProposal } from '../../../../../src/types';
+import { FractalProposal, AzoriusProposal, SnapshotProposal } from '../../../../../src/types';
 
 export default function ProposalDetailsPage({
   params: { proposalId },
@@ -25,6 +26,10 @@ export default function ProposalDetailsPage({
   } = useFractal();
 
   const [proposal, setProposal] = useState<FractalProposal | null>();
+  const isSnapshotProposal = useMemo(
+    () => !!(proposal as SnapshotProposal).snapshotProposalId,
+    [proposal]
+  );
   const metaData = useGetMetadata(proposal);
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
@@ -71,6 +76,8 @@ export default function ProposalDetailsPage({
         <EmptyBox emptyText={t('noProposal')} />
       ) : dao?.isAzorius ? (
         <AzoriusProposalDetails proposal={azoriusProposal} />
+      ) : isSnapshotProposal ? (
+        <SnapshotProposalDetails proposal={proposal as SnapshotProposal} />
       ) : (
         <MultisigProposalDetails proposal={proposal} />
       )}

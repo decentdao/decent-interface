@@ -32,7 +32,7 @@ export function ProposalAction({
   expandedView?: boolean;
 }) {
   const {
-    node: { daoAddress, daoSnapshotURL },
+    node: { daoAddress },
     readOnly: { user, dao },
   } = useFractal();
   const { push } = useRouter();
@@ -54,10 +54,8 @@ export function ProposalAction({
 
   const handleClick = () => {
     if (isSnapshotProposal) {
-      window.open(
-        `https://snapshot.org/#/${daoSnapshotURL}/proposal/${
-          (proposal as SnapshotProposal).snapshotProposalId
-        }`
+      push(
+        DAO_ROUTES.proposal.relative(daoAddress, (proposal as SnapshotProposal).snapshotProposalId)
       );
     } else {
       push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
@@ -80,7 +78,7 @@ export function ProposalAction({
 
   const label = useMemo(() => {
     if (isSnapshotProposal) {
-      return t('snapshotVote');
+      return t('details');
     }
 
     if (isActiveProposal) {

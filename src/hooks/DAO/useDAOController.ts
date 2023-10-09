@@ -9,7 +9,7 @@ import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
 import { useFractalNode } from './loaders/useFractalNode';
 import { useFractalTreasury } from './loaders/useFractalTreasury';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
-import { useSnapshotProposals } from './loaders/useSnapshotProposals';
+import { useSnapshotProposals } from './loaders/snapshot/useSnapshotProposals';
 
 export default function useDAOController({ daoAddress }: { daoAddress?: string }) {
   const [currentDAOAddress, setCurrentDAOAddress] = useState<string>();

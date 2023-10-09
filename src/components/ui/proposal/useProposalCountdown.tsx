@@ -12,6 +12,7 @@ import {
   FractalProposalState,
   AzoriusProposal,
   FreezeGuardType,
+  SnapshotProposal,
 } from '../../../types';
 import { blocksToSeconds } from '../../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../../utils/guard';
@@ -27,6 +28,8 @@ export function useProposalCountdown(proposal: FractalProposal) {
   const provider = useProvider();
 
   const [secondsLeft, setSecondsLeft] = useState<number>();
+  const snapshotProposal = proposal as SnapshotProposal;
+  const isSnapshotProposal = !!snapshotProposal.snapshotProposalId;
 
   const azoriusGovernance = governance as AzoriusGovernance;
 
@@ -144,6 +147,8 @@ export function useProposalCountdown(proposal: FractalProposal) {
           guardTimelockPeriod = timeLockPeriod.value.toNumber() * 1000 + votingDeadlineMs;
         }
         startCountdown(guardTimelockPeriod);
+      } else if (isSnapshotProposal) {
+        startCountdown(snapshotProposal.endTime * 1000);
       }
     }
 
