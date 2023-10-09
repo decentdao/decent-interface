@@ -1,5 +1,7 @@
 import { GridItem } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { SnapshotProposal } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
@@ -20,6 +22,13 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
     readOnly: { user },
   } = useFractal();
   useProposalCountdown(proposal);
+
+  const { loadProposal, extendedSnapshotProposal } = useSnapshotProposal(proposal);
+
+  useEffect(() => {
+    loadProposal();
+  }, [loadProposal, proposal]);
+
   return (
     <ProposalDetailsGrid>
       <GridItem colSpan={2}>
@@ -29,7 +38,7 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
         <SnapshotProposalVotes proposal={proposal} />
       </GridItem>
       <GridItem>
-        <SnapshotProposalSummary proposal={proposal} />
+        <SnapshotProposalSummary proposal={extendedSnapshotProposal} />
         {user.address && (
           <VoteContextProvider proposal={proposal}>
             <ProposalAction

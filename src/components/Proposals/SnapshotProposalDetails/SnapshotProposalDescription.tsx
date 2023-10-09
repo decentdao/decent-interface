@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { SnapshotProposal } from '../../../types';
-import './SnapshotProposalMarkdown.css';
+import '../../../assets/css/SnapshotProposalMarkdown.css';
 
 interface ISnapshotProposalDescription {
   truncate?: boolean;

@@ -1,10 +1,12 @@
 import { gql } from '@apollo/client';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { FractalProposal, SnapshotProposal } from '../../../../types';
+import { ExtendedSnapshotProposal, FractalProposal, SnapshotProposal } from '../../../../types';
 import client from './';
 
 export default function useSnapshotProposal(proposal: FractalProposal | null | undefined) {
+  const [extendedSnapshotProposal, setExtendedSnapshotProposal] =
+    useState<ExtendedSnapshotProposal>();
   const {
     node: { daoSnapshotURL },
     readOnly: {
@@ -17,7 +19,81 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     () => !!snapshotProposal?.snapshotProposalId,
     [snapshotProposal]
   );
-  const loadProposal = useCallback(async () => {}, []);
+  const loadProposal = useCallback(async () => {
+    if (snapshotProposal?.snapshotProposalId) {
+      const proposalQueryResult = await client
+        .query({
+          query: gql`
+          query ExtendedSnapshotProposal {
+            proposal(id: "${snapshotProposal.snapshotProposalId}") {
+              snapshot
+              type
+              quorum
+              privacy
+              strategies {
+                name
+                network
+                params
+              }
+              plugins
+              choices
+              ipfs
+            }
+          }
+        `,
+        })
+        .then(
+          ({
+            data: {
+              proposal: { snapshot, strategies, plugins, choices, type, quorum, privacy, ipfs },
+            },
+          }) => {
+            return {
+              snapshot,
+              strategies,
+              plugins,
+              choices,
+              type,
+              quorum,
+              privacy,
+              ipfs,
+            };
+          }
+        );
+
+      const votesQueryResult = await client
+        .query({
+          query: gql`query SnapshotProposalVotes {
+          votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}) {
+            id
+            voter
+            vp
+            vp_by_strategy
+            vp_state
+            created
+            choice
+          }
+        }`,
+        })
+        .then(({ data: { votes } }) => {
+          return votes.map(({ id, voter, vp, vp_by_strategy, vp_state, created, choice }: any) => ({
+            id,
+            voter,
+            votingWeight: vp,
+            votingWeightByStrategy: vp_by_strategy,
+            votingState: vp_state,
+            created,
+            choice,
+          }));
+        });
+
+      setExtendedSnapshotProposal({
+        ...proposal,
+        ...proposalQueryResult,
+        votes: votesQueryResult,
+      } as ExtendedSnapshotProposal);
+    }
+  }, [snapshotProposal?.snapshotProposalId, proposal]);
 
   const loadVotingWeight = useCallback(async () => {
     if (snapshotProposal?.snapshotProposalId) {
@@ -59,5 +135,6 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     loadProposal,
     snapshotProposal,
     isSnapshotProposal,
+    extendedSnapshotProposal,
   };
 }

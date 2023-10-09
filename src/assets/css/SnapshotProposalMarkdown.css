@@ -36,6 +36,10 @@
     color: inherit;
     text-decoration: none;
   }
+
+  .markdown-body a {
+    color: #fabd2e;
+  }
   
   .markdown-body .absent {
     color: #cb2431;
