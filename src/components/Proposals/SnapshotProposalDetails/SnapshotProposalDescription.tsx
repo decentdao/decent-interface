@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { SnapshotProposal } from '../../../types';
+import './SnapshotProposalMarkdown.css';
 
 interface ISnapshotProposalDescription {
   truncate?: boolean;
@@ -34,10 +35,13 @@ export default function SnapshotProposalDescription({
 
   return (
     <>
-      <Text noOfLines={collapsed ? 6 : undefined}>
+      <Text
+        noOfLines={collapsed ? 6 : undefined}
+        maxWidth="100%"
+      >
         <Markdown
           remarkPlugins={[remarkGfm]}
-          className="markdown-container"
+          className="markdown-body"
         >
           {proposal.description}
         </Markdown>

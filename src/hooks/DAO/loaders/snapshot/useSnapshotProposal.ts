@@ -14,37 +14,45 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
 
   const snapshotProposal = proposal as SnapshotProposal;
   const isSnapshotProposal = useMemo(
-    () => !!snapshotProposal.snapshotProposalId,
+    () => !!snapshotProposal?.snapshotProposalId,
     [snapshotProposal]
   );
   const loadProposal = useCallback(async () => {}, []);
 
   const loadVotingWeight = useCallback(async () => {
-    const queryResult = await client
-      .query({
-        query: gql`
-    query UserVotingWeight {
-        vp(
-            voter: ${address}
-            space: ${daoSnapshotURL}
-            proposal: ${snapshotProposal.snapshotProposalId}
-        ) {
-            vp
-            vp_by_strategy
-            vp_state
-        }
-    }`,
-      })
-      .then(({ data: { vp } }) => {
-        return {
-          votingWeight: vp.vp,
-          votingWeightByStrategy: vp.vp_by_strategy,
-          votingState: vp.vp_state,
-        };
-      });
+    if (snapshotProposal?.snapshotProposalId) {
+      const queryResult = await client
+        .query({
+          query: gql`
+      query UserVotingWeight {
+          vp(
+              voter: "${address}"
+              space: "${daoSnapshotURL}"
+              proposal: "${snapshotProposal.snapshotProposalId}"
+          ) {
+              vp
+              vp_by_strategy
+              vp_state
+          }
+      }`,
+        })
+        .then(({ data: { vp } }) => {
+          return {
+            votingWeight: vp.vp,
+            votingWeightByStrategy: vp.vp_by_strategy,
+            votingState: vp.vp_state,
+          };
+        });
 
-    return queryResult;
-  }, [address, daoSnapshotURL, snapshotProposal.snapshotProposalId]);
+      return queryResult;
+    }
+
+    return {
+      votingWeight: 0,
+      votingWeightByStrategy: [0],
+      votingState: '',
+    };
+  }, [address, daoSnapshotURL, snapshotProposal?.snapshotProposalId]);
 
   return {
     loadVotingWeight,

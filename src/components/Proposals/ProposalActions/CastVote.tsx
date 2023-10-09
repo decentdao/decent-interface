@@ -2,6 +2,7 @@ import { Button, Tooltip } from '@chakra-ui/react';
 import { CloseX, Check } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 import {
@@ -24,6 +25,7 @@ function Vote({ proposal }: { proposal: FractalProposal }) {
     setPending,
   });
 
+  const { isSnapshotProposal } = useSnapshotProposal(proposal);
   const { canVote, canVoteLoading, hasVoted, hasVotedLoading } = useVoteContext();
 
   // if the user is not a signer or has no delegated tokens, don't show anything
@@ -36,7 +38,10 @@ function Vote({ proposal }: { proposal: FractalProposal }) {
   // This gives a weird behavior when casting vote fails due to requirement under LinearERC20Voting contract that current block number
   // Shouldn't be equal to proposal's start block number. Which is dictated by the need to have voting tokens delegation being "finalized" to prevent proposal hijacking.
   const proposalStartBlockNotFinalized = Boolean(
-    isCurrentBlockLoaded && currentBlockNumber && azoriusProposal.startBlock.gte(currentBlockNumber)
+    !isSnapshotProposal &&
+      isCurrentBlockLoaded &&
+      currentBlockNumber &&
+      azoriusProposal.startBlock.gte(currentBlockNumber)
   );
 
   const disabled =

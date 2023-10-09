@@ -1,8 +1,10 @@
 import { Box, Flex, Text, Image } from '@chakra-ui/react';
 import useSnapshotProposal from '../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
+import { useFractal } from '../../providers/App/AppProvider';
 import { FractalProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
+import Snapshot from '../ui/badges/Snapshot';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
@@ -10,6 +12,9 @@ import ProposalStateBox from '../ui/proposal/ProposalStateBox';
 
 export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
   const metaData = useGetMetadata(proposal);
+  const {
+    node: { daoSnapshotURL },
+  } = useFractal();
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
 
   const confirmUrl = useFractalModal(ModalType.CONFIRM_URL, { url: metaData.documentationUrl });
@@ -21,6 +26,12 @@ export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
         alignItems="center"
       >
         <ProposalStateBox state={proposal.state} />
+        {isSnapshotProposal && (
+          <Snapshot
+            snapshotURL={`${daoSnapshotURL}/proposal/${proposal.proposalId}`}
+            mt={0}
+          />
+        )}
       </Flex>
       <Box mt={4}>
         <ActivityDescription
