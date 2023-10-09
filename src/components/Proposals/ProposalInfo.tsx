@@ -1,4 +1,5 @@
 import { Box, Flex, Text, Image } from '@chakra-ui/react';
+import useSnapshotProposal from '../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { FractalProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
@@ -9,6 +10,7 @@ import ProposalStateBox from '../ui/proposal/ProposalStateBox';
 
 export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
   const metaData = useGetMetadata(proposal);
+  const { isSnapshotProposal } = useSnapshotProposal(proposal);
 
   const confirmUrl = useFractalModal(ModalType.CONFIRM_URL, { url: metaData.documentationUrl });
 
@@ -21,8 +23,11 @@ export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
         <ProposalStateBox state={proposal.state} />
       </Flex>
       <Box mt={4}>
-        <ActivityDescription activity={proposal} />
-        <Text my={4}>{metaData.description}</Text>
+        <ActivityDescription
+          activity={proposal}
+          showFullSnapshotDescription
+        />
+        {!isSnapshotProposal && <Text my={4}>{metaData.description}</Text>}
         {metaData.documentationUrl && (
           <Text
             onClick={confirmUrl}

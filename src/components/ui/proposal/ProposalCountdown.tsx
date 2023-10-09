@@ -2,7 +2,8 @@ import { ComponentWithAs, Flex, IconProps, Text, Tooltip } from '@chakra-ui/reac
 import { Vote, Execute, Lock } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FractalProposal, FractalProposalState, SnapshotProposal } from '../../../types';
+import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
+import { FractalProposal, FractalProposalState } from '../../../types';
 import { useProposalCountdown } from './useProposalCountdown';
 
 /** pads a zero to the start of a number so that it is always 2 characters, e.g. '03' */
@@ -23,10 +24,7 @@ export function ProposalCountdown({ proposal }: { proposal: FractalProposal }) {
 
   const state: FractalProposalState | null = useMemo(() => proposal.state, [proposal]);
 
-  const isSnapshotProposal = useMemo(
-    () => !!(proposal as SnapshotProposal).snapshotProposalId,
-    [proposal]
-  );
+  const { isSnapshotProposal } = useSnapshotProposal(proposal);
   const showCountdown = useMemo(
     () =>
       !!secondsLeft &&

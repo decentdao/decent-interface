@@ -1,9 +1,18 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { Activity, SnapshotProposal } from '../../types';
+import SnapshotProposalDescription from '../Proposals/SnapshotProposalDetails/SnapshotProposalDescription';
 import { ProposalTitle } from './ActivityDescriptionGovernance';
 import { ActivityDescriptionTreasury } from './ActivityDescriptionTreasury';
 
-export function ActivityDescription({ activity }: { activity: Activity }) {
+interface IActivityDescription {
+  activity: Activity;
+  showFullSnapshotDescription?: boolean;
+}
+
+export function ActivityDescription({
+  activity,
+  showFullSnapshotDescription,
+}: IActivityDescription) {
   const snapshotProposalActivity = activity as SnapshotProposal;
   return (
     <Flex
@@ -15,12 +24,10 @@ export function ActivityDescription({ activity }: { activity: Activity }) {
     >
       <ProposalTitle activity={activity} />
       {!!snapshotProposalActivity.snapshotProposalId && (
-        <Text
-          noOfLines={2}
-          fontWeight={400}
-        >
-          {snapshotProposalActivity.description}
-        </Text>
+        <SnapshotProposalDescription
+          truncate={!showFullSnapshotDescription}
+          proposal={snapshotProposalActivity}
+        />
       )}
       {!!activity.transaction && <ActivityDescriptionTreasury activity={activity} />}
     </Flex>

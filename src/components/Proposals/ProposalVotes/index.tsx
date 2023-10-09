@@ -25,7 +25,7 @@ import ProgressBar from '../../ui/utils/ProgressBar';
 import ProposalERC20VoteItem from './ProposalERC20VoteItem';
 import ProposalERC721VoteItem from './ProposalERC721VoteItem';
 
-function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
+export function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
   return (
     <Flex
       flexWrap="wrap"

@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
+import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalProposal, FractalProposalState, SnapshotProposal } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
@@ -37,7 +38,7 @@ export function ProposalAction({
   } = useFractal();
   const { push } = useRouter();
   const { t } = useTranslation();
-  const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
+  const { isSnapshotProposal } = useSnapshotProposal(proposal);
   const { canVote } = useVoteContext();
 
   const isActiveProposal = useMemo(

@@ -1,13 +1,55 @@
 import { gql } from '@apollo/client';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { SnapshotProposal } from '../../../../types';
+import { FractalProposal, SnapshotProposal } from '../../../../types';
 import client from './';
 
-export default function useSnapshotProposal(proposal: SnapshotProposal) {
+export default function useSnapshotProposal(proposal: FractalProposal | null | undefined) {
   const {
     node: { daoSnapshotURL },
+    readOnly: {
+      user: { address },
+    },
   } = useFractal();
 
+  const snapshotProposal = proposal as SnapshotProposal;
+  const isSnapshotProposal = useMemo(
+    () => !!snapshotProposal.snapshotProposalId,
+    [snapshotProposal]
+  );
   const loadProposal = useCallback(async () => {}, []);
+
+  const loadVotingWeight = useCallback(async () => {
+    const queryResult = await client
+      .query({
+        query: gql`
+    query UserVotingWeight {
+        vp(
+            voter: ${address}
+            space: ${daoSnapshotURL}
+            proposal: ${snapshotProposal.snapshotProposalId}
+        ) {
+            vp
+            vp_by_strategy
+            vp_state
+        }
+    }`,
+      })
+      .then(({ data: { vp } }) => {
+        return {
+          votingWeight: vp.vp,
+          votingWeightByStrategy: vp.vp_by_strategy,
+          votingState: vp.vp_state,
+        };
+      });
+
+    return queryResult;
+  }, [address, daoSnapshotURL, snapshotProposal.snapshotProposalId]);
+
+  return {
+    loadVotingWeight,
+    loadProposal,
+    snapshotProposal,
+    isSnapshotProposal,
+  };
 }

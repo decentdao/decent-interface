@@ -7,9 +7,9 @@ import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { useProposalCountdown } from '../../ui/proposal/useProposalCountdown';
 import { ProposalAction } from '../ProposalActions/ProposalAction';
 import { ProposalInfo } from '../ProposalInfo';
-// import ProposalSummary from '../ProposalSummary';
-// import ProposalVotes from '../ProposalVotes';
 import { VoteContextProvider } from '../ProposalVotes/context/VoteContext';
+import SnapshotProposalSummary from './SnapshotProposalSummary';
+import SnapshotProposalVotes from './SnapshotProposalVotes';
 
 interface ISnapshotProposalDetails {
   proposal: SnapshotProposal;
@@ -26,10 +26,10 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
         <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <ProposalInfo proposal={proposal} />
         </ContentBox>
-        {/* <ProposalVotes proposal={proposal} /> */}
+        <SnapshotProposalVotes proposal={proposal} />
       </GridItem>
       <GridItem>
-        {/* <ProposalSummary proposal={proposal} /> */}
+        <SnapshotProposalSummary proposal={proposal} />
         {user.address && (
           <VoteContextProvider proposal={proposal}>
             <ProposalAction

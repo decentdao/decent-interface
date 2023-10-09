@@ -1,4 +1,5 @@
 import { useContext, useCallback, useEffect, useState, createContext, ReactNode } from 'react';
+import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
@@ -49,12 +50,13 @@ export function VoteContextProvider({
     node: { safe },
     governance: { type },
   } = useFractal();
+  const { loadVotingWeight } = useSnapshotProposal(proposal as SnapshotProposal);
   const { remainingTokenIds, getUserERC721VotingTokens } = useUserERC721VotingTokens(
     proposal.proposalId,
     undefined,
     true
   );
-  const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
+  const { isSnapshotProposal } = useSnapshotProposal(proposal);
 
   const getHasVoted = useCallback(() => {
     setHasVotedLoading(true);
@@ -79,6 +81,10 @@ export function VoteContextProvider({
     async (refetchUserTokens?: boolean) => {
       setCanVoteLoading(true);
       let newCanVote = false;
+      if (isSnapshotProposal) {
+        const votingWeightData = await loadVotingWeight();
+        newCanVote = votingWeightData.votingWeight > 1;
+      }
       if (user.address) {
         if (type === GovernanceType.AZORIUS_ERC20) {
           newCanVote = user.votingWeight.gt(0) && !hasVoted;
@@ -99,7 +105,17 @@ export function VoteContextProvider({
       }
       setCanVoteLoading(false);
     },
-    [user, type, hasVoted, safe, canVote, remainingTokenIds, getUserERC721VotingTokens]
+    [
+      user,
+      type,
+      hasVoted,
+      safe,
+      canVote,
+      remainingTokenIds,
+      getUserERC721VotingTokens,
+      isSnapshotProposal,
+      loadVotingWeight,
+    ]
   );
   useEffect(() => {
     getCanVote();
