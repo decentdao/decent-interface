@@ -89,10 +89,17 @@ export interface SnapshotVoteBreakdown {
   };
 }
 
+export type SnapshotProposalType =
+  | 'single-choice'
+  | 'approval'
+  | 'quadratic'
+  | 'ranked-choice'
+  | 'weighted'
+  | 'basic';
 export interface ExtendedSnapshotProposal extends SnapshotProposal {
   snapshot: number; // Number of block
   snapshotState: string; // State retrieved from Snapshot
-  type: 'basic' | 'single';
+  type: SnapshotProposalType;
   quorum?: number;
   privacy?: string;
   ipfs: string;

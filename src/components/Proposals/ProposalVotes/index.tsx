@@ -9,7 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
-import { useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -25,18 +25,32 @@ import ProgressBar from '../../ui/utils/ProgressBar';
 import ProposalERC20VoteItem from './ProposalERC20VoteItem';
 import ProposalERC721VoteItem from './ProposalERC721VoteItem';
 
-export function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
+export function VotesPercentage({
+  label,
+  percentage,
+  children,
+}: {
+  label: string;
+  percentage: number;
+  children?: ReactNode;
+}) {
   return (
     <Flex
       flexWrap="wrap"
       marginTop={2}
     >
-      <Text
-        marginTop={2}
-        marginBottom={2}
+      <Flex
+        justifyContent="space-between"
+        width="100%"
       >
-        {label}
-      </Text>
+        <Text
+          marginTop={2}
+          marginBottom={2}
+        >
+          {label}
+        </Text>
+        {children}
+      </Flex>
       <ProgressBar value={percentage} />
     </Flex>
   );

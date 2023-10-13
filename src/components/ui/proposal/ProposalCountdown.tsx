@@ -18,7 +18,13 @@ const zeroPad = (num: number) => String(num).padStart(2, '0');
  *
  * For all other states this component will simply return null.
  */
-export function ProposalCountdown({ proposal }: { proposal: FractalProposal }) {
+export function ProposalCountdown({
+  proposal,
+  showIcon = true,
+}: {
+  proposal: FractalProposal;
+  showIcon?: boolean;
+}) {
   const secondsLeft = useProposalCountdown(proposal);
   const { t } = useTranslation('proposal');
 
@@ -70,7 +76,7 @@ export function ProposalCountdown({ proposal }: { proposal: FractalProposal }) {
         justifyContent="flex-end"
         alignItems="center"
       >
-        {Icon && <Icon />}
+        {showIcon && Icon && <Icon />}
         <Flex
           px={2}
           gap={1}

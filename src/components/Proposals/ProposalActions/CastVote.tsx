@@ -10,19 +10,27 @@ import {
   AzoriusProposal,
   FractalProposalState,
   AzoriusVoteChoice,
+  ExtendedSnapshotProposal,
 } from '../../../types';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 
-function Vote({ proposal }: { proposal: FractalProposal }) {
+function Vote({
+  proposal,
+  extendedSnapshotProposal,
+}: {
+  proposal: FractalProposal;
+  extendedSnapshotProposal?: ExtendedSnapshotProposal;
+}) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['common', 'proposal']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
 
   const azoriusProposal = proposal as AzoriusProposal;
 
-  const { castVote } = useCastVote({
+  const { castVote, castSnapshotVote } = useCastVote({
     proposal,
     setPending,
+    extendedSnapshotProposal,
   });
 
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
@@ -50,6 +58,24 @@ function Vote({ proposal }: { proposal: FractalProposal }) {
     proposalStartBlockNotFinalized ||
     canVoteLoading ||
     hasVotedLoading;
+
+  if (isSnapshotProposal && extendedSnapshotProposal) {
+    return (
+      <>
+        {extendedSnapshotProposal.choices.map(choice => (
+          <Button
+            key={choice}
+            width="full"
+            isDisabled={disabled}
+            onClick={() => castSnapshotVote(choice)}
+            marginTop={5}
+          >
+            {choice}
+          </Button>
+        ))}
+      </>
+    );
+  }
 
   return (
     <Tooltip

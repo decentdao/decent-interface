@@ -33,9 +33,11 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
     <ProposalDetailsGrid>
       <GridItem colSpan={2}>
         <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-          <ProposalInfo proposal={proposal} />
+          <ProposalInfo proposal={extendedSnapshotProposal || proposal} />
         </ContentBox>
-        <SnapshotProposalVotes proposal={proposal} />
+        {!!extendedSnapshotProposal && (
+          <SnapshotProposalVotes proposal={extendedSnapshotProposal} />
+        )}
       </GridItem>
       <GridItem>
         <SnapshotProposalSummary proposal={extendedSnapshotProposal} />
@@ -43,6 +45,7 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
           <VoteContextProvider proposal={proposal}>
             <ProposalAction
               proposal={proposal}
+              extendedSnapshotProposal={extendedSnapshotProposal}
               expandedView
             />
           </VoteContextProvider>

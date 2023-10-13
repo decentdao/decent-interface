@@ -1,8 +1,10 @@
-import { Box, Flex, Text, Image } from '@chakra-ui/react';
+import { Box, Flex, Text, Image, Button } from '@chakra-ui/react';
+import { Shield } from '@decent-org/fractal-ui';
+import { useTranslation } from 'react-i18next';
 import useSnapshotProposal from '../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../providers/App/AppProvider';
-import { FractalProposal } from '../../types';
+import { ExtendedSnapshotProposal, FractalProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
 import Snapshot from '../ui/badges/Snapshot';
 import { ModalType } from '../ui/modals/ModalProvider';
@@ -10,8 +12,13 @@ import { useFractalModal } from '../ui/modals/useFractalModal';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
 import ProposalStateBox from '../ui/proposal/ProposalStateBox';
 
-export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
+export function ProposalInfo({
+  proposal,
+}: {
+  proposal: FractalProposal | ExtendedSnapshotProposal;
+}) {
   const metaData = useGetMetadata(proposal);
+  const { t } = useTranslation('proposal');
   const {
     node: { daoSnapshotURL },
   } = useFractal();
@@ -27,10 +34,31 @@ export function ProposalInfo({ proposal }: { proposal: FractalProposal }) {
       >
         <ProposalStateBox state={proposal.state} />
         {isSnapshotProposal && (
-          <Snapshot
-            snapshotURL={`${daoSnapshotURL}/proposal/${proposal.proposalId}`}
-            mt={0}
-          />
+          <>
+            <Snapshot
+              snapshotURL={`${daoSnapshotURL}/proposal/${proposal.proposalId}`}
+              mt={0}
+            />
+            {(proposal as ExtendedSnapshotProposal).privacy === 'shutter' && (
+              <Button
+                variant="secondary"
+                h={6}
+                w={32}
+                onClick={() =>
+                  window.open(
+                    'https://blog.shutter.network/announcing-shutter-governance-shielded-voting-for-daos/'
+                  )
+                }
+              >
+                <Shield
+                  width="16px"
+                  height="16px"
+                  mr={1}
+                />
+                {t('shutterPrivacy')}
+              </Button>
+            )}
+          </>
         )}
       </Flex>
       <Box mt={4}>

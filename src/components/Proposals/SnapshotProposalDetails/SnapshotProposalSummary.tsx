@@ -1,6 +1,5 @@
 import { Text, Box, Divider, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { ExtendedSnapshotProposal } from '../../../types';
@@ -10,28 +9,15 @@ import ExternalLink from '../../ui/links/ExternalLink';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
 import { ExtendedProgressBar } from '../../ui/utils/ProgressBar';
 import { InfoRow } from '../MultisigProposalDetails/TxDetails';
+import useTotalVotes from './hooks/useTotalVotes';
 
 interface ISnapshotProposalSummary {
   proposal?: ExtendedSnapshotProposal;
 }
 
 export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalSummary) {
-  const [totalVotesCasted, setTotalVotesCasted] = useState(0);
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
-
-  useEffect(() => {
-    if (proposal) {
-      let newTotalVotesCasted = 0;
-      Object.keys(proposal.votesBreakdown).forEach(voteChoice => {
-        const voteChoiceBreakdown = proposal.votesBreakdown[voteChoice];
-        newTotalVotesCasted += voteChoiceBreakdown.total;
-      });
-
-      if (newTotalVotesCasted !== totalVotesCasted) {
-        setTotalVotesCasted(newTotalVotesCasted);
-      }
-    }
-  }, [proposal, totalVotesCasted]);
+  const { totalVotesCasted } = useTotalVotes({ proposal });
 
   if (!proposal) {
     return (
@@ -75,26 +61,6 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
             #{proposal.ipfs.slice(0, 7)}
           </ExternalLink>
         </Flex>
-        {proposal.privacy === 'shutter' && (
-          <Flex
-            marginTop={4}
-            justifyContent="space-between"
-          >
-            <Text
-              textStyle="text-base-sans-regular"
-              color="chocolate.200"
-            >
-              {t('privacy')}
-            </Text>
-            <ExternalLink
-              href={
-                'https://blog.shutter.network/announcing-shutter-governance-shielded-voting-for-daos/'
-              }
-            >
-              {t('shutterPrivacy')}
-            </ExternalLink>
-          </Flex>
-        )}
         <InfoRow
           property={t('proposalSummaryStartDate')}
           value={format(proposal.startTime * 1000, DEFAULT_DATE_TIME_FORMAT)}
@@ -111,8 +77,10 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           <Box marginTop={4}>
             <ExtendedProgressBar
               label={t('quorum', { ns: 'common' })}
-              helperText={proposal.privacy === 'shutter' ? t('shutterQuorumHelper') : undefined}
-              percentage={proposal.quorum > 0 ? totalVotesCasted / proposal.quorum : 100}
+              valueLabel={`${totalVotesCasted}/${proposal.quorum}`}
+              percentage={
+                proposal.quorum > 0 ? (totalVotesCasted / proposal.quorum || 1) * 100 : 100
+              }
               requiredPercentage={100}
               unit=""
             />
