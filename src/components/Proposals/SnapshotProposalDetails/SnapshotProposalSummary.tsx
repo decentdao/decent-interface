@@ -33,6 +33,8 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
         return 'basicSnapshotVotingSystem';
       case 'single-choice':
         return 'singleSnapshotVotingSystem';
+      case 'weighted':
+        return 'weightedSnapshotVotingSystem';
       default:
         return 'unknownSnapshotVotingSystem';
     }

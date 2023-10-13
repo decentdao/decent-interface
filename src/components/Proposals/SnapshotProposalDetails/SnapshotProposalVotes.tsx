@@ -43,26 +43,32 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
             colSpan={4}
             rowGap={4}
           >
-            {choices.map(choice => (
-              <VotesPercentage
-                key={choice}
-                label={choice}
-                percentage={(votesBreakdown[choice]?.total || 0 * 100) / totalVotesCasted}
-              >
-                <Text>
-                  {proposal.privacy === 'shutter'
-                    ? `? ${strategySymbol}`
-                    : `${votesBreakdown[choice].total} ${strategySymbol}`}
-                </Text>
-              </VotesPercentage>
-            ))}
+            {choices.map(choice => {
+              const choicePercentageFromTotal =
+                ((votesBreakdown[choice]?.total || 0) * 100) / totalVotesCasted;
+
+              return (
+                <VotesPercentage
+                  key={choice}
+                  label={choice}
+                  percentage={Number(choicePercentageFromTotal.toFixed(2))}
+                >
+                  <Text>
+                    {proposal.privacy === 'shutter' &&
+                    proposal.state !== FractalProposalState.CLOSED
+                      ? `? ${strategySymbol}`
+                      : `${votesBreakdown[choice].total} ${strategySymbol}`}
+                  </Text>
+                </VotesPercentage>
+              );
+            })}
           </GridItem>
         </Grid>
       </ContentBox>
       {votes && votes.length !== 0 && (
         <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <Text textStyle="text-lg-mono-medium">
-            {t('votesTitle')} ({totalVotesCasted})
+            {t('votesTitle')} ({votes.length})
           </Text>
           <Divider
             color="chocolate.700"

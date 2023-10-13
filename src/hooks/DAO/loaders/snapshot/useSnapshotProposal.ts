@@ -4,8 +4,10 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import {
   ExtendedSnapshotProposal,
   FractalProposal,
+  FractalProposalState,
   SnapshotProposal,
   SnapshotVote,
+  SnapshotWeightedVotingChoice,
 } from '../../../../types';
 import client from './';
 
@@ -24,6 +26,13 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     () => !!snapshotProposal?.snapshotProposalId,
     [snapshotProposal]
   );
+
+  const getVoteWeight = useCallback(
+    (vote: SnapshotVote) =>
+      vote.votingWeight * vote.votingWeightByStrategy.reduce((prev, curr) => prev + curr, 0),
+    []
+  );
+
   const loadProposal = useCallback(async () => {
     if (snapshotProposal?.snapshotProposalId) {
       const proposalQueryResult = await client
@@ -99,23 +108,56 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
         };
       } = {};
 
-      const getVoteWeight = (vote: SnapshotVote) =>
-        vote.votingWeight * vote.votingWeightByStrategy.reduce((prev, curr) => prev + curr, 0);
+      const { choices, type, privacy } = proposalQueryResult;
 
-      votesQueryResult.forEach((vote: SnapshotVote) => {
-        const existingChoiceType = votesBreakdown[vote.choice];
-        if (existingChoiceType) {
-          votesBreakdown[vote.choice] = {
-            total: existingChoiceType.total + getVoteWeight(vote),
-            votes: [...existingChoiceType.votes, vote],
-          };
-        } else {
-          votesBreakdown[vote.choice] = {
-            total: getVoteWeight(vote),
-            votes: [vote],
-          };
-        }
+      Object.keys(choices).forEach(choice => {
+        votesBreakdown[choice] = {
+          votes: [],
+          total: 0,
+        };
       });
+
+      const isShielded = privacy === 'shutter';
+      const isClosed = snapshotProposal.state === FractalProposalState.CLOSED;
+      if (!(isShielded && !isClosed)) {
+        votesQueryResult.forEach((vote: SnapshotVote) => {
+          if (type === 'weighted') {
+            const voteChoices = vote.choice as SnapshotWeightedVotingChoice;
+            Object.keys(voteChoices).forEach((choiceIndex: any) => {
+              // In Snapshot API choices are indexed 1-based. The first choice has index 1.
+              // https://docs.snapshot.org/tools/api#vote
+              const voteChoice = choices[choiceIndex - 1];
+              const existingChoiceType = votesBreakdown[voteChoice];
+              if (existingChoiceType) {
+                votesBreakdown[voteChoice] = {
+                  total: existingChoiceType.total + getVoteWeight(vote),
+                  votes: [...existingChoiceType.votes, vote],
+                };
+              } else {
+                votesBreakdown[voteChoice] = {
+                  total: getVoteWeight(vote),
+                  votes: [vote],
+                };
+              }
+            });
+          } else {
+            const voteChoice = vote.choice as string;
+            const existingChoiceType = votesBreakdown[voteChoice];
+
+            if (existingChoiceType) {
+              votesBreakdown[voteChoice] = {
+                total: existingChoiceType.total + getVoteWeight(vote),
+                votes: [...existingChoiceType.votes, vote],
+              };
+            } else {
+              votesBreakdown[voteChoice] = {
+                total: getVoteWeight(vote),
+                votes: [vote],
+              };
+            }
+          }
+        });
+      }
 
       setExtendedSnapshotProposal({
         ...proposal,
@@ -124,7 +166,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
         votes: votesQueryResult,
       } as ExtendedSnapshotProposal);
     }
-  }, [snapshotProposal?.snapshotProposalId, proposal]);
+  }, [snapshotProposal?.snapshotProposalId, proposal, snapshotProposal?.state, getVoteWeight]);
 
   const loadVotingWeight = useCallback(async () => {
     if (snapshotProposal?.snapshotProposalId) {
@@ -164,6 +206,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   return {
     loadVotingWeight,
     loadProposal,
+    getVoteWeight,
     snapshotProposal,
     isSnapshotProposal,
     extendedSnapshotProposal,

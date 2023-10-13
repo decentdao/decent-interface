@@ -120,6 +120,7 @@
     "votingSystem": "Voting system",
     "basicSnapshotVotingSystem": "Basic voting",
     "singleSnapshotVotingSystem": "Single choice voting",
+    "weightedSnapshotVotingSystem": "Weighted voting",
     "unknownSnapshotVotingSystem": "Unknown voting system",
     "ipfs": "IPFS",
     "privacy": "Privacy",

@@ -63,12 +63,9 @@ interface SnapshotVotingStrategy {
 }
 
 interface SnapshotPlugin {}
-
-/**
- * @interface ExtendedSnapshotProposal - extension of `SnapshotProposal` to inject voting strategy data, votes, quorum, etc.
- * Their data model is quite different comparing to our, so there's not much of point to reuse existing
- */
-
+export interface SnapshotWeightedVotingChoice {
+  [choice: number]: number;
+}
 export interface SnapshotVote {
   id: string;
   voter: string;
@@ -76,7 +73,7 @@ export interface SnapshotVote {
   votingWeightByStrategy: number[];
   votingState: string;
   created: number;
-  choice: string;
+  choice: string | SnapshotWeightedVotingChoice;
 }
 
 export interface SnapshotVoteBreakdown {
@@ -96,6 +93,11 @@ export type SnapshotProposalType =
   | 'ranked-choice'
   | 'weighted'
   | 'basic';
+
+/**
+ * @interface ExtendedSnapshotProposal - extension of `SnapshotProposal` to inject voting strategy data, votes, quorum, etc.
+ * Their data model is quite different comparing to our, so there's not much of point to reuse existing
+ */
 export interface ExtendedSnapshotProposal extends SnapshotProposal {
   snapshot: number; // Number of block
   snapshotState: string; // State retrieved from Snapshot
