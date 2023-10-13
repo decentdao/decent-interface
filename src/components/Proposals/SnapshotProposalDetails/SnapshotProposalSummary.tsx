@@ -31,7 +31,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
     switch (proposal.type) {
       case 'basic':
         return 'basicSnapshotVotingSystem';
-      case 'single':
+      case 'single-choice':
         return 'singleSnapshotVotingSystem';
       default:
         return 'unknownSnapshotVotingSystem';
