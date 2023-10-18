@@ -62,12 +62,12 @@ function Vote({
   if (isSnapshotProposal && extendedSnapshotProposal) {
     return (
       <>
-        {extendedSnapshotProposal.choices.map(choice => (
+        {extendedSnapshotProposal.choices.map((choice, i) => (
           <Button
             key={choice}
             width="full"
             isDisabled={disabled}
-            onClick={() => castSnapshotVote(choice)}
+            onClick={() => castSnapshotVote(i + 1)}
             marginTop={5}
           >
             {choice}
