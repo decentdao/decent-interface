@@ -51,7 +51,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                 <VotesPercentage
                   key={choice}
                   label={choice}
-                  percentage={Number(choicePercentageFromTotal.toFixed(2))}
+                  percentage={Number(choicePercentageFromTotal.toFixed(1))}
                 >
                   <Text>
                     {proposal.privacy === 'shutter' &&

@@ -73,7 +73,7 @@ export interface SnapshotVote {
   votingWeightByStrategy: number[];
   votingState: string;
   created: number;
-  choice: string | SnapshotWeightedVotingChoice;
+  choice: number | SnapshotWeightedVotingChoice;
 }
 
 export interface SnapshotVoteBreakdown {

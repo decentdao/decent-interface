@@ -101,7 +101,7 @@ const useCastVote = ({
   );
 
   const castSnapshotVote = useCallback(
-    async (choice: string) => {
+    async (choice: number) => {
       if (signer && signer?.provider && address && daoSnapshotURL && extendedSnapshotProposal) {
         let toastId;
         try {
@@ -114,7 +114,7 @@ const useCastVote = ({
           });
           if (extendedSnapshotProposal.privacy === 'shutter') {
             const encryptedChoice = await encryptWithShutter(
-              choice,
+              JSON.stringify(choice),
               extendedSnapshotProposal.proposalId
             );
             await client.vote(signer.provider as ethers.providers.Web3Provider, address, {

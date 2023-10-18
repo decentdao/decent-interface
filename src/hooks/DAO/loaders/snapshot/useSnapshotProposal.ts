@@ -110,12 +110,21 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
 
       const { choices, type, privacy } = proposalQueryResult;
 
-      Object.keys(choices).forEach(choice => {
-        votesBreakdown[choice] = {
-          votes: [],
-          total: 0,
-        };
-      });
+      if (type === 'weighted') {
+        Object.keys(choices).forEach((choice: string) => {
+          votesBreakdown[choice] = {
+            votes: [],
+            total: 0,
+          };
+        });
+      } else {
+        choices.forEach((choice: string) => {
+          votesBreakdown[choice] = {
+            votes: [],
+            total: 0,
+          };
+        });
+      }
 
       const isShielded = privacy === 'shutter';
       const isClosed = snapshotProposal.state === FractalProposalState.CLOSED;
@@ -141,16 +150,17 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
               }
             });
           } else {
-            const voteChoice = vote.choice as string;
-            const existingChoiceType = votesBreakdown[voteChoice];
+            const voteChoice = vote.choice as number;
+            const choiceKey = choices[voteChoice - 1];
+            const existingChoiceType = votesBreakdown[choiceKey];
 
             if (existingChoiceType) {
-              votesBreakdown[voteChoice] = {
+              votesBreakdown[choiceKey] = {
                 total: existingChoiceType.total + getVoteWeight(vote),
                 votes: [...existingChoiceType.votes, vote],
               };
             } else {
-              votesBreakdown[voteChoice] = {
+              votesBreakdown[choiceKey] = {
                 total: getVoteWeight(vote),
                 votes: [vote],
               };

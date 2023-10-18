@@ -54,7 +54,9 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
           </Flex>
         ) : (
           <StatusBox>
-            <Text textStyle="text-sm-mono-semibold">{vote.choice as string}</Text>
+            <Text textStyle="text-sm-mono-semibold">
+              {proposal.choices[(vote.choice as number) - 1]}
+            </Text>
           </StatusBox>
         )}
       </GridItem>

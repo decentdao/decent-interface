@@ -31,7 +31,7 @@ export default function ProgressBar({
           height="100%"
           position="absolute"
           top="0"
-          left={value > 50 ? `calc(${Math.min(value - 5, 90)}% - 20px)` : `${value / 2}%`}
+          left={value > 50 ? `calc(${Math.min(value - 5, 90)}% - 20px)` : value / 2}
         >
           {valueLabel || Math.min(value, 100)}
           {unit}
