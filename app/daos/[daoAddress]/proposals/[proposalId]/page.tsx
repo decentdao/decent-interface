@@ -76,10 +76,10 @@ export default function ProposalDetailsPage({
         <InfoBoxLoader />
       ) : proposal === null ? (
         <EmptyBox emptyText={t('noProposal')} />
-      ) : dao?.isAzorius ? (
-        <AzoriusProposalDetails proposal={azoriusProposal} />
       ) : isSnapshotProposal ? (
         <SnapshotProposalDetails proposal={proposal as SnapshotProposal} />
+      ) : dao?.isAzorius ? (
+        <AzoriusProposalDetails proposal={azoriusProposal} />
       ) : (
         <MultisigProposalDetails proposal={proposal} />
       )}

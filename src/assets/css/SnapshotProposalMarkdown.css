@@ -2,6 +2,9 @@
     Source - https://github.com/snapshot-labs/snapshot/blob/master/src/components/BaseMarkdown.vue
 */
 
+.markdown-body {
+  min-width: 100%;
+}
 .markdown-body, .markdown-body > * {
     font-size: 16px;
     line-height: 1.3;
