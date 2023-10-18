@@ -1,14 +1,10 @@
-import { ApolloClient, InMemoryCache, gql } from '@apollo/client';
+import { gql } from '@apollo/client';
 import { useCallback, useEffect, useRef } from 'react';
-import { useFractal } from '../../../providers/App/AppProvider';
-import { FractalGovernanceAction } from '../../../providers/App/governance/action';
-import { ActivityEventType, FractalProposalState } from '../../../types';
-import { SnapshotProposal } from '../../../types/daoProposal';
-
-const client = new ApolloClient({
-  uri: 'https://hub.snapshot.org/graphql',
-  cache: new InMemoryCache(),
-});
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import { ActivityEventType, FractalProposalState } from '../../../../types';
+import { SnapshotProposal } from '../../../../types/daoProposal';
+import client from './';
 
 export const useSnapshotProposals = () => {
   const {
