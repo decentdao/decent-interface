@@ -17,21 +17,37 @@ export default function SnapshotProposalDescription({
 }: ISnapshotProposalDescription) {
   const { t } = useTranslation('common');
   const [collapsed, setCollapsed] = useState(true);
-  const [shownLines, setShownLines] = useState(0);
+  const [totalLines, setTotalLines] = useState(0);
   const markdownTextContainerRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    if (markdownTextContainerRef && markdownTextContainerRef.current) {
-      const divHeight = markdownTextContainerRef.current.offsetHeight;
-      const lineHeight = parseInt(markdownTextContainerRef.current.style.lineHeight);
+    if (
+      markdownTextContainerRef &&
+      markdownTextContainerRef.current &&
+      document &&
+      document.defaultView
+    ) {
+      const divHeight = markdownTextContainerRef.current.scrollHeight;
+      const lineHeight = parseInt(
+        document.defaultView.getComputedStyle(markdownTextContainerRef.current, null).lineHeight
+      );
       const lines = divHeight / lineHeight;
-
-      setShownLines(lines);
+      setTotalLines(lines);
     }
   }, []);
 
   const handleToggleCollapse = () => {
     setCollapsed(prevState => !prevState);
+  };
+
+  const handleTransformURI = (uri: string) => {
+    if (uri.startsWith('ipfs://')) {
+      const hash = uri.split('://')[1];
+      const SNAPSHOT_IPFS_BASE_URL = 'https://snapshot.4everland.link/ipfs';
+      return `${SNAPSHOT_IPFS_BASE_URL}/${hash}`;
+    }
+
+    return uri;
   };
 
   if (truncate) {
@@ -55,12 +71,13 @@ export default function SnapshotProposalDescription({
       >
         <Markdown
           remarkPlugins={[remarkGfm]}
+          urlTransform={handleTransformURI}
           className="markdown-body"
         >
           {proposal.description}
         </Markdown>
       </Text>
-      {shownLines > 7 && (
+      {totalLines > 6 && (
         <Button
           marginTop={4}
           paddingLeft={0}
