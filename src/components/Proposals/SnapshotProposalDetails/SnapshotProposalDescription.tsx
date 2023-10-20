@@ -1,10 +1,38 @@
 import { Text, Button } from '@chakra-ui/react';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Markdown from 'react-markdown';
+import Markdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { SnapshotProposal } from '../../../types';
 import '../../../assets/css/SnapshotProposalMarkdown.css';
+
+function CustomMarkdownImage({ src, alt }: { src?: string; alt?: string }) {
+  const [error, setError] = useState(false);
+
+  if (!src || error) {
+    return null;
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt || ''}
+      onError={() => setError(true)}
+    />
+  );
+}
+
+const MarkdownComponents: Components = {
+  img: image => {
+    return (
+      <CustomMarkdownImage
+        src={image.src}
+        alt={image.alt || ''}
+      />
+    );
+  },
+};
 
 interface ISnapshotProposalDescription {
   truncate?: boolean;
@@ -18,6 +46,7 @@ export default function SnapshotProposalDescription({
   const { t } = useTranslation('common');
   const [collapsed, setCollapsed] = useState(true);
   const [totalLines, setTotalLines] = useState(0);
+  const [totalLinesError, setTotalLinesError] = useState(false);
   const markdownTextContainerRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
@@ -31,8 +60,14 @@ export default function SnapshotProposalDescription({
       const lineHeight = parseInt(
         document.defaultView.getComputedStyle(markdownTextContainerRef.current, null).lineHeight
       );
-      const lines = divHeight / lineHeight;
-      setTotalLines(lines);
+      if (isNaN(lineHeight)) {
+        setCollapsed(false);
+        setTotalLinesError(true);
+      } else {
+        const lines = divHeight / lineHeight;
+        setTotalLines(lines);
+        setTotalLinesError(false);
+      }
     }
   }, []);
 
@@ -72,12 +107,13 @@ export default function SnapshotProposalDescription({
         <Markdown
           remarkPlugins={[remarkGfm]}
           urlTransform={handleTransformURI}
+          components={MarkdownComponents}
           className="markdown-body"
         >
           {proposal.description}
         </Markdown>
       </Text>
-      {totalLines > 6 && (
+      {totalLines > 6 && !totalLinesError && (
         <Button
           marginTop={4}
           paddingLeft={0}
