@@ -1,10 +1,38 @@
 import { Text, Button } from '@chakra-ui/react';
+import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Markdown from 'react-markdown';
+import Markdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { SnapshotProposal } from '../../../types';
 import '../../../assets/css/SnapshotProposalMarkdown.css';
+
+function CustomMarkdownImage({ src, alt }: { src?: string; alt?: string }) {
+  const [error, setError] = useState(false);
+
+  if (!src || error) {
+    return null;
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={alt || ''}
+      onError={() => setError(true)}
+    />
+  );
+}
+
+const MarkdownComponents: Components = {
+  img: image => {
+    return (
+      <CustomMarkdownImage
+        src={image.src}
+        alt={image.alt || ''}
+      />
+    );
+  },
+};
 
 interface ISnapshotProposalDescription {
   truncate?: boolean;
@@ -17,21 +45,44 @@ export default function SnapshotProposalDescription({
 }: ISnapshotProposalDescription) {
   const { t } = useTranslation('common');
   const [collapsed, setCollapsed] = useState(true);
-  const [shownLines, setShownLines] = useState(0);
+  const [totalLines, setTotalLines] = useState(0);
+  const [totalLinesError, setTotalLinesError] = useState(false);
   const markdownTextContainerRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
-    if (markdownTextContainerRef && markdownTextContainerRef.current) {
-      const divHeight = markdownTextContainerRef.current.offsetHeight;
-      const lineHeight = parseInt(markdownTextContainerRef.current.style.lineHeight);
-      const lines = divHeight / lineHeight;
-
-      setShownLines(lines);
+    if (
+      markdownTextContainerRef &&
+      markdownTextContainerRef.current &&
+      document &&
+      document.defaultView
+    ) {
+      const divHeight = markdownTextContainerRef.current.scrollHeight;
+      const lineHeight = parseInt(
+        document.defaultView.getComputedStyle(markdownTextContainerRef.current, null).lineHeight
+      );
+      if (isNaN(lineHeight)) {
+        setCollapsed(false);
+        setTotalLinesError(true);
+      } else {
+        const lines = divHeight / lineHeight;
+        setTotalLines(lines);
+        setTotalLinesError(false);
+      }
     }
   }, []);
 
   const handleToggleCollapse = () => {
     setCollapsed(prevState => !prevState);
+  };
+
+  const handleTransformURI = (uri: string) => {
+    if (uri.startsWith('ipfs://')) {
+      const hash = uri.split('://')[1];
+      const SNAPSHOT_IPFS_BASE_URL = 'https://snapshot.4everland.link/ipfs';
+      return `${SNAPSHOT_IPFS_BASE_URL}/${hash}`;
+    }
+
+    return uri;
   };
 
   if (truncate) {
@@ -55,12 +106,14 @@ export default function SnapshotProposalDescription({
       >
         <Markdown
           remarkPlugins={[remarkGfm]}
+          urlTransform={handleTransformURI}
+          components={MarkdownComponents}
           className="markdown-body"
         >
           {proposal.description}
         </Markdown>
       </Text>
-      {shownLines > 7 && (
+      {totalLines > 6 && !totalLinesError && (
         <Button
           marginTop={4}
           paddingLeft={0}

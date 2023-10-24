@@ -75,7 +75,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           color="chocolate.700"
           marginTop={4}
         />
-        {(proposal.quorum || proposal.quorum === 0) && (
+        {!!proposal.quorum && (
           <Box marginTop={4}>
             <ExtendedProgressBar
               label={t('quorum', { ns: 'common' })}
