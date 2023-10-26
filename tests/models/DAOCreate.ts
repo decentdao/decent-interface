@@ -121,7 +121,6 @@ export class DAOCreate extends NavPage {
       .then(() => this.fillThreshold('1'))
       .then(() => this.fillMultisigSigner(0, accounts[0]))
       .then(() => this.clickDeployButton());
-    await this.waitForURLPath('/daos/');
     return new DAOHome(this.pageContext());
   }
 
