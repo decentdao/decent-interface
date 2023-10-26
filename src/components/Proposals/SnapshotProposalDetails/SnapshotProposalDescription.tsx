@@ -103,6 +103,7 @@ export default function SnapshotProposalDescription({
         maxWidth="100%"
         minWidth="100%"
         ref={markdownTextContainerRef}
+        data-testid="Snapshot-Proposal-description"
       >
         <Markdown
           remarkPlugins={[remarkGfm]}

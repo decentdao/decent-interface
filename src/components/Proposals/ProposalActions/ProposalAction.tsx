@@ -109,12 +109,14 @@ export function ProposalAction({
     return t('details');
   }, [isSnapshotProposal, t, canVote, dao, isActiveProposal]);
 
+  const testId = `Proposal-details-button-${proposal.proposalId}`;
   if (!showActionButton) {
     if (!expandedView) {
       return (
         <Button
           variant="secondary"
           onClick={handleClick}
+          data-testid={testId}
         >
           {t('details')}
         </Button>
@@ -149,6 +151,7 @@ export function ProposalAction({
     <Button
       onClick={handleClick}
       variant={showActionButton && canVote ? 'primary' : 'secondary'}
+      data-testid={testId}
     >
       {label}
     </Button>

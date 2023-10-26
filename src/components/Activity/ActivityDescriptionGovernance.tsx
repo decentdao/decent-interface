@@ -55,10 +55,13 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
   }
 
   if ((activity as SnapshotProposal).snapshotProposalId) {
+    const formattedId = formatId((activity as SnapshotProposal).snapshotProposalId);
+    const title = (activity as SnapshotProposal).title;
+
     return (
       <>
-        <Text>{formatId((activity as SnapshotProposal).snapshotProposalId)}</Text>
-        <Text>{(activity as SnapshotProposal).title}</Text>
+        <Text data-testid={`Proposal-id-${formattedId}`}>{formattedId}</Text>
+        <Text data-testId={`Proposal-title-${title}`}>{title}</Text>
       </>
     );
   }
@@ -67,10 +70,12 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
   const hasTransfers =
     treasuryActivity.transferAddresses && !!treasuryActivity.transferAddresses.length;
 
+  const formattedId = formatId((activity as GovernanceActivity).proposalId);
+  const title = metaData.title || metaData.description;
   return (
     <>
-      <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
-      <Text>{metaData.title || metaData.description}</Text>
+      <Text data-testid={`Proposal-id-${formattedId}`}>{formattedId}</Text>
+      <Text data-testId={`Proposal-title-${title}`}>{title}</Text>
       <TargetAddress activity={activity} />
       {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}
       <OnChainRejectionMessage activity={activity} />

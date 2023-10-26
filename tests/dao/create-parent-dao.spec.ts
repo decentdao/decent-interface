@@ -59,3 +59,26 @@ test('Create Token Voting DAO', async ({ page }) => {
   await page.waitForSelector('[data-testid=DAOInfo-name]', { timeout: 10000 });
   expect(daoNameEle).toContainText('Test Token Voting');
 });
+
+test('Create DAO with Snapshot URL', async ({ page }) => {
+  new CreateMultisigMocker(page);
+  const subgraphMocker = new SubgraphMocker(page);
+  await subgraphMocker.mock(createSubgraphDAO('0x', 'Test Multisig', []));
+
+  await create.createTestMultisigSnapshot();
+
+  await page.waitForURL(BASE_URL + '/daos/*');
+
+  const daoNameSelector = '[data-testid=DAOInfo-name]';
+  const daoSnapshotURLSelector = '[data-testid=DAOInfo-snapshotURL]';
+
+  const daoNameElement = page.locator(daoNameSelector);
+  const daoSnapshotElement = page.locator(daoSnapshotURLSelector);
+
+  await page.waitForSelector(daoNameSelector, { timeout: 10000 });
+  await page.waitForSelector(daoSnapshotURLSelector, { timeout: 10000 });
+
+  expect(daoNameElement).toContainText('Test Multisig + Snapshot');
+  expect(daoSnapshotElement).toContainText('Snapshot');
+  expect(daoSnapshotElement).toHaveAttribute('href', 'https://snapshot.org/#/ethlizards.eth');
+});

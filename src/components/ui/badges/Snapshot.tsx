@@ -1,20 +1,25 @@
-import { Button, ButtonProps, Image } from '@chakra-ui/react';
+import { Button, Image, Link, ButtonProps } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import { t } from 'i18next';
 
 interface Props extends ButtonProps {
   snapshotURL: string;
   isExternal?: boolean;
+  testId?: string;
 }
 
-export default function Snapshot({ snapshotURL, isExternal, ...rest }: Props) {
+export default function Snapshot({ snapshotURL, isExternal, testId, ...rest }: Props) {
   return (
     <Button
-      onClick={() => window.open(`https://snapshot.org/#/${snapshotURL}`)}
+      href={`https://snapshot.org/#/${snapshotURL}`}
       variant="secondary"
       mt={5}
       h={6}
       w={isExternal ? 40 : 32}
+      textTransform="none"
+      as={Link}
+      data-testid={testId}
+      target="_blank"
       {...rest}
     >
       <>

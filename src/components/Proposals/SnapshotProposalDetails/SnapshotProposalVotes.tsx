@@ -33,6 +33,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
             <Text
               ml={1}
               textStyle="text-md-mono-semibold"
+              data-testid="Snapshot-Proposal-total-votes"
             >
               {totalVotesCasted} {strategySymbol}
             </Text>
