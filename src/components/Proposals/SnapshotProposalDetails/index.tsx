@@ -42,7 +42,10 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
       <GridItem>
         <SnapshotProposalSummary proposal={extendedSnapshotProposal} />
         {user.address && (
-          <VoteContextProvider proposal={proposal}>
+          <VoteContextProvider
+            proposal={proposal}
+            extendedSnapshotProposal={extendedSnapshotProposal}
+          >
             <ProposalAction
               proposal={proposal}
               extendedSnapshotProposal={extendedSnapshotProposal}

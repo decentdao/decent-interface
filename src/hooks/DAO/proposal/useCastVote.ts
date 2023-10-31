@@ -1,6 +1,6 @@
 import snapshot from '@snapshot-labs/snapshot.js';
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useSigner } from 'wagmi';
@@ -28,6 +28,9 @@ const useCastVote = ({
   setPending?: React.Dispatch<React.SetStateAction<boolean>>;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
 }) => {
+  const [selectedChoice, setSelectedChoice] = useState();
+  const [snapshotWeightedChoice, setSnapshotWeightedChoice] = useState([]);
+
   const {
     governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance,
@@ -53,6 +56,11 @@ const useCastVote = ({
       setPending(contractCallPending);
     }
   }, [setPending, contractCallPending]);
+
+  useEffect(() => {
+    if (extendedSnapshotProposal) {
+    }
+  }, [extendedSnapshotProposal]);
 
   const { t } = useTranslation('transaction');
 
@@ -135,7 +143,7 @@ const useCastVote = ({
             });
           }
           toast.dismiss(toastId);
-          toast.success(t('successCastVote'));
+          toast.success(`${t('successCastVote')}. ${t('snapshotRecastVoteHelper')}`);
           if (onSuccess) {
             onSuccess();
           }
@@ -149,7 +157,7 @@ const useCastVote = ({
     [signer, address, daoSnapshotURL, extendedSnapshotProposal, t]
   );
 
-  return { castVote, castSnapshotVote };
+  return { castVote, castSnapshotVote, selectedChoice, snapshotWeightedChoice };
 };
 
 export default useCastVote;

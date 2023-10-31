@@ -1,4 +1,4 @@
-import { Button, Tooltip } from '@chakra-ui/react';
+import { Button, Tooltip, Box, Text, Image, Flex } from '@chakra-ui/react';
 import { CloseX, Check } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +24,7 @@ function Vote({
   onCastSnapshotVote?: () => void;
 }) {
   const [pending, setPending] = useState<boolean>(false);
-  const { t } = useTranslation(['common', 'proposal']);
+  const { t } = useTranslation(['common', 'proposal', 'transaction']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
 
   const azoriusProposal = proposal as AzoriusProposal;
@@ -46,7 +46,7 @@ function Vote({
   // If user is lucky enough - he could create a proposal and proceed to vote on it
   // even before the block, in which proposal was created, was mined.
   // This gives a weird behavior when casting vote fails due to requirement under LinearERC20Voting contract that current block number
-  // Shouldn't be equal to proposal's start block number. Which is dictated by the need to have voting tokens delegation being "finalized" to prevent proposal hijacking.
+  // shouldn't be equal to proposal's start block number. Which is dictated by the need to have voting tokens delegation being "finalized" to prevent proposal hijacking.
   const proposalStartBlockNotFinalized = Boolean(
     !isSnapshotProposal &&
       isCurrentBlockLoaded &&
@@ -75,6 +75,38 @@ function Vote({
             {choice}
           </Button>
         ))}
+        {hasVoted && (
+          <Box mt={2}>
+            <Flex>
+              <Check boxSize="1.5rem" />
+              <Text>{t('successCastVote', { ns: 'transaction' })}</Text>
+            </Flex>
+            <Text>{t('snapshotRecastVoteHelper', { ns: 'transaction' })}</Text>
+          </Box>
+        )}
+        <Box mt={4}>
+          <Text>{t('poweredBy')}</Text>
+          <Flex>
+            <Flex mr={1}>
+              <Image
+                src="/images/snapshot-icon.svg"
+                alt="Snapshot icon"
+                mr={1}
+              />
+              <Text>{t('snapshot')}</Text>
+            </Flex>
+            {extendedSnapshotProposal.privacy === 'shutter' && (
+              <Flex>
+                <Image
+                  src="/images/shutter-icon.svg"
+                  alt="Shutter icon"
+                  mr={1}
+                />
+                <Text>{t('shutter')}</Text>
+              </Flex>
+            )}
+          </Flex>
+        </Box>
       </>
     );
   }

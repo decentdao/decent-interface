@@ -17,6 +17,7 @@
     "vote": "Vote",
     "sign": "Sign",
     "snapshot": "Snapshot",
+    "shutter": "shutter",
     "send": "Send",
     "transfer": "Transfer",
     "received": "Received",
@@ -99,5 +100,6 @@
     "invalidSafe2": "Try refreshing the page or changing networks in your wallet.",
     "invalidChain": "Your currently connected chain is not supported.",
     "showMore": "Show More",
-    "showLess": "Show Less"
+    "showLess": "Show Less",
+    "poweredBy": "Powered by"
 }
