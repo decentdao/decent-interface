@@ -46,6 +46,7 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
             <ProposalAction
               proposal={proposal}
               extendedSnapshotProposal={extendedSnapshotProposal}
+              onCastSnapshotVote={loadProposal}
               expandedView
             />
           </VoteContextProvider>

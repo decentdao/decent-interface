@@ -17,9 +17,11 @@ import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 function Vote({
   proposal,
   extendedSnapshotProposal,
+  onCastSnapshotVote,
 }: {
   proposal: FractalProposal;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
+  onCastSnapshotVote?: () => void;
 }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['common', 'proposal']);
@@ -67,7 +69,7 @@ function Vote({
             key={choice}
             width="full"
             isDisabled={disabled}
-            onClick={() => castSnapshotVote(i + 1)}
+            onClick={() => castSnapshotVote(i + 1, onCastSnapshotVote)}
             marginTop={5}
           >
             {choice}

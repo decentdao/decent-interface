@@ -18,12 +18,15 @@ import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 import CastVote from './CastVote';
 import { Execute } from './Execute';
 
+// TODO: Refactor extendedSnapshotProposal and onCastSnapshotVote to the context
 export function ProposalActions({
   proposal,
   extendedSnapshotProposal,
+  onCastSnapshotVote,
 }: {
   proposal: FractalProposal;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
+  onCastSnapshotVote?: () => void;
 }) {
   switch (proposal.state) {
     case FractalProposalState.ACTIVE:
@@ -31,6 +34,7 @@ export function ProposalActions({
         <CastVote
           proposal={proposal}
           extendedSnapshotProposal={extendedSnapshotProposal}
+          onCastSnapshotVote={onCastSnapshotVote}
         />
       );
     case FractalProposalState.EXECUTABLE:
@@ -45,10 +49,12 @@ export function ProposalAction({
   proposal,
   expandedView,
   extendedSnapshotProposal,
+  onCastSnapshotVote,
 }: {
   proposal: FractalProposal;
   expandedView?: boolean;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
+  onCastSnapshotVote?: () => void;
 }) {
   const {
     node: { daoAddress },
@@ -140,6 +146,7 @@ export function ProposalAction({
         <ProposalActions
           proposal={proposal}
           extendedSnapshotProposal={extendedSnapshotProposal}
+          onCastSnapshotVote={onCastSnapshotVote}
         />
       </ContentBox>
     );

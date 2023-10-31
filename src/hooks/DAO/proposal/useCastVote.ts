@@ -101,7 +101,7 @@ const useCastVote = ({
   );
 
   const castSnapshotVote = useCallback(
-    async (choice: number) => {
+    async (choice: number, onSuccess?: () => void) => {
       if (signer && signer?.provider && address && daoSnapshotURL && extendedSnapshotProposal) {
         let toastId;
         try {
@@ -136,6 +136,9 @@ const useCastVote = ({
           }
           toast.dismiss(toastId);
           toast.success(t('successCastVote'));
+          if (onSuccess) {
+            onSuccess();
+          }
         } catch (e) {
           toast.dismiss(toastId);
           toast.error('failedCastVote');
