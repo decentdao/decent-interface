@@ -86,12 +86,11 @@ export function VoteContextProvider({
     async (refetchUserTokens?: boolean) => {
       setCanVoteLoading(true);
       let newCanVote = false;
-      if (isSnapshotProposal) {
-        const votingWeightData = await loadVotingWeight();
-        newCanVote = votingWeightData.votingWeight > 1;
-      }
       if (user.address) {
-        if (type === GovernanceType.AZORIUS_ERC20) {
+        if (isSnapshotProposal) {
+          const votingWeightData = await loadVotingWeight();
+          newCanVote = votingWeightData.votingWeight >= 1;
+        } else if (type === GovernanceType.AZORIUS_ERC20) {
           newCanVote = user.votingWeight.gt(0) && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {

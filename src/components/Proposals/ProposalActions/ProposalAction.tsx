@@ -26,7 +26,7 @@ export function ProposalActions({
 }: {
   proposal: FractalProposal;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
-  onCastSnapshotVote?: () => void;
+  onCastSnapshotVote?: () => Promise<void>;
 }) {
   switch (proposal.state) {
     case FractalProposalState.ACTIVE:
@@ -54,7 +54,7 @@ export function ProposalAction({
   proposal: FractalProposal;
   expandedView?: boolean;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
-  onCastSnapshotVote?: () => void;
+  onCastSnapshotVote?: () => Promise<void>;
 }) {
   const {
     node: { daoAddress },
@@ -71,11 +71,12 @@ export function ProposalAction({
   );
 
   const showActionButton =
-    user.votingWeight.gt(0) &&
-    (isActiveProposal ||
-      proposal.state === FractalProposalState.EXECUTABLE ||
-      proposal.state === FractalProposalState.TIMELOCKABLE ||
-      proposal.state === FractalProposalState.TIMELOCKED);
+    (isSnapshotProposal && canVote) ||
+    (user.votingWeight.gt(0) &&
+      (isActiveProposal ||
+        proposal.state === FractalProposalState.EXECUTABLE ||
+        proposal.state === FractalProposalState.TIMELOCKABLE ||
+        proposal.state === FractalProposalState.TIMELOCKED));
 
   const handleClick = () => {
     if (isSnapshotProposal) {
@@ -131,7 +132,8 @@ export function ProposalAction({
   }
 
   if (expandedView) {
-    if (user.votingWeight.eq(0) || (isActiveProposal && !canVote)) return null;
+    if (!isSnapshotProposal && (user.votingWeight.eq(0) || (isActiveProposal && !canVote)))
+      return null;
 
     return (
       <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>

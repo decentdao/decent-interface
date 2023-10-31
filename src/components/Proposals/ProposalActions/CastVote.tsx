@@ -1,5 +1,5 @@
 import { Button, Tooltip, Box, Text, Image, Flex } from '@chakra-ui/react';
-import { CloseX, Check } from '@decent-org/fractal-ui';
+import { CloseX, Check, SingleCheckOutline } from '@decent-org/fractal-ui';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
@@ -12,6 +12,7 @@ import {
   AzoriusVoteChoice,
   ExtendedSnapshotProposal,
 } from '../../../types';
+import WeightedInput from '../../ui/forms/WeightedInput';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 
 function Vote({
@@ -21,7 +22,7 @@ function Vote({
 }: {
   proposal: FractalProposal;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
-  onCastSnapshotVote?: () => void;
+  onCastSnapshotVote?: () => Promise<void>;
 }) {
   const [pending, setPending] = useState<boolean>(false);
   const { t } = useTranslation(['common', 'proposal', 'transaction']);
@@ -29,7 +30,14 @@ function Vote({
 
   const azoriusProposal = proposal as AzoriusProposal;
 
-  const { castVote, castSnapshotVote } = useCastVote({
+  const {
+    castVote,
+    castSnapshotVote,
+    handleChangeSnapshotWeightedChoice,
+    handleSelectSnapshotChoice,
+    selectedChoice,
+    snapshotWeightedChoice,
+  } = useCastVote({
     proposal,
     setPending,
     extendedSnapshotProposal,
@@ -62,29 +70,63 @@ function Vote({
     hasVotedLoading;
 
   if (isSnapshotProposal && extendedSnapshotProposal) {
+    const isWeighted = extendedSnapshotProposal.type === 'weighted';
+    const weightedTotalValue = snapshotWeightedChoice.reduce((prev, curr) => prev + curr, 0);
+    const voteDisabled =
+      (!isWeighted && typeof selectedChoice === 'undefined') ||
+      (isWeighted && weightedTotalValue === 0);
     return (
       <>
-        {extendedSnapshotProposal.choices.map((choice, i) => (
-          <Button
-            key={choice}
-            width="full"
-            isDisabled={disabled}
-            onClick={() => castSnapshotVote(i + 1, onCastSnapshotVote)}
-            marginTop={5}
-          >
-            {choice}
-          </Button>
-        ))}
+        {isWeighted && snapshotWeightedChoice.length > 0
+          ? extendedSnapshotProposal.choices.map((choice, i) => (
+              <WeightedInput
+                key={choice}
+                label={choice}
+                totalValue={weightedTotalValue}
+                value={snapshotWeightedChoice[i]}
+                onChange={newValue => handleChangeSnapshotWeightedChoice(i, newValue)}
+              />
+            ))
+          : extendedSnapshotProposal.choices.map((choice, i) => (
+              <Button
+                key={choice}
+                variant="secondary"
+                width="full"
+                onClick={() => handleSelectSnapshotChoice(i)}
+                marginTop={5}
+              >
+                {selectedChoice === i && <Check boxSize="1.5rem" />}
+                {choice}
+              </Button>
+            ))}
+        <Button
+          width="full"
+          isDisabled={voteDisabled}
+          onClick={() => castSnapshotVote(onCastSnapshotVote)}
+          marginTop={5}
+        >
+          {t('vote')}
+        </Button>
         {hasVoted && (
-          <Box mt={2}>
+          <Box
+            mt={4}
+            color="grayscale.500"
+            fontWeight="600"
+          >
             <Flex>
-              <Check boxSize="1.5rem" />
+              <SingleCheckOutline
+                boxSize="1.5rem"
+                mr={2}
+              />
               <Text>{t('successCastVote', { ns: 'transaction' })}</Text>
             </Flex>
             <Text>{t('snapshotRecastVoteHelper', { ns: 'transaction' })}</Text>
           </Box>
         )}
-        <Box mt={4}>
+        <Box
+          mt={4}
+          color="grayscale.700"
+        >
           <Text>{t('poweredBy')}</Text>
           <Flex>
             <Flex mr={1}>
