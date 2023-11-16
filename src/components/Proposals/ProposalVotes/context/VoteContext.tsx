@@ -8,6 +8,7 @@ import {
   AzoriusProposal,
   MultisigProposal,
   GovernanceType,
+  ExtendedSnapshotProposal,
 } from '../../../../types';
 
 interface IVoteContext {
@@ -36,8 +37,10 @@ export const useVoteContext = () => {
 export function VoteContextProvider({
   proposal,
   children,
+  extendedSnapshotProposal,
 }: {
   proposal: FractalProposal;
+  extendedSnapshotProposal?: ExtendedSnapshotProposal;
   children: ReactNode;
 }) {
   const [canVote, setCanVote] = useState(false);
@@ -61,8 +64,10 @@ export function VoteContextProvider({
   const getHasVoted = useCallback(() => {
     setHasVotedLoading(true);
     if (isSnapshotProposal) {
-      // Snapshot proposals not tracking votes
-      setHasVoted(false);
+      setHasVoted(
+        !!extendedSnapshotProposal &&
+          !!extendedSnapshotProposal.votes.find(vote => vote.voter === user.address)
+      );
     } else if (dao?.isAzorius) {
       const azoriusProposal = proposal as AzoriusProposal;
       if (azoriusProposal?.votes) {
@@ -75,18 +80,17 @@ export function VoteContextProvider({
       );
     }
     setHasVotedLoading(false);
-  }, [dao, isSnapshotProposal, proposal, user.address]);
+  }, [dao, isSnapshotProposal, proposal, user.address, extendedSnapshotProposal]);
 
   const getCanVote = useCallback(
     async (refetchUserTokens?: boolean) => {
       setCanVoteLoading(true);
       let newCanVote = false;
-      if (isSnapshotProposal) {
-        const votingWeightData = await loadVotingWeight();
-        newCanVote = votingWeightData.votingWeight > 1;
-      }
       if (user.address) {
-        if (type === GovernanceType.AZORIUS_ERC20) {
+        if (isSnapshotProposal) {
+          const votingWeightData = await loadVotingWeight();
+          newCanVote = votingWeightData.votingWeight >= 1;
+        } else if (type === GovernanceType.AZORIUS_ERC20) {
           newCanVote = user.votingWeight.gt(0) && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
@@ -131,7 +135,14 @@ export function VoteContextProvider({
 
   return (
     <VoteContext.Provider
-      value={{ canVote, canVoteLoading, hasVoted, hasVotedLoading, getHasVoted, getCanVote }}
+      value={{
+        canVote,
+        canVoteLoading,
+        hasVoted,
+        hasVotedLoading,
+        getHasVoted,
+        getCanVote,
+      }}
     >
       {children}
     </VoteContext.Provider>

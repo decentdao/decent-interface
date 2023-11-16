@@ -15,7 +15,7 @@ interface ISnapshotProposalVotes {
 export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVotes) {
   const { t } = useTranslation('proposal');
   const { totalVotesCasted } = useTotalVotes({ proposal });
-  const { votes, votesBreakdown, choices, strategies, privacy, state } = proposal;
+  const { votes, votesBreakdown, choices, strategies, privacy, state, type } = proposal;
   const strategySymbol = strategies[0].params.symbol;
 
   return (
@@ -43,9 +43,15 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
             colSpan={4}
             rowGap={4}
           >
-            {choices.map(choice => {
+            {choices.map((choice, i) => {
+              const votesBreakdownChoice =
+                type === 'weighted' ? votesBreakdown[i] : votesBreakdown[choice];
+              const votesBreakdownChoiceTotal =
+                votesBreakdownChoice && votesBreakdownChoice?.total
+                  ? votesBreakdownChoice?.total
+                  : 0;
               const choicePercentageFromTotal =
-                ((votesBreakdown[choice]?.total || 0) * 100) / totalVotesCasted;
+                (votesBreakdownChoiceTotal * 100) / totalVotesCasted;
 
               return (
                 <VotesPercentage
@@ -57,7 +63,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                     {proposal.privacy === 'shutter' &&
                     proposal.state !== FractalProposalState.CLOSED
                       ? `? ${strategySymbol}`
-                      : `${votesBreakdown[choice].total} ${strategySymbol}`}
+                      : `${votesBreakdownChoiceTotal} ${strategySymbol}`}
                   </Text>
                 </VotesPercentage>
               );

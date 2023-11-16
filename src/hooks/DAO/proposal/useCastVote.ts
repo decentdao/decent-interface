@@ -1,6 +1,6 @@
 import snapshot from '@snapshot-labs/snapshot.js';
 import { ethers } from 'ethers';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useSigner } from 'wagmi';
@@ -28,6 +28,9 @@ const useCastVote = ({
   setPending?: React.Dispatch<React.SetStateAction<boolean>>;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
 }) => {
+  const [selectedChoice, setSelectedChoice] = useState<number>();
+  const [snapshotWeightedChoice, setSnapshotWeightedChoice] = useState<number[]>([]);
+
   const {
     governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance,
@@ -54,7 +57,23 @@ const useCastVote = ({
     }
   }, [setPending, contractCallPending]);
 
+  useEffect(() => {
+    if (extendedSnapshotProposal) {
+      setSnapshotWeightedChoice(extendedSnapshotProposal.choices.map(() => 0));
+    }
+  }, [extendedSnapshotProposal]);
+
   const { t } = useTranslation('transaction');
+
+  const handleSelectSnapshotChoice = useCallback((choiceIndex: number) => {
+    setSelectedChoice(choiceIndex);
+  }, []);
+
+  const handleChangeSnapshotWeightedChoice = useCallback((choiceIndex: number, value: number) => {
+    setSnapshotWeightedChoice(prevState =>
+      prevState.map((choiceValue, index) => (index === choiceIndex ? value : choiceValue))
+    );
+  }, []);
 
   const castVote = useCallback(
     async (vote: number) => {
@@ -101,9 +120,13 @@ const useCastVote = ({
   );
 
   const castSnapshotVote = useCallback(
-    async (choice: number) => {
+    async (onSuccess?: () => Promise<void>) => {
       if (signer && signer?.provider && address && daoSnapshotURL && extendedSnapshotProposal) {
         let toastId;
+        const choice =
+          extendedSnapshotProposal.type === 'weighted'
+            ? snapshotWeightedChoice
+            : (selectedChoice as number) + 1;
         try {
           toastId = toast(t('pendingCastVote'), {
             autoClose: false,
@@ -135,7 +158,12 @@ const useCastVote = ({
             });
           }
           toast.dismiss(toastId);
-          toast.success(t('successCastVote'));
+          toast.success(`${t('successCastVote')}. ${t('snapshotRecastVoteHelper')}`);
+          setSelectedChoice(undefined);
+          if (onSuccess) {
+            // Need to refetch votes after timeout so that Snapshot API has enough time to record the vote
+            setTimeout(() => onSuccess(), 3000);
+          }
         } catch (e) {
           toast.dismiss(toastId);
           toast.error('failedCastVote');
@@ -143,10 +171,25 @@ const useCastVote = ({
         }
       }
     },
-    [signer, address, daoSnapshotURL, extendedSnapshotProposal, t]
+    [
+      signer,
+      address,
+      daoSnapshotURL,
+      extendedSnapshotProposal,
+      t,
+      selectedChoice,
+      snapshotWeightedChoice,
+    ]
   );
 
-  return { castVote, castSnapshotVote };
+  return {
+    castVote,
+    castSnapshotVote,
+    selectedChoice,
+    snapshotWeightedChoice,
+    handleSelectSnapshotChoice,
+    handleChangeSnapshotWeightedChoice,
+  };
 };
 
 export default useCastVote;

@@ -128,14 +128,14 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
 
       const isShielded = privacy === 'shutter';
       const isClosed = snapshotProposal.state === FractalProposalState.CLOSED;
+
       if (!(isShielded && !isClosed)) {
         votesQueryResult.forEach((vote: SnapshotVote) => {
           if (type === 'weighted') {
             const voteChoices = vote.choice as SnapshotWeightedVotingChoice;
-            Object.keys(voteChoices).forEach((choiceIndex: any) => {
-              // In Snapshot API choices are indexed 1-based. The first choice has index 1.
-              // https://docs.snapshot.org/tools/api#vote
-              const voteChoice = choices[choiceIndex - 1];
+            if (typeof voteChoices === 'number') {
+              // Means vote casted for single option, and Snapshot API returns just just number then =/
+              const voteChoice = voteChoices - 1;
               const existingChoiceType = votesBreakdown[voteChoice];
               if (existingChoiceType) {
                 votesBreakdown[voteChoice] = {
@@ -148,7 +148,25 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
                   votes: [vote],
                 };
               }
-            });
+            } else {
+              Object.keys(voteChoices).forEach((choiceIndex: any) => {
+                // In Snapshot API choices are indexed 1-based. The first choice has index 1.
+                // https://docs.snapshot.org/tools/api#vote
+                const voteChoice = choices[choiceIndex - 1];
+                const existingChoiceType = votesBreakdown[voteChoice];
+                if (existingChoiceType) {
+                  votesBreakdown[voteChoice] = {
+                    total: existingChoiceType.total + getVoteWeight(vote),
+                    votes: [...existingChoiceType.votes, vote],
+                  };
+                } else {
+                  votesBreakdown[voteChoice] = {
+                    total: getVoteWeight(vote),
+                    votes: [vote],
+                  };
+                }
+              });
+            }
           } else {
             const voteChoice = vote.choice as number;
             const choiceKey = choices[voteChoice - 1];

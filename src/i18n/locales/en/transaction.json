@@ -20,5 +20,6 @@
     "pendingTokenClaim": "Claiming {{ symbol }}",
     "failedTokenClaim": "Failed to claim {{ symbol }}",
     "successTokenClaim": "You have successfully claimed {{ amount }} {{ symbol }}",
+    "snapshotRecastVoteHelper": "You can still change your vote until the vote end date",
     "modifyGovernanceSetAzoriusProposalPendingMessage": "Submitting proposal to modify governance..."
 }

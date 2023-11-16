@@ -18,12 +18,15 @@ import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 import CastVote from './CastVote';
 import { Execute } from './Execute';
 
+// TODO: Refactor extendedSnapshotProposal and onCastSnapshotVote to the context
 export function ProposalActions({
   proposal,
   extendedSnapshotProposal,
+  onCastSnapshotVote,
 }: {
   proposal: FractalProposal;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
+  onCastSnapshotVote?: () => Promise<void>;
 }) {
   switch (proposal.state) {
     case FractalProposalState.ACTIVE:
@@ -31,6 +34,7 @@ export function ProposalActions({
         <CastVote
           proposal={proposal}
           extendedSnapshotProposal={extendedSnapshotProposal}
+          onCastSnapshotVote={onCastSnapshotVote}
         />
       );
     case FractalProposalState.EXECUTABLE:
@@ -45,10 +49,12 @@ export function ProposalAction({
   proposal,
   expandedView,
   extendedSnapshotProposal,
+  onCastSnapshotVote,
 }: {
   proposal: FractalProposal;
   expandedView?: boolean;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
+  onCastSnapshotVote?: () => Promise<void>;
 }) {
   const {
     node: { daoAddress },
@@ -65,11 +71,12 @@ export function ProposalAction({
   );
 
   const showActionButton =
-    user.votingWeight.gt(0) &&
-    (isActiveProposal ||
-      proposal.state === FractalProposalState.EXECUTABLE ||
-      proposal.state === FractalProposalState.TIMELOCKABLE ||
-      proposal.state === FractalProposalState.TIMELOCKED);
+    (isSnapshotProposal && canVote) ||
+    (user.votingWeight.gt(0) &&
+      (isActiveProposal ||
+        proposal.state === FractalProposalState.EXECUTABLE ||
+        proposal.state === FractalProposalState.TIMELOCKABLE ||
+        proposal.state === FractalProposalState.TIMELOCKED));
 
   const handleClick = () => {
     if (isSnapshotProposal) {
@@ -125,7 +132,8 @@ export function ProposalAction({
   }
 
   if (expandedView) {
-    if (user.votingWeight.eq(0) || (isActiveProposal && !canVote)) return null;
+    if (!isSnapshotProposal && (user.votingWeight.eq(0) || (isActiveProposal && !canVote)))
+      return null;
 
     return (
       <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
@@ -140,6 +148,7 @@ export function ProposalAction({
         <ProposalActions
           proposal={proposal}
           extendedSnapshotProposal={extendedSnapshotProposal}
+          onCastSnapshotVote={onCastSnapshotVote}
         />
       </ContentBox>
     );
