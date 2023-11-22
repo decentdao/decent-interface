@@ -123,9 +123,10 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   const chainId = chain ? chain.id : disconnectedChain.id;
   useEffect(() => {
     if (daoAddress && chainId + daoAddress !== currentValidSafe.current) {
+      setNodeLoading(true);
       setDAO(chainId, daoAddress);
     }
-  }, [daoAddress, setDAO, action, currentValidSafe, chainId]);
+  }, [daoAddress, setDAO, currentValidSafe, chainId]);
 
   return nodeLoading;
 };

@@ -27,11 +27,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     [snapshotProposal]
   );
 
-  const getVoteWeight = useCallback(
-    (vote: SnapshotVote) =>
-      vote.votingWeight * vote.votingWeightByStrategy.reduce((prev, curr) => prev + curr, 0),
-    []
-  );
+  const getVoteWeight = useCallback((vote: SnapshotVote) => vote.votingWeight, []);
 
   const loadProposal = useCallback(async () => {
     if (snapshotProposal?.snapshotProposalId) {
@@ -78,7 +74,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       const votesQueryResult = await client
         .query({
           query: gql`query SnapshotProposalVotes {
-          votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}) {
+          votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}, first: 100) {
             id
             voter
             vp

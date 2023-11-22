@@ -74,7 +74,7 @@ export default function DaoPageLayout({
   params: { daoAddress?: string };
 }) {
   const { node } = useFractal();
-  const loading = useDAOController({ daoAddress });
+  const { nodeLoading, reloadingDAO } = useDAOController({ daoAddress });
   const { chain } = useNetwork();
 
   const validSafe = node.safe;
@@ -84,7 +84,7 @@ export default function DaoPageLayout({
     display = children;
   } else if (!chain) {
     // if we're disconnected
-    if (loading || validSafe) {
+    if (nodeLoading || reloadingDAO || validSafe) {
       display = children;
     } else {
       display = <InvalidSafe />;
@@ -94,7 +94,7 @@ export default function DaoPageLayout({
     const invalidChain = !supportedChains.map(c => c.chainId).includes(chain.id);
     if (invalidChain) {
       display = <InvalidChain />;
-    } else if (loading || validSafe) {
+    } else if (nodeLoading || reloadingDAO || validSafe) {
       display = children;
     } else {
       display = <InvalidSafe />;
