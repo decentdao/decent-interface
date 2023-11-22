@@ -27,8 +27,6 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     [snapshotProposal]
   );
 
-  const getVoteWeight = useCallback((vote: SnapshotVote) => vote.votingWeight, []);
-
   const loadProposal = useCallback(async () => {
     if (snapshotProposal?.snapshotProposalId) {
       const proposalQueryResult = await client
@@ -135,12 +133,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
               const existingChoiceType = votesBreakdown[voteChoice];
               if (existingChoiceType) {
                 votesBreakdown[voteChoice] = {
-                  total: existingChoiceType.total + getVoteWeight(vote),
+                  total: existingChoiceType.total + vote.votingWeight,
                   votes: [...existingChoiceType.votes, vote],
                 };
               } else {
                 votesBreakdown[voteChoice] = {
-                  total: getVoteWeight(vote),
+                  total: vote.votingWeight,
                   votes: [vote],
                 };
               }
@@ -152,12 +150,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
                 const existingChoiceType = votesBreakdown[voteChoice];
                 if (existingChoiceType) {
                   votesBreakdown[voteChoice] = {
-                    total: existingChoiceType.total + getVoteWeight(vote),
+                    total: existingChoiceType.total + vote.votingWeight,
                     votes: [...existingChoiceType.votes, vote],
                   };
                 } else {
                   votesBreakdown[voteChoice] = {
-                    total: getVoteWeight(vote),
+                    total: vote.votingWeight,
                     votes: [vote],
                   };
                 }
@@ -170,12 +168,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
 
             if (existingChoiceType) {
               votesBreakdown[choiceKey] = {
-                total: existingChoiceType.total + getVoteWeight(vote),
+                total: existingChoiceType.total + vote.votingWeight,
                 votes: [...existingChoiceType.votes, vote],
               };
             } else {
               votesBreakdown[choiceKey] = {
-                total: getVoteWeight(vote),
+                total: vote.votingWeight,
                 votes: [vote],
               };
             }
@@ -190,7 +188,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
         votes: votesQueryResult,
       } as ExtendedSnapshotProposal);
     }
-  }, [snapshotProposal?.snapshotProposalId, proposal, snapshotProposal?.state, getVoteWeight]);
+  }, [snapshotProposal?.snapshotProposalId, proposal, snapshotProposal?.state]);
 
   const loadVotingWeight = useCallback(async () => {
     if (snapshotProposal?.snapshotProposalId) {
@@ -230,7 +228,6 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   return {
     loadVotingWeight,
     loadProposal,
-    getVoteWeight,
     snapshotProposal,
     isSnapshotProposal,
     extendedSnapshotProposal,
