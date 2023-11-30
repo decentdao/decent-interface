@@ -21,9 +21,9 @@ export default function InfoHeader() {
       bg={daoMetadata.headerBackground}
       justifyContent="center"
       alignItems="center"
-      marginLeft="-3rem"
-      marginRight="-3rem"
-      width="calc(100% + 6rem)"
+      position="absolute"
+      left="4.25rem"
+      width="calc(100vw - 4.25rem)"
       paddingTop={2}
       paddingBottom={2}
       flexDirection="column"

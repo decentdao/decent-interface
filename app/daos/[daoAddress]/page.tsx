@@ -26,6 +26,7 @@ export default function DaoDashboardPage() {
             },
             body: {
               ...theme.styles.global.body,
+              zIndex: '-1',
               background: daoMetadata.bodyBackground,
             },
           },
@@ -38,7 +39,7 @@ export default function DaoDashboardPage() {
   return (
     <ChakraProvider theme={activeTheme}>
       <InfoHeader />
-      <ClientOnly mt={!!daoMetadata ? 8 : 12}>
+      <ClientOnly mt={!!daoMetadata ? 40 : 12}>
         <Info />
         <ERCO20Claim />
         <Activities />
