@@ -214,6 +214,13 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       }`,
         })
         .then(({ data: { vp } }) => {
+          if (!vp) {
+            return {
+              votingWeight: 0,
+              votingWeightByStrategy: [0],
+              votingState: 'final',
+            };
+          }
           return {
             votingWeight: vp.vp,
             votingWeightByStrategy: vp.vp_by_strategy,

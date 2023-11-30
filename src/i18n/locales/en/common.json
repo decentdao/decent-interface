@@ -101,5 +101,6 @@
     "invalidChain": "Your currently connected chain is not supported.",
     "showMore": "Show More",
     "showLess": "Show Less",
-    "poweredBy": "Powered by"
+    "poweredBy": "Powered by",
+    "goTo": "Go to"
 }
