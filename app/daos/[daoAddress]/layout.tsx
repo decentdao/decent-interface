@@ -1,12 +1,14 @@
 'use client';
 
-import { Button, Center, Text, VStack } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import { Button, Center, Text, VStack, ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { theme } from '@decent-org/fractal-ui';
+import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
 import ClientOnly from '../../../src/components/ui/utils/ClientOnly';
 import { APP_NAME } from '../../../src/constants/common';
 import useDAOController from '../../../src/hooks/DAO/useDAOController';
+import useDAOMetadata from '../../../src/hooks/DAO/useDAOMetadata';
 import { useFractal } from '../../../src/providers/App/AppProvider';
 import {
   disconnectedChain,
@@ -75,7 +77,31 @@ export default function DaoPageLayout({
 }) {
   const { node } = useFractal();
   const loading = useDAOController({ daoAddress });
+  const daoMetadata = useDAOMetadata();
   const { chain } = useNetwork();
+  const activeTheme = useMemo(() => {
+    if (daoMetadata && daoMetadata.bodyBackground) {
+      return extendTheme({
+        ...theme,
+        styles: {
+          ...theme.styles,
+          global: {
+            ...theme.styles.global,
+            html: {
+              ...theme.styles.global.html,
+              background: daoMetadata.bodyBackground,
+            },
+            body: {
+              ...theme.styles.global.body,
+              zIndex: '-1',
+              background: daoMetadata.bodyBackground,
+            },
+          },
+        },
+      });
+    }
+    return theme;
+  }, [daoMetadata]);
 
   const validSafe = node.safe;
   let display;
@@ -95,7 +121,7 @@ export default function DaoPageLayout({
     if (invalidChain) {
       display = <InvalidChain />;
     } else if (loading || validSafe) {
-      display = children;
+      display = <ChakraProvider theme={activeTheme}>{children}</ChakraProvider>;
     } else {
       display = <InvalidSafe />;
     }
