@@ -1,5 +1,5 @@
 import { Box, Flex, Image, Menu, MenuButton, MenuList, Text } from '@chakra-ui/react';
-import { FractalBrandBurger } from '@decent-org/fractal-ui';
+import { Burger } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import useDAOMetadata from '../../../../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -37,9 +37,8 @@ export default function InfoHeader() {
       <Box marginTop={2}>
         <Menu>
           <MenuButton>
-            <Flex>
-              {/* TODO: Replace with regular burger icon once added to @decent-org/fractal-ui */}
-              <FractalBrandBurger boxSize="2rem" />
+            <Flex alignItems="center">
+              <Burger boxSize="1.5rem" />
               <Text
                 textStyle="text-lg-mono-regular"
                 ml={4}
