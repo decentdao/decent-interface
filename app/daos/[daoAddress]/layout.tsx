@@ -94,7 +94,7 @@ export default function DaoPageLayout({
             body: {
               ...theme.styles.global.body,
               zIndex: '-1',
-              background: daoMetadata.bodyBackground,
+              background: 'none',
             },
           },
         },
