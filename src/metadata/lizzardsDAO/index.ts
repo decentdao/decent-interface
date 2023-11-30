@@ -7,6 +7,7 @@ const LIZZARDS_DAO_METADATA: DAOMetadata = {
   logo: logo.src,
   headerBackground:
     'linear-gradient(269deg, rgba(110, 97, 240, 0.35) 3.2%, rgba(74, 163, 183, 0.35) 51.2%, rgba(101, 211, 138, 0.35) 98.2%), #000',
+  bodyBackground: 'linear-gradient(180deg, #2A2F33 0%, #101212 100%)',
   links: [
     {
       title: 'Eth Lizards White Paper',

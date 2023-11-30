@@ -3,18 +3,19 @@ import lizzardsDAOMetadata from '../../metadata/lizzardsDAO';
 import { useFractal } from '../../providers/App/AppProvider';
 
 export default function useDAOMetadata() {
-  const {
-    node: { daoAddress },
-  } = useFractal();
+  const storeState = useFractal();
 
   const daoMetadata = useMemo(() => {
-    switch (daoAddress) {
-      case lizzardsDAOMetadata.address:
-        return lizzardsDAOMetadata;
-      default:
-        return undefined;
+    if (storeState && storeState.node && storeState.node.daoAddress) {
+      switch (storeState.node.daoAddress) {
+        case lizzardsDAOMetadata.address:
+          return lizzardsDAOMetadata;
+        default:
+          return undefined;
+      }
     }
-  }, [daoAddress]);
+    return undefined;
+  }, [storeState]);
 
   return daoMetadata;
 }

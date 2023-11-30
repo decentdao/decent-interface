@@ -12,6 +12,7 @@ export type DAOMetadata = {
   address: string;
   logo: string;
   headerBackground: string;
+  bodyBackground?: string;
   links: {
     title: string;
     url: string;

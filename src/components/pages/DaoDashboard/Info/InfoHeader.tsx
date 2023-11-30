@@ -66,7 +66,12 @@ export default function InfoHeader() {
             </Text>
             {daoMetadata.links.map(link => (
               <Box key={link.url}>
-                <ExternalLink href={link.url}>{link.title}</ExternalLink>
+                <ExternalLink
+                  href={link.url}
+                  color="grayscale.100"
+                >
+                  {link.title}
+                </ExternalLink>
               </Box>
             ))}
           </MenuList>
