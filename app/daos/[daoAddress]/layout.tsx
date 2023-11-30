@@ -93,7 +93,6 @@ export default function DaoPageLayout({
             },
             body: {
               ...theme.styles.global.body,
-              zIndex: '-1',
               background: 'none',
             },
           },
