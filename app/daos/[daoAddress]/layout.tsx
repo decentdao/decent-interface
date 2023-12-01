@@ -104,13 +104,14 @@ export default function DaoPageLayout({
 
   const validSafe = node.safe;
   let display;
+  const childrenDisplay = <ChakraProvider theme={activeTheme}>{children}</ChakraProvider>;
 
   if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
-    display = children;
+    display = childrenDisplay;
   } else if (!chain) {
     // if we're disconnected
     if (loading || validSafe) {
-      display = children;
+      display = childrenDisplay;
     } else {
       display = <InvalidSafe />;
     }
@@ -120,7 +121,7 @@ export default function DaoPageLayout({
     if (invalidChain) {
       display = <InvalidChain />;
     } else if (loading || validSafe) {
-      display = <ChakraProvider theme={activeTheme}>{children}</ChakraProvider>;
+      display = childrenDisplay;
     } else {
       display = <InvalidSafe />;
     }
