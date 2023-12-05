@@ -5,6 +5,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOMetadata from '../../../../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { InfoBox } from '../../../ui/containers/InfoBox';
+import ExternalLink from '../../../ui/links/ExternalLink';
 import { InfoDAO } from './InfoDAO';
 import { InfoGovernance } from './InfoGovernance';
 import { InfoProposals } from './InfoProposals';
@@ -79,6 +80,7 @@ export function Info() {
                   position="relative"
                   minWidth="auto"
                   width="50%"
+                  p="1.5rem"
                   key={index}
                 >
                   {section.background && (
@@ -96,8 +98,21 @@ export function Info() {
                       backgroundPosition="50%"
                     />
                   )}
-                  <Text textStyle="text-lg-mono-regular">{section.title}</Text>
-                  <Text textStyle="text-base-mono-regular">{section.content}</Text>
+                  <Text
+                    textStyle="text-lg-mono-regular"
+                    marginBottom={2}
+                  >
+                    {section.title}
+                  </Text>
+                  <Text textStyle="text-base-mono-regular">
+                    {section.link && section.link.position === 'start' && (
+                      <ExternalLink href={section.link.url}>{section.link.text}</ExternalLink>
+                    )}
+                    {section.content}
+                    {section.link && section.link.position === 'end' && (
+                      <ExternalLink href={section.link.url}>{section.link.text}</ExternalLink>
+                    )}
+                  </Text>
                 </InfoBox>
               ))}
             </Flex>

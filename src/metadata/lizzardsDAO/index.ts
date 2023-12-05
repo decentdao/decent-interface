@@ -25,15 +25,24 @@ const LIZZARDS_DAO_METADATA: DAOMetadata = {
   sections: [
     {
       title: 'Description',
-      content:
-        'Vote here for this proposal or just click on the link to learn more about the proposal',
+      content: ' for this proposal or just click on the link to learn more about the proposal',
       background: undefined,
+      link: {
+        position: 'start',
+        text: 'Vote here',
+        url: '/proposals/0xe10c44fceb1b43f74c42bd6efc9316e9ce14109ac8a166e5266fc78499cb4fea',
+      },
     },
     {
       title: 'Elemental Lizards coming soon',
       content:
-        'Designed by gamers for Web3 Gamers, Guild Leaders, and Content Creators. The Elemental Lizards provide battle passes for all Ethlizards gaming experiences, customizable avatars, and exclusive community access for the Community Sub-DAO. Learn more ',
+        'Designed by gamers for Web3 Gamers, Guild Leaders, and Content Creators. The Elemental Lizards provide battle passes for all Ethlizards gaming experiences, customizable avatars, and exclusive community access for the Community Sub-DAO. ',
       background: metaSectionBackground1.src,
+      link: {
+        position: 'end',
+        text: 'Learn more',
+        url: 'https://ethlizards.io/#lizards',
+      },
     },
   ],
 };

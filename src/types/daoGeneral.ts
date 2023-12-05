@@ -21,6 +21,11 @@ export type DAOMetadata = {
     title: string;
     content: string;
     background?: string;
+    link?: {
+      url: string;
+      text: string;
+      position: 'start' | 'end';
+    };
   }[];
 };
 

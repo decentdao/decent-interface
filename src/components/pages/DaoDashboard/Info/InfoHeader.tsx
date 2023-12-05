@@ -1,5 +1,5 @@
 import { Box, Flex, Image, Menu, MenuButton, MenuList, Text } from '@chakra-ui/react';
-import { Burger } from '@decent-org/fractal-ui';
+import { ArrowAngleUp, Burger } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import useDAOMetadata from '../../../../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -53,7 +53,7 @@ export default function InfoHeader() {
             mr={['auto', '1rem']}
             bg="grayscale.black"
             border="none"
-            padding="1rem"
+            padding="1rem 1.5rem"
             zIndex={1000}
           >
             <Text
@@ -63,16 +63,25 @@ export default function InfoHeader() {
             >
               {t('goTo')}
             </Text>
-            {daoMetadata.links.map(link => (
-              <Box key={link.url}>
-                <ExternalLink
-                  href={link.url}
-                  color="grayscale.100"
-                >
-                  {link.title}
-                </ExternalLink>
-              </Box>
-            ))}
+            <Flex
+              gap={4}
+              flexDirection="column"
+            >
+              {daoMetadata.links.map(link => (
+                <Box key={link.url}>
+                  <ExternalLink
+                    href={link.url}
+                    color="grayscale.100"
+                  >
+                    {link.title}{' '}
+                    <ArrowAngleUp
+                      boxSize="1.5rem"
+                      fill="currentColor"
+                    />
+                  </ExternalLink>
+                </Box>
+              ))}
+            </Flex>
           </MenuList>
         </Menu>
       </Box>
