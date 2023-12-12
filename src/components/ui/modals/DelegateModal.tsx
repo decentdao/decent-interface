@@ -199,7 +199,7 @@ export function DelegateModal({ close }: { close: Function }) {
                 !!errors.address ||
                 contractCallPending ||
                 !values.address ||
-                azoriusGovernance.votesToken?.balance?.isZero()
+                values.address === azoriusGovernance.votesToken?.delegatee
               }
             >
               {t('buttonDelegate')}
@@ -213,7 +213,7 @@ export function DelegateModal({ close }: { close: Function }) {
                   !!errors.address ||
                   contractCallPending ||
                   !values.address ||
-                  decentGovernance.lockedVotesToken.balance?.isZero()
+                  values.address === decentGovernance.lockedVotesToken.delegatee
                 }
               >
                 {t('buttonLockedDelegate')}
