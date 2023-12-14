@@ -3,6 +3,7 @@ import { BigNumber } from 'ethers';
 import { useEffect, useRef, useState } from 'react';
 import { useProvider } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
+import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useDAOProposals } from '../../../hooks/DAO/loaders/useProposals';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -27,6 +28,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
   const provider = useProvider();
 
   const [secondsLeft, setSecondsLeft] = useState<number>();
+  const { snapshotProposal, isSnapshotProposal } = useSnapshotProposal(proposal);
 
   const azoriusGovernance = governance as AzoriusGovernance;
 
@@ -144,6 +146,8 @@ export function useProposalCountdown(proposal: FractalProposal) {
           guardTimelockPeriod = timeLockPeriod.value.toNumber() * 1000 + votingDeadlineMs;
         }
         startCountdown(guardTimelockPeriod);
+      } else if (isSnapshotProposal) {
+        startCountdown(snapshotProposal.endTime * 1000);
       }
     }
 

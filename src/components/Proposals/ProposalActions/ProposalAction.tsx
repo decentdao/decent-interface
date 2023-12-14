@@ -4,18 +4,39 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
+import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { FractalProposal, FractalProposalState, SnapshotProposal } from '../../../types';
+import {
+  ExtendedSnapshotProposal,
+  FractalProposal,
+  FractalProposalState,
+  SnapshotProposal,
+} from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 import CastVote from './CastVote';
 import { Execute } from './Execute';
 
-export function ProposalActions({ proposal }: { proposal: FractalProposal }) {
+// TODO: Refactor extendedSnapshotProposal and onCastSnapshotVote to the context
+export function ProposalActions({
+  proposal,
+  extendedSnapshotProposal,
+  onCastSnapshotVote,
+}: {
+  proposal: FractalProposal;
+  extendedSnapshotProposal?: ExtendedSnapshotProposal;
+  onCastSnapshotVote?: () => Promise<void>;
+}) {
   switch (proposal.state) {
     case FractalProposalState.ACTIVE:
-      return <CastVote proposal={proposal} />;
+      return (
+        <CastVote
+          proposal={proposal}
+          extendedSnapshotProposal={extendedSnapshotProposal}
+          onCastSnapshotVote={onCastSnapshotVote}
+        />
+      );
     case FractalProposalState.EXECUTABLE:
     case FractalProposalState.TIMELOCKED:
       return <Execute proposal={proposal} />;
@@ -27,17 +48,21 @@ export function ProposalActions({ proposal }: { proposal: FractalProposal }) {
 export function ProposalAction({
   proposal,
   expandedView,
+  extendedSnapshotProposal,
+  onCastSnapshotVote,
 }: {
   proposal: FractalProposal;
   expandedView?: boolean;
+  extendedSnapshotProposal?: ExtendedSnapshotProposal;
+  onCastSnapshotVote?: () => Promise<void>;
 }) {
   const {
-    node: { daoAddress, daoSnapshotURL },
+    node: { daoAddress },
     readOnly: { user, dao },
   } = useFractal();
   const { push } = useRouter();
   const { t } = useTranslation();
-  const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
+  const { isSnapshotProposal } = useSnapshotProposal(proposal);
   const { canVote } = useVoteContext();
 
   const isActiveProposal = useMemo(
@@ -46,18 +71,17 @@ export function ProposalAction({
   );
 
   const showActionButton =
-    user.votingWeight.gt(0) &&
-    (isActiveProposal ||
-      proposal.state === FractalProposalState.EXECUTABLE ||
-      proposal.state === FractalProposalState.TIMELOCKABLE ||
-      proposal.state === FractalProposalState.TIMELOCKED);
+    (isSnapshotProposal && canVote) ||
+    (user.votingWeight.gt(0) &&
+      (isActiveProposal ||
+        proposal.state === FractalProposalState.EXECUTABLE ||
+        proposal.state === FractalProposalState.TIMELOCKABLE ||
+        proposal.state === FractalProposalState.TIMELOCKED));
 
   const handleClick = () => {
     if (isSnapshotProposal) {
-      window.open(
-        `https://snapshot.org/#/${daoSnapshotURL}/proposal/${
-          (proposal as SnapshotProposal).snapshotProposalId
-        }`
+      push(
+        DAO_ROUTES.proposal.relative(daoAddress, (proposal as SnapshotProposal).snapshotProposalId)
       );
     } else {
       push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
@@ -80,7 +104,7 @@ export function ProposalAction({
 
   const label = useMemo(() => {
     if (isSnapshotProposal) {
-      return t('snapshotVote');
+      return t('details');
     }
 
     if (isActiveProposal) {
@@ -108,7 +132,8 @@ export function ProposalAction({
   }
 
   if (expandedView) {
-    if (user.votingWeight.eq(0) || (isActiveProposal && !canVote)) return null;
+    if (!isSnapshotProposal && (user.votingWeight.eq(0) || (isActiveProposal && !canVote)))
+      return null;
 
     return (
       <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
@@ -120,7 +145,11 @@ export function ProposalAction({
           </Text>
           <ProposalCountdown proposal={proposal} />
         </Flex>
-        <ProposalActions proposal={proposal} />
+        <ProposalActions
+          proposal={proposal}
+          extendedSnapshotProposal={extendedSnapshotProposal}
+          onCastSnapshotVote={onCastSnapshotVote}
+        />
       </ContentBox>
     );
   }

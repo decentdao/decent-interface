@@ -17,7 +17,7 @@ const formatId = (proposalId: string) => {
     // Multisig id, just give the first 4 characters
     return `#${proposalId.substring(2, 6)}`;
   } else {
-    // Azorius and Snapshot ids are incrementing whole numbers
+    // Azorius id is just incrementing whole number
     return `#${proposalId}`;
   }
 };

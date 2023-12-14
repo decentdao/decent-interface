@@ -53,6 +53,65 @@ export interface SnapshotProposal extends GovernanceActivity {
   endTime: number;
 }
 
+interface SnapshotVotingStrategy {
+  name: string;
+  network: string;
+  params: {
+    addresses?: string[];
+    symbol?: string;
+  };
+}
+
+interface SnapshotPlugin {}
+export interface SnapshotWeightedVotingChoice {
+  [choice: number]: number;
+}
+export interface SnapshotVote {
+  id: string;
+  voter: string;
+  votingWeight: number;
+  votingWeightByStrategy: number[];
+  votingState: string;
+  created: number;
+  choice: number | SnapshotWeightedVotingChoice;
+}
+
+export interface SnapshotVoteBreakdown {
+  // Choice might be dynamically created by proposal's author.
+  // So "For" | "Against" | "Abstain" are not hardcoded/guaranteed
+  // However, it's not a big deal cause we don't need to rely on that
+  [voteChoice: string]: {
+    total: number;
+    votes: SnapshotVote[];
+  };
+}
+
+export type SnapshotProposalType =
+  | 'single-choice'
+  | 'approval'
+  | 'quadratic'
+  | 'ranked-choice'
+  | 'weighted'
+  | 'basic';
+
+/**
+ * @interface ExtendedSnapshotProposal - extension of `SnapshotProposal` to inject voting strategy data, votes, quorum, etc.
+ * Their data model is quite different comparing to our, so there's not much of point to reuse existing
+ */
+export interface ExtendedSnapshotProposal extends SnapshotProposal {
+  snapshot: number; // Number of block
+  snapshotState: string; // State retrieved from Snapshot
+  type: SnapshotProposalType;
+  quorum?: number;
+  privacy?: string;
+  ipfs: string;
+  strategies: SnapshotVotingStrategy[];
+  choices: string[];
+  plugins: SnapshotPlugin[];
+  votes: SnapshotVote[];
+  votesBreakdown: SnapshotVoteBreakdown;
+}
+
 export type ProposalVotesSummary = {
   yes: BigNumber;
   no: BigNumber;

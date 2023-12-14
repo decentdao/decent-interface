@@ -55,7 +55,7 @@ export default function ProgressBar({
 
 interface ExtendedProgressBarProps {
   label: string;
-  helperText: string;
+  helperText?: string;
   percentage: number;
   requiredPercentage: number;
   unit?: string;
@@ -88,12 +88,14 @@ export function ExtendedProgressBar({
         requiredValue={requiredPercentage}
         unit={unit}
       />
-      <Text
-        textStyle="text-sm-sans-regular"
-        marginTop={3}
-      >
-        {helperText}
-      </Text>
+      {helperText && (
+        <Text
+          textStyle="text-sm-sans-regular"
+          marginTop={3}
+        >
+          {helperText}
+        </Text>
+      )}
     </Flex>
   );
 }

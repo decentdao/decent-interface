@@ -116,5 +116,16 @@
     "customNonceError": "The nonce you entered is lower than the Safe{Wallet}'s current nonce.",
     "noTimeDifference": "0 seconds",
     "functionNameError": "The function name can contain only numbers and letters.",
-    "labelOrValueRequired": "Parameter Label or Parameter Value is required"
+    "labelOrValueRequired": "Parameter Label or Parameter Value is required",
+    "votingSystem": "Voting system",
+    "basicSnapshotVotingSystem": "Basic voting",
+    "singleSnapshotVotingSystem": "Single choice voting",
+    "weightedSnapshotVotingSystem": "Weighted voting",
+    "unknownSnapshotVotingSystem": "Unknown voting system",
+    "ipfs": "IPFS",
+    "privacy": "Privacy",
+    "shielded": "Shielded",
+    "shutterPrivacy": "Shielded",
+    "shutterVotesHidden": "Results hidden during voting",
+    "totalVotes": "Total votes"
 }

@@ -2,6 +2,7 @@ import { ComponentWithAs, Flex, IconProps, Text, Tooltip } from '@chakra-ui/reac
 import { Vote, Execute, Lock } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { FractalProposal, FractalProposalState } from '../../../types';
 import { useProposalCountdown } from './useProposalCountdown';
 
@@ -17,20 +18,28 @@ const zeroPad = (num: number) => String(num).padStart(2, '0');
  *
  * For all other states this component will simply return null.
  */
-export function ProposalCountdown({ proposal }: { proposal: FractalProposal }) {
+export function ProposalCountdown({
+  proposal,
+  showIcon = true,
+}: {
+  proposal: FractalProposal;
+  showIcon?: boolean;
+}) {
   const secondsLeft = useProposalCountdown(proposal);
   const { t } = useTranslation('proposal');
 
   const state: FractalProposalState | null = useMemo(() => proposal.state, [proposal]);
 
+  const { isSnapshotProposal } = useSnapshotProposal(proposal);
   const showCountdown = useMemo(
     () =>
       !!secondsLeft &&
       secondsLeft > 0 &&
       (state === FractalProposalState.ACTIVE ||
         state === FractalProposalState.TIMELOCKED ||
-        state === FractalProposalState.EXECUTABLE),
-    [state, secondsLeft]
+        state === FractalProposalState.EXECUTABLE ||
+        isSnapshotProposal),
+    [state, secondsLeft, isSnapshotProposal]
   );
 
   if (!showCountdown) return null;
@@ -46,7 +55,7 @@ export function ProposalCountdown({ proposal }: { proposal: FractalProposal }) {
   );
 
   const Icon: ComponentWithAs<'svg', IconProps> | null =
-    state === FractalProposalState.ACTIVE
+    state === FractalProposalState.ACTIVE || isSnapshotProposal
       ? Vote
       : state === FractalProposalState.TIMELOCKED
       ? Lock
@@ -67,7 +76,7 @@ export function ProposalCountdown({ proposal }: { proposal: FractalProposal }) {
         justifyContent="flex-end"
         alignItems="center"
       >
-        {Icon && <Icon />}
+        {showIcon && Icon && <Icon />}
         <Flex
           px={2}
           gap={1}

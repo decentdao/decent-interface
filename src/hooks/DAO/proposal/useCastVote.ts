@@ -1,22 +1,45 @@
-import { useCallback, useEffect, useMemo } from 'react';
+import snapshot from '@snapshot-labs/snapshot.js';
+import { ethers } from 'ethers';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+import { useSigner } from 'wagmi';
 import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { AzoriusGovernance, GovernanceType, FractalProposal } from '../../../types';
+import {
+  AzoriusGovernance,
+  GovernanceType,
+  FractalProposal,
+  ExtendedSnapshotProposal,
+} from '../../../types';
+import encryptWithShutter from '../../../utils/shutter';
 import { useTransaction } from '../../utils/useTransaction';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';
+
+const hub = 'https://hub.snapshot.org';
+const client = new snapshot.Client712(hub);
 
 const useCastVote = ({
   proposal,
   setPending,
+  extendedSnapshotProposal,
 }: {
   proposal: FractalProposal;
   setPending?: React.Dispatch<React.SetStateAction<boolean>>;
+  extendedSnapshotProposal?: ExtendedSnapshotProposal;
 }) => {
+  const [selectedChoice, setSelectedChoice] = useState<number>();
+  const [snapshotWeightedChoice, setSnapshotWeightedChoice] = useState<number[]>([]);
+
   const {
     governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance,
+    node: { daoSnapshotURL },
+    readOnly: {
+      user: { address },
+    },
   } = useFractal();
+  const { data: signer } = useSigner();
 
   const azoriusGovernance = useMemo(() => governance as AzoriusGovernance, [governance]);
   const { type } = azoriusGovernance;
@@ -34,7 +57,23 @@ const useCastVote = ({
     }
   }, [setPending, contractCallPending]);
 
+  useEffect(() => {
+    if (extendedSnapshotProposal) {
+      setSnapshotWeightedChoice(extendedSnapshotProposal.choices.map(() => 0));
+    }
+  }, [extendedSnapshotProposal]);
+
   const { t } = useTranslation('transaction');
+
+  const handleSelectSnapshotChoice = useCallback((choiceIndex: number) => {
+    setSelectedChoice(choiceIndex);
+  }, []);
+
+  const handleChangeSnapshotWeightedChoice = useCallback((choiceIndex: number, value: number) => {
+    setSnapshotWeightedChoice(prevState =>
+      prevState.map((choiceValue, index) => (index === choiceIndex ? value : choiceValue))
+    );
+  }, []);
 
   const castVote = useCallback(
     async (vote: number) => {
@@ -79,7 +118,78 @@ const useCastVote = ({
       getHasVoted,
     ]
   );
-  return { castVote };
+
+  const castSnapshotVote = useCallback(
+    async (onSuccess?: () => Promise<void>) => {
+      if (signer && signer?.provider && address && daoSnapshotURL && extendedSnapshotProposal) {
+        let toastId;
+        const choice =
+          extendedSnapshotProposal.type === 'weighted'
+            ? snapshotWeightedChoice
+            : (selectedChoice as number) + 1;
+        try {
+          toastId = toast(t('pendingCastVote'), {
+            autoClose: false,
+            closeOnClick: false,
+            draggable: false,
+            closeButton: false,
+            progress: 1,
+          });
+          if (extendedSnapshotProposal.privacy === 'shutter') {
+            const encryptedChoice = await encryptWithShutter(
+              JSON.stringify(choice),
+              extendedSnapshotProposal.proposalId
+            );
+            await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
+              space: daoSnapshotURL,
+              proposal: extendedSnapshotProposal.proposalId,
+              type: extendedSnapshotProposal.type,
+              privacy: extendedSnapshotProposal.privacy,
+              choice: encryptedChoice!,
+              app: 'fractal',
+            });
+          } else {
+            await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
+              space: daoSnapshotURL,
+              proposal: extendedSnapshotProposal.proposalId,
+              type: extendedSnapshotProposal.type,
+              choice,
+              app: 'fractal',
+            });
+          }
+          toast.dismiss(toastId);
+          toast.success(`${t('successCastVote')}. ${t('snapshotRecastVoteHelper')}`);
+          setSelectedChoice(undefined);
+          if (onSuccess) {
+            // Need to refetch votes after timeout so that Snapshot API has enough time to record the vote
+            setTimeout(() => onSuccess(), 3000);
+          }
+        } catch (e) {
+          toast.dismiss(toastId);
+          toast.error('failedCastVote');
+          console.error('Error while casting Snapshot vote', e);
+        }
+      }
+    },
+    [
+      signer,
+      address,
+      daoSnapshotURL,
+      extendedSnapshotProposal,
+      t,
+      selectedChoice,
+      snapshotWeightedChoice,
+    ]
+  );
+
+  return {
+    castVote,
+    castSnapshotVote,
+    selectedChoice,
+    snapshotWeightedChoice,
+    handleSelectSnapshotChoice,
+    handleChangeSnapshotWeightedChoice,
+  };
 };
 
 export default useCastVote;

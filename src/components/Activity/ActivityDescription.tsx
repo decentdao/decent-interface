@@ -1,10 +1,19 @@
 import { Flex } from '@chakra-ui/react';
-import { Activity } from '../../types';
-
+import { Activity, SnapshotProposal } from '../../types';
+import SnapshotProposalDescription from '../Proposals/SnapshotProposalDetails/SnapshotProposalDescription';
 import { ProposalTitle } from './ActivityDescriptionGovernance';
 import { ActivityDescriptionTreasury } from './ActivityDescriptionTreasury';
 
-export function ActivityDescription({ activity }: { activity: Activity }) {
+interface IActivityDescription {
+  activity: Activity;
+  showFullSnapshotDescription?: boolean;
+}
+
+export function ActivityDescription({
+  activity,
+  showFullSnapshotDescription,
+}: IActivityDescription) {
+  const snapshotProposalActivity = activity as SnapshotProposal;
   return (
     <Flex
       color="grayscale.100"
@@ -14,6 +23,12 @@ export function ActivityDescription({ activity }: { activity: Activity }) {
       flexWrap="wrap"
     >
       <ProposalTitle activity={activity} />
+      {!!snapshotProposalActivity.snapshotProposalId && (
+        <SnapshotProposalDescription
+          truncate={!showFullSnapshotDescription}
+          proposal={snapshotProposalActivity}
+        />
+      )}
       {!!activity.transaction && <ActivityDescriptionTreasury activity={activity} />}
     </Flex>
   );

@@ -4,14 +4,16 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AzoriusProposalDetails } from '../../../../../src/components/Proposals/AzoriusDetails';
 import { MultisigProposalDetails } from '../../../../../src/components/Proposals/MultisigProposalDetails';
+import SnapshotProposalDetails from '../../../../../src/components/Proposals/SnapshotProposalDetails';
 import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../../../src/components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
+import useSnapshotProposal from '../../../../../src/hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../../../../src/hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../../../../src/providers/App/AppProvider';
-import { FractalProposal, AzoriusProposal } from '../../../../../src/types';
+import { FractalProposal, AzoriusProposal, SnapshotProposal } from '../../../../../src/types';
 
 export default function ProposalDetailsPage({
   params: { proposalId },
@@ -25,6 +27,7 @@ export default function ProposalDetailsPage({
   } = useFractal();
 
   const [proposal, setProposal] = useState<FractalProposal | null>();
+  const { isSnapshotProposal, snapshotProposal } = useSnapshotProposal(proposal);
   const metaData = useGetMetadata(proposal);
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
@@ -37,6 +40,10 @@ export default function ProposalDetailsPage({
     }
 
     const foundProposal = proposals.find(p => {
+      const currentSnapshotProposal = p as SnapshotProposal;
+      if (!!currentSnapshotProposal.snapshotProposalId) {
+        return currentSnapshotProposal.snapshotProposalId === proposalId;
+      }
       return p.proposalId === proposalId;
     });
     if (!foundProposal) {
@@ -44,7 +51,7 @@ export default function ProposalDetailsPage({
       return;
     }
     setProposal(foundProposal);
-  }, [proposals, proposalId]);
+  }, [proposals, proposalId, isSnapshotProposal]);
 
   return (
     <ClientOnly>
@@ -59,7 +66,7 @@ export default function ProposalDetailsPage({
             terminus: t('proposal', {
               ns: 'breadcrumbs',
               proposalId,
-              proposalTitle: metaData.title,
+              proposalTitle: metaData.title || snapshotProposal?.title,
             }),
             path: '',
           },
@@ -69,6 +76,8 @@ export default function ProposalDetailsPage({
         <InfoBoxLoader />
       ) : proposal === null ? (
         <EmptyBox emptyText={t('noProposal')} />
+      ) : isSnapshotProposal ? (
+        <SnapshotProposalDetails proposal={proposal as SnapshotProposal} />
       ) : dao?.isAzorius ? (
         <AzoriusProposalDetails proposal={azoriusProposal} />
       ) : (

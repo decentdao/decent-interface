@@ -30,11 +30,13 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
       action.dispatch({ type: DecentGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA });
       return;
     }
-    const [tokenBalance, tokenDelegatee, tokenVotingWeight] = await Promise.all([
-      lockReleaseContract.asSigner.getPending(account),
-      lockReleaseContract.asSigner.delegates(account),
-      lockReleaseContract.asSigner.getVotes(account),
-    ]);
+    const [tokenAmountTotal, tokenAmountReleased, tokenDelegatee, tokenVotingWeight] =
+      await Promise.all([
+        lockReleaseContract.asSigner.getTotal(account),
+        lockReleaseContract.asSigner.getReleased(account),
+        lockReleaseContract.asSigner.delegates(account),
+        lockReleaseContract.asSigner.getVotes(account),
+      ]);
 
     let delegateChangeEvents: DelegateChangedEvent[];
     try {
@@ -46,7 +48,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
     }
 
     const tokenAccountData = {
-      balance: tokenBalance,
+      balance: tokenAmountTotal.sub(tokenAmountReleased),
       delegatee: tokenDelegatee,
       votingWeight: tokenVotingWeight,
       isDelegatesSet: delegateChangeEvents.length > 0,
