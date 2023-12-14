@@ -18,7 +18,7 @@ import { InfoRow } from './MultisigProposalDetails/TxDetails';
 export default function ProposalSummary({
   proposal: {
     startBlock,
-    votesSummary: { yes, no, abstain, quorum },
+    votesSummary: { yes, no, abstain },
     deadlineMs,
     proposer,
     transactionHash,
@@ -73,7 +73,7 @@ export default function ProposalSummary({
   const noVotesPercentage = getVotesPercentage(no);
   const strategyQuorum =
     votesToken && isERC20
-      ? quorum.div(votesToken.totalSupply.div(100)).toNumber()
+      ? votingStrategy.quorumPercentage!.value.toNumber()
       : isERC721
       ? votingStrategy.quorumThreshold!.value.toNumber()
       : 1;
