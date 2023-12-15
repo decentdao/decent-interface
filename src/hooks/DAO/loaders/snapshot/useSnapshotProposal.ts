@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import { useCallback, useMemo, useState } from 'react';
+import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
   ExtendedSnapshotProposal,
@@ -197,6 +198,11 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   }, [snapshotProposal?.snapshotProposalId, proposal, snapshotProposal?.state, getVoteWeight]);
 
   const loadVotingWeight = useCallback(async () => {
+    const emptyVotingWeight = {
+      votingWeight: 0,
+      votingWeightByStrategy: [0],
+      votingState: '',
+    };
     if (snapshotProposal?.snapshotProposalId) {
       const queryResult = await client
         .query({
@@ -214,6 +220,10 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       }`,
         })
         .then(({ data: { vp } }) => {
+          if (!vp) {
+            logError('Error while retrieving Snapshot voting weight', vp);
+            return emptyVotingWeight;
+          }
           return {
             votingWeight: vp.vp,
             votingWeightByStrategy: vp.vp_by_strategy,
@@ -224,11 +234,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       return queryResult;
     }
 
-    return {
-      votingWeight: 0,
-      votingWeightByStrategy: [0],
-      votingState: '',
-    };
+    return emptyVotingWeight;
   }, [address, daoSnapshotURL, snapshotProposal?.snapshotProposalId]);
 
   return {

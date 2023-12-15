@@ -1,17 +1,12 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
-import {
-  ExtendedSnapshotProposal,
-  FractalProposal,
-  FractalProposalState,
-  SnapshotProposal,
-} from '../../../types';
+import { ExtendedSnapshotProposal, FractalProposal, FractalProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
@@ -60,7 +55,6 @@ export function ProposalAction({
     node: { daoAddress },
     readOnly: { user, dao },
   } = useFractal();
-  const { push } = useRouter();
   const { t } = useTranslation();
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
   const { canVote } = useVoteContext();
@@ -77,16 +71,6 @@ export function ProposalAction({
         proposal.state === FractalProposalState.EXECUTABLE ||
         proposal.state === FractalProposalState.TIMELOCKABLE ||
         proposal.state === FractalProposalState.TIMELOCKED));
-
-  const handleClick = () => {
-    if (isSnapshotProposal) {
-      push(
-        DAO_ROUTES.proposal.relative(daoAddress, (proposal as SnapshotProposal).snapshotProposalId)
-      );
-    } else {
-      push(DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId));
-    }
-  };
 
   const labelKey = useMemo(() => {
     switch (proposal.state) {
@@ -119,12 +103,17 @@ export function ProposalAction({
   if (!showActionButton) {
     if (!expandedView) {
       return (
-        <Button
-          variant="secondary"
-          onClick={handleClick}
+        <Link
+          href={DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId)}
+          passHref
         >
-          {t('details')}
-        </Button>
+          <Button
+            as="a"
+            variant="secondary"
+          >
+            {t('details')}
+          </Button>
+        </Link>
       );
     }
     // This means that Proposal in state where there's no action to perform
@@ -155,11 +144,16 @@ export function ProposalAction({
   }
 
   return (
-    <Button
-      onClick={handleClick}
-      variant={showActionButton && canVote ? 'primary' : 'secondary'}
+    <Link
+      href={DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId)}
+      passHref
     >
-      {label}
-    </Button>
+      <Button
+        as="a"
+        variant={showActionButton && canVote ? 'primary' : 'secondary'}
+      >
+        {label}
+      </Button>
+    </Link>
   );
 }

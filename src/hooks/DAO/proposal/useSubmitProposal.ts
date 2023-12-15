@@ -295,6 +295,7 @@ export default function useSubmitProposal() {
       });
 
       setPendingCreateTx(true);
+      let success = false;
       try {
         const transactions = proposalData.targets.map((target, index) => ({
           to: target,
@@ -316,18 +317,26 @@ export default function useSubmitProposal() {
             })
           )
         ).wait();
-        await loadDAOProposals();
+        success = true;
+        toast.dismiss(toastId);
+        toast(successToastMessage);
         if (successCallback) {
           successCallback(safeAddress!);
         }
-        toast.dismiss(toastId);
-        toast(successToastMessage);
       } catch (e) {
         toast.dismiss(toastId);
         toast(failedToastMessage);
         logError(e, 'Error during Azorius proposal creation');
       } finally {
         setPendingCreateTx(false);
+      }
+
+      if (success) {
+        // Frequently there's an error in loadDAOProposals if we're loading the proposal immediately after proposal creation
+        // The error occurs because block of proposal creation not yet mined and trying to fetch underlying data of voting weight for new proposal fails with that error
+        // The code that throws an error: https://github.com/decent-dao/fractal-contracts/blob/develop/contracts/azorius/LinearERC20Voting.sol#L205-L211
+        // So to avoid showing error toast - we're marking proposal creation as success and only then re-fetching proposals
+        await loadDAOProposals();
       }
     },
     [loadDAOProposals]
