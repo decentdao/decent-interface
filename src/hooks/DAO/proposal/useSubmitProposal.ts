@@ -336,7 +336,7 @@ export default function useSubmitProposal() {
         // The error occurs because block of proposal creation not yet mined and trying to fetch underlying data of voting weight for new proposal fails with that error
         // The code that throws an error: https://github.com/decent-dao/fractal-contracts/blob/develop/contracts/azorius/LinearERC20Voting.sol#L205-L211
         // So to avoid showing error toast - we're marking proposal creation as success and only then re-fetching proposals
-        setTimeout(loadDAOProposals, 5000);
+        setTimeout(loadDAOProposals, 10000);
       }
     },
     [loadDAOProposals]
