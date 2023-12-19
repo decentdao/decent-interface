@@ -1,6 +1,6 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { BigNumber, Contract, constants, utils, BigNumberish, Signer } from 'ethers';
-import { goerli, mainnet, polygon } from 'wagmi/chains';
+import { goerli, sepolia, mainnet, polygon } from 'wagmi/chains';
 import { ContractConnection } from '../types';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
 
@@ -211,5 +211,5 @@ export function getEventRPC<T>(connection: ContractConnection<T>, chainId: numbe
 }
 
 export function supportsENS(chainId: number): boolean {
-  return chainId === goerli.id || chainId == mainnet.id;
+  return chainId === goerli.id || chainId == mainnet.id || chainId == sepolia.id;
 }
