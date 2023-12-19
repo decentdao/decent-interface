@@ -1,6 +1,5 @@
 import { Grid, GridItem, Text, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
@@ -17,7 +16,6 @@ interface ISnapshotProposalVoteItem {
 
 export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotProposalVoteItem) {
   const { t } = useTranslation();
-  const { getVoteWeight } = useSnapshotProposal(proposal);
   const { displayName } = useDisplayName(vote.voter);
   const {
     readOnly: { user },
@@ -62,7 +60,7 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
       </GridItem>
       <GridItem colSpan={1}>
         <Text textStyle="text-base-sans-regular">
-          {getVoteWeight(vote)} {proposal.strategies[0].params.symbol}
+          {vote.votingWeight} {proposal.strategies[0].params.symbol}
         </Text>
       </GridItem>
     </Grid>
