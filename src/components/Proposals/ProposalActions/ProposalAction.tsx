@@ -65,7 +65,7 @@ export function ProposalAction({
   );
 
   const showActionButton =
-    (isSnapshotProposal && canVote) ||
+    (isSnapshotProposal && canVote && isActiveProposal) ||
     (user.votingWeight.gt(0) &&
       (isActiveProposal ||
         proposal.state === FractalProposalState.EXECUTABLE ||

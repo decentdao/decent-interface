@@ -35,12 +35,6 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     [snapshotProposal]
   );
 
-  const getVoteWeight = useCallback(
-    (vote: SnapshotVote) =>
-      vote.votingWeight * vote.votingWeightByStrategy.reduce((prev, curr) => prev + curr, 0),
-    []
-  );
-
   const loadProposal = useCallback(async () => {
     if (snapshotProposal?.snapshotProposalId && client) {
       const proposalQueryResult = await client
@@ -86,7 +80,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       const votesQueryResult = await client
         .query({
           query: gql`query SnapshotProposalVotes {
-          votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}) {
+          votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}, first: 100) {
             id
             voter
             vp
@@ -147,12 +141,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
               const existingChoiceType = votesBreakdown[voteChoice];
               if (existingChoiceType) {
                 votesBreakdown[voteChoice] = {
-                  total: existingChoiceType.total + getVoteWeight(vote),
+                  total: existingChoiceType.total + vote.votingWeight,
                   votes: [...existingChoiceType.votes, vote],
                 };
               } else {
                 votesBreakdown[voteChoice] = {
-                  total: getVoteWeight(vote),
+                  total: vote.votingWeight,
                   votes: [vote],
                 };
               }
@@ -164,12 +158,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
                 const existingChoiceType = votesBreakdown[voteChoice];
                 if (existingChoiceType) {
                   votesBreakdown[voteChoice] = {
-                    total: existingChoiceType.total + getVoteWeight(vote),
+                    total: existingChoiceType.total + vote.votingWeight,
                     votes: [...existingChoiceType.votes, vote],
                   };
                 } else {
                   votesBreakdown[voteChoice] = {
-                    total: getVoteWeight(vote),
+                    total: vote.votingWeight,
                     votes: [vote],
                   };
                 }
@@ -182,12 +176,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
 
             if (existingChoiceType) {
               votesBreakdown[choiceKey] = {
-                total: existingChoiceType.total + getVoteWeight(vote),
+                total: existingChoiceType.total + vote.votingWeight,
                 votes: [...existingChoiceType.votes, vote],
               };
             } else {
               votesBreakdown[choiceKey] = {
-                total: getVoteWeight(vote),
+                total: vote.votingWeight,
                 votes: [vote],
               };
             }
@@ -202,13 +196,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
         votes: votesQueryResult,
       } as ExtendedSnapshotProposal);
     }
-  }, [
-    snapshotProposal?.snapshotProposalId,
-    proposal,
-    snapshotProposal?.state,
-    getVoteWeight,
-    client,
-  ]);
+  }, [snapshotProposal?.snapshotProposalId, proposal, snapshotProposal?.state, client]);
 
   const loadVotingWeight = useCallback(async () => {
     const emptyVotingWeight = {
@@ -253,7 +241,6 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   return {
     loadVotingWeight,
     loadProposal,
-    getVoteWeight,
     snapshotProposal,
     isSnapshotProposal,
     extendedSnapshotProposal,

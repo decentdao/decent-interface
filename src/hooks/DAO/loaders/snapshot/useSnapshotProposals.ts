@@ -27,6 +27,7 @@ export const useSnapshotProposals = () => {
           query: gql`
       query Proposals {
         proposals(
+          first: 50,
           where: {
             space_in: ["${daoSnapshotSpaceName}"]
           },
