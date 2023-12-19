@@ -10,7 +10,8 @@ import {
   SnapshotVote,
   SnapshotWeightedVotingChoice,
 } from '../../../../types';
-import client from './';
+import useSnapshotSpaceName from './useSnapshotSpaceName';
+import { createClient } from './';
 
 export default function useSnapshotProposal(proposal: FractalProposal | null | undefined) {
   const [extendedSnapshotProposal, setExtendedSnapshotProposal] =
@@ -21,6 +22,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       user: { address },
     },
   } = useFractal();
+  const daoSnapshotSpaceName = useSnapshotSpaceName();
+  const client = useMemo(() => {
+    if (daoSnapshotURL) {
+      return createClient(daoSnapshotURL);
+    }
+  }, [daoSnapshotURL]);
 
   const snapshotProposal = proposal as SnapshotProposal;
   const isSnapshotProposal = useMemo(
@@ -35,7 +42,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   );
 
   const loadProposal = useCallback(async () => {
-    if (snapshotProposal?.snapshotProposalId) {
+    if (snapshotProposal?.snapshotProposalId && client) {
       const proposalQueryResult = await client
         .query({
           query: gql`
@@ -195,7 +202,13 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
         votes: votesQueryResult,
       } as ExtendedSnapshotProposal);
     }
-  }, [snapshotProposal?.snapshotProposalId, proposal, snapshotProposal?.state, getVoteWeight]);
+  }, [
+    snapshotProposal?.snapshotProposalId,
+    proposal,
+    snapshotProposal?.state,
+    getVoteWeight,
+    client,
+  ]);
 
   const loadVotingWeight = useCallback(async () => {
     const emptyVotingWeight = {
@@ -203,14 +216,14 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       votingWeightByStrategy: [0],
       votingState: '',
     };
-    if (snapshotProposal?.snapshotProposalId) {
+    if (snapshotProposal?.snapshotProposalId && client) {
       const queryResult = await client
         .query({
           query: gql`
       query UserVotingWeight {
           vp(
               voter: "${address}"
-              space: "${daoSnapshotURL}"
+              space: "${daoSnapshotSpaceName}"
               proposal: "${snapshotProposal.snapshotProposalId}"
           ) {
               vp
@@ -235,7 +248,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     }
 
     return emptyVotingWeight;
-  }, [address, daoSnapshotURL, snapshotProposal?.snapshotProposalId]);
+  }, [address, snapshotProposal?.snapshotProposalId, client, daoSnapshotSpaceName]);
 
   return {
     loadVotingWeight,

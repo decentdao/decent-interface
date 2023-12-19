@@ -8,7 +8,7 @@ interface Props extends ButtonProps {
 export default function Snapshot({ snapshotURL, ...rest }: Props) {
   return (
     <Button
-      href={`https://snapshot.org/#/${snapshotURL}`}
+      href={snapshotURL}
       as={Link}
       target="_blank"
       variant="secondary"
