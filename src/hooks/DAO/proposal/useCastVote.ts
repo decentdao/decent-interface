@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useSigner } from 'wagmi';
 import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
+import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
@@ -167,7 +168,7 @@ const useCastVote = ({
         } catch (e) {
           toast.dismiss(toastId);
           toast.error('failedCastVote');
-          console.error('Error while casting Snapshot vote', e);
+          logError('Error while casting Snapshot vote', e);
         }
       }
     },
