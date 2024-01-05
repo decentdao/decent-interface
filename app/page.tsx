@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
-import { goerli, mainnet } from 'wagmi/chains';
+import { goerli, mainnet, sepolia } from 'wagmi/chains';
 import { AppFooter } from '../src/components/pages/AppHome/AppFooter';
 import { CTABox } from '../src/components/pages/AppHome/CTABox';
 import FeaturedDAOCard from '../src/components/pages/AppHome/FeaturedDAOCard';
@@ -75,6 +75,23 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         titleKey: 'awakeTitle',
         descKey: 'awakeDesc',
         address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5',
+      },
+    ],
+  ],
+  [
+    sepolia.id,
+    [
+      {
+        iconSrc: '/images/icon-decent.svg',
+        titleKey: 'decentTitle',
+        descKey: 'decentDesc',
+        address: '0xD26c85D435F02DaB8B220cd4D2d398f6f646e235', // TODO: Change to Sepolia Address once it will be there
+      },
+      {
+        iconSrc: '/images/icon-awakevc.svg',
+        titleKey: 'awakeTitle',
+        descKey: 'awakeDesc',
+        address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5', // TODO: Change to Sepolia Address once it will be there
       },
     ],
   ],
