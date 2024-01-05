@@ -1,6 +1,7 @@
 import { Link } from '@chakra-ui/next-js';
 import { Box, Button, Center, Flex, Text } from '@chakra-ui/react';
 import { Alert } from '@decent-org/fractal-ui';
+import { useRouter } from 'next/navigation';
 import { Trans, useTranslation } from 'react-i18next';
 import { CONTENT_HEIGHT } from '../../../constants/common';
 import { URL_DISCORD } from '../../../constants/url';
@@ -8,6 +9,7 @@ import { InfoBox } from '../containers/InfoBox';
 
 export function ErrorFallback() {
   const { t } = useTranslation();
+  const router = useRouter();
   return (
     <Center h={CONTENT_HEIGHT}>
       <Box maxWidth="fit-content">
@@ -36,7 +38,7 @@ export function ErrorFallback() {
                 />
               </Trans>
             </Text>
-            <Button onClick={() => window.location.reload()}>{t('reload')}</Button>
+            <Button onClick={router.refresh}>{t('reload')}</Button>
           </Flex>
         </InfoBox>
       </Box>

@@ -1,6 +1,7 @@
 'use client';
 
 import { Button, Center, Text, VStack } from '@chakra-ui/react';
+import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
@@ -16,6 +17,7 @@ import {
 function InvalidSafe() {
   const { chain } = useNetwork();
   const { t } = useTranslation('common');
+  const router = useRouter();
   return (
     <Center
       padding="3rem"
@@ -30,13 +32,7 @@ function InvalidSafe() {
         </Text>
         <Text>{t('invalidSafe1', { chain: chain ? chain.name : disconnectedChain.name })}</Text>
         <Text paddingBottom="1rem">{t('invalidSafe2')}</Text>
-        <Button
-          onClick={() => {
-            window.location.reload();
-          }}
-        >
-          {t('refresh')}
-        </Button>
+        <Button onClick={router.refresh}>{t('refresh')}</Button>
       </VStack>
     </Center>
   );
