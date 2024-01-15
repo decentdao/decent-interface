@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { logError } from '../../helpers/errorLogging';
 
 function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -23,7 +24,7 @@ export function useAsyncRetry() {
             return result;
           }
         } catch (error) {
-          console.error('Error in requestWithRetries:', error);
+          logError('Error in requestWithRetries:', error);
         }
 
         currentRetries += 1;

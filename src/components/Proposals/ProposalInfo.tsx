@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Image, Button } from '@chakra-ui/react';
+import { Box, Flex, Text, Image, Button, Link } from '@chakra-ui/react';
 import { Shield } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import useSnapshotProposal from '../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
@@ -41,14 +41,12 @@ export function ProposalInfo({
             />
             {(proposal as ExtendedSnapshotProposal).privacy === 'shutter' && (
               <Button
+                as={Link}
+                target="_blank"
+                href="https://blog.shutter.network/announcing-shutter-governance-shielded-voting-for-daos/"
                 variant="secondary"
                 h={6}
                 w={32}
-                onClick={() =>
-                  window.open(
-                    'https://blog.shutter.network/announcing-shutter-governance-shielded-voting-for-daos/'
-                  )
-                }
               >
                 <Shield
                   width="16px"

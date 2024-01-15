@@ -52,6 +52,7 @@ export function VoteContextProvider({
     readOnly: { user, dao },
     node: { safe },
     governance: { type },
+    governanceContracts: { ozLinearVotingContract },
   } = useFractal();
   const { loadVotingWeight } = useSnapshotProposal(proposal as SnapshotProposal);
   const { remainingTokenIds, getUserERC721VotingTokens } = useUserERC721VotingTokens(
@@ -91,7 +92,10 @@ export function VoteContextProvider({
           const votingWeightData = await loadVotingWeight();
           newCanVote = votingWeightData.votingWeight >= 1;
         } else if (type === GovernanceType.AZORIUS_ERC20) {
-          newCanVote = user.votingWeight.gt(0) && !hasVoted;
+          newCanVote =
+            (
+              await ozLinearVotingContract!.asSigner.getProposalVotingSupply(proposal.proposalId)
+            )?.gt(0) && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
             await getUserERC721VotingTokens();
@@ -119,6 +123,8 @@ export function VoteContextProvider({
       getUserERC721VotingTokens,
       isSnapshotProposal,
       loadVotingWeight,
+      ozLinearVotingContract,
+      proposal?.proposalId,
     ]
   );
   useEffect(() => {

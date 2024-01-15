@@ -10,16 +10,17 @@ import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
+import useSubmitProposal from '../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../src/providers/App/AppProvider';
 
 export default function Treasury() {
   const {
-    readOnly: { user },
     node: { daoName, daoAddress },
   } = useFractal();
   const { t } = useTranslation('treasury');
   const treasuryTotal = useTreasuryTotalBN();
-  const showButton = user.votingWeight.gt(0) && !treasuryTotal.isZero();
+  const { canUserCreateProposal } = useSubmitProposal();
+  const showButton = canUserCreateProposal && !treasuryTotal.isZero();
 
   return (
     <ClientOnly>

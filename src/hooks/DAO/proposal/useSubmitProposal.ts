@@ -9,7 +9,7 @@ import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useSigner } from 'wagmi';
+import { useProvider, useSigner } from 'wagmi';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -24,6 +24,7 @@ import {
   ProposalMetadata,
 } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
+import { getAverageBlockTime } from '../../../utils/contract';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
@@ -61,6 +62,7 @@ export default function useSubmitProposal() {
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const loadDAOProposals = useDAOProposals();
   const { data: signer } = useSigner();
+  const provider = useProvider();
 
   const {
     node: { safe, fractalModules },
@@ -295,6 +297,7 @@ export default function useSubmitProposal() {
       });
 
       setPendingCreateTx(true);
+      let success = false;
       try {
         const transactions = proposalData.targets.map((target, index) => ({
           to: target,
@@ -316,12 +319,12 @@ export default function useSubmitProposal() {
             })
           )
         ).wait();
-        await loadDAOProposals();
+        success = true;
+        toast.dismiss(toastId);
+        toast(successToastMessage);
         if (successCallback) {
           successCallback(safeAddress!);
         }
-        toast.dismiss(toastId);
-        toast(successToastMessage);
       } catch (e) {
         toast.dismiss(toastId);
         toast(failedToastMessage);
@@ -329,8 +332,17 @@ export default function useSubmitProposal() {
       } finally {
         setPendingCreateTx(false);
       }
+
+      if (success) {
+        const averageBlockTime = await getAverageBlockTime(provider);
+        // Frequently there's an error in loadDAOProposals if we're loading the proposal immediately after proposal creation
+        // The error occurs because block of proposal creation not yet mined and trying to fetch underlying data of voting weight for new proposal fails with that error
+        // The code that throws an error: https://github.com/decent-dao/fractal-contracts/blob/develop/contracts/azorius/LinearERC20Voting.sol#L205-L211
+        // So to avoid showing error toast - we're marking proposal creation as success and only then re-fetching proposals
+        setTimeout(loadDAOProposals, averageBlockTime * 1.5 * 1000);
+      }
     },
-    [loadDAOProposals]
+    [loadDAOProposals, provider]
   );
 
   const submitProposal = useCallback(

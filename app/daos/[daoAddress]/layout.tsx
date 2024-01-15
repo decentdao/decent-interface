@@ -3,6 +3,7 @@
 import { Button, Center, Text, VStack, ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { theme } from '@decent-org/fractal-ui';
 import { ReactNode, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
 import ClientOnly from '../../../src/components/ui/utils/ClientOnly';
@@ -18,6 +19,7 @@ import {
 function InvalidSafe() {
   const { chain } = useNetwork();
   const { t } = useTranslation('common');
+  const router = useRouter();
   return (
     <Center
       padding="3rem"
@@ -32,13 +34,7 @@ function InvalidSafe() {
         </Text>
         <Text>{t('invalidSafe1', { chain: chain ? chain.name : disconnectedChain.name })}</Text>
         <Text paddingBottom="1rem">{t('invalidSafe2')}</Text>
-        <Button
-          onClick={() => {
-            window.location.reload();
-          }}
-        >
-          {t('refresh')}
-        </Button>
+        <Button onClick={router.refresh}>{t('refresh')}</Button>
       </VStack>
     </Center>
   );
@@ -76,7 +72,7 @@ export default function DaoPageLayout({
   params: { daoAddress?: string };
 }) {
   const { node } = useFractal();
-  const loading = useDAOController({ daoAddress });
+  const { nodeLoading, reloadingDAO } = useDAOController({ daoAddress });
   const daoMetadata = useDAOMetadata();
   const { chain } = useNetwork();
   const activeTheme = useMemo(() => {
@@ -110,8 +106,8 @@ export default function DaoPageLayout({
     display = childrenDisplay;
   } else if (!chain) {
     // if we're disconnected
-    if (loading || validSafe) {
-      display = childrenDisplay;
+    if (nodeLoading || reloadingDAO || validSafe) {
+      display = children;
     } else {
       display = <InvalidSafe />;
     }
@@ -120,8 +116,8 @@ export default function DaoPageLayout({
     const invalidChain = !supportedChains.map(c => c.chainId).includes(chain.id);
     if (invalidChain) {
       display = <InvalidChain />;
-    } else if (loading || validSafe) {
-      display = childrenDisplay;
+    } else if (nodeLoading || reloadingDAO || validSafe) {
+      display = children;
     } else {
       display = <InvalidSafe />;
     }
