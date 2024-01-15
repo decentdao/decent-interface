@@ -2,8 +2,8 @@
 
 import { Button, Center, Text, VStack, ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { theme } from '@decent-org/fractal-ui';
-import { ReactNode, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
 import ClientOnly from '../../../src/components/ui/utils/ClientOnly';

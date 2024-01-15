@@ -3,7 +3,7 @@ import logo from './assets/logo.png';
 import metaSectionBackground1 from './assets/meta-section-background-1.png';
 
 const LIZZARDS_DAO_METADATA: DAOMetadata = {
-  address: '0x27feCf4E8A4394B1daC54541414b607f88c451F1',
+  address: '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e',
   logo: logo.src,
   headerBackground:
     'linear-gradient(269deg, rgba(110, 97, 240, 0.35) 3.2%, rgba(74, 163, 183, 0.35) 51.2%, rgba(101, 211, 138, 0.35) 98.2%), #000',
