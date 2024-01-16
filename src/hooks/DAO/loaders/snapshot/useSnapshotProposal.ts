@@ -113,8 +113,8 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       const { choices, type, privacy } = proposalQueryResult;
 
       if (type === 'weighted') {
-        Object.keys(choices).forEach((choice: string) => {
-          votesBreakdown[choice] = {
+        Object.keys(choices).forEach((choice: string, choiceIndex) => {
+          votesBreakdown[choiceIndex] = {
             votes: [],
             total: 0,
           };
@@ -146,7 +146,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
                 };
               } else {
                 votesBreakdown[voteChoice] = {
-                  total: vote.votingWeight,
+                  total: voteChoices[voteChoice],
                   votes: [vote],
                 };
               }
