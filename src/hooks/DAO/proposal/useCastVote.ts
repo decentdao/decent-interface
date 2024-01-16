@@ -15,10 +15,8 @@ import {
 } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
 import { useTransaction } from '../../utils/useTransaction';
+import useSnapshotSpaceName from '../loaders/snapshot/useSnapshotSpaceName';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';
-
-const hub = 'https://hub.snapshot.org';
-const client = new snapshot.Client712(hub);
 
 const useCastVote = ({
   proposal,
@@ -40,7 +38,18 @@ const useCastVote = ({
       user: { address },
     },
   } = useFractal();
+  const daoSnapshotSpaceName = useSnapshotSpaceName();
   const { data: signer } = useSigner();
+  const client = useMemo(() => {
+    if (daoSnapshotURL) {
+      const isTestnetSnapshotURL = daoSnapshotURL.includes('testnet');
+      const hub = isTestnetSnapshotURL
+        ? 'https://testnet.seq.snapshot.org' // This is not covered in Snapshot docs, but that's where they're sending request on testnet
+        : 'https://hub.snapshot.org';
+      return new snapshot.Client712(hub);
+    }
+    return undefined;
+  }, [daoSnapshotURL]);
 
   const azoriusGovernance = useMemo(() => governance as AzoriusGovernance, [governance]);
   const { type } = azoriusGovernance;
@@ -122,11 +131,24 @@ const useCastVote = ({
 
   const castSnapshotVote = useCallback(
     async (onSuccess?: () => Promise<void>) => {
-      if (signer && signer?.provider && address && daoSnapshotURL && extendedSnapshotProposal) {
+      if (
+        signer &&
+        signer?.provider &&
+        address &&
+        daoSnapshotSpaceName &&
+        extendedSnapshotProposal &&
+        client
+      ) {
         let toastId;
+        const mappedSnapshotWeightedChoice: { [choiceKey: number]: number } = {};
+        if (extendedSnapshotProposal.type === 'weighted') {
+          snapshotWeightedChoice.forEach((value, choiceIndex) => {
+            mappedSnapshotWeightedChoice[choiceIndex + 1] = value;
+          });
+        }
         const choice =
           extendedSnapshotProposal.type === 'weighted'
-            ? snapshotWeightedChoice
+            ? mappedSnapshotWeightedChoice
             : (selectedChoice as number) + 1;
         try {
           toastId = toast(t('pendingCastVote'), {
@@ -142,7 +164,7 @@ const useCastVote = ({
               extendedSnapshotProposal.proposalId
             );
             await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
-              space: daoSnapshotURL,
+              space: daoSnapshotSpaceName,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
               privacy: extendedSnapshotProposal.privacy,
@@ -151,7 +173,7 @@ const useCastVote = ({
             });
           } else {
             await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
-              space: daoSnapshotURL,
+              space: daoSnapshotSpaceName,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
               choice,
@@ -167,7 +189,7 @@ const useCastVote = ({
           }
         } catch (e) {
           toast.dismiss(toastId);
-          toast.error('failedCastVote');
+          toast.error(t('failedCastVote'));
           logError('Error while casting Snapshot vote', e);
         }
       }
@@ -175,11 +197,12 @@ const useCastVote = ({
     [
       signer,
       address,
-      daoSnapshotURL,
+      daoSnapshotSpaceName,
       extendedSnapshotProposal,
       t,
       selectedChoice,
       snapshotWeightedChoice,
+      client,
     ]
   );
 
