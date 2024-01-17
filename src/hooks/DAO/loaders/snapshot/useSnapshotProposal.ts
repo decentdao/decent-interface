@@ -114,7 +114,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
 
       if (type === 'weighted') {
         Object.keys(choices).forEach((choice: string, choiceIndex) => {
-          votesBreakdown[choiceIndex] = {
+          votesBreakdown[choiceIndex + 1] = {
             votes: [],
             total: 0,
           };
@@ -136,7 +136,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
           if (type === 'weighted') {
             const voteChoices = vote.choice as SnapshotWeightedVotingChoice;
             if (typeof voteChoices === 'number') {
-              // Means vote casted for single option, and Snapshot API returns just just number then =/
+              // Means vote casted for single option, and Snapshot API returns just number then =/
               const voteChoice = voteChoices - 1;
               const existingChoiceType = votesBreakdown[voteChoice];
               if (existingChoiceType) {
@@ -146,24 +146,27 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
                 };
               } else {
                 votesBreakdown[voteChoice] = {
-                  total: voteChoices[voteChoice],
+                  total: vote.votingWeight,
                   votes: [vote],
                 };
               }
             } else {
+              let totalVotingWeightDistributon = 0;
+              Object.keys(voteChoices).forEach(
+                (choice: any) => (totalVotingWeightDistributon += voteChoices[choice])
+              );
               Object.keys(voteChoices).forEach((choiceIndex: any) => {
-                // In Snapshot API choices are indexed 1-based. The first choice has index 1.
-                // https://docs.snapshot.org/tools/api#vote
-                const voteChoice = choices[choiceIndex - 1];
-                const existingChoiceType = votesBreakdown[voteChoice];
+                const voteChoiceValue = voteChoices[choiceIndex] / totalVotingWeightDistributon;
+                const existingChoiceType = votesBreakdown[choiceIndex];
+
                 if (existingChoiceType) {
-                  votesBreakdown[voteChoice] = {
-                    total: existingChoiceType.total + vote.votingWeight,
+                  votesBreakdown[choiceIndex] = {
+                    total: existingChoiceType.total + vote.votingWeight * voteChoiceValue,
                     votes: [...existingChoiceType.votes, vote],
                   };
                 } else {
-                  votesBreakdown[voteChoice] = {
-                    total: vote.votingWeight,
+                  votesBreakdown[choiceIndex] = {
+                    total: vote.votingWeight * voteChoiceValue,
                     votes: [vote],
                   };
                 }

@@ -45,7 +45,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
           >
             {choices.map((choice, i) => {
               const votesBreakdownChoice =
-                type === 'weighted' ? votesBreakdown[i] : votesBreakdown[choice];
+                type === 'weighted' ? votesBreakdown[i + 1] : votesBreakdown[choice];
               const votesBreakdownChoiceTotal =
                 votesBreakdownChoice && votesBreakdownChoice?.total
                   ? votesBreakdownChoice?.total
