@@ -37,6 +37,7 @@
     "home": "Home",
     "labelViewDAO": "View Safe",
     "labelDAOFound": "Safe found",
+    "labelCurrentDAO": "This is Safe you are currently viewing",
     "labelEtherscan": "View on Etherscan",
     "errorInvalidENSAddress": "Invalid ENS name or address",
     "errorInvalidENSName": "Invalid ENS name",

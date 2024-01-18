@@ -1,5 +1,6 @@
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
@@ -28,8 +29,11 @@ export function SearchDisplay({
   closeDrawer,
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
-  const { action } = useFractal();
+  const { action, node } = useFractal();
   const { push } = useRouter();
+  const isCurrentSafe = useMemo(() => {
+    return !!node && !!node.daoAddress && node.daoAddress === address;
+  }, [node, address]);
   if (loading && address) {
     return (
       <Box>
@@ -49,12 +53,14 @@ export function SearchDisplay({
       <Flex
         py={2}
         onClick={() => {
-          onClickView();
-          if (closeDrawer) closeDrawer();
-          action.resetDAO();
-          push(DAO_ROUTES.dao.relative(address));
+          if (!isCurrentSafe) {
+            onClickView();
+            if (closeDrawer) closeDrawer();
+            action.resetDAO();
+            push(DAO_ROUTES.dao.relative(address));
+          }
         }}
-        cursor="default"
+        cursor={isCurrentSafe ? 'not-allowed' : 'default'}
         justifyContent="space-between"
       >
         <Flex
@@ -66,17 +72,19 @@ export function SearchDisplay({
               textStyle="text-sm-sans-regular"
               color="chocolate.100"
             >
-              {t('labelDAOFound')}
+              {t(isCurrentSafe ? 'labelCurrentDAO' : 'labelDAOFound')}
             </Text>
             <DAONameDisplay address={address} />
           </Flex>
         </Flex>
-        <Button
-          alignSelf="center"
-          data-testid="search-viewDAO"
-        >
-          {t('labelViewDAO')}
-        </Button>
+        {!isCurrentSafe && (
+          <Button
+            alignSelf="center"
+            data-testid="search-viewDAO"
+          >
+            {t('labelViewDAO')}
+          </Button>
+        )}
       </Flex>
     );
   }

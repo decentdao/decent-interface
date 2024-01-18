@@ -14,6 +14,7 @@ import ExternalLink from '../src/components/ui/links/ExternalLink';
 import ClientOnly from '../src/components/ui/utils/ClientOnly';
 import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DOCS } from '../src/constants/url';
+import ethLizardsLogo from '../src/metadata/lizzardsDAO/assets/logo.png';
 import { useFractal } from '../src/providers/App/AppProvider';
 import { disconnectedChain } from '../src/providers/NetworkConfig/NetworkConfigProvider';
 
@@ -59,6 +60,12 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         descKey: 'awakeDesc',
         address: '0x36C19472D4CA942710cA9aF01a03cED4dBc6eC0a',
       },
+      {
+        iconSrc: ethLizardsLogo.src,
+        titleKey: 'ethlizardsTitle',
+        descKey: 'ethlizardsDesc',
+        address: '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e',
+      },
     ],
   ],
   [
@@ -76,6 +83,12 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         descKey: 'awakeDesc',
         address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5',
       },
+      {
+        iconSrc: ethLizardsLogo.src,
+        titleKey: 'ethlizardsTitle',
+        descKey: 'ethlizardsDesc',
+        address: '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e', // TODO: Change to mainnet address once it will be there
+      },
     ],
   ],
   [
@@ -92,6 +105,12 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         titleKey: 'awakeTitle',
         descKey: 'awakeDesc',
         address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5', // TODO: Change to Sepolia Address once it will be there
+      },
+      {
+        iconSrc: ethLizardsLogo.src,
+        titleKey: 'ethlizardsTitle',
+        descKey: 'ethlizardsDesc',
+        address: '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e', // TODO: Change to Sepolia address once it will be there
       },
     ],
   ],
@@ -216,6 +235,12 @@ export default function HomePage() {
                 paddingBottom="1.5rem"
               >
                 {features.map((feature, index) => {
+                  if (
+                    typeof location !== 'undefined' &&
+                    location.pathname === 'app.fractalframework.xyz'
+                  ) {
+                    return null;
+                  }
                   return (
                     <FeaturedDAOCard
                       width={{ sm: '100%', lg: '50%' }}

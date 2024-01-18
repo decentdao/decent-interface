@@ -40,11 +40,14 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
             gap={1}
             flexWrap="wrap"
           >
-            {Object.keys(vote.choice as SnapshotWeightedVotingChoice).map((choice: any) => {
+            {Object.keys(vote.choice as SnapshotWeightedVotingChoice).map((choiceIdx: any) => {
+              if (!(vote.choice as SnapshotWeightedVotingChoice)[choiceIdx]) {
+                return null;
+              }
               return (
-                <StatusBox key={choice}>
+                <StatusBox key={choiceIdx}>
                   <Text textStyle="text-sm-mono-semibold">
-                    {proposal.choices[(choice as any as number) - 1]}
+                    {proposal.choices[(choiceIdx as number) - 1]}
                   </Text>
                 </StatusBox>
               );

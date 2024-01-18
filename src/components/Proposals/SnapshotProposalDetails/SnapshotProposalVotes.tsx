@@ -63,7 +63,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                     {proposal.privacy === 'shutter' &&
                     proposal.state !== FractalProposalState.CLOSED
                       ? `? ${strategySymbol}`
-                      : `${votesBreakdownChoiceTotal} ${strategySymbol}`}
+                      : `${votesBreakdownChoiceTotal.toFixed(2)} ${strategySymbol}`}
                   </Text>
                 </VotesPercentage>
               );
