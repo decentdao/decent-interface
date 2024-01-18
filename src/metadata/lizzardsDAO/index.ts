@@ -25,13 +25,14 @@ const LIZZARDS_DAO_METADATA: DAOMetadata = {
   sections: [
     {
       title: 'Description',
-      content: ' for this proposal or just click on the link to learn more about the proposal',
+      content:
+        'Ethlizards brings together an exceptional mix of avid gamers, visionary builders, and savvy investors, establishing itself as a highly esteemed partner in the GameFi ecosystem.',
       background: undefined,
-      link: {
-        position: 'start',
-        text: 'Vote here',
-        url: '/proposals/0xe10c44fceb1b43f74c42bd6efc9316e9ce14109ac8a166e5266fc78499cb4fea',
-      },
+      // link: {
+      //   position: 'start',
+      //   text: 'Vote here',
+      //   url: '/proposals/0xe10c44fceb1b43f74c42bd6efc9316e9ce14109ac8a166e5266fc78499cb4fea',
+      // },
     },
     {
       title: 'Elemental Lizards coming soon',
