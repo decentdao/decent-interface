@@ -77,15 +77,14 @@ export function SearchDisplay({
             <DAONameDisplay address={address} />
           </Flex>
         </Flex>
-        <Button
-          alignSelf="center"
-          data-testid="search-viewDAO"
-          disabled={isCurrentSafe}
-          isDisabled={isCurrentSafe}
-          cursor={isCurrentSafe ? 'disabled' : 'pointer'}
-        >
-          {t('labelViewDAO')}
-        </Button>
+        {!isCurrentSafe && (
+          <Button
+            alignSelf="center"
+            data-testid="search-viewDAO"
+          >
+            {t('labelViewDAO')}
+          </Button>
+        )}
       </Flex>
     );
   }
