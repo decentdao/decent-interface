@@ -30,7 +30,7 @@ export default function useDAOController({ daoAddress }: { daoAddress?: string }
     }
   }, [daoAddress, currentDAOAddress, action]);
 
-  const nodeLoading = useFractalNode({ daoAddress: currentDAOAddress });
+  const { nodeLoading, errorLoading } = useFractalNode({ daoAddress: currentDAOAddress });
   useGovernanceContracts();
   useFractalGuardContracts({});
   useFractalFreeze({ parentSafeAddress: parentAddress });
@@ -38,5 +38,5 @@ export default function useDAOController({ daoAddress }: { daoAddress?: string }
   useFractalTreasury();
   useERC20Claim();
   useSnapshotProposals();
-  return { nodeLoading, reloadingDAO };
+  return { nodeLoading, reloadingDAO, errorLoading };
 }
