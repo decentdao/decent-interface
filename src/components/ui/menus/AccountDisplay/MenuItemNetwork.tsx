@@ -1,13 +1,23 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Select, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useSwitchNetwork } from 'wagmi';
+import {
+  supportedChains,
+  useNetworkConfig,
+} from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 /**
  * Network display for menu
  */
 export function MenuItemNetwork() {
-  const { name, color } = useNetworkConfig();
   const { t } = useTranslation('menu');
+  const { chainId } = useNetworkConfig();
+  const { switchNetwork } = useSwitchNetwork();
+
+  if (!switchNetwork) {
+    return null;
+  }
+
   return (
     <Box
       cursor="default"
@@ -23,24 +33,39 @@ export function MenuItemNetwork() {
         >
           {t('network')}
         </Text>
-        <Flex
-          padding={0}
-          alignItems="center"
-          gap="2"
+        <Select
+          mt={4}
+          width="100%"
+          bgColor="#2c2c2c"
+          borderColor="#4d4d4d"
+          rounded="sm"
+          cursor="pointer"
+          onChange={async e => {
+            e.preventDefault();
+            switchNetwork(Number(e.target.value));
+          }}
+          value={chainId}
         >
-          <Box
-            w="1rem"
-            h="1rem"
-            bg={color}
-            rounded="full"
-          />
-          <Text
-            data-testid="accountMenu-network"
-            textStyle="text-base-mono-medium"
-          >
-            {name}
-          </Text>
-        </Flex>
+          {supportedChains.map(chain => (
+            <option
+              key={chain.chainId}
+              value={chain.chainId}
+            >
+              <Box
+                w="1rem"
+                h="1rem"
+                bg={chain.color}
+                rounded="full"
+              />
+              <Text
+                data-testid="accountMenu-network"
+                textStyle="text-base-mono-medium"
+              >
+                {chain.name}
+              </Text>
+            </option>
+          ))}
+        </Select>
       </Flex>
     </Box>
   );
