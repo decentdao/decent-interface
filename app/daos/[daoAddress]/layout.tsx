@@ -3,6 +3,7 @@
 import { Button, Center, Text, VStack, ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { theme } from '@decent-org/fractal-ui';
 import { useRouter } from 'next/navigation';
+import Script from 'next/script';
 import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
@@ -126,6 +127,21 @@ export default function DaoPageLayout({
   return (
     <ClientOnly>
       <title>{node?.daoName ? `${node.daoName} | ${APP_NAME}` : APP_NAME}</title>
+      {node && node.daoAddress === '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e' && (
+        <Script
+          id="ethlizards-hotjar-tracking"
+          strategy="afterInteractive"
+        >
+          {`(function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:3776270,hjsv:6};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`}
+        </Script>
+      )}
       {display}
     </ClientOnly>
   );
