@@ -80,7 +80,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       const votesQueryResult = await client
         .query({
           query: gql`query SnapshotProposalVotes {
-          votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}, first: 100) {
+          votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}, first: 500) {
             id
             voter
             vp

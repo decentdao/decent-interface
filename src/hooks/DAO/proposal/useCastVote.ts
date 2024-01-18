@@ -143,7 +143,9 @@ const useCastVote = ({
         const mappedSnapshotWeightedChoice: { [choiceKey: number]: number } = {};
         if (extendedSnapshotProposal.type === 'weighted') {
           snapshotWeightedChoice.forEach((value, choiceIndex) => {
-            mappedSnapshotWeightedChoice[choiceIndex + 1] = value;
+            if (value > 0) {
+              mappedSnapshotWeightedChoice[choiceIndex + 1] = value;
+            }
           });
         }
         const choice =
