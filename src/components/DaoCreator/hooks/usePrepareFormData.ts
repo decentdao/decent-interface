@@ -1,7 +1,8 @@
 import { IVotes__factory } from '@fractal-framework/fractal-contracts';
 
 import { useCallback } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
+import { useEthersSigner } from '../../../hooks/utils/useEthersSigner';
 import {
   SafeMultisigDAO,
   DAOFreezeGuardConfig,
@@ -16,8 +17,8 @@ import { couldBeENS } from '../../../utils/url';
 type FreezeGuardConfigParam = { freezeGuard?: DAOFreezeGuardConfig<BigNumberValuePair> };
 
 export function usePrepareFormData() {
-  const { data: signer } = useSigner();
-  const provider = useProvider();
+  const signer = useEthersSigner();
+  const provider = useEthersProvider();
 
   // Helper function to prepare freezeGuard data
   const prepareFreezeGuardData = useCallback(

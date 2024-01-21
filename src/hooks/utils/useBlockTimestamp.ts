@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useProvider } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
+import { useEthersProvider } from './useEthersProvider';
 
 const useBlockTimestamp = (blockNumber?: number) => {
   const [timestamp, setTimestamp] = useState<number>(Math.floor(Date.now() / 1000));
-  const provider = useProvider();
+  const provider = useEthersProvider();
 
   useEffect(() => {
     if (!provider || !blockNumber) {

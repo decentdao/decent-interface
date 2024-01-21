@@ -3,11 +3,11 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber, constants } from 'ethers';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { useSigner } from 'wagmi';
 import * as Yup from 'yup';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useEthersSigner } from '../../../hooks/utils/useEthersSigner';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance, DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
@@ -24,7 +24,7 @@ export function DelegateModal({ close }: { close: Function }) {
     readOnly: { user },
   } = useFractal();
 
-  const { data: signer } = useSigner();
+  const signer = useEthersSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
 
   const decentGovernance = azoriusGovernance as DecentGovernance;

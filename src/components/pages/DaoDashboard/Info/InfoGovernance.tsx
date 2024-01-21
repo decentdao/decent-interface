@@ -3,7 +3,7 @@ import { Govern } from '@decent-org/fractal-ui';
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProvider } from 'wagmi';
+import { useEthersProvider } from '../../../../hooks/utils/useEthersProvider';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { AzoriusGovernance, FreezeGuardType } from '../../../../types';
@@ -18,7 +18,7 @@ export function InfoGovernance() {
     guardContracts: { freezeGuardType, freezeGuardContract },
     readOnly: { dao },
   } = useFractal();
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const { getTimeDuration } = useTimeHelpers();
 
   const [timelockPeriod, setTimelockPeriod] = useState<string>();

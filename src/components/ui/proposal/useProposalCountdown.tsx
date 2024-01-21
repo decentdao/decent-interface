@@ -1,11 +1,11 @@
 import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useEffect, useRef, useState } from 'react';
-import { useProvider } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useDAOProposals } from '../../../hooks/DAO/loaders/useProposals';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
+import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
@@ -25,7 +25,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
     action,
     readOnly: { dao },
   } = useFractal();
-  const provider = useProvider();
+  const provider = useEthersProvider();
 
   const [secondsLeft, setSecondsLeft] = useState<number>();
   const { snapshotProposal, isSnapshotProposal } = useSnapshotProposal(proposal);

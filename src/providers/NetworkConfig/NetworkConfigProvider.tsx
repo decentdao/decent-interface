@@ -1,5 +1,5 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { Chain, useProvider } from 'wagmi';
+import { Chain, useNetwork } from 'wagmi';
 import { NetworkConfig } from '../../types/network';
 import { isProd } from '../../utils';
 import { goerliConfig, sepoliaConfig, mainnetConfig } from './networks';
@@ -22,12 +22,14 @@ const getNetworkConfig = (chainId: number) => {
 };
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
-  const provider = useProvider();
-  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(provider.network.chainId));
+  const { chain } = useNetwork();
+  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(chain?.id || 1));
 
   useEffect(() => {
-    setConfig(getNetworkConfig(provider.network.chainId));
-  }, [provider]);
+    if (chain) {
+      setConfig(getNetworkConfig(chain?.id));
+    }
+  }, [chain]);
 
   return <NetworkConfigContext.Provider value={config}>{children}</NetworkConfigContext.Provider>;
 }

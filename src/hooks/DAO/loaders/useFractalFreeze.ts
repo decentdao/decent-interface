@@ -7,7 +7,7 @@ import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typecha
 import { FreezeVoteCastEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/ERC20FreezeVoting';
 import { BigNumber, constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
-import { useAccount, useProvider } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
 import {
   isWithinFreezeProposalPeriod,
@@ -17,6 +17,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGuardAction } from '../../../providers/App/guard/action';
 import { ContractConnection, FractalGuardContracts, FreezeVotingType } from '../../../types';
 import { blocksToSeconds, getTimeStamp } from '../../../utils/contract';
+import { useEthersProvider } from '../../utils/useEthersProvider';
 import useUserERC721VotingTokens from '../proposal/useUserERC721VotingTokens';
 import { FreezeGuard } from './../../../types/fractal';
 
@@ -44,7 +45,7 @@ export const useFractalFreeze = ({
     loadOnMount
   );
 
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const {
     network: { chainId },
   } = provider;

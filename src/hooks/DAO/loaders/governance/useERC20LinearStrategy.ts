@@ -5,12 +5,12 @@ import { QuorumNumeratorUpdatedEvent } from '@fractal-framework/fractal-contract
 import { VotingPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect } from 'react';
-import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
+import { useEthersProvider } from '../../../utils/useEthersProvider';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC20LinearStrategy = () => {
@@ -18,7 +18,7 @@ export const useERC20LinearStrategy = () => {
     governanceContracts: { ozLinearVotingContract, azoriusContract },
     action,
   } = useFractal();
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const {
     network: { chainId },
   } = provider;

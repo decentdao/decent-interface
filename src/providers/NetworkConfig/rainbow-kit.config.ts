@@ -7,7 +7,8 @@ import {
   metaMaskWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { configureChains, createClient, createStorage } from 'wagmi';
+import { createPublicClient, http } from 'viem';
+import { configureChains, createStorage, createConfig, mainnet } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { alchemyProvider } from 'wagmi/providers/alchemy';
 import { infuraProvider } from 'wagmi/providers/infura';
@@ -23,18 +24,22 @@ if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
   supportedWagmiChains.unshift(hardhat);
 }
 
-export const { chains, provider } = configureChains(supportedWagmiChains, [
+export const { chains } = configureChains(supportedWagmiChains, [
   infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY! }),
   alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY! }),
   publicProvider(),
 ]);
 
-const defaultWallets = [
-  injectedWallet({ chains }),
-  metaMaskWallet({ chains }),
-  coinbaseWallet({ appName: APP_NAME, chains }),
-  walletConnectWallet({ chains }),
-];
+const defaultWallets = [injectedWallet({ chains }), coinbaseWallet({ appName: APP_NAME, chains })];
+
+if (process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID) {
+  defaultWallets.push(
+    walletConnectWallet({ chains, projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID })
+  );
+  defaultWallets.push(
+    metaMaskWallet({ chains, projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID })
+  );
+}
 // allows connection to localhost only in development mode.
 if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
   defaultWallets.unshift(testWallet({ chains }));
@@ -48,8 +53,12 @@ const connectors = connectorsForWallets([
   },
 ]);
 
-export const wagmiClient = createClient({
+export const wagmiConfig = createConfig({
   autoConnect: true,
+  publicClient: createPublicClient({
+    transport: http(),
+    chain: mainnet,
+  }),
   storage:
     typeof window !== 'undefined'
       ? createStorage({
@@ -57,5 +66,4 @@ export const wagmiClient = createClient({
         })
       : undefined,
   connectors,
-  provider,
 });

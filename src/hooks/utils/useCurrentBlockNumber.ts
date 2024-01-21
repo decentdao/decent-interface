@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useProvider } from 'wagmi';
+import { useEthersProvider } from './useEthersProvider';
 
 const useCurrentBlockNumber = () => {
   const [currentBlockNumber, setCurrentBlockNumber] = useState<number>();
   const [isLoaded, setIsLoaded] = useState(false);
-  const provider = useProvider();
+  const provider = useEthersProvider();
 
   const updateBlockNumber = useCallback(
     (block: number) => {

@@ -5,10 +5,11 @@ import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount, useSigner } from 'wagmi';
+import { useAccount } from 'wagmi';
 import * as Yup from 'yup';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
 import useApproval from '../../../hooks/utils/useApproval';
+import { useEthersSigner } from '../../../hooks/utils/useEthersSigner';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -19,7 +20,7 @@ import { BigNumberInput } from '../forms/BigNumberInput';
 export function UnwrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
-  const { data: signer } = useSigner();
+  const signer = useEthersSigner();
   const { address: account } = useAccount();
 
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });

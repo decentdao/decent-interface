@@ -19,7 +19,7 @@ import graphQLClient from '../src/graphql';
 import { FractalErrorBoundary, initErrorLogging } from '../src/helpers/errorLogging';
 import { AppProvider } from '../src/providers/App/AppProvider';
 import { NetworkConfigProvider } from '../src/providers/NetworkConfig/NetworkConfigProvider';
-import { chains, wagmiClient } from '../src/providers/NetworkConfig/rainbow-kit.config';
+import { chains, wagmiConfig } from '../src/providers/NetworkConfig/rainbow-kit.config';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
@@ -95,7 +95,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           resetCSS
         >
           <FractalErrorBoundary fallback={<ErrorFallback />}>
-            <WagmiConfig client={wagmiClient}>
+            <WagmiConfig config={wagmiConfig}>
               <RainbowKitProvider
                 chains={chains}
                 modalSize="compact"
