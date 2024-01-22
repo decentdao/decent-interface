@@ -13,6 +13,7 @@ import { useGovernanceContracts } from './loaders/useGovernanceContracts';
 
 export default function useDAOController({ daoAddress }: { daoAddress?: string }) {
   const [currentDAOAddress, setCurrentDAOAddress] = useState<string>();
+  const [reloadingDAO, setReloadingDAO] = useState(false);
   const {
     node: {
       nodeHierarchy: { parentAddress },
@@ -21,13 +22,15 @@ export default function useDAOController({ daoAddress }: { daoAddress?: string }
   } = useFractal();
   useEffect(() => {
     if (daoAddress && currentDAOAddress !== daoAddress) {
+      setReloadingDAO(true);
       action.resetDAO().then(() => {
         setCurrentDAOAddress(daoAddress);
+        setReloadingDAO(false);
       });
     }
   }, [daoAddress, currentDAOAddress, action]);
 
-  const nodeLoading = useFractalNode({ daoAddress: currentDAOAddress });
+  const { nodeLoading, errorLoading } = useFractalNode({ daoAddress: currentDAOAddress });
   useGovernanceContracts();
   useFractalGuardContracts({});
   useFractalFreeze({ parentSafeAddress: parentAddress });
@@ -35,5 +38,5 @@ export default function useDAOController({ daoAddress }: { daoAddress?: string }
   useFractalTreasury();
   useERC20Claim();
   useSnapshotProposals();
-  return nodeLoading;
+  return { nodeLoading, reloadingDAO, errorLoading };
 }

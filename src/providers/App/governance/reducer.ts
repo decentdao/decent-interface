@@ -68,7 +68,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       };
     case FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC20_VOTE: {
       const { proposalId, voter, support, votesSummary, weight } = action.payload;
-      const updatedProposals = (proposals as AzoriusProposal[]).map(proposal => {
+      const updatedProposals = ((proposals || []) as AzoriusProposal[]).map(proposal => {
         if (proposal.proposalId === proposalId) {
           const foundVote = proposal.votes.find(vote => vote.voter === voter);
           const newProposal: AzoriusProposal = {
@@ -86,7 +86,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     }
     case FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC721_VOTE: {
       const { proposalId, voter, support, votesSummary, tokenAddresses, tokenIds } = action.payload;
-      const updatedProposals = (proposals as AzoriusProposal[]).map(proposal => {
+      const updatedProposals = ((proposals || []) as AzoriusProposal[]).map(proposal => {
         if (proposal.proposalId === proposalId) {
           const foundVote = proposal.votes.find(vote => vote.voter === voter);
           const newProposal: AzoriusProposal = {
@@ -110,7 +110,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       if (!proposals) {
         return state;
       }
-      const updatedProposals = (proposals as AzoriusProposal[]).map(proposal => {
+      const updatedProposals = ((proposals || []) as AzoriusProposal[]).map(proposal => {
         if (proposal.proposalId === proposalId) {
           const newProposal: AzoriusProposal = {
             ...proposal,

@@ -2,7 +2,7 @@ import { Context, createContext, ReactNode, useContext, useEffect, useState } fr
 import { Chain, useProvider } from 'wagmi';
 import { NetworkConfig } from '../../types/network';
 import { isProd } from '../../utils';
-import { goerliConfig, mainnetConfig } from './networks';
+import { goerliConfig, sepoliaConfig, mainnetConfig } from './networks';
 import { polygonConfig } from './networks/polygon';
 
 export const NetworkConfigContext = createContext({} as NetworkConfig);
@@ -12,8 +12,8 @@ export const useNetworkConfig = (): NetworkConfig =>
 
 // mainnet is first so it defaults to that when disconnected on production
 export const supportedChains: NetworkConfig[] = isProd()
-  ? [mainnetConfig, goerliConfig]
-  : [goerliConfig, mainnetConfig, polygonConfig];
+  ? [mainnetConfig, goerliConfig, sepoliaConfig]
+  : [goerliConfig, sepoliaConfig, mainnetConfig, polygonConfig];
 
 export const disconnectedChain: Chain = supportedChains[0].wagmiChain;
 

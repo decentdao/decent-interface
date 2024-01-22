@@ -37,6 +37,7 @@
     "home": "Home",
     "labelViewDAO": "View Safe",
     "labelDAOFound": "Safe found",
+    "labelCurrentDAO": "This is Safe you are currently viewing",
     "labelEtherscan": "View on Etherscan",
     "errorInvalidENSAddress": "Invalid ENS name or address",
     "errorInvalidENSName": "Invalid ENS name",
@@ -101,5 +102,6 @@
     "invalidChain": "Your currently connected chain is not supported.",
     "showMore": "Show More",
     "showLess": "Show Less",
-    "poweredBy": "Powered by"
+    "poweredBy": "Powered by",
+    "goTo": "Go to"
 }

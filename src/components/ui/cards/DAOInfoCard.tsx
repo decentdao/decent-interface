@@ -1,4 +1,5 @@
 import { Box, Flex, Text, Spacer, HStack, FlexProps, Link, Center } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -74,6 +75,7 @@ export function DAOInfoCard({
       >
         <HStack>
           <Link
+            as={NextLink}
             pointerEvents={isCurrentDAO ? 'none' : undefined}
             href={DAO_ROUTES.dao.relative(displayedAddress)}
             _hover={{ textDecoration: 'none' }}
@@ -101,7 +103,10 @@ export function DAOInfoCard({
             data-testid="DAOInfo-favorite"
           />
           {childCount && childCount > 0 && (
-            <Link href={DAO_ROUTES.hierarchy.relative(displayedAddress)}>
+            <Link
+              href={DAO_ROUTES.hierarchy.relative(displayedAddress)}
+              as={NextLink}
+            >
               <Box
                 bg="chocolate.500"
                 borderRadius="4px"

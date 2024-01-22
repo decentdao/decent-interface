@@ -20,6 +20,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [nodeLoading, setNodeLoading] = useState<boolean>(true);
+  const [errorLoading, setErrorLoading] = useState<boolean>(false);
 
   const { action } = useFractal();
   const safeAPI = useSafeAPI();
@@ -87,12 +88,14 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   const setDAO = useCallback(
     async (_chainId: number, _daoAddress: string) => {
       setNodeLoading(true);
+      setErrorLoading(false);
       if (utils.isAddress(_daoAddress) && safeAPI) {
         try {
           const safeInfo = await requestWithRetries(fetchSafeInfo, 5);
           if (!safeInfo) {
             currentValidSafe.current = undefined;
             action.resetDAO();
+            setErrorLoading(true);
           } else {
             currentValidSafe.current = _chainId + _daoAddress;
             action.dispatch({
@@ -103,16 +106,19 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
               type: NodeAction.SET_SAFE_INFO,
               payload: safeInfo,
             });
+            setErrorLoading(false);
           }
         } catch (e) {
           // network error
           currentValidSafe.current = undefined;
           action.resetDAO();
+          setErrorLoading(true);
         }
       } else {
         // invalid address
         currentValidSafe.current = undefined;
         action.resetDAO();
+        setErrorLoading(true);
       }
       setNodeLoading(false);
     },
@@ -123,9 +129,10 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   const chainId = chain ? chain.id : disconnectedChain.id;
   useEffect(() => {
     if (daoAddress && chainId + daoAddress !== currentValidSafe.current) {
+      setNodeLoading(true);
       setDAO(chainId, daoAddress);
     }
-  }, [daoAddress, setDAO, action, currentValidSafe, chainId]);
+  }, [daoAddress, setDAO, currentValidSafe, chainId]);
 
-  return nodeLoading;
+  return { nodeLoading, errorLoading };
 };

@@ -1,5 +1,6 @@
 import { gql } from '@apollo/client';
 import { useCallback, useMemo, useState } from 'react';
+import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
   ExtendedSnapshotProposal,
@@ -9,7 +10,8 @@ import {
   SnapshotVote,
   SnapshotWeightedVotingChoice,
 } from '../../../../types';
-import client from './';
+import useSnapshotSpaceName from './useSnapshotSpaceName';
+import { createClient } from './';
 
 export default function useSnapshotProposal(proposal: FractalProposal | null | undefined) {
   const [extendedSnapshotProposal, setExtendedSnapshotProposal] =
@@ -20,6 +22,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       user: { address },
     },
   } = useFractal();
+  const daoSnapshotSpaceName = useSnapshotSpaceName();
+  const client = useMemo(() => {
+    if (daoSnapshotURL) {
+      return createClient(daoSnapshotURL);
+    }
+  }, [daoSnapshotURL]);
 
   const snapshotProposal = proposal as SnapshotProposal;
   const isSnapshotProposal = useMemo(
@@ -27,14 +35,8 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     [snapshotProposal]
   );
 
-  const getVoteWeight = useCallback(
-    (vote: SnapshotVote) =>
-      vote.votingWeight * vote.votingWeightByStrategy.reduce((prev, curr) => prev + curr, 0),
-    []
-  );
-
   const loadProposal = useCallback(async () => {
-    if (snapshotProposal?.snapshotProposalId) {
+    if (snapshotProposal?.snapshotProposalId && client) {
       const proposalQueryResult = await client
         .query({
           query: gql`
@@ -78,7 +80,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       const votesQueryResult = await client
         .query({
           query: gql`query SnapshotProposalVotes {
-          votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}) {
+          votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}, first: 500) {
             id
             voter
             vp
@@ -111,8 +113,8 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       const { choices, type, privacy } = proposalQueryResult;
 
       if (type === 'weighted') {
-        Object.keys(choices).forEach((choice: string) => {
-          votesBreakdown[choice] = {
+        Object.keys(choices).forEach((choice: string, choiceIndex) => {
+          votesBreakdown[choiceIndex + 1] = {
             votes: [],
             total: 0,
           };
@@ -134,34 +136,37 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
           if (type === 'weighted') {
             const voteChoices = vote.choice as SnapshotWeightedVotingChoice;
             if (typeof voteChoices === 'number') {
-              // Means vote casted for single option, and Snapshot API returns just just number then =/
+              // Means vote casted for single option, and Snapshot API returns just number then =/
               const voteChoice = voteChoices - 1;
               const existingChoiceType = votesBreakdown[voteChoice];
               if (existingChoiceType) {
                 votesBreakdown[voteChoice] = {
-                  total: existingChoiceType.total + getVoteWeight(vote),
+                  total: existingChoiceType.total + vote.votingWeight,
                   votes: [...existingChoiceType.votes, vote],
                 };
               } else {
                 votesBreakdown[voteChoice] = {
-                  total: getVoteWeight(vote),
+                  total: vote.votingWeight,
                   votes: [vote],
                 };
               }
             } else {
+              let totalVotingWeightDistributon = 0;
+              Object.keys(voteChoices).forEach(
+                (choice: any) => (totalVotingWeightDistributon += voteChoices[choice])
+              );
               Object.keys(voteChoices).forEach((choiceIndex: any) => {
-                // In Snapshot API choices are indexed 1-based. The first choice has index 1.
-                // https://docs.snapshot.org/tools/api#vote
-                const voteChoice = choices[choiceIndex - 1];
-                const existingChoiceType = votesBreakdown[voteChoice];
+                const voteChoiceValue = voteChoices[choiceIndex] / totalVotingWeightDistributon;
+                const existingChoiceType = votesBreakdown[choiceIndex];
+
                 if (existingChoiceType) {
-                  votesBreakdown[voteChoice] = {
-                    total: existingChoiceType.total + getVoteWeight(vote),
+                  votesBreakdown[choiceIndex] = {
+                    total: existingChoiceType.total + vote.votingWeight * voteChoiceValue,
                     votes: [...existingChoiceType.votes, vote],
                   };
                 } else {
-                  votesBreakdown[voteChoice] = {
-                    total: getVoteWeight(vote),
+                  votesBreakdown[choiceIndex] = {
+                    total: vote.votingWeight * voteChoiceValue,
                     votes: [vote],
                   };
                 }
@@ -174,12 +179,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
 
             if (existingChoiceType) {
               votesBreakdown[choiceKey] = {
-                total: existingChoiceType.total + getVoteWeight(vote),
+                total: existingChoiceType.total + vote.votingWeight,
                 votes: [...existingChoiceType.votes, vote],
               };
             } else {
               votesBreakdown[choiceKey] = {
-                total: getVoteWeight(vote),
+                total: vote.votingWeight,
                 votes: [vote],
               };
             }
@@ -194,17 +199,22 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
         votes: votesQueryResult,
       } as ExtendedSnapshotProposal);
     }
-  }, [snapshotProposal?.snapshotProposalId, proposal, snapshotProposal?.state, getVoteWeight]);
+  }, [snapshotProposal?.snapshotProposalId, proposal, snapshotProposal?.state, client]);
 
   const loadVotingWeight = useCallback(async () => {
-    if (snapshotProposal?.snapshotProposalId) {
+    const emptyVotingWeight = {
+      votingWeight: 0,
+      votingWeightByStrategy: [0],
+      votingState: '',
+    };
+    if (snapshotProposal?.snapshotProposalId && client) {
       const queryResult = await client
         .query({
           query: gql`
       query UserVotingWeight {
           vp(
               voter: "${address}"
-              space: "${daoSnapshotURL}"
+              space: "${daoSnapshotSpaceName}"
               proposal: "${snapshotProposal.snapshotProposalId}"
           ) {
               vp
@@ -214,6 +224,10 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       }`,
         })
         .then(({ data: { vp } }) => {
+          if (!vp) {
+            logError('Error while retrieving Snapshot voting weight', vp);
+            return emptyVotingWeight;
+          }
           return {
             votingWeight: vp.vp,
             votingWeightByStrategy: vp.vp_by_strategy,
@@ -224,17 +238,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       return queryResult;
     }
 
-    return {
-      votingWeight: 0,
-      votingWeightByStrategy: [0],
-      votingState: '',
-    };
-  }, [address, daoSnapshotURL, snapshotProposal?.snapshotProposalId]);
+    return emptyVotingWeight;
+  }, [address, snapshotProposal?.snapshotProposalId, client, daoSnapshotSpaceName]);
 
   return {
     loadVotingWeight,
     loadProposal,
-    getVoteWeight,
     snapshotProposal,
     isSnapshotProposal,
     extendedSnapshotProposal,
