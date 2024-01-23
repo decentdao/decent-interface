@@ -38,6 +38,7 @@ export function MenuItemNetwork() {
           width="100%"
           bgColor="#2c2c2c"
           borderColor="#4d4d4d"
+          data-testid="accountMenu-network"
           rounded="sm"
           cursor="pointer"
           onChange={async e => {
@@ -57,12 +58,7 @@ export function MenuItemNetwork() {
                 bg={chain.color}
                 rounded="full"
               />
-              <Text
-                data-testid="accountMenu-network"
-                textStyle="text-base-mono-medium"
-              >
-                {chain.name}
-              </Text>
+              <Text textStyle="text-base-mono-medium">{chain.name}</Text>
             </option>
           ))}
         </Select>
