@@ -74,21 +74,15 @@ Test results for each test on each browser type will be output into the `/playwr
 
 ## Deployment Notes
 
-The "dev", "staging", and "prod" environments of this app are currently deployed via both Netlify and IPFS (see the Github workflow files).
+The "dev", "staging", and "prod" environments of this app are currently deployed via Netlify.
 
 The "dev" environment tracks the `develop` branch, "staging" tracks `staging`, and the "prod" environment tracks the `main` branch. The "dev", "staging", and "prod" Github environments are where custom environment variables are configured.
 
-So at any given time, there are effectively six builds out there, and they are publicly accessible and privately configurable within Github:
+So at any given time, there are effectively three builds out there, and they are publicly accessible and privately configurable within Github:
 
-1. dev site via Netlify
+1. dev site
     - url: https://app.dev.fractalframework.xyz
-1. dev [site via IPFS](./docs/IPFS_HOSTING.md)
-    - url: http://app.dev.fractalframework.xyz.ipns.localhost:8080/
-1. staging site via Netlify
+2. staging site
     - url: https://app.staging.fractalframework.xyz
-1. staging [site via IPFS](./docs/IPFS_HOSTING.md)
-    - url: http://app.staging.fractalframework.xyz.ipns.localhost:8080/
-1. prod site via Netlify
+3. prod site
     - url: https://app.fractalframework.xyz
-1. prod [site via IPFS](./docs/IPFS_HOSTING.md)
-    - url: http://app.fractalframework.xyz.ipns.localhost:8080/
