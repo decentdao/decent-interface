@@ -7,8 +7,7 @@ import {
   metaMaskWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { createPublicClient, http, Chain } from 'viem';
-import { configureChains, createStorage, createConfig, mainnet } from 'wagmi';
+import { configureChains, createStorage, createConfig, mainnet, Chain } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { APP_NAME } from '../../constants/common';
@@ -22,7 +21,7 @@ if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
   supportedWagmiChains.unshift(hardhat);
 }
 
-export const { chains } = configureChains(supportedWagmiChains, [
+export const { chains, publicClient } = configureChains(supportedWagmiChains, [
   jsonRpcProvider({
     rpc: (chain: Chain) => {
       const networkUrl = `${
@@ -58,15 +57,12 @@ const connectors = connectorsForWallets([
 
 export const wagmiConfig = createConfig({
   autoConnect: true,
-  publicClient: createPublicClient({
-    transport: http(),
-    chain: mainnet,
-  }),
+  publicClient,
+  connectors,
   storage:
     typeof window !== 'undefined'
       ? createStorage({
           storage: window.localStorage,
         })
       : undefined,
-  connectors,
 });
