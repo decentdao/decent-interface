@@ -103,17 +103,13 @@ export function ProposalAction({
   if (!showActionButton) {
     if (!expandedView) {
       return (
-        <Link
+        <Button
+          as={Link}
           href={DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId)}
-          passHref
+          variant="secondary"
         >
-          <Button
-            as="a"
-            variant="secondary"
-          >
-            {t('details')}
-          </Button>
-        </Link>
+          {t('details')}
+        </Button>
       );
     }
     // This means that Proposal in state where there's no action to perform
