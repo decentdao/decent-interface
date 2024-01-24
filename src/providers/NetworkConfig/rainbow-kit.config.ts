@@ -7,11 +7,10 @@ import {
   metaMaskWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { createPublicClient, http } from 'viem';
+import { createPublicClient, http, Chain } from 'viem';
 import { configureChains, createStorage, createConfig, mainnet } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { publicProvider } from 'wagmi/providers/public';
 import { APP_NAME } from '../../constants/common';
 import { supportedChains } from './NetworkConfigProvider';
 import { testWallet } from './testWallet';
@@ -23,7 +22,7 @@ if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
   supportedWagmiChains.unshift(hardhat);
 }
 
-export const { chains, provider } = configureChains(supportedWagmiChains, [
+export const { chains } = configureChains(supportedWagmiChains, [
   jsonRpcProvider({
     rpc: (chain: Chain) => {
       const networkUrl = `${
@@ -32,7 +31,6 @@ export const { chains, provider } = configureChains(supportedWagmiChains, [
       return { http: `https://${networkUrl}`, webSocket: `wss://${networkUrl}` };
     },
   }),
-  publicProvider(),
 ]);
 
 const defaultWallets = [injectedWallet({ chains }), coinbaseWallet({ appName: APP_NAME, chains })];
