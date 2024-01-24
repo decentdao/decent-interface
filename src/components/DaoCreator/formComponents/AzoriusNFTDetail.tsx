@@ -25,7 +25,7 @@ export default function AzoriusNFTDetail({
   const [tokenDetails, setTokenDetails] = useState<TokenDetails>();
   const { t } = useTranslation('daoCreate');
 
-  const publicClient = useEthersProvider();
+  const provider = useEthersProvider();
   const { displayName } = useDisplayName(tokenDetails?.address, true);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function AzoriusNFTDetail({
       setLoading(true);
       try {
         if (nft.tokenAddress && ethers.utils.isAddress(nft.tokenAddress)) {
-          const tokenContract = new ethers.Contract(nft.tokenAddress, erc721ABI, publicClient);
+          const tokenContract = new ethers.Contract(nft.tokenAddress, erc721ABI, provider);
           const [name, symbol] = await Promise.all([tokenContract.name(), tokenContract.symbol()]);
           setTokenDetails({
             name,
@@ -54,7 +54,7 @@ export default function AzoriusNFTDetail({
     };
 
     loadNFTDetails();
-  }, [hasAddressError, nft, publicClient]);
+  }, [hasAddressError, nft, provider]);
 
   const showData = !!tokenDetails && !loading && !hasAddressError;
 
