@@ -52,13 +52,7 @@ export function MenuItemNetwork() {
               key={chain.chainId}
               value={chain.chainId}
             >
-              <Box
-                w="1rem"
-                h="1rem"
-                bg={chain.color}
-                rounded="full"
-              />
-              <Text textStyle="text-base-mono-medium">{chain.name}</Text>
+              {chain.name}
             </option>
           ))}
         </Select>
