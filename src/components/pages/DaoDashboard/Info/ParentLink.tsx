@@ -1,4 +1,4 @@
-import { Link, HStack, Image, Text, LinkProps } from '@chakra-ui/react';
+import { Link, HStack, Image, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -7,7 +7,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 /**
  * Displays a link to the current DAO's parent, if it has one.
  */
-export function ParentLink({ ...rest }: LinkProps) {
+export function ParentLink() {
   const {
     node: { nodeHierarchy },
   } = useFractal();
@@ -24,7 +24,6 @@ export function ParentLink({ ...rest }: LinkProps) {
       href={DAO_ROUTES.dao.relative(nodeHierarchy.parentAddress)}
       marginBottom="1rem"
       as={NextLink}
-      {...rest}
     >
       <HStack>
         <Image
