@@ -10,7 +10,6 @@ import {
 import { Chain, configureChains, createClient, createStorage, mainnet } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { publicProvider } from 'wagmi/providers/public';
 import { APP_NAME } from '../../constants/common';
 import { supportedChains } from './NetworkConfigProvider';
 import { testWallet } from './testWallet';
@@ -31,7 +30,6 @@ export const { chains, provider } = configureChains(supportedWagmiChains, [
       return { http: `https://${networkUrl}`, webSocket: `wss://${networkUrl}` };
     },
   }),
-  publicProvider(),
 ]);
 
 const defaultWallets = [

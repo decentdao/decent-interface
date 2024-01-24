@@ -26,7 +26,8 @@ export function useERC20Claim() {
     const tokenClaimArray = await possibleTokenClaimContract
       .queryFilter(tokenClaimFilter)
       .catch(() => []);
-    if (!tokenClaimArray.length && tokenClaimArray[0].args[1] === tokenContract.asSigner.address) {
+
+    if (!tokenClaimArray.length || tokenClaimArray[0].args[1] === tokenContract.asSigner.address) {
       return;
     }
     // action to governance
