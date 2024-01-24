@@ -64,7 +64,14 @@ export function ProposalInfo({
           activity={proposal}
           showFullSnapshotDescription
         />
-        {!isSnapshotProposal && <Text my={4}>{metaData.description}</Text>}
+        {!isSnapshotProposal && (
+          <Text
+            my={4}
+            whiteSpace="break-spaces"
+          >
+            {metaData.description}
+          </Text>
+        )}
         {metaData.documentationUrl && (
           <Text
             onClick={confirmUrl}
