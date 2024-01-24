@@ -146,6 +146,8 @@ export function useProposalCountdown(proposal: FractalProposal) {
           guardTimelockPeriod = timeLockPeriod.value.toNumber() * 1000 + votingDeadlineMs;
         }
         startCountdown(guardTimelockPeriod);
+      } else if (isSnapshotProposal && proposal.state === FractalProposalState.PENDING) {
+        startCountdown(snapshotProposal.startTime * 1000);
       } else if (isSnapshotProposal) {
         startCountdown(snapshotProposal.endTime * 1000);
       }

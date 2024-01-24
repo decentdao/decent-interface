@@ -10,8 +10,7 @@ import {
 import { createPublicClient, http } from 'viem';
 import { configureChains, createStorage, createConfig, mainnet } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
-import { alchemyProvider } from 'wagmi/providers/alchemy';
-import { infuraProvider } from 'wagmi/providers/infura';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 import { APP_NAME } from '../../constants/common';
 import { supportedChains } from './NetworkConfigProvider';
@@ -24,9 +23,15 @@ if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
   supportedWagmiChains.unshift(hardhat);
 }
 
-export const { chains } = configureChains(supportedWagmiChains, [
-  infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_API_KEY! }),
-  alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_API_KEY! }),
+export const { chains, provider } = configureChains(supportedWagmiChains, [
+  jsonRpcProvider({
+    rpc: (chain: Chain) => {
+      const networkUrl = `${
+        chain.id === mainnet.id ? 'ethereum' : 'ethereum-' + chain.name
+      }.publicnode.com`;
+      return { http: `https://${networkUrl}`, webSocket: `wss://${networkUrl}` };
+    },
+  }),
   publicProvider(),
 ]);
 

@@ -94,7 +94,10 @@ export function VoteContextProvider({
         } else if (type === GovernanceType.AZORIUS_ERC20) {
           newCanVote =
             (
-              await ozLinearVotingContract!.asSigner.getProposalVotingSupply(proposal.proposalId)
+              await ozLinearVotingContract!.asSigner.getVotingWeight(
+                user.address,
+                proposal.proposalId
+              )
             )?.gt(0) && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
