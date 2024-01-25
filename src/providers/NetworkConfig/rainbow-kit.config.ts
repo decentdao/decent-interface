@@ -7,7 +7,7 @@ import {
   metaMaskWallet,
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
-import { Chain, configureChains, createClient, createStorage, mainnet } from 'wagmi';
+import { Chain, configureChains, createClient, createStorage, goerli, mainnet } from 'wagmi';
 import { hardhat } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { APP_NAME } from '../../constants/common';
@@ -29,6 +29,11 @@ export const { chains, provider } = configureChains(supportedWagmiChains, [
         return {
           http: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
           webSocket: `wss://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
+        };
+      } else if (chain.id === goerli.id) {
+        return {
+          http: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_GOERLI_API_KEY}`,
+          webSocket: `wss://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_GOERLI_API_KEY}`,
         };
       }
       return {
