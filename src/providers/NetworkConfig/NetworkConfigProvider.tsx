@@ -18,18 +18,21 @@ export const supportedChains: NetworkConfig[] = isProd()
 export const disconnectedChain: Chain = supportedChains[0].wagmiChain;
 
 const getNetworkConfig = (chainId: number) => {
-  return supportedChains.find(chain => chain.chainId === chainId) || isProd()
-    ? mainnetConfig
-    : goerliConfig;
+  const foundChain = supportedChains.find(chain => chain.chainId === chainId);
+  if (foundChain) {
+    return foundChain;
+  } else {
+    if (isProd()) {
+      return mainnetConfig;
+    } else {
+      return goerliConfig;
+    }
+  }
 };
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   const provider = useProvider();
-  const [config, setConfig] = useState<NetworkConfig>(
-    getNetworkConfig(
-      provider.network.chainId || isProd() ? mainnetConfig.chainId : goerliConfig.chainId
-    )
-  );
+  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(provider.network.chainId));
 
   useEffect(() => {
     setConfig(getNetworkConfig(provider.network.chainId));
