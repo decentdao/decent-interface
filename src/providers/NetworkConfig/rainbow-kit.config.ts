@@ -24,10 +24,17 @@ if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
 export const { chains, provider } = configureChains(supportedWagmiChains, [
   jsonRpcProvider({
     rpc: (chain: Chain) => {
-      const networkUrl = `${
-        chain.id === mainnet.id ? 'ethereum' : 'ethereum-' + chain.name
-      }.publicnode.com`;
-      return { http: `https://${networkUrl}`, webSocket: `wss://${networkUrl}` };
+      const publicNodeNetworkUrl = `ethereum-${chain.name}.publicnode.com`;
+      if (chain.id === mainnet.id) {
+        return {
+          http: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
+          webSocket: `wss://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
+        };
+      }
+      return {
+        http: `https://${publicNodeNetworkUrl}`,
+        webSocket: `wss://${publicNodeNetworkUrl}`,
+      };
     },
   }),
 ]);
