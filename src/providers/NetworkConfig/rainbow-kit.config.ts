@@ -8,7 +8,7 @@ import {
   walletConnectWallet,
 } from '@rainbow-me/rainbowkit/wallets';
 import { Chain, configureChains, createConfig, createStorage } from 'wagmi';
-import { hardhat, goerli, mainnet } from 'wagmi/chains';
+import { hardhat, sepolia, mainnet } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { APP_NAME } from '../../constants/common';
 import { supportedChains } from './NetworkConfigProvider';
@@ -30,10 +30,10 @@ export const { chains, publicClient } = configureChains(supportedWagmiChains, [
           http: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
           webSocket: `wss://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
         };
-      } else if (chain.id === goerli.id) {
+      } else if (chain.id === sepolia.id) {
         return {
-          http: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_GOERLI_API_KEY}`,
-          webSocket: `wss://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_GOERLI_API_KEY}`,
+          http: `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_SEPOLOA_API_KEY}`,
+          webSocket: `wss://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_SEPOLIA_API_KEY}`,
         };
       }
       return {

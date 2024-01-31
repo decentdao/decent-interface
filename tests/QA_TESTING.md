@@ -9,7 +9,7 @@ https://app.staging.fractalframework.xyz/
 - [ ] Favorites menu appears and displays favorites
 - [ ] Favorites link to their respective DAO homepage
 - [ ] *Connect Wallet dropdown* -> *Connect* opens Connect a Wallet modal
-- [ ] *Connect Wallet dropdown* shows default network (Goerli)
+- [ ] *Connect Wallet dropdown* shows default network (Sepolia)
 - [ ] *Connect your wallet* in page content opens Connect a Wallet modal
 - [ ] FAQ, Discord, Docs links in page content are correct
 - [ ] no DAO related sidebar icons appear
@@ -32,7 +32,7 @@ click *Connect your wallet* -> *MetaMask* and connect your wallet
 - [ ] opening wallet menu displays truncated address
 - [ ] wallet menu address click copies address to clipboard
 - [ ] wallet menu generated user image links to Etherscan
-- [ ] wallet menu displays **connected** network (Goerli)
+- [ ] wallet menu displays **connected** network (Sepolia)
 - [ ] wallet menu Disconnect button disconnects the wallet
 - [ ] Create a Fractal button in page content links to DAO creation flow
 

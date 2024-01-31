@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
-import { goerli, mainnet, sepolia } from 'wagmi/chains';
+import { mainnet, sepolia } from 'wagmi/chains';
 import { AppFooter } from '../src/components/pages/AppHome/AppFooter';
 import { CTABox } from '../src/components/pages/AppHome/CTABox';
 import FeaturedDAOCard from '../src/components/pages/AppHome/FeaturedDAOCard';
@@ -45,29 +45,6 @@ interface Feature {
 
 // featured DAOs are dependent on the connected chain
 const FEATURED_DAOS = new Map<number, Feature[]>([
-  [
-    goerli.id,
-    [
-      {
-        iconSrc: '/images/icon-decent.svg',
-        titleKey: 'decentTitle',
-        descKey: 'decentDesc',
-        address: '0x8202E3cBa328CCf3eeA5bF0A11596c5297Cf7525',
-      },
-      {
-        iconSrc: '/images/icon-awakevc.svg',
-        titleKey: 'awakeTitle',
-        descKey: 'awakeDesc',
-        address: '0x36C19472D4CA942710cA9aF01a03cED4dBc6eC0a',
-      },
-      {
-        iconSrc: ethLizardsLogo.src,
-        titleKey: 'ethlizardsTitle',
-        descKey: 'ethlizardsDesc',
-        address: '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e',
-      },
-    ],
-  ],
   [
     mainnet.id,
     [
