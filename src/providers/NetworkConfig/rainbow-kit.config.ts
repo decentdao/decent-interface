@@ -32,7 +32,7 @@ export const { chains, publicClient } = configureChains(supportedWagmiChains, [
         };
       } else if (chain.id === sepolia.id) {
         return {
-          http: `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_SEPOLOA_API_KEY}`,
+          http: `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_SEPOLIA_API_KEY}`,
           webSocket: `wss://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_SEPOLIA_API_KEY}`,
         };
       }
