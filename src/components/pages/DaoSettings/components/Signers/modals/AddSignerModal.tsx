@@ -14,9 +14,9 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSigner } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
+import { useEthersSigner } from '../../../../../../hooks/utils/useEthersSigner';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { couldBeENS } from '../../../../../../utils/url';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
@@ -37,7 +37,7 @@ function AddSignerModal({
     node: { daoAddress, safe },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
-  const { data: signer } = useSigner();
+  const signer = useEthersSigner();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
   const tooltipContainer = useRef<HTMLDivElement>(null);
 

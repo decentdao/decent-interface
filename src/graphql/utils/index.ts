@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import { useProvider } from 'wagmi';
+import { useEthersProvider } from '../../hooks/utils/useEthersProvider';
 import { supportedChains } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export const useSubgraphChainName = () => {
-  const provider = useProvider();
+  const provider = useEthersProvider();
 
   const subgraphChainName = useMemo(() => {
     let chainName = provider.network.name;

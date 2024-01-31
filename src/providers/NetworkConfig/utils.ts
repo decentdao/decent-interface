@@ -5,7 +5,7 @@ import { useNetworkConfig } from './NetworkConfigProvider';
 export const useEIP1193Providers = () => {
   const { chainId } = useNetworkConfig();
 
-  // Unfortunately, useProvider from wagmi package does not return instance that compatible with EIP1193 standard
+  // Unfortunately, usePublicClient from wagmi package does not return instance that compatible with EIP1193 standard
   // And that's required for Proxy Detection
   const eip1193InfuraProvider = useMemo(
     () => new InfuraProvider(chainId, process.env.NEXT_PUBLIC_INFURA_API_KEY!),

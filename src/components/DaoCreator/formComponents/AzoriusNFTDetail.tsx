@@ -2,8 +2,9 @@ import { Flex, Box, Text } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc721ABI, useProvider } from 'wagmi';
+import { erc721ABI } from 'wagmi';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
 import { BigNumberValuePair, ERC721TokenConfig } from '../../../types';
 import { BarLoader } from '../../ui/loaders/BarLoader';
 
@@ -24,7 +25,7 @@ export default function AzoriusNFTDetail({
   const [tokenDetails, setTokenDetails] = useState<TokenDetails>();
   const { t } = useTranslation('daoCreate');
 
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const { displayName } = useDisplayName(tokenDetails?.address, true);
 
   useEffect(() => {

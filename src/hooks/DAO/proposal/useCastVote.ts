@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { useSigner } from 'wagmi';
 import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -14,6 +13,7 @@ import {
   ExtendedSnapshotProposal,
 } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
+import { useEthersSigner } from '../../utils/useEthersSigner';
 import { useTransaction } from '../../utils/useTransaction';
 import useSnapshotSpaceName from '../loaders/snapshot/useSnapshotSpaceName';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';
@@ -39,7 +39,7 @@ const useCastVote = ({
     },
   } = useFractal();
   const daoSnapshotSpaceName = useSnapshotSpaceName();
-  const { data: signer } = useSigner();
+  const signer = useEthersSigner();
   const client = useMemo(() => {
     if (daoSnapshotURL) {
       const isTestnetSnapshotURL = daoSnapshotURL.includes('testnet');

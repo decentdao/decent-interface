@@ -9,7 +9,6 @@ import {
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useMemo, useCallback, useState, useEffect } from 'react';
-import { useProvider } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { getEventRPC } from '../../../../helpers';
 import {
@@ -20,6 +19,7 @@ import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal'
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
+import { useEthersProvider } from '../../../../hooks/utils/useEthersProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
   FractalGuardContracts,
@@ -72,7 +72,7 @@ export function ManageDAOMenu({
   const { push } = useRouter();
   const {
     network: { chainId },
-  } = useProvider();
+  } = useEthersProvider();
   const safeAddress = fractalNode?.daoAddress;
 
   const { getCanUserCreateProposal } = useSubmitProposal();

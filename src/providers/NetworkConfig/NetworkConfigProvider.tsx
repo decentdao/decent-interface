@@ -1,8 +1,8 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
-import { Chain, useProvider } from 'wagmi';
+import { Chain, useNetwork } from 'wagmi';
 import { NetworkConfig } from '../../types/network';
 import { isProd } from '../../utils';
-import { goerliConfig, sepoliaConfig, mainnetConfig } from './networks';
+import { sepoliaConfig, mainnetConfig } from './networks';
 import { polygonConfig } from './networks/polygon';
 
 export const NetworkConfigContext = createContext({} as NetworkConfig);
@@ -12,8 +12,8 @@ export const useNetworkConfig = (): NetworkConfig =>
 
 // mainnet is first so it defaults to that when disconnected on production
 export const supportedChains: NetworkConfig[] = isProd()
-  ? [mainnetConfig, goerliConfig, sepoliaConfig]
-  : [goerliConfig, sepoliaConfig, mainnetConfig, polygonConfig];
+  ? [mainnetConfig, sepoliaConfig]
+  : [sepoliaConfig, mainnetConfig, polygonConfig];
 
 export const disconnectedChain: Chain = supportedChains[0].wagmiChain;
 
@@ -25,18 +25,22 @@ const getNetworkConfig = (chainId: number) => {
     if (isProd()) {
       return mainnetConfig;
     } else {
-      return goerliConfig;
+      return sepoliaConfig;
     }
   }
 };
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
-  const provider = useProvider();
-  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(provider.network.chainId));
+  const { chain } = useNetwork();
+  const [config, setConfig] = useState<NetworkConfig>(
+    getNetworkConfig(chain?.id || disconnectedChain.id)
+  );
 
   useEffect(() => {
-    setConfig(getNetworkConfig(provider.network.chainId));
-  }, [provider]);
+    if (chain) {
+      setConfig(getNetworkConfig(chain?.id));
+    }
+  }, [chain]);
 
   return <NetworkConfigContext.Provider value={config}>{children}</NetworkConfigContext.Provider>;
 }

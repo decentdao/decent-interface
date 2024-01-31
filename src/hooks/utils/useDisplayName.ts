@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Address, useEnsName, useProvider } from 'wagmi';
+import { Address, useEnsName } from 'wagmi';
+import { useEthersProvider } from './useEthersProvider';
 
 export const createAccountSubstring = (account: string) => {
   return `${account.substring(0, 6)}...${account.slice(-4)}`;
@@ -15,7 +16,7 @@ export const createAccountSubstring = (account: string) => {
  */
 const useDisplayName = (account?: string | null, truncate?: boolean) => {
   if (truncate === undefined) truncate = true;
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const networkId = provider.network.chainId;
   const { data: ensName } = useEnsName({
     address: account as Address,

@@ -1,13 +1,14 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useNetwork, useProvider } from 'wagmi';
+import { useNetwork } from 'wagmi';
 import { supportsENS } from '../../helpers';
 import { couldBeENS } from '../../utils/url';
 import { CacheKeys, CacheExpiry } from './cache/cacheDefaults';
 import { useLocalStorage } from './cache/useLocalStorage';
+import { useEthersProvider } from './useEthersProvider';
 
 const useAddress = (addressInput: string | undefined) => {
-  const provider = useProvider();
+  const provider = useEthersProvider();
 
   const [address, setAddress] = useState<string>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
@@ -78,7 +79,7 @@ const useAddress = (addressInput: string | undefined) => {
 
     provider
       .resolveName(addressInput)
-      .then(resolvedAddress => {
+      .then((resolvedAddress: any) => {
         if (!resolvedAddress) {
           // cache an unresolved address as 'undefined' for 20 minutes
           setValue(CacheKeys.ENS_RESOLVE_PREFIX + addressInput, undefined, 20);

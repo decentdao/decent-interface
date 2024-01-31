@@ -5,7 +5,6 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
-import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
@@ -15,6 +14,7 @@ import {
   FreezeGuardType,
   FreezeVotingType,
 } from '../../../types';
+import { useEthersProvider } from '../../utils/useEthersProvider';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
   // load key for component; helps prevent unnecessary calls
@@ -34,7 +34,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
   const {
     network: { chainId },
-  } = useProvider();
+  } = useEthersProvider();
 
   const getMasterCopyAddress = useCallback(
     async (proxyAddress: string): Promise<string> => {

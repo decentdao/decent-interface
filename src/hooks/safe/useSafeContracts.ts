@@ -18,14 +18,14 @@ import {
   ERC721FreezeVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
-import { useProvider } from 'wagmi';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useEthersProvider } from '../utils/useEthersProvider';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
 
 export default function useSafeContracts() {
   const signerOrProvider = useSignerOrProvider();
-  const provider = useProvider();
+  const provider = useEthersProvider();
 
   const {
     contracts: {
