@@ -1,17 +1,18 @@
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
-import { ProgressBarDelimiter } from '@decent-org/fractal-ui';
+import { useTranslation } from 'react-i18next';
 
-export default function ProgressBar({
-  value,
-  requiredValue,
-  unit = '%',
-  valueLabel,
-}: {
+interface ProgressBarProps {
   value: number;
-  requiredValue?: number;
   unit?: string;
   valueLabel?: string;
-}) {
+  showValueWithinProgressBar?: boolean;
+}
+export default function ProgressBar({
+  value,
+  unit = '%',
+  showValueWithinProgressBar = true,
+  valueLabel,
+}: ProgressBarProps) {
   return (
     <Box
       width="full"
@@ -22,7 +23,7 @@ export default function ProgressBar({
         height="24px"
         maxWidth="100%"
       />
-      {value > 0 && (
+      {showValueWithinProgressBar && value > 0 && (
         <Text
           display="inline-flex"
           alignItems="center"
@@ -37,56 +38,49 @@ export default function ProgressBar({
           {unit}
         </Text>
       )}
-      {!!(requiredValue && requiredValue > 0) && (
-        <Box
-          position="absolute"
-          top="-10px"
-          left={`${requiredValue - 0.9}%`}
-        >
-          <ProgressBarDelimiter
-            width="6px"
-            height="45px"
-          />
-        </Box>
-      )}
     </Box>
   );
 }
 
-interface ExtendedProgressBarProps {
-  label: string;
+interface QuorumProgressBarProps {
   helperText?: string;
   percentage: number;
-  requiredPercentage: number;
   unit?: string;
   valueLabel?: string;
+  reachedQuorum?: string;
+  totalQuorum?: string;
 }
 
-export function ExtendedProgressBar({
-  label,
-  helperText,
+export function QuorumProgressBar({
   percentage,
-  requiredPercentage,
   unit,
-  valueLabel,
-}: ExtendedProgressBarProps) {
+  helperText,
+  reachedQuorum,
+  totalQuorum,
+}: QuorumProgressBarProps) {
+  const { t } = useTranslation('proposal');
   return (
     <Flex
       flexWrap="wrap"
       marginTop={2}
     >
-      <Text
-        marginTop={2}
-        marginBottom={3}
-        textStyle="text-base-sans-regular"
-      >
-        {label}
-      </Text>
+      {reachedQuorum && totalQuorum && (
+        <Flex
+          width="100%"
+          marginTop={2}
+          marginBottom={3}
+          justifyContent="space-between"
+        >
+          <Text textStyle="text-base-sans-regular">{t('quorum', { ns: 'common' })}</Text>
+          <Text textStyle="text-base-sans-regular">
+            {reachedQuorum}/{totalQuorum}
+          </Text>
+        </Flex>
+      )}
       <ProgressBar
         value={Math.min(percentage, 100)}
-        valueLabel={valueLabel}
-        requiredValue={requiredPercentage}
         unit={unit}
+        showValueWithinProgressBar={false}
       />
       {helperText && (
         <Text

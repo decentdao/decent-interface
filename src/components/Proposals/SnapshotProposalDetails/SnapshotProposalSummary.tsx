@@ -1,4 +1,4 @@
-import { Text, Box, Divider, Flex } from '@chakra-ui/react';
+import { Text, Box, Divider, Flex, Tooltip } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
@@ -7,8 +7,9 @@ import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
 import ExternalLink from '../../ui/links/ExternalLink';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
-import { ExtendedProgressBar } from '../../ui/utils/ProgressBar';
+import { QuorumProgressBar } from '../../ui/utils/ProgressBar';
 import { InfoRow } from '../MultisigProposalDetails/TxDetails';
+import useSnapshotUserVotingWeight from './hooks/useSnapshotUserVotingWeight';
 import useTotalVotes from './hooks/useTotalVotes';
 
 interface ISnapshotProposalSummary {
@@ -18,6 +19,7 @@ interface ISnapshotProposalSummary {
 export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalSummary) {
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const { totalVotesCasted } = useTotalVotes({ proposal });
+  const { votingWeight } = useSnapshotUserVotingWeight({ proposal });
 
   if (!proposal) {
     return (
@@ -71,19 +73,39 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           property={t('proposalSummaryEndDate')}
           value={format(proposal.endTime * 1000, DEFAULT_DATE_TIME_FORMAT)}
         />
+        <Flex
+          marginTop={4}
+          marginBottom={4}
+          justifyContent="space-between"
+        >
+          <Text
+            textStyle="text-base-sans-regular"
+            color="chocolate.200"
+          >
+            {t('votingPower')}
+          </Text>
+          <Tooltip label={votingWeight}>
+            <Text
+              textStyle="text-base-sans-regular"
+              color="gold.500"
+            >
+              {t('show')}
+            </Text>
+          </Tooltip>
+        </Flex>
         <Divider
           color="chocolate.700"
           marginTop={4}
         />
         {!!proposal.quorum && (
           <Box marginTop={4}>
-            <ExtendedProgressBar
-              label={t('quorum', { ns: 'common' })}
+            <QuorumProgressBar
               valueLabel={`${totalVotesCasted}/${proposal.quorum}`}
               percentage={
                 proposal.quorum > 0 ? (totalVotesCasted / proposal.quorum || 1) * 100 : 100
               }
-              requiredPercentage={100}
+              reachedQuorum={totalVotesCasted.toString()}
+              totalQuorum={proposal.quorum?.toString()}
               unit=""
             />
           </Box>
