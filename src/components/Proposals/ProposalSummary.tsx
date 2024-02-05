@@ -111,6 +111,10 @@ export default function ProposalSummary({
       <Box marginTop={4}>
         <Divider color="chocolate.700" />
         <InfoRow
+          property={t('votingSystem')}
+          value={t('singleSnapshotVotingSystem')}
+        />
+        <InfoRow
           property={t('proposalSummaryStartDate')}
           value={format(startBlockTimeStamp * 1000, DEFAULT_DATE_TIME_FORMAT)}
         />
