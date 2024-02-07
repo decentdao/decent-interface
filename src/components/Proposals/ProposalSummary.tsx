@@ -230,8 +230,12 @@ export default function ProposalSummary({
           }
           totalQuorum={
             isERC721
-              ? totalVotingWeight?.toString()
-              : votesToken?.totalSupply.div(votesTokenDecimalsDenominator).toString()
+              ? strategyQuorum.toString()
+              : votesToken?.totalSupply
+                  .div(votesTokenDecimalsDenominator)
+                  .div(100)
+                  .mul(strategyQuorum)
+                  .toString()
           }
           unit={isERC20 ? '%' : ''}
         />
