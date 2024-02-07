@@ -21,7 +21,6 @@ export default function ProgressBar({
     >
       <Progress
         value={Math.min(value, 100)}
-        height="16px"
         maxWidth="100%"
       />
       {showValueWithinProgressBar && value > 0 && (
