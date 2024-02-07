@@ -1,4 +1,4 @@
-import { Text, Box, Divider, Flex, Tooltip } from '@chakra-ui/react';
+import { Text, Box, Button, Divider, Flex, Tooltip } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import { format } from 'date-fns';
 import { BigNumber } from 'ethers';
@@ -55,6 +55,9 @@ export default function ProposalSummary({
     () => BigNumber.from(10).pow(votesToken?.decimals || 0),
     [votesToken?.decimals]
   );
+  const [showVotingPower, setShowVotingPower] = useState(false);
+
+  const toggleShowVotingPower = () => setShowVotingPower(prevState => !prevState);
 
   useEffect(() => {
     async function loadProposalVotingWeight() {
@@ -104,6 +107,22 @@ export default function ProposalSummary({
       : isERC721
       ? votingStrategy.quorumThreshold!.value.toNumber()
       : 1;
+
+  const ShowVotingPowerButton = (
+    <Button
+      pr={0}
+      variant="link"
+      textStyle="text-base-sans-regular"
+      color="gold.500"
+      onClick={toggleShowVotingPower}
+    >
+      {showVotingPower
+        ? isERC721
+          ? votingWeight.toString()
+          : proposalsERC20VotingWeight
+        : t('show')}
+    </Button>
+  );
 
   return (
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
@@ -160,14 +179,11 @@ export default function ProposalSummary({
           >
             {t('votingPower')}
           </Text>
-          <Tooltip label={isERC721 ? votingWeight.toString() : proposalsERC20VotingWeight}>
-            <Text
-              textStyle="text-base-sans-regular"
-              color="gold.500"
-            >
-              {t('show')}
-            </Text>
-          </Tooltip>
+          {showVotingPower ? (
+            <Tooltip label={t('votingPowerTooltip')}>{ShowVotingPowerButton}</Tooltip>
+          ) : (
+            ShowVotingPowerButton
+          )}
         </Flex>
         {transactionHash && (
           <Flex

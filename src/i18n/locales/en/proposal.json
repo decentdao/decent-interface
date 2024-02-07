@@ -50,6 +50,7 @@
     "proposalSummaryEndDate": "End Date",
     "snapshotTaken": "Snapshot taken",
     "votingPower": "Voting power",
+    "votingPowerTooltip": "This is your voting power at a time of taking snapshot, which happens in the moment of proposal creation",
     "show": "Show",
     "proposalSupportERC20SummaryHelper": "Minimum {{quorum}}% required out of {{total}}",
     "proposalSupportERC721SummaryHelper": "Minimum {{quorum}} token votes required out {{total}}",

@@ -1,5 +1,6 @@
-import { Text, Box, Divider, Flex, Tooltip } from '@chakra-ui/react';
+import { Text, Box, Button, Divider, Flex, Tooltip } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { ExtendedSnapshotProposal } from '../../../types';
@@ -20,6 +21,9 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const { totalVotesCasted } = useTotalVotes({ proposal });
   const { votingWeight } = useSnapshotUserVotingWeight({ proposal });
+  const [showVotingPower, setShowVotingPower] = useState(false);
+
+  const toggleShowVotingPower = () => setShowVotingPower(prevState => !prevState);
 
   if (!proposal) {
     return (
@@ -41,6 +45,18 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
         return 'unknownSnapshotVotingSystem';
     }
   };
+
+  const ShowVotingPowerButton = (
+    <Button
+      pr={0}
+      variant="link"
+      textStyle="text-base-sans-regular"
+      color="gold.500"
+      onClick={toggleShowVotingPower}
+    >
+      {showVotingPower ? votingWeight : t('show')}
+    </Button>
+  );
 
   return (
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
@@ -84,14 +100,11 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           >
             {t('votingPower')}
           </Text>
-          <Tooltip label={votingWeight}>
-            <Text
-              textStyle="text-base-sans-regular"
-              color="gold.500"
-            >
-              {t('show')}
-            </Text>
-          </Tooltip>
+          {showVotingPower ? (
+            <Tooltip label={t('votingPowerTooltip')}>{ShowVotingPowerButton}</Tooltip>
+          ) : (
+            ShowVotingPowerButton
+          )}
         </Flex>
         <Divider
           color="chocolate.700"

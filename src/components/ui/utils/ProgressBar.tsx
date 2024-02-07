@@ -1,4 +1,5 @@
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
+import { Check } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 
 interface ProgressBarProps {
@@ -20,7 +21,7 @@ export default function ProgressBar({
     >
       <Progress
         value={Math.min(value, 100)}
-        height="24px"
+        height="16px"
         maxWidth="100%"
       />
       {showValueWithinProgressBar && value > 0 && (
@@ -70,9 +71,16 @@ export function QuorumProgressBar({
           marginTop={2}
           marginBottom={3}
           justifyContent="space-between"
+          alignItems="center"
         >
           <Text textStyle="text-base-sans-regular">{t('quorum', { ns: 'common' })}</Text>
           <Text textStyle="text-base-sans-regular">
+            {reachedQuorum >= totalQuorum && (
+              <Check
+                color="green.500"
+                mr={2}
+              />
+            )}
             {reachedQuorum}/{totalQuorum}
           </Text>
         </Flex>
