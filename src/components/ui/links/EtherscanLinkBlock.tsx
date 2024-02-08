@@ -8,10 +8,7 @@ interface Props extends LinkProps {
 }
 
 /**
- * A transaction link to Etherscan.
- *
- * For most use cases, you probably want to use DisplayTransaction,
- * to add proper styling.
+ * A block link to Etherscan.
  */
 export default function EtherscanLinkBlock({ blockNumber, children, ...rest }: Props) {
   const { etherscanBaseURL } = useNetworkConfig();
