@@ -16,7 +16,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   // loads base Fractal contracts with provider into state
   const baseContracts = useSafeContracts();
   // memoize fractal store
-  const { readOnlyValues } = useReadOnlyValues(state, account);
+  const { readOnlyValues, loadReadOnlyValues } = useReadOnlyValues(state, account);
   const fractalStore: FractalStore = useMemo(() => {
     return {
       node: state.node,
@@ -28,13 +28,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       readOnly: readOnlyValues,
       action: {
         dispatch,
+        loadReadOnlyValues,
         resetDAO: async () => {
           await Promise.resolve(dispatch({ type: StoreAction.RESET }));
         },
       },
       baseContracts,
     };
-  }, [state, baseContracts, readOnlyValues]);
+  }, [state, baseContracts, loadReadOnlyValues, readOnlyValues]);
 
   return <FractalContext.Provider value={fractalStore}>{children}</FractalContext.Provider>;
 }

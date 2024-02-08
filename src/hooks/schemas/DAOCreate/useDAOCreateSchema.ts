@@ -20,7 +20,6 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
     addressValidationTest,
     uniqueAddressValidationTest,
     uniqueNFTAddressValidationTest,
-    ensNameValidationTest,
   } = useValidationAddress();
   const {
     minValueValidation,
@@ -40,10 +39,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         essentials: Yup.object().shape({
           daoName: Yup.string().required(),
           governance: Yup.string().required(),
-          snapshotURL: Yup.string().when({
-            is: (value: string) => !!value,
-            then: _schema => _schema.test(ensNameValidationTest),
-          }),
+          snapshotURL: Yup.string(),
         }),
         multisig: Yup.object().when('essentials', {
           is: ({ governance }: DAOEssentials) => governance === GovernanceType.MULTISIG,
@@ -162,7 +158,6 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         }),
       }),
     [
-      ensNameValidationTest,
       isSubDAO,
       t,
       addressValidationTest,

@@ -39,19 +39,20 @@ export function VotesPercentage({
       flexWrap="wrap"
       marginTop={2}
     >
-      <Flex
-        justifyContent="space-between"
-        width="100%"
-      >
-        <Text
-          marginTop={2}
-          marginBottom={2}
+      <ProgressBar value={percentage}>
+        <Flex
+          justifyContent="space-between"
+          width="100%"
         >
-          {label}
-        </Text>
-        {children}
-      </Flex>
-      <ProgressBar value={percentage} />
+          <Text
+            marginTop={2}
+            marginBottom={2}
+          >
+            {label}
+          </Text>
+          {children}
+        </Flex>
+      </ProgressBar>
     </Flex>
   );
 }
