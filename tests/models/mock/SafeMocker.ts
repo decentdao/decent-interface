@@ -1,7 +1,7 @@
 import { Page, Request } from '@playwright/test';
 
 /**
- * https://safe-transaction-goerli.safe.global/
+ * https://safe-transaction-sepolia.safe.global/
  */
 export enum Endpoint {
   SAFE_INFO = 'v1/safes/**',
@@ -32,7 +32,7 @@ export abstract class SafeMocker {
 
   async mockWithHandler(endpoint: Endpoint, handler: (request: Request) => object) {
     await this.page.route(
-      'https://safe-transaction-goerli.safe.global/api/' + endpoint.toString(),
+      'https://safe-transaction-sepolia.safe.global/api/' + endpoint.toString(),
       async (route, request) => {
         await route.fulfill({
           body: JSON.stringify(handler(request)),

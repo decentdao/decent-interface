@@ -37,7 +37,8 @@ export const encodeFunction = (
     : undefined;
 
   const parametersFixed: Array<string | string[]> | undefined = parameters ? [] : undefined;
-  parameters?.forEach(param => {
+  let tupleIndex: number | undefined = undefined;
+  parameters?.forEach((param, i) => {
     if (param.startsWith('[') && param.endsWith(']')) {
       parametersFixed!!.push(
         param
@@ -45,6 +46,16 @@ export const encodeFunction = (
           .split(',')
           .map(p => (p = p.trim()))
       );
+    } else if (param.startsWith('(')) {
+      // This is part of tuple param, we need to re-assemble it. There should be better solution to this within splitIgnoreBrackets with regex.
+      // However, we probably want to rebuild proposal builder to be more like ProposalTemplate builder
+      tupleIndex = i;
+      parametersFixed!!.push([param.replace('(', '')]);
+    } else if (typeof tupleIndex === 'number' && !param.endsWith(')')) {
+      (parametersFixed!![tupleIndex!] as string[]).push(param);
+    } else if (param.endsWith(')')) {
+      (parametersFixed!![tupleIndex!] as string[]).push(param.replace(')', ''));
+      tupleIndex = undefined;
     } else {
       parametersFixed!!.push(param);
     }

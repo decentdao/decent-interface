@@ -2,7 +2,7 @@ sources:
   - name: fractal
     handler:
       graphql:
-        endpoint: https://api.studio.thegraph.com/query/43215/fractal-{context.chainName:goerli}/version/latest
+        endpoint: https://api.studio.thegraph.com/query/43215/fractal-{context.chainName:sepolia}/version/latest
 
 documents:
   - ./src/graphql/DAO.graphql

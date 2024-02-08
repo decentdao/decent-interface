@@ -9,15 +9,14 @@ import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contra
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { ProposalMetadata, MetaTransaction, VotingStrategyType } from '../../../../types';
-
 import { AzoriusProposal, ProposalData } from '../../../../types/daoProposal';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
 import { useAsyncRetry } from '../../../utils/useAsyncRetry';
+import { useEthersProvider } from '../../../utils/useEthersProvider';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
 export const useAzoriusProposals = () => {
@@ -34,7 +33,7 @@ export const useAzoriusProposals = () => {
       return undefined;
     }
   }, [ozLinearVotingContract, erc721LinearVotingContract]);
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const {
     network: { chainId },
   } = provider;

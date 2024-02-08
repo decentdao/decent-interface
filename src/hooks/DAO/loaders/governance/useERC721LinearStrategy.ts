@@ -7,12 +7,12 @@ import {
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect } from 'react';
-import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
+import { useEthersProvider } from '../../../utils/useEthersProvider';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC721LinearStrategy = () => {
@@ -20,7 +20,7 @@ export const useERC721LinearStrategy = () => {
     governanceContracts: { erc721LinearVotingContract, azoriusContract },
     action,
   } = useFractal();
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const {
     network: { chainId },
   } = provider;

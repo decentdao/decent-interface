@@ -2,11 +2,13 @@ import { Box, Button, Divider } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetwork, useSigner, useProvider } from 'wagmi';
+import { useNetwork } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
 import { validateAddress } from '../../../hooks/schemas/common/useValidationAddress';
+import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
+import { useEthersSigner } from '../../../hooks/utils/useEthersSigner';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { disconnectedChain } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
@@ -29,8 +31,8 @@ export default function ForkProposalTemplateModal({
 
   const { t } = useTranslation('proposalTemplate');
   const { push } = useRouter();
-  const provider = useProvider();
-  const { data: signer } = useSigner();
+  const provider = useEthersProvider();
+  const signer = useEthersSigner();
   const signerOrProvider = signer || provider;
   const { chain } = useNetwork();
   const {

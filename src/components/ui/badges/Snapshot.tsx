@@ -5,17 +5,16 @@ interface Props extends ButtonProps {
   snapshotURL: string;
 }
 
-export default function Snapshot({ snapshotURL, ...rest }: Props) {
+export default function Snapshot({ snapshotURL, mt }: Props) {
   return (
     <Button
       href={snapshotURL}
       as={Link}
       target="_blank"
       variant="secondary"
-      mt={5}
+      mt={mt || 5}
       h={6}
       w={32}
-      {...rest}
     >
       <>
         <Image

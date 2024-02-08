@@ -1,14 +1,14 @@
 import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
 import { constants, utils } from 'ethers';
 import { useCallback } from 'react';
-import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalModuleData, FractalModuleType } from '../../../types';
+import { useEthersProvider } from '../../utils/useEthersProvider';
 export const useFractalModules = () => {
   const {
     network: { chainId },
-  } = useProvider();
+  } = useEthersProvider();
   const {
     baseContracts: {
       zodiacModuleProxyFactoryContract,

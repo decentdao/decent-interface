@@ -8,7 +8,6 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useProvider } from 'wagmi';
 import { LockRelease, LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -16,6 +15,7 @@ import { GovernanceContractAction } from '../../../providers/App/governanceContr
 import { ContractConnection } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
 import { useLocalStorage } from '../../utils/cache/useLocalStorage';
+import { useEthersProvider } from '../../utils/useEthersProvider';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 const AZORIUS_MODULE_CACHE_KEY = 'azorius_module_gov_';
@@ -35,7 +35,7 @@ export const useGovernanceContracts = () => {
     action,
   } = useFractal();
 
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const signerOrProvider = useSignerOrProvider();
   const {
     network: { chainId },

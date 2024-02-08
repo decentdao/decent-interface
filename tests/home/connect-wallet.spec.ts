@@ -1,11 +1,11 @@
 import { expect, test } from '@playwright/test';
 import { HomePage } from '../models/HomePage';
 
-test('network should appear as Goerli', async ({ page }) => {
+test('network should appear as Sepolia', async ({ page }) => {
   const home = await new HomePage(page).visit();
 
   await home.clickAccountMenu();
-  await expect(page.locator('[data-testid=accountMenu-network]')).toContainText('Goerli');
+  await expect(page.locator('[data-testid=accountMenu-network]')).toContainText('Sepolia');
 });
 
 test('wallet should auto connect', async ({ page }) => {

@@ -7,7 +7,6 @@ import {
 } from '@safe-global/safe-service-client';
 import { constants, BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
-import { useProvider } from 'wagmi';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -21,6 +20,7 @@ import {
 import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
 import { getAverageBlockTime } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
+import { useEthersProvider } from './useEthersProvider';
 import { useSafeDecoder } from './useSafeDecoder';
 
 type FreezeGuardData = {
@@ -31,7 +31,7 @@ type FreezeGuardData = {
 
 export const useSafeTransactions = () => {
   const { nativeTokenSymbol } = useNetworkConfig();
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const { guardContracts } = useFractal();
   const decode = useSafeDecoder();
 

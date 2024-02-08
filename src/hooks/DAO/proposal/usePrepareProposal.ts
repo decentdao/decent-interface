@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
-import { useSigner } from 'wagmi';
 import { CreateProposalForm } from '../../../types';
 import { encodeFunction } from '../../../utils/crypto';
 import { couldBeENS } from '../../../utils/url';
+import { useEthersSigner } from '../../utils/useEthersSigner';
 
 export function usePrepareProposal() {
-  const { data: signer } = useSigner();
+  const signer = useEthersSigner();
   const prepareProposal = useCallback(
     async (values: CreateProposalForm) => {
       const { transactions, proposalMetadata } = values;

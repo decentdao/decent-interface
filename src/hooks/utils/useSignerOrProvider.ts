@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
-import { useProvider, useSigner } from 'wagmi';
+import { useEthersProvider } from './useEthersProvider';
+import { useEthersSigner } from './useEthersSigner';
 
 export default function useSignerOrProvider() {
-  const { data: signer } = useSigner();
-  const provider = useProvider();
+  const signer = useEthersSigner();
+  const provider = useEthersProvider();
 
   const signerOrProvider = useMemo(() => signer || provider, [signer, provider]);
 

@@ -1,10 +1,10 @@
 import { VotesERC20 } from '@fractal-framework/fractal-contracts';
 import { DelegateChangedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/VotesERC20';
 import { useCallback, useEffect, useRef } from 'react';
-import { useProvider } from 'wagmi';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import { useEthersProvider } from '../../../utils/useEthersProvider';
 export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) => {
   const isTokenLoaded = useRef(false);
   const tokenAccount = useRef<string>();
@@ -18,7 +18,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
 
   const {
     network: { chainId },
-  } = useProvider();
+  } = useEthersProvider();
 
   const loadERC20Token = useCallback(async () => {
     if (!tokenContract) {

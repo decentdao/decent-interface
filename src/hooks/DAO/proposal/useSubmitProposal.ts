@@ -9,7 +9,6 @@ import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useProvider, useSigner } from 'wagmi';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -25,6 +24,8 @@ import {
 } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import { getAverageBlockTime } from '../../../utils/contract';
+import { useEthersProvider } from '../../utils/useEthersProvider';
+import { useEthersSigner } from '../../utils/useEthersSigner';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
@@ -61,8 +62,8 @@ export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const loadDAOProposals = useDAOProposals();
-  const { data: signer } = useSigner();
-  const provider = useProvider();
+  const signer = useEthersSigner();
+  const provider = useEthersProvider();
 
   const {
     node: { safe, fractalModules },

@@ -3,9 +3,10 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber, constants, ethers, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20ABI, useProvider } from 'wagmi';
+import { erc20ABI } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
 import { TokenCreationType, ICreationStepProps } from '../../../types';
 import SupportTooltip from '../../ui/badges/SupportTooltip';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
@@ -40,7 +41,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   } = props;
 
   const { t } = useTranslation('daoCreate');
-  const provider = useProvider();
+  const provider = useEthersProvider();
 
   const { checkVotesToken } = usePrepareFormData();
   const [isImportedVotesToken, setIsImportedVotesToken] = useState(false);

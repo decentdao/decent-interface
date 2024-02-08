@@ -1,5 +1,7 @@
 import { Chain, Wallet } from '@rainbow-me/rainbowkit';
 import { providers } from 'ethers';
+import { createTestClient, publicActions, walletActions, http } from 'viem';
+import { hardhat } from 'viem/chains';
 import { MockConnector } from 'wagmi/connectors/mock';
 export interface MyWalletOptions {
   chains: Chain[];
@@ -11,10 +13,18 @@ export const testWallet = ({ chains }: MyWalletOptions): Wallet => ({
   iconBackground: '#0c2f78',
   downloadUrls: {},
   createConnector: () => {
+    const mockWalletClient = createTestClient({
+      account: new providers.JsonRpcProvider().getSigner()._address as any,
+      chain: hardhat,
+      mode: 'hardhat',
+      transport: http(),
+    })
+      .extend(publicActions)
+      .extend(walletActions);
     const connector = new MockConnector({
       chains,
       options: {
-        signer: new providers.JsonRpcProvider().getSigner(),
+        walletClient: mockWalletClient as any,
       },
     });
     return {

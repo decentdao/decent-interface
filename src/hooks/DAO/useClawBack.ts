@@ -2,9 +2,9 @@ import { ERC20__factory, FractalModule } from '@fractal-framework/fractal-contra
 import { ethers, utils } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useProvider } from 'wagmi';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { FractalModuleType, FractalNode } from '../../types';
+import { useEthersProvider } from '../utils/useEthersProvider';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
@@ -14,7 +14,7 @@ interface IUseClawBack {
 
 export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBack) {
   const { t } = useTranslation(['proposal', 'proposalMetadata']);
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const safeAPI = useSafeAPI();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
 

@@ -1,11 +1,12 @@
 import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
-import { Address, useEnsName, useProvider } from 'wagmi';
+import { Address, useEnsName } from 'wagmi';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { CacheKeys } from '../utils/cache/cacheDefaults';
 import { useLocalStorage } from '../utils/cache/useLocalStorage';
 import { createAccountSubstring } from '../utils/useDisplayName';
+import { useEthersProvider } from '../utils/useEthersProvider';
 
 /**
  * Gets the 'display name' for a Fractal DAO, in the following order of preference:
@@ -25,7 +26,7 @@ export default function useDAOName({
     baseContracts: { fractalRegistryContract },
   } = useFractal();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const networkId = provider.network.chainId;
 
   const { data: ensName } = useEnsName({
@@ -94,7 +95,7 @@ export default function useDAOName({
  */
 export function useLazyDAOName() {
   const { setValue, getValue } = useLocalStorage();
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const getDaoName = useCallback(
     async (_address: string, _registryName?: string | null): Promise<string> => {
       const cachedName = getValue(CacheKeys.DAO_NAME_PREFIX + _address);
