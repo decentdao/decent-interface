@@ -49,6 +49,10 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
   const ShowVotingPowerButton = (
     <Button
       pr={0}
+      py={0}
+      height="auto"
+      justifyContent="flex-end"
+      alignItems="flex-start"
       variant="link"
       textStyle="text-base-sans-regular"
       color="gold.500"
@@ -113,10 +117,6 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
         {!!proposal.quorum && (
           <Box marginTop={4}>
             <QuorumProgressBar
-              valueLabel={`${totalVotesCasted}/${proposal.quorum}`}
-              percentage={
-                proposal.quorum > 0 ? (totalVotesCasted / proposal.quorum || 1) * 100 : 100
-              }
               reachedQuorum={totalVotesCasted.toString()}
               totalQuorum={proposal.quorum?.toString()}
               unit=""

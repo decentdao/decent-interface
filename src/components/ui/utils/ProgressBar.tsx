@@ -1,58 +1,60 @@
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
 import { Check } from '@decent-org/fractal-ui';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ProgressBarProps {
   value: number;
+  children?: ReactNode;
+  max?: number;
   unit?: string;
-  valueLabel?: string;
   showValueWithinProgressBar?: boolean;
 }
 export default function ProgressBar({
   value,
+  children,
+  max = 100,
   unit = '%',
   showValueWithinProgressBar = true,
-  valueLabel,
 }: ProgressBarProps) {
   return (
-    <Box
-      width="full"
-      position="relative"
-    >
+    <Box width="full">
+      {((showValueWithinProgressBar && value > 0) || children) && (
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          {children}
+          {showValueWithinProgressBar && value > 0 && (
+            <Text
+              display="inline-flex"
+              alignItems="center"
+              height="100%"
+              right="0"
+            >
+              {Math.min(value, 100)}
+              {unit}
+            </Text>
+          )}
+        </Flex>
+      )}
       <Progress
-        value={Math.min(value, 100)}
+        value={max !== 100 ? value : Math.min(value, 100)}
+        max={max}
         maxWidth="100%"
       />
-      {showValueWithinProgressBar && value > 0 && (
-        <Text
-          display="inline-flex"
-          alignItems="center"
-          textStyle="text-sm-mono-semibold"
-          color="gold.100"
-          height="100%"
-          position="absolute"
-          top="0"
-          left={value > 50 ? `calc(${Math.min(value - 5, 90)}% - 20px)` : value / 2}
-        >
-          {valueLabel || Math.min(value, 100)}
-          {unit}
-        </Text>
-      )}
     </Box>
   );
 }
 
 interface QuorumProgressBarProps {
   helperText?: string;
-  percentage: number;
   unit?: string;
-  valueLabel?: string;
-  reachedQuorum?: string;
+  reachedQuorum: string;
   totalQuorum?: string;
 }
 
 export function QuorumProgressBar({
-  percentage,
   unit,
   helperText,
   reachedQuorum,
@@ -74,7 +76,7 @@ export function QuorumProgressBar({
         >
           <Text textStyle="text-base-sans-regular">{t('quorum', { ns: 'common' })}</Text>
           <Text textStyle="text-base-sans-regular">
-            {reachedQuorum >= totalQuorum && (
+            {parseInt(reachedQuorum) >= parseInt(totalQuorum) && (
               <Check
                 color="green.500"
                 mr={2}
@@ -85,7 +87,8 @@ export function QuorumProgressBar({
         </Flex>
       )}
       <ProgressBar
-        value={Math.min(percentage, 100)}
+        value={parseInt(reachedQuorum)}
+        max={totalQuorum ? parseInt(totalQuorum) : undefined}
         unit={unit}
         showValueWithinProgressBar={false}
       />

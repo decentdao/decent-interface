@@ -72,21 +72,6 @@ export default function ProposalSummary({
     loadProposalVotingWeight();
   }, [address, startBlock, tokenContract, votesTokenDecimalsDenominator]);
 
-  const getVotesPercentage = (voteTotal: BigNumber): number => {
-    if (type === GovernanceType.AZORIUS_ERC20) {
-      if (!votesToken?.totalSupply || votesToken.totalSupply.eq(0)) {
-        return 0;
-      }
-      return voteTotal.div(votesToken.totalSupply.div(100)).toNumber();
-    } else if (type === GovernanceType.AZORIUS_ERC721) {
-      if (totalVotesCasted.eq(0) || !erc721Tokens || !totalVotingWeight) {
-        return 0;
-      }
-      return voteTotal.mul(100).div(totalVotingWeight).toNumber();
-    }
-    return 0;
-  };
-
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;
   if (
@@ -100,17 +85,32 @@ export default function ProposalSummary({
     );
   }
 
-  const yesVotesPercentage = getVotesPercentage(yes);
   const strategyQuorum =
     votesToken && isERC20
       ? votingStrategy.quorumPercentage!.value.toNumber()
       : isERC721
       ? votingStrategy.quorumThreshold!.value.toNumber()
       : 1;
+  const reachedQuorum = isERC721
+    ? totalVotesCasted.sub(no).toString()
+    : votesToken
+    ? totalVotesCasted.sub(no).div(votesTokenDecimalsDenominator).toString()
+    : '0';
+  const totalQuorum = isERC721
+    ? strategyQuorum.toString()
+    : votesToken?.totalSupply
+        .div(votesTokenDecimalsDenominator)
+        .div(100)
+        .mul(strategyQuorum)
+        .toString();
 
   const ShowVotingPowerButton = (
     <Button
       pr={0}
+      py={0}
+      height="auto"
+      justifyContent="flex-end"
+      alignItems="flex-start"
       variant="link"
       textStyle="text-base-sans-regular"
       color="gold.500"
@@ -143,7 +143,6 @@ export default function ProposalSummary({
         />
         <Flex
           marginTop={4}
-          marginBottom={4}
           justifyContent="space-between"
         >
           <Text
@@ -170,7 +169,7 @@ export default function ProposalSummary({
         </Flex>
         <Flex
           marginTop={4}
-          marginBottom={4}
+          marginBottom={transactionHash ? 0 : 4}
           justifyContent="space-between"
         >
           <Text
@@ -217,26 +216,8 @@ export default function ProposalSummary({
                 : votesToken?.totalSupply.div(votesTokenDecimalsDenominator).toString(),
             }
           )}
-          valueLabel={
-            isERC721 ? `${yes.add(abstain).toString()}/${totalVotingWeight?.toString()}` : undefined
-          }
-          percentage={yesVotesPercentage}
-          reachedQuorum={
-            isERC721
-              ? totalVotesCasted.sub(no).toString()
-              : votesToken
-              ? totalVotesCasted.sub(no).div(votesTokenDecimalsDenominator).toString()
-              : '0'
-          }
-          totalQuorum={
-            isERC721
-              ? strategyQuorum.toString()
-              : votesToken?.totalSupply
-                  .div(votesTokenDecimalsDenominator)
-                  .div(100)
-                  .mul(strategyQuorum)
-                  .toString()
-          }
+          reachedQuorum={reachedQuorum}
+          totalQuorum={totalQuorum}
           unit={isERC20 ? '%' : ''}
         />
       </Box>
