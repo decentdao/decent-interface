@@ -50,11 +50,11 @@ export const encodeFunction = (
       // This is part of tuple param, we need to re-assemble it. There should be better solution to this within splitIgnoreBrackets with regex.
       // However, we probably want to rebuild proposal builder to be more like ProposalTemplate builder
       tupleIndex = i;
-      parametersFixed!!.push(param + ',');
+      parametersFixed!!.push([param.replace('(', '')]);
     } else if (typeof tupleIndex === 'number' && !param.endsWith(')')) {
-      parametersFixed!![tupleIndex!] = parametersFixed!![tupleIndex!] + param + ',';
+      (parametersFixed!![tupleIndex!] as string[]).push(param);
     } else if (param.endsWith(')')) {
-      parametersFixed!![tupleIndex!] = parametersFixed!![tupleIndex!] + param;
+      (parametersFixed!![tupleIndex!] as string[]).push(param.replace(')', ''));
       tupleIndex = undefined;
     } else {
       parametersFixed!!.push(param);
