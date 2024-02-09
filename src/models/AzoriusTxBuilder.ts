@@ -384,7 +384,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
           '0x0000000000000000000000000000000000000001', // Azorius module
           azoriusGovernanceDaoData.votingPeriod,
           BigNumber.from(1), // proposer weight, how much is needed to create a proposal.
-          azoriusGovernanceDaoData.quorumPercentage, // quorom numerator, denominator is 1,000,000, so quorum percentage is 50%
+          azoriusGovernanceDaoData.quorumPercentage.mul(10000), // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
           BigNumber.from(500000), // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
         ]
       );

@@ -87,7 +87,10 @@ export default function ProposalSummary({
 
   const strategyQuorum =
     votesToken && isERC20
-      ? votingStrategy.quorumPercentage!.value.toNumber()
+      ? votingStrategy
+          .quorumPercentage!.value.mul(100)
+          .div(votingStrategy.quorumDenominator?.value || 1000000)
+          .toNumber()
       : isERC721
       ? votingStrategy.quorumThreshold!.value.toNumber()
       : 1;
