@@ -87,10 +87,7 @@ export default function ProposalSummary({
 
   const strategyQuorum =
     votesToken && isERC20
-      ? votingStrategy
-          .quorumPercentage!.value.mul(100)
-          .div(votingStrategy.quorumDenominator?.value || 1000000)
-          .toNumber()
+      ? votingStrategy.quorumPercentage!.value.toNumber()
       : isERC721
       ? votingStrategy.quorumThreshold!.value.toNumber()
       : 1;
@@ -106,6 +103,8 @@ export default function ProposalSummary({
         .div(100)
         .mul(strategyQuorum)
         .toString();
+
+  console.log(strategyQuorum, reachedQuorum, totalQuorum);
 
   const ShowVotingPowerButton = (
     <Button

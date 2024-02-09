@@ -48,9 +48,6 @@ export const useERC20LinearStrategy = () => {
         value: quorumPercentage,
         formatted: quorumPercentage.toString() + '%',
       },
-      quorumDenominator: {
-        value: quorumDenominator,
-      },
       timeLockPeriod: {
         value: BigNumber.from(timeLockPeriodValue),
         formatted: getTimeDuration(timeLockPeriodValue),
