@@ -308,7 +308,6 @@ export interface VotingStrategyAzorius extends VotingStrategy {
 export interface VotingStrategy<Type = BNFormattedPair> {
   votingPeriod?: Type;
   quorumPercentage?: Type;
-  quorumDenominator?: Type;
   quorumThreshold?: Type;
   timeLockPeriod?: Type;
 }
