@@ -104,8 +104,6 @@ export default function ProposalSummary({
         .mul(strategyQuorum)
         .toString();
 
-  console.log(strategyQuorum, reachedQuorum, totalQuorum);
-
   const ShowVotingPowerButton = (
     <Button
       pr={0}
