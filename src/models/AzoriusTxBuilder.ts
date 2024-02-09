@@ -93,10 +93,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public async init() {
-    await this.setPredictedAddresses();
-  }
-
-  private async setPredictedAddresses() {
     await this.setPredictedStrategyAddress();
     this.setPredictedAzoriusAddress();
     this.setContracts();
@@ -115,8 +111,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         this.setPredictedTokenClaimAddress();
       }
     }
-
-    return this;
   }
 
   public buildRemoveOwners(owners: string[]): SafeTransaction[] {
