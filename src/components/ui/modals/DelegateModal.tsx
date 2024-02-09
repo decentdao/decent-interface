@@ -22,11 +22,11 @@ export function DelegateModal({ close }: { close: Function }) {
     governance,
     governanceContracts: { tokenContract, lockReleaseContract },
     readOnly: { user },
+    action: { loadReadOnlyValues },
   } = useFractal();
 
   const signer = useEthersSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
-
   const decentGovernance = azoriusGovernance as DecentGovernance;
   const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken?.delegatee);
   const lockedDelegateeDisplayName = useDisplayName(decentGovernance?.lockedVotesToken?.delegatee);
@@ -56,7 +56,8 @@ export function DelegateModal({ close }: { close: Function }) {
     delegateVote({
       delegatee: validAddress,
       votingTokenContract: lockReleaseContract.asSigner,
-      successCallback: () => {
+      successCallback: async () => {
+        await loadReadOnlyValues();
         close();
       },
     });

@@ -1,5 +1,6 @@
-import { Text, Box, Divider, Flex } from '@chakra-ui/react';
+import { Text, Box, Button, Divider, Flex, Tooltip } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { ExtendedSnapshotProposal } from '../../../types';
@@ -7,8 +8,9 @@ import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
 import ExternalLink from '../../ui/links/ExternalLink';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
-import { ExtendedProgressBar } from '../../ui/utils/ProgressBar';
+import { QuorumProgressBar } from '../../ui/utils/ProgressBar';
 import { InfoRow } from '../MultisigProposalDetails/TxDetails';
+import useSnapshotUserVotingWeight from './hooks/useSnapshotUserVotingWeight';
 import useTotalVotes from './hooks/useTotalVotes';
 
 interface ISnapshotProposalSummary {
@@ -18,6 +20,10 @@ interface ISnapshotProposalSummary {
 export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalSummary) {
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const { totalVotesCasted } = useTotalVotes({ proposal });
+  const { votingWeight } = useSnapshotUserVotingWeight({ proposal });
+  const [showVotingPower, setShowVotingPower] = useState(false);
+
+  const toggleShowVotingPower = () => setShowVotingPower(prevState => !prevState);
 
   if (!proposal) {
     return (
@@ -39,6 +45,22 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
         return 'unknownSnapshotVotingSystem';
     }
   };
+
+  const ShowVotingPowerButton = (
+    <Button
+      pr={0}
+      py={0}
+      height="auto"
+      justifyContent="flex-end"
+      alignItems="flex-start"
+      variant="link"
+      textStyle="text-base-sans-regular"
+      color="gold.500"
+      onClick={toggleShowVotingPower}
+    >
+      {showVotingPower ? votingWeight : t('show')}
+    </Button>
+  );
 
   return (
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
@@ -71,19 +93,32 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           property={t('proposalSummaryEndDate')}
           value={format(proposal.endTime * 1000, DEFAULT_DATE_TIME_FORMAT)}
         />
+        <Flex
+          marginTop={4}
+          marginBottom={4}
+          justifyContent="space-between"
+        >
+          <Text
+            textStyle="text-base-sans-regular"
+            color="chocolate.200"
+          >
+            {t('votingPower')}
+          </Text>
+          {showVotingPower ? (
+            <Tooltip label={t('votingPowerTooltip')}>{ShowVotingPowerButton}</Tooltip>
+          ) : (
+            ShowVotingPowerButton
+          )}
+        </Flex>
         <Divider
           color="chocolate.700"
           marginTop={4}
         />
         {!!proposal.quorum && (
           <Box marginTop={4}>
-            <ExtendedProgressBar
-              label={t('quorum', { ns: 'common' })}
-              valueLabel={`${totalVotesCasted}/${proposal.quorum}`}
-              percentage={
-                proposal.quorum > 0 ? (totalVotesCasted / proposal.quorum || 1) * 100 : 100
-              }
-              requiredPercentage={100}
+            <QuorumProgressBar
+              reachedQuorum={totalVotesCasted.toString()}
+              totalQuorum={proposal.quorum?.toString()}
               unit=""
             />
           </Box>

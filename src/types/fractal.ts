@@ -197,6 +197,7 @@ export interface FractalStore extends Fractal {
   baseContracts: FractalContracts;
   action: {
     dispatch: Dispatch<FractalActions>;
+    loadReadOnlyValues: () => Promise<void>;
     resetDAO: () => Promise<void>;
   };
 }

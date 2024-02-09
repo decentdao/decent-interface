@@ -107,21 +107,6 @@ export const useValidationAddress = () => {
     };
   }, [signerOrProvider, addressValidationMap, t]);
 
-  const ensNameValidationTest = useMemo(() => {
-    return {
-      name: 'ENS Name Validation',
-      message: t('errorInvalidENSName', { ns: 'common' }),
-      test: function (ensName: string | undefined) {
-        if (!ensName) return false;
-        const { validation } = validateENSName({ ensName });
-        if (validation.isValidAddress) {
-          addressValidationMap.current.set(ensName, validation);
-        }
-        return validation.isValidAddress;
-      },
-    };
-  }, [addressValidationMap, t]);
-
   const addressValidationTestSimple = useMemo(() => {
     return {
       name: 'Address Validation',
@@ -222,7 +207,6 @@ export const useValidationAddress = () => {
   return {
     addressValidationTestSimple,
     addressValidationTest,
-    ensNameValidationTest,
     newSignerValidationTest,
     uniqueAddressValidationTest,
     uniqueNFTAddressValidationTest,

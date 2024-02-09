@@ -37,7 +37,6 @@ export const useERC20LinearStrategy = () => {
       ]);
 
     const quorumPercentage = quorumNumerator.mul(100).div(quorumDenominator);
-
     const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, provider);
     const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, provider);
     const votingData = {

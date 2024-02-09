@@ -1,92 +1,96 @@
 import { Box, Flex, Progress, Text } from '@chakra-ui/react';
-import { ProgressBarDelimiter } from '@decent-org/fractal-ui';
+import { Check } from '@decent-org/fractal-ui';
+import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 
+interface ProgressBarProps {
+  value: number;
+  children?: ReactNode;
+  max?: number;
+  unit?: string;
+  showValueWithinProgressBar?: boolean;
+}
 export default function ProgressBar({
   value,
-  requiredValue,
+  children,
+  max = 100,
   unit = '%',
-  valueLabel,
-}: {
-  value: number;
-  requiredValue?: number;
-  unit?: string;
-  valueLabel?: string;
-}) {
+  showValueWithinProgressBar = true,
+}: ProgressBarProps) {
   return (
-    <Box
-      width="full"
-      position="relative"
-    >
+    <Box width="full">
+      {((showValueWithinProgressBar && value > 0) || children) && (
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          {children}
+          {showValueWithinProgressBar && value > 0 && (
+            <Text
+              display="inline-flex"
+              alignItems="center"
+              height="100%"
+              right="0"
+            >
+              {Math.min(value, 100)}
+              {unit}
+            </Text>
+          )}
+        </Flex>
+      )}
       <Progress
-        value={Math.min(value, 100)}
-        height="24px"
+        value={max !== 100 ? value : Math.min(value, 100)}
+        max={max}
         maxWidth="100%"
       />
-      {value > 0 && (
-        <Text
-          display="inline-flex"
-          alignItems="center"
-          textStyle="text-sm-mono-semibold"
-          color="gold.100"
-          height="100%"
-          position="absolute"
-          top="0"
-          left={value > 50 ? `calc(${Math.min(value - 5, 90)}% - 20px)` : value / 2}
-        >
-          {valueLabel || Math.min(value, 100)}
-          {unit}
-        </Text>
-      )}
-      {!!(requiredValue && requiredValue > 0) && (
-        <Box
-          position="absolute"
-          top="-10px"
-          left={`${requiredValue - 0.9}%`}
-        >
-          <ProgressBarDelimiter
-            width="6px"
-            height="45px"
-          />
-        </Box>
-      )}
     </Box>
   );
 }
 
-interface ExtendedProgressBarProps {
-  label: string;
+interface QuorumProgressBarProps {
   helperText?: string;
-  percentage: number;
-  requiredPercentage: number;
   unit?: string;
-  valueLabel?: string;
+  reachedQuorum: string;
+  totalQuorum?: string;
 }
 
-export function ExtendedProgressBar({
-  label,
-  helperText,
-  percentage,
-  requiredPercentage,
+export function QuorumProgressBar({
   unit,
-  valueLabel,
-}: ExtendedProgressBarProps) {
+  helperText,
+  reachedQuorum,
+  totalQuorum,
+}: QuorumProgressBarProps) {
+  const { t } = useTranslation('proposal');
   return (
     <Flex
       flexWrap="wrap"
       marginTop={2}
     >
-      <Text
-        marginTop={2}
-        marginBottom={3}
-        textStyle="text-base-sans-regular"
-      >
-        {label}
-      </Text>
+      {reachedQuorum && totalQuorum && (
+        <Flex
+          width="100%"
+          marginTop={2}
+          marginBottom={3}
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Text textStyle="text-base-sans-regular">{t('quorum', { ns: 'common' })}</Text>
+          <Text textStyle="text-base-sans-regular">
+            {parseInt(reachedQuorum) >= parseInt(totalQuorum) && (
+              <Check
+                color="green.500"
+                mr={2}
+              />
+            )}
+            {reachedQuorum}/{totalQuorum}
+          </Text>
+        </Flex>
+      )}
       <ProgressBar
-        value={Math.min(percentage, 100)}
-        valueLabel={valueLabel}
-        requiredValue={requiredPercentage}
+        value={parseInt(reachedQuorum)}
+        max={totalQuorum ? parseInt(totalQuorum) : undefined}
         unit={unit}
+        showValueWithinProgressBar={false}
       />
       {helperText && (
         <Text

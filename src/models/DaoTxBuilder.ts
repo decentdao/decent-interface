@@ -75,7 +75,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     shouldSetSnapshot: boolean = true,
     existingSafe?: { owners: string[] }
   ): Promise<string> {
-    const azoriusTxBuilder = this.txBuilderFactory.createAzoriusTxBuilder();
+    const azoriusTxBuilder = await this.txBuilderFactory.createAzoriusTxBuilder();
 
     // transactions that must be called by safe
     this.internalTxs = [];
