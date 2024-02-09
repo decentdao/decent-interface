@@ -90,22 +90,33 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         }
       }
     }
+  }
 
-    this.setPredictedStrategyAddress();
+  public async init() {
+    await this.setPredictedAddresses();
+  }
+
+  private async setPredictedAddresses() {
+    await this.setPredictedStrategyAddress();
     this.setPredictedAzoriusAddress();
     this.setContracts();
 
-    if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
-      daoData = daoData as AzoriusERC20DAO;
+    if (
+      (this.daoData as AzoriusERC20DAO | AzoriusERC721DAO).votingStrategyType ===
+      VotingStrategyType.LINEAR_ERC20
+    ) {
+      const azoriusDAOData = this.daoData as AzoriusERC20DAO;
       if (
-        parentTokenAddress &&
-        daoData.parentAllocationAmount &&
-        !daoData.parentAllocationAmount.isZero()
+        this.parentTokenAddress &&
+        azoriusDAOData.parentAllocationAmount &&
+        !azoriusDAOData.parentAllocationAmount.isZero()
       ) {
         this.setEncodedSetupTokenClaimData();
         this.setPredictedTokenClaimAddress();
       }
     }
+
+    return this;
   }
 
   public buildRemoveOwners(owners: string[]): SafeTransaction[] {
@@ -373,9 +384,11 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     );
   }
 
-  private setPredictedStrategyAddress() {
+  private async setPredictedStrategyAddress() {
     const azoriusGovernanceDaoData = this.daoData as AzoriusGovernanceDAO;
     if (azoriusGovernanceDaoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
+      const quorumDenominator =
+        await this.azoriusContracts!.linearVotingMasterCopyContract.QUORUM_DENOMINATOR();
       const encodedStrategyInitParams = defaultAbiCoder.encode(
         ['address', 'address', 'address', 'uint32', 'uint256', 'uint256', 'uint256'],
         [
@@ -384,7 +397,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
           '0x0000000000000000000000000000000000000001', // Azorius module
           azoriusGovernanceDaoData.votingPeriod,
           BigNumber.from(1), // proposer weight, how much is needed to create a proposal.
-          azoriusGovernanceDaoData.quorumPercentage.mul(10000), // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
+          azoriusGovernanceDaoData.quorumPercentage.mul(quorumDenominator.div(100)), // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
           BigNumber.from(500000), // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
         ]
       );

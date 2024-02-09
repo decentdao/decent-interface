@@ -118,8 +118,8 @@ export class TxBuilderFactory extends BaseTxBuilder {
     );
   }
 
-  public createAzoriusTxBuilder(): AzoriusTxBuilder {
-    return new AzoriusTxBuilder(
+  public async createAzoriusTxBuilder(): Promise<AzoriusTxBuilder> {
+    const azoriusTxBuilder = new AzoriusTxBuilder(
       this.signerOrProvider,
       this.baseContracts,
       this.azoriusContracts!,
@@ -129,5 +129,8 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.parentAddress,
       this.parentTokenAddress
     );
+
+    await azoriusTxBuilder.init();
+    return azoriusTxBuilder;
   }
 }
