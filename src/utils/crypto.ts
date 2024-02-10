@@ -61,10 +61,32 @@ export const encodeFunction = (
     }
   });
 
+  const boolify = (parameter: string) => {
+    if (['false'].includes(parameter.toLowerCase())) {
+      return false;
+    } else if (['true'].includes(parameter.toLowerCase())) {
+      return true;
+    } else {
+      return parameter;
+    }
+  };
+
+  const parametersFixedWithBool = parametersFixed?.map(parameter => {
+    if (typeof parameter === 'string') {
+      return boolify(parameter);
+    } else if (Array.isArray(parameter)) {
+      return parameter.map(innerParameter => {
+        return boolify(innerParameter);
+      });
+    } else {
+      throw new Error('parameter type not as expected');
+    }
+  });
+
   try {
     return new utils.Interface([functionSignature]).encodeFunctionData(
       _functionName,
-      parametersFixed
+      parametersFixedWithBool
     );
   } catch (e) {
     logError(e);
