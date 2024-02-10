@@ -36,3 +36,27 @@ test('Function encoding with [uint8=100]', () => {
   const encoded = new utils.Interface(['function foo(uint8)']).encodeFunctionData('foo', [100]);
   expect(encodeFunction('foo', 'uint8', '100')).toEqual(encoded);
 });
+
+test('Function encoding with [string="true"]', () => {
+  const encoded = new utils.Interface(['function foo(string)']).encodeFunctionData('foo', ['true']);
+  expect(encodeFunction('foo', 'string', 'true')).toEqual(encoded);
+});
+
+test('Function encoding with [string="false"]', () => {
+  const encoded = new utils.Interface(['function foo(string)']).encodeFunctionData('foo', [
+    'false',
+  ]);
+  expect(encodeFunction('foo', 'string', 'false')).toEqual(encoded);
+});
+
+test('Function encoding with [string=""', () => {
+  const encoded = new utils.Interface(['function foo(string)']).encodeFunctionData('foo', ['']);
+  expect(encodeFunction('foo', 'string', '')).toEqual(encoded);
+});
+
+test('Function encoding with [string="hello, world"', () => {
+  const encoded = new utils.Interface(['function foo(string)']).encodeFunctionData('foo', [
+    'hello, world',
+  ]);
+  expect(encodeFunction('foo', 'string', 'hello, world')).toEqual(encoded);
+});
