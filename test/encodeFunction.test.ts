@@ -12,10 +12,10 @@ test('Function encoding with [boolean=true]', () => {
   expect(encodeFunction('foo', 'bool', 'true')).toEqual(encoded);
 });
 
-// test('Function encoding with [boolean=false]', () => {
-//   const encoded = new utils.Interface(['function foo(bool)']).encodeFunctionData('foo', [false]);
-//   expect(encodeFunction('foo', 'bool', 'false')).toEqual(encoded);
-// });
+test('Function encoding with [boolean=false]', () => {
+  const encoded = new utils.Interface(['function foo(bool)']).encodeFunctionData('foo', [false]);
+  expect(encodeFunction('foo', 'bool', 'false')).toEqual(encoded);
+});
 
 test('Function encoding with [uint=0]', () => {
   const encoded = new utils.Interface(['function foo(uint)']).encodeFunctionData('foo', [0]);
