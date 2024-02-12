@@ -94,7 +94,7 @@ export function VoteContextProvider({
         } else if (type === GovernanceType.AZORIUS_ERC20) {
           newCanVote =
             (
-              await ozLinearVotingContract!.asSigner.getVotingWeight(
+              await ozLinearVotingContract!.asProvider.getVotingWeight(
                 user.address,
                 proposal.proposalId
               )

@@ -4,11 +4,8 @@ import { useCallback } from 'react';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalModuleData, FractalModuleType } from '../../../types';
-import { useEthersProvider } from '../../utils/useEthersProvider';
+
 export const useFractalModules = () => {
-  const {
-    network: { chainId },
-  } = useEthersProvider();
   const {
     baseContracts: {
       zodiacModuleProxyFactoryContract,
@@ -19,7 +16,7 @@ export const useFractalModules = () => {
 
   const lookupModules = useCallback(
     async (_moduleAddresses: string[]) => {
-      const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
+      const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
       const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
         const filter = rpc.filters.ModuleProxyCreation(proxyAddress, null);
         return rpc.queryFilter(filter).then(proxiesCreated => {
@@ -36,16 +33,16 @@ export const useFractalModules = () => {
 
           if (
             utils.getAddress(masterCopyAddress) ===
-            fractalAzoriusMasterCopyContract.asSigner.address
+            fractalAzoriusMasterCopyContract.asProvider.address
           ) {
             safeModule = {
-              moduleContract: fractalAzoriusMasterCopyContract.asSigner.attach(moduleAddress),
+              moduleContract: fractalAzoriusMasterCopyContract.asProvider.attach(moduleAddress),
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.AZORIUS,
             };
-          } else if (masterCopyAddress === fractalModuleMasterCopyContract.asSigner.address) {
+          } else if (masterCopyAddress === fractalModuleMasterCopyContract.asProvider.address) {
             safeModule = {
-              moduleContract: fractalModuleMasterCopyContract.asSigner.attach(moduleAddress),
+              moduleContract: fractalModuleMasterCopyContract.asProvider.attach(moduleAddress),
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.FRACTAL,
             };
@@ -66,7 +63,6 @@ export const useFractalModules = () => {
       zodiacModuleProxyFactoryContract,
       fractalAzoriusMasterCopyContract,
       fractalModuleMasterCopyContract,
-      chainId,
     ]
   );
   return lookupModules;

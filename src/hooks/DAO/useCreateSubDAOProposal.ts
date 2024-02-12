@@ -39,11 +39,14 @@ export const useCreateSubDAOProposal = () => {
         const { safeTx, predictedSafeAddress } = builtSafeTx;
 
         const proposalData: ProposalExecuteData = {
-          targets: [multiSendContract.asSigner.address, fractalRegistryContract.asSigner.address],
+          targets: [
+            multiSendContract.asProvider.address,
+            fractalRegistryContract.asProvider.address,
+          ],
           values: [BigNumber.from('0'), BigNumber.from('0')],
           calldatas: [
-            multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [safeTx]),
-            fractalRegistryContract.asSigner.interface.encodeFunctionData('declareSubDAO', [
+            multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [safeTx]),
+            fractalRegistryContract.asProvider.interface.encodeFunctionData('declareSubDAO', [
               predictedSafeAddress,
             ]),
           ],

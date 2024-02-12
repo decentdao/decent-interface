@@ -1,6 +1,6 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { BigNumber, Contract, constants, utils, BigNumberish, Signer } from 'ethers';
-import { sepolia, mainnet, polygon } from 'wagmi/chains';
+import { sepolia, mainnet } from 'wagmi/chains';
 import { ContractConnection } from '../types';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
 
@@ -183,31 +183,10 @@ export const encodeMultiSend = (txs: MetaTransaction[]): string => {
 };
 
 /**
- * Explained by our future overlord, ChatGPT:
- *
- * On networks like Polygon where block times are very short, events cannot be
- * looked up without specifying a starting block number. If a user connects their
- * Metamask wallet to Polygon as a public provider, attempting to load events in
- * this way would cause it to fail, resulting in reduced performance and a high
- * probability of failure.
- *
- * While power users can swap out the remote procedure call (RPC) in their
- * Metamask for a custom one, this option is not feasible for most users. As a
- * solution, the contract can be used as a provider with our own keys, allowing
- * us to use our own rate limits.
- *
- * This gave rise to the idea of updating the useSafeContracts hook to enable
- * connections as signers (using a connected wallet) or using our own keys as
- * providers. The asSigner option is essentially connecting as a signer or provider,
- * making it the ideal choice for most normal use cases.
+ * TODO: Remove getEventRPC usage as whole
  */
-export function getEventRPC<T>(connection: ContractConnection<T>, chainId: number): T {
-  switch (chainId) {
-    case polygon.id:
-      return connection.asProvider;
-    default:
-      return connection.asSigner;
-  }
+export function getEventRPC<T>(connection: ContractConnection<T>): T {
+  return connection.asProvider;
 }
 
 export function supportsENS(chainId: number): boolean {

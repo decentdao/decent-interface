@@ -55,25 +55,25 @@ const useDeployAzorius = () => {
       let azoriusContracts;
 
       azoriusContracts = {
-        fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asSigner,
-        linearVotingMasterCopyContract: linearVotingMasterCopyContract.asSigner,
-        azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asSigner,
-        votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
-        claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
-        votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asSigner,
+        fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asProvider,
+        linearVotingMasterCopyContract: linearVotingMasterCopyContract.asProvider,
+        azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asProvider,
+        votesTokenMasterCopyContract: votesTokenMasterCopyContract.asProvider,
+        claimingMasterCopyContract: claimingMasterCopyContract.asProvider,
+        votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asProvider,
       } as AzoriusContracts;
 
       const baseContracts = {
-        fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asSigner,
-        fractalRegistryContract: fractalRegistryContract.asSigner,
-        safeFactoryContract: safeFactoryContract.asSigner,
-        safeSingletonContract: safeSingletonContract.asSigner,
-        multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
-        multiSendContract: multiSendContract.asSigner,
-        freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
-        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
-        zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
-        keyValuePairsContract: keyValuePairsContract.asSigner,
+        fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asProvider,
+        fractalRegistryContract: fractalRegistryContract.asProvider,
+        safeFactoryContract: safeFactoryContract.asProvider,
+        safeSingletonContract: safeSingletonContract.asProvider,
+        multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asProvider,
+        multiSendContract: multiSendContract.asProvider,
+        freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asProvider,
+        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asProvider,
+        zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asProvider,
+        keyValuePairsContract: keyValuePairsContract.asProvider,
       } as BaseContracts;
 
       const txBuilderFactory = new TxBuilderFactory(
@@ -93,14 +93,14 @@ const useDeployAzorius = () => {
       });
 
       const proposalData: ProposalExecuteData = {
-        targets: [daoAddress, multiSendContract.asSigner.address],
+        targets: [daoAddress, multiSendContract.asProvider.address],
         values: [BigNumber.from('0'), BigNumber.from('0')],
         calldatas: [
-          safeSingletonContract.asSigner.interface.encodeFunctionData('addOwnerWithThreshold', [
-            multiSendContract.asSigner.address,
+          safeSingletonContract.asProvider.interface.encodeFunctionData('addOwnerWithThreshold', [
+            multiSendContract.asProvider.address,
             1,
           ]),
-          multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [safeTx]),
+          multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [safeTx]),
         ],
         metaData: {
           title: '',
