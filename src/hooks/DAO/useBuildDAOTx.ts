@@ -136,7 +136,7 @@ const useBuildDAOTx = () => {
           parentVotingStrategyType === VotingStrategyType.LINEAR_ERC721 &&
           erc721LinearVotingContract
         ) {
-          parentVotingStrategyAddress = erc721LinearVotingContract.asSigner.address;
+          parentVotingStrategyAddress = erc721LinearVotingContract.asProvider.address;
         }
       }
 

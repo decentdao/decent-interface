@@ -135,11 +135,11 @@ export default function useSubmitProposal() {
           return checkIsMultisigOwner(owners);
         } else if (type === GovernanceType.AZORIUS_ERC20) {
           if (ozLinearVotingContract && user.address) {
-            return ozLinearVotingContract.asSigner.isProposer(user.address);
+            return ozLinearVotingContract.asProvider.isProposer(user.address);
           }
         } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (erc721LinearVotingContract) {
-            return erc721LinearVotingContract.asSigner.isProposer(user.address);
+            return erc721LinearVotingContract.asProvider.isProposer(user.address);
           }
         } else {
           return false;
@@ -217,7 +217,7 @@ export default function useSubmitProposal() {
             return;
           }
           // Need to wrap it in Multisend function call
-          to = multiSendContract.asSigner.address;
+          to = multiSendContract.asProvider.address;
 
           const tempData = proposalData.targets.map((target, index) => {
             return {
@@ -228,7 +228,7 @@ export default function useSubmitProposal() {
             } as MetaTransaction;
           });
 
-          data = multiSendContract.asSigner.interface.encodeFunctionData('multiSend', [
+          data = multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [
             encodeMultiSend(tempData),
           ]);
 
@@ -396,9 +396,9 @@ export default function useSubmitProposal() {
         }
       } else {
         const votingStrategyAddress =
-          ozLinearVotingContract?.asSigner.address ||
-          erc721LinearVotingContract?.asSigner.address ||
-          freezeVotingContract?.asSigner.address;
+          ozLinearVotingContract?.asProvider.address ||
+          erc721LinearVotingContract?.asProvider.address ||
+          freezeVotingContract?.asProvider.address;
 
         if (!globalAzoriusContract || !votingStrategyAddress) {
           await submitMultisigProposal({

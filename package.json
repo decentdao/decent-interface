@@ -62,7 +62,7 @@
     "build:windows": "for /F \"delims=\" %I in ('git rev-parse HEAD') do set \"NEXT_PUBLIC_GIT_HASH=%I\" && next build",
     "graphql:build": "graphclient build",
     "graphql:dev-server": "graphclient serve-dev",
-    "test": "npm run set:env & next test",
+    "test": "vitest --dir=test",
     "prepare": "husky install",
     "tests": "playwright test"
   },
@@ -86,10 +86,12 @@
     "@graphprotocol/client-cli": "^2.2.20",
     "@playwright/test": "^1.32.3",
     "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.2.1",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
+    "@vitejs/plugin-react": "^4.2.1",
     "encoding": "^0.1.13",
     "eslint": "^8.22.0",
     "eslint-config-airbnb-typescript": "^17.1.0",
@@ -97,9 +99,11 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "husky": "^8.0.0",
+    "jsdom": "^24.0.0",
     "playwright": "^1.32.3",
     "prettier": "^2.7.1",
     "typescript": "^5.0.4",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "vitest": "^1.2.2"
   }
 }

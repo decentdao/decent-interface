@@ -122,7 +122,7 @@ export const mapProposalCreatedEventToProposal = async (
   const quorum = await getQuorum(strategyContract, strategyType, proposalId);
 
   const deadlineSeconds = await getTimeStamp(endBlock, provider);
-  const state = await getAzoriusProposalState(azoriusContract.asSigner, proposalId);
+  const state = await getAzoriusProposalState(azoriusContract.asProvider, proposalId);
   const votes = await getProposalVotes(strategyContract, proposalId);
   const block = await provider.getBlock(startBlock);
   const votesSummary = {
@@ -136,8 +136,8 @@ export const mapProposalCreatedEventToProposal = async (
 
   let transactionHash: string | undefined;
   if (state === FractalProposalState.EXECUTED) {
-    const proposalExecutedFilter = azoriusContract.asSigner.filters.ProposalExecuted();
-    const proposalExecutedEvents = await azoriusContract.asSigner.queryFilter(
+    const proposalExecutedFilter = azoriusContract.asProvider.filters.ProposalExecuted();
+    const proposalExecutedEvents = await azoriusContract.asProvider.queryFilter(
       proposalExecutedFilter
     );
     const executedEvent = proposalExecutedEvents.find(event =>

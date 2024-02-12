@@ -19,7 +19,6 @@ import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal'
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
-import { useEthersProvider } from '../../../../hooks/utils/useEthersProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
   FractalGuardContracts,
@@ -70,9 +69,6 @@ export function ManageDAOMenu({
   } = useFractal();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { push } = useRouter();
-  const {
-    network: { chainId },
-  } = useEthersProvider();
   const safeAddress = fractalNode?.daoAddress;
 
   const { getCanUserCreateProposal } = useSubmitProposal();
@@ -111,12 +107,12 @@ export function ManageDAOMenu({
                 azoriusModule.moduleAddress
               ),
             };
-            const votingContractAddress = await getEventRPC<Azorius>(azoriusContract, chainId)
+            const votingContractAddress = await getEventRPC<Azorius>(azoriusContract)
               .queryFilter((azoriusModule.moduleContract as Azorius).filters.EnabledStrategy())
               .then(strategiesEnabled => {
                 return strategiesEnabled[0].args.strategy;
               });
-            const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
+            const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
             const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
             const votingContractMasterCopyAddress = await rpc
               .queryFilter(filter)
@@ -143,7 +139,6 @@ export function ManageDAOMenu({
 
     loadGovernanceType();
   }, [
-    chainId,
     fractalAzoriusMasterCopyContract,
     linearVotingERC721MasterCopyContract,
     linearVotingMasterCopyContract,

@@ -21,7 +21,7 @@ export default function useUpdateProposalState({
       if (!azoriusContract) {
         return;
       }
-      const newState = await getAzoriusProposalState(azoriusContract.asSigner, proposalId);
+      const newState = await getAzoriusProposalState(azoriusContract.asProvider, proposalId);
       governanceDispatch({
         type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
         payload: { proposalId: proposalId.toString(), state: newState },

@@ -49,7 +49,7 @@ export default function useUserERC721VotingTokens(
   const getUserERC721VotingTokens = useCallback(
     async (_proposalId?: string, _safeAddress?: string | null) => {
       let govTokens = erc721Tokens;
-      let votingContract = erc721LinearVotingContract?.asSigner;
+      let votingContract = erc721LinearVotingContract?.asProvider;
 
       if (_safeAddress && daoAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
