@@ -41,7 +41,7 @@ test('Function encoding with tuple', () => {
   const encoded = new utils.Interface([
     'function someFooWithTupleAndLargeNumbers((address,address,address,uint88,uint88,uint88,uint88,uint88,uint64,uint64,uint40,uint40,uint40,uint40,bool,bytes32),uint256,uint256,bytes32)'
   ]).encodeFunctionData(
-    'createLiquidityBootstrapPool',
+    'someFooWithTupleAndLargeNumbers',
     [
       [
         '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
