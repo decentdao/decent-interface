@@ -33,16 +33,16 @@ export const useFractalModules = () => {
 
           if (
             utils.getAddress(masterCopyAddress) ===
-            fractalAzoriusMasterCopyContract.asProvider.address
+            fractalAzoriusMasterCopyContract.asSigner.address
           ) {
             safeModule = {
-              moduleContract: fractalAzoriusMasterCopyContract.asProvider.attach(moduleAddress),
+              moduleContract: fractalAzoriusMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.AZORIUS,
             };
-          } else if (masterCopyAddress === fractalModuleMasterCopyContract.asProvider.address) {
+          } else if (masterCopyAddress === fractalModuleMasterCopyContract.asSigner.address) {
             safeModule = {
-              moduleContract: fractalModuleMasterCopyContract.asProvider.attach(moduleAddress),
+              moduleContract: fractalModuleMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.FRACTAL,
             };
