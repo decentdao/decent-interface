@@ -60,7 +60,7 @@ export default function useDAOName({
       // Aka supplied from Subgraph
       setDAORegistryName(registryName);
     } else {
-      const rpc = getEventRPC<FractalRegistry>(fractalRegistryContract, networkId);
+      const rpc = getEventRPC<FractalRegistry>(fractalRegistryContract);
       const events = await rpc.queryFilter(rpc.filters.FractalNameUpdated(address));
 
       const latestEvent = events.pop();
@@ -73,7 +73,7 @@ export default function useDAOName({
       setValue(CacheKeys.DAO_NAME_PREFIX + address, daoName, 60);
       setDAORegistryName(daoName);
     }
-  }, [address, ensName, fractalRegistryContract, getValue, networkId, setValue, registryName]);
+  }, [address, ensName, fractalRegistryContract, getValue, setValue, registryName]);
 
   useEffect(() => {
     (async () => {

@@ -4,7 +4,6 @@ import { LockRelease } from '../../../../assets/typechain-types/dcnt';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { DecentGovernanceAction } from '../../../../providers/App/governance/action';
-import { useEthersProvider } from '../../../utils/useEthersProvider';
 
 /**
  * @link https://github.com/decent-dao/dcnt/blob/master/contracts/LockRelease.sol
@@ -21,10 +20,6 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
   } = useFractal();
   const account = user.address;
 
-  const {
-    network: { chainId },
-  } = useEthersProvider();
-
   const loadLockedVotesToken = useCallback(async () => {
     if (!lockReleaseContract || !account) {
       action.dispatch({ type: DecentGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA });
@@ -32,16 +27,16 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
     }
     const [tokenAmountTotal, tokenAmountReleased, tokenDelegatee, tokenVotingWeight] =
       await Promise.all([
-        lockReleaseContract.asSigner.getTotal(account),
-        lockReleaseContract.asSigner.getReleased(account),
-        lockReleaseContract.asSigner.delegates(account),
-        lockReleaseContract.asSigner.getVotes(account),
+        lockReleaseContract.asProvider.getTotal(account),
+        lockReleaseContract.asProvider.getReleased(account),
+        lockReleaseContract.asProvider.delegates(account),
+        lockReleaseContract.asProvider.getVotes(account),
       ]);
 
     let delegateChangeEvents: DelegateChangedEvent[];
     try {
-      delegateChangeEvents = await lockReleaseContract.asSigner.queryFilter(
-        lockReleaseContract.asSigner.filters.DelegateChanged()
+      delegateChangeEvents = await lockReleaseContract.asProvider.queryFilter(
+        lockReleaseContract.asProvider.filters.DelegateChanged()
       );
     } catch (e) {
       delegateChangeEvents = [];
@@ -63,10 +58,10 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
     if (
       lockReleaseContract &&
       isTokenLoaded.current &&
-      tokenAccount.current !== account + lockReleaseContract.asSigner.address &&
+      tokenAccount.current !== account + lockReleaseContract.asProvider.address &&
       onMount
     ) {
-      tokenAccount.current = account + lockReleaseContract.asSigner.address;
+      tokenAccount.current = account + lockReleaseContract.asProvider.address;
       loadLockedVotesToken();
     }
   }, [account, lockReleaseContract, onMount, loadLockedVotesToken]);
@@ -75,27 +70,27 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
     if (!lockReleaseContract || !onMount) {
       return;
     }
-    const rpc = getEventRPC<LockRelease>(lockReleaseContract, chainId);
+    const rpc = getEventRPC<LockRelease>(lockReleaseContract);
     const delegateVotesChangedfilter = rpc.filters.DelegateVotesChanged();
     rpc.on(delegateVotesChangedfilter, loadLockedVotesToken);
 
     return () => {
       rpc.off(delegateVotesChangedfilter, loadLockedVotesToken);
     };
-  }, [lockReleaseContract, chainId, loadLockedVotesToken, onMount]);
+  }, [lockReleaseContract, loadLockedVotesToken, onMount]);
 
   useEffect(() => {
     if (!lockReleaseContract || !onMount) {
       return;
     }
-    const rpc = getEventRPC<LockRelease>(lockReleaseContract, chainId);
+    const rpc = getEventRPC<LockRelease>(lockReleaseContract);
     const delegateChangedfilter = rpc.filters.DelegateChanged();
     rpc.on(delegateChangedfilter, loadLockedVotesToken);
 
     return () => {
       rpc.off(delegateChangedfilter, loadLockedVotesToken);
     };
-  }, [lockReleaseContract, chainId, loadLockedVotesToken, onMount]);
+  }, [lockReleaseContract, loadLockedVotesToken, onMount]);
 
   return { loadLockedVotesToken };
 };

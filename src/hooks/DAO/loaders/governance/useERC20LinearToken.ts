@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { useEthersProvider } from '../../../utils/useEthersProvider';
+
 export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) => {
   const isTokenLoaded = useRef(false);
   const tokenAccount = useRef<string>();
@@ -16,20 +16,16 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
   } = useFractal();
   const account = user.address;
 
-  const {
-    network: { chainId },
-  } = useEthersProvider();
-
   const loadERC20Token = useCallback(async () => {
     if (!tokenContract) {
       return;
     }
-    const tokenAddress = tokenContract.asSigner.address;
+    const tokenAddress = tokenContract.asProvider.address;
     const [tokenName, tokenSymbol, tokenDecimals, totalSupply] = await Promise.all([
-      tokenContract.asSigner.name(),
-      tokenContract.asSigner.symbol(),
-      tokenContract.asSigner.decimals(),
-      tokenContract.asSigner.totalSupply(),
+      tokenContract.asProvider.name(),
+      tokenContract.asProvider.symbol(),
+      tokenContract.asProvider.decimals(),
+      tokenContract.asProvider.totalSupply(),
     ]);
     const tokenData = {
       name: tokenName,
@@ -47,7 +43,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       return;
     }
 
-    const erc20WrapperContract = tokenContract.asSigner.attach(underlyingTokenAddress);
+    const erc20WrapperContract = tokenContract.asProvider.attach(underlyingTokenAddress);
 
     const [tokenName, tokenSymbol] = await Promise.all([
       erc20WrapperContract.name(),
@@ -71,15 +67,15 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     }
     // @todo We could probably save on some requests here.
     const [tokenBalance, tokenDelegatee, tokenVotingWeight] = await Promise.all([
-      tokenContract.asSigner.balanceOf(account),
-      tokenContract.asSigner.delegates(account),
-      tokenContract.asSigner.getVotes(account),
+      tokenContract.asProvider.balanceOf(account),
+      tokenContract.asProvider.delegates(account),
+      tokenContract.asProvider.getVotes(account),
     ]);
 
     let delegateChangeEvents: DelegateChangedEvent[];
     try {
-      delegateChangeEvents = await tokenContract.asSigner.queryFilter(
-        tokenContract.asSigner.filters.DelegateChanged()
+      delegateChangeEvents = await tokenContract.asProvider.queryFilter(
+        tokenContract.asProvider.filters.DelegateChanged()
       );
     } catch (e) {
       delegateChangeEvents = [];
@@ -102,10 +98,10 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     if (
       tokenContract &&
       isTokenLoaded.current &&
-      tokenAccount.current !== account + tokenContract.asSigner.address &&
+      tokenAccount.current !== account + tokenContract.asProvider.address &&
       onMount
     ) {
-      tokenAccount.current = account + tokenContract.asSigner.address;
+      tokenAccount.current = account + tokenContract.asProvider.address;
       loadERC20TokenAccountData();
     }
   }, [account, tokenContract, onMount, loadERC20TokenAccountData]);
@@ -114,33 +110,33 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     if (!tokenContract || !onMount) {
       return;
     }
-    const rpc = getEventRPC<VotesERC20>(tokenContract, chainId);
+    const rpc = getEventRPC<VotesERC20>(tokenContract);
     const delegateVotesChangedfilter = rpc.filters.DelegateVotesChanged();
     rpc.on(delegateVotesChangedfilter, loadERC20TokenAccountData);
 
     return () => {
       rpc.off(delegateVotesChangedfilter, loadERC20TokenAccountData);
     };
-  }, [tokenContract, chainId, loadERC20TokenAccountData, onMount]);
+  }, [tokenContract, loadERC20TokenAccountData, onMount]);
 
   useEffect(() => {
     if (!tokenContract || !onMount) {
       return;
     }
-    const rpc = getEventRPC<VotesERC20>(tokenContract, chainId);
+    const rpc = getEventRPC<VotesERC20>(tokenContract);
     const delegateChangedfilter = rpc.filters.DelegateChanged();
     rpc.on(delegateChangedfilter, loadERC20TokenAccountData);
 
     return () => {
       rpc.off(delegateChangedfilter, loadERC20TokenAccountData);
     };
-  }, [tokenContract, chainId, loadERC20TokenAccountData, onMount]);
+  }, [tokenContract, loadERC20TokenAccountData, onMount]);
 
   useEffect(() => {
     if (!tokenContract || !account || !onMount) {
       return;
     }
-    const rpc = getEventRPC<VotesERC20>(tokenContract, chainId);
+    const rpc = getEventRPC<VotesERC20>(tokenContract);
     const filterTo = rpc.filters.Transfer(null, account);
     const filterFrom = rpc.filters.Transfer(account, null);
     rpc.on(filterTo, loadERC20TokenAccountData);
@@ -149,7 +145,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       rpc.off(filterTo, loadERC20TokenAccountData);
       rpc.off(filterFrom, loadERC20TokenAccountData);
     };
-  }, [tokenContract, chainId, account, onMount, loadERC20TokenAccountData]);
+  }, [tokenContract, account, onMount, loadERC20TokenAccountData]);
 
   return { loadERC20Token, loadUnderlyingERC20Token, loadERC20TokenAccountData };
 };

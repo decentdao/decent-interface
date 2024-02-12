@@ -39,7 +39,7 @@ export function useFetchNodes(address?: string) {
     async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
       if (safeInfo && safeInfo.guard && multisigFreezeGuardMasterCopyContract) {
         if (safeInfo.guard !== ethers.constants.AddressZero) {
-          const guard = multisigFreezeGuardMasterCopyContract.asSigner.attach(safeInfo.guard);
+          const guard = multisigFreezeGuardMasterCopyContract.asProvider.attach(safeInfo.guard);
           const guardOwner = await guard.owner();
           if (guardOwner !== safeInfo.address) {
             return guardOwner;
@@ -53,13 +53,13 @@ export function useFetchNodes(address?: string) {
             azoriusFreezeGuardMasterCopyContract &&
             fractalAzoriusMasterCopyContract
           ) {
-            const azoriusContract = fractalAzoriusMasterCopyContract?.asSigner.attach(
+            const azoriusContract = fractalAzoriusMasterCopyContract?.asProvider.attach(
               azoriusModule.moduleAddress
             );
             const azoriusGuardAddress = await azoriusContract.getGuard();
             if (azoriusGuardAddress !== ethers.constants.AddressZero) {
               const guard =
-                azoriusFreezeGuardMasterCopyContract.asSigner.attach(azoriusGuardAddress);
+                azoriusFreezeGuardMasterCopyContract.asProvider.attach(azoriusGuardAddress);
               const guardOwner = await guard.owner();
               if (guardOwner !== safeInfo.address) {
                 return guardOwner;

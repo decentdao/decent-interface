@@ -321,7 +321,7 @@ export const useSafeTransactions = () => {
       if (guardContracts.freezeGuardContract) {
         const blockNumber = await provider.getBlockNumber();
         const averageBlockTime = await getAverageBlockTime(provider);
-        freezeGuard = guardContracts.freezeGuardContract.asSigner as MultisigFreezeGuard;
+        freezeGuard = guardContracts.freezeGuardContract.asProvider as MultisigFreezeGuard;
         freezeGuardData = {
           guardTimelockPeriodMs: BigNumber.from(
             (await freezeGuard.timelockPeriod()) * averageBlockTime * 1000

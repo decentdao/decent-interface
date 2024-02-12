@@ -19,9 +19,6 @@ export const useERC20LinearStrategy = () => {
     action,
   } = useFractal();
   const provider = useEthersProvider();
-  const {
-    network: { chainId },
-  } = provider;
   const { getTimeDuration } = useTimeHelpers();
 
   const loadERC20Strategy = useCallback(async () => {
@@ -30,10 +27,10 @@ export const useERC20LinearStrategy = () => {
     }
     const [votingPeriodBlocks, quorumNumerator, quorumDenominator, timeLockPeriod] =
       await Promise.all([
-        ozLinearVotingContract.asSigner.votingPeriod(),
-        ozLinearVotingContract.asSigner.quorumNumerator(),
-        ozLinearVotingContract.asSigner.QUORUM_DENOMINATOR(),
-        azoriusContract.asSigner.timelockPeriod(),
+        ozLinearVotingContract.asProvider.votingPeriod(),
+        ozLinearVotingContract.asProvider.quorumNumerator(),
+        ozLinearVotingContract.asProvider.QUORUM_DENOMINATOR(),
+        azoriusContract.asProvider.timelockPeriod(),
       ]);
 
     const quorumPercentage = quorumNumerator.mul(100).div(quorumDenominator);
@@ -61,7 +58,7 @@ export const useERC20LinearStrategy = () => {
     if (!ozLinearVotingContract) {
       return;
     }
-    const rpc = getEventRPC<LinearERC20Voting>(ozLinearVotingContract, chainId);
+    const rpc = getEventRPC<LinearERC20Voting>(ozLinearVotingContract);
     const votingPeriodfilter = rpc.filters.VotingPeriodUpdated();
     const listener: TypedListener<VotingPeriodUpdatedEvent> = votingPeriod => {
       action.dispatch({
@@ -73,13 +70,13 @@ export const useERC20LinearStrategy = () => {
     return () => {
       rpc.off(votingPeriodfilter, listener);
     };
-  }, [ozLinearVotingContract, chainId, action]);
+  }, [ozLinearVotingContract, action]);
 
   useEffect(() => {
     if (!ozLinearVotingContract) {
       return;
     }
-    const rpc = getEventRPC<LinearERC20Voting>(ozLinearVotingContract, chainId);
+    const rpc = getEventRPC<LinearERC20Voting>(ozLinearVotingContract);
     const quorumNumeratorUpdatedFilter = rpc.filters.QuorumNumeratorUpdated();
     const quorumNumeratorUpdatedListener: TypedListener<
       QuorumNumeratorUpdatedEvent
@@ -93,13 +90,13 @@ export const useERC20LinearStrategy = () => {
     return () => {
       rpc.off(quorumNumeratorUpdatedFilter, quorumNumeratorUpdatedListener);
     };
-  }, [ozLinearVotingContract, chainId, action]);
+  }, [ozLinearVotingContract, action]);
 
   useEffect(() => {
     if (!azoriusContract) {
       return;
     }
-    const rpc = getEventRPC<Azorius>(azoriusContract, chainId);
+    const rpc = getEventRPC<Azorius>(azoriusContract);
     const timeLockPeriodFilter = rpc.filters.TimelockPeriodUpdated();
     const timelockPeriodListener: TypedListener<TimelockPeriodUpdatedEvent> = timelockPeriod => {
       action.dispatch({
@@ -111,7 +108,7 @@ export const useERC20LinearStrategy = () => {
     return () => {
       rpc.off(timeLockPeriodFilter, timelockPeriodListener);
     };
-  }, [azoriusContract, chainId, action]);
+  }, [azoriusContract, action]);
 
   return loadERC20Strategy;
 };
