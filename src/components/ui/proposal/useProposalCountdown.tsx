@@ -97,9 +97,9 @@ export function useProposalCountdown(proposal: FractalProposal) {
     async function getCountdown() {
       const freezeGuard =
         freezeGuardType === FreezeGuardType.MULTISIG
-          ? (freezeGuardContract?.asSigner as MultisigFreezeGuard)
+          ? (freezeGuardContract?.asProvider as MultisigFreezeGuard)
           : freezeGuardType === FreezeGuardType.AZORIUS
-          ? (freezeGuardContract?.asSigner as AzoriusFreezeGuard)
+          ? (freezeGuardContract?.asProvider as AzoriusFreezeGuard)
           : undefined;
 
       const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;

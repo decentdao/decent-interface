@@ -78,7 +78,7 @@ export const useGovernanceContracts = () => {
         let lockReleaseContract: ContractConnection<LockRelease> | null = null;
 
         if (!votingContractAddress) {
-          votingContractAddress = await getEventRPC<Azorius>(azoriusContract, chainId)
+          votingContractAddress = await getEventRPC<Azorius>(azoriusContract)
             .queryFilter(azoriusModuleContract.filters.EnabledStrategy())
             .then(strategiesEnabled => {
               return strategiesEnabled[0].args.strategy;
@@ -86,7 +86,7 @@ export const useGovernanceContracts = () => {
         }
 
         if (!votingContractMasterCopyAddress) {
-          const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId);
+          const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
           const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
           votingContractMasterCopyAddress = await rpc.queryFilter(filter).then(proxiesCreated => {
             return proxiesCreated[0].args.masterCopy;
@@ -111,10 +111,10 @@ export const useGovernanceContracts = () => {
         }
         if (ozLinearVotingContract) {
           if (!govTokenAddress) {
-            govTokenAddress = await ozLinearVotingContract.asSigner.governanceToken();
+            govTokenAddress = await ozLinearVotingContract.asProvider.governanceToken();
           }
           const possibleERC20Wrapper =
-            votesERC20WrapperMasterCopyContract.asSigner.attach(govTokenAddress);
+            votesERC20WrapperMasterCopyContract.asProvider.attach(govTokenAddress);
           underlyingTokenAddress = await possibleERC20Wrapper.underlying().catch(() => {
             // if the underlying token is not an ERC20Wrapper, this will throw an error,
             // so we catch it and return undefined
@@ -235,7 +235,6 @@ export const useGovernanceContracts = () => {
       }
     }
   }, [
-    chainId,
     action,
     getValue,
     setValue,

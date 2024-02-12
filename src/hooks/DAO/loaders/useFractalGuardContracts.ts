@@ -39,17 +39,16 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   const getMasterCopyAddress = useCallback(
     async (proxyAddress: string): Promise<string> => {
       const filter = getEventRPC<ModuleProxyFactory>(
-        zodiacModuleProxyFactoryContract,
-        chainId
+        zodiacModuleProxyFactoryContract
       ).filters.ModuleProxyCreation(proxyAddress, null);
-      return getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract, chainId)
+      return getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract)
         .queryFilter(filter)
         .then(proxiesCreated => {
           if (proxiesCreated.length === 0) return constants.AddressZero;
           return proxiesCreated[0].args.masterCopy;
         });
     },
-    [zodiacModuleProxyFactoryContract, chainId]
+    [zodiacModuleProxyFactoryContract]
   );
 
   const loadFractalGuardContracts = useCallback(
@@ -80,7 +79,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         const hasNoGuard = _safe.guard === constants.AddressZero;
         const guardMasterCopyAddress = await getMasterCopyAddress(guard!);
         const isSafeGuard =
-          guardMasterCopyAddress === multisigFreezeGuardMasterCopyContract.asSigner.address;
+          guardMasterCopyAddress === multisigFreezeGuardMasterCopyContract.asProvider.address;
         if (isSafeGuard && !hasNoGuard) {
           freezeGuardContract = {
             asSigner: multisigFreezeGuardMasterCopyContract.asSigner.attach(guard!),
@@ -91,12 +90,12 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       }
 
       if (!!freezeGuardContract) {
-        const votingAddress = await freezeGuardContract.asSigner.freezeVoting();
+        const votingAddress = await freezeGuardContract.asProvider.freezeVoting();
         const votingMasterCopyAddress = await getMasterCopyAddress(votingAddress);
         const freezeVotingType =
-          votingMasterCopyAddress === freezeMultisigVotingMasterCopyContract.asSigner.address
+          votingMasterCopyAddress === freezeMultisigVotingMasterCopyContract.asProvider.address
             ? FreezeVotingType.MULTISIG
-            : votingMasterCopyAddress === freezeERC721VotingMasterCopyContract.asSigner.address
+            : votingMasterCopyAddress === freezeERC721VotingMasterCopyContract.asProvider.address
             ? FreezeVotingType.ERC721
             : FreezeVotingType.ERC20;
 

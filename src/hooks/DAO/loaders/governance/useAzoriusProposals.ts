@@ -34,9 +34,6 @@ export const useAzoriusProposals = () => {
     }
   }, [ozLinearVotingContract, erc721LinearVotingContract]);
   const provider = useEthersProvider();
-  const {
-    network: { chainId },
-  } = provider;
   const decode = useSafeDecoder();
   const decodeTransactions = useCallback(
     async (transactions: MetaTransaction[]) => {
@@ -58,14 +55,13 @@ export const useAzoriusProposals = () => {
     ) {
       return [];
     }
-    const rpc = getEventRPC<Azorius>(azoriusContract, chainId);
+    const rpc = getEventRPC<Azorius>(azoriusContract);
     const proposalCreatedFilter = rpc.filters.ProposalCreated();
 
     const proposalCreatedEvents = await rpc.queryFilter(proposalCreatedFilter);
 
     const strategyContract = getEventRPC<LinearERC20Voting | LinearERC721Voting>(
-      ozLinearVotingContract ?? erc721LinearVotingContract!,
-      chainId
+      ozLinearVotingContract ?? erc721LinearVotingContract!
     );
 
     const proposals = await Promise.all(
@@ -97,7 +93,6 @@ export const useAzoriusProposals = () => {
     );
     return proposals;
   }, [
-    chainId,
     decodeTransactions,
     ozLinearVotingContract,
     erc721LinearVotingContract,
@@ -132,8 +127,7 @@ export const useAzoriusProposals = () => {
         };
       }
       const strategyContract = getEventRPC<LinearERC20Voting | LinearERC721Voting>(
-        ozLinearVotingContract ?? erc721LinearVotingContract!,
-        chainId
+        ozLinearVotingContract ?? erc721LinearVotingContract!
       ).attach(strategyAddress);
       const func = async () => {
         return mapProposalCreatedEventToProposal(
@@ -157,7 +151,6 @@ export const useAzoriusProposals = () => {
       erc721LinearVotingContract,
       azoriusContract,
       provider,
-      chainId,
       decodeTransactions,
       action,
       requestWithRetries,
@@ -170,7 +163,7 @@ export const useAzoriusProposals = () => {
       if (!ozLinearVotingContract || !strategyType) {
         return;
       }
-      const strategyContract = getEventRPC<LinearERC20Voting>(ozLinearVotingContract, chainId);
+      const strategyContract = getEventRPC<LinearERC20Voting>(ozLinearVotingContract);
       const votesSummary = await getProposalVotesSummary(
         strategyContract,
         strategyType,
@@ -188,7 +181,7 @@ export const useAzoriusProposals = () => {
         },
       });
     },
-    [ozLinearVotingContract, chainId, action, strategyType]
+    [ozLinearVotingContract, action, strategyType]
   );
 
   const erc721ProposalVotedEventListener: TypedListener<ERC721VotedEvent> = useCallback(
@@ -196,7 +189,7 @@ export const useAzoriusProposals = () => {
       if (!erc721LinearVotingContract || !strategyType) {
         return;
       }
-      const strategyContract = getEventRPC<LinearERC721Voting>(erc721LinearVotingContract, chainId);
+      const strategyContract = getEventRPC<LinearERC721Voting>(erc721LinearVotingContract);
       const votesSummary = await getProposalVotesSummary(
         strategyContract,
         strategyType,
@@ -215,38 +208,38 @@ export const useAzoriusProposals = () => {
         },
       });
     },
-    [erc721LinearVotingContract, chainId, action, strategyType]
+    [erc721LinearVotingContract, action, strategyType]
   );
 
   useEffect(() => {
     if (!azoriusContract) {
       return;
     }
-    const proposalCreatedFilter = azoriusContract.asSigner.filters.ProposalCreated();
+    const proposalCreatedFilter = azoriusContract.asProvider.filters.ProposalCreated();
 
-    azoriusContract.asSigner.on(proposalCreatedFilter, proposalCreatedListener);
+    azoriusContract.asProvider.on(proposalCreatedFilter, proposalCreatedListener);
 
     return () => {
-      azoriusContract.asSigner.off(proposalCreatedFilter, proposalCreatedListener);
+      azoriusContract.asProvider.off(proposalCreatedFilter, proposalCreatedListener);
     };
   }, [azoriusContract, proposalCreatedListener]);
 
   useEffect(() => {
     if (ozLinearVotingContract) {
-      const votedEvent = ozLinearVotingContract.asSigner.filters.Voted();
+      const votedEvent = ozLinearVotingContract.asProvider.filters.Voted();
 
-      ozLinearVotingContract.asSigner.on(votedEvent, erc20ProposalVotedEventListener);
+      ozLinearVotingContract.asProvider.on(votedEvent, erc20ProposalVotedEventListener);
 
       return () => {
-        ozLinearVotingContract.asSigner.off(votedEvent, erc20ProposalVotedEventListener);
+        ozLinearVotingContract.asProvider.off(votedEvent, erc20ProposalVotedEventListener);
       };
     } else if (erc721LinearVotingContract) {
-      const votedEvent = erc721LinearVotingContract.asSigner.filters.Voted();
+      const votedEvent = erc721LinearVotingContract.asProvider.filters.Voted();
 
-      erc721LinearVotingContract.asSigner.on(votedEvent, erc721ProposalVotedEventListener);
+      erc721LinearVotingContract.asProvider.on(votedEvent, erc721ProposalVotedEventListener);
 
       return () => {
-        erc721LinearVotingContract.asSigner.off(votedEvent, erc721ProposalVotedEventListener);
+        erc721LinearVotingContract.asProvider.off(votedEvent, erc721ProposalVotedEventListener);
       };
     }
   }, [

@@ -31,7 +31,7 @@ export function InfoGovernance() {
         };
         if (freezeGuardType == FreezeGuardType.MULTISIG) {
           if (freezeGuardContract) {
-            const freezeGuard = freezeGuardContract.asSigner as MultisigFreezeGuard;
+            const freezeGuard = freezeGuardContract.asProvider as MultisigFreezeGuard;
             setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
             setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
           }

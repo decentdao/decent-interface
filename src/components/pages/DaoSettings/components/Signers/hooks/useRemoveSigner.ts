@@ -28,7 +28,7 @@ const useRemoveSigner = ({
     const description = 'Remove Signers';
 
     const calldatas = [
-      safeSingletonContract.asSigner.interface.encodeFunctionData('removeOwner', [
+      safeSingletonContract.asProvider.interface.encodeFunctionData('removeOwner', [
         prevSigner,
         signerToRemove,
         BigNumber.from(threshold),
@@ -54,7 +54,7 @@ const useRemoveSigner = ({
       failedToastMessage: t('removeSignerFailureToastMessage'),
     });
   }, [
-    safeSingletonContract.asSigner.interface,
+    safeSingletonContract.asProvider.interface,
     prevSigner,
     signerToRemove,
     threshold,

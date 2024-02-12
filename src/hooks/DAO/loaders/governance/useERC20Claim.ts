@@ -16,10 +16,10 @@ export function useERC20Claim() {
   const loadTokenClaimContract = useCallback(async () => {
     if (!claimingMasterCopyContract || !tokenContract) return;
 
-    const approvalFilter = tokenContract.asSigner.filters.Approval();
-    const approvals = await tokenContract.asSigner.queryFilter(approvalFilter);
+    const approvalFilter = tokenContract.asProvider.filters.Approval();
+    const approvals = await tokenContract.asProvider.queryFilter(approvalFilter);
     if (!approvals.length) return;
-    const possibleTokenClaimContract = claimingMasterCopyContract.asSigner.attach(
+    const possibleTokenClaimContract = claimingMasterCopyContract.asProvider.attach(
       approvals[0].args[1]
     );
     const tokenClaimFilter = possibleTokenClaimContract.filters.ERC20ClaimCreated();
@@ -27,7 +27,10 @@ export function useERC20Claim() {
       .queryFilter(tokenClaimFilter)
       .catch(() => []);
 
-    if (!tokenClaimArray.length || tokenClaimArray[0].args[1] === tokenContract.asSigner.address) {
+    if (
+      !tokenClaimArray.length ||
+      tokenClaimArray[0].args[1] === tokenContract.asProvider.address
+    ) {
       return;
     }
     // action to governance
