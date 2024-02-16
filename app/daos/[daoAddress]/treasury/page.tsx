@@ -1,6 +1,6 @@
 'use client';
 
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Assets } from '../../../../src/components/pages/DAOTreasury/components/Assets';
 import { Transactions } from '../../../../src/components/pages/DAOTreasury/components/Transactions';
@@ -9,7 +9,6 @@ import { TitledInfoBox } from '../../../../src/components/ui/containers/TitledIn
 import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import useSubmitProposal from '../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../src/providers/App/AppProvider';
 
@@ -23,7 +22,7 @@ export default function Treasury() {
   const showButton = canUserCreateProposal && !treasuryTotal.isZero();
 
   return (
-    <ClientOnly>
+    <Box>
       <PageHeader
         title={t('headerTitle', {
           ns: 'breadcrumbs',
@@ -62,6 +61,6 @@ export default function Treasury() {
           <Assets />
         </TitledInfoBox>
       </Flex>
-    </ClientOnly>
+    </Box>
   );
 }

@@ -1,12 +1,11 @@
 'use client';
 
-import { Button, Center, Text, VStack, ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { Button, Center, Text, VStack, ChakraProvider, extendTheme, Box } from '@chakra-ui/react';
 import { theme } from '@decent-org/fractal-ui';
 import Script from 'next/script';
 import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useChainId, useClient } from 'wagmi';
-import ClientOnly from '../../../src/components/ui/utils/ClientOnly';
 import { APP_NAME } from '../../../src/constants/common';
 import useDAOController from '../../../src/hooks/DAO/useDAOController';
 import useDAOMetadata from '../../../src/hooks/DAO/useDAOMetadata';
@@ -125,7 +124,7 @@ export default function DaoPageLayout({
   }
 
   return (
-    <ClientOnly>
+    <Box>
       <title>{node?.daoName ? `${node.daoName} | ${APP_NAME}` : APP_NAME}</title>
       {node && node.daoAddress === '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e' && (
         <Script
@@ -143,6 +142,6 @@ export default function DaoPageLayout({
         </Script>
       )}
       {display}
-    </ClientOnly>
+    </Box>
   );
 }

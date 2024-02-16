@@ -8,7 +8,6 @@ import SnapshotProposalDetails from '../../../../../src/components/Proposals/Sna
 import { EmptyBox } from '../../../../../src/components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../../../src/components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../../src/constants/routes';
 import useSnapshotProposal from '../../../../../src/hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../../../../src/hooks/DAO/proposal/useGetMetadata';
@@ -54,7 +53,7 @@ export default function ProposalDetailsPage({
   }, [proposals, proposalId, isSnapshotProposal]);
 
   return (
-    <ClientOnly>
+    <>
       <PageHeader
         title={t('proposalOverview')}
         breadcrumbs={[
@@ -83,6 +82,6 @@ export default function ProposalDetailsPage({
       ) : (
         <MultisigProposalDetails proposal={proposal} />
       )}
-    </ClientOnly>
+    </>
   );
 }
