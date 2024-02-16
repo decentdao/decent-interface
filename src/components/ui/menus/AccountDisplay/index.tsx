@@ -1,9 +1,9 @@
 import { Menu, MenuButton } from '@chakra-ui/react';
 import { Fragment } from 'react';
 import { MenuButtonDisplay } from './MenuButtonDisplay';
-import { MenuItems } from './MenuItems';
+import MenuItems from './MenuItems';
 
-export function AccountDisplay() {
+function AccountDisplay() {
   return (
     <Menu>
       <Fragment>
@@ -19,3 +19,5 @@ export function AccountDisplay() {
     </Menu>
   );
 }
+
+export default AccountDisplay;

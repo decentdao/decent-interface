@@ -1,11 +1,8 @@
-'use client';
-
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import { PropsWithChildren } from 'react';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
 import Header from '../Header';
 import Navigation from '../Navigation';
-
 export default function Layout({ children }: PropsWithChildren<{}>) {
   return (
     <Grid
@@ -19,6 +16,18 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
       gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
     >
+      <GridItem area={'header'}>
+        <Box
+          as="header"
+          bg="chocolate.900"
+          h="4rem"
+          position="fixed"
+          zIndex={5}
+          w="calc(100% - 4.25rem)"
+        >
+          <Header />
+        </Box>
+      </GridItem>
       <GridItem
         area={'main'}
         mx="1.5rem"
@@ -32,18 +41,6 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
         >
           {children}
         </Container>
-      </GridItem>
-      <GridItem area={'header'}>
-        <Box
-          as="header"
-          bg="chocolate.900"
-          h="4rem"
-          position="fixed"
-          zIndex={5}
-          w="calc(100% - 4.25rem)"
-        >
-          <Header />
-        </Box>
       </GridItem>
 
       <GridItem
