@@ -4,7 +4,7 @@ import { Center, VStack, Text, Button, Flex, Box } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetwork } from 'wagmi';
+import { useClient } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { AppFooter } from '../src/components/pages/AppHome/AppFooter';
 import { CTABox } from '../src/components/pages/AppHome/CTABox';
@@ -110,8 +110,8 @@ export default function HomePage() {
     }
   }, [daoAddress, action]);
 
-  const { chain } = useNetwork();
-  const features = FEATURED_DAOS.get(chain ? chain.id : disconnectedChain.id);
+  const client = useClient();
+  const features = FEATURED_DAOS.get(client ? client.chain.id : disconnectedChain.id);
 
   return (
     <ClientOnly>

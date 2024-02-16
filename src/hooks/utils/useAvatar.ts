@@ -1,7 +1,7 @@
 import { useEnsAvatar } from 'wagmi';
 import { useEthersProvider } from './useEthersProvider';
 
-const useAvatar = (account: string | null) => {
+const useAvatar = (account: string | undefined) => {
   const provider = useEthersProvider();
   const networkId = provider.network.chainId;
   const { data: avatarURL } = useEnsAvatar({

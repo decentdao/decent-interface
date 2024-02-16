@@ -2,7 +2,7 @@ import { Box, Button, Divider } from '@chakra-ui/react';
 import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetwork } from 'wagmi';
+import { useClient } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
@@ -34,7 +34,7 @@ export default function ForkProposalTemplateModal({
   const provider = useEthersProvider();
   const signer = useEthersSigner();
   const signerOrProvider = signer || provider;
-  const { chain } = useNetwork();
+  const client = useClient();
   const {
     node: { proposalTemplatesHash },
   } = useFractal();
@@ -53,7 +53,7 @@ export default function ForkProposalTemplateModal({
       return false;
     }
 
-    const chainName = chain ? chain.name : disconnectedChain.name;
+    const chainName = client ? client.name : disconnectedChain.name;
     const {
       validation: { address, isValidAddress },
     } = await validateAddress({ address: inputValue, signerOrProvider });
@@ -76,7 +76,7 @@ export default function ForkProposalTemplateModal({
     }
 
     return isValidAddress;
-  }, [getCanUserCreateProposal, isSafe, t, inputValue, chain, isSafeLoading, signerOrProvider]);
+  }, [getCanUserCreateProposal, isSafe, t, inputValue, client, isSafeLoading, signerOrProvider]);
 
   const handleSubmit = () => {
     push(

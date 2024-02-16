@@ -25,7 +25,7 @@ export function Connected() {
   } = useFractal();
   const account = user.address;
   const { displayName: accountDisplayName } = useDisplayName(account);
-  const avatarURL = useAvatar(account || null);
+  const avatarURL = useAvatar(account || undefined);
 
   if (!account) {
     return null;

@@ -5,7 +5,7 @@ import { theme } from '@decent-org/fractal-ui';
 import Script from 'next/script';
 import { ReactNode, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetwork } from 'wagmi';
+import { useChainId, useClient } from 'wagmi';
 import ClientOnly from '../../../src/components/ui/utils/ClientOnly';
 import { APP_NAME } from '../../../src/constants/common';
 import useDAOController from '../../../src/hooks/DAO/useDAOController';
@@ -17,7 +17,7 @@ import {
 } from '../../../src/providers/NetworkConfig/NetworkConfigProvider';
 
 function InvalidSafe() {
-  const { chain } = useNetwork();
+  const client = useClient();
   const { t } = useTranslation('common');
   return (
     <Center
@@ -31,7 +31,9 @@ function InvalidSafe() {
         >
           {t('errorSentryFallbackTitle')}
         </Text>
-        <Text>{t('invalidSafe1', { chain: chain ? chain.name : disconnectedChain.name })}</Text>
+        <Text>
+          {t('invalidSafe1', { chain: client ? client.chain.name : disconnectedChain.name })}
+        </Text>
         <Text paddingBottom="1rem">{t('invalidSafe2')}</Text>
         <Button onClick={() => window.location.reload()}>{t('refresh')}</Button>
       </VStack>
@@ -73,7 +75,7 @@ export default function DaoPageLayout({
   const { node } = useFractal();
   const { nodeLoading, reloadingDAO, errorLoading } = useDAOController({ daoAddress });
   const daoMetadata = useDAOMetadata();
-  const { chain } = useNetwork();
+  const chainId = useChainId();
   const activeTheme = useMemo(() => {
     if (daoMetadata && daoMetadata.bodyBackground) {
       return extendTheme({
@@ -103,7 +105,7 @@ export default function DaoPageLayout({
 
   if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
     display = childrenDisplay;
-  } else if (!chain) {
+  } else if (!chainId) {
     // if we're disconnected
     if (nodeLoading || reloadingDAO || validSafe || !errorLoading) {
       display = children;
@@ -112,7 +114,7 @@ export default function DaoPageLayout({
     }
   } else {
     // if we're connected
-    const invalidChain = !supportedChains.map(c => c.chainId).includes(chain.id);
+    const invalidChain = !supportedChains.map(c => c.chainId).includes(chainId);
     if (invalidChain) {
       display = <InvalidChain />;
     } else if (nodeLoading || reloadingDAO || validSafe || !errorLoading) {

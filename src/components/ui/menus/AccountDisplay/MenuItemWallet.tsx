@@ -18,7 +18,7 @@ export function MenuItemWallet() {
   } = useFractal();
   const account = user.address;
   const { displayName: accountDisplayName } = useDisplayName(account);
-  const avatarURL = useAvatar(account || null);
+  const avatarURL = useAvatar(account || undefined);
   const copyTextToClipboard = useCopyText();
   const { t } = useTranslation('menu');
 

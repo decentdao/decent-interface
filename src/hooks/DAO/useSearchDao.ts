@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetwork } from 'wagmi';
+import { useClient } from 'wagmi';
 import { disconnectedChain } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useIsSafe } from '../safe/useIsSafe';
 import useAddress from '../utils/useAddress';
@@ -13,7 +13,7 @@ export const useSearchDao = () => {
   const { address, isValidAddress, isAddressLoading } = useAddress(searchString);
   const { isSafe, isSafeLoading } = useIsSafe(address);
   const { t } = useTranslation('dashboard');
-  const { chain } = useNetwork();
+  const client = useClient();
 
   useEffect(() => {
     setIsLoading(isAddressLoading === true || isSafeLoading === true);
@@ -30,23 +30,13 @@ export const useSearchDao = () => {
     } else {
       if (isValidAddress) {
         setErrorMessage(
-          t('errorFailedSearch', { chain: chain ? chain.name : disconnectedChain.name })
+          t('errorFailedSearch', { chain: client ? client.chain.name : disconnectedChain.name })
         );
       } else {
         setErrorMessage(t('errorInvalidSearch'));
       }
     }
-  }, [
-    address,
-    isValidAddress,
-    searchString,
-    isSafe,
-    t,
-    isLoading,
-    errorMessage,
-    chain?.name,
-    chain,
-  ]);
+  }, [address, isValidAddress, searchString, isSafe, t, isLoading, errorMessage, client]);
 
   return {
     errorMessage,

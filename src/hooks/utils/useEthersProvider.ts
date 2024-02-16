@@ -7,7 +7,8 @@ import { usePublicClient } from 'wagmi';
 export function useEthersProvider() {
   const client = usePublicClient();
   const provider = useMemo(() => {
-    const { chain, transport } = client;
+    if (!client) return new providers.JsonRpcProvider();
+    const { transport, chain } = client;
     const network = {
       chainId: chain.id,
       name: chain.name,
