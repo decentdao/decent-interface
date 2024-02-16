@@ -3,7 +3,7 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumber, constants, ethers, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20ABI } from 'wagmi';
+import { erc20Abi } from 'viem';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
@@ -51,7 +51,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     const importError = errors?.erc20Token?.tokenImportAddress;
     if (importAddress && !importError && utils.isAddress(importAddress)) {
       const isVotesToken = await checkVotesToken(importAddress);
-      const tokenContract = new ethers.Contract(importAddress, erc20ABI, provider);
+      const tokenContract = new ethers.Contract(importAddress, erc20Abi, provider);
       const name: string = await tokenContract.name();
       const symbol: string = await tokenContract.symbol();
       const decimals: number = await tokenContract.decimals();

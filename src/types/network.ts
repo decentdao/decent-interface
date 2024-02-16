@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { Chain } from 'wagmi';
+import { Chain } from 'viem';
 import { GovernanceType } from './fractal';
 
 export type Providers =

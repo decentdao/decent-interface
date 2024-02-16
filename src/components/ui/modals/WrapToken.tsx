@@ -5,7 +5,8 @@ import { BigNumber, Contract } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20ABI, useAccount } from 'wagmi';
+import { erc20Abi } from 'viem';
+import { useAccount } from 'wagmi';
 import * as Yup from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
@@ -53,7 +54,7 @@ export function WrapToken({ close }: { close: () => void }) {
       return;
     const baseTokenContract = new Contract(
       azoriusGovernance.votesToken.underlyingTokenData.address,
-      erc20ABI,
+      erc20Abi,
       signer
     );
     try {

@@ -1,7 +1,7 @@
 import { BigNumber, ethers, utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20ABI } from 'wagmi';
+import { erc20Abi } from 'viem';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
@@ -138,7 +138,7 @@ export function useDAOCreateTests() {
       test: async function (address: string | undefined) {
         if (address && utils.isAddress(address)) {
           try {
-            const tokenContract = new ethers.Contract(address, erc20ABI, provider);
+            const tokenContract = new ethers.Contract(address, erc20Abi, provider);
             const [name, symbol, decimals] = await Promise.all([
               tokenContract.name(),
               tokenContract.symbol(),

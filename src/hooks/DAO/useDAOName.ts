@@ -1,6 +1,7 @@
 import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
-import { Address, useEnsName } from 'wagmi';
+import { Address } from 'viem';
+import { useEnsName } from 'wagmi';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { CacheKeys } from '../utils/cache/cacheDefaults';
@@ -32,7 +33,6 @@ export default function useDAOName({
   const { data: ensName } = useEnsName({
     address: address as Address,
     chainId: networkId,
-    cacheTime: 1000 * 60 * 30, // 30 min
   });
   const { setValue, getValue } = useLocalStorage();
 

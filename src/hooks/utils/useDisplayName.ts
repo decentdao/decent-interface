@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Address, useEnsName } from 'wagmi';
+import { Address } from 'viem';
+import { useEnsName } from 'wagmi';
 import { useEthersProvider } from './useEthersProvider';
 
 export const createAccountSubstring = (account: string) => {
@@ -21,7 +22,6 @@ const useDisplayName = (account?: string | null, truncate?: boolean) => {
   const { data: ensName } = useEnsName({
     address: account as Address,
     chainId: networkId,
-    cacheTime: 1000 * 60 * 30, // 30 min
   });
 
   const [accountSubstring, setAccountSubstring] = useState<string>();

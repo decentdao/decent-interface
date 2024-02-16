@@ -12,7 +12,8 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, useEnsName } from 'wagmi';
+import { Address } from 'viem';
+import { useEnsName } from 'wagmi';
 import { useEthersProvider } from '../../../../../../hooks/utils/useEthersProvider';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
@@ -42,7 +43,6 @@ function RemoveSignerModal({
   const { data: ensName } = useEnsName({
     address: selectedSigner as Address,
     chainId: networkId,
-    cacheTime: 1000 * 60 * 30, // 30 min
   });
   const { t } = useTranslation(['modals', 'common']);
   const tooltipContainer = useRef<HTMLDivElement>(null);
