@@ -31,6 +31,7 @@ const config = defaultWagmiConfig({
       `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_SEPOLIA_API_KEY}`
     ),
   },
+  ssr: true,
 });
 
 export { config, projectId };
