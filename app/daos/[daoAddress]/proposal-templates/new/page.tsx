@@ -13,7 +13,6 @@ import ProposalTemplateTransactionsForm from '../../../../../src/components/Crea
 import { DEFAULT_PROPOSAL_TEMPLATE } from '../../../../../src/components/CreateProposalTemplate/constants';
 import { CustomNonceInput } from '../../../../../src/components/ui/forms/CustomNonceInput';
 import PageHeader from '../../../../../src/components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../../src/components/ui/utils/ClientOnly';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../../../src/constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../src/constants/routes';
 import { logError } from '../../../../../src/helpers/errorLogging';
@@ -96,123 +95,121 @@ export default function CreateProposalTemplatePage() {
   }, [defaultProposalTemplatesHash, defaultProposalTemplateIndex, ipfsClient]);
 
   return (
-    <ClientOnly>
-      <Formik<CreateProposalTemplateForm>
-        validationSchema={createProposalTemplateValidation}
-        initialValues={initialProposalTemplate}
-        enableReinitialize
-        onSubmit={async values => {
-          if (canUserCreateProposal) {
-            const proposalData = await prepareProposalTemplateProposal(values);
-            if (proposalData) {
-              submitProposal({
-                proposalData,
-                nonce: values?.nonce,
-                pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
-                successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
-                failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-                successCallback,
-              });
-            }
+    <Formik<CreateProposalTemplateForm>
+      validationSchema={createProposalTemplateValidation}
+      initialValues={initialProposalTemplate}
+      enableReinitialize
+      onSubmit={async values => {
+        if (canUserCreateProposal) {
+          const proposalData = await prepareProposalTemplateProposal(values);
+          if (proposalData) {
+            submitProposal({
+              proposalData,
+              nonce: values?.nonce,
+              pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+              successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+              failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+              successCallback,
+            });
           }
-        }}
-      >
-        {(formikProps: FormikProps<CreateProposalTemplateForm>) => {
-          const { handleSubmit } = formikProps;
+        }
+      }}
+    >
+      {(formikProps: FormikProps<CreateProposalTemplateForm>) => {
+        const { handleSubmit } = formikProps;
 
-          return (
-            <form onSubmit={handleSubmit}>
-              <Box>
-                <PageHeader
-                  title={t('createProposalTemplate')}
-                  breadcrumbs={[
-                    {
-                      terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
-                      path: DAO_ROUTES.proposalTemplates.relative(daoAddress),
-                    },
-                    {
-                      terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
-                      path: '',
-                    },
-                  ]}
-                  ButtonIcon={Trash}
-                  buttonVariant="secondary"
-                  buttonClick={() =>
-                    push(
-                      daoAddress
-                        ? DAO_ROUTES.proposalTemplates.relative(daoAddress)
-                        : BASE_ROUTES.landing
-                    )
-                  }
-                  isButtonDisabled={pendingCreateTx}
-                />
-                <Grid
-                  gap={4}
-                  templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
-                  gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}
-                  templateAreas={{
-                    base: templateAreaSingleCol,
-                    lg: templateAreaTwoCol,
-                  }}
-                >
-                  <GridItem area="content">
-                    <Flex
-                      flexDirection="column"
-                      align="left"
+        return (
+          <form onSubmit={handleSubmit}>
+            <Box>
+              <PageHeader
+                title={t('createProposalTemplate')}
+                breadcrumbs={[
+                  {
+                    terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
+                    path: DAO_ROUTES.proposalTemplates.relative(daoAddress),
+                  },
+                  {
+                    terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
+                    path: '',
+                  },
+                ]}
+                ButtonIcon={Trash}
+                buttonVariant="secondary"
+                buttonClick={() =>
+                  push(
+                    daoAddress
+                      ? DAO_ROUTES.proposalTemplates.relative(daoAddress)
+                      : BASE_ROUTES.landing
+                  )
+                }
+                isButtonDisabled={pendingCreateTx}
+              />
+              <Grid
+                gap={4}
+                templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
+                gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}
+                templateAreas={{
+                  base: templateAreaSingleCol,
+                  lg: templateAreaTwoCol,
+                }}
+              >
+                <GridItem area="content">
+                  <Flex
+                    flexDirection="column"
+                    align="left"
+                  >
+                    <Box
+                      marginBottom="2rem"
+                      rounded="lg"
+                      p="1rem"
+                      bg={BACKGROUND_SEMI_TRANSPARENT}
                     >
-                      <Box
-                        marginBottom="2rem"
-                        rounded="lg"
-                        p="1rem"
-                        bg={BACKGROUND_SEMI_TRANSPARENT}
-                      >
-                        {formState === CreateProposalTemplateFormState.METADATA_FORM ? (
-                          <ProposalTemplateMetadata
+                      {formState === CreateProposalTemplateFormState.METADATA_FORM ? (
+                        <ProposalTemplateMetadata
+                          setFormState={setFormState}
+                          {...formikProps}
+                        />
+                      ) : (
+                        <>
+                          <Flex
+                            alignItems="center"
+                            justifyContent="space-between"
+                          >
+                            <Text
+                              textStyle="text-xl-mono-medium"
+                              mb={4}
+                            >
+                              {formikProps.values.proposalTemplateMetadata.title}
+                            </Text>
+                            <CustomNonceInput
+                              nonce={formikProps.values.nonce}
+                              onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                              align="end"
+                            />
+                          </Flex>
+                          <ProposalTemplateTransactionsForm
                             setFormState={setFormState}
+                            canUserCreateProposal={canUserCreateProposal}
+                            pendingTransaction={pendingCreateTx}
+                            safeNonce={safe?.nonce}
                             {...formikProps}
                           />
-                        ) : (
-                          <>
-                            <Flex
-                              alignItems="center"
-                              justifyContent="space-between"
-                            >
-                              <Text
-                                textStyle="text-xl-mono-medium"
-                                mb={4}
-                              >
-                                {formikProps.values.proposalTemplateMetadata.title}
-                              </Text>
-                              <CustomNonceInput
-                                nonce={formikProps.values.nonce}
-                                onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-                                align="end"
-                              />
-                            </Flex>
-                            <ProposalTemplateTransactionsForm
-                              setFormState={setFormState}
-                              canUserCreateProposal={canUserCreateProposal}
-                              pendingTransaction={pendingCreateTx}
-                              safeNonce={safe?.nonce}
-                              {...formikProps}
-                            />
-                          </>
-                        )}
-                      </Box>
-                    </Flex>
-                  </GridItem>
-                  <GridItem
-                    area="details"
-                    w="100%"
-                  >
-                    <ProposalTemplateDetails {...formikProps} />
-                  </GridItem>
-                </Grid>
-              </Box>
-            </form>
-          );
-        }}
-      </Formik>
-    </ClientOnly>
+                        </>
+                      )}
+                    </Box>
+                  </Flex>
+                </GridItem>
+                <GridItem
+                  area="details"
+                  w="100%"
+                >
+                  <ProposalTemplateDetails {...formikProps} />
+                </GridItem>
+              </Grid>
+            </Box>
+          </form>
+        );
+      }}
+    </Formik>
   );
 }

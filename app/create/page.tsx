@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import DaoCreator from '../../src/components/DaoCreator';
 import { DAOCreateMode } from '../../src/components/DaoCreator/formComponents/EstablishEssentials';
-import ClientOnly from '../../src/components/ui/utils/ClientOnly';
 import { BASE_ROUTES, DAO_ROUTES } from '../../src/constants/routes';
 import { useAccountFavorites } from '../../src/hooks/DAO/loaders/useFavorites';
 import useDeployDAO from '../../src/hooks/DAO/useDeployDAO';
@@ -55,12 +54,10 @@ export default function DaoCreatePage() {
   };
 
   return (
-    <ClientOnly>
-      <DaoCreator
-        pending={pending || redirectPending}
-        deployDAO={deployDAO}
-        mode={DAOCreateMode.ROOTDAO}
-      />
-    </ClientOnly>
+    <DaoCreator
+      pending={pending || redirectPending}
+      deployDAO={deployDAO}
+      mode={DAOCreateMode.ROOTDAO}
+    />
   );
 }

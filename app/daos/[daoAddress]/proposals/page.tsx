@@ -9,7 +9,6 @@ import Proposals from '../../../../src/components/Proposals';
 import { ModalType } from '../../../../src/components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../src/components/ui/modals/useFractalModal';
 import PageHeader from '../../../../src/components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../src/components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../src/constants/routes';
 import useSubmitProposal from '../../../../src/hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../src/providers/App/AppProvider';
@@ -43,7 +42,7 @@ export default function ProposalsPage() {
     !azoriusGovernance.votesToken.balance.isZero();
 
   return (
-    <ClientOnly>
+    <>
       <PageHeader
         breadcrumbs={[
           {
@@ -104,6 +103,6 @@ export default function ProposalsPage() {
         )}
       </PageHeader>
       <Proposals />
-    </ClientOnly>
+    </>
   );
 }
