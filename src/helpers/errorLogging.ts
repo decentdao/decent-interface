@@ -1,5 +1,4 @@
 import * as Sentry from '@sentry/react';
-import { BrowserTracing } from '@sentry/tracing';
 import { isProd } from '../utils/dev';
 
 /**
@@ -18,7 +17,7 @@ export function initErrorLogging() {
   if (!isProd()) {
     Sentry.init({
       dsn: SENTRY_DSN_DEV,
-      integrations: [new BrowserTracing()],
+      integrations: [Sentry.browserTracingIntegration()],
 
       // Setting tracesSampleRate to 1.0 captures 100%
       // of sentry transactions for performance monitoring.
