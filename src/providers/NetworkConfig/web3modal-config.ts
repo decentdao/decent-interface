@@ -9,9 +9,9 @@ const projectId = process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID as string;
 
 const metadata = {
   name: 'Fractal',
-  description: '',
-  url: 'http://localhost', // origin must match your domain & subdomain
-  icons: [],
+  description: 'Your Safe, Superpowered',
+  url: process.env.NEXT_PUBLIC_SITE_URL || '', // origin must match your domain & subdomain
+  icons: ['/favicon.ico'],
 };
 
 const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
@@ -31,7 +31,6 @@ const config = defaultWagmiConfig({
       `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_SEPOLIA_API_KEY}`
     ),
   },
-  ssr: true,
 });
 
 export { config, projectId };
