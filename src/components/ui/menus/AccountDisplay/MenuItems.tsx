@@ -3,7 +3,7 @@ import { Connect, Disconnect } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useDisconnect } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { web3Modal } from '../../../../providers/Web3ModalProvider';
+import { web3ModalInit } from '../../../../providers/NetworkConfig/web3modal-config';
 import { MenuItemButton } from './MenuItemButton';
 import { MenuItemNetwork } from './MenuItemNetwork';
 import { MenuItemWallet } from './MenuItemWallet';
@@ -39,9 +39,10 @@ export default function MenuItems() {
           testId="accountMenu-connect"
           label={t('connect')}
           Icon={Connect}
-          onClick={() => {
+          onClick={async () => {
             try {
-              web3Modal.open();
+              const web3Modal = web3ModalInit();
+              await web3Modal.open();
             } catch (e) {
               console.error(e);
             }

@@ -4,12 +4,14 @@ import { ReactNode, useReducer, useMemo, Context, createContext, useContext } fr
 import { useAccount } from 'wagmi';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import { FractalStore, StoreAction } from '../../types';
+import { web3ModalInit } from '../NetworkConfig/web3modal-config';
 import { combinedReducer, initialState } from './combinedReducer';
 import { useReadOnlyValues } from './useReadOnlyValues';
 export const FractalContext = createContext<FractalStore | null>(null);
 
 export const useFractal = (): FractalStore => useContext(FractalContext as Context<FractalStore>);
 export function AppProvider({ children }: { children: ReactNode }) {
+  web3ModalInit();
   const { address: account } = useAccount();
   // Replace individual useReducer calls with a single combined reducer
   const [state, dispatch] = useReducer(combinedReducer, initialState);

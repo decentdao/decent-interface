@@ -1,4 +1,5 @@
 'use client';
+import { createWeb3Modal } from '@web3modal/wagmi';
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
 
 import { http } from 'wagmi';
@@ -34,4 +35,13 @@ const config = defaultWagmiConfig({
   ssr: true,
 });
 
-export { config, projectId };
+function web3ModalInit() {
+  return createWeb3Modal({
+    wagmiConfig: config,
+    defaultChain: sepolia,
+    projectId: projectId,
+    themeMode: 'dark',
+    enableAnalytics: false,
+  });
+}
+export { config, projectId, web3ModalInit };
