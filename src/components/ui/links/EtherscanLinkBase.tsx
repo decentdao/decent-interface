@@ -13,8 +13,8 @@ export default function EtherscanBase({ children, ...rest }: LinkProps) {
   const { t } = useTranslation();
   const containerRef = useRef<HTMLDivElement>(null);
   return (
-    <Box ref={containerRef}>
-      <ExternalLink {...rest}>
+    <ExternalLink {...rest}>
+      <Box ref={containerRef}>
         <ModalTooltip
           label={t('etherscanTip')}
           placement="bottom"
@@ -23,7 +23,7 @@ export default function EtherscanBase({ children, ...rest }: LinkProps) {
           {/* Box here allows multiple children to be wrapped by a single tooltip */}
           <Box>{children}</Box>
         </ModalTooltip>
-      </ExternalLink>
-    </Box>
+      </Box>
+    </ExternalLink>
   );
 }
