@@ -71,7 +71,6 @@ export default function ProposalCreatePage() {
           successToastMessage: t('proposalCreateSuccessToastMessage'),
           failedToastMessage: t('proposalCreateFailureToastMessage'),
           successCallback,
-          safeAddress: daoAddress,
         });
       }}
       validateOnMount
