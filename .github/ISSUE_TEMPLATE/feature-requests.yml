@@ -1,0 +1,22 @@
+name: Feature Request
+description: Suggest a feature
+labels: ['feature-request']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please give your feature request a short and descriptive title.
+  - type: textarea
+    id: overview
+    attributes:
+      label: Overview
+      description: General description of the new feature.
+    validations:
+      required: true
+  - type: textarea
+    id: info
+    attributes:
+      label: Additional Info
+      description: More context and reasoning, expected implementation details, etc.
+    validations:
+      required: false
