@@ -6,7 +6,7 @@
 
 
 
-## Issue / Notion doc (if applicable)
+## Issue
 
 
 
@@ -15,4 +15,5 @@
 
 
 ## Screenshots (if applicable)
+
 
