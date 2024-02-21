@@ -8,7 +8,6 @@ on:
 jobs:
   vitest:
     runs-on: ubuntu-latest
-    environment: dev
     steps:
       # Checkout the repository
       - name: Checkout
