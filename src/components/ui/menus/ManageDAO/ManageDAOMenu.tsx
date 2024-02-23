@@ -17,6 +17,7 @@ import {
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
+import { CacheKeys } from '../../../../hooks/utils/cache/cacheDefaults';
 import { useLocalStorage } from '../../../../hooks/utils/cache/useLocalStorage';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -116,7 +117,9 @@ export function ManageDAOMenu({
                 0
               )
             )[1];
-            const cachedMasterCopyAddress = getValue('master_copy_of_' + votingContractAddress);
+            const cachedMasterCopyAddress = getValue(
+              CacheKeys.MASTER_COPY_PREFIX + votingContractAddress
+            );
             let votingContractMasterCopyAddress = cachedMasterCopyAddress;
             if (!votingContractMasterCopyAddress) {
               const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
@@ -126,7 +129,10 @@ export function ManageDAOMenu({
                 .then(proxiesCreated => {
                   return proxiesCreated[0].args.masterCopy;
                 });
-              setValue('master_copy_of_' + votingContractAddress, votingContractMasterCopyAddress);
+              setValue(
+                CacheKeys.MASTER_COPY_PREFIX + votingContractAddress,
+                votingContractMasterCopyAddress
+              );
             }
 
             if (

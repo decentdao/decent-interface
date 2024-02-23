@@ -4,6 +4,7 @@ import { useCallback } from 'react';
 import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalModuleData, FractalModuleType } from '../../../types';
+import { CacheKeys } from '../../utils/cache/cacheDefaults';
 import { useLocalStorage } from './../../utils/cache/useLocalStorage';
 
 export const useFractalModules = () => {
@@ -20,12 +21,12 @@ export const useFractalModules = () => {
     async (_moduleAddresses: string[]) => {
       const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
       const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
-        const cachedValue = getValue('master_copy_of_' + proxyAddress);
+        const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
         if (cachedValue) return cachedValue;
         const filter = rpc.filters.ModuleProxyCreation(proxyAddress, null);
         return rpc.queryFilter(filter).then(proxiesCreated => {
           if (proxiesCreated.length === 0) return constants.AddressZero;
-          setValue('master_copy_of_' + proxyAddress, proxiesCreated[0].args.masterCopy);
+          setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, proxiesCreated[0].args.masterCopy);
           return proxiesCreated[0].args.masterCopy;
         });
       };
