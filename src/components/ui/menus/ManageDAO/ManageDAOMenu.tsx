@@ -109,7 +109,7 @@ export function ManageDAOMenu({
               ),
             };
 
-            // Get the voting contract address
+            // @dev assumes the first strategy is the voting contract
             const votingContractAddress = (
               await azoriusContract.asProvider.getStrategies(
                 '0x0000000000000000000000000000000000000001',

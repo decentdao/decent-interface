@@ -78,6 +78,7 @@ export const useGovernanceContracts = () => {
         let lockReleaseContract: ContractConnection<LockRelease> | null = null;
 
         if (!votingContractAddress) {
+          // @dev assumes the first strategy is the voting contract
           votingContractAddress = (
             await azoriusContract.asProvider.getStrategies(
               '0x0000000000000000000000000000000000000001',
