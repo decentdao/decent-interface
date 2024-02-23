@@ -20,12 +20,12 @@ export const useFractalModules = () => {
     async (_moduleAddresses: string[]) => {
       const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
       const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
-        const cachedValue = getValue('master_copy_of' + proxyAddress);
+        const cachedValue = getValue('master_copy_of_' + proxyAddress);
         if (cachedValue) return cachedValue;
         const filter = rpc.filters.ModuleProxyCreation(proxyAddress, null);
         return rpc.queryFilter(filter).then(proxiesCreated => {
           if (proxiesCreated.length === 0) return constants.AddressZero;
-          setValue('master_copy_of' + proxyAddress, proxiesCreated[0].args.masterCopy);
+          setValue('master_copy_of_' + proxyAddress, proxiesCreated[0].args.masterCopy);
           return proxiesCreated[0].args.masterCopy;
         });
       };

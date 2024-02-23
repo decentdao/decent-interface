@@ -81,9 +81,9 @@ export const useGovernanceContracts = () => {
           votingContractAddress = (
             await azoriusContract.asProvider.getStrategies(
               '0x0000000000000000000000000000000000000001',
-              1
+              0
             )
-          )[0][0];
+          )[1];
         }
 
         if (!votingContractMasterCopyAddress) {

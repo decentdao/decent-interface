@@ -113,21 +113,20 @@ export function ManageDAOMenu({
             const votingContractAddress = (
               await azoriusContract.asProvider.getStrategies(
                 '0x0000000000000000000000000000000000000001',
-                1
+                0
               )
-            )[0][0];
-            const cachedMasterCopyAddress = getValue('master_copy_of' + votingContractAddress);
+            )[1];
+            const cachedMasterCopyAddress = getValue('master_copy_of_' + votingContractAddress);
             let votingContractMasterCopyAddress = cachedMasterCopyAddress;
             if (!votingContractMasterCopyAddress) {
               const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
               const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
-
               votingContractMasterCopyAddress = await rpc
                 .queryFilter(filter)
                 .then(proxiesCreated => {
                   return proxiesCreated[0].args.masterCopy;
                 });
-              setValue('master_copy_of' + votingContractAddress, votingContractMasterCopyAddress);
+              setValue('master_copy_of_' + votingContractAddress, votingContractMasterCopyAddress);
             }
 
             if (
