@@ -17,6 +17,7 @@ import {
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
+import { useLocalStorage } from '../../../../hooks/utils/cache/useLocalStorage';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
@@ -69,6 +70,7 @@ export function ManageDAOMenu({
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { push } = useRouter();
   const safeAddress = fractalNode?.daoAddress;
+  const { setValue, getValue } = useLocalStorage();
 
   const { getCanUserCreateProposal } = useSubmitProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, safeAddress, false);
@@ -114,13 +116,19 @@ export function ManageDAOMenu({
                 1
               )
             )[0][0];
-            const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
-            const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
-            const votingContractMasterCopyAddress = await rpc
-              .queryFilter(filter)
-              .then(proxiesCreated => {
-                return proxiesCreated[0].args.masterCopy;
-              });
+            const cachedMasterCopyAddress = getValue('master_copy_of' + votingContractAddress);
+            let votingContractMasterCopyAddress = cachedMasterCopyAddress;
+            if (!votingContractMasterCopyAddress) {
+              const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
+              const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
+
+              votingContractMasterCopyAddress = await rpc
+                .queryFilter(filter)
+                .then(proxiesCreated => {
+                  return proxiesCreated[0].args.masterCopy;
+                });
+              setValue('master_copy_of' + votingContractAddress, votingContractMasterCopyAddress);
+            }
 
             if (
               votingContractMasterCopyAddress === linearVotingMasterCopyContract.asProvider.address
@@ -149,6 +157,8 @@ export function ManageDAOMenu({
     safeAddress,
     type,
     zodiacModuleProxyFactoryContract,
+    getValue,
+    setValue,
   ]);
 
   const handleNavigateToSettings = useCallback(
