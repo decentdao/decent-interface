@@ -2,7 +2,6 @@ import { VEllipsis } from '@decent-org/fractal-ui';
 import {
   ERC20FreezeVoting,
   ERC721FreezeVoting,
-  Azorius,
   ModuleProxyFactory,
   MultisigFreezeVoting,
 } from '@fractal-framework/fractal-contracts';
@@ -107,11 +106,14 @@ export function ManageDAOMenu({
                 azoriusModule.moduleAddress
               ),
             };
-            const votingContractAddress = await getEventRPC<Azorius>(azoriusContract)
-              .queryFilter((azoriusModule.moduleContract as Azorius).filters.EnabledStrategy())
-              .then(strategiesEnabled => {
-                return strategiesEnabled[0].args.strategy;
-              });
+
+            // Get the voting contract address
+            const votingContractAddress = (
+              await azoriusContract.asProvider.getStrategies(
+                '0x0000000000000000000000000000000000000001',
+                1
+              )
+            )[0][0];
             const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
             const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
             const votingContractMasterCopyAddress = await rpc

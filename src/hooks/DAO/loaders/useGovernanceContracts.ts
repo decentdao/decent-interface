@@ -78,11 +78,12 @@ export const useGovernanceContracts = () => {
         let lockReleaseContract: ContractConnection<LockRelease> | null = null;
 
         if (!votingContractAddress) {
-          votingContractAddress = await getEventRPC<Azorius>(azoriusContract)
-            .queryFilter(azoriusModuleContract.filters.EnabledStrategy())
-            .then(strategiesEnabled => {
-              return strategiesEnabled[0].args.strategy;
-            });
+          votingContractAddress = (
+            await azoriusContract.asProvider.getStrategies(
+              '0x0000000000000000000000000000000000000001',
+              1
+            )
+          )[0][0];
         }
 
         if (!votingContractMasterCopyAddress) {

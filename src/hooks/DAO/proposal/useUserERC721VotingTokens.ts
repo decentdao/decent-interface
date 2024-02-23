@@ -58,11 +58,9 @@ export default function useUserERC721VotingTokens(
         const azoriusModule = getAzoriusModuleFromModules(safeModules);
         if (azoriusModule && azoriusModule.moduleContract) {
           const azoriusContract = azoriusModule.moduleContract as Azorius;
-          const votingContractAddress = await azoriusContract
-            .queryFilter(azoriusContract.filters.EnabledStrategy())
-            .then(strategiesEnabled => {
-              return strategiesEnabled[0].args.strategy;
-            });
+          const votingContractAddress = (
+            await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 1)
+          )[0][0];
           votingContract = LinearERC721Voting__factory.connect(
             votingContractAddress,
             signerOrProvider
