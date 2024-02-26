@@ -14,6 +14,8 @@ import {
   FreezeGuardType,
   FreezeVotingType,
 } from '../../../types';
+import { CacheKeys } from '../../utils/cache/cacheDefaults';
+import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import { useEthersProvider } from '../../utils/useEthersProvider';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
@@ -36,8 +38,12 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     network: { chainId },
   } = useEthersProvider();
 
+  const { setValue, getValue } = useLocalStorage();
+
   const getMasterCopyAddress = useCallback(
     async (proxyAddress: string): Promise<string> => {
+      const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
+      if (cachedValue) return cachedValue;
       const filter = getEventRPC<ModuleProxyFactory>(
         zodiacModuleProxyFactoryContract
       ).filters.ModuleProxyCreation(proxyAddress, null);
@@ -45,10 +51,11 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         .queryFilter(filter)
         .then(proxiesCreated => {
           if (proxiesCreated.length === 0) return constants.AddressZero;
+          setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, proxiesCreated[0].args.masterCopy);
           return proxiesCreated[0].args.masterCopy;
         });
     },
-    [zodiacModuleProxyFactoryContract]
+    [zodiacModuleProxyFactoryContract, getValue, setValue]
   );
 
   const loadFractalGuardContracts = useCallback(

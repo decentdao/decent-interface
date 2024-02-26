@@ -14,6 +14,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
 import { ContractConnection } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
+import { CacheKeys } from '../../utils/cache/cacheDefaults';
 import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import { useEthersProvider } from '../../utils/useEthersProvider';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
@@ -59,17 +60,9 @@ export const useGovernanceContracts = () => {
           ),
           asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(azoriusModuleContract.address),
         };
-        const cachedContractAddresses = getValue(
-          'azorius_module_gov_' + azoriusModuleContract.address
-        );
 
-        // if existing cached addresses are found, use them
-        let votingContractAddress: string | undefined =
-          cachedContractAddresses?.votingContractAddress;
-
-        let votingContractMasterCopyAddress: string | undefined =
-          cachedContractAddresses?.votingContractMasterCopyAddress;
-        let govTokenAddress: string | undefined = cachedContractAddresses?.govTokenContractAddress;
+        let votingContractMasterCopyAddress: string | undefined;
+        let govTokenAddress: string | undefined;
 
         let ozLinearVotingContract: ContractConnection<LinearERC20Voting> | undefined;
         let erc721LinearVotingContract: ContractConnection<LinearERC721Voting> | undefined;
@@ -77,20 +70,28 @@ export const useGovernanceContracts = () => {
         let underlyingTokenAddress: string | undefined;
         let lockReleaseContract: ContractConnection<LockRelease> | null = null;
 
-        if (!votingContractAddress) {
-          votingContractAddress = await getEventRPC<Azorius>(azoriusContract)
-            .queryFilter(azoriusModuleContract.filters.EnabledStrategy())
-            .then(strategiesEnabled => {
-              return strategiesEnabled[0].args.strategy;
-            });
-        }
+        // @dev assumes the first strategy is the voting contract
+        const votingContractAddress = (
+          await azoriusContract.asProvider.getStrategies(
+            '0x0000000000000000000000000000000000000001',
+            0
+          )
+        )[1];
 
         if (!votingContractMasterCopyAddress) {
-          const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
-          const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
-          votingContractMasterCopyAddress = await rpc.queryFilter(filter).then(proxiesCreated => {
-            return proxiesCreated[0].args.masterCopy;
-          });
+          const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + votingContractAddress);
+          votingContractMasterCopyAddress = cachedValue;
+          if (!cachedValue) {
+            const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
+            const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
+            votingContractMasterCopyAddress = await rpc.queryFilter(filter).then(proxiesCreated => {
+              setValue(
+                CacheKeys.MASTER_COPY_PREFIX + votingContractAddress,
+                proxiesCreated[0].args.masterCopy
+              );
+              return proxiesCreated[0].args.masterCopy;
+            });
+          }
         }
 
         if (votingContractMasterCopyAddress === linearVotingMasterCopyContract.asProvider.address) {

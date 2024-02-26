@@ -29,6 +29,7 @@ export enum CacheKeys {
   DAO_NAME_PREFIX = 'dao_name_',
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
+  MASTER_COPY_PREFIX = 'master_copy_of_',
 }
 
 interface IndexedObject {

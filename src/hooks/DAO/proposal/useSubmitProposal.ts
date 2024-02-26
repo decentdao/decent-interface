@@ -115,11 +115,10 @@ export default function useSubmitProposal() {
 
         if (azoriusModule && azoriusModule.moduleContract) {
           const azoriusContract = azoriusModule.moduleContract as Azorius;
-          const votingContractAddress = await azoriusContract
-            .queryFilter(azoriusContract.filters.EnabledStrategy())
-            .then(strategiesEnabled => {
-              return strategiesEnabled[0].args.strategy;
-            });
+          // @dev assumes the first strategy is the voting contract
+          const votingContractAddress = (
+            await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
+          )[1];
           const votingContract = BaseStrategy__factory.connect(
             votingContractAddress,
             signerOrProvider
@@ -377,11 +376,13 @@ export default function useSubmitProposal() {
           });
         } else {
           const azoriusModuleContract = azoriusModule.moduleContract as Azorius;
-          const votingStrategyAddress = await azoriusModuleContract
-            .queryFilter(azoriusModuleContract.filters.EnabledStrategy())
-            .then(strategiesEnabled => {
-              return strategiesEnabled[0].args.strategy;
-            });
+          // @dev assumes the first strategy is the voting contract
+          const votingStrategyAddress = (
+            await azoriusModuleContract.getStrategies(
+              '0x0000000000000000000000000000000000000001',
+              0
+            )
+          )[1];
           submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
