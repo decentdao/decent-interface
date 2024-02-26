@@ -12,9 +12,10 @@ import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deploymen
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/polygon/VotesERC20.json';
 import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/polygon/VotesERC20Wrapper.json';
 import {
-  getSafeSingletonDeployment,
   getProxyFactoryDeployment,
   getMultiSendCallOnlyDeployment,
+  getSafeL2SingletonDeployment,
+  getCompatibilityFallbackHandlerDeployment,
 } from '@safe-global/safe-deployments';
 import { polygon } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
@@ -47,18 +48,22 @@ export const polygonConfig: NetworkConfig = {
     erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
     erc721FreezeVotingMasterCopy: '',
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
-    safe: getSafeSingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
-      ?.defaultAddress!,
+    fallbackHandler: getCompatibilityFallbackHandlerDeployment({
+      version: SAFE_VERSION,
+      network: CHAIN_ID.toString(),
+    })?.networkAddresses[CHAIN_ID.toString()]!,
+    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
+      ?.networkAddresses[CHAIN_ID.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
-    })?.defaultAddress!,
+    })?.networkAddresses[CHAIN_ID.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
-    })?.defaultAddress!,
+    })?.networkAddresses[CHAIN_ID.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },

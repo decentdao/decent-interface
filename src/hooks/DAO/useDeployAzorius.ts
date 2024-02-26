@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   BaseContracts,
   AzoriusContracts,
@@ -18,6 +19,9 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 const useDeployAzorius = () => {
   const signerOrProvider = useSignerOrProvider();
   const { push } = useRouter();
+  const {
+    contracts: { fallbackHandler },
+  } = useNetworkConfig();
   const {
     node: { daoAddress, safe },
     baseContracts: {
@@ -81,6 +85,7 @@ const useDeployAzorius = () => {
         baseContracts,
         azoriusContracts,
         daoData,
+        fallbackHandler,
         undefined,
         undefined
       );
@@ -142,6 +147,7 @@ const useDeployAzorius = () => {
       submitProposal,
       push,
       safe,
+      fallbackHandler,
     ]
   );
 

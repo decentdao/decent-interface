@@ -1,6 +1,5 @@
 import {
   GnosisSafeProxyFactory,
-  GnosisSafe,
   ModuleProxyFactory,
   Azorius,
   LinearERC20Voting,
@@ -16,6 +15,7 @@ import {
   ERC721FreezeVoting,
 } from '@fractal-framework/fractal-contracts';
 import { MultiSend } from '../assets/typechain-types/usul';
+import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 
 export interface ContractEvent {
   blockTimestamp: number;
@@ -31,7 +31,7 @@ export interface DAOContracts {
   safeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
-  safeSingletonContract: ContractConnection<GnosisSafe>;
+  safeSingletonContract: ContractConnection<GnosisSafeL2>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;
@@ -48,7 +48,7 @@ export interface BaseContracts {
   fractalModuleMasterCopyContract: FractalModule;
   fractalRegistryContract: FractalRegistry;
   safeFactoryContract: GnosisSafeProxyFactory;
-  safeSingletonContract: GnosisSafe;
+  safeSingletonContract: GnosisSafeL2;
   multisigFreezeGuardMasterCopyContract: MultisigFreezeGuard;
   multiSendContract: MultiSend;
   freezeERC20VotingMasterCopyContract: ERC20FreezeVoting;

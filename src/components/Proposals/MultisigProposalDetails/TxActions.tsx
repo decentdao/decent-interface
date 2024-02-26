@@ -1,10 +1,11 @@
 import { Box, Button, Text, Flex } from '@chakra-ui/react';
 import { Check } from '@decent-org/fractal-ui';
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { GnosisSafe__factory, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
+import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -121,7 +122,7 @@ export function TxActions({
       if (!signerOrProvider || !safe?.address || !multisigTx.confirmations) {
         return;
       }
-      const safeContract = GnosisSafe__factory.connect(safe.address, signerOrProvider);
+      const safeContract = GnosisSafeL2__factory.connect(safe.address, signerOrProvider);
       const safeTx = buildSafeTransaction({
         ...multisigTx,
       });

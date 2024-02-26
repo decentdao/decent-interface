@@ -1,7 +1,6 @@
 import {
   Azorius,
   Azorius__factory,
-  GnosisSafe,
   LinearERC20Voting,
   LinearERC20Voting__factory,
   LinearERC721Voting,
@@ -11,6 +10,7 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { defaultAbiCoder, getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, getRandomBytes } from '../helpers';
 import {
   BaseContracts,
@@ -25,7 +25,7 @@ import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
 
 export class AzoriusTxBuilder extends BaseTxBuilder {
-  private readonly safeContract: GnosisSafe;
+  private readonly safeContract: GnosisSafeL2;
   private readonly predictedSafeAddress: string;
 
   private encodedSetupTokenData: string | undefined;
@@ -54,7 +54,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts,
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
-    safeContract: GnosisSafe,
+    safeContract: GnosisSafeL2,
     predictedSafeAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string

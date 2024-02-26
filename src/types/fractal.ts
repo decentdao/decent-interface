@@ -1,7 +1,6 @@
 import {
   FractalModule,
   FractalRegistry,
-  GnosisSafe,
   GnosisSafeProxyFactory,
   ModuleProxyFactory,
   LinearERC20Voting,
@@ -28,6 +27,7 @@ import { BigNumber } from 'ethers';
 import { Dispatch } from 'react';
 import { LockRelease } from '../assets/typechain-types/dcnt';
 import { MultiSend } from '../assets/typechain-types/usul';
+import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
 import { FractalGuardActions } from '../providers/App/guard/action';
@@ -334,7 +334,7 @@ export interface FractalContracts {
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
   linearVotingERC721MasterCopyContract: ContractConnection<LinearERC721Voting>;
-  safeSingletonContract: ContractConnection<GnosisSafe>;
+  safeSingletonContract: ContractConnection<GnosisSafeL2>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;
