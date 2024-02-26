@@ -51,7 +51,7 @@ export const polygonConfig: NetworkConfig = {
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
-    })?.defaultAddress!,
+    })?.networkAddresses[CHAIN_ID.toString()]!,
     safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
       ?.defaultAddress!,
     safeFactory: getProxyFactoryDeployment({
