@@ -16,7 +16,10 @@ import useSignerOrProvider from '../utils/useSignerOrProvider';
 
 const useBuildDAOTx = () => {
   const signerOrProvider = useSignerOrProvider();
-  const { createOptions } = useNetworkConfig();
+  const {
+    createOptions,
+    contracts: { fallbackHandler },
+  } = useNetworkConfig();
 
   const {
     baseContracts: {
@@ -121,6 +124,7 @@ const useBuildDAOTx = () => {
         baseContracts,
         azoriusContracts,
         daoData,
+        fallbackHandler,
         parentAddress,
         parentTokenAddress
       );
@@ -183,6 +187,7 @@ const useBuildDAOTx = () => {
       dao,
       governance,
       createOptions,
+      fallbackHandler,
     ]
   );
 

@@ -1,13 +1,13 @@
-import { GnosisSafe } from '@fractal-framework/fractal-contracts';
+import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../helpers';
 import { BaseContracts, SafeMultisigDAO, SafeTransaction } from '../types';
 
 export class MultisigTxBuilder {
   private baseContracts: BaseContracts;
   private readonly daoData: SafeMultisigDAO;
-  private readonly safeContract: GnosisSafe;
+  private readonly safeContract: GnosisSafeL2;
 
-  constructor(baseContracts: BaseContracts, daoData: SafeMultisigDAO, safeContract: GnosisSafe) {
+  constructor(baseContracts: BaseContracts, daoData: SafeMultisigDAO, safeContract: GnosisSafeL2) {
     this.baseContracts = baseContracts;
     this.daoData = daoData;
     this.safeContract = safeContract;

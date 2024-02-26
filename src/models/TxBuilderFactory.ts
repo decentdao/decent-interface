@@ -1,5 +1,6 @@
-import { GnosisSafe, GnosisSafe__factory } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
+import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
+import { GnosisSafeL2__factory } from '../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { getRandomBytes } from '../helpers';
 import {
   BaseContracts,
@@ -24,13 +25,15 @@ export class TxBuilderFactory extends BaseTxBuilder {
   // Safe Data
   public predictedSafeAddress: string | undefined;
   public createSafeTx: SafeTransaction | undefined;
-  private safeContract: GnosisSafe | undefined;
+  private safeContract: GnosisSafeL2 | undefined;
+  public fallbackHandler: string;
 
   constructor(
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
+    fallbackHandler: string,
     parentAddress?: string,
     parentTokenAddress?: string
   ) {
@@ -43,11 +46,12 @@ export class TxBuilderFactory extends BaseTxBuilder {
       parentTokenAddress
     );
 
+    this.fallbackHandler = fallbackHandler;
     this.saltNum = getRandomBytes();
   }
 
   public setSafeContract(safeAddress: string) {
-    const safeContract = GnosisSafe__factory.connect(safeAddress, this.signerOrProvider);
+    const safeContract = GnosisSafeL2__factory.connect(safeAddress, this.signerOrProvider);
     this.safeContract = safeContract;
   }
 
@@ -58,6 +62,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.baseContracts.safeSingletonContract,
       this.daoData as SafeMultisigDAO,
       this.saltNum,
+      this.fallbackHandler,
       !!this.azoriusContracts
     );
 

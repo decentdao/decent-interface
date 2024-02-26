@@ -1,6 +1,5 @@
 import {
   Azorius,
-  GnosisSafe,
   AzoriusFreezeGuard__factory,
   ERC20FreezeVoting__factory,
   MultisigFreezeGuard__factory,
@@ -12,6 +11,7 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../helpers';
 import {
   BaseContracts,
@@ -33,7 +33,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private readonly saltNum;
 
   // Safe Data
-  private readonly safeContract: GnosisSafe;
+  private readonly safeContract: GnosisSafeL2;
 
   // Freeze Voting Data
   private freezeVotingType: any;
@@ -55,7 +55,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     signerOrProvider: any,
     baseContracts: BaseContracts,
     daoData: SubDAO,
-    safeContract: GnosisSafe,
+    safeContract: GnosisSafeL2,
     saltNum: string,
     parentAddress: string,
     parentTokenAddress?: string,
@@ -134,7 +134,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     );
   }
 
-  public buildSetGuardTx(contract: GnosisSafe | Azorius): SafeTransaction {
+  public buildSetGuardTx(contract: GnosisSafeL2 | Azorius): SafeTransaction {
     return buildContractCall(contract, 'setGuard', [this.freezeGuardAddress], 0, false);
   }
 

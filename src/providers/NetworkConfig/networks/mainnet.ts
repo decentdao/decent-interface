@@ -12,9 +12,10 @@ import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deploymen
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/mainnet/VotesERC20.json';
 import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/mainnet/VotesERC20Wrapper.json';
 import {
-  getSafeSingletonDeployment,
   getProxyFactoryDeployment,
   getMultiSendCallOnlyDeployment,
+  getSafeL2SingletonDeployment,
+  getCompatibilityFallbackHandlerDeployment,
 } from '@safe-global/safe-deployments';
 import { mainnet } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
@@ -47,7 +48,11 @@ export const mainnetConfig: NetworkConfig = {
     erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
     erc721FreezeVotingMasterCopy: '', // TODO - Add actual address once contract is deployed on mainnet
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
-    safe: getSafeSingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
+    fallbackHandler: getCompatibilityFallbackHandlerDeployment({
+      version: SAFE_VERSION,
+      network: CHAIN_ID.toString(),
+    })?.defaultAddress!,
+    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
       ?.defaultAddress!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
