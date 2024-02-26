@@ -53,17 +53,17 @@ export const polygonConfig: NetworkConfig = {
       network: CHAIN_ID.toString(),
     })?.networkAddresses[CHAIN_ID.toString()]!,
     safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
-      ?.defaultAddress!,
+      ?.networkAddresses[CHAIN_ID.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
-    })?.defaultAddress!,
+    })?.networkAddresses[CHAIN_ID.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
       network: CHAIN_ID.toString(),
-    })?.defaultAddress!,
+    })?.networkAddresses[CHAIN_ID.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
