@@ -121,7 +121,6 @@ const useDeployAzorius = () => {
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
         successCallback: () => push(DAO_ROUTES.proposals.relative(daoAddress)),
-        safeAddress: daoAddress,
       });
     },
     [
