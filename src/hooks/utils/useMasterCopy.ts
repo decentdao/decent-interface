@@ -15,6 +15,8 @@ export function useMasterCopy() {
       multisigFreezeGuardMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       freezeERC721VotingMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
+      fractalModuleMasterCopyContract,
     },
   } = useFractal();
 
@@ -28,6 +30,10 @@ export function useMasterCopy() {
     masterCopyAddress === freezeMultisigVotingMasterCopyContract.asProvider.address;
   const isERC721FreezeVoting = (masterCopyAddress: string | `0x${string}`) =>
     masterCopyAddress === freezeERC721VotingMasterCopyContract.asProvider.address;
+  const isAzorius = (masterCopyAddress: string | `0x${string}`) =>
+    masterCopyAddress === fractalAzoriusMasterCopyContract.asProvider.address;
+  const isFractalModule = (masterCopyAddress: string | `0x${string}`) =>
+    masterCopyAddress === fractalModuleMasterCopyContract.asProvider.address;
 
   async function getMasterCopyAddress(
     contract: Contract,
@@ -60,6 +66,8 @@ export function useMasterCopy() {
       isMultisigFreezeGuard: isMultisigFreezeGuard(masterCopyAddress),
       isMultisigFreezeVoting: isMultisigFreezeVoting(masterCopyAddress),
       isERC721FreezeVoting: isERC721FreezeVoting(masterCopyAddress),
+      isAzorius: isAzorius(masterCopyAddress),
+      isFractalModule: isFractalModule(masterCopyAddress),
     };
   }
 
