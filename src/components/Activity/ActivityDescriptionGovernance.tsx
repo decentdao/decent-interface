@@ -10,7 +10,6 @@ import {
   SnapshotProposal,
   FractalProposal,
 } from '../../types';
-import { ActivityAddress } from './ActivityAddress';
 
 const formatId = (proposalId: string) => {
   if (proposalId.startsWith('0x')) {
@@ -21,15 +20,6 @@ const formatId = (proposalId: string) => {
     return `#${proposalId}`;
   }
 };
-
-function TargetAddress({ activity }: { activity: Activity }) {
-  const governanceActivity = activity as GovernanceActivity;
-  if (governanceActivity.targets.length === 1) {
-    return <ActivityAddress address={governanceActivity.targets[0]} />;
-  } else {
-    return null;
-  }
-}
 
 function OnChainRejectionMessage({ activity }: { activity: Activity }) {
   const { t } = useTranslation('dashboard');
@@ -71,7 +61,6 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
     <>
       <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
       <Text>{metaData.title || metaData.description}</Text>
-      <TargetAddress activity={activity} />
       {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}
       <OnChainRejectionMessage activity={activity} />
     </>
