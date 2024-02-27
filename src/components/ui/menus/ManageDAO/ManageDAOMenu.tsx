@@ -2,7 +2,6 @@ import { VEllipsis } from '@decent-org/fractal-ui';
 import {
   ERC20FreezeVoting,
   ERC721FreezeVoting,
-  Azorius,
   ModuleProxyFactory,
   MultisigFreezeVoting,
 } from '@fractal-framework/fractal-contracts';
@@ -18,6 +17,8 @@ import {
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
+import { CacheKeys } from '../../../../hooks/utils/cache/cacheDefaults';
+import { useLocalStorage } from '../../../../hooks/utils/cache/useLocalStorage';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
@@ -70,6 +71,7 @@ export function ManageDAOMenu({
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { push } = useRouter();
   const safeAddress = fractalNode?.daoAddress;
+  const { setValue, getValue } = useLocalStorage();
 
   const { getCanUserCreateProposal } = useSubmitProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, safeAddress, false);
@@ -107,18 +109,31 @@ export function ManageDAOMenu({
                 azoriusModule.moduleAddress
               ),
             };
-            const votingContractAddress = await getEventRPC<Azorius>(azoriusContract)
-              .queryFilter((azoriusModule.moduleContract as Azorius).filters.EnabledStrategy())
-              .then(strategiesEnabled => {
-                return strategiesEnabled[0].args.strategy;
-              });
-            const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
-            const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
-            const votingContractMasterCopyAddress = await rpc
-              .queryFilter(filter)
-              .then(proxiesCreated => {
-                return proxiesCreated[0].args.masterCopy;
-              });
+
+            // @dev assumes the first strategy is the voting contract
+            const votingContractAddress = (
+              await azoriusContract.asProvider.getStrategies(
+                '0x0000000000000000000000000000000000000001',
+                0
+              )
+            )[1];
+            const cachedMasterCopyAddress = getValue(
+              CacheKeys.MASTER_COPY_PREFIX + votingContractAddress
+            );
+            let votingContractMasterCopyAddress = cachedMasterCopyAddress;
+            if (!votingContractMasterCopyAddress) {
+              const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
+              const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
+              votingContractMasterCopyAddress = await rpc
+                .queryFilter(filter)
+                .then(proxiesCreated => {
+                  return proxiesCreated[0].args.masterCopy;
+                });
+              setValue(
+                CacheKeys.MASTER_COPY_PREFIX + votingContractAddress,
+                votingContractMasterCopyAddress
+              );
+            }
 
             if (
               votingContractMasterCopyAddress === linearVotingMasterCopyContract.asProvider.address
@@ -147,6 +162,8 @@ export function ManageDAOMenu({
     safeAddress,
     type,
     zodiacModuleProxyFactoryContract,
+    getValue,
+    setValue,
   ]);
 
   const handleNavigateToSettings = useCallback(

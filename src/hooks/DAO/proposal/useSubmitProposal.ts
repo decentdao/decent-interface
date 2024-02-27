@@ -1,14 +1,11 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import {
-  Azorius,
-  BaseStrategy__factory,
-  GnosisSafe__factory,
-} from '@fractal-framework/fractal-contracts';
+import { Azorius, BaseStrategy__factory } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -115,11 +112,10 @@ export default function useSubmitProposal() {
 
         if (azoriusModule && azoriusModule.moduleContract) {
           const azoriusContract = azoriusModule.moduleContract as Azorius;
-          const votingContractAddress = await azoriusContract
-            .queryFilter(azoriusContract.filters.EnabledStrategy())
-            .then(strategiesEnabled => {
-              return strategiesEnabled[0].args.strategy;
-            });
+          // @dev assumes the first strategy is the voting contract
+          const votingContractAddress = (
+            await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
+          )[1];
           const votingContract = BaseStrategy__factory.connect(
             votingContractAddress,
             signerOrProvider
@@ -241,7 +237,7 @@ export default function useSubmitProposal() {
           operation = 0;
         }
 
-        const safeContract = GnosisSafe__factory.connect(safeAddress, signerOrProvider);
+        const safeContract = GnosisSafeL2__factory.connect(safeAddress, signerOrProvider);
         await axios.post(
           buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
           await buildSafeAPIPost(
@@ -377,11 +373,13 @@ export default function useSubmitProposal() {
           });
         } else {
           const azoriusModuleContract = azoriusModule.moduleContract as Azorius;
-          const votingStrategyAddress = await azoriusModuleContract
-            .queryFilter(azoriusModuleContract.filters.EnabledStrategy())
-            .then(strategiesEnabled => {
-              return strategiesEnabled[0].args.strategy;
-            });
+          // @dev assumes the first strategy is the voting contract
+          const votingStrategyAddress = (
+            await azoriusModuleContract.getStrategies(
+              '0x0000000000000000000000000000000000000001',
+              0
+            )
+          )[1];
           submitAzoriusProposal({
             proposalData,
             pendingToastMessage,

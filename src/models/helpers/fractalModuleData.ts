@@ -1,10 +1,10 @@
 import {
   FractalModule,
   FractalModule__factory,
-  GnosisSafe,
   ModuleProxyFactory,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
+import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
 import {
@@ -23,7 +23,7 @@ export interface FractalModuleData {
 export const fractalModuleData = (
   fractalModuleMasterCopyContract: FractalModule,
   zodiacModuleProxyFactoryContract: ModuleProxyFactory,
-  safeContract: GnosisSafe,
+  safeContract: GnosisSafeL2,
   saltNum: string,
   parentAddress?: string
 ): FractalModuleData => {

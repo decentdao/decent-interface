@@ -1,5 +1,5 @@
-import { GnosisSafe } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
+import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, encodeMultiSend } from '../helpers';
 import {
   BaseContracts,
@@ -24,7 +24,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   // Safe Data
   private predictedSafeAddress: string;
   private readonly createSafeTx: SafeTransaction;
-  private readonly safeContract: GnosisSafe;
+  private readonly safeContract: GnosisSafeL2;
   private readonly parentStrategyType?: VotingStrategyType;
   private readonly parentStrategyAddress?: string;
 
@@ -42,7 +42,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     saltNum: string,
     predictedSafeAddress: string,
     createSafeTx: SafeTransaction,
-    safeContract: GnosisSafe,
+    safeContract: GnosisSafeL2,
     txBuilderFactory: TxBuilderFactory,
     parentAddress?: string,
     parentTokenAddress?: string,

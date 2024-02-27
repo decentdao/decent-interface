@@ -21,6 +21,7 @@ export type NetworkConfig = {
   contracts: {
     safe: string;
     safeFactory: string;
+    fallbackHandler: string;
     zodiacModuleProxyFactory: string;
     linearVotingMasterCopy: string;
     multisend: string;

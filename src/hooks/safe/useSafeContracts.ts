@@ -7,7 +7,6 @@ import {
   MultisigFreezeVoting__factory,
   VotesERC20__factory,
   GnosisSafeProxyFactory__factory,
-  GnosisSafe__factory,
   ModuleProxyFactory__factory,
   LinearERC20Voting__factory,
   Azorius__factory,
@@ -19,6 +18,7 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
+import { GnosisSafeL2__factory } from '../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useEthersProvider } from '../utils/useEthersProvider';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
@@ -76,8 +76,8 @@ export default function useSafeContracts() {
     };
 
     const safeSingletonContract = {
-      asSigner: GnosisSafe__factory.connect(safe, signerOrProvider),
-      asProvider: GnosisSafe__factory.connect(safe, provider),
+      asSigner: GnosisSafeL2__factory.connect(safe, signerOrProvider),
+      asProvider: GnosisSafeL2__factory.connect(safe, provider),
     };
 
     const zodiacModuleProxyFactoryContract = {
