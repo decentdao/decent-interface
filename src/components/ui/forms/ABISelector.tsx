@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { useEnsAddress, usePublicClient } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useEIP1193Providers } from '../../../providers/NetworkConfig/utils';
 import { LabelComponent } from './InputComponent';
 
 export type ABIElement = {
@@ -30,7 +29,6 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
   const [abi, setABI] = useState<ABIElement[]>([]);
   const { etherscanAPIBaseUrl } = useNetworkConfig();
   const { t } = useTranslation('common');
-  const { eip1193InfuraProvider } = useEIP1193Providers();
   const { data: ensAddress } = useEnsAddress({ name: target });
   const client = usePublicClient();
 
