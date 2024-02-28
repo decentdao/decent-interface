@@ -1,6 +1,8 @@
 import { Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FractalProposal, ActivityEventType, SnapshotProposal } from '../../types';
 import { DEFAULT_DATE_FORMAT } from '../../utils/numberFormats';
@@ -26,31 +28,37 @@ export function ActivityGovernance({ activity }: { activity: FractalProposal }) 
       : 'created'
   );
 
+  const {
+    node: { daoAddress },
+  } = useFractal();
+
   return (
-    <ActivityCard
-      Badge={
-        activity.state && (
-          <Badge
-            labelKey={activity.state}
-            size="base"
-          />
-        )
-      }
-      description={<ActivityDescription activity={activity} />}
-      RightElement={
-        <Flex
-          gap={14}
-          alignItems="center"
-        >
-          <ProposalCountdown proposal={activity} />
-          <VoteContextProvider proposal={activity}>
-            <ProposalAction proposal={activity} />
-          </VoteContextProvider>
-        </Flex>
-      }
-      eventDate={format(activity.eventDate, DEFAULT_DATE_FORMAT)}
-      eventDateLabel={eventDateLabel}
-      isSnapshot={!!(activity as SnapshotProposal).snapshotProposalId}
-    />
+    <Link href={DAO_ROUTES.proposal.relative(daoAddress, activity.proposalId)}>
+      <ActivityCard
+        Badge={
+          activity.state && (
+            <Badge
+              labelKey={activity.state}
+              size="base"
+            />
+          )
+        }
+        description={<ActivityDescription activity={activity} />}
+        RightElement={
+          <Flex
+            gap={14}
+            alignItems="center"
+          >
+            <ProposalCountdown proposal={activity} />
+            <VoteContextProvider proposal={activity}>
+              <ProposalAction proposal={activity} />
+            </VoteContextProvider>
+          </Flex>
+        }
+        eventDate={format(activity.eventDate, DEFAULT_DATE_FORMAT)}
+        eventDateLabel={eventDateLabel}
+        isSnapshot={!!(activity as SnapshotProposal).snapshotProposalId}
+      />
+    </Link>
   );
 }

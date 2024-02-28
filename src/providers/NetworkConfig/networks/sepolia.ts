@@ -28,7 +28,7 @@ const SAFE_VERSION = '1.3.0';
 
 export const sepoliaConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
-  etherscanBaseURL: 'https://sepolia.etherscan.io/',
+  etherscanBaseURL: 'https://sepolia.etherscan.io',
   etherscanAPIBaseUrl: 'https://api-sepolia.etherscan.io',
   chainId: CHAIN_ID,
   name: sepolia.name,
