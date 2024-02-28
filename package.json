@@ -97,7 +97,6 @@
     "eslint-config-next": "^13.2.4",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "husky": "^8.0.0",
     "jsdom": "^24.0.0",
     "playwright": "^1.32.3",
     "prettier": "^2.7.1",
