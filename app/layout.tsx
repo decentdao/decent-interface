@@ -1,9 +1,5 @@
-'use client';
-import '@fontsource/ibm-plex-mono';
-import '@fontsource/ibm-plex-sans';
 import 'i18next';
 import { ReactNode } from 'react';
-import 'react-toastify/dist/ReactToastify.min.css';
 import { APP_NAME } from '../src/constants/common';
 import Providers from '../src/providers/Providers';
 
