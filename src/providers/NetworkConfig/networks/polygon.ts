@@ -27,7 +27,7 @@ const SAFE_VERSION = '1.3.0';
 
 export const polygonConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
-  etherscanBaseURL: 'https://polygonscan.com/',
+  etherscanBaseURL: 'https://polygonscan.com',
   etherscanAPIBaseUrl: 'https://api.polygonscan.com/api', // TODO test ABISelector on template builder
   chainId: CHAIN_ID,
   name: polygon.name,
