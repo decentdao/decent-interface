@@ -1,19 +1,12 @@
-'use client';
-
 import '@fontsource/ibm-plex-mono';
 import '@fontsource/ibm-plex-sans';
 import 'i18next';
-import { ReactNode, useEffect } from 'react';
+import { ReactNode } from 'react';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { APP_NAME } from '../src/constants/common';
-import { initErrorLogging } from '../src/helpers/errorLogging';
 import Providers from '../src/providers/Providers';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  useEffect(() => {
-    initErrorLogging();
-  }, []);
-
   return (
     <html>
       <head>
