@@ -1,3 +1,4 @@
+'use client';
 import '@fontsource/ibm-plex-mono';
 import '@fontsource/ibm-plex-sans';
 import 'i18next';
