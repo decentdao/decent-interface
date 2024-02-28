@@ -63,7 +63,6 @@
     "graphql:build": "graphclient build",
     "graphql:dev-server": "graphclient serve-dev",
     "test": "vitest --dir=test",
-    "prepare": "husky install",
     "tests": "playwright test"
   },
   "engines": {
