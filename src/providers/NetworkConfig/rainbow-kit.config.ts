@@ -27,8 +27,8 @@ export const { chains, publicClient } = configureChains(supportedWagmiChains, [
       const publicNodeNetworkUrl = `ethereum-${chain.name}.publicnode.com`;
       if (chain.id === mainnet.id) {
         return {
-          http: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
-          webSocket: `wss://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`,
+          http: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_MAINNET_API_KEY}`,
+          webSocket: `wss://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_MAINNET_API_KEY}`,
         };
       } else if (chain.id === sepolia.id) {
         return {
