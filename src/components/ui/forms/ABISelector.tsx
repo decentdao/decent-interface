@@ -4,7 +4,7 @@ import { isAddress } from 'ethers/lib/utils';
 import detectProxyTarget from 'evm-proxy-detection';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEnsAddress } from 'wagmi';
+import { useEnsAddress, usePublicClient } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useEIP1193Providers } from '../../../providers/NetworkConfig/utils';
@@ -32,13 +32,14 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
   const { t } = useTranslation('common');
   const { eip1193InfuraProvider } = useEIP1193Providers();
   const { data: ensAddress } = useEnsAddress({ name: target });
+  const client = usePublicClient();
 
   useEffect(() => {
     const loadABI = async () => {
       if (target && ((ensAddress && isAddress(ensAddress)) || isAddress(target))) {
         try {
-          const requestFunc = ({ method, params }: { method: string; params: any[] }) =>
-            eip1193InfuraProvider.send(method, params);
+          const requestFunc = ({ method, params }: { method: any; params: any }) =>
+            client.request({ method, params });
 
           const proxy = await detectProxyTarget(ensAddress || target, requestFunc);
 
@@ -71,7 +72,7 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
       }
     };
     loadABI();
-  }, [target, ensAddress, etherscanAPIBaseUrl, onFetchABI, eip1193InfuraProvider]);
+  }, [target, ensAddress, etherscanAPIBaseUrl, onFetchABI, client]);
 
   /*
    * This makes component quite scoped to proposal / proposal template creation
