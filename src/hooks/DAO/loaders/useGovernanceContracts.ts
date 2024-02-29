@@ -176,6 +176,7 @@ export const useGovernanceContracts = () => {
             lockReleaseContract: null,
           },
         });
+        currentValidAddress.current = null;
       }
     } else {
       action.dispatch({
@@ -188,6 +189,7 @@ export const useGovernanceContracts = () => {
           lockReleaseContract: null,
         },
       });
+      currentValidAddress.current = null;
     }
   }, [
     action,
