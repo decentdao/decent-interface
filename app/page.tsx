@@ -227,8 +227,8 @@ export default function HomePage() {
                       desc={t(feature.descKey)}
                       address={feature.address}
                       marginBottom="2rem"
-                      paddingEnd={{ sm: '0rem', lg: index === 0 ? '0.56rem' : '0rem' }}
-                      paddingStart={{ sm: '0rem', lg: index === 1 ? '0.56rem' : '0rem' }}
+                      paddingEnd={{ sm: '0rem', lg: index % 2 === 0 ? '0.56rem' : '0rem' }}
+                      paddingStart={{ sm: '0rem', lg: index % 2 === 1 ? '0.56rem' : '0rem' }}
                     />
                   );
                 })}
