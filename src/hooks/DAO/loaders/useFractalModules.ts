@@ -1,52 +1,28 @@
-import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
-import { constants, utils } from 'ethers';
 import { useCallback } from 'react';
-import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalModuleData, FractalModuleType } from '../../../types';
-import { CacheKeys } from '../../utils/cache/cacheDefaults';
-import { useLocalStorage } from './../../utils/cache/useLocalStorage';
+import { useMasterCopy } from '../../utils/useMasterCopy';
 
 export const useFractalModules = () => {
   const {
-    baseContracts: {
-      zodiacModuleProxyFactoryContract,
-      fractalAzoriusMasterCopyContract,
-      fractalModuleMasterCopyContract,
-    },
+    baseContracts: { fractalAzoriusMasterCopyContract, fractalModuleMasterCopyContract },
   } = useFractal();
-  const { setValue, getValue } = useLocalStorage();
-
+  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const lookupModules = useCallback(
     async (_moduleAddresses: string[]) => {
-      const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
-      const getMasterCopyAddress = async (proxyAddress: string): Promise<string> => {
-        const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
-        if (cachedValue) return cachedValue;
-        const filter = rpc.filters.ModuleProxyCreation(proxyAddress, null);
-        return rpc.queryFilter(filter).then(proxiesCreated => {
-          if (proxiesCreated.length === 0) return constants.AddressZero;
-          setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, proxiesCreated[0].args.masterCopy);
-          return proxiesCreated[0].args.masterCopy;
-        });
-      };
-
       const modules = await Promise.all(
         _moduleAddresses.map(async moduleAddress => {
-          const masterCopyAddress = await getMasterCopyAddress(moduleAddress);
+          const masterCopyData = await getZodiacModuleProxyMasterCopyData(moduleAddress);
 
           let safeModule: FractalModuleData;
 
-          if (
-            utils.getAddress(masterCopyAddress) ===
-            fractalAzoriusMasterCopyContract.asSigner.address
-          ) {
+          if (masterCopyData.isAzorius) {
             safeModule = {
               moduleContract: fractalAzoriusMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.AZORIUS,
             };
-          } else if (masterCopyAddress === fractalModuleMasterCopyContract.asSigner.address) {
+          } else if (masterCopyData.isFractalModule) {
             safeModule = {
               moduleContract: fractalModuleMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,
@@ -66,11 +42,9 @@ export const useFractalModules = () => {
       return modules;
     },
     [
-      zodiacModuleProxyFactoryContract,
       fractalAzoriusMasterCopyContract,
       fractalModuleMasterCopyContract,
-      getValue,
-      setValue,
+      getZodiacModuleProxyMasterCopyData,
     ]
   );
   return lookupModules;

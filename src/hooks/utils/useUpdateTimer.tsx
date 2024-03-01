@@ -39,6 +39,11 @@ export const useUpdateTimer = (safeAddress?: string | null) => {
     [isActive]
   );
 
+  // clear intervals
+  const clearIntervals = () => {
+    timers.current.forEach(timer => clearInterval(timer));
+  };
+
   // Clear intervals when the component is unmounted to avoid memory leaks
   useEffect(() => {
     const nodeTimers = timers.current;
@@ -54,5 +59,5 @@ export const useUpdateTimer = (safeAddress?: string | null) => {
     }
   }, [safeAddress]);
 
-  return { setMethodOnInterval };
+  return { setMethodOnInterval, clearIntervals };
 };

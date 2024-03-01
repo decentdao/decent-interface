@@ -14,7 +14,9 @@ import { FractalErrorBoundary, initErrorLogging } from '../helpers/errorLogging'
 import { AppProvider } from './App/AppProvider';
 import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
 import { wagmiConfig, chains } from './NetworkConfig/rainbow-kit.config';
-
+import '@fontsource/ibm-plex-mono';
+import '@fontsource/ibm-plex-sans';
+import 'react-toastify/dist/ReactToastify.min.css';
 export default function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
     initErrorLogging();
