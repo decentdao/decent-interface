@@ -68,7 +68,17 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
       },
     ],
   ],
-  [sepolia.id, []],
+  [
+    sepolia.id,
+    [
+      {
+        iconSrc: '/images/icon-myosin.svg',
+        titleKey: 'myosinTitle',
+        descKey: 'myosinDesc',
+        address: '0xdef90A94273a1A1A72B33D39129fa41E6C08Be3a',
+      },
+    ],
+  ],
 ]);
 
 export default function HomePage() {
