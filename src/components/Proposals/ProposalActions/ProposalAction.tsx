@@ -1,9 +1,7 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
-import Link from 'next/link';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import { DAO_ROUTES } from '../../../constants/routes';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ExtendedSnapshotProposal, FractalProposal, FractalProposalState } from '../../../types';
@@ -52,7 +50,6 @@ export function ProposalAction({
   onCastSnapshotVote?: () => Promise<void>;
 }) {
   const {
-    node: { daoAddress },
     readOnly: { user, dao },
   } = useFractal();
   const { t } = useTranslation();
@@ -102,15 +99,7 @@ export function ProposalAction({
 
   if (!showActionButton) {
     if (!expandedView) {
-      return (
-        <Button
-          as={Link}
-          href={DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId)}
-          variant="secondary"
-        >
-          {t('details')}
-        </Button>
-      );
+      return <Button variant="secondary">{t('details')}</Button>;
     }
     // This means that Proposal in state where there's no action to perform
     return null;
@@ -139,17 +128,5 @@ export function ProposalAction({
     );
   }
 
-  return (
-    <Link
-      href={DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId)}
-      passHref
-    >
-      <Button
-        as="a"
-        variant={showActionButton && canVote ? 'primary' : 'secondary'}
-      >
-        {label}
-      </Button>
-    </Link>
-  );
+  return <Button variant={showActionButton && canVote ? 'primary' : 'secondary'}>{label}</Button>;
 }
