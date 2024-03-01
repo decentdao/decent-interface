@@ -198,7 +198,7 @@ export default function HomePage() {
               </Text>
             }
           />
-          {features ? (
+          {features && features.length > 0 ? (
             <>
               <Text
                 paddingTop="3.5rem"
