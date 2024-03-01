@@ -49,6 +49,12 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
     mainnet.id,
     [
       {
+        iconSrc: '/images/shutter-icon-only-logo.svg',
+        titleKey: 'shutterTitle',
+        descKey: 'shutterDesc',
+        address: '0x36bD3044ab68f600f6d3e081056F34f2a58432c4',
+      },
+      {
         iconSrc: '/images/icon-decent.svg',
         titleKey: 'decentTitle',
         descKey: 'decentDesc',
