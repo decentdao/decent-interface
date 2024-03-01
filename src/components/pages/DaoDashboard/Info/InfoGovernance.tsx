@@ -20,33 +20,34 @@ export function InfoGovernance() {
   } = useFractal();
   const provider = useEthersProvider();
   const { getTimeDuration } = useTimeHelpers();
-
   const [timelockPeriod, setTimelockPeriod] = useState<string>();
   const [executionPeriod, setExecutionPeriod] = useState<string>();
   useEffect(() => {
     const setTimelockInfo = async () => {
-      if (!timelockPeriod && !executionPeriod) {
-        const formatBlocks = async (blocks: number): Promise<string | undefined> => {
-          return getTimeDuration(await blocksToSeconds(blocks, provider));
-        };
-        if (freezeGuardType == FreezeGuardType.MULTISIG) {
-          if (freezeGuardContract) {
-            const freezeGuard = freezeGuardContract.asProvider as MultisigFreezeGuard;
-            setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
-            setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
-          }
-        } else if (dao?.isAzorius) {
-          const azoriusGovernance = governance as AzoriusGovernance;
-          const timelock = azoriusGovernance.votingStrategy?.timeLockPeriod;
-          if (timelock?.formatted) {
-            setTimelockPeriod(timelock.formatted);
-          }
-          // TODO Azorius execution period
-          // We don't have room to fit a 5th row on this card currently,
-          // so leaving this off until we can have a discussion with design
-          // setExecutionPeriod(await freezeGuard.executionPeriod());
+      const formatBlocks = async (blocks: number): Promise<string | undefined> => {
+        return getTimeDuration(await blocksToSeconds(blocks, provider));
+      };
+      if (freezeGuardType == FreezeGuardType.MULTISIG) {
+        if (freezeGuardContract) {
+          const freezeGuard = freezeGuardContract.asProvider as MultisigFreezeGuard;
+          setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
+          setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
         }
+      } else if (dao?.isAzorius) {
+        const azoriusGovernance = governance as AzoriusGovernance;
+        const timelock = azoriusGovernance.votingStrategy?.timeLockPeriod;
+        if (timelock?.formatted) {
+          setTimelockPeriod(timelock.formatted);
+        }
+        // TODO Azorius execution period
+        // We don't have room to fit a 5th row on this card currently,
+        // so leaving this off until we can have a discussion with design
+        // setExecutionPeriod(await freezeGuard.executionPeriod());
       }
+      return () => {
+        setTimelockPeriod(undefined);
+        setExecutionPeriod(undefined);
+      };
     };
 
     setTimelockInfo();

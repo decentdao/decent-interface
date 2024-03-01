@@ -1,11 +1,6 @@
-import {
-  ModuleProxyFactory,
-  AzoriusFreezeGuard,
-  MultisigFreezeGuard,
-} from '@fractal-framework/fractal-contracts';
+import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
-import { getEventRPC } from '../../../helpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import {
@@ -14,9 +9,8 @@ import {
   FreezeGuardType,
   FreezeVotingType,
 } from '../../../types';
-import { CacheKeys } from '../../utils/cache/cacheDefaults';
-import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import { useEthersProvider } from '../../utils/useEthersProvider';
+import { useMasterCopy } from '../../utils/useMasterCopy';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
   // load key for component; helps prevent unnecessary calls
@@ -24,7 +18,6 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   const {
     node: { daoAddress, safe, fractalModules, isModulesLoaded },
     baseContracts: {
-      zodiacModuleProxyFactoryContract,
       freezeERC20VotingMasterCopyContract,
       freezeERC721VotingMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
@@ -38,25 +31,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     network: { chainId },
   } = useEthersProvider();
 
-  const { setValue, getValue } = useLocalStorage();
-
-  const getMasterCopyAddress = useCallback(
-    async (proxyAddress: string): Promise<string> => {
-      const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
-      if (cachedValue) return cachedValue;
-      const filter = getEventRPC<ModuleProxyFactory>(
-        zodiacModuleProxyFactoryContract
-      ).filters.ModuleProxyCreation(proxyAddress, null);
-      return getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract)
-        .queryFilter(filter)
-        .then(proxiesCreated => {
-          if (proxiesCreated.length === 0) return constants.AddressZero;
-          setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, proxiesCreated[0].args.masterCopy);
-          return proxiesCreated[0].args.masterCopy;
-        });
-    },
-    [zodiacModuleProxyFactoryContract, getValue, setValue]
-  );
+  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
   const loadFractalGuardContracts = useCallback(
     async (
@@ -84,10 +59,8 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         freezeGuardType = FreezeGuardType.AZORIUS;
       } else {
         const hasNoGuard = _safe.guard === constants.AddressZero;
-        const guardMasterCopyAddress = await getMasterCopyAddress(guard!);
-        const isSafeGuard =
-          guardMasterCopyAddress === multisigFreezeGuardMasterCopyContract.asProvider.address;
-        if (isSafeGuard && !hasNoGuard) {
+        const masterCopyData = await getZodiacModuleProxyMasterCopyData(guard!);
+        if (masterCopyData.isMultisigFreezeGuard && !hasNoGuard) {
           freezeGuardContract = {
             asSigner: multisigFreezeGuardMasterCopyContract.asSigner.attach(guard!),
             asProvider: multisigFreezeGuardMasterCopyContract.asProvider.attach(guard!),
@@ -98,13 +71,12 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
       if (!!freezeGuardContract) {
         const votingAddress = await freezeGuardContract.asProvider.freezeVoting();
-        const votingMasterCopyAddress = await getMasterCopyAddress(votingAddress);
-        const freezeVotingType =
-          votingMasterCopyAddress === freezeMultisigVotingMasterCopyContract.asProvider.address
-            ? FreezeVotingType.MULTISIG
-            : votingMasterCopyAddress === freezeERC721VotingMasterCopyContract.asProvider.address
-            ? FreezeVotingType.ERC721
-            : FreezeVotingType.ERC20;
+        const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingAddress);
+        const freezeVotingType = masterCopyData.isMultisigFreezeVoting
+          ? FreezeVotingType.MULTISIG
+          : masterCopyData.isERC721FreezeVoting
+          ? FreezeVotingType.ERC721
+          : FreezeVotingType.ERC20;
 
         const freezeVotingContract =
           freezeVotingType === FreezeVotingType.MULTISIG
@@ -133,12 +105,12 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       }
     },
     [
-      getMasterCopyAddress,
       freezeERC20VotingMasterCopyContract,
       freezeERC721VotingMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
       multisigFreezeGuardMasterCopyContract,
+      getZodiacModuleProxyMasterCopyData,
     ]
   );
 

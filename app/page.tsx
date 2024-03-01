@@ -49,6 +49,12 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
     mainnet.id,
     [
       {
+        iconSrc: '/images/shutter-icon-only-logo.svg',
+        titleKey: 'shutterTitle',
+        descKey: 'shutterDesc',
+        address: '0x36bD3044ab68f600f6d3e081056F34f2a58432c4',
+      },
+      {
         iconSrc: '/images/icon-decent.svg',
         titleKey: 'decentTitle',
         descKey: 'decentDesc',
@@ -60,34 +66,16 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         descKey: 'awakeDesc',
         address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5',
       },
-      {
-        iconSrc: ethLizardsLogo.src,
-        titleKey: 'ethlizardsTitle',
-        descKey: 'ethlizardsDesc',
-        address: '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e', // TODO: Change to mainnet address once it will be there
-      },
     ],
   ],
   [
     sepolia.id,
     [
       {
-        iconSrc: '/images/icon-decent.svg',
-        titleKey: 'decentTitle',
-        descKey: 'decentDesc',
-        address: '0xD26c85D435F02DaB8B220cd4D2d398f6f646e235', // TODO: Change to Sepolia Address once it will be there
-      },
-      {
-        iconSrc: '/images/icon-awakevc.svg',
-        titleKey: 'awakeTitle',
-        descKey: 'awakeDesc',
-        address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5', // TODO: Change to Sepolia Address once it will be there
-      },
-      {
-        iconSrc: ethLizardsLogo.src,
-        titleKey: 'ethlizardsTitle',
-        descKey: 'ethlizardsDesc',
-        address: '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e', // TODO: Change to Sepolia address once it will be there
+        iconSrc: '/images/icon-myosin.svg',
+        titleKey: 'myosinTitle',
+        descKey: 'myosinDesc',
+        address: '0xdef90A94273a1A1A72B33D39129fa41E6C08Be3a',
       },
     ],
   ],
@@ -192,7 +180,7 @@ export default function HomePage() {
               </Text>
             }
           />
-          {features ? (
+          {features && features.length > 0 ? (
             <>
               <Text
                 paddingTop="3.5rem"
@@ -227,8 +215,8 @@ export default function HomePage() {
                       desc={t(feature.descKey)}
                       address={feature.address}
                       marginBottom="2rem"
-                      paddingEnd={{ sm: '0rem', lg: index === 0 ? '0.56rem' : '0rem' }}
-                      paddingStart={{ sm: '0rem', lg: index === 1 ? '0.56rem' : '0rem' }}
+                      paddingEnd={{ sm: '0rem', lg: index % 2 === 0 ? '0.56rem' : '0rem' }}
+                      paddingStart={{ sm: '0rem', lg: index % 2 === 1 ? '0.56rem' : '0rem' }}
                     />
                   );
                 })}
