@@ -66,37 +66,9 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         descKey: 'awakeDesc',
         address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5',
       },
-      {
-        iconSrc: ethLizardsLogo.src,
-        titleKey: 'ethlizardsTitle',
-        descKey: 'ethlizardsDesc',
-        address: '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e', // TODO: Change to mainnet address once it will be there
-      },
     ],
   ],
-  [
-    sepolia.id,
-    [
-      {
-        iconSrc: '/images/icon-decent.svg',
-        titleKey: 'decentTitle',
-        descKey: 'decentDesc',
-        address: '0xD26c85D435F02DaB8B220cd4D2d398f6f646e235', // TODO: Change to Sepolia Address once it will be there
-      },
-      {
-        iconSrc: '/images/icon-awakevc.svg',
-        titleKey: 'awakeTitle',
-        descKey: 'awakeDesc',
-        address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5', // TODO: Change to Sepolia Address once it will be there
-      },
-      {
-        iconSrc: ethLizardsLogo.src,
-        titleKey: 'ethlizardsTitle',
-        descKey: 'ethlizardsDesc',
-        address: '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e', // TODO: Change to Sepolia address once it will be there
-      },
-    ],
-  ],
+  [sepolia.id, []],
 ]);
 
 export default function HomePage() {
