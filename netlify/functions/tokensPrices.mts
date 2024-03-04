@@ -17,15 +17,11 @@ export default async function getTokenprices(request: Request) {
     const cachedPrices = await Promise.all(
       tokens.map(tokenAddress => store.getWithMetadata(tokenAddress, { type: 'json' }))
     );
-    const expiredPrices: string[] = [];
     const cachedUnexpiredPrices = cachedPrices
-      .filter(tokenPrice => {
-        if (tokenPrice && (tokenPrice?.metadata as any as TokenPriceMetadata).expiration <= now) {
-          expiredPrices.push(tokenPrice.data.tokenAddress);
-          return false;
-        }
-        return tokenPrice;
-      })
+      .filter(
+        tokenPrice =>
+          tokenPrice && (tokenPrice?.metadata as any as TokenPriceMetadata).expiration <= now
+      )
       .map(tokenPrice => ({
         tokenAddress: tokenPrice?.data.tokenAddress,
         price: tokenPrice?.data.price,
@@ -54,7 +50,7 @@ export default async function getTokenprices(request: Request) {
     const tokenPricesResponseJson = await tokenPricesResponse.json();
     const tokenPriceMetadata = { metadata: { expiration: now + 1000 * 60 * 30 } };
     Object.keys(tokenPricesResponseJson).forEach(tokenAddress => {
-      const price = tokenPricesResponseJson[tokenAddress];
+      const price = tokenPricesResponseJson[tokenAddress].usd;
       responseBody[tokenAddress] = price;
       store.setJSON(tokenAddress, { tokenAddress, price }, tokenPriceMetadata);
     });
@@ -69,7 +65,7 @@ export default async function getTokenprices(request: Request) {
       const ethPriceResponseJson = await ethPriceResponse.json();
       store.setJSON(
         'ethereum',
-        { tokenAddress: 'ethereum', price: ethPriceResponseJson.ethereum },
+        { tokenAddress: 'ethereum', price: ethPriceResponseJson.ethereum.usd },
         tokenPriceMetadata
       );
       responseBody.ethereum = ethPriceResponseJson.ethereum;

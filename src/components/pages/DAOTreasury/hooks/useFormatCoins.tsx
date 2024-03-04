@@ -1,7 +1,7 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
-import useCoinGeckoAPI from '../../../../providers/App/hooks/usePriceAPI';
+import usePriceAPI from '../../../../providers/App/hooks/usePriceAPI';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatCoin, formatUSD } from '../../../../utils/numberFormats';
 
@@ -21,7 +21,7 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
   const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfig();
   const [totalFiatValue, setTotalFiatValue] = useState(0);
   const [displayData, setDisplayData] = useState<TokenDisplayData[]>([]);
-  const { getTokenPrices } = useCoinGeckoAPI();
+  const { getTokenPrices } = usePriceAPI();
 
   useEffect(() => {
     async function loadDisplayData() {
@@ -32,17 +32,17 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
         let asset = assets[i];
         if (asset.balance === '0') continue;
         const tokenPrice = asset.tokenAddress
-          ? tokenPrices[asset.tokenAddress.toLowerCase()]?.usd
-          : tokenPrices.ethereum?.usd;
+          ? tokenPrices[asset.tokenAddress.toLowerCase()]
+          : tokenPrices.ethereum;
 
         let tokenFiatBalance = 0;
         if (tokenPrice && asset.balance) {
-          const numerator = 1000000000;
+          const multiplicator = 1000000000;
           tokenFiatBalance =
             BigNumber.from(asset.balance)
-              .mul(Math.round(tokenPrice * numerator)) // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off - maybe up to 1%
+              .mul(Math.round(tokenPrice * multiplicator)) // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off - maybe up to 1%
               .div(BigNumber.from(10).pow(asset.token?.decimals || 18))
-              .toNumber() / numerator;
+              .toNumber() / multiplicator;
           newTotalFiatValue += tokenFiatBalance;
         }
 
