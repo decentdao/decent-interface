@@ -81,12 +81,11 @@ export const useFractalGovernance = () => {
     } = governanceContracts;
 
     const newLoadKey =
-      daoAddress +
       (azoriusContract ? '1' : '0') +
       nodeHierarchy.parentAddress +
       !!guardContracts.freezeGuardContract;
 
-    if (isLoaded && daoAddress && newLoadKey !== loadKey.current) {
+    if (isLoaded && newLoadKey !== loadKey.current) {
       loadKey.current = newLoadKey;
 
       if (azoriusContract) {
@@ -115,11 +114,8 @@ export const useFractalGovernance = () => {
           payload: GovernanceType.MULTISIG,
         });
       }
-    } else if (!isLoaded) {
-      loadKey.current = undefined;
     }
   }, [
-    daoAddress,
     governanceContracts,
     loadDAOProposals,
     loadUnderlyingERC20Token,

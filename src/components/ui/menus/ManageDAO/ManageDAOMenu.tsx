@@ -2,14 +2,12 @@ import { VEllipsis } from '@decent-org/fractal-ui';
 import {
   ERC20FreezeVoting,
   ERC721FreezeVoting,
-  ModuleProxyFactory,
   MultisigFreezeVoting,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useRouter } from 'next/navigation';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { getEventRPC } from '../../../../helpers';
 import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
@@ -17,9 +15,8 @@ import {
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
-import { CacheKeys } from '../../../../hooks/utils/cache/cacheDefaults';
-import { useLocalStorage } from '../../../../hooks/utils/cache/useLocalStorage';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
+import { useMasterCopy } from '../../../../hooks/utils/useMasterCopy';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
   FractalGuardContracts,
@@ -71,8 +68,7 @@ export function ManageDAOMenu({
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { push } = useRouter();
   const safeAddress = fractalNode?.daoAddress;
-  const { setValue, getValue } = useLocalStorage();
-
+  const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { getCanUserCreateProposal } = useSubmitProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, safeAddress, false);
   const { handleClawBack } = useClawBack({
@@ -117,32 +113,11 @@ export function ManageDAOMenu({
                 0
               )
             )[1];
-            const cachedMasterCopyAddress = getValue(
-              CacheKeys.MASTER_COPY_PREFIX + votingContractAddress
-            );
-            let votingContractMasterCopyAddress = cachedMasterCopyAddress;
-            if (!votingContractMasterCopyAddress) {
-              const rpc = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
-              const filter = rpc.filters.ModuleProxyCreation(votingContractAddress, null);
-              votingContractMasterCopyAddress = await rpc
-                .queryFilter(filter)
-                .then(proxiesCreated => {
-                  return proxiesCreated[0].args.masterCopy;
-                });
-              setValue(
-                CacheKeys.MASTER_COPY_PREFIX + votingContractAddress,
-                votingContractMasterCopyAddress
-              );
-            }
+            const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingContractAddress);
 
-            if (
-              votingContractMasterCopyAddress === linearVotingMasterCopyContract.asProvider.address
-            ) {
+            if (masterCopyData.isOzLinearVoting) {
               result = GovernanceType.AZORIUS_ERC20;
-            } else if (
-              votingContractMasterCopyAddress ===
-              linearVotingERC721MasterCopyContract.asProvider.address
-            ) {
+            } else if (masterCopyData.isOzLinearVotingERC721) {
               result = GovernanceType.AZORIUS_ERC721;
             }
           }
@@ -162,8 +137,7 @@ export function ManageDAOMenu({
     safeAddress,
     type,
     zodiacModuleProxyFactoryContract,
-    getValue,
-    setValue,
+    getZodiacModuleProxyMasterCopyData,
   ]);
 
   const handleNavigateToSettings = useCallback(
