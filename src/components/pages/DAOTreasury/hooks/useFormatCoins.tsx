@@ -1,6 +1,7 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { BigNumber, ethers } from 'ethers';
+import { BigNumber, constants } from 'ethers';
 import { useEffect, useState } from 'react';
+import { logError } from '../../../../helpers/errorLogging';
 import usePriceAPI from '../../../../providers/App/hooks/usePriceAPI';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatCoin, formatUSD } from '../../../../utils/numberFormats';
@@ -37,20 +38,24 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
 
         let tokenFiatBalance = 0;
         if (tokenPrice && asset.balance) {
-          const multiplicator = 1000000000;
-          const tokenFiatBalanceBn = BigNumber.from(asset.balance)
-            .mul(Math.round(tokenPrice * multiplicator)) // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off - maybe up to 1%
-            .div(BigNumber.from(10).pow(asset.token?.decimals || 18));
-          tokenFiatBalance = tokenFiatBalanceBn.gte(Number.MAX_SAFE_INTEGER)
-            ? tokenFiatBalanceBn.div(multiplicator).toNumber()
-            : tokenFiatBalanceBn.toNumber() / multiplicator;
-          newTotalFiatValue += tokenFiatBalance;
+          try {
+            const multiplicator = 1000000000;
+            const tokenFiatBalanceBn = BigNumber.from(asset.balance)
+              .mul(Math.round(tokenPrice * multiplicator)) // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off - maybe up to 1%
+              .div(BigNumber.from(10).pow(asset.token?.decimals || 18));
+            tokenFiatBalance = tokenFiatBalanceBn.gte(constants.MaxUint256)
+              ? tokenFiatBalanceBn.div(multiplicator).toNumber()
+              : tokenFiatBalanceBn.toNumber() / multiplicator;
+            newTotalFiatValue += tokenFiatBalance;
+          } catch (e) {
+            logError('Error while calculating token fiat balance', e);
+          }
         }
 
         let symbol = asset.token === null ? nativeTokenSymbol : asset.token.symbol;
         const formatted: TokenDisplayData = {
           iconUri: asset.token === null ? nativeTokenIcon : asset.token.logoUri,
-          address: asset.tokenAddress === null ? ethers.constants.AddressZero : asset.tokenAddress,
+          address: asset.tokenAddress === null ? constants.AddressZero : asset.tokenAddress,
           truncatedCoinTotal: formatCoin(asset.balance, true, asset?.token?.decimals, symbol),
           fiatValue: tokenFiatBalance,
           symbol: symbol,
