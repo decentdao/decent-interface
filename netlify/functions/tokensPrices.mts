@@ -62,13 +62,9 @@ export default async function getTokenprices(request: Request) {
       // Or, we are doing this "hardcoded" call for ETH price. But our request for token prices simpler.
       const ethPriceUrl = `${PUBLIC_DEMO_API_BASE_URL}simple/price${AUTH_QUERY_PARAM}&ids=ethereum&vs_currencies=usd`;
       const ethPriceResponse = await fetch(ethPriceUrl);
-      const ethPriceResponseJson = await ethPriceResponse.json();
-      store.setJSON(
-        'ethereum',
-        { tokenAddress: 'ethereum', price: ethPriceResponseJson.ethereum.usd },
-        tokenPriceMetadata
-      );
-      responseBody.ethereum = ethPriceResponseJson.ethereum;
+      const price = (await ethPriceResponse.json()).ethereum.usd;
+      store.setJSON('ethereum', { tokenAddress: 'ethereum', price }, tokenPriceMetadata);
+      responseBody.ethereum = price;
     }
     return Response.json({ data: responseBody });
   } catch (e) {
