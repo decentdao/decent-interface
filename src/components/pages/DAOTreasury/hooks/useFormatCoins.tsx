@@ -1,7 +1,7 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState } from 'react';
-import useCoinGeckoAPI from '../../../../providers/App/hooks/useCoinGeckoAPI';
+import useCoinGeckoAPI from '../../../../providers/App/hooks/usePriceAPI';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatCoin, formatUSD } from '../../../../utils/numberFormats';
 
