@@ -48,7 +48,10 @@ export function MenuItems() {
           testId="accountMenu-disconnect"
           label={t('disconnect')}
           Icon={Disconnect}
-          onClick={disconnect}
+          onClick={() => {
+            disconnect();
+            setTimeout(() => {}, 500);
+          }}
         />
       )}
     </MenuList>
