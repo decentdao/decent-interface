@@ -38,11 +38,12 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
         let tokenFiatBalance = 0;
         if (tokenPrice && asset.balance) {
           const multiplicator = 1000000000;
-          tokenFiatBalance =
-            BigNumber.from(asset.balance)
-              .mul(Math.round(tokenPrice * multiplicator)) // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off - maybe up to 1%
-              .div(BigNumber.from(10).pow(asset.token?.decimals || 18))
-              .toNumber() / multiplicator;
+          const tokenFiatBalanceBn = BigNumber.from(asset.balance)
+            .mul(Math.round(tokenPrice * multiplicator)) // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off - maybe up to 1%
+            .div(BigNumber.from(10).pow(asset.token?.decimals || 18));
+          tokenFiatBalance = tokenFiatBalanceBn.gte(Number.MAX_SAFE_INTEGER)
+            ? tokenFiatBalanceBn.div(multiplicator).toNumber()
+            : tokenFiatBalanceBn.toNumber() / multiplicator;
           newTotalFiatValue += tokenFiatBalance;
         }
 
