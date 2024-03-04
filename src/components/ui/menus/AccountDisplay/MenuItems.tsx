@@ -2,17 +2,14 @@ import { MenuList } from '@chakra-ui/react';
 import { Connect, Disconnect } from '@decent-org/fractal-ui';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useTranslation } from 'react-i18next';
-import { useDisconnect } from 'wagmi';
-import { useFractal } from '../../../../providers/App/AppProvider';
+import { useDisconnect, useWalletClient } from 'wagmi';
 import { MenuItemButton } from './MenuItemButton';
 import { MenuItemNetwork } from './MenuItemNetwork';
 import { MenuItemWallet } from './MenuItemWallet';
 
 export function MenuItems() {
-  const {
-    readOnly: { user },
-  } = useFractal();
   const { disconnect } = useDisconnect();
+  const { data: isConnected } = useWalletClient();
   const { openConnectModal } = useConnectModal();
   const { t } = useTranslation('menu');
   return (
@@ -33,9 +30,9 @@ export function MenuItems() {
         },
       }}
     >
-      {user.address && <MenuItemWallet />}
+      {isConnected && <MenuItemWallet />}
       <MenuItemNetwork />
-      {!user.address && (
+      {!isConnected && (
         <MenuItemButton
           testId="accountMenu-connect"
           label={t('connect')}
@@ -43,15 +40,12 @@ export function MenuItems() {
           onClick={openConnectModal}
         />
       )}
-      {user.address && (
+      {isConnected && (
         <MenuItemButton
           testId="accountMenu-disconnect"
           label={t('disconnect')}
           Icon={Disconnect}
-          onClick={() => {
-            disconnect();
-            setTimeout(() => {}, 500);
-          }}
+          onClick={disconnect}
         />
       )}
     </MenuList>
