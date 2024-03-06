@@ -25,7 +25,7 @@ export default function usePriceAPI() {
           tokensAddresses.push('ethereum');
         }
         const pricesResponse = await fetch(
-          `/.netlify/functions/tokensPrices?tokens=${tokensAddresses.join(',')}`
+          `/.netlify/functions/tokenPrices?tokens=${tokensAddresses.join(',')}`
         );
 
         const pricesResponseBody = await pricesResponse.json();

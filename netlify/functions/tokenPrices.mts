@@ -1,30 +1,38 @@
 import { getStore } from '@netlify/blobs';
 
-type TokenPriceMetadata = {
-  expiration: number;
+type TokenPriceWithMetadata = {
+  data: {
+    tokenAddress: string;
+    price: number;
+  };
+  metadata: {
+    expiration: number;
+  };
 };
 
-export default async function getTokenprices(request: Request) {
-  const store = getStore('fractal-token-prices-store');
+export default async function getTokenPrices(request: Request) {
+  const store = getStore('token-prices');
   const tokensString = new URL(request.url).searchParams.get('tokens');
 
   if (!tokensString) {
-    Response.json({ error: 'Tokens to request were not provided' });
+    return Response.json({ error: 'Tokens to request were not provided' });
   }
-  const tokens = tokensString!.split(',');
+  const tokens = tokensString.split(',');
   try {
-    const now = new Date().getTime();
+    const now = Date.now();
     const cachedPrices = await Promise.all(
-      tokens.map(tokenAddress => store.getWithMetadata(tokenAddress, { type: 'json' }))
+      tokens.map(
+        tokenAddress =>
+          store.getWithMetadata(tokenAddress, {
+            type: 'json',
+          }) as Promise<TokenPriceWithMetadata> | null
+      )
     );
     const cachedUnexpiredPrices = cachedPrices
-      .filter(
-        tokenPrice =>
-          tokenPrice && (tokenPrice?.metadata as any as TokenPriceMetadata).expiration <= now
-      )
+      .filter(tokenPrice => tokenPrice && tokenPrice.metadata.expiration <= now)
       .map(tokenPrice => ({
-        tokenAddress: tokenPrice?.data.tokenAddress,
-        price: tokenPrice?.data.price,
+        tokenAddress: tokenPrice!.data.tokenAddress,
+        price: tokenPrice!.data.price,
       }));
     const nonCachedTokensAddresses = tokens.filter(
       address => !cachedUnexpiredPrices.find(tokenPrice => tokenPrice.tokenAddress === address)
@@ -38,7 +46,7 @@ export default async function getTokenprices(request: Request) {
     }
     if (!process.env.COINGECKO_API_KEY) {
       console.error('CoinGecko API key is missing');
-      return { error: 'Unknown error while fetching prices' };
+      return Response.json({ error: 'Unknown error while fetching prices' });
     }
     const PUBLIC_DEMO_API_BASE_URL = 'https://api.coingecko.com/api/v3/';
     const AUTH_QUERY_PARAM = `?x_cg_demo_api_key=${process.env.COINGECKO_API_KEY}`;
