@@ -64,7 +64,7 @@ export default async function getTokenPrices(request: Request) {
     // TokenPricesWithMetadata. All of these TokenPrices will be either
     // expired or unexpired.
     const allCachedTokenPrices = possibleCachedTokenPrices.filter(
-      (possible): possible is TokenPriceWithMetadata => possible !== null
+      (possible): possible is TokenPriceWithMetadata => !!possible
     );
 
     // Let's pull out all of the unexpired TokenPrices from our cache.
