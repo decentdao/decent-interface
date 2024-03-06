@@ -52,7 +52,7 @@
   "scripts": {
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "dev": "NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next dev",
+    "dev": "npm run graphql:build && NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next dev",
     "build": "npm run graphql:build && NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next build",
     "graphql:build": "graphclient build",
     "graphql:dev-server": "graphclient serve-dev",
