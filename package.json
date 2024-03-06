@@ -53,10 +53,9 @@
   "scripts": {
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "set:env": "GENERATE_SOURCEMAP=false NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD`",
-    "dev": "npm run set:env & next dev",
-    "start": "npm run set:env & next start",
-    "start:https": "npm run set:env & HTTPS=true next start",
+    "dev": "GENERATE_SOURCEMAP=false NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next dev",
+    "start": "GENERATE_SOURCEMAP=false NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next start",
+    "start:https": "GENERATE_SOURCEMAP=false NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` HTTPS=true next start",
     "build": "npm run graphql:build && NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next build",
     "graphql:build": "graphclient build",
     "graphql:dev-server": "graphclient serve-dev",
