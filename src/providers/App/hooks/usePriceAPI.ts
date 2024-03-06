@@ -24,20 +24,22 @@ export default function usePriceAPI() {
         if (ethAsset) {
           tokensAddresses.push('ethereum');
         }
-        const pricesResponse = await fetch(
-          `/.netlify/functions/tokenPrices?tokens=${tokensAddresses.join(',')}`
-        );
+        if (tokensAddresses.length > 0) {
+          const pricesResponse = await fetch(
+            `/.netlify/functions/tokenPrices?tokens=${tokensAddresses.join(',')}`
+          );
 
-        const pricesResponseBody = await pricesResponse.json();
-        if (pricesResponseBody.error) {
-          // We don't need to log error here as it is supposed to be logged through Netlify function anyway
-          toast.warning(t('tokenPriceFetchingError'));
-          if (pricesResponseBody.data) {
-            // Netlify function might fail due to rate limit of CoinGecko error, but it still will return cached prices.
+          const pricesResponseBody = await pricesResponse.json();
+          if (pricesResponseBody.error) {
+            // We don't need to log error here as it is supposed to be logged through Netlify function anyway
+            toast.warning(t('tokenPriceFetchingError'));
+            if (pricesResponseBody.data) {
+              // Netlify function might fail due to rate limit of CoinGecko error, but it still will return cached prices.
+              return pricesResponseBody.data;
+            }
+          } else {
             return pricesResponseBody.data;
           }
-        } else {
-          return pricesResponseBody.data;
         }
       } catch (e) {
         logError('Error while getting tokens prices', e);
