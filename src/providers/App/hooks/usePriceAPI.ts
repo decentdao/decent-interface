@@ -32,6 +32,10 @@ export default function usePriceAPI() {
         if (pricesResponseBody.error) {
           // We don't need to log error here as it is supposed to be logged through Netlify function anyway
           toast.warning(t('tokenPriceFetchingError'));
+          if (pricesResponseBody.data) {
+            // Netlify function might fail due to rate limit of CoinGecko error, but it still will return cached prices.
+            return pricesResponseBody.data;
+          }
         } else {
           return pricesResponseBody.data;
         }

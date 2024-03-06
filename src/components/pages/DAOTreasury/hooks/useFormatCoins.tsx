@@ -32,9 +32,11 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
       for (let i = 0; i < assets.length; i++) {
         let asset = assets[i];
         if (asset.balance === '0') continue;
-        const tokenPrice = asset.tokenAddress
-          ? tokenPrices[asset.tokenAddress.toLowerCase()]
-          : tokenPrices.ethereum;
+        const tokenPrice = tokenPrices
+          ? asset.tokenAddress
+            ? tokenPrices[asset.tokenAddress.toLowerCase()]
+            : tokenPrices.ethereum
+          : 0;
 
         let tokenFiatBalance = 0;
         if (tokenPrice && asset.balance) {
