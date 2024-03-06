@@ -92,13 +92,18 @@ export default async function getTokenPrices(request: Request) {
 
     // Finally let's get a list of all of the token addresses that
     // we don't have any price for in our cache, expired or not.
-    const allUncachedTokenPrices = possibleCachedTokenPrices.filter(
-      (possible): possible is TokenPriceWithMetadata => possible === null
-    );
+    const allUncachedTokenAddresses = tokensStringParam
+      .split(',')
+      .filter(
+        address =>
+          !allCachedTokenPrices.find(
+            cachedTokenPrice => cachedTokenPrice.data.tokenAddress === address
+          )
+      );
 
     // If there are no expired token prices, and no token addresses that we
     // don't have a cached value for at all, we can early return!
-    if (allUncachedTokenPrices.length === 0 && cachedExpiredTokenPrices.length === 0) {
+    if (allUncachedTokenAddresses.length === 0 && cachedExpiredTokenPrices.length === 0) {
       return Response.json({ data: responseBody });
     }
 
@@ -107,13 +112,16 @@ export default async function getTokenPrices(request: Request) {
 
     // First, let's build up our list of token addresses to query CoinGecko with,
     // which is all uncached tokens and tokens that have expired.
-    const needPrices = [...allUncachedTokenPrices, ...cachedExpiredTokenPrices];
+    const needPricesTokenAddresses = [
+      ...allUncachedTokenAddresses,
+      ...cachedExpiredTokenPrices.map(tokenPrice => tokenPrice.data.tokenAddress),
+    ];
 
     try {
       // Build up the request URL.
       const PUBLIC_DEMO_API_BASE_URL = 'https://api.coingecko.com/api/v3/';
       const AUTH_QUERY_PARAM = `?x_cg_demo_api_key=${process.env.COINGECKO_API_KEY}`;
-      const tokenPricesUrl = `${PUBLIC_DEMO_API_BASE_URL}simple/token_price/ethereum/${AUTH_QUERY_PARAM}&vs_currencies=usd&contract_addresses=${needPrices.join(
+      const tokenPricesUrl = `${PUBLIC_DEMO_API_BASE_URL}simple/token_price/ethereum/${AUTH_QUERY_PARAM}&vs_currencies=usd&contract_addresses=${needPricesTokenAddresses.join(
         ','
       )}`;
 
@@ -140,7 +148,7 @@ export default async function getTokenPrices(request: Request) {
       });
 
       // Do we need to get the price of our chain's gas token (ethereum)?
-      const ethAsset = needPrices.find(token => token.data.tokenAddress === 'ethereum');
+      const ethAsset = needPricesTokenAddresses.find(address => address === 'ethereum');
       if (ethAsset) {
         // Build up the request URL.
         const ethPriceUrl = `${PUBLIC_DEMO_API_BASE_URL}simple/price${AUTH_QUERY_PARAM}&ids=ethereum&vs_currencies=usd`;
