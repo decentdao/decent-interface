@@ -53,6 +53,8 @@
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "dev": "npm run graphql:build && NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next dev",
+    "start": "NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next start",
+    "start:https": "NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` HTTPS=true next start",
     "build": "npm run graphql:build && NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` next build",
     "graphql:build": "graphclient build",
     "graphql:dev-server": "graphclient serve-dev",
