@@ -1,6 +1,5 @@
 {
   "name": "fractal-interface",
-  "version": "0.1.8",
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.10",
