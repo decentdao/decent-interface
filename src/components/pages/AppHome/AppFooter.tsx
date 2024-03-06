@@ -1,6 +1,5 @@
 import { Box, BoxProps, Divider, Flex, Link, Spacer, Text } from '@chakra-ui/react';
 import { Trans, useTranslation } from 'react-i18next';
-import packageJson from '../../../../package.json';
 import { URL_DECENT } from '../../../constants/url';
 import ExternalLink from '../../ui/links/ExternalLink';
 
@@ -42,23 +41,27 @@ export function AppFooter({ ...rest }: BoxProps) {
         >
           {t('audit')}
         </ExternalLink>
-        <Text
-          color="grayscale.100"
-          textStyle="text-sm-mono-bold"
-          paddingStart="1rem"
-          paddingEnd="1rem"
-        >
-          |
-        </Text>
-        <ExternalLink
-          href={
-            'https://github.com/decent-dao/fractal-interface/commit/' +
-            process.env.NEXT_PUBLIC_GIT_HASH
-          }
-          textStyle="text-sm-mono-bold"
-        >
-          v{packageJson.version}
-        </ExternalLink>
+        {process.env.NEXT_PUBLIC_GIT_HASH !== undefined && (
+          <>
+            <Text
+              color="grayscale.100"
+              textStyle="text-sm-mono-bold"
+              paddingStart="1rem"
+              paddingEnd="1rem"
+            >
+              |
+            </Text>
+            <ExternalLink
+              href={
+                'https://github.com/decent-dao/fractal-interface/commit/' +
+                process.env.NEXT_PUBLIC_GIT_HASH
+              }
+              textStyle="text-sm-mono-bold"
+            >
+              {process.env.NEXT_PUBLIC_GIT_HASH.substring(0, 7)}
+            </ExternalLink>
+          </>
+        )}
       </Flex>
     </Box>
   );
