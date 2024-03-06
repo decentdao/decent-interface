@@ -17,8 +17,6 @@ export default async function getTokenPrices(request: Request) {
     return Response.json({ error: 'Unknown error while fetching prices' }, { status: 503 });
   }
 
-  const now = Date.now();
-
   // First we want to pull the tokens off of the request's query param.
   const tokensStringParam = new URL(request.url).searchParams.get('tokens');
   if (!tokensStringParam) {
@@ -48,6 +46,8 @@ export default async function getTokenPrices(request: Request) {
   const responseBody: Record<string, number> = tokens.reduce((p, c) => ({ ...p, [c]: 0 }), {});
 
   try {
+    const now = Date.now();
+
     // Try to get all of the tokens from our store.
     // Any token address that we don't have a record for will
     // come back as null.
@@ -92,14 +92,12 @@ export default async function getTokenPrices(request: Request) {
 
     // Finally let's get a list of all of the token addresses that
     // we don't have any price for in our cache, expired or not.
-    const allUncachedTokenAddresses = tokensStringParam
-      .split(',')
-      .filter(
-        address =>
-          !allCachedTokenPrices.find(
-            cachedTokenPrice => cachedTokenPrice.data.tokenAddress === address
-          )
-      );
+    const allUncachedTokenAddresses = rawTokenAddresses.filter(
+      address =>
+        !allCachedTokenPrices.find(
+          cachedTokenPrice => cachedTokenPrice.data.tokenAddress === address
+        )
+    );
 
     // If there are no expired token prices, and no token addresses that we
     // don't have a cached value for at all, we can early return!
