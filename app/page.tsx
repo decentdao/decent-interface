@@ -14,7 +14,6 @@ import ExternalLink from '../src/components/ui/links/ExternalLink';
 import ClientOnly from '../src/components/ui/utils/ClientOnly';
 import { BASE_ROUTES } from '../src/constants/routes';
 import { URL_DOCS } from '../src/constants/url';
-import ethLizardsLogo from '../src/metadata/lizzardsDAO/assets/logo.png';
 import { useFractal } from '../src/providers/App/AppProvider';
 import { disconnectedChain } from '../src/providers/NetworkConfig/NetworkConfigProvider';
 
