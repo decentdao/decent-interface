@@ -74,11 +74,11 @@ function ProposalVotes({
 
   const isERC20 = useMemo(
     () => azoriusGovernance.type === GovernanceType.AZORIUS_ERC20,
-    [azoriusGovernance.type]
+    [azoriusGovernance.type],
   );
   const isERC721 = useMemo(
     () => azoriusGovernance.type === GovernanceType.AZORIUS_ERC721,
-    [azoriusGovernance.type]
+    [azoriusGovernance.type],
   );
 
   const getVotesPercentage = useCallback(
@@ -88,7 +88,7 @@ function ProposalVotes({
       }
       return voteTotal.mul(100).div(totalVotesCasted).toNumber();
     },
-    [totalVotesCasted]
+    [totalVotesCasted],
   );
 
   if ((isERC20 && !azoriusGovernance.votesToken) || (isERC721 && !azoriusGovernance.erc721Tokens)) {

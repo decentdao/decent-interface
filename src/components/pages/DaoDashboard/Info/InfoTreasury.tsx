@@ -3,17 +3,18 @@ import { Treasury } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
-import { useTreasuryTotalUSD } from '../../DAOTreasury/hooks/useTreasuryTotalUSD';
+import { useFormatCoins } from '../../DAOTreasury/hooks/useFormatCoins';
 
 interface IDAOGovernance {}
 
 export function InfoTreasury({}: IDAOGovernance) {
-  const { t } = useTranslation('dashboard');
-  const totalUSD = useTreasuryTotalUSD();
-
   const {
     node: { daoAddress },
+    treasury: { assetsFungible },
   } = useFractal();
+
+  const { t } = useTranslation('dashboard');
+  const { totalFiatValue } = useFormatCoins(assetsFungible);
 
   if (!daoAddress) {
     return (
@@ -48,7 +49,7 @@ export function InfoTreasury({}: IDAOGovernance) {
         textStyle="text-lg-mono-semibold"
         color="grayscale.100"
       >
-        {totalUSD}
+        {totalFiatValue}
       </Text>
     </Box>
   );

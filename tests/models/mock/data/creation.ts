@@ -72,7 +72,7 @@ export const createSubgraphDAO = (
   address: string,
   name: string,
   hierarchy: DAO[],
-  parentAddress?: string
+  parentAddress?: string,
 ) => {
   return {
     data: {

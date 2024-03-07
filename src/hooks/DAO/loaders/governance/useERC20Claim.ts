@@ -10,18 +10,18 @@ export function useERC20Claim() {
   const {
     node: { daoAddress },
     governanceContracts: { tokenContract },
-    baseContracts: { claimingMasterCopyContract },
+    baseContracts,
     action,
   } = useFractal();
 
   const loadTokenClaimContract = useCallback(async () => {
-    if (!claimingMasterCopyContract || !tokenContract) return;
-
+    if (!baseContracts || !tokenContract) return;
+    const { claimingMasterCopyContract } = baseContracts;
     const approvalFilter = tokenContract.asProvider.filters.Approval();
     const approvals = await tokenContract.asProvider.queryFilter(approvalFilter);
     if (!approvals.length) return;
     const possibleTokenClaimContract = claimingMasterCopyContract.asProvider.attach(
-      approvals[0].args[1]
+      approvals[0].args[1],
     );
     const tokenClaimFilter = possibleTokenClaimContract.filters.ERC20ClaimCreated();
     const tokenClaimArray = await possibleTokenClaimContract
@@ -39,7 +39,7 @@ export function useERC20Claim() {
       type: FractalGovernanceAction.SET_CLAIMING_CONTRACT,
       payload: possibleTokenClaimContract,
     });
-  }, [claimingMasterCopyContract, tokenContract, action]);
+  }, [baseContracts, tokenContract, action]);
 
   useEffect(() => {
     if (daoAddress) {

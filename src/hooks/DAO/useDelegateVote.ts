@@ -27,7 +27,7 @@ const useDelegateVote = () => {
         successCallback,
       });
     },
-    [contractCallDelegateVote, t]
+    [contractCallDelegateVote, t],
   );
 
   return { delegateVote, contractCallPending };

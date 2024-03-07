@@ -4,9 +4,7 @@ import { FractalModuleData, FractalModuleType } from '../../../types';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 
 export const useFractalModules = () => {
-  const {
-    baseContracts: { fractalAzoriusMasterCopyContract, fractalModuleMasterCopyContract },
-  } = useFractal();
+  const { baseContracts } = useFractal();
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const lookupModules = useCallback(
     async (_moduleAddresses: string[]) => {
@@ -16,15 +14,17 @@ export const useFractalModules = () => {
 
           let safeModule: FractalModuleData;
 
-          if (masterCopyData.isAzorius) {
+          if (masterCopyData.isAzorius && baseContracts) {
             safeModule = {
-              moduleContract: fractalAzoriusMasterCopyContract.asSigner.attach(moduleAddress),
+              moduleContract:
+                baseContracts.fractalAzoriusMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.AZORIUS,
             };
-          } else if (masterCopyData.isFractalModule) {
+          } else if (masterCopyData.isFractalModule && baseContracts) {
             safeModule = {
-              moduleContract: fractalModuleMasterCopyContract.asSigner.attach(moduleAddress),
+              moduleContract:
+                baseContracts.fractalModuleMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.FRACTAL,
             };
@@ -37,15 +37,11 @@ export const useFractalModules = () => {
           }
 
           return safeModule;
-        })
+        }),
       );
       return modules;
     },
-    [
-      fractalAzoriusMasterCopyContract,
-      fractalModuleMasterCopyContract,
-      getZodiacModuleProxyMasterCopyData,
-    ]
+    [baseContracts, getZodiacModuleProxyMasterCopyData],
   );
   return lookupModules;
 };

@@ -47,7 +47,7 @@ function GuardDetails(props: ICreationStepProps) {
     (nonce?: number) => {
       setFieldValue('multisig.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
     },
-    [setFieldValue]
+    [setFieldValue],
   );
 
   useEffect(() => {
@@ -76,14 +76,14 @@ function GuardDetails(props: ICreationStepProps) {
           if (azoriusGovernance.votesToken) {
             const normalized = ethers.utils.formatUnits(
               azoriusGovernance.votesToken.totalSupply,
-              azoriusGovernance.votesToken.decimals
+              azoriusGovernance.votesToken.decimals,
             );
 
             parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
           } else if (azoriusGovernance.erc721Tokens) {
             parentVotes = azoriusGovernance.erc721Tokens!.reduce(
               (prev, curr) => curr.votingWeight.mul(curr.totalSupply || 1).add(prev),
-              BigNumber.from(0)
+              BigNumber.from(0),
             );
           } else {
             parentVotes = BigNumber.from(1);

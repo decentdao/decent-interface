@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 export const secondsLeftInFreezePeriod = (
   freezeProposalCreatedTime: BigNumber,
   freezePeriod: BigNumber,
-  currentTime: BigNumber
+  currentTime: BigNumber,
 ): BigNumber => {
   const secondsLeft = freezeProposalCreatedTime.add(freezePeriod).sub(currentTime);
 
@@ -13,7 +13,7 @@ export const secondsLeftInFreezePeriod = (
 export const secondsLeftInFreezeProposalPeriod = (
   freezeProposalCreatedTime: BigNumber,
   freezeProposalPeriod: BigNumber,
-  currentTime: BigNumber
+  currentTime: BigNumber,
 ): BigNumber => {
   const secondsLeft = freezeProposalCreatedTime.add(freezeProposalPeriod).sub(currentTime);
 
@@ -23,12 +23,12 @@ export const secondsLeftInFreezeProposalPeriod = (
 export const isWithinFreezePeriod = (
   freezeProposalCreatedTime: BigNumber,
   freezePeriod: BigNumber,
-  currentTime: BigNumber
+  currentTime: BigNumber,
 ): boolean => {
   const secondsLeft = secondsLeftInFreezePeriod(
     freezeProposalCreatedTime,
     freezePeriod,
-    currentTime
+    currentTime,
   );
 
   return secondsLeft.gt(0);
@@ -37,12 +37,12 @@ export const isWithinFreezePeriod = (
 export const isWithinFreezeProposalPeriod = (
   freezeProposalCreatedTime: BigNumber,
   freezeProposalPeriod: BigNumber,
-  currentTime: BigNumber
+  currentTime: BigNumber,
 ): boolean => {
   const secondsLeft = secondsLeftInFreezeProposalPeriod(
     freezeProposalCreatedTime,
     freezeProposalPeriod,
-    currentTime
+    currentTime,
   );
 
   return secondsLeft.gt(0);

@@ -21,7 +21,7 @@ export default function useLidoStaking() {
 
   const handleStake = useCallback(
     async (value: BigNumber) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !daoAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
       }
@@ -46,26 +46,26 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, signerOrProvider, daoAddress, safe, submitProposal, t]
+    [lido, signerOrProvider, daoAddress, safe, submitProposal, t],
   );
 
   const handleUnstake = useCallback(
     async (value: string) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !daoAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
       }
       const stETHContract = getSTETHContract(lido.stETHContractAddress, signerOrProvider);
       const withdrawalQueueContract = getWithdrawalQueueContract(
         lido.withdrawalQueueContractAddress,
-        signerOrProvider
+        signerOrProvider,
       );
 
       const proposalData: ProposalExecuteData = {
         metaData: {
           title: t('Unstake stETH'),
           description: t(
-            'This proposal will unstake your stETH from Lido and mint a Lido Withdrawal NFT which can be used to claim your ETH.'
+            'This proposal will unstake your stETH from Lido and mint a Lido Withdrawal NFT which can be used to claim your ETH.',
           ),
           documentationUrl:
             'https://docs.lido.fi/guides/steth-integration-guide#request-withdrawal-and-mint-nft',
@@ -91,26 +91,26 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t, signerOrProvider]
+    [lido, daoAddress, safe, submitProposal, t, signerOrProvider],
   );
 
   const handleClaimUnstakedETH = useCallback(
     async (nftId: BigNumber) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !daoAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
       }
 
       const withdrawalQueueContract = getWithdrawalQueueContract(
         lido.withdrawalQueueContractAddress,
-        signerOrProvider
+        signerOrProvider,
       );
 
       const proposalData: ProposalExecuteData = {
         metaData: {
           title: t('Lido Withdrawal'),
           description: t(
-            'This proposal will burn your Lido Withdrawal NFT and return the ETH to your Safe.'
+            'This proposal will burn your Lido Withdrawal NFT and return the ETH to your Safe.',
           ),
           documentationUrl: 'https://docs.lido.fi/guides/steth-integration-guide#claiming',
         },
@@ -128,7 +128,7 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t, signerOrProvider]
+    [lido, daoAddress, safe, submitProposal, t, signerOrProvider],
   );
 
   return { handleStake, handleUnstake, handleClaimUnstakedETH };

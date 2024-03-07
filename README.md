@@ -27,6 +27,7 @@ $ npm run graphql:build # For UNIX
 ```
 
 Running development environment
+
 ```shell
 $ npm run dev
 ```
@@ -81,8 +82,8 @@ The "dev" environment tracks the `develop` branch, "staging" tracks `staging`, a
 So at any given time, there are effectively three builds out there, and they are publicly accessible and privately configurable within Github:
 
 1. dev site
-    - url: https://app.dev.fractalframework.xyz
+   - url: https://app.dev.fractalframework.xyz
 2. staging site
-    - url: https://app.staging.fractalframework.xyz
+   - url: https://app.staging.fractalframework.xyz
 3. prod site
-    - url: https://app.fractalframework.xyz
+   - url: https://app.fractalframework.xyz

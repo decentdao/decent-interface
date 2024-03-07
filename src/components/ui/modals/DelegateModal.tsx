@@ -7,8 +7,8 @@ import * as Yup from 'yup';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useEthersSigner } from '../../../hooks/utils/useEthersSigner';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AzoriusGovernance, DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 import { couldBeENS } from '../../../utils/url';
@@ -89,7 +89,7 @@ export function DelegateModal({ close }: { close: Function }) {
             azoriusGovernance.votesToken.balance || BigNumber.from(0),
             false,
             azoriusGovernance.votesToken.decimals,
-            azoriusGovernance.votesToken.symbol
+            azoriusGovernance.votesToken.symbol,
           )}
         </Text>
         <Text
@@ -130,7 +130,7 @@ export function DelegateModal({ close }: { close: Function }) {
               decentGovernance.lockedVotesToken.balance || BigNumber.from(0),
               false,
               azoriusGovernance.votesToken.decimals,
-              azoriusGovernance.votesToken.symbol
+              azoriusGovernance.votesToken.symbol,
             )}
           </Text>
           <Text

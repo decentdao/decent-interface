@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { erc20ABI } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { TokenCreationType, ICreationStepProps } from '../../../types';
 import SupportTooltip from '../../ui/badges/SupportTooltip';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
@@ -62,7 +62,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
           value: totalSupply,
           bigNumberValue: BigNumber.from(totalSupply),
         },
-        true
+        true,
       );
       if (!isVotesToken) {
         setFieldValue('erc20Token.tokenName', 'Wrapped ' + name, true);

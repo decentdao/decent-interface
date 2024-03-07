@@ -1,9 +1,9 @@
-version: "3"
+version: '3'
 services:
   blockchain:
     build: docker/blockchain
     ports:
-      - "8545:8545"
+      - '8545:8545'
     env_file:
       - ./docker/.env.tests.local
 
@@ -16,7 +16,7 @@ services:
         NEXT_PUBLIC_LOCAL_CHAIN_ID: '31337'
         NEXT_PUBLIC_LOCAL_PROVIDER_URL: 'http://127.0.0.1:8545'
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NEXT_PUBLIC_TESTING_ENVIRONMENT=true
       - NEXT_PUBLIC_LOCAL_CHAIN_ID=31337

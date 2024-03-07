@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { erc20ABI } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { couldBeENS } from '../../../utils/url';
-import { useEthersProvider } from '../../utils/useEthersProvider';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { validateAddress } from '../common/useValidationAddress';
 
@@ -38,7 +38,7 @@ export function useDAOCreateTests() {
         },
       };
     },
-    [t]
+    [t],
   );
 
   const allocationValidationTest = useMemo(() => {
@@ -88,11 +88,11 @@ export function useDAOCreateTests() {
               return validation.address;
             }
             return address;
-          })
+          }),
         );
 
         const uniqueFilter = resolvedAddresses.filter(
-          address => address === value || address === inputValidation?.address
+          address => address === value || address === inputValidation?.address,
         );
         return uniqueFilter.length === 1;
       },
@@ -113,12 +113,12 @@ export function useDAOCreateTests() {
 
         const filteredAllocations = tokenAllocations.filter(
           allocation =>
-            allocation.amount.bigNumberValue && !allocation.amount.bigNumberValue.isZero()
+            allocation.amount.bigNumberValue && !allocation.amount.bigNumberValue.isZero(),
         );
 
         const allocationSum = filteredAllocations.reduce(
           (prev, cur) => prev.add(cur.amount.bigNumberValue!),
-          BigNumber.from(0)
+          BigNumber.from(0),
         );
 
         const totalAllocation = allocationSum.add(parentAllocationAmount);

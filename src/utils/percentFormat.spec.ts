@@ -82,17 +82,17 @@ describe('Percent formatting, BigNumber', () => {
   });
   test('correct 1.1%, number', () => {
     expect(formatPercentage(BigNumber.from('10000000000'), BigNumber.from('909090909091'))).toBe(
-      '1.1%'
+      '1.1%',
     );
   });
   test('correct 1.01%, number', () => {
     expect(formatPercentage(BigNumber.from('10000000000'), BigNumber.from('990099009901'))).toBe(
-      '1.01%'
+      '1.01%',
     );
   });
   test('correct 1.001%, number', () => {
     expect(formatPercentage(BigNumber.from('10000000000'), BigNumber.from('999000999001'))).toBe(
-      '1%'
+      '1%',
     );
   });
 });

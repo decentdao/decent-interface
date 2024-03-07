@@ -21,7 +21,7 @@ interface Transaction {
 const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) => {
   const ipfsClient = useIPFSClient();
   const [multisigMetadata, setMultisigMetadata] = useState<undefined | ProposalMetadata | null>(
-    undefined
+    undefined,
   );
   const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
 
@@ -29,7 +29,7 @@ const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) =>
     if (!proposal) return;
 
     const cached: ProposalMetadata = await getValue(
-      CacheKeys.MULTISIG_METADATA_PREFIX + proposal.proposalId
+      CacheKeys.MULTISIG_METADATA_PREFIX + proposal.proposalId,
     );
     if (cached) {
       setMultisigMetadata(cached);

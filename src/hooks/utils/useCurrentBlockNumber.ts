@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useEthersProvider } from './useEthersProvider';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 
 const useCurrentBlockNumber = () => {
   const [currentBlockNumber, setCurrentBlockNumber] = useState<number>();
@@ -13,7 +13,7 @@ const useCurrentBlockNumber = () => {
         setIsLoaded(true);
       }
     },
-    [isLoaded]
+    [isLoaded],
   );
 
   useEffect(() => {

@@ -41,7 +41,7 @@ export default function ProposalCreatePage() {
   const [formState, setFormState] = useState(CreateProposalState.METADATA_FORM);
   const isAzorius = useMemo(
     () => type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721,
-    [type]
+    [type],
   );
 
   const successCallback = () => {

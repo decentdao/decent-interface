@@ -37,7 +37,7 @@ export abstract class SafeMocker {
         await route.fulfill({
           body: JSON.stringify(handler(request)),
         });
-      }
+      },
     );
   }
 }

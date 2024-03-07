@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { CreateProposalForm } from '../../../types';
 import { encodeFunction } from '../../../utils/crypto';
 import { couldBeENS } from '../../../utils/url';
-import { useEthersSigner } from '../../utils/useEthersSigner';
 
 export function usePrepareProposal() {
   const signer = useEthersSigner();
@@ -21,13 +21,13 @@ export function usePrepareProposal() {
             return signer!.resolveName(tx.targetAddress);
           }
           return tx.targetAddress;
-        })
+        }),
       );
       return {
         targets,
         values: transactionsWithEncoding.map(transaction => transaction.ethValue.bigNumberValue!),
         calldatas: transactionsWithEncoding.map(
-          transaction => transaction.encodedFunctionData || ''
+          transaction => transaction.encodedFunctionData || '',
         ),
         metaData: {
           title: proposalMetadata.title,
@@ -36,7 +36,7 @@ export function usePrepareProposal() {
         },
       };
     },
-    [signer]
+    [signer],
   );
   return { prepareProposal };
 }

@@ -10,26 +10,16 @@ import { useCallback, useEffect, useRef } from 'react';
 import { LockRelease, LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { ContractConnection } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
-import { useEthersProvider } from '../../utils/useEthersProvider';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string | null>();
-  const {
-    node,
-    baseContracts: {
-      votesTokenMasterCopyContract,
-      fractalAzoriusMasterCopyContract,
-      votesERC20WrapperMasterCopyContract,
-      linearVotingMasterCopyContract,
-      linearVotingERC721MasterCopyContract,
-    },
-    action,
-  } = useFractal();
+  const { node, baseContracts, action } = useFractal();
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const provider = useEthersProvider();
   const signerOrProvider = useSignerOrProvider();
@@ -37,13 +27,23 @@ export const useGovernanceContracts = () => {
   const { fractalModules, isModulesLoaded, daoAddress } = node;
 
   const loadGovernanceContracts = useCallback(async () => {
+    if (!baseContracts) {
+      return;
+    }
+    const {
+      votesTokenMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
+      linearVotingMasterCopyContract,
+      linearVotingERC721MasterCopyContract,
+    } = baseContracts;
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
     const azoriusModuleContract = azoriusModule?.moduleContract as Azorius;
 
     if (!!azoriusModuleContract) {
       const azoriusContract = {
         asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(
-          azoriusModuleContract.address
+          azoriusModuleContract.address,
         ),
         asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(azoriusModuleContract.address),
       };
@@ -61,7 +61,7 @@ export const useGovernanceContracts = () => {
       const votingContractAddress = (
         await azoriusContract.asProvider.getStrategies(
           '0x0000000000000000000000000000000000000001',
-          0
+          0,
         )
       )[1];
 
@@ -82,7 +82,7 @@ export const useGovernanceContracts = () => {
         erc721LinearVotingContract = {
           asSigner: linearVotingERC721MasterCopyContract.asSigner.attach(votingContractAddress!),
           asProvider: linearVotingERC721MasterCopyContract.asProvider.attach(
-            votingContractAddress!
+            votingContractAddress!,
           ),
         };
       }
@@ -99,7 +99,7 @@ export const useGovernanceContracts = () => {
         const possibleLockRelease = new ethers.Contract(
           govTokenAddress,
           LockRelease__factory.abi,
-          provider
+          provider,
         ) as LockRelease;
 
         const lockedToken = await possibleLockRelease.token().catch(() => {
@@ -108,7 +108,7 @@ export const useGovernanceContracts = () => {
           return undefined;
         });
 
-        if (lockedToken) {
+        if (lockedToken && provider && signerOrProvider) {
           lockReleaseContract = {
             asSigner: LockRelease__factory.connect(govTokenAddress, signerOrProvider),
             asProvider: LockRelease__factory.connect(govTokenAddress, provider),
@@ -195,12 +195,8 @@ export const useGovernanceContracts = () => {
     action,
     provider,
     signerOrProvider,
-    votesTokenMasterCopyContract,
-    fractalAzoriusMasterCopyContract,
-    votesERC20WrapperMasterCopyContract,
     getZodiacModuleProxyMasterCopyData,
-    linearVotingMasterCopyContract,
-    linearVotingERC721MasterCopyContract,
+    baseContracts,
     fractalModules,
   ]);
 

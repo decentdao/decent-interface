@@ -57,7 +57,7 @@ export function useActionToast({
         draggable: false,
         progress: 1,
         toastId,
-      }
+      },
     );
   }, [buttonOnClick, buttonTranslationKey, isVisible, t, testId, titleTranslationKey, toastId]);
 }

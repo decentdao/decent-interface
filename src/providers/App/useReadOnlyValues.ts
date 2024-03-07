@@ -39,7 +39,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
           const tokenWeight = azoriusGovernance.votesToken?.votingWeight || BigNumber.from(0);
           return lockedTokenWeight || tokenWeight;
         case GovernanceType.AZORIUS_ERC721:
-          if (!_account || !azoriusGovernance.erc721Tokens) {
+          if (!_account || !azoriusGovernance.erc721Tokens || !signerOrProvider) {
             return BigNumber.from(0);
           }
           const userVotingWeight = (
@@ -48,7 +48,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
                 const tokenContract = ERC721__factory.connect(address, signerOrProvider);
                 const userBalance = await tokenContract.balanceOf(_account);
                 return userBalance.mul(votingWeight);
-              })
+              }),
             )
           ).reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
           return userVotingWeight;

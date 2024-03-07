@@ -27,7 +27,7 @@ const useSendAssets = ({
       transferAmount,
       false,
       asset?.token?.decimals,
-      asset?.token?.symbol
+      asset?.token?.symbol,
     );
 
     const funcSignature = 'function transfer(address to, uint256 value)';

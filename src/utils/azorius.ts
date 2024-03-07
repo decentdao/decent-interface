@@ -31,7 +31,7 @@ import { getTimeStamp } from './contract';
 
 export const getAzoriusProposalState = async (
   azoriusContract: Azorius,
-  proposalId: BigNumber
+  proposalId: BigNumber,
 ): Promise<FractalProposalState> => {
   const state = await azoriusContract.proposalState(proposalId);
   return strategyFractalProposalStates[state];
@@ -40,7 +40,7 @@ export const getAzoriusProposalState = async (
 const getQuorum = async (
   strategyContract: LinearERC20Voting | LinearERC721Voting,
   strategyType: VotingStrategyType,
-  proposalId: BigNumber
+  proposalId: BigNumber,
 ) => {
   let quorum;
 
@@ -65,7 +65,7 @@ const getQuorum = async (
 export const getProposalVotesSummary = async (
   strategy: LinearERC20Voting | LinearERC721Voting,
   strategyType: VotingStrategyType,
-  proposalId: BigNumber
+  proposalId: BigNumber,
 ): Promise<ProposalVotesSummary> => {
   try {
     const { yesVotes, noVotes, abstainVotes } = await strategy.getProposalVotes(proposalId);
@@ -93,7 +93,7 @@ export const getProposalVotesSummary = async (
 
 export const getProposalVotes = async (
   strategyContract: LinearERC20Voting | LinearERC721Voting,
-  proposalId: BigNumber
+  proposalId: BigNumber,
 ): Promise<ProposalVote[] | ERC721ProposalVote[]> => {
   const voteEventFilter = strategyContract.filters.Voted();
   const votes = await strategyContract.queryFilter(voteEventFilter);
@@ -115,7 +115,7 @@ export const mapProposalCreatedEventToProposal = async (
   proposer: string,
   azoriusContract: ContractConnection<Azorius>,
   provider: Providers,
-  data?: ProposalData
+  data?: ProposalData,
 ) => {
   const { endBlock, startBlock, abstainVotes, yesVotes, noVotes } =
     await strategyContract.getProposalVotes(proposalId);
@@ -137,11 +137,10 @@ export const mapProposalCreatedEventToProposal = async (
   let transactionHash: string | undefined;
   if (state === FractalProposalState.EXECUTED) {
     const proposalExecutedFilter = azoriusContract.asProvider.filters.ProposalExecuted();
-    const proposalExecutedEvents = await azoriusContract.asProvider.queryFilter(
-      proposalExecutedFilter
-    );
+    const proposalExecutedEvents =
+      await azoriusContract.asProvider.queryFilter(proposalExecutedFilter);
     const executedEvent = proposalExecutedEvents.find(event =>
-      BigNumber.from(event.args[0]).eq(proposalId)
+      BigNumber.from(event.args[0]).eq(proposalId),
     );
     transactionHash = executedEvent?.transactionHash;
   }
@@ -166,7 +165,7 @@ export const mapProposalCreatedEventToProposal = async (
 
 export const parseMultiSendTransactions = (
   eventTransactionMap: Map<number, any>,
-  parameters?: Parameter[]
+  parameters?: Parameter[],
 ) => {
   if (!parameters || !parameters.length) {
     return;
@@ -203,7 +202,7 @@ export const parseDecodedData = (
   multiSigTransaction:
     | SafeMultisigTransactionWithTransfersResponse
     | SafeMultisigTransactionResponse,
-  isMultiSigTransaction: boolean
+  isMultiSigTransaction: boolean,
 ): DecodedTransaction[] => {
   const eventTransactionMap = new Map<number, any>();
   const dataDecoded = multiSigTransaction.dataDecoded as any as DataDecoded;

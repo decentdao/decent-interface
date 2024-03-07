@@ -7,7 +7,7 @@ describe('Safe URL builder tests', () => {
       'https://safe-transaction-sepolia.safe.global',
       '/about',
       {},
-      'v1'
+      'v1',
     );
     const EXPECTED_URL = 'https://safe-transaction-sepolia.safe.global/api/v1/about';
     expect(safeTransactionURL).toEqual(EXPECTED_URL);
@@ -18,7 +18,7 @@ describe('Safe URL builder tests', () => {
       'https://safe-transaction-sepolia.safe.global',
       `/safes/${constants.AddressZero}/multisig-transactions`,
       { target: constants.AddressZero },
-      'v1'
+      'v1',
     );
     const EXPECTED_URL = `https://safe-transaction-sepolia.safe.global/api/v1/safes/${constants.AddressZero}/multisig-transactions?target=${constants.AddressZero}`;
     expect(safeTransactionURL).toEqual(EXPECTED_URL);

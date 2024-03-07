@@ -6,9 +6,7 @@ import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
 
 const useDeployDAO = () => {
-  const {
-    baseContracts: { multiSendContract },
-  } = useFractal();
+  const { baseContracts } = useFractal();
 
   const [contractCallDeploy, contractCallPending] = useTransaction();
   const [build] = useBuildDAOTx();
@@ -18,12 +16,14 @@ const useDeployDAO = () => {
   const deployDao = useCallback(
     (
       daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
-      successCallback: (daoAddress: string) => void
+      successCallback: (daoAddress: string) => void,
     ) => {
       const deploy = async () => {
-        if (!multiSendContract) {
+        if (!baseContracts) {
           return;
         }
+
+        const { multiSendContract } = baseContracts;
 
         const builtSafeTx = await build(daoData);
         if (!builtSafeTx) {
@@ -43,7 +43,7 @@ const useDeployDAO = () => {
 
       deploy();
     },
-    [build, contractCallDeploy, multiSendContract, t]
+    [build, contractCallDeploy, baseContracts, t],
   );
 
   return [deployDao, contractCallPending] as const;

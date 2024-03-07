@@ -9,7 +9,7 @@ export const initialTreasuryState: FractalTreasury = {
 
 export const treasuryReducer = (
   state: FractalTreasury,
-  action: TreasuryActions
+  action: TreasuryActions,
 ): FractalTreasury => {
   switch (action.type) {
     case TreasuryAction.UPDATE_TREASURY:

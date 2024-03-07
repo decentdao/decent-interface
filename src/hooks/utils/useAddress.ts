@@ -2,10 +2,10 @@ import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useNetwork } from 'wagmi';
 import { supportsENS } from '../../helpers';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { couldBeENS } from '../../utils/url';
 import { CacheKeys, CacheExpiry } from './cache/cacheDefaults';
 import { useLocalStorage } from './cache/useLocalStorage';
-import { useEthersProvider } from './useEthersProvider';
 
 const useAddress = (addressInput: string | undefined) => {
   const provider = useEthersProvider();
@@ -90,7 +90,7 @@ const useAddress = (addressInput: string | undefined) => {
           setValue(
             CacheKeys.ENS_RESOLVE_PREFIX + addressInput,
             resolvedAddress,
-            CacheExpiry.ONE_WEEK
+            CacheExpiry.ONE_WEEK,
           );
           setAddress(resolvedAddress);
           setIsValidAddress(true);

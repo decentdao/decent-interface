@@ -35,18 +35,18 @@ export function getRandomBytes() {
 export const calculateSafeTransactionHash = (
   safe: Contract,
   safeTx: SafeTransaction,
-  chainId: BigNumberish
+  chainId: BigNumberish,
 ): string => {
   return utils._TypedDataEncoder.hash(
     { verifyingContract: safe.address, chainId },
     EIP712_SAFE_TX_TYPE,
-    safeTx
+    safeTx,
   );
 };
 
 export const buildSignatureBytes = (signatures: SafeSignature[]): string => {
   signatures.sort((left, right) =>
-    left.signer.toLowerCase().localeCompare(right.signer.toLowerCase())
+    left.signer.toLowerCase().localeCompare(right.signer.toLowerCase()),
   );
   let signatureBytes = '0x';
   for (const sig of signatures) {
@@ -85,7 +85,7 @@ export const safeSignTypedData = async (
   signer: Signer & TypedDataSigner,
   safe: Contract,
   safeTx: SafeTransaction,
-  chainId?: BigNumberish
+  chainId?: BigNumberish,
 ): Promise<SafeSignature> => {
   if (!chainId && !signer.provider) throw Error('Provider required to retrieve chainId');
   const cid = chainId || (await signer.provider!.getNetwork()).chainId;
@@ -95,7 +95,7 @@ export const safeSignTypedData = async (
     data: await signer._signTypedData(
       { verifyingContract: safe.address, chainId: cid },
       EIP712_SAFE_TX_TYPE,
-      safeTx
+      safeTx,
     ),
   };
 };
@@ -115,7 +115,7 @@ export const buildSafeAPIPost = async (
     gasToken?: string;
     refundReceiver?: string;
     nonce: number;
-  }
+  },
 ): Promise<SafePostTransaction> => {
   const safeTx = buildSafeTransaction(template);
 
@@ -125,7 +125,7 @@ export const buildSafeAPIPost = async (
       signerOrProvider as Signer & TypedDataSigner,
       safeContract,
       safeTx,
-      chainId
+      chainId,
     ),
   ];
   const signatureBytes = buildSignatureBytes(sig);
@@ -153,7 +153,7 @@ export const buildContractCall = (
   params: any[],
   nonce: number,
   delegateCall?: boolean,
-  overrides?: Partial<SafeTransaction>
+  overrides?: Partial<SafeTransaction>,
 ): SafeTransaction => {
   const data = contract.interface.encodeFunctionData(method, params);
   return buildSafeTransaction(
@@ -164,8 +164,8 @@ export const buildContractCall = (
         operation: delegateCall ? 1 : 0,
         nonce,
       },
-      overrides
-    )
+      overrides,
+    ),
   );
 };
 
@@ -173,7 +173,7 @@ const encodeMetaTransaction = (tx: MetaTransaction): string => {
   const data = utils.arrayify(tx.data);
   const encoded = utils.solidityPack(
     ['uint8', 'address', 'uint256', 'uint256', 'bytes'],
-    [tx.operation, tx.to, tx.value, data.length, data]
+    [tx.operation, tx.to, tx.value, data.length, data],
   );
   return encoded.slice(2);
 };

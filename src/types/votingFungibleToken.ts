@@ -6,20 +6,20 @@ export type DelegateChangedListener = (
   delegator: string,
   fromDelegate: string,
   toDelegate: string,
-  _: any
+  _: any,
 ) => void;
 export type DelegateVotesChangedListener = (
   delegate: string,
   previousBalance: BigNumber,
   currentBalance: BigNumber,
-  _: any
+  _: any,
 ) => void;
 export type ClaimListener = (
   parentToken: string,
   childToken: string,
   claimer: string,
   amount: BigNumber,
-  _: any
+  _: any,
 ) => void;
 
 export interface ITokenData {
