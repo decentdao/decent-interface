@@ -113,12 +113,12 @@ async function processTokenPricesResponse(
 ) {
   const coinGeckoResponseAddresses = Object.keys(tokenPricesResponseJson);
   for await (const tokenAddress of coinGeckoResponseAddresses) {
+    // Sometimes no USD price is returned. If this happens,
+    // we should consider it as though CoinGecko doesn't support
+    // this address and fallback to 0.
     const price = tokenPricesResponseJson[tokenAddress].usd || 0;
     const sanitizedAddress = tokenAddress.toLowerCase();
 
-    // Sometimes no USD price is returned. If this happens,
-    // we should consider it as though CoinGecko doesn't support
-    // this address and not query it again for a while.
     responseBodyCallback(sanitizedAddress, price);
     await storeTokenPrice(config, sanitizedAddress, price, network);
   }
@@ -245,12 +245,6 @@ export default async function getTokenPrices(request: Request) {
     console.error('Error while querying CoinGecko', e);
     return Response.json({ error: 'Error while fetching prices', data: responseBody });
   }
-
-  // In the previous request, CoinGecko will only respond back with prices
-  // for token addresses that it knows about. We should store a price of 0
-  // in our store with a long expiration for all addresses that CoinGecko
-  // isn't tracking (likely spam tokens), so as to not continually query
-  // CoinGecko with these addresses
   await processUnknownAddresses(config, needPricesTokenAddresses, responseAddresses, networkParam);
 
   // Do we need to get the price of our chain's gas token?
