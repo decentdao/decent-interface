@@ -8,7 +8,7 @@ function sleep(ms: number) {
 export type RequestWithRetries<FuncRes = any> = (
   func: () => Promise<FuncRes>,
   retries: number,
-  secondsToWait?: number
+  secondsToWait?: number,
 ) => Promise<FuncRes | {} | null | undefined>;
 
 export function useAsyncRetry() {
@@ -35,7 +35,7 @@ export function useAsyncRetry() {
 
       return result;
     },
-    []
+    [],
   );
 
   return { requestWithRetries };

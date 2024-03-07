@@ -27,7 +27,7 @@ export function FreezeButton() {
       isDisabled={disabled}
     >
       {t(
-        !userHasVotes ? 'noVotesButton' : userHasFreezeVoted ? 'freezeVotedButton' : 'freezeButton'
+        !userHasVotes ? 'noVotesButton' : userHasFreezeVoted ? 'freezeVotedButton' : 'freezeButton',
       )}
     </Button>
   );

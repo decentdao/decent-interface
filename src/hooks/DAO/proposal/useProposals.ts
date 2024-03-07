@@ -19,7 +19,7 @@ export default function useProposals({
         return proposals.filter(proposal => proposal.state === state).length;
       }
     },
-    [proposals]
+    [proposals],
   );
 
   const sortedAndFilteredProposals = useMemo(() => {

@@ -75,7 +75,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     let delegateChangeEvents: DelegateChangedEvent[];
     try {
       delegateChangeEvents = await tokenContract.asProvider.queryFilter(
-        tokenContract.asProvider.filters.DelegateChanged()
+        tokenContract.asProvider.filters.DelegateChanged(),
       );
     } catch (e) {
       delegateChangeEvents = [];

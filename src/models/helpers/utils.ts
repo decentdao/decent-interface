@@ -17,21 +17,21 @@ export const generateContractByteCodeLinear = (contractAddress: string): string 
 export const generateSalt = (calldata: string, saltNum: string): string => {
   return solidityKeccak256(
     ['bytes32', 'uint256'],
-    [solidityKeccak256(['bytes'], [calldata]), saltNum]
+    [solidityKeccak256(['bytes'], [calldata]), saltNum],
   );
 };
 
 export const generatePredictedModuleAddress = (
   zodiacProxyAddress: string,
   salt: string,
-  byteCode: string
+  byteCode: string,
 ): string => {
   return getCreate2Address(zodiacProxyAddress, salt, solidityKeccak256(['bytes'], [byteCode]));
 };
 
 export const buildDeployZodiacModuleTx = (
   zodiacProxyFactoryContract: ModuleProxyFactory,
-  params: string[]
+  params: string[],
 ): SafeTransaction => {
   return buildContractCall(zodiacProxyFactoryContract, 'deployModule', params, 0, false);
 };

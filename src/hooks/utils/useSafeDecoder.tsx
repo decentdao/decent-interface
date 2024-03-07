@@ -31,7 +31,7 @@ export const useSafeDecoder = () => {
       }
 
       const cachedTransactions = await getValue(
-        CacheKeys.DECODED_TRANSACTION_PREFIX + solidityKeccak256(['string'], [to + data])
+        CacheKeys.DECODED_TRANSACTION_PREFIX + solidityKeccak256(['string'], [to + data]),
       );
       if (cachedTransactions) return cachedTransactions;
 
@@ -75,12 +75,12 @@ export const useSafeDecoder = () => {
 
       await setValue(
         CacheKeys.DECODED_TRANSACTION_PREFIX + solidityKeccak256(['string'], [to + data]),
-        decoded
+        decoded,
       );
 
       return decoded;
     },
-    [getValue, safeBaseURL, setValue]
+    [getValue, safeBaseURL, setValue],
   );
 
   return decode;

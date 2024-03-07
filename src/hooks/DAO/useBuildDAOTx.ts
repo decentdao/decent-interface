@@ -51,7 +51,7 @@ const useBuildDAOTx = () => {
     async (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
       parentAddress?: string,
-      parentTokenAddress?: string
+      parentTokenAddress?: string,
     ) => {
       let azoriusContracts;
 
@@ -126,7 +126,7 @@ const useBuildDAOTx = () => {
         daoData,
         fallbackHandler,
         parentAddress,
-        parentTokenAddress
+        parentTokenAddress,
       );
 
       await txBuilderFactory.setupSafeData();
@@ -146,7 +146,7 @@ const useBuildDAOTx = () => {
 
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder(
         parentVotingStrategyType,
-        parentVotingStrategyAddress
+        parentVotingStrategyAddress,
       );
 
       // Build Tx bundle based on governance type (Azorius or Multisig)
@@ -188,7 +188,7 @@ const useBuildDAOTx = () => {
       governance,
       createOptions,
       fallbackHandler,
-    ]
+    ],
   );
 
   return [buildDao] as const;

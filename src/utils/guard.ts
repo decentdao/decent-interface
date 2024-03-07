@@ -9,7 +9,7 @@ import { getTimeStamp } from './contract';
 export async function getTxTimelockedTimestamp(
   activity: Activity,
   freezeGuard: MultisigFreezeGuard,
-  provider: Providers
+  provider: Providers,
 ) {
   const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
@@ -17,13 +17,13 @@ export async function getTxTimelockedTimestamp(
     multiSigTransaction.confirmations!.map(confirmation => ({
       signer: confirmation.owner,
       data: confirmation.signature,
-    }))
+    })),
   );
   const signaturesHash = ethers.utils.solidityKeccak256(['bytes'], [signatures]);
 
   const timelockedTimestamp = await getTimeStamp(
     await freezeGuard.getTransactionTimelockedBlock(signaturesHash),
-    provider
+    provider,
   );
   return timelockedTimestamp;
 }

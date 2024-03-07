@@ -37,7 +37,7 @@ export const useFractalModules = () => {
           }
 
           return safeModule;
-        })
+        }),
       );
       return modules;
     },
@@ -45,7 +45,7 @@ export const useFractalModules = () => {
       fractalAzoriusMasterCopyContract,
       fractalModuleMasterCopyContract,
       getZodiacModuleProxyMasterCopyData,
-    ]
+    ],
   );
   return lookupModules;
 };

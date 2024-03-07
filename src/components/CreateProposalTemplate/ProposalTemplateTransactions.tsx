@@ -36,7 +36,7 @@ export default function ProposalTemplateTransactions({
   const removeTransaction = (transactionIndex: number) => {
     setFieldValue(
       'transactions',
-      transactions.filter((tx, i) => i !== transactionIndex)
+      transactions.filter((tx, i) => i !== transactionIndex),
     );
   };
   return (

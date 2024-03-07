@@ -29,7 +29,7 @@ export default function DaoCreatePage() {
       const { getAddress } = ethers.utils;
       const daoFound = await requestWithRetries(
         () => safeAPI.getSafeCreationInfo(getAddress(daoAddress)),
-        8
+        8,
       );
       toggleFavorite(daoAddress);
       if (daoFound) {
@@ -45,7 +45,7 @@ export default function DaoCreatePage() {
         push(BASE_ROUTES.landing);
       }
     },
-    [safeAPI, requestWithRetries, toggleFavorite, push, t]
+    [safeAPI, requestWithRetries, toggleFavorite, push, t],
   );
 
   const [deploy, pending] = useDeployDAO();

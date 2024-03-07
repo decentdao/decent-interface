@@ -89,7 +89,7 @@ export function DelegateModal({ close }: { close: Function }) {
             azoriusGovernance.votesToken.balance || BigNumber.from(0),
             false,
             azoriusGovernance.votesToken.decimals,
-            azoriusGovernance.votesToken.symbol
+            azoriusGovernance.votesToken.symbol,
           )}
         </Text>
         <Text
@@ -130,7 +130,7 @@ export function DelegateModal({ close }: { close: Function }) {
               decentGovernance.lockedVotesToken.balance || BigNumber.from(0),
               false,
               azoriusGovernance.votesToken.decimals,
-              azoriusGovernance.votesToken.symbol
+              azoriusGovernance.votesToken.symbol,
             )}
           </Text>
           <Text

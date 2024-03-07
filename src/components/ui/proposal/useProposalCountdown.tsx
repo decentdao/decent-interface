@@ -99,8 +99,8 @@ export function useProposalCountdown(proposal: FractalProposal) {
         freezeGuardType === FreezeGuardType.MULTISIG
           ? (freezeGuardContract?.asProvider as MultisigFreezeGuard)
           : freezeGuardType === FreezeGuardType.AZORIUS
-          ? (freezeGuardContract?.asProvider as AzoriusFreezeGuard)
-          : undefined;
+            ? (freezeGuardContract?.asProvider as AzoriusFreezeGuard)
+            : undefined;
 
       const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
       const isAzoriusGuard = freezeGuardType === FreezeGuardType.AZORIUS;
@@ -124,7 +124,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         const timelockedTimestamp = await getTxTimelockedTimestamp(proposal, safeGuard, provider);
         const guardTimeLockPeriod = await blocksToSeconds(
           await safeGuard.timelockPeriod(),
-          provider
+          provider,
         );
         startCountdown(timelockedTimestamp * 1000 + guardTimeLockPeriod * 1000);
         // If the proposal is executable start the countdown (for safe multisig proposals with guards)

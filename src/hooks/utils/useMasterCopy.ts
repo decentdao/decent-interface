@@ -24,43 +24,43 @@ export function useMasterCopy() {
   const isOzLinearVoting = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === linearVotingMasterCopyContract.asProvider.address,
-    [linearVotingMasterCopyContract]
+    [linearVotingMasterCopyContract],
   );
   const isOzLinearVotingERC721 = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === linearVotingERC721MasterCopyContract.asProvider.address,
-    [linearVotingERC721MasterCopyContract]
+    [linearVotingERC721MasterCopyContract],
   );
   const isMultisigFreezeGuard = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === multisigFreezeGuardMasterCopyContract.asProvider.address,
-    [multisigFreezeGuardMasterCopyContract]
+    [multisigFreezeGuardMasterCopyContract],
   );
   const isMultisigFreezeVoting = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === freezeMultisigVotingMasterCopyContract.asProvider.address,
-    [freezeMultisigVotingMasterCopyContract]
+    [freezeMultisigVotingMasterCopyContract],
   );
   const isERC721FreezeVoting = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === freezeERC721VotingMasterCopyContract.asProvider.address,
-    [freezeERC721VotingMasterCopyContract]
+    [freezeERC721VotingMasterCopyContract],
   );
   const isAzorius = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === fractalAzoriusMasterCopyContract.asProvider.address,
-    [fractalAzoriusMasterCopyContract]
+    [fractalAzoriusMasterCopyContract],
   );
   const isFractalModule = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === fractalModuleMasterCopyContract.asProvider.address,
-    [fractalModuleMasterCopyContract]
+    [fractalModuleMasterCopyContract],
   );
 
   const getMasterCopyAddress = useCallback(
     async function (
       contract: Contract,
-      proxyAddress: string | `0x${string}`
+      proxyAddress: string | `0x${string}`,
     ): Promise<[string, string | null]> {
       const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
       if (cachedValue) return [cachedValue, null] as const;
@@ -75,7 +75,7 @@ export function useMasterCopy() {
         return [masterCopyAddress, null] as const;
       });
     },
-    [getValue, setValue]
+    [getValue, setValue],
   );
 
   const getZodiacModuleProxyMasterCopyData = useCallback(
@@ -106,7 +106,7 @@ export function useMasterCopy() {
       isMultisigFreezeVoting,
       isOzLinearVoting,
       isOzLinearVotingERC721,
-    ]
+    ],
   );
 
   return { getZodiacModuleProxyMasterCopyData };

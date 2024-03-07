@@ -32,7 +32,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
     pending: approvalPending,
   } = useApproval(
     governanceContracts.tokenContract?.asSigner.attach(governanceContracts.underlyingTokenAddress!),
-    azoriusGovernance.votesToken?.address
+    azoriusGovernance.votesToken?.address,
   );
 
   const { t } = useTranslation(['modals', 'treasury']);
@@ -56,7 +56,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
         },
       });
     },
-    [account, contractCall, governanceContracts, signer, close, t, loadERC20TokenAccountData]
+    [account, contractCall, governanceContracts, signer, close, t, loadERC20TokenAccountData],
   );
 
   if (
@@ -119,7 +119,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
                     azoriusGovernance.votesToken?.balance!,
                     false,
                     azoriusGovernance.votesToken?.decimals!,
-                    azoriusGovernance.votesToken?.symbol
+                    azoriusGovernance.votesToken?.symbol,
                   ),
                 })}
               >

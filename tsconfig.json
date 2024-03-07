@@ -1,11 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -26,9 +22,7 @@
       }
     ]
   },
-  "exclude": [
-    "docker"
-  ],
+  "exclude": ["docker"],
   "include": [
     "src",
     "tests",
@@ -37,6 +31,6 @@
     "netlify/functions",
     ".next/types/**/*.ts",
     "next-env.d.ts",
-    "next.config.js",
+    "next.config.js"
   ]
 }

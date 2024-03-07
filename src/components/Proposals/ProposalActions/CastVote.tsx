@@ -59,7 +59,7 @@ function Vote({
     !isSnapshotProposal &&
       isCurrentBlockLoaded &&
       currentBlockNumber &&
-      azoriusProposal.startBlock.gte(currentBlockNumber)
+      azoriusProposal.startBlock.gte(currentBlockNumber),
   );
 
   const disabled =
@@ -160,8 +160,8 @@ function Vote({
         proposalStartBlockNotFinalized
           ? t('proposalStartBlockNotFinalized', { ns: 'proposal' })
           : hasVoted
-          ? t('currentUserAlreadyVoted', { ns: 'proposal' })
-          : undefined
+            ? t('currentUserAlreadyVoted', { ns: 'proposal' })
+            : undefined
       }
     >
       <>

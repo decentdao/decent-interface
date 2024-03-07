@@ -38,12 +38,12 @@ export interface SafeSignature {
 export const calculateSafeTransactionHash = (
   safeAddress: string,
   safeTx: SafeAPITransaction,
-  chainId: BigNumberish
+  chainId: BigNumberish,
 ): string => {
   return utils._TypedDataEncoder.hash(
     { verifyingContract: safeAddress, chainId },
     EIP712_SAFE_TX_TYPE,
-    safeTx
+    safeTx,
   );
 };
 
@@ -69,7 +69,7 @@ export const safeSignMessage = async (
   signer: Signer,
   safeAddress: string,
   safeTx: SafeAPITransaction,
-  chainId?: BigNumberish
+  chainId?: BigNumberish,
 ): Promise<SafeSignature> => {
   const cid = chainId || (await signer.provider!.getNetwork()).chainId;
   return signHash(signer, calculateSafeTransactionHash(safeAddress, safeTx, cid));

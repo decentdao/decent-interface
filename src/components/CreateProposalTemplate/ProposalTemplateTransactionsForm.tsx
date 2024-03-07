@@ -19,7 +19,7 @@ interface ProposalTemplateTransactionsFormProps extends FormikProps<CreatePropos
 }
 
 export default function ProposalTemplateTransactionsForm(
-  props: ProposalTemplateTransactionsFormProps
+  props: ProposalTemplateTransactionsFormProps,
 ) {
   const {
     pendingTransaction,

@@ -21,13 +21,13 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const handleClawBack = useCallback(async () => {
     if (childSafeInfo && childSafeInfo.daoAddress && parentAddress) {
       const childSafeBalance = await safeAPI.getBalances(
-        utils.getAddress(childSafeInfo.daoAddress)
+        utils.getAddress(childSafeInfo.daoAddress),
       );
       const parentSafeInfo = await safeAPI.getSafeInfo(utils.getAddress(parentAddress));
       if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
         const abiCoder = new ethers.utils.AbiCoder();
         const fractalModule = childSafeInfo.fractalModules!.find(
-          module => module.moduleType === FractalModuleType.FRACTAL
+          module => module.moduleType === FractalModuleType.FRACTAL,
         );
         const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
         if (fractalModule) {
@@ -36,11 +36,11 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               // Seems like we're operating with native coin i.e ETH
               const txData = abiCoder.encode(
                 ['address', 'uint256', 'bytes', 'uint8'],
-                [parentAddress, asset.balance, '0x', 0]
+                [parentAddress, asset.balance, '0x', 0],
               );
               const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
                 'execTx',
-                [txData]
+                [txData],
               );
               return {
                 target: fractalModuleContract.address,
@@ -55,11 +55,11 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               ]);
               const txData = abiCoder.encode(
                 ['address', 'uint256', 'bytes', 'uint8'],
-                [asset.tokenAddress, 0, clawBackCalldata, 0]
+                [asset.tokenAddress, 0, clawBackCalldata, 0],
               );
               const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
                 'execTx',
-                [txData]
+                [txData],
               );
 
               return {
@@ -78,7 +78,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                   'Transfer all funds from the targeted sub-Safe to the parent-Safe treasury.',
                   {
                     ns: 'proposalMetadata',
-                  }
+                  },
                 ),
                 documentationUrl: '',
               },

@@ -37,7 +37,7 @@ const useCastFreezeVote = ({
           return getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo =>
             (freezeVotingContract?.asSigner as ERC721FreezeVoting)[
               'castFreezeVote(address[],uint256[])'
-            ](tokensInfo.totalVotingTokenAddresses, tokensInfo.totalVotingTokenIds)
+            ](tokensInfo.totalVotingTokenAddresses, tokensInfo.totalVotingTokenIds),
           );
         } else {
           return (
