@@ -13,7 +13,6 @@ import { GovernanceContractAction } from '../../../providers/App/governanceContr
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { ContractConnection } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
-import { useEthersProvider } from '../../utils/useEthersProvider';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
@@ -109,7 +108,7 @@ export const useGovernanceContracts = () => {
           return undefined;
         });
 
-        if (lockedToken && provider) {
+        if (lockedToken && provider && signerOrProvider) {
           lockReleaseContract = {
             asSigner: LockRelease__factory.connect(govTokenAddress, signerOrProvider),
             asProvider: LockRelease__factory.connect(govTokenAddress, provider),

@@ -1,19 +1,19 @@
 import { useMemo } from 'react';
-import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
+import { usePublicClient } from 'wagmi';
 import { supportedChains } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export const useSubgraphChainName = () => {
-  const provider = useEthersProvider();
+  const { chain } = usePublicClient();
 
   const subgraphChainName = useMemo(() => {
-    let chainName = provider.network.name;
-    supportedChains.forEach(chain => {
-      if (chain.chainId === provider.network.chainId) {
-        chainName = chain.subgraphChainName;
+    let chainName = chain.name;
+    supportedChains.forEach(supportedChain => {
+      if (supportedChain.chainId === chain.id) {
+        chainName = supportedChain.subgraphChainName;
       }
     });
     return chainName;
-  }, [provider]);
+  }, [chain.id, chain.name]);
 
   return subgraphChainName;
 };

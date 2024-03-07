@@ -97,7 +97,7 @@ export default function useSubmitProposal() {
    */
   const getCanUserCreateProposal = useCallback(
     async (safeAddress?: string): Promise<boolean> => {
-      if (!user.address) {
+      if (!user.address || !safeAPI || !signerOrProvider) {
         return false;
       }
 
@@ -282,7 +282,7 @@ export default function useSubmitProposal() {
       failedToastMessage,
       safeAddress,
     }: ISubmitAzoriusProposal) => {
-      if (!proposalData) {
+      if (!proposalData || !provider) {
         return;
       }
       const toastId = toast(pendingToastMessage, {
@@ -352,7 +352,7 @@ export default function useSubmitProposal() {
       successCallback,
       safeAddress,
     }: ISubmitProposal) => {
-      if (!proposalData) {
+      if (!proposalData || !safeAPI) {
         return;
       }
 

@@ -1,6 +1,6 @@
 import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
-import { Address, useEnsName } from 'wagmi';
+import { Address, useEnsName, usePublicClient } from 'wagmi';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
@@ -26,12 +26,11 @@ export default function useDAOName({
     baseContracts: { fractalRegistryContract },
   } = useFractal();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
-  const provider = useEthersProvider();
-  const networkId = provider.network.chainId;
+  const { chain } = usePublicClient();
 
   const { data: ensName } = useEnsName({
     address: address as Address,
-    chainId: networkId,
+    chainId: chain.id,
     cacheTime: 1000 * 60 * 30, // 30 min
   });
   const { setValue, getValue } = useLocalStorage();
@@ -102,11 +101,13 @@ export function useLazyDAOName() {
       if (cachedName) {
         return cachedName;
       }
-      // check if ens name resolves
-      const ensName = await provider.lookupAddress(_address).catch(() => null);
-      if (ensName) {
-        setValue(CacheKeys.DAO_NAME_PREFIX + _address, ensName, 5);
-        return ensName;
+      if (provider) {
+        // check if ens name resolves
+        const ensName = await provider.lookupAddress(_address).catch(() => null);
+        if (ensName) {
+          setValue(CacheKeys.DAO_NAME_PREFIX + _address, ensName, 5);
+          return ensName;
+        }
       }
 
       if (_registryName) {

@@ -19,7 +19,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
 
   const handleClawBack = useCallback(async () => {
-    if (childSafeInfo && childSafeInfo.daoAddress && parentAddress) {
+    if (childSafeInfo && childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
       const childSafeBalance = await safeAPI.getBalances(
         utils.getAddress(childSafeInfo.daoAddress)
       );

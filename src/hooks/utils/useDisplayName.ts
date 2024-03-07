@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Address, useEnsName } from 'wagmi';
-import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
+import { Address, useEnsName, usePublicClient } from 'wagmi';
 
 export const createAccountSubstring = (account: string) => {
   return `${account.substring(0, 6)}...${account.slice(-4)}`;
@@ -16,11 +15,10 @@ export const createAccountSubstring = (account: string) => {
  */
 const useDisplayName = (account?: string | null, truncate?: boolean) => {
   if (truncate === undefined) truncate = true;
-  const provider = useEthersProvider();
-  const networkId = provider.network.chainId;
+  const { chain } = usePublicClient();
   const { data: ensName } = useEnsName({
     address: account as Address,
-    chainId: networkId,
+    chainId: chain.id,
     cacheTime: 1000 * 60 * 30, // 30 min
   });
 

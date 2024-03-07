@@ -24,39 +24,43 @@ export function usePrepareFormData() {
   const prepareFreezeGuardData = useCallback(
     async (
       freezeGuard: DAOFreezeGuardConfig<BigNumberValuePair>
-    ): Promise<DAOFreezeGuardConfig> => {
-      return {
-        executionPeriod: await getEstimatedNumberOfBlocks(
-          freezeGuard.executionPeriod.bigNumberValue!,
-          provider
-        ),
-        timelockPeriod: await getEstimatedNumberOfBlocks(
-          freezeGuard.timelockPeriod.bigNumberValue!,
-          provider
-        ),
-        freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigNumberValue!,
-        freezeProposalPeriod: await getEstimatedNumberOfBlocks(
-          freezeGuard.freezeProposalPeriod.bigNumberValue!,
-          provider
-        ),
-        freezePeriod: await getEstimatedNumberOfBlocks(
-          freezeGuard.freezePeriod.bigNumberValue!,
-          provider
-        ),
-      };
+    ): Promise<DAOFreezeGuardConfig | undefined> => {
+      if (provider) {
+        return {
+          executionPeriod: await getEstimatedNumberOfBlocks(
+            freezeGuard.executionPeriod.bigNumberValue!,
+            provider
+          ),
+          timelockPeriod: await getEstimatedNumberOfBlocks(
+            freezeGuard.timelockPeriod.bigNumberValue!,
+            provider
+          ),
+          freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigNumberValue!,
+          freezeProposalPeriod: await getEstimatedNumberOfBlocks(
+            freezeGuard.freezeProposalPeriod.bigNumberValue!,
+            provider
+          ),
+          freezePeriod: await getEstimatedNumberOfBlocks(
+            freezeGuard.freezePeriod.bigNumberValue!,
+            provider
+          ),
+        };
+      }
     },
     [provider]
   );
 
   const checkVotesToken = useCallback(
     async (address: string) => {
-      try {
-        const votesContract = IVotes__factory.connect(address, provider);
-        await votesContract.delegates('0x0000000000000000000000000000000000000001');
-        await votesContract.getVotes('0x0000000000000000000000000000000000000001');
-        return true;
-      } catch (error) {
-        return false;
+      if (provider) {
+        try {
+          const votesContract = IVotes__factory.connect(address, provider);
+          await votesContract.delegates('0x0000000000000000000000000000000000000001');
+          await votesContract.getVotes('0x0000000000000000000000000000000000000001');
+          return true;
+        } catch (error) {
+          return false;
+        }
       }
     },
     [provider]
@@ -77,15 +81,17 @@ export function usePrepareFormData() {
           return inputValue;
         })
       );
-      let freezeGuardData: Partial<DAOFreezeGuardConfig> = {};
+      let freezeGuardData;
       if (freezeGuard) {
         freezeGuardData = await prepareFreezeGuardData(freezeGuard);
       }
-      return {
-        trustedAddresses: resolvedAddresses,
-        ...freezeGuardData,
-        ...rest,
-      };
+      if (freezeGuardData) {
+        return {
+          trustedAddresses: resolvedAddresses,
+          ...freezeGuardData,
+          ...rest,
+        };
+      }
     },
     [signer, prepareFreezeGuardData]
   );
@@ -103,44 +109,48 @@ export function usePrepareFormData() {
       tokenImportAddress,
       tokenCreationType,
       ...rest
-    }: AzoriusERC20DAO<BigNumberValuePair> & FreezeGuardConfigParam): Promise<AzoriusERC20DAO> => {
-      const resolvedTokenAllocations = await Promise.all(
-        tokenAllocations.map(async allocation => {
-          let address = allocation.address;
-          if (couldBeENS(address)) {
-            address = await signer!.resolveName(allocation.address);
-          }
-          return { amount: allocation.amount.bigNumberValue!, address: address };
-        })
-      );
-      let freezeGuardData: Partial<DAOFreezeGuardConfig> = {};
-      if (freezeGuard) {
-        freezeGuardData = await prepareFreezeGuardData(freezeGuard);
+    }: AzoriusERC20DAO<BigNumberValuePair> & FreezeGuardConfigParam): Promise<
+      AzoriusERC20DAO | undefined
+    > => {
+      if (provider) {
+        const resolvedTokenAllocations = await Promise.all(
+          tokenAllocations.map(async allocation => {
+            let address = allocation.address;
+            if (couldBeENS(address)) {
+              address = await signer!.resolveName(allocation.address);
+            }
+            return { amount: allocation.amount.bigNumberValue!, address: address };
+          })
+        );
+        let freezeGuardData;
+        if (freezeGuard) {
+          freezeGuardData = await prepareFreezeGuardData(freezeGuard);
+        }
+        const isTokenImported =
+          tokenCreationType === TokenCreationType.IMPORTED && !!tokenImportAddress;
+        let isVotesToken: boolean | undefined = false;
+        if (isTokenImported) {
+          isVotesToken = await checkVotesToken(tokenImportAddress);
+        }
+        return {
+          tokenSupply: tokenSupply.bigNumberValue!,
+          parentAllocationAmount: parentAllocationAmount?.bigNumberValue!,
+          quorumPercentage: quorumPercentage.bigNumberValue!,
+          timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
+          executionPeriod: await getEstimatedNumberOfBlocks(
+            executionPeriod.bigNumberValue!,
+            provider
+          ),
+          votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
+          tokenAllocations: resolvedTokenAllocations,
+          tokenImportAddress,
+          tokenCreationType,
+          isTokenImported,
+          isVotesToken,
+          ...freezeGuardData,
+          ...rest,
+        };
       }
-      const isTokenImported =
-        tokenCreationType === TokenCreationType.IMPORTED && !!tokenImportAddress;
-      let isVotesToken = false;
-      if (isTokenImported) {
-        isVotesToken = await checkVotesToken(tokenImportAddress);
-      }
-      return {
-        tokenSupply: tokenSupply.bigNumberValue!,
-        parentAllocationAmount: parentAllocationAmount?.bigNumberValue!,
-        quorumPercentage: quorumPercentage.bigNumberValue!,
-        timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
-        executionPeriod: await getEstimatedNumberOfBlocks(
-          executionPeriod.bigNumberValue!,
-          provider
-        ),
-        votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
-        tokenAllocations: resolvedTokenAllocations,
-        tokenImportAddress,
-        tokenCreationType,
-        isTokenImported,
-        isVotesToken,
-        ...freezeGuardData,
-        ...rest,
-      };
     },
     [signer, checkVotesToken, provider, prepareFreezeGuardData]
   );
@@ -155,39 +165,42 @@ export function usePrepareFormData() {
       nfts,
       quorumThreshold,
       ...rest
-    }: AzoriusERC721DAO<BigNumberValuePair> &
-      FreezeGuardConfigParam): Promise<AzoriusERC721DAO> => {
-      let freezeGuardData: Partial<DAOFreezeGuardConfig> = {};
-      if (freezeGuard) {
-        freezeGuardData = await prepareFreezeGuardData(freezeGuard);
+    }: AzoriusERC721DAO<BigNumberValuePair> & FreezeGuardConfigParam): Promise<
+      AzoriusERC721DAO | undefined
+    > => {
+      if (provider) {
+        let freezeGuardData;
+        if (freezeGuard) {
+          freezeGuardData = await prepareFreezeGuardData(freezeGuard);
+        }
+
+        const resolvedNFTs = await Promise.all(
+          nfts.map(async nft => {
+            let address = nft.tokenAddress;
+            if (couldBeENS(address)) {
+              address = await signer!.resolveName(nft.tokenAddress);
+            }
+            return {
+              tokenAddress: address,
+              tokenWeight: nft.tokenWeight.bigNumberValue!,
+            };
+          })
+        );
+
+        return {
+          quorumPercentage: quorumPercentage.bigNumberValue!,
+          timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
+          executionPeriod: await getEstimatedNumberOfBlocks(
+            executionPeriod.bigNumberValue!,
+            provider
+          ),
+          votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
+          nfts: resolvedNFTs,
+          quorumThreshold: quorumThreshold.bigNumberValue!,
+          ...freezeGuardData,
+          ...rest,
+        };
       }
-
-      const resolvedNFTs = await Promise.all(
-        nfts.map(async nft => {
-          let address = nft.tokenAddress;
-          if (couldBeENS(address)) {
-            address = await signer!.resolveName(nft.tokenAddress);
-          }
-          return {
-            tokenAddress: address,
-            tokenWeight: nft.tokenWeight.bigNumberValue!,
-          };
-        })
-      );
-
-      return {
-        quorumPercentage: quorumPercentage.bigNumberValue!,
-        timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
-        executionPeriod: await getEstimatedNumberOfBlocks(
-          executionPeriod.bigNumberValue!,
-          provider
-        ),
-        votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
-        nfts: resolvedNFTs,
-        quorumThreshold: quorumThreshold.bigNumberValue!,
-        ...freezeGuardData,
-        ...rest,
-      };
     },
     [prepareFreezeGuardData, provider, signer]
   );

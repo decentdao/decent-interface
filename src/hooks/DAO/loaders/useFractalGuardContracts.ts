@@ -1,18 +1,18 @@
 import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
+import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
-import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import {
   ContractConnection,
   SafeInfoResponseWithGuard,
   FreezeGuardType,
   FreezeVotingType,
 } from '../../../types';
-import { useEthersProvider } from '../../utils/useEthersProvider';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
+
 export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?: boolean }) => {
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();
@@ -28,8 +28,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     action,
   } = useFractal();
 
-  const provider = useEthersProvider();
-  const chainId = provider?.network.chainId;
+  const { chain } = usePublicClient();
 
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
@@ -122,14 +121,10 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   }, [action, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
-    if (chainId === undefined) {
-      return;
-    }
-
-    if (daoAddress && chainId + daoAddress !== loadKey.current && loadOnMount && isModulesLoaded) {
-      loadKey.current = chainId + daoAddress;
+    if (daoAddress && chain.id + daoAddress !== loadKey.current && loadOnMount && isModulesLoaded) {
+      loadKey.current = chain.id + daoAddress;
       setGuardContracts();
     }
-  }, [setGuardContracts, isModulesLoaded, daoAddress, loadOnMount, chainId]);
+  }, [setGuardContracts, isModulesLoaded, daoAddress, loadOnMount, chain.id]);
   return loadFractalGuardContracts;
 };

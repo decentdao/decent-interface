@@ -22,7 +22,7 @@ export const useERC20LinearStrategy = () => {
   const { getTimeDuration } = useTimeHelpers();
 
   const loadERC20Strategy = useCallback(async () => {
-    if (!ozLinearVotingContract || !azoriusContract) {
+    if (!ozLinearVotingContract || !azoriusContract || !provider) {
       return {};
     }
     const [votingPeriodBlocks, quorumNumerator, quorumDenominator, timeLockPeriod] =

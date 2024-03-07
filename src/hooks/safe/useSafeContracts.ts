@@ -51,6 +51,9 @@ export default function useSafeContracts() {
   } = useNetworkConfig();
 
   const daoContracts = useMemo(() => {
+    if (!signerOrProvider || !provider) {
+      return;
+    }
     const multiSendContract = {
       asSigner: MultiSend__factory.connect(multisend, signerOrProvider),
       asProvider: MultiSend__factory.connect(multisend, provider),

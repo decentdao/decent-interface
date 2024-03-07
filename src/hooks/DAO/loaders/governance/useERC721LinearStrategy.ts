@@ -24,7 +24,7 @@ export const useERC721LinearStrategy = () => {
   const { getTimeDuration } = useTimeHelpers();
 
   const loadERC721Strategy = useCallback(async () => {
-    if (!erc721LinearVotingContract || !azoriusContract) {
+    if (!erc721LinearVotingContract || !azoriusContract || !provider) {
       return {};
     }
     const [votingPeriodBlocks, quorumThreshold, timeLockPeriod] = await Promise.all([

@@ -41,7 +41,7 @@ export const useSafeTransactions = () => {
       freezeGuard?: MultisigFreezeGuard,
       freezeGuardData?: FreezeGuardData
     ) => {
-      if (freezeGuard && freezeGuardData) {
+      if (freezeGuard && freezeGuardData && provider) {
         return Promise.all(
           activities.map(async (activity, _, activityArr) => {
             if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
@@ -189,7 +189,7 @@ export const useSafeTransactions = () => {
 
   const parseTransactions = useCallback(
     async (transactions: AllTransactionsListResponse, daoAddress: string) => {
-      if (!transactions.results.length) {
+      if (!transactions.results.length || !provider) {
         return [];
       }
 
