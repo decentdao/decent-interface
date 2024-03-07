@@ -21,5 +21,6 @@
   "stake": "Stake",
   "unstake": "Unstake",
   "claimUnstakedETH": "Claim ETH",
-  "nonClaimableYet": "Your ETH cannot yet be claimed from Lido"
+  "nonClaimableYet": "Your ETH cannot yet be claimed from Lido",
+  "tokenPriceFetchingError": "There was an error obtaining token prices. Please, try visiting Treasury page later."
 }

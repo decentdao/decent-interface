@@ -28,6 +28,7 @@
     "tests",
     "test",
     "app",
+    "netlify/functions",
     ".next/types/**/*.ts",
     "next-env.d.ts",
     "next.config.js"
