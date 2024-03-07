@@ -118,7 +118,7 @@ export default function useSubmitProposal() {
           )[1];
           const votingContract = BaseStrategy__factory.connect(
             votingContractAddress,
-            signerOrProvider
+            signerOrProvider,
           );
           const isProposer = await votingContract.isProposer(user.address);
           return isProposer;
@@ -152,7 +152,7 @@ export default function useSubmitProposal() {
       lookupModules,
       safeAPI,
       signerOrProvider,
-    ]
+    ],
   );
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
@@ -251,8 +251,8 @@ export default function useSubmitProposal() {
               data,
               operation,
               nonce,
-            }
-          )
+            },
+          ),
         );
         await new Promise(resolve => setTimeout(resolve, 1000));
         await loadDAOProposals();
@@ -269,7 +269,7 @@ export default function useSubmitProposal() {
         return;
       }
     },
-    [signerOrProvider, safeBaseURL, chainId, loadDAOProposals, ipfsClient, baseContracts]
+    [signerOrProvider, safeBaseURL, chainId, loadDAOProposals, ipfsClient, baseContracts],
   );
 
   const submitAzoriusProposal = useCallback(
@@ -314,7 +314,7 @@ export default function useSubmitProposal() {
               title: proposalData.metaData.title,
               description: proposalData.metaData.description,
               documentationUrl: proposalData.metaData.documentationUrl,
-            })
+            }),
           )
         ).wait();
         success = true;
@@ -340,7 +340,7 @@ export default function useSubmitProposal() {
         setTimeout(loadDAOProposals, averageBlockTime * 1.5 * 1000);
       }
     },
-    [loadDAOProposals, provider]
+    [loadDAOProposals, provider],
   );
 
   const submitProposal = useCallback(
@@ -378,7 +378,7 @@ export default function useSubmitProposal() {
           const votingStrategyAddress = (
             await azoriusModuleContract.getStrategies(
               '0x0000000000000000000000000000000000000001',
-              0
+              0,
             )
           )[1];
           submitAzoriusProposal({
@@ -434,7 +434,7 @@ export default function useSubmitProposal() {
       erc721LinearVotingContract,
       submitAzoriusProposal,
       safeAPI,
-    ]
+    ],
   );
 
   return { submitProposal, pendingCreateTx, canUserCreateProposal, getCanUserCreateProposal };

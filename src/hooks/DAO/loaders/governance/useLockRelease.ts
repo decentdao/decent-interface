@@ -36,7 +36,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
     let delegateChangeEvents: DelegateChangedEvent[];
     try {
       delegateChangeEvents = await lockReleaseContract.asProvider.queryFilter(
-        lockReleaseContract.asProvider.filters.DelegateChanged()
+        lockReleaseContract.asProvider.filters.DelegateChanged(),
       );
     } catch (e) {
       delegateChangeEvents = [];

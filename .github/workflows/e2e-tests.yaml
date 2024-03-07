@@ -143,4 +143,3 @@ jobs:
           docker rm webapp
           docker stop blockchain
           docker rm blockchain
-

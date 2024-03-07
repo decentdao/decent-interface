@@ -23,7 +23,7 @@ export interface TransferDisplayData {
 
 export function useFormatTransfers(
   transfers: AssetTransfer[],
-  safeAddress: string
+  safeAddress: string,
 ): TransferDisplayData[] {
   let displayData: TransferDisplayData[] = new Array(transfers.length);
   const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfig();

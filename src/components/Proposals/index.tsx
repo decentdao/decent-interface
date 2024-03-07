@@ -101,10 +101,10 @@ export default function Proposals() {
     filters.length === 1
       ? t(filters[0])
       : filters.length === allOptions.length
-      ? t('filterProposalsAllSelected')
-      : filters.length === 0 // No filters selected means no filtering applied
-      ? t('filterProposalsNoneSelected')
-      : t('filterProposalsNSelected', { count: filters.length });
+        ? t('filterProposalsAllSelected')
+        : filters.length === 0 // No filters selected means no filtering applied
+          ? t('filterProposalsNoneSelected')
+          : t('filterProposalsNSelected', { count: filters.length });
 
   return (
     <>

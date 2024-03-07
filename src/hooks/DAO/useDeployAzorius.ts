@@ -34,7 +34,7 @@ const useDeployAzorius = () => {
     async (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO,
       shouldSetName?: boolean,
-      shouldSetSnapshot?: boolean
+      shouldSetSnapshot?: boolean,
     ) => {
       if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts) {
         return;
@@ -88,7 +88,7 @@ const useDeployAzorius = () => {
         daoData,
         fallbackHandler,
         undefined,
-        undefined
+        undefined,
       );
 
       txBuilderFactory.setSafeContract(daoAddress);
@@ -134,7 +134,7 @@ const useDeployAzorius = () => {
       push,
       safe,
       fallbackHandler,
-    ]
+    ],
   );
 
   return deployAzorius;

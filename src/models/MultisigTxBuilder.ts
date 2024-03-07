@@ -32,7 +32,7 @@ export class MultisigTxBuilder {
         this.daoData.signatureThreshold,
       ],
       0,
-      false
+      false,
     );
   }
 }

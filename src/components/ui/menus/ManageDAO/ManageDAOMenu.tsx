@@ -95,10 +95,10 @@ export function ManageDAOMenu({
           if (!!azoriusModule) {
             const azoriusContract = {
               asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(
-                azoriusModule.moduleAddress
+                azoriusModule.moduleAddress,
               ),
               asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(
-                azoriusModule.moduleAddress
+                azoriusModule.moduleAddress,
               ),
             };
 
@@ -106,7 +106,7 @@ export function ManageDAOMenu({
             const votingContractAddress = (
               await azoriusContract.asProvider.getStrategies(
                 '0x0000000000000000000000000000000000000001',
-                0
+                0,
               )
             )[1];
             const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingContractAddress);
@@ -128,7 +128,7 @@ export function ManageDAOMenu({
 
   const handleNavigateToSettings = useCallback(
     () => push(DAO_ROUTES.settings.relative(safeAddress)),
-    [push, safeAddress]
+    [push, safeAddress],
   );
 
   const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
@@ -184,12 +184,12 @@ export function ManageDAOMenu({
       !isWithinFreezeProposalPeriod(
         freezeGuard.freezeProposalCreatedTime,
         freezeGuard.freezeProposalPeriod,
-        currentTime
+        currentTime,
       ) &&
       !isWithinFreezePeriod(
         freezeGuard.freezeProposalCreatedTime,
         freezeGuard.freezePeriod,
-        currentTime
+        currentTime,
       ) &&
       freezeGuard.userHasVotes
     ) {
@@ -205,7 +205,7 @@ export function ManageDAOMenu({
       isWithinFreezePeriod(
         freezeGuard.freezeProposalCreatedTime,
         freezeGuard.freezePeriod,
-        currentTime
+        currentTime,
       ) &&
       freezeGuard.isFrozen &&
       freezeGuard.userHasVotes

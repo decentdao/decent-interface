@@ -43,7 +43,7 @@ export const useGovernanceContracts = () => {
     if (!!azoriusModuleContract) {
       const azoriusContract = {
         asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(
-          azoriusModuleContract.address
+          azoriusModuleContract.address,
         ),
         asSigner: fractalAzoriusMasterCopyContract.asSigner.attach(azoriusModuleContract.address),
       };
@@ -61,7 +61,7 @@ export const useGovernanceContracts = () => {
       const votingContractAddress = (
         await azoriusContract.asProvider.getStrategies(
           '0x0000000000000000000000000000000000000001',
-          0
+          0,
         )
       )[1];
 
@@ -82,7 +82,7 @@ export const useGovernanceContracts = () => {
         erc721LinearVotingContract = {
           asSigner: linearVotingERC721MasterCopyContract.asSigner.attach(votingContractAddress!),
           asProvider: linearVotingERC721MasterCopyContract.asProvider.attach(
-            votingContractAddress!
+            votingContractAddress!,
           ),
         };
       }
@@ -99,7 +99,7 @@ export const useGovernanceContracts = () => {
         const possibleLockRelease = new ethers.Contract(
           govTokenAddress,
           LockRelease__factory.abi,
-          provider
+          provider,
         ) as LockRelease;
 
         const lockedToken = await possibleLockRelease.token().catch(() => {

@@ -40,7 +40,7 @@ export function ERCO20Claim() {
       userClaimable,
       false,
       azoriusGovernance.votesToken.decimals,
-      azoriusGovernance.votesToken.symbol
+      azoriusGovernance.votesToken.symbol,
     );
     contractCall({
       contractFn: () => tokenClaimContract.claimTokens(account),
@@ -66,7 +66,7 @@ export function ERCO20Claim() {
     userClaimable,
     false,
     azoriusGovernance.votesToken.decimals,
-    azoriusGovernance.votesToken.symbol
+    azoriusGovernance.votesToken.symbol,
   );
   return (
     <Alert

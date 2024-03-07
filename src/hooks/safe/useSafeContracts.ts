@@ -101,7 +101,7 @@ export default function useSafeContracts() {
     const multisigFreezeGuardMasterCopyContract = {
       asSigner: MultisigFreezeGuard__factory.connect(
         multisigFreezeGuardMasterCopy,
-        signerOrProvider
+        signerOrProvider,
       ),
       asProvider: MultisigFreezeGuard__factory.connect(multisigFreezeGuardMasterCopy, provider),
     };
@@ -114,7 +114,7 @@ export default function useSafeContracts() {
     const freezeMultisigVotingMasterCopyContract = {
       asSigner: MultisigFreezeVoting__factory.connect(
         multisigFreezeVotingMasterCopy,
-        signerOrProvider
+        signerOrProvider,
       ),
       asProvider: MultisigFreezeVoting__factory.connect(multisigFreezeVotingMasterCopy, provider),
     };

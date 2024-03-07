@@ -25,7 +25,7 @@ export function ActivityGovernance({ activity }: { activity: FractalProposal }) 
       ? activity.transaction?.to === safe?.address
         ? 'received'
         : 'sent'
-      : 'created'
+      : 'created',
   );
 
   const {

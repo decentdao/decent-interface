@@ -15,16 +15,16 @@ export function ActivityDescriptionTreasury({ activity }: { activity: Activity }
   const transferTypeStr = !hasTransfers
     ? undefined
     : !isGovernanceActivity && isDeposit
-    ? t('received')
-    : isGovernanceActivity && !isDeposit
-    ? t('transfer')
-    : t('send');
+      ? t('received')
+      : isGovernanceActivity && !isDeposit
+        ? t('transfer')
+        : t('send');
 
   const transferDirStr = !hasTransfers
     ? undefined
     : treasuryActivity.isDeposit && activity.eventType !== ActivityEventType.Governance
-    ? t('from')
-    : t('to');
+      ? t('from')
+      : t('to');
 
   return (
     <>

@@ -30,7 +30,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     async (
       _daoAddress: string,
       _safe: SafeInfoResponseWithGuard,
-      _fractalModules: FractalModuleData[]
+      _fractalModules: FractalModuleData[],
     ) => {
       if (!baseContracts) {
         return;
@@ -50,7 +50,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       let freezeGuardType: FreezeGuardType | null = null;
 
       const azoriusModule = _fractalModules?.find(
-        module => module.moduleType === FractalModuleType.AZORIUS
+        module => module.moduleType === FractalModuleType.AZORIUS,
       );
       if (!!azoriusModule && azoriusModule.moduleContract) {
         const azoriusGuardAddress = await azoriusModule.moduleContract.getGuard();
@@ -78,8 +78,8 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         const freezeVotingType = masterCopyData.isMultisigFreezeVoting
           ? FreezeVotingType.MULTISIG
           : masterCopyData.isERC721FreezeVoting
-          ? FreezeVotingType.ERC721
-          : FreezeVotingType.ERC20;
+            ? FreezeVotingType.ERC721
+            : FreezeVotingType.ERC20;
 
         const freezeVotingContract =
           freezeVotingType === FreezeVotingType.MULTISIG
@@ -88,14 +88,14 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
                 asProvider: freezeMultisigVotingMasterCopyContract.asProvider.attach(votingAddress),
               }
             : freezeVotingType === FreezeVotingType.ERC721
-            ? {
-                asSigner: freezeERC721VotingMasterCopyContract.asSigner.attach(votingAddress),
-                asProvider: freezeERC721VotingMasterCopyContract.asProvider.attach(votingAddress),
-              }
-            : {
-                asSigner: freezeERC20VotingMasterCopyContract.asSigner.attach(votingAddress),
-                asProvider: freezeERC20VotingMasterCopyContract.asProvider.attach(votingAddress),
-              };
+              ? {
+                  asSigner: freezeERC721VotingMasterCopyContract.asSigner.attach(votingAddress),
+                  asProvider: freezeERC721VotingMasterCopyContract.asProvider.attach(votingAddress),
+                }
+              : {
+                  asSigner: freezeERC20VotingMasterCopyContract.asSigner.attach(votingAddress),
+                  asProvider: freezeERC20VotingMasterCopyContract.asProvider.attach(votingAddress),
+                };
 
         const contracts = {
           freezeGuardContract,
@@ -107,7 +107,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         return contracts;
       }
     },
-    [baseContracts, getZodiacModuleProxyMasterCopyData]
+    [baseContracts, getZodiacModuleProxyMasterCopyData],
   );
 
   const setGuardContracts = useCallback(async () => {

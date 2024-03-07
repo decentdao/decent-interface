@@ -73,7 +73,7 @@ export default function ProposalTemplateModal({
           };
         }
         return transaction;
-      })
+      }),
     );
   };
 
@@ -102,11 +102,11 @@ export default function ProposalTemplateModal({
             .map(parameter =>
               isValidUrl(parameter.value!.trim())
                 ? encodeURIComponent(parameter.value!.trim()) // If parameter.value is valid URL with special symbols like ":" or "?" - decoding might fail, thus we need to encode URL
-                : parameter.value!.trim()
+                : parameter.value!.trim(),
             )
             .join(', '),
         };
-      }
+      },
     );
     try {
       const proposalData = await prepareProposal({
@@ -129,7 +129,7 @@ export default function ProposalTemplateModal({
 
   // The form is valid when there's no parameter without filled value
   const isValid = !filledProposalTransactions.find(
-    transaction => !!transaction.parameters.find(parameter => !parameter.value)
+    transaction => !!transaction.parameters.find(parameter => !parameter.value),
   );
 
   return (
@@ -176,7 +176,7 @@ export default function ProposalTemplateModal({
                     }
                   />
                 </Flex>
-              )
+              ),
           )}
           {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
         </VStack>

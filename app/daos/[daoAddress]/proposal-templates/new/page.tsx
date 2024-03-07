@@ -41,11 +41,11 @@ export default function CreateProposalTemplatePage() {
   const searchParams = useSearchParams();
   const defaultProposalTemplatesHash = useMemo(
     () => searchParams?.get('templatesHash'),
-    [searchParams]
+    [searchParams],
   );
   const defaultProposalTemplateIndex = useMemo(
     () => searchParams?.get('templateIndex'),
-    [searchParams]
+    [searchParams],
   );
 
   const {
@@ -141,7 +141,7 @@ export default function CreateProposalTemplatePage() {
                     push(
                       daoAddress
                         ? DAO_ROUTES.proposalTemplates.relative(daoAddress)
-                        : BASE_ROUTES.landing
+                        : BASE_ROUTES.landing,
                     )
                   }
                   isButtonDisabled={pendingCreateTx}

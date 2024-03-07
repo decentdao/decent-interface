@@ -57,7 +57,7 @@ const useCastVote = ({
   const [contractCallCastVote, contractCallPending] = useTransaction();
 
   const { remainingTokenIds, remainingTokenAddresses } = useUserERC721VotingTokens(
-    proposal.proposalId
+    proposal.proposalId,
   );
   const { getCanVote, getHasVoted } = useVoteContext();
 
@@ -81,7 +81,7 @@ const useCastVote = ({
 
   const handleChangeSnapshotWeightedChoice = useCallback((choiceIndex: number, value: number) => {
     setSnapshotWeightedChoice(prevState =>
-      prevState.map((choiceValue, index) => (index === choiceIndex ? value : choiceValue))
+      prevState.map((choiceValue, index) => (index === choiceIndex ? value : choiceValue)),
     );
   }, []);
 
@@ -96,7 +96,7 @@ const useCastVote = ({
             proposal.proposalId,
             vote,
             remainingTokenAddresses,
-            remainingTokenIds
+            remainingTokenIds,
           );
       }
 
@@ -126,7 +126,7 @@ const useCastVote = ({
       remainingTokenIds,
       getCanVote,
       getHasVoted,
-    ]
+    ],
   );
 
   const castSnapshotVote = useCallback(
@@ -163,7 +163,7 @@ const useCastVote = ({
           if (extendedSnapshotProposal.privacy === 'shutter') {
             const encryptedChoice = await encryptWithShutter(
               JSON.stringify(choice),
-              extendedSnapshotProposal.proposalId
+              extendedSnapshotProposal.proposalId,
             );
             await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
               space: daoSnapshotSpaceName,
@@ -205,7 +205,7 @@ const useCastVote = ({
       selectedChoice,
       snapshotWeightedChoice,
       client,
-    ]
+    ],
   );
 
   return {

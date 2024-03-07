@@ -59,7 +59,7 @@ function AddSignerModal({
         close: close,
       });
     },
-    [addSigner, close, daoAddress, signer]
+    [addSigner, close, daoAddress, signer],
   );
 
   const addSignerValidationSchema = Yup.object().shape({
@@ -150,7 +150,7 @@ function AddSignerModal({
                     ml={2}
                   >{`${t('signersRequired1', { ns: 'modals' })} ${signers.length + 1} ${t(
                     'signersRequired2',
-                    { ns: 'modals' }
+                    { ns: 'modals' },
                   )}`}</Text>
                 </Flex>
               </HStack>

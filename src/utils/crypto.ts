@@ -23,7 +23,7 @@ function splitIgnoreBrackets(str: string): string[] {
 export const encodeFunction = (
   _functionName: string,
   _functionSignature?: string,
-  _parameters?: string
+  _parameters?: string,
 ) => {
   let functionSignature = `function ${_functionName}`;
   if (_functionSignature) {
@@ -44,7 +44,7 @@ export const encodeFunction = (
         param
           .substring(1, param.length - 1)
           .split(',')
-          .map(p => (p = p.trim()))
+          .map(p => (p = p.trim())),
       );
     } else if (param.startsWith('(')) {
       // This is part of tuple param, we need to re-assemble it. There should be better solution to this within splitIgnoreBrackets with regex.
@@ -86,7 +86,7 @@ export const encodeFunction = (
   try {
     return new utils.Interface([functionSignature]).encodeFunctionData(
       _functionName,
-      parametersFixedWithBool
+      parametersFixedWithBool,
     );
   } catch (e) {
     logError(e);

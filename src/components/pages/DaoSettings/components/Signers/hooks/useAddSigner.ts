@@ -56,7 +56,7 @@ const useAddSigner = () => {
         failedToastMessage: t('addSignerFailureToastMessage'),
       });
     },
-    [baseContracts, submitProposal, t]
+    [baseContracts, submitProposal, t],
   );
 
   return addSigner;

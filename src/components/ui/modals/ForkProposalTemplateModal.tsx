@@ -78,8 +78,8 @@ export default function ForkProposalTemplateModal({
   const handleSubmit = () => {
     push(
       `${DAO_ROUTES.proposalTemplateNew.relative(
-        targetDAOAddress
-      )}?templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`
+        targetDAOAddress,
+      )}?templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`,
     );
     onClose();
   };

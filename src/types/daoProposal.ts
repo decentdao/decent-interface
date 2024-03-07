@@ -121,7 +121,7 @@ export type ProposalVotesSummary = {
 
 export type ProposalVote = {
   voter: string;
-  choice: typeof VOTE_CHOICES[number];
+  choice: (typeof VOTE_CHOICES)[number];
   weight: BigNumber;
 };
 

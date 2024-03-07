@@ -22,7 +22,7 @@ export const useCreateSubDAOProposal = () => {
     (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
       nonce: number | undefined,
-      successCallback: (daoAddress: string) => void
+      successCallback: (daoAddress: string) => void,
     ) => {
       const propose = async () => {
         if (!baseContracts || !daoAddress) {
@@ -66,7 +66,7 @@ export const useCreateSubDAOProposal = () => {
       };
       propose();
     },
-    [baseContracts, build, daoAddress, submitProposal, azoriusGovernance, t]
+    [baseContracts, build, daoAddress, submitProposal, azoriusGovernance, t],
   );
 
   return { proposeDao, pendingCreateTx, canUserCreateProposal } as const;

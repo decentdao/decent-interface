@@ -232,7 +232,7 @@ export function Assets() {
 
   // --- Lido Unstake button setup ---
   const stETHAsset = coinDisplay.displayData.find(
-    asset => asset.address === staking?.lido?.stETHContractAddress
+    asset => asset.address === staking?.lido?.stETHContractAddress,
   );
   const showUnstakeButton = canUserCreateProposal && staking.lido && stETHAsset;
   const handleUnstakeButtonClick = () => {
@@ -243,7 +243,7 @@ export function Assets() {
   const signerOrProvider = useSignerOrProvider();
   const [isLidoClaimable, setIsLidoClaimable] = useState(false);
   const lidoWithdrawelNFT = assetsNonFungible.find(
-    asset => asset.address === staking.lido?.withdrawalQueueContractAddress
+    asset => asset.address === staking.lido?.withdrawalQueueContractAddress,
   );
   const showClaimETHButton = canUserCreateProposal && staking.lido && lidoWithdrawelNFT;
   useEffect(() => {
@@ -257,7 +257,7 @@ export function Assets() {
       }
       const withdrawalQueueContract = getWithdrawalQueueContract(
         staking.lido.withdrawalQueueContractAddress,
-        signerOrProvider
+        signerOrProvider,
       );
       const claimableStatus = (
         await withdrawalQueueContract.getWithdrawalStatus([lidoWithdrawelNFT!.id])

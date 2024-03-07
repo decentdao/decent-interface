@@ -16,7 +16,7 @@ const useDeployDAO = () => {
   const deployDao = useCallback(
     (
       daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
-      successCallback: (daoAddress: string) => void
+      successCallback: (daoAddress: string) => void,
     ) => {
       const deploy = async () => {
         if (!baseContracts) {
@@ -43,7 +43,7 @@ const useDeployDAO = () => {
 
       deploy();
     },
-    [build, contractCallDeploy, baseContracts, t]
+    [build, contractCallDeploy, baseContracts, t],
   );
 
   return [deployDao, contractCallPending] as const;

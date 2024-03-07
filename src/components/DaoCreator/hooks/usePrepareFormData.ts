@@ -23,31 +23,31 @@ export function usePrepareFormData() {
   // Helper function to prepare freezeGuard data
   const prepareFreezeGuardData = useCallback(
     async (
-      freezeGuard: DAOFreezeGuardConfig<BigNumberValuePair>
+      freezeGuard: DAOFreezeGuardConfig<BigNumberValuePair>,
     ): Promise<DAOFreezeGuardConfig | undefined> => {
       if (provider) {
         return {
           executionPeriod: await getEstimatedNumberOfBlocks(
             freezeGuard.executionPeriod.bigNumberValue!,
-            provider
+            provider,
           ),
           timelockPeriod: await getEstimatedNumberOfBlocks(
             freezeGuard.timelockPeriod.bigNumberValue!,
-            provider
+            provider,
           ),
           freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigNumberValue!,
           freezeProposalPeriod: await getEstimatedNumberOfBlocks(
             freezeGuard.freezeProposalPeriod.bigNumberValue!,
-            provider
+            provider,
           ),
           freezePeriod: await getEstimatedNumberOfBlocks(
             freezeGuard.freezePeriod.bigNumberValue!,
-            provider
+            provider,
           ),
         };
       }
     },
-    [provider]
+    [provider],
   );
 
   const checkVotesToken = useCallback(
@@ -63,7 +63,7 @@ export function usePrepareFormData() {
         }
       }
     },
-    [provider]
+    [provider],
   );
 
   const prepareMultisigFormData = useCallback(
@@ -79,7 +79,7 @@ export function usePrepareFormData() {
             return resolvedAddress;
           }
           return inputValue;
-        })
+        }),
       );
       let freezeGuardData;
       if (freezeGuard) {
@@ -93,7 +93,7 @@ export function usePrepareFormData() {
         };
       }
     },
-    [signer, prepareFreezeGuardData]
+    [signer, prepareFreezeGuardData],
   );
 
   const prepareAzoriusERC20FormData = useCallback(
@@ -120,7 +120,7 @@ export function usePrepareFormData() {
               address = await signer!.resolveName(allocation.address);
             }
             return { amount: allocation.amount.bigNumberValue!, address: address };
-          })
+          }),
         );
         let freezeGuardData;
         if (freezeGuard) {
@@ -139,7 +139,7 @@ export function usePrepareFormData() {
           timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
           executionPeriod: await getEstimatedNumberOfBlocks(
             executionPeriod.bigNumberValue!,
-            provider
+            provider,
           ),
           votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
           tokenAllocations: resolvedTokenAllocations,
@@ -152,7 +152,7 @@ export function usePrepareFormData() {
         };
       }
     },
-    [signer, checkVotesToken, provider, prepareFreezeGuardData]
+    [signer, checkVotesToken, provider, prepareFreezeGuardData],
   );
 
   const prepareAzoriusERC721FormData = useCallback(
@@ -184,7 +184,7 @@ export function usePrepareFormData() {
               tokenAddress: address,
               tokenWeight: nft.tokenWeight.bigNumberValue!,
             };
-          })
+          }),
         );
 
         return {
@@ -192,7 +192,7 @@ export function usePrepareFormData() {
           timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
           executionPeriod: await getEstimatedNumberOfBlocks(
             executionPeriod.bigNumberValue!,
-            provider
+            provider,
           ),
           votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
           nfts: resolvedNFTs,
@@ -202,7 +202,7 @@ export function usePrepareFormData() {
         };
       }
     },
-    [prepareFreezeGuardData, provider, signer]
+    [prepareFreezeGuardData, provider, signer],
   );
   return {
     prepareMultisigFormData,

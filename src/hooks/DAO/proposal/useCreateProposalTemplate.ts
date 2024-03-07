@@ -46,7 +46,7 @@ export default function useCreateProposalTemplate() {
                   }
                 })
                 .filter(param => param),
-            }))
+            })),
           ),
         };
 
@@ -69,7 +69,7 @@ export default function useCreateProposalTemplate() {
         return proposal;
       }
     },
-    [proposalTemplates, keyValuePairsContract, client, signerOrProvider]
+    [proposalTemplates, keyValuePairsContract, client, signerOrProvider],
   );
 
   return { prepareProposalTemplateProposal };

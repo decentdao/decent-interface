@@ -36,7 +36,7 @@ export const useUpdateTimer = (safeAddress?: string | null) => {
       timers.current.set(methodKey, intervalId);
       return returnValue;
     },
-    [isActive]
+    [isActive],
   );
 
   // clear intervals

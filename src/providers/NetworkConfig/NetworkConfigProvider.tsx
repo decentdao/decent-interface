@@ -33,7 +33,7 @@ const getNetworkConfig = (chainId: number) => {
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   const { chain } = useNetwork();
   const [config, setConfig] = useState<NetworkConfig>(
-    getNetworkConfig(chain?.id || disconnectedChain.id)
+    getNetworkConfig(chain?.id || disconnectedChain.id),
   );
 
   useEffect(() => {

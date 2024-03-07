@@ -90,7 +90,7 @@ const useAddress = (addressInput: string | undefined) => {
           setValue(
             CacheKeys.ENS_RESOLVE_PREFIX + addressInput,
             resolvedAddress,
-            CacheExpiry.ONE_WEEK
+            CacheExpiry.ONE_WEEK,
           );
           setAddress(resolvedAddress);
           setIsValidAddress(true);

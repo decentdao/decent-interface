@@ -39,7 +39,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
         proposals: [
           ...action.payload,
           ...(proposals || []).filter(
-            proposal => !!(proposal as SnapshotProposal).snapshotProposalId
+            proposal => !!(proposal as SnapshotProposal).snapshotProposalId,
           ),
         ],
       };
@@ -63,7 +63,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
         // Yet, I'm not sure of the cause :(
         proposals: [...(proposals || []), action.payload].filter(
           (proposal, index, array) =>
-            index === array.findIndex(p => p.proposalId === proposal.proposalId)
+            index === array.findIndex(p => p.proposalId === proposal.proposalId),
         ),
       };
     case FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC20_VOTE: {

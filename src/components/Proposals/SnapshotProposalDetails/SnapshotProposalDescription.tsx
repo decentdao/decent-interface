@@ -58,7 +58,7 @@ export default function SnapshotProposalDescription({
     ) {
       const divHeight = markdownTextContainerRef.current.scrollHeight;
       const lineHeight = parseInt(
-        document.defaultView.getComputedStyle(markdownTextContainerRef.current, null).lineHeight
+        document.defaultView.getComputedStyle(markdownTextContainerRef.current, null).lineHeight,
       );
       if (isNaN(lineHeight)) {
         setCollapsed(false);

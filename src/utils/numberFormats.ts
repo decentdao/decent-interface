@@ -7,7 +7,7 @@ export const DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
 
 export const formatPercentage = (
   numerator: BigNumber | number | string,
-  denominator: BigNumber | number | string
+  denominator: BigNumber | number | string,
 ) => {
   const fraction = bigDecimal.divide(numerator.toString(), denominator.toString(), 18);
   const percent = parseFloat(bigDecimal.multiply(fraction, 100));
@@ -32,7 +32,7 @@ export const formatUSD = (rawUSD: number | string) => {
 export const formatCoinUnits = (
   rawBalance: BigNumber | string,
   decimals?: number,
-  symbol?: string
+  symbol?: string,
 ): number => {
   if (!rawBalance) rawBalance = '0';
   return symbol
@@ -49,7 +49,7 @@ export const formatCoin = (
   truncate: boolean,
   decimals?: number,
   symbol?: string,
-  showSymbol: boolean = true
+  showSymbol: boolean = true,
 ): string => {
   const amount = formatCoinUnits(rawBalance, decimals, symbol);
 

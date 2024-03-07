@@ -65,7 +65,7 @@ function RemoveSignerModal({
   useEffect(() => {
     const signerIndex = signers.findIndex(signer => signer === selectedSigner);
     setPrevSigner(
-      signerIndex > 0 ? signers[signerIndex - 1] : '0x0000000000000000000000000000000000000001'
+      signerIndex > 0 ? signers[signerIndex - 1] : '0x0000000000000000000000000000000000000001',
     );
   }, [selectedSigner, signers]);
 
@@ -136,7 +136,7 @@ function RemoveSignerModal({
             ml={2}
           >{`${t('signersRequired1', { ns: 'modals' })} ${signers.length - 1} ${t(
             'signersRequired2',
-            { ns: 'modals' }
+            { ns: 'modals' },
           )}`}</Text>
         </Flex>
       </HStack>

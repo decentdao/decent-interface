@@ -35,7 +35,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
     fallbackHandler: string,
     parentAddress?: string,
-    parentTokenAddress?: string
+    parentTokenAddress?: string,
   ) {
     super(
       signerOrProvider,
@@ -43,7 +43,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       azoriusContracts,
       daoData,
       parentAddress,
-      parentTokenAddress
+      parentTokenAddress,
     );
 
     this.fallbackHandler = fallbackHandler;
@@ -63,7 +63,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.daoData as SafeMultisigDAO,
       this.saltNum,
       this.fallbackHandler,
-      !!this.azoriusContracts
+      !!this.azoriusContracts,
     );
 
     this.predictedSafeAddress = predictedSafeAddress;
@@ -74,7 +74,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
 
   public createDaoTxBuilder(
     parentStrategyType?: VotingStrategyType,
-    parentStrategyAddress?: string
+    parentStrategyAddress?: string,
   ): DaoTxBuilder {
     return new DaoTxBuilder(
       this.signerOrProvider,
@@ -89,7 +89,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.parentAddress,
       this.parentTokenAddress,
       parentStrategyType,
-      parentStrategyAddress
+      parentStrategyAddress,
     );
   }
 
@@ -97,7 +97,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     azoriusAddress?: string,
     strategyAddress?: string,
     parentStrategyType?: VotingStrategyType,
-    parentStrategyAddress?: string // User only with ERC-721 parent
+    parentStrategyAddress?: string, // User only with ERC-721 parent
   ): FreezeGuardTxBuilder {
     return new FreezeGuardTxBuilder(
       this.signerOrProvider,
@@ -111,7 +111,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       azoriusAddress,
       strategyAddress,
       parentStrategyType,
-      parentStrategyAddress
+      parentStrategyAddress,
     );
   }
 
@@ -119,7 +119,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     return new MultisigTxBuilder(
       this.baseContracts,
       this.daoData as SafeMultisigDAO,
-      this.safeContract!
+      this.safeContract!,
     );
   }
 
@@ -132,7 +132,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.safeContract!,
       this.predictedSafeAddress!,
       this.parentAddress,
-      this.parentTokenAddress
+      this.parentTokenAddress,
     );
 
     await azoriusTxBuilder.init();

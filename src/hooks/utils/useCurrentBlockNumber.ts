@@ -13,7 +13,7 @@ const useCurrentBlockNumber = () => {
         setIsLoaded(true);
       }
     },
-    [isLoaded]
+    [isLoaded],
   );
 
   useEffect(() => {

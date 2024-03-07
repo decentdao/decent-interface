@@ -37,11 +37,11 @@ export const useFractalModules = () => {
           }
 
           return safeModule;
-        })
+        }),
       );
       return modules;
     },
-    [baseContracts, getZodiacModuleProxyMasterCopyData]
+    [baseContracts, getZodiacModuleProxyMasterCopyData],
   );
   return lookupModules;
 };

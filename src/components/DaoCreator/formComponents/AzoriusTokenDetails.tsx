@@ -62,7 +62,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
           value: totalSupply,
           bigNumberValue: BigNumber.from(totalSupply),
         },
-        true
+        true,
       );
       if (!isVotesToken) {
         setFieldValue('erc20Token.tokenName', 'Wrapped ' + name, true);

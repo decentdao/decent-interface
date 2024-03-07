@@ -13,44 +13,44 @@ export function useMasterCopy() {
   const isOzLinearVoting = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === baseContracts?.linearVotingMasterCopyContract.asProvider.address,
-    [baseContracts]
+    [baseContracts],
   );
   const isOzLinearVotingERC721 = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === baseContracts?.linearVotingERC721MasterCopyContract.asProvider.address,
-    [baseContracts]
+    [baseContracts],
   );
   const isMultisigFreezeGuard = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === baseContracts?.multisigFreezeGuardMasterCopyContract.asProvider.address,
-    [baseContracts]
+    [baseContracts],
   );
   const isMultisigFreezeVoting = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress ===
       baseContracts?.freezeMultisigVotingMasterCopyContract.asProvider.address,
-    [baseContracts]
+    [baseContracts],
   );
   const isERC721FreezeVoting = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === baseContracts?.freezeERC721VotingMasterCopyContract.asProvider.address,
-    [baseContracts]
+    [baseContracts],
   );
   const isAzorius = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === baseContracts?.fractalAzoriusMasterCopyContract.asProvider.address,
-    [baseContracts]
+    [baseContracts],
   );
   const isFractalModule = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
       masterCopyAddress === baseContracts?.fractalModuleMasterCopyContract.asProvider.address,
-    [baseContracts]
+    [baseContracts],
   );
 
   const getMasterCopyAddress = useCallback(
     async function (
       contract: Contract,
-      proxyAddress: string | `0x${string}`
+      proxyAddress: string | `0x${string}`,
     ): Promise<[string, string | null]> {
       const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
       if (cachedValue) return [cachedValue, null] as const;
@@ -65,7 +65,7 @@ export function useMasterCopy() {
         return [masterCopyAddress, null] as const;
       });
     },
-    [getValue, setValue]
+    [getValue, setValue],
   );
 
   const getZodiacModuleProxyMasterCopyData = useCallback(
@@ -74,7 +74,7 @@ export function useMasterCopy() {
       let error;
       if (baseContracts) {
         const contract = getEventRPC<ModuleProxyFactory>(
-          baseContracts?.zodiacModuleProxyFactoryContract
+          baseContracts?.zodiacModuleProxyFactoryContract,
         );
         [masterCopyAddress, error] = await getMasterCopyAddress(contract, proxyAddress);
         if (error) {
@@ -102,7 +102,7 @@ export function useMasterCopy() {
       isOzLinearVoting,
       isOzLinearVotingERC721,
       baseContracts,
-    ]
+    ],
   );
 
   return { getZodiacModuleProxyMasterCopyData };

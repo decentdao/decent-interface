@@ -39,7 +39,7 @@ export const useSafeTransactions = () => {
     async (
       activities: Activity[],
       freezeGuard?: MultisigFreezeGuard,
-      freezeGuardData?: FreezeGuardData
+      freezeGuardData?: FreezeGuardData,
     ) => {
       if (freezeGuard && freezeGuardData && provider) {
         return Promise.all(
@@ -103,7 +103,7 @@ export const useSafeTransactions = () => {
               }
             }
             return { ...activity, state };
-          })
+          }),
         );
       } else {
         return activities.map((activity, _, activityArr) => {
@@ -134,7 +134,7 @@ export const useSafeTransactions = () => {
         });
       }
     },
-    [provider]
+    [provider],
   );
 
   const getTransferTotal = useCallback(
@@ -181,10 +181,10 @@ export const useSafeTransactions = () => {
 
           return prev;
         },
-        new Map()
+        new Map(),
       );
     },
-    [nativeTokenSymbol]
+    [nativeTokenSymbol],
   );
 
   const parseTransactions = useCallback(
@@ -203,7 +203,7 @@ export const useSafeTransactions = () => {
 
           // @note for ethereum transactions event these are the execution date
           const eventDate = new Date(
-            multiSigTransaction.submissionDate || ethereumTransaction.executionDate
+            multiSigTransaction.submissionDate || ethereumTransaction.executionDate,
           );
 
           // @note it can be assumed that if there is no transfers it a receiving event
@@ -220,12 +220,12 @@ export const useSafeTransactions = () => {
               const totalAmount = formatWeiToValue(token.bn, token.decimals);
               const symbol = token.symbol;
               return `${totalAmount} ${symbol}`;
-            }
+            },
           );
 
           // maps address for each transfer
           const transferAddresses = transaction.transfers.map(transfer =>
-            transfer.to.toLowerCase() === daoAddress.toLowerCase() ? transfer.from : transfer.to
+            transfer.to.toLowerCase() === daoAddress.toLowerCase() ? transfer.from : transfer.to,
           );
 
           // @note this indentifies transaction a simple ETH transfer
@@ -237,7 +237,7 @@ export const useSafeTransactions = () => {
 
           if (isEthSend) {
             transferAmountTotals.push(
-              `${formatWeiToValue(multiSigTransaction.value, 18)} ${nativeTokenSymbol}`
+              `${formatWeiToValue(multiSigTransaction.value, 18)} ${nativeTokenSymbol}`,
             );
             transferAddresses.push(multiSigTransaction.to);
           }
@@ -247,8 +247,8 @@ export const useSafeTransactions = () => {
           const eventType: any = isMultiSigTransaction
             ? ActivityEventType.Governance
             : isModuleTransaction
-            ? ActivityEventType.Module
-            : ActivityEventType.Treasury;
+              ? ActivityEventType.Module
+              : ActivityEventType.Treasury;
 
           const eventNonce = multiSigTransaction.nonce;
 
@@ -277,14 +277,14 @@ export const useSafeTransactions = () => {
               ? {
                   decodedTransactions: parseDecodedData(
                     multiSigTransaction,
-                    isMultiSigTransaction || isModuleTransaction
+                    isMultiSigTransaction || isModuleTransaction,
                   ),
                 }
               : {
                   decodedTransactions: await decode(
                     multiSigTransaction.value,
                     multiSigTransaction.to,
-                    multiSigTransaction.data
+                    multiSigTransaction.data,
                   ),
                 };
 
@@ -313,7 +313,7 @@ export const useSafeTransactions = () => {
             nonce: eventNonce,
           };
           return activity;
-        })
+        }),
       );
       let freezeGuard: MultisigFreezeGuard | undefined;
       let freezeGuardData: FreezeGuardData | undefined;
@@ -324,10 +324,10 @@ export const useSafeTransactions = () => {
         freezeGuard = guardContracts.freezeGuardContract.asProvider as MultisigFreezeGuard;
         freezeGuardData = {
           guardTimelockPeriodMs: BigNumber.from(
-            (await freezeGuard.timelockPeriod()) * averageBlockTime * 1000
+            (await freezeGuard.timelockPeriod()) * averageBlockTime * 1000,
           ),
           guardExecutionPeriodMs: BigNumber.from(
-            (await freezeGuard.executionPeriod()) * averageBlockTime * 1000
+            (await freezeGuard.executionPeriod()) * averageBlockTime * 1000,
           ),
           lastBlock: await provider.getBlock(blockNumber),
         };
@@ -343,7 +343,7 @@ export const useSafeTransactions = () => {
       decode,
       nativeTokenSymbol,
       provider,
-    ]
+    ],
   );
   return { parseTransactions };
 };

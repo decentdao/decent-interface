@@ -17,11 +17,14 @@ const config: PlaywrightTestConfig = {
     /* List reporter for getting updates */
     [process.env.CI ? 'list' : 'line'],
     /* HTML output - unzip(open) videos and images before referencing them on the html report */
-    ['html', {
-      /* Output HTML files to playwright-report folder */
-      /* Never open a server - important for CI since it doesn't close automatically */
-      open: 'never',
-    }],
+    [
+      'html',
+      {
+        /* Output HTML files to playwright-report folder */
+        /* Never open a server - important for CI since it doesn't close automatically */
+        open: 'never',
+      },
+    ],
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -30,17 +33,21 @@ const config: PlaywrightTestConfig = {
     viewport: { width: 1280, height: 1020 },
     ignoreHTTPSErrors: false,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry', /* Tracks exactly what is going on in the test. Saved as a zip file in test-results folder. Can be viewed at 'trace.playwright.dev' in a browser. To use 'npx playwright test --trace on' */
+    trace:
+      'on-first-retry' /* Tracks exactly what is going on in the test. Saved as a zip file in test-results folder. Can be viewed at 'trace.playwright.dev' in a browser. To use 'npx playwright test --trace on' */,
     screenshot: 'on',
     launchOptions: {
-      slowMo: !process.env.CI ? 100 : 0, /* Adjusts tests' run speed to aid in video report visualization reports as well as mimic user input/action speed */
-      devtools: false, /* When tests are ran locally with the '--headed' flag devtools will appear for debugging purposes. */
+      slowMo: !process.env.CI
+        ? 100
+        : 0 /* Adjusts tests' run speed to aid in video report visualization reports as well as mimic user input/action speed */,
+      devtools:
+        false /* When tests are ran locally with the '--headed' flag devtools will appear for debugging purposes. */,
     },
     video: !process.env.CI ? 'on' : 'off',
     contextOptions: {
       recordVideo: {
-        dir: './playwright-report'
-      } /* Or wherever you want the videos to be saved. */
+        dir: './playwright-report',
+      } /* Or wherever you want the videos to be saved. */,
     },
   },
 
