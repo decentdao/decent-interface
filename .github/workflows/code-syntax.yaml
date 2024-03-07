@@ -16,6 +16,8 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Install dependencies
         run: npm ci
+      - name: Build GraphQL client
+        run: npm run graphql:build
       - name: Run tests
         run: npm run lint
   pretty:
@@ -29,5 +31,7 @@ jobs:
           node-version-file: '.nvmrc'
       - name: Install dependencies
         run: npm ci
+      - name: Build GraphQL client
+        run: npm run graphql:build
       - name: Run tests
         run: npm run pretty:check
