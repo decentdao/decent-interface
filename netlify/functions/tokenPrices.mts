@@ -11,15 +11,14 @@ type TokenPriceWithMetadata = {
     price: number;
   };
   metadata: {
-    expiration: number;
+    fetched: number;
   };
 };
 
 type Config = {
   store: Store;
   now: number;
-  invalidAddressCacheTime: number;
-  validAddressCacheTime: number;
+  cacheTime: number;
 };
 
 const SUPPORTED_NETWORKS = ['ethereum'] as const;
@@ -62,7 +61,7 @@ async function splitData(
 
   // Let's pull out all of the expired addresses from our cache.
   const expiredCachedTokenAddresses = cachedTokenPrices
-    .filter(tokenPrice => tokenPrice.metadata.expiration < config.now)
+    .filter(tokenPrice => tokenPrice.metadata.fetched > config.now + config.cacheTime)
     .map(tokenPrice => tokenPrice.data.tokenAddress);
 
   // Finally let's get a list of all of the token addresses that
@@ -97,13 +96,12 @@ async function storeTokenPrice(
   config: Config,
   tokenAddress: string,
   price: number,
-  expiration: number,
   network: SupportedNetworks
 ) {
   await config.store.setJSON(
     `${network}/${tokenAddress}`,
     { tokenAddress, price },
-    { metadata: { expiration: config.now + expiration } }
+    { metadata: { fetched: config.now } }
   );
 }
 
@@ -115,20 +113,14 @@ async function processTokenPricesResponse(
 ) {
   const coinGeckoResponseAddresses = Object.keys(tokenPricesResponseJson);
   for await (const tokenAddress of coinGeckoResponseAddresses) {
-    const price = tokenPricesResponseJson[tokenAddress].usd;
+    const price = tokenPricesResponseJson[tokenAddress].usd || 0;
     const sanitizedAddress = tokenAddress.toLowerCase();
 
     // Sometimes no USD price is returned. If this happens,
     // we should consider it as though CoinGecko doesn't support
     // this address and not query it again for a while.
-    if (price === undefined) {
-      await storeTokenPrice(config, sanitizedAddress, 0, config.invalidAddressCacheTime, network);
-    } else {
-      // Otherwise, update the cache with the new price and update
-      // the response object.
-      responseBodyCallback(sanitizedAddress, price);
-      await storeTokenPrice(config, sanitizedAddress, price, config.validAddressCacheTime, network);
-    }
+    responseBodyCallback(sanitizedAddress, price);
+    await storeTokenPrice(config, sanitizedAddress, price, network);
   }
 
   return coinGeckoResponseAddresses;
@@ -144,7 +136,7 @@ async function processUnknownAddresses(
     .filter(x => !responseAddresses.includes(x))
     .map(address => address.toLowerCase());
   for await (const tokenAddress of unknownAddresses) {
-    await storeTokenPrice(config, tokenAddress, 0, config.invalidAddressCacheTime, network);
+    await storeTokenPrice(config, tokenAddress, 0, network);
   }
 }
 
@@ -185,13 +177,8 @@ export default async function getTokenPrices(request: Request) {
     return Response.json({ error: 'Error while fetching prices' }, { status: 503 });
   }
 
-  if (!process.env.TOKEN_PRICE_INVALID_CACHE_MINUTES) {
-    console.error('TOKEN_PRICE_INVALID_CACHE_MINUTES is not set');
-    return Response.json({ error: 'Error while fetching prices' }, { status: 503 });
-  }
-
-  if (!process.env.TOKEN_PRICE_VALID_CACHE_MINUTES) {
-    console.error('TOKEN_PRICE_VALID_CACHE_MINUTES is not set');
+  if (!process.env.TOKEN_PRICE_CACHE_INTERVAL_MINUTES) {
+    console.error('TOKEN_PRICE_CACHE_INTERVAL_MINUTES is not set');
     return Response.json({ error: 'Error while fetching prices' }, { status: 503 });
   }
 
@@ -208,9 +195,8 @@ export default async function getTokenPrices(request: Request) {
 
   const store = getStore('token-prices');
   const now = Math.floor(Date.now() / 1000);
-  const invalidAddressCacheTime = parseInt(process.env.TOKEN_PRICE_INVALID_CACHE_MINUTES);
-  const validAddressCacheTime = parseInt(process.env.TOKEN_PRICE_VALID_CACHE_MINUTES);
-  const config = { store, now, invalidAddressCacheTime, validAddressCacheTime };
+  const cacheTime = parseInt(process.env.TOKEN_PRICE_CACHE_INTERVAL_MINUTES);
+  const config = { store, now, cacheTime };
 
   const { tokens, needNativeAsset } = sanitizeUserInput(tokensStringParam, networkParam);
 
