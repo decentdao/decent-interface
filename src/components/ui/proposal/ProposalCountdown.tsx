@@ -39,7 +39,7 @@ export function ProposalCountdown({
         state === FractalProposalState.TIMELOCKED ||
         state === FractalProposalState.EXECUTABLE ||
         isSnapshotProposal),
-    [state, secondsLeft, isSnapshotProposal]
+    [state, secondsLeft, isSnapshotProposal],
   );
 
   if (!showCountdown) return null;
@@ -48,20 +48,20 @@ export function ProposalCountdown({
     state === FractalProposalState.ACTIVE
       ? 'votingTooltip'
       : state === FractalProposalState.TIMELOCKED
-      ? 'timeLockedTooltip'
-      : state === FractalProposalState.EXECUTABLE
-      ? 'executableTooltip'
-      : ''
+        ? 'timeLockedTooltip'
+        : state === FractalProposalState.EXECUTABLE
+          ? 'executableTooltip'
+          : '',
   );
 
   const Icon: ComponentWithAs<'svg', IconProps> | null =
     state === FractalProposalState.ACTIVE || isSnapshotProposal
       ? Vote
       : state === FractalProposalState.TIMELOCKED
-      ? Lock
-      : state === FractalProposalState.EXECUTABLE
-      ? Execute
-      : null;
+        ? Lock
+        : state === FractalProposalState.EXECUTABLE
+          ? Execute
+          : null;
 
   const daysLeft = Math.floor(secondsLeft! / (60 * 60 * 24));
   const hoursLeft = Math.floor((secondsLeft! / (60 * 60)) % 24);

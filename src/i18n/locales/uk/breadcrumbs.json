@@ -1,7 +1,7 @@
 {
-    "proposals": "Пропозиції",
-    "proposalNew": "Нова Пропозиція",
-    "nodes": "Ієрархія",
-    "treasury": "Скарбниця",
-    "proposal": "#{{proposalId}} {{proposalTitle}}"
+  "proposals": "Пропозиції",
+  "proposalNew": "Нова Пропозиція",
+  "nodes": "Ієрархія",
+  "treasury": "Скарбниця",
+  "proposal": "#{{proposalId}} {{proposalTitle}}"
 }

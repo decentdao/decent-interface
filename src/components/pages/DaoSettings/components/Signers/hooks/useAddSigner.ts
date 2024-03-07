@@ -54,7 +54,7 @@ const useAddSigner = () => {
         failedToastMessage: t('addSignerFailureToastMessage'),
       });
     },
-    [safeSingletonContract.asSigner.interface, submitProposal, t]
+    [safeSingletonContract.asSigner.interface, submitProposal, t],
   );
 
   return addSigner;

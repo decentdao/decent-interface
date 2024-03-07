@@ -44,7 +44,7 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
           const response = await axios.get(
             `${etherscanAPIBaseUrl}/api?module=contract&action=getabi&address=${
               proxy || ensAddress || target // Proxy detection might not always work
-            }&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`
+            }&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`,
           );
           const responseData = response.data;
 
@@ -83,9 +83,9 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
         (abiElement: ABIElement) =>
           abiElement.type === 'function' &&
           abiElement.stateMutability !== 'pure' &&
-          abiElement.stateMutability !== 'view'
+          abiElement.stateMutability !== 'view',
       ),
-    [abi]
+    [abi],
   );
 
   if (!abiFunctions || !abiFunctions.length) {
@@ -108,7 +108,7 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
         color="white"
         onChange={e => {
           const selectedFunction = abiFunctions.find(
-            (abiFunction: ABIElement) => abiFunction.name === e.target.value
+            (abiFunction: ABIElement) => abiFunction.name === e.target.value,
           );
           onChange(selectedFunction!);
         }}

@@ -35,7 +35,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
   const handleRemoveNFT = (indexToRemove: number) => {
     setFieldValue(
       'erc721Token.nfts',
-      values.erc721Token.nfts.filter((_, i) => i !== indexToRemove)
+      values.erc721Token.nfts.filter((_, i) => i !== indexToRemove),
     );
   };
 

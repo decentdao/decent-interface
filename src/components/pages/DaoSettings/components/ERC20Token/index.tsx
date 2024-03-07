@@ -68,7 +68,7 @@ export default function ERC20TokenContainer() {
                 false,
                 votesToken.decimals,
                 votesToken.symbol,
-                false
+                false,
               )}
             </Text>
           </Box>

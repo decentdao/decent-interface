@@ -4,7 +4,7 @@ import { isMultiSigTx } from '../utils';
 
 export const isRejected = (
   activityArr: Activity[],
-  multiSigTransaction: SafeMultisigTransactionWithTransfersResponse
+  multiSigTransaction: SafeMultisigTransactionWithTransfersResponse,
 ) => {
   return (
     isMultiSigTx(multiSigTransaction) &&

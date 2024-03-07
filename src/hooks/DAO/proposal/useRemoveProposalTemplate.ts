@@ -23,7 +23,7 @@ export default function useRemoveProposalTemplate() {
         };
 
         const updatedTemplatesList = proposalTemplates.filter(
-          (_, index: number) => index !== templateIndex
+          (_, index: number) => index !== templateIndex,
         );
 
         const { Hash } = await client.add(JSON.stringify(updatedTemplatesList));
@@ -43,7 +43,7 @@ export default function useRemoveProposalTemplate() {
         return proposal;
       }
     },
-    [proposalTemplates, keyValuePairsContract, client]
+    [proposalTemplates, keyValuePairsContract, client],
   );
 
   return { prepareRemoveProposalTemplateProposal };

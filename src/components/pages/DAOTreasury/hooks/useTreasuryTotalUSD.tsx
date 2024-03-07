@@ -8,7 +8,7 @@ export function useTreasuryTotalUSD(): string {
   } = useFractal();
   return useMemo(() => {
     return formatUSD(
-      assetsFungible.reduce((prev, asset) => (prev += Number(asset.fiatBalance)), 0)
+      assetsFungible.reduce((prev, asset) => (prev += Number(asset.fiatBalance)), 0),
     );
   }, [assetsFungible]);
 }

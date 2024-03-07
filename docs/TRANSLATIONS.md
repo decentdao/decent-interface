@@ -3,16 +3,18 @@
 ### Submitting Language Translations
 
 - Languages we are actively seeking translations for will appear as a [Github Issue](https://github.com/decent-dao/fractal-interface/labels/translation), though we always appreciate other
-  submissions.  If we don't currently support your language, please help us out!
+  submissions. If we don't currently support your language, please help us out!
 
 - Run the `1_json_to_csv.py` [Python 3](https://www.python.org/downloads/) script with your [2 character ISO language code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) to get a helpful CSV file of missing strings in your language:
+
   ```console
   python3 1_json_to_csv.py
   ```
 
-- Add your translations in the last column of the output CSV file.  Feel free to improve existing translations!
+- Add your translations in the last column of the output CSV file. Feel free to improve existing translations!
 
 - When finished translating, run `2_csv_to_json.py` to generate the required `.json` files for the Fractal app:
+
   ```console
   python3 2_csv_to_json.py
   ```
@@ -23,7 +25,7 @@
 
 ### Translation Guidelines
 
-- The app name is Fractal, which is a project of Decent DAO.  Unless used as their non product specific meanings (e.g. John is a decent fellow who loves fractals.), these words should not be translated.
+- The app name is Fractal, which is a project of Decent DAO. Unless used as their non product specific meanings (e.g. John is a decent fellow who loves fractals.), these words should not be translated.
 
 - Content within curly brackets (e.g. `{{count}}`), indicates a variable that is replaced within the app logic, and neither the brackets, nor the content within should be altered. _You may place these bracketed variables anywhere in your translation text_.
 

@@ -73,7 +73,7 @@ const useTransaction = () => {
           toast.error(t('errorGeneral', { ns: 'common' }));
         });
     },
-    [t]
+    [t],
   );
 
   return [contractCall, pending] as const;

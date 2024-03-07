@@ -60,7 +60,7 @@ export const setIndexedDBValue = async (
   key: string,
   value: any,
   chainId: number,
-  expirationMinutes: number = CacheExpiry.ONE_WEEK
+  expirationMinutes: number = CacheExpiry.ONE_WEEK,
 ): Promise<void> => {
   const val: IStorageValue = {
     v: value,
@@ -86,7 +86,7 @@ export const setIndexedDBValue = async (
 export const getIndexedDBValue = async (
   storeKey: string,
   key: string,
-  chainId: number
+  chainId: number,
 ): Promise<any> => {
   return withIndexedDB(async db => {
     let transaction: IDBTransaction, store: IDBObjectStore, request: IDBRequest<any>;
@@ -137,14 +137,14 @@ export const useIndexedDB = (objectStoreName: string) => {
     async (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
       await setIndexedDBValue(objectStoreName, key, value, chainId, expirationMinutes);
     },
-    [chainId, objectStoreName]
+    [chainId, objectStoreName],
   );
 
   const get = useCallback(
     async (key: string) => {
       return getIndexedDBValue(objectStoreName, key, chainId);
     },
-    [chainId, objectStoreName]
+    [chainId, objectStoreName],
   );
 
   return [set, get] as const;

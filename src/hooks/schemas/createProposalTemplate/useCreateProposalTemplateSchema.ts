@@ -17,7 +17,7 @@ const useCreateProposalTemplateSchema = () => {
 
   const labelOrValueValidationTest: Yup.TestFunction<string | undefined, Yup.AnyObject> = (
     _,
-    context
+    context,
   ) => {
     if (!context.parent.signature) {
       return true;
@@ -55,9 +55,9 @@ const useCreateProposalTemplateSchema = () => {
                     message: t('labelOrValueRequired'),
                     test: labelOrValueValidationTest,
                   }),
-                })
+                }),
               ),
-            })
+            }),
           ),
         proposalTemplateMetadata: Yup.object().shape({
           title: Yup.string().trim().required().max(50),
@@ -67,7 +67,7 @@ const useCreateProposalTemplateSchema = () => {
           .required()
           .moreThan((!!safe && safe.nonce - 1) || 0),
       }),
-    [addressValidationTest, t, safe]
+    [addressValidationTest, t, safe],
   );
   return { createProposalTemplateValidation };
 };

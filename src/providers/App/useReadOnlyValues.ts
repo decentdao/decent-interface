@@ -48,7 +48,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
                 const tokenContract = ERC721__factory.connect(address, signerOrProvider);
                 const userBalance = await tokenContract.balanceOf(_account);
                 return userBalance.mul(votingWeight);
-              })
+              }),
             )
           ).reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
           return userVotingWeight;

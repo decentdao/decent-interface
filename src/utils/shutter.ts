@@ -5,7 +5,7 @@ import { BigNumber, utils } from 'ethers';
 
 export default async function encryptWithShutter(
   choice: string,
-  id: string
+  id: string,
 ): Promise<string | null> {
   const shutterPath = '/assets/scripts/shutter-crypto.wasm';
   await init(shutterPath);

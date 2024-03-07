@@ -24,7 +24,7 @@ export const useAccountFavorites = () => {
    */
   const isConnectedFavorited = useMemo(
     () => (!daoAddress ? false : favoritesList.includes(daoAddress)),
-    [daoAddress, favoritesList]
+    [daoAddress, favoritesList],
   );
 
   /**
@@ -46,7 +46,7 @@ export const useAccountFavorites = () => {
       setFavoritesList(updatedFavorites);
       setValue(CacheKeys.FAVORITES, updatedFavorites, CacheExpiry.NEVER);
     },
-    [favoritesList, setValue]
+    [favoritesList, setValue],
   );
 
   return { favoritesList, isConnectedFavorited, toggleFavorite };

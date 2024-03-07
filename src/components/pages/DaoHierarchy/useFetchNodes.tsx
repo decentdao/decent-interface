@@ -54,7 +54,7 @@ export function useFetchNodes(address?: string) {
             fractalAzoriusMasterCopyContract
           ) {
             const azoriusContract = fractalAzoriusMasterCopyContract?.asProvider.attach(
-              azoriusModule.moduleAddress
+              azoriusModule.moduleAddress,
             );
             const azoriusGuardAddress = await azoriusContract.getGuard();
             if (azoriusGuardAddress !== ethers.constants.AddressZero) {
@@ -75,7 +75,7 @@ export function useFetchNodes(address?: string) {
       azoriusFreezeGuardMasterCopyContract,
       fractalAzoriusMasterCopyContract,
       lookupModules,
-    ]
+    ],
   );
 
   const fetchDAOInfo = useCallback(
@@ -83,7 +83,7 @@ export function useFetchNodes(address?: string) {
       const { getAddress } = ethers.utils;
       return (await safeAPI.getSafeInfo(getAddress(safeAddress))) as SafeInfoResponseWithGuard;
     },
-    [safeAPI]
+    [safeAPI],
   );
 
   const fetchSubDAOs = useCallback(async () => {

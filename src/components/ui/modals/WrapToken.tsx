@@ -37,7 +37,7 @@ export function WrapToken({ close }: { close: () => void }) {
   } = useApproval(
     governanceContracts.tokenContract?.asSigner.attach(governanceContracts.underlyingTokenAddress!),
     azoriusGovernance.votesToken?.address,
-    userBalance.bigNumberValue
+    userBalance.bigNumberValue,
   );
 
   const { t } = useTranslation(['modals', 'treasury']);
@@ -54,7 +54,7 @@ export function WrapToken({ close }: { close: () => void }) {
     const baseTokenContract = new Contract(
       azoriusGovernance.votesToken.underlyingTokenData.address,
       erc20ABI,
-      signer
+      signer,
     );
     try {
       const [balance, decimals]: [BigNumber, number] = await Promise.all([
@@ -66,7 +66,7 @@ export function WrapToken({ close }: { close: () => void }) {
           balance,
           false,
           decimals,
-          azoriusGovernance.votesToken?.underlyingTokenData?.symbol
+          azoriusGovernance.votesToken?.underlyingTokenData?.symbol,
         ),
         bigNumberValue: balance,
       });
@@ -98,7 +98,7 @@ export function WrapToken({ close }: { close: () => void }) {
         },
       });
     },
-    [account, contractCall, governanceContracts, signer, close, t, loadERC20TokenAccountData]
+    [account, contractCall, governanceContracts, signer, close, t, loadERC20TokenAccountData],
   );
 
   if (

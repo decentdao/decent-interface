@@ -11,7 +11,7 @@ export const buildSafeApiUrl = (
   baseUrl: string,
   pathname: string,
   queryParams: { [key: string]: string } = {},
-  version: 'v1' | 'v2' = 'v1'
+  version: 'v1' | 'v2' = 'v1',
 ) => {
   const SAFE_URL = `${baseUrl}/api/${version}`;
   if (!Object.keys(queryParams).length) {

@@ -58,7 +58,7 @@ export function ProposalAction({
 
   const isActiveProposal = useMemo(
     () => proposal.state === FractalProposalState.ACTIVE,
-    [proposal.state]
+    [proposal.state],
   );
 
   const showActionButton =

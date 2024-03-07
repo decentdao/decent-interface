@@ -40,11 +40,11 @@ export const useAzoriusProposals = () => {
       const decodedTransactions = await Promise.all(
         transactions.map(async tx => {
           return decode(tx.value.toString(), tx.to, tx.data);
-        })
+        }),
       );
       return decodedTransactions.flat();
     },
-    [decode]
+    [decode],
   );
 
   const loadAzoriusProposals = useCallback(async (): Promise<AzoriusProposal[]> => {
@@ -61,7 +61,7 @@ export const useAzoriusProposals = () => {
     const proposalCreatedEvents = await rpc.queryFilter(proposalCreatedFilter);
 
     const strategyContract = getEventRPC<LinearERC20Voting | LinearERC721Voting>(
-      ozLinearVotingContract ?? erc721LinearVotingContract!
+      ozLinearVotingContract ?? erc721LinearVotingContract!,
     );
 
     const proposals = await Promise.all(
@@ -87,9 +87,9 @@ export const useAzoriusProposals = () => {
           args.proposer,
           azoriusContract,
           provider,
-          proposalData
+          proposalData,
         );
-      })
+      }),
     );
     return proposals;
   }, [
@@ -127,7 +127,7 @@ export const useAzoriusProposals = () => {
         };
       }
       const strategyContract = getEventRPC<LinearERC20Voting | LinearERC721Voting>(
-        ozLinearVotingContract ?? erc721LinearVotingContract!
+        ozLinearVotingContract ?? erc721LinearVotingContract!,
       ).attach(strategyAddress);
       const func = async () => {
         return mapProposalCreatedEventToProposal(
@@ -137,7 +137,7 @@ export const useAzoriusProposals = () => {
           proposer,
           azoriusContract,
           provider,
-          proposalData
+          proposalData,
         );
       };
       const proposal = await requestWithRetries(func, 5, 7000);
@@ -155,7 +155,7 @@ export const useAzoriusProposals = () => {
       action,
       requestWithRetries,
       strategyType,
-    ]
+    ],
   );
 
   const erc20ProposalVotedEventListener: TypedListener<ERC20VotedEvent> = useCallback(
@@ -167,7 +167,7 @@ export const useAzoriusProposals = () => {
       const votesSummary = await getProposalVotesSummary(
         strategyContract,
         strategyType,
-        BigNumber.from(proposalId)
+        BigNumber.from(proposalId),
       );
 
       action.dispatch({
@@ -181,7 +181,7 @@ export const useAzoriusProposals = () => {
         },
       });
     },
-    [ozLinearVotingContract, action, strategyType]
+    [ozLinearVotingContract, action, strategyType],
   );
 
   const erc721ProposalVotedEventListener: TypedListener<ERC721VotedEvent> = useCallback(
@@ -193,7 +193,7 @@ export const useAzoriusProposals = () => {
       const votesSummary = await getProposalVotesSummary(
         strategyContract,
         strategyType,
-        BigNumber.from(proposalId)
+        BigNumber.from(proposalId),
       );
 
       action.dispatch({
@@ -208,7 +208,7 @@ export const useAzoriusProposals = () => {
         },
       });
     },
-    [erc721LinearVotingContract, action, strategyType]
+    [erc721LinearVotingContract, action, strategyType],
   );
 
   useEffect(() => {

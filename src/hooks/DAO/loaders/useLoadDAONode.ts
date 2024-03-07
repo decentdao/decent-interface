@@ -46,7 +46,7 @@ export const useLoadDAONode = () => {
         try {
           const graphNodeInfo = formatDAOQuery(
             await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-            _daoAddress
+            _daoAddress,
           );
           if (!graphNodeInfo) {
             logError('graphQL query failed');
@@ -75,7 +75,7 @@ export const useLoadDAONode = () => {
         return { error: 'errorFailedSearch' };
       }
     },
-    [safeAPI, lookupModules, formatDAOQuery, getDAOInfo, getDaoName]
+    [safeAPI, lookupModules, formatDAOQuery, getDAOInfo, getDaoName],
   );
 
   return { loadDao };

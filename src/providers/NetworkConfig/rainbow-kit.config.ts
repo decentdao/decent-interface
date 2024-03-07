@@ -48,10 +48,10 @@ const defaultWallets = [injectedWallet({ chains }), coinbaseWallet({ appName: AP
 
 if (process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID) {
   defaultWallets.push(
-    walletConnectWallet({ chains, projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID })
+    walletConnectWallet({ chains, projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }),
   );
   defaultWallets.push(
-    metaMaskWallet({ chains, projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID })
+    metaMaskWallet({ chains, projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }),
   );
 }
 // allows connection to localhost only in development mode.
