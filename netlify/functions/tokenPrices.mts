@@ -61,7 +61,7 @@ async function splitData(
 
   // Let's pull out all of the expired addresses from our cache.
   const expiredCachedTokenAddresses = cachedTokenPrices
-    .filter(tokenPrice => tokenPrice.metadata.fetched + config.cacheTime > config.now)
+    .filter(tokenPrice => tokenPrice.metadata.fetched + config.cacheTime < config.now)
     .map(tokenPrice => tokenPrice.data.tokenAddress);
 
   // Finally let's get a list of all of the token addresses that
