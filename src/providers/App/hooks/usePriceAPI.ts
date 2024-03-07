@@ -26,7 +26,7 @@ export default function usePriceAPI() {
         }
         if (tokensAddresses.length > 0) {
           const pricesResponse = await fetch(
-            `/.netlify/functions/tokenPrices?tokens=${tokensAddresses.join(',')}`
+            `/.netlify/functions/tokenPrices?tokens=${tokensAddresses.join(',')}&network=ethereum`
           );
 
           const pricesResponseBody = await pricesResponse.json();
