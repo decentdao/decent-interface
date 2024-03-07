@@ -17,8 +17,8 @@ type TokenPriceWithMetadata = {
 
 type Config = {
   store: Store;
-  now: number;
-  cacheTime: number;
+  nowSeconds: number;
+  cacheTimeSeconds: number;
 };
 
 const SUPPORTED_NETWORKS = ['ethereum'] as const;
@@ -61,7 +61,7 @@ async function splitData(
 
   // Let's pull out all of the expired addresses from our cache.
   const expiredCachedTokenAddresses = cachedTokenPrices
-    .filter(tokenPrice => tokenPrice.metadata.fetched + config.cacheTime < config.now)
+    .filter(tokenPrice => tokenPrice.metadata.fetched + config.cacheTimeSeconds < config.nowSeconds)
     .map(tokenPrice => tokenPrice.data.tokenAddress);
 
   // Finally let's get a list of all of the token addresses that
@@ -101,7 +101,7 @@ async function storeTokenPrice(
   await config.store.setJSON(
     `${network}/${tokenAddress}`,
     { tokenAddress, price },
-    { metadata: { fetched: config.now } }
+    { metadata: { fetched: config.nowSeconds } }
   );
 }
 
@@ -194,9 +194,9 @@ export default async function getTokenPrices(request: Request) {
   }
 
   const store = getStore('token-prices');
-  const now = Math.floor(Date.now() / 1000);
-  const cacheTime = parseInt(process.env.TOKEN_PRICE_CACHE_INTERVAL_MINUTES);
-  const config = { store, now, cacheTime };
+  const nowSeconds = Math.floor(Date.now() / 1000);
+  const cacheTimeSeconds = parseInt(process.env.TOKEN_PRICE_CACHE_INTERVAL_MINUTES) * 60;
+  const config = { store, nowSeconds, cacheTimeSeconds };
 
   const { tokens, needNativeAsset } = sanitizeUserInput(tokensStringParam, networkParam);
 
