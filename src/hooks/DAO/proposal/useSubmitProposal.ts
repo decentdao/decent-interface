@@ -64,7 +64,7 @@ export default function useSubmitProposal() {
 
   const {
     node: { safe, fractalModules },
-    baseContracts: { multiSendContract },
+    baseContracts,
     guardContracts: { freezeVotingContract },
     governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance: { type },
@@ -171,9 +171,10 @@ export default function useSubmitProposal() {
       successCallback,
       safeAddress,
     }: ISubmitProposal) => {
-      if (!proposalData) {
+      if (!proposalData || !baseContracts) {
         return;
       }
+      const { multiSendContract } = baseContracts;
 
       const toastId = toast(pendingToastMessage, {
         autoClose: false,
@@ -268,7 +269,7 @@ export default function useSubmitProposal() {
         return;
       }
     },
-    [signerOrProvider, safeBaseURL, chainId, loadDAOProposals, ipfsClient, multiSendContract]
+    [signerOrProvider, safeBaseURL, chainId, loadDAOProposals, ipfsClient, baseContracts]
   );
 
   const submitAzoriusProposal = useCallback(

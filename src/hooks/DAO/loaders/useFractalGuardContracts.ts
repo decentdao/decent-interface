@@ -18,13 +18,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   const loadKey = useRef<string>();
   const {
     node: { daoAddress, safe, fractalModules, isModulesLoaded },
-    baseContracts: {
-      freezeERC20VotingMasterCopyContract,
-      freezeERC721VotingMasterCopyContract,
-      freezeMultisigVotingMasterCopyContract,
-      azoriusFreezeGuardMasterCopyContract,
-      multisigFreezeGuardMasterCopyContract,
-    },
+    baseContracts,
     action,
   } = useFractal();
 
@@ -38,6 +32,16 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       _safe: SafeInfoResponseWithGuard,
       _fractalModules: FractalModuleData[]
     ) => {
+      if (!baseContracts) {
+        return;
+      }
+      const {
+        freezeERC20VotingMasterCopyContract,
+        freezeERC721VotingMasterCopyContract,
+        freezeMultisigVotingMasterCopyContract,
+        azoriusFreezeGuardMasterCopyContract,
+        multisigFreezeGuardMasterCopyContract,
+      } = baseContracts;
       const { guard } = _safe;
 
       let freezeGuardContract:
@@ -103,14 +107,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         return contracts;
       }
     },
-    [
-      freezeERC20VotingMasterCopyContract,
-      freezeERC721VotingMasterCopyContract,
-      freezeMultisigVotingMasterCopyContract,
-      azoriusFreezeGuardMasterCopyContract,
-      multisigFreezeGuardMasterCopyContract,
-      getZodiacModuleProxyMasterCopyData,
-    ]
+    [baseContracts, getZodiacModuleProxyMasterCopyData]
   );
 
   const setGuardContracts = useCallback(async () => {

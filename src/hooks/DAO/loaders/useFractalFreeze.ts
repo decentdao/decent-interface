@@ -34,7 +34,7 @@ export const useFractalFreeze = ({
 
   const {
     node: { daoAddress },
-    baseContracts: { votesTokenMasterCopyContract, safeSingletonContract },
+    baseContracts,
     guardContracts,
     action,
   } = useFractal();
@@ -49,7 +49,14 @@ export const useFractalFreeze = ({
 
   const loadFractalFreezeGuard = useCallback(
     async ({ freezeVotingContract, freezeVotingType: freezeVotingType }: FractalGuardContracts) => {
-      if (freezeVotingType == null || !freezeVotingContract || !account || !provider) return;
+      if (
+        freezeVotingType == null ||
+        !freezeVotingContract ||
+        !account ||
+        !provider ||
+        !baseContracts
+      )
+        return;
       let userHasVotes: boolean = false;
       const freezeCreatedBlock = await (
         freezeVotingContract!.asProvider as
@@ -86,6 +93,8 @@ export const useFractalFreeze = ({
         userHasFreezeVoted,
         isFrozen,
       };
+
+      const { votesTokenMasterCopyContract, safeSingletonContract } = baseContracts;
 
       if (freezeVotingType === FreezeVotingType.MULTISIG) {
         const safeContract = safeSingletonContract!.asProvider.attach(
@@ -131,14 +140,7 @@ export const useFractalFreeze = ({
       isFreezeSet.current = true;
       return freeze;
     },
-    [
-      account,
-      provider,
-      safeSingletonContract,
-      votesTokenMasterCopyContract,
-      getUserERC721VotingTokens,
-      parentSafeAddress,
-    ]
+    [account, provider, baseContracts, getUserERC721VotingTokens, parentSafeAddress]
   );
 
   const setFractalFreezeGuard = useCallback(

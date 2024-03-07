@@ -58,12 +58,7 @@ export function ManageDAOMenu({
   const {
     node: { safe },
     governance: { type },
-    baseContracts: {
-      fractalAzoriusMasterCopyContract,
-      zodiacModuleProxyFactoryContract,
-      linearVotingERC721MasterCopyContract,
-      linearVotingMasterCopyContract,
-    },
+    baseContracts,
   } = useFractal();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const { push } = useRouter();
@@ -93,9 +88,10 @@ export function ManageDAOMenu({
         // are the same - we can simply grab governance type from global scope and avoid double-fetching
         setGovernanceType(type);
       } else {
-        if (fractalNode?.fractalModules) {
+        if (fractalNode?.fractalModules && baseContracts) {
           let result = GovernanceType.MULTISIG;
           const azoriusModule = getAzoriusModuleFromModules(fractalNode?.fractalModules);
+          const { fractalAzoriusMasterCopyContract } = baseContracts;
           if (!!azoriusModule) {
             const azoriusContract = {
               asProvider: fractalAzoriusMasterCopyContract.asProvider.attach(
@@ -128,17 +124,7 @@ export function ManageDAOMenu({
     };
 
     loadGovernanceType();
-  }, [
-    fractalAzoriusMasterCopyContract,
-    linearVotingERC721MasterCopyContract,
-    linearVotingMasterCopyContract,
-    fractalNode,
-    safe,
-    safeAddress,
-    type,
-    zodiacModuleProxyFactoryContract,
-    getZodiacModuleProxyMasterCopyData,
-  ]);
+  }, [fractalNode, safe, safeAddress, type, getZodiacModuleProxyMasterCopyData, baseContracts]);
 
   const handleNavigateToSettings = useCallback(
     () => push(DAO_ROUTES.settings.relative(safeAddress)),

@@ -19,17 +19,7 @@ import useSignerOrProvider from '../../utils/useSignerOrProvider';
 export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string | null>();
-  const {
-    node,
-    baseContracts: {
-      votesTokenMasterCopyContract,
-      fractalAzoriusMasterCopyContract,
-      votesERC20WrapperMasterCopyContract,
-      linearVotingMasterCopyContract,
-      linearVotingERC721MasterCopyContract,
-    },
-    action,
-  } = useFractal();
+  const { node, baseContracts, action } = useFractal();
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const provider = useEthersProvider();
   const signerOrProvider = useSignerOrProvider();
@@ -37,6 +27,16 @@ export const useGovernanceContracts = () => {
   const { fractalModules, isModulesLoaded, daoAddress } = node;
 
   const loadGovernanceContracts = useCallback(async () => {
+    if (!baseContracts) {
+      return;
+    }
+    const {
+      votesTokenMasterCopyContract,
+      fractalAzoriusMasterCopyContract,
+      votesERC20WrapperMasterCopyContract,
+      linearVotingMasterCopyContract,
+      linearVotingERC721MasterCopyContract,
+    } = baseContracts;
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
     const azoriusModuleContract = azoriusModule?.moduleContract as Azorius;
 
@@ -195,12 +195,8 @@ export const useGovernanceContracts = () => {
     action,
     provider,
     signerOrProvider,
-    votesTokenMasterCopyContract,
-    fractalAzoriusMasterCopyContract,
-    votesERC20WrapperMasterCopyContract,
     getZodiacModuleProxyMasterCopyData,
-    linearVotingMasterCopyContract,
-    linearVotingERC721MasterCopyContract,
+    baseContracts,
     fractalModules,
   ]);
 

@@ -67,7 +67,7 @@ export function TxActions({
         pendingMessage: t('pendingSign'),
         successMessage: t('successSign'),
         successCallback: async (signature: string) => {
-          await safeAPI.confirmTransaction(proposal.proposalId, signature);
+          await safeAPI!.confirmTransaction(proposal.proposalId, signature);
           await loadSafeMultisigProposals();
         },
       });

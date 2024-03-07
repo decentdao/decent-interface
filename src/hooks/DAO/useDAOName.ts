@@ -22,9 +22,7 @@ export default function useDAOName({
   address?: string;
   registryName?: string | null;
 }) {
-  const {
-    baseContracts: { fractalRegistryContract },
-  } = useFractal();
+  const { baseContracts } = useFractal();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
   const { chain } = usePublicClient();
 
@@ -36,7 +34,7 @@ export default function useDAOName({
   const { setValue, getValue } = useLocalStorage();
 
   const getDaoName = useCallback(async () => {
-    if (!address) {
+    if (!address || !baseContracts) {
       setDAORegistryName('');
       return;
     }
@@ -51,6 +49,7 @@ export default function useDAOName({
       setDAORegistryName(cachedName);
       return;
     }
+    const { fractalRegistryContract } = baseContracts;
     if (!fractalRegistryContract) {
       setDAORegistryName(createAccountSubstring(address));
       return;
@@ -72,7 +71,7 @@ export default function useDAOName({
       setValue(CacheKeys.DAO_NAME_PREFIX + address, daoName, 60);
       setDAORegistryName(daoName);
     }
-  }, [address, ensName, fractalRegistryContract, getValue, setValue, registryName]);
+  }, [address, ensName, baseContracts, getValue, setValue, registryName]);
 
   useEffect(() => {
     (async () => {

@@ -21,7 +21,7 @@ export default function MetadataContainer() {
 
   const { canUserCreateProposal, submitProposal } = useSubmitProposal();
   const {
-    baseContracts: { fractalRegistryContract, keyValuePairsContract },
+    baseContracts,
     node: { daoName, daoSnapshotURL, daoAddress, safe },
     readOnly: {
       user: { votingWeight },
@@ -53,6 +53,10 @@ export default function MetadataContainer() {
   const submitProposalSuccessCallback = () => push(DAO_ROUTES.proposals.relative(daoAddress));
 
   const handleEditDAOName = () => {
+    if (!baseContracts) {
+      return;
+    }
+    const { fractalRegistryContract } = baseContracts;
     const proposalData: ProposalExecuteData = {
       metaData: {
         title: t('Update Safe Name', { ns: 'proposalMetadata' }),
@@ -77,6 +81,10 @@ export default function MetadataContainer() {
   };
 
   const handleEditDAOSnapshotURL = () => {
+    if (!baseContracts) {
+      return;
+    }
+    const { keyValuePairsContract } = baseContracts;
     const proposalData: ProposalExecuteData = {
       metaData: {
         title: t('Update Snapshot Space', { ns: 'proposalMetadata' }),

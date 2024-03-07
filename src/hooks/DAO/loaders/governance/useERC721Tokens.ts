@@ -14,7 +14,7 @@ export default function useERC721Tokens() {
     action,
   } = useFractal();
   const loadERC721Tokens = useCallback(async () => {
-    if (!erc721LinearVotingContract) {
+    if (!erc721LinearVotingContract || !signerOrProvider) {
       return;
     }
 

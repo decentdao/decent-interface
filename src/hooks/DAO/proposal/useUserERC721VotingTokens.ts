@@ -53,7 +53,7 @@ export default function useUserERC721VotingTokens(
 
       if (_safeAddress && daoAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
-        const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(_safeAddress));
+        const safeInfo = await safeAPI!.getSafeInfo(utils.getAddress(_safeAddress));
         const safeModules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(safeModules);
         if (azoriusModule && azoriusModule.moduleContract) {
@@ -64,12 +64,12 @@ export default function useUserERC721VotingTokens(
           )[1];
           votingContract = LinearERC721Voting__factory.connect(
             votingContractAddress,
-            signerOrProvider
+            signerOrProvider!
           );
           const addresses = await votingContract.getAllTokenAddresses();
           govTokens = await Promise.all(
             addresses.map(async tokenAddress => {
-              const tokenContract = ERC721__factory.connect(tokenAddress, signerOrProvider);
+              const tokenContract = ERC721__factory.connect(tokenAddress, signerOrProvider!);
               const votingWeight = await votingContract!.getTokenWeight(tokenAddress);
               const name = await tokenContract.name();
               const symbol = await tokenContract.symbol();
@@ -106,7 +106,7 @@ export default function useUserERC721VotingTokens(
         // Using `map` instead of `forEach` to simplify usage of `Promise.all`
         // and guarantee syncronous contractFn assignment
         govTokens.map(async token => {
-          const tokenContract = ERC721__factory.connect(token.address, signerOrProvider);
+          const tokenContract = ERC721__factory.connect(token.address, signerOrProvider!);
           if ((await tokenContract.balanceOf(user.address!)).gt(0)) {
             const tokenSentEvents = await tokenContract.queryFilter(
               tokenContract.filters.Transfer(user.address!, null)
