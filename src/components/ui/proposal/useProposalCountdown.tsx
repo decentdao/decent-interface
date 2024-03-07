@@ -5,7 +5,7 @@ import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useDAOProposals } from '../../../hooks/DAO/loaders/useProposals';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
-import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,

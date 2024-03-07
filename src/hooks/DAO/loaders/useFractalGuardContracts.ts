@@ -3,6 +3,7 @@ import { constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import {
   ContractConnection,
   SafeInfoResponseWithGuard,
@@ -27,9 +28,8 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     action,
   } = useFractal();
 
-  const {
-    network: { chainId },
-  } = useEthersProvider();
+  const provider = useEthersProvider();
+  const chainId = provider?.network.chainId;
 
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
@@ -122,6 +122,10 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   }, [action, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
+    if (chainId === undefined) {
+      return;
+    }
+
     if (daoAddress && chainId + daoAddress !== loadKey.current && loadOnMount && isModulesLoaded) {
       loadKey.current = chainId + daoAddress;
       setGuardContracts();

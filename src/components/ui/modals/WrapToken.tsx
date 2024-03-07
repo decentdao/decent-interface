@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
 import useApproval from '../../../hooks/utils/useApproval';
-import { useEthersSigner } from '../../../hooks/utils/useEthersSigner';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';

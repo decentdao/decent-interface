@@ -229,7 +229,10 @@ export function useSafeAPI() {
   const { safeBaseURL, chainId } = useNetworkConfig();
   const signerOrProvider = useSignerOrProvider();
 
-  const safeAPI: SafeServiceClient = useMemo(() => {
+  const safeAPI: SafeServiceClient | undefined = useMemo(() => {
+    if (!signerOrProvider) {
+      return undefined;
+    }
     const ethAdapter = new EthersAdapter({
       ethers,
       signerOrProvider,

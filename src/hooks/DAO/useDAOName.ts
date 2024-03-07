@@ -3,10 +3,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { Address, useEnsName } from 'wagmi';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { CacheKeys } from '../utils/cache/cacheDefaults';
 import { useLocalStorage } from '../utils/cache/useLocalStorage';
 import { createAccountSubstring } from '../utils/useDisplayName';
-import { useEthersProvider } from '../utils/useEthersProvider';
 
 /**
  * Gets the 'display name' for a Fractal DAO, in the following order of preference:

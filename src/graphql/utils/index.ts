@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useEthersProvider } from '../../hooks/utils/useEthersProvider';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { supportedChains } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export const useSubgraphChainName = () => {

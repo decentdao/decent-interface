@@ -1,8 +1,8 @@
 import { IVotes__factory } from '@fractal-framework/fractal-contracts';
 
 import { useCallback } from 'react';
-import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
-import { useEthersSigner } from '../../../hooks/utils/useEthersSigner';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import {
   SafeMultisigDAO,
   DAOFreezeGuardConfig,

@@ -21,7 +21,7 @@ export default function useLidoStaking() {
 
   const handleStake = useCallback(
     async (value: BigNumber) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !daoAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
       }
@@ -51,7 +51,7 @@ export default function useLidoStaking() {
 
   const handleUnstake = useCallback(
     async (value: string) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !daoAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
       }
@@ -96,7 +96,7 @@ export default function useLidoStaking() {
 
   const handleClaimUnstakedETH = useCallback(
     async (nftId: BigNumber) => {
-      if (!lido || !daoAddress) {
+      if (!lido || !daoAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
       }

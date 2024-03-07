@@ -9,6 +9,7 @@ import { constants, BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   AssetTotals,
@@ -20,7 +21,6 @@ import {
 import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
 import { getAverageBlockTime } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
-import { useEthersProvider } from './useEthersProvider';
 import { useSafeDecoder } from './useSafeDecoder';
 
 type FreezeGuardData = {

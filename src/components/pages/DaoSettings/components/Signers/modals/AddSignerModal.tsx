@@ -16,7 +16,7 @@ import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
-import { useEthersSigner } from '../../../../../../hooks/utils/useEthersSigner';
+import { useEthersSigner } from '../../../../../../providers/Ethers/hooks/useEthersSigner';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { couldBeENS } from '../../../../../../utils/url';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';

@@ -12,6 +12,8 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   MetaTransaction,
@@ -21,8 +23,6 @@ import {
 } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import { getAverageBlockTime } from '../../../utils/contract';
-import { useEthersProvider } from '../../utils/useEthersProvider';
-import { useEthersSigner } from '../../utils/useEthersSigner';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';

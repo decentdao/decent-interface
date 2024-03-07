@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useEthersSigner } from '../../../hooks/utils/useEthersSigner';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance, DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';

@@ -79,7 +79,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   });
 
   const fetchSafeInfo = useCallback(async () => {
-    if (daoAddress) {
+    if (daoAddress && safeAPI) {
       const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(daoAddress));
       return safeInfo;
     }

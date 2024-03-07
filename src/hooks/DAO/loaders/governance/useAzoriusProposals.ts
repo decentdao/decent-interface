@@ -12,11 +12,11 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { ProposalMetadata, MetaTransaction, VotingStrategyType } from '../../../../types';
 import { AzoriusProposal, ProposalData } from '../../../../types/daoProposal';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
 import { useAsyncRetry } from '../../../utils/useAsyncRetry';
-import { useEthersProvider } from '../../../utils/useEthersProvider';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
 export const useAzoriusProposals = () => {
@@ -51,7 +51,8 @@ export const useAzoriusProposals = () => {
     if (
       !azoriusContract ||
       !(ozLinearVotingContract || erc721LinearVotingContract) ||
-      !strategyType
+      !strategyType ||
+      !provider
     ) {
       return [];
     }
@@ -108,7 +109,8 @@ export const useAzoriusProposals = () => {
       if (
         !azoriusContract ||
         !(ozLinearVotingContract || erc721LinearVotingContract) ||
-        !strategyType
+        !strategyType ||
+        !provider
       ) {
         return;
       }

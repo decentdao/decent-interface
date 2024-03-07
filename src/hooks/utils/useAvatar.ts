@@ -1,5 +1,5 @@
 import { useEnsAvatar } from 'wagmi';
-import { useEthersProvider } from './useEthersProvider';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 
 const useAvatar = (account: string | null) => {
   const provider = useEthersProvider();

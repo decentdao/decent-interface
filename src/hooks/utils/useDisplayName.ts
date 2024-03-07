@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Address, useEnsName } from 'wagmi';
-import { useEthersProvider } from './useEthersProvider';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 
 export const createAccountSubstring = (account: string) => {
   return `${account.substring(0, 6)}...${account.slice(-4)}`;

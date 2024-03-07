@@ -3,7 +3,7 @@ import { Govern } from '@decent-org/fractal-ui';
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEthersProvider } from '../../../../hooks/utils/useEthersProvider';
+import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { AzoriusGovernance, FreezeGuardType } from '../../../../types';

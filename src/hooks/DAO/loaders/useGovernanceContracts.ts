@@ -10,6 +10,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { LockRelease, LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { ContractConnection } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
 import { useEthersProvider } from '../../utils/useEthersProvider';
@@ -108,7 +109,7 @@ export const useGovernanceContracts = () => {
           return undefined;
         });
 
-        if (lockedToken) {
+        if (lockedToken && provider) {
           lockReleaseContract = {
             asSigner: LockRelease__factory.connect(govTokenAddress, signerOrProvider),
             asProvider: LockRelease__factory.connect(govTokenAddress, provider),

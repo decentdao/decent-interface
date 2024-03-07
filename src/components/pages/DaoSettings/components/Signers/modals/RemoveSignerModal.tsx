@@ -13,7 +13,7 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, useEnsName } from 'wagmi';
-import { useEthersProvider } from '../../../../../../hooks/utils/useEthersProvider';
+import { useEthersProvider } from '../../../../../../providers/Ethers/hooks/useEthersProvider';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
