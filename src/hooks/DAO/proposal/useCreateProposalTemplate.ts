@@ -11,7 +11,7 @@ import useSignerOrProvider from '../../utils/useSignerOrProvider';
 export default function useCreateProposalTemplate() {
   const signerOrProvider = useSignerOrProvider();
 
-  const { keyValuePairsContract } = useSafeContracts();
+  const keyValuePairsContract = useSafeContracts()?.keyValuePairsContract;
   const client = useIPFSClient();
   const {
     governance: { proposalTemplates },
@@ -19,7 +19,7 @@ export default function useCreateProposalTemplate() {
 
   const prepareProposalTemplateProposal = useCallback(
     async (values: CreateProposalTemplateForm) => {
-      if (proposalTemplates) {
+      if (proposalTemplates && signerOrProvider && keyValuePairsContract) {
         const proposalMetadata = {
           title: 'Create Proposal Template',
           description:

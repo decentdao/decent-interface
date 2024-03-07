@@ -16,11 +16,7 @@ export function useFetchNodes(address?: string) {
 
   const {
     node: { safe, nodeHierarchy },
-    baseContracts: {
-      multisigFreezeGuardMasterCopyContract,
-      azoriusFreezeGuardMasterCopyContract,
-      fractalAzoriusMasterCopyContract,
-    },
+    baseContracts,
   } = useFractal();
 
   const safeAPI = useSafeAPI();
@@ -37,7 +33,12 @@ export function useFetchNodes(address?: string) {
 
   const getDAOOwner = useCallback(
     async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
-      if (safeInfo && safeInfo.guard && multisigFreezeGuardMasterCopyContract) {
+      if (safeInfo && safeInfo.guard && baseContracts) {
+        const {
+          multisigFreezeGuardMasterCopyContract,
+          azoriusFreezeGuardMasterCopyContract,
+          fractalAzoriusMasterCopyContract,
+        } = baseContracts;
         if (safeInfo.guard !== ethers.constants.AddressZero) {
           const guard = multisigFreezeGuardMasterCopyContract.asProvider.attach(safeInfo.guard);
           const guardOwner = await guard.owner();
@@ -70,18 +71,15 @@ export function useFetchNodes(address?: string) {
       }
       return undefined;
     },
-    [
-      multisigFreezeGuardMasterCopyContract,
-      azoriusFreezeGuardMasterCopyContract,
-      fractalAzoriusMasterCopyContract,
-      lookupModules,
-    ],
+    [baseContracts, lookupModules],
   );
 
   const fetchDAOInfo = useCallback(
     async (safeAddress: string) => {
       const { getAddress } = ethers.utils;
-      return (await safeAPI.getSafeInfo(getAddress(safeAddress))) as SafeInfoResponseWithGuard;
+      if (safeAPI) {
+        return (await safeAPI.getSafeInfo(getAddress(safeAddress))) as SafeInfoResponseWithGuard;
+      }
     },
     [safeAPI],
   );

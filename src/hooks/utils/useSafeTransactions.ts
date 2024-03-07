@@ -9,6 +9,7 @@ import { constants, BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   AssetTotals,
@@ -20,7 +21,6 @@ import {
 import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
 import { getAverageBlockTime } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
-import { useEthersProvider } from './useEthersProvider';
 import { useSafeDecoder } from './useSafeDecoder';
 
 type FreezeGuardData = {
@@ -41,7 +41,7 @@ export const useSafeTransactions = () => {
       freezeGuard?: MultisigFreezeGuard,
       freezeGuardData?: FreezeGuardData,
     ) => {
-      if (freezeGuard && freezeGuardData) {
+      if (freezeGuard && freezeGuardData && provider) {
         return Promise.all(
           activities.map(async (activity, _, activityArr) => {
             if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
@@ -189,7 +189,7 @@ export const useSafeTransactions = () => {
 
   const parseTransactions = useCallback(
     async (transactions: AllTransactionsListResponse, daoAddress: string) => {
-      if (!transactions.results.length) {
+      if (!transactions.results.length || !provider) {
         return [];
       }
 

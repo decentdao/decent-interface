@@ -6,7 +6,7 @@ import { ProposalExecuteData } from '../../../types';
 import useSafeContracts from '../../safe/useSafeContracts';
 
 export default function useRemoveProposalTemplate() {
-  const { keyValuePairsContract } = useSafeContracts();
+  const keyValuePairsContract = useSafeContracts()?.keyValuePairsContract;
   const client = useIPFSClient();
   const {
     governance: { proposalTemplates },
@@ -14,7 +14,7 @@ export default function useRemoveProposalTemplate() {
 
   const prepareRemoveProposalTemplateProposal = useCallback(
     async (templateIndex: number) => {
-      if (proposalTemplates) {
+      if (proposalTemplates && keyValuePairsContract) {
         const proposalMetadata = {
           title: 'Remove Proposal Template',
           description:

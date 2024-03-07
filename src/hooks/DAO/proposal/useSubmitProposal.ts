@@ -12,6 +12,8 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   MetaTransaction,
@@ -21,8 +23,6 @@ import {
 } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import { getAverageBlockTime } from '../../../utils/contract';
-import { useEthersProvider } from '../../utils/useEthersProvider';
-import { useEthersSigner } from '../../utils/useEthersSigner';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
@@ -64,7 +64,7 @@ export default function useSubmitProposal() {
 
   const {
     node: { safe, fractalModules },
-    baseContracts: { multiSendContract },
+    baseContracts,
     guardContracts: { freezeVotingContract },
     governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
     governance: { type },
@@ -97,7 +97,7 @@ export default function useSubmitProposal() {
    */
   const getCanUserCreateProposal = useCallback(
     async (safeAddress?: string): Promise<boolean> => {
-      if (!user.address) {
+      if (!user.address || !safeAPI || !signerOrProvider) {
         return false;
       }
 
@@ -171,9 +171,10 @@ export default function useSubmitProposal() {
       successCallback,
       safeAddress,
     }: ISubmitProposal) => {
-      if (!proposalData) {
+      if (!proposalData || !baseContracts) {
         return;
       }
+      const { multiSendContract } = baseContracts;
 
       const toastId = toast(pendingToastMessage, {
         autoClose: false,
@@ -268,7 +269,7 @@ export default function useSubmitProposal() {
         return;
       }
     },
-    [signerOrProvider, safeBaseURL, chainId, loadDAOProposals, ipfsClient, multiSendContract],
+    [signerOrProvider, safeBaseURL, chainId, loadDAOProposals, ipfsClient, baseContracts],
   );
 
   const submitAzoriusProposal = useCallback(
@@ -282,7 +283,7 @@ export default function useSubmitProposal() {
       failedToastMessage,
       safeAddress,
     }: ISubmitAzoriusProposal) => {
-      if (!proposalData) {
+      if (!proposalData || !provider) {
         return;
       }
       const toastId = toast(pendingToastMessage, {
@@ -352,7 +353,7 @@ export default function useSubmitProposal() {
       successCallback,
       safeAddress,
     }: ISubmitProposal) => {
-      if (!proposalData) {
+      if (!proposalData || !safeAPI) {
         return;
       }
 

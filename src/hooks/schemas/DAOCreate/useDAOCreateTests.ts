@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { erc20ABI } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { couldBeENS } from '../../../utils/url';
-import { useEthersProvider } from '../../utils/useEthersProvider';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { validateAddress } from '../common/useValidationAddress';
 

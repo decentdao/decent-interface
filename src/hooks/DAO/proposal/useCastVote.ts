@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import {
   AzoriusGovernance,
   GovernanceType,
@@ -13,7 +14,6 @@ import {
   ExtendedSnapshotProposal,
 } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
-import { useEthersSigner } from '../../utils/useEthersSigner';
 import { useTransaction } from '../../utils/useTransaction';
 import useSnapshotSpaceName from '../loaders/snapshot/useSnapshotSpaceName';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';

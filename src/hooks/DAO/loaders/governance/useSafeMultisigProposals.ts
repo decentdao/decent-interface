@@ -16,7 +16,7 @@ export const useSafeMultisigProposals = () => {
   const { parseTransactions } = useSafeTransactions();
 
   const loadSafeMultisigProposals = useCallback(async () => {
-    if (!daoAddress) {
+    if (!daoAddress || !safeAPI) {
       return;
     }
     try {

@@ -8,53 +8,43 @@ import { useLocalStorage } from './cache/useLocalStorage';
 
 export function useMasterCopy() {
   const { getValue, setValue } = useLocalStorage();
-  const {
-    baseContracts: {
-      zodiacModuleProxyFactoryContract,
-      linearVotingMasterCopyContract,
-      linearVotingERC721MasterCopyContract,
-      multisigFreezeGuardMasterCopyContract,
-      freezeMultisigVotingMasterCopyContract,
-      freezeERC721VotingMasterCopyContract,
-      fractalAzoriusMasterCopyContract,
-      fractalModuleMasterCopyContract,
-    },
-  } = useFractal();
+  const { baseContracts } = useFractal();
 
   const isOzLinearVoting = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === linearVotingMasterCopyContract.asProvider.address,
-    [linearVotingMasterCopyContract],
+      masterCopyAddress === baseContracts?.linearVotingMasterCopyContract.asProvider.address,
+    [baseContracts],
   );
   const isOzLinearVotingERC721 = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === linearVotingERC721MasterCopyContract.asProvider.address,
-    [linearVotingERC721MasterCopyContract],
+      masterCopyAddress === baseContracts?.linearVotingERC721MasterCopyContract.asProvider.address,
+    [baseContracts],
   );
   const isMultisigFreezeGuard = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === multisigFreezeGuardMasterCopyContract.asProvider.address,
-    [multisigFreezeGuardMasterCopyContract],
+      masterCopyAddress === baseContracts?.multisigFreezeGuardMasterCopyContract.asProvider.address,
+    [baseContracts],
   );
   const isMultisigFreezeVoting = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === freezeMultisigVotingMasterCopyContract.asProvider.address,
-    [freezeMultisigVotingMasterCopyContract],
+      masterCopyAddress ===
+      baseContracts?.freezeMultisigVotingMasterCopyContract.asProvider.address,
+    [baseContracts],
   );
   const isERC721FreezeVoting = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === freezeERC721VotingMasterCopyContract.asProvider.address,
-    [freezeERC721VotingMasterCopyContract],
+      masterCopyAddress === baseContracts?.freezeERC721VotingMasterCopyContract.asProvider.address,
+    [baseContracts],
   );
   const isAzorius = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === fractalAzoriusMasterCopyContract.asProvider.address,
-    [fractalAzoriusMasterCopyContract],
+      masterCopyAddress === baseContracts?.fractalAzoriusMasterCopyContract.asProvider.address,
+    [baseContracts],
   );
   const isFractalModule = useCallback(
     (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === fractalModuleMasterCopyContract.asProvider.address,
-    [fractalModuleMasterCopyContract],
+      masterCopyAddress === baseContracts?.fractalModuleMasterCopyContract.asProvider.address,
+    [baseContracts],
   );
 
   const getMasterCopyAddress = useCallback(
@@ -80,10 +70,16 @@ export function useMasterCopy() {
 
   const getZodiacModuleProxyMasterCopyData = useCallback(
     async function (proxyAddress: string | `0x${string}`) {
-      const contract = getEventRPC<ModuleProxyFactory>(zodiacModuleProxyFactoryContract);
-      const [masterCopyAddress, error] = await getMasterCopyAddress(contract, proxyAddress);
-      if (error) {
-        console.error(error);
+      let masterCopyAddress = '';
+      let error;
+      if (baseContracts) {
+        const contract = getEventRPC<ModuleProxyFactory>(
+          baseContracts?.zodiacModuleProxyFactoryContract,
+        );
+        [masterCopyAddress, error] = await getMasterCopyAddress(contract, proxyAddress);
+        if (error) {
+          console.error(error);
+        }
       }
       return {
         address: masterCopyAddress,
@@ -97,7 +93,6 @@ export function useMasterCopy() {
       };
     },
     [
-      zodiacModuleProxyFactoryContract,
       getMasterCopyAddress,
       isAzorius,
       isFractalModule,
@@ -106,6 +101,7 @@ export function useMasterCopy() {
       isMultisigFreezeVoting,
       isOzLinearVoting,
       isOzLinearVotingERC721,
+      baseContracts,
     ],
   );
 

@@ -7,8 +7,7 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
 import { validateAddress } from '../../../hooks/schemas/common/useValidationAddress';
-import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
-import { useEthersSigner } from '../../../hooks/utils/useEthersSigner';
+import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { disconnectedChain } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
@@ -31,9 +30,7 @@ export default function ForkProposalTemplateModal({
 
   const { t } = useTranslation('proposalTemplate');
   const { push } = useRouter();
-  const provider = useEthersProvider();
-  const signer = useEthersSigner();
-  const signerOrProvider = signer || provider;
+  const signerOrProvider = useSignerOrProvider();
   const { chain } = useNetwork();
   const {
     node: { proposalTemplatesHash },

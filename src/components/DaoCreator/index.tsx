@@ -38,7 +38,9 @@ function DaoCreator({
                 ...values.multisig,
                 freezeGuard,
               });
-              deployDAO(data);
+              if (data) {
+                deployDAO(data);
+              }
               return;
             }
             case GovernanceType.AZORIUS_ERC20: {
@@ -48,7 +50,9 @@ function DaoCreator({
                 ...values.erc20Token,
                 freezeGuard,
               });
-              deployDAO(data);
+              if (data) {
+                deployDAO(data);
+              }
               return;
             }
             case GovernanceType.AZORIUS_ERC721: {
@@ -58,7 +62,9 @@ function DaoCreator({
                 ...values.erc721Token,
                 freezeGuard,
               });
-              deployDAO(data);
+              if (data) {
+                deployDAO(data);
+              }
               return;
             }
           }

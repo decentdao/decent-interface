@@ -24,24 +24,7 @@ const useDeployAzorius = () => {
   } = useNetworkConfig();
   const {
     node: { daoAddress, safe },
-    baseContracts: {
-      multiSendContract,
-      safeFactoryContract,
-      safeSingletonContract,
-      linearVotingMasterCopyContract,
-      fractalAzoriusMasterCopyContract,
-      zodiacModuleProxyFactoryContract,
-      fractalRegistryContract,
-      fractalModuleMasterCopyContract,
-      multisigFreezeGuardMasterCopyContract,
-      azoriusFreezeGuardMasterCopyContract,
-      freezeMultisigVotingMasterCopyContract,
-      freezeERC20VotingMasterCopyContract,
-      votesTokenMasterCopyContract,
-      claimingMasterCopyContract,
-      votesERC20WrapperMasterCopyContract,
-      keyValuePairsContract,
-    },
+    baseContracts,
   } = useFractal();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
@@ -53,9 +36,27 @@ const useDeployAzorius = () => {
       shouldSetName?: boolean,
       shouldSetSnapshot?: boolean,
     ) => {
-      if (!daoAddress || !canUserCreateProposal || !safe) {
+      if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts) {
         return;
       }
+      const {
+        multiSendContract,
+        safeFactoryContract,
+        safeSingletonContract,
+        linearVotingMasterCopyContract,
+        fractalAzoriusMasterCopyContract,
+        zodiacModuleProxyFactoryContract,
+        fractalRegistryContract,
+        fractalModuleMasterCopyContract,
+        multisigFreezeGuardMasterCopyContract,
+        azoriusFreezeGuardMasterCopyContract,
+        freezeMultisigVotingMasterCopyContract,
+        freezeERC20VotingMasterCopyContract,
+        votesTokenMasterCopyContract,
+        claimingMasterCopyContract,
+        votesERC20WrapperMasterCopyContract,
+        keyValuePairsContract,
+      } = baseContracts;
       let azoriusContracts;
 
       azoriusContracts = {
@@ -67,7 +68,7 @@ const useDeployAzorius = () => {
         votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asProvider,
       } as AzoriusContracts;
 
-      const baseContracts = {
+      const builderBaseContracts = {
         fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asProvider,
         fractalRegistryContract: fractalRegistryContract.asProvider,
         safeFactoryContract: safeFactoryContract.asProvider,
@@ -82,7 +83,7 @@ const useDeployAzorius = () => {
 
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
-        baseContracts,
+        builderBaseContracts,
         azoriusContracts,
         daoData,
         fallbackHandler,
@@ -125,22 +126,7 @@ const useDeployAzorius = () => {
     },
     [
       signerOrProvider,
-      multiSendContract,
-      fractalRegistryContract,
-      zodiacModuleProxyFactoryContract,
-      fractalModuleMasterCopyContract,
-      multisigFreezeGuardMasterCopyContract,
-      freezeMultisigVotingMasterCopyContract,
-      freezeERC20VotingMasterCopyContract,
-      safeFactoryContract,
-      safeSingletonContract,
-      claimingMasterCopyContract,
-      votesERC20WrapperMasterCopyContract,
-      keyValuePairsContract,
-      fractalAzoriusMasterCopyContract,
-      linearVotingMasterCopyContract,
-      votesTokenMasterCopyContract,
-      azoriusFreezeGuardMasterCopyContract,
+      baseContracts,
       t,
       canUserCreateProposal,
       daoAddress,

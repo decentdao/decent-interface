@@ -28,7 +28,7 @@ export default function DaoCreatePage() {
       setRedirectPending(true);
       const { getAddress } = ethers.utils;
       const daoFound = await requestWithRetries(
-        () => safeAPI.getSafeCreationInfo(getAddress(daoAddress)),
+        async () => (safeAPI ? safeAPI.getSafeCreationInfo(getAddress(daoAddress)) : undefined),
         8,
       );
       toggleFavorite(daoAddress);

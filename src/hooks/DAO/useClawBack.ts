@@ -3,8 +3,8 @@ import { ethers, utils } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { FractalModuleType, FractalNode } from '../../types';
-import { useEthersProvider } from '../utils/useEthersProvider';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
@@ -19,7 +19,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
 
   const handleClawBack = useCallback(async () => {
-    if (childSafeInfo && childSafeInfo.daoAddress && parentAddress) {
+    if (childSafeInfo && childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
       const childSafeBalance = await safeAPI.getBalances(
         utils.getAddress(childSafeInfo.daoAddress),
       );

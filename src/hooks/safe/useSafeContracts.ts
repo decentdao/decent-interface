@@ -19,8 +19,8 @@ import {
 import { useMemo } from 'react';
 import { MultiSend__factory } from '../../assets/typechain-types/usul';
 import { GnosisSafeL2__factory } from '../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { useEthersProvider } from '../utils/useEthersProvider';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
 
 export default function useSafeContracts() {
@@ -51,6 +51,9 @@ export default function useSafeContracts() {
   } = useNetworkConfig();
 
   const daoContracts = useMemo(() => {
+    if (!signerOrProvider || !provider) {
+      return;
+    }
     const multiSendContract = {
       asSigner: MultiSend__factory.connect(multisend, signerOrProvider),
       asProvider: MultiSend__factory.connect(multisend, provider),

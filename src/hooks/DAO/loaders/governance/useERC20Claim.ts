@@ -9,13 +9,13 @@ import { FractalGovernanceAction } from '../../../../providers/App/governance/ac
 export function useERC20Claim() {
   const {
     governanceContracts: { tokenContract },
-    baseContracts: { claimingMasterCopyContract },
+    baseContracts,
     action,
   } = useFractal();
 
   const loadTokenClaimContract = useCallback(async () => {
-    if (!claimingMasterCopyContract || !tokenContract) return;
-
+    if (!baseContracts || !tokenContract) return;
+    const { claimingMasterCopyContract } = baseContracts;
     const approvalFilter = tokenContract.asProvider.filters.Approval();
     const approvals = await tokenContract.asProvider.queryFilter(approvalFilter);
     if (!approvals.length) return;
@@ -38,7 +38,7 @@ export function useERC20Claim() {
       type: FractalGovernanceAction.SET_CLAIMING_CONTRACT,
       payload: possibleTokenClaimContract,
     });
-  }, [claimingMasterCopyContract, tokenContract, action]);
+  }, [baseContracts, tokenContract, action]);
 
   useEffect(() => {
     loadTokenClaimContract();

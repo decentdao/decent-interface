@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { CreateProposalForm } from '../../../types';
 import { encodeFunction } from '../../../utils/crypto';
 import { couldBeENS } from '../../../utils/url';
-import { useEthersSigner } from '../../utils/useEthersSigner';
 
 export function usePrepareProposal() {
   const signer = useEthersSigner();
