@@ -30,19 +30,19 @@ export default function usePriceAPI() {
           );
 
           const pricesResponseBody = await pricesResponse.json();
-          if (pricesResponseBody.error) {
-            // We don't need to log error here as it is supposed to be logged through Netlify function anyway
-            toast.warning(t('tokenPriceFetchingError'));
-            if (pricesResponseBody.data) {
-              // Netlify function might fail due to rate limit of CoinGecko error, but it still will return cached prices.
-              return pricesResponseBody.data;
-            }
-          } else {
+          if (pricesResponseBody.data) {
             return pricesResponseBody.data;
+          } else {
+            // In theory - we shouldn't get into such situation, when request data is missing, but also we haven't fallen into catch case
+            // Yet, better safe than sorry
+            logError('Error fetching prices, response data is missing!', pricesResponseBody);
+            toast.warning(t('tokenPriceFetchingError'));
+            return;
           }
         }
       } catch (e) {
         logError('Error while getting tokens prices', e);
+        toast.warning(t('tokenPriceFetchingError'));
         return;
       }
     },

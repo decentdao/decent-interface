@@ -38,7 +38,8 @@ function sanitizeUserInput(tokensString: string, network: SupportedNetworks) {
 async function splitData(
   config: Config,
   tokens: string[],
-  responseBodyCallback: (address: string, price: number) => void
+  responseBodyCallback: (address: string, price: number) => void,
+  network: SupportedNetworks
 ) {
   // Try to get all of the tokens from our store.
   // Any token address that we don't have a record for will
@@ -46,7 +47,7 @@ async function splitData(
   const possibleCachedTokenPrices = await Promise.all(
     tokens.map(
       tokenAddress =>
-        config.store.getWithMetadata(tokenAddress, {
+        config.store.getWithMetadata(`${network}/${tokenAddress}`, {
           type: 'json',
         }) as Promise<TokenPriceWithMetadata> | null
     )
@@ -96,10 +97,11 @@ async function storeTokenPrice(
   config: Config,
   tokenAddress: string,
   price: number,
-  expiration: number
+  expiration: number,
+  network: SupportedNetworks
 ) {
   await config.store.setJSON(
-    tokenAddress,
+    `${network}/${tokenAddress}`,
     { tokenAddress, price },
     { metadata: { expiration: config.now + expiration } }
   );
@@ -108,7 +110,8 @@ async function storeTokenPrice(
 async function processTokenPricesResponse(
   config: Config,
   tokenPricesResponseJson: Record<string, { usd?: number }>,
-  responseBodyCallback: (address: string, price: number) => void
+  responseBodyCallback: (address: string, price: number) => void,
+  network: SupportedNetworks
 ) {
   const coinGeckoResponseAddresses = Object.keys(tokenPricesResponseJson);
   for await (const tokenAddress of coinGeckoResponseAddresses) {
@@ -119,12 +122,12 @@ async function processTokenPricesResponse(
     // we should consider it as though CoinGecko doesn't support
     // this address and not query it again for a while.
     if (price === undefined) {
-      await storeTokenPrice(config, sanitizedAddress, 0, config.invalidAddressCacheTime);
+      await storeTokenPrice(config, sanitizedAddress, 0, config.invalidAddressCacheTime, network);
     } else {
       // Otherwise, update the cache with the new price and update
       // the response object.
       responseBodyCallback(sanitizedAddress, price);
-      await storeTokenPrice(config, sanitizedAddress, price, config.validAddressCacheTime);
+      await storeTokenPrice(config, sanitizedAddress, price, config.validAddressCacheTime, network);
     }
   }
 
@@ -134,20 +137,22 @@ async function processTokenPricesResponse(
 async function processUnknownAddresses(
   config: Config,
   needPricesTokenAddresses: string[],
-  responseAddresses: string[]
+  responseAddresses: string[],
+  network: SupportedNetworks
 ) {
   const unknownAddresses = needPricesTokenAddresses
     .filter(x => !responseAddresses.includes(x))
     .map(address => address.toLowerCase());
   for await (const tokenAddress of unknownAddresses) {
-    await storeTokenPrice(config, tokenAddress, 0, config.invalidAddressCacheTime);
+    await storeTokenPrice(config, tokenAddress, 0, config.invalidAddressCacheTime, network);
   }
 }
 
 async function coinGeckoRequestAndResponse(
   config: Config,
   url: string,
-  responseBodyCallback: (address: string, price: number) => void
+  responseBodyCallback: (address: string, price: number) => void,
+  network: SupportedNetworks
 ) {
   // Make the request to CoinGecko.
   // Response is of shape:
@@ -167,7 +172,8 @@ async function coinGeckoRequestAndResponse(
   const responseAddresses = processTokenPricesResponse(
     config,
     ethPriceResponseJson,
-    responseBodyCallback
+    responseBodyCallback,
+    network
   );
 
   return responseAddresses;
@@ -200,7 +206,7 @@ export default async function getTokenPrices(request: Request) {
     return Response.json({ error: 'Requested network is not supported' }, { status: 400 });
   }
 
-  const store = getStore(`${networkParam}-token-prices`);
+  const store = getStore('token-prices');
   const now = Math.floor(Date.now() / 1000);
   const invalidAddressCacheTime = parseInt(process.env.TOKEN_PRICE_INVALID_CACHE_MINUTES);
   const validAddressCacheTime = parseInt(process.env.TOKEN_PRICE_VALID_CACHE_MINUTES);
@@ -218,7 +224,8 @@ export default async function getTokenPrices(request: Request) {
     tokens,
     (address, price) => {
       responseBody[address] = price;
-    }
+    },
+    networkParam
   );
 
   // If there are no expired token prices, and no token addresses that we
@@ -245,7 +252,8 @@ export default async function getTokenPrices(request: Request) {
       getTokenPricesUrl(needPricesTokenAddresses, networkParam),
       (address, price) => {
         responseBody[address] = price;
-      }
+      },
+      networkParam
     );
   } catch (e) {
     console.error('Error while querying CoinGecko', e);
@@ -257,7 +265,7 @@ export default async function getTokenPrices(request: Request) {
   // in our store with a long expiration for all addresses that CoinGecko
   // isn't tracking (likely spam tokens), so as to not continually query
   // CoinGecko with these addresses
-  await processUnknownAddresses(config, needPricesTokenAddresses, responseAddresses);
+  await processUnknownAddresses(config, needPricesTokenAddresses, responseAddresses, networkParam);
 
   // Do we need to get the price of our chain's gas token?
   if (needNativeAsset) {
@@ -267,7 +275,8 @@ export default async function getTokenPrices(request: Request) {
         getNativeAssetPriceUrl(networkParam),
         (address, price) => {
           responseBody[address] = price;
-        }
+        },
+        networkParam
       );
     } catch (e) {
       console.error('Error while querying CoinGecko', e);
