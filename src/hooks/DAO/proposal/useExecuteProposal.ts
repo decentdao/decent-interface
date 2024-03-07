@@ -43,7 +43,7 @@ export default function useExecuteProposal() {
             targets,
             values,
             data,
-            operations
+            operations,
           ),
         pendingMessage: t('pendingExecute'),
         failedMessage: t('failedExecute'),
@@ -54,7 +54,7 @@ export default function useExecuteProposal() {
         },
       });
     },
-    [contractCallExecuteProposal, t, azoriusContract, updateProposalState]
+    [contractCallExecuteProposal, t, azoriusContract, updateProposalState],
   );
 
   return {

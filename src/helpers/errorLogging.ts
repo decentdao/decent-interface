@@ -91,7 +91,7 @@ export class FractalErrorBoundary extends Sentry.ErrorBoundary {
     error: Error & {
       cause?: Error;
     },
-    errorInfo: React.ErrorInfo
+    errorInfo: React.ErrorInfo,
   ) {
     logError(error, errorInfo);
     if (isProd()) return;

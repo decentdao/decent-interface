@@ -60,8 +60,8 @@ export const useSnapshotProposals = () => {
                 proposal.state === 'active'
                   ? FractalProposalState.ACTIVE
                   : proposal.state === 'closed'
-                  ? FractalProposalState.CLOSED
-                  : FractalProposalState.PENDING,
+                    ? FractalProposalState.CLOSED
+                    : FractalProposalState.PENDING,
 
               proposalId: proposal.id,
               snapshotProposalId: proposal.id,

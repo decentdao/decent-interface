@@ -39,13 +39,13 @@ export const useCreateProposalSchema = () => {
                   const encodedFunction = encodeFunction(
                     functionName,
                     functionSignature,
-                    parameters
+                    parameters,
                   );
 
                   return !!encodedFunction;
                 },
               }),
-            })
+            }),
           ),
         proposalMetadata: Yup.object().shape({
           title: Yup.string().notRequired(),
@@ -69,7 +69,7 @@ export const useCreateProposalSchema = () => {
         }),
         nonce: Yup.number(),
       }),
-    [addressValidationTest, t]
+    [addressValidationTest, t],
   );
   return { createProposalValidation };
 };

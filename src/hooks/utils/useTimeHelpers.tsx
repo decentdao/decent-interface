@@ -11,7 +11,7 @@ export const useTimeHelpers = () => {
       if (Number(_seconds) === 0) return t('noTimeDifference');
       return formatDistance(0, Number(_seconds) * 1000, { includeSeconds: true, locale: locale });
     },
-    [locale, t]
+    [locale, t],
   );
   return { getTimeDuration };
 };

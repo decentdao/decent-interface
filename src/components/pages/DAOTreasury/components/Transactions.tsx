@@ -144,7 +144,7 @@ export function Transactions() {
 
   const displayData: TransferDisplayData[] = useFormatTransfers(
     transfers ? (transfers.results as AssetTransfer[]) : [],
-    daoAddress!
+    daoAddress!,
   );
 
   if (!transfers || transfers.results.length === 0) return <EmptyTransactions />;

@@ -25,7 +25,7 @@ export const fractalModuleData = (
   zodiacModuleProxyFactoryContract: ModuleProxyFactory,
   safeContract: GnosisSafeL2,
   saltNum: string,
-  parentAddress?: string
+  parentAddress?: string,
 ): FractalModuleData => {
   const fractalModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData(
     'setUp',
@@ -37,13 +37,13 @@ export const fractalModuleData = (
           safeContract.address, // Avatar
           safeContract.address, // Target
           [], // Authorized Controllers
-        ]
+        ],
       ),
-    ]
+    ],
   );
 
   const fractalByteCodeLinear = generateContractByteCodeLinear(
-    fractalModuleMasterCopyContract.address.slice(2)
+    fractalModuleMasterCopyContract.address.slice(2),
   );
 
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
@@ -55,7 +55,7 @@ export const fractalModuleData = (
   const predictedFractalModuleAddress = generatePredictedModuleAddress(
     zodiacModuleProxyFactoryContract.address,
     fractalSalt,
-    fractalByteCodeLinear
+    fractalByteCodeLinear,
   );
 
   const enableFractalModuleTx = buildContractCall(
@@ -63,7 +63,7 @@ export const fractalModuleData = (
     'enableModule',
     [predictedFractalModuleAddress],
     0,
-    false
+    false,
   );
 
   return {

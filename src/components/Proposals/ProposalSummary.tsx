@@ -47,13 +47,13 @@ export default function ProposalSummary({
     () =>
       erc721Tokens?.reduce(
         (prev, curr) => prev.add(curr.totalSupply?.mul(curr.votingWeight) || BigNumber.from(0)),
-        BigNumber.from(0)
+        BigNumber.from(0),
       ),
-    [erc721Tokens]
+    [erc721Tokens],
   );
   const votesTokenDecimalsDenominator = useMemo(
     () => BigNumber.from(10).pow(votesToken?.decimals || 0),
-    [votesToken?.decimals]
+    [votesToken?.decimals],
   );
   const [showVotingPower, setShowVotingPower] = useState(false);
 
@@ -64,7 +64,7 @@ export default function ProposalSummary({
       if (tokenContract && address) {
         const pastVotingWeight = await tokenContract.asProvider.getPastVotes(address, startBlock);
         setProposalsERC20VotingWeight(
-          pastVotingWeight.div(votesTokenDecimalsDenominator).toString()
+          pastVotingWeight.div(votesTokenDecimalsDenominator).toString(),
         );
       }
     }
@@ -89,13 +89,13 @@ export default function ProposalSummary({
     votesToken && isERC20
       ? votingStrategy.quorumPercentage!.value.toNumber()
       : isERC721
-      ? votingStrategy.quorumThreshold!.value.toNumber()
-      : 1;
+        ? votingStrategy.quorumThreshold!.value.toNumber()
+        : 1;
   const reachedQuorum = isERC721
     ? totalVotesCasted.sub(no).toString()
     : votesToken
-    ? totalVotesCasted.sub(no).div(votesTokenDecimalsDenominator).toString()
-    : '0';
+      ? totalVotesCasted.sub(no).div(votesTokenDecimalsDenominator).toString()
+      : '0';
   const totalQuorum = isERC721
     ? strategyQuorum.toString()
     : votesToken?.totalSupply
@@ -207,14 +207,14 @@ export default function ProposalSummary({
             isERC20
               ? 'proposalSupportERC20SummaryHelper'
               : isERC721
-              ? 'proposalSupportERC721SummaryHelper'
-              : '',
+                ? 'proposalSupportERC721SummaryHelper'
+                : '',
             {
               quorum: strategyQuorum,
               total: isERC721
                 ? totalVotingWeight?.toString()
                 : votesToken?.totalSupply.div(votesTokenDecimalsDenominator).toString(),
-            }
+            },
           )}
           reachedQuorum={reachedQuorum}
           totalQuorum={totalQuorum}

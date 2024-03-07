@@ -32,7 +32,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   const snapshotProposal = proposal as SnapshotProposal;
   const isSnapshotProposal = useMemo(
     () => !!snapshotProposal?.snapshotProposalId,
-    [snapshotProposal]
+    [snapshotProposal],
   );
 
   const loadProposal = useCallback(async () => {
@@ -74,7 +74,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
               privacy,
               ipfs,
             };
-          }
+          },
         );
 
       const votesQueryResult = await client
@@ -153,7 +153,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
             } else {
               let totalVotingWeightDistributon = 0;
               Object.keys(voteChoices).forEach(
-                (choice: any) => (totalVotingWeightDistributon += voteChoices[choice])
+                (choice: any) => (totalVotingWeightDistributon += voteChoices[choice]),
               );
               Object.keys(voteChoices).forEach((choiceIndex: any) => {
                 const voteChoiceValue = voteChoices[choiceIndex] / totalVotingWeightDistributon;

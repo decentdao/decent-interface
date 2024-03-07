@@ -12,7 +12,7 @@ export const initialGovernanceContractsState: FractalGovernanceContracts = {
 
 export const governanceContractsReducer = (
   state: FractalGovernanceContracts,
-  action: GovernanceContractActions
+  action: GovernanceContractActions,
 ) => {
   switch (action.type) {
     case GovernanceContractAction.SET_GOVERNANCE_CONTRACT:

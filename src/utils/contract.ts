@@ -45,7 +45,7 @@ export const getTimeStamp = async (blockNumber: number | 'latest', provider: Pro
 
 export const blocksToSeconds = async (
   numOfBlocks: number,
-  provider: Providers
+  provider: Providers,
 ): Promise<number> => {
   if (!provider || !numOfBlocks) {
     return 0;
@@ -61,7 +61,7 @@ export const blocksToSeconds = async (
 
 export const getEstimatedNumberOfBlocks = async (
   timeInMinutes: BigNumber,
-  provider: Providers
+  provider: Providers,
 ): Promise<BigNumber> => {
   const seconds = timeInMinutes.toNumber() * 60;
   const averageBlockTime = await getAverageBlockTime(provider);

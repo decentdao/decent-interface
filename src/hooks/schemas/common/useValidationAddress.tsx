@@ -162,16 +162,16 @@ export const useValidationAddress = () => {
             return validation.address;
           }
           return address;
-        })
+        }),
       );
 
       const uniqueFilter = resolvedAddresses.filter(
-        address => address === value || address === inputValidation?.address
+        address => address === value || address === inputValidation?.address,
       );
 
       return uniqueFilter.length === 1;
     },
-    [signerOrProvider]
+    [signerOrProvider],
   );
 
   const uniqueAddressValidationTest = useMemo(() => {
@@ -196,7 +196,7 @@ export const useValidationAddress = () => {
         if (!value) return false;
         // retreive parent array
         const parentAddressArray = context.from[1].value.nfts.map(
-          ({ tokenAddress }: ERC721TokenConfig) => tokenAddress
+          ({ tokenAddress }: ERC721TokenConfig) => tokenAddress,
         );
         const isUnique = await testUniqueAddressArray(value, parentAddressArray);
         return isUnique;

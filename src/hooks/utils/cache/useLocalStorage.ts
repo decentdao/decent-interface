@@ -6,7 +6,7 @@ export const setValue = (
   key: string,
   value: any,
   chainId: number,
-  expirationMinutes: number = CacheExpiry.ONE_WEEK
+  expirationMinutes: number = CacheExpiry.ONE_WEEK,
 ): void => {
   if (typeof window !== 'undefined') {
     const val: IStorageValue = {
@@ -62,14 +62,14 @@ export const useLocalStorage = () => {
     (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
       setValue(key, value, chainId, expirationMinutes);
     },
-    [chainId]
+    [chainId],
   );
 
   const get = useCallback(
     (key: string) => {
       return getValue(key, chainId);
     },
-    [chainId]
+    [chainId],
   );
 
   return { setValue: set, getValue: get };

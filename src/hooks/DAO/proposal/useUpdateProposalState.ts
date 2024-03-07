@@ -27,7 +27,7 @@ export default function useUpdateProposalState({
         payload: { proposalId: proposalId.toString(), state: newState },
       });
     },
-    [azoriusContract, governanceDispatch]
+    [azoriusContract, governanceDispatch],
   );
 
   return updateProposalState;

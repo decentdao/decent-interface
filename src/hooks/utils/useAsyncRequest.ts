@@ -51,7 +51,7 @@ export const useAsyncRequest = () => {
         setPending(false);
       }
     },
-    []
+    [],
   );
 
   return [asyncRequestFunc, pending] as const;

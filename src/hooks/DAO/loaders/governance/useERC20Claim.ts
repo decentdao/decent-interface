@@ -20,7 +20,7 @@ export function useERC20Claim() {
     const approvals = await tokenContract.asProvider.queryFilter(approvalFilter);
     if (!approvals.length) return;
     const possibleTokenClaimContract = claimingMasterCopyContract.asProvider.attach(
-      approvals[0].args[1]
+      approvals[0].args[1],
     );
     const tokenClaimFilter = possibleTokenClaimContract.filters.ERC20ClaimCreated();
     const tokenClaimArray = await possibleTokenClaimContract

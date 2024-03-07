@@ -116,7 +116,7 @@ export function useLazyDAOName() {
 
       return createAccountSubstring(_address);
     },
-    [getValue, setValue, provider]
+    [getValue, setValue, provider],
   );
 
   return { getDaoName };
