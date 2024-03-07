@@ -22,7 +22,7 @@ type Config = {
 };
 
 const SUPPORTED_NETWORKS = ['ethereum'] as const;
-type SupportedNetworks = typeof SUPPORTED_NETWORKS[number];
+type SupportedNetworks = (typeof SUPPORTED_NETWORKS)[number];
 
 function sanitizeUserInput(tokensString: string, network: SupportedNetworks) {
   const rawTokenAddresses = tokensString.split(',');
@@ -38,7 +38,7 @@ async function splitData(
   config: Config,
   tokens: string[],
   responseBodyCallback: (address: string, price: number) => void,
-  network: SupportedNetworks
+  network: SupportedNetworks,
 ) {
   // Try to get all of the tokens from our store.
   // Any token address that we don't have a record for will
@@ -48,15 +48,15 @@ async function splitData(
       tokenAddress =>
         config.store.getWithMetadata(`${network}/${tokenAddress}`, {
           type: 'json',
-        }) as Promise<TokenPriceWithMetadata> | null
-    )
+        }) as Promise<TokenPriceWithMetadata> | null,
+    ),
   );
 
   // Filter out the null values, leaving us with an array of
   // TokenPricesWithMetadata. All of these TokenPrices will be either
   // expired or unexpired.
   const cachedTokenPrices = possibleCachedTokenPrices.filter(
-    (possible): possible is TokenPriceWithMetadata => possible !== null
+    (possible): possible is TokenPriceWithMetadata => possible !== null,
   );
 
   // Let's pull out all of the expired addresses from our cache.
@@ -68,7 +68,7 @@ async function splitData(
   // we don't have any record of in our cache.
   const uncachedTokenAddresses = tokens.filter(
     address =>
-      !cachedTokenPrices.find(cachedTokenPrice => cachedTokenPrice.data.tokenAddress === address)
+      !cachedTokenPrices.find(cachedTokenPrice => cachedTokenPrice.data.tokenAddress === address),
   );
 
   // We'll update our response with those cached expired and
@@ -82,7 +82,7 @@ async function splitData(
 
 function getTokenPricesUrl(tokens: string[], network: SupportedNetworks) {
   const tokenPricesUrl = `${PUBLIC_DEMO_API_BASE_URL}simple/token_price/${network}/${AUTH_QUERY_PARAM}&vs_currencies=usd&contract_addresses=${tokens.join(
-    ','
+    ',',
   )}`;
   return tokenPricesUrl;
 }
@@ -96,12 +96,12 @@ async function storeTokenPrice(
   config: Config,
   tokenAddress: string,
   price: number,
-  network: SupportedNetworks
+  network: SupportedNetworks,
 ) {
   await config.store.setJSON(
     `${network}/${tokenAddress}`,
     { tokenAddress, price },
-    { metadata: { fetched: config.nowSeconds } }
+    { metadata: { fetched: config.nowSeconds } },
   );
 }
 
@@ -109,7 +109,7 @@ async function processTokenPricesResponse(
   config: Config,
   tokenPricesResponseJson: Record<string, { usd?: number }>,
   responseBodyCallback: (address: string, price: number) => void,
-  network: SupportedNetworks
+  network: SupportedNetworks,
 ) {
   const coinGeckoResponseAddresses = Object.keys(tokenPricesResponseJson);
   for await (const tokenAddress of coinGeckoResponseAddresses) {
@@ -130,7 +130,7 @@ async function processUnknownAddresses(
   config: Config,
   needPricesTokenAddresses: string[],
   responseAddresses: string[],
-  network: SupportedNetworks
+  network: SupportedNetworks,
 ) {
   const unknownAddresses = needPricesTokenAddresses
     .filter(x => !responseAddresses.includes(x))
@@ -144,7 +144,7 @@ async function coinGeckoRequestAndResponse(
   config: Config,
   url: string,
   responseBodyCallback: (address: string, price: number) => void,
-  network: SupportedNetworks
+  network: SupportedNetworks,
 ) {
   // Make the request to CoinGecko.
   // Response is of shape:
@@ -165,7 +165,7 @@ async function coinGeckoRequestAndResponse(
     config,
     ethPriceResponseJson,
     responseBodyCallback,
-    network
+    network,
   );
 
   return responseAddresses;
@@ -211,7 +211,7 @@ export default async function getTokenPrices(request: Request) {
     (address, price) => {
       responseBody[address] = price;
     },
-    networkParam
+    networkParam,
   );
 
   // If there are no expired token prices, and no token addresses that we
@@ -239,7 +239,7 @@ export default async function getTokenPrices(request: Request) {
       (address, price) => {
         responseBody[address] = price;
       },
-      networkParam
+      networkParam,
     );
   } catch (e) {
     console.error('Error while querying CoinGecko', e);
@@ -256,7 +256,7 @@ export default async function getTokenPrices(request: Request) {
         (address, price) => {
           responseBody[address] = price;
         },
-        networkParam
+        networkParam,
       );
     } catch (e) {
       console.error('Error while querying CoinGecko', e);

@@ -26,7 +26,7 @@ export default function usePriceAPI() {
         }
         if (tokensAddresses.length > 0) {
           const pricesResponse = await fetch(
-            `/.netlify/functions/tokenPrices?tokens=${tokensAddresses.join(',')}&network=ethereum`
+            `/.netlify/functions/tokenPrices?tokens=${tokensAddresses.join(',')}&network=ethereum`,
           );
 
           const pricesResponseBody = await pricesResponse.json();
@@ -46,7 +46,7 @@ export default function usePriceAPI() {
         return;
       }
     },
-    [chainId, t]
+    [chainId, t],
   );
   return { getTokenPrices };
 }
