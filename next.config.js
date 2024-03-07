@@ -7,6 +7,7 @@ module.exports = {
 
     return config;
   },
+  output: 'export',
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
@@ -15,6 +16,5 @@ module.exports = {
   },
   experimental: {
     esmExternals: false,
-    appDir: true,
   },
 };
