@@ -188,7 +188,7 @@ export default function MetadataContainer() {
         onChange={handleSnapshotURLChange}
         value={snapshotURL}
         disabled={!userHasVotingWeight}
-        placeholder="example.eth"
+        placeholder="httpsexample.eth"
         testId="daoSettings.snapshotUrl"
         gridContainerProps={{
           display: 'inline-flex',

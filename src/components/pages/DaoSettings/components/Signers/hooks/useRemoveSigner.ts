@@ -20,11 +20,13 @@ const useRemoveSigner = ({
 }) => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
-  const {
-    baseContracts: { safeSingletonContract },
-  } = useFractal();
+  const { baseContracts } = useFractal();
 
   const removeSigner = useCallback(async () => {
+    if (!baseContracts) {
+      return;
+    }
+    const { safeSingletonContract } = baseContracts;
     const description = 'Remove Signers';
 
     const calldatas = [
@@ -53,16 +55,7 @@ const useRemoveSigner = ({
       successToastMessage: t('removeSignerSuccessToastMessage'),
       failedToastMessage: t('removeSignerFailureToastMessage'),
     });
-  }, [
-    safeSingletonContract.asProvider.interface,
-    prevSigner,
-    signerToRemove,
-    threshold,
-    daoAddress,
-    submitProposal,
-    nonce,
-    t,
-  ]);
+  }, [baseContracts, prevSigner, signerToRemove, threshold, daoAddress, submitProposal, nonce, t]);
 
   return removeSigner;
 };
