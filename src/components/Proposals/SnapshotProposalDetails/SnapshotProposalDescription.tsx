@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import Markdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { SnapshotProposal } from '../../../types';
-import '../../../assets/css/SnapshotProposalMarkdown.css';
 
 function CustomMarkdownImage({ src, alt }: { src?: string; alt?: string }) {
   const [error, setError] = useState(false);
