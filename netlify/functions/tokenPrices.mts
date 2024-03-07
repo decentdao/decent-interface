@@ -23,30 +23,23 @@ export default async function getTokenPrices(request: Request) {
     return Response.json({ error: 'Tokens to request were not provided' }, { status: 400 });
   }
 
-  // These are the token addresses from the client, split up.
+  // Sanitize user input
   const rawTokenAddresses = tokensStringParam.split(',');
-
-  // Let's make sure all of these given addresses are valid.
-  const anyInvalidTokens = rawTokenAddresses.some(address => !ethers.utils.isAddress(address));
-  if (!anyInvalidTokens) {
-    return Response.json({ error: 'One or more token addresses is invalid' }, { status: 400 });
-  }
-
-  // Next we want to standardize them all by making them lowercase.
-  const lowerCaseTokens = rawTokenAddresses.map(address => address.toLowerCase());
-
-  // Finally, make sure we're dealing with a unique set of token addresses.
-  const tokens = [...new Set(lowerCaseTokens)];
-
-  const store = getStore('token-prices');
+  const needEthereum = rawTokenAddresses.map(address => address.toLowerCase()).includes('ethereum');
+  const validTokenAddresses = rawTokenAddresses.filter(address => ethers.utils.isAddress(address));
+  const lowerCaseTokenAddresses = validTokenAddresses.map(address => address.toLowerCase());
+  const tokens = [...new Set(lowerCaseTokenAddresses)];
+  if (needEthereum) tokens.push('ethereum');
 
   // Let's immediately build up our repsonse object, containing each
   // token address and an value of 0. We'll modify this along the way
   // populating it with more relevant prices.
   const responseBody: Record<string, number> = tokens.reduce((p, c) => ({ ...p, [c]: 0 }), {});
 
+  const store = getStore('token-prices');
+
   try {
-    const now = Date.now();
+    const now = Math.floor(Date.now() / 1000);
 
     // Try to get all of the tokens from our store.
     // Any token address that we don't have a record for will
@@ -64,12 +57,30 @@ export default async function getTokenPrices(request: Request) {
     // TokenPricesWithMetadata. All of these TokenPrices will be either
     // expired or unexpired.
     const allCachedTokenPrices = possibleCachedTokenPrices.filter(
-      (possible): possible is TokenPriceWithMetadata => !!possible
+      (possible): possible is TokenPriceWithMetadata => possible !== null
+    );
+
+    console.log('allCachedTokenPrices');
+    console.log(
+      allCachedTokenPrices.map(a => ({
+        address: a.data.tokenAddress,
+        price: a.data.price,
+        now: '      ' + now,
+        expiration: a.metadata.expiration,
+        expired: a.metadata.expiration < now,
+      }))
     );
 
     // Let's pull out all of the unexpired TokenPrices from our cache.
     const cachedUnexpiredTokenPrices = allCachedTokenPrices.filter(
-      tokenPrice => tokenPrice.metadata.expiration <= now
+      tokenPrice => tokenPrice.metadata.expiration >= now
+    );
+
+    console.log('cachedUnexpiredTokenPrices');
+    console.log(
+      cachedUnexpiredTokenPrices.map(a => ({
+        address: a.data.tokenAddress,
+      }))
     );
 
     // We'll update our response with those unexpired cached prices.
@@ -79,7 +90,14 @@ export default async function getTokenPrices(request: Request) {
 
     // Let's pull out all of the expired TokenPrices from our cache.
     const cachedExpiredTokenPrices = allCachedTokenPrices.filter(
-      tokenPrice => tokenPrice.metadata.expiration > now
+      tokenPrice => tokenPrice.metadata.expiration < now
+    );
+
+    console.log('cachedExpiredTokenPrices');
+    console.log(
+      cachedExpiredTokenPrices.map(a => ({
+        address: a.data.tokenAddress,
+      }))
     );
 
     // We'll update our response with those expired cached prices.
@@ -92,16 +110,25 @@ export default async function getTokenPrices(request: Request) {
 
     // Finally let's get a list of all of the token addresses that
     // we don't have any price for in our cache, expired or not.
-    const allUncachedTokenAddresses = rawTokenAddresses.filter(
+    const allUncachedTokenAddresses = tokens.filter(
       address =>
         !allCachedTokenPrices.find(
           cachedTokenPrice => cachedTokenPrice.data.tokenAddress === address
         )
     );
 
+    console.log('allUncachedTokenAddresses');
+    console.log(
+      allUncachedTokenAddresses.map(a => ({
+        address: a,
+      }))
+    );
+
     // If there are no expired token prices, and no token addresses that we
     // don't have a cached value for at all, we can early return!
     if (allUncachedTokenAddresses.length === 0 && cachedExpiredTokenPrices.length === 0) {
+      console.log('early exit');
+      console.log({ responseBody });
       return Response.json({ data: responseBody });
     }
 
@@ -110,10 +137,11 @@ export default async function getTokenPrices(request: Request) {
 
     // First, let's build up our list of token addresses to query CoinGecko with,
     // which is all uncached tokens and tokens that have expired.
+    // Remove "ethereum" if it's in this list
     const needPricesTokenAddresses = [
       ...allUncachedTokenAddresses,
       ...cachedExpiredTokenPrices.map(tokenPrice => tokenPrice.data.tokenAddress),
-    ];
+    ].filter(address => address !== 'ethereum');
 
     try {
       // Build up the request URL.
@@ -123,18 +151,33 @@ export default async function getTokenPrices(request: Request) {
         ','
       )}`;
 
+      console.log('making CoinGecko API call:', tokenPricesUrl);
+
       // Make the request.
       const tokenPricesResponse = await fetch(tokenPricesUrl);
       const tokenPricesResponseJson = await tokenPricesResponse.json();
 
       // Create the metadata for our new token prices, with an
       // expiration in the future.
-      const tokenPriceMetadata = { metadata: { expiration: now + 1000 * 60 * 30 } };
+      const tokenPriceMetadata = { metadata: { expiration: now + 48 } };
 
       // With our response...
-      Object.keys(tokenPricesResponseJson).forEach(tokenAddress => {
-        const price = tokenPricesResponseJson[tokenAddress].usd;
+      const coinGeckoResponseAddresses = Object.keys(tokenPricesResponseJson);
+      coinGeckoResponseAddresses.forEach(tokenAddress => {
+        const price: number | undefined = tokenPricesResponseJson[tokenAddress].usd;
+
         const sanitizedAddress = tokenAddress.toLowerCase();
+
+        // Sometimes no USD price is returned
+        if (price === undefined) {
+          store.setJSON(
+            sanitizedAddress,
+            { tokenAddress: sanitizedAddress, price: 0 },
+            { metadata: { expiration: now + 60 * 10 } }
+          );
+          return;
+        }
+
         // 1. Replace the token addresses of our existing response object with the new prices.
         responseBody[sanitizedAddress] = price;
         // 2. Store these fresh prices in our Blob store.
@@ -145,25 +188,48 @@ export default async function getTokenPrices(request: Request) {
         );
       });
 
+      // CoinGecko will only respond back with prices for token addresses
+      // that it knows about. We should store a price of 0 in our store with
+      // a long expiration for all addresses that CoinGecko isn't tracking
+      // (likely spam tokens), so as to not continually query CoinGecko with
+      // these addresses
+      const likelySpamAddresses = needPricesTokenAddresses.filter(
+        x => !coinGeckoResponseAddresses.includes(x)
+      );
+      console.log({ likelySpamAddresses });
+      likelySpamAddresses.forEach(tokenAddress => {
+        const sanitizedAddress = tokenAddress.toLowerCase();
+        store.setJSON(
+          sanitizedAddress,
+          { tokenAddress: sanitizedAddress, price: 0 },
+          { metadata: { expiration: now + 60 * 10 } }
+        );
+      });
+
       // Do we need to get the price of our chain's gas token (ethereum)?
-      const ethAsset = needPricesTokenAddresses.find(address => address === 'ethereum');
-      if (ethAsset) {
+      if (needEthereum) {
         // Build up the request URL.
         const ethPriceUrl = `${PUBLIC_DEMO_API_BASE_URL}simple/price${AUTH_QUERY_PARAM}&ids=ethereum&vs_currencies=usd`;
+
+        console.log('making CoinGecko API call:', ethPriceUrl);
 
         // Make the request.
         const ethPriceResponse = await fetch(ethPriceUrl);
         const ethPriceResponseJson = await ethPriceResponse.json();
 
         // Get the price data.
-        const price = ethPriceResponseJson.ethereum.usd;
+        const price: number | undefined = ethPriceResponseJson.ethereum.usd;
 
-        // 1. Replace the token addresses of our existing response object with the new prices.
-        responseBody.ethereum = price;
+        if (price !== undefined) {
+          // 1. Replace the token addresses of our existing response object with the new prices.
+          responseBody.ethereum = price;
 
-        // 2. Store this fresh prices in our Blob store.
-        store.setJSON('ethereum', { tokenAddress: 'ethereum', price }, tokenPriceMetadata);
+          // 2. Store this fresh prices in our Blob store.
+          store.setJSON('ethereum', { tokenAddress: 'ethereum', price }, tokenPriceMetadata);
+        }
       }
+
+      console.log({ responseBody });
       return Response.json({ data: responseBody });
     } catch (e) {
       console.error('Error while querying CoinGecko', e);
@@ -171,9 +237,6 @@ export default async function getTokenPrices(request: Request) {
     }
   } catch (e) {
     console.error('Error while fetching prices', e);
-    return Response.json({
-      error: 'Unknown error while fetching prices',
-      data: responseBody,
-    });
+    return Response.json({ error: 'Error while fetching prices', data: responseBody });
   }
 }
