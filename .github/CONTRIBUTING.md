@@ -20,12 +20,10 @@
 
 - If possible, please provide unit or integration tests for your changes. You can see example
   automation tests in the [test directory](https://github.com/decent-dao/fractal-interface/tree/HEAD/tests).
-  
 - All of your components should be composed of [Chakra UI](https://chakra-ui.com/) base components, using our custom theme.
 
 - A member of the Fractal engineering team will respond with any further discussion or requested changes and once approved
   you are free to merge.
-  
 - We appreciate the collaboration!
 
 ### Submitting Language Translations

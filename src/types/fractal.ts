@@ -194,7 +194,7 @@ export interface ITokenAccount {
  * @param dispatch - This object contains the dispatch functions for the Fractal DAO.
  */
 export interface FractalStore extends Fractal {
-  baseContracts: FractalContracts;
+  baseContracts?: FractalContracts;
   action: {
     dispatch: Dispatch<FractalActions>;
     loadReadOnlyValues: () => Promise<void>;

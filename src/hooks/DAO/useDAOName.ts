@@ -1,12 +1,12 @@
 import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
-import { Address, useEnsName } from 'wagmi';
+import { Address, useEnsName, usePublicClient } from 'wagmi';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { CacheKeys } from '../utils/cache/cacheDefaults';
 import { useLocalStorage } from '../utils/cache/useLocalStorage';
 import { createAccountSubstring } from '../utils/useDisplayName';
-import { useEthersProvider } from '../utils/useEthersProvider';
 
 /**
  * Gets the 'display name' for a Fractal DAO, in the following order of preference:
@@ -22,22 +22,19 @@ export default function useDAOName({
   address?: string;
   registryName?: string | null;
 }) {
-  const {
-    baseContracts: { fractalRegistryContract },
-  } = useFractal();
+  const { baseContracts } = useFractal();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
-  const provider = useEthersProvider();
-  const networkId = provider.network.chainId;
+  const { chain } = usePublicClient();
 
   const { data: ensName } = useEnsName({
     address: address as Address,
-    chainId: networkId,
+    chainId: chain.id,
     cacheTime: 1000 * 60 * 30, // 30 min
   });
   const { setValue, getValue } = useLocalStorage();
 
   const getDaoName = useCallback(async () => {
-    if (!address) {
+    if (!address || !baseContracts) {
       setDAORegistryName('');
       return;
     }
@@ -52,6 +49,7 @@ export default function useDAOName({
       setDAORegistryName(cachedName);
       return;
     }
+    const { fractalRegistryContract } = baseContracts;
     if (!fractalRegistryContract) {
       setDAORegistryName(createAccountSubstring(address));
       return;
@@ -73,7 +71,7 @@ export default function useDAOName({
       setValue(CacheKeys.DAO_NAME_PREFIX + address, daoName, 60);
       setDAORegistryName(daoName);
     }
-  }, [address, ensName, fractalRegistryContract, getValue, setValue, registryName]);
+  }, [address, ensName, baseContracts, getValue, setValue, registryName]);
 
   useEffect(() => {
     (async () => {
@@ -102,11 +100,13 @@ export function useLazyDAOName() {
       if (cachedName) {
         return cachedName;
       }
-      // check if ens name resolves
-      const ensName = await provider.lookupAddress(_address).catch(() => null);
-      if (ensName) {
-        setValue(CacheKeys.DAO_NAME_PREFIX + _address, ensName, 5);
-        return ensName;
+      if (provider) {
+        // check if ens name resolves
+        const ensName = await provider.lookupAddress(_address).catch(() => null);
+        if (ensName) {
+          setValue(CacheKeys.DAO_NAME_PREFIX + _address, ensName, 5);
+          return ensName;
+        }
       }
 
       if (_registryName) {
@@ -116,7 +116,7 @@ export function useLazyDAOName() {
 
       return createAccountSubstring(_address);
     },
-    [getValue, setValue, provider]
+    [getValue, setValue, provider],
   );
 
   return { getDaoName };

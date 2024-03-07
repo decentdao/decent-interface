@@ -1,12 +1,10 @@
-import { useEnsAvatar } from 'wagmi';
-import { useEthersProvider } from './useEthersProvider';
+import { useEnsAvatar, usePublicClient } from 'wagmi';
 
 const useAvatar = (account: string | null) => {
-  const provider = useEthersProvider();
-  const networkId = provider.network.chainId;
+  const { chain } = usePublicClient();
   const { data: avatarURL } = useEnsAvatar({
     name: account,
-    chainId: networkId,
+    chainId: chain.id,
   });
 
   return avatarURL;

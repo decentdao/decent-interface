@@ -14,7 +14,7 @@ export const safeData = async (
   daoData: SafeMultisigDAO,
   saltNum: string,
   fallbackHandler: string,
-  hasAzorius?: boolean
+  hasAzorius?: boolean,
 ) => {
   const signers = hasAzorius
     ? [multiSendContract.address]
@@ -38,12 +38,12 @@ export const safeData = async (
     safeFactoryContract.address,
     solidityKeccak256(
       ['bytes', 'uint256'],
-      [solidityKeccak256(['bytes'], [createSafeCalldata]), saltNum]
+      [solidityKeccak256(['bytes'], [createSafeCalldata]), saltNum],
     ),
     solidityKeccak256(
       ['bytes', 'uint256'],
-      [await safeFactoryContract.proxyCreationCode(), safeSingletonContract.address]
-    )
+      [await safeFactoryContract.proxyCreationCode(), safeSingletonContract.address],
+    ),
   );
 
   const createSafeTx = buildContractCall(
@@ -51,7 +51,7 @@ export const safeData = async (
     'createProxyWithNonce',
     [safeSingletonContract.address, createSafeCalldata, saltNum],
     0,
-    false
+    false,
   );
 
   return {

@@ -33,8 +33,8 @@ export function StepButtons({
     isLastStep && isSubDAO
       ? t('labelDeploySubDAO')
       : isLastStep && isEdit
-      ? t('labelDeployAzorius')
-      : t(isLastStep ? 'deploy' : 'next', { ns: 'common' });
+        ? t('labelDeployAzorius')
+        : t(isLastStep ? 'deploy' : 'next', { ns: 'common' });
   const buttonType = isLastStep ? 'submit' : 'button';
   return (
     <Flex

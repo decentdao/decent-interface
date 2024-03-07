@@ -61,7 +61,7 @@ export function BigNumberInput({
         ? !value.isZero()
           ? removeTrailingZeros(utils.formatUnits(value, decimalPlaces))
           : '0'
-        : ''
+        : '',
     );
   }, [value, decimalPlaces, inputValue]);
 
@@ -89,7 +89,7 @@ export function BigNumberInput({
       }
       return eventValue;
     },
-    [decimalPlaces]
+    [decimalPlaces],
   );
 
   const processValue = useCallback(
@@ -137,14 +137,14 @@ export function BigNumberInput({
       }
       setInputValue(newValue);
     },
-    [decimalPlaces, max, onChange, truncateDecimalPlaces]
+    [decimalPlaces, max, onChange, truncateDecimalPlaces],
   );
 
   const onChangeInput = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       processValue(event);
     },
-    [processValue]
+    [processValue],
   );
 
   //set value to min if less than min, when focus is lost
@@ -168,7 +168,7 @@ export function BigNumberInput({
         }
       }
     },
-    [decimalPlaces, min, onChange]
+    [decimalPlaces, min, onChange],
   );
 
   // if the decimalPlaces change, need to update the value

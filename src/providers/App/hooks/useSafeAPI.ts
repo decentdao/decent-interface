@@ -58,7 +58,7 @@ class CachingSafeServiceClient extends SafeServiceClient {
   private async request<T>(
     cacheKey: string,
     cacheMinutes: number,
-    endpoint: () => Promise<T>
+    endpoint: () => Promise<T>,
   ): Promise<T> {
     let value: T = await this.getCache<T>(cacheKey);
     if (!value) {
@@ -82,7 +82,7 @@ class CachingSafeServiceClient extends SafeServiceClient {
     const value = await this.request(
       'getServiceMasterCopiesInfo',
       CacheExpiry.ONE_DAY,
-      super.getServiceMasterCopiesInfo
+      super.getServiceMasterCopiesInfo,
     );
     return value;
   }
@@ -129,7 +129,7 @@ class CachingSafeServiceClient extends SafeServiceClient {
     return value;
   }
   override async getModuleTransactions(
-    safeAddress: string
+    safeAddress: string,
   ): Promise<SafeModuleTransactionListResponse> {
     const value = await this.request('getModuleTransactions' + safeAddress, 1, () => {
       return super.getModuleTransactions(safeAddress);
@@ -137,7 +137,7 @@ class CachingSafeServiceClient extends SafeServiceClient {
     return value;
   }
   override async getMultisigTransactions(
-    safeAddress: string
+    safeAddress: string,
   ): Promise<SafeMultisigTransactionListResponse> {
     const value = await this.request('getMultisigTransactions' + safeAddress, 1, () => {
       return super.getMultisigTransactions(safeAddress);
@@ -146,20 +146,20 @@ class CachingSafeServiceClient extends SafeServiceClient {
   }
   override async getPendingTransactions(
     safeAddress: string,
-    currentNonce?: number | undefined
+    currentNonce?: number | undefined,
   ): Promise<SafeMultisigTransactionListResponse> {
     const value = await this.request(
       'getPendingTransactions' + safeAddress + currentNonce?.toString(),
       1,
       () => {
         return super.getPendingTransactions(safeAddress, currentNonce);
-      }
+      },
     );
     return value;
   }
   override async getBalances(
     safeAddress: string,
-    options?: SafeBalancesOptions | undefined
+    options?: SafeBalancesOptions | undefined,
   ): Promise<SafeBalanceResponse[]> {
     const value = await this.request('getBalances' + safeAddress + options?.toString(), 1, () => {
       return super.getBalances(safeAddress, options);
@@ -168,27 +168,27 @@ class CachingSafeServiceClient extends SafeServiceClient {
   }
   override async getUsdBalances(
     safeAddress: string,
-    options?: SafeBalancesUsdOptions | undefined
+    options?: SafeBalancesUsdOptions | undefined,
   ): Promise<SafeBalanceUsdResponse[]> {
     const value = await this.request(
       'getUsdBalances' + safeAddress + options?.toString(),
       1,
       () => {
         return super.getUsdBalances(safeAddress, options);
-      }
+      },
     );
     return value;
   }
   override async getCollectibles(
     safeAddress: string,
-    options?: SafeCollectiblesOptions | undefined
+    options?: SafeCollectiblesOptions | undefined,
   ): Promise<SafeCollectibleResponse[]> {
     const value = await this.request(
       'getCollectibles' + safeAddress + options?.toString(),
       1,
       () => {
         return super.getCollectibles(safeAddress, options);
-      }
+      },
     );
     return value;
   }
@@ -206,14 +206,14 @@ class CachingSafeServiceClient extends SafeServiceClient {
   }
   override async getAllTransactions(
     safeAddress: string,
-    options?: AllTransactionsOptions
+    options?: AllTransactionsOptions,
   ): Promise<AllTransactionsListResponse> {
     const value = await this.request(
       'getAllTransactions' + safeAddress + options?.toString(),
       1,
       () => {
         return super.getAllTransactions(safeAddress, options);
-      }
+      },
     );
     return value;
   }
@@ -229,7 +229,10 @@ export function useSafeAPI() {
   const { safeBaseURL, chainId } = useNetworkConfig();
   const signerOrProvider = useSignerOrProvider();
 
-  const safeAPI: SafeServiceClient = useMemo(() => {
+  const safeAPI: SafeServiceClient | undefined = useMemo(() => {
+    if (!signerOrProvider) {
+      return undefined;
+    }
     const ethAdapter = new EthersAdapter({
       ethers,
       signerOrProvider,

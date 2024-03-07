@@ -10,7 +10,7 @@ export const initialGuardContractsState: FractalGuardContracts = {
 
 export const guardContractReducer = (
   state: FractalGuardContracts,
-  action: GuardContractActions
+  action: GuardContractActions,
 ) => {
   switch (action.type) {
     case GuardContractAction.SET_GUARD_CONTRACT:

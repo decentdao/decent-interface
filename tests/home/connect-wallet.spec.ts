@@ -14,7 +14,7 @@ test('wallet should auto connect', async ({ page }) => {
   /* Assert defined wallet address is present ("0xf39F...2266") */
   await home.clickAccountMenu();
   await expect(page.locator('[data-testid="walletMenu-accountDisplay"]')).toContainText(
-    '0xf39F...2266'
+    '0xf39F...2266',
   );
 });
 

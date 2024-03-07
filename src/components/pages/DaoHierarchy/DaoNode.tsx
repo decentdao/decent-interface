@@ -63,9 +63,9 @@ export function DaoNode({
               ? getTotalDescendants(
                   fnode.nodeHierarchy.childNodes[
                     fnode.nodeHierarchy.childNodes.length - 1
-                  ] as FractalNode
+                  ] as FractalNode,
                 )
-              : 0
+              : 0,
           );
         } else if (errorNode.error === 'errorFailedSearch') {
           setNode({

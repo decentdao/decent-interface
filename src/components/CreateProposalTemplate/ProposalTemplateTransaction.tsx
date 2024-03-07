@@ -35,10 +35,10 @@ export default function ProposalTemplateTransaction({
           signature: `${abiInput.type} ${abiInput.name}`,
           label: '',
           value: '',
-        }))
+        })),
       );
     },
-    [setFieldValue, transactionIndex]
+    [setFieldValue, transactionIndex],
   );
 
   return (
@@ -151,7 +151,7 @@ export default function ProposalTemplateTransaction({
                 onChange={e =>
                   setFieldValue(
                     `transactions.${transactionIndex}.parameters.${i}.signature`,
-                    e.target.value
+                    e.target.value,
                   )
                 }
                 disabled={transactionPending}
@@ -178,7 +178,7 @@ export default function ProposalTemplateTransaction({
                   onChange={e =>
                     setFieldValue(
                       `transactions.${transactionIndex}.parameters.${i}.label`,
-                      e.target.value
+                      e.target.value,
                     )
                   }
                   disabled={transactionPending || !!parameter.value}
@@ -206,7 +206,7 @@ export default function ProposalTemplateTransaction({
                   onChange={e =>
                     setFieldValue(
                       `transactions.${transactionIndex}.parameters.${i}.value`,
-                      e.target.value
+                      e.target.value,
                     )
                   }
                   disabled={transactionPending || !!parameter.label}
@@ -245,8 +245,8 @@ export default function ProposalTemplateTransaction({
                   setFieldValue(
                     `transactions.${transactionIndex}.parameters`,
                     transaction.parameters.filter(
-                      (parameterToRemove, parameterToRemoveIndex) => parameterToRemoveIndex !== i
-                    )
+                      (parameterToRemove, parameterToRemoveIndex) => parameterToRemoveIndex !== i,
+                    ),
                   )
                 }
               >

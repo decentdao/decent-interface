@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { logError } from '../../helpers/errorLogging';
-import { useEthersProvider } from './useEthersProvider';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 
 const useBlockTimestamp = (blockNumber?: number) => {
   const [timestamp, setTimestamp] = useState<number>(Math.floor(Date.now() / 1000));

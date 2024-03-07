@@ -16,8 +16,8 @@ import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
-import { useEthersSigner } from '../../../../../../hooks/utils/useEthersSigner';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
+import { useEthersSigner } from '../../../../../../providers/Ethers/hooks/useEthersSigner';
 import { couldBeENS } from '../../../../../../utils/url';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
@@ -59,7 +59,7 @@ function AddSignerModal({
         close: close,
       });
     },
-    [addSigner, close, daoAddress, signer]
+    [addSigner, close, daoAddress, signer],
   );
 
   const addSignerValidationSchema = Yup.object().shape({
@@ -150,7 +150,7 @@ function AddSignerModal({
                     ml={2}
                   >{`${t('signersRequired1', { ns: 'modals' })} ${signers.length + 1} ${t(
                     'signersRequired2',
-                    { ns: 'modals' }
+                    { ns: 'modals' },
                   )}`}</Text>
                 </Flex>
               </HStack>

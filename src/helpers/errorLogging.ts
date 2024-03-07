@@ -51,7 +51,7 @@ export class FractalErrorBoundary extends Sentry.ErrorBoundary {
     error: Error & {
       cause?: Error;
     },
-    errorInfo: React.ErrorInfo
+    errorInfo: React.ErrorInfo,
   ) {
     logError(error, errorInfo);
     if (process.env.NODE_ENV === 'development') return;

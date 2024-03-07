@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { useEthersProvider } from './useEthersProvider';
-import { useEthersSigner } from './useEthersSigner';
+import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
+import { useEthersSigner } from '../../providers/Ethers/hooks/useEthersSigner';
 
 export default function useSignerOrProvider() {
   const signer = useEthersSigner();

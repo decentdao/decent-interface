@@ -58,7 +58,7 @@ export function VoteContextProvider({
   const { remainingTokenIds, getUserERC721VotingTokens } = useUserERC721VotingTokens(
     proposal.proposalId,
     undefined,
-    true
+    true,
   );
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
 
@@ -67,7 +67,7 @@ export function VoteContextProvider({
     if (isSnapshotProposal) {
       setHasVoted(
         !!extendedSnapshotProposal &&
-          !!extendedSnapshotProposal.votes.find(vote => vote.voter === user.address)
+          !!extendedSnapshotProposal.votes.find(vote => vote.voter === user.address),
       );
     } else if (dao?.isAzorius) {
       const azoriusProposal = proposal as AzoriusProposal;
@@ -77,7 +77,7 @@ export function VoteContextProvider({
     } else {
       const safeProposal = proposal as MultisigProposal;
       setHasVoted(
-        !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address)
+        !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address),
       );
     }
     setHasVotedLoading(false);
@@ -96,7 +96,7 @@ export function VoteContextProvider({
             (
               await ozLinearVotingContract!.asProvider.getVotingWeight(
                 user.address,
-                proposal.proposalId
+                proposal.proposalId,
               )
             )?.gt(0) && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {
@@ -128,7 +128,7 @@ export function VoteContextProvider({
       loadVotingWeight,
       ozLinearVotingContract,
       proposal?.proposalId,
-    ]
+    ],
   );
   useEffect(() => {
     getCanVote();

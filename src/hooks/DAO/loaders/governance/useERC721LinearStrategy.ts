@@ -10,9 +10,9 @@ import { useCallback, useEffect } from 'react';
 import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
-import { useEthersProvider } from '../../../utils/useEthersProvider';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC721LinearStrategy = () => {
@@ -24,7 +24,7 @@ export const useERC721LinearStrategy = () => {
   const { getTimeDuration } = useTimeHelpers();
 
   const loadERC721Strategy = useCallback(async () => {
-    if (!erc721LinearVotingContract || !azoriusContract) {
+    if (!erc721LinearVotingContract || !azoriusContract || !provider) {
       return {};
     }
     const [votingPeriodBlocks, quorumThreshold, timeLockPeriod] = await Promise.all([

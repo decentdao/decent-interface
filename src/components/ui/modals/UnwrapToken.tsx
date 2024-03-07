@@ -9,10 +9,10 @@ import { useAccount } from 'wagmi';
 import * as Yup from 'yup';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
 import useApproval from '../../../hooks/utils/useApproval';
-import { useEthersSigner } from '../../../hooks/utils/useEthersSigner';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AzoriusGovernance, BigNumberValuePair } from '../../../types';
 import { formatCoin } from '../../../utils';
 import { BigNumberInput } from '../forms/BigNumberInput';
@@ -32,7 +32,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
     pending: approvalPending,
   } = useApproval(
     governanceContracts.tokenContract?.asSigner.attach(governanceContracts.underlyingTokenAddress!),
-    azoriusGovernance.votesToken?.address
+    azoriusGovernance.votesToken?.address,
   );
 
   const { t } = useTranslation(['modals', 'treasury']);
@@ -56,7 +56,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
         },
       });
     },
-    [account, contractCall, governanceContracts, signer, close, t, loadERC20TokenAccountData]
+    [account, contractCall, governanceContracts, signer, close, t, loadERC20TokenAccountData],
   );
 
   if (
@@ -119,7 +119,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
                     azoriusGovernance.votesToken?.balance!,
                     false,
                     azoriusGovernance.votesToken?.decimals!,
-                    azoriusGovernance.votesToken?.symbol
+                    azoriusGovernance.votesToken?.symbol,
                   ),
                 })}
               >

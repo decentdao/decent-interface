@@ -5,8 +5,8 @@ import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useDAOProposals } from '../../../hooks/DAO/loaders/useProposals';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
-import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import {
   AzoriusGovernance,
   FractalProposal,
@@ -99,8 +99,8 @@ export function useProposalCountdown(proposal: FractalProposal) {
         freezeGuardType === FreezeGuardType.MULTISIG
           ? (freezeGuardContract?.asProvider as MultisigFreezeGuard)
           : freezeGuardType === FreezeGuardType.AZORIUS
-          ? (freezeGuardContract?.asProvider as AzoriusFreezeGuard)
-          : undefined;
+            ? (freezeGuardContract?.asProvider as AzoriusFreezeGuard)
+            : undefined;
 
       const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
       const isAzoriusGuard = freezeGuardType === FreezeGuardType.AZORIUS;
@@ -119,18 +119,23 @@ export function useProposalCountdown(proposal: FractalProposal) {
       ) {
         startCountdown(votingDeadlineMs + Number(timeLockPeriod.value) * 1000);
         // If the proposal is timelocked start the countdown (for safe multisig proposals with guards)
-      } else if (proposal.state === FractalProposalState.TIMELOCKED && freezeGuard && isSafeGuard) {
+      } else if (
+        proposal.state === FractalProposalState.TIMELOCKED &&
+        freezeGuard &&
+        isSafeGuard &&
+        provider
+      ) {
         const safeGuard = freezeGuard as MultisigFreezeGuard;
         const timelockedTimestamp = await getTxTimelockedTimestamp(proposal, safeGuard, provider);
         const guardTimeLockPeriod = await blocksToSeconds(
           await safeGuard.timelockPeriod(),
-          provider
+          provider,
         );
         startCountdown(timelockedTimestamp * 1000 + guardTimeLockPeriod * 1000);
         // If the proposal is executable start the countdown (for safe multisig proposals with guards)
       } else if (proposal.state === FractalProposalState.EXECUTABLE && freezeGuard) {
         let guardTimelockPeriod: number = 0;
-        if (isSafeGuard) {
+        if (isSafeGuard && provider) {
           const safeGuard = freezeGuard as MultisigFreezeGuard;
           const timelockedTimestamp =
             (await getTxTimelockedTimestamp(proposal, safeGuard, provider)) * 1000;

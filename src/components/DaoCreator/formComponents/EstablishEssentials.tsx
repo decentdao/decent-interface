@@ -187,8 +187,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
           values.essentials.governance === GovernanceType.MULTISIG
             ? CreatorSteps.MULTISIG_DETAILS
             : values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20
-            ? CreatorSteps.ERC20_DETAILS
-            : CreatorSteps.ERC721_DETAILS
+              ? CreatorSteps.ERC20_DETAILS
+              : CreatorSteps.ERC721_DETAILS
         }
       />
     </StepWrapper>

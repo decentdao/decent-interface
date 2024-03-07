@@ -8,9 +8,7 @@ import { ProposalExecuteData } from '../../../../../../types';
 const useAddSigner = () => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
-  const {
-    baseContracts: { safeSingletonContract },
-  } = useFractal();
+  const { baseContracts } = useFractal();
   const addSigner = useCallback(
     async ({
       newSigner,
@@ -25,6 +23,10 @@ const useAddSigner = () => {
       daoAddress: string | null;
       close: () => void;
     }) => {
+      if (!baseContracts) {
+        return;
+      }
+      const { safeSingletonContract } = baseContracts;
       const description = 'Add Signer';
 
       const calldatas = [
@@ -54,7 +56,7 @@ const useAddSigner = () => {
         failedToastMessage: t('addSignerFailureToastMessage'),
       });
     },
-    [safeSingletonContract.asSigner.interface, submitProposal, t]
+    [baseContracts, submitProposal, t],
   );
 
   return addSigner;

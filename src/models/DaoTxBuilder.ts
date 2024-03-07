@@ -47,7 +47,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     parentAddress?: string,
     parentTokenAddress?: string,
     parentStrategyType?: VotingStrategyType,
-    parentStrategyAddress?: string
+    parentStrategyAddress?: string,
   ) {
     super(
       signerOrProvider,
@@ -55,7 +55,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       azoriusContracts,
       daoData,
       parentAddress,
-      parentTokenAddress
+      parentTokenAddress,
     );
 
     this.predictedSafeAddress = predictedSafeAddress;
@@ -73,7 +73,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   public async buildAzoriusTx(
     shouldSetName: boolean = true,
     shouldSetSnapshot: boolean = true,
-    existingSafe?: { owners: string[] }
+    existingSafe?: { owners: string[] },
   ): Promise<string> {
     const azoriusTxBuilder = await this.txBuilderFactory.createAzoriusTxBuilder();
 
@@ -91,7 +91,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     this.internalTxs = this.internalTxs.concat(
       azoriusTxBuilder.buildVotingContractSetupTx(),
-      azoriusTxBuilder.buildEnableAzoriusModuleTx()
+      azoriusTxBuilder.buildEnableAzoriusModuleTx(),
     );
 
     if (this.parentAddress) {
@@ -100,7 +100,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
         azoriusTxBuilder.linearVotingContract?.address ??
           azoriusTxBuilder.linearERC721VotingContract?.address,
         this.parentStrategyType,
-        this.parentStrategyAddress
+        this.parentStrategyAddress,
       );
 
       this.internalTxs = this.internalTxs.concat([
@@ -168,7 +168,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
         undefined,
         undefined,
         this.parentStrategyType,
-        this.parentStrategyAddress
+        this.parentStrategyAddress,
       );
 
       this.internalTxs = this.internalTxs.concat([
@@ -207,7 +207,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.baseContracts.zodiacModuleProxyFactoryContract,
       this.safeContract!,
       this.saltNum,
-      this.parentAddress
+      this.parentAddress,
     );
 
     this.enableFractalModuleTx = enableFractalModuleTx;
@@ -224,7 +224,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       'updateDAOName',
       [this.daoData.daoName],
       0,
-      false
+      false,
     );
   }
 
@@ -234,7 +234,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       'updateValues',
       [['snapshotURL'], [this.daoData.snapshotURL]],
       0,
-      false
+      false,
     );
   }
 
@@ -258,7 +258,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
         signatures, // sigs
       ],
       0,
-      false
+      false,
     );
   }
 }
