@@ -16,7 +16,7 @@ import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
 
-export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
+export const useFractalNode = ({ daoAddress }: { daoAddress: string | null }) => {
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [nodeLoading, setNodeLoading] = useState<boolean>(true);
@@ -128,9 +128,15 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   const { chain } = useNetwork();
   const chainId = chain ? chain.id : disconnectedChain.id;
   useEffect(() => {
+    console.log('🚀 ~ daoAddress:', daoAddress);
+
     if (daoAddress && chainId + daoAddress !== currentValidSafe.current) {
       setNodeLoading(true);
       setDAO(chainId, daoAddress);
+    }
+    if (!daoAddress) {
+      currentValidSafe.current = undefined;
+      setNodeLoading(false);
     }
   }, [daoAddress, setDAO, currentValidSafe, chainId]);
 

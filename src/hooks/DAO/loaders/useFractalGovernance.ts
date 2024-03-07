@@ -115,6 +115,9 @@ export const useFractalGovernance = () => {
         });
       }
     }
+    if (!daoAddress) {
+      loadKey.current = undefined;
+    }
   }, [
     governanceContracts,
     loadDAOProposals,
@@ -127,6 +130,7 @@ export const useFractalGovernance = () => {
     loadERC721Strategy,
     loadERC721Tokens,
     action,
+    daoAddress,
   ]);
 
   useEffect(() => {

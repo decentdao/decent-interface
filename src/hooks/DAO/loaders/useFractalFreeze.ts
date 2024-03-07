@@ -161,6 +161,9 @@ export const useFractalFreeze = ({
       loadKey.current = guardContracts.freezeVotingContract.asProvider.address;
       setFractalFreezeGuard(guardContracts);
     }
+    if (!daoAddress) {
+      loadKey.current = undefined;
+    }
   }, [setFractalFreezeGuard, guardContracts, daoAddress, loadOnMount]);
 
   useEffect(() => {
