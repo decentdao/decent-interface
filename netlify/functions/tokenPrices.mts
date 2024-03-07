@@ -22,14 +22,17 @@ type Config = {
   validAddressCacheTime: number;
 };
 
-function sanitizeUserInput(tokensString: string) {
+const SUPPORTED_NETWORKS = ['ethereum'] as const;
+type SupportedNetworks = typeof SUPPORTED_NETWORKS[number];
+
+function sanitizeUserInput(tokensString: string, network: SupportedNetworks) {
   const rawTokenAddresses = tokensString.split(',');
-  const needEthereum = rawTokenAddresses.map(address => address.toLowerCase()).includes('ethereum');
+  const needNativeAsset = rawTokenAddresses.map(address => address.toLowerCase()).includes(network);
   const validTokenAddresses = rawTokenAddresses.filter(address => ethers.utils.isAddress(address));
   const lowerCaseTokenAddresses = validTokenAddresses.map(address => address.toLowerCase());
   const tokens = [...new Set(lowerCaseTokenAddresses)];
-  if (needEthereum) tokens.push('ethereum');
-  return { tokens, needEthereum };
+  if (needNativeAsset) tokens.push(network);
+  return { tokens, needNativeAsset };
 }
 
 async function splitData(
@@ -77,16 +80,16 @@ async function splitData(
   return { expiredCachedTokenAddresses, uncachedTokenAddresses };
 }
 
-function getTokenPricesUrl(tokens: string[]) {
-  const tokenPricesUrl = `${PUBLIC_DEMO_API_BASE_URL}simple/token_price/ethereum/${AUTH_QUERY_PARAM}&vs_currencies=usd&contract_addresses=${tokens.join(
+function getTokenPricesUrl(tokens: string[], network: SupportedNetworks) {
+  const tokenPricesUrl = `${PUBLIC_DEMO_API_BASE_URL}simple/token_price/${network}/${AUTH_QUERY_PARAM}&vs_currencies=usd&contract_addresses=${tokens.join(
     ','
   )}`;
   return tokenPricesUrl;
 }
 
-function getEthereumPriceUrl() {
-  const ethPriceUrl = `${PUBLIC_DEMO_API_BASE_URL}simple/price${AUTH_QUERY_PARAM}&ids=ethereum&vs_currencies=usd`;
-  return ethPriceUrl;
+function getNativeAssetPriceUrl(network: SupportedNetworks) {
+  const nativeAssetPriceUrl = `${PUBLIC_DEMO_API_BASE_URL}simple/price${AUTH_QUERY_PARAM}&ids=${network}&vs_currencies=usd`;
+  return nativeAssetPriceUrl;
 }
 
 async function storeTokenPrice(
@@ -186,18 +189,24 @@ export default async function getTokenPrices(request: Request) {
     return Response.json({ error: 'Error while fetching prices' }, { status: 503 });
   }
 
-  const tokensStringParam = new URL(request.url).searchParams.get('tokens');
+  const requestSearchParams = new URL(request.url).searchParams;
+  const tokensStringParam = requestSearchParams.get('tokens');
   if (!tokensStringParam) {
     return Response.json({ error: 'Tokens missing from request' }, { status: 400 });
   }
 
-  const store = getStore('token-prices');
+  const networkParam = requestSearchParams.get('network') as SupportedNetworks;
+  if (!networkParam || !SUPPORTED_NETWORKS.includes(networkParam)) {
+    return Response.json({ error: 'Requested network is not supported' }, { status: 400 });
+  }
+
+  const store = getStore(`${networkParam}-token-prices`);
   const now = Math.floor(Date.now() / 1000);
   const invalidAddressCacheTime = parseInt(process.env.TOKEN_PRICE_INVALID_CACHE_MINUTES);
   const validAddressCacheTime = parseInt(process.env.TOKEN_PRICE_VALID_CACHE_MINUTES);
   const config = { store, now, invalidAddressCacheTime, validAddressCacheTime };
 
-  const { tokens, needEthereum } = sanitizeUserInput(tokensStringParam);
+  const { tokens, needNativeAsset } = sanitizeUserInput(tokensStringParam, networkParam);
 
   // Let's immediately build up our repsonse object, containing each
   // token address and an value of 0. We'll modify this along the way
@@ -223,17 +232,17 @@ export default async function getTokenPrices(request: Request) {
 
   // First, let's build up our list of token addresses to query CoinGecko with,
   // which is all uncached tokens and tokens that have expired.
-  // Remove "ethereum" if it's in this list.
+  // Remove native asset name if it's in this list.
   const needPricesTokenAddresses = [
     ...uncachedTokenAddresses,
     ...expiredCachedTokenAddresses,
-  ].filter(address => address !== 'ethereum');
+  ].filter(address => address !== networkParam);
 
   let responseAddresses: string[];
   try {
     responseAddresses = await coinGeckoRequestAndResponse(
       config,
-      getTokenPricesUrl(needPricesTokenAddresses),
+      getTokenPricesUrl(needPricesTokenAddresses, networkParam),
       (address, price) => {
         responseBody[address] = price;
       }
@@ -250,12 +259,16 @@ export default async function getTokenPrices(request: Request) {
   // CoinGecko with these addresses
   await processUnknownAddresses(config, needPricesTokenAddresses, responseAddresses);
 
-  // Do we need to get the price of our chain's gas token (ethereum)?
-  if (needEthereum) {
+  // Do we need to get the price of our chain's gas token?
+  if (needNativeAsset) {
     try {
-      await coinGeckoRequestAndResponse(config, getEthereumPriceUrl(), (address, price) => {
-        responseBody[address] = price;
-      });
+      await coinGeckoRequestAndResponse(
+        config,
+        getNativeAssetPriceUrl(networkParam),
+        (address, price) => {
+          responseBody[address] = price;
+        }
+      );
     } catch (e) {
       console.error('Error while querying CoinGecko', e);
       return Response.json({ error: 'Error while fetching prices', data: responseBody });
