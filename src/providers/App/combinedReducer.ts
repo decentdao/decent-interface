@@ -43,7 +43,7 @@ export const combinedReducer = (state: Fractal, action: FractalActions) => {
     treasury: treasuryReducer(state.treasury, action as TreasuryActions),
     governanceContracts: governanceContractsReducer(
       state.governanceContracts,
-      action as GovernanceContractActions
+      action as GovernanceContractActions,
     ),
     guardContracts: guardContractReducer(state.guardContracts, action as GuardContractActions),
     guard: guardReducer(state.guard, action as FractalGuardActions),

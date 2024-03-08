@@ -108,7 +108,7 @@ export interface AzoriusERC721DAO<T = BigNumber>
 export interface SafeMultisigDAO extends DAOEssentials, SafeConfiguration {}
 
 export type DAOTrigger = (
-  daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO
+  daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
 ) => void;
 
 export type AddressValidationMap = Map<string, AddressValidation>;
@@ -133,7 +133,7 @@ export type TokenAllocation<T = BigNumber> = {
 
 export type CreateDAOFunc = (
   daoData: SafeMultisigDAO,
-  successCallback: DeployDAOSuccessCallback
+  successCallback: DeployDAOSuccessCallback,
 ) => void;
 export type DeployDAOSuccessCallback = (daoAddress: string) => void;
 export type DAODetails = {

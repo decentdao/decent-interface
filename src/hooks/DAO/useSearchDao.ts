@@ -30,7 +30,7 @@ export const useSearchDao = () => {
     } else {
       if (isValidAddress) {
         setErrorMessage(
-          t('errorFailedSearch', { chain: chain ? chain.name : disconnectedChain.name })
+          t('errorFailedSearch', { chain: chain ? chain.name : disconnectedChain.name }),
         );
       } else {
         setErrorMessage(t('errorInvalidSearch'));

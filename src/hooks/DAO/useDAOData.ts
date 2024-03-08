@@ -33,7 +33,7 @@ export function useLoadDAOData(fractalNode?: FractalNode, parentAddress?: string
       let freezeGuardContracts: FractalGuardContracts | undefined = await loadFractalGuardContracts(
         daoAddress,
         safe,
-        fractalModules
+        fractalModules,
       );
 
       if (!freezeGuardContracts) {

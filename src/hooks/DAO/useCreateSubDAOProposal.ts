@@ -8,9 +8,7 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 import useBuildDAOTx from './useBuildDAOTx';
 
 export const useCreateSubDAOProposal = () => {
-  const {
-    baseContracts: { multiSendContract, fractalRegistryContract },
-  } = useFractal();
+  const { baseContracts } = useFractal();
   const { t } = useTranslation(['daoCreate', 'proposal', 'proposalMetadata']);
 
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
@@ -24,12 +22,13 @@ export const useCreateSubDAOProposal = () => {
     (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
       nonce: number | undefined,
-      successCallback: (daoAddress: string) => void
+      successCallback: (daoAddress: string) => void,
     ) => {
       const propose = async () => {
-        if (!multiSendContract || !fractalRegistryContract || !daoAddress) {
+        if (!baseContracts || !daoAddress) {
           return;
         }
+        const { multiSendContract, fractalRegistryContract } = baseContracts;
 
         const builtSafeTx = await build(daoData, daoAddress, azoriusGovernance.votesToken?.address);
         if (!builtSafeTx) {
@@ -67,15 +66,7 @@ export const useCreateSubDAOProposal = () => {
       };
       propose();
     },
-    [
-      multiSendContract,
-      fractalRegistryContract,
-      build,
-      daoAddress,
-      submitProposal,
-      azoriusGovernance,
-      t,
-    ]
+    [baseContracts, build, daoAddress, submitProposal, azoriusGovernance, t],
   );
 
   return { proposeDao, pendingCreateTx, canUserCreateProposal } as const;

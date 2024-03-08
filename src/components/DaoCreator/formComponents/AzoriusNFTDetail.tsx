@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc721ABI } from 'wagmi';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useEthersProvider } from '../../../hooks/utils/useEthersProvider';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { BigNumberValuePair, ERC721TokenConfig } from '../../../types';
 import { BarLoader } from '../../ui/loaders/BarLoader';
 

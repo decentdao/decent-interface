@@ -12,6 +12,7 @@ import { ErrorFallback } from '../components/ui/utils/ErrorFallback';
 import graphQLClient from '../graphql';
 import { FractalErrorBoundary, initErrorLogging } from '../helpers/errorLogging';
 import { AppProvider } from './App/AppProvider';
+import EthersContextProvider from './Ethers';
 import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
 import { wagmiConfig, chains } from './NetworkConfig/rainbow-kit.config';
 import '@fontsource/ibm-plex-mono';
@@ -21,6 +22,7 @@ export default function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
     initErrorLogging();
   }, []);
+
   return (
     <ChakraProvider
       theme={theme}
@@ -35,17 +37,19 @@ export default function Providers({ children }: { children: ReactNode }) {
               theme={midnightTheme()}
             >
               <NetworkConfigProvider>
-                <AppProvider>
-                  <ToastContainer
-                    position="bottom-center"
-                    closeButton={false}
-                    newestOnTop={false}
-                    pauseOnFocusLoss={false}
-                  />
-                  <ModalProvider>
-                    <Layout>{children}</Layout>
-                  </ModalProvider>
-                </AppProvider>
+                <EthersContextProvider>
+                  <AppProvider>
+                    <ToastContainer
+                      position="bottom-center"
+                      closeButton={false}
+                      newestOnTop={false}
+                      pauseOnFocusLoss={false}
+                    />
+                    <ModalProvider>
+                      <Layout>{children}</Layout>
+                    </ModalProvider>
+                  </AppProvider>
+                </EthersContextProvider>
               </NetworkConfigProvider>
             </RainbowKitProvider>
           </WagmiConfig>

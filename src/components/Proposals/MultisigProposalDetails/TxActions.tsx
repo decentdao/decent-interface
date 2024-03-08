@@ -61,13 +61,13 @@ export function TxActions({
           (signerOrProvider as Signer & TypedDataSigner)._signTypedData(
             { verifyingContract: safe.address, chainId: chainId },
             EIP712_SAFE_TX_TYPE,
-            safeTx
+            safeTx,
           ),
         failedMessage: t('failedSign'),
         pendingMessage: t('pendingSign'),
         successMessage: t('successSign'),
         successCallback: async (signature: string) => {
-          await safeAPI.confirmTransaction(proposal.proposalId, signature);
+          await safeAPI!.confirmTransaction(proposal.proposalId, signature);
           await loadSafeMultisigProposals();
         },
       });
@@ -88,7 +88,7 @@ export function TxActions({
         multisigTx.confirmations.map(confirmation => ({
           signer: confirmation.owner,
           data: confirmation.signature,
-        }))
+        })),
       );
       contractCall({
         contractFn: () =>
@@ -103,7 +103,7 @@ export function TxActions({
             safeTx.gasToken,
             safeTx.refundReceiver,
             signatures,
-            safeTx.nonce
+            safeTx.nonce,
           ),
         failedMessage: t('failedExecute', { ns: 'transaction' }),
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
@@ -130,7 +130,7 @@ export function TxActions({
         multisigTx.confirmations.map(confirmation => ({
           signer: confirmation.owner,
           data: confirmation.signature,
-        }))
+        })),
       );
       contractCall({
         contractFn: () =>
@@ -144,7 +144,7 @@ export function TxActions({
             safeTx.gasPrice,
             safeTx.gasToken,
             safeTx.refundReceiver,
-            signatures
+            signatures,
           ),
         failedMessage: t('failedExecute', { ns: 'transaction' }),
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),

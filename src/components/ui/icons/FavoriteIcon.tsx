@@ -13,7 +13,7 @@ export default function FavoriteIcon({ safeAddress, ...rest }: Props) {
   const { favoritesList, toggleFavorite } = useAccountFavorites();
   const isFavorite = useMemo(
     () => (!!safeAddress ? favoritesList.includes(utils.getAddress(safeAddress)) : false),
-    [favoritesList, safeAddress]
+    [favoritesList, safeAddress],
   );
   const { t } = useTranslation();
   return (

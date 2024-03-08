@@ -22,7 +22,7 @@ export class BaseTxBuilder {
     azoriusContracts: AzoriusContracts | undefined,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
     parentAddress?: string,
-    parentTokenAddress?: string
+    parentTokenAddress?: string,
   ) {
     this.signerOrProvider = signerOrProvider;
     this.baseContracts = baseContracts;

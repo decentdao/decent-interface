@@ -28,8 +28,8 @@ export default function DaoCreatePage() {
       setRedirectPending(true);
       const { getAddress } = ethers.utils;
       const daoFound = await requestWithRetries(
-        () => safeAPI.getSafeCreationInfo(getAddress(daoAddress)),
-        8
+        async () => (safeAPI ? safeAPI.getSafeCreationInfo(getAddress(daoAddress)) : undefined),
+        8,
       );
       toggleFavorite(daoAddress);
       if (daoFound) {
@@ -45,7 +45,7 @@ export default function DaoCreatePage() {
         push(BASE_ROUTES.landing);
       }
     },
-    [safeAPI, requestWithRetries, toggleFavorite, push, t]
+    [safeAPI, requestWithRetries, toggleFavorite, push, t],
   );
 
   const [deploy, pending] = useDeployDAO();

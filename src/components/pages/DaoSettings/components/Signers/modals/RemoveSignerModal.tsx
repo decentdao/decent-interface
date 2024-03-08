@@ -12,8 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, useEnsName } from 'wagmi';
-import { useEthersProvider } from '../../../../../../hooks/utils/useEthersProvider';
+import { Address, useEnsName, usePublicClient } from 'wagmi';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
@@ -37,11 +36,10 @@ function RemoveSignerModal({
   const [prevSigner, setPrevSigner] = useState<string>('');
   const [threshold, setThreshold] = useState<number>(currentThreshold);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
-  const provider = useEthersProvider();
-  const networkId = provider.network.chainId;
+  const { chain } = usePublicClient();
   const { data: ensName } = useEnsName({
     address: selectedSigner as Address,
-    chainId: networkId,
+    chainId: chain.id,
     cacheTime: 1000 * 60 * 30, // 30 min
   });
   const { t } = useTranslation(['modals', 'common']);
@@ -67,7 +65,7 @@ function RemoveSignerModal({
   useEffect(() => {
     const signerIndex = signers.findIndex(signer => signer === selectedSigner);
     setPrevSigner(
-      signerIndex > 0 ? signers[signerIndex - 1] : '0x0000000000000000000000000000000000000001'
+      signerIndex > 0 ? signers[signerIndex - 1] : '0x0000000000000000000000000000000000000001',
     );
   }, [selectedSigner, signers]);
 
@@ -138,7 +136,7 @@ function RemoveSignerModal({
             ml={2}
           >{`${t('signersRequired1', { ns: 'modals' })} ${signers.length - 1} ${t(
             'signersRequired2',
-            { ns: 'modals' }
+            { ns: 'modals' },
           )}`}</Text>
         </Flex>
       </HStack>

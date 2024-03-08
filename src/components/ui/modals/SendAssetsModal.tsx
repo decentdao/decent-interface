@@ -27,7 +27,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
   const [selectedAsset, setSelectedAsset] = useState<SafeBalanceUsdResponse>(
-    fungibleAssetsWithBalance[0]
+    fungibleAssetsWithBalance[0],
   );
   const [inputAmount, setInputAmount] = useState<BigNumberValuePair>();
   const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
@@ -37,7 +37,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   const hasFiatBalance = Number(selectedAsset.fiatBalance) > 0;
 
   const convertedTotal = formatUSD(
-    Number(inputAmount?.value || '0') * Number(selectedAsset.fiatConversion)
+    Number(inputAmount?.value || '0') * Number(selectedAsset.fiatConversion),
   );
 
   const sendAssets = useSendAssets({

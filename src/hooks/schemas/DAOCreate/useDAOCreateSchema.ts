@@ -51,7 +51,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                   is: (array: string[]) => array && array.length > 1,
                   then: schema =>
                     schema.of(
-                      Yup.string().test(addressValidationTest).test(uniqueAddressValidationTest)
+                      Yup.string().test(addressValidationTest).test(uniqueAddressValidationTest),
                     ),
                   otherwise: schema => schema.of(Yup.string().test(addressValidationTest)),
                 }),
@@ -108,7 +108,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                         .shape({
                           value: Yup.string().test(maxAllocationValidation),
                         }),
-                    })
+                    }),
                   ),
               }),
             }),
@@ -130,7 +130,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                       .shape({
                         value: Yup.string().test(isBigNumberValidation).test(minValueValidation(1)), // Otherwise "0" treated as proper value
                       }),
-                  })
+                  }),
                 ),
             }),
         }),
@@ -171,7 +171,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
       uniqueNFTAddressValidationTest,
       minValueValidation,
       isBigNumberValidation,
-    ]
+    ],
   );
   return { createDAOValidation };
 };

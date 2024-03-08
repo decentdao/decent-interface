@@ -3,9 +3,9 @@ import { Govern } from '@decent-org/fractal-ui';
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEthersProvider } from '../../../../hooks/utils/useEthersProvider';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { AzoriusGovernance, FreezeGuardType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
@@ -25,7 +25,9 @@ export function InfoGovernance() {
   useEffect(() => {
     const setTimelockInfo = async () => {
       const formatBlocks = async (blocks: number): Promise<string | undefined> => {
-        return getTimeDuration(await blocksToSeconds(blocks, provider));
+        if (provider) {
+          return getTimeDuration(await blocksToSeconds(blocks, provider));
+        }
       };
       if (freezeGuardType == FreezeGuardType.MULTISIG) {
         if (freezeGuardContract) {

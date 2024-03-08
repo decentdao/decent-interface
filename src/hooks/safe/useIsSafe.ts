@@ -22,7 +22,7 @@ export const useIsSafe = (address: string | undefined) => {
     setSafeLoading(true);
     setIsSafe(undefined);
 
-    if (!address || !isAddress(address)) {
+    if (!address || !isAddress(address) || !safeAPI) {
       setIsSafe(false);
       setSafeLoading(false);
       return;

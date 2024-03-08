@@ -3,10 +3,10 @@ import { useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AnyObject } from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AddressValidationMap, ERC721TokenConfig } from '../../../types';
 import { Providers } from '../../../types/network';
 import { couldBeENS } from '../../../utils/url';
-import { useEthersSigner } from '../../utils/useEthersSigner';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export function validateENSName({ ensName }: { ensName: string }) {
@@ -33,11 +33,11 @@ export async function validateAddress({
   address,
   checkENS = true,
 }: {
-  signerOrProvider: Signer | Providers;
+  signerOrProvider?: Signer | Providers;
   address: string;
   checkENS?: boolean;
 }) {
-  if (couldBeENS(address) && checkENS) {
+  if (couldBeENS(address) && checkENS && signerOrProvider) {
     const resolvedAddress = await signerOrProvider.resolveName(address).catch();
     if (resolvedAddress) {
       return {
@@ -162,16 +162,16 @@ export const useValidationAddress = () => {
             return validation.address;
           }
           return address;
-        })
+        }),
       );
 
       const uniqueFilter = resolvedAddresses.filter(
-        address => address === value || address === inputValidation?.address
+        address => address === value || address === inputValidation?.address,
       );
 
       return uniqueFilter.length === 1;
     },
-    [signerOrProvider]
+    [signerOrProvider],
   );
 
   const uniqueAddressValidationTest = useMemo(() => {
@@ -196,7 +196,7 @@ export const useValidationAddress = () => {
         if (!value) return false;
         // retreive parent array
         const parentAddressArray = context.from[1].value.nfts.map(
-          ({ tokenAddress }: ERC721TokenConfig) => tokenAddress
+          ({ tokenAddress }: ERC721TokenConfig) => tokenAddress,
         );
         const isUnique = await testUniqueAddressArray(value, parentAddressArray);
         return isUnique;

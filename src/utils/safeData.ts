@@ -10,7 +10,7 @@ import { AssetTotals, SafeTransferType } from '../types';
  */
 export const totalsReducer = (
   prev: Map<string, AssetTotals>,
-  cur: TransferWithTokenInfoResponse
+  cur: TransferWithTokenInfoResponse,
 ) => {
   if (cur.type === SafeTransferType.ETHER && cur.value) {
     const prevValue = prev.get(constants.AddressZero)!;

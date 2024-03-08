@@ -19,7 +19,7 @@ export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
       ? activity.transaction?.to === daoAddress
         ? 'received'
         : 'sent'
-      : 'created'
+      : 'created',
   );
 
   return (

@@ -30,7 +30,7 @@ export function InfoProposals({}: IDAOGovernance) {
     ? 0
     : proposals.reduce(
         (prev, proposal) => (proposal.state === FractalProposalState.EXECUTED ? prev + 1 : prev),
-        0
+        0,
       );
 
   const active = !proposals
@@ -41,7 +41,7 @@ export function InfoProposals({}: IDAOGovernance) {
           proposal.state === FractalProposalState.EXECUTABLE
             ? prev + 1
             : prev,
-        0
+        0,
       );
 
   return (
