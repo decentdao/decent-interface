@@ -25,15 +25,15 @@ export function ProposalCountdown({
   proposal: FractalProposal;
   showIcon?: boolean;
 }) {
-  const secondsLeft = useProposalCountdown(proposal);
+  const totalSecondsLeft = useProposalCountdown(proposal);
   const { t } = useTranslation('proposal');
 
   const state: FractalProposalState | null = useMemo(() => proposal.state, [proposal]);
 
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
   const showCountdown =
-    !!secondsLeft &&
-    secondsLeft > 0 &&
+    !!totalSecondsLeft &&
+    totalSecondsLeft > 0 &&
     (state === FractalProposalState.ACTIVE ||
       state === FractalProposalState.TIMELOCKED ||
       state === FractalProposalState.EXECUTABLE ||
@@ -60,9 +60,10 @@ export function ProposalCountdown({
           ? Execute
           : null;
 
-  const daysLeft = Math.floor(secondsLeft! / (60 * 60 * 24));
-  const hoursLeft = Math.floor((secondsLeft! / (60 * 60)) % 24);
-  const minutesLeft = Math.floor((secondsLeft! / 60) % 60);
+  const daysLeft = Math.floor(totalSecondsLeft / (60 * 60 * 24));
+  const hoursLeft = Math.floor((totalSecondsLeft / (60 * 60)) % 24);
+  const minutesLeft = Math.floor((totalSecondsLeft / 60) % 60);
+  const secondsLeft = Math.floor(totalSecondsLeft % 60);
 
   const showDays = daysLeft > 0;
   const showHours = showDays || hoursLeft > 0;
@@ -90,7 +91,7 @@ export function ProposalCountdown({
             {showDays && `${zeroPad(daysLeft)}:`}
             {showHours && `${zeroPad(hoursLeft)}:`}
             {showMinutes && `${zeroPad(minutesLeft)}:`}
-            {showSeconds && `${zeroPad(secondsLeft % 60)}`}
+            {showSeconds && `${zeroPad(secondsLeft)}`}
           </Text>
         </Flex>
       </Flex>
