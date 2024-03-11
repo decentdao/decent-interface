@@ -13,7 +13,6 @@ import {
   disconnectedChain,
   supportedChains,
 } from '../providers/NetworkConfig/NetworkConfigProvider';
-import { useETHLizardsScript } from '../hooks/utils/useETHLizardsScript';
 import { Outlet } from 'react-router-dom';
 
 function InvalidSafe() {
@@ -115,7 +114,6 @@ export default function DAOController() {
       display = <InvalidSafe />;
     }
   }
-  useETHLizardsScript(node.daoAddress)
   return (
     <>
       <title>{node?.daoName ? `${node.daoName} | ${APP_NAME}` : APP_NAME}</title>
