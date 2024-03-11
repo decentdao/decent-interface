@@ -35,7 +35,7 @@ export default function CreateProposalTemplatePage() {
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
 
   const navigate = useNavigate();
-  let [searchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const defaultProposalTemplatesHash = useMemo(
     () => searchParams?.get('templatesHash'),
     [searchParams],
