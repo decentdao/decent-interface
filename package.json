@@ -53,8 +53,8 @@
     "yup": "^1"
   },
   "scripts": {
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "lint": "eslint . --ext .ts,.tsx --fix",
+    "lint:check": "eslint . --ext .ts,.tsx",
     "pretty": "prettier . --write",
     "pretty:check": "prettier . --check",
     "dev": "npm run graphql:build && VITE_APP_GIT_HASH=`git rev-parse HEAD` vite",
