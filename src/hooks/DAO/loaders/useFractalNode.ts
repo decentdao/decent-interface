@@ -16,7 +16,7 @@ import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
 
-export const useFractalNode = ({ daoAddress }: { daoAddress: string | null }) => {
+export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [nodeLoading, setNodeLoading] = useState<boolean>(true);

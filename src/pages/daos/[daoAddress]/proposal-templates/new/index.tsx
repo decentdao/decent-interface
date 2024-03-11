@@ -4,9 +4,9 @@ import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import ProposalTemplateDetails from '../../../../../components/CreateProposalTemplate/ProposalTemplateDetails';
 import ProposalTemplateMetadata from '../../../../../components/CreateProposalTemplate/ProposalTemplateMetadata';
 import ProposalTemplateTransactionsForm from '../../../../../components/CreateProposalTemplate/ProposalTemplateTransactionsForm';
@@ -37,8 +37,8 @@ export default function CreateProposalTemplatePage() {
   const [initialProposalTemplate, setInitialProposalTemplate] = useState(DEFAULT_PROPOSAL_TEMPLATE);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
 
-  const { push } = useRouter();
-  const searchParams = useSearchParams();
+  const navigate = useNavigate();
+  let [searchParams] = useSearchParams();
   const defaultProposalTemplatesHash = useMemo(
     () => searchParams?.get('templatesHash'),
     [searchParams],
@@ -60,7 +60,7 @@ export default function CreateProposalTemplatePage() {
   const successCallback = () => {
     if (daoAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      push(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(daoAddress));
     }
   };
 
@@ -138,7 +138,7 @@ export default function CreateProposalTemplatePage() {
                   ButtonIcon={Trash}
                   buttonVariant="secondary"
                   buttonClick={() =>
-                    push(
+                    navigate(
                       daoAddress
                         ? DAO_ROUTES.proposalTemplates.relative(daoAddress)
                         : BASE_ROUTES.landing,

@@ -1,5 +1,4 @@
 import { Box, Button, Divider } from '@chakra-ui/react';
-import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
@@ -12,6 +11,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { disconnectedChain } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { InputComponent } from '../forms/InputComponent';
+import { useNavigate } from 'react-router-dom';
 
 interface IForkProposalTemplateModalProps {
   proposalTemplate: ProposalTemplate;
@@ -29,7 +29,7 @@ export default function ForkProposalTemplateModal({
   const [error, setError] = useState('');
 
   const { t } = useTranslation('proposalTemplate');
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const signerOrProvider = useSignerOrProvider();
   const { chain } = useNetwork();
   const {
@@ -76,7 +76,7 @@ export default function ForkProposalTemplateModal({
   }, [getCanUserCreateProposal, isSafe, t, inputValue, chain, isSafeLoading, signerOrProvider]);
 
   const handleSubmit = () => {
-    push(
+    navigate(
       `${DAO_ROUTES.proposalTemplateNew.relative(
         targetDAOAddress,
       )}?templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`,

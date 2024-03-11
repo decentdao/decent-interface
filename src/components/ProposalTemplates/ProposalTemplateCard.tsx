@@ -1,6 +1,5 @@
 import { Avatar, Flex, Text } from '@chakra-ui/react';
 import { VEllipsis } from '@decent-org/fractal-ui';
-import { useRouter } from 'next/navigation';
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -12,6 +11,7 @@ import ContentBox from '../ui/containers/ContentBox';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
+import { useNavigate } from 'react-router-dom';
 
 type ProposalTemplateCardProps = {
   proposalTemplate: ProposalTemplate;
@@ -22,7 +22,7 @@ export default function ProposalTemplateCard({
   proposalTemplate,
   templateIndex,
 }: ProposalTemplateCardProps) {
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const { t } = useTranslation('proposalTemplate');
   const {
     node: { safe, daoAddress },
@@ -43,9 +43,9 @@ export default function ProposalTemplateCard({
   const successCallback = useCallback(() => {
     if (daoAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      push(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(daoAddress));
     }
-  }, [push, daoAddress]);
+  }, [navigate, daoAddress]);
 
   const nonce = safe?.nonce;
   const handleRemoveTemplate = useCallback(async () => {

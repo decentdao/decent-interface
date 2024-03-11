@@ -1,7 +1,6 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DAO_ROUTES } from '../../../constants/routes';
@@ -9,13 +8,14 @@ import useLidoStaking from '../../../hooks/stake/lido/useLidoStaking';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { BigNumberValuePair } from '../../../types';
 import { BigNumberInput } from '../forms/BigNumberInput';
+import { useNavigate } from 'react-router-dom';
 
 export default function StakeModal({ close }: { close: () => void }) {
   const {
     node: { daoAddress },
     treasury: { assetsFungible },
   } = useFractal();
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const { t } = useTranslation('stake');
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
@@ -32,7 +32,7 @@ export default function StakeModal({ close }: { close: () => void }) {
       await handleStake(inputAmount?.bigNumberValue);
       close();
       if (daoAddress) {
-        push(DAO_ROUTES.proposals.relative(daoAddress));
+        navigate(DAO_ROUTES.proposals.relative(daoAddress));
       }
     }
   };

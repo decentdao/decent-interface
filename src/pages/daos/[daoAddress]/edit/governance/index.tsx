@@ -2,7 +2,7 @@
 
 import { Box } from '@chakra-ui/react';
 import { CloseX } from '@decent-org/fractal-ui';
-import { useRouter } from 'next/navigation';
+
 import { useTranslation } from 'react-i18next';
 import DaoCreator from '../../../../../components/DaoCreator';
 import { DAOCreateMode } from '../../../../../components/DaoCreator/formComponents/EstablishEssentials';
@@ -18,6 +18,7 @@ import {
   AzoriusERC721DAO,
   GovernanceType,
 } from '../../../../../types';
+import { useNavigate } from 'react-router-dom';
 
 export default function ModifyGovernancePage() {
   const {
@@ -26,7 +27,7 @@ export default function ModifyGovernancePage() {
     readOnly: { user },
   } = useFractal();
   const { t } = useTranslation(['daoEdit', 'common', 'breadcrumbs']);
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const isMultisig = type === GovernanceType.MULTISIG;
   const isSigner = user.address && safe?.owners.includes(user.address);
   const deployAzorius = useDeployAzorius();
@@ -45,7 +46,7 @@ export default function ModifyGovernancePage() {
         hasDAOLink
         ButtonIcon={CloseX}
         buttonVariant="secondary"
-        buttonClick={() => push(DAO_ROUTES.dao.relative(daoAddress))}
+        buttonClick={() => navigate(DAO_ROUTES.dao.relative(daoAddress))}
         isButtonDisabled={false}
         breadcrumbs={[
           {

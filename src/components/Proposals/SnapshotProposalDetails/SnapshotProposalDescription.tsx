@@ -1,5 +1,4 @@
-import { Text, Button } from '@chakra-ui/react';
-import Image from 'next/image';
+import { Text, Button, Image } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown, { Components } from 'react-markdown';

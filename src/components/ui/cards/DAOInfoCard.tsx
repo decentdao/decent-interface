@@ -1,5 +1,5 @@
 import { Box, Flex, Text, Spacer, HStack, FlexProps, Link, Center } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Link as NextLink } from "react-router-dom";
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';

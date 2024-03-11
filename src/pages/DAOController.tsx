@@ -2,7 +2,6 @@
 
 import { Button, Center, Text, VStack, ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { theme } from '@decent-org/fractal-ui';
-import Script from 'next/script';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
@@ -14,6 +13,8 @@ import {
   disconnectedChain,
   supportedChains,
 } from '../providers/NetworkConfig/NetworkConfigProvider';
+import { useETHLizardsScript } from '../hooks/utils/useETHLizardsScript';
+import { Outlet } from 'react-router-dom';
 
 function InvalidSafe() {
   const { chain } = useNetwork();
@@ -62,7 +63,7 @@ function InvalidChain() {
   );
 }
 
-export default function DAOController({ children }: { children: React.ReactNode }) {
+export default function DAOController() {
   const { node } = useFractal();
   const { nodeLoading, errorLoading } = useDAOController();
   const daoMetadata = useDAOMetadata();
@@ -92,14 +93,14 @@ export default function DAOController({ children }: { children: React.ReactNode 
 
   const validSafe = node.safe;
   let display;
-  const childrenDisplay = <ChakraProvider theme={activeTheme}>{children}</ChakraProvider>;
+  const childrenDisplay = <ChakraProvider theme={activeTheme}><Outlet /></ChakraProvider>;
 
-  if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
+  if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
     display = childrenDisplay;
   } else if (!chain) {
     // if we're disconnected
     if (nodeLoading || validSafe || !errorLoading) {
-      display = children;
+      display = <Outlet />;
     } else {
       display = <InvalidSafe />;
     }
@@ -109,30 +110,15 @@ export default function DAOController({ children }: { children: React.ReactNode 
     if (invalidChain) {
       display = <InvalidChain />;
     } else if (nodeLoading || validSafe || !errorLoading) {
-      display = children;
+      display = <Outlet />;
     } else {
       display = <InvalidSafe />;
     }
   }
-
+  useETHLizardsScript(node.daoAddress)
   return (
     <>
       <title>{node?.daoName ? `${node.daoName} | ${APP_NAME}` : APP_NAME}</title>
-      {node && node.daoAddress === '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e' && (
-        <Script
-          id="ethlizards-hotjar-tracking"
-          strategy="afterInteractive"
-        >
-          {`(function(h,o,t,j,a,r){
-        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-        h._hjSettings={hjid:3776270,hjsv:6};
-        a=o.getElementsByTagName('head')[0];
-        r=o.createElement('script');r.async=1;
-        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-        a.appendChild(r);
-        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`}
-        </Script>
-      )}
       {display}
     </>
   );

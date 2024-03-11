@@ -1,6 +1,6 @@
 import { Link, HStack, Image, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { Link as NextLink } from "react-router-dom";
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 

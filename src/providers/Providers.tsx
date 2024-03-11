@@ -43,7 +43,7 @@ export default function Providers({ children }: { children: ReactNode }) {
                       pauseOnFocusLoss={false}
                     />
                     <ModalProvider>
-                      <Layout>{children}</Layout>
+                      {children}
                     </ModalProvider>
                   </AppProvider>
                 </EthersContextProvider>

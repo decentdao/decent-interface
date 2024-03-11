@@ -1,12 +1,12 @@
 'use client';
 
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
-import { PropsWithChildren } from 'react';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
 import Header from '../Header';
 import Navigation from '../Navigation';
+import { Outlet } from 'react-router-dom';
 
-export default function Layout({ children }: PropsWithChildren<{}>) {
+export default function Layout() {
   return (
     <Grid
       templateAreas={{
@@ -30,7 +30,7 @@ export default function Layout({ children }: PropsWithChildren<{}>) {
           minH={CONTENT_HEIGHT}
           paddingBottom="2rem"
         >
-          {children}
+          <Outlet />
         </Container>
       </GridItem>
       <GridItem area={'header'}>

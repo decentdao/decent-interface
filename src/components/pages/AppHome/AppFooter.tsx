@@ -41,7 +41,7 @@ export function AppFooter({ ...rest }: BoxProps) {
         >
           {t('audit')}
         </ExternalLink>
-        {process.env.NEXT_PUBLIC_GIT_HASH !== undefined && (
+        {import.meta.env.VITE_APP_GIT_HASH !== undefined && (
           <>
             <Text
               color="grayscale.100"
@@ -54,11 +54,11 @@ export function AppFooter({ ...rest }: BoxProps) {
             <ExternalLink
               href={
                 'https://github.com/decent-dao/fractal-interface/commit/' +
-                process.env.NEXT_PUBLIC_GIT_HASH
+                import.meta.env.VITE_APP_GIT_HASH
               }
               textStyle="text-sm-mono-bold"
             >
-              {process.env.NEXT_PUBLIC_GIT_HASH.substring(0, 7)}
+              {import.meta.env.VITE_APP_GIT_HASH.substring(0, 7)}
             </ExternalLink>
           </>
         )}

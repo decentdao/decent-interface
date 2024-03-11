@@ -1,6 +1,5 @@
 import { Flex, Text, Button, Divider } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
-import { useRouter } from 'next/navigation';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SettingsSection } from '..';
@@ -11,13 +10,14 @@ import { useFractal } from '../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../types';
 import { couldBeENS } from '../../../../../utils/url';
 import { InputComponent } from '../../../../ui/forms/InputComponent';
+import { useNavigate } from 'react-router-dom';
 
 export default function MetadataContainer() {
   const [name, setName] = useState('');
   const [snapshotURL, setSnapshotURL] = useState('');
   const [snapshotURLValid, setSnapshotURLValid] = useState<boolean>();
   const { t } = useTranslation(['settings', 'proposalMetadata']);
-  const { push } = useRouter();
+  const navigate = useNavigate();
 
   const { canUserCreateProposal, submitProposal } = useSubmitProposal();
   const {
@@ -50,7 +50,7 @@ export default function MetadataContainer() {
 
   const userHasVotingWeight = votingWeight.gt(0);
 
-  const submitProposalSuccessCallback = () => push(DAO_ROUTES.proposals.relative(daoAddress));
+  const submitProposalSuccessCallback = () => navigate(DAO_ROUTES.proposals.relative(daoAddress));
 
   const handleEditDAOName = () => {
     if (!baseContracts) {

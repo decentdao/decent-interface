@@ -5,7 +5,6 @@ import {
   MultisigFreezeVoting,
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { useRouter } from 'next/navigation';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
@@ -29,6 +28,7 @@ import { getAzoriusModuleFromModules } from '../../../../utils';
 import { ModalType } from '../../modals/ModalProvider';
 import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
+import { useNavigate } from 'react-router-dom';
 
 interface IManageDAOMenu {
   parentAddress?: string | null;
@@ -61,7 +61,7 @@ export function ManageDAOMenu({
     baseContracts,
   } = useFractal();
   const currentTime = BigNumber.from(useBlockTimestamp());
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const safeAddress = fractalNode?.daoAddress;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { getCanUserCreateProposal } = useSubmitProposal();
@@ -127,8 +127,8 @@ export function ManageDAOMenu({
   }, [fractalNode, safe, safeAddress, type, getZodiacModuleProxyMasterCopyData, baseContracts]);
 
   const handleNavigateToSettings = useCallback(
-    () => push(DAO_ROUTES.settings.relative(safeAddress)),
-    [push, safeAddress],
+    () => navigate(DAO_ROUTES.settings.relative(safeAddress)),
+    [navigate, safeAddress],
   );
 
   const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
@@ -136,7 +136,7 @@ export function ManageDAOMenu({
   const options = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
-      onClick: () => push(DAO_ROUTES.newSubDao.relative(safeAddress)),
+      onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
     };
 
     const freezeOption = {
@@ -225,7 +225,7 @@ export function ManageDAOMenu({
   }, [
     freezeGuard,
     currentTime,
-    push,
+    navigate,
     safeAddress,
     parentAddress,
     governanceType,

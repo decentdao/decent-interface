@@ -1,7 +1,6 @@
 'use client';
 
 import { ethers } from 'ethers';
-import { useRouter } from 'next/navigation';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -14,9 +13,10 @@ import useDeployDAO from '../../hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../../hooks/utils/useAsyncRetry';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
+import { useNavigate } from 'react-router-dom';
 
 export default function DaoCreatePage() {
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const { requestWithRetries } = useAsyncRetry();
   const { toggleFavorite } = useAccountFavorites();
   const [redirectPending, setRedirectPending] = useState(false);
@@ -33,7 +33,7 @@ export default function DaoCreatePage() {
       );
       toggleFavorite(daoAddress);
       if (daoFound) {
-        push(DAO_ROUTES.dao.relative(daoAddress));
+        navigate(DAO_ROUTES.dao.relative(daoAddress));
       } else {
         toast(t('failedIndexSafe'), {
           autoClose: false,
@@ -42,10 +42,10 @@ export default function DaoCreatePage() {
           closeButton: false,
           progress: 1,
         });
-        push(BASE_ROUTES.landing);
+        navigate(BASE_ROUTES.landing);
       }
     },
-    [safeAPI, requestWithRetries, toggleFavorite, push, t],
+    [safeAPI, requestWithRetries, toggleFavorite, navigate, t],
   );
 
   const [deploy, pending] = useDeployDAO();

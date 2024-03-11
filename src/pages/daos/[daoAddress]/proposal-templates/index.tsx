@@ -2,8 +2,8 @@
 
 import { Button, Show } from '@chakra-ui/react';
 import { AddPlus } from '@decent-org/fractal-ui';
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { Link } from "react-router-dom";
 import ProposalTemplates from '../../../../components/ProposalTemplates';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import ClientOnly from '../../../../components/ui/utils/ClientOnly';
@@ -30,7 +30,7 @@ export default function ProposalTemplatesPage() {
         ]}
       >
         {canUserCreateProposal && (
-          <Link href={DAO_ROUTES.proposalTemplateNew.relative(daoAddress)}>
+          <Link to={DAO_ROUTES.proposalTemplateNew.relative(daoAddress)}>
             <Button minW={0}>
               <AddPlus />
               <Show above="sm">{t('create')}</Show>

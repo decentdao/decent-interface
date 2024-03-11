@@ -1,9 +1,9 @@
 import { MenuItem, Text } from '@chakra-ui/react';
 import { StarGoldSolid } from '@decent-org/fractal-ui';
-import { useRouter } from 'next/navigation';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNavigate } from 'react-router-dom';
 
 interface IFavorite {
   address: string;
@@ -11,11 +11,11 @@ interface IFavorite {
 export function Favorite({ address }: IFavorite) {
   const { daoRegistryName } = useDAOName({ address });
   const { action } = useFractal();
-  const { push } = useRouter();
+  const navigate = useNavigate();
 
   const onClickNav = () => {
     action.resetDAO();
-    push(DAO_ROUTES.dao.relative(address));
+    navigate(DAO_ROUTES.dao.relative(address));
   };
 
   return (

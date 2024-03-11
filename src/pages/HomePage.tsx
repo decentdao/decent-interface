@@ -1,5 +1,5 @@
 import { Center, VStack, Text, Button, Flex, Box } from '@chakra-ui/react';
-import { useRouter } from 'next/navigation';
+
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
@@ -13,6 +13,7 @@ import { BASE_ROUTES } from '../constants/routes';
 import { URL_DOCS } from '../constants/url';
 import { useFractal } from '../providers/App/AppProvider';
 import { disconnectedChain } from '../providers/NetworkConfig/NetworkConfigProvider';
+import { useNavigate } from 'react-router-dom';
 
 const VALUE_PROPS = [
   {
@@ -79,9 +80,9 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
 
 export default function HomePage() {
   const { t } = useTranslation('home');
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const createDAO = () => {
-    push(BASE_ROUTES.create);
+    navigate(BASE_ROUTES.create);
   };
   const {
     node: { daoAddress },

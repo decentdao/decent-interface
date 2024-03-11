@@ -17,7 +17,7 @@ import { testWallet } from './testWallet';
 const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
 
 // allows connection to localhost only in development mode.
-if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
+if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
   supportedWagmiChains.unshift(hardhat);
 }
 
@@ -27,13 +27,13 @@ export const { chains, publicClient } = configureChains(supportedWagmiChains, [
       const publicNodeNetworkUrl = `ethereum-${chain.name}.publicnode.com`;
       if (chain.id === mainnet.id) {
         return {
-          http: `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_MAINNET_API_KEY}`,
-          webSocket: `wss://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_MAINNET_API_KEY}`,
+          http: `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`,
+          webSocket: `wss://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`,
         };
       } else if (chain.id === sepolia.id) {
         return {
-          http: `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_SEPOLIA_API_KEY}`,
-          webSocket: `wss://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_SEPOLIA_API_KEY}`,
+          http: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
+          webSocket: `wss://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
         };
       }
       return {
@@ -46,16 +46,16 @@ export const { chains, publicClient } = configureChains(supportedWagmiChains, [
 
 const defaultWallets = [injectedWallet({ chains }), coinbaseWallet({ appName: APP_NAME, chains })];
 
-if (process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID) {
+if (import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID) {
   defaultWallets.push(
-    walletConnectWallet({ chains, projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }),
+    walletConnectWallet({ chains, projectId: import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID }),
   );
   defaultWallets.push(
-    metaMaskWallet({ chains, projectId: process.env.NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }),
+    metaMaskWallet({ chains, projectId: import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID }),
   );
 }
 // allows connection to localhost only in development mode.
-if (process.env.NEXT_PUBLIC_TESTING_ENVIRONMENT) {
+if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
   defaultWallets.unshift(testWallet({ chains }));
 }
 

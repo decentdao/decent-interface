@@ -1,6 +1,5 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useERC20Claim } from './loaders/governance/useERC20Claim';
@@ -11,10 +10,10 @@ import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
 import { useFractalNode } from './loaders/useFractalNode';
 import { useFractalTreasury } from './loaders/useFractalTreasury';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
+import { useParams } from 'react-router-dom';
 
 export default function useDAOController() {
-  const params = useSearchParams();
-  const daoAddress = params.get('daoAddress');
+  const {daoAddress} = useParams();
   const {
     node: {
       nodeHierarchy: { parentAddress },

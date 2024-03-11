@@ -6,13 +6,13 @@ import * as Sentry from '@sentry/react';
 export function initErrorLogging() {
   if (
     process.env.NODE_ENV === 'development' ||
-    process.env.NEXT_PUBLIC_SENTRY_DSN_URL === undefined
+    import.meta.env.VITE_APP_SENTRY_DSN_URL === undefined
   ) {
     return;
   }
 
   Sentry.init({
-    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN_URL,
+    dsn: import.meta.env.VITE_APP_SENTRY_DSN_URL,
     integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
 
     // Set tracesSampleRate to 1.0 to capture 100%

@@ -1,6 +1,6 @@
 import { Box, Button, Divider, Text } from '@chakra-ui/react';
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { Link } from "react-router-dom";
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 
@@ -28,7 +28,7 @@ export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
       >
         {t('confirmAction')}
       </Text>
-      <Link href={DAO_ROUTES.modifyGovernance.relative(daoAddress)}>
+      <Link to={DAO_ROUTES.modifyGovernance.relative(daoAddress)}>
         <Button
           width="100%"
           onClick={close}

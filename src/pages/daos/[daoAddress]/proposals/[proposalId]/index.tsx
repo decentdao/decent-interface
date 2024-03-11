@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AzoriusProposalDetails } from '../../../../../components/Proposals/AzoriusDetails';
@@ -15,6 +14,7 @@ import useSnapshotProposal from '../../../../../hooks/DAO/loaders/snapshot/useSn
 import { useGetMetadata } from '../../../../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { FractalProposal, AzoriusProposal, SnapshotProposal } from '../../../../../types';
+import { useParams } from 'react-router-dom';
 
 export default function ProposalDetailsPage() {
   const {
@@ -22,8 +22,7 @@ export default function ProposalDetailsPage() {
     governance: { proposals },
     readOnly: { dao },
   } = useFractal();
-  const router = useRouter();
-  const proposalId = router.query.proposalId;
+  const { proposalId } = useParams();
   const [proposal, setProposal] = useState<FractalProposal | null>();
   const { isSnapshotProposal, snapshotProposal } = useSnapshotProposal(proposal);
   const metaData = useGetMetadata(proposal);

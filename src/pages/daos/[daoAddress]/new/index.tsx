@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import DaoCreator from '../../../../components/DaoCreator';
 import { DAOCreateMode } from '../../../../components/DaoCreator/formComponents/EstablishEssentials';
@@ -9,9 +8,10 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCreateSubDAOProposal } from '../../../../hooks/DAO/useCreateSubDAOProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { SafeMultisigDAO, AzoriusGovernanceDAO, SubDAO } from '../../../../types';
+import { useNavigate } from 'react-router-dom';
 
 export default function SubDaoCreate() {
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const [redirectPending, setRedirectPending] = useState(false);
   const {
     node: { safe },
@@ -19,7 +19,7 @@ export default function SubDaoCreate() {
 
   const successCallback = async (daoAddress: string) => {
     setRedirectPending(true);
-    push(DAO_ROUTES.dao.relative(daoAddress));
+    navigate(DAO_ROUTES.dao.relative(daoAddress));
   };
 
   const { proposeDao, pendingCreateTx } = useCreateSubDAOProposal();

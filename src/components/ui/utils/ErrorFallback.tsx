@@ -1,5 +1,4 @@
-import { Link } from '@chakra-ui/next-js';
-import { Box, Button, Center, Flex, Text } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Text, Link } from '@chakra-ui/react';
 import { Alert } from '@decent-org/fractal-ui';
 import { Trans, useTranslation } from 'react-i18next';
 import { CONTENT_HEIGHT } from '../../../constants/common';

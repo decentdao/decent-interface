@@ -1,6 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
-import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
@@ -8,6 +7,7 @@ import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import PageHeader from '../ui/page/Header/PageHeader';
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
+import { useNavigate } from 'react-router-dom';
 
 interface IStepWrapper {
   titleKey: string;
@@ -30,7 +30,7 @@ export function StepWrapper({
     node: { daoAddress },
   } = useFractal();
   const { t } = useTranslation(['daoCreate']);
-  const { push } = useRouter();
+  const navigate = useNavigate();
 
   const isEdit = mode === DAOCreateMode.EDIT;
   return (
@@ -63,7 +63,7 @@ export function StepWrapper({
           buttonVariant="secondary"
           isButtonDisabled={isFormSubmitting}
           buttonClick={() =>
-            push(
+            navigate(
               !isSubDAO || !daoAddress ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(daoAddress),
             )
           }

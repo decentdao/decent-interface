@@ -3,9 +3,9 @@
 import { Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
-import { useRouter } from 'next/navigation';
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '../../../../../components/ProposalCreate/ProposalDetails';
 import { ProposalHeader } from '../../../../../components/ProposalCreate/ProposalHeader';
 import ProposalMetadata from '../../../../../components/ProposalCreate/ProposalMetadata';
@@ -35,7 +35,7 @@ export default function ProposalCreatePage() {
   const { prepareProposal } = usePrepareProposal();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
 
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
 
   const [formState, setFormState] = useState(CreateProposalState.METADATA_FORM);
@@ -46,7 +46,7 @@ export default function ProposalCreatePage() {
 
   const successCallback = () => {
     if (daoAddress) {
-      push(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(daoAddress));
     }
   };
 
@@ -97,7 +97,7 @@ export default function ProposalCreatePage() {
                   ]}
                   ButtonIcon={Trash}
                   buttonVariant="secondary"
-                  buttonClick={() => push(DAO_ROUTES.proposals.relative(daoAddress))}
+                  buttonClick={() => navigate(DAO_ROUTES.proposals.relative(daoAddress))}
                   isButtonDisabled={pendingCreateTx}
                 />
                 <Grid
