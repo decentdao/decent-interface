@@ -41,9 +41,7 @@ export default function Providers({ children }: { children: ReactNode }) {
                       newestOnTop={false}
                       pauseOnFocusLoss={false}
                     />
-                    <ModalProvider>
-                      {children}
-                    </ModalProvider>
+                    <ModalProvider>{children}</ModalProvider>
                   </AppProvider>
                 </EthersContextProvider>
               </NetworkConfigProvider>

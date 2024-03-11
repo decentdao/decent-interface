@@ -27,7 +27,7 @@ export function InfoBox({
       onClick={
         to
           ? () => {
-            navigate(to);
+              navigate(to);
             }
           : undefined
       }

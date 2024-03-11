@@ -27,11 +27,11 @@ export default function SubDaoCreate() {
   };
 
   return (
-      <DaoCreator
-        pending={pendingCreateTx || redirectPending}
-        deployDAO={proposeSubDAO}
-        isSubDAO={true}
-        mode={DAOCreateMode.SUBDAO}
-      />
+    <DaoCreator
+      pending={pendingCreateTx || redirectPending}
+      deployDAO={proposeSubDAO}
+      isSubDAO={true}
+      mode={DAOCreateMode.SUBDAO}
+    />
   );
 }

@@ -1,4 +1,4 @@
-import { Link , Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text } from '@chakra-ui/react';
+import { Link, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text } from '@chakra-ui/react';
 
 export type Crumb = {
   terminus: string;

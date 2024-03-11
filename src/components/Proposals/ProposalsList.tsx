@@ -1,6 +1,6 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';

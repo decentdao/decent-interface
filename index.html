@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charSet="utf-8" />
+    <meta charset="utf-8" />
     <link
       rel="icon"
       href="/favicon.ico"
@@ -17,7 +17,7 @@
     />
     <meta
       name="git-hash"
-      content={import.meta.env.VITE_APP_GIT_HASH}
+      content="{import.meta.env.VITE_APP_GIT_HASH}"
     />
     <link
       rel="apple-touch-icon"
@@ -29,7 +29,7 @@
     />
     <meta
       property="og:url"
-      content={import.meta.env.VITE_APP_SITE_URL}
+      content="{import.meta.env.VITE_APP_SITE_URL}"
     />
     <meta
       property="og:description"
@@ -41,7 +41,7 @@
     />
     <meta
       property="og:title"
-      content={import.meta.env.VITE_APP_NAME}
+      content="{import.meta.env.VITE_APP_NAME}"
     />
     <meta
       property="og:image"
@@ -49,11 +49,11 @@
     />
     <meta
       property="og:image:alt"
-      content={import.meta.env.VITE_APP_NAME}
+      content="{import.meta.env.VITE_APP_NAME}"
     />
     <meta
       property="og:site_name"
-      content={import.meta.env.VITE_APP_NAME}
+      content="{import.meta.env.VITE_APP_NAME}"
     />
     <meta
       name="viewport"
@@ -63,6 +63,9 @@
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <script
+      type="module"
+      src="/src/main.tsx"
+    ></script>
   </body>
 </html>

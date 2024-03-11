@@ -11,7 +11,7 @@ import { useFractalTreasury } from './loaders/useFractalTreasury';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
 
 export default function useDAOController() {
-  const {daoAddress} = useParams();
+  const { daoAddress } = useParams();
   const {
     node: {
       nodeHierarchy: { parentAddress },

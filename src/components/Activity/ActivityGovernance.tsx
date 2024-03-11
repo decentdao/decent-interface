@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FractalProposal, ActivityEventType, SnapshotProposal } from '../../types';

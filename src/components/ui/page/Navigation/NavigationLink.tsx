@@ -1,7 +1,7 @@
 import { Box, ComponentWithAs, Hide, IconProps, Text } from '@chakra-ui/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link, useMatch } from "react-router-dom";
+import { Link, useMatch } from 'react-router-dom';
 import { NavigationTooltip } from './NavigationTooltip';
 
 interface INavigationLink {

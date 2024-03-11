@@ -43,7 +43,10 @@ export const { chains, publicClient } = configureChains(supportedWagmiChains, [
   }),
 ]);
 
-const defaultWallets = [injectedWallet({ chains }), coinbaseWallet({ appName: import.meta.env.VITE_APP_NAME, chains })];
+const defaultWallets = [
+  injectedWallet({ chains }),
+  coinbaseWallet({ appName: import.meta.env.VITE_APP_NAME, chains }),
+];
 
 if (import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID) {
   defaultWallets.push(

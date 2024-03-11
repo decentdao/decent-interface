@@ -5,6 +5,6 @@ export {};
 declare global {
   interface Window {
     hj: ((...params: any[]) => void) & { q: [string, any[]][] };
-    _hjSettings: { hjid: number; hjsv: number; };
+    _hjSettings: { hjid: number; hjsv: number };
   }
 }

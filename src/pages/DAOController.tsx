@@ -89,7 +89,11 @@ export default function DAOController() {
 
   const validSafe = node.safe;
   let display;
-  const childrenDisplay = <ChakraProvider theme={activeTheme}><Outlet /></ChakraProvider>;
+  const childrenDisplay = (
+    <ChakraProvider theme={activeTheme}>
+      <Outlet />
+    </ChakraProvider>
+  );
 
   if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
     display = childrenDisplay;
@@ -113,7 +117,11 @@ export default function DAOController() {
   }
   return (
     <>
-      <title>{node?.daoName ? `${node.daoName} | ${import.meta.env.VITE_APP_NAME}` : import.meta.env.VITE_APP_NAME}</title>
+      <title>
+        {node?.daoName
+          ? `${node.daoName} | ${import.meta.env.VITE_APP_NAME}`
+          : import.meta.env.VITE_APP_NAME}
+      </title>
       {display}
     </>
   );
