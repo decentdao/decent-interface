@@ -31,16 +31,13 @@ export function ProposalCountdown({
   const state: FractalProposalState | null = useMemo(() => proposal.state, [proposal]);
 
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
-  const showCountdown = useMemo(
-    () =>
-      !!secondsLeft &&
-      secondsLeft > 0 &&
-      (state === FractalProposalState.ACTIVE ||
-        state === FractalProposalState.TIMELOCKED ||
-        state === FractalProposalState.EXECUTABLE ||
-        isSnapshotProposal),
-    [state, secondsLeft, isSnapshotProposal],
-  );
+  const showCountdown =
+    !!secondsLeft &&
+    secondsLeft > 0 &&
+    (state === FractalProposalState.ACTIVE ||
+      state === FractalProposalState.TIMELOCKED ||
+      state === FractalProposalState.EXECUTABLE ||
+      isSnapshotProposal);
 
   if (!showCountdown) return null;
 
