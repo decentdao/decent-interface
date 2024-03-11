@@ -11,6 +11,7 @@ import {
 import { utils } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { logError } from '../../../helpers/errorLogging';
 import { usePrepareProposal } from '../../../hooks/DAO/proposal/usePrepareProposal';
@@ -21,7 +22,6 @@ import { isValidUrl } from '../../../utils/url';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { InputComponent } from '../forms/InputComponent';
 import LineBreakBlock from '../utils/LineBreakBlock';
-import { useNavigate } from 'react-router-dom';
 
 interface IProposalTemplateModalProps {
   proposalTemplate: ProposalTemplate;

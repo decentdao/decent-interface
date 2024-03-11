@@ -1,10 +1,10 @@
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNavigate } from 'react-router-dom';
 
 interface ISearchDisplay {
   loading?: boolean;

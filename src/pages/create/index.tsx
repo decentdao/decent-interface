@@ -3,6 +3,7 @@
 import { ethers } from 'ethers';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import DaoCreator from '../../components/DaoCreator';
 import { DAOCreateMode } from '../../components/DaoCreator/formComponents/EstablishEssentials';
@@ -13,7 +14,6 @@ import useDeployDAO from '../../hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../../hooks/utils/useAsyncRetry';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
-import { useNavigate } from 'react-router-dom';
 
 export default function DaoCreatePage() {
   const navigate = useNavigate();

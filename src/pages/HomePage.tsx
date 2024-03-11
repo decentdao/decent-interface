@@ -2,6 +2,7 @@ import { Center, VStack, Text, Button, Flex, Box } from '@chakra-ui/react';
 
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useNetwork } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { AppFooter } from '../components/pages/AppHome/AppFooter';
@@ -13,7 +14,6 @@ import { BASE_ROUTES } from '../constants/routes';
 import { URL_DOCS } from '../constants/url';
 import { useFractal } from '../providers/App/AppProvider';
 import { disconnectedChain } from '../providers/NetworkConfig/NetworkConfigProvider';
-import { useNavigate } from 'react-router-dom';
 
 const VALUE_PROPS = [
   {

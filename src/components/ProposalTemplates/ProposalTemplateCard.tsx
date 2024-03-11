@@ -2,6 +2,7 @@ import { Avatar, Flex, Text } from '@chakra-ui/react';
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import useRemoveProposalTemplate from '../../hooks/DAO/proposal/useRemoveProposalTemplate';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
@@ -11,7 +12,6 @@ import ContentBox from '../ui/containers/ContentBox';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
-import { useNavigate } from 'react-router-dom';
 
 type ProposalTemplateCardProps = {
   proposalTemplate: ProposalTemplate;

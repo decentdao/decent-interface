@@ -6,7 +6,6 @@ import { ReactNode, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { WagmiConfig } from 'wagmi';
 import { ModalProvider } from '../components/ui/modals/ModalProvider';
-import Layout from '../components/ui/page/Layout';
 import { ErrorFallback } from '../components/ui/utils/ErrorFallback';
 import graphQLClient from '../graphql';
 import { FractalErrorBoundary, initErrorLogging } from '../helpers/errorLogging';

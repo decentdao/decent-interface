@@ -2,6 +2,7 @@ import { Flex, Text, Button, Divider } from '@chakra-ui/react';
 import { BigNumber } from 'ethers';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { SettingsSection } from '..';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -10,7 +11,6 @@ import { useFractal } from '../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../types';
 import { couldBeENS } from '../../../../../utils/url';
 import { InputComponent } from '../../../../ui/forms/InputComponent';
-import { useNavigate } from 'react-router-dom';
 
 export default function MetadataContainer() {
   const [name, setName] = useState('');

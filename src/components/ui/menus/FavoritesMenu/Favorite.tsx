@@ -1,9 +1,9 @@
 import { MenuItem, Text } from '@chakra-ui/react';
 import { StarGoldSolid } from '@decent-org/fractal-ui';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNavigate } from 'react-router-dom';
 
 interface IFavorite {
   address: string;

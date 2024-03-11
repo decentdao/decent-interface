@@ -3,12 +3,12 @@ import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useLidoStaking from '../../../hooks/stake/lido/useLidoStaking';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { BigNumberValuePair } from '../../../types';
 import { BigNumberInput } from '../forms/BigNumberInput';
-import { useNavigate } from 'react-router-dom';
 
 export default function StakeModal({ close }: { close: () => void }) {
   const {

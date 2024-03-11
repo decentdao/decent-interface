@@ -4,6 +4,7 @@ import { Button, Center, Text, VStack, ChakraProvider, extendTheme } from '@chak
 import { theme } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Outlet } from 'react-router-dom';
 import { useNetwork } from 'wagmi';
 import { APP_NAME } from '../constants/common';
 import useDAOController from '../hooks/DAO/useDAOController';
@@ -13,7 +14,6 @@ import {
   disconnectedChain,
   supportedChains,
 } from '../providers/NetworkConfig/NetworkConfigProvider';
-import { Outlet } from 'react-router-dom';
 
 function InvalidSafe() {
   const { chain } = useNetwork();

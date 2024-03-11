@@ -1,13 +1,13 @@
 'use client';
 
-import { Text, Button, ChakraProvider, VStack, AbsoluteCenter, Image } from '@chakra-ui/react';
+import { AbsoluteCenter, Button, ChakraProvider, Image, Text, VStack } from '@chakra-ui/react';
+import '@fontsource/ibm-plex-mono';
+import '@fontsource/ibm-plex-sans';
 import { I18nextProvider, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { theme } from '../assets/theme';
 import { BASE_ROUTES } from '../constants/routes';
 import i18n from '../i18n';
-import '@fontsource/ibm-plex-mono';
-import '@fontsource/ibm-plex-sans';
-import { useNavigate } from 'react-router-dom';
 
 export default function FourOhFourPage() {
   const { t } = useTranslation('common');

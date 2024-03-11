@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -14,7 +15,6 @@ import {
 } from '../../types';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
 import useSubmitProposal from './proposal/useSubmitProposal';
-import { useNavigate } from 'react-router-dom';
 
 const useDeployAzorius = () => {
   const signerOrProvider = useSignerOrProvider();

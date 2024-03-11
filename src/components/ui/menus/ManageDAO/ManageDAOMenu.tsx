@@ -6,6 +6,7 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -28,7 +29,6 @@ import { getAzoriusModuleFromModules } from '../../../../utils';
 import { ModalType } from '../../modals/ModalProvider';
 import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
-import { useNavigate } from 'react-router-dom';
 
 interface IManageDAOMenu {
   parentAddress?: string | null;

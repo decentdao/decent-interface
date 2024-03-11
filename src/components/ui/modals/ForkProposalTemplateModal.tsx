@@ -1,6 +1,7 @@
 import { Box, Button, Divider } from '@chakra-ui/react';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useNetwork } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
@@ -11,7 +12,6 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { disconnectedChain } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { InputComponent } from '../forms/InputComponent';
-import { useNavigate } from 'react-router-dom';
 
 interface IForkProposalTemplateModalProps {
   proposalTemplate: ProposalTemplate;

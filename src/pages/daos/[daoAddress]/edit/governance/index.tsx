@@ -4,6 +4,7 @@ import { Box } from '@chakra-ui/react';
 import { CloseX } from '@decent-org/fractal-ui';
 
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../../../../components/DaoCreator';
 import { DAOCreateMode } from '../../../../../components/DaoCreator/formComponents/EstablishEssentials';
 import { EmptyBox } from '../../../../../components/ui/containers/EmptyBox';
@@ -18,7 +19,6 @@ import {
   AzoriusERC721DAO,
   GovernanceType,
 } from '../../../../../types';
-import { useNavigate } from 'react-router-dom';
 
 export default function ModifyGovernancePage() {
   const {

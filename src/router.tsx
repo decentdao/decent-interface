@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
-import DAOController from './pages/DAOController';
 import Layout from './components/ui/page/Layout';
+import FourOhFourPage from './pages/404';
+import DAOController from './pages/DAOController';
 import HomePage from './pages/HomePage';
 import DaoCreatePage from './pages/create';
 import DaoDashboardPage from './pages/daos/[daoAddress]/DaoDashboardPage';
@@ -14,7 +15,6 @@ import ProposalDetailsPage from './pages/daos/[daoAddress]/proposals/[proposalId
 import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
 import SettingsPage from './pages/daos/[daoAddress]/settings';
 import Treasury from './pages/daos/[daoAddress]/treasury';
-import FourOhFourPage from './pages/404';
 
 export const router = createBrowserRouter([
   {

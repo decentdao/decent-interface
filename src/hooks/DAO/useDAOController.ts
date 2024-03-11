@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useERC20Claim } from './loaders/governance/useERC20Claim';
 import { useSnapshotProposals } from './loaders/snapshot/useSnapshotProposals';
@@ -10,7 +11,6 @@ import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
 import { useFractalNode } from './loaders/useFractalNode';
 import { useFractalTreasury } from './loaders/useFractalTreasury';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
-import { useParams } from 'react-router-dom';
 
 export default function useDAOController() {
   const {daoAddress} = useParams();

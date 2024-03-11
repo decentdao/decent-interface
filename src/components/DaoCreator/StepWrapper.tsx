@@ -2,12 +2,12 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import PageHeader from '../ui/page/Header/PageHeader';
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
-import { useNavigate } from 'react-router-dom';
 
 interface IStepWrapper {
   titleKey: string;

@@ -1,7 +1,7 @@
 import { Box, BoxProps } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useNavigate } from 'react-router-dom';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 
 type InfoBoxProps = {
   minHeight?: string;

@@ -1,7 +1,7 @@
 'use client';
 
 import { Box, BoxProps } from '@chakra-ui/react';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function ClientOnly({ children, ...rest }: BoxProps) {
   // State / Props

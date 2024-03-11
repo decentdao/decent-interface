@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import { AzoriusProposalDetails } from '../../../../../components/Proposals/AzoriusDetails';
 import { MultisigProposalDetails } from '../../../../../components/Proposals/MultisigProposalDetails';
 import SnapshotProposalDetails from '../../../../../components/Proposals/SnapshotProposalDetails';
@@ -14,7 +15,6 @@ import useSnapshotProposal from '../../../../../hooks/DAO/loaders/snapshot/useSn
 import { useGetMetadata } from '../../../../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { FractalProposal, AzoriusProposal, SnapshotProposal } from '../../../../../types';
-import { useParams } from 'react-router-dom';
 
 export default function ProposalDetailsPage() {
   const {

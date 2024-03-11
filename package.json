@@ -46,13 +46,14 @@
     "react-router-dom": "^6.22.0",
     "react-toastify": "^9.0.8",
     "remark-gfm": "^4.0.0",
+    "vite-plugin-node-polyfills": "^0.21.0",
     "viem": "^1.21",
     "vite": "^5.1.0",
     "wagmi": "^1.4.11",
     "yup": "^1"
   },
   "scripts": {
-    "lint": "eslint . --ext .ts,.tsx",
+    "lint": "eslint . --ext .ts,.tsx --fix",
     "pretty": "prettier . --write",
     "pretty:check": "prettier . --check",
     "dev": "npm run graphql:build && NEXT_PUBLIC_GIT_HASH=`git rev-parse HEAD` vite",
@@ -95,12 +96,13 @@
     "eslint-config-airbnb-typescript": "^17.1.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "jsdom": "^24.0.0",
     "playwright": "^1.32.3",
     "prettier": "^3.2.5",
     "typescript": "^5.0.4",
     "url": "^0.11.0",
-    "vite-plugin-node-polyfills": "^0.21.0",
     "vitest": "^1.2.2"
   }
 }
