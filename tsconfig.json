@@ -24,7 +24,7 @@
     "test",
     "app",
     "netlify/functions",
-    "vite.config.ts",
+    "vite.config.mts",
     "global.d.ts",
   ]
 }
