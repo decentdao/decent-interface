@@ -64,6 +64,11 @@ export function ProposalCountdown({
   const hoursLeft = Math.floor((secondsLeft! / (60 * 60)) % 24);
   const minutesLeft = Math.floor((secondsLeft! / 60) % 60);
 
+  const showDays = daysLeft > 0;
+  const showHours = showDays || hoursLeft > 0;
+  const showMinutes = showHours || minutesLeft > 0;
+  const showSeconds = secondsLeft >= 0;
+
   return (
     <Tooltip
       label={tooltipLabel}
@@ -82,10 +87,10 @@ export function ProposalCountdown({
             color="chocolate.200"
             textStyle="text-base-mono-semibold"
           >
-            {daysLeft > 0 && `${zeroPad(daysLeft)}:`}
-            {hoursLeft > 0 && `${zeroPad(hoursLeft)}:`}
-            {minutesLeft > 0 && `${zeroPad(minutesLeft)}:`}
-            {secondsLeft! >= 0 && `${zeroPad(secondsLeft! % 60)}`}
+            {showDays && `${zeroPad(daysLeft)}:`}
+            {showHours && `${zeroPad(hoursLeft)}:`}
+            {showMinutes && `${zeroPad(minutesLeft)}:`}
+            {showSeconds && `${zeroPad(secondsLeft % 60)}`}
           </Text>
         </Flex>
       </Flex>
