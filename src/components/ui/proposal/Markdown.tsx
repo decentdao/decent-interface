@@ -89,6 +89,7 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
       <Text
         noOfLines={2}
         fontWeight={400}
+        minWidth="100%"
       >
         {plainText}
       </Text>
