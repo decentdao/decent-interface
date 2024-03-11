@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
 import { useNetwork } from 'wagmi';
-import { APP_NAME } from '../constants/common';
 import useDAOController from '../hooks/DAO/useDAOController';
 import useDAOMetadata from '../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../providers/App/AppProvider';
@@ -114,7 +113,7 @@ export default function DAOController() {
   }
   return (
     <>
-      <title>{node?.daoName ? `${node.daoName} | ${APP_NAME}` : APP_NAME}</title>
+      <title>{node?.daoName ? `${node.daoName} | ${import.meta.env.VITE_APP_NAME}` : import.meta.env.VITE_APP_NAME}</title>
       {display}
     </>
   );

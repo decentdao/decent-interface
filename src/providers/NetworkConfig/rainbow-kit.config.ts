@@ -10,7 +10,6 @@ import {
 import { Chain, configureChains, createConfig, createStorage } from 'wagmi';
 import { hardhat, sepolia, mainnet } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
-import { APP_NAME } from '../../constants/common';
 import { supportedChains } from './NetworkConfigProvider';
 import { testWallet } from './testWallet';
 
@@ -44,7 +43,7 @@ export const { chains, publicClient } = configureChains(supportedWagmiChains, [
   }),
 ]);
 
-const defaultWallets = [injectedWallet({ chains }), coinbaseWallet({ appName: APP_NAME, chains })];
+const defaultWallets = [injectedWallet({ chains }), coinbaseWallet({ appName: import.meta.env.VITE_APP_NAME, chains })];
 
 if (import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID) {
   defaultWallets.push(
