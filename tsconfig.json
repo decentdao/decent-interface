@@ -18,5 +18,5 @@
     "incremental": true
   },
   "exclude": ["docker"],
-  "include": ["src", "tests", "test", "app", "netlify/functions", "vite.config.mts", "global.d.ts"]
+  "include": ["src", "tests", "test", "app", "netlify/functions", "vite.config.mts"]
 }
