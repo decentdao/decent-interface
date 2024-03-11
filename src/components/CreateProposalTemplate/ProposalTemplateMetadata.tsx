@@ -38,13 +38,13 @@ export default function ProposalTemplateMetadata({
         />
         <TextareaComponent
           label={t('proposalTemplateDescription')}
+          subLabel={t('')}
           helper={t('proposalTemplateDescriptionHelperText')}
           isRequired={false}
           value={proposalTemplateMetadata.description}
           onChange={e => setFieldValue('proposalTemplateMetadata.description', e.target.value)}
           disabled={false}
-          rows={3}
-          maxLength={300}
+          rows={12}
         />
       </VStack>
       <Divider
