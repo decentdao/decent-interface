@@ -59,7 +59,6 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
       const lineHeight = parseInt(
         document.defaultView.getComputedStyle(markdownTextContainerRef.current, null).lineHeight,
       );
-      console.log(lineHeight);
       if (isNaN(lineHeight)) {
         setCollapsed(false);
         setTotalLinesError(true);
