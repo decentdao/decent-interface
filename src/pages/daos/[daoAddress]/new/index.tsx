@@ -1,10 +1,7 @@
-'use client';
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../../../components/DaoCreator';
 import { DAOCreateMode } from '../../../../components/DaoCreator/formComponents/EstablishEssentials';
-import ClientOnly from '../../../../components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCreateSubDAOProposal } from '../../../../hooks/DAO/useCreateSubDAOProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -30,13 +27,11 @@ export default function SubDaoCreate() {
   };
 
   return (
-    <ClientOnly>
       <DaoCreator
         pending={pendingCreateTx || redirectPending}
         deployDAO={proposeSubDAO}
         isSubDAO={true}
         mode={DAOCreateMode.SUBDAO}
       />
-    </ClientOnly>
   );
 }

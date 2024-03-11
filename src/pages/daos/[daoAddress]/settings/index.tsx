@@ -1,11 +1,8 @@
-'use client';
-
-import { Center } from '@chakra-ui/react';
+import { Box, Center } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Settings } from '../../../../components/pages/DaoSettings';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../components/ui/utils/ClientOnly';
 import { HEADER_HEIGHT } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
@@ -23,7 +20,7 @@ export default function SettingsPage() {
     );
   }
   return (
-    <ClientOnly mt={12}>
+    <Box mt={12}>
       <PageHeader
         title={t('headerTitle', {
           daoName,
@@ -37,6 +34,6 @@ export default function SettingsPage() {
         ]}
       />
       <Settings />
-    </ClientOnly>
+    </Box>
   );
 }

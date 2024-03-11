@@ -1,5 +1,3 @@
-'use client';
-
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';

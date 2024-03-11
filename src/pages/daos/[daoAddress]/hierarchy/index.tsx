@@ -1,11 +1,8 @@
-'use client';
-
 import { Center } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { DaoNode } from '../../../../components/pages/DaoHierarchy/DaoNode';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../components/ui/utils/ClientOnly';
 import { HEADER_HEIGHT } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
@@ -24,7 +21,7 @@ export default function HierarchyPage() {
   }
 
   return (
-    <ClientOnly>
+    <>
       <PageHeader
         title={t('headerTitle', {
           daoName,
@@ -41,6 +38,6 @@ export default function HierarchyPage() {
         daoAddress={nodeHierarchy.parentAddress || daoAddress}
         depth={0}
       />
-    </ClientOnly>
+    </>
   );
 }

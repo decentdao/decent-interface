@@ -1,5 +1,3 @@
-'use client';
-
 import { Button, Center, Text, VStack, ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { theme } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';

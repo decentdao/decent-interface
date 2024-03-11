@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -9,7 +7,6 @@ import SnapshotProposalDetails from '../../../../../components/Proposals/Snapsho
 import { EmptyBox } from '../../../../../components/ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../../../components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../../components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSnapshotProposal from '../../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../../../../hooks/DAO/proposal/useGetMetadata';
@@ -51,7 +48,7 @@ export default function ProposalDetailsPage() {
   }, [proposals, proposalId, isSnapshotProposal]);
 
   return (
-    <ClientOnly>
+    <>
       <PageHeader
         title={t('proposalOverview')}
         breadcrumbs={[
@@ -80,6 +77,6 @@ export default function ProposalDetailsPage() {
       ) : (
         <MultisigProposalDetails proposal={proposal} />
       )}
-    </ClientOnly>
+    </>
   );
 }

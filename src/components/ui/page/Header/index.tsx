@@ -2,11 +2,9 @@ import { Flex, Show } from '@chakra-ui/react';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { FavoritesMenu } from '../../menus/FavoritesMenu';
-import ClientOnly from '../../utils/ClientOnly';
 
 function Header() {
   return (
-    <ClientOnly>
       <Flex
         h="full"
         w="full"
@@ -26,7 +24,6 @@ function Header() {
           <AccountDisplay />
         </Flex>
       </Flex>
-    </ClientOnly>
   );
 }
 

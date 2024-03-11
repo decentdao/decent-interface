@@ -1,5 +1,3 @@
-'use client';
-
 import { init, encrypt } from '@shutter-network/shutter-crypto';
 import { BigNumber, utils } from 'ethers';
 

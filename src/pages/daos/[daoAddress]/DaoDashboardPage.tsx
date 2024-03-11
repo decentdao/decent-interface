@@ -1,5 +1,3 @@
-'use client';
-
 import { Box } from '@chakra-ui/react';
 import { Activities } from '../../../components/pages/DaoDashboard/Activities';
 import { ERCO20Claim } from '../../../components/pages/DaoDashboard/ERC20Claim';

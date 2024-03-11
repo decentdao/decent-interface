@@ -1,5 +1,3 @@
-'use client';
-
 import { ethers } from 'ethers';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import DaoCreator from '../../components/DaoCreator';
 import { DAOCreateMode } from '../../components/DaoCreator/formComponents/EstablishEssentials';
-import ClientOnly from '../../components/ui/utils/ClientOnly';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
 import useDeployDAO from '../../hooks/DAO/useDeployDAO';
@@ -55,12 +52,10 @@ export default function DaoCreatePage() {
   };
 
   return (
-    <ClientOnly>
-      <DaoCreator
-        pending={pending || redirectPending}
-        deployDAO={deployDAO}
-        mode={DAOCreateMode.ROOTDAO}
-      />
-    </ClientOnly>
+    <DaoCreator
+      pending={pending || redirectPending}
+      deployDAO={deployDAO}
+      mode={DAOCreateMode.ROOTDAO}
+    />
   );
 }

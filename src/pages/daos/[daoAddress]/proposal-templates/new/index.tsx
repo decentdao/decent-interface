@@ -1,5 +1,3 @@
-'use client';
-
 import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { BigNumber } from 'ethers';
@@ -13,7 +11,6 @@ import ProposalTemplateTransactionsForm from '../../../../../components/CreatePr
 import { DEFAULT_PROPOSAL_TEMPLATE } from '../../../../../components/CreateProposalTemplate/constants';
 import { CustomNonceInput } from '../../../../../components/ui/forms/CustomNonceInput';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../../components/ui/utils/ClientOnly';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../constants/routes';
 import { logError } from '../../../../../helpers/errorLogging';
@@ -96,123 +93,121 @@ export default function CreateProposalTemplatePage() {
   }, [defaultProposalTemplatesHash, defaultProposalTemplateIndex, ipfsClient]);
 
   return (
-    <ClientOnly>
-      <Formik<CreateProposalTemplateForm>
-        validationSchema={createProposalTemplateValidation}
-        initialValues={initialProposalTemplate}
-        enableReinitialize
-        onSubmit={async values => {
-          if (canUserCreateProposal) {
-            const proposalData = await prepareProposalTemplateProposal(values);
-            if (proposalData) {
-              submitProposal({
-                proposalData,
-                nonce: values?.nonce,
-                pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
-                successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
-                failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-                successCallback,
-              });
-            }
+    <Formik<CreateProposalTemplateForm>
+      validationSchema={createProposalTemplateValidation}
+      initialValues={initialProposalTemplate}
+      enableReinitialize
+      onSubmit={async values => {
+        if (canUserCreateProposal) {
+          const proposalData = await prepareProposalTemplateProposal(values);
+          if (proposalData) {
+            submitProposal({
+              proposalData,
+              nonce: values?.nonce,
+              pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+              successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+              failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+              successCallback,
+            });
           }
-        }}
-      >
-        {(formikProps: FormikProps<CreateProposalTemplateForm>) => {
-          const { handleSubmit } = formikProps;
+        }
+      }}
+    >
+      {(formikProps: FormikProps<CreateProposalTemplateForm>) => {
+        const { handleSubmit } = formikProps;
 
-          return (
-            <form onSubmit={handleSubmit}>
-              <Box>
-                <PageHeader
-                  title={t('createProposalTemplate')}
-                  breadcrumbs={[
-                    {
-                      terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
-                      path: DAO_ROUTES.proposalTemplates.relative(daoAddress),
-                    },
-                    {
-                      terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
-                      path: '',
-                    },
-                  ]}
-                  ButtonIcon={Trash}
-                  buttonVariant="secondary"
-                  buttonClick={() =>
-                    navigate(
-                      daoAddress
-                        ? DAO_ROUTES.proposalTemplates.relative(daoAddress)
-                        : BASE_ROUTES.landing,
-                    )
-                  }
-                  isButtonDisabled={pendingCreateTx}
-                />
-                <Grid
-                  gap={4}
-                  templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
-                  gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}
-                  templateAreas={{
-                    base: templateAreaSingleCol,
-                    lg: templateAreaTwoCol,
-                  }}
-                >
-                  <GridItem area="content">
-                    <Flex
-                      flexDirection="column"
-                      align="left"
+        return (
+          <form onSubmit={handleSubmit}>
+            <Box>
+              <PageHeader
+                title={t('createProposalTemplate')}
+                breadcrumbs={[
+                  {
+                    terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
+                    path: DAO_ROUTES.proposalTemplates.relative(daoAddress),
+                  },
+                  {
+                    terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
+                    path: '',
+                  },
+                ]}
+                ButtonIcon={Trash}
+                buttonVariant="secondary"
+                buttonClick={() =>
+                  navigate(
+                    daoAddress
+                      ? DAO_ROUTES.proposalTemplates.relative(daoAddress)
+                      : BASE_ROUTES.landing,
+                  )
+                }
+                isButtonDisabled={pendingCreateTx}
+              />
+              <Grid
+                gap={4}
+                templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
+                gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}
+                templateAreas={{
+                  base: templateAreaSingleCol,
+                  lg: templateAreaTwoCol,
+                }}
+              >
+                <GridItem area="content">
+                  <Flex
+                    flexDirection="column"
+                    align="left"
+                  >
+                    <Box
+                      marginBottom="2rem"
+                      rounded="lg"
+                      p="1rem"
+                      bg={BACKGROUND_SEMI_TRANSPARENT}
                     >
-                      <Box
-                        marginBottom="2rem"
-                        rounded="lg"
-                        p="1rem"
-                        bg={BACKGROUND_SEMI_TRANSPARENT}
-                      >
-                        {formState === CreateProposalTemplateFormState.METADATA_FORM ? (
-                          <ProposalTemplateMetadata
+                      {formState === CreateProposalTemplateFormState.METADATA_FORM ? (
+                        <ProposalTemplateMetadata
+                          setFormState={setFormState}
+                          {...formikProps}
+                        />
+                      ) : (
+                        <>
+                          <Flex
+                            alignItems="center"
+                            justifyContent="space-between"
+                          >
+                            <Text
+                              textStyle="text-xl-mono-medium"
+                              mb={4}
+                            >
+                              {formikProps.values.proposalTemplateMetadata.title}
+                            </Text>
+                            <CustomNonceInput
+                              nonce={formikProps.values.nonce}
+                              onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                              align="end"
+                            />
+                          </Flex>
+                          <ProposalTemplateTransactionsForm
                             setFormState={setFormState}
+                            canUserCreateProposal={canUserCreateProposal}
+                            pendingTransaction={pendingCreateTx}
+                            safeNonce={safe?.nonce}
                             {...formikProps}
                           />
-                        ) : (
-                          <>
-                            <Flex
-                              alignItems="center"
-                              justifyContent="space-between"
-                            >
-                              <Text
-                                textStyle="text-xl-mono-medium"
-                                mb={4}
-                              >
-                                {formikProps.values.proposalTemplateMetadata.title}
-                              </Text>
-                              <CustomNonceInput
-                                nonce={formikProps.values.nonce}
-                                onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-                                align="end"
-                              />
-                            </Flex>
-                            <ProposalTemplateTransactionsForm
-                              setFormState={setFormState}
-                              canUserCreateProposal={canUserCreateProposal}
-                              pendingTransaction={pendingCreateTx}
-                              safeNonce={safe?.nonce}
-                              {...formikProps}
-                            />
-                          </>
-                        )}
-                      </Box>
-                    </Flex>
-                  </GridItem>
-                  <GridItem
-                    area="details"
-                    w="100%"
-                  >
-                    <ProposalTemplateDetails {...formikProps} />
-                  </GridItem>
-                </Grid>
-              </Box>
-            </form>
-          );
-        }}
-      </Formik>
-    </ClientOnly>
+                        </>
+                      )}
+                    </Box>
+                  </Flex>
+                </GridItem>
+                <GridItem
+                  area="details"
+                  w="100%"
+                >
+                  <ProposalTemplateDetails {...formikProps} />
+                </GridItem>
+              </Grid>
+            </Box>
+          </form>
+        );
+      }}
+    </Formik>
   );
 }

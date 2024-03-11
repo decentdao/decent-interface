@@ -1,5 +1,3 @@
-'use client';
-
 import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Assets } from '../../../../components/pages/DAOTreasury/components/Assets';
@@ -9,7 +7,6 @@ import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBo
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../components/ui/utils/ClientOnly';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
@@ -23,7 +20,7 @@ export default function Treasury() {
   const showButton = canUserCreateProposal && !treasuryTotal.isZero();
 
   return (
-    <ClientOnly>
+    <>
       <PageHeader
         title={t('headerTitle', {
           ns: 'breadcrumbs',
@@ -62,6 +59,6 @@ export default function Treasury() {
           <Assets />
         </TitledInfoBox>
       </Flex>
-    </ClientOnly>
+    </>
   );
 }

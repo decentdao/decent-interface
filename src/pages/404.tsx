@@ -1,5 +1,3 @@
-'use client';
-
 import { AbsoluteCenter, Button, ChakraProvider, Image, Text, VStack } from '@chakra-ui/react';
 import '@fontsource/ibm-plex-mono';
 import '@fontsource/ibm-plex-sans';

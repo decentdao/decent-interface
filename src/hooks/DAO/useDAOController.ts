@@ -1,5 +1,3 @@
-'use client';
-
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useFractal } from '../../providers/App/AppProvider';

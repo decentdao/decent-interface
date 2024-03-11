@@ -1,5 +1,3 @@
-'use client';
-
 import { Button, Flex, Show, Text } from '@chakra-ui/react';
 import { AddPlus, TokenPlaceholder } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
@@ -9,7 +7,6 @@ import Proposals from '../../../../components/Proposals';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
-import ClientOnly from '../../../../components/ui/utils/ClientOnly';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -43,7 +40,7 @@ export default function ProposalsPage() {
     !azoriusGovernance.votesToken.balance.isZero();
 
   return (
-    <ClientOnly>
+    <>
       <PageHeader
         breadcrumbs={[
           {
@@ -104,6 +101,6 @@ export default function ProposalsPage() {
         )}
       </PageHeader>
       <Proposals />
-    </ClientOnly>
+    </>
   );
 }
