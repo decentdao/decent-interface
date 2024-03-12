@@ -15,8 +15,8 @@ import { DisplayAddress } from '../ui/links/DisplayAddress';
 import DisplayTransaction from '../ui/links/DisplayTransaction';
 import EtherscanLinkBlock from '../ui/links/EtherscanLinkBlock';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
+import InfoRow from '../ui/proposal/InfoRow';
 import { QuorumProgressBar } from '../ui/utils/ProgressBar';
-import { InfoRow } from './MultisigProposalDetails/TxDetails';
 
 export default function ProposalSummary({
   proposal: {

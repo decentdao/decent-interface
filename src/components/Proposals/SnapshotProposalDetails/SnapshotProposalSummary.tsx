@@ -9,8 +9,8 @@ import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
 import ExternalLink from '../../ui/links/ExternalLink';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
+import InfoRow from '../../ui/proposal/InfoRow';
 import { QuorumProgressBar } from '../../ui/utils/ProgressBar';
-import { InfoRow } from '../MultisigProposalDetails/TxDetails';
 import useSnapshotUserVotingWeight from './hooks/useSnapshotUserVotingWeight';
 import useTotalVotes from './hooks/useTotalVotes';
 
