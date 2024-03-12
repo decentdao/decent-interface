@@ -1,5 +1,6 @@
-import { Box, Divider, Flex, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { format } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
@@ -8,14 +9,20 @@ import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
 import DisplayTransaction from '../../ui/links/DisplayTransaction';
 
+function TransactionOrText({ txHash, value }: { txHash?: string | null; value?: string }) {
+  return txHash ? <DisplayTransaction txHash={txHash} /> : <Text>{value}</Text>;
+}
+
 export function InfoRow({
   property,
   value,
   txHash,
+  tooltip,
 }: {
   property: string;
   value?: string;
   txHash?: string | null;
+  tooltip?: string;
 }) {
   return (
     <Flex
@@ -28,7 +35,19 @@ export function InfoRow({
       >
         {property}
       </Text>
-      {txHash ? <DisplayTransaction txHash={txHash} /> : <Text>{value}</Text>}
+      {tooltip === undefined ? (
+        <TransactionOrText
+          txHash={txHash}
+          value={value}
+        />
+      ) : (
+        <Tooltip label={tooltip}>
+          <TransactionOrText
+            txHash={txHash}
+            value={value}
+          />
+        </Tooltip>
+      )}
     </Flex>
   );
 }
