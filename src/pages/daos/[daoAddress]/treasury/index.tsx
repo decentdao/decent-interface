@@ -20,7 +20,7 @@ export default function Treasury() {
   const showButton = canUserCreateProposal && !treasuryTotal.isZero();
 
   return (
-    <>
+    <div>
       <PageHeader
         title={t('headerTitle', {
           ns: 'breadcrumbs',
@@ -59,6 +59,6 @@ export default function Treasury() {
           <Assets />
         </TitledInfoBox>
       </Flex>
-    </>
+    </div>
   );
 }

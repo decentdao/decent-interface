@@ -16,7 +16,7 @@ export default function ProposalTemplatesPage() {
   const { canUserCreateProposal } = useSubmitProposal();
 
   return (
-    <>
+    <div>
       <PageHeader
         title={t('proposalTemplates', { ns: 'breadcrumbs' })}
         breadcrumbs={[
@@ -36,6 +36,6 @@ export default function ProposalTemplatesPage() {
         )}
       </PageHeader>
       <ProposalTemplates />
-    </>
+    </div>
   );
 }

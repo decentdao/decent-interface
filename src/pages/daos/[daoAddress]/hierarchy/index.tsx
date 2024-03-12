@@ -21,7 +21,7 @@ export default function HierarchyPage() {
   }
 
   return (
-    <>
+    <div>
       <PageHeader
         title={t('headerTitle', {
           daoName,
@@ -38,6 +38,6 @@ export default function HierarchyPage() {
         daoAddress={nodeHierarchy.parentAddress || daoAddress}
         depth={0}
       />
-    </>
+    </div>
   );
 }
