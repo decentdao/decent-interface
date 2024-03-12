@@ -51,8 +51,11 @@ export const router = createBrowserRouter([
           },
           {
             path: 'proposal-templates',
-            element: <ProposalTemplatesPage />,
             children: [
+              {
+                index: true,
+                element: <ProposalTemplatesPage />,
+              },
               {
                 path: 'new',
                 element: <CreateProposalTemplatePage />,
