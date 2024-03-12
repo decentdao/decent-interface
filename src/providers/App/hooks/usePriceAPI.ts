@@ -41,6 +41,9 @@ export default function usePriceAPI() {
           }
         }
       } catch (e) {
+        // When doing local development, it's unlikely that the Pricing Service is going to be running locally,
+        // so don't worry about logging or showing the error toast.
+        if (process.env.NODE_ENV === 'development') return;
         logError('Error while getting tokens prices', e);
         toast.warning(t('tokenPriceFetchingError'));
         return;
