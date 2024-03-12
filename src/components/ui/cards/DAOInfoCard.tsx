@@ -77,7 +77,7 @@ export function DAOInfoCard({
           <Link
             as={RouterLink}
             pointerEvents={isCurrentDAO ? 'none' : undefined}
-            href={DAO_ROUTES.dao.relative(displayedAddress)}
+            to={DAO_ROUTES.dao.relative(displayedAddress)}
             _hover={{ textDecoration: 'none' }}
             onClick={() => {
               // if we're not on the current DAO, reset
@@ -104,7 +104,7 @@ export function DAOInfoCard({
           />
           {childCount && childCount > 0 && (
             <Link
-              href={DAO_ROUTES.hierarchy.relative(displayedAddress)}
+              to={DAO_ROUTES.hierarchy.relative(displayedAddress)}
               as={RouterLink}
             >
               <Box
