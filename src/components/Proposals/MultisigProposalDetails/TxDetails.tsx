@@ -73,7 +73,8 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
         />
         <InfoRow
           property={t('created')}
-          value={format(new Date(proposal.eventDate), DEFAULT_DATE_TIME_FORMAT)}
+          value={format(proposal.eventDate, DEFAULT_DATE_TIME_FORMAT)}
+          tooltip={formatInTimeZone(proposal.eventDate, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
         />
         <InfoRow
           property={t('transactionHash')}
