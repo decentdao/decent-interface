@@ -29,6 +29,7 @@
     "axios": "^0.27.2",
     "classnames": "^2.3.1",
     "date-fns": "^2.29.3",
+    "date-fns-tz": "^2.0.1",
     "ethers": "^5.7.2",
     "evm-proxy-detection": "^1.1.0",
     "formik": "^2.2.9",
