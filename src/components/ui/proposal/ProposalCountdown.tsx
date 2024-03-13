@@ -25,22 +25,19 @@ export function ProposalCountdown({
   proposal: FractalProposal;
   showIcon?: boolean;
 }) {
-  const secondsLeft = useProposalCountdown(proposal);
+  const totalSecondsLeft = useProposalCountdown(proposal);
   const { t } = useTranslation('proposal');
 
   const state: FractalProposalState | null = useMemo(() => proposal.state, [proposal]);
 
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
-  const showCountdown = useMemo(
-    () =>
-      !!secondsLeft &&
-      secondsLeft > 0 &&
-      (state === FractalProposalState.ACTIVE ||
-        state === FractalProposalState.TIMELOCKED ||
-        state === FractalProposalState.EXECUTABLE ||
-        isSnapshotProposal),
-    [state, secondsLeft, isSnapshotProposal],
-  );
+  const showCountdown =
+    !!totalSecondsLeft &&
+    totalSecondsLeft > 0 &&
+    (state === FractalProposalState.ACTIVE ||
+      state === FractalProposalState.TIMELOCKED ||
+      state === FractalProposalState.EXECUTABLE ||
+      isSnapshotProposal);
 
   if (!showCountdown) return null;
 
@@ -63,9 +60,15 @@ export function ProposalCountdown({
           ? Execute
           : null;
 
-  const daysLeft = Math.floor(secondsLeft! / (60 * 60 * 24));
-  const hoursLeft = Math.floor((secondsLeft! / (60 * 60)) % 24);
-  const minutesLeft = Math.floor((secondsLeft! / 60) % 60);
+  const daysLeft = Math.floor(totalSecondsLeft / (60 * 60 * 24));
+  const hoursLeft = Math.floor((totalSecondsLeft / (60 * 60)) % 24);
+  const minutesLeft = Math.floor((totalSecondsLeft / 60) % 60);
+  const secondsLeft = Math.floor(totalSecondsLeft % 60);
+
+  const showDays = daysLeft > 0;
+  const showHours = showDays || hoursLeft > 0;
+  const showMinutes = showHours || minutesLeft > 0;
+  const showSeconds = secondsLeft >= 0;
 
   return (
     <Tooltip
@@ -85,10 +88,10 @@ export function ProposalCountdown({
             color="chocolate.200"
             textStyle="text-base-mono-semibold"
           >
-            {daysLeft > 0 && `${zeroPad(daysLeft)}:`}
-            {hoursLeft > 0 && `${zeroPad(hoursLeft)}:`}
-            {minutesLeft > 0 && `${zeroPad(minutesLeft)}:`}
-            {secondsLeft! >= 0 && `${zeroPad(secondsLeft! % 60)}`}
+            {showDays && `${zeroPad(daysLeft)}:`}
+            {showHours && `${zeroPad(hoursLeft)}:`}
+            {showMinutes && `${zeroPad(minutesLeft)}:`}
+            {showSeconds && `${zeroPad(secondsLeft)}`}
           </Text>
         </Flex>
       </Flex>

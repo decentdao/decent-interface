@@ -2,6 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { Treasury } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { formatUSD } from '../../../../utils';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
 import { useFormatCoins } from '../../DAOTreasury/hooks/useFormatCoins';
 
@@ -49,7 +50,7 @@ export function InfoTreasury({}: IDAOGovernance) {
         textStyle="text-lg-mono-semibold"
         color="grayscale.100"
       >
-        {totalFiatValue}
+        {formatUSD(totalFiatValue)}
       </Text>
     </Box>
   );
