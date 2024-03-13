@@ -1,11 +1,11 @@
 'use client';
 import { ApolloProvider } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
+import { theme } from '@decent-org/fractal-ui';
 import { RainbowKitProvider, midnightTheme } from '@rainbow-me/rainbowkit';
 import { ReactNode, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { WagmiConfig } from 'wagmi';
-import { theme } from '../assets/theme';
 import { ModalProvider } from '../components/ui/modals/ModalProvider';
 import Layout from '../components/ui/page/Layout';
 import { ErrorFallback } from '../components/ui/utils/ErrorFallback';

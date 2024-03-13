@@ -1,13 +1,37 @@
-import { Box, Divider, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { MultisigProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
-import InfoRow from '../../ui/proposal/InfoRow';
+import DisplayTransaction from '../../ui/links/DisplayTransaction';
+
+export function InfoRow({
+  property,
+  value,
+  txHash,
+}: {
+  property: string;
+  value?: string;
+  txHash?: string | null;
+}) {
+  return (
+    <Flex
+      marginTop={4}
+      justifyContent="space-between"
+    >
+      <Text
+        textStyle="text-base-sans-regular"
+        color="chocolate.200"
+      >
+        {property}
+      </Text>
+      {txHash ? <DisplayTransaction txHash={txHash} /> : <Text>{value}</Text>}
+    </Flex>
+  );
+}
 
 export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
   const { t } = useTranslation('proposal');
@@ -30,8 +54,7 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
         />
         <InfoRow
           property={t('created')}
-          value={format(proposal.eventDate, DEFAULT_DATE_TIME_FORMAT)}
-          tooltip={formatInTimeZone(proposal.eventDate, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
+          value={format(new Date(proposal.eventDate), DEFAULT_DATE_TIME_FORMAT)}
         />
         <InfoRow
           property={t('transactionHash')}

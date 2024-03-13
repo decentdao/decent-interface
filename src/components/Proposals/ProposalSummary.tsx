@@ -1,7 +1,6 @@
 import { Text, Box, Button, Divider, Flex, Tooltip } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import { format } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
 import { BigNumber } from 'ethers';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,8 +14,8 @@ import { DisplayAddress } from '../ui/links/DisplayAddress';
 import DisplayTransaction from '../ui/links/DisplayTransaction';
 import EtherscanLinkBlock from '../ui/links/EtherscanLinkBlock';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
-import InfoRow from '../ui/proposal/InfoRow';
 import { QuorumProgressBar } from '../ui/utils/ProgressBar';
+import { InfoRow } from './MultisigProposalDetails/TxDetails';
 
 export default function ProposalSummary({
   proposal: {
@@ -137,12 +136,10 @@ export default function ProposalSummary({
         <InfoRow
           property={t('proposalSummaryStartDate')}
           value={format(startBlockTimeStamp * 1000, DEFAULT_DATE_TIME_FORMAT)}
-          tooltip={formatInTimeZone(startBlockTimeStamp * 1000, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
         />
         <InfoRow
           property={t('proposalSummaryEndDate')}
           value={format(deadlineMs, DEFAULT_DATE_TIME_FORMAT)}
-          tooltip={formatInTimeZone(deadlineMs, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
         />
         <Flex
           marginTop={4}

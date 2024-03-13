@@ -1,6 +1,5 @@
 import { Text, Box, Button, Divider, Flex, Tooltip } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
@@ -9,8 +8,8 @@ import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
 import ExternalLink from '../../ui/links/ExternalLink';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
-import InfoRow from '../../ui/proposal/InfoRow';
 import { QuorumProgressBar } from '../../ui/utils/ProgressBar';
+import { InfoRow } from '../MultisigProposalDetails/TxDetails';
 import useSnapshotUserVotingWeight from './hooks/useSnapshotUserVotingWeight';
 import useTotalVotes from './hooks/useTotalVotes';
 
@@ -89,12 +88,10 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
         <InfoRow
           property={t('proposalSummaryStartDate')}
           value={format(proposal.startTime * 1000, DEFAULT_DATE_TIME_FORMAT)}
-          tooltip={formatInTimeZone(proposal.startTime * 1000, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
         />
         <InfoRow
           property={t('proposalSummaryEndDate')}
           value={format(proposal.endTime * 1000, DEFAULT_DATE_TIME_FORMAT)}
-          tooltip={formatInTimeZone(proposal.endTime * 1000, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
         />
         <Flex
           marginTop={4}

@@ -2,7 +2,7 @@ import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { BigNumber, ethers } from 'ethers';
 import bigDecimal from 'js-big-decimal';
 
-export const DEFAULT_DATE_TIME_FORMAT = 'MMM dd, yyyy, h:mm aa O';
+export const DEFAULT_DATE_TIME_FORMAT = 'MMM dd, yyyy, h:mm aa';
 export const DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
 
 export const formatPercentage = (
