@@ -4,7 +4,7 @@ import { useMemo, useCallback } from 'react';
 const INFURA_AUTH =
   'Basic ' +
   Buffer.from(
-    `${process.env.NEXT_PUBLIC_INFURA_IPFS_API_KEY}:${process.env.NEXT_PUBLIC_INFURA_IPFS_API_SECRET}`,
+    `${import.meta.env.VITE_APP_INFURA_IPFS_API_KEY}:${import.meta.env.VITE_APP_INFURA_IPFS_API_SECRET}`,
   ).toString('base64');
 const BASE_URL = 'https://ipfs.infura.io:5001/api/v0';
 

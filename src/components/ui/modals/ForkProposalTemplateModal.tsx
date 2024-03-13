@@ -1,7 +1,7 @@
 import { Box, Button, Divider } from '@chakra-ui/react';
-import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useNetwork } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
@@ -29,7 +29,7 @@ export default function ForkProposalTemplateModal({
   const [error, setError] = useState('');
 
   const { t } = useTranslation('proposalTemplate');
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const signerOrProvider = useSignerOrProvider();
   const { chain } = useNetwork();
   const {
@@ -76,7 +76,7 @@ export default function ForkProposalTemplateModal({
   }, [getCanUserCreateProposal, isSafe, t, inputValue, chain, isSafeLoading, signerOrProvider]);
 
   const handleSubmit = () => {
-    push(
+    navigate(
       `${DAO_ROUTES.proposalTemplateNew.relative(
         targetDAOAddress,
       )}?templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`,

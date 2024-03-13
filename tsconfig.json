@@ -15,22 +15,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    "incremental": true
   },
   "exclude": ["docker"],
-  "include": [
-    "src",
-    "tests",
-    "test",
-    "app",
-    "netlify/functions",
-    ".next/types/**/*.ts",
-    "next-env.d.ts",
-    "next.config.js"
-  ]
+  "include": ["src", "tests", "test", "app", "netlify/functions", "vite.config.mts"]
 }

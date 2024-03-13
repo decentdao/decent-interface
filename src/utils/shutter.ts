@@ -1,5 +1,3 @@
-'use client';
-
 import { init, encrypt } from '@shutter-network/shutter-crypto';
 import { BigNumber, utils } from 'ethers';
 
@@ -14,7 +12,7 @@ export default async function encryptWithShutter(
 
   const bytesChoice = toUtf8Bytes(choice);
   const message = arrayify(bytesChoice);
-  const eonPublicKey = arrayify(process.env.NEXT_PUBLIC_SHUTTER_EON_PUBKEY!);
+  const eonPublicKey = arrayify(import.meta.env.VITE_APP_SHUTTER_EON_PUBKEY!);
 
   const is32ByteString = id.substring(0, 2) === '0x';
   const proposalId = arrayify(is32ByteString ? id : formatBytes32String(id));

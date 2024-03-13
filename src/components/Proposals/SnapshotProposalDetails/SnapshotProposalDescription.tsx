@@ -1,11 +1,9 @@
-import { Text, Button } from '@chakra-ui/react';
-import Image from 'next/image';
+import { Text, Button, Image } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Markdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { SnapshotProposal } from '../../../types';
-import '../../../assets/css/SnapshotProposalMarkdown.css';
 
 function CustomMarkdownImage({ src, alt }: { src?: string; alt?: string }) {
   const [error, setError] = useState(false);

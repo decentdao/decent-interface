@@ -205,5 +205,8 @@ export const useGovernanceContracts = () => {
       loadGovernanceContracts();
       currentValidAddress.current = daoAddress;
     }
+    if (!daoAddress) {
+      currentValidAddress.current = null;
+    }
   }, [isModulesLoaded, loadGovernanceContracts, daoAddress]);
 };

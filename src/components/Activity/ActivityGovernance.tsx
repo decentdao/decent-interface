@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FractalProposal, ActivityEventType, SnapshotProposal } from '../../types';
@@ -33,7 +33,7 @@ export function ActivityGovernance({ activity }: { activity: FractalProposal }) 
   } = useFractal();
 
   return (
-    <Link href={DAO_ROUTES.proposal.relative(daoAddress, activity.proposalId)}>
+    <Link to={DAO_ROUTES.proposal.relative(daoAddress, activity.proposalId)}>
       <ActivityCard
         Badge={
           activity.state && (

@@ -8,6 +8,7 @@ import { FractalGovernanceAction } from '../../../../providers/App/governance/ac
 
 export function useERC20Claim() {
   const {
+    node: { daoAddress },
     governanceContracts: { tokenContract },
     baseContracts,
     action,
@@ -41,7 +42,9 @@ export function useERC20Claim() {
   }, [baseContracts, tokenContract, action]);
 
   useEffect(() => {
-    loadTokenClaimContract();
-  }, [loadTokenClaimContract]);
+    if (daoAddress) {
+      loadTokenClaimContract();
+    }
+  }, [loadTokenClaimContract, daoAddress]);
   return;
 }
