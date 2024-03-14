@@ -8,7 +8,7 @@ import { router } from './router';
 import '@fontsource/ibm-plex-mono';
 import '@fontsource/ibm-plex-sans';
 import 'react-toastify/dist/ReactToastify.min.css';
-import './assets/css/SnapshotProposalMarkdown.css';
+import './assets/css/Markdown.css';
 
 const root = document.getElementById('root');
 if (root !== null) {
