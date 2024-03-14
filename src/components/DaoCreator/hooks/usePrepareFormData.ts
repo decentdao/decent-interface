@@ -85,13 +85,11 @@ export function usePrepareFormData() {
       if (freezeGuard) {
         freezeGuardData = await prepareFreezeGuardData(freezeGuard);
       }
-      if (freezeGuardData) {
-        return {
-          trustedAddresses: resolvedAddresses,
-          ...freezeGuardData,
-          ...rest,
-        };
-      }
+      return {
+        trustedAddresses: resolvedAddresses,
+        ...freezeGuardData,
+        ...rest,
+      };
     },
     [signer, prepareFreezeGuardData],
   );

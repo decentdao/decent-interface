@@ -4,7 +4,7 @@ import metaSectionBackground1 from './assets/meta-section-background-1.png';
 
 const LIZZARDS_DAO_METADATA: DAOMetadata = {
   address: '0x167bE4073f52aD2Aa0D6d6FeddF0F1f79a82B98e',
-  logo: logo.src,
+  logo: logo,
   headerBackground:
     'linear-gradient(269deg, rgba(110, 97, 240, 0.35) 3.2%, rgba(74, 163, 183, 0.35) 51.2%, rgba(101, 211, 138, 0.35) 98.2%), #000',
   bodyBackground: 'linear-gradient(180deg, #2A2F33 0%, #101212 100%)',
@@ -38,7 +38,7 @@ const LIZZARDS_DAO_METADATA: DAOMetadata = {
       title: 'Elemental Lizards coming soon',
       content:
         'Designed by gamers for Web3 Gamers, Guild Leaders, and Content Creators. The Elemental Lizards provide battle passes for all Ethlizards gaming experiences, customizable avatars, and exclusive community access for the Community Sub-DAO. ',
-      background: metaSectionBackground1.src,
+      background: metaSectionBackground1,
       link: {
         position: 'end',
         text: 'Learn more',

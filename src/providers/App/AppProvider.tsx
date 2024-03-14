@@ -1,5 +1,3 @@
-'use client';
-
 import { ReactNode, useReducer, useMemo, Context, createContext, useContext } from 'react';
 import { useAccount } from 'wagmi';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';

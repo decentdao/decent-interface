@@ -1,5 +1,3 @@
-'use client';
-
 import { Divider, Flex } from '@chakra-ui/react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceType } from '../../../types';

@@ -1,4 +1,3 @@
-'use client';
 import { Box, Divider, Flex, Text, Button } from '@chakra-ui/react';
 import { ArrowDown } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';

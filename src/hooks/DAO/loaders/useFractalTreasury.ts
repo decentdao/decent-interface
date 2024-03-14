@@ -22,7 +22,7 @@ export const useFractalTreasury = () => {
 
   const { safeBaseURL } = useNetworkConfig();
 
-  const { setMethodOnInterval } = useUpdateTimer(daoAddress);
+  const { setMethodOnInterval, clearIntervals } = useUpdateTimer(daoAddress);
 
   const loadTreasury = useCallback(async () => {
     if (!daoAddress || !safeAPI) {
@@ -58,7 +58,11 @@ export const useFractalTreasury = () => {
       loadKey.current = chain.id + daoAddress;
       setMethodOnInterval(loadTreasury);
     }
-  }, [chain, daoAddress, loadTreasury, setMethodOnInterval]);
+    if (!daoAddress) {
+      loadKey.current = null;
+      clearIntervals();
+    }
+  }, [chain.id, daoAddress, loadTreasury, setMethodOnInterval, clearIntervals]);
 
   return;
 };

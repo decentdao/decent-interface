@@ -122,6 +122,9 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       loadKey.current = chain.id + daoAddress;
       setGuardContracts();
     }
+    if (!daoAddress) {
+      loadKey.current = undefined;
+    }
   }, [setGuardContracts, isModulesLoaded, daoAddress, loadOnMount, chain.id]);
   return loadFractalGuardContracts;
 };

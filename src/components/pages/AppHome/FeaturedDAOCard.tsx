@@ -1,9 +1,8 @@
-import { Text, BoxProps, Image, HStack, Spacer, Flex, Box } from '@chakra-ui/react';
+import { Text, BoxProps, Image, HStack, Spacer, Flex, Box, Link } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { StyledBox } from '../../ui/containers/StyledBox';
-import ExternalLink from '../../ui/links/ExternalLink';
-
 interface DAOFeatureProps extends BoxProps {
   iconSrc: string;
   title: string;
@@ -52,13 +51,16 @@ export default function FeaturedDAOCard({
         </Box>
         <Flex>
           <Spacer />
-          <ExternalLink
+          <Link
+            as={RouterLink}
+            color="gold.500"
+            _hover={{ color: 'gold.500-hover' }}
             alignSelf="end"
             textStyle="text-lg-mono-bold"
-            href={DAO_ROUTES.dao.relative(address)}
+            to={DAO_ROUTES.dao.relative(address)}
           >
             {t('featureLink')}
-          </ExternalLink>
+          </Link>
         </Flex>
       </StyledBox>
     </Box>

@@ -9,9 +9,9 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { utils } from 'ethers';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { logError } from '../../../helpers/errorLogging';
 import { usePrepareProposal } from '../../../hooks/DAO/proposal/usePrepareProposal';
@@ -40,7 +40,7 @@ export default function ProposalTemplateModal({
   const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
   const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
   const { prepareProposal } = usePrepareProposal();
 
@@ -79,7 +79,7 @@ export default function ProposalTemplateModal({
 
   const successCallback = () => {
     if (daoAddress) {
-      push(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(daoAddress));
       onClose();
     }
   };
