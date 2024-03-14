@@ -12,6 +12,7 @@ import ContentBox from '../ui/containers/ContentBox';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
+import Markdown from '../ui/proposal/Markdown';
 
 type ProposalTemplateCardProps = {
   proposalTemplate: ProposalTemplate;
@@ -122,12 +123,7 @@ export default function ProposalTemplateCard({
       >
         {title}
       </Text>
-      <Text
-        textStyle="text-sm-mono-regular"
-        color="grayscale.100"
-      >
-        {description}
-      </Text>
+      <Markdown content={description}/>
     </ContentBox>
   );
 }
