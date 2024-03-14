@@ -123,7 +123,7 @@ export default function ProposalTemplateCard({
       >
         {title}
       </Text>
-      <Markdown content={description}/>
+      <Markdown content={description} />
     </ContentBox>
   );
 }

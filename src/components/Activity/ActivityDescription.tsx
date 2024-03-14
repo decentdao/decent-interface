@@ -24,7 +24,10 @@ export function ActivityDescription({ activity, showFullDescription }: IActivity
       <ProposalTitle activity={activity} />
       {snapshotProposal.description ||
         (metaData.description && (
-          <Box my={4} minWidth="100%">
+          <Box
+            my={4}
+            minWidth="100%"
+          >
             <Markdown
               content={snapshotProposal.description || metaData.description}
               truncate={!showFullDescription}

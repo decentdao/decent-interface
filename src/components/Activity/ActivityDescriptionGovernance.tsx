@@ -61,7 +61,14 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
   return (
     <>
       <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
-      {metaData.title ? <Text>{metaData.title}</Text> : metaData.description ? <Markdown truncate content={metaData.description}/> : null}
+      {metaData.title ? (
+        <Text>{metaData.title}</Text>
+      ) : metaData.description ? (
+        <Markdown
+          truncate
+          content={metaData.description}
+        />
+      ) : null}
       {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}
       <OnChainRejectionMessage activity={activity} />
     </>
