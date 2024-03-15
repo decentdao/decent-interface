@@ -1,38 +1,39 @@
-import {
-  Azorius,
-  LinearERC20Voting,
-  LinearERC721Voting,
-} from '@fractal-framework/fractal-contracts';
+import { LinearERC20Voting, LinearERC721Voting } from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { ProposalCreatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
-import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { ProposalMetadata, MetaTransaction, VotingStrategyType } from '../../../../types';
 import { AzoriusProposal, ProposalData } from '../../../../types/daoProposal';
 import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
+import useSafeContracts from '../../../safe/useSafeContracts';
 import { useAsyncRetry } from '../../../utils/useAsyncRetry';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
 export const useAzoriusProposals = () => {
   const {
-    governanceContracts: { azoriusContract, ozLinearVotingContract, erc721LinearVotingContract },
+    governanceContracts: {
+      azoriusContractAddress,
+      ozLinearVotingContractAddress,
+      erc721LinearVotingContractAddress,
+    },
     action,
   } = useFractal();
+  const baseContracts = useSafeContracts();
   const strategyType = useMemo(() => {
-    if (ozLinearVotingContract) {
+    if (ozLinearVotingContractAddress) {
       return VotingStrategyType.LINEAR_ERC20;
-    } else if (erc721LinearVotingContract) {
+    } else if (erc721LinearVotingContractAddress) {
       return VotingStrategyType.LINEAR_ERC721;
     } else {
       return undefined;
     }
-  }, [ozLinearVotingContract, erc721LinearVotingContract]);
+  }, [ozLinearVotingContractAddress, erc721LinearVotingContractAddress]);
   const provider = useEthersProvider();
   const decode = useSafeDecoder();
   const decodeTransactions = useCallback(
@@ -49,21 +50,32 @@ export const useAzoriusProposals = () => {
 
   const loadAzoriusProposals = useCallback(async (): Promise<AzoriusProposal[]> => {
     if (
-      !azoriusContract ||
-      !(ozLinearVotingContract || erc721LinearVotingContract) ||
+      !azoriusContractAddress ||
+      !(ozLinearVotingContractAddress || erc721LinearVotingContractAddress) ||
       !strategyType ||
-      !provider
+      !provider ||
+      !baseContracts
     ) {
       return [];
     }
-    const rpc = getEventRPC<Azorius>(azoriusContract);
-    const proposalCreatedFilter = rpc.filters.ProposalCreated();
+    const azoriusContract =
+      baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
+    const proposalCreatedFilter = azoriusContract.filters.ProposalCreated();
 
-    const proposalCreatedEvents = await rpc.queryFilter(proposalCreatedFilter);
-
-    const strategyContract = getEventRPC<LinearERC20Voting | LinearERC721Voting>(
-      ozLinearVotingContract ?? erc721LinearVotingContract!,
-    );
+    const proposalCreatedEvents = await azoriusContract.queryFilter(proposalCreatedFilter);
+    let strategyContract: LinearERC20Voting | LinearERC721Voting;
+    if (ozLinearVotingContractAddress) {
+      strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+        ozLinearVotingContractAddress,
+      );
+    } else if (erc721LinearVotingContractAddress) {
+      strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+        erc721LinearVotingContractAddress,
+      );
+    } else {
+      console.error('No strategy contract found');
+      return [];
+    }
 
     const proposals = await Promise.all(
       proposalCreatedEvents.map(async ({ args }) => {
@@ -95,11 +107,12 @@ export const useAzoriusProposals = () => {
     return proposals;
   }, [
     decodeTransactions,
-    ozLinearVotingContract,
-    erc721LinearVotingContract,
-    azoriusContract,
+    ozLinearVotingContractAddress,
+    erc721LinearVotingContractAddress,
+    azoriusContractAddress,
     provider,
     strategyType,
+    baseContracts,
   ]);
 
   const { requestWithRetries } = useAsyncRetry();
@@ -107,15 +120,17 @@ export const useAzoriusProposals = () => {
   const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
     async (strategyAddress, proposalId, proposer, transactions, _metadata) => {
       if (
-        !azoriusContract ||
-        !(ozLinearVotingContract || erc721LinearVotingContract) ||
+        !azoriusContractAddress ||
+        !(ozLinearVotingContractAddress || erc721LinearVotingContractAddress) ||
         !strategyType ||
-        !provider
+        !provider ||
+        !baseContracts
       ) {
         return;
       }
       let proposalData: ProposalData | undefined;
-
+      const azoriusContract =
+        baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
       if (_metadata) {
         const metaDataEvent: ProposalMetadata = JSON.parse(_metadata);
         proposalData = {
@@ -128,9 +143,17 @@ export const useAzoriusProposals = () => {
           decodedTransactions: await decodeTransactions(transactions),
         };
       }
-      const strategyContract = getEventRPC<LinearERC20Voting | LinearERC721Voting>(
-        ozLinearVotingContract ?? erc721LinearVotingContract!,
-      ).attach(strategyAddress);
+      let strategyContract: LinearERC20Voting | LinearERC721Voting;
+      if (ozLinearVotingContractAddress) {
+        strategyContract =
+          baseContracts.linearVotingMasterCopyContract.asProvider.attach(strategyAddress);
+      } else if (erc721LinearVotingContractAddress) {
+        strategyContract =
+          baseContracts.linearVotingMasterCopyContract.asProvider.attach(strategyAddress);
+      } else {
+        console.error('No strategy contract found');
+        return [];
+      }
       const func = async () => {
         return mapProposalCreatedEventToProposal(
           strategyContract,
@@ -149,23 +172,27 @@ export const useAzoriusProposals = () => {
       });
     },
     [
-      ozLinearVotingContract,
-      erc721LinearVotingContract,
-      azoriusContract,
+      baseContracts,
+      azoriusContractAddress,
       provider,
       decodeTransactions,
       action,
       requestWithRetries,
       strategyType,
+      ozLinearVotingContractAddress,
+      erc721LinearVotingContractAddress,
     ],
   );
 
   const erc20ProposalVotedEventListener: TypedListener<ERC20VotedEvent> = useCallback(
     async (voter, proposalId, support, weight) => {
-      if (!ozLinearVotingContract || !strategyType) {
+      if (!ozLinearVotingContractAddress || !strategyType || !baseContracts) {
         return;
       }
-      const strategyContract = getEventRPC<LinearERC20Voting>(ozLinearVotingContract);
+      const strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+        ozLinearVotingContractAddress,
+      );
+
       const votesSummary = await getProposalVotesSummary(
         strategyContract,
         strategyType,
@@ -183,15 +210,17 @@ export const useAzoriusProposals = () => {
         },
       });
     },
-    [ozLinearVotingContract, action, strategyType],
+    [ozLinearVotingContractAddress, action, strategyType, baseContracts],
   );
 
   const erc721ProposalVotedEventListener: TypedListener<ERC721VotedEvent> = useCallback(
     async (voter, proposalId, support, tokenAddresses, tokenIds) => {
-      if (!erc721LinearVotingContract || !strategyType) {
+      if (!erc721LinearVotingContractAddress || !strategyType || !baseContracts) {
         return;
       }
-      const strategyContract = getEventRPC<LinearERC721Voting>(erc721LinearVotingContract);
+      const strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+        erc721LinearVotingContractAddress,
+      );
       const votesSummary = await getProposalVotesSummary(
         strategyContract,
         strategyType,
@@ -210,45 +239,57 @@ export const useAzoriusProposals = () => {
         },
       });
     },
-    [erc721LinearVotingContract, action, strategyType],
+    [erc721LinearVotingContractAddress, action, strategyType, baseContracts],
   );
 
   useEffect(() => {
-    if (!azoriusContract) {
+    if (!azoriusContractAddress || !baseContracts) {
       return;
     }
-    const proposalCreatedFilter = azoriusContract.asProvider.filters.ProposalCreated();
 
-    azoriusContract.asProvider.on(proposalCreatedFilter, proposalCreatedListener);
+    const azoriusContract =
+      baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
+    const proposalCreatedFilter = azoriusContract.filters.ProposalCreated();
+
+    azoriusContract.on(proposalCreatedFilter, proposalCreatedListener);
 
     return () => {
-      azoriusContract.asProvider.off(proposalCreatedFilter, proposalCreatedListener);
+      azoriusContract.off(proposalCreatedFilter, proposalCreatedListener);
     };
-  }, [azoriusContract, proposalCreatedListener]);
+  }, [azoriusContractAddress, proposalCreatedListener, baseContracts]);
 
   useEffect(() => {
-    if (ozLinearVotingContract) {
-      const votedEvent = ozLinearVotingContract.asProvider.filters.Voted();
+    if (ozLinearVotingContractAddress && baseContracts) {
+      const ozLinearVotingContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+        ozLinearVotingContractAddress,
+      );
 
-      ozLinearVotingContract.asProvider.on(votedEvent, erc20ProposalVotedEventListener);
+      const votedEvent = ozLinearVotingContract.filters.Voted();
+
+      ozLinearVotingContract.on(votedEvent, erc20ProposalVotedEventListener);
 
       return () => {
-        ozLinearVotingContract.asProvider.off(votedEvent, erc20ProposalVotedEventListener);
+        ozLinearVotingContract.off(votedEvent, erc20ProposalVotedEventListener);
       };
-    } else if (erc721LinearVotingContract) {
-      const votedEvent = erc721LinearVotingContract.asProvider.filters.Voted();
+    } else if (erc721LinearVotingContractAddress && baseContracts) {
+      const erc721LinearVotingContract =
+        baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+          erc721LinearVotingContractAddress,
+        );
+      const votedEvent = erc721LinearVotingContract.filters.Voted();
 
-      erc721LinearVotingContract.asProvider.on(votedEvent, erc721ProposalVotedEventListener);
+      erc721LinearVotingContract.on(votedEvent, erc721ProposalVotedEventListener);
 
       return () => {
-        erc721LinearVotingContract.asProvider.off(votedEvent, erc721ProposalVotedEventListener);
+        erc721LinearVotingContract.off(votedEvent, erc721ProposalVotedEventListener);
       };
     }
   }, [
-    ozLinearVotingContract,
-    erc721LinearVotingContract,
+    ozLinearVotingContractAddress,
+    erc721LinearVotingContractAddress,
     erc20ProposalVotedEventListener,
     erc721ProposalVotedEventListener,
+    baseContracts,
   ]);
 
   return loadAzoriusProposals;

@@ -5,11 +5,13 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { utils, BigNumber } from 'ethers';
 import { useState, useEffect, useCallback } from 'react';
+import { zeroAddress } from 'viem';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
+import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 
@@ -36,10 +38,11 @@ export default function useUserERC721VotingTokens(
   const signerOrProvider = useSignerOrProvider();
   const {
     node: { daoAddress },
-    governanceContracts: { erc721LinearVotingContract },
+    governanceContracts: { erc721LinearVotingContractAddress },
     governance,
     readOnly: { user },
   } = useFractal();
+  const baseContracts = useSafeContracts();
   const lookupModules = useFractalModules();
   const safeAPI = useSafeAPI();
 
@@ -49,7 +52,9 @@ export default function useUserERC721VotingTokens(
   const getUserERC721VotingTokens = useCallback(
     async (_proposalId?: string, _safeAddress?: string | null) => {
       let govTokens = erc721Tokens;
-      let votingContract = erc721LinearVotingContract?.asProvider;
+      let votingContract = baseContracts?.linearVotingERC721MasterCopyContract?.asProvider.attach(
+        erc721LinearVotingContractAddress || zeroAddress,
+      );
 
       if (_safeAddress && daoAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
@@ -174,13 +179,14 @@ export default function useUserERC721VotingTokens(
       };
     },
     [
-      erc721LinearVotingContract,
+      erc721LinearVotingContractAddress,
       erc721Tokens,
       signerOrProvider,
       lookupModules,
       safeAPI,
       daoAddress,
       user.address,
+      baseContracts,
     ],
   );
 

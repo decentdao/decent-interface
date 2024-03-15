@@ -4,7 +4,9 @@ import { BigNumber, constants } from 'ethers';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
+import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
+import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -20,10 +22,12 @@ export function DelegateModal({ close }: { close: Function }) {
 
   const {
     governance,
-    governanceContracts: { tokenContract, lockReleaseContract },
+    governanceContracts: { votesTokenContractAddress, lockReleaseContractAddress },
     readOnly: { user },
     action: { loadReadOnlyValues },
   } = useFractal();
+
+  const baseContracts = useSafeContracts()
 
   const signer = useEthersSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
@@ -34,28 +38,32 @@ export function DelegateModal({ close }: { close: Function }) {
   const { addressValidationTest } = useValidationAddress();
 
   const submitDelegation = async (values: { address: string }) => {
-    if (!tokenContract) return;
+    if (!votesTokenContractAddress || !baseContracts) return;
     let validAddress = values.address;
     if (couldBeENS(validAddress)) {
       validAddress = await signer!.resolveName(values.address);
     }
+    const votingTokenContract = baseContracts.votesERC20WrapperMasterCopyContract.asProvider.attach(
+      votesTokenContractAddress,
+    );
     delegateVote({
       delegatee: validAddress,
-      votingTokenContract: tokenContract?.asSigner,
+      votingTokenContract,
       successCallback: () => {
         close();
       },
     });
   };
   const submitLockedDelegation = async (values: { address: string }) => {
-    if (!lockReleaseContract) return;
+    if (!lockReleaseContractAddress || !baseContracts || !signer) return;
     let validAddress = values.address;
     if (couldBeENS(validAddress)) {
       validAddress = await signer!.resolveName(values.address);
     }
+    const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, signer)
     delegateVote({
       delegatee: validAddress,
-      votingTokenContract: lockReleaseContract.asSigner,
+      votingTokenContract: lockReleaseContract,
       successCallback: async () => {
         await loadReadOnlyValues();
         close();

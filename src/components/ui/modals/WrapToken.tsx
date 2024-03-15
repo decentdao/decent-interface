@@ -1,6 +1,5 @@
 import { Button, Flex, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { VotesERC20Wrapper } from '@fractal-framework/fractal-contracts';
 import { BigNumber, Contract } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
@@ -9,6 +8,7 @@ import { erc20ABI, useAccount } from 'wagmi';
 import * as Yup from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
+import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import useApproval from '../../../hooks/utils/useApproval';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
@@ -27,6 +27,7 @@ export function WrapToken({ close }: { close: () => void }) {
     value: '',
     bigNumberValue: BigNumber.from(0),
   });
+  const baseContracts = useSafeContracts();
 
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
   const [contractCall, pending] = useTransaction();
@@ -35,7 +36,9 @@ export function WrapToken({ close }: { close: () => void }) {
     approveTransaction,
     pending: approvalPending,
   } = useApproval(
-    governanceContracts.tokenContract?.asSigner.attach(governanceContracts.underlyingTokenAddress!),
+    baseContracts?.votesTokenMasterCopyContract?.asSigner.attach(
+      governanceContracts.underlyingTokenAddress!,
+    ),
     azoriusGovernance.votesToken?.address,
     userBalance.bigNumberValue,
   );
@@ -82,9 +85,12 @@ export function WrapToken({ close }: { close: () => void }) {
 
   const handleFormSubmit = useCallback(
     (amount: BigNumberValuePair) => {
-      const { tokenContract } = governanceContracts;
-      if (!tokenContract || !signer || !account) return;
-      const wrapperTokenContract = tokenContract.asSigner as VotesERC20Wrapper;
+      const { votesTokenContractAddress } = governanceContracts;
+      if (!votesTokenContractAddress || !signer || !account || !baseContracts) return;
+      const wrapperTokenContract =
+        baseContracts.votesERC20WrapperMasterCopyContract.asSigner.attach(
+          votesTokenContractAddress,
+        );
       contractCall({
         contractFn: () => wrapperTokenContract.depositFor(account, amount.bigNumberValue!),
         pendingMessage: t('wrapTokenPendingMessage'),
@@ -98,7 +104,16 @@ export function WrapToken({ close }: { close: () => void }) {
         },
       });
     },
-    [account, contractCall, governanceContracts, signer, close, t, loadERC20TokenAccountData],
+    [
+      account,
+      contractCall,
+      governanceContracts,
+      signer,
+      close,
+      t,
+      loadERC20TokenAccountData,
+      baseContracts,
+    ],
   );
 
   if (

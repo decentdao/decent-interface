@@ -13,7 +13,6 @@ import {
   ProposalVotesSummary,
   ProposalVote,
   VOTE_CHOICES,
-  ContractConnection,
   ProposalData,
   AzoriusProposal,
   ActivityEventType,
@@ -113,7 +112,7 @@ export const mapProposalCreatedEventToProposal = async (
   strategyType: VotingStrategyType,
   proposalId: BigNumber,
   proposer: string,
-  azoriusContract: ContractConnection<Azorius>,
+  azoriusContract: Azorius,
   provider: Providers,
   data?: ProposalData,
 ) => {
@@ -122,7 +121,7 @@ export const mapProposalCreatedEventToProposal = async (
   const quorum = await getQuorum(strategyContract, strategyType, proposalId);
 
   const deadlineSeconds = await getTimeStamp(endBlock, provider);
-  const state = await getAzoriusProposalState(azoriusContract.asProvider, proposalId);
+  const state = await getAzoriusProposalState(azoriusContract, proposalId);
   const votes = await getProposalVotes(strategyContract, proposalId);
   const block = await provider.getBlock(startBlock);
   const votesSummary = {
@@ -136,9 +135,8 @@ export const mapProposalCreatedEventToProposal = async (
 
   let transactionHash: string | undefined;
   if (state === FractalProposalState.EXECUTED) {
-    const proposalExecutedFilter = azoriusContract.asProvider.filters.ProposalExecuted();
-    const proposalExecutedEvents =
-      await azoriusContract.asProvider.queryFilter(proposalExecutedFilter);
+    const proposalExecutedFilter = azoriusContract.filters.ProposalExecuted();
+    const proposalExecutedEvents = await azoriusContract.queryFilter(proposalExecutedFilter);
     const executedEvent = proposalExecutedEvents.find(event =>
       BigNumber.from(event.args[0]).eq(proposalId),
     );
