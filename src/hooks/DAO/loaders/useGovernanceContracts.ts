@@ -104,13 +104,15 @@ export const useGovernanceContracts = () => {
             lockReleaseContractAddress,
           },
         });
-      } else {
-        action.dispatch({
-          type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
-          payload: {},
-        });
-        currentValidAddress.current = null;
+        
       }
+      // else this has no governance token and can be assumed is a multi-sig
+    } else {
+      action.dispatch({
+        type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
+        payload: {},
+      });
+      currentValidAddress.current = null;
     }
   }, [action, provider, getZodiacModuleProxyMasterCopyData, baseContracts, fractalModules]);
 
