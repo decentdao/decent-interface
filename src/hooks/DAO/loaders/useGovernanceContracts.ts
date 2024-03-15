@@ -112,7 +112,6 @@ export const useGovernanceContracts = () => {
         type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
         payload: {},
       });
-      currentValidAddress.current = null;
     }
   }, [action, provider, getZodiacModuleProxyMasterCopyData, baseContracts, fractalModules]);
 
