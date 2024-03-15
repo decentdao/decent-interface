@@ -152,7 +152,7 @@ export const useAzoriusProposals = () => {
         strategyContract =
           baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(strategyAddress);
       } else {
-          logError('No strategy contract found');
+        logError('No strategy contract found');
         return [];
       }
       const func = async () => {

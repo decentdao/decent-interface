@@ -104,7 +104,6 @@ export const useGovernanceContracts = () => {
             lockReleaseContractAddress,
           },
         });
-        
       }
       // else this has no governance token and can be assumed is a multi-sig
     } else {
