@@ -150,7 +150,7 @@ export const useAzoriusProposals = () => {
           baseContracts.linearVotingMasterCopyContract.asProvider.attach(strategyAddress);
       } else if (erc721LinearVotingContractAddress) {
         strategyContract =
-          baseContracts.linearVotingMasterCopyContract.asProvider.attach(strategyAddress);
+          baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(strategyAddress);
       } else {
           logError('No strategy contract found');
         return [];
