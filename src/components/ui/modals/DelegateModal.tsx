@@ -44,7 +44,7 @@ export function DelegateModal({ close }: { close: Function }) {
       validAddress = await signer!.resolveName(values.address);
     }
     const votingTokenContract =
-      baseContracts.votesERC20WrapperMasterCopyContract.asProvider.attach(
+      baseContracts.votesERC20WrapperMasterCopyContract.asSigner.attach(
         votesTokenContractAddress,
       );
     delegateVote({
