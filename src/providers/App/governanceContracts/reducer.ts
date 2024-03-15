@@ -2,11 +2,11 @@ import { FractalGovernanceContracts } from '../../../types';
 import { GovernanceContractAction, GovernanceContractActions } from './action';
 
 export const initialGovernanceContractsState: FractalGovernanceContracts = {
-  ozLinearVotingContract: null,
-  erc721LinearVotingContract: null,
-  azoriusContract: null,
-  tokenContract: null,
-  lockReleaseContract: null,
+  erc721LinearVotingContractAddress: undefined,
+  ozLinearVotingContractAddress: undefined,
+  azoriusContractAddress: undefined,
+  votesTokenContractAddress: undefined,
+  lockReleaseContractAddress: undefined,
   isLoaded: false,
 };
 
