@@ -32,10 +32,11 @@ export function UnwrapToken({ close }: { close: () => void }) {
     approveTransaction,
     pending: approvalPending,
   } = useApproval(
-    baseContracts?.votesTokenMasterCopyContract?.asSigner.attach(governanceContracts.underlyingTokenAddress!),
+    baseContracts?.votesTokenMasterCopyContract?.asSigner.attach(
+      governanceContracts.underlyingTokenAddress!,
+    ),
     azoriusGovernance.votesToken?.address,
   );
-  
 
   const { t } = useTranslation(['modals', 'treasury']);
   const { restrictChars } = useFormHelpers();
@@ -44,7 +45,10 @@ export function UnwrapToken({ close }: { close: () => void }) {
     (amount: BigNumberValuePair) => {
       const { votesTokenContractAddress } = governanceContracts;
       if (!votesTokenContractAddress || !signer || !account) return;
-      const votesTokenContract = baseContracts?.votesERC20WrapperMasterCopyContract?.asSigner.attach(votesTokenContractAddress);
+      const votesTokenContract =
+        baseContracts?.votesERC20WrapperMasterCopyContract?.asSigner.attach(
+          votesTokenContractAddress,
+        );
       const wrapperTokenContract = votesTokenContract as VotesERC20Wrapper;
       contractCall({
         contractFn: () => wrapperTokenContract.withdrawTo(account, amount.bigNumberValue!),
@@ -59,7 +63,16 @@ export function UnwrapToken({ close }: { close: () => void }) {
         },
       });
     },
-    [account, contractCall, governanceContracts, signer, close, t, loadERC20TokenAccountData, baseContracts],
+    [
+      account,
+      contractCall,
+      governanceContracts,
+      signer,
+      close,
+      t,
+      loadERC20TokenAccountData,
+      baseContracts,
+    ],
   );
 
   if (

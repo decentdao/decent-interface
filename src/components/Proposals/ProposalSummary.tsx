@@ -63,7 +63,9 @@ export default function ProposalSummary({
   useEffect(() => {
     async function loadProposalVotingWeight() {
       if (address && baseContracts && votesToken) {
-        const tokenContract = baseContracts?.votesTokenMasterCopyContract.asProvider.attach(votesToken.address);
+        const tokenContract = baseContracts.votesTokenMasterCopyContract.asProvider.attach(
+          votesToken.address,
+        );
         const pastVotingWeight = await tokenContract.getPastVotes(address, startBlock);
         setProposalsERC20VotingWeight(
           pastVotingWeight.div(votesTokenDecimalsDenominator).toString(),

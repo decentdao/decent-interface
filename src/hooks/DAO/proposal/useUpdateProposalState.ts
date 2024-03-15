@@ -23,9 +23,8 @@ export default function useUpdateProposalState({
       if (!azoriusContractAddress || !baseContracts) {
         return;
       }
-      const azoriusContract = baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(
-        azoriusContractAddress,
-      );
+      const azoriusContract =
+        baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
       const newState = await getAzoriusProposalState(azoriusContract, proposalId);
       governanceDispatch({
         type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,

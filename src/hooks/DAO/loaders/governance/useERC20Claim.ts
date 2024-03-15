@@ -17,9 +17,8 @@ export function useERC20Claim() {
   const loadTokenClaimContract = useCallback(async () => {
     if (!baseContracts || !votesTokenContractAddress) return;
     const { claimingMasterCopyContract } = baseContracts;
-    const votesTokenContract = baseContracts.votesTokenMasterCopyContract.asProvider.attach(
-      votesTokenContractAddress,
-    );
+    const votesTokenContract =
+      baseContracts.votesTokenMasterCopyContract.asProvider.attach(votesTokenContractAddress);
     const approvalFilter = votesTokenContract.filters.Approval();
     const approvals = await votesTokenContract.queryFilter(approvalFilter);
     if (!approvals.length) return;
@@ -31,10 +30,7 @@ export function useERC20Claim() {
       .queryFilter(tokenClaimFilter)
       .catch(() => []);
 
-    if (
-      !tokenClaimArray.length ||
-      tokenClaimArray[0].args[1] === votesTokenContractAddress
-    ) {
+    if (!tokenClaimArray.length || tokenClaimArray[0].args[1] === votesTokenContractAddress) {
       return;
     }
     // action to governance

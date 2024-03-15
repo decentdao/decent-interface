@@ -2,7 +2,6 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { TransferType, TokenInfo, AssetTransfer } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
 
-
 export enum TokenEventType {
   DEPOSIT,
   WITHDRAW,

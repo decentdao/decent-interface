@@ -14,14 +14,15 @@ export default function useERC721Tokens() {
     governanceContracts: { erc721LinearVotingContractAddress },
     action,
   } = useFractal();
-  const baseContracts = useSafeContracts()
+  const baseContracts = useSafeContracts();
   const loadERC721Tokens = useCallback(async () => {
     if (!erc721LinearVotingContractAddress || !signerOrProvider || !baseContracts) {
       return;
     }
-    const erc721LinearVotingContract = baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-      erc721LinearVotingContractAddress,
-    );
+    const erc721LinearVotingContract =
+      baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
+        erc721LinearVotingContractAddress,
+      );
     const addresses = await erc721LinearVotingContract.getAllTokenAddresses();
     const erc721Tokens: ERC721TokenData[] = await Promise.all(
       addresses.map(async address => {

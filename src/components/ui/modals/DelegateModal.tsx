@@ -27,7 +27,7 @@ export function DelegateModal({ close }: { close: Function }) {
     action: { loadReadOnlyValues },
   } = useFractal();
 
-  const baseContracts = useSafeContracts()
+  const baseContracts = useSafeContracts();
 
   const signer = useEthersSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
@@ -43,9 +43,10 @@ export function DelegateModal({ close }: { close: Function }) {
     if (couldBeENS(validAddress)) {
       validAddress = await signer!.resolveName(values.address);
     }
-    const votingTokenContract = baseContracts.votesERC20WrapperMasterCopyContract.asProvider.attach(
-      votesTokenContractAddress,
-    );
+    const votingTokenContract =
+      baseContracts.votesERC20WrapperMasterCopyContract.asProvider.attach(
+        votesTokenContractAddress,
+      );
     delegateVote({
       delegatee: validAddress,
       votingTokenContract,
@@ -60,7 +61,7 @@ export function DelegateModal({ close }: { close: Function }) {
     if (couldBeENS(validAddress)) {
       validAddress = await signer!.resolveName(values.address);
     }
-    const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, signer)
+    const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, signer);
     delegateVote({
       delegatee: validAddress,
       votingTokenContract: lockReleaseContract,
