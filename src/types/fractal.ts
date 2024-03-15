@@ -230,15 +230,6 @@ export interface FractalGovernanceContracts {
   underlyingTokenAddress?: string;
   isLoaded: boolean;
 }
-// export interface FractalGovernanceContracts {
-//   ozLinearVotingContract: ContractConnection<LinearERC20Voting> | null;
-//   erc721LinearVotingContract: ContractConnection<LinearERC721Voting> | null;
-//   azoriusContract: ContractConnection<Azorius> | null;
-//   tokenContract: ContractConnection<VotesERC20 | VotesERC20Wrapper> | null;
-//   lockReleaseContract: ContractConnection<LockRelease> | null;
-//   underlyingTokenAddress?: string;
-//   isLoaded: boolean;
-// }
 
 export interface FractalNode {
   daoName: string | null;
