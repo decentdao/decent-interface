@@ -5,6 +5,7 @@ import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contra
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useMemo } from 'react';
+import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
@@ -73,7 +74,7 @@ export const useAzoriusProposals = () => {
         erc721LinearVotingContractAddress,
       );
     } else {
-      console.error('No strategy contract found');
+      logError('No strategy contract found');
       return [];
     }
 
@@ -151,7 +152,7 @@ export const useAzoriusProposals = () => {
         strategyContract =
           baseContracts.linearVotingMasterCopyContract.asProvider.attach(strategyAddress);
       } else {
-        console.error('No strategy contract found');
+          logError('No strategy contract found');
         return [];
       }
       const func = async () => {
