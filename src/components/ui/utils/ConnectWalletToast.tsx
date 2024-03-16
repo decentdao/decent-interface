@@ -1,12 +1,12 @@
 import { Flex, Text, Button } from '@chakra-ui/react';
-import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useWeb3Modal } from '@web3modal/wagmi/react'
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useFractal } from '../../../providers/App/AppProvider';
 
 function ToastContent({ label }: { label: string }) {
-  const { openConnectModal } = useConnectModal();
+  const { open } = useWeb3Modal();
   const { t } = useTranslation('menu');
   return (
     <Flex
@@ -17,7 +17,7 @@ function ToastContent({ label }: { label: string }) {
       <Button
         size="lg"
         variant="text"
-        onClick={openConnectModal}
+        onClick={() => open()}
       >
         {t('connectWallet')}
       </Button>

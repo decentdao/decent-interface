@@ -1,17 +1,8 @@
-import '@rainbow-me/rainbowkit/styles.css';
-
-import { connectorsForWallets } from '@rainbow-me/rainbowkit';
-import {
-  coinbaseWallet,
-  injectedWallet,
-  metaMaskWallet,
-  walletConnectWallet,
-} from '@rainbow-me/rainbowkit/wallets';
-import { Chain, configureChains, createConfig, createStorage } from 'wagmi';
+import { defaultWagmiConfig } from '@web3modal/wagmi/react'
+import { Chain, configureChains } from 'wagmi';
 import { hardhat, sepolia, mainnet } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { supportedChains } from './NetworkConfigProvider';
-import { testWallet } from './testWallet';
 
 const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
 
@@ -43,40 +34,21 @@ export const { chains, publicClient } = configureChains(supportedWagmiChains, [
   }),
 ]);
 
-const defaultWallets = [
-  injectedWallet({ chains }),
-  coinbaseWallet({ appName: import.meta.env.VITE_APP_NAME, chains }),
-];
-
-if (import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID) {
-  defaultWallets.push(
-    walletConnectWallet({ chains, projectId: import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID }),
-  );
-  defaultWallets.push(
-    metaMaskWallet({ chains, projectId: import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID }),
-  );
-}
+export const walletConnectProjectId = import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID;
 // allows connection to localhost only in development mode.
-if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
-  defaultWallets.unshift(testWallet({ chains }));
+
+const wagmiMetadata = {
+  name: 'Fractal',
+  description: 'Fractal',
+  url: 'https://fractalframework.xyz',
+  icons: ['https://assets-global.website-files.com/62a0c42025f5e9c3b8955db4/63f6be241f0c205728d5061b_small.ico'] // Icon from our landing page
 }
 
-const connectors = connectorsForWallets([
-  {
-    // @note no translation here.
-    groupName: 'Supported',
-    wallets: defaultWallets,
-  },
-]);
-
-export const wagmiConfig = createConfig({
-  autoConnect: true,
-  publicClient,
-  connectors,
-  storage:
-    typeof window !== 'undefined'
-      ? createStorage({
-          storage: window.localStorage,
-        })
-      : undefined,
-});
+export const wagmiConfig = defaultWagmiConfig({
+  chains: supportedWagmiChains,
+  projectId: walletConnectProjectId,
+  metadata: wagmiMetadata,
+  enableCoinbase: true,
+  enableInjected: true,
+  enableWalletConnect: true
+})

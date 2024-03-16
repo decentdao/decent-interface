@@ -1,12 +1,11 @@
-import { Chain, Wallet } from '@rainbow-me/rainbowkit';
 import { providers } from 'ethers';
 import { createTestClient, publicActions, walletActions, http } from 'viem';
 import { hardhat } from 'viem/chains';
 import { MockConnector } from 'wagmi/connectors/mock';
 export interface MyWalletOptions {
-  chains: Chain[];
+  chains: any;
 }
-export const testWallet = ({ chains }: MyWalletOptions): Wallet => ({
+export const testWallet = ({ chains }: MyWalletOptions): any => ({
   id: 'test-wallet',
   name: 'Local Node Wallet',
   iconUrl: '/images/coin-icon-default.svg',
