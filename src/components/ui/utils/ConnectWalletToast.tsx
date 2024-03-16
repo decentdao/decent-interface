@@ -1,5 +1,5 @@
 import { Flex, Text, Button } from '@chakra-ui/react';
-import { useWeb3Modal } from '@web3modal/wagmi/react'
+import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';

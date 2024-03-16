@@ -1,4 +1,4 @@
-import { defaultWagmiConfig } from '@web3modal/wagmi/react'
+import { defaultWagmiConfig } from '@web3modal/wagmi/react';
 import { Chain, configureChains } from 'wagmi';
 import { hardhat, sepolia, mainnet } from 'wagmi/chains';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
@@ -41,8 +41,10 @@ const wagmiMetadata = {
   name: 'Fractal',
   description: 'Fractal',
   url: 'https://fractalframework.xyz',
-  icons: ['https://assets-global.website-files.com/62a0c42025f5e9c3b8955db4/63f6be241f0c205728d5061b_small.ico'] // Icon from our landing page
-}
+  icons: [
+    'https://assets-global.website-files.com/62a0c42025f5e9c3b8955db4/63f6be241f0c205728d5061b_small.ico',
+  ], // Icon from our landing page
+};
 
 export const wagmiConfig = defaultWagmiConfig({
   chains: supportedWagmiChains,
@@ -50,5 +52,5 @@ export const wagmiConfig = defaultWagmiConfig({
   metadata: wagmiMetadata,
   enableCoinbase: true,
   enableInjected: true,
-  enableWalletConnect: true
-})
+  enableWalletConnect: true,
+});

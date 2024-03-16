@@ -1,6 +1,6 @@
 import { MenuList } from '@chakra-ui/react';
 import { Connect, Disconnect } from '@decent-org/fractal-ui';
-import { useWeb3Modal } from '@web3modal/wagmi/react'
+import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useTranslation } from 'react-i18next';
 import { useDisconnect } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
