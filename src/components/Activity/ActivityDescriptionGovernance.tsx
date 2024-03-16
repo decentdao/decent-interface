@@ -60,9 +60,7 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
   return (
     <>
       <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
-      {metaData.title ? (
-        <Text>{metaData.title}</Text>
-      ) : null}
+      {metaData.title ? <Text>{metaData.title}</Text> : null}
       {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}
       <OnChainRejectionMessage activity={activity} />
     </>

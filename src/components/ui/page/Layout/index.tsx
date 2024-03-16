@@ -1,13 +1,12 @@
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
-import { ModalProvider } from '../../modals/ModalProvider';
 import Header from '../Header';
 import Navigation from '../Navigation';
 
 export default function Layout() {
   return (
-    <ModalProvider><Grid
+    <Grid
       templateAreas={{
         base: `"nav header"
 "main main"`,
@@ -57,6 +56,6 @@ export default function Layout() {
       >
         <Navigation />
       </GridItem>
-    </Grid></ModalProvider>
+    </Grid>
   );
 }

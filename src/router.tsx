@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
 import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
@@ -19,7 +20,11 @@ import Treasury from './pages/daos/[daoAddress]/treasury';
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Layout />,
+    element: (
+      <ModalProvider>
+        <Layout />
+      </ModalProvider>
+    ),
     children: [
       {
         index: true,

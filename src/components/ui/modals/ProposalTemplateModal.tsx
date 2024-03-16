@@ -134,7 +134,7 @@ export default function ProposalTemplateModal({
 
   return (
     <Box>
-      {description && <Markdown content={description}/>}
+      {description && <Markdown content={description} />}
       <Divider color="chocolate.700" />
       {filledProposalTransactions.map((transaction, transactionIndex) => (
         <VStack key={transactionIndex}>
