@@ -18,10 +18,10 @@ function ToastContent({ label }: { label: string }) {
       try {
         open();
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     }
-  }
+  };
   return (
     <Flex
       flexDirection="column"

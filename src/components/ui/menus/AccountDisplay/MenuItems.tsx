@@ -26,11 +26,11 @@ export function MenuItems() {
       try {
         open();
       } catch (err) {
-        console.error(err)
+        console.error(err);
       }
     }
-  }
-  
+  };
+
   return (
     <MenuList
       p="0"
