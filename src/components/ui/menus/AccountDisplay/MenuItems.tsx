@@ -15,6 +15,22 @@ export function MenuItems() {
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();
   const { t } = useTranslation('menu');
+
+  const openWeb3Modal = () => {
+    // Ugly hack to open web3Modal.
+    // This problem is solved in Web3Modal v4+
+    try {
+      open();
+    } catch (e) {
+      console.error(e);
+      try {
+        open();
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  }
+  
   return (
     <MenuList
       p="0"
@@ -40,7 +56,7 @@ export function MenuItems() {
           testId="accountMenu-connect"
           label={t('connect')}
           Icon={Connect}
-          onClick={open}
+          onClick={openWeb3Modal}
         />
       )}
       {user.address && (

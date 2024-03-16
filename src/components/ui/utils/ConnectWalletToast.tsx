@@ -8,6 +8,20 @@ import { useFractal } from '../../../providers/App/AppProvider';
 function ToastContent({ label }: { label: string }) {
   const { open } = useWeb3Modal();
   const { t } = useTranslation('menu');
+  const openWeb3Modal = () => {
+    // Ugly hack to open web3Modal.
+    // This problem is solved in Web3Modal v4+
+    try {
+      open();
+    } catch (e) {
+      console.error(e);
+      try {
+        open();
+      } catch (err) {
+        console.error(err)
+      }
+    }
+  }
   return (
     <Flex
       flexDirection="column"
@@ -17,7 +31,7 @@ function ToastContent({ label }: { label: string }) {
       <Button
         size="lg"
         variant="text"
-        onClick={() => open()}
+        onClick={openWeb3Modal}
       >
         {t('connectWallet')}
       </Button>
