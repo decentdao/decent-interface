@@ -10,7 +10,6 @@ import {
   SnapshotProposal,
   FractalProposal,
 } from '../../types';
-import Markdown from '../ui/proposal/Markdown';
 
 const formatId = (proposalId: string) => {
   if (proposalId.startsWith('0x')) {
@@ -63,11 +62,6 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
       <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
       {metaData.title ? (
         <Text>{metaData.title}</Text>
-      ) : metaData.description ? (
-        <Markdown
-          truncate
-          content={metaData.description}
-        />
       ) : null}
       {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}
       <OnChainRejectionMessage activity={activity} />

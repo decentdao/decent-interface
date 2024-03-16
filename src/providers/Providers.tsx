@@ -5,7 +5,6 @@ import { ReactNode, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { WagmiConfig } from 'wagmi';
 import { theme } from '../assets/theme';
-import { ModalProvider } from '../components/ui/modals/ModalProvider';
 import { ErrorFallback } from '../components/ui/utils/ErrorFallback';
 import graphQLClient from '../graphql';
 import { FractalErrorBoundary, initErrorLogging } from '../helpers/errorLogging';
@@ -41,7 +40,7 @@ export default function Providers({ children }: { children: ReactNode }) {
                       newestOnTop={false}
                       pauseOnFocusLoss={false}
                     />
-                    <ModalProvider>{children}</ModalProvider>
+                    {children}
                   </AppProvider>
                 </EthersContextProvider>
               </NetworkConfigProvider>
