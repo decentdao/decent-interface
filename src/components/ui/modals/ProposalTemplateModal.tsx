@@ -21,7 +21,7 @@ import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { isValidUrl } from '../../../utils/url';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { InputComponent } from '../forms/InputComponent';
-import LineBreakBlock from '../utils/LineBreakBlock';
+import Markdown from '../proposal/Markdown';
 
 interface IProposalTemplateModalProps {
   proposalTemplate: ProposalTemplate;
@@ -134,13 +134,12 @@ export default function ProposalTemplateModal({
 
   return (
     <Box>
-      <LineBreakBlock
-        textStyle="text-base-mono-regular"
-        color="grayscale.100"
-        marginBottom="1.5rem"
-        text={description}
-      />
-      <Divider color="chocolate.700" />
+      {description && (
+        <>
+          <Markdown content={description} />
+          <Divider color="chocolate.700" />
+        </>
+      )}
       {filledProposalTransactions.map((transaction, transactionIndex) => (
         <VStack key={transactionIndex}>
           {transaction.parameters.map(

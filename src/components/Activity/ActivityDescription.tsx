@@ -1,19 +1,20 @@
-import { Flex } from '@chakra-ui/react';
-import { Activity, SnapshotProposal } from '../../types';
-import SnapshotProposalDescription from '../Proposals/SnapshotProposalDetails/SnapshotProposalDescription';
+import { Box, Flex } from '@chakra-ui/react';
+import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
+import { Activity, FractalProposal, SnapshotProposal } from '../../types';
+import Markdown from '../ui/proposal/Markdown';
 import { ProposalTitle } from './ActivityDescriptionGovernance';
 import { ActivityDescriptionTreasury } from './ActivityDescriptionTreasury';
 
 interface IActivityDescription {
   activity: Activity;
-  showFullSnapshotDescription?: boolean;
+  showFullDescription?: boolean;
 }
 
-export function ActivityDescription({
-  activity,
-  showFullSnapshotDescription,
-}: IActivityDescription) {
-  const snapshotProposalActivity = activity as SnapshotProposal;
+export function ActivityDescription({ activity, showFullDescription }: IActivityDescription) {
+  const metaData = useGetMetadata(activity as FractalProposal);
+  const snapshotProposal = activity as SnapshotProposal;
+  const description = snapshotProposal.description || metaData.description;
+
   return (
     <Flex
       color="grayscale.100"
@@ -23,11 +24,16 @@ export function ActivityDescription({
       flexWrap="wrap"
     >
       <ProposalTitle activity={activity} />
-      {!!snapshotProposalActivity.snapshotProposalId && (
-        <SnapshotProposalDescription
-          truncate={!showFullSnapshotDescription}
-          proposal={snapshotProposalActivity}
-        />
+      {description && (
+        <Box
+          my={4}
+          minWidth="100%"
+        >
+          <Markdown
+            content={description}
+            truncate={!showFullDescription}
+          />
+        </Box>
       )}
       {!!activity.transaction && <ActivityDescriptionTreasury activity={activity} />}
     </Flex>

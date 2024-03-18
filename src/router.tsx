@@ -1,4 +1,5 @@
 import { createBrowserRouter } from 'react-router-dom';
+import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
 import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
@@ -19,7 +20,14 @@ import Treasury from './pages/daos/[daoAddress]/treasury';
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <Layout />,
+    element: (
+      // We're placing ModalProvider here instead of src/providers/Providers.tsx due to the need of having router context
+      // within underlying modals. Otherwise - trying to invoke routing-related hooks would lead to crash.
+      // Not the best place to have this provider here but also more reasonalbe than putting that into <Layout />
+      <ModalProvider>
+        <Layout />
+      </ModalProvider>
+    ),
     children: [
       {
         index: true,
