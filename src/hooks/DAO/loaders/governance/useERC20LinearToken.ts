@@ -1,53 +1,54 @@
-import { VotesERC20 } from '@fractal-framework/fractal-contracts';
 import { DelegateChangedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/VotesERC20';
 import { useCallback, useEffect, useRef } from 'react';
-import { getEventRPC } from '../../../../helpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
+import useSafeContracts from '../../../safe/useSafeContracts';
 
 export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) => {
   const isTokenLoaded = useRef(false);
   const tokenAccount = useRef<string>();
 
   const {
-    governanceContracts: { tokenContract, underlyingTokenAddress },
+    governanceContracts: { votesTokenContractAddress, underlyingTokenAddress },
     action,
     readOnly: { user },
   } = useFractal();
   const account = user.address;
+  const baseContracts = useSafeContracts();
 
   const loadERC20Token = useCallback(async () => {
-    if (!tokenContract) {
+    if (!votesTokenContractAddress || !baseContracts) {
       return;
     }
-    const tokenAddress = tokenContract.asProvider.address;
+    const tokenContract =
+      baseContracts.votesTokenMasterCopyContract.asProvider.attach(votesTokenContractAddress);
     const [tokenName, tokenSymbol, tokenDecimals, totalSupply] = await Promise.all([
-      tokenContract.asProvider.name(),
-      tokenContract.asProvider.symbol(),
-      tokenContract.asProvider.decimals(),
-      tokenContract.asProvider.totalSupply(),
+      tokenContract.name(),
+      tokenContract.symbol(),
+      tokenContract.decimals(),
+      tokenContract.totalSupply(),
     ]);
     const tokenData = {
       name: tokenName,
       symbol: tokenSymbol,
       decimals: tokenDecimals,
-      address: tokenAddress,
+      address: votesTokenContractAddress,
       totalSupply,
     };
     isTokenLoaded.current = true;
     action.dispatch({ type: FractalGovernanceAction.SET_TOKEN_DATA, payload: tokenData });
-  }, [tokenContract, action]);
+  }, [votesTokenContractAddress, action, baseContracts]);
 
   const loadUnderlyingERC20Token = useCallback(async () => {
-    if (!tokenContract || !underlyingTokenAddress) {
+    if (!underlyingTokenAddress || !baseContracts) {
       return;
     }
-
-    const erc20WrapperContract = tokenContract.asProvider.attach(underlyingTokenAddress);
+    const tokenContract =
+      baseContracts.votesTokenMasterCopyContract.asProvider.attach(underlyingTokenAddress);
 
     const [tokenName, tokenSymbol] = await Promise.all([
-      erc20WrapperContract.name(),
-      erc20WrapperContract.symbol(),
+      tokenContract.name(),
+      tokenContract.symbol(),
     ]);
     const tokenData = {
       name: tokenName,
@@ -58,24 +59,26 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       type: FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA,
       payload: tokenData,
     });
-  }, [tokenContract, underlyingTokenAddress, action]);
+  }, [underlyingTokenAddress, action, baseContracts]);
 
   const loadERC20TokenAccountData = useCallback(async () => {
-    if (!tokenContract || !account) {
+    if (!votesTokenContractAddress || !account || !baseContracts) {
       action.dispatch({ type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA });
       return;
     }
+    const tokenContract =
+      baseContracts.votesTokenMasterCopyContract.asProvider.attach(votesTokenContractAddress);
     // @todo We could probably save on some requests here.
     const [tokenBalance, tokenDelegatee, tokenVotingWeight] = await Promise.all([
-      tokenContract.asProvider.balanceOf(account),
-      tokenContract.asProvider.delegates(account),
-      tokenContract.asProvider.getVotes(account),
+      tokenContract.balanceOf(account),
+      tokenContract.delegates(account),
+      tokenContract.getVotes(account),
     ]);
 
     let delegateChangeEvents: DelegateChangedEvent[];
     try {
-      delegateChangeEvents = await tokenContract.asProvider.queryFilter(
-        tokenContract.asProvider.filters.DelegateChanged(),
+      delegateChangeEvents = await tokenContract.queryFilter(
+        tokenContract.filters.DelegateChanged(),
       );
     } catch (e) {
       delegateChangeEvents = [];
@@ -92,60 +95,64 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA,
       payload: tokenAccountData,
     });
-  }, [tokenContract, action, account]);
+  }, [votesTokenContractAddress, action, account, baseContracts]);
 
   useEffect(() => {
     if (
-      tokenContract &&
+      votesTokenContractAddress &&
       isTokenLoaded.current &&
-      tokenAccount.current !== account + tokenContract.asProvider.address &&
+      tokenAccount.current !== account + votesTokenContractAddress &&
       onMount
     ) {
-      tokenAccount.current = account + tokenContract.asProvider.address;
+      tokenAccount.current = account + votesTokenContractAddress;
       loadERC20TokenAccountData();
     }
-  }, [account, tokenContract, onMount, loadERC20TokenAccountData]);
+  }, [account, votesTokenContractAddress, onMount, loadERC20TokenAccountData]);
 
   useEffect(() => {
-    if (!tokenContract || !onMount) {
+    if (!votesTokenContractAddress || !onMount || !baseContracts) {
       return;
     }
-    const rpc = getEventRPC<VotesERC20>(tokenContract);
-    const delegateVotesChangedfilter = rpc.filters.DelegateVotesChanged();
-    rpc.on(delegateVotesChangedfilter, loadERC20TokenAccountData);
+    const tokenContract =
+      baseContracts.votesTokenMasterCopyContract.asProvider.attach(votesTokenContractAddress);
+
+    const delegateVotesChangedfilter = tokenContract.filters.DelegateVotesChanged();
+    tokenContract.on(delegateVotesChangedfilter, loadERC20TokenAccountData);
 
     return () => {
-      rpc.off(delegateVotesChangedfilter, loadERC20TokenAccountData);
+      tokenContract.off(delegateVotesChangedfilter, loadERC20TokenAccountData);
     };
-  }, [tokenContract, loadERC20TokenAccountData, onMount]);
+  }, [votesTokenContractAddress, loadERC20TokenAccountData, onMount, baseContracts]);
 
   useEffect(() => {
-    if (!tokenContract || !onMount) {
+    if (!votesTokenContractAddress || !onMount || !baseContracts) {
       return;
     }
-    const rpc = getEventRPC<VotesERC20>(tokenContract);
-    const delegateChangedfilter = rpc.filters.DelegateChanged();
-    rpc.on(delegateChangedfilter, loadERC20TokenAccountData);
+    const tokenContract =
+      baseContracts.votesTokenMasterCopyContract.asProvider.attach(votesTokenContractAddress);
+    const delegateChangedfilter = tokenContract.filters.DelegateChanged();
+    tokenContract.on(delegateChangedfilter, loadERC20TokenAccountData);
 
     return () => {
-      rpc.off(delegateChangedfilter, loadERC20TokenAccountData);
+      tokenContract.off(delegateChangedfilter, loadERC20TokenAccountData);
     };
-  }, [tokenContract, loadERC20TokenAccountData, onMount]);
+  }, [votesTokenContractAddress, loadERC20TokenAccountData, onMount, baseContracts]);
 
   useEffect(() => {
-    if (!tokenContract || !account || !onMount) {
+    if (!votesTokenContractAddress || !onMount || !baseContracts) {
       return;
     }
-    const rpc = getEventRPC<VotesERC20>(tokenContract);
-    const filterTo = rpc.filters.Transfer(null, account);
-    const filterFrom = rpc.filters.Transfer(account, null);
-    rpc.on(filterTo, loadERC20TokenAccountData);
-    rpc.on(filterFrom, loadERC20TokenAccountData);
+    const tokenContract =
+      baseContracts.votesTokenMasterCopyContract.asProvider.attach(votesTokenContractAddress);
+    const filterTo = tokenContract.filters.Transfer(null, account);
+    const filterFrom = tokenContract.filters.Transfer(account, null);
+    tokenContract.on(filterTo, loadERC20TokenAccountData);
+    tokenContract.on(filterFrom, loadERC20TokenAccountData);
     return () => {
-      rpc.off(filterTo, loadERC20TokenAccountData);
-      rpc.off(filterFrom, loadERC20TokenAccountData);
+      tokenContract.off(filterTo, loadERC20TokenAccountData);
+      tokenContract.off(filterFrom, loadERC20TokenAccountData);
     };
-  }, [tokenContract, account, onMount, loadERC20TokenAccountData]);
+  }, [votesTokenContractAddress, account, onMount, loadERC20TokenAccountData, baseContracts]);
 
   return { loadERC20Token, loadUnderlyingERC20Token, loadERC20TokenAccountData };
 };

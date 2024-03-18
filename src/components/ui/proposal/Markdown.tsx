@@ -1,9 +1,10 @@
 import { Text, Button, Image } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Markdown, { Components } from 'react-markdown';
+import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { SnapshotProposal } from '../../../types';
+import removeMd from 'remove-markdown';
+import '../../../assets/css/Markdown.css';
 
 function CustomMarkdownImage({ src, alt }: { src?: string; alt?: string }) {
   const [error, setError] = useState(false);
@@ -32,20 +33,19 @@ const MarkdownComponents: Components = {
   },
 };
 
-interface ISnapshotProposalDescription {
+interface IMarkdown {
   truncate?: boolean;
-  proposal: SnapshotProposal;
+  collapsedLines?: number;
+  content: string;
 }
 
-export default function SnapshotProposalDescription({
-  truncate,
-  proposal,
-}: ISnapshotProposalDescription) {
+export default function Markdown({ truncate, content, collapsedLines = 6 }: IMarkdown) {
   const { t } = useTranslation('common');
   const [collapsed, setCollapsed] = useState(true);
   const [totalLines, setTotalLines] = useState(0);
   const [totalLinesError, setTotalLinesError] = useState(false);
   const markdownTextContainerRef = useRef<HTMLParagraphElement>(null);
+  const plainText = removeMd(content);
 
   useEffect(() => {
     if (
@@ -67,7 +67,7 @@ export default function SnapshotProposalDescription({
         setTotalLinesError(false);
       }
     }
-  }, []);
+  }, [content]);
 
   const handleToggleCollapse = () => {
     setCollapsed(prevState => !prevState);
@@ -88,8 +88,9 @@ export default function SnapshotProposalDescription({
       <Text
         noOfLines={2}
         fontWeight={400}
+        minWidth="100%"
       >
-        {proposal.description}
+        {plainText}
       </Text>
     );
   }
@@ -97,21 +98,21 @@ export default function SnapshotProposalDescription({
   return (
     <>
       <Text
-        noOfLines={collapsed ? 6 : undefined}
-        maxWidth="100%"
-        minWidth="100%"
+        noOfLines={collapsed ? collapsedLines : undefined}
         ref={markdownTextContainerRef}
+        maxWidth="100%"
       >
-        <Markdown
+        <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           urlTransform={handleTransformURI}
           components={MarkdownComponents}
           className="markdown-body"
         >
-          {proposal.description}
-        </Markdown>
+          {content}
+        </ReactMarkdown>
       </Text>
-      {totalLines > 6 && !totalLinesError && (
+
+      {totalLines > collapsedLines && !totalLinesError && (
         <Button
           marginTop={4}
           paddingLeft={0}

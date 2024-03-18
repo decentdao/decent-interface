@@ -46,7 +46,7 @@ function ProposalMetadata(props: AzoriusMetadataProps) {
           onChange={e => setFieldValue('proposalMetadata.description', e.target.value)}
           disabled={false}
           placeholder={t('proposalDescriptionPlaceholder')}
-          rows={3}
+          rows={9}
         />
         <InputComponent
           label={t('proposalAdditionalResources')}

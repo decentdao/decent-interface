@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import * as Yup from 'yup';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
+import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import useApproval from '../../../hooks/utils/useApproval';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
@@ -22,7 +23,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
   const azoriusGovernance = governance as AzoriusGovernance;
   const signer = useEthersSigner();
   const { address: account } = useAccount();
-
+  const baseContracts = useSafeContracts();
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
 
   const [contractCall, pending] = useTransaction();
@@ -31,7 +32,9 @@ export function UnwrapToken({ close }: { close: () => void }) {
     approveTransaction,
     pending: approvalPending,
   } = useApproval(
-    governanceContracts.tokenContract?.asSigner.attach(governanceContracts.underlyingTokenAddress!),
+    baseContracts?.votesTokenMasterCopyContract?.asSigner.attach(
+      governanceContracts.underlyingTokenAddress!,
+    ),
     azoriusGovernance.votesToken?.address,
   );
 
@@ -40,9 +43,13 @@ export function UnwrapToken({ close }: { close: () => void }) {
 
   const handleFormSubmit = useCallback(
     (amount: BigNumberValuePair) => {
-      const { tokenContract } = governanceContracts;
-      if (!tokenContract || !signer || !account) return;
-      const wrapperTokenContract = tokenContract.asSigner as VotesERC20Wrapper;
+      const { votesTokenContractAddress } = governanceContracts;
+      if (!votesTokenContractAddress || !signer || !account) return;
+      const votesTokenContract =
+        baseContracts?.votesERC20WrapperMasterCopyContract?.asSigner.attach(
+          votesTokenContractAddress,
+        );
+      const wrapperTokenContract = votesTokenContract as VotesERC20Wrapper;
       contractCall({
         contractFn: () => wrapperTokenContract.withdrawTo(account, amount.bigNumberValue!),
         pendingMessage: t('unwrapTokenPendingMessage'),
@@ -56,7 +63,16 @@ export function UnwrapToken({ close }: { close: () => void }) {
         },
       });
     },
-    [account, contractCall, governanceContracts, signer, close, t, loadERC20TokenAccountData],
+    [
+      account,
+      contractCall,
+      governanceContracts,
+      signer,
+      close,
+      t,
+      loadERC20TokenAccountData,
+      baseContracts,
+    ],
   );
 
   if (

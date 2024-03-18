@@ -6,7 +6,6 @@ export enum TokenEventType {
   DEPOSIT,
   WITHDRAW,
 }
-
 export interface TransferDisplayData {
   eventType: TokenEventType;
   transferType: TransferType;

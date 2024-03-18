@@ -49,7 +49,4 @@ export const wagmiConfig = defaultWagmiConfig({
   chains: supportedWagmiChains,
   projectId: walletConnectProjectId,
   metadata: wagmiMetadata,
-  enableCoinbase: true,
-  enableInjected: true,
-  enableWalletConnect: true,
 });
