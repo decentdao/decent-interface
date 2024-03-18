@@ -7,6 +7,7 @@ import {
   GridItem,
   GridProps,
   GridItemProps,
+  ResponsiveValue,
 } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { BigNumberInput, BigNumberInputProps } from './BigNumberInput';
@@ -43,6 +44,7 @@ interface TextareaProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLTextAreaElement> | undefined;
   placeholder?: string;
   rows?: number;
+  resize?: ResponsiveValue<string>;
 }
 interface BigNumberProps
   extends Omit<BaseProps, 'children' | 'value'>,
@@ -142,7 +144,16 @@ export function EthAddressComponent(props: EthAddressProps) {
 }
 
 export function TextareaComponent(props: TextareaProps) {
-  const { id, value, disabled, onChange, rows, placeholder, maxLength } = props;
+  const {
+    id,
+    value,
+    disabled,
+    onChange,
+    rows,
+    placeholder,
+    maxLength,
+    resize = 'vertical',
+  } = props;
   return (
     <LabelComponent
       {...props}
@@ -150,7 +161,7 @@ export function TextareaComponent(props: TextareaProps) {
     >
       <Textarea
         id={id}
-        resize="none"
+        resize={resize as any}
         onChange={onChange}
         value={value}
         isDisabled={disabled}

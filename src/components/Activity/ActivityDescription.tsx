@@ -13,6 +13,8 @@ interface IActivityDescription {
 export function ActivityDescription({ activity, showFullDescription }: IActivityDescription) {
   const metaData = useGetMetadata(activity as FractalProposal);
   const snapshotProposal = activity as SnapshotProposal;
+  const description = snapshotProposal.description || metaData.description;
+
   return (
     <Flex
       color="grayscale.100"
@@ -22,18 +24,17 @@ export function ActivityDescription({ activity, showFullDescription }: IActivity
       flexWrap="wrap"
     >
       <ProposalTitle activity={activity} />
-      {snapshotProposal.description ||
-        (metaData.description && (
-          <Box
-            my={4}
-            minWidth="100%"
-          >
-            <Markdown
-              content={snapshotProposal.description || metaData.description}
-              truncate={!showFullDescription}
-            />
-          </Box>
-        ))}
+      {description && (
+        <Box
+          my={4}
+          minWidth="100%"
+        >
+          <Markdown
+            content={description}
+            truncate={!showFullDescription}
+          />
+        </Box>
+      )}
       {!!activity.transaction && <ActivityDescriptionTreasury activity={activity} />}
     </Flex>
   );
