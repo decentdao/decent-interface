@@ -1,3 +1,4 @@
+import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
@@ -67,7 +68,9 @@ export default function ProposalDetailsPage() {
         ]}
       />
       {proposal === undefined ? (
-        <InfoBoxLoader />
+        <Box>
+          <InfoBoxLoader />
+        </Box>
       ) : proposal === null ? (
         <EmptyBox emptyText={t('noProposal')} />
       ) : isSnapshotProposal ? (

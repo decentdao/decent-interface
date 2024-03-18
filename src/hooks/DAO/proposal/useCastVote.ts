@@ -14,6 +14,7 @@ import {
   ExtendedSnapshotProposal,
 } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
+import useSafeContracts from '../../safe/useSafeContracts';
 import { useTransaction } from '../../utils/useTransaction';
 import useSnapshotSpaceName from '../loaders/snapshot/useSnapshotSpaceName';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';
@@ -31,13 +32,14 @@ const useCastVote = ({
   const [snapshotWeightedChoice, setSnapshotWeightedChoice] = useState<number[]>([]);
 
   const {
-    governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
+    governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
     governance,
     node: { daoSnapshotURL },
     readOnly: {
       user: { address },
     },
   } = useFractal();
+  const baseContracts = useSafeContracts();
   const daoSnapshotSpaceName = useSnapshotSpaceName();
   const signer = useEthersSigner();
   const client = useMemo(() => {
@@ -88,11 +90,23 @@ const useCastVote = ({
   const castVote = useCallback(
     async (vote: number) => {
       let contractFn;
-      if (type === GovernanceType.AZORIUS_ERC20 && ozLinearVotingContract) {
-        contractFn = () => ozLinearVotingContract.asSigner.vote(proposal.proposalId, vote);
-      } else if (type === GovernanceType.AZORIUS_ERC721 && erc721LinearVotingContract) {
+      if (type === GovernanceType.AZORIUS_ERC20 && ozLinearVotingContractAddress && baseContracts) {
+        const ozLinearVotingContract = baseContracts.linearVotingMasterCopyContract.asSigner.attach(
+          ozLinearVotingContractAddress,
+        );
+        contractFn = () => ozLinearVotingContract.vote(proposal.proposalId, vote);
+      } else if (
+        type === GovernanceType.AZORIUS_ERC721 &&
+        erc721LinearVotingContractAddress &&
+        baseContracts
+      ) {
+        const erc721LinearVotingContract =
+          baseContracts.linearVotingERC721MasterCopyContract.asSigner.attach(
+            erc721LinearVotingContractAddress,
+          );
+
         contractFn = () =>
-          erc721LinearVotingContract.asSigner.vote(
+          erc721LinearVotingContract.vote(
             proposal.proposalId,
             vote,
             remainingTokenAddresses,
@@ -118,14 +132,15 @@ const useCastVote = ({
     [
       contractCallCastVote,
       t,
-      ozLinearVotingContract,
-      erc721LinearVotingContract,
+      ozLinearVotingContractAddress,
+      erc721LinearVotingContractAddress,
       type,
       proposal,
       remainingTokenAddresses,
       remainingTokenIds,
       getCanVote,
       getHasVoted,
+      baseContracts,
     ],
   );
 

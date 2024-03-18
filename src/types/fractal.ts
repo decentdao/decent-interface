@@ -25,7 +25,6 @@ import {
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { Dispatch } from 'react';
-import { LockRelease } from '../assets/typechain-types/dcnt';
 import { MultiSend } from '../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
@@ -223,11 +222,11 @@ export interface Fractal {
 }
 
 export interface FractalGovernanceContracts {
-  ozLinearVotingContract: ContractConnection<LinearERC20Voting> | null;
-  erc721LinearVotingContract: ContractConnection<LinearERC721Voting> | null;
-  azoriusContract: ContractConnection<Azorius> | null;
-  tokenContract: ContractConnection<VotesERC20 | VotesERC20Wrapper> | null;
-  lockReleaseContract: ContractConnection<LockRelease> | null;
+  ozLinearVotingContractAddress?: string;
+  erc721LinearVotingContractAddress?: string;
+  azoriusContractAddress?: string;
+  votesTokenContractAddress?: string;
+  lockReleaseContractAddress?: string;
   underlyingTokenAddress?: string;
   isLoaded: boolean;
 }
@@ -256,7 +255,13 @@ export enum FractalModuleType {
   FRACTAL,
   UNKNOWN,
 }
-
+// @todo updates Fractal Guard Contract to just store addresses in the store
+// export interface FractalGuardContracts {
+//   freezeGuardContractAddress?: string;
+//   freezeVotingContractAddress?: string;
+//   freezeGuardType: FreezeGuardType | null;
+//   freezeVotingType: FreezeVotingType | null;
+// }
 export interface FractalGuardContracts {
   freezeGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
   freezeVotingContract?: ContractConnection<
@@ -294,6 +299,13 @@ export interface DecentGovernance extends AzoriusGovernance {
 }
 export interface SafeMultisigGovernance extends Governance {}
 
+// @todo update FractalContracts to just store addresses in the store
+// export interface Governance {
+//   type?: GovernanceType;
+//   proposals: FractalProposal[] | null;
+//   proposalTemplates?: ProposalTemplate[] | null;
+//   tokenClaimContractAddress?: string;
+// }
 export interface Governance {
   type?: GovernanceType;
   proposals: FractalProposal[] | null;
