@@ -45,7 +45,7 @@ export function MenuItemNetwork() {
           cursor="pointer"
           onChange={async e => {
             e.preventDefault();
-            switchChain({chainId: Number(e.target.value)});
+            switchChain({ chainId: Number(e.target.value) });
           }}
           value={chainId}
         >

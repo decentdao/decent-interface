@@ -1,6 +1,6 @@
-import { QueryClient } from '@tanstack/react-query'
-import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
-import {  http } from 'wagmi';
+import { QueryClient } from '@tanstack/react-query';
+import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
+import { http } from 'wagmi';
 import { hardhat, sepolia, mainnet, Chain } from 'wagmi/chains';
 import { supportedChains } from './NetworkConfigProvider';
 
@@ -22,13 +22,16 @@ const wagmiMetadata = {
   icons: [`${import.meta.env.VITE_APP_SITE_URL}favicon.icon`],
 };
 
-
 export const wagmiConfig = defaultWagmiConfig({
   chains: supportedWagmiChains as [Chain, ...Chain[]],
   projectId: walletConnectProjectId,
   metadata: wagmiMetadata,
   transports: {
-    [mainnet.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`),
-    [sepolia.id]: http(`https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`)
-  }
+    [mainnet.id]: http(
+      `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`,
+    ),
+    [sepolia.id]: http(
+      `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
+    ),
+  },
 });
