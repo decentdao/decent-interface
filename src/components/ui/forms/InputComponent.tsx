@@ -44,7 +44,7 @@ interface TextareaProps extends Omit<BaseProps, 'children'> {
   onChange: React.ChangeEventHandler<HTMLTextAreaElement> | undefined;
   placeholder?: string;
   rows?: number;
-  resize?: ResponsiveValue<string>;
+  resize?: ResponsiveValue<'vertical' | 'horizontal' | 'both' | 'none'>;
 }
 interface BigNumberProps
   extends Omit<BaseProps, 'children' | 'value'>,
@@ -161,7 +161,7 @@ export function TextareaComponent(props: TextareaProps) {
     >
       <Textarea
         id={id}
-        resize={resize as any}
+        resize={resize}
         onChange={onChange}
         value={value}
         isDisabled={disabled}

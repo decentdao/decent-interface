@@ -21,6 +21,9 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: (
+      // We're placing ModalProvider here instead of src/providers/Providers.tsx due to the need of having router context
+      // within underlying modals. Otherwise - trying to invoke routing-related hooks would lead to crash.
+      // Not the best place to have this provider here but also more reasonalbe than putting that into <Layout />
       <ModalProvider>
         <Layout />
       </ModalProvider>
