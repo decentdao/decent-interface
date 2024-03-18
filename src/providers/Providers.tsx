@@ -1,9 +1,10 @@
 import { ApolloProvider } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
+import { QueryClientProvider } from '@tanstack/react-query'
 import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { ReactNode, useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
-import { WagmiConfig } from 'wagmi';
+import { WagmiProvider } from 'wagmi';
 import { theme } from '../assets/theme';
 import { ErrorFallback } from '../components/ui/utils/ErrorFallback';
 import graphQLClient from '../graphql';
@@ -11,10 +12,10 @@ import { FractalErrorBoundary, initErrorLogging } from '../helpers/errorLogging'
 import { AppProvider } from './App/AppProvider';
 import EthersContextProvider from './Ethers';
 import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
-import { wagmiConfig, chains, walletConnectProjectId } from './NetworkConfig/web3-modal.config';
+import { wagmiConfig, walletConnectProjectId, queryClient } from './NetworkConfig/web3-modal.config';
 
 if (walletConnectProjectId) {
-  createWeb3Modal({ wagmiConfig, projectId: walletConnectProjectId, chains });
+  createWeb3Modal({ wagmiConfig, projectId: walletConnectProjectId });
 }
 
 export default function Providers({ children }: { children: ReactNode }) {
@@ -29,7 +30,8 @@ export default function Providers({ children }: { children: ReactNode }) {
     >
       <FractalErrorBoundary fallback={<ErrorFallback />}>
         <ApolloProvider client={graphQLClient}>
-          <WagmiConfig config={wagmiConfig}>
+          <WagmiProvider config={wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
             <NetworkConfigProvider>
               <EthersContextProvider>
                 <AppProvider>
@@ -43,7 +45,8 @@ export default function Providers({ children }: { children: ReactNode }) {
                 </AppProvider>
               </EthersContextProvider>
             </NetworkConfigProvider>
-          </WagmiConfig>
+            </QueryClientProvider>
+          </WagmiProvider>
         </ApolloProvider>
       </FractalErrorBoundary>
     </ChakraProvider>

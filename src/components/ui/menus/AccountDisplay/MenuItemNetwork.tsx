@@ -1,6 +1,6 @@
 import { Box, Flex, Select, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useSwitchNetwork } from 'wagmi';
+import { useSwitchChain, useAccount } from 'wagmi';
 import {
   supportedChains,
   useNetworkConfig,
@@ -12,9 +12,11 @@ import {
 export function MenuItemNetwork() {
   const { t } = useTranslation('menu');
   const { chainId } = useNetworkConfig();
-  const { switchNetwork } = useSwitchNetwork();
+  const { isConnected } = useAccount();
+  const { switchChain } = useSwitchChain();
 
-  if (!switchNetwork) {
+  // TODO: Allow switching chains even when account is not connected
+  if (!isConnected) {
     return null;
   }
 
@@ -43,7 +45,7 @@ export function MenuItemNetwork() {
           cursor="pointer"
           onChange={async e => {
             e.preventDefault();
-            switchNetwork(Number(e.target.value));
+            switchChain({chainId: Number(e.target.value)});
           }}
           value={chainId}
         >

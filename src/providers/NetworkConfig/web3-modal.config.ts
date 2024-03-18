@@ -1,40 +1,18 @@
-import { defaultWagmiConfig } from '@web3modal/wagmi/react';
-import { Chain, configureChains } from 'wagmi';
-import { hardhat, sepolia, mainnet } from 'wagmi/chains';
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { QueryClient } from '@tanstack/react-query'
+import { defaultWagmiConfig } from '@web3modal/wagmi/react/config'
+import {  http } from 'wagmi';
+import { hardhat, sepolia, mainnet, Chain } from 'wagmi/chains';
 import { supportedChains } from './NetworkConfigProvider';
 
-const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
+export const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
 
 // allows connection to localhost only in development mode.
 if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
   supportedWagmiChains.unshift(hardhat);
 }
 
-export const { chains, publicClient } = configureChains(supportedWagmiChains, [
-  jsonRpcProvider({
-    rpc: (chain: Chain) => {
-      const publicNodeNetworkUrl = `ethereum-${chain.name}.publicnode.com`;
-      if (chain.id === mainnet.id) {
-        return {
-          http: `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`,
-          webSocket: `wss://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`,
-        };
-      } else if (chain.id === sepolia.id) {
-        return {
-          http: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
-          webSocket: `wss://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
-        };
-      }
-      return {
-        http: `https://${publicNodeNetworkUrl}`,
-        webSocket: `wss://${publicNodeNetworkUrl}`,
-      };
-    },
-  }),
-]);
-
 export const walletConnectProjectId = import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID;
+export const queryClient = new QueryClient();
 
 const wagmiMetadata = {
   name: import.meta.env.VITE_APP_NAME,
@@ -44,8 +22,13 @@ const wagmiMetadata = {
   icons: [`${import.meta.env.VITE_APP_SITE_URL}favicon.icon`],
 };
 
+
 export const wagmiConfig = defaultWagmiConfig({
-  chains: supportedWagmiChains,
+  chains: supportedWagmiChains as [Chain, ...Chain[]],
   projectId: walletConnectProjectId,
   metadata: wagmiMetadata,
+  transports: {
+    [mainnet.id]: http(`https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`),
+    [sepolia.id]: http(`https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`)
+  }
 });
