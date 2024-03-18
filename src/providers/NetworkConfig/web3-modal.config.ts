@@ -37,12 +37,11 @@ export const { chains, publicClient } = configureChains(supportedWagmiChains, [
 export const walletConnectProjectId = import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID;
 
 const wagmiMetadata = {
-  name: 'Fractal',
-  description: 'Fractal',
-  url: 'https://fractalframework.xyz',
-  icons: [
-    'https://assets-global.website-files.com/62a0c42025f5e9c3b8955db4/63f6be241f0c205728d5061b_small.ico', // Icon from our landing page
-  ],
+  name: import.meta.env.VITE_APP_NAME,
+  description:
+    'Are you outgrowing your Multisig? Fractal extends Safe treasuries into on-chain hierarchies of permissions, token flows, and governance.',
+  url: import.meta.env.VITE_APP_SITE_URL,
+  icons: [`${import.meta.env.VITE_APP_SITE_URL}favicon.icon`],
 };
 
 export const wagmiConfig = defaultWagmiConfig({
