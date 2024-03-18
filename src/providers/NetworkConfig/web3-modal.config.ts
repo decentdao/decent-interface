@@ -53,4 +53,4 @@ export const wagmiConfig = defaultWagmiConfig({
   enableCoinbase: true,
   enableInjected: true,
   enableWalletConnect: true,
-});
+})
