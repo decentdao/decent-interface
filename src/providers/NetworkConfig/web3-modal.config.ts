@@ -35,15 +35,14 @@ export const { chains, publicClient } = configureChains(supportedWagmiChains, [
 ]);
 
 export const walletConnectProjectId = import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID;
-// allows connection to localhost only in development mode.
 
 const wagmiMetadata = {
   name: 'Fractal',
   description: 'Fractal',
   url: 'https://fractalframework.xyz',
   icons: [
-    'https://assets-global.website-files.com/62a0c42025f5e9c3b8955db4/63f6be241f0c205728d5061b_small.ico',
-  ], // Icon from our landing page
+    'https://assets-global.website-files.com/62a0c42025f5e9c3b8955db4/63f6be241f0c205728d5061b_small.ico', // Icon from our landing page
+  ],
 };
 
 export const wagmiConfig = defaultWagmiConfig({
@@ -53,4 +52,4 @@ export const wagmiConfig = defaultWagmiConfig({
   enableCoinbase: true,
   enableInjected: true,
   enableWalletConnect: true,
-})
+});
