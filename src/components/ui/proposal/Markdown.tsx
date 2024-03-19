@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import removeMd from 'remove-markdown';
 import '../../../assets/css/Markdown.css';
 
 function CustomMarkdownImage({ src, alt }: { src?: string; alt?: string }) {
@@ -39,13 +38,12 @@ interface IMarkdown {
   content: string;
 }
 
-export default function Markdown({ truncate, content, collapsedLines = 6 }: IMarkdown) {
+export default function Markdown({ truncate, content, collapsedLines = 6}: IMarkdown) {
   const { t } = useTranslation('common');
   const [collapsed, setCollapsed] = useState(true);
   const [totalLines, setTotalLines] = useState(0);
   const [totalLinesError, setTotalLinesError] = useState(false);
   const markdownTextContainerRef = useRef<HTMLParagraphElement>(null);
-  const plainText = removeMd(content);
 
   useEffect(() => {
     if (
@@ -83,22 +81,10 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
     return uri;
   };
 
-  if (truncate) {
-    return (
-      <Text
-        noOfLines={2}
-        fontWeight={400}
-        minWidth="100%"
-      >
-        {plainText}
-      </Text>
-    );
-  }
-
   return (
     <>
       <Text
-        noOfLines={collapsed ? collapsedLines : undefined}
+        noOfLines={collapsed || truncate ? collapsedLines : undefined}
         ref={markdownTextContainerRef}
         maxWidth="100%"
       >
@@ -112,7 +98,7 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
         </ReactMarkdown>
       </Text>
 
-      {totalLines > collapsedLines && !totalLinesError && (
+      {totalLines > collapsedLines && !totalLinesError && !truncate && (
         <Button
           marginTop={4}
           paddingLeft={0}

@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import {
@@ -58,11 +58,17 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
     treasuryActivity.transferAddresses && !!treasuryActivity.transferAddresses.length;
 
   return (
-    <>
-      <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
-      {metaData.title ? <Text>{metaData.title}</Text> : null}
+    <Box
+      textStyle="text-lg-sans-medium"
+      fontSize="20px"
+      color="grayscale.100"
+    >
+      <Flex gap={2}>
+        <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
+        {metaData.title ? <Text>{metaData.title}</Text> : null}
+      </Flex>
       {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}
       <OnChainRejectionMessage activity={activity} />
-    </>
+    </Box>
   );
 }

@@ -17,21 +17,21 @@ export function ActivityDescription({ activity, showFullDescription }: IActivity
 
   return (
     <Flex
-      color="grayscale.100"
-      textStyle="text-lg-mono-semibold"
       gap="0.5rem"
       mr="1rem"
+      mt="0.5rem"
       flexWrap="wrap"
     >
       <ProposalTitle activity={activity} />
       {description && (
         <Box
-          my={4}
           minWidth="100%"
         >
           <Markdown
             content={description}
             truncate={!showFullDescription}
+            isSubDescription={!showFullDescription}
+            collapsedLines={3}
           />
         </Box>
       )}
