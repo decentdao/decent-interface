@@ -1,91 +1,106 @@
-import { Flex, Text, Tooltip } from '@chakra-ui/react';
-import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck } from '@decent-org/fractal-ui';
+import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
-import { FractalProposalState, DAOState } from '../../../types';
-import { Green, Red } from '../colors';
+import { FractalProposalState, DAOState, FractalProposal } from '../../../types';
+import { ProposalCountdown } from '../proposal/ProposalCountdown';
 
-type BadgeType = { [key: string]: { Icon?: any; tooltipKey?: string; bg: string; color: string } };
+type BadgeType = {
+  [key: string]: {
+    tooltipKey?: string;
+    bg: string;
+    _hover: { bg: string };
+    textColor: string;
+  };
+};
+
+const greenPlus2 = '#56A355';
+const greenMinus4 = '#0A320A';
+const greenHover = '#0E440E';
+
+const redPlus4 = '#FFC7C7';
+const redMinus2 = '#640E0D';
+const redHover = '#76110F';
 
 const BADGE_MAPPING: BadgeType = {
   [FractalProposalState.ACTIVE]: {
-    Icon: ActiveTwo,
     tooltipKey: 'stateActiveTip',
-    bg: Green._500,
-    color: 'grayscale.black',
+    bg: greenMinus4,
+    textColor: greenPlus2,
+    _hover: { bg: greenHover },
   },
   [FractalProposalState.TIMELOCKED]: {
-    Icon: ClockTwo,
     tooltipKey: 'stateTimelockedTip',
     bg: 'sand.700',
-    color: 'grayscale.black',
+    textColor: 'grayscale.black',
+    _hover: { bg: 'grayscale.black' },
   },
   [FractalProposalState.EXECUTED]: {
-    Icon: DoubleCheck,
     tooltipKey: 'stateExecutedTip',
-    bg: Green._600,
-    color: 'grayscale.black',
+    bg: greenMinus4,
+    textColor: greenPlus2,
+    _hover: { bg: greenHover },
   },
   [FractalProposalState.EXECUTABLE]: {
-    Icon: Check,
     tooltipKey: 'stateExecutableTip',
-    bg: Green._500,
-    color: 'grayscale.black',
+    bg: greenMinus4,
+    textColor: greenPlus2,
+    _hover: { bg: greenHover },
   },
   [FractalProposalState.FAILED]: {
-    Icon: CloseX,
     tooltipKey: 'stateFailedTip',
-    bg: Red._600,
-    color: 'grayscale.black',
+    bg: redMinus2,
+    textColor: redPlus4,
+    _hover: { bg: redHover },
   },
   [FractalProposalState.TIMELOCKABLE]: {
-    Icon: ClockTwo,
     tooltipKey: 'stateTimelockableTip',
-    bg: Green._500,
-    color: 'grayscale.black',
+    bg: greenMinus4,
+    textColor: greenPlus2,
+    _hover: { bg: greenHover },
   },
   [FractalProposalState.MODULE]: {
     tooltipKey: 'stateModuleTip',
     bg: 'sand.700',
-    color: 'grayscale.black',
+    textColor: 'grayscale.black',
+    _hover: { bg: '' },
   },
   [FractalProposalState.EXPIRED]: {
-    Icon: ClockTwo,
     tooltipKey: 'stateExpiredTip',
-    bg: Red._600,
-    color: 'grayscale.black',
+    bg: redMinus2,
+    textColor: redPlus4,
+    _hover: { bg: redHover },
   },
   [FractalProposalState.REJECTED]: {
-    Icon: CloseX,
     tooltipKey: 'stateRejectedTip',
-    bg: Red._600,
-    color: 'grayscale.black',
+    bg: redMinus2,
+    textColor: redPlus4,
+    _hover: { bg: redHover },
   },
   [FractalProposalState.PENDING]: {
-    Icon: ClockTwo,
     tooltipKey: 'statePendingTip',
-    bg: Green._500,
-    color: 'grayscale.black',
+    bg: greenMinus4,
+    textColor: greenPlus2,
+    _hover: { bg: greenHover },
   },
   [FractalProposalState.CLOSED]: {
-    Icon: ClockTwo,
     tooltipKey: 'stateClosedTip',
-    bg: Green._600,
-    color: 'grayscale.black',
+    bg: greenMinus4,
+    textColor: greenPlus2,
+    _hover: { bg: greenHover },
   },
   [DAOState.freezeInit]: {
-    Icon: Check,
     tooltipKey: 'stateFreezeInitTip',
     bg: 'blue.400',
-    color: 'grayscale.black',
+    textColor: 'grayscale.black',
+    _hover: { bg: 'grayscale.black' },
   },
   [DAOState.frozen]: {
-    Icon: DoubleCheck,
     tooltipKey: 'stateFrozenTip',
     bg: 'blue.400',
-    color: 'grayscale.black',
+    textColor: 'grayscale.black',
+    _hover: { bg: 'grayscale.black' },
   },
-  ownerApproved: { bg: 'sand.700', color: 'grayscale.black' },
+  ownerApproved: { bg: 'sand.700', textColor: 'grayscale.black', _hover: { bg: 'grayscale.black' } },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };
@@ -97,10 +112,12 @@ const BADGE_SIZES: BadgeSize = {
 interface IBadge {
   size: 'sm' | 'base';
   labelKey: FractalProposalState | DAOState | string;
+  // add as undefined to avoid breaking changes
+  proposal?: FractalProposal;
 }
 
-export function Badge({ labelKey, size }: IBadge) {
-  const { Icon, tooltipKey, ...colors } = BADGE_MAPPING[labelKey];
+export function Badge({ labelKey, size, proposal }: IBadge) {
+  const { tooltipKey, ...colors } = BADGE_MAPPING[labelKey];
   const sizes = BADGE_SIZES[size];
 
   const { t } = useTranslation('proposal');
@@ -112,16 +129,32 @@ export function Badge({ labelKey, size }: IBadge) {
         placement="top"
       >
         <Flex
-          padding="0.125rem 0.5rem"
           alignItems="center"
-          gap="0.125rem"
+          gap="0.5rem"
           borderRadius="0.25rem"
           justifyContent="center"
+          h="1.5rem"
+          w="fit-content"
+          p="0.5rem"
+          lineHeight={1.5}
           {...sizes}
           {...colors}
         >
-          {!!Icon && <Icon />}
-          <Text textStyle="text-sm-mono-semibold">{t(labelKey)}</Text>
+          <Box
+            rounded="full"
+            bg={colors.textColor}
+            w="0.5rem"
+            h="0.5rem"
+          />
+          <Text textStyle="text-md-sans-regular">{t(labelKey)}</Text>
+          {proposal && (
+            <ProposalCountdown
+              proposal={proposal}
+              showIcon={false}
+              textColor={colors.textColor}
+              textStyle="text-md-sans-regular"
+            />
+          )}
         </Flex>
       </Tooltip>
     </>
