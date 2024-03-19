@@ -1,5 +1,5 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { Azorius, BaseStrategy__factory } from '@fractal-framework/fractal-contracts';
+import { Azorius } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
@@ -23,6 +23,7 @@ import {
 } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import { getAverageBlockTime } from '../../../utils/contract';
+import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
@@ -64,12 +65,12 @@ export default function useSubmitProposal() {
 
   const {
     node: { safe, fractalModules },
-    baseContracts,
     guardContracts: { freezeVotingContract },
-    governanceContracts: { ozLinearVotingContract, erc721LinearVotingContract },
+    governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
     governance: { type },
     readOnly: { user },
   } = useFractal();
+  const baseContracts = useSafeContracts();
   const safeAPI = useSafeAPI();
 
   const globalAzoriusContract = useMemo(() => {
@@ -105,7 +106,7 @@ export default function useSubmitProposal() {
         return !!owners?.includes(user.address || '');
       };
 
-      if (safeAddress) {
+      if (safeAddress && baseContracts) {
         const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(safeAddress));
         const safeModules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(safeModules);
@@ -116,10 +117,8 @@ export default function useSubmitProposal() {
           const votingContractAddress = (
             await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
           )[1];
-          const votingContract = BaseStrategy__factory.connect(
-            votingContractAddress,
-            signerOrProvider,
-          );
+          const votingContract =
+            baseContracts.linearVotingMasterCopyContract.asProvider.attach(votingContractAddress);
           const isProposer = await votingContract.isProposer(user.address);
           return isProposer;
         } else {
@@ -130,13 +129,23 @@ export default function useSubmitProposal() {
           const { owners } = safe || {};
           return checkIsMultisigOwner(owners);
         } else if (type === GovernanceType.AZORIUS_ERC20) {
-          if (ozLinearVotingContract && user.address) {
-            return ozLinearVotingContract.asProvider.isProposer(user.address);
+          if (ozLinearVotingContractAddress && user.address && baseContracts) {
+            const ozLinearVotingContract =
+              baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+                ozLinearVotingContractAddress,
+              );
+            return ozLinearVotingContract.isProposer(user.address);
           }
-        } else if (type === GovernanceType.AZORIUS_ERC721) {
-          if (erc721LinearVotingContract) {
-            return erc721LinearVotingContract.asProvider.isProposer(user.address);
-          }
+        } else if (
+          type === GovernanceType.AZORIUS_ERC721 &&
+          baseContracts &&
+          erc721LinearVotingContractAddress
+        ) {
+          const erc721LinearVotingContract =
+            baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
+              erc721LinearVotingContractAddress,
+            );
+          return erc721LinearVotingContract.isProposer(user.address);
         } else {
           return false;
         }
@@ -147,11 +156,12 @@ export default function useSubmitProposal() {
       safe,
       type,
       user,
-      ozLinearVotingContract,
-      erc721LinearVotingContract,
+      ozLinearVotingContractAddress,
+      erc721LinearVotingContractAddress,
       lookupModules,
       safeAPI,
       signerOrProvider,
+      baseContracts,
     ],
   );
   useEffect(() => {
@@ -395,8 +405,8 @@ export default function useSubmitProposal() {
         }
       } else {
         const votingStrategyAddress =
-          ozLinearVotingContract?.asProvider.address ||
-          erc721LinearVotingContract?.asProvider.address ||
+          ozLinearVotingContractAddress ||
+          erc721LinearVotingContractAddress ||
           freezeVotingContract?.asProvider.address;
 
         if (!globalAzoriusContract || !votingStrategyAddress) {
@@ -430,8 +440,8 @@ export default function useSubmitProposal() {
       safe,
       lookupModules,
       submitMultisigProposal,
-      ozLinearVotingContract,
-      erc721LinearVotingContract,
+      ozLinearVotingContractAddress,
+      erc721LinearVotingContractAddress,
       submitAzoriusProposal,
       safeAPI,
     ],

@@ -1,5 +1,4 @@
-import { Link } from '@chakra-ui/next-js';
-import { HStack, Text } from '@chakra-ui/react';
+import { Link, HStack, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
 interface IconWithTextProps {

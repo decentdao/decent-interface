@@ -4,7 +4,8 @@ import { Fragment, PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { CreateProposalTemplateForm } from '../../types/createProposalTemplate';
-import LineBreakBlock from '../ui/utils/LineBreakBlock';
+import Markdown from '../ui/proposal/Markdown';
+import '../../assets/css/Markdown.css';
 
 export function TransactionValueContainer({
   children,
@@ -65,10 +66,9 @@ export default function ProposalTemplateDetails({
         </HStack>
         <HStack justifyContent="space-between">
           <Text color="grayscale.500">{t('proposalTemplateDescription')}</Text>
-          <LineBreakBlock
-            textAlign="right"
-            wordBreak="break-word"
-            text={proposalTemplateMetadata.description?.trim()}
+          <Markdown
+            content={proposalTemplateMetadata.description}
+            collapsedLines={2}
           />
         </HStack>
         <Divider color="chocolate.700" />

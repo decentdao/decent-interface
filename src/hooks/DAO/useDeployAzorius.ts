@@ -1,7 +1,7 @@
 import { BigNumber } from 'ethers';
-import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -18,7 +18,7 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 
 const useDeployAzorius = () => {
   const signerOrProvider = useSignerOrProvider();
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const {
     contracts: { fallbackHandler },
   } = useNetworkConfig();
@@ -121,7 +121,7 @@ const useDeployAzorius = () => {
         pendingToastMessage: t('modifyGovernanceSetAzoriusProposalPendingMessage'),
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-        successCallback: () => push(DAO_ROUTES.proposals.relative(daoAddress)),
+        successCallback: () => navigate(DAO_ROUTES.proposals.relative(daoAddress)),
       });
     },
     [
@@ -131,7 +131,7 @@ const useDeployAzorius = () => {
       canUserCreateProposal,
       daoAddress,
       submitProposal,
-      push,
+      navigate,
       safe,
       fallbackHandler,
     ],

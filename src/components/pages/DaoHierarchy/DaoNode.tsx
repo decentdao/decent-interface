@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { utils } from 'ethers';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -26,7 +26,6 @@ export function DaoNode({
   daoAddress?: string;
   depth: number;
 }) {
-  const onMountOnly = useRef(true);
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
   const { daoData } = useLoadDAOData(fractalNode, parentAddress);
@@ -39,7 +38,7 @@ export function DaoNode({
   const isCurrentDAO = daoAddress === currentDAOAddress;
 
   useEffect(() => {
-    if (daoAddress && onMountOnly.current) {
+    if (daoAddress && !fractalNode) {
       loadDao(utils.getAddress(daoAddress)).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
@@ -80,9 +79,8 @@ export function DaoNode({
           });
         }
       });
-      onMountOnly.current = false;
     }
-  }, [loadDao, daoAddress, fractalNode?.nodeHierarchy.childNodes, depth]);
+  }, [loadDao, daoAddress, fractalNode, depth]);
 
   return (
     <Box position="relative">

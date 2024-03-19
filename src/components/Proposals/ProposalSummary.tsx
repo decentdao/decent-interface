@@ -6,6 +6,7 @@ import { BigNumber } from 'ethers';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
+import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
@@ -32,12 +33,11 @@ export default function ProposalSummary({
 }) {
   const {
     governance,
-    governanceContracts: { tokenContract },
     readOnly: {
       user: { votingWeight, address },
     },
   } = useFractal();
-
+  const baseContracts = useSafeContracts();
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
@@ -62,8 +62,11 @@ export default function ProposalSummary({
 
   useEffect(() => {
     async function loadProposalVotingWeight() {
-      if (tokenContract && address) {
-        const pastVotingWeight = await tokenContract.asProvider.getPastVotes(address, startBlock);
+      if (address && baseContracts && votesToken) {
+        const tokenContract = baseContracts.votesTokenMasterCopyContract.asProvider.attach(
+          votesToken.address,
+        );
+        const pastVotingWeight = await tokenContract.getPastVotes(address, startBlock);
         setProposalsERC20VotingWeight(
           pastVotingWeight.div(votesTokenDecimalsDenominator).toString(),
         );
@@ -71,7 +74,7 @@ export default function ProposalSummary({
     }
 
     loadProposalVotingWeight();
-  }, [address, startBlock, tokenContract, votesTokenDecimalsDenominator]);
+  }, [address, startBlock, votesTokenDecimalsDenominator, baseContracts, votesToken]);
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;

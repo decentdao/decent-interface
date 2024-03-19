@@ -19,7 +19,7 @@ jobs:
       - name: Build GraphQL client
         run: npm run graphql:build
       - name: Run tests
-        run: npm run lint
+        run: npm run lint:check
   pretty:
     runs-on: ubuntu-latest
     steps:

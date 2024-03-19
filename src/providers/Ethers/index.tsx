@@ -1,5 +1,3 @@
-'use client';
-
 import { Signer, providers } from 'ethers';
 import { ReactNode, createContext, useMemo } from 'react';
 import type { Transport } from 'viem';

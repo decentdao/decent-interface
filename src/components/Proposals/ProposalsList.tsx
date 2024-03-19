@@ -1,6 +1,6 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
-import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -35,7 +35,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
       ) : (
         <EmptyBox emptyText={t('emptyProposals')}>
           {canUserCreateProposal && (
-            <Link href={DAO_ROUTES.proposalNew.relative(daoAddress)}>
+            <Link to={DAO_ROUTES.proposalNew.relative(daoAddress)}>
               <Button
                 variant="text"
                 textStyle="text-xl-mono-bold"

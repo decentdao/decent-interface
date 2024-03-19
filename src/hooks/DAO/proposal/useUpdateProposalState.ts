@@ -6,6 +6,7 @@ import {
 } from '../../../providers/App/governance/action';
 import { FractalGovernanceContracts } from '../../../types';
 import { getAzoriusProposalState } from '../../../utils';
+import useSafeContracts from '../../safe/useSafeContracts';
 
 interface IUseUpdateProposalState {
   governanceContracts: FractalGovernanceContracts;
@@ -13,21 +14,24 @@ interface IUseUpdateProposalState {
 }
 
 export default function useUpdateProposalState({
-  governanceContracts: { azoriusContract },
+  governanceContracts: { azoriusContractAddress },
   governanceDispatch,
 }: IUseUpdateProposalState) {
+  const baseContracts = useSafeContracts();
   const updateProposalState = useCallback(
     async (proposalId: BigNumber) => {
-      if (!azoriusContract) {
+      if (!azoriusContractAddress || !baseContracts) {
         return;
       }
-      const newState = await getAzoriusProposalState(azoriusContract.asProvider, proposalId);
+      const azoriusContract =
+        baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
+      const newState = await getAzoriusProposalState(azoriusContract, proposalId);
       governanceDispatch({
         type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
         payload: { proposalId: proposalId.toString(), state: newState },
       });
     },
-    [azoriusContract, governanceDispatch],
+    [azoriusContractAddress, governanceDispatch, baseContracts],
   );
 
   return updateProposalState;

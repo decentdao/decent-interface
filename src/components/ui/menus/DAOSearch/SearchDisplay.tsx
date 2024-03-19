@@ -1,7 +1,7 @@
 import { Box, Flex, Text, Button } from '@chakra-ui/react';
-import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -30,7 +30,7 @@ export function SearchDisplay({
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
   const { action, node } = useFractal();
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const isCurrentSafe = useMemo(() => {
     return !!node && !!node.daoAddress && node.daoAddress === address;
   }, [node, address]);
@@ -57,7 +57,7 @@ export function SearchDisplay({
             onClickView();
             if (closeDrawer) closeDrawer();
             action.resetDAO();
-            push(DAO_ROUTES.dao.relative(address));
+            navigate(DAO_ROUTES.dao.relative(address));
           }
         }}
         cursor={isCurrentSafe ? 'not-allowed' : 'default'}

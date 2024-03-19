@@ -1,6 +1,6 @@
 import { Link, HStack, Image, Text } from '@chakra-ui/react';
-import NextLink from 'next/link';
 import { useTranslation } from 'react-i18next';
+import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
@@ -25,7 +25,7 @@ export function ParentLink() {
       href={DAO_ROUTES.dao.relative(nodeHierarchy.parentAddress)}
       onClick={action.resetDAO}
       marginBottom="1rem"
-      as={NextLink}
+      as={RouterLink}
     >
       <HStack>
         <Image

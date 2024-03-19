@@ -1,5 +1,3 @@
-'use client';
-
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOMetadata from '../../../../hooks/DAO/useDAOMetadata';

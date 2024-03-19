@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { MetaTransaction, FractalProposal, AzoriusProposal } from '../../../types';
+import useSafeContracts from '../../safe/useSafeContracts';
 import { useTransaction } from '../../utils/useTransaction';
 import useUpdateProposalState from './useUpdateProposalState';
 
@@ -10,7 +11,8 @@ export default function useExecuteProposal() {
   const { t } = useTranslation('transaction');
 
   const { governanceContracts, action } = useFractal();
-  const { azoriusContract } = governanceContracts;
+  const { azoriusContractAddress } = governanceContracts;
+  const baseContracts = useSafeContracts();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
     governanceDispatch: action.dispatch,
@@ -20,9 +22,16 @@ export default function useExecuteProposal() {
   const executeProposal = useCallback(
     (proposal: FractalProposal) => {
       const azoriusProposal = proposal as AzoriusProposal;
-      if (!azoriusContract || !azoriusProposal.data || !azoriusProposal.data.transactions) {
+      if (
+        !azoriusContractAddress ||
+        !azoriusProposal.data ||
+        !azoriusProposal.data.transactions ||
+        !baseContracts
+      ) {
         return;
       }
+      const azoriusContract =
+        baseContracts.fractalAzoriusMasterCopyContract.asSigner.attach(azoriusContractAddress);
 
       const targets: string[] = [];
       const values: MetaTransaction['value'][] = [];
@@ -38,13 +47,7 @@ export default function useExecuteProposal() {
 
       contractCallExecuteProposal({
         contractFn: () =>
-          azoriusContract.asSigner.executeProposal(
-            proposal.proposalId,
-            targets,
-            values,
-            data,
-            operations,
-          ),
+          azoriusContract.executeProposal(proposal.proposalId, targets, values, data, operations),
         pendingMessage: t('pendingExecute'),
         failedMessage: t('failedExecute'),
         successMessage: t('successExecute'),
@@ -54,7 +57,7 @@ export default function useExecuteProposal() {
         },
       });
     },
-    [contractCallExecuteProposal, t, azoriusContract, updateProposalState],
+    [contractCallExecuteProposal, t, azoriusContractAddress, updateProposalState, baseContracts],
   );
 
   return {

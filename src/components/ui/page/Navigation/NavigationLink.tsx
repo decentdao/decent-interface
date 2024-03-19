@@ -1,8 +1,7 @@
 import { Box, ComponentWithAs, Hide, IconProps, Text } from '@chakra-ui/react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link, useMatch } from 'react-router-dom';
 import { NavigationTooltip } from './NavigationTooltip';
 
 interface INavigationLink {
@@ -28,8 +27,7 @@ export function NavigationLink({
   const tooltipTranslationKey = tooltipKey || labelKey;
 
   const { t } = useTranslation('navigation');
-  const pathname = usePathname();
-  const isActive = pathname === href;
+  const isActive = useMatch(href);
 
   const activeColors = useCallback(() => {
     return {
@@ -45,7 +43,7 @@ export function NavigationLink({
       <Link
         data-testid={testId}
         aria-label={t(tooltipTranslationKey)}
-        href={href}
+        to={href}
         {...rest}
         onClick={closeDrawer}
       >

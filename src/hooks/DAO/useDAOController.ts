@@ -1,6 +1,5 @@
-'use client';
-
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useERC20Claim } from './loaders/governance/useERC20Claim';
 import { useSnapshotProposals } from './loaders/snapshot/useSnapshotProposals';
@@ -11,9 +10,8 @@ import { useFractalNode } from './loaders/useFractalNode';
 import { useFractalTreasury } from './loaders/useFractalTreasury';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
 
-export default function useDAOController({ daoAddress }: { daoAddress?: string }) {
-  const [currentDAOAddress, setCurrentDAOAddress] = useState<string>();
-  const [reloadingDAO, setReloadingDAO] = useState(false);
+export default function useDAOController() {
+  const { daoAddress } = useParams();
   const {
     node: {
       nodeHierarchy: { parentAddress },
@@ -21,16 +19,12 @@ export default function useDAOController({ daoAddress }: { daoAddress?: string }
     action,
   } = useFractal();
   useEffect(() => {
-    if (daoAddress && currentDAOAddress !== daoAddress) {
-      setReloadingDAO(true);
-      action.resetDAO().then(() => {
-        setCurrentDAOAddress(daoAddress);
-        setReloadingDAO(false);
-      });
+    if (!daoAddress) {
+      action.resetDAO();
     }
-  }, [daoAddress, currentDAOAddress, action]);
+  }, [action, daoAddress]);
 
-  const { nodeLoading, errorLoading } = useFractalNode({ daoAddress: currentDAOAddress });
+  const { nodeLoading, errorLoading } = useFractalNode({ daoAddress });
   useGovernanceContracts();
   useFractalGuardContracts({});
   useFractalFreeze({ parentSafeAddress: parentAddress });
@@ -38,5 +32,5 @@ export default function useDAOController({ daoAddress }: { daoAddress?: string }
   useFractalTreasury();
   useERC20Claim();
   useSnapshotProposals();
-  return { nodeLoading, reloadingDAO, errorLoading };
+  return { nodeLoading, errorLoading };
 }

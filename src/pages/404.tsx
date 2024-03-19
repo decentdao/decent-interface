@@ -1,28 +1,24 @@
-'use client';
-
-import { Text, Button, ChakraProvider, VStack, AbsoluteCenter } from '@chakra-ui/react';
-import NextImage from 'next/image';
-import { useRouter } from 'next/navigation';
+import { AbsoluteCenter, Button, ChakraProvider, Image, Text, VStack } from '@chakra-ui/react';
+import '@fontsource/ibm-plex-mono';
+import '@fontsource/ibm-plex-sans';
 import { I18nextProvider, useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { theme } from '../assets/theme';
 import { BASE_ROUTES } from '../constants/routes';
 import i18n from '../i18n';
-import '@fontsource/ibm-plex-mono';
-import '@fontsource/ibm-plex-sans';
 
 export default function FourOhFourPage() {
   const { t } = useTranslation('common');
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const home = () => {
-    push(BASE_ROUTES.landing);
+    navigate(BASE_ROUTES.landing);
   };
   return (
     <ChakraProvider theme={theme}>
       <I18nextProvider i18n={i18n}>
         <AbsoluteCenter>
           <VStack>
-            <NextImage
-              priority
+            <Image
               width={252}
               height={48}
               src="/images/fractal-text-logo.svg"

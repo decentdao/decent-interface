@@ -1,6 +1,6 @@
 import { Box, BoxProps } from '@chakra-ui/react';
-import { useRouter } from 'next/navigation';
 import { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 
 type InfoBoxProps = {
@@ -20,14 +20,14 @@ export function InfoBox({
   background,
   ...rest
 }: InfoBoxProps) {
-  const { push } = useRouter();
+  const navigate = useNavigate();
   return (
     <Box
       cursor={to ? 'pointer' : undefined}
       onClick={
         to
           ? () => {
-              push(to);
+              navigate(to);
             }
           : undefined
       }

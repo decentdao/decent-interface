@@ -9,9 +9,9 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { utils } from 'ethers';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { logError } from '../../../helpers/errorLogging';
 import { usePrepareProposal } from '../../../hooks/DAO/proposal/usePrepareProposal';
@@ -21,7 +21,7 @@ import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { isValidUrl } from '../../../utils/url';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { InputComponent } from '../forms/InputComponent';
-import LineBreakBlock from '../utils/LineBreakBlock';
+import Markdown from '../proposal/Markdown';
 
 interface IProposalTemplateModalProps {
   proposalTemplate: ProposalTemplate;
@@ -40,7 +40,7 @@ export default function ProposalTemplateModal({
   const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
   const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
-  const { push } = useRouter();
+  const navigate = useNavigate();
   const { submitProposal, canUserCreateProposal } = useSubmitProposal();
   const { prepareProposal } = usePrepareProposal();
 
@@ -79,7 +79,7 @@ export default function ProposalTemplateModal({
 
   const successCallback = () => {
     if (daoAddress) {
-      push(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(daoAddress));
       onClose();
     }
   };
@@ -134,13 +134,12 @@ export default function ProposalTemplateModal({
 
   return (
     <Box>
-      <LineBreakBlock
-        textStyle="text-base-mono-regular"
-        color="grayscale.100"
-        marginBottom="1.5rem"
-        text={description}
-      />
-      <Divider color="chocolate.700" />
+      {description && (
+        <>
+          <Markdown content={description} />
+          <Divider color="chocolate.700" />
+        </>
+      )}
       {filledProposalTransactions.map((transaction, transactionIndex) => (
         <VStack key={transactionIndex}>
           {transaction.parameters.map(
