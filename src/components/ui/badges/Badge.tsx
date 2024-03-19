@@ -32,7 +32,7 @@ const BADGE_MAPPING: BadgeType = {
     tooltipKey: 'stateTimelockedTip',
     bg: 'sand.700',
     textColor: 'grayscale.black',
-    _hover: { bg: 'grayscale.black' },
+    _hover: { bg: 'sand.600' },
   },
   [FractalProposalState.EXECUTED]: {
     tooltipKey: 'stateExecutedTip',
@@ -62,7 +62,7 @@ const BADGE_MAPPING: BadgeType = {
     tooltipKey: 'stateModuleTip',
     bg: 'sand.700',
     textColor: 'grayscale.black',
-    _hover: { bg: '' },
+    _hover: { bg: 'sand.600' },
   },
   [FractalProposalState.EXPIRED]: {
     tooltipKey: 'stateExpiredTip',
@@ -92,15 +92,15 @@ const BADGE_MAPPING: BadgeType = {
     tooltipKey: 'stateFreezeInitTip',
     bg: 'blue.400',
     textColor: 'grayscale.black',
-    _hover: { bg: 'grayscale.black' },
+    _hover: { bg: 'blue.400-hover' },
   },
   [DAOState.frozen]: {
     tooltipKey: 'stateFrozenTip',
     bg: 'blue.400',
     textColor: 'grayscale.black',
-    _hover: { bg: 'grayscale.black' },
+    _hover: { bg: 'blue.400-hover' },
   },
-  ownerApproved: { bg: 'sand.700', textColor: 'grayscale.black', _hover: { bg: 'grayscale.black' } },
+  ownerApproved: { bg: 'sand.700', textColor: 'grayscale.black', _hover: { bg: 'sand.600' }, },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };
