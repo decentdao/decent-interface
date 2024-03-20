@@ -161,7 +161,12 @@ export function Badge({ labelKey, size, proposal }: IBadge) {
             w="0.5rem"
             h="0.5rem"
           />
-          <Text textStyle="text-md-sans-regular" lineHeight="1">{t(labelKey)}</Text>
+          <Text
+            textStyle="text-md-sans-regular"
+            lineHeight="1"
+          >
+            {t(labelKey)}
+          </Text>
           {proposal && (
             <ProposalCountdown
               proposal={proposal}
