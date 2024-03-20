@@ -8,13 +8,14 @@ import useDAOController from '../hooks/DAO/useDAOController';
 import useDAOMetadata from '../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../providers/App/AppProvider';
 import {
-  disconnectedChain,
   supportedChains,
+  useNetworkConfig,
 } from '../providers/NetworkConfig/NetworkConfigProvider';
 
 function InvalidSafe() {
-  const { chain } = useAccount();
+  const { name } = useNetworkConfig();
   const { t } = useTranslation('common');
+
   return (
     <Center
       padding="3rem"
@@ -27,7 +28,7 @@ function InvalidSafe() {
         >
           {t('errorSentryFallbackTitle')}
         </Text>
-        <Text>{t('invalidSafe1', { chain: chain ? chain.name : disconnectedChain.name })}</Text>
+        <Text>{t('invalidSafe1', { chain: name })}</Text>
         <Text paddingBottom="1rem">{t('invalidSafe2')}</Text>
         <Button onClick={() => window.location.reload()}>{t('refresh')}</Button>
       </VStack>
@@ -38,6 +39,7 @@ function InvalidSafe() {
 function InvalidChain() {
   const { t } = useTranslation(['common', 'menu']);
   const supportedChainNames = supportedChains.map(c => c.name).join(', ');
+
   return (
     <Center
       padding="3rem"
