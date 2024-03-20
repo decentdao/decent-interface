@@ -5,9 +5,9 @@ import { DAO_ROUTES } from '../../constants/routes';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FractalProposal } from '../../types';
-import { ActivityGovernance } from '../Activity/ActivityGovernance';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
+import ProposalCard from './ProposalCard/ProposalCard';
 
 export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const {
@@ -27,9 +27,9 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
         </Box>
       ) : proposals.length > 0 ? (
         proposals.map(proposal => (
-          <ActivityGovernance
+          <ProposalCard
             key={proposal.proposalId}
-            activity={proposal}
+            proposal={proposal}
           />
         ))
       ) : (
