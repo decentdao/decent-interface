@@ -33,7 +33,7 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
     return BigNumber.from(0);
   }, [votesSummary]);
 
-  const erc20MeetsQuorum = useMemo(async() => {
+  const erc20MeetsQuorum = useMemo(async () => {
     if (!ozLinearVotingContractAddress || !baseContracts || !votesToken || !votesSummary) {
       return undefined;
     }
@@ -45,9 +45,9 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
       votesSummary.yes,
       votesSummary.abstain,
     );
-    return result
+    return result;
   }, [votesToken, votesSummary, baseContracts, ozLinearVotingContractAddress]);
-  
+
   // @dev only azorius governance has quorum
   if ((proposal as SnapshotProposal).snapshotProposalId || !votingStrategy) {
     return null;
@@ -64,24 +64,16 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
       : null;
 
   const strategyQuorum =
-    erc721Tokens !== undefined
-      ? votingStrategy.quorumThreshold!.value.toNumber()
-      : 1;
+    erc721Tokens !== undefined ? votingStrategy.quorumThreshold!.value.toNumber() : 1;
   const reachedQuorum =
-    erc721Tokens !== undefined
-      ? totalVotesCasted.sub(votesSummary.no).toString()
-      : '0';
-  const totalQuorum =
-    erc721Tokens !== undefined
-      ? strategyQuorum.toString()
-      : 0;
+    erc721Tokens !== undefined ? totalVotesCasted.sub(votesSummary.no).toString() : '0';
+  const totalQuorum = erc721Tokens !== undefined ? strategyQuorum.toString() : 0;
 
-  const meetsQuorum = erc20MeetsQuorum !== undefined ? erc20MeetsQuorum : reachedQuorum >= totalQuorum;
+  const meetsQuorum =
+    erc20MeetsQuorum !== undefined ? erc20MeetsQuorum : reachedQuorum >= totalQuorum;
 
   const displayColor =
-    !totalVotesCasted.isZero() && meetsQuorum
-      ? quorumReachedColor
-      : quorumNotReachedColor;
+    !totalVotesCasted.isZero() && meetsQuorum ? quorumReachedColor : quorumNotReachedColor;
   return (
     <>
       <Box

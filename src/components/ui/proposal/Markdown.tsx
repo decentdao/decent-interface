@@ -38,7 +38,7 @@ interface IMarkdown {
   content: string;
 }
 
-export default function Markdown({ truncate, content, collapsedLines = 6}: IMarkdown) {
+export default function Markdown({ truncate, content, collapsedLines = 6 }: IMarkdown) {
   const { t } = useTranslation('common');
   const [collapsed, setCollapsed] = useState(true);
   const [totalLines, setTotalLines] = useState(0);

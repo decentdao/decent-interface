@@ -49,7 +49,7 @@ export function ActivityDescription({ activity, showFullDescription }: IActivity
         alignItems="center"
         color="#B3B3B3"
         textStyle="text-md-sans-regular"
-         >
+      >
         <Avatar
           size="sm"
           address={author}

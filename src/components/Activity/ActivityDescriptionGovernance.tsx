@@ -71,7 +71,10 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
       color="grayscale.100"
       pr={2}
     >
-      <Flex gap={2} alignItems="center">
+      <Flex
+        gap={2}
+        alignItems="center"
+      >
         <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
         {metaData.title ? <Text>{metaData.title}</Text> : null}
       </Flex>

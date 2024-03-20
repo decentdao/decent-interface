@@ -22,19 +22,19 @@ const redMinus2 = '#640E0D';
 const redHover = '#76110F';
 
 const sandBG = '#C18D5A';
-const sandHover = '#B97F46'
-const blackText = '#150D04'
+const sandHover = '#B97F46';
+const blackText = '#150D04';
 
-const grayBG = '#9A979D'
-const grayHover = '#8C8990'
+const grayBG = '#9A979D';
+const grayHover = '#8C8990';
 
-const lightBlueBG = '#A3B9EC'
-const lightBlueHover = '#8DA8E7'
-const darkBlueText = '#0A1E3D'
+const lightBlueBG = '#A3B9EC';
+const lightBlueHover = '#8DA8E7';
+const darkBlueText = '#0A1E3D';
 
-const darkBlueBG = '#1B3B83'
-const darkBlueHover = '#17326E'
-const lightBlueText = '#D1DCF5'
+const darkBlueBG = '#1B3B83';
+const darkBlueHover = '#17326E';
+const lightBlueText = '#D1DCF5';
 
 const BADGE_MAPPING: BadgeType = {
   [FractalProposalState.ACTIVE]: {
@@ -115,7 +115,7 @@ const BADGE_MAPPING: BadgeType = {
     textColor: darkBlueText,
     _hover: { bg: lightBlueHover },
   },
-  ownerApproved: { bg: 'sand.700', textColor: 'grayscale.black', _hover: { bg: 'sand.600' }, },
+  ownerApproved: { bg: 'sand.700', textColor: 'grayscale.black', _hover: { bg: 'sand.600' } },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };
