@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { ActivityEventType, SortBy, TreasuryActivity, FractalProposal } from '../../../../types';
-import { ActivityGovernance } from '../../../Activity/ActivityGovernance';
 import { ActivityModule } from '../../../Activity/ActivityModule';
 import { ActivityTreasury } from '../../../Activity/ActivityTreasury';
+import ProposalCard from '../../../Proposals/ProposalCard/ProposalCard';
 import { EmptyBox } from '../../../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../ui/loaders/InfoBoxLoader';
 import { Sort } from '../../../ui/utils/Sort';
@@ -48,9 +48,9 @@ export function Activities() {
             {sortedActivities.map((activity, i) => {
               if (activity.eventType === ActivityEventType.Governance) {
                 return (
-                  <ActivityGovernance
+                  <ProposalCard
                     key={i}
-                    activity={activity as FractalProposal}
+                    proposal={activity as FractalProposal}
                   />
                 );
               }
