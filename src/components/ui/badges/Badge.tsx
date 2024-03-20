@@ -150,7 +150,7 @@ export function Badge({ labelKey, size, proposal }: IBadge) {
           justifyContent="center"
           h="1.5rem"
           w="fit-content"
-          p="0.5rem"
+          p="0.5rem 0.25rem"
           lineHeight={1.5}
           {...sizes}
           {...colors}
@@ -161,7 +161,7 @@ export function Badge({ labelKey, size, proposal }: IBadge) {
             w="0.5rem"
             h="0.5rem"
           />
-          <Text textStyle="text-md-sans-regular">{t(labelKey)}</Text>
+          <Text textStyle="text-md-sans-regular" lineHeight="1">{t(labelKey)}</Text>
           {proposal && (
             <ProposalCountdown
               proposal={proposal}
