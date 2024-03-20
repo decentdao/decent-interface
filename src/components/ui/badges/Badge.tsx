@@ -13,12 +13,12 @@ type BadgeType = {
   };
 };
 
-const greenPlus2 = '#56A355';
-const greenMinus5 = '#0A320A';
+const greenText = '#56A355';
+const greenBG = '#0A320A';
 const greenHover = '#0E440E';
 
-const redPlus4 = '#FFC7C7';
-const redMinus2 = '#640E0D';
+const redText = '#FFB2B2';
+const redBG = '#640E0D';
 const redHover = '#76110F';
 
 const sandBG = '#C18D5A';
@@ -39,56 +39,56 @@ const lightBlueText = '#D1DCF5';
 const BADGE_MAPPING: BadgeType = {
   [FractalProposalState.ACTIVE]: {
     tooltipKey: 'stateActiveTip',
-    bg: greenMinus5,
-    textColor: greenPlus2,
+    bg: greenBG,
+    textColor: greenText,
     _hover: { bg: greenHover },
   },
   [FractalProposalState.TIMELOCKED]: {
     tooltipKey: 'stateTimelockedTip',
-    bg: greenMinus5,
-    textColor: greenPlus2,
+    bg: greenBG,
+    textColor: greenText,
     _hover: { bg: greenHover },
   },
   [FractalProposalState.EXECUTED]: {
     tooltipKey: 'stateExecutedTip',
-    bg: greenMinus5,
-    textColor: greenPlus2,
+    bg: greenBG,
+    textColor: greenText,
     _hover: { bg: greenHover },
   },
   [FractalProposalState.EXECUTABLE]: {
     tooltipKey: 'stateExecutableTip',
-    bg: greenMinus5,
-    textColor: greenPlus2,
+    bg: greenBG,
+    textColor: greenText,
     _hover: { bg: greenHover },
   },
   [FractalProposalState.FAILED]: {
     tooltipKey: 'stateFailedTip',
-    bg: redMinus2,
-    textColor: redPlus4,
+    bg: redBG,
+    textColor: redText,
     _hover: { bg: redHover },
   },
   [FractalProposalState.TIMELOCKABLE]: {
     tooltipKey: 'stateTimelockableTip',
-    bg: greenMinus5,
-    textColor: greenPlus2,
+    bg: greenBG,
+    textColor: greenText,
     _hover: { bg: greenHover },
   },
   [FractalProposalState.MODULE]: {
     tooltipKey: 'stateModuleTip',
-    bg: greenMinus5,
-    textColor: greenPlus2,
+    bg: greenBG,
+    textColor: greenText,
     _hover: { bg: greenHover },
   },
   [FractalProposalState.EXPIRED]: {
     tooltipKey: 'stateExpiredTip',
-    bg: redMinus2,
-    textColor: redPlus4,
+    bg: redBG,
+    textColor: redText,
     _hover: { bg: redHover },
   },
   [FractalProposalState.REJECTED]: {
     tooltipKey: 'stateRejectedTip',
-    bg: redMinus2,
-    textColor: redPlus4,
+    bg: redBG,
+    textColor: redText,
     _hover: { bg: redHover },
   },
   [FractalProposalState.PENDING]: {
