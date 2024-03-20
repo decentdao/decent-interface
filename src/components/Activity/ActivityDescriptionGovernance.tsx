@@ -46,10 +46,17 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
 
   if ((activity as SnapshotProposal).snapshotProposalId) {
     return (
-      <>
+      <Flex
+        textStyle="text-lg-sans-medium"
+        fontSize="20px"
+        alignItems="center"
+        color="grayscale.100"
+        pr={2}
+        gap={2}
+      >
         <Text>{formatId((activity as SnapshotProposal).snapshotProposalId)}</Text>
         <Text>{(activity as SnapshotProposal).title}</Text>
-      </>
+      </Flex>
     );
   }
 
@@ -62,8 +69,9 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
       textStyle="text-lg-sans-medium"
       fontSize="20px"
       color="grayscale.100"
+      pr={2}
     >
-      <Flex gap={2}>
+      <Flex gap={2} alignItems="center">
         <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
         {metaData.title ? <Text>{metaData.title}</Text> : null}
       </Flex>
