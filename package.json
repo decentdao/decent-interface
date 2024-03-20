@@ -70,8 +70,8 @@
     "tests": "playwright test"
   },
   "engines": {
-    "node": "18.14.0",
-    "npm": "9.3.1"
+    "node": "20.11.1",
+    "npm": "10.2.4"
   },
   "browserslist": {
     "production": [

@@ -1,10 +1,11 @@
 import { QueryClient } from '@tanstack/react-query';
+import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
 import { http } from 'wagmi';
-import { hardhat, sepolia, mainnet, Chain } from 'wagmi/chains';
+import { hardhat, sepolia, mainnet, Chain, polygon } from 'wagmi/chains';
 import { supportedChains } from './NetworkConfigProvider';
 
-export const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
+const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
 
 // allows connection to localhost only in development mode.
 if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
@@ -33,5 +34,10 @@ export const wagmiConfig = defaultWagmiConfig({
     [sepolia.id]: http(
       `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
     ),
+    [polygon.id]: http(),
   },
 });
+
+if (walletConnectProjectId) {
+  createWeb3Modal({ wagmiConfig, projectId: walletConnectProjectId });
+}

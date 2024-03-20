@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useRef } from 'react';
 import { DAOQueryDocument } from '../../../../.graphclient';
-import { useSubgraphChainName } from '../../../graphql/utils';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { GovernanceType } from '../../../types';
 import { useERC20LinearStrategy } from './governance/useERC20LinearStrategy';
 import { useERC20LinearToken } from './governance/useERC20LinearToken';
@@ -35,7 +35,7 @@ export const useFractalGovernance = () => {
 
   const ONE_MINUTE = 60 * 1000;
 
-  const chainName = useSubgraphChainName();
+  const { subgraphChainName } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },
@@ -66,7 +66,7 @@ export const useFractalGovernance = () => {
         });
       }
     },
-    context: { chainName },
+    context: { chainName: subgraphChainName },
     pollInterval: ONE_MINUTE,
     skip: !daoAddress,
   });
