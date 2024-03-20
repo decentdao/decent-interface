@@ -22,20 +22,22 @@ export default function EthersContextProvider({ children }: { children: ReactNod
   const { data: walletClient } = useWalletClient();
 
   const provider = useMemo(() => {
-    const { chain, transport } = publicClient;
-    const network = {
-      chainId: chain.id,
-      name: chain.name,
-      ensAddress: chain.contracts?.ensRegistry?.address,
-    };
-    if (transport.type === 'fallback') {
-      return new providers.FallbackProvider(
-        (transport.transports as ReturnType<Transport>[]).map(
-          ({ value }) => new providers.JsonRpcProvider(value?.url, network),
-        ),
-      );
+    if (publicClient) {
+      const { chain, transport } = publicClient;
+      const network = {
+        chainId: chain.id,
+        name: chain.name,
+        ensAddress: chain.contracts?.ensRegistry?.address,
+      };
+      if (transport.type === 'fallback') {
+        return new providers.FallbackProvider(
+          (transport.transports as ReturnType<Transport>[]).map(
+            ({ value }) => new providers.JsonRpcProvider(value?.url, network),
+          ),
+        );
+      }
+      return new providers.JsonRpcProvider(transport.url, network);
     }
-    return new providers.JsonRpcProvider(transport.url, network);
   }, [publicClient]);
 
   const signer = useMemo(() => {

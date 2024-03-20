@@ -2,7 +2,7 @@ import { Flex, Box, Text } from '@chakra-ui/react';
 import { ethers } from 'ethers';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc721ABI } from 'wagmi';
+import { erc721Abi } from 'viem';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { BigNumberValuePair, ERC721TokenConfig } from '../../../types';
@@ -37,7 +37,7 @@ export default function AzoriusNFTDetail({
       setLoading(true);
       try {
         if (nft.tokenAddress && ethers.utils.isAddress(nft.tokenAddress)) {
-          const tokenContract = new ethers.Contract(nft.tokenAddress, erc721ABI, provider);
+          const tokenContract = new ethers.Contract(nft.tokenAddress, erc721Abi, provider);
           const [name, symbol] = await Promise.all([tokenContract.name(), tokenContract.symbol()]);
           setTokenDetails({
             name,

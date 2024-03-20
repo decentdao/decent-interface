@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { useEffect, useCallback, useRef } from 'react';
-import { usePublicClient } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -18,7 +17,7 @@ export const useFractalTreasury = () => {
   } = useFractal();
   const safeAPI = useSafeAPI();
 
-  const { chain } = usePublicClient();
+  const { chainId } = useNetworkConfig();
 
   const { safeBaseURL } = useNetworkConfig();
 
@@ -54,15 +53,15 @@ export const useFractalTreasury = () => {
   }, [daoAddress, safeAPI, safeBaseURL, action]);
 
   useEffect(() => {
-    if (daoAddress && chain.id + daoAddress !== loadKey.current) {
-      loadKey.current = chain.id + daoAddress;
+    if (daoAddress && chainId + daoAddress !== loadKey.current) {
+      loadKey.current = chainId + daoAddress;
       setMethodOnInterval(loadTreasury);
     }
     if (!daoAddress) {
       loadKey.current = null;
       clearIntervals();
     }
-  }, [chain.id, daoAddress, loadTreasury, setMethodOnInterval, clearIntervals]);
+  }, [chainId, daoAddress, loadTreasury, setMethodOnInterval, clearIntervals]);
 
   return;
 };

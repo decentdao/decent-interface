@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Address, useEnsName, usePublicClient } from 'wagmi';
+import { Address } from 'viem';
+import { useEnsName } from 'wagmi';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export const createAccountSubstring = (account: string) => {
   return `${account.substring(0, 6)}...${account.slice(-4)}`;
@@ -15,11 +17,10 @@ export const createAccountSubstring = (account: string) => {
  */
 const useDisplayName = (account?: string | null, truncate?: boolean) => {
   if (truncate === undefined) truncate = true;
-  const { chain } = usePublicClient();
+  const { chainId } = useNetworkConfig();
   const { data: ensName } = useEnsName({
     address: account as Address,
-    chainId: chain.id,
-    cacheTime: 1000 * 60 * 30, // 30 min
+    chainId,
   });
 
   const [accountSubstring, setAccountSubstring] = useState<string>();

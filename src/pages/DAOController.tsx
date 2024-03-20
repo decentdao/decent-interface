@@ -3,7 +3,7 @@ import { theme } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
-import { useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import useDAOController from '../hooks/DAO/useDAOController';
 import useDAOMetadata from '../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../providers/App/AppProvider';
@@ -13,7 +13,7 @@ import {
 } from '../providers/NetworkConfig/NetworkConfigProvider';
 
 function InvalidSafe() {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const { t } = useTranslation('common');
   return (
     <Center
@@ -63,7 +63,7 @@ export default function DAOController() {
   const { node } = useFractal();
   const { nodeLoading, errorLoading } = useDAOController();
   const daoMetadata = useDAOMetadata();
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const activeTheme = useMemo(() => {
     if (daoMetadata && daoMetadata.bodyBackground) {
       return extendTheme({

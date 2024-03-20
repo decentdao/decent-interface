@@ -12,8 +12,10 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, useEnsName, usePublicClient } from 'wagmi';
+import { Address } from 'viem';
+import { useEnsName } from 'wagmi';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
 import useRemoveSigner from '../hooks/useRemoveSigner';
@@ -36,11 +38,10 @@ function RemoveSignerModal({
   const [prevSigner, setPrevSigner] = useState<string>('');
   const [threshold, setThreshold] = useState<number>(currentThreshold);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
-  const { chain } = usePublicClient();
+  const { chainId } = useNetworkConfig();
   const { data: ensName } = useEnsName({
     address: selectedSigner as Address,
-    chainId: chain.id,
-    cacheTime: 1000 * 60 * 30, // 30 min
+    chainId,
   });
   const { t } = useTranslation(['modals', 'common']);
   const tooltipContainer = useRef<HTMLDivElement>(null);
