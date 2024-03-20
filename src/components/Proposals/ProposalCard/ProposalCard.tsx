@@ -56,17 +56,7 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
           </Flex>
           <QuorumBadge proposal={proposal} />
         </Flex>
-        {/* Proposal Description Row */}
         <ActivityDescription activity={proposal} />
-        {/* Voting Data Row */}
-        <Box>
-          {/* For/Yes Votes % */}
-          {/* No Votes % */}
-          {/* Abstain Votes % */}
-        </Box>
-        {/* Voting Data Row Visual Bar */}
-        <Box>{/* pass/fail + passing threshold Votes Bar */}</Box>
-        {/* Created Data */}
         <Box>
           {proposal.eventDate && (
             <Text
