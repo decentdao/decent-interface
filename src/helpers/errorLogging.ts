@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/react';
 /**
  * Initializes error logging.
  */
-export function initErrorLogging() {
+function initErrorLogging() {
   if (
     process.env.NODE_ENV === 'development' ||
     import.meta.env.VITE_APP_SENTRY_DSN_URL === undefined
@@ -26,6 +26,8 @@ export function initErrorLogging() {
     replaysOnErrorSampleRate: 1.0,
   });
 }
+
+initErrorLogging();
 
 /**
  * Logs an error to Sentry and the console.
