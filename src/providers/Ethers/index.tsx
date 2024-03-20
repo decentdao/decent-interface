@@ -38,7 +38,6 @@ export default function EthersContextProvider({ children }: { children: ReactNod
       }
       return new providers.JsonRpcProvider(transport.url, network);
     }
-
   }, [publicClient]);
 
   const signer = useMemo(() => {
