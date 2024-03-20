@@ -14,35 +14,50 @@ type BadgeType = {
 };
 
 const greenPlus2 = '#56A355';
-const greenMinus4 = '#0A320A';
+const greenMinus5 = '#0A320A';
 const greenHover = '#0E440E';
 
 const redPlus4 = '#FFC7C7';
 const redMinus2 = '#640E0D';
 const redHover = '#76110F';
 
+const sandBG = '#C18D5A';
+const sandHover = '#B97F46'
+const blackText = '#150D04'
+
+const grayBG = '#9A979D'
+const grayHover = '#8C8990'
+
+const lightBlueBG = '#A3B9EC'
+const lightBlueHover = '#8DA8E7'
+const darkBlueText = '#0A1E3D'
+
+const darkBlueBG = '#1B3B83'
+const darkBlueHover = '#17326E'
+const lightBlueText = '#D1DCF5'
+
 const BADGE_MAPPING: BadgeType = {
   [FractalProposalState.ACTIVE]: {
     tooltipKey: 'stateActiveTip',
-    bg: greenMinus4,
+    bg: greenMinus5,
     textColor: greenPlus2,
     _hover: { bg: greenHover },
   },
   [FractalProposalState.TIMELOCKED]: {
     tooltipKey: 'stateTimelockedTip',
-    bg: 'sand.700',
-    textColor: 'grayscale.black',
-    _hover: { bg: 'sand.600' },
+    bg: greenMinus5,
+    textColor: greenPlus2,
+    _hover: { bg: greenHover },
   },
   [FractalProposalState.EXECUTED]: {
     tooltipKey: 'stateExecutedTip',
-    bg: greenMinus4,
+    bg: greenMinus5,
     textColor: greenPlus2,
     _hover: { bg: greenHover },
   },
   [FractalProposalState.EXECUTABLE]: {
     tooltipKey: 'stateExecutableTip',
-    bg: greenMinus4,
+    bg: greenMinus5,
     textColor: greenPlus2,
     _hover: { bg: greenHover },
   },
@@ -54,15 +69,15 @@ const BADGE_MAPPING: BadgeType = {
   },
   [FractalProposalState.TIMELOCKABLE]: {
     tooltipKey: 'stateTimelockableTip',
-    bg: greenMinus4,
+    bg: greenMinus5,
     textColor: greenPlus2,
     _hover: { bg: greenHover },
   },
   [FractalProposalState.MODULE]: {
     tooltipKey: 'stateModuleTip',
-    bg: 'sand.700',
-    textColor: 'grayscale.black',
-    _hover: { bg: 'sand.600' },
+    bg: greenMinus5,
+    textColor: greenPlus2,
+    _hover: { bg: greenHover },
   },
   [FractalProposalState.EXPIRED]: {
     tooltipKey: 'stateExpiredTip',
@@ -78,27 +93,27 @@ const BADGE_MAPPING: BadgeType = {
   },
   [FractalProposalState.PENDING]: {
     tooltipKey: 'statePendingTip',
-    bg: greenMinus4,
-    textColor: greenPlus2,
-    _hover: { bg: greenHover },
+    bg: sandBG,
+    textColor: blackText,
+    _hover: { bg: sandHover },
   },
   [FractalProposalState.CLOSED]: {
     tooltipKey: 'stateClosedTip',
-    bg: greenMinus4,
-    textColor: greenPlus2,
-    _hover: { bg: greenHover },
+    bg: grayBG,
+    textColor: '#000',
+    _hover: { bg: grayHover },
   },
   [DAOState.freezeInit]: {
     tooltipKey: 'stateFreezeInitTip',
-    bg: 'blue.400',
-    textColor: 'grayscale.black',
-    _hover: { bg: 'blue.400-hover' },
+    bg: lightBlueBG,
+    textColor: lightBlueText,
+    _hover: { bg: darkBlueHover },
   },
   [DAOState.frozen]: {
     tooltipKey: 'stateFrozenTip',
-    bg: 'blue.400',
-    textColor: 'grayscale.black',
-    _hover: { bg: 'blue.400-hover' },
+    bg: darkBlueBG,
+    textColor: darkBlueText,
+    _hover: { bg: lightBlueHover },
   },
   ownerApproved: { bg: 'sand.700', textColor: 'grayscale.black', _hover: { bg: 'sand.600' }, },
 };
