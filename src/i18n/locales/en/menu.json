@@ -5,7 +5,6 @@
   "faq": "FAQ",
   "discord": "Discord",
   "docs": "Docs",
-  "toastSwitchChain": "Switch your wallet to a supported chain: {{chainNames}}",
   "network": "Network",
   "wallet": "Wallet",
   "titleManageDAO": "Manage Safe",

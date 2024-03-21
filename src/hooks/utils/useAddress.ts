@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
-import { useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { supportsENS } from '../../helpers';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { couldBeENS } from '../../utils/url';
@@ -14,7 +14,7 @@ const useAddress = (addressInput: string | undefined) => {
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
   const { setValue, getValue } = useLocalStorage();
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
 
   useEffect(() => {
     setIsAddressLoading(true);

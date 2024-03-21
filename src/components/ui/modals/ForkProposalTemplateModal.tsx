@@ -2,7 +2,7 @@ import { Box, Button, Divider } from '@chakra-ui/react';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
@@ -31,7 +31,7 @@ export default function ForkProposalTemplateModal({
   const { t } = useTranslation('proposalTemplate');
   const navigate = useNavigate();
   const signerOrProvider = useSignerOrProvider();
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const {
     node: { proposalTemplatesHash },
   } = useFractal();

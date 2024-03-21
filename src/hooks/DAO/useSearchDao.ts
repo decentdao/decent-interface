@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNetwork } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { disconnectedChain } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useIsSafe } from '../safe/useIsSafe';
 import useAddress from '../utils/useAddress';
@@ -13,7 +13,7 @@ export const useSearchDao = () => {
   const { address, isValidAddress, isAddressLoading } = useAddress(searchString);
   const { isSafe, isSafeLoading } = useIsSafe(address);
   const { t } = useTranslation('dashboard');
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
 
   useEffect(() => {
     setIsLoading(isAddressLoading === true || isSafeLoading === true);
