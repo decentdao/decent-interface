@@ -75,26 +75,24 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
   const displayColor =
     !totalVotesCasted.isZero() && meetsQuorum ? quorumReachedColor : quorumNotReachedColor;
   return (
-    <>
-      <Box
-        rounded="md"
-        textStyle="text-md-sans-regular"
-        borderColor={displayColor}
-        textColor={displayColor}
-        border="1px solid"
-        px="0.5rem"
-        h="1.5rem"
-        lineHeight={1.5}
+    <Box
+      rounded="md"
+      textStyle="text-md-sans-regular"
+      borderColor={displayColor}
+      textColor={displayColor}
+      border="1px solid"
+      px="0.5rem"
+      h="1.5rem"
+      lineHeight={1.5}
+    >
+      <Flex
+        gap={2}
+        alignItems="center"
       >
-        <Flex
-          gap={2}
-          alignItems="center"
-        >
-          <Check boxSize={4} />
-          <Box>{t('quorum', { ns: 'common' })}</Box>
-          <Box>{quorumDisplay}</Box>
-        </Flex>
-      </Box>
-    </>
+        <Check boxSize={4} />
+        <Box>{t('quorum', { ns: 'common' })}</Box>
+        <Box>{quorumDisplay}</Box>
+      </Flex>
+    </Box>
   );
 }
