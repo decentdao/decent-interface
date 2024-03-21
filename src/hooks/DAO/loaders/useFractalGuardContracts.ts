@@ -1,9 +1,9 @@
 import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
-import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   ContractConnection,
   SafeInfoResponseWithGuard,
@@ -22,7 +22,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     action,
   } = useFractal();
 
-  const { chain } = usePublicClient();
+  const { chainId } = useNetworkConfig();
 
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
@@ -118,13 +118,13 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   }, [action, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
-    if (daoAddress && chain.id + daoAddress !== loadKey.current && loadOnMount && isModulesLoaded) {
-      loadKey.current = chain.id + daoAddress;
+    if (daoAddress && chainId + daoAddress !== loadKey.current && loadOnMount && isModulesLoaded) {
+      loadKey.current = chainId + daoAddress;
       setGuardContracts();
     }
     if (!daoAddress) {
       loadKey.current = undefined;
     }
-  }, [setGuardContracts, isModulesLoaded, daoAddress, loadOnMount, chain.id]);
+  }, [setGuardContracts, isModulesLoaded, daoAddress, loadOnMount, chainId]);
   return loadFractalGuardContracts;
 };

@@ -34,7 +34,7 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
 
   useEffect(() => {
     const loadABI = async () => {
-      if (target && ((ensAddress && isAddress(ensAddress)) || isAddress(target))) {
+      if (client && target && ((ensAddress && isAddress(ensAddress)) || isAddress(target))) {
         try {
           const requestFunc = ({ method, params }: { method: any; params: any }) =>
             client.request({ method, params });

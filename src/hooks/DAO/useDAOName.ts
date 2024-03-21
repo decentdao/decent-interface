@@ -1,9 +1,11 @@
 import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
-import { Address, useEnsName, usePublicClient } from 'wagmi';
+import { Address } from 'viem';
+import { useEnsName } from 'wagmi';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { CacheKeys } from '../utils/cache/cacheDefaults';
 import { useLocalStorage } from '../utils/cache/useLocalStorage';
 import { createAccountSubstring } from '../utils/useDisplayName';
@@ -24,12 +26,11 @@ export default function useDAOName({
 }) {
   const { baseContracts } = useFractal();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
-  const { chain } = usePublicClient();
+  const { chainId } = useNetworkConfig();
 
   const { data: ensName } = useEnsName({
     address: address as Address,
-    chainId: chain.id,
-    cacheTime: 1000 * 60 * 30, // 30 min
+    chainId,
   });
   const { setValue, getValue } = useLocalStorage();
 
