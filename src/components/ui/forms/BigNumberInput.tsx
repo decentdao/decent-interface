@@ -101,7 +101,7 @@ export function BigNumberInput({
       if (stringValue === '') {
         onChange({
           value: stringValue,
-          bigNumberValue: BigNumber.from(0),
+          bigNumberValue: undefined,
         });
         setInputValue('');
         return;
