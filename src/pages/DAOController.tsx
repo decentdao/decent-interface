@@ -7,9 +7,7 @@ import { useAccount } from 'wagmi';
 import useDAOController from '../hooks/DAO/useDAOController';
 import useDAOMetadata from '../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../providers/App/AppProvider';
-import {
-  disconnectedChain,
-} from '../providers/NetworkConfig/NetworkConfigProvider';
+import { disconnectedChain } from '../providers/NetworkConfig/NetworkConfigProvider';
 
 function InvalidSafe() {
   const { chain } = useAccount();
@@ -76,5 +74,5 @@ export default function DAOController() {
     display = <InvalidSafe />;
   }
 
-  return display
+  return display;
 }
