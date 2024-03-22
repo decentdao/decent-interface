@@ -33,7 +33,6 @@ export const useFractalFreeze = ({
   const isFreezeSet = useRef(false);
 
   const {
-    node: { daoAddress },
     guardContracts,
     action,
   } = useFractal();
@@ -168,15 +167,16 @@ export const useFractalFreeze = ({
       guardContracts.freezeVotingType !== null &&
       !!guardContracts.freezeVotingContractAddress &&
       loadOnMount &&
-      guardContracts.freezeVotingContractAddress !== loadKey.current
+      guardContracts.freezeVotingContractAddress + parentSafeAddress !== loadKey.current
     ) {
-      loadKey.current = guardContracts.freezeVotingContractAddress;
+      console.count('load freeze guard')
       setFractalFreezeGuard(guardContracts);
+      loadKey.current = guardContracts.freezeVotingContractAddress + parentSafeAddress;
     }
-    if (!daoAddress) {
+    if (!parentSafeAddress) {
       loadKey.current = undefined;
     }
-  }, [setFractalFreezeGuard, guardContracts, daoAddress, loadOnMount]);
+  }, [setFractalFreezeGuard, guardContracts, parentSafeAddress, loadOnMount]);
 
   useEffect(() => {
     const { freezeVotingContractAddress, freezeVotingType: freezeVotingType } = guardContracts;
