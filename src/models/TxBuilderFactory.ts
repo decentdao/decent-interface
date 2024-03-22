@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
-import { GnosisSafeL2__factory } from '../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
+import { SafeL2 } from '../assets/typechain-types/safe/contracts';
+import { SafeL2__factory } from '../assets/typechain-types/safe/factories/contracts';
 import { getRandomBytes } from '../helpers';
 import {
   BaseContracts,
@@ -25,7 +25,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   // Safe Data
   public predictedSafeAddress: string | undefined;
   public createSafeTx: SafeTransaction | undefined;
-  private safeContract: GnosisSafeL2 | undefined;
+  private safeContract: SafeL2 | undefined;
   public fallbackHandler: string;
 
   constructor(
@@ -51,7 +51,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   }
 
   public setSafeContract(safeAddress: string) {
-    const safeContract = GnosisSafeL2__factory.connect(safeAddress, this.signerOrProvider);
+    const safeContract = SafeL2__factory.connect(safeAddress, this.signerOrProvider);
     this.safeContract = safeContract;
   }
 

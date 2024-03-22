@@ -101,7 +101,7 @@ export const useFractalFreeze = ({
           await (freezeVotingContract!.asProvider as MultisigFreezeVoting).parentGnosisSafe(),
         );
         const owners = await safeContract.getOwners();
-        userHasVotes = owners.find(owner => owner === account) !== undefined;
+        userHasVotes = owners.find((owner: string) => owner === account) !== undefined;
       } else if (freezeVotingType === FreezeVotingType.ERC20) {
         const votesTokenContract = votesTokenMasterCopyContract!.asProvider.attach(
           await (freezeVotingContract!.asProvider as ERC20FreezeVoting).votesERC20(),

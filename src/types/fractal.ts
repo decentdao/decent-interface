@@ -25,8 +25,8 @@ import {
 } from '@safe-global/safe-service-client';
 import { BigNumber } from 'ethers';
 import { Dispatch } from 'react';
+import { SafeL2 } from '../assets/typechain-types/safe/contracts';
 import { MultiSend } from '../assets/typechain-types/usul';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
 import { FractalGuardActions } from '../providers/App/guard/action';
@@ -346,7 +346,7 @@ export interface FractalContracts {
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
   linearVotingERC721MasterCopyContract: ContractConnection<LinearERC721Voting>;
-  safeSingletonContract: ContractConnection<GnosisSafeL2>;
+  safeSingletonContract: ContractConnection<SafeL2>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;

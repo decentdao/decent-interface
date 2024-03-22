@@ -5,7 +5,7 @@ import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
+import { SafeL2__factory } from '../../../assets/typechain-types/safe/factories/contracts';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -122,7 +122,7 @@ export function TxActions({
       if (!signerOrProvider || !safe?.address || !multisigTx.confirmations) {
         return;
       }
-      const safeContract = GnosisSafeL2__factory.connect(safe.address, signerOrProvider);
+      const safeContract = SafeL2__factory.connect(safe.address, signerOrProvider);
       const safeTx = buildSafeTransaction({
         ...multisigTx,
       });

@@ -5,7 +5,7 @@ import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
+import { SafeL2__factory } from '../../../assets/typechain-types/safe/factories/contracts';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -248,7 +248,7 @@ export default function useSubmitProposal() {
           operation = 0;
         }
 
-        const safeContract = GnosisSafeL2__factory.connect(safeAddress, signerOrProvider);
+        const safeContract = SafeL2__factory.connect(safeAddress, signerOrProvider);
         await axios.post(
           buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
           await buildSafeAPIPost(
