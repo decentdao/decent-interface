@@ -38,7 +38,7 @@ export function DaoNode({
   const isCurrentDAO = daoAddress === currentDAOAddress;
 
   useEffect(() => {
-    if (daoAddress && !fractalNode) {
+    if (daoAddress) {
       loadDao(utils.getAddress(daoAddress)).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
@@ -80,7 +80,8 @@ export function DaoNode({
         }
       });
     }
-  }, [loadDao, daoAddress, fractalNode, depth]);
+  }, [loadDao, daoAddress, depth]);
+
 
   return (
     <Box position="relative">
