@@ -108,7 +108,6 @@ export const useFractalGovernance = () => {
         });
       }
     }
-
   }, [
     governanceContracts,
     loadUnderlyingERC20Token,
@@ -118,16 +117,16 @@ export const useFractalGovernance = () => {
     loadERC721Strategy,
     loadERC721Tokens,
     action,
-    type
+    type,
   ]);
 
   useEffect(() => {
-    const newLoadKey = (daoAddress || "0x");
+    const newLoadKey = daoAddress || '0x';
     if (type && daoAddress && daoAddress !== loadKey.current && isGuardLoaded) {
       loadKey.current = newLoadKey;
       loadDAOProposals();
     }
-    if(!type || !daoAddress) {
+    if (!type || !daoAddress) {
       loadKey.current = undefined;
     }
   }, [type, loadDAOProposals, isGuardLoaded, daoAddress]);

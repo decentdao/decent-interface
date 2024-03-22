@@ -17,7 +17,7 @@ import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 export const useERC721LinearStrategy = () => {
   const {
     governanceContracts: { erc721LinearVotingContractAddress, azoriusContractAddress },
-    governance: {type},
+    governance: { type },
     action,
   } = useFractal();
   const provider = useEthersProvider();

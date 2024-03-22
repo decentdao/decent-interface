@@ -33,7 +33,9 @@ export function InfoGovernance() {
       if (freezeGuardType == FreezeGuardType.MULTISIG) {
         if (freezeGuardContractAddress && baseContracts) {
           const freezeGuardContract =
-            baseContracts.multisigFreezeGuardMasterCopyContract.asProvider.attach(freezeGuardContractAddress);
+            baseContracts.multisigFreezeGuardMasterCopyContract.asProvider.attach(
+              freezeGuardContractAddress,
+            );
           setTimelockPeriod(await formatBlocks(await freezeGuardContract.timelockPeriod()));
           setExecutionPeriod(await formatBlocks(await freezeGuardContract.executionPeriod()));
         }

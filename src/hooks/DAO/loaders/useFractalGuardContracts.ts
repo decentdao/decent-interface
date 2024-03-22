@@ -22,7 +22,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
     action,
   } = useFractal();
-  const baseContracts = useSafeContracts()
+  const baseContracts = useSafeContracts();
 
   const { chainId } = useNetworkConfig();
 
@@ -119,7 +119,8 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       loadOnMount &&
       daoAddress &&
       daoAddress + chainId !== loadKey.current &&
-      isHierarchyLoaded && safe
+      isHierarchyLoaded &&
+      safe
     ) {
       loadKey.current = daoAddress + chainId;
       setGuardContracts();

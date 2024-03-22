@@ -132,7 +132,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
     if (daoAddress && chainId + daoAddress !== currentValidSafe.current) {
       setNodeLoading(true);
       setDAO(chainId, daoAddress);
-      currentValidSafe.current = chainId + daoAddress
+      currentValidSafe.current = chainId + daoAddress;
     }
     if (!daoAddress) {
       currentValidSafe.current = undefined;

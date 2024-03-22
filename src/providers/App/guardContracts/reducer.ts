@@ -14,7 +14,7 @@ export const guardContractReducer = (
 ) => {
   switch (action.type) {
     case GuardContractAction.SET_GUARD_CONTRACT:
-      return {...action.payload, isGuardLoaded: true};
+      return { ...action.payload, isGuardLoaded: true };
     default:
       return state;
   }

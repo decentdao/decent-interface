@@ -320,7 +320,6 @@ export const useSafeTransactions = () => {
       let freezeGuard: MultisigFreezeGuard | undefined;
       let freezeGuardData: FreezeGuardData | undefined;
 
-  
       if (guardContracts.freezeGuardContractAddress && baseContracts) {
         const blockNumber = await provider.getBlockNumber();
         const averageBlockTime = BigNumber.from(Math.round(await getAverageBlockTime(provider)));

@@ -243,7 +243,8 @@ export interface FractalNode {
   proposalTemplatesHash?: string;
 }
 
-export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {}
+export interface Node
+  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {}
 
 export interface FractalModuleData {
   moduleContract: Azorius | FractalModule | undefined;

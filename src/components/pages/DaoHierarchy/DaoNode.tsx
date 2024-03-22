@@ -82,7 +82,6 @@ export function DaoNode({
     }
   }, [loadDao, daoAddress, depth]);
 
-
   return (
     <Box position="relative">
       <DAONodeRow
