@@ -320,20 +320,19 @@ export const useSafeTransactions = () => {
       let freezeGuard: MultisigFreezeGuard | undefined;
       let freezeGuardData: FreezeGuardData | undefined;
 
+  
       if (guardContracts.freezeGuardContractAddress && baseContracts) {
         const blockNumber = await provider.getBlockNumber();
-        const averageBlockTime = await getAverageBlockTime(provider);
-
+        const averageBlockTime = BigNumber.from(Math.round(await getAverageBlockTime(provider)));
         freezeGuard = baseContracts.multisigFreezeGuardMasterCopyContract.asSigner.attach(
           guardContracts.freezeGuardContractAddress,
         );
+
+        const timelockPeriod = BigNumber.from(await freezeGuard.timelockPeriod());
+        const executionPeriod = BigNumber.from(await freezeGuard.executionPeriod());
         freezeGuardData = {
-          guardTimelockPeriodMs: BigNumber.from(
-            (await freezeGuard.timelockPeriod()) * averageBlockTime * 1000,
-          ),
-          guardExecutionPeriodMs: BigNumber.from(
-            (await freezeGuard.executionPeriod()) * averageBlockTime * 1000,
-          ),
+          guardTimelockPeriodMs: BigNumber.from(timelockPeriod.mul(averageBlockTime).mul(1000)),
+          guardExecutionPeriodMs: BigNumber.from(executionPeriod.mul(averageBlockTime).mul(1000)),
           lastBlock: await provider.getBlock(blockNumber),
         };
       }

@@ -1,6 +1,6 @@
 import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useDAOProposals } from '../../../hooks/DAO/loaders/useProposals';
@@ -41,6 +41,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
   });
 
   let updateStateInterval = useRef<NodeJS.Timer | undefined>();
+  let countdownInterval = useRef<NodeJS.Timer | undefined>();
   useEffect(() => {
     // if it's not a state that requires a countdown, clear the interval and return
     if (
@@ -85,93 +86,106 @@ export function useProposalCountdown(proposal: FractalProposal) {
     };
   }, [secondsLeft, loadDAOProposals, proposal, updateProposalState, governance.type, dao]);
 
+  const startCountdown = useCallback((initialTimeMs: number) => {
+    countdownInterval.current = setInterval(() => {
+      setSecondsLeft(Math.floor((initialTimeMs - Date.now()) / 1000));
+    }, 1000);
+  }, []);
+
+  const getCountdown = useCallback(async () => {
+    if (!baseContracts) return;
+    const freezeGuard =
+      freezeGuardType === FreezeGuardType.MULTISIG
+        ? baseContracts.multisigFreezeGuardMasterCopyContract.asSigner.attach(
+            freezeGuardContractAddress || '0x',
+          )
+        : freezeGuardType === FreezeGuardType.AZORIUS
+          ? (baseContracts.azoriusFreezeGuardMasterCopyContract.asSigner.attach(
+              freezeGuardContractAddress || '0x',
+            ) as AzoriusFreezeGuard)
+          : undefined;
+
+    const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
+    const isAzoriusGuard = freezeGuardType === FreezeGuardType.AZORIUS;
+
+    const timeLockPeriod = azoriusGovernance.votingStrategy?.timeLockPeriod;
+    const votingDeadlineMs = (proposal as AzoriusProposal).deadlineMs;
+
+    // If the proposal is active and has a deadline, start the countdown (for Azorius proposals)
+    if (proposal.state === FractalProposalState.ACTIVE && votingDeadlineMs) {
+      startCountdown(votingDeadlineMs);
+      return;
+    } else if (
+      // If the proposal is timelocked and has a deadline, start the countdown (for Azorius proposals)
+      proposal.state === FractalProposalState.TIMELOCKED &&
+      votingDeadlineMs &&
+      timeLockPeriod
+    ) {
+      startCountdown(votingDeadlineMs + Number(timeLockPeriod.value) * 1000);
+      // If the proposal is timelocked start the countdown (for safe multisig proposals with guards)
+      return;
+    } else if (
+      proposal.state === FractalProposalState.TIMELOCKED &&
+      freezeGuard &&
+      isSafeGuard &&
+      provider
+    ) {
+      const safeGuard = freezeGuard as MultisigFreezeGuard;
+      const timelockedTimestamp = await getTxTimelockedTimestamp(proposal, safeGuard, provider);
+      const guardTimeLockPeriod = await blocksToSeconds(await safeGuard.timelockPeriod(), provider);
+      startCountdown(timelockedTimestamp * 1000 + guardTimeLockPeriod * 1000);
+      // If the proposal is executable start the countdown (for safe multisig proposals with guards)
+      return;
+    } else if (proposal.state === FractalProposalState.EXECUTABLE && freezeGuard) {
+      let guardTimelockPeriod: number = 0;
+      if (isSafeGuard && provider) {
+        const safeGuard = freezeGuard as MultisigFreezeGuard;
+        const timelockedTimestamp =
+          (await getTxTimelockedTimestamp(proposal, safeGuard, provider)) * 1000;
+        const safeGuardTimelockPeriod =
+          (await blocksToSeconds(await safeGuard.timelockPeriod(), provider)) * 1000;
+        const guardExecutionPeriod =
+          (await blocksToSeconds(await safeGuard.executionPeriod(), provider)) * 1000;
+        guardTimelockPeriod = timelockedTimestamp + safeGuardTimelockPeriod + guardExecutionPeriod;
+
+        // If the proposal is executing start the countdown (for Azorius proposals with guards)
+        return;
+      } else if (isAzoriusGuard && timeLockPeriod && votingDeadlineMs) {
+        guardTimelockPeriod = timeLockPeriod.value.toNumber() * 1000 + votingDeadlineMs;
+      }
+      startCountdown(guardTimelockPeriod);
+      return;
+    } else if (isSnapshotProposal && proposal.state === FractalProposalState.PENDING) {
+      startCountdown(snapshotProposal.startTime * 1000);
+      return;
+    } else if (isSnapshotProposal) {
+      startCountdown(snapshotProposal.endTime * 1000);
+      return;
+    }
+  }, [
+    freezeGuardType,
+    baseContracts,
+    azoriusGovernance.votingStrategy,
+    provider,
+    proposal,
+    startCountdown,
+    isSnapshotProposal,
+    snapshotProposal,
+    freezeGuardContractAddress,
+  ]);
+
   useEffect(() => {
-    let countdownInterval: NodeJS.Timer | undefined;
+    if (!baseContracts) return;
 
     // continually calculates the initial time (in ms) - the current time (in ms)
     // then converts it to seconds, all on a 1 second interval
-    const startCountdown = (initialTimeMs: number) => {
-      countdownInterval = setInterval(() => {
-        setSecondsLeft(Math.floor((initialTimeMs - Date.now()) / 1000));
-      }, 1000);
-    };
-
-    async function getCountdown() {
-      const freezeGuard =
-        freezeGuardType === FreezeGuardType.MULTISIG
-          ? baseContracts?.multisigFreezeGuardMasterCopyContract.asProvider
-          : freezeGuardType === FreezeGuardType.AZORIUS
-            ? (baseContracts?.azoriusFreezeGuardMasterCopyContract.asProvider as AzoriusFreezeGuard)
-            : undefined;
-
-      const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
-      const isAzoriusGuard = freezeGuardType === FreezeGuardType.AZORIUS;
-
-      const timeLockPeriod = azoriusGovernance.votingStrategy?.timeLockPeriod;
-      const votingDeadlineMs = (proposal as AzoriusProposal).deadlineMs;
-
-      // If the proposal is active and has a deadline, start the countdown (for Azorius proposals)
-      if (proposal.state === FractalProposalState.ACTIVE && votingDeadlineMs) {
-        startCountdown(votingDeadlineMs);
-      } else if (
-        // If the proposal is timelocked and has a deadline, start the countdown (for Azorius proposals)
-        proposal.state === FractalProposalState.TIMELOCKED &&
-        votingDeadlineMs &&
-        timeLockPeriod
-      ) {
-        startCountdown(votingDeadlineMs + Number(timeLockPeriod.value) * 1000);
-        // If the proposal is timelocked start the countdown (for safe multisig proposals with guards)
-      } else if (
-        proposal.state === FractalProposalState.TIMELOCKED &&
-        freezeGuard &&
-        isSafeGuard &&
-        provider
-      ) {
-        const safeGuard = freezeGuard as MultisigFreezeGuard;
-        const timelockedTimestamp = await getTxTimelockedTimestamp(proposal, safeGuard, provider);
-        const guardTimeLockPeriod = await blocksToSeconds(
-          await safeGuard.timelockPeriod(),
-          provider,
-        );
-        startCountdown(timelockedTimestamp * 1000 + guardTimeLockPeriod * 1000);
-        // If the proposal is executable start the countdown (for safe multisig proposals with guards)
-      } else if (proposal.state === FractalProposalState.EXECUTABLE && freezeGuard) {
-        let guardTimelockPeriod: number = 0;
-        if (isSafeGuard && provider) {
-          const safeGuard = freezeGuard as MultisigFreezeGuard;
-          const timelockedTimestamp =
-            (await getTxTimelockedTimestamp(proposal, safeGuard, provider)) * 1000;
-          const safeGuardTimelockPeriod =
-            (await blocksToSeconds(await safeGuard.timelockPeriod(), provider)) * 1000;
-          const guardExecutionPeriod =
-            (await blocksToSeconds(await safeGuard.executionPeriod(), provider)) * 1000;
-          guardTimelockPeriod =
-            timelockedTimestamp + safeGuardTimelockPeriod + guardExecutionPeriod;
-
-          // If the proposal is executing start the countdown (for Azorius proposals with guards)
-        } else if (isAzoriusGuard && timeLockPeriod && votingDeadlineMs) {
-          guardTimelockPeriod = timeLockPeriod.value.toNumber() * 1000 + votingDeadlineMs;
-        }
-        startCountdown(guardTimelockPeriod);
-      } else if (isSnapshotProposal && proposal.state === FractalProposalState.PENDING) {
-        startCountdown(snapshotProposal.startTime * 1000);
-      } else if (isSnapshotProposal) {
-        startCountdown(snapshotProposal.endTime * 1000);
-      }
-    }
-
     getCountdown();
 
     return () => {
-      clearInterval(countdownInterval);
+      clearInterval(countdownInterval.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    proposal.state,
-    azoriusGovernance.votingStrategy,
-    freezeGuardContractAddress,
-    freezeGuardType,
-  ]);
+  }, [proposal.state, azoriusGovernance.votingStrategy, freezeGuardType, baseContracts]);
 
   return secondsLeft;
 }
