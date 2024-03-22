@@ -124,7 +124,7 @@ export function ManageDAOMenu({
   }, [fractalNode, safe, safeAddress, type, getZodiacModuleProxyMasterCopyData, baseContracts]);
 
   const handleNavigateToSettings = useCallback(
-    () => navigate(DAO_ROUTES.settings.relative(safeAddress)),
+    () => navigate(DAO_ROUTES.settings.relative(safeAddress), { replace: true }),
     [navigate, safeAddress],
   );
 
@@ -133,7 +133,7 @@ export function ManageDAOMenu({
   const options = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
-      onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress)),
+      onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress), { replace: true }),
     };
 
     const freezeOption = {
