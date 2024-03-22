@@ -105,17 +105,15 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
   useEffect(() => {
     if (
-      parentAddress &&
-      daoAddress &&
-      parentAddress + daoAddress !== loadKey.current &&
-      loadOnMount &&
+      loadOnMount && parentAddress && daoAddress &&
+      parentAddress + daoAddress + chainId !== loadKey.current &&
       isModulesLoaded
     ) {
-      loadKey.current = parentAddress + daoAddress;
-      console.count('load guard contracts');
+      loadKey.current = parentAddress + daoAddress + chainId;
       setGuardContracts();
     }
-    if (!daoAddress) {
+
+    if (!daoAddress || !parentAddress) {
       loadKey.current = undefined;
     }
   }, [setGuardContracts, isModulesLoaded, parentAddress, loadOnMount, chainId, daoAddress]);
