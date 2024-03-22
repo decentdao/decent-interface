@@ -32,10 +32,7 @@ export const useFractalFreeze = ({
   const loadKey = useRef<string>();
   const isFreezeSet = useRef(false);
 
-  const {
-    guardContracts,
-    action,
-  } = useFractal();
+  const { guardContracts, action } = useFractal();
   const baseContracts = useSafeContracts();
   const { address: account } = useAccount();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(
@@ -169,7 +166,7 @@ export const useFractalFreeze = ({
       loadOnMount &&
       guardContracts.freezeVotingContractAddress + parentSafeAddress !== loadKey.current
     ) {
-      console.count('load freeze guard')
+      console.count('load freeze guard');
       setFractalFreezeGuard(guardContracts);
       loadKey.current = guardContracts.freezeVotingContractAddress + parentSafeAddress;
     }
