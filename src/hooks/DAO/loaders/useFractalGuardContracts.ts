@@ -10,6 +10,7 @@ import {
   FreezeGuardType,
   FreezeVotingType,
 } from '../../../types';
+import useSafeContracts from '../../safe/useSafeContracts';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 
@@ -17,17 +18,11 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();
   const {
-    node: {
-      daoAddress,
-      safe,
-      fractalModules,
-      isModulesLoaded,
-      nodeHierarchy: { parentAddress },
-    },
+    node: { daoAddress, safe, fractalModules, isHierarchyLoaded },
 
-    baseContracts,
     action,
   } = useFractal();
+  const baseContracts = useSafeContracts()
 
   const { chainId } = useNetworkConfig();
 
@@ -56,7 +51,16 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       );
       if (!!azoriusModule && azoriusModule.moduleContract) {
         const azoriusGuardAddress = await azoriusModule.moduleContract.getGuard();
-        if (azoriusGuardAddress === constants.AddressZero) return;
+
+        if (azoriusGuardAddress === constants.AddressZero) {
+          return {
+            freezeGuardContractAddress: '',
+            freezeVotingContractAddress: '',
+            freezeVotingType: null,
+            freezeGuardType: null,
+          };
+        }
+
         freezeGuardContract = {
           asSigner: azoriusFreezeGuardMasterCopyContract.asSigner.attach(azoriusGuardAddress),
           asProvider: azoriusFreezeGuardMasterCopyContract.asProvider.attach(azoriusGuardAddress),
@@ -91,13 +95,20 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         };
 
         return contracts;
+      } else {
+        return {
+          freezeGuardContractAddress: '',
+          freezeVotingContractAddress: '',
+          freezeVotingType: null,
+          freezeGuardType: null,
+        };
       }
     },
     [baseContracts, getZodiacModuleProxyMasterCopyData],
   );
 
   const setGuardContracts = useCallback(async () => {
-    if (!daoAddress || !safe || !fractalModules.length || !safe.guard) return;
+    if (!daoAddress || !safe) return;
     const contracts = await loadFractalGuardContracts(daoAddress, safe, fractalModules);
     if (!contracts) return;
     action.dispatch({ type: GuardContractAction.SET_GUARD_CONTRACT, payload: contracts });
@@ -105,17 +116,18 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
   useEffect(() => {
     if (
-      loadOnMount && parentAddress && daoAddress &&
-      parentAddress + daoAddress + chainId !== loadKey.current &&
-      isModulesLoaded
+      loadOnMount &&
+      daoAddress &&
+      daoAddress + chainId !== loadKey.current &&
+      isHierarchyLoaded && safe
     ) {
-      loadKey.current = parentAddress + daoAddress + chainId;
+      loadKey.current = daoAddress + chainId;
       setGuardContracts();
     }
 
-    if (!daoAddress || !parentAddress) {
+    if (!daoAddress) {
       loadKey.current = undefined;
     }
-  }, [setGuardContracts, isModulesLoaded, parentAddress, loadOnMount, chainId, daoAddress]);
+  }, [setGuardContracts, isHierarchyLoaded, loadOnMount, chainId, daoAddress, safe]);
   return loadFractalGuardContracts;
 };

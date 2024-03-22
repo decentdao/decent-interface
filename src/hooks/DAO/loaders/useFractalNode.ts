@@ -99,7 +99,6 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
             action.resetDAO();
             setErrorLoading(true);
           } else {
-            currentValidSafe.current = _chainId + _daoAddress;
             action.dispatch({
               type: NodeAction.SET_FRACTAL_MODULES,
               payload: await lookupModules(safeInfo.modules),
@@ -133,6 +132,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
     if (daoAddress && chainId + daoAddress !== currentValidSafe.current) {
       setNodeLoading(true);
       setDAO(chainId, daoAddress);
+      currentValidSafe.current = chainId + daoAddress
     }
     if (!daoAddress) {
       currentValidSafe.current = undefined;

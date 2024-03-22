@@ -166,7 +166,6 @@ export const useFractalFreeze = ({
       loadOnMount &&
       guardContracts.freezeVotingContractAddress + parentSafeAddress !== loadKey.current
     ) {
-      console.count('load freeze guard');
       setFractalFreezeGuard(guardContracts);
       loadKey.current = guardContracts.freezeVotingContractAddress + parentSafeAddress;
     }

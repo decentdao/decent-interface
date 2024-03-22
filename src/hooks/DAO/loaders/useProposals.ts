@@ -28,6 +28,7 @@ export const useDAOProposals = () => {
       clearIntervals();
     } else if (type === GovernanceType.MULTISIG) {
       // load mulisig proposals
+      clearIntervals();
       setMethodOnInterval(loadSafeMultisigProposals);
     }
   }, [

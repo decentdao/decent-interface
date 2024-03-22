@@ -238,11 +238,12 @@ export interface FractalNode {
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
   isModulesLoaded?: boolean;
+  isHierarchyLoaded?: boolean;
   daoSnapshotURL?: string;
   proposalTemplatesHash?: string;
 }
 
-export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded'> {}
+export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {}
 
 export interface FractalModuleData {
   moduleContract: Azorius | FractalModule | undefined;
@@ -260,6 +261,7 @@ export interface FractalGuardContracts {
   freezeVotingContractAddress?: string;
   freezeGuardType: FreezeGuardType | null;
   freezeVotingType: FreezeVotingType | null;
+  isGuardLoaded?: boolean;
 }
 
 export interface FreezeGuard {
