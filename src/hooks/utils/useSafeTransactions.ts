@@ -21,6 +21,7 @@ import {
 import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
 import { getAverageBlockTime } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
+import useSafeContracts from '../safe/useSafeContracts';
 import { useSafeDecoder } from './useSafeDecoder';
 
 type FreezeGuardData = {
@@ -33,6 +34,7 @@ export const useSafeTransactions = () => {
   const { nativeTokenSymbol } = useNetworkConfig();
   const provider = useEthersProvider();
   const { guardContracts } = useFractal();
+  const baseContracts = useSafeContracts();
   const decode = useSafeDecoder();
 
   const getState = useCallback(
@@ -318,10 +320,13 @@ export const useSafeTransactions = () => {
       let freezeGuard: MultisigFreezeGuard | undefined;
       let freezeGuardData: FreezeGuardData | undefined;
 
-      if (guardContracts.freezeGuardContract) {
+      if (guardContracts.freezeGuardContractAddress && baseContracts) {
         const blockNumber = await provider.getBlockNumber();
         const averageBlockTime = await getAverageBlockTime(provider);
-        freezeGuard = guardContracts.freezeGuardContract.asProvider as MultisigFreezeGuard;
+
+        freezeGuard = baseContracts.multisigFreezeGuardMasterCopyContract.asSigner.attach(
+          guardContracts.freezeGuardContractAddress,
+        );
         freezeGuardData = {
           guardTimelockPeriodMs: BigNumber.from(
             (await freezeGuard.timelockPeriod()) * averageBlockTime * 1000,
@@ -337,12 +342,13 @@ export const useSafeTransactions = () => {
       return activitiesWithState;
     },
     [
-      guardContracts.freezeGuardContract,
+      guardContracts,
       getState,
       getTransferTotal,
       decode,
       nativeTokenSymbol,
       provider,
+      baseContracts,
     ],
   );
   return { parseTransactions };

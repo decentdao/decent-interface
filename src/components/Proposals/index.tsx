@@ -65,7 +65,7 @@ export default function Proposals() {
         break;
       case GovernanceType.MULTISIG:
       default:
-        if (guardContracts.freezeGuardContract) {
+        if (guardContracts.freezeGuardContractAddress) {
           options = FILTERS_MULTISIG_CHILD;
         } else {
           options = FILTERS_MULTISIG_BASE;
@@ -77,7 +77,7 @@ export default function Proposals() {
     }
     setAllOptions(options);
     setFilters(options);
-  }, [daoSnapshotURL, guardContracts.freezeGuardContract, type]);
+  }, [daoSnapshotURL, guardContracts.freezeGuardContractAddress, type]);
 
   const toggleFilter = (filter: FractalProposalState) => {
     setFilters(prevState => {

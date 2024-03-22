@@ -5,6 +5,7 @@ import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useDAOProposals } from '../../../hooks/DAO/loaders/useProposals';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
+import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import {
@@ -20,11 +21,12 @@ import { getTxTimelockedTimestamp } from '../../../utils/guard';
 export function useProposalCountdown(proposal: FractalProposal) {
   const {
     governance,
-    guardContracts: { freezeGuardContract, freezeGuardType },
+    guardContracts: { freezeGuardContractAddress, freezeGuardType },
     governanceContracts,
     action,
     readOnly: { dao },
   } = useFractal();
+  const baseContracts = useSafeContracts();
   const provider = useEthersProvider();
 
   const [secondsLeft, setSecondsLeft] = useState<number>();
@@ -97,9 +99,9 @@ export function useProposalCountdown(proposal: FractalProposal) {
     async function getCountdown() {
       const freezeGuard =
         freezeGuardType === FreezeGuardType.MULTISIG
-          ? (freezeGuardContract?.asProvider as MultisigFreezeGuard)
+          ? baseContracts?.multisigFreezeGuardMasterCopyContract.asProvider
           : freezeGuardType === FreezeGuardType.AZORIUS
-            ? (freezeGuardContract?.asProvider as AzoriusFreezeGuard)
+            ? (baseContracts?.azoriusFreezeGuardMasterCopyContract.asProvider as AzoriusFreezeGuard)
             : undefined;
 
       const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
@@ -164,7 +166,12 @@ export function useProposalCountdown(proposal: FractalProposal) {
       clearInterval(countdownInterval);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proposal.state, azoriusGovernance.votingStrategy, freezeGuardContract, freezeGuardType]);
+  }, [
+    proposal.state,
+    azoriusGovernance.votingStrategy,
+    freezeGuardContractAddress,
+    freezeGuardType,
+  ]);
 
   return secondsLeft;
 }

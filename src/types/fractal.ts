@@ -255,18 +255,9 @@ export enum FractalModuleType {
   FRACTAL,
   UNKNOWN,
 }
-// @todo updates Fractal Guard Contract to just store addresses in the store
-// export interface FractalGuardContracts {
-//   freezeGuardContractAddress?: string;
-//   freezeVotingContractAddress?: string;
-//   freezeGuardType: FreezeGuardType | null;
-//   freezeVotingType: FreezeVotingType | null;
-// }
 export interface FractalGuardContracts {
-  freezeGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
-  freezeVotingContract?: ContractConnection<
-    ERC20FreezeVoting | ERC721FreezeVoting | MultisigFreezeVoting
-  >;
+  freezeGuardContractAddress?: string;
+  freezeVotingContractAddress?: string;
   freezeGuardType: FreezeGuardType | null;
   freezeVotingType: FreezeVotingType | null;
 }

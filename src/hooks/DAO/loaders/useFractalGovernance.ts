@@ -83,7 +83,7 @@ export const useFractalGovernance = () => {
     const newLoadKey =
       (azoriusContractAddress ? '1' : '0') +
       nodeHierarchy.parentAddress +
-      !!guardContracts.freezeGuardContract;
+      !!guardContracts.freezeGuardContractAddress;
 
     if (isLoaded && newLoadKey !== loadKey.current) {
       loadKey.current = newLoadKey;
@@ -126,7 +126,7 @@ export const useFractalGovernance = () => {
     loadERC20Token,
     loadLockedVotesToken,
     nodeHierarchy.parentAddress,
-    guardContracts.freezeGuardContract,
+    guardContracts.freezeGuardContractAddress,
     loadERC721Strategy,
     loadERC721Tokens,
     action,

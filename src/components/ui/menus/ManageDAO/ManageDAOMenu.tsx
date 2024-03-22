@@ -1,9 +1,5 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
-import {
-  ERC20FreezeVoting,
-  ERC721FreezeVoting,
-  MultisigFreezeVoting,
-} from '@fractal-framework/fractal-contracts';
+import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +11,7 @@ import {
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
+import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useMasterCopy } from '../../../../hooks/utils/useMasterCopy';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -58,8 +55,8 @@ export function ManageDAOMenu({
   const {
     node: { safe },
     governance: { type },
-    baseContracts,
   } = useFractal();
+  const baseContracts = useSafeContracts();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const navigate = useNavigate();
   const safeAddress = fractalNode?.daoAddress;
@@ -142,7 +139,7 @@ export function ManageDAOMenu({
     const freezeOption = {
       optionKey: 'optionInitiateFreeze',
       onClick: () => {
-        const freezeVotingContract = guardContracts?.freezeVotingContract?.asSigner;
+        const freezeVotingContract = baseContracts?.freezeMultisigVotingMasterCopyContract.asSigner;
         const freezeVotingType = guardContracts?.freezeVotingType;
         if (freezeVotingContract) {
           if (
@@ -152,9 +149,12 @@ export function ManageDAOMenu({
             (freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting).castFreezeVote();
           } else if (freezeVotingType === FreezeVotingType.ERC721) {
             getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo => {
-              return (freezeVotingContract as ERC721FreezeVoting)[
-                'castFreezeVote(address[],uint256[])'
-              ](tokensInfo.totalVotingTokenAddresses, tokensInfo.totalVotingTokenIds);
+              const freezeERC721VotingContract =
+                baseContracts?.freezeERC721VotingMasterCopyContract.asSigner;
+              return freezeERC721VotingContract['castFreezeVote(address[],uint256[])'](
+                tokensInfo.totalVotingTokenAddresses,
+                tokensInfo.totalVotingTokenIds,
+              );
             });
           }
         }
@@ -229,13 +229,13 @@ export function ManageDAOMenu({
     safeAddress,
     parentAddress,
     governanceType,
-    guardContracts?.freezeVotingContract?.asSigner,
-    guardContracts?.freezeVotingType,
+    guardContracts,
     handleClawBack,
     canUserCreateProposal,
     handleModifyGovernance,
     handleNavigateToSettings,
     getUserERC721VotingTokens,
+    baseContracts,
   ]);
 
   return (
