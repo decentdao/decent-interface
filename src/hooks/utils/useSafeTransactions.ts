@@ -330,8 +330,8 @@ export const useSafeTransactions = () => {
         const timelockPeriod = BigNumber.from(await freezeGuard.timelockPeriod());
         const executionPeriod = BigNumber.from(await freezeGuard.executionPeriod());
         freezeGuardData = {
-          guardTimelockPeriodMs: BigNumber.from(timelockPeriod.mul(averageBlockTime).mul(1000)),
-          guardExecutionPeriodMs: BigNumber.from(executionPeriod.mul(averageBlockTime).mul(1000)),
+          guardTimelockPeriodMs: timelockPeriod.mul(averageBlockTime).mul(1000),
+          guardExecutionPeriodMs: executionPeriod.mul(averageBlockTime).mul(1000),
           lastBlock: await provider.getBlock(blockNumber),
         };
       }
