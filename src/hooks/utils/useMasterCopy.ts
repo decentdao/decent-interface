@@ -58,7 +58,11 @@ export function useMasterCopy() {
       const filter = contract.filters.ModuleProxyCreation(proxyAddress, null);
       return contract.queryFilter(filter).then(proxiesCreated => {
         if (proxiesCreated.length === 0) {
-          setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, constants.AddressZero, CacheExpiry.ONE_WEEK);
+          setValue(
+            CacheKeys.MASTER_COPY_PREFIX + proxyAddress,
+            constants.AddressZero,
+            CacheExpiry.ONE_WEEK,
+          );
           return [constants.AddressZero, 'No proxies created'] as const;
         }
         const masterCopyAddress = proxiesCreated[0].args!.masterCopy;
