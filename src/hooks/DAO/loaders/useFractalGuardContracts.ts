@@ -19,7 +19,6 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   const loadKey = useRef<string>();
   const {
     node: { daoAddress, safe, fractalModules, isHierarchyLoaded },
-
     action,
   } = useFractal();
   const baseContracts = useSafeContracts();
