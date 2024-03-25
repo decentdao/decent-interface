@@ -136,7 +136,6 @@ const BADGE_SIZES: BadgeSize = {
 interface IBadge {
   size: 'sm' | 'base';
   labelKey: FractalProposalState | DAOState | string;
-  // add as undefined to avoid breaking changes
   proposal?: FractalProposal;
 }
 
