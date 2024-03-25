@@ -146,46 +146,44 @@ export function Badge({ labelKey, size, proposal }: IBadge) {
 
   const { t } = useTranslation('proposal');
   return (
-    <>
-      <Tooltip
-        label={tooltipKey ? t(tooltipKey) : undefined}
-        maxW={TOOLTIP_MAXW}
-        placement="top"
+    <Tooltip
+      label={tooltipKey ? t(tooltipKey) : undefined}
+      maxW={TOOLTIP_MAXW}
+      placement="top"
+    >
+      <Flex
+        alignItems="center"
+        gap="0.5rem"
+        borderRadius="0.25rem"
+        justifyContent="center"
+        h="1.5rem"
+        w="fit-content"
+        p="0.5rem"
+        lineHeight={1.5}
+        {...sizes}
+        {...colors}
       >
-        <Flex
-          alignItems="center"
-          gap="0.5rem"
-          borderRadius="0.25rem"
-          justifyContent="center"
-          h="1.5rem"
-          w="fit-content"
-          p="0.5rem 0.25rem"
-          lineHeight={1.5}
-          {...sizes}
-          {...colors}
+        <Box
+          rounded="full"
+          bg={colors.textColor}
+          w="0.5rem"
+          h="0.5rem"
+        />
+        <Text
+          textStyle="text-md-sans-regular"
+          lineHeight="1"
         >
-          <Box
-            rounded="full"
-            bg={colors.textColor}
-            w="0.5rem"
-            h="0.5rem"
-          />
-          <Text
+          {t(labelKey)}
+        </Text>
+        {proposal && (
+          <ProposalCountdown
+            proposal={proposal}
+            showIcon={false}
+            textColor={colors.textColor}
             textStyle="text-md-sans-regular"
-            lineHeight="1"
-          >
-            {t(labelKey)}
-          </Text>
-          {proposal && (
-            <ProposalCountdown
-              proposal={proposal}
-              showIcon={false}
-              textColor={colors.textColor}
-              textStyle="text-md-sans-regular"
-            />
-          )}
-        </Flex>
-      </Tooltip>
-    </>
+          />
+        )}
+      </Flex>
+    </Tooltip>
   );
 }
