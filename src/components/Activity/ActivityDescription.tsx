@@ -22,7 +22,10 @@ export function ActivityDescription({ activity, showFullDescription }: IActivity
       mr="1rem"
       mt="0.5rem"
     >
-      <ProposalTitle activity={activity} />
+      <ProposalTitle
+        activity={activity}
+        showAuthor
+      />
       {description && (
         <Box
           mt={2}

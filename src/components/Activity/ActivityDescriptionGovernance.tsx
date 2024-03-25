@@ -68,7 +68,13 @@ function ProposalAuthor({ activity }: { activity: Activity }) {
   );
 }
 
-export function ProposalTitle({ activity }: { activity: Activity }) {
+export function ProposalTitle({
+  activity,
+  showAuthor = false,
+}: {
+  activity: Activity;
+  showAuthor?: boolean;
+}) {
   const metaData = useGetMetadata(activity as FractalProposal);
 
   if (activity.eventType !== ActivityEventType.Governance) {
@@ -98,7 +104,7 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
         flexWrap="wrap"
       >
         <Text as="span">{titleText}</Text>
-        <ProposalAuthor activity={activity} />
+        {showAuthor && <ProposalAuthor activity={activity} />}
       </Flex>
       <Box mt={2}>
         <OnChainRejectionMessage activity={activity} />
