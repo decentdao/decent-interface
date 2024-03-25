@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
-import { disconnectedChain } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useIsSafe } from '../safe/useIsSafe';
 import useAddress from '../utils/useAddress';
 
@@ -13,7 +12,7 @@ export const useSearchDao = () => {
   const { address, isValidAddress, isAddressLoading } = useAddress(searchString);
   const { isSafe, isSafeLoading } = useIsSafe(address);
   const { t } = useTranslation('dashboard');
-  const { chain } = useAccount();
+  const { name } = useNetworkConfig();
 
   useEffect(() => {
     setIsLoading(isAddressLoading === true || isSafeLoading === true);
@@ -29,24 +28,12 @@ export const useSearchDao = () => {
       setErrorMessage('');
     } else {
       if (isValidAddress) {
-        setErrorMessage(
-          t('errorFailedSearch', { chain: chain ? chain.name : disconnectedChain.name }),
-        );
+        setErrorMessage(t('errorFailedSearch', { chain: name }));
       } else {
         setErrorMessage(t('errorInvalidSearch'));
       }
     }
-  }, [
-    address,
-    isValidAddress,
-    searchString,
-    isSafe,
-    t,
-    isLoading,
-    errorMessage,
-    chain?.name,
-    chain,
-  ]);
+  }, [isLoading, isSafe, isValidAddress, name, searchString, t]);
 
   return {
     errorMessage,
