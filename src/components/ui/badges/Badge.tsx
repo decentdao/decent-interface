@@ -8,114 +8,123 @@ type BadgeType = {
   [key: string]: {
     tooltipKey?: string;
     bg: string;
-    _hover: { bg: string };
+    _hover: { bg: string; textColor: string };
     textColor: string;
   };
 };
 
-const greenText = '#56A355';
+const greenText = '#8BDA8B';
 const greenBG = '#0A320A';
+const greenHoverText = '#78D378';
 const greenHover = '#0E440E';
 
 const redText = '#FFB2B2';
 const redBG = '#640E0D';
-const redHover = '#76110F';
+const redHoverText = '#FF9999';
+const redHover = '#4D0B0A';
 
 const sandBG = '#C18D5A';
 const sandHover = '#B97F46';
-const blackText = '#150D04';
+const sandText = '#2C1A08';
+const sandHoverText = '#150D04  ';
 
 const grayBG = '#9A979D';
 const grayHover = '#8C8990';
 
-const lightBlueBG = '#A3B9EC';
-const lightBlueHover = '#8DA8E7';
-const darkBlueText = '#0A1E3D';
+const freezeBG = '#A3B9EC';
+const freezeHover = '#8DA8E7';
+const freezeText = '#0D2356';
+const freezeHoverText = '#09193E';
 
-const darkBlueBG = '#1B3B83';
-const darkBlueHover = '#17326E';
-const lightBlueText = '#D1DCF5';
+const frozenBG = '#09193E';
+const frozenText = '#D1DCF5';
+const frozenHoverText = '#BCCCF0';
+const frozenHover = '#17326E';
 
 const BADGE_MAPPING: BadgeType = {
   [FractalProposalState.ACTIVE]: {
     tooltipKey: 'stateActiveTip',
     bg: greenBG,
     textColor: greenText,
-    _hover: { bg: greenHover },
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.TIMELOCKED]: {
     tooltipKey: 'stateTimelockedTip',
     bg: greenBG,
     textColor: greenText,
-    _hover: { bg: greenHover },
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.EXECUTED]: {
     tooltipKey: 'stateExecutedTip',
     bg: greenBG,
     textColor: greenText,
-    _hover: { bg: greenHover },
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.EXECUTABLE]: {
     tooltipKey: 'stateExecutableTip',
     bg: greenBG,
     textColor: greenText,
-    _hover: { bg: greenHover },
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.FAILED]: {
     tooltipKey: 'stateFailedTip',
     bg: redBG,
     textColor: redText,
-    _hover: { bg: redHover },
+    _hover: { bg: redHover, textColor: redHoverText },
   },
   [FractalProposalState.TIMELOCKABLE]: {
     tooltipKey: 'stateTimelockableTip',
     bg: greenBG,
     textColor: greenText,
-    _hover: { bg: greenHover },
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.MODULE]: {
     tooltipKey: 'stateModuleTip',
     bg: greenBG,
     textColor: greenText,
-    _hover: { bg: greenHover },
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.EXPIRED]: {
     tooltipKey: 'stateExpiredTip',
     bg: redBG,
     textColor: redText,
-    _hover: { bg: redHover },
+    _hover: { bg: redHover, textColor: redHoverText },
   },
   [FractalProposalState.REJECTED]: {
     tooltipKey: 'stateRejectedTip',
     bg: redBG,
     textColor: redText,
-    _hover: { bg: redHover },
+    _hover: { bg: redHover, textColor: redHoverText },
   },
   [FractalProposalState.PENDING]: {
     tooltipKey: 'statePendingTip',
     bg: sandBG,
-    textColor: blackText,
-    _hover: { bg: sandHover },
+    textColor: sandText,
+    _hover: { bg: sandHover, textColor: sandHoverText },
   },
   [FractalProposalState.CLOSED]: {
     tooltipKey: 'stateClosedTip',
     bg: grayBG,
     textColor: '#000',
-    _hover: { bg: grayHover },
+    _hover: { bg: grayHover, textColor: '#000' },
   },
   [DAOState.freezeInit]: {
     tooltipKey: 'stateFreezeInitTip',
-    bg: lightBlueBG,
-    textColor: lightBlueText,
-    _hover: { bg: darkBlueHover },
+    bg: freezeBG,
+    textColor: freezeText,
+    _hover: { bg: freezeHover, textColor: freezeHoverText },
   },
   [DAOState.frozen]: {
     tooltipKey: 'stateFrozenTip',
-    bg: darkBlueBG,
-    textColor: darkBlueText,
-    _hover: { bg: lightBlueHover },
+    bg: frozenBG,
+    textColor: frozenText,
+    _hover: { bg: frozenHover, textColor: frozenHoverText },
   },
-  ownerApproved: { bg: 'sand.700', textColor: 'grayscale.black', _hover: { bg: 'sand.600' } },
+  ownerApproved: {
+    bg: 'sand.700',
+    textColor: sandText,
+    _hover: { bg: sandBG, textColor: sandHoverText },
+  },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };
