@@ -323,7 +323,7 @@ export const useSafeTransactions = () => {
       if (guardContracts.freezeGuardContractAddress && baseContracts) {
         const blockNumber = await provider.getBlockNumber();
         const averageBlockTime = BigNumber.from(Math.round(await getAverageBlockTime(provider)));
-        freezeGuard = baseContracts.multisigFreezeGuardMasterCopyContract.asSigner.attach(
+        freezeGuard = baseContracts.multisigFreezeGuardMasterCopyContract.asProvider.attach(
           guardContracts.freezeGuardContractAddress,
         );
 
