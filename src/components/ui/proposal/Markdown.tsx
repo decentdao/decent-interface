@@ -1,4 +1,4 @@
-import { Text, Button, Image } from '@chakra-ui/react';
+import { Button, Image, Box } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown, { Components } from 'react-markdown';
@@ -83,7 +83,7 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
 
   return (
     <>
-      <Text
+      <Box
         noOfLines={collapsed || truncate ? collapsedLines : undefined}
         ref={markdownTextContainerRef}
         maxWidth="100%"
@@ -96,7 +96,7 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
         >
           {content}
         </ReactMarkdown>
-      </Text>
+      </Box>
 
       {totalLines > collapsedLines && !totalLinesError && !truncate && (
         <Button

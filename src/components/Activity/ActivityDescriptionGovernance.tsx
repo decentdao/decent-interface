@@ -1,15 +1,17 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
+import useDisplayName from '../../hooks/utils/useDisplayName';
 import {
   Activity,
   GovernanceActivity,
   MultisigProposal,
   ActivityEventType,
-  TreasuryActivity,
   SnapshotProposal,
   FractalProposal,
+  AzoriusProposal,
 } from '../../types';
+import Avatar from '../ui/page/Header/Avatar';
 
 const formatId = (proposalId: string) => {
   if (proposalId.startsWith('0x')) {
@@ -36,34 +38,53 @@ function OnChainRejectionMessage({ activity }: { activity: Activity }) {
   );
 }
 
+function ProposalAuthor({ activity }: { activity: Activity }) {
+  const snapshotProposal = activity as SnapshotProposal;
+  const azoriusProposal = activity as AzoriusProposal;
+  const multisigProposal = activity as MultisigProposal;
+  const isSnapshotProposal = !!snapshotProposal.snapshotProposalId;
+  const isAzoriusProposal = !!azoriusProposal.proposer;
+
+  const proposer = isAzoriusProposal
+    ? azoriusProposal.proposer
+    : isSnapshotProposal
+      ? snapshotProposal.author
+      : multisigProposal.confirmations[0].owner;
+
+  const { displayName: author } = useDisplayName(proposer);
+  return (
+    <Flex
+      gap={2}
+      alignItems="center"
+      color="#B3B3B3"
+      textStyle="text-md-sans-regular"
+    >
+      <Avatar
+        size="sm"
+        address={author}
+      />
+      <Box>{author}</Box>
+    </Flex>
+  );
+}
+
 export function ProposalTitle({ activity }: { activity: Activity }) {
-  const { t } = useTranslation(['common', 'dashboard']);
   const metaData = useGetMetadata(activity as FractalProposal);
 
   if (activity.eventType !== ActivityEventType.Governance) {
     return null;
   }
 
-  if ((activity as SnapshotProposal).snapshotProposalId) {
-    return (
-      <Flex
-        textStyle="text-lg-sans-medium"
-        fontSize="20px"
-        alignItems="center"
-        color="grayscale.100"
-        pr={2}
-        gap={2}
-      >
-        <Text>{formatId((activity as SnapshotProposal).snapshotProposalId)}</Text>
-        <Text>{(activity as SnapshotProposal).title}</Text>
-      </Flex>
-    );
-  }
+  // Check if it's a SnapshotProposal and set variables accordingly
+  const isSnapshotProposal = (activity as SnapshotProposal).snapshotProposalId !== undefined;
+  const proposalIdText = isSnapshotProposal
+    ? formatId((activity as SnapshotProposal).snapshotProposalId)
+    : formatId((activity as GovernanceActivity).proposalId);
+  const proposaltitleText = isSnapshotProposal
+    ? (activity as SnapshotProposal).title
+    : metaData.title || '';
 
-  const treasuryActivity = activity as TreasuryActivity;
-  const hasTransfers =
-    treasuryActivity.transferAddresses && !!treasuryActivity.transferAddresses.length;
-
+  const titleText = proposalIdText + ' ' + proposaltitleText;
   return (
     <Box
       textStyle="text-lg-sans-medium"
@@ -72,14 +93,20 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
       pr={2}
     >
       <Flex
-        gap={2}
         alignItems="center"
+        gap={2}
+        flexWrap="wrap"
       >
-        <Text>{formatId((activity as GovernanceActivity).proposalId)}</Text>
-        {metaData.title ? <Text>{metaData.title}</Text> : null}
+        <Text
+          as="span"
+        >
+          {titleText}
+        </Text>
+        <ProposalAuthor activity={activity} />
       </Flex>
-      {hasTransfers && <Text> {t('proposalDescriptionCont', { ns: 'dashboard' })} </Text>}
-      <OnChainRejectionMessage activity={activity} />
+      <Box mt={2}>
+        <OnChainRejectionMessage activity={activity} />
+      </Box>
     </Box>
   );
 }
