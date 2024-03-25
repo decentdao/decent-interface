@@ -184,8 +184,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
     return () => {
       clearInterval(countdownInterval.current);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proposal.state, azoriusGovernance.votingStrategy, freezeGuardType, baseContracts]);
+  }, [baseContracts, getCountdown]);
 
   return secondsLeft;
 }
