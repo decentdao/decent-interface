@@ -18,6 +18,7 @@ export const useDAOProposals = () => {
   const loadSafeMultisigProposals = useSafeMultisigProposals();
 
   const loadDAOProposals = useCallback(async () => {
+    clearIntervals();
     if (type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721) {
       // load Azorius proposals and strategies
       const proposals = await loadAzoriusProposals();
@@ -25,10 +26,8 @@ export const useDAOProposals = () => {
         type: FractalGovernanceAction.SET_PROPOSALS,
         payload: proposals,
       });
-      clearIntervals();
     } else if (type === GovernanceType.MULTISIG) {
       // load mulisig proposals
-      clearIntervals();
       setMethodOnInterval(loadSafeMultisigProposals);
     }
   }, [
