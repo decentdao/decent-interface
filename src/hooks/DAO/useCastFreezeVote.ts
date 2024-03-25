@@ -33,7 +33,9 @@ const useCastFreezeVote = ({
       contractFn: () => {
         if (freezeVotingType === FreezeVotingType.ERC721) {
           const freezeERC721VotingContract =
-            baseContracts.freezeERC721VotingMasterCopyContract.asSigner.attach(freezeVotingContractAddress);
+            baseContracts.freezeERC721VotingMasterCopyContract.asSigner.attach(
+              freezeVotingContractAddress,
+            );
           return getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo =>
             freezeERC721VotingContract['castFreezeVote(address[],uint256[])'](
               tokensInfo.totalVotingTokenAddresses,
@@ -42,7 +44,9 @@ const useCastFreezeVote = ({
           );
         } else {
           const freezeVotingContract =
-            baseContracts.freezeMultisigVotingMasterCopyContract.asSigner.attach(freezeVotingContractAddress);
+            baseContracts.freezeMultisigVotingMasterCopyContract.asSigner.attach(
+              freezeVotingContractAddress,
+            );
           return freezeVotingContract.castFreezeVote();
         }
       },
