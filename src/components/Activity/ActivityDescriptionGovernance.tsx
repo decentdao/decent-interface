@@ -97,11 +97,7 @@ export function ProposalTitle({ activity }: { activity: Activity }) {
         gap={2}
         flexWrap="wrap"
       >
-        <Text
-          as="span"
-        >
-          {titleText}
-        </Text>
+        <Text as="span">{titleText}</Text>
         <ProposalAuthor activity={activity} />
       </Flex>
       <Box mt={2}>

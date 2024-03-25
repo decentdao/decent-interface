@@ -1,10 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
-import {
-  Activity,
-  FractalProposal,
-  SnapshotProposal,
-} from '../../types';
+import { Activity, FractalProposal, SnapshotProposal } from '../../types';
 import Markdown from '../ui/proposal/Markdown';
 import { ProposalTitle } from './ActivityDescriptionGovernance';
 import { ActivityDescriptionTreasury } from './ActivityDescriptionTreasury';

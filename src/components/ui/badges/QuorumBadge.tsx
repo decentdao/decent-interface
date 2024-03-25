@@ -14,9 +14,7 @@ import {
 const quorumNotReachedColor = '#838383';
 const quorumReachedColor = '#56A355';
 export default function QuorumBadge({ proposal }: { proposal: FractalProposal }) {
-  const {
-    governance,
-  } = useFractal();
+  const { governance } = useFractal();
   const { t } = useTranslation('common');
 
   const azoriusGovernance = governance as AzoriusGovernance;
