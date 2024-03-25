@@ -27,7 +27,6 @@ export function ActivityDescription({ activity, showFullDescription }: IActivity
         <Box
           mt={2}
           textColor="#B3B3B3"
-          maxWidth={{ base: '272px', sm: '400px', md: '600px', lg: '725px', xl: '100%' }}
         >
           <Markdown
             content={description}
