@@ -72,6 +72,46 @@ test('Function encoding with tuple', () => {
   ).toEqual(encoded);
 });
 
+test('Function encoding of array of tuples with nested tuples', () => {
+  const encoded = new utils.Interface([
+    'function someStuffWithArrayOfArraysAndTuplesThereAndSomeOtherStuff(address,address,(address,uint40,bool,bool,address,uint128,(address,uint256),(uint128,uint64,uint40)[])[])',
+  ]).encodeFunctionData('someStuffWithArrayOfArraysAndTuplesThereAndSomeOtherStuff', [
+    '0x7CC7e125d83A581ff438608490Cc0f7bDff79127',
+    '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
+    [
+      [
+        '0x36bD3044ab68f600f6d3e081056F34f2a58432c4',
+        1711980240,
+        true,
+        false,
+        '0x36bD3044ab68f600f6d3e081056F34f2a58432c4',
+        25000000000,
+        ['0x0000000000000000000000000000000000000000', 0],
+        [
+          [0, '1000000000000000000', 1714572239],
+          [5000000000, '1000000000000000000', 1714572240],
+          [0, '1000000000000000000', 1717250639],
+          [5000000000, '1000000000000000000', 1717250640],
+          [0, '1000000000000000000', 1719842639],
+          [5000000000, '1000000000000000000', 1719842640],
+          [0, '1000000000000000000', 1722521039],
+          [5000000000, '1000000000000000000', 1722521040],
+          [0, '1000000000000000000', 1725199439],
+          [5000000000, '1000000000000000000', 1725199440],
+        ],
+      ],
+    ],
+  ]);
+
+  expect(
+    encodeFunction(
+      'someStuffWithArrayOfArraysAndTuplesThereAndSomeOtherStuff',
+      'address,address,(address,uint40,bool,bool,address,uint128,(address,uint256),(uint128,uint64,uint40)[])[]',
+      '0x7CC7e125d83A581ff438608490Cc0f7bDff79127,0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48,[(0x36bD3044ab68f600f6d3e081056F34f2a58432c4, 1711980240, true, false, 0x36bD3044ab68f600f6d3e081056F34f2a58432c4, 25000000000, (0x0000000000000000000000000000000000000000, 0),[(0, 1000000000000000000, 1714572239),(5000000000, 1000000000000000000, 1714572240), (0, 1000000000000000000, 1717250639), (5000000000, 1000000000000000000, 1717250640), (0, 1000000000000000000, 1719842639), (5000000000, 1000000000000000000, 1719842640), (0, 1000000000000000000, 1722521039), (5000000000, 1000000000000000000, 1722521040), (0, 1000000000000000000, 1725199439), (5000000000, 1000000000000000000, 1725199440)])]',
+    ),
+  ).toEqual(encoded);
+});
+
 // TODO: This test cases would fail, which is known issue. We'll need to improve our implementation
 test.skip('Function encoding with [string="true"]', () => {
   const encoded = new utils.Interface(['function foo(string)']).encodeFunctionData('foo', ['true']);

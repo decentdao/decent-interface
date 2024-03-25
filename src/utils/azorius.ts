@@ -103,6 +103,7 @@ export const getProposalVotes = async (
       ...rest,
       voter,
       choice: VOTE_CHOICES[voteType],
+      weight: rest.weight!,
     } as ProposalVote; // This bypasses the type check, but it's fine
   });
 };
