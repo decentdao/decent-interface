@@ -60,7 +60,7 @@ export const useFractalFreeze = ({
 
       // @dev using freeze 'multisig' contract but these functions are the same for all freeze types
       const freezeVotingContract =
-        baseContracts.freezeMultisigVotingMasterCopyContract.asSigner.attach(
+        baseContracts.freezeMultisigVotingMasterCopyContract.asProvider.attach(
           freezeVotingContractAddress,
         );
       let userHasVotes: boolean = false;
@@ -106,7 +106,7 @@ export const useFractalFreeze = ({
         const owners = await safeContract.getOwners();
         userHasVotes = owners.find(owner => owner === account) !== undefined;
       } else if (freezeVotingType === FreezeVotingType.ERC20) {
-        const freezeERC20VotingContract = freezeERC20VotingMasterCopyContract.asSigner.attach(
+        const freezeERC20VotingContract = freezeERC20VotingMasterCopyContract.asProvider.attach(
           freezeVotingContractAddress,
         );
         const votesTokenContract = votesTokenMasterCopyContract!.asProvider.attach(
@@ -185,7 +185,7 @@ export const useFractalFreeze = ({
 
     // @dev using freeze 'multisig' contract but these functions are the same for all freeze types
     let votingRPC: MultisigFreezeVoting | ERC20FreezeVoting | ERC721FreezeVoting =
-      freezeMultisigVotingMasterCopyContract.asSigner.attach(freezeVotingContractAddress);
+      freezeMultisigVotingMasterCopyContract.asProvider.attach(freezeVotingContractAddress);
 
     const listenerCallback: TypedListener<FreezeVoteCastEvent> = async (
       voter: string,
