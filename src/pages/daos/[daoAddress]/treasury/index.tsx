@@ -7,7 +7,7 @@ import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBo
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
-import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function Treasury() {
@@ -16,7 +16,7 @@ export default function Treasury() {
   } = useFractal();
   const { t } = useTranslation('treasury');
   const treasuryTotal = useTreasuryTotalBN();
-  const { canUserCreateProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const showButton = canUserCreateProposal && !treasuryTotal.isZero();
 
   return (

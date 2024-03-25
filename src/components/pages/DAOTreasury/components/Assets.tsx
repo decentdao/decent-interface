@@ -4,8 +4,8 @@ import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { ethers, BigNumber } from 'ethers';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -215,7 +215,7 @@ export function Assets() {
     node: { daoAddress },
     treasury: { assetsFungible, assetsNonFungible },
   } = useFractal();
-  const { canUserCreateProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const { staking } = useNetworkConfig();
   const { t } = useTranslation('treasury');
   const coinDisplay = useFormatCoins(assetsFungible);

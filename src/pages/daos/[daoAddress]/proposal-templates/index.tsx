@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import ProposalTemplates from '../../../../components/ProposalTemplates';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function ProposalTemplatesPage() {
@@ -13,7 +13,7 @@ export default function ProposalTemplatesPage() {
   const {
     node: { daoAddress },
   } = useFractal();
-  const { canUserCreateProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
 
   return (
     <div>

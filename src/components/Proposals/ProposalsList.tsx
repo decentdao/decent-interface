@@ -2,7 +2,7 @@ import { Button, Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
-import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FractalProposal } from '../../types';
 import { EmptyBox } from '../ui/containers/EmptyBox';
@@ -13,8 +13,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const {
     node: { daoAddress },
   } = useFractal();
-  const { canUserCreateProposal } = useSubmitProposal();
-
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const { t } = useTranslation('proposal');
   return (
     <Flex

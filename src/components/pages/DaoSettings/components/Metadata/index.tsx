@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { SettingsSection } from '..';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
 import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../types';
@@ -19,7 +20,8 @@ export default function MetadataContainer() {
   const { t } = useTranslation(['settings', 'proposalMetadata']);
   const navigate = useNavigate();
 
-  const { canUserCreateProposal, submitProposal } = useSubmitProposal();
+  const { submitProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
     baseContracts,
     node: { daoName, daoSnapshotURL, daoAddress, safe },

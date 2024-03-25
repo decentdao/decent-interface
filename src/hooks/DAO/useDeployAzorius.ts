@@ -13,6 +13,7 @@ import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
 } from '../../types';
+import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
@@ -28,8 +29,8 @@ const useDeployAzorius = () => {
   } = useFractal();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
-  const { submitProposal, canUserCreateProposal } = useSubmitProposal();
-
+  const { submitProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const deployAzorius = useCallback(
     async (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO,

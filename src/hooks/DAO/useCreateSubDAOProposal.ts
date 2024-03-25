@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
 import { SafeMultisigDAO, AzoriusGovernance, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { ProposalExecuteData } from '../../types/daoProposal';
+import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 import useBuildDAOTx from './useBuildDAOTx';
 
@@ -11,7 +12,8 @@ export const useCreateSubDAOProposal = () => {
   const { baseContracts } = useFractal();
   const { t } = useTranslation(['daoCreate', 'proposal', 'proposalMetadata']);
 
-  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
+  const { submitProposal, pendingCreateTx } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const [build] = useBuildDAOTx();
   const {
     node: { daoAddress },
