@@ -94,11 +94,7 @@ export const encodeFunction = (
   }
 };
 
-export const encodeProposalTransaction = (
-  functionName: string,
-  signature: string,
-  data: any,
-) => {
+export const encodeProposalTransaction = (functionName: string, signature: string, data: any) => {
   return new utils.Interface([signature]).encodeFunctionData(functionName, data);
 };
 
