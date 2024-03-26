@@ -34,7 +34,7 @@ export const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: '/create',
+        path: 'create',
         element: <DaoCreatePage />,
       },
       {
