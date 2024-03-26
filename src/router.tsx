@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
 import FourOhFourPage from './pages/404';
@@ -92,6 +92,17 @@ export const router = createBrowserRouter([
       {
         path: ':daoAddress/treasury',
         element: <Treasury />,
+      },
+      {
+        path: 'daos',
+        children: [
+          {
+            // this exists to keep old links working
+            // /daos/0x0123/* will redirect to /0x0123
+            path: ':daoAddress/*',
+            loader: ({ params: { daoAddress } }) => redirect(`/${daoAddress}`),
+          },
+        ],
       },
       {
         path: '*', // 404
