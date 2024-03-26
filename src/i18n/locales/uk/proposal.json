@@ -65,7 +65,6 @@
   "signers": "Підписанти",
   "txDetailsSignersCurrent": "Поточні підписи",
   "txDetailsSignersRequired": "Обов'язкова кількість підписів",
-  "created": "Створено",
   "transactionHash": "Хеш транзакції",
   "proposalId": "Id пропозиції",
   "pendingSign": "Використайте крипто-гаманець для підписання транзакції",

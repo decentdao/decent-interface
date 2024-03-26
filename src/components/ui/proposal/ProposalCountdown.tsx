@@ -21,9 +21,14 @@ const zeroPad = (num: number) => String(num).padStart(2, '0');
 export function ProposalCountdown({
   proposal,
   showIcon = true,
+  textColor = 'chocolate.200',
+  textStyle = 'text-base-mono-semibold', // previous default
 }: {
   proposal: FractalProposal;
   showIcon?: boolean;
+  // custom text color and style
+  textColor?: string;
+  textStyle?: string;
 }) {
   const totalSecondsLeft = useProposalCountdown(proposal);
   const { t } = useTranslation('proposal');
@@ -85,8 +90,8 @@ export function ProposalCountdown({
           gap={1}
         >
           <Text
-            color="chocolate.200"
-            textStyle="text-base-mono-semibold"
+            color={textColor}
+            textStyle={textStyle}
           >
             {showDays && `${zeroPad(daysLeft)}:`}
             {showHours && `${zeroPad(hoursLeft)}:`}

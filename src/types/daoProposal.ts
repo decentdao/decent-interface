@@ -51,6 +51,7 @@ export interface SnapshotProposal extends GovernanceActivity {
   description: string;
   startTime: number;
   endTime: number;
+  author: string;
 }
 
 interface SnapshotVotingStrategy {
