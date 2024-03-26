@@ -99,7 +99,12 @@ export default function ProposalCreatePage() {
                 buttonClick={() => navigate(DAO_ROUTES.proposals.relative(daoAddress))}
                 isButtonDisabled={pendingCreateTx}
               />
-              {TARGET_DAO_ADDRESSES.includes(daoAddress) && <CustomProposalSubmitter values={values} daoAddress={daoAddress}/>}
+              {TARGET_DAO_ADDRESSES.includes(daoAddress) && (
+                <CustomProposalSubmitter
+                  values={values}
+                  daoAddress={daoAddress}
+                />
+              )}
               <Grid
                 gap={4}
                 templateColumns={{ base: '1fr', lg: '2fr 1fr' }}

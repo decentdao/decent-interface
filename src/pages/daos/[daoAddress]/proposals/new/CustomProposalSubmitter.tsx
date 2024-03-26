@@ -38,7 +38,7 @@ export default function CustomProposalSubmitter({
     const functionName = 'createWithMilestones';
     const signature =
       'function createWithMilestones(address,address,(address,address,uint128,uint40,bool,bool,(uint128,uint64,uint40)[], (address,uint256))[])';
-    const approveAmount = BigNumber.from(10).pow(18).mul(10000000); // Approve spending for 1M tokens
+    const approveAmount = BigNumber.from(10).pow(18).mul(1000000); // Approve spending for 1M tokens
 
     if (chainId === sepolia.id) {
       const receiver = '0x2884b7Bf17Ca966bB2e4099bf384734a48885Df0';
@@ -46,7 +46,7 @@ export default function CustomProposalSubmitter({
       const sablierLockupDynamicAddress = '0xc9940AD8F43aAD8e8f33A4D5dbBf0a8F7FF4429A'; // SablierV2LockupDynamic
       const tokenAddress = '0xa60196673256ae375c8ce2bb6b404c07b6b4a56a'; // Test DAO token address
       const startDate = Math.round(Date.now() / 1000);
-      console.log(startDate, startDate + (1000 * 60 * 10))
+
       const sablierBatchData = [
         sablierLockupDynamicAddress, // Address of LockupDynamic contract. Will be called by batch internally to create streams
         tokenAddress, // Address of token to stream
@@ -60,7 +60,7 @@ export default function CustomProposalSubmitter({
             false, // Transferable - is receiver able to transfer receiving rights to someone else
             [
               [0, '1000000000000000000', startDate], // First number represents amount of tokens denoted in units of token's decimals. Second number represents exponent, denoted as a fixed-point number. Third value is a Unix timestamp till when amount set in first value will be fully streamed
-              [approveAmount.div(5), '1000000000000000000', startDate + (60 * 10)], // For testing purpose - make the whole amount streamed at the start date + 10 minutes
+              [approveAmount.div(5), '1000000000000000000', startDate + 60 * 10], // For testing purpose - make the whole amount streamed at the start date + 10 minutes
             ], // Array of segments, see explanation above. Additional explanation: https://github.com/sablier-labs/v2-core/blob/main/src/types/DataTypes.sol#L131-L140
             ['0x0000000000000000000000000000000000000000', 0], // Optional broker
           ],
