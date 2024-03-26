@@ -91,7 +91,7 @@ export function useCanUserCreateProposal() {
       safeAPI,
       baseContracts,
     ],
-  );  
+  );
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
       setCanUserCreateProposal(await getCanUserCreateProposal());
