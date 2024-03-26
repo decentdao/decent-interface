@@ -26,9 +26,9 @@ export function useCanUserCreateProposal() {
    * @returns {Promise<boolean>} - whether or not user has rights to create proposal either in global scope either for provided `safeAddress`.
    */
   const getCanUserCreateProposal = useCallback(
-    async (safeAddress?: string): Promise<boolean> => {
+    async (safeAddress?: string): Promise<boolean | undefined> => {
       if (!user.address || !safeAPI) {
-        return false;
+        return;
       }
 
       const checkIsMultisigOwner = (owners?: string[]) => {
@@ -76,10 +76,10 @@ export function useCanUserCreateProposal() {
             );
           return erc721LinearVotingContract.isProposer(user.address);
         } else {
-          return false;
+          return;
         }
       }
-      return false;
+      return;
     },
     [
       safe,
@@ -91,7 +91,7 @@ export function useCanUserCreateProposal() {
       safeAPI,
       baseContracts,
     ],
-  );
+  );  
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
       setCanUserCreateProposal(await getCanUserCreateProposal());
@@ -99,7 +99,7 @@ export function useCanUserCreateProposal() {
     if (canUserCreateProposal === undefined) {
       loadCanUserCreateProposal();
     }
-  }, [getCanUserCreateProposal, canUserCreateProposal]);
+  }, [getCanUserCreateProposal, canUserCreateProposal, user]);
 
   return { canUserCreateProposal, getCanUserCreateProposal };
 }
