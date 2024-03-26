@@ -18,10 +18,13 @@ import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitPropos
 import { useCreateProposalSchema } from '../../../../../hooks/schemas/proposalCreate/useCreateProposalSchema';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { CreateProposalForm, CreateProposalState, GovernanceType } from '../../../../../types';
+import CustomProposalSubmitter from './CustomProposalSubmitter';
 
 const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
   "details"`;
+
+const SHUTTER_DAO_ADDRESS = '0x1CEB4eB34A0AA9D439Dd0A4bab0f6830f715ddF0';
 
 export default function ProposalCreatePage() {
   const {
@@ -96,6 +99,7 @@ export default function ProposalCreatePage() {
                 buttonClick={() => navigate(DAO_ROUTES.proposals.relative(daoAddress))}
                 isButtonDisabled={pendingCreateTx}
               />
+              {daoAddress === SHUTTER_DAO_ADDRESS && <CustomProposalSubmitter values={values} />}
               <Grid
                 gap={4}
                 templateColumns={{ base: '1fr', lg: '2fr 1fr' }}

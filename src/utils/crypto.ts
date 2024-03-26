@@ -95,59 +95,12 @@ export const encodeFunction = (
 };
 
 export const encodeProposalTransaction = (
-  target: string,
   functionName: string,
   signature: string,
   data: any,
-  metaData: { title: string; description: string; documentationUrl?: string },
 ) => {
-  const calldata = new utils.Interface([signature]).encodeFunctionData(functionName, data);
-  const stringifiedMetadata = JSON.stringify(metaData);
-  return {
-    transaction: { to: target, value: 0, data: calldata, operation: 0 },
-    metaData: stringifiedMetadata,
-  };
+  return new utils.Interface([signature]).encodeFunctionData(functionName, data);
 };
-
-const target = '0x7CC7e125d83A581ff438608490Cc0f7bDff79127'; // SablierV2LockupDynamic
-const functionName = 'createWithMilestones';
-const signature =
-  'function createWithMilestones(address,address,(address,uint40,bool,bool,address,uint128,(address,uint256),(uint128,uint64,uint40)[])[])';
-const data = [
-  '0x7CC7e125d83A581ff438608490Cc0f7bDff79127',
-  '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-  [
-    [
-      '0x36bD3044ab68f600f6d3e081056F34f2a58432c4',
-      1711980240,
-      true,
-      false,
-      '0x36bD3044ab68f600f6d3e081056F34f2a58432c4',
-      25000000000,
-      ['0x0000000000000000000000000000000000000000', 0],
-      [
-        [0, '1000000000000000000', 1714572239],
-        [5000000000, '1000000000000000000', 1714572240],
-        [0, '1000000000000000000', 1717250639],
-        [5000000000, '1000000000000000000', 1717250640],
-        [0, '1000000000000000000', 1719842639],
-        [5000000000, '1000000000000000000', 1719842640],
-        [0, '1000000000000000000', 1722521039],
-        [5000000000, '1000000000000000000', 1722521040],
-        [0, '1000000000000000000', 1725199439],
-        [5000000000, '1000000000000000000', 1725199440],
-      ],
-    ],
-  ],
-];
-
-const metaData = {
-  title: 'Sablier proposal',
-  description: 'Sablier proposal description. Markdown supported!',
-  documentationUrl: '',
-};
-
-console.log(encodeProposalTransaction(target, functionName, signature, data, metaData));
 
 export function isMultiSigTx(transaction: ActivityTransactionType): boolean {
   return transaction.txType === 'MULTISIG_TRANSACTION';
