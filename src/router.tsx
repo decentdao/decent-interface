@@ -25,9 +25,7 @@ export const router = createBrowserRouter([
       // within underlying modals. Otherwise - trying to invoke routing-related hooks would lead to crash.
       // Not the best place to have this provider here but also more reasonalbe than putting that into <Layout />
       <ModalProvider>
-        <DAOController>
-          <Layout />
-        </DAOController>
+        <Layout />
       </ModalProvider>
     ),
     children: [
@@ -40,58 +38,64 @@ export const router = createBrowserRouter([
         element: <DaoCreatePage />,
       },
       {
-        path: 'home',
-        element: <DaoDashboardPage />,
-      },
-      {
-        path: 'edit/governance',
-        element: <ModifyGovernancePage />,
-      },
-      {
-        path: 'hierarchy',
-        element: <HierarchyPage />,
-      },
-      {
-        path: 'new',
-        element: <SubDaoCreate />,
-      },
-      {
-        path: 'proposal-templates',
+        path: '/',
+        element: <DAOController />,
         children: [
           {
-            index: true,
-            element: <ProposalTemplatesPage />,
+            path: 'home',
+            element: <DaoDashboardPage />,
+          },
+          {
+            path: 'edit/governance',
+            element: <ModifyGovernancePage />,
+          },
+          {
+            path: 'hierarchy',
+            element: <HierarchyPage />,
           },
           {
             path: 'new',
-            element: <CreateProposalTemplatePage />,
+            element: <SubDaoCreate />,
+          },
+          {
+            path: 'proposal-templates',
+            children: [
+              {
+                index: true,
+                element: <ProposalTemplatesPage />,
+              },
+              {
+                path: 'new',
+                element: <CreateProposalTemplatePage />,
+              },
+            ],
+          },
+          {
+            path: 'proposals',
+            children: [
+              {
+                index: true,
+                element: <ProposalsPage />,
+              },
+              {
+                path: ':proposalId',
+                element: <ProposalDetailsPage />,
+              },
+              {
+                path: 'new',
+                element: <ProposalCreatePage />,
+              },
+            ],
+          },
+          {
+            path: 'settings',
+            element: <SettingsPage />,
+          },
+          {
+            path: 'treasury',
+            element: <Treasury />,
           },
         ],
-      },
-      {
-        path: 'proposals',
-        children: [
-          {
-            index: true,
-            element: <ProposalsPage />,
-          },
-          {
-            path: ':proposalId',
-            element: <ProposalDetailsPage />,
-          },
-          {
-            path: 'new',
-            element: <ProposalCreatePage />,
-          },
-        ],
-      },
-      {
-        path: 'settings',
-        element: <SettingsPage />,
-      },
-      {
-        path: 'treasury',
-        element: <Treasury />,
       },
       {
         // this exists to keep old links working
