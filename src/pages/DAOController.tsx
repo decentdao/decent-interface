@@ -2,7 +2,6 @@ import { Button, Center, Text, VStack, ChakraProvider, extendTheme } from '@chak
 import { theme } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet } from 'react-router-dom';
 import useDAOController from '../hooks/DAO/useDAOController';
 import useDAOMetadata from '../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../providers/App/AppProvider';
@@ -32,7 +31,7 @@ function InvalidSafe() {
   );
 }
 
-export default function DAOController() {
+export default function DAOController({ children }: { children: React.ReactNode }) {
   const { node } = useFractal();
   const { nodeLoading, errorLoading } = useDAOController();
   const daoMetadata = useDAOMetadata();
@@ -63,13 +62,9 @@ export default function DAOController() {
   let display;
 
   if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
-    display = (
-      <ChakraProvider theme={activeTheme}>
-        <Outlet />
-      </ChakraProvider>
-    );
+    display = <ChakraProvider theme={activeTheme}>{children}</ChakraProvider>;
   } else if (nodeLoading || validSafe || !errorLoading) {
-    display = <Outlet />;
+    display = <>{children}</>;
   } else {
     display = <InvalidSafe />;
   }
