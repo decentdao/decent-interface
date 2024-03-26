@@ -94,15 +94,10 @@ export const router = createBrowserRouter([
         element: <Treasury />,
       },
       {
-        path: 'daos',
-        children: [
-          {
-            // this exists to keep old links working
-            // /daos/0x0123/* will redirect to /home?dao=0x0123
-            path: ':daoAddress/*',
-            loader: ({ params: { daoAddress } }) => redirect(`/home?dao=${daoAddress}`),
-          },
-        ],
+        // this exists to keep old links working
+        // /daos/0x0123/* will redirect to /home?dao=0x0123
+        path: 'daos/:daoAddress/*',
+        loader: ({ params: { daoAddress } }) => redirect(`/home?dao=${daoAddress}`),
       },
       {
         path: '*', // 404
