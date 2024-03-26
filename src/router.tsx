@@ -40,23 +40,23 @@ export const router = createBrowserRouter([
         element: <DaoCreatePage />,
       },
       {
-        path: ':daoAddress',
+        path: 'home',
         element: <DaoDashboardPage />,
       },
       {
-        path: ':daoAddress/edit/governance',
+        path: 'edit/governance',
         element: <ModifyGovernancePage />,
       },
       {
-        path: ':daoAddress/hierarchy',
+        path: 'hierarchy',
         element: <HierarchyPage />,
       },
       {
-        path: ':daoAddress/new',
+        path: 'new',
         element: <SubDaoCreate />,
       },
       {
-        path: ':daoAddress/proposal-templates',
+        path: 'proposal-templates',
         children: [
           {
             index: true,
@@ -69,7 +69,7 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        path: ':daoAddress/proposals',
+        path: 'proposals',
         children: [
           {
             index: true,
@@ -86,11 +86,11 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        path: ':daoAddress/settings',
+        path: 'settings',
         element: <SettingsPage />,
       },
       {
-        path: ':daoAddress/treasury',
+        path: 'treasury',
         element: <Treasury />,
       },
       {
@@ -98,9 +98,9 @@ export const router = createBrowserRouter([
         children: [
           {
             // this exists to keep old links working
-            // /daos/0x0123/* will redirect to /0x0123
+            // /daos/0x0123/* will redirect to /home?dao=0x0123
             path: ':daoAddress/*',
-            loader: ({ params: { daoAddress } }) => redirect(`/${daoAddress}`),
+            loader: ({ params: { daoAddress } }) => redirect(`/home?dao=${daoAddress}`),
           },
         ],
       },
