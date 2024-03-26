@@ -1,13 +1,13 @@
 import { Button } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { encodeFunctionData, erc20Abi } from 'viem';
 import { mainnet, sepolia } from 'viem/chains';
+import SablierBatchABI from '../../../../../assets/abi/SablierV2Batch.json';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../../../types';
-import { encodeProposalTransaction } from '../../../../../utils';
 
 export default function CustomProposalSubmitter({
   values,
@@ -36,12 +36,9 @@ export default function CustomProposalSubmitter({
       successCallback,
     };
     const functionName = 'createWithMilestones';
-    const signature =
-      'function createWithMilestones(address,address,(address,address,uint128,uint40,bool,bool,(uint128,uint64,uint40)[], (address,uint256))[])';
-    const approveAmount = BigNumber.from(10).pow(18).mul(1000000); // Approve spending for 1M tokens
 
     if (chainId === sepolia.id) {
-      const receiver = '0x2884b7Bf17Ca966bB2e4099bf384734a48885Df0';
+      const recipient = '0x2884b7Bf17Ca966bB2e4099bf384734a48885Df0';
       const sablierBatchAddress = '0xd2569DC4A58dfE85d807Dffb976dbC0a3bf0B0Fb'; // SablierV2Batch
       const sablierLockupDynamicAddress = '0xc9940AD8F43aAD8e8f33A4D5dbBf0a8F7FF4429A'; // SablierV2LockupDynamic
       const tokenAddress = '0xa60196673256ae375c8ce2bb6b404c07b6b4a56a'; // Test DAO token address
@@ -53,30 +50,31 @@ export default function CustomProposalSubmitter({
         [
           [
             daoAddress, // Tokens sender. This address will be able to cancel the stream
-            receiver, // Receiver of tokens through stream
-            approveAmount.div(5), // total amount of tokens sent
             startDate, // Start time
             true, // Cancelable - is it possible to cancel this stream
             false, // Transferable - is receiver able to transfer receiving rights to someone else
+            recipient, // Receiver of tokens through stream
+            250000, // total amount of tokens sent
+            ['0x0000000000000000000000000000000000000000', 0], // Optional broker
             [
               [0, '1000000000000000000', startDate], // First number represents amount of tokens denoted in units of token's decimals. Second number represents exponent, denoted as a fixed-point number. Third value is a Unix timestamp till when amount set in first value will be fully streamed
-              [approveAmount.div(5), '1000000000000000000', startDate + 60 * 10], // For testing purpose - make the whole amount streamed at the start date + 10 minutes
+              [250000, '1000000000000000000', startDate + 60 * 10], // For testing purpose - make the whole amount streamed at the start date + 10 minutes
             ], // Array of segments, see explanation above. Additional explanation: https://github.com/sablier-labs/v2-core/blob/main/src/types/DataTypes.sol#L131-L140
-            ['0x0000000000000000000000000000000000000000', 0], // Optional broker
           ],
         ],
       ];
-      const sablierBatchCalldata = encodeProposalTransaction(
+
+      const sablierBatchCalldata = encodeFunctionData({
+        abi: SablierBatchABI,
         functionName,
-        signature,
-        sablierBatchData,
-      );
-      const tokenApproveData = [sablierBatchAddress, approveAmount]; // Batch contract will be sending token to itself, then routing that to the LockupDynamic contract and approving spend for that contract
-      const tokenCalldata = encodeProposalTransaction(
-        'approve',
-        'function approve(address,uint256)',
-        tokenApproveData,
-      );
+        args: sablierBatchData,
+      });
+      const tokenCalldata = encodeFunctionData({
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [sablierBatchAddress, BigInt('1000000000000000000000000')],
+      });
+
       const proposalData: ProposalExecuteData = {
         targets: [tokenAddress, sablierBatchAddress],
         values: [0, 0],
@@ -92,7 +90,7 @@ export default function CustomProposalSubmitter({
         proposalData,
       });
     } else if (chainId === mainnet.id) {
-      const receiver = daoAddress; // TODO: Change this. this will lead to stream tokens to itself
+      const recipient = daoAddress; // TODO: Change this. this will lead to stream tokens to itself
       const sablierBatchAddress = '0xEa07DdBBeA804E7fe66b958329F8Fa5cDA95Bd55';
       const sablierLockupDynamicAddress = '0x7CC7e125d83A581ff438608490Cc0f7bDff79127'; // SablierV2LockupDynamic
       const tokenAddress = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'; // Mainnet USDC address
@@ -104,11 +102,12 @@ export default function CustomProposalSubmitter({
           [
             // Note - the order of inputs while using SablierV2Batch is different from order when using SablierV2LockupDynamic
             daoAddress, // Tokens sender. This address will be able to cancel the stream
-            receiver, // Receiver of tokens through stream
-            approveAmount.div(5), // total amount of tokens sent
             startTime, // Start time
             true, // Cancelable - is it possible to cancel this stream
             false, // Transferable - is receiver able to transfer receiving rights to someone else
+            recipient, // Receiver of tokens through stream
+            25000000000, // total amount of tokens sent
+            ['0x0000000000000000000000000000000000000000', 0],
             [
               [0, '1000000000000000000', 1714572239],
               [5000000000, '1000000000000000000', 1714572240],
@@ -121,21 +120,19 @@ export default function CustomProposalSubmitter({
               [0, '1000000000000000000', 1725199439],
               [5000000000, '1000000000000000000', 1725199440],
             ],
-            ['0x0000000000000000000000000000000000000000', 0],
           ],
         ],
       ];
-      const tokenApproveData = [sablierBatchAddress, approveAmount];
-      const tokenCalldata = encodeProposalTransaction(
-        'approve',
-        'function approve(address,uint256)',
-        tokenApproveData,
-      );
-      const sablierBatchCalldata = encodeProposalTransaction(
+      const sablierBatchCalldata = encodeFunctionData({
+        abi: SablierBatchABI,
         functionName,
-        signature,
-        sablierBatchData,
-      );
+        args: sablierBatchData,
+      });
+      const tokenCalldata = encodeFunctionData({
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [sablierBatchAddress, BigInt('25000000000000000000000000000')],
+      });
       const proposalData: ProposalExecuteData = {
         targets: [tokenAddress, sablierBatchAddress],
         values: [0, 0],
