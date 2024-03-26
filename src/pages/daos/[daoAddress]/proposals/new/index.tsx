@@ -24,7 +24,7 @@ const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
   "details"`;
 
-const SHUTTER_DAO_ADDRESS = '0x1CEB4eB34A0AA9D439Dd0A4bab0f6830f715ddF0';
+const TARGET_DAO_ADDRESSES = ['0xbB4f275578d038e0D3C5A38E79dCdC0cf5b8c9Cd'];
 
 export default function ProposalCreatePage() {
   const {
@@ -99,7 +99,7 @@ export default function ProposalCreatePage() {
                 buttonClick={() => navigate(DAO_ROUTES.proposals.relative(daoAddress))}
                 isButtonDisabled={pendingCreateTx}
               />
-              {daoAddress === SHUTTER_DAO_ADDRESS && <CustomProposalSubmitter values={values} />}
+              {TARGET_DAO_ADDRESSES.includes(daoAddress) && <CustomProposalSubmitter values={values} daoAddress={daoAddress}/>}
               <Grid
                 gap={4}
                 templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
