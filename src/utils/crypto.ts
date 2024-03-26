@@ -94,10 +94,6 @@ export const encodeFunction = (
   }
 };
 
-export const encodeProposalTransaction = (functionName: string, signature: string, data: any) => {
-  return new utils.Interface([signature]).encodeFunctionData(functionName, data);
-};
-
 export function isMultiSigTx(transaction: ActivityTransactionType): boolean {
   return transaction.txType === 'MULTISIG_TRANSACTION';
 }
