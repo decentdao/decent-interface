@@ -59,13 +59,13 @@ export default function CreateSablierProposalModal({ close }: { close: () => voi
       hardCodedSegments = [
         [0, '1000000000000000000', startDate + 3599], // First number represents amount of tokens denoted in units of token's decimals. Second number represents exponent, denoted as a fixed-point number. Third value is a Unix timestamp till when amount set in first value will be fully streamed
         [segmentAmount, '1000000000000000000', startDate + 3600],
-        [0, '1000000000000000000', startDate + (3600 * 2) - 1],
+        [0, '1000000000000000000', startDate + 3600 * 2 - 1],
         [segmentAmount, '1000000000000000000', startDate + 3600 * 2],
-        [0, '1000000000000000000', startDate + (3600 * 3) - 1],
+        [0, '1000000000000000000', startDate + 3600 * 3 - 1],
         [segmentAmount, '1000000000000000000', startDate + 3600 * 3],
-        [0, '1000000000000000000', startDate + (3600 * 4) - 1],
+        [0, '1000000000000000000', startDate + 3600 * 4 - 1],
         [segmentAmount, '1000000000000000000', startDate + 3600 * 4],
-        [0, '1000000000000000000', startDate + (3600 * 5) - 1],
+        [0, '1000000000000000000', startDate + 3600 * 5 - 1],
         [segmentAmount, '1000000000000000000', startDate + 3600 * 5],
       ]; // Array of segments, see explanation above. Additional explanation: https://github.com/sablier-labs/v2-core/blob/main/src/types/DataTypes.sol#L131-L140
     } else if (chainId === mainnet.id) {
