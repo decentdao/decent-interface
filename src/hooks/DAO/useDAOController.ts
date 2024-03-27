@@ -11,7 +11,7 @@ import { useFractalTreasury } from './loaders/useFractalTreasury';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
 
 export default function useDAOController() {
-  const currentDAOAddress = useRef<string | null>(null);
+  const currentDAOAddress = useRef<string>();
   const { daoAddress } = useParams();
   const {
     node: {
@@ -20,16 +20,16 @@ export default function useDAOController() {
     action,
   } = useFractal();
   useEffect(() => {
-    if (!daoAddress || daoAddress !== currentDAOAddress.current) {
-      action.resetDAO();
-      currentDAOAddress.current = null;
-    }
     if (daoAddress && !currentDAOAddress.current) {
       currentDAOAddress.current = daoAddress;
     }
+    if (!daoAddress || daoAddress !== currentDAOAddress.current) {
+      action.resetDAO();
+      currentDAOAddress.current = undefined;
+    }
   }, [action, daoAddress]);
 
-  const { nodeLoading, errorLoading } = useFractalNode({ daoAddress: currentDAOAddress.current || '' });
+  const { nodeLoading, errorLoading } = useFractalNode({ daoAddress: currentDAOAddress.current });
   useGovernanceContracts();
   useFractalGuardContracts({});
   useFractalFreeze({ parentSafeAddress: parentAddress });
