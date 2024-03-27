@@ -1,91 +1,130 @@
-import { Flex, Text, Tooltip } from '@chakra-ui/react';
-import { ActiveTwo, Check, ClockTwo, CloseX, DoubleCheck } from '@decent-org/fractal-ui';
+import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
-import { FractalProposalState, DAOState } from '../../../types';
-import { Green, Red } from '../colors';
+import { FractalProposalState, DAOState, FractalProposal } from '../../../types';
+import { ProposalCountdown } from '../proposal/ProposalCountdown';
 
-type BadgeType = { [key: string]: { Icon?: any; tooltipKey?: string; bg: string; color: string } };
+type BadgeType = {
+  [key: string]: {
+    tooltipKey?: string;
+    bg: string;
+    _hover: { bg: string; textColor: string };
+    textColor: string;
+  };
+};
+
+const greenText = '#8BDA8B';
+const greenBG = '#0A320A';
+const greenHoverText = '#78D378';
+const greenHover = '#0E440E';
+
+const redText = '#FFB2B2';
+const redBG = '#640E0D';
+const redHoverText = '#FF9999';
+const redHover = '#4D0B0A';
+
+const sandBG = '#C18D5A';
+const sandHover = '#B97F46';
+const sandText = '#2C1A08';
+const sandHoverText = '#150D04  ';
+
+const grayBG = '#9A979D';
+const grayHover = '#8C8990';
+
+const freezeBG = '#A3B9EC';
+const freezeHover = '#8DA8E7';
+const freezeText = '#0D2356';
+const freezeHoverText = '#09193E';
+
+const frozenBG = '#09193E';
+const frozenText = '#D1DCF5';
+const frozenHoverText = '#BCCCF0';
+const frozenHover = '#17326E';
 
 const BADGE_MAPPING: BadgeType = {
   [FractalProposalState.ACTIVE]: {
-    Icon: ActiveTwo,
     tooltipKey: 'stateActiveTip',
-    bg: Green._500,
-    color: 'grayscale.black',
+    bg: greenBG,
+    textColor: greenText,
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.TIMELOCKED]: {
-    Icon: ClockTwo,
     tooltipKey: 'stateTimelockedTip',
-    bg: 'sand.700',
-    color: 'grayscale.black',
+    bg: greenBG,
+    textColor: greenText,
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.EXECUTED]: {
-    Icon: DoubleCheck,
     tooltipKey: 'stateExecutedTip',
-    bg: Green._600,
-    color: 'grayscale.black',
+    bg: greenBG,
+    textColor: greenText,
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.EXECUTABLE]: {
-    Icon: Check,
     tooltipKey: 'stateExecutableTip',
-    bg: Green._500,
-    color: 'grayscale.black',
+    bg: greenBG,
+    textColor: greenText,
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.FAILED]: {
-    Icon: CloseX,
     tooltipKey: 'stateFailedTip',
-    bg: Red._600,
-    color: 'grayscale.black',
+    bg: redBG,
+    textColor: redText,
+    _hover: { bg: redHover, textColor: redHoverText },
   },
   [FractalProposalState.TIMELOCKABLE]: {
-    Icon: ClockTwo,
     tooltipKey: 'stateTimelockableTip',
-    bg: Green._500,
-    color: 'grayscale.black',
+    bg: greenBG,
+    textColor: greenText,
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.MODULE]: {
     tooltipKey: 'stateModuleTip',
-    bg: 'sand.700',
-    color: 'grayscale.black',
+    bg: greenBG,
+    textColor: greenText,
+    _hover: { bg: greenHover, textColor: greenHoverText },
   },
   [FractalProposalState.EXPIRED]: {
-    Icon: ClockTwo,
     tooltipKey: 'stateExpiredTip',
-    bg: Red._600,
-    color: 'grayscale.black',
+    bg: redBG,
+    textColor: redText,
+    _hover: { bg: redHover, textColor: redHoverText },
   },
   [FractalProposalState.REJECTED]: {
-    Icon: CloseX,
     tooltipKey: 'stateRejectedTip',
-    bg: Red._600,
-    color: 'grayscale.black',
+    bg: redBG,
+    textColor: redText,
+    _hover: { bg: redHover, textColor: redHoverText },
   },
   [FractalProposalState.PENDING]: {
-    Icon: ClockTwo,
     tooltipKey: 'statePendingTip',
-    bg: Green._500,
-    color: 'grayscale.black',
+    bg: sandBG,
+    textColor: sandText,
+    _hover: { bg: sandHover, textColor: sandHoverText },
   },
   [FractalProposalState.CLOSED]: {
-    Icon: ClockTwo,
     tooltipKey: 'stateClosedTip',
-    bg: Green._600,
-    color: 'grayscale.black',
+    bg: grayBG,
+    textColor: '#000',
+    _hover: { bg: grayHover, textColor: '#000' },
   },
   [DAOState.freezeInit]: {
-    Icon: Check,
     tooltipKey: 'stateFreezeInitTip',
-    bg: 'blue.400',
-    color: 'grayscale.black',
+    bg: freezeBG,
+    textColor: freezeText,
+    _hover: { bg: freezeHover, textColor: freezeHoverText },
   },
   [DAOState.frozen]: {
-    Icon: DoubleCheck,
     tooltipKey: 'stateFrozenTip',
-    bg: 'blue.400',
-    color: 'grayscale.black',
+    bg: frozenBG,
+    textColor: frozenText,
+    _hover: { bg: frozenHover, textColor: frozenHoverText },
   },
-  ownerApproved: { bg: 'sand.700', color: 'grayscale.black' },
+  ownerApproved: {
+    bg: 'sand.700',
+    textColor: sandText,
+    _hover: { bg: sandBG, textColor: sandHoverText },
+  },
 };
 
 type BadgeSize = { [key: string]: { minWidth: string; height: string } };
@@ -97,33 +136,53 @@ const BADGE_SIZES: BadgeSize = {
 interface IBadge {
   size: 'sm' | 'base';
   labelKey: FractalProposalState | DAOState | string;
+  proposal?: FractalProposal;
 }
 
-export function Badge({ labelKey, size }: IBadge) {
-  const { Icon, tooltipKey, ...colors } = BADGE_MAPPING[labelKey];
+export function Badge({ labelKey, size, proposal }: IBadge) {
+  const { tooltipKey, ...colors } = BADGE_MAPPING[labelKey];
   const sizes = BADGE_SIZES[size];
 
   const { t } = useTranslation('proposal');
   return (
-    <>
-      <Tooltip
-        label={tooltipKey ? t(tooltipKey) : undefined}
-        maxW={TOOLTIP_MAXW}
-        placement="top"
+    <Tooltip
+      label={tooltipKey ? t(tooltipKey) : undefined}
+      maxW={TOOLTIP_MAXW}
+      placement="top"
+    >
+      <Flex
+        alignItems="center"
+        gap="0.5rem"
+        borderRadius="0.25rem"
+        justifyContent="center"
+        h="1.5rem"
+        w="fit-content"
+        p="0.5rem"
+        lineHeight={1.5}
+        {...sizes}
+        {...colors}
       >
-        <Flex
-          padding="0.125rem 0.5rem"
-          alignItems="center"
-          gap="0.125rem"
-          borderRadius="0.25rem"
-          justifyContent="center"
-          {...sizes}
-          {...colors}
+        <Box
+          rounded="full"
+          bg={colors.textColor}
+          w="0.5rem"
+          h="0.5rem"
+        />
+        <Text
+          textStyle="text-md-sans-regular"
+          lineHeight="1"
         >
-          {!!Icon && <Icon />}
-          <Text textStyle="text-sm-mono-semibold">{t(labelKey)}</Text>
-        </Flex>
-      </Tooltip>
-    </>
+          {t(labelKey)}
+        </Text>
+        {proposal && (
+          <ProposalCountdown
+            proposal={proposal}
+            showIcon={false}
+            textColor={colors.textColor}
+            textStyle="text-md-sans-regular"
+          />
+        )}
+      </Flex>
+    </Tooltip>
   );
 }

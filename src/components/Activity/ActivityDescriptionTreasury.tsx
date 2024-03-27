@@ -1,4 +1,4 @@
-import { Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Activity, TreasuryActivity, ActivityEventType } from '../../types';
 import { ActivityAddress } from './ActivityAddress';
@@ -26,27 +26,29 @@ export function ActivityDescriptionTreasury({ activity }: { activity: Activity }
       ? t('from')
       : t('to');
 
+  const textString = transferTypeStr
+    ? transferTypeStr +
+      ' ' +
+      treasuryActivity.transferAmountTotals.join(', ') +
+      ' ' +
+      transferDirStr
+    : undefined;
+
   return (
-    <>
-      <Text>
-        {transferTypeStr} {treasuryActivity.transferAmountTotals.join(', ')} {transferDirStr}
-      </Text>
-      {treasuryActivity.transferAddresses.length > 2 ? (
-        <Text>
-          {t('addresses', {
+    <Flex>
+      <Text mr={2}>{textString}</Text>
+      {treasuryActivity.transferAddresses.length > 2
+        ? t('addresses', {
             ns: 'treasury',
             numOfAddresses: treasuryActivity.transferAddresses.length,
-          })}
-        </Text>
-      ) : (
-        treasuryActivity.transferAddresses.map((address, i, arr) => (
-          <ActivityAddress
-            key={address + i}
-            address={address}
-            addComma={i !== arr.length - 1}
-          />
-        ))
-      )}
-    </>
+          })
+        : treasuryActivity.transferAddresses.map((address, i, arr) => (
+            <ActivityAddress
+              key={address + i}
+              address={address}
+              addComma={i !== arr.length - 1}
+            />
+          ))}
+    </Flex>
   );
 }

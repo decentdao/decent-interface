@@ -3,8 +3,9 @@ import { Jazzicon } from '@ukstv/jazzicon-react';
 import { Suspense } from 'react';
 import { useImage } from 'react-image';
 
-type AvatarSize = 'icon' | 'lg';
+type AvatarSize = 'icon' | 'lg' | 'sm';
 const avatarSizes: { [size: string]: string } = {
+  sm: '1rem',
   icon: '1.5rem',
   lg: '2rem',
 };

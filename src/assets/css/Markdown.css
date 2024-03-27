@@ -4,6 +4,7 @@
 
 .markdown-body {
   min-width: 100%;
+  max-width: 0;
 }
 .markdown-body,
 .markdown-body > * {
