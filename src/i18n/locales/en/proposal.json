@@ -130,5 +130,12 @@
   "shielded": "Shielded",
   "shutterPrivacy": "Shielded",
   "shutterVotesHidden": "Results hidden during voting",
-  "totalVotes": "Total votes"
+  "totalVotes": "Total votes",
+  "createSablierProposalButton": "Create Sablier Stream",
+  "sablierStreamSenderLabel": "Sender",
+  "sablierStreamRecipientLabel": "Recipient",
+  "sablierStreamTotalAmountLabel": "Total Amount",
+  "sablierStreamTokenAddressLabel": "Token Address",
+  "sablierStreamStartDateLabel": "Start timestamp (Unix)",
+  "submitSablierProposal": "Submit Proposal"
 }

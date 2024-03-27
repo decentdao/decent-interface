@@ -18,6 +18,7 @@ interface ModuleBaseProps {
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
+  size?: string;
 }
 /**
  * The base wrapper component for a modal.  This displays the Chakra components necessary to open a modal,
@@ -27,7 +28,7 @@ export function ModalBase(props: ModuleBaseProps) {
   return (
     <Modal
       isCentered
-      size="lg"
+      size={props.size || 'lg'}
       isOpen={props.isOpen}
       onClose={props.onClose}
     >

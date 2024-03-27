@@ -5,6 +5,7 @@ import AddSignerModal from '../../pages/DaoSettings/components/Signers/modals/Ad
 import RemoveSignerModal from '../../pages/DaoSettings/components/Signers/modals/RemoveSignerModal';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
+import CreateSablierProposalModal from './CreateSablierProposalModal';
 import { DelegateModal } from './DelegateModal';
 import ForkProposalTemplateModal from './ForkProposalTemplateModal';
 import { ModalBase } from './ModalBase';
@@ -27,6 +28,7 @@ export enum ModalType {
   CREATE_PROPOSAL_FROM_TEMPLATE,
   COPY_PROPOSAL_TEMPLATE,
   CONFIRM_MODIFY_GOVERNANCE,
+  CREATE_SABLIER_STREAM,
 }
 
 export interface CurrentModal {
@@ -49,6 +51,7 @@ interface ModalUI {
   warn: boolean;
   content: ReactNode | null;
   onSetClosed: () => void;
+  size?: string;
 }
 /**
  * A provider that handles displaying modals in the app.
@@ -67,7 +70,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     if (current.type != ModalType.NONE) onOpen();
   });
 
-  const { title, warn, content, onSetClosed } = useMemo<ModalUI>(() => {
+  const { title, warn, content, onSetClosed, size } = useMemo<ModalUI>(() => {
     const cl = () => {
       setCurrent({ type: ModalType.NONE, props: [] });
       onClose();
@@ -75,6 +78,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     let ti;
     let wa = false;
     let co;
+    let si = 'lg';
     switch (current.type) {
       case ModalType.DELEGATE:
         ti = t('delegateTitle');
@@ -151,12 +155,17 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         ti = t('confirmModifyGovernanceTitle');
         co = <ConfirmModifyGovernanceModal close={cl} />;
         break;
+      case ModalType.CREATE_SABLIER_STREAM:
+        ti = t('createSablierStreamTitle');
+        co = <CreateSablierProposalModal close={cl} />;
+        si = '4xl';
+        break;
       case ModalType.NONE:
       default:
         ti = '';
         co = null;
     }
-    return { title: ti, warn: wa, content: co, onSetClosed: cl };
+    return { title: ti, warn: wa, content: co, onSetClosed: cl, size: si };
   }, [current, onClose, t]);
 
   const display = content ? (
@@ -165,6 +174,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       warn={warn}
       isOpen={isOpen}
       onClose={onSetClosed}
+      size={size}
     >
       {content}
     </ModalBase>

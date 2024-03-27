@@ -1,4 +1,4 @@
-import { Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
+import { Button, Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useState, useMemo } from 'react';
@@ -10,6 +10,8 @@ import ProposalMetadata from '../../../../../components/ProposalCreate/ProposalM
 import TransactionsForm from '../../../../../components/ProposalCreate/TransactionsForm';
 import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalCreate/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
+import { ModalType } from '../../../../../components/ui/modals/ModalProvider';
+import { useFractalModal } from '../../../../../components/ui/modals/useFractalModal';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { BACKGROUND_SEMI_TRANSPARENT, HEADER_HEIGHT } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
@@ -18,13 +20,16 @@ import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitPropos
 import { useCreateProposalSchema } from '../../../../../hooks/schemas/proposalCreate/useCreateProposalSchema';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { CreateProposalForm, CreateProposalState, GovernanceType } from '../../../../../types';
-import CustomProposalSubmitter from './CustomProposalSubmitter';
 
 const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
   "details"`;
 
-const TARGET_DAO_ADDRESSES = ['0xbB4f275578d038e0D3C5A38E79dCdC0cf5b8c9Cd'];
+const SABLIER_FEATURE_ENABLED_DAO_ADDRESSES = [
+  '0xbB4f275578d038e0D3C5A38E79dCdC0cf5b8c9Cd',
+  '0xE19f640d1FC22FeAf12DbD86b52bEa8Ac7d43E41',
+  '0xCcFd25b1e1eE3B13944Cf14BA7896bAE03f82dF6',
+];
 
 export default function ProposalCreatePage() {
   const {
@@ -34,6 +39,7 @@ export default function ProposalCreatePage() {
   const { createProposalValidation } = useCreateProposalSchema();
   const { prepareProposal } = usePrepareProposal();
   const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
+  const openSablierStreamForm = useFractalModal(ModalType.CREATE_SABLIER_STREAM, {});
 
   const navigate = useNavigate();
   const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
@@ -99,11 +105,8 @@ export default function ProposalCreatePage() {
                 buttonClick={() => navigate(DAO_ROUTES.proposals.relative(daoAddress))}
                 isButtonDisabled={pendingCreateTx}
               />
-              {TARGET_DAO_ADDRESSES.includes(daoAddress) && (
-                <CustomProposalSubmitter
-                  values={values}
-                  daoAddress={daoAddress}
-                />
+              {SABLIER_FEATURE_ENABLED_DAO_ADDRESSES.includes(daoAddress) && (
+                <Button onClick={openSablierStreamForm}>{t('createSablierProposalButton')}</Button>
               )}
               <Grid
                 gap={4}
