@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useERC20Claim } from './loaders/governance/useERC20Claim';
 import { useSnapshotProposals } from './loaders/snapshot/useSnapshotProposals';
@@ -11,7 +11,9 @@ import { useFractalTreasury } from './loaders/useFractalTreasury';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
 
 export default function useDAOController() {
-  const { daoAddress } = useParams();
+  const [searchParams] = useSearchParams();
+  const daoAddress = searchParams.get('dao');
+
   const {
     node: {
       nodeHierarchy: { parentAddress },
@@ -24,7 +26,7 @@ export default function useDAOController() {
     }
   }, [action, daoAddress]);
 
-  const { nodeLoading, errorLoading } = useFractalNode({ daoAddress });
+  const { nodeLoading, errorLoading } = useFractalNode({ daoAddress: daoAddress || undefined });
   useGovernanceContracts();
   useFractalGuardContracts({});
   useFractalFreeze({ parentSafeAddress: parentAddress });
