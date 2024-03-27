@@ -162,12 +162,7 @@ export function ManageDAOMenu({
         }
       },
     }),
-    [
-      baseContracts,
-      guardContracts,
-      getUserERC721VotingTokens,
-      parentAddress,
-    ],
+    [baseContracts, guardContracts, getUserERC721VotingTokens, parentAddress],
   );
 
   const options = useMemo(() => {
