@@ -55,7 +55,7 @@ export default function CreateSablierProposalModal({ close }: { close: () => voi
     if (chainId === sepolia.id) {
       sablierBatchAddress = '0xd2569DC4A58dfE85d807Dffb976dbC0a3bf0B0Fb'; // SablierV2Batch on Sepolia
       sablierLockupDynamicAddress = '0xc9940AD8F43aAD8e8f33A4D5dbBf0a8F7FF4429A'; // SablierV2LockupDynamic on Sepolia
-      const segmentAmount = BigNumber.from(totalAmount).div(5).toNumber();
+      const segmentAmount = BigNumber.from(totalAmount).div(5).toString();
       hardCodedSegments = [
         [0, '1000000000000000000', startDate + 3599], // First number represents amount of tokens denoted in units of token's decimals. Second number represents exponent, denoted as a fixed-point number. Third value is a Unix timestamp till when amount set in first value will be fully streamed
         [segmentAmount, '1000000000000000000', startDate + 3600],
@@ -71,7 +71,7 @@ export default function CreateSablierProposalModal({ close }: { close: () => voi
     } else if (chainId === mainnet.id) {
       sablierBatchAddress = '0xEa07DdBBeA804E7fe66b958329F8Fa5cDA95Bd55'; // SablierV2Batch on Mainnet
       sablierLockupDynamicAddress = '0x7CC7e125d83A581ff438608490Cc0f7bDff79127'; // SablierV2LockupDynamic on Mainnet
-      const segmentAmount = BigNumber.from(totalAmount).div(5).toNumber();
+      const segmentAmount = BigNumber.from(totalAmount).div(5).toString();
       hardCodedSegments = [
         [0, '1000000000000000000', 1714572239],
         [segmentAmount, '1000000000000000000', 1714572240],
