@@ -55,7 +55,6 @@ export function ManageDAOMenu({
   const {
     node: { safe },
     governance: { type },
-    guardContracts: { freezeVotingContractAddress },
   } = useFractal();
   const baseContracts = useSafeContracts();
   const currentTime = BigNumber.from(useBlockTimestamp());
@@ -131,18 +130,13 @@ export function ManageDAOMenu({
 
   const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
-  const options = useMemo(() => {
-    const createSubDAOOption = {
-      optionKey: 'optionCreateSubDAO',
-      onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress), { replace: true }),
-    };
-
-    const freezeOption = {
+  const freezeOption = useMemo(
+    () => ({
       optionKey: 'optionInitiateFreeze',
       onClick: () => {
         const freezeVotingContract =
           baseContracts!.freezeMultisigVotingMasterCopyContract.asSigner.attach(
-            freezeVotingContractAddress!,
+            guardContracts!.freezeVotingContractAddress!,
           );
         const freezeVotingType = guardContracts!.freezeVotingType;
         if (freezeVotingContract) {
@@ -150,12 +144,14 @@ export function ManageDAOMenu({
             freezeVotingType === FreezeVotingType.MULTISIG ||
             freezeVotingType === FreezeVotingType.ERC20
           ) {
-            (freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting).castFreezeVote();
+            return (
+              freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting
+            ).castFreezeVote();
           } else if (freezeVotingType === FreezeVotingType.ERC721) {
             getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo => {
               const freezeERC721VotingContract =
                 baseContracts!.freezeERC721VotingMasterCopyContract.asSigner.attach(
-                  freezeVotingContractAddress!,
+                  guardContracts!.freezeVotingContractAddress!,
                 );
               return freezeERC721VotingContract!['castFreezeVote(address[],uint256[])'](
                 tokensInfo.totalVotingTokenAddresses,
@@ -165,8 +161,20 @@ export function ManageDAOMenu({
           }
         }
       },
-    };
+    }),
+    [
+      baseContracts,
+      guardContracts,
+      getUserERC721VotingTokens,
+      parentAddress,
+    ],
+  );
 
+  const options = useMemo(() => {
+    const createSubDAOOption = {
+      optionKey: 'optionCreateSubDAO',
+      onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress), { replace: true }),
+    };
     const clawBackOption = {
       optionKey: 'optionInitiateClawback',
       onClick: handleClawBack,
@@ -233,16 +241,12 @@ export function ManageDAOMenu({
     currentTime,
     navigate,
     safeAddress,
-    parentAddress,
     governanceType,
-    guardContracts,
     handleClawBack,
     canUserCreateProposal,
     handleModifyGovernance,
     handleNavigateToSettings,
-    getUserERC721VotingTokens,
-    baseContracts,
-    freezeVotingContractAddress,
+    freezeOption,
   ]);
 
   return (
