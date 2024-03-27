@@ -1,15 +1,11 @@
 import { useQuery } from '@apollo/client';
 import { utils } from 'ethers';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useAccount } from 'wagmi';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { NodeAction } from '../../../providers/App/node/action';
-import {
-  disconnectedChain,
-  useNetworkConfig,
-} from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useAsyncRetry } from '../../utils/useAsyncRetry';
@@ -126,8 +122,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
     [action, safeAPI, lookupModules, fetchSafeInfo, requestWithRetries],
   );
 
-  const { chain } = useAccount();
-  const chainId = chain ? chain.id : disconnectedChain.id;
+  const { chainId } = useNetworkConfig();
   useEffect(() => {
     if (daoAddress && chainId + daoAddress !== currentValidSafe.current) {
       setNodeLoading(true);

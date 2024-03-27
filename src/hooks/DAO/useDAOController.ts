@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useERC20Claim } from './loaders/governance/useERC20Claim';
 import { useSnapshotProposals } from './loaders/snapshot/useSnapshotProposals';
@@ -12,7 +12,8 @@ import { useGovernanceContracts } from './loaders/useGovernanceContracts';
 
 export default function useDAOController() {
   const currentDAOAddress = useRef<string>();
-  const { daoAddress } = useParams();
+  const [searchParams] = useSearchParams();
+  const daoAddress = searchParams.get('dao');
   const {
     node: {
       nodeHierarchy: { parentAddress },

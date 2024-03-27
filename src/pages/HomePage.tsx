@@ -3,7 +3,6 @@ import { Center, VStack, Text, Button, Flex, Box } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useAccount } from 'wagmi';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { AppFooter } from '../components/pages/AppHome/AppFooter';
 import { CTABox } from '../components/pages/AppHome/CTABox';
@@ -13,7 +12,7 @@ import ExternalLink from '../components/ui/links/ExternalLink';
 import { BASE_ROUTES } from '../constants/routes';
 import { URL_DOCS } from '../constants/url';
 import { useFractal } from '../providers/App/AppProvider';
-import { disconnectedChain } from '../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../providers/NetworkConfig/NetworkConfigProvider';
 
 const VALUE_PROPS = [
   {
@@ -95,8 +94,8 @@ export default function HomePage() {
     }
   }, [daoAddress, action]);
 
-  const { chain } = useAccount();
-  const features = FEATURED_DAOS.get(chain ? chain.id : disconnectedChain.id);
+  const { chainId } = useNetworkConfig();
+  const features = FEATURED_DAOS.get(chainId);
 
   return (
     <Center>

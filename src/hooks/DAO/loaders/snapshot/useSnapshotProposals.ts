@@ -70,6 +70,7 @@ export const useSnapshotProposals = () => {
               description: proposal.body,
               startTime: proposal.start,
               endTime: proposal.end,
+              author: proposal.author,
             };
           });
 

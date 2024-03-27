@@ -1,9 +1,8 @@
-import { Text, Button, Image } from '@chakra-ui/react';
+import { Button, Image, Box } from '@chakra-ui/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import removeMd from 'remove-markdown';
 import '../../../assets/css/Markdown.css';
 
 function CustomMarkdownImage({ src, alt }: { src?: string; alt?: string }) {
@@ -45,7 +44,6 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
   const [totalLines, setTotalLines] = useState(0);
   const [totalLinesError, setTotalLinesError] = useState(false);
   const markdownTextContainerRef = useRef<HTMLParagraphElement>(null);
-  const plainText = removeMd(content);
 
   useEffect(() => {
     if (
@@ -83,22 +81,10 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
     return uri;
   };
 
-  if (truncate) {
-    return (
-      <Text
-        noOfLines={2}
-        fontWeight={400}
-        minWidth="100%"
-      >
-        {plainText}
-      </Text>
-    );
-  }
-
   return (
     <>
-      <Text
-        noOfLines={collapsed ? collapsedLines : undefined}
+      <Box
+        noOfLines={collapsed || truncate ? collapsedLines : undefined}
         ref={markdownTextContainerRef}
         maxWidth="100%"
       >
@@ -110,9 +96,9 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
         >
           {content}
         </ReactMarkdown>
-      </Text>
+      </Box>
 
-      {totalLines > collapsedLines && !totalLinesError && (
+      {totalLines > collapsedLines && !totalLinesError && !truncate && (
         <Button
           marginTop={4}
           paddingLeft={0}

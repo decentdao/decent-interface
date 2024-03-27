@@ -78,7 +78,7 @@ export default function CreateProposalTemplatePage() {
                 ...tx,
                 ethValue: {
                   value: tx.ethValue.value,
-                  bigNumerValue: BigNumber.from(tx.ethValue.value || 0),
+                  bigNumberValue: BigNumber.from(tx.ethValue.value || 0),
                 },
               })),
             };
