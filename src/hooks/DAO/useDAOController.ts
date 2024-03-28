@@ -22,10 +22,11 @@ export default function useDAOController() {
   } = useFractal();
   useEffect(() => {
     if (daoAddress && !currentDAOAddress.current) {
-      currentDAOAddress.current = daoAddress;
+      action.resetDAO().then(() => {
+        currentDAOAddress.current = daoAddress;
+      })
     }
     if (!daoAddress || daoAddress !== currentDAOAddress.current) {
-      action.resetDAO();
       currentDAOAddress.current = undefined;
     }
   }, [action, daoAddress]);
