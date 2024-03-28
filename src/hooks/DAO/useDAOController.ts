@@ -24,7 +24,7 @@ export default function useDAOController() {
     if (daoAddress && !currentDAOAddress.current) {
       action.resetDAO().then(() => {
         currentDAOAddress.current = daoAddress;
-      })
+      });
     }
     if (!daoAddress || daoAddress !== currentDAOAddress.current) {
       currentDAOAddress.current = undefined;
