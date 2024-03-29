@@ -4,12 +4,10 @@ import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import useDAOController from '../hooks/DAO/useDAOController';
 import useDAOMetadata from '../hooks/DAO/useDAOMetadata';
-import { useFractal } from '../providers/App/AppProvider';
 import LoadingProblem from './LoadingProblem';
 
 export default function DAOController() {
-  const { node } = useFractal();
-  const { nodeLoading, errorLoading, wrongNetwork } = useDAOController();
+  const { errorLoading, wrongNetwork, invalidQuery } = useDAOController();
   const daoMetadata = useDAOMetadata();
   const activeTheme = useMemo(() => {
     if (daoMetadata && daoMetadata.bodyBackground) {
@@ -34,7 +32,6 @@ export default function DAOController() {
     return theme;
   }, [daoMetadata]);
 
-  const validSafe = node.safe;
   let display;
 
   if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
@@ -43,12 +40,15 @@ export default function DAOController() {
         <Outlet />
       </ChakraProvider>
     );
+    // the order of the if blocks of these next three error states matters
+  } else if (invalidQuery) {
+    display = <LoadingProblem type="badQueryParam" />;
   } else if (wrongNetwork) {
     display = <LoadingProblem type="wrongNetwork" />;
-  } else if (nodeLoading || validSafe || !errorLoading) {
-    display = <Outlet />;
-  } else {
+  } else if (errorLoading) {
     display = <LoadingProblem type="invalidSafe" />;
+  } else {
+    display = <Outlet />;
   }
 
   return display;
