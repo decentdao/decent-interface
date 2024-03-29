@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 interface ISearchDisplay {
   loading?: boolean;
@@ -30,6 +31,7 @@ export function SearchDisplay({
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
   const { action, node } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
   const isCurrentSafe = useMemo(() => {
     return !!node && !!node.daoAddress && node.daoAddress === address;
@@ -77,7 +79,7 @@ export function SearchDisplay({
               onClickView();
               if (closeDrawer) closeDrawer();
               action.resetDAO();
-              navigate(DAO_ROUTES.dao.relative(address));
+              navigate(DAO_ROUTES.dao.relative(`${addressPrefix}:${address}`));
             }}
           >
             {t('labelViewDAO')}
