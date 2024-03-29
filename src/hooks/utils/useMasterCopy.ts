@@ -57,6 +57,7 @@ export function useMasterCopy() {
 
       const filter = contract.filters.ModuleProxyCreation(proxyAddress, null);
       return contract.queryFilter(filter).then(proxiesCreated => {
+        // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
         if (proxiesCreated.length === 0) {
           setValue(
             CacheKeys.MASTER_COPY_PREFIX + proxyAddress,
