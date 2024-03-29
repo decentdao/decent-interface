@@ -4,7 +4,7 @@
 interface ImportMetaEnv {
   readonly VITE_APP_NAME: string;
   readonly VITE_APP_GIT_HASH: string;
-
+  readonly VITE_APP_ALCHEMY_POLYGON_API_KEY: string;
   readonly VITE_APP_ALCHEMY_MAINNET_API_KEY: string;
   readonly VITE_APP_ALCHEMY_SEPOLIA_API_KEY: string;
   readonly VITE_APP_ETHERSCAN_API_KEY: string;
