@@ -25,6 +25,7 @@ export const useFractalNode = ({
   const currentValidSafe = useRef<string>();
   const [nodeLoading, setNodeLoading] = useState<boolean>(true);
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
+  const [wrongNetwork, setWrongNetwork] = useState<boolean>(false);
 
   const { action } = useFractal();
   const safeAPI = useSafeAPI();
@@ -97,11 +98,13 @@ export const useFractalNode = ({
     async (_daoNetwork: string, _daoAddress: string, _connectedNetwork: string) => {
       setNodeLoading(true);
       setErrorLoading(false);
+      setWrongNetwork(false);
 
       if (_connectedNetwork !== _daoNetwork) {
         currentValidSafe.current = undefined;
         action.resetDAO();
         setErrorLoading(true);
+        setWrongNetwork(true);
       } else if (utils.isAddress(_daoAddress) && safeAPI) {
         try {
           const safeInfo = await requestWithRetries(fetchSafeInfo, 5);
@@ -152,5 +155,5 @@ export const useFractalNode = ({
     }
   }, [daoAddress, daoNetwork, setDAO, currentValidSafe, addressPrefix]);
 
-  return { nodeLoading, errorLoading };
+  return { nodeLoading, errorLoading, wrongNetwork };
 };
