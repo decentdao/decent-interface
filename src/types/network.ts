@@ -10,7 +10,7 @@ export type Providers =
 export type NetworkConfig = {
   safeBaseURL: string;
   etherscanBaseURL: string;
-  etherscanAPIBaseUrl: string;
+  etherscanAPIUrl: string;
   chainId: number;
   name: string;
   addressPrefix: string; // copy whatever Safe uses
