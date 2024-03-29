@@ -34,7 +34,7 @@ interface ISubmitProposal {
   pendingToastMessage: string;
   failedToastMessage: string;
   successToastMessage: string;
-  successCallback?: (daoAddress: string) => void;
+  successCallback?: (addressPrefix: string, daoAddress: string) => void;
   /**
    * @param safeAddress - provided address of DAO to which proposal will be submitted
    */
@@ -87,7 +87,7 @@ export default function useSubmitProposal() {
 
   const lookupModules = useFractalModules();
   const signerOrProvider = useSignerOrProvider();
-  const { chainId, safeBaseURL } = useNetworkConfig();
+  const { chainId, safeBaseURL, addressPrefix } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
 
   /**
@@ -267,7 +267,7 @@ export default function useSubmitProposal() {
         await new Promise(resolve => setTimeout(resolve, 1000));
         await loadDAOProposals();
         if (successCallback) {
-          successCallback(safeAddress);
+          successCallback(addressPrefix, safeAddress);
         }
         toast(successToastMessage);
       } catch (e) {
@@ -279,7 +279,15 @@ export default function useSubmitProposal() {
         return;
       }
     },
-    [signerOrProvider, safeBaseURL, chainId, loadDAOProposals, ipfsClient, baseContracts],
+    [
+      signerOrProvider,
+      safeBaseURL,
+      chainId,
+      loadDAOProposals,
+      ipfsClient,
+      baseContracts,
+      addressPrefix,
+    ],
   );
 
   const submitAzoriusProposal = useCallback(
@@ -331,7 +339,7 @@ export default function useSubmitProposal() {
         toast.dismiss(toastId);
         toast(successToastMessage);
         if (successCallback) {
-          successCallback(safeAddress!);
+          successCallback(addressPrefix, safeAddress!);
         }
       } catch (e) {
         toast.dismiss(toastId);
@@ -350,7 +358,7 @@ export default function useSubmitProposal() {
         setTimeout(loadDAOProposals, averageBlockTime * 1.5 * 1000);
       }
     },
-    [loadDAOProposals, provider],
+    [loadDAOProposals, provider, addressPrefix],
   );
 
   const submitProposal = useCallback(

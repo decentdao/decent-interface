@@ -1,40 +1,13 @@
-import { Button, Center, Text, VStack, ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { theme } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
 import useDAOController from '../hooks/DAO/useDAOController';
 import useDAOMetadata from '../hooks/DAO/useDAOMetadata';
-import { useFractal } from '../providers/App/AppProvider';
-import { useNetworkConfig } from '../providers/NetworkConfig/NetworkConfigProvider';
-
-function InvalidSafe() {
-  const { name } = useNetworkConfig();
-  const { t } = useTranslation('common');
-
-  return (
-    <Center
-      padding="3rem"
-      textColor="grayscale.100"
-    >
-      <VStack>
-        <Text
-          paddingTop="3rem"
-          textStyle="text-6xl-mono-regular"
-        >
-          {t('errorSentryFallbackTitle')}
-        </Text>
-        <Text>{t('invalidSafe1', { chain: name })}</Text>
-        <Text paddingBottom="1rem">{t('invalidSafe2')}</Text>
-        <Button onClick={() => window.location.reload()}>{t('refresh')}</Button>
-      </VStack>
-    </Center>
-  );
-}
+import LoadingProblem from './LoadingProblem';
 
 export default function DAOController() {
-  const { node } = useFractal();
-  const { nodeLoading, errorLoading } = useDAOController();
+  const { errorLoading, wrongNetwork, invalidQuery } = useDAOController();
   const daoMetadata = useDAOMetadata();
   const activeTheme = useMemo(() => {
     if (daoMetadata && daoMetadata.bodyBackground) {
@@ -59,7 +32,6 @@ export default function DAOController() {
     return theme;
   }, [daoMetadata]);
 
-  const validSafe = node.safe;
   let display;
 
   if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
@@ -68,10 +40,15 @@ export default function DAOController() {
         <Outlet />
       </ChakraProvider>
     );
-  } else if (nodeLoading || validSafe || !errorLoading) {
-    display = <Outlet />;
+    // the order of the if blocks of these next three error states matters
+  } else if (invalidQuery) {
+    display = <LoadingProblem type="badQueryParam" />;
+  } else if (wrongNetwork) {
+    display = <LoadingProblem type="wrongNetwork" />;
+  } else if (errorLoading) {
+    display = <LoadingProblem type="invalidSafe" />;
   } else {
-    display = <InvalidSafe />;
+    display = <Outlet />;
   }
 
   return display;

@@ -17,6 +17,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { usePrepareProposal } from '../../../hooks/DAO/proposal/usePrepareProposal';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { isValidUrl } from '../../../utils/url';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
@@ -35,6 +36,7 @@ export default function ProposalTemplateModal({
   const {
     node: { daoAddress, safe },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
 
   const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
@@ -79,7 +81,7 @@ export default function ProposalTemplateModal({
 
   const successCallback = () => {
     if (daoAddress) {
-      navigate(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
       onClose();
     }
   };

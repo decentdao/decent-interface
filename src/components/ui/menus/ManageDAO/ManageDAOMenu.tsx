@@ -15,6 +15,7 @@ import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useMasterCopy } from '../../../../hooks/utils/useMasterCopy';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   FractalGuardContracts,
   FractalNode,
@@ -122,11 +123,13 @@ export function ManageDAOMenu({
 
     loadGovernanceType();
   }, [fractalNode, safe, safeAddress, type, getZodiacModuleProxyMasterCopyData, baseContracts]);
+  const { addressPrefix } = useNetworkConfig();
 
-  const handleNavigateToSettings = useCallback(
-    () => navigate(DAO_ROUTES.settings.relative(safeAddress), { replace: true }),
-    [navigate, safeAddress],
-  );
+  const handleNavigateToSettings = useCallback(() => {
+    if (safeAddress) {
+      navigate(DAO_ROUTES.settings.relative(addressPrefix, safeAddress), { replace: true });
+    }
+  }, [navigate, addressPrefix, safeAddress]);
 
   const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
@@ -168,7 +171,12 @@ export function ManageDAOMenu({
   const options = useMemo(() => {
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
-      onClick: () => navigate(DAO_ROUTES.newSubDao.relative(safeAddress), { replace: true }),
+
+      onClick: () => {
+        if (safeAddress) {
+          navigate(DAO_ROUTES.newSubDao.relative(addressPrefix, safeAddress), { replace: true });
+        }
+      },
     };
     const clawBackOption = {
       optionKey: 'optionInitiateClawback',
@@ -241,6 +249,7 @@ export function ManageDAOMenu({
     canUserCreateProposal,
     handleModifyGovernance,
     handleNavigateToSettings,
+    addressPrefix,
     freezeOption,
   ]);
 

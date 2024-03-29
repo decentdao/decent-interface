@@ -7,12 +7,14 @@ import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function ProposalTemplatesPage() {
   const { t } = useTranslation();
   const {
     node: { daoAddress },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const { canUserCreateProposal } = useSubmitProposal();
 
   return (
@@ -26,8 +28,8 @@ export default function ProposalTemplatesPage() {
           },
         ]}
       >
-        {canUserCreateProposal && (
-          <Link to={DAO_ROUTES.proposalTemplateNew.relative(daoAddress)}>
+        {canUserCreateProposal && daoAddress && (
+          <Link to={DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)}>
             <Button minW={0}>
               <AddPlus />
               <Show above="sm">{t('create')}</Show>

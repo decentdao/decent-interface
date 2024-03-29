@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalProposal } from '../../types';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
@@ -13,6 +14,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const {
     node: { daoAddress },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const { canUserCreateProposal } = useSubmitProposal();
 
   const { t } = useTranslation('proposal');
@@ -34,8 +36,8 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
         ))
       ) : (
         <EmptyBox emptyText={t('emptyProposals')}>
-          {canUserCreateProposal && (
-            <Link to={DAO_ROUTES.proposalNew.relative(daoAddress)}>
+          {canUserCreateProposal && daoAddress && (
+            <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)}>
               <Button
                 variant="text"
                 textStyle="text-xl-mono-bold"

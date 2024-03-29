@@ -31,6 +31,7 @@ export const polygonConfig: NetworkConfig = {
   etherscanAPIBaseUrl: 'https://api.polygonscan.com/api', // TODO test ABISelector on template builder
   chainId: CHAIN_ID,
   name: polygon.name,
+  addressPrefix: 'matic',
   color: '#753cd8cc',
   nativeTokenSymbol: polygon.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
