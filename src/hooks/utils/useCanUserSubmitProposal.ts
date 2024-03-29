@@ -96,10 +96,8 @@ export function useCanUserCreateProposal() {
     const loadCanUserCreateProposal = async () => {
       setCanUserCreateProposal(await getCanUserCreateProposal());
     };
-    if (canUserCreateProposal === undefined) {
-      loadCanUserCreateProposal();
-    }
-  }, [getCanUserCreateProposal, canUserCreateProposal, user]);
+    loadCanUserCreateProposal();
+  }, [getCanUserCreateProposal, canUserCreateProposal]);
 
   return { canUserCreateProposal, getCanUserCreateProposal };
 }
