@@ -101,7 +101,7 @@
   "invalidSafe2": "Please double check the address then try again.",
   "wrongNetwork1": "Fractal is currently connected to {{chain}}.",
   "wrongNetwork2": "Try switching the app to the correct chain for your Safe.",
-  "badQueryParam1": "The DAO address in the URL isn't formatted correctly",
+  "badQueryParam1": "The Safe address in the URL isn't formatted correctly",
   "badQueryParam2": "",
   "showMore": "Show More",
   "showLess": "Show Less",

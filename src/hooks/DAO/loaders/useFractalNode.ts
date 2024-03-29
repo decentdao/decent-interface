@@ -95,16 +95,14 @@ export const useFractalNode = (
 
   const setDAO = useCallback(
     async (_addressPrefix: string, _daoAddress: string) => {
+      currentValidSafe.current = _addressPrefix + _daoAddress;
       setErrorLoading(false);
-
-      if (!utils.isAddress(_daoAddress) || !safeAPI) {
-        reset({ error: true });
-        return;
-      }
 
       let safeInfo;
 
       try {
+        if (!safeAPI) throw new Error('SafeAPI not set');
+
         safeInfo = await requestWithRetries(
           () => safeAPI.getSafeInfo(utils.getAddress(_daoAddress)),
           5,
@@ -121,8 +119,6 @@ export const useFractalNode = (
 
       // if here, we have a valid Safe!
 
-      currentValidSafe.current = _addressPrefix + _daoAddress;
-
       action.dispatch({
         type: NodeAction.SET_FRACTAL_MODULES,
         payload: await lookupModules(safeInfo.modules),
@@ -137,12 +133,7 @@ export const useFractalNode = (
   );
 
   useEffect(() => {
-    if (skip) {
-      reset({ error: false });
-      return;
-    }
-
-    if (addressPrefix === undefined || daoAddress === undefined) {
+    if (skip || addressPrefix === undefined || daoAddress === undefined) {
       reset({ error: false });
       return;
     }
