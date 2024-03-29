@@ -20,7 +20,7 @@ export const useLoadDAONode = () => {
   });
 
   const formatDAOQuery = useCallback(
-    (result: { data?: DAOQueryQuery }, _daoAddress: string, _daoNetwork: string) => {
+    (result: { data?: DAOQueryQuery }, _daoNetwork: string, _daoAddress: string) => {
       if (!result.data) {
         return;
       }
@@ -52,8 +52,8 @@ export const useLoadDAONode = () => {
         try {
           const graphNodeInfo = formatDAOQuery(
             await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-            _daoAddress,
             _daoNetwork,
+            _daoAddress,
           );
           if (!graphNodeInfo) {
             logError('graphQL query failed');

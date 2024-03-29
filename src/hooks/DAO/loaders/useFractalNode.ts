@@ -35,7 +35,7 @@ export const useFractalNode = ({
   const { requestWithRetries } = useAsyncRetry();
 
   const formatDAOQuery = useCallback(
-    (result: { data?: DAOQueryQuery }, _daoAddress: string, _daoNetwork: string) => {
+    (result: { data?: DAOQueryQuery }, _daoNetwork: string, _daoAddress: string) => {
       if (!result.data) {
         return;
       }
@@ -68,7 +68,7 @@ export const useFractalNode = ({
     variables: { daoAddress },
     onCompleted: async data => {
       if (!daoAddress || !daoNetwork) return;
-      const graphNodeInfo = formatDAOQuery({ data }, daoAddress, daoNetwork);
+      const graphNodeInfo = formatDAOQuery({ data }, daoNetwork, daoAddress);
       const daoName = await getDaoName(utils.getAddress(daoAddress), graphNodeInfo?.daoName);
 
       if (!!graphNodeInfo) {
