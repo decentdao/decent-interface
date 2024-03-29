@@ -52,14 +52,6 @@ export function SearchDisplay({
     return (
       <Flex
         py={2}
-        onClick={() => {
-          if (!isCurrentSafe) {
-            onClickView();
-            if (closeDrawer) closeDrawer();
-            action.resetDAO();
-            navigate(DAO_ROUTES.dao.relative(address));
-          }
-        }}
         cursor={isCurrentSafe ? 'not-allowed' : 'default'}
         justifyContent="space-between"
       >
@@ -81,6 +73,12 @@ export function SearchDisplay({
           <Button
             alignSelf="center"
             data-testid="search-viewDAO"
+            onClick={() => {
+              onClickView();
+              if (closeDrawer) closeDrawer();
+              action.resetDAO();
+              navigate(DAO_ROUTES.dao.relative(address));
+            }}
           >
             {t('labelViewDAO')}
           </Button>
