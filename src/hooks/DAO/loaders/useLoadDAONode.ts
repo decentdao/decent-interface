@@ -47,7 +47,7 @@ export const useLoadDAONode = () => {
   );
 
   const loadDao = useCallback(
-    async (_daoAddress: string, _daoNetwork: string): Promise<FractalNode | WithError> => {
+    async (_daoNetwork: string, _daoAddress: string): Promise<FractalNode | WithError> => {
       if (utils.isAddress(_daoAddress) && safeAPI) {
         try {
           const graphNodeInfo = formatDAOQuery(

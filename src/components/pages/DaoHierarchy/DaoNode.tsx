@@ -41,7 +41,7 @@ export function DaoNode({
 
   useEffect(() => {
     if (daoAddress && daoNetwork && !fractalNode) {
-      loadDao(utils.getAddress(daoAddress), daoNetwork).then(_node => {
+      loadDao(daoNetwork, utils.getAddress(daoAddress)).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
           // calculates the total number of descendants below the given node
