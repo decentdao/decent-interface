@@ -167,10 +167,12 @@ export const useAzoriusProposals = () => {
         );
       };
       const proposal = await requestWithRetries(func, 5, 7000);
-      action.dispatch({
-        type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW,
-        payload: proposal,
-      });
+      if (proposal) {
+        action.dispatch({
+          type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW,
+          payload: proposal,
+        });
+      }
     },
     [
       baseContracts,
