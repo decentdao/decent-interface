@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import PageHeader from '../ui/page/Header/PageHeader';
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
 
@@ -27,8 +28,9 @@ export function StepWrapper({
   shouldWrapChildren = true,
 }: IStepWrapper) {
   const {
-    node: { daoAddress, daoNetwork },
+    node: { daoAddress },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['daoCreate']);
   const navigate = useNavigate();
 
@@ -64,9 +66,9 @@ export function StepWrapper({
           isButtonDisabled={isFormSubmitting}
           buttonClick={() =>
             navigate(
-              !isSubDAO || !daoAddress || !daoNetwork
+              !isSubDAO || !daoAddress
                 ? BASE_ROUTES.landing
-                : DAO_ROUTES.dao.relative(daoNetwork, daoAddress),
+                : DAO_ROUTES.dao.relative(addressPrefix, daoAddress),
             )
           }
         />

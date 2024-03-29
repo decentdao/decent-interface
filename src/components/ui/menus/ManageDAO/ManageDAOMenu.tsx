@@ -18,6 +18,7 @@ import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useMasterCopy } from '../../../../hooks/utils/useMasterCopy';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   FractalGuardContracts,
   FractalNode,
@@ -56,15 +57,16 @@ export function ManageDAOMenu({
   const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const [governanceType, setGovernanceType] = useState(GovernanceType.MULTISIG);
   const {
-    node: { safe, daoNetwork, daoAddress },
+    node: { safe },
     governance: { type },
     baseContracts,
   } = useFractal();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const navigate = useNavigate();
+  const safeAddress = fractalNode?.daoAddress;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { getCanUserCreateProposal } = useSubmitProposal();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, daoAddress, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, safeAddress, false);
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeInfo: fractalNode,
@@ -72,17 +74,17 @@ export function ManageDAOMenu({
 
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
-      if (daoAddress) {
-        setCanUserCreateProposal(await getCanUserCreateProposal(daoAddress));
+      if (safeAddress) {
+        setCanUserCreateProposal(await getCanUserCreateProposal(safeAddress));
       }
     };
 
     loadCanUserCreateProposal();
-  }, [daoAddress, getCanUserCreateProposal]);
+  }, [safeAddress, getCanUserCreateProposal]);
 
   useEffect(() => {
     const loadGovernanceType = async () => {
-      if (safe && safe.address && safe.address === daoAddress && type) {
+      if (safe && safe.address && safe.address === safeAddress && type) {
         // Since safe.address (global scope DAO address) and safeAddress(Node provided to this component via props)
         // are the same - we can simply grab governance type from global scope and avoid double-fetching
         setGovernanceType(type);
@@ -123,13 +125,15 @@ export function ManageDAOMenu({
     };
 
     loadGovernanceType();
-  }, [fractalNode, safe, daoAddress, type, getZodiacModuleProxyMasterCopyData, baseContracts]);
+  }, [fractalNode, safe, safeAddress, type, getZodiacModuleProxyMasterCopyData, baseContracts]);
+
+  const { addressPrefix } = useNetworkConfig();
 
   const handleNavigateToSettings = useCallback(() => {
-    if (daoNetwork && daoAddress) {
-      navigate(DAO_ROUTES.settings.relative(daoNetwork, daoAddress));
+    if (safeAddress) {
+      navigate(DAO_ROUTES.settings.relative(addressPrefix, safeAddress));
     }
-  }, [navigate, daoAddress, daoNetwork]);
+  }, [navigate, addressPrefix, safeAddress]);
 
   const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
@@ -137,8 +141,8 @@ export function ManageDAOMenu({
     const createSubDAOOption = {
       optionKey: 'optionCreateSubDAO',
       onClick: () => {
-        if (daoNetwork && daoAddress) {
-          navigate(DAO_ROUTES.newSubDao.relative(daoNetwork, daoAddress));
+        if (safeAddress) {
+          navigate(DAO_ROUTES.newSubDao.relative(addressPrefix, safeAddress));
         }
       },
     };
@@ -230,7 +234,7 @@ export function ManageDAOMenu({
     freezeGuard,
     currentTime,
     navigate,
-    daoAddress,
+    safeAddress,
     parentAddress,
     governanceType,
     guardContracts?.freezeVotingContract?.asSigner,
@@ -240,7 +244,7 @@ export function ManageDAOMenu({
     handleModifyGovernance,
     handleNavigateToSettings,
     getUserERC721VotingTokens,
-    daoNetwork,
+    addressPrefix,
   ]);
 
   return (

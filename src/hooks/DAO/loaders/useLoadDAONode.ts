@@ -19,40 +19,35 @@ export const useLoadDAONode = () => {
     context: { chainName: subgraphChainName },
   });
 
-  const formatDAOQuery = useCallback(
-    (result: { data?: DAOQueryQuery }, _daoNetwork: string, _daoAddress: string) => {
-      if (!result.data) {
-        return;
-      }
-      const { daos } = result.data;
-      const dao = daos[0];
-      if (dao) {
-        const { parentAddress, name, hierarchy, snapshotURL } = dao;
-
-        const currentNode: Node = {
-          nodeHierarchy: {
-            parentAddress: parentAddress as string,
-            childNodes: mapChildNodes(hierarchy),
-          },
-          daoName: name as string,
-          daoAddress: utils.getAddress(_daoAddress as string),
-          daoNetwork: _daoNetwork,
-          daoSnapshotURL: snapshotURL as string,
-        };
-        return currentNode;
-      }
+  const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
+    if (!result.data) {
       return;
-    },
-    [],
-  );
+    }
+    const { daos } = result.data;
+    const dao = daos[0];
+    if (dao) {
+      const { parentAddress, name, hierarchy, snapshotURL } = dao;
+
+      const currentNode: Node = {
+        nodeHierarchy: {
+          parentAddress: parentAddress as string,
+          childNodes: mapChildNodes(hierarchy),
+        },
+        daoName: name as string,
+        daoAddress: utils.getAddress(_daoAddress as string),
+        daoSnapshotURL: snapshotURL as string,
+      };
+      return currentNode;
+    }
+    return;
+  }, []);
 
   const loadDao = useCallback(
-    async (_daoNetwork: string, _daoAddress: string): Promise<FractalNode | WithError> => {
+    async (_daoAddress: string): Promise<FractalNode | WithError> => {
       if (utils.isAddress(_daoAddress) && safeAPI) {
         try {
           const graphNodeInfo = formatDAOQuery(
             await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-            _daoNetwork,
             _daoAddress,
           );
           if (!graphNodeInfo) {

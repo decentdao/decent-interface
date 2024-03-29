@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ActivityEventType, FractalProposal, SnapshotProposal } from '../../../types';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { ActivityDescription } from '../../Activity/ActivityDescription';
@@ -12,8 +13,9 @@ import QuorumBadge from '../../ui/badges/QuorumBadge';
 
 function ProposalCard({ proposal }: { proposal: FractalProposal }) {
   const {
-    node: { daoAddress, daoNetwork },
+    node: { daoAddress },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation('common');
 
   const eventDateLabel = t(
@@ -26,12 +28,12 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
 
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
 
-  if (!daoNetwork || !daoAddress) {
+  if (!daoAddress) {
     return null;
   }
 
   return (
-    <Link to={DAO_ROUTES.proposal.relative(daoNetwork, daoAddress, proposal.proposalId)}>
+    <Link to={DAO_ROUTES.proposal.relative(addressPrefix, daoAddress, proposal.proposalId)}>
       <Box
         minHeight="6.25rem"
         bg="chocolate.900"

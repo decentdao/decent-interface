@@ -26,7 +26,7 @@ function Navigation() {
   const btnRef = React.useRef<HTMLButtonElement | null>(null);
 
   const {
-    node: { daoAddress, daoNetwork },
+    node: { daoAddress },
   } = useFractal();
 
   const showDAOLinks = !!daoAddress;
@@ -93,7 +93,6 @@ function Navigation() {
                   <Divider color="chocolate.700" />
                   <NavigationLinks
                     showDAOLinks={showDAOLinks}
-                    network={daoNetwork}
                     address={daoAddress}
                     closeDrawer={onClose}
                   />
@@ -115,7 +114,6 @@ function Navigation() {
           </Link>
           <NavigationLinks
             showDAOLinks={showDAOLinks}
-            network={daoNetwork}
             address={daoAddress}
           />
         </Show>

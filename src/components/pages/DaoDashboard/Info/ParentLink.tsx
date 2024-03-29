@@ -3,18 +3,20 @@ import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 /**
  * Displays a link to the current DAO's parent, if it has one.
  */
 export function ParentLink() {
   const {
-    node: { nodeHierarchy, daoNetwork },
+    node: { nodeHierarchy },
     action,
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation('breadcrumbs');
 
-  if (!nodeHierarchy.parentAddress || !daoNetwork) {
+  if (!nodeHierarchy.parentAddress) {
     return null;
   }
 
@@ -22,7 +24,7 @@ export function ParentLink() {
     <Link
       color="gold.500"
       _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
-      href={DAO_ROUTES.dao.relative(daoNetwork, nodeHierarchy.parentAddress)}
+      href={DAO_ROUTES.dao.relative(addressPrefix, nodeHierarchy.parentAddress)}
       onClick={action.resetDAO}
       marginBottom="1rem"
       as={RouterLink}

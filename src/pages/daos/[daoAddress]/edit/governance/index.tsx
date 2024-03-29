@@ -11,6 +11,7 @@ import { DAO_ROUTES } from '../../../../../constants/routes';
 import useDeployAzorius from '../../../../../hooks/DAO/useDeployAzorius';
 import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   DAOTrigger,
   AzoriusERC20DAO,
@@ -20,10 +21,11 @@ import {
 
 export default function ModifyGovernancePage() {
   const {
-    node: { daoAddress, safe, daoName, daoSnapshotURL, daoNetwork },
+    node: { daoAddress, safe, daoName, daoSnapshotURL },
     governance: { type },
     readOnly: { user },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['daoEdit', 'common', 'breadcrumbs']);
   const navigate = useNavigate();
   const isMultisig = type === GovernanceType.MULTISIG;
@@ -38,7 +40,7 @@ export default function ModifyGovernancePage() {
     );
   };
 
-  if (!daoNetwork || !daoAddress) {
+  if (!daoAddress) {
     return null;
   }
 
@@ -48,7 +50,7 @@ export default function ModifyGovernancePage() {
         hasDAOLink
         ButtonIcon={CloseX}
         buttonVariant="secondary"
-        buttonClick={() => navigate(DAO_ROUTES.dao.relative(daoNetwork, daoAddress))}
+        buttonClick={() => navigate(DAO_ROUTES.dao.relative(addressPrefix, daoAddress))}
         isButtonDisabled={false}
         breadcrumbs={[
           {

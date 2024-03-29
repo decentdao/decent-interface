@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalNode, WithError } from '../../../types';
 import { DAONodeRow } from '../../ui/cards/DAONodeRow';
 import { NodeLineVertical } from './NodeLines';
@@ -20,12 +21,10 @@ import { NodeLineVertical } from './NodeLines';
 export function DaoNode({
   parentAddress,
   daoAddress,
-  daoNetwork,
   depth,
 }: {
   parentAddress?: string;
   daoAddress?: string;
-  daoNetwork?: string;
   depth: number;
 }) {
   const [fractalNode, setNode] = useState<FractalNode>();
@@ -36,12 +35,13 @@ export function DaoNode({
   const {
     node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
 
   const isCurrentDAO = daoAddress === currentDAOAddress;
 
   useEffect(() => {
-    if (daoAddress && daoNetwork && !fractalNode) {
-      loadDao(daoNetwork, utils.getAddress(daoAddress)).then(_node => {
+    if (daoAddress && !fractalNode) {
+      loadDao(utils.getAddress(daoAddress)).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
           // calculates the total number of descendants below the given node
@@ -72,7 +72,6 @@ export function DaoNode({
           setNode({
             daoName: null,
             daoAddress,
-            daoNetwork,
             safe: null,
             fractalModules: [],
             nodeHierarchy: {
@@ -83,7 +82,7 @@ export function DaoNode({
         }
       });
     }
-  }, [loadDao, daoAddress, fractalNode, depth, daoNetwork]);
+  }, [loadDao, daoAddress, fractalNode, depth, addressPrefix]);
 
   return (
     <Box position="relative">
@@ -109,7 +108,6 @@ export function DaoNode({
           <DaoNode
             parentAddress={daoAddress}
             daoAddress={childNode.daoAddress || undefined}
-            daoNetwork={daoNetwork}
             depth={depth + 1}
           />
         </Box>

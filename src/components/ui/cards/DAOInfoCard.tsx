@@ -3,6 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FreezeGuard, FractalGuardContracts, FractalNode } from '../../../types';
 import Snapshot from '../badges/Snapshot';
 import FavoriteIcon from '../icons/FavoriteIcon';
@@ -42,11 +43,12 @@ export function DAOInfoCard({
     action,
     readOnly: { user },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   // for non Fractal Safes
   const { displayName } = useDisplayName(node?.daoAddress);
 
   // node hasn't loaded yet
-  if (!node || !node.daoAddress || !node.daoNetwork) {
+  if (!node || !node.daoAddress) {
     return (
       <Flex
         w="full"
@@ -77,7 +79,7 @@ export function DAOInfoCard({
           <Link
             as={RouterLink}
             pointerEvents={isCurrentDAO ? 'none' : undefined}
-            to={DAO_ROUTES.dao.relative(node.daoNetwork, displayedAddress)}
+            to={DAO_ROUTES.dao.relative(addressPrefix, displayedAddress)}
             _hover={{ textDecoration: 'none' }}
             onClick={() => {
               // if we're not on the current DAO, reset
@@ -104,7 +106,7 @@ export function DAOInfoCard({
           />
           {childCount && childCount > 0 && (
             <Link
-              to={DAO_ROUTES.hierarchy.relative(node.daoNetwork, displayedAddress)}
+              to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
               as={RouterLink}
             >
               <Box

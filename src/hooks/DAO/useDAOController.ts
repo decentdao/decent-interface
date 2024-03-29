@@ -23,7 +23,7 @@ export default function useDAOController() {
   }
 
   const prefixAndAddress = addressWithPrefix.split(':');
-  const daoNetwork = prefixAndAddress[0];
+  const addressPrefix = prefixAndAddress[0];
   const daoAddress = prefixAndAddress[1];
 
   const {
@@ -39,7 +39,7 @@ export default function useDAOController() {
     }
   }, [action, daoAddress]);
 
-  const { nodeLoading, errorLoading, wrongNetwork } = useFractalNode({ daoAddress, daoNetwork });
+  const { nodeLoading, errorLoading, wrongNetwork } = useFractalNode({ addressPrefix, daoAddress });
   useGovernanceContracts();
   useFractalGuardContracts({});
   useFractalFreeze({ parentSafeAddress: parentAddress });

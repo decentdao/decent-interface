@@ -12,6 +12,7 @@ import {
 import { ReactNode, useEffect, useState } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import AddressCopier from '../../links/AddressCopier';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface IPageHeader {
@@ -45,22 +46,23 @@ function PageHeader({
   children,
 }: IPageHeader) {
   const {
-    node: { daoAddress, daoName, daoNetwork },
+    node: { daoAddress, daoName },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
 
   const [links, setLinks] = useState([...breadcrumbs]);
 
   useEffect(() => {
-    if (hasDAOLink && daoNetwork && daoAddress) {
+    if (hasDAOLink && daoAddress) {
       setLinks([
         {
           terminus: daoName || '',
-          path: DAO_ROUTES.dao.relative(daoNetwork, daoAddress),
+          path: DAO_ROUTES.dao.relative(addressPrefix, daoAddress),
         },
         ...breadcrumbs,
       ]);
     }
-  }, [hasDAOLink, daoName, daoAddress, breadcrumbs, daoNetwork]);
+  }, [hasDAOLink, daoName, daoAddress, breadcrumbs, addressPrefix]);
 
   return (
     <Box

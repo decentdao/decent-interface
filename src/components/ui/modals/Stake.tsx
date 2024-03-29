@@ -7,14 +7,16 @@ import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useLidoStaking from '../../../hooks/stake/lido/useLidoStaking';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { BigNumberValuePair } from '../../../types';
 import { BigNumberInput } from '../forms/BigNumberInput';
 
 export default function StakeModal({ close }: { close: () => void }) {
   const {
-    node: { daoAddress, daoNetwork },
+    node: { daoAddress },
     treasury: { assetsFungible },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
   const { t } = useTranslation('stake');
 
@@ -31,8 +33,8 @@ export default function StakeModal({ close }: { close: () => void }) {
     if (inputAmount?.bigNumberValue) {
       await handleStake(inputAmount?.bigNumberValue);
       close();
-      if (daoNetwork && daoAddress) {
-        navigate(DAO_ROUTES.proposals.relative(daoNetwork, daoAddress));
+      if (daoAddress) {
+        navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
       }
     }
   };

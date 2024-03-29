@@ -10,14 +10,16 @@ import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AzoriusGovernance, DecentGovernance, GovernanceType } from '../../../../types';
 
 export default function ProposalsPage() {
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
   const {
     governance,
-    node: { daoAddress, daoNetwork },
+    node: { daoAddress },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const azoriusGovernance = governance as AzoriusGovernance;
   const delegate = useFractalModal(ModalType.DELEGATE);
   const wrapTokenOpen = useFractalModal(ModalType.WRAP_TOKEN);
@@ -91,8 +93,8 @@ export default function ProposalsPage() {
             </Flex>
           </Button>
         )}
-        {canUserCreateProposal && daoNetwork && daoAddress && (
-          <Link to={DAO_ROUTES.proposalNew.relative(daoNetwork, daoAddress)}>
+        {canUserCreateProposal && daoAddress && (
+          <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)}>
             <Button minW={0}>
               <AddPlus />
               <Show above="sm">{t('create')}</Show>
