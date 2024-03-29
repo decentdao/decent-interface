@@ -13,6 +13,7 @@ export type NetworkConfig = {
   etherscanAPIBaseUrl: string;
   chainId: number;
   name: string;
+  addressPrefix: string; // copy whatever Safe uses
   color: string;
   nativeTokenSymbol: string;
   nativeTokenIcon: string;
