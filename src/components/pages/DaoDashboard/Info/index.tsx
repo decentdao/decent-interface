@@ -137,22 +137,18 @@ export function Info() {
               pb={{ sm: PAD, md: NONE }}
               pt={{ sm: PAD, lg: NONE }}
             >
-              {daoAddress && (
-                <InfoBox to={DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)}>
-                  <InfoProposals />
-                </InfoBox>
-              )}
+              <InfoBox to={DAO_ROUTES.proposals.relative(addressPrefix, daoAddress || '')}>
+                <InfoProposals />
+              </InfoBox>
             </Box>
             <Box
               width={{ base: '100%', md: '33.3%', lg: '23%', xl: '20%' }}
               ps={{ base: NONE, md: PAD }}
               pt={{ sm: PAD, lg: NONE }}
             >
-              {daoAddress && (
-                <InfoBox to={DAO_ROUTES.treasury.relative(addressPrefix, daoAddress)}>
-                  <InfoTreasury />
-                </InfoBox>
-              )}
+              <InfoBox to={DAO_ROUTES.treasury.relative(addressPrefix, daoAddress || '')}>
+                <InfoTreasury />
+              </InfoBox>
             </Box>
           </>
         )}
