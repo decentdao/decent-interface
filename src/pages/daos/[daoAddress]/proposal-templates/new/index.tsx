@@ -20,6 +20,7 @@ import useCreateProposalTemplateSchema from '../../../../../hooks/schemas/create
 import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import useIPFSClient from '../../../../../providers/App/hooks/useIPFSClient';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   CreateProposalTemplateForm,
   CreateProposalTemplateFormState,
@@ -49,6 +50,7 @@ export default function CreateProposalTemplatePage() {
   const {
     node: { daoAddress, safe },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
 
   const { prepareProposalTemplateProposal } = useCreateProposalTemplate();
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
@@ -59,7 +61,7 @@ export default function CreateProposalTemplatePage() {
   const successCallback = () => {
     if (daoAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      navigate(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
     }
   };
 
@@ -118,6 +120,10 @@ export default function CreateProposalTemplatePage() {
       {(formikProps: FormikProps<CreateProposalTemplateForm>) => {
         const { handleSubmit } = formikProps;
 
+        if (!daoAddress) {
+          return;
+        }
+
         return (
           <form onSubmit={handleSubmit}>
             <Box>
@@ -126,7 +132,7 @@ export default function CreateProposalTemplatePage() {
                 breadcrumbs={[
                   {
                     terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
-                    path: DAO_ROUTES.proposalTemplates.relative(daoAddress),
+                    path: DAO_ROUTES.proposalTemplates.relative(addressPrefix, daoAddress),
                   },
                   {
                     terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
@@ -138,7 +144,7 @@ export default function CreateProposalTemplatePage() {
                 buttonClick={() =>
                   navigate(
                     daoAddress
-                      ? DAO_ROUTES.proposalTemplates.relative(daoAddress)
+                      ? DAO_ROUTES.proposalTemplates.relative(addressPrefix, daoAddress)
                       : BASE_ROUTES.landing,
                   )
                 }

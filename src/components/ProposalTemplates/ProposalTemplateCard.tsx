@@ -8,6 +8,7 @@ import useRemoveProposalTemplate from '../../hooks/DAO/proposal/useRemoveProposa
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../types/createProposalTemplate';
 import ContentBox from '../ui/containers/ContentBox';
 import { OptionMenu } from '../ui/menus/OptionMenu';
@@ -29,6 +30,7 @@ export default function ProposalTemplateCard({
   const {
     node: { safe, daoAddress },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
 
   const { prepareRemoveProposalTemplateProposal } = useRemoveProposalTemplate();
   const { submitProposal } = useSubmitProposal();
@@ -46,9 +48,9 @@ export default function ProposalTemplateCard({
   const successCallback = useCallback(() => {
     if (daoAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      navigate(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
     }
-  }, [navigate, daoAddress]);
+  }, [navigate, daoAddress, addressPrefix]);
 
   const nonce = safe?.nonce;
   const handleRemoveTemplate = useCallback(async () => {

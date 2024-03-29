@@ -24,7 +24,7 @@ export const useCreateSubDAOProposal = () => {
     (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
       nonce: number | undefined,
-      successCallback: (daoAddress: string) => void,
+      successCallback: (addressPrefix: string, daoAddress: string) => void,
     ) => {
       const propose = async () => {
         if (!baseContracts || !daoAddress) {

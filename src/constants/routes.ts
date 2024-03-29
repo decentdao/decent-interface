@@ -3,7 +3,10 @@ export const BASE_ROUTES = {
   create: '/create',
 };
 
-type RouteInfo = { relative: (...args: any) => string; path: string };
+type RouteInfo = {
+  relative: (addressPrefix: string, daoAddress: string, ...args: string[]) => string;
+  path: string;
+};
 type RouteIndex = { [key: string]: RouteInfo };
 export interface DAORoutes extends RouteIndex {
   dao: RouteInfo;
@@ -22,53 +25,63 @@ export interface DAORoutes extends RouteIndex {
 
 export const DAO_ROUTES: DAORoutes = {
   dao: {
-    relative: (daoAddress: string) => `/home?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/home?dao=${addressPrefix}:${daoAddress}`,
     path: '*',
   },
   newSubDao: {
-    relative: (daoAddress: string) => `/new?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/new?dao=${addressPrefix}:${daoAddress}`,
     path: 'new',
   },
   modifyGovernance: {
-    relative: (daoAddress: string) => `/edit/governance?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/edit/governance?dao=${addressPrefix}:${daoAddress}`,
     path: 'edit/governance',
   },
   hierarchy: {
-    relative: (daoAddress: string) => `/hierarchy?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/hierarchy?dao=${addressPrefix}:${daoAddress}`,
     path: 'hierarchy',
   },
   treasury: {
-    relative: (daoAddress: string) => `/treasury?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/treasury?dao=${addressPrefix}:${daoAddress}`,
     path: 'treasury',
   },
   proposals: {
-    relative: (daoAddress: string) => `/proposals?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/proposals?dao=${addressPrefix}:${daoAddress}`,
     path: 'proposals',
   },
   proposal: {
-    relative: (daoAddress: string, proposalId: string) =>
-      `/proposals/${proposalId}?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string, proposalId: string) =>
+      `/proposals/${proposalId}?dao=${addressPrefix}:${daoAddress}`,
     path: 'proposals/:proposalId',
   },
   proposalNew: {
-    relative: (daoAddress: string) => `/proposals/new?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/proposals/new?dao=${addressPrefix}:${daoAddress}`,
     path: 'proposals/new',
   },
   settings: {
-    relative: (daoAddress: string) => `/settings?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/settings?dao=${addressPrefix}:${daoAddress}`,
     path: 'settings',
   },
   proposalTemplates: {
-    relative: (daoAddress: string) => `/proposal-templates?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/proposal-templates?dao=${addressPrefix}:${daoAddress}`,
     path: 'proposal-templates',
   },
   proposalTemplate: {
-    relative: (daoAddress: string, proposalTemplateKey: string) =>
-      `/proposal-templates/${proposalTemplateKey}?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string, proposalTemplateKey: string) =>
+      `/proposal-templates/${proposalTemplateKey}?dao=${addressPrefix}:${daoAddress}`,
     path: 'proposal-templates/:proposalTemplateKey',
   },
   proposalTemplateNew: {
-    relative: (daoAddress: string) => `/proposal-templates/new?dao=${daoAddress}`,
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/proposal-templates/new?dao=${addressPrefix}:${daoAddress}`,
     path: 'proposal-templates/new',
   },
 };

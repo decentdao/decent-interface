@@ -31,6 +31,7 @@ export const mainnetConfig: NetworkConfig = {
   etherscanAPIBaseUrl: 'https://api.etherscan.io',
   chainId: CHAIN_ID,
   name: mainnet.name,
+  addressPrefix: 'eth',
   color: 'blue.400',
   nativeTokenSymbol: mainnet.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',

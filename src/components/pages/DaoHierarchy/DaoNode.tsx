@@ -69,7 +69,7 @@ export function DaoNode({
         } else if (errorNode.error === 'errorFailedSearch') {
           setNode({
             daoName: null,
-            daoAddress: daoAddress,
+            daoAddress,
             safe: null,
             fractalModules: [],
             nodeHierarchy: {

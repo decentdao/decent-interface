@@ -17,98 +17,100 @@ import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
 import SettingsPage from './pages/daos/[daoAddress]/settings';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 
-export const router = createBrowserRouter([
-  {
-    path: '/',
-    element: (
-      // We're placing ModalProvider here instead of src/providers/Providers.tsx due to the need of having router context
-      // within underlying modals. Otherwise - trying to invoke routing-related hooks would lead to crash.
-      // Not the best place to have this provider here but also more reasonalbe than putting that into <Layout />
-      <ModalProvider>
-        <Layout />
-      </ModalProvider>
-    ),
-    children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-      {
-        path: 'create',
-        element: <DaoCreatePage />,
-      },
-      {
-        path: '/',
-        element: <DAOController />,
-        children: [
-          {
-            path: 'home',
-            element: <DaoDashboardPage />,
-          },
-          {
-            path: 'edit/governance',
-            element: <ModifyGovernancePage />,
-          },
-          {
-            path: 'hierarchy',
-            element: <HierarchyPage />,
-          },
-          {
-            path: 'new',
-            element: <SubDaoCreate />,
-          },
-          {
-            path: 'proposal-templates',
-            children: [
-              {
-                index: true,
-                element: <ProposalTemplatesPage />,
-              },
-              {
-                path: 'new',
-                element: <CreateProposalTemplatePage />,
-              },
-            ],
-          },
-          {
-            path: 'proposals',
-            children: [
-              {
-                index: true,
-                element: <ProposalsPage />,
-              },
-              {
-                path: ':proposalId',
-                element: <ProposalDetailsPage />,
-              },
-              {
-                path: 'new',
-                element: <ProposalCreatePage />,
-              },
-            ],
-          },
-          {
-            path: 'settings',
-            element: <SettingsPage />,
-          },
-          {
-            path: 'treasury',
-            element: <Treasury />,
-          },
-        ],
-      },
-      {
-        // this exists to keep old links working
-        // /daos/0x0123/* will redirect to /home?dao=0x0123
-        path: 'daos/:daoAddress/*',
-        loader: ({ params: { daoAddress } }) => redirect(`/home?dao=${daoAddress}`),
-      },
-      {
-        path: '*', // 404
-        element: <FourOhFourPage />,
-      },
-    ],
-  },
-]);
+export const router = (addressPrefix: string) =>
+  createBrowserRouter([
+    {
+      path: '/',
+      element: (
+        // We're placing ModalProvider here instead of src/providers/Providers.tsx due to the need of having router context
+        // within underlying modals. Otherwise - trying to invoke routing-related hooks would lead to crash.
+        // Not the best place to have this provider here but also more reasonalbe than putting that into <Layout />
+        <ModalProvider>
+          <Layout />
+        </ModalProvider>
+      ),
+      children: [
+        {
+          index: true,
+          element: <HomePage />,
+        },
+        {
+          path: 'create',
+          element: <DaoCreatePage />,
+        },
+        {
+          path: '/',
+          element: <DAOController />,
+          children: [
+            {
+              path: 'home',
+              element: <DaoDashboardPage />,
+            },
+            {
+              path: 'edit/governance',
+              element: <ModifyGovernancePage />,
+            },
+            {
+              path: 'hierarchy',
+              element: <HierarchyPage />,
+            },
+            {
+              path: 'new',
+              element: <SubDaoCreate />,
+            },
+            {
+              path: 'proposal-templates',
+              children: [
+                {
+                  index: true,
+                  element: <ProposalTemplatesPage />,
+                },
+                {
+                  path: 'new',
+                  element: <CreateProposalTemplatePage />,
+                },
+              ],
+            },
+            {
+              path: 'proposals',
+              children: [
+                {
+                  index: true,
+                  element: <ProposalsPage />,
+                },
+                {
+                  path: ':proposalId',
+                  element: <ProposalDetailsPage />,
+                },
+                {
+                  path: 'new',
+                  element: <ProposalCreatePage />,
+                },
+              ],
+            },
+            {
+              path: 'settings',
+              element: <SettingsPage />,
+            },
+            {
+              path: 'treasury',
+              element: <Treasury />,
+            },
+          ],
+        },
+        {
+          // this exists to keep old links working
+          // /daos/0x0123/* will redirect to /home?dao=0x0123
+          path: 'daos/:daoAddress/*',
+          loader: ({ params: { daoAddress } }) =>
+            redirect(`/home?dao=${addressPrefix}:${daoAddress}`),
+        },
+        {
+          path: '*', // 404
+          element: <FourOhFourPage />,
+        },
+      ],
+    },
+  ]);
 
 export default router;

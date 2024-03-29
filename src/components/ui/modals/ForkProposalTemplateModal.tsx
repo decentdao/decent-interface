@@ -30,7 +30,7 @@ export default function ForkProposalTemplateModal({
   const { t } = useTranslation('proposalTemplate');
   const navigate = useNavigate();
   const signerOrProvider = useSignerOrProvider();
-  const { name } = useNetworkConfig();
+  const { name, addressPrefix } = useNetworkConfig();
   const {
     node: { proposalTemplatesHash },
   } = useFractal();
@@ -76,6 +76,7 @@ export default function ForkProposalTemplateModal({
   const handleSubmit = () => {
     navigate(
       `${DAO_ROUTES.proposalTemplateNew.relative(
+        addressPrefix,
         targetDAOAddress,
       )}?templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`,
     );

@@ -14,10 +14,18 @@ import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
 
-export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
+export const useFractalNode = (
+  skip: boolean,
+  {
+    addressPrefix,
+    daoAddress,
+  }: {
+    addressPrefix?: string;
+    daoAddress?: string;
+  },
+) => {
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
-  const [nodeLoading, setNodeLoading] = useState<boolean>(true);
   const [errorLoading, setErrorLoading] = useState<boolean>(false);
 
   const { action } = useFractal();
@@ -76,64 +84,64 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
     pollInterval: ONE_MINUTE,
   });
 
-  const fetchSafeInfo = useCallback(async () => {
-    if (daoAddress && safeAPI) {
-      const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(daoAddress));
-      return safeInfo;
-    }
-  }, [safeAPI, daoAddress]);
-
-  const setDAO = useCallback(
-    async (_chainId: number, _daoAddress: string) => {
-      setNodeLoading(true);
-      setErrorLoading(false);
-      if (utils.isAddress(_daoAddress) && safeAPI) {
-        try {
-          const safeInfo = await requestWithRetries(fetchSafeInfo, 5);
-          if (!safeInfo) {
-            currentValidSafe.current = undefined;
-            action.resetDAO();
-            setErrorLoading(true);
-          } else {
-            action.dispatch({
-              type: NodeAction.SET_FRACTAL_MODULES,
-              payload: await lookupModules(safeInfo.modules),
-            });
-            action.dispatch({
-              type: NodeAction.SET_SAFE_INFO,
-              payload: safeInfo,
-            });
-            setErrorLoading(false);
-          }
-        } catch (e) {
-          // network error
-          currentValidSafe.current = undefined;
-          action.resetDAO();
-          setErrorLoading(true);
-        }
-      } else {
-        // invalid address
-        currentValidSafe.current = undefined;
-        action.resetDAO();
-        setErrorLoading(true);
-      }
-      setNodeLoading(false);
+  const reset = useCallback(
+    ({ error }: { error: boolean }) => {
+      currentValidSafe.current = undefined;
+      action.resetDAO();
+      setErrorLoading(error);
     },
-    [action, safeAPI, lookupModules, fetchSafeInfo, requestWithRetries],
+    [action],
   );
 
-  const { chainId } = useNetworkConfig();
-  useEffect(() => {
-    if (daoAddress && chainId + daoAddress !== currentValidSafe.current) {
-      setNodeLoading(true);
-      setDAO(chainId, daoAddress);
-      currentValidSafe.current = chainId + daoAddress;
-    }
-    if (!daoAddress) {
-      currentValidSafe.current = undefined;
-      setNodeLoading(false);
-    }
-  }, [daoAddress, setDAO, currentValidSafe, chainId]);
+  const setDAO = useCallback(
+    async (_addressPrefix: string, _daoAddress: string) => {
+      currentValidSafe.current = _addressPrefix + _daoAddress;
+      setErrorLoading(false);
 
-  return { nodeLoading, errorLoading };
+      let safeInfo;
+
+      try {
+        if (!safeAPI) throw new Error('SafeAPI not set');
+
+        safeInfo = await requestWithRetries(
+          () => safeAPI.getSafeInfo(utils.getAddress(_daoAddress)),
+          5,
+        );
+      } catch (e) {
+        reset({ error: true });
+        return;
+      }
+
+      if (!safeInfo) {
+        reset({ error: true });
+        return;
+      }
+
+      // if here, we have a valid Safe!
+
+      action.dispatch({
+        type: NodeAction.SET_FRACTAL_MODULES,
+        payload: await lookupModules(safeInfo.modules),
+      });
+
+      action.dispatch({
+        type: NodeAction.SET_SAFE_INFO,
+        payload: safeInfo,
+      });
+    },
+    [action, lookupModules, requestWithRetries, reset, safeAPI],
+  );
+
+  useEffect(() => {
+    if (skip || addressPrefix === undefined || daoAddress === undefined) {
+      reset({ error: false });
+      return;
+    }
+
+    if (addressPrefix + daoAddress !== currentValidSafe.current) {
+      setDAO(addressPrefix, daoAddress);
+    }
+  }, [addressPrefix, daoAddress, setDAO, reset, skip]);
+
+  return { errorLoading };
 };

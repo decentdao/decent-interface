@@ -1,10 +1,12 @@
 import { Box, MenuList } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Favorite } from './Favorite';
 
 export function FavoritesList() {
   const { favoritesList } = useAccountFavorites();
+  const { addressPrefix } = useNetworkConfig();
 
   const { t } = useTranslation('dashboard');
   return (
@@ -45,6 +47,7 @@ export function FavoritesList() {
             {favoritesList.map(favorite => (
               <Favorite
                 key={favorite}
+                network={addressPrefix}
                 address={favorite}
               />
             ))}
