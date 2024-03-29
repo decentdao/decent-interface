@@ -103,7 +103,6 @@ export const useFractalNode = ({
       if (_connectedNetwork !== _daoNetwork) {
         currentValidSafe.current = undefined;
         action.resetDAO();
-        setErrorLoading(true);
         setWrongNetwork(true);
       } else if (utils.isAddress(_daoAddress) && safeAPI) {
         try {
