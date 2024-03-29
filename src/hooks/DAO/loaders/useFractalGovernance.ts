@@ -18,11 +18,11 @@ export const useFractalGovernance = () => {
   const loadKey = useRef<string>();
 
   const {
-    node: { daoAddress, nodeHierarchy },
+    node: { daoAddress },
     governanceContracts,
     action,
-    guardContracts,
     governance: { type },
+    guardContracts: { isGuardLoaded },
   } = useFractal();
 
   const loadDAOProposals = useDAOProposals();
@@ -68,7 +68,7 @@ export const useFractalGovernance = () => {
     },
     context: { chainName: subgraphChainName },
     pollInterval: ONE_MINUTE,
-    skip: !daoAddress,
+    skip: !daoAddress || !type,
   });
 
   useEffect(() => {
@@ -80,14 +80,7 @@ export const useFractalGovernance = () => {
       ozLinearVotingContractAddress,
     } = governanceContracts;
 
-    const newLoadKey =
-      (azoriusContractAddress ? '1' : '0') +
-      nodeHierarchy.parentAddress +
-      !!guardContracts.freezeGuardContract;
-
-    if (isLoaded && newLoadKey !== loadKey.current) {
-      loadKey.current = newLoadKey;
-
+    if (isLoaded && !type) {
       if (azoriusContractAddress) {
         if (ozLinearVotingContractAddress) {
           action.dispatch({
@@ -115,30 +108,26 @@ export const useFractalGovernance = () => {
         });
       }
     }
-    if (!daoAddress) {
-      loadKey.current = undefined;
-    }
   }, [
     governanceContracts,
-    loadDAOProposals,
     loadUnderlyingERC20Token,
     loadERC20Strategy,
     loadERC20Token,
     loadLockedVotesToken,
-    nodeHierarchy.parentAddress,
-    guardContracts.freezeGuardContract,
     loadERC721Strategy,
     loadERC721Tokens,
     action,
-    daoAddress,
+    type,
   ]);
 
   useEffect(() => {
-    if (type) {
-      // Since previous hook is the only place where governance type is set - we don't need any additional check
-      // But it's better to be sure that governance type is defined before calling for proposals loading
+    const newLoadKey = daoAddress || '0x';
+    if (type && daoAddress && daoAddress !== loadKey.current && isGuardLoaded) {
+      loadKey.current = newLoadKey;
       loadDAOProposals();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [type]);
+    if (!type || !daoAddress) {
+      loadKey.current = undefined;
+    }
+  }, [type, loadDAOProposals, isGuardLoaded, daoAddress]);
 };

@@ -213,10 +213,10 @@ export default function useUserERC721VotingTokens(
   }, [getUserERC721VotingTokens, proposalId, safeAddress]);
 
   useEffect(() => {
-    if (loadOnMount) {
+    if (loadOnMount && erc721LinearVotingContractAddress) {
       loadUserERC721VotingTokens();
     }
-  }, [loadUserERC721VotingTokens, loadOnMount]);
+  }, [loadUserERC721VotingTokens, loadOnMount, erc721LinearVotingContractAddress]);
 
   return {
     totalVotingTokenIds,

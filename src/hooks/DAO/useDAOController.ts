@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useERC20Claim } from './loaders/governance/useERC20Claim';
@@ -11,9 +11,9 @@ import { useFractalTreasury } from './loaders/useFractalTreasury';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
 
 export default function useDAOController() {
+  const currentDAOAddress = useRef<string>();
   const [searchParams] = useSearchParams();
   const daoAddress = searchParams.get('dao');
-
   const {
     node: {
       nodeHierarchy: { parentAddress },
@@ -21,12 +21,17 @@ export default function useDAOController() {
     action,
   } = useFractal();
   useEffect(() => {
-    if (!daoAddress) {
-      action.resetDAO();
+    if (daoAddress && !currentDAOAddress.current) {
+      action.resetDAO().then(() => {
+        currentDAOAddress.current = daoAddress;
+      });
+    }
+    if (!daoAddress || daoAddress !== currentDAOAddress.current) {
+      currentDAOAddress.current = undefined;
     }
   }, [action, daoAddress]);
 
-  const { nodeLoading, errorLoading } = useFractalNode({ daoAddress: daoAddress || undefined });
+  const { nodeLoading, errorLoading } = useFractalNode({ daoAddress: currentDAOAddress.current });
   useGovernanceContracts();
   useFractalGuardContracts({});
   useFractalFreeze({ parentSafeAddress: parentAddress });

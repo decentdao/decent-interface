@@ -22,7 +22,7 @@ export function ParentLink() {
     <Link
       color="gold.500"
       _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
-      href={DAO_ROUTES.dao.relative(nodeHierarchy.parentAddress)}
+      to={DAO_ROUTES.dao.relative(nodeHierarchy.parentAddress)}
       onClick={action.resetDAO}
       marginBottom="1rem"
       as={RouterLink}

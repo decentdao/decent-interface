@@ -14,6 +14,7 @@ import { useActivities } from './hooks/useActivities';
 
 export function Activities() {
   const {
+    guardContracts: { freezeVotingContractAddress },
     guard,
     governance: { type },
   } = useFractal();
@@ -37,7 +38,7 @@ export function Activities() {
         flexDirection="column"
         gap="1rem"
       >
-        {guard.freezeProposalVoteCount?.gt(0) && <ActivityFreeze />}
+        {freezeVotingContractAddress && guard.freezeProposalVoteCount?.gt(0) && <ActivityFreeze />}
         {!type ? (
           <InfoBoxLoader />
         ) : sortedActivities.length ? (

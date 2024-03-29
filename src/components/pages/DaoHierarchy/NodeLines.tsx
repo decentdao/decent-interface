@@ -25,7 +25,6 @@ export function NodeLineVertical({ isCurrentDAO, trueDepth = 0, lastChildDescend
       position="absolute"
       h={`calc(100% - ${NODE_HEIGHT_REM + NODE_MARGIN_TOP_REM}rem)`}
       w="100%"
-      zIndex={-1 - trueDepth}
       bottom={0}
       overflow="hidden"
     >
