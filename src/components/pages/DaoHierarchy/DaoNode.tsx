@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalNode, WithError } from '../../../types';
 import { DAONodeRow } from '../../ui/cards/DAONodeRow';
 import { NodeLineVertical } from './NodeLines';
@@ -35,7 +34,6 @@ export function DaoNode({
   const {
     node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
   } = useFractal();
-  const { addressPrefix } = useNetworkConfig();
 
   const isCurrentDAO = daoAddress === currentDAOAddress;
 
@@ -82,7 +80,7 @@ export function DaoNode({
         }
       });
     }
-  }, [loadDao, daoAddress, fractalNode, depth, addressPrefix]);
+  }, [loadDao, daoAddress, fractalNode, depth]);
 
   return (
     <Box position="relative">
