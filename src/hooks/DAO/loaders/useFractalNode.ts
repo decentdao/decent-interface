@@ -14,7 +14,13 @@ import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
 
-export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
+export const useFractalNode = ({
+  daoAddress,
+  daoNetwork,
+}: {
+  daoAddress: string;
+  daoNetwork: string;
+}) => {
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
   const currentValidSafe = useRef<string>();
   const [nodeLoading, setNodeLoading] = useState<boolean>(true);
@@ -27,37 +33,41 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   const lookupModules = useFractalModules();
   const { requestWithRetries } = useAsyncRetry();
 
-  const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
-    if (!result.data) {
+  const formatDAOQuery = useCallback(
+    (result: { data?: DAOQueryQuery }, _daoAddress: string, _daoNetwork: string) => {
+      if (!result.data) {
+        return;
+      }
+      const { daos } = result.data;
+      const dao = daos[0];
+      if (dao) {
+        const { parentAddress, name, hierarchy, snapshotURL, proposalTemplatesHash } = dao;
+
+        const currentNode: Node = {
+          nodeHierarchy: {
+            parentAddress: parentAddress as string,
+            childNodes: mapChildNodes(hierarchy),
+          },
+          daoName: name as string,
+          daoAddress: utils.getAddress(_daoAddress as string),
+          daoNetwork: _daoNetwork,
+          daoSnapshotURL: snapshotURL as string,
+          proposalTemplatesHash: proposalTemplatesHash as string,
+        };
+        return currentNode;
+      }
       return;
-    }
-    const { daos } = result.data;
-    const dao = daos[0];
-    if (dao) {
-      const { parentAddress, name, hierarchy, snapshotURL, proposalTemplatesHash } = dao;
+    },
+    [],
+  );
 
-      const currentNode: Node = {
-        nodeHierarchy: {
-          parentAddress: parentAddress as string,
-          childNodes: mapChildNodes(hierarchy),
-        },
-        daoName: name as string,
-        daoAddress: utils.getAddress(_daoAddress as string),
-        daoSnapshotURL: snapshotURL as string,
-        proposalTemplatesHash: proposalTemplatesHash as string,
-      };
-      return currentNode;
-    }
-    return;
-  }, []);
-
-  const { subgraphChainName } = useNetworkConfig();
+  const { subgraphChainName, addressPrefix } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },
     onCompleted: async data => {
-      if (!daoAddress) return;
-      const graphNodeInfo = formatDAOQuery({ data }, daoAddress);
+      if (!daoAddress || !daoNetwork) return;
+      const graphNodeInfo = formatDAOQuery({ data }, daoAddress, daoNetwork);
       const daoName = await getDaoName(utils.getAddress(daoAddress), graphNodeInfo?.daoName);
 
       if (!!graphNodeInfo) {
@@ -84,10 +94,15 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
   }, [safeAPI, daoAddress]);
 
   const setDAO = useCallback(
-    async (_chainId: number, _daoAddress: string) => {
+    async (_daoNetwork: string, _daoAddress: string, _connectedNetwork: string) => {
       setNodeLoading(true);
       setErrorLoading(false);
-      if (utils.isAddress(_daoAddress) && safeAPI) {
+
+      if (_connectedNetwork !== _daoNetwork) {
+        currentValidSafe.current = undefined;
+        action.resetDAO();
+        setErrorLoading(true);
+      } else if (utils.isAddress(_daoAddress) && safeAPI) {
         try {
           const safeInfo = await requestWithRetries(fetchSafeInfo, 5);
           if (!safeInfo) {
@@ -95,7 +110,7 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
             action.resetDAO();
             setErrorLoading(true);
           } else {
-            currentValidSafe.current = _chainId + _daoAddress;
+            currentValidSafe.current = _daoNetwork + _daoAddress;
             action.dispatch({
               type: NodeAction.SET_FRACTAL_MODULES,
               payload: await lookupModules(safeInfo.modules),
@@ -120,20 +135,22 @@ export const useFractalNode = ({ daoAddress }: { daoAddress?: string }) => {
       }
       setNodeLoading(false);
     },
-    [action, safeAPI, lookupModules, fetchSafeInfo, requestWithRetries],
+    [safeAPI, action, requestWithRetries, fetchSafeInfo, lookupModules],
   );
 
-  const { chainId } = useNetworkConfig();
   useEffect(() => {
-    if (daoAddress && chainId + daoAddress !== currentValidSafe.current) {
+    if (
+      (daoAddress && daoNetwork && daoNetwork + daoAddress !== currentValidSafe.current) ||
+      daoNetwork !== addressPrefix
+    ) {
       setNodeLoading(true);
-      setDAO(chainId, daoAddress);
+      setDAO(daoNetwork, daoAddress, addressPrefix);
     }
-    if (!daoAddress) {
+    if (!daoAddress || !daoNetwork) {
       currentValidSafe.current = undefined;
       setNodeLoading(false);
     }
-  }, [daoAddress, setDAO, currentValidSafe, chainId]);
+  }, [daoAddress, daoNetwork, setDAO, currentValidSafe, addressPrefix]);
 
   return { nodeLoading, errorLoading };
 };

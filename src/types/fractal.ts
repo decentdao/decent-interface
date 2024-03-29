@@ -234,6 +234,7 @@ export interface FractalGovernanceContracts {
 export interface FractalNode {
   daoName: string | null;
   daoAddress: string | null;
+  daoNetwork: string | null;
   safe: SafeInfoResponseWithGuard | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;

@@ -20,10 +20,12 @@ import { NodeLineVertical } from './NodeLines';
 export function DaoNode({
   parentAddress,
   daoAddress,
+  daoNetwork,
   depth,
 }: {
   parentAddress?: string;
   daoAddress?: string;
+  daoNetwork?: string;
   depth: number;
 }) {
   const [fractalNode, setNode] = useState<FractalNode>();
@@ -38,8 +40,8 @@ export function DaoNode({
   const isCurrentDAO = daoAddress === currentDAOAddress;
 
   useEffect(() => {
-    if (daoAddress && !fractalNode) {
-      loadDao(utils.getAddress(daoAddress)).then(_node => {
+    if (daoAddress && daoNetwork && !fractalNode) {
+      loadDao(utils.getAddress(daoAddress), daoNetwork).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
           // calculates the total number of descendants below the given node
@@ -69,7 +71,8 @@ export function DaoNode({
         } else if (errorNode.error === 'errorFailedSearch') {
           setNode({
             daoName: null,
-            daoAddress: daoAddress,
+            daoAddress,
+            daoNetwork,
             safe: null,
             fractalModules: [],
             nodeHierarchy: {
@@ -80,7 +83,7 @@ export function DaoNode({
         }
       });
     }
-  }, [loadDao, daoAddress, fractalNode, depth]);
+  }, [loadDao, daoAddress, fractalNode, depth, daoNetwork]);
 
   return (
     <Box position="relative">
@@ -106,6 +109,7 @@ export function DaoNode({
           <DaoNode
             parentAddress={daoAddress}
             daoAddress={childNode.daoAddress || undefined}
+            daoNetwork={daoNetwork}
             depth={depth + 1}
           />
         </Box>
