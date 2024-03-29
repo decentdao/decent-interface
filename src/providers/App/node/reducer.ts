@@ -13,6 +13,8 @@ export const initialNodeState: FractalNode = {
   safe: null,
   fractalModules: [],
   nodeHierarchy: initialNodeHierarchyState,
+  isHierarchyLoaded: false,
+  isModulesLoaded: false,
 };
 
 export function nodeReducer(state: FractalNode, action: NodeActions) {
@@ -25,7 +27,7 @@ export function nodeReducer(state: FractalNode, action: NodeActions) {
       };
     }
     case NodeAction.SET_DAO_INFO: {
-      return { ...state, ...action.payload };
+      return { ...state, ...action.payload, isHierarchyLoaded: true };
     }
     case NodeAction.SET_FRACTAL_MODULES: {
       return { ...state, fractalModules: action.payload, isModulesLoaded: true };

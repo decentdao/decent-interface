@@ -26,7 +26,7 @@ export function ModulesContainer() {
   const { t } = useTranslation(['settings']);
   const {
     node: { fractalModules, isModulesLoaded, safe },
-    guardContracts: { freezeGuardContract, freezeVotingContract },
+    guardContracts: { freezeGuardContractAddress, freezeVotingContractAddress },
   } = useFractal();
 
   return (
@@ -91,7 +91,9 @@ export function ModulesContainer() {
           <Box>
             <DisplayAddress address={safe.guard}>
               {safe.guard}
-              {!!freezeGuardContract || !!freezeVotingContract ? ' (Freeze Guard)' : ''}
+              {!!freezeGuardContractAddress || !!freezeVotingContractAddress
+                ? ' (Freeze Guard)'
+                : ''}
             </DisplayAddress>
           </Box>
         ) : (

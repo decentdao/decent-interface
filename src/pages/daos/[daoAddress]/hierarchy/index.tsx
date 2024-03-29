@@ -8,11 +8,16 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function HierarchyPage() {
   const {
-    node: { daoAddress, daoName, nodeHierarchy },
+    node: {
+      daoAddress,
+      daoName,
+      nodeHierarchy: { parentAddress },
+      isHierarchyLoaded,
+    },
   } = useFractal();
   const { t } = useTranslation('breadcrumbs');
 
-  if (!daoAddress) {
+  if (!daoAddress || !isHierarchyLoaded) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />
@@ -35,7 +40,7 @@ export default function HierarchyPage() {
         ]}
       />
       <DaoNode
-        daoAddress={nodeHierarchy.parentAddress || daoAddress}
+        daoAddress={parentAddress || daoAddress}
         depth={0}
       />
     </div>

@@ -1,9 +1,5 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
-import {
-  ERC20FreezeVoting,
-  ERC721FreezeVoting,
-  MultisigFreezeVoting,
-} from '@fractal-framework/fractal-contracts';
+import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { BigNumber } from 'ethers';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -15,6 +11,7 @@ import {
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
+import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useMasterCopy } from '../../../../hooks/utils/useMasterCopy';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -59,8 +56,8 @@ export function ManageDAOMenu({
   const {
     node: { safe },
     governance: { type },
-    baseContracts,
   } = useFractal();
+  const baseContracts = useSafeContracts();
   const currentTime = BigNumber.from(useBlockTimestamp());
   const navigate = useNavigate();
   const safeAddress = fractalNode?.daoAddress;
@@ -126,49 +123,61 @@ export function ManageDAOMenu({
 
     loadGovernanceType();
   }, [fractalNode, safe, safeAddress, type, getZodiacModuleProxyMasterCopyData, baseContracts]);
-
   const { addressPrefix } = useNetworkConfig();
 
   const handleNavigateToSettings = useCallback(() => {
     if (safeAddress) {
-      navigate(DAO_ROUTES.settings.relative(addressPrefix, safeAddress));
+      navigate(DAO_ROUTES.settings.relative(addressPrefix, safeAddress), { replace: true });
     }
   }, [navigate, addressPrefix, safeAddress]);
 
   const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
-  const options = useMemo(() => {
-    const createSubDAOOption = {
-      optionKey: 'optionCreateSubDAO',
-      onClick: () => {
-        if (safeAddress) {
-          navigate(DAO_ROUTES.newSubDao.relative(addressPrefix, safeAddress));
-        }
-      },
-    };
-
-    const freezeOption = {
+  const freezeOption = useMemo(
+    () => ({
       optionKey: 'optionInitiateFreeze',
       onClick: () => {
-        const freezeVotingContract = guardContracts?.freezeVotingContract?.asSigner;
-        const freezeVotingType = guardContracts?.freezeVotingType;
+        const freezeVotingContract =
+          baseContracts!.freezeMultisigVotingMasterCopyContract.asSigner.attach(
+            guardContracts!.freezeVotingContractAddress!,
+          );
+        const freezeVotingType = guardContracts!.freezeVotingType;
         if (freezeVotingContract) {
           if (
             freezeVotingType === FreezeVotingType.MULTISIG ||
             freezeVotingType === FreezeVotingType.ERC20
           ) {
-            (freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting).castFreezeVote();
+            return (
+              freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting
+            ).castFreezeVote();
           } else if (freezeVotingType === FreezeVotingType.ERC721) {
             getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo => {
-              return (freezeVotingContract as ERC721FreezeVoting)[
-                'castFreezeVote(address[],uint256[])'
-              ](tokensInfo.totalVotingTokenAddresses, tokensInfo.totalVotingTokenIds);
+              const freezeERC721VotingContract =
+                baseContracts!.freezeERC721VotingMasterCopyContract.asSigner.attach(
+                  guardContracts!.freezeVotingContractAddress!,
+                );
+              return freezeERC721VotingContract!['castFreezeVote(address[],uint256[])'](
+                tokensInfo.totalVotingTokenAddresses,
+                tokensInfo.totalVotingTokenIds,
+              );
             });
           }
         }
       },
-    };
+    }),
+    [baseContracts, guardContracts, getUserERC721VotingTokens, parentAddress],
+  );
 
+  const options = useMemo(() => {
+    const createSubDAOOption = {
+      optionKey: 'optionCreateSubDAO',
+
+      onClick: () => {
+        if (safeAddress) {
+          navigate(DAO_ROUTES.newSubDao.relative(addressPrefix, safeAddress), { replace: true });
+        }
+      },
+    };
     const clawBackOption = {
       optionKey: 'optionInitiateClawback',
       onClick: handleClawBack,
@@ -235,16 +244,13 @@ export function ManageDAOMenu({
     currentTime,
     navigate,
     safeAddress,
-    parentAddress,
     governanceType,
-    guardContracts?.freezeVotingContract?.asSigner,
-    guardContracts?.freezeVotingType,
     handleClawBack,
     canUserCreateProposal,
     handleModifyGovernance,
     handleNavigateToSettings,
-    getUserERC721VotingTokens,
     addressPrefix,
+    freezeOption,
   ]);
 
   return (

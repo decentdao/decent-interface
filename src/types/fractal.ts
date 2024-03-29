@@ -238,11 +238,13 @@ export interface FractalNode {
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
   isModulesLoaded?: boolean;
+  isHierarchyLoaded?: boolean;
   daoSnapshotURL?: string;
   proposalTemplatesHash?: string;
 }
 
-export interface Node extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded'> {}
+export interface Node
+  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {}
 
 export interface FractalModuleData {
   moduleContract: Azorius | FractalModule | undefined;
@@ -255,20 +257,12 @@ export enum FractalModuleType {
   FRACTAL,
   UNKNOWN,
 }
-// @todo updates Fractal Guard Contract to just store addresses in the store
-// export interface FractalGuardContracts {
-//   freezeGuardContractAddress?: string;
-//   freezeVotingContractAddress?: string;
-//   freezeGuardType: FreezeGuardType | null;
-//   freezeVotingType: FreezeVotingType | null;
-// }
 export interface FractalGuardContracts {
-  freezeGuardContract?: ContractConnection<MultisigFreezeGuard | AzoriusFreezeGuard>;
-  freezeVotingContract?: ContractConnection<
-    ERC20FreezeVoting | ERC721FreezeVoting | MultisigFreezeVoting
-  >;
+  freezeGuardContractAddress?: string;
+  freezeVotingContractAddress?: string;
   freezeGuardType: FreezeGuardType | null;
   freezeVotingType: FreezeVotingType | null;
+  isGuardLoaded?: boolean;
 }
 
 export interface FreezeGuard {
