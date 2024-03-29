@@ -43,12 +43,12 @@ export const polygonConfig: NetworkConfig = {
     fractalModuleMasterCopy: FractalModule.address,
     fractalRegistry: FractalRegistry.address,
     votesERC20MasterCopy: VotesERC20.address,
-    linearVotingERC721MasterCopy: '', // TODO - Add actual address once contract is deployed on mainnet
+    linearVotingERC721MasterCopy: '', // TODO - Add actual address once contract is deployed on polygon
     claimingMasterCopy: ERC20Claim.address,
     azoriusFreezeGuardMasterCopy: AzoriusFreezeGuard.address,
     multisigFreezeVotingMasterCopy: MultisigFreezeVoting.address,
     erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
-    erc721FreezeVotingMasterCopy: '', // TODO - Add actual address once contract is deployed on mainnet
+    erc721FreezeVotingMasterCopy: '', // TODO - Add actual address once contract is deployed on polygon
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
