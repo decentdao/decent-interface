@@ -29,7 +29,7 @@ const SAFE_VERSION = '1.3.0';
 export const mainnetConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
   etherscanBaseURL: 'https://etherscan.io',
-  etherscanAPIUrl: `https://api.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_MAINNET_API_KEY}&`,
+  etherscanAPIUrl: `https://api.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_MAINNET_API_KEY}`,
   chainId: CHAIN_ID,
   name: mainnet.name,
   addressPrefix: 'eth',

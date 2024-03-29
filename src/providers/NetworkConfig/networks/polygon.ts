@@ -29,7 +29,7 @@ const SAFE_VERSION = '1.3.0';
 export const polygonConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',
-  etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_POLYGON_API_KEY}&`,
+  etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
   chainId: CHAIN_ID,
   name: polygon.name,
   addressPrefix: 'matic',
