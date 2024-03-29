@@ -45,22 +45,22 @@ function PageHeader({
   children,
 }: IPageHeader) {
   const {
-    node: { daoAddress, daoName },
+    node: { daoAddress, daoName, daoNetwork },
   } = useFractal();
 
   const [links, setLinks] = useState([...breadcrumbs]);
 
   useEffect(() => {
-    if (hasDAOLink) {
+    if (hasDAOLink && daoNetwork && daoAddress) {
       setLinks([
         {
           terminus: daoName || '',
-          path: DAO_ROUTES.dao.relative(daoAddress),
+          path: DAO_ROUTES.dao.relative(daoNetwork, daoAddress),
         },
         ...breadcrumbs,
       ]);
     }
-  }, [hasDAOLink, daoName, daoAddress, breadcrumbs]);
+  }, [hasDAOLink, daoName, daoAddress, breadcrumbs, daoNetwork]);
 
   return (
     <Box

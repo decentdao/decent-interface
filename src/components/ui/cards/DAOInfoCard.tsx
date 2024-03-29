@@ -46,7 +46,7 @@ export function DAOInfoCard({
   const { displayName } = useDisplayName(node?.daoAddress);
 
   // node hasn't loaded yet
-  if (!node || !node.daoAddress) {
+  if (!node || !node.daoAddress || !node.daoNetwork) {
     return (
       <Flex
         w="full"
@@ -77,7 +77,7 @@ export function DAOInfoCard({
           <Link
             as={RouterLink}
             pointerEvents={isCurrentDAO ? 'none' : undefined}
-            to={DAO_ROUTES.dao.relative(displayedAddress)}
+            to={DAO_ROUTES.dao.relative(node.daoNetwork, displayedAddress)}
             _hover={{ textDecoration: 'none' }}
             onClick={() => {
               // if we're not on the current DAO, reset
@@ -104,7 +104,7 @@ export function DAOInfoCard({
           />
           {childCount && childCount > 0 && (
             <Link
-              to={DAO_ROUTES.hierarchy.relative(displayedAddress)}
+              to={DAO_ROUTES.hierarchy.relative(node.daoNetwork, displayedAddress)}
               as={RouterLink}
             >
               <Box

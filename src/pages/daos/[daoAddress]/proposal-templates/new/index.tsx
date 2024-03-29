@@ -46,7 +46,7 @@ export default function CreateProposalTemplatePage() {
   );
 
   const {
-    node: { daoAddress, safe },
+    node: { daoAddress, safe, daoNetwork },
   } = useFractal();
 
   const { prepareProposalTemplateProposal } = useCreateProposalTemplate();
@@ -55,9 +55,9 @@ export default function CreateProposalTemplatePage() {
   const ipfsClient = useIPFSClient();
 
   const successCallback = () => {
-    if (daoAddress) {
+    if (daoAddress && daoNetwork) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      navigate(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(daoNetwork, daoAddress));
     }
   };
 
@@ -116,6 +116,10 @@ export default function CreateProposalTemplatePage() {
       {(formikProps: FormikProps<CreateProposalTemplateForm>) => {
         const { handleSubmit } = formikProps;
 
+        if (!daoAddress || !daoNetwork) {
+          return;
+        }
+
         return (
           <form onSubmit={handleSubmit}>
             <Box>
@@ -124,7 +128,7 @@ export default function CreateProposalTemplatePage() {
                 breadcrumbs={[
                   {
                     terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
-                    path: DAO_ROUTES.proposalTemplates.relative(daoAddress),
+                    path: DAO_ROUTES.proposalTemplates.relative(daoNetwork, daoAddress),
                   },
                   {
                     terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
@@ -135,8 +139,8 @@ export default function CreateProposalTemplatePage() {
                 buttonVariant="secondary"
                 buttonClick={() =>
                   navigate(
-                    daoAddress
-                      ? DAO_ROUTES.proposalTemplates.relative(daoAddress)
+                    daoAddress && daoNetwork
+                      ? DAO_ROUTES.proposalTemplates.relative(daoNetwork, daoAddress)
                       : BASE_ROUTES.landing,
                   )
                 }

@@ -12,7 +12,7 @@ import { BigNumberInput } from '../forms/BigNumberInput';
 
 export default function StakeModal({ close }: { close: () => void }) {
   const {
-    node: { daoAddress },
+    node: { daoAddress, daoNetwork },
     treasury: { assetsFungible },
   } = useFractal();
   const navigate = useNavigate();
@@ -31,8 +31,8 @@ export default function StakeModal({ close }: { close: () => void }) {
     if (inputAmount?.bigNumberValue) {
       await handleStake(inputAmount?.bigNumberValue);
       close();
-      if (daoAddress) {
-        navigate(DAO_ROUTES.proposals.relative(daoAddress));
+      if (daoNetwork && daoAddress) {
+        navigate(DAO_ROUTES.proposals.relative(daoNetwork, daoAddress));
       }
     }
   };

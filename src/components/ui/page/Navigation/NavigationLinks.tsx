@@ -16,17 +16,19 @@ import { NavigationExternalLink } from './NavigationExternalLink';
 import { NavigationLink } from './NavigationLink';
 
 export function NavigationLinks({
+  network,
   address,
   showDAOLinks,
   closeDrawer,
 }: {
+  network: string | null;
   showDAOLinks: boolean;
   address: string | null;
   closeDrawer?: () => void;
 }) {
   return (
     <>
-      {showDAOLinks && (
+      {showDAOLinks && network && address && (
         <>
           <Flex
             alignItems={{ base: 'flex-start', md: 'center' }}
@@ -36,35 +38,35 @@ export function NavigationLinks({
             my={8}
           >
             <NavigationLink
-              href={DAO_ROUTES.dao.relative(address)}
+              href={DAO_ROUTES.dao.relative(network, address)}
               labelKey="home"
               testId="navigation-daoHomeLink"
               Icon={Home}
               closeDrawer={closeDrawer}
             />
             <NavigationLink
-              href={DAO_ROUTES.hierarchy.relative(address)}
+              href={DAO_ROUTES.hierarchy.relative(network, address)}
               labelKey="nodes"
               testId="navigation-hierarchy"
               Icon={Tree}
               closeDrawer={closeDrawer}
             />
             <NavigationLink
-              href={DAO_ROUTES.proposals.relative(address)}
+              href={DAO_ROUTES.proposals.relative(network, address)}
               labelKey="proposals"
               testId="navigation-proposalsLink"
               Icon={Proposals}
               closeDrawer={closeDrawer}
             />
             <NavigationLink
-              href={DAO_ROUTES.treasury.relative(address)}
+              href={DAO_ROUTES.treasury.relative(network, address)}
               labelKey="treasury"
               testId="navigation-treasuryLink"
               Icon={Treasury}
               closeDrawer={closeDrawer}
             />
             <NavigationLink
-              href={DAO_ROUTES.proposalTemplates.relative(address)}
+              href={DAO_ROUTES.proposalTemplates.relative(network, address)}
               labelKey="proposalTemplates"
               testId="navigation-proposalTemplatesLink"
               Icon={Templates}

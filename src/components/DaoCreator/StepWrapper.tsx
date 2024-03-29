@@ -27,7 +27,7 @@ export function StepWrapper({
   shouldWrapChildren = true,
 }: IStepWrapper) {
   const {
-    node: { daoAddress },
+    node: { daoAddress, daoNetwork },
   } = useFractal();
   const { t } = useTranslation(['daoCreate']);
   const navigate = useNavigate();
@@ -64,7 +64,9 @@ export function StepWrapper({
           isButtonDisabled={isFormSubmitting}
           buttonClick={() =>
             navigate(
-              !isSubDAO || !daoAddress ? BASE_ROUTES.landing : DAO_ROUTES.dao.relative(daoAddress),
+              !isSubDAO || !daoAddress || !daoNetwork
+                ? BASE_ROUTES.landing
+                : DAO_ROUTES.dao.relative(daoNetwork, daoAddress),
             )
           }
         />

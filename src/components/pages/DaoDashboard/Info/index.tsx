@@ -12,7 +12,7 @@ import { ParentLink } from './ParentLink';
 
 export function Info() {
   const {
-    node: { daoAddress },
+    node: { daoAddress, daoNetwork },
   } = useFractal();
   const daoMetadata = useDAOMetadata();
 
@@ -135,18 +135,22 @@ export function Info() {
               pb={{ sm: PAD, md: NONE }}
               pt={{ sm: PAD, lg: NONE }}
             >
-              <InfoBox to={DAO_ROUTES.proposals.relative(daoAddress)}>
-                <InfoProposals />
-              </InfoBox>
+              {daoNetwork && daoAddress && (
+                <InfoBox to={DAO_ROUTES.proposals.relative(daoNetwork, daoAddress)}>
+                  <InfoProposals />
+                </InfoBox>
+              )}
             </Box>
             <Box
               width={{ base: '100%', md: '33.3%', lg: '23%', xl: '20%' }}
               ps={{ base: NONE, md: PAD }}
               pt={{ sm: PAD, lg: NONE }}
             >
-              <InfoBox to={DAO_ROUTES.treasury.relative(daoAddress)}>
-                <InfoTreasury />
-              </InfoBox>
+              {daoNetwork && daoAddress && (
+                <InfoBox to={DAO_ROUTES.treasury.relative(daoNetwork, daoAddress)}>
+                  <InfoTreasury />
+                </InfoBox>
+              )}
             </Box>
           </>
         )}

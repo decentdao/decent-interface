@@ -9,12 +9,12 @@ import { useFractal } from '../../../../providers/App/AppProvider';
  */
 export function ParentLink() {
   const {
-    node: { nodeHierarchy },
+    node: { nodeHierarchy, daoNetwork },
     action,
   } = useFractal();
   const { t } = useTranslation('breadcrumbs');
 
-  if (!nodeHierarchy.parentAddress) {
+  if (!nodeHierarchy.parentAddress || !daoNetwork) {
     return null;
   }
 
@@ -22,7 +22,7 @@ export function ParentLink() {
     <Link
       color="gold.500"
       _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
-      href={DAO_ROUTES.dao.relative(nodeHierarchy.parentAddress)}
+      href={DAO_ROUTES.dao.relative(daoNetwork, nodeHierarchy.parentAddress)}
       onClick={action.resetDAO}
       marginBottom="1rem"
       as={RouterLink}

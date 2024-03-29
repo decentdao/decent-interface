@@ -33,7 +33,7 @@ export default function ProposalTemplateModal({
   onClose,
 }: IProposalTemplateModalProps) {
   const {
-    node: { daoAddress, safe },
+    node: { daoAddress, safe, daoNetwork },
   } = useFractal();
 
   const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
@@ -78,8 +78,8 @@ export default function ProposalTemplateModal({
   };
 
   const successCallback = () => {
-    if (daoAddress) {
-      navigate(DAO_ROUTES.proposals.relative(daoAddress));
+    if (daoAddress && daoNetwork) {
+      navigate(DAO_ROUTES.proposals.relative(daoNetwork, daoAddress));
       onClose();
     }
   };

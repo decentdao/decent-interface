@@ -11,7 +11,7 @@ import ProposalTemplateCard from './ProposalTemplateCard';
 export default function ProposalTemplates() {
   const { t } = useTranslation('proposalTemplate');
   const {
-    node: { daoAddress },
+    node: { daoAddress, daoNetwork },
     governance: { proposalTemplates },
   } = useFractal();
   const { canUserCreateProposal } = useSubmitProposal();
@@ -36,8 +36,8 @@ export default function ProposalTemplates() {
         ))
       ) : (
         <EmptyBox emptyText={t('emptyProposalTemplates')}>
-          {canUserCreateProposal && (
-            <Link to={DAO_ROUTES.proposalTemplateNew.relative(daoAddress)}>
+          {canUserCreateProposal && daoNetwork && daoAddress && (
+            <Link to={DAO_ROUTES.proposalTemplateNew.relative(daoNetwork, daoAddress)}>
               <Button
                 variant="text"
                 textStyle="text-xl-mono-bold"

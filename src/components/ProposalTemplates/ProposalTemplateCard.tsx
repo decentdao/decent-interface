@@ -26,7 +26,7 @@ export default function ProposalTemplateCard({
   const navigate = useNavigate();
   const { t } = useTranslation('proposalTemplate');
   const {
-    node: { safe, daoAddress },
+    node: { safe, daoAddress, daoNetwork },
   } = useFractal();
 
   const { prepareRemoveProposalTemplateProposal } = useRemoveProposalTemplate();
@@ -42,11 +42,11 @@ export default function ProposalTemplateCard({
   });
 
   const successCallback = useCallback(() => {
-    if (daoAddress) {
+    if (daoAddress && daoNetwork) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      navigate(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(daoNetwork, daoAddress));
     }
-  }, [navigate, daoAddress]);
+  }, [navigate, daoAddress, daoNetwork]);
 
   const nonce = safe?.nonce;
   const handleRemoveTemplate = useCallback(async () => {

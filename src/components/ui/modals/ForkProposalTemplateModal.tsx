@@ -32,7 +32,7 @@ export default function ForkProposalTemplateModal({
   const signerOrProvider = useSignerOrProvider();
   const { name } = useNetworkConfig();
   const {
-    node: { proposalTemplatesHash },
+    node: { proposalTemplatesHash, daoNetwork },
   } = useFractal();
 
   const { isSafe, isSafeLoading } = useIsSafe(targetDAOAddress);
@@ -74,12 +74,15 @@ export default function ForkProposalTemplateModal({
   }, [getCanUserCreateProposal, inputValue, isSafe, isSafeLoading, name, signerOrProvider, t]);
 
   const handleSubmit = () => {
-    navigate(
-      `${DAO_ROUTES.proposalTemplateNew.relative(
-        targetDAOAddress,
-      )}?templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`,
-    );
-    onClose();
+    if (daoNetwork) {
+      navigate(
+        `${DAO_ROUTES.proposalTemplateNew.relative(
+          daoNetwork,
+          targetDAOAddress,
+        )}?templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`,
+      );
+      onClose();
+    }
   };
 
   useEffect(() => {

@@ -79,7 +79,7 @@ export function SearchDisplay({
               onClickView();
               if (closeDrawer) closeDrawer();
               action.resetDAO();
-              navigate(DAO_ROUTES.dao.relative(`${addressPrefix}:${address}`));
+              navigate(DAO_ROUTES.dao.relative(addressPrefix, address));
             }}
           >
             {t('labelViewDAO')}

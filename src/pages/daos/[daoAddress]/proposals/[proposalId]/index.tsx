@@ -16,7 +16,7 @@ import { FractalProposal, AzoriusProposal, SnapshotProposal } from '../../../../
 
 export default function ProposalDetailsPage() {
   const {
-    node: { daoAddress },
+    node: { daoAddress, daoNetwork },
     governance: { proposals },
     readOnly: { dao },
   } = useFractal();
@@ -48,6 +48,10 @@ export default function ProposalDetailsPage() {
     setProposal(foundProposal);
   }, [proposals, proposalId, isSnapshotProposal]);
 
+  if (!daoAddress || !daoNetwork) {
+    return <></>;
+  }
+
   return (
     <div>
       <PageHeader
@@ -55,7 +59,7 @@ export default function ProposalDetailsPage() {
         breadcrumbs={[
           {
             terminus: t('proposals', { ns: 'breadcrumbs' }),
-            path: DAO_ROUTES.proposals.relative(daoAddress),
+            path: DAO_ROUTES.proposals.relative(daoNetwork, daoAddress),
           },
           {
             terminus: t('proposal', {

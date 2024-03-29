@@ -25,7 +25,7 @@ const templateAreaSingleCol = `"content"
 
 export default function ProposalCreatePage() {
   const {
-    node: { daoAddress, safe },
+    node: { daoAddress, safe, daoNetwork },
     governance: { type },
   } = useFractal();
   const { createProposalValidation } = useCreateProposalSchema();
@@ -42,12 +42,12 @@ export default function ProposalCreatePage() {
   );
 
   const successCallback = () => {
-    if (daoAddress) {
-      navigate(DAO_ROUTES.proposals.relative(daoAddress));
+    if (daoAddress && daoNetwork) {
+      navigate(DAO_ROUTES.proposals.relative(daoNetwork, daoAddress));
     }
   };
 
-  if (!type || !daoAddress || !safe) {
+  if (!type || !daoAddress || !safe || !daoNetwork) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />
@@ -84,7 +84,7 @@ export default function ProposalCreatePage() {
                 breadcrumbs={[
                   {
                     terminus: t('proposals', { ns: 'breadcrumbs' }),
-                    path: DAO_ROUTES.proposals.relative(daoAddress),
+                    path: DAO_ROUTES.proposals.relative(daoNetwork, daoAddress),
                   },
                   {
                     terminus: t('proposalNew', { ns: 'breadcrumbs' }),
@@ -93,7 +93,7 @@ export default function ProposalCreatePage() {
                 ]}
                 ButtonIcon={Trash}
                 buttonVariant="secondary"
-                buttonClick={() => navigate(DAO_ROUTES.proposals.relative(daoAddress))}
+                buttonClick={() => navigate(DAO_ROUTES.proposals.relative(daoNetwork, daoAddress))}
                 isButtonDisabled={pendingCreateTx}
               />
               <Grid

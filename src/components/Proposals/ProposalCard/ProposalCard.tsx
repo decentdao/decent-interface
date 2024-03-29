@@ -12,7 +12,7 @@ import QuorumBadge from '../../ui/badges/QuorumBadge';
 
 function ProposalCard({ proposal }: { proposal: FractalProposal }) {
   const {
-    node: { daoAddress },
+    node: { daoAddress, daoNetwork },
   } = useFractal();
   const { t } = useTranslation('common');
 
@@ -26,8 +26,12 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
 
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
 
+  if (!daoNetwork || !daoAddress) {
+    return <></>;
+  }
+
   return (
-    <Link to={DAO_ROUTES.proposal.relative(daoAddress, proposal.proposalId)}>
+    <Link to={DAO_ROUTES.proposal.relative(daoNetwork, daoAddress, proposal.proposalId)}>
       <Box
         minHeight="6.25rem"
         bg="chocolate.900"

@@ -21,7 +21,7 @@ export default function DaoCreatePage() {
   const safeAPI = useSafeAPI();
 
   const successCallback = useCallback(
-    async (daoAddress: string) => {
+    async (daoNetwork: string, daoAddress: string) => {
       setRedirectPending(true);
       const { getAddress } = ethers.utils;
       const daoFound = await requestWithRetries(
@@ -30,7 +30,7 @@ export default function DaoCreatePage() {
       );
       toggleFavorite(daoAddress);
       if (daoFound) {
-        navigate(DAO_ROUTES.dao.relative(daoAddress));
+        navigate(DAO_ROUTES.dao.relative(daoNetwork, daoAddress));
       } else {
         toast(t('failedIndexSafe'), {
           autoClose: false,

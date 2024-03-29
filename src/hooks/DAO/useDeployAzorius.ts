@@ -23,7 +23,7 @@ const useDeployAzorius = () => {
     contracts: { fallbackHandler },
   } = useNetworkConfig();
   const {
-    node: { daoAddress, safe },
+    node: { daoAddress, safe, daoNetwork },
     baseContracts,
   } = useFractal();
 
@@ -36,7 +36,7 @@ const useDeployAzorius = () => {
       shouldSetName?: boolean,
       shouldSetSnapshot?: boolean,
     ) => {
-      if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts) {
+      if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts || !daoNetwork) {
         return;
       }
       const {
@@ -121,7 +121,7 @@ const useDeployAzorius = () => {
         pendingToastMessage: t('modifyGovernanceSetAzoriusProposalPendingMessage'),
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-        successCallback: () => navigate(DAO_ROUTES.proposals.relative(daoAddress)),
+        successCallback: () => navigate(DAO_ROUTES.proposals.relative(daoNetwork, daoAddress)),
       });
     },
     [
@@ -134,6 +134,7 @@ const useDeployAzorius = () => {
       navigate,
       safe,
       fallbackHandler,
+      daoNetwork,
     ],
   );
 

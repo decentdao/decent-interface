@@ -11,7 +11,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 export default function ProposalTemplatesPage() {
   const { t } = useTranslation();
   const {
-    node: { daoAddress },
+    node: { daoAddress, daoNetwork },
   } = useFractal();
   const { canUserCreateProposal } = useSubmitProposal();
 
@@ -26,8 +26,8 @@ export default function ProposalTemplatesPage() {
           },
         ]}
       >
-        {canUserCreateProposal && (
-          <Link to={DAO_ROUTES.proposalTemplateNew.relative(daoAddress)}>
+        {canUserCreateProposal && daoNetwork && daoAddress && (
+          <Link to={DAO_ROUTES.proposalTemplateNew.relative(daoNetwork, daoAddress)}>
             <Button minW={0}>
               <AddPlus />
               <Show above="sm">{t('create')}</Show>

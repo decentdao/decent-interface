@@ -20,7 +20,7 @@ import {
 
 export default function ModifyGovernancePage() {
   const {
-    node: { daoAddress, safe, daoName, daoSnapshotURL },
+    node: { daoAddress, safe, daoName, daoSnapshotURL, daoNetwork },
     governance: { type },
     readOnly: { user },
   } = useFractal();
@@ -38,13 +38,17 @@ export default function ModifyGovernancePage() {
     );
   };
 
+  if (!daoNetwork || !daoAddress) {
+    return <></>;
+  }
+
   return (
     <Box>
       <PageHeader
         hasDAOLink
         ButtonIcon={CloseX}
         buttonVariant="secondary"
-        buttonClick={() => navigate(DAO_ROUTES.dao.relative(daoAddress))}
+        buttonClick={() => navigate(DAO_ROUTES.dao.relative(daoNetwork, daoAddress))}
         isButtonDisabled={false}
         breadcrumbs={[
           {

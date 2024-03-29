@@ -6,16 +6,17 @@ import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
 interface IFavorite {
+  network: string;
   address: string;
 }
-export function Favorite({ address }: IFavorite) {
+export function Favorite({ network, address }: IFavorite) {
   const { daoRegistryName } = useDAOName({ address });
   const { action } = useFractal();
   const navigate = useNavigate();
 
   const onClickNav = () => {
     action.resetDAO();
-    navigate(DAO_ROUTES.dao.relative(address));
+    navigate(DAO_ROUTES.dao.relative(network, address));
   };
 
   return (

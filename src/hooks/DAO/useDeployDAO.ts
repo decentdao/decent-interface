@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
@@ -13,10 +14,12 @@ const useDeployDAO = () => {
 
   const { t } = useTranslation('transaction');
 
+  const { addressPrefix } = useNetworkConfig();
+
   const deployDao = useCallback(
     (
       daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
-      successCallback: (daoAddress: string) => void,
+      successCallback: (daoNetwork: string, daoAddress: string) => void,
     ) => {
       const deploy = async () => {
         if (!baseContracts) {
@@ -37,13 +40,13 @@ const useDeployDAO = () => {
           pendingMessage: t('pendingDeploySafe'),
           failedMessage: t('failedDeploySafe'),
           successMessage: t('successDeploySafe'),
-          successCallback: () => successCallback(predictedSafeAddress),
+          successCallback: () => successCallback(addressPrefix, predictedSafeAddress),
         });
       };
 
       deploy();
     },
-    [build, contractCallDeploy, baseContracts, t],
+    [build, contractCallDeploy, baseContracts, t, addressPrefix],
   );
 
   return [deployDao, contractCallPending] as const;

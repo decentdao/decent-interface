@@ -22,7 +22,7 @@ export default function MetadataContainer() {
   const { canUserCreateProposal, submitProposal } = useSubmitProposal();
   const {
     baseContracts,
-    node: { daoName, daoSnapshotURL, daoAddress, safe },
+    node: { daoName, daoSnapshotURL, daoAddress, safe, daoNetwork },
     readOnly: {
       user: { votingWeight },
     },
@@ -50,7 +50,11 @@ export default function MetadataContainer() {
 
   const userHasVotingWeight = votingWeight.gt(0);
 
-  const submitProposalSuccessCallback = () => navigate(DAO_ROUTES.proposals.relative(daoAddress));
+  const submitProposalSuccessCallback = () => {
+    if (daoNetwork && daoAddress) {
+      navigate(DAO_ROUTES.proposals.relative(daoNetwork, daoAddress));
+    }
+  };
 
   const handleEditDAOName = () => {
     if (!baseContracts) {

@@ -36,6 +36,7 @@ interface Feature {
   iconSrc: string;
   titleKey: string;
   descKey: string;
+  network: string;
   address: string;
 }
 
@@ -48,18 +49,21 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         iconSrc: '/images/shutter-icon-only-logo.svg',
         titleKey: 'shutterTitle',
         descKey: 'shutterDesc',
+        network: 'eth',
         address: '0x36bD3044ab68f600f6d3e081056F34f2a58432c4',
       },
       {
         iconSrc: '/images/icon-decent.svg',
         titleKey: 'decentTitle',
         descKey: 'decentDesc',
+        network: 'eth',
         address: '0xD26c85D435F02DaB8B220cd4D2d398f6f646e235',
       },
       {
         iconSrc: '/images/icon-awakevc.svg',
         titleKey: 'awakeTitle',
         descKey: 'awakeDesc',
+        network: 'eth',
         address: '0xdD6CeFA62239272f1eDf755ba6471eacb7DF2Fa5',
       },
     ],
@@ -71,6 +75,7 @@ const FEATURED_DAOS = new Map<number, Feature[]>([
         iconSrc: '/images/icon-myosin.svg',
         titleKey: 'myosinTitle',
         descKey: 'myosinDesc',
+        network: 'sep',
         address: '0xdef90A94273a1A1A72B33D39129fa41E6C08Be3a',
       },
     ],
@@ -208,6 +213,7 @@ export default function HomePage() {
                     iconSrc={feature.iconSrc}
                     title={t(feature.titleKey)}
                     desc={t(feature.descKey)}
+                    network={feature.network}
                     address={feature.address}
                     marginBottom="2rem"
                     paddingEnd={{ sm: '0rem', lg: index % 2 === 0 ? '0.56rem' : '0rem' }}
