@@ -27,7 +27,7 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
 
   if (!daoNetwork || !daoAddress) {
-    return <></>;
+    return null;
   }
 
   return (

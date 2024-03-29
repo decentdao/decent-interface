@@ -49,7 +49,7 @@ export default function ProposalDetailsPage() {
   }, [proposals, proposalId, isSnapshotProposal]);
 
   if (!daoAddress || !daoNetwork) {
-    return <></>;
+    return null;
   }
 
   return (

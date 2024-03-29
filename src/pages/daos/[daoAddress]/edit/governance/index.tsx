@@ -39,7 +39,7 @@ export default function ModifyGovernancePage() {
   };
 
   if (!daoNetwork || !daoAddress) {
-    return <></>;
+    return null;
   }
 
   return (

@@ -11,7 +11,7 @@ export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
   } = useFractal();
 
   if (!daoNetwork || !daoAddress) {
-    return <></>;
+    return null;
   }
 
   return (
