@@ -113,14 +113,7 @@ export const useAzoriusProposals = () => {
       );
     };
 
-    const loadProposalSynchronously = async (
-      _proposalCreatedEvents: ProposalCreatedEvent[],
-      _loadProposalFromEvent: (
-        { args }: ProposalCreatedEvent,
-        votedEvents: VotedEvent[],
-        executedEvents: ProposalExecutedEvent[],
-      ) => Promise<AzoriusProposal>,
-    ) => {
+    const loadProposalsSynchronously = async (_proposalCreatedEvents: ProposalCreatedEvent[]) => {
       const votedEventFilter = strategyContract.filters.Voted();
       const votedEvents = await strategyContract.queryFilter(votedEventFilter);
 
@@ -128,7 +121,7 @@ export const useAzoriusProposals = () => {
       const executedEvents = await azoriusContract.queryFilter(executedEventFilter);
 
       for (const proposalCreatedEvent of _proposalCreatedEvents) {
-        const proposal = await _loadProposalFromEvent(
+        const proposal = await loadProposalFromEvent(
           proposalCreatedEvent,
           votedEvents,
           executedEvents,
@@ -140,7 +133,7 @@ export const useAzoriusProposals = () => {
       }
     };
 
-    await loadProposalSynchronously(proposalCreatedEvents.reverse(), loadProposalFromEvent);
+    await loadProposalsSynchronously(proposalCreatedEvents.reverse());
   }, [
     azoriusContractAddress,
     ozLinearVotingContractAddress,
