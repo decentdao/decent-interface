@@ -49,7 +49,7 @@ export const useAzoriusProposals = () => {
     [decode],
   );
 
-  const loadAzoriusProposals = useCallback(async (): Promise<AzoriusProposal[]> => {
+  const loadAzoriusProposals = useCallback(async () => {
     if (
       !azoriusContractAddress ||
       !(ozLinearVotingContractAddress || erc721LinearVotingContractAddress) ||
@@ -78,42 +78,55 @@ export const useAzoriusProposals = () => {
       return [];
     }
 
-    const proposals = await Promise.all(
-      proposalCreatedEvents.map(async ({ args }) => {
-        let proposalData;
-        if (args.metadata) {
-          const metadataEvent: ProposalMetadata = JSON.parse(args.metadata);
-          const decodedTransactions = await decodeTransactions(args.transactions);
-          proposalData = {
-            metaData: {
-              title: metadataEvent.title,
-              description: metadataEvent.description,
-              documentationUrl: metadataEvent.documentationUrl,
-            },
-            transactions: args.transactions,
-            decodedTransactions,
-          };
-        }
-        return mapProposalCreatedEventToProposal(
-          strategyContract,
-          strategyType,
-          args.proposalId,
-          args.proposer,
-          azoriusContract,
-          provider,
-          proposalData,
-        );
-      }),
-    );
-    return proposals;
+    const loadProposalFromEvent = async ({ args }: ProposalCreatedEvent) => {
+      let proposalData;
+      if (args.metadata) {
+        const metadataEvent: ProposalMetadata = JSON.parse(args.metadata);
+        const decodedTransactions = await decodeTransactions(args.transactions);
+        proposalData = {
+          metaData: {
+            title: metadataEvent.title,
+            description: metadataEvent.description,
+            documentationUrl: metadataEvent.documentationUrl,
+          },
+          transactions: args.transactions,
+          decodedTransactions,
+        };
+      }
+      return mapProposalCreatedEventToProposal(
+        strategyContract,
+        strategyType,
+        args.proposalId,
+        args.proposer,
+        azoriusContract,
+        provider,
+        proposalData,
+      );
+    };
+
+    const loadProposalSynchronously = async (
+      _proposalCreatedEvents: ProposalCreatedEvent[],
+      _loadProposalFromEvent: ({ args }: ProposalCreatedEvent) => Promise<AzoriusProposal>,
+    ) => {
+      for (const proposalCreatedEvent of _proposalCreatedEvents) {
+        const proposal = await _loadProposalFromEvent(proposalCreatedEvent);
+        action.dispatch({
+          type: FractalGovernanceAction.SET_AZORIUS_PROPOSAL,
+          payload: proposal,
+        });
+      }
+    };
+
+    await loadProposalSynchronously(proposalCreatedEvents.reverse(), loadProposalFromEvent);
   }, [
-    decodeTransactions,
+    azoriusContractAddress,
     ozLinearVotingContractAddress,
     erc721LinearVotingContractAddress,
-    azoriusContractAddress,
-    provider,
     strategyType,
+    provider,
     baseContracts,
+    decodeTransactions,
+    action,
   ]);
 
   // const { requestWithRetries } = useAsyncRetry();
