@@ -1,6 +1,8 @@
 import { LinearERC20Voting, LinearERC721Voting } from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
+import { ProposalExecutedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
 import { ProposalCreatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
+import { VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { BigNumber } from 'ethers';
@@ -78,7 +80,11 @@ export const useAzoriusProposals = () => {
       return [];
     }
 
-    const loadProposalFromEvent = async ({ args }: ProposalCreatedEvent) => {
+    const loadProposalFromEvent = async (
+      { args }: ProposalCreatedEvent,
+      votedEvents: VotedEvent[],
+      executedEvents: ProposalExecutedEvent[],
+    ) => {
       let proposalData;
       if (args.metadata) {
         const metadataEvent: ProposalMetadata = JSON.parse(args.metadata);
@@ -93,6 +99,7 @@ export const useAzoriusProposals = () => {
           decodedTransactions,
         };
       }
+
       return mapProposalCreatedEventToProposal(
         strategyContract,
         strategyType,
@@ -100,16 +107,32 @@ export const useAzoriusProposals = () => {
         args.proposer,
         azoriusContract,
         provider,
+        votedEvents,
+        executedEvents,
         proposalData,
       );
     };
 
     const loadProposalSynchronously = async (
       _proposalCreatedEvents: ProposalCreatedEvent[],
-      _loadProposalFromEvent: ({ args }: ProposalCreatedEvent) => Promise<AzoriusProposal>,
+      _loadProposalFromEvent: (
+        { args }: ProposalCreatedEvent,
+        votedEvents: VotedEvent[],
+        executedEvents: ProposalExecutedEvent[],
+      ) => Promise<AzoriusProposal>,
     ) => {
+      const votedEventFilter = strategyContract.filters.Voted();
+      const votedEvents = await strategyContract.queryFilter(votedEventFilter);
+
+      const executedEventFilter = azoriusContract.filters.ProposalExecuted();
+      const executedEvents = await azoriusContract.queryFilter(executedEventFilter);
+
       for (const proposalCreatedEvent of _proposalCreatedEvents) {
-        const proposal = await _loadProposalFromEvent(proposalCreatedEvent);
+        const proposal = await _loadProposalFromEvent(
+          proposalCreatedEvent,
+          votedEvents,
+          executedEvents,
+        );
         action.dispatch({
           type: FractalGovernanceAction.SET_AZORIUS_PROPOSAL,
           payload: proposal,
