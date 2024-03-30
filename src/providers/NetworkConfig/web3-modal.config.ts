@@ -30,6 +30,9 @@ export const wagmiConfig = defaultWagmiConfig({
   transports: {
     [mainnet.id]: http(
       `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`,
+      {
+        batch: true,
+      },
     ),
     [sepolia.id]: http(
       `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
