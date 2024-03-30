@@ -116,184 +116,184 @@ export const useAzoriusProposals = () => {
     baseContracts,
   ]);
 
-  const { requestWithRetries } = useAsyncRetry();
-  // Azrious proposals are listeners
-  const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
-    async (strategyAddress, proposalId, proposer, transactions, _metadata) => {
-      if (
-        !azoriusContractAddress ||
-        !(ozLinearVotingContractAddress || erc721LinearVotingContractAddress) ||
-        !strategyType ||
-        !provider ||
-        !baseContracts
-      ) {
-        return;
-      }
-      let proposalData: ProposalData | undefined;
-      const azoriusContract =
-        baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
-      if (_metadata) {
-        const metaDataEvent: ProposalMetadata = JSON.parse(_metadata);
-        proposalData = {
-          metaData: {
-            title: metaDataEvent.title,
-            description: metaDataEvent.description,
-            documentationUrl: metaDataEvent.documentationUrl,
-          },
-          transactions: transactions,
-          decodedTransactions: await decodeTransactions(transactions),
-        };
-      }
-      let strategyContract: LinearERC20Voting | LinearERC721Voting;
-      if (ozLinearVotingContractAddress) {
-        strategyContract =
-          baseContracts.linearVotingMasterCopyContract.asProvider.attach(strategyAddress);
-      } else if (erc721LinearVotingContractAddress) {
-        strategyContract =
-          baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(strategyAddress);
-      } else {
-        logError('No strategy contract found');
-        return [];
-      }
-      const func = async () => {
-        return mapProposalCreatedEventToProposal(
-          strategyContract,
-          strategyType,
-          proposalId,
-          proposer,
-          azoriusContract,
-          provider,
-          proposalData,
-        );
-      };
-      const proposal = await requestWithRetries(func, 5, 7000);
-      if (proposal) {
-        action.dispatch({
-          type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW,
-          payload: proposal,
-        });
-      }
-    },
-    [
-      baseContracts,
-      azoriusContractAddress,
-      provider,
-      decodeTransactions,
-      action,
-      requestWithRetries,
-      strategyType,
-      ozLinearVotingContractAddress,
-      erc721LinearVotingContractAddress,
-    ],
-  );
+  // const { requestWithRetries } = useAsyncRetry();
+  // // Azrious proposals are listeners
+  // const proposalCreatedListener: TypedListener<ProposalCreatedEvent> = useCallback(
+  //   async (strategyAddress, proposalId, proposer, transactions, _metadata) => {
+  //     if (
+  //       !azoriusContractAddress ||
+  //       !(ozLinearVotingContractAddress || erc721LinearVotingContractAddress) ||
+  //       !strategyType ||
+  //       !provider ||
+  //       !baseContracts
+  //     ) {
+  //       return;
+  //     }
+  //     let proposalData: ProposalData | undefined;
+  //     const azoriusContract =
+  //       baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
+  //     if (_metadata) {
+  //       const metaDataEvent: ProposalMetadata = JSON.parse(_metadata);
+  //       proposalData = {
+  //         metaData: {
+  //           title: metaDataEvent.title,
+  //           description: metaDataEvent.description,
+  //           documentationUrl: metaDataEvent.documentationUrl,
+  //         },
+  //         transactions: transactions,
+  //         decodedTransactions: await decodeTransactions(transactions),
+  //       };
+  //     }
+  //     let strategyContract: LinearERC20Voting | LinearERC721Voting;
+  //     if (ozLinearVotingContractAddress) {
+  //       strategyContract =
+  //         baseContracts.linearVotingMasterCopyContract.asProvider.attach(strategyAddress);
+  //     } else if (erc721LinearVotingContractAddress) {
+  //       strategyContract =
+  //         baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(strategyAddress);
+  //     } else {
+  //       logError('No strategy contract found');
+  //       return [];
+  //     }
+  //     const func = async () => {
+  //       return mapProposalCreatedEventToProposal(
+  //         strategyContract,
+  //         strategyType,
+  //         proposalId,
+  //         proposer,
+  //         azoriusContract,
+  //         provider,
+  //         proposalData,
+  //       );
+  //     };
+  //     const proposal = await requestWithRetries(func, 5, 7000);
+  //     if (proposal) {
+  //       action.dispatch({
+  //         type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW,
+  //         payload: proposal,
+  //       });
+  //     }
+  //   },
+  //   [
+  //     baseContracts,
+  //     azoriusContractAddress,
+  //     provider,
+  //     decodeTransactions,
+  //     action,
+  //     requestWithRetries,
+  //     strategyType,
+  //     ozLinearVotingContractAddress,
+  //     erc721LinearVotingContractAddress,
+  //   ],
+  // );
 
-  const erc20ProposalVotedEventListener: TypedListener<ERC20VotedEvent> = useCallback(
-    async (voter, proposalId, support, weight) => {
-      if (!ozLinearVotingContractAddress || !strategyType || !baseContracts) {
-        return;
-      }
-      const strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-        ozLinearVotingContractAddress,
-      );
+  // const erc20ProposalVotedEventListener: TypedListener<ERC20VotedEvent> = useCallback(
+  //   async (voter, proposalId, support, weight) => {
+  //     if (!ozLinearVotingContractAddress || !strategyType || !baseContracts) {
+  //       return;
+  //     }
+  //     const strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+  //       ozLinearVotingContractAddress,
+  //     );
 
-      const votesSummary = await getProposalVotesSummary(
-        strategyContract,
-        strategyType,
-        BigNumber.from(proposalId),
-      );
+  //     const votesSummary = await getProposalVotesSummary(
+  //       strategyContract,
+  //       strategyType,
+  //       BigNumber.from(proposalId),
+  //     );
 
-      action.dispatch({
-        type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC20_VOTE,
-        payload: {
-          proposalId: proposalId.toString(),
-          voter,
-          support,
-          weight,
-          votesSummary,
-        },
-      });
-    },
-    [ozLinearVotingContractAddress, action, strategyType, baseContracts],
-  );
+  //     action.dispatch({
+  //       type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC20_VOTE,
+  //       payload: {
+  //         proposalId: proposalId.toString(),
+  //         voter,
+  //         support,
+  //         weight,
+  //         votesSummary,
+  //       },
+  //     });
+  //   },
+  //   [ozLinearVotingContractAddress, action, strategyType, baseContracts],
+  // );
 
-  const erc721ProposalVotedEventListener: TypedListener<ERC721VotedEvent> = useCallback(
-    async (voter, proposalId, support, tokenAddresses, tokenIds) => {
-      if (!erc721LinearVotingContractAddress || !strategyType || !baseContracts) {
-        return;
-      }
-      const strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-        erc721LinearVotingContractAddress,
-      );
-      const votesSummary = await getProposalVotesSummary(
-        strategyContract,
-        strategyType,
-        BigNumber.from(proposalId),
-      );
+  // const erc721ProposalVotedEventListener: TypedListener<ERC721VotedEvent> = useCallback(
+  //   async (voter, proposalId, support, tokenAddresses, tokenIds) => {
+  //     if (!erc721LinearVotingContractAddress || !strategyType || !baseContracts) {
+  //       return;
+  //     }
+  //     const strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+  //       erc721LinearVotingContractAddress,
+  //     );
+  //     const votesSummary = await getProposalVotesSummary(
+  //       strategyContract,
+  //       strategyType,
+  //       BigNumber.from(proposalId),
+  //     );
 
-      action.dispatch({
-        type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC721_VOTE,
-        payload: {
-          proposalId: proposalId.toString(),
-          voter,
-          support,
-          tokenAddresses,
-          tokenIds: tokenIds.map(tokenId => tokenId.toString()),
-          votesSummary,
-        },
-      });
-    },
-    [erc721LinearVotingContractAddress, action, strategyType, baseContracts],
-  );
+  //     action.dispatch({
+  //       type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC721_VOTE,
+  //       payload: {
+  //         proposalId: proposalId.toString(),
+  //         voter,
+  //         support,
+  //         tokenAddresses,
+  //         tokenIds: tokenIds.map(tokenId => tokenId.toString()),
+  //         votesSummary,
+  //       },
+  //     });
+  //   },
+  //   [erc721LinearVotingContractAddress, action, strategyType, baseContracts],
+  // );
 
-  useEffect(() => {
-    if (!azoriusContractAddress || !baseContracts) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!azoriusContractAddress || !baseContracts) {
+  //     return;
+  //   }
 
-    const azoriusContract =
-      baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
-    const proposalCreatedFilter = azoriusContract.filters.ProposalCreated();
+  //   const azoriusContract =
+  //     baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
+  //   const proposalCreatedFilter = azoriusContract.filters.ProposalCreated();
 
-    azoriusContract.on(proposalCreatedFilter, proposalCreatedListener);
+  //   azoriusContract.on(proposalCreatedFilter, proposalCreatedListener);
 
-    return () => {
-      azoriusContract.off(proposalCreatedFilter, proposalCreatedListener);
-    };
-  }, [azoriusContractAddress, proposalCreatedListener, baseContracts]);
+  //   return () => {
+  //     azoriusContract.off(proposalCreatedFilter, proposalCreatedListener);
+  //   };
+  // }, [azoriusContractAddress, proposalCreatedListener, baseContracts]);
 
-  useEffect(() => {
-    if (ozLinearVotingContractAddress && baseContracts) {
-      const ozLinearVotingContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-        ozLinearVotingContractAddress,
-      );
+  // useEffect(() => {
+  //   if (ozLinearVotingContractAddress && baseContracts) {
+  //     const ozLinearVotingContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+  //       ozLinearVotingContractAddress,
+  //     );
 
-      const votedEvent = ozLinearVotingContract.filters.Voted();
+  //     const votedEvent = ozLinearVotingContract.filters.Voted();
 
-      ozLinearVotingContract.on(votedEvent, erc20ProposalVotedEventListener);
+  //     ozLinearVotingContract.on(votedEvent, erc20ProposalVotedEventListener);
 
-      return () => {
-        ozLinearVotingContract.off(votedEvent, erc20ProposalVotedEventListener);
-      };
-    } else if (erc721LinearVotingContractAddress && baseContracts) {
-      const erc721LinearVotingContract =
-        baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-          erc721LinearVotingContractAddress,
-        );
-      const votedEvent = erc721LinearVotingContract.filters.Voted();
+  //     return () => {
+  //       ozLinearVotingContract.off(votedEvent, erc20ProposalVotedEventListener);
+  //     };
+  //   } else if (erc721LinearVotingContractAddress && baseContracts) {
+  //     const erc721LinearVotingContract =
+  //       baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+  //         erc721LinearVotingContractAddress,
+  //       );
+  //     const votedEvent = erc721LinearVotingContract.filters.Voted();
 
-      erc721LinearVotingContract.on(votedEvent, erc721ProposalVotedEventListener);
+  //     erc721LinearVotingContract.on(votedEvent, erc721ProposalVotedEventListener);
 
-      return () => {
-        erc721LinearVotingContract.off(votedEvent, erc721ProposalVotedEventListener);
-      };
-    }
-  }, [
-    ozLinearVotingContractAddress,
-    erc721LinearVotingContractAddress,
-    erc20ProposalVotedEventListener,
-    erc721ProposalVotedEventListener,
-    baseContracts,
-  ]);
+  //     return () => {
+  //       erc721LinearVotingContract.off(votedEvent, erc721ProposalVotedEventListener);
+  //     };
+  //   }
+  // }, [
+  //   ozLinearVotingContractAddress,
+  //   erc721LinearVotingContractAddress,
+  //   erc20ProposalVotedEventListener,
+  //   erc721ProposalVotedEventListener,
+  //   baseContracts,
+  // ]);
 
   return loadAzoriusProposals;
 };
