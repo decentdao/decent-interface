@@ -14,7 +14,6 @@ import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC20LinearStrategy = () => {
   const {
-    governance: { type },
     governanceContracts: { ozLinearVotingContractAddress, azoriusContractAddress },
     action,
   } = useFractal();
@@ -68,7 +67,7 @@ export const useERC20LinearStrategy = () => {
   ]);
 
   useEffect(() => {
-    if (!ozLinearVotingContractAddress || !baseContracts || !type) {
+    if (!ozLinearVotingContractAddress || !baseContracts) {
       return;
     }
     const ozLinearVotingContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
@@ -86,10 +85,10 @@ export const useERC20LinearStrategy = () => {
     return () => {
       ozLinearVotingContract.off(votingPeriodfilter, listener);
     };
-  }, [ozLinearVotingContractAddress, action, baseContracts, type]);
+  }, [ozLinearVotingContractAddress, action, baseContracts]);
 
   useEffect(() => {
-    if (!ozLinearVotingContractAddress || !baseContracts || !type) {
+    if (!ozLinearVotingContractAddress || !baseContracts) {
       return;
     }
     const ozLinearVotingContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
@@ -108,14 +107,15 @@ export const useERC20LinearStrategy = () => {
     return () => {
       ozLinearVotingContract.off(quorumNumeratorUpdatedFilter, quorumNumeratorUpdatedListener);
     };
-  }, [ozLinearVotingContractAddress, action, baseContracts, type]);
+  }, [ozLinearVotingContractAddress, action, baseContracts]);
 
   useEffect(() => {
-    if (!azoriusContractAddress || !baseContracts || !type) {
+    if (!azoriusContractAddress || !baseContracts) {
       return;
     }
     const azoriusContract =
       baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
+
     const timeLockPeriodFilter = azoriusContract.filters.TimelockPeriodUpdated();
     const timelockPeriodListener: TypedListener<TimelockPeriodUpdatedEvent> = timelockPeriod => {
       action.dispatch({
@@ -127,7 +127,7 @@ export const useERC20LinearStrategy = () => {
     return () => {
       azoriusContract.off(timeLockPeriodFilter, timelockPeriodListener);
     };
-  }, [azoriusContractAddress, action, baseContracts, type]);
+  }, [azoriusContractAddress, action, baseContracts]);
 
   return loadERC20Strategy;
 };
