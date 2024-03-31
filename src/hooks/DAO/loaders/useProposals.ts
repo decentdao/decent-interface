@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import { GovernanceType } from '../../../types';
 import { useUpdateTimer } from '../../utils/useUpdateTimer';
 import { useAzoriusProposals } from './governance/useAzoriusProposals';
@@ -9,6 +10,7 @@ export const useDAOProposals = () => {
   const {
     node: { daoAddress },
     governance: { type },
+    action,
   } = useFractal();
 
   const { setMethodOnInterval, clearIntervals } = useUpdateTimer(daoAddress);
@@ -17,14 +19,29 @@ export const useDAOProposals = () => {
 
   const loadDAOProposals = useCallback(async () => {
     clearIntervals();
-    if (type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721) {
+    if (
+      (type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721) &&
+      loadAzoriusProposals !== undefined
+    ) {
       // load Azorius proposals and strategies
-      await loadAzoriusProposals();
+      loadAzoriusProposals(proposal => {
+        action.dispatch({
+          type: FractalGovernanceAction.SET_AZORIUS_PROPOSAL,
+          payload: proposal,
+        });
+      });
     } else if (type === GovernanceType.MULTISIG) {
       // load mulisig proposals
       setMethodOnInterval(loadSafeMultisigProposals);
     }
-  }, [type, loadAzoriusProposals, loadSafeMultisigProposals, setMethodOnInterval, clearIntervals]);
+  }, [
+    clearIntervals,
+    type,
+    loadAzoriusProposals,
+    action,
+    setMethodOnInterval,
+    loadSafeMultisigProposals,
+  ]);
 
   return loadDAOProposals;
 };

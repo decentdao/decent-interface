@@ -1,22 +1,111 @@
 import { LinearERC20Voting, LinearERC721Voting } from '@fractal-framework/fractal-contracts';
-import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
-import { ProposalExecutedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
-import { ProposalCreatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
+import {
+  Azorius,
+  ProposalExecutedEvent,
+  ProposalCreatedEvent,
+} from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
 import { VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
-import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
-import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
-import { BigNumber } from 'ethers';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
-import { ProposalMetadata, MetaTransaction, VotingStrategyType } from '../../../../types';
-import { AzoriusProposal, ProposalData } from '../../../../types/daoProposal';
-import { mapProposalCreatedEventToProposal, getProposalVotesSummary } from '../../../../utils';
+import {
+  ProposalMetadata,
+  MetaTransaction,
+  VotingStrategyType,
+  DecodedTransaction,
+} from '../../../../types';
+import { AzoriusProposal } from '../../../../types/daoProposal';
+import { Providers } from '../../../../types/network';
+import { mapProposalCreatedEventToProposal } from '../../../../utils';
 import useSafeContracts from '../../../safe/useSafeContracts';
 import { useAsyncRetry } from '../../../utils/useAsyncRetry';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
+
+const decodeTransactions = async (
+  _decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
+  _transactions: MetaTransaction[],
+) => {
+  const decodedTransactions = await Promise.all(
+    _transactions.map(async tx => _decode(tx.value.toString(), tx.to, tx.data)),
+  );
+  return decodedTransactions.flat();
+};
+
+const loadProposalFromEvent = async (
+  _provider: Providers,
+  _decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
+  _azoriusContract: Azorius,
+  _strategyContract: LinearERC20Voting | LinearERC721Voting,
+  _strategyType: VotingStrategyType,
+  { args: _args }: ProposalCreatedEvent,
+  _votedEvents: VotedEvent[],
+  _executedEvents: ProposalExecutedEvent[],
+) => {
+  let proposalData;
+  if (_args.metadata) {
+    const metadataEvent: ProposalMetadata = JSON.parse(_args.metadata);
+    const decodedTransactions = await decodeTransactions(_decode, _args.transactions);
+    proposalData = {
+      metaData: {
+        title: metadataEvent.title,
+        description: metadataEvent.description,
+        documentationUrl: metadataEvent.documentationUrl,
+      },
+      transactions: _args.transactions,
+      decodedTransactions,
+    };
+  }
+
+  const proposal = await mapProposalCreatedEventToProposal(
+    _strategyContract,
+    _strategyType,
+    _args.proposalId,
+    _args.proposer,
+    _azoriusContract,
+    _provider,
+    _votedEvents,
+    _executedEvents,
+    proposalData,
+  );
+
+  return proposal;
+};
+
+const loadAzoriusProposals = async (
+  azoriusContract: Azorius,
+  strategyContract: LinearERC20Voting | LinearERC721Voting,
+  strategyType: VotingStrategyType,
+  provider: Providers,
+  decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
+  proposalLoaded: (proposal: AzoriusProposal) => void,
+) => {
+  const proposalCreatedFilter = azoriusContract.filters.ProposalCreated();
+  const proposalCreatedEvents = (
+    await azoriusContract.queryFilter(proposalCreatedFilter)
+  ).reverse();
+
+  const votedEventFilter = strategyContract.filters.Voted();
+  const votedEvents = await strategyContract.queryFilter(votedEventFilter);
+
+  const proposalExecutedEventFilter = azoriusContract.filters.ProposalExecuted();
+  const proposalExecutedEvents = await azoriusContract.queryFilter(proposalExecutedEventFilter);
+
+  for (const proposalCreatedEvent of proposalCreatedEvents) {
+    const proposal = await loadProposalFromEvent(
+      provider,
+      decode,
+      azoriusContract,
+      strategyContract,
+      strategyType,
+      proposalCreatedEvent,
+      votedEvents,
+      proposalExecutedEvents,
+    );
+
+    proposalLoaded(proposal);
+  }
+};
 
 export const useAzoriusProposals = () => {
   const {
@@ -25,9 +114,8 @@ export const useAzoriusProposals = () => {
       ozLinearVotingContractAddress,
       erc721LinearVotingContractAddress,
     },
-    action,
   } = useFractal();
-  const baseContracts = useSafeContracts();
+
   const strategyType = useMemo(() => {
     if (ozLinearVotingContractAddress) {
       return VotingStrategyType.LINEAR_ERC20;
@@ -37,113 +125,31 @@ export const useAzoriusProposals = () => {
       return undefined;
     }
   }, [ozLinearVotingContractAddress, erc721LinearVotingContractAddress]);
+
+  const baseContracts = useSafeContracts();
   const provider = useEthersProvider();
   const decode = useSafeDecoder();
-  const decodeTransactions = useCallback(
-    async (transactions: MetaTransaction[]) => {
-      const decodedTransactions = await Promise.all(
-        transactions.map(async tx => {
-          return decode(tx.value.toString(), tx.to, tx.data);
-        }),
-      );
-      return decodedTransactions.flat();
-    },
-    [decode],
-  );
 
-  const loadAzoriusProposals = useCallback(async () => {
-    if (
-      !azoriusContractAddress ||
-      !(ozLinearVotingContractAddress || erc721LinearVotingContractAddress) ||
-      !strategyType ||
-      !provider ||
-      !baseContracts
-    ) {
-      return [];
-    }
-    const azoriusContract =
-      baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
-    const proposalCreatedFilter = azoriusContract.filters.ProposalCreated();
+  if (!azoriusContractAddress || !strategyType || !provider || !baseContracts) {
+    return undefined;
+  }
 
-    const proposalCreatedEvents = await azoriusContract.queryFilter(proposalCreatedFilter);
-    let strategyContract: LinearERC20Voting | LinearERC721Voting;
-    if (ozLinearVotingContractAddress) {
-      strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-        ozLinearVotingContractAddress,
-      );
-    } else if (erc721LinearVotingContractAddress) {
-      strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-        erc721LinearVotingContractAddress,
-      );
-    } else {
-      logError('No strategy contract found');
-      return [];
-    }
+  const azoriusContract =
+    baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
 
-    const loadProposalFromEvent = async (
-      { args }: ProposalCreatedEvent,
-      votedEvents: VotedEvent[],
-      executedEvents: ProposalExecutedEvent[],
-    ) => {
-      let proposalData;
-      if (args.metadata) {
-        const metadataEvent: ProposalMetadata = JSON.parse(args.metadata);
-        const decodedTransactions = await decodeTransactions(args.transactions);
-        proposalData = {
-          metaData: {
-            title: metadataEvent.title,
-            description: metadataEvent.description,
-            documentationUrl: metadataEvent.documentationUrl,
-          },
-          transactions: args.transactions,
-          decodedTransactions,
-        };
-      }
-
-      return mapProposalCreatedEventToProposal(
-        strategyContract,
-        strategyType,
-        args.proposalId,
-        args.proposer,
-        azoriusContract,
-        provider,
-        votedEvents,
-        executedEvents,
-        proposalData,
-      );
-    };
-
-    const loadProposalsSynchronously = async (_proposalCreatedEvents: ProposalCreatedEvent[]) => {
-      const votedEventFilter = strategyContract.filters.Voted();
-      const votedEvents = await strategyContract.queryFilter(votedEventFilter);
-
-      const executedEventFilter = azoriusContract.filters.ProposalExecuted();
-      const executedEvents = await azoriusContract.queryFilter(executedEventFilter);
-
-      for (const proposalCreatedEvent of _proposalCreatedEvents) {
-        const proposal = await loadProposalFromEvent(
-          proposalCreatedEvent,
-          votedEvents,
-          executedEvents,
-        );
-        action.dispatch({
-          type: FractalGovernanceAction.SET_AZORIUS_PROPOSAL,
-          payload: proposal,
-        });
-      }
-    };
-
-    await loadProposalsSynchronously(proposalCreatedEvents.reverse());
-  }, [
-    azoriusContractAddress,
-    ozLinearVotingContractAddress,
-    erc721LinearVotingContractAddress,
-    strategyType,
-    provider,
-    baseContracts,
-    decodeTransactions,
-    action,
-  ]);
+  let strategyContract: LinearERC20Voting | LinearERC721Voting;
+  if (ozLinearVotingContractAddress) {
+    strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+      ozLinearVotingContractAddress,
+    );
+  } else if (erc721LinearVotingContractAddress) {
+    strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+      erc721LinearVotingContractAddress,
+    );
+  } else {
+    logError('No strategy contract found');
+    return undefined;
+  }
 
   // const { requestWithRetries } = useAsyncRetry();
   // // Azrious proposals are listeners
@@ -324,5 +330,14 @@ export const useAzoriusProposals = () => {
   //   baseContracts,
   // ]);
 
-  return loadAzoriusProposals;
+  return (proposalLoaded: (proposal: AzoriusProposal) => void) => {
+    return loadAzoriusProposals(
+      azoriusContract,
+      strategyContract,
+      strategyType,
+      provider,
+      decode,
+      proposalLoaded,
+    );
+  };
 };
