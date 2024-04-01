@@ -17,6 +17,7 @@ import { logError } from '../../../../../helpers/errorLogging';
 import useCreateProposalTemplate from '../../../../../hooks/DAO/proposal/useCreateProposalTemplate';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import useCreateProposalTemplateSchema from '../../../../../hooks/schemas/createProposalTemplate/useCreateProposalTemplateSchema';
+import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import useIPFSClient from '../../../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -52,7 +53,8 @@ export default function CreateProposalTemplatePage() {
   const { addressPrefix } = useNetworkConfig();
 
   const { prepareProposalTemplateProposal } = useCreateProposalTemplate();
-  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
+  const { submitProposal, pendingCreateTx } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const { createProposalTemplateValidation } = useCreateProposalTemplateSchema();
   const ipfsClient = useIPFSClient();
 

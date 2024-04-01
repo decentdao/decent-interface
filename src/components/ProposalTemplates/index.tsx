@@ -2,7 +2,7 @@ import { Flex, Box, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
-import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { EmptyBox } from '../ui/containers/EmptyBox';
@@ -16,7 +16,7 @@ export default function ProposalTemplates() {
     governance: { proposalTemplates },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
-  const { canUserCreateProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
 
   return (
     <Flex

@@ -16,6 +16,7 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { logError } from '../../../helpers/errorLogging';
 import { usePrepareProposal } from '../../../hooks/DAO/proposal/usePrepareProposal';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
@@ -43,7 +44,8 @@ export default function ProposalTemplateModal({
   const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const navigate = useNavigate();
-  const { submitProposal, canUserCreateProposal } = useSubmitProposal();
+  const { submitProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const { prepareProposal } = usePrepareProposal();
 
   const handleParameterChange = ({

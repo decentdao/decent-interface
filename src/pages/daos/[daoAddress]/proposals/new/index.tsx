@@ -16,6 +16,7 @@ import { DAO_ROUTES } from '../../../../../constants/routes';
 import { usePrepareProposal } from '../../../../../hooks/DAO/proposal/usePrepareProposal';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCreateProposalSchema } from '../../../../../hooks/schemas/proposalCreate/useCreateProposalSchema';
+import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { CreateProposalForm, CreateProposalState, GovernanceType } from '../../../../../types';
@@ -32,7 +33,8 @@ export default function ProposalCreatePage() {
   const { addressPrefix } = useNetworkConfig();
   const { createProposalValidation } = useCreateProposalSchema();
   const { prepareProposal } = usePrepareProposal();
-  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
+  const { submitProposal, pendingCreateTx } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
 
   const navigate = useNavigate();
   const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import ProposalTemplates from '../../../../components/ProposalTemplates';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
@@ -14,8 +14,8 @@ export default function ProposalTemplatesPage() {
   const {
     node: { daoAddress },
   } = useFractal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const { addressPrefix } = useNetworkConfig();
-  const { canUserCreateProposal } = useSubmitProposal();
 
   return (
     <div>

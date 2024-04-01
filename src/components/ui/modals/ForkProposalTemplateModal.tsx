@@ -3,9 +3,9 @@ import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
-import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
 import { validateAddress } from '../../../hooks/schemas/common/useValidationAddress';
+import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -36,7 +36,7 @@ export default function ForkProposalTemplateModal({
   } = useFractal();
 
   const { isSafe, isSafeLoading } = useIsSafe(targetDAOAddress);
-  const { getCanUserCreateProposal } = useSubmitProposal();
+  const { getCanUserCreateProposal } = useCanUserCreateProposal();
 
   const handleAddressChange: ChangeEventHandler<HTMLInputElement> = e => {
     setInputValue(e.target.value);

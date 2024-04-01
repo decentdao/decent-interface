@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import useRemoveProposalTemplate from '../../hooks/DAO/proposal/useRemoveProposalTemplate';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../types/createProposalTemplate';
@@ -32,7 +33,8 @@ export default function ProposalTemplateCard({
   const { addressPrefix } = useNetworkConfig();
 
   const { prepareRemoveProposalTemplateProposal } = useRemoveProposalTemplate();
-  const { submitProposal, canUserCreateProposal } = useSubmitProposal();
+  const { submitProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const { title, description } = proposalTemplate;
 
   const openProposalForm = useFractalModal(ModalType.CREATE_PROPOSAL_FROM_TEMPLATE, {

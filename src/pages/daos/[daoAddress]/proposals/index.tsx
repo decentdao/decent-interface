@@ -8,7 +8,7 @@ import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AzoriusGovernance, DecentGovernance, GovernanceType } from '../../../../types';
@@ -33,7 +33,7 @@ export default function ProposalsPage() {
     }
     return false;
   }, [azoriusGovernance]);
-  const { canUserCreateProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
 
   const showWrapTokenButton = !!azoriusGovernance.votesToken?.underlyingTokenData;
   const showUnWrapTokenButton =

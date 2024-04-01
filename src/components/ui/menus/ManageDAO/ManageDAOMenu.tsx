@@ -8,11 +8,11 @@ import {
   isWithinFreezePeriod,
   isWithinFreezeProposalPeriod,
 } from '../../../../helpers/freezePeriodHelpers';
-import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useMasterCopy } from '../../../../hooks/utils/useMasterCopy';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -51,7 +51,6 @@ export function ManageDAOMenu({
   guardContracts,
   fractalNode,
 }: IManageDAOMenu) {
-  const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const [governanceType, setGovernanceType] = useState(GovernanceType.MULTISIG);
   const {
     node: { safe },
@@ -62,22 +61,12 @@ export function ManageDAOMenu({
   const navigate = useNavigate();
   const safeAddress = fractalNode?.daoAddress;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
-  const { getCanUserCreateProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, safeAddress, false);
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeInfo: fractalNode,
   });
-
-  useEffect(() => {
-    const loadCanUserCreateProposal = async () => {
-      if (safeAddress) {
-        setCanUserCreateProposal(await getCanUserCreateProposal(safeAddress));
-      }
-    };
-
-    loadCanUserCreateProposal();
-  }, [safeAddress, getCanUserCreateProposal]);
 
   useEffect(() => {
     const loadGovernanceType = async () => {
