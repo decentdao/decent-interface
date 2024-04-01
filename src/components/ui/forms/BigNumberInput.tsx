@@ -42,28 +42,9 @@ export function BigNumberInput({
   ...rest
 }: BigNumberInputProps) {
   const { t } = useTranslation('common');
-  const removeTrailingZeros = (input: string) => {
-    if (input.includes('.')) {
-      const [leftDigits, rightDigits] = input.split('.');
-      if (Number(rightDigits) === 0) {
-        return input.slice(0, leftDigits.length);
-      }
-    }
-    return input;
-  };
-
-  const [inputValue, setInputValue] = useState<string>('');
-
-  useEffect(() => {
-    if (!value) return;
-    setInputValue(
-      value
-        ? !value.isZero()
-          ? removeTrailingZeros(utils.formatUnits(value, decimalPlaces))
-          : '0'
-        : '',
-    );
-  }, [value, decimalPlaces]);
+  const [inputValue, setInputValue] = useState<string>(
+    value && !value.isZero() ? utils.formatUnits(value, decimalPlaces) : '',
+  );
 
   // this will insure the caret in the input component does not shift to the end of the input when the value is changed
   const resetCaretPositionForInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,13 +121,6 @@ export function BigNumberInput({
     [decimalPlaces, max, onChange, truncateDecimalPlaces],
   );
 
-  const onChangeInput = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      processValue(event);
-    },
-    [processValue],
-  );
-
   //set value to min if less than min, when focus is lost
   const onBlur = useCallback(
     (event: React.FocusEvent<HTMLInputElement>) => {
@@ -182,7 +156,7 @@ export function BigNumberInput({
     <InputGroup>
       <Input
         value={inputValue}
-        onChange={onChangeInput}
+        onChange={processValue}
         onBlur={onBlur}
         type="number"
         {...rest}

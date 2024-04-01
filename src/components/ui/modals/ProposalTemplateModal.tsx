@@ -200,8 +200,8 @@ export default function ProposalTemplateModal({
               ),
           )}
           {(showAll ||
-            !transaction.ethValue.bigNumberValue ||
-            BigNumber.from(transaction.ethValue.bigNumberValue).eq(0)) && (
+            !transactions[transactionIndex].ethValue.bigNumberValue ||
+            BigNumber.from(transactions[transactionIndex].ethValue.bigNumberValue).eq(0)) && (
             <Flex
               width="100%"
               flexWrap="wrap"
