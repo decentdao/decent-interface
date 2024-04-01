@@ -202,21 +202,23 @@ export default function ProposalTemplateModal({
           {(showAll ||
             !transaction.ethValue.bigNumberValue ||
             BigNumber.from(transaction.ethValue.bigNumberValue).eq(0)) && (
-              <Flex
+            <Flex
               width="100%"
               flexWrap="wrap"
               marginTop="1.5rem"
-            ><BigNumberComponent
-              label={t('labelEthValue', { ns: 'proposal' })}
-              helper={t('helperEthValue', { ns: 'proposal' })}
-              isRequired={false}
-              errorMessage={undefined}
-              value={BigNumber.from(transaction.ethValue.bigNumberValue || 0)}
-              onChange={value => {
-                handleEthValueChange({ transactionIndex, value });
-              }}
-              decimalPlaces={18}
-            /></Flex>
+            >
+              <BigNumberComponent
+                label={t('labelEthValue', { ns: 'proposal' })}
+                helper={t('helperEthValue', { ns: 'proposal' })}
+                isRequired={false}
+                errorMessage={undefined}
+                value={BigNumber.from(transaction.ethValue.bigNumberValue || 0)}
+                onChange={value => {
+                  handleEthValueChange({ transactionIndex, value });
+                }}
+                decimalPlaces={18}
+              />
+            </Flex>
           )}
           {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
         </VStack>
