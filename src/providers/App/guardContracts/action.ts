@@ -6,5 +6,5 @@ export enum GuardContractAction {
 
 export type GuardContractActions = {
   type: GuardContractAction.SET_GUARD_CONTRACT;
-  payload: FractalGuardContracts;
+  payload: Omit<FractalGuardContracts, 'isGuardLoaded'>;
 };

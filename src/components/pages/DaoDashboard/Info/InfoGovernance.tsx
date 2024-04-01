@@ -1,8 +1,8 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Govern } from '@decent-org/fractal-ui';
-import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
@@ -15,11 +15,12 @@ export function InfoGovernance() {
   const {
     node: { daoAddress },
     governance,
-    guardContracts: { freezeGuardType, freezeGuardContract },
+    guardContracts: { freezeGuardType, freezeGuardContractAddress },
     readOnly: { dao },
   } = useFractal();
   const provider = useEthersProvider();
   const { getTimeDuration } = useTimeHelpers();
+  const baseContracts = useSafeContracts();
   const [timelockPeriod, setTimelockPeriod] = useState<string>();
   const [executionPeriod, setExecutionPeriod] = useState<string>();
   useEffect(() => {
@@ -30,10 +31,13 @@ export function InfoGovernance() {
         }
       };
       if (freezeGuardType == FreezeGuardType.MULTISIG) {
-        if (freezeGuardContract) {
-          const freezeGuard = freezeGuardContract.asProvider as MultisigFreezeGuard;
-          setTimelockPeriod(await formatBlocks(await freezeGuard.timelockPeriod()));
-          setExecutionPeriod(await formatBlocks(await freezeGuard.executionPeriod()));
+        if (freezeGuardContractAddress && baseContracts) {
+          const freezeGuardContract =
+            baseContracts.multisigFreezeGuardMasterCopyContract.asProvider.attach(
+              freezeGuardContractAddress,
+            );
+          setTimelockPeriod(await formatBlocks(await freezeGuardContract.timelockPeriod()));
+          setExecutionPeriod(await formatBlocks(await freezeGuardContract.executionPeriod()));
         }
       } else if (dao?.isAzorius) {
         const azoriusGovernance = governance as AzoriusGovernance;
@@ -54,10 +58,11 @@ export function InfoGovernance() {
 
     setTimelockInfo();
   }, [
+    baseContracts,
     executionPeriod,
     getTimeDuration,
     governance,
-    freezeGuardContract,
+    freezeGuardContractAddress,
     freezeGuardType,
     provider,
     timelockPeriod,

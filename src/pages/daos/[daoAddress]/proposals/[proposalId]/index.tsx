@@ -12,6 +12,7 @@ import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSnapshotProposal from '../../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../../../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalProposal, AzoriusProposal, SnapshotProposal } from '../../../../../types';
 
 export default function ProposalDetailsPage() {
@@ -20,6 +21,7 @@ export default function ProposalDetailsPage() {
     governance: { proposals },
     readOnly: { dao },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const { proposalId } = useParams();
   const [proposal, setProposal] = useState<FractalProposal | null>();
   const { isSnapshotProposal, snapshotProposal } = useSnapshotProposal(proposal);
@@ -48,6 +50,10 @@ export default function ProposalDetailsPage() {
     setProposal(foundProposal);
   }, [proposals, proposalId, isSnapshotProposal]);
 
+  if (!daoAddress) {
+    return null;
+  }
+
   return (
     <div>
       <PageHeader
@@ -55,7 +61,7 @@ export default function ProposalDetailsPage() {
         breadcrumbs={[
           {
             terminus: t('proposals', { ns: 'breadcrumbs' }),
-            path: DAO_ROUTES.proposals.relative(daoAddress),
+            path: DAO_ROUTES.proposals.relative(addressPrefix, daoAddress),
           },
           {
             terminus: t('proposal', {

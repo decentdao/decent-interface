@@ -1,7 +1,6 @@
 import { Box, Button, Text, Flex } from '@chakra-ui/react';
 import { Check } from '@decent-org/fractal-ui';
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +9,7 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeMultisigProposals } from '../../../hooks/DAO/loaders/governance/useSafeMultisigProposals';
+import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
@@ -20,15 +20,10 @@ import { MultisigProposal, FractalProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
-export function TxActions({
-  proposal,
-  freezeGuard,
-}: {
-  proposal: MultisigProposal;
-  freezeGuard: MultisigFreezeGuard;
-}) {
+export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const {
     node: { safe },
+    guardContracts: { freezeGuardContractAddress },
     readOnly: { user },
   } = useFractal();
   const signerOrProvider = useSignerOrProvider();
@@ -40,7 +35,7 @@ export function TxActions({
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
   const loadSafeMultisigProposals = useSafeMultisigProposals();
-
+  const baseContracts = useSafeContracts();
   if (user.votingWeight.eq(0)) return <></>;
 
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
@@ -78,7 +73,7 @@ export function TxActions({
 
   const timelockTransaction = async () => {
     try {
-      if (!multisigTx.confirmations) {
+      if (!multisigTx.confirmations || !baseContracts || !freezeGuardContractAddress) {
         return;
       }
       const safeTx = buildSafeTransaction({
@@ -89,6 +84,9 @@ export function TxActions({
           signer: confirmation.owner,
           data: confirmation.signature,
         })),
+      );
+      const freezeGuard = baseContracts.multisigFreezeGuardMasterCopyContract.asSigner.attach(
+        freezeGuardContractAddress,
       );
       contractCall({
         contractFn: () =>

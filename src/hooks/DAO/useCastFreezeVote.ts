@@ -1,12 +1,8 @@
-import {
-  ERC20FreezeVoting,
-  ERC721FreezeVoting,
-  MultisigFreezeVoting,
-} from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FreezeVotingType } from '../../types';
+import useSafeContracts from '../safe/useSafeContracts';
 import { useTransaction } from '../utils/useTransaction';
 import useUserERC721VotingTokens from './proposal/useUserERC721VotingTokens';
 
@@ -17,11 +13,12 @@ const useCastFreezeVote = ({
 }) => {
   const [contractCallCastFreeze, contractCallPending] = useTransaction();
   const {
-    guardContracts: { freezeVotingContract, freezeVotingType },
+    guardContracts: { freezeVotingContractAddress, freezeVotingType },
     node: {
       nodeHierarchy: { parentAddress },
     },
   } = useFractal();
+  const baseContracts = useSafeContracts();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, undefined, false);
 
   useEffect(() => {
@@ -31,18 +28,26 @@ const useCastFreezeVote = ({
   const { t } = useTranslation('transaction');
 
   const castFreezeVote = useCallback(() => {
+    if (!freezeVotingContractAddress || !baseContracts) return;
     contractCallCastFreeze({
       contractFn: () => {
         if (freezeVotingType === FreezeVotingType.ERC721) {
+          const freezeERC721VotingContract =
+            baseContracts.freezeERC721VotingMasterCopyContract.asSigner.attach(
+              freezeVotingContractAddress,
+            );
           return getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo =>
-            (freezeVotingContract?.asSigner as ERC721FreezeVoting)[
-              'castFreezeVote(address[],uint256[])'
-            ](tokensInfo.totalVotingTokenAddresses, tokensInfo.totalVotingTokenIds),
+            freezeERC721VotingContract['castFreezeVote(address[],uint256[])'](
+              tokensInfo.totalVotingTokenAddresses,
+              tokensInfo.totalVotingTokenIds,
+            ),
           );
         } else {
-          return (
-            freezeVotingContract?.asSigner as MultisigFreezeVoting | ERC20FreezeVoting
-          ).castFreezeVote();
+          const freezeVotingContract =
+            baseContracts.freezeMultisigVotingMasterCopyContract.asSigner.attach(
+              freezeVotingContractAddress,
+            );
+          return freezeVotingContract.castFreezeVote();
         }
       },
       pendingMessage: t('pendingCastFreezeVote'),
@@ -52,10 +57,11 @@ const useCastFreezeVote = ({
   }, [
     contractCallCastFreeze,
     t,
-    freezeVotingContract,
+    freezeVotingContractAddress,
     freezeVotingType,
     getUserERC721VotingTokens,
     parentAddress,
+    baseContracts,
   ]);
   return castFreezeVote;
 };

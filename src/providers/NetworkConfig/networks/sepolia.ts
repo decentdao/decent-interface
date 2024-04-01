@@ -32,6 +32,7 @@ export const sepoliaConfig: NetworkConfig = {
   etherscanAPIBaseUrl: 'https://api-sepolia.etherscan.io',
   chainId: CHAIN_ID,
   name: sepolia.name,
+  addressPrefix: 'sep',
   color: 'gold.300',
   nativeTokenSymbol: sepolia.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',

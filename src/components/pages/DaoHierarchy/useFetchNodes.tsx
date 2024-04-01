@@ -96,7 +96,7 @@ export function useFetchNodes(address?: string) {
     for await (const subDAO of nodes) {
       try {
         const safeInfo = await requestWithRetries(() => fetchDAOInfo(subDAO.address), 5, 5000);
-        if (safeInfo.guard) {
+        if (safeInfo && safeInfo.guard) {
           if (safeInfo.guard === ethers.constants.AddressZero) {
             subDAOs.push(safeInfo);
           } else {
