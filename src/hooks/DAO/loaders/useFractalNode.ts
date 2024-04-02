@@ -125,7 +125,7 @@ export const useFractalNode = (
         payload: safeInfo,
       });
     },
-    [action, lookupModules, requestWithRetries, reset, safeAPI],
+    [action, lookupModules, reset, safeAPI],
   );
 
   useEffect(() => {
