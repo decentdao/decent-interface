@@ -48,14 +48,7 @@ const getQuorum = async (
   let quorum;
 
   if (strategyType === VotingStrategyType.LINEAR_ERC20 && erc20StrategyContract) {
-    try {
-      quorum = await erc20StrategyContract.quorumVotes(proposalId);
-    } catch (e) {
-      // For who knows reason - strategy.quorumVotes might give you an error
-      // Seems like occuring when token deployment haven't worked properly
-      logError('Error while getting strategy quorum', e);
-      quorum = BigNumber.from(0);
-    }
+    quorum = await erc20StrategyContract.quorumVotes(proposalId);
   } else if (strategyType === VotingStrategyType.LINEAR_ERC721 && erc721StrategyContract) {
     quorum = await erc721StrategyContract.quorumThreshold();
   } else {
