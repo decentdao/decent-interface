@@ -334,7 +334,6 @@ export default function useSubmitProposal() {
             }),
           )
         ).wait();
-        console.log('success');
         toast.dismiss(toastId);
         toast(successToastMessage);
         if (successCallback) {
