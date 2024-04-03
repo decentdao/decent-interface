@@ -19,10 +19,7 @@ export const useDAOProposals = () => {
 
   const loadDAOProposals = useCallback(async () => {
     clearIntervals();
-    if (
-      (type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721) &&
-      loadAzoriusProposals !== undefined
-    ) {
+    if (type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721) {
       // load Azorius proposals and strategies
       loadAzoriusProposals(proposal => {
         action.dispatch({
