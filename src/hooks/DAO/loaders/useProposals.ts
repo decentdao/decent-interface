@@ -14,17 +14,17 @@ export const useDAOProposals = () => {
   } = useFractal();
 
   const { setMethodOnInterval, clearIntervals } = useUpdateTimer(daoAddress);
-  const azoriusProposals = useAzoriusProposals();
+  const loadAzoriusProposals = useAzoriusProposals();
   const loadSafeMultisigProposals = useSafeMultisigProposals();
 
   const loadDAOProposals = useCallback(async () => {
     clearIntervals();
     if (
       (type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721) &&
-      azoriusProposals !== undefined
+      loadAzoriusProposals !== undefined
     ) {
       // load Azorius proposals and strategies
-      azoriusProposals.loadAzoriusProposals(proposal => {
+      loadAzoriusProposals(proposal => {
         action.dispatch({
           type: FractalGovernanceAction.SET_AZORIUS_PROPOSAL,
           payload: proposal,
@@ -37,7 +37,7 @@ export const useDAOProposals = () => {
   }, [
     clearIntervals,
     type,
-    azoriusProposals,
+    loadAzoriusProposals,
     action,
     setMethodOnInterval,
     loadSafeMultisigProposals,

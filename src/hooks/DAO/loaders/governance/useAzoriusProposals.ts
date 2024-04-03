@@ -157,20 +157,18 @@ export const useAzoriusProposals = () => {
     return undefined;
   }
 
-  return {
-    loadAzoriusProposals: (proposalLoaded: (proposal: AzoriusProposal) => void) => {
-      return loadAzoriusProposals(
-        azoriusContract,
-        erc20StrategyContract,
-        erc721StrategyContract,
-        strategyType,
-        provider,
-        erc20VotedEvents,
-        erc721VotedEvents,
-        executedEvents,
-        decode,
-        proposalLoaded,
-      );
-    },
+  return (proposalLoaded: (proposal: AzoriusProposal) => void) => {
+    return loadAzoriusProposals(
+      azoriusContract,
+      erc20StrategyContract,
+      erc721StrategyContract,
+      strategyType,
+      provider,
+      erc20VotedEvents,
+      erc721VotedEvents,
+      executedEvents,
+      decode,
+      proposalLoaded,
+    );
   };
 };
