@@ -22,7 +22,6 @@ import {
   ProposalMetadata,
 } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
-import { getAverageBlockTime } from '../../../utils/contract';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';

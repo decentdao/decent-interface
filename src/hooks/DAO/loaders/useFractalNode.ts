@@ -8,7 +8,6 @@ import { NodeAction } from '../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { useAsyncRetry } from '../../utils/useAsyncRetry';
 import { useLazyDAOName } from '../useDAOName';
 import { useFractalModules } from './useFractalModules';
 
@@ -33,7 +32,6 @@ export const useFractalNode = (
   const { getDaoName } = useLazyDAOName();
 
   const lookupModules = useFractalModules();
-  const { requestWithRetries } = useAsyncRetry();
 
   const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
     if (!result.data) {

@@ -1,5 +1,4 @@
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
-import { TimelockPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/MultisigFreezeGuard';
 import {
   VotingPeriodUpdatedEvent,
   QuorumThresholdUpdatedEvent,
@@ -116,27 +115,6 @@ export const useERC721LinearStrategy = () => {
       erc721LinearVotingContract.off(quorumThresholdUpdatedFilter, quorumThresholdUpdatedListener);
     };
   }, [erc721LinearVotingContractAddress, action, baseContracts, type]);
-
-  // this is duplicated in useERC20LinearStrategy line for line
-  // useEffect(() => {
-  //   if (!azoriusContractAddress || !baseContracts) {
-  //     return;
-  //   }
-  //   const azoriusContract =
-  //     baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
-
-  //   const timeLockPeriodFilter = azoriusContract.filters.TimelockPeriodUpdated();
-  //   const timelockPeriodListener: TypedListener<TimelockPeriodUpdatedEvent> = timelockPeriod => {
-  //     action.dispatch({
-  //       type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD,
-  //       payload: BigNumber.from(timelockPeriod),
-  //     });
-  //   };
-  //   azoriusContract.on(timeLockPeriodFilter, timelockPeriodListener);
-  //   return () => {
-  //     azoriusContract.off(timeLockPeriodFilter, timelockPeriodListener);
-  //   };
-  // }, [azoriusContractAddress, action, baseContracts]);
 
   return loadERC721Strategy;
 };

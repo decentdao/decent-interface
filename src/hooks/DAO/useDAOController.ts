@@ -2,7 +2,7 @@ import { utils } from 'ethers';
 import { useSearchParams } from 'react-router-dom';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { useAzoriusProposalListeners } from './loaders/governance/useAzoriusProposalListeners';
+import { useAzoriusListeners } from './loaders/governance/useAzoriusListeners';
 import { useERC20Claim } from './loaders/governance/useERC20Claim';
 import { useSnapshotProposals } from './loaders/snapshot/useSnapshotProposals';
 import { useFractalFreeze } from './loaders/useFractalFreeze';
@@ -49,7 +49,7 @@ export default function useDAOController() {
   useFractalTreasury();
   useERC20Claim();
   useSnapshotProposals();
-  useAzoriusProposalListeners();
+  useAzoriusListeners();
 
   return { invalidQuery, wrongNetwork, errorLoading };
 }

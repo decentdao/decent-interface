@@ -26,6 +26,7 @@ import {
 import { getAverageBlockTime } from '../../../../utils/contract';
 import useSafeContracts from '../../../safe/useSafeContracts';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
+import { TimelockPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/MultisigFreezeGuard';
 
 const proposalCreatedEventListener = (
   azoriusContract: Azorius,
@@ -133,7 +134,7 @@ const erc721VotedEventListener = (
   };
 };
 
-export const useAzoriusProposalListeners = () => {
+export const useAzoriusListeners = () => {
   const {
     action,
     governanceContracts: {
@@ -249,4 +250,24 @@ export const useAzoriusProposalListeners = () => {
       erc721StrategyContract.off(votedEvent, listener);
     };
   }, [action.dispatch, erc721StrategyContract, strategyType]);
+
+  useEffect(() => {
+    if (!azoriusContract) {
+      return;
+    }
+
+    const timeLockPeriodFilter = azoriusContract.filters.TimelockPeriodUpdated();
+    const timelockPeriodListener: TypedListener<TimelockPeriodUpdatedEvent> = timelockPeriod => {
+      action.dispatch({
+        type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD,
+        payload: BigNumber.from(timelockPeriod),
+      });
+    };
+
+    azoriusContract.on(timeLockPeriodFilter, timelockPeriodListener);
+
+    return () => {
+      azoriusContract.off(timeLockPeriodFilter, timelockPeriodListener);
+    };
+  }, [action, azoriusContract]);
 };
