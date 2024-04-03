@@ -16,7 +16,6 @@ import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 export const useERC721LinearStrategy = () => {
   const {
     governanceContracts: { erc721LinearVotingContractAddress, azoriusContractAddress },
-    governance: { type },
     action,
   } = useFractal();
   const provider = useEthersProvider();
@@ -72,7 +71,7 @@ export const useERC721LinearStrategy = () => {
   ]);
 
   useEffect(() => {
-    if (!erc721LinearVotingContractAddress || !baseContracts || !type) {
+    if (!erc721LinearVotingContractAddress || !baseContracts) {
       return;
     }
     const erc721LinearVotingContract =
@@ -90,10 +89,10 @@ export const useERC721LinearStrategy = () => {
     return () => {
       erc721LinearVotingContract.off(votingPeriodfilter, listener);
     };
-  }, [erc721LinearVotingContractAddress, action, baseContracts, type]);
+  }, [erc721LinearVotingContractAddress, action, baseContracts]);
 
   useEffect(() => {
-    if (!erc721LinearVotingContractAddress || !baseContracts || !type) {
+    if (!erc721LinearVotingContractAddress || !baseContracts) {
       return;
     }
     const erc721LinearVotingContract =
@@ -114,7 +113,7 @@ export const useERC721LinearStrategy = () => {
     return () => {
       erc721LinearVotingContract.off(quorumThresholdUpdatedFilter, quorumThresholdUpdatedListener);
     };
-  }, [erc721LinearVotingContractAddress, action, baseContracts, type]);
+  }, [erc721LinearVotingContractAddress, action, baseContracts]);
 
   return loadERC721Strategy;
 };
