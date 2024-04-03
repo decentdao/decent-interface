@@ -16,8 +16,12 @@ export const useAccountFavorites = () => {
   const [favoritesList, setFavoritesList] = useState<string[]>([]);
 
   useEffect(() => {
-    setFavoritesList(getValue(CacheKeys.FAVORITES));
-  }, [getValue]);
+    let favorites = getValue(CacheKeys.FAVORITES);
+    if (!!daoAddress && Array.isArray(favorites) && favorites.includes(daoAddress)) {
+      favorites = favorites.filter((favorite: string) => favorite !== daoAddress);
+    }
+    setFavoritesList(favorites);
+  }, [getValue, daoAddress]);
 
   /**
    * @returns favorited status of loaded safe
