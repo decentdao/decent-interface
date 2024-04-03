@@ -23,6 +23,7 @@ import {
   mapProposalCreatedEventToProposal,
   decodeTransactions,
 } from '../../../../utils';
+import { getAverageBlockTime } from '../../../../utils/contract';
 import useSafeContracts from '../../../safe/useSafeContracts';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
@@ -36,6 +37,13 @@ const proposalCreatedEventListener = (
   dispatch: Dispatch<FractalActions>,
 ): TypedListener<ProposalCreatedEvent> => {
   return async (_strategyAddress, proposalId, proposer, transactions, metadata) => {
+    // Wait for a block before processing.
+    // We've seen that calling smart contract functions in `mapProposalCreatedEventToProposal`
+    // which include the `proposalId` error out because the RPC node (rather, the block it's on)
+    // doesn't see this proposal yet (despite the event being caught in the app...).
+    const averageBlockTime = await getAverageBlockTime(provider);
+    await new Promise(resolve => setTimeout(resolve, averageBlockTime * 1000));
+
     if (!metadata) {
       return;
     }
