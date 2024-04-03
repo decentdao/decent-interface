@@ -27,6 +27,7 @@ import {
   DecodedTransaction,
   VotingStrategyType,
   ERC721ProposalVote,
+  MetaTransaction,
 } from '../types';
 import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
@@ -293,3 +294,13 @@ export const parseDecodedData = (
 export function getAzoriusModuleFromModules(modules: FractalModuleData[]) {
   return modules.find(module => module.moduleType === FractalModuleType.AZORIUS);
 }
+
+export const decodeTransactions = async (
+  _decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
+  _transactions: MetaTransaction[],
+) => {
+  const decodedTransactions = await Promise.all(
+    _transactions.map(async tx => _decode(tx.value.toString(), tx.to, tx.data)),
+  );
+  return decodedTransactions.flat();
+};
