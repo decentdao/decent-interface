@@ -1,5 +1,6 @@
 import { LinearERC20Voting, LinearERC721Voting } from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
+import { TimelockPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/MultisigFreezeGuard';
 import {
   Azorius,
   ProposalCreatedEvent,
@@ -26,7 +27,6 @@ import {
 import { getAverageBlockTime } from '../../../../utils/contract';
 import useSafeContracts from '../../../safe/useSafeContracts';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
-import { TimelockPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/MultisigFreezeGuard';
 
 const proposalCreatedEventListener = (
   azoriusContract: Azorius,
