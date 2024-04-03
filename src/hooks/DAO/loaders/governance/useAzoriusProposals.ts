@@ -2,7 +2,6 @@ import { LinearERC20Voting, LinearERC721Voting } from '@fractal-framework/fracta
 import {
   Azorius,
   ProposalExecutedEvent,
-  ProposalCreatedEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
@@ -15,50 +14,6 @@ import { Providers } from '../../../../types/network';
 import { mapProposalCreatedEventToProposal, decodeTransactions } from '../../../../utils';
 import useSafeContracts from '../../../safe/useSafeContracts';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
-
-const loadProposalFromEvent = async (
-  _provider: Providers,
-  _decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
-  _azoriusContract: Azorius,
-  _erc20StrategyContract: LinearERC20Voting | undefined,
-  _erc721StrategyContract: LinearERC721Voting | undefined,
-  _strategyType: VotingStrategyType,
-  { args: _args }: ProposalCreatedEvent,
-  _erc20VotedEvents: Promise<ERC20VotedEvent[] | undefined>,
-  _erc721VotedEvents: Promise<ERC721VotedEvent[] | undefined>,
-  _executedEvents: Promise<ProposalExecutedEvent[] | undefined>,
-) => {
-  let proposalData;
-  if (_args.metadata) {
-    const metadataEvent: ProposalMetadata = JSON.parse(_args.metadata);
-    const decodedTransactions = await decodeTransactions(_decode, _args.transactions);
-    proposalData = {
-      metaData: {
-        title: metadataEvent.title,
-        description: metadataEvent.description,
-        documentationUrl: metadataEvent.documentationUrl,
-      },
-      transactions: _args.transactions,
-      decodedTransactions,
-    };
-  }
-
-  const proposal = await mapProposalCreatedEventToProposal(
-    _erc20StrategyContract,
-    _erc721StrategyContract,
-    _strategyType,
-    _args.proposalId,
-    _args.proposer,
-    _azoriusContract,
-    _provider,
-    _erc20VotedEvents,
-    _erc721VotedEvents,
-    _executedEvents,
-    proposalData,
-  );
-
-  return proposal;
-};
 
 const loadAzoriusProposals = async (
   azoriusContract: Azorius,
@@ -78,17 +33,36 @@ const loadAzoriusProposals = async (
   ).reverse();
 
   for (const proposalCreatedEvent of proposalCreatedEvents) {
-    const proposal = await loadProposalFromEvent(
-      provider,
-      decode,
-      azoriusContract,
+    let proposalData;
+    if (proposalCreatedEvent.args.metadata) {
+      const metadataEvent: ProposalMetadata = JSON.parse(proposalCreatedEvent.args.metadata);
+      const decodedTransactions = await decodeTransactions(
+        decode,
+        proposalCreatedEvent.args.transactions,
+      );
+      proposalData = {
+        metaData: {
+          title: metadataEvent.title,
+          description: metadataEvent.description,
+          documentationUrl: metadataEvent.documentationUrl,
+        },
+        transactions: proposalCreatedEvent.args.transactions,
+        decodedTransactions,
+      };
+    }
+
+    const proposal = await mapProposalCreatedEventToProposal(
       erc20StrategyContract,
       erc721StrategyContract,
       strategyType,
-      proposalCreatedEvent,
+      proposalCreatedEvent.args.proposalId,
+      proposalCreatedEvent.args.proposer,
+      azoriusContract,
+      provider,
       erc20VotedEvents,
       erc721VotedEvents,
       executedEvents,
+      proposalData,
     );
 
     proposalLoaded(proposal);
