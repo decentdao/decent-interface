@@ -36,7 +36,6 @@ const proposalCreatedEventListener = (
   dispatch: Dispatch<FractalActions>,
 ): TypedListener<ProposalCreatedEvent> => {
   return async (_strategyAddress, proposalId, proposer, transactions, metadata) => {
-    console.log({ metadata });
     if (!metadata) {
       return;
     }
@@ -65,8 +64,6 @@ const proposalCreatedEventListener = (
       Promise.resolve(undefined),
       proposalData,
     );
-
-    console.log({ proposal });
 
     dispatch({
       type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW,
@@ -219,11 +216,9 @@ export const useAzoriusProposalListeners = () => {
     const votedEvent = erc20StrategyContract.filters.Voted();
     const listener = erc20VotedEventListener(erc20StrategyContract, strategyType, action.dispatch);
 
-    console.log('creating erc20 voted listener');
     erc20StrategyContract.on(votedEvent, listener);
 
     return () => {
-      console.log('removing erc20 voted listener');
       erc20StrategyContract.off(votedEvent, listener);
     };
   }, [action.dispatch, erc20StrategyContract, strategyType]);
