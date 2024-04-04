@@ -62,7 +62,7 @@ export default function ProposalCreatePage() {
   return (
     <Formik<CreateProposalForm>
       validationSchema={createProposalValidation}
-      initialValues={{ ...DEFAULT_PROPOSAL, nonce: safe.nonce }}
+      initialValues={{ ...DEFAULT_PROPOSAL, nonce: safe.nonceWithPending }}
       onSubmit={async values => {
         const { nonce } = values;
         const proposalData = await prepareProposal(values);
