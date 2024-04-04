@@ -55,20 +55,15 @@ export const useLoadDAONode = () => {
             return { error: 'errorFailedSearch' };
           }
 
-          const safeInfo = await safeAPI.getSafeInfo(_daoAddress);
-          const nextNonce = await safeAPI.getNextNonce(_daoAddress);
+          const sanitizedDaoAddress = utils.getAddress(_daoAddress);
+          const safeInfo = await safeAPI.getSafeInfo(sanitizedDaoAddress);
+          const nextNonce = await safeAPI.getNextNonce(sanitizedDaoAddress);
           const safeInfoWithGuard = { ...safeInfo, nonce: nextNonce };
 
-          const fractalModules = await lookupModules(safeInfo.modules);
-          const daoName = await getDaoName(
-            utils.getAddress(safeInfo.address),
-            graphNodeInfo.daoName,
-          );
-
           const node: FractalNode = Object.assign(graphNodeInfo, {
-            daoName,
+            daoName: await getDaoName(sanitizedDaoAddress, graphNodeInfo.daoName),
             safe: safeInfoWithGuard,
-            fractalModules,
+            fractalModules: await lookupModules(safeInfo.modules),
           });
 
           // TODO we could cache node here, but should be careful not to cache
