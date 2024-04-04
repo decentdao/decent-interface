@@ -96,15 +96,15 @@ export const useFractalNode = (
       currentValidSafe.current = _addressPrefix + _daoAddress;
       setErrorLoading(false);
 
-      let safeInfoResponseWithGuard;
+      let safeInfo;
 
       try {
         if (!safeAPI) throw new Error('SafeAPI not set');
 
         const address = utils.getAddress(_daoAddress);
-        const safeInfo = await safeAPI.getSafeInfo(address);
+        const safeInfoResponse = await safeAPI.getSafeInfo(address);
         const nextNonce = await safeAPI.getNextNonce(address);
-        safeInfoResponseWithGuard = { ...safeInfo, nonce: nextNonce };
+        safeInfo = { ...safeInfoResponse, nonce: nextNonce };
       } catch (e) {
         reset({ error: true });
         return;
@@ -114,12 +114,12 @@ export const useFractalNode = (
 
       action.dispatch({
         type: NodeAction.SET_FRACTAL_MODULES,
-        payload: await lookupModules(safeInfoResponseWithGuard.modules),
+        payload: await lookupModules(safeInfo.modules),
       });
 
       action.dispatch({
         type: NodeAction.SET_SAFE_INFO,
-        payload: safeInfoResponseWithGuard,
+        payload: safeInfo,
       });
     },
     [action, lookupModules, reset, safeAPI],
