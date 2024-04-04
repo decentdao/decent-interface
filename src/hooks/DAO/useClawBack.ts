@@ -25,7 +25,14 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
       const childSafeBalance = await safeAPI.getBalances(
         utils.getAddress(childSafeInfo.daoAddress),
       );
+
       const parentSafeInfo = await safeAPI.getSafeInfo(utils.getAddress(parentAddress));
+      let parentSafeInfoNextNonce = parentSafeInfo.nonce;
+      const pendingTransactions = await safeAPI.getPendingTransactions(parentAddress);
+      if (pendingTransactions.count > 0) {
+        parentSafeInfoNextNonce = Math.max(...pendingTransactions.results.map(tx => tx.nonce)) + 1;
+      }
+
       if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
         const abiCoder = new ethers.utils.AbiCoder();
         const fractalModule = childSafeInfo.fractalModules!.find(
@@ -88,7 +95,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               values: transactions.map(tx => tx.value),
               calldatas: transactions.map(tx => tx.calldata),
             },
-            nonce: parentSafeInfo.nonce,
+            nonce: parentSafeInfoNextNonce,
             pendingToastMessage: t('clawBackPendingToastMessage'),
             failedToastMessage: t('clawBackFailedToastMessage'),
             successToastMessage: t('clawBackSuccessToastMessage'),
