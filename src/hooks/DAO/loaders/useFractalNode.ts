@@ -109,13 +109,6 @@ export const useFractalNode = (
         return;
       }
 
-      // comment to pick up in review: will `safeInfoResponseWithGuard` ever not be set?
-      // typescript doesn't think so.
-      if (!safeInfoResponseWithGuard) {
-        reset({ error: true });
-        return;
-      }
-
       // if here, we have a valid Safe!
 
       action.dispatch({
