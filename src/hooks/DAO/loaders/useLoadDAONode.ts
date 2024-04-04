@@ -56,11 +56,7 @@ export const useLoadDAONode = () => {
           }
 
           const safeInfo = await safeAPI.getSafeInfo(_daoAddress);
-          let nextNonce = safeInfo.nonce;
-          const pendingTransactions = await safeAPI.getPendingTransactions(_daoAddress);
-          if (pendingTransactions.count > 0) {
-            nextNonce = Math.max(...pendingTransactions.results.map(tx => tx.nonce)) + 1;
-          }
+          const nextNonce = await safeAPI.getNextNonce(_daoAddress);
           const safeInfoWithGuard = { ...safeInfo, nonce: nextNonce };
 
           const fractalModules = await lookupModules(safeInfo.modules);

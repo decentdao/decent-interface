@@ -26,12 +26,9 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         utils.getAddress(childSafeInfo.daoAddress),
       );
 
-      const parentSafeInfo = await safeAPI.getSafeInfo(utils.getAddress(parentAddress));
-      let parentSafeInfoNextNonce = parentSafeInfo.nonce;
-      const pendingTransactions = await safeAPI.getPendingTransactions(parentAddress);
-      if (pendingTransactions.count > 0) {
-        parentSafeInfoNextNonce = Math.max(...pendingTransactions.results.map(tx => tx.nonce)) + 1;
-      }
+      const santitizedParentAddress = utils.getAddress(parentAddress);
+      const parentSafeInfo = await safeAPI.getSafeInfo(santitizedParentAddress);
+      const parentSafeNextNonce = await safeAPI.getNextNonce(santitizedParentAddress);
 
       if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
         const abiCoder = new ethers.utils.AbiCoder();
@@ -95,7 +92,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               values: transactions.map(tx => tx.value),
               calldatas: transactions.map(tx => tx.calldata),
             },
-            nonce: parentSafeInfoNextNonce,
+            nonce: parentSafeNextNonce,
             pendingToastMessage: t('clawBackPendingToastMessage'),
             failedToastMessage: t('clawBackFailedToastMessage'),
             successToastMessage: t('clawBackSuccessToastMessage'),
