@@ -101,9 +101,14 @@ export const useFractalNode = (
       try {
         if (!safeAPI) throw new Error('SafeAPI not set');
         const address = utils.getAddress(_daoAddress);
+
         const safeInfo = await safeAPI.getSafeInfo(address);
-        const allTransactions = await safeAPI.getAllTransactions(address);
-        safeInfoResponseWithGuard = { ...safeInfo, nonceWithPending: allTransactions.count };
+        let nextNonce = safeInfo.nonce;
+        const pendingTransactions = await safeAPI.getPendingTransactions(address);
+        if (pendingTransactions.count > 0) {
+          nextNonce = Math.max(...pendingTransactions.results.map(tx => tx.nonce)) + 1;
+        }
+        safeInfoResponseWithGuard = { ...safeInfo, nonce: nextNonce };
       } catch (e) {
         reset({ error: true });
         return;
