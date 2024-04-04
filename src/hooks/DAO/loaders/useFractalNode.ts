@@ -96,18 +96,22 @@ export const useFractalNode = (
       currentValidSafe.current = _addressPrefix + _daoAddress;
       setErrorLoading(false);
 
-      let safeInfo;
+      let safeInfoResponseWithGuard;
 
       try {
         if (!safeAPI) throw new Error('SafeAPI not set');
-
-        safeInfo = await safeAPI.getSafeInfo(utils.getAddress(_daoAddress));
+        const address = utils.getAddress(_daoAddress);
+        const safeInfo = await safeAPI.getSafeInfo(address);
+        const allTransactions = await safeAPI.getAllTransactions(address);
+        safeInfoResponseWithGuard = { ...safeInfo, nonceWithPending: allTransactions.count };
       } catch (e) {
         reset({ error: true });
         return;
       }
 
-      if (!safeInfo) {
+      // comment to pick up in review: will `safeInfoResponseWithGuard` ever not be set?
+      // typescript doesn't think so.
+      if (!safeInfoResponseWithGuard) {
         reset({ error: true });
         return;
       }
@@ -116,12 +120,12 @@ export const useFractalNode = (
 
       action.dispatch({
         type: NodeAction.SET_FRACTAL_MODULES,
-        payload: await lookupModules(safeInfo.modules),
+        payload: await lookupModules(safeInfoResponseWithGuard.modules),
       });
 
       action.dispatch({
         type: NodeAction.SET_SAFE_INFO,
-        payload: safeInfo,
+        payload: safeInfoResponseWithGuard,
       });
     },
     [action, lookupModules, reset, safeAPI],

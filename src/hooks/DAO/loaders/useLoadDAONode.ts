@@ -54,13 +54,18 @@ export const useLoadDAONode = () => {
             logError('graphQL query failed');
             return { error: 'errorFailedSearch' };
           }
-          const safe = await safeAPI.getSafeInfo(_daoAddress);
-          const fractalModules = await lookupModules(safe.modules);
-          const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo.daoName);
+          const safeInfo = await safeAPI.getSafeInfo(_daoAddress);
+          const allTransactions = await safeAPI.getAllTransactions(_daoAddress);
+          const safeInfoWithGuard = { ...safeInfo, nonceWithPending: allTransactions.count };
+          const fractalModules = await lookupModules(safeInfo.modules);
+          const daoName = await getDaoName(
+            utils.getAddress(safeInfo.address),
+            graphNodeInfo.daoName,
+          );
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName,
-            safe,
+            safe: safeInfoWithGuard,
             fractalModules,
           });
 

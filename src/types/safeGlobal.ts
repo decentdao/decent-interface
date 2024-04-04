@@ -28,6 +28,7 @@ export declare type DataDecoded = {
 };
 
 export type SafeInfoResponseWithGuard = SafeInfoResponse & {
+  nonceWithPending: number;
   guard?: string;
 };
 
