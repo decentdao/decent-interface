@@ -1,5 +1,4 @@
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
-import { TimelockPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/MultisigFreezeGuard';
 import { QuorumNumeratorUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/BaseQuorumPercent';
 import { VotingPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { BigNumber } from 'ethers';
@@ -14,7 +13,6 @@ import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC20LinearStrategy = () => {
   const {
-    governance: { type },
     governanceContracts: { ozLinearVotingContractAddress, azoriusContractAddress },
     action,
   } = useFractal();
@@ -68,7 +66,7 @@ export const useERC20LinearStrategy = () => {
   ]);
 
   useEffect(() => {
-    if (!ozLinearVotingContractAddress || !baseContracts || !type) {
+    if (!ozLinearVotingContractAddress || !baseContracts) {
       return;
     }
     const ozLinearVotingContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
@@ -86,10 +84,10 @@ export const useERC20LinearStrategy = () => {
     return () => {
       ozLinearVotingContract.off(votingPeriodfilter, listener);
     };
-  }, [ozLinearVotingContractAddress, action, baseContracts, type]);
+  }, [ozLinearVotingContractAddress, action, baseContracts]);
 
   useEffect(() => {
-    if (!ozLinearVotingContractAddress || !baseContracts || !type) {
+    if (!ozLinearVotingContractAddress || !baseContracts) {
       return;
     }
     const ozLinearVotingContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
@@ -108,26 +106,7 @@ export const useERC20LinearStrategy = () => {
     return () => {
       ozLinearVotingContract.off(quorumNumeratorUpdatedFilter, quorumNumeratorUpdatedListener);
     };
-  }, [ozLinearVotingContractAddress, action, baseContracts, type]);
-
-  useEffect(() => {
-    if (!azoriusContractAddress || !baseContracts || !type) {
-      return;
-    }
-    const azoriusContract =
-      baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
-    const timeLockPeriodFilter = azoriusContract.filters.TimelockPeriodUpdated();
-    const timelockPeriodListener: TypedListener<TimelockPeriodUpdatedEvent> = timelockPeriod => {
-      action.dispatch({
-        type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD,
-        payload: BigNumber.from(timelockPeriod),
-      });
-    };
-    azoriusContract.on(timeLockPeriodFilter, timelockPeriodListener);
-    return () => {
-      azoriusContract.off(timeLockPeriodFilter, timelockPeriodListener);
-    };
-  }, [azoriusContractAddress, action, baseContracts, type]);
+  }, [ozLinearVotingContractAddress, action, baseContracts]);
 
   return loadERC20Strategy;
 };
