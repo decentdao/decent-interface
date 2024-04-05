@@ -44,6 +44,12 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
         ],
       };
     }
+    case FractalGovernanceAction.SET_AZORIUS_PROPOSAL: {
+      return {
+        ...state,
+        proposals: [...(proposals || []), action.payload],
+      };
+    }
     case FractalGovernanceAction.SET_PROPOSAL_TEMPLATES: {
       return { ...state, proposalTemplates: action.payload };
     }
