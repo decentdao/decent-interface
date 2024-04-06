@@ -164,15 +164,15 @@ export const useFractalFreeze = ({
       guardContracts.freezeVotingType !== null &&
       !!guardContracts.freezeVotingContractAddress &&
       loadOnMount &&
-      guardContracts.freezeVotingContractAddress + parentSafeAddress !== loadKey.current
+      guardContracts.freezeVotingContractAddress + parentSafeAddress + account !== loadKey.current
     ) {
       setFractalFreezeGuard(guardContracts);
-      loadKey.current = guardContracts.freezeVotingContractAddress + parentSafeAddress;
+      loadKey.current = guardContracts.freezeVotingContractAddress + parentSafeAddress + account;
     }
     if (!parentSafeAddress) {
       loadKey.current = undefined;
     }
-  }, [setFractalFreezeGuard, guardContracts, parentSafeAddress, loadOnMount]);
+  }, [setFractalFreezeGuard, guardContracts, parentSafeAddress, loadOnMount, account]);
 
   useEffect(() => {
     const { freezeVotingContractAddress, freezeVotingType: freezeVotingType } = guardContracts;

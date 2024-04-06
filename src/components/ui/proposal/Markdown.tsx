@@ -89,7 +89,7 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
         maxWidth="100%"
       >
         <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
+          remarkPlugins={truncate ? [] : [remarkGfm]}
           urlTransform={handleTransformURI}
           components={MarkdownComponents}
           className="markdown-body"
