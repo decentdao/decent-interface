@@ -13,7 +13,7 @@ export const DEFAULT_PROPOSAL_TRANSACTION: CreateProposalTransaction = {
   ],
 };
 
-export const DEFAULT_PROPOSAL_TEMPLATE = {
+export const DEFAULT_PROPOSAL = {
   nonce: undefined,
   proposalMetadata: {
     title: '',

@@ -7,23 +7,22 @@ import { useNavigate } from 'react-router-dom';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { DAO_ROUTES, BASE_ROUTES } from '../../constants/routes';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
-import useCreateProposalTemplateSchema from '../../hooks/schemas/createProposalTemplate/useCreateProposalTemplateSchema';
+import useCreateProposalSchema from '../../hooks/schemas/proposalBuilder/useCreateProposalSchema';
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { CreateProposalState, ProposalExecuteData } from '../../types';
-import { CreateProposalForm } from '../../types/proposalBuilder';
+import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 import PageHeader from '../ui/page/Header/PageHeader';
 import ProposalDetails from './ProposalDetails';
 import ProposalMetadata from './ProposalMetadata';
 import ProposalTransactionsForm from './ProposalTransactionsForm';
-import { DEFAULT_PROPOSAL_TEMPLATE } from './constants';
 
 interface IProposalBuilder {
-  mode: 'proposal' | 'template';
+  mode: ProposalBuilderMode;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
-  initialValues: typeof DEFAULT_PROPOSAL_TEMPLATE;
+  initialValues: CreateProposalForm;
 }
 
 const templateAreaTwoCol = '"content details"';
@@ -47,7 +46,7 @@ export default function ProposalBuilder({
   const { addressPrefix } = useNetworkConfig();
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { createProposalTemplateValidation } = useCreateProposalTemplateSchema();
+  const { createProposalValidation } = useCreateProposalSchema();
 
   const successCallback = () => {
     if (daoAddress) {
@@ -58,7 +57,7 @@ export default function ProposalBuilder({
 
   return (
     <Formik<CreateProposalForm>
-      validationSchema={createProposalTemplateValidation}
+      validationSchema={createProposalValidation}
       initialValues={initialValues}
       enableReinitialize
       onSubmit={async values => {
@@ -88,7 +87,11 @@ export default function ProposalBuilder({
           <form onSubmit={handleSubmit}>
             <Box>
               <PageHeader
-                title={t(isProposalMode ? 'createProposal' : 'createProposalTemplate')}
+                title={
+                  isProposalMode
+                    ? t('createProposal', { ns: 'proposal' })
+                    : t('createProposalTemplate', { ns: 'proposalTemplate' })
+                }
                 breadcrumbs={
                   isProposalMode
                     ? [
@@ -148,6 +151,7 @@ export default function ProposalBuilder({
                       {formState === CreateProposalState.METADATA_FORM ? (
                         <ProposalMetadata
                           setFormState={setFormState}
+                          mode={mode}
                           {...formikProps}
                         />
                       ) : (
@@ -173,6 +177,7 @@ export default function ProposalBuilder({
                             canUserCreateProposal={canUserCreateProposal}
                             pendingTransaction={pendingCreateTx}
                             safeNonce={safe?.nonce}
+                            mode={mode}
                             {...formikProps}
                           />
                         </>
@@ -184,7 +189,10 @@ export default function ProposalBuilder({
                   area="details"
                   w="100%"
                 >
-                  <ProposalDetails {...formikProps} />
+                  <ProposalDetails
+                    {...formikProps}
+                    mode={mode}
+                  />
                 </GridItem>
               </Grid>
             </Box>

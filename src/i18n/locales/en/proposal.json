@@ -2,7 +2,7 @@
   "proposalOverview": "Proposal Overview",
   "breakdownTitle": "Breakdown",
   "labelTargetAddress": "Target Address",
-  "helperTargetAddress": "The smart contract address this proposal will modify",
+  "helperTargetAddress": "The smart contract address this proposal will modify. Paste address and we'll try to fetch ABI for this contract from Etherscan",
   "labelFunctionName": "Function Name",
   "helperFunctionName": "The name of the function to be called if this proposal passes",
   "labelFunctionSignature": "Function Signature",

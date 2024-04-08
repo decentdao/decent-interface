@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
-import { CreateProposalForm } from '../../../types';
+import { CreateProposalForm } from '../../../types/proposalBuilder';
 import { encodeFunction } from '../../../utils/crypto';
-import { couldBeENS } from '../../../utils/url';
+import { couldBeENS, isValidUrl } from '../../../utils/url';
 
 export function usePrepareProposal() {
   const signer = useEthersSigner();
@@ -12,7 +12,17 @@ export function usePrepareProposal() {
       const transactionsWithEncoding = transactions.map(tx => {
         return {
           ...tx,
-          encodedFunctionData: encodeFunction(tx.functionName, tx.functionSignature, tx.parameters),
+          encodedFunctionData: encodeFunction(
+            tx.functionName,
+            tx.parameters.map(parameter => parameter.signature.trim()).join(', '),
+            tx.parameters
+              .map(parameter =>
+                isValidUrl(parameter.value!.trim())
+                  ? encodeURIComponent(parameter.value!.trim()) // If parameter.value is valid URL with special symbols like ":" or "?" - decoding might fail, thus we need to encode URL
+                  : parameter.value!.trim(),
+              )
+              .join(', '),
+          ),
         };
       });
       const targets = await Promise.all(

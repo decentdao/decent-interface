@@ -2,7 +2,11 @@ import { utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import { FractalProposal, ProposalMetadata, SafeMultisigTransactionResponse } from '../../../types';
+import {
+  FractalProposal,
+  CreateProposalMetadata,
+  SafeMultisigTransactionResponse,
+} from '../../../types';
 import { CacheKeys } from '../../utils/cache/cacheDefaults';
 import { DBObjectKeys, useIndexedDB } from '../../utils/cache/useLocalDB';
 
@@ -20,15 +24,15 @@ interface Transaction {
 
 const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) => {
   const ipfsClient = useIPFSClient();
-  const [multisigMetadata, setMultisigMetadata] = useState<undefined | ProposalMetadata | null>(
-    undefined,
-  );
+  const [multisigMetadata, setMultisigMetadata] = useState<
+    undefined | CreateProposalMetadata | null
+  >(undefined);
   const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
 
   const fetchMultisigMetadata = useCallback(async () => {
     if (!proposal) return;
 
-    const cached: ProposalMetadata = await getValue(
+    const cached: CreateProposalMetadata = await getValue(
       CacheKeys.MULTISIG_METADATA_PREFIX + proposal.proposalId,
     );
     if (cached) {
@@ -59,7 +63,7 @@ const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) =>
       try {
         const decoded = new utils.AbiCoder().decode(['string'], encodedMetadata);
         const ipfsHash = (decoded as string[])[0];
-        const meta: ProposalMetadata = await ipfsClient.cat(ipfsHash);
+        const meta: CreateProposalMetadata = await ipfsClient.cat(ipfsHash);
 
         // cache the metadata JSON
         await setValue(CacheKeys.MULTISIG_METADATA_PREFIX + proposal.proposalId, meta);
@@ -78,7 +82,9 @@ const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) =>
   return { multisigMetadata };
 };
 
-export const useGetMetadata = (proposal: FractalProposal | null | undefined): ProposalMetadata => {
+export const useGetMetadata = (
+  proposal: FractalProposal | null | undefined,
+): CreateProposalMetadata => {
   const { multisigMetadata } = useGetMultisigMetadata(proposal);
   const { t } = useTranslation('dashboard');
 

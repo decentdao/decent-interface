@@ -5,10 +5,10 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 /**
- * validation schema for Create Proposal Template workflow
+ * validation schema for Create Proposal workflow
  * @dev https://www.npmjs.com/package/yup
  */
-const useCreateProposalTemplateSchema = () => {
+const useCreateProposalSchema = () => {
   const { t } = useTranslation('proposal');
   const { addressValidationTest } = useValidationAddress();
   const {
@@ -30,7 +30,7 @@ const useCreateProposalTemplateSchema = () => {
     return false;
   };
 
-  const createProposalTemplateValidation = useMemo(
+  const createProposalValidation = useMemo(
     () =>
       Yup.object().shape({
         transactions: Yup.array()
@@ -59,9 +59,10 @@ const useCreateProposalTemplateSchema = () => {
               ),
             }),
           ),
-        proposalTemplateMetadata: Yup.object().shape({
+        proposalMetadata: Yup.object().shape({
           title: Yup.string().trim().required().max(50),
-          description: Yup.string().trim().notRequired().max(300),
+          description: Yup.string().trim().notRequired(),
+          documentationUrl: Yup.string().trim().notRequired(),
         }),
         nonce: Yup.number()
           .required()
@@ -69,7 +70,7 @@ const useCreateProposalTemplateSchema = () => {
       }),
     [addressValidationTest, t, safe],
   );
-  return { createProposalTemplateValidation };
+  return { createProposalValidation };
 };
 
-export default useCreateProposalTemplateSchema;
+export default useCreateProposalSchema;

@@ -13,7 +13,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import {
-  ProposalMetadata,
+  CreateProposalMetadata,
   VotingStrategyType,
   DecodedTransaction,
   FractalActions,
@@ -49,7 +49,7 @@ const proposalCreatedEventListener = (
       return;
     }
 
-    const metaDataEvent: ProposalMetadata = JSON.parse(metadata);
+    const metaDataEvent: CreateProposalMetadata = JSON.parse(metadata);
     const proposalData = {
       metaData: {
         title: metaDataEvent.title,

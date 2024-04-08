@@ -3,7 +3,7 @@ import { FormikProps } from 'formik';
 import { Fragment, PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
-import { CreateProposalForm } from '../../types/proposalBuilder';
+import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import Markdown from '../ui/proposal/Markdown';
 import '../../assets/css/Markdown.css';
 
@@ -30,7 +30,8 @@ export function TransactionValueContainer({
 
 export default function ProposalTemplateDetails({
   values: { proposalMetadata, transactions },
-}: FormikProps<CreateProposalForm>) {
+  mode,
+}: FormikProps<CreateProposalForm> & { mode: ProposalBuilderMode }) {
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const trimmedTitle = proposalMetadata.title?.trim();
 
@@ -51,19 +52,21 @@ export default function ProposalTemplateDetails({
           <Text color="grayscale.500">{t('previewTitle')}</Text>
           <Text textAlign="right">{trimmedTitle}</Text>
         </HStack>
-        <HStack justifyContent="space-between">
-          <Text color="grayscale.500">{t('previewThumnbail')}</Text>
-          {trimmedTitle && (
-            <Avatar
-              size="sm"
-              w="28px"
-              h="28px"
-              name={trimmedTitle}
-              borderRadius="4px"
-              getInitials={(title: string) => title.slice(0, 2)}
-            />
-          )}
-        </HStack>
+        {mode === 'template' && (
+          <HStack justifyContent="space-between">
+            <Text color="grayscale.500">{t('previewThumnbail')}</Text>
+            {trimmedTitle && (
+              <Avatar
+                size="sm"
+                w="28px"
+                h="28px"
+                name={trimmedTitle}
+                borderRadius="4px"
+                getInitials={(title: string) => title.slice(0, 2)}
+              />
+            )}
+          </HStack>
+        )}
         <HStack justifyContent="space-between">
           <Text color="grayscale.500">{t('proposalTemplateDescription')}</Text>
           <Markdown
