@@ -1,11 +1,11 @@
-import { BigNumberValuePair } from './common';
+import { BigIntValuePair } from './common';
 
 export enum CreateProposalTemplateFormState {
   METADATA_FORM,
   TRANSACTIONS_FORM,
 }
 
-export interface CreateProposalTemplateTransaction<T = BigNumberValuePair> {
+export interface CreateProposalTemplateTransaction<T = BigIntValuePair> {
   targetAddress: string;
   ethValue: T;
   functionName: string;

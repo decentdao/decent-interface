@@ -1,7 +1,6 @@
-import { BigNumber } from 'ethers';
 export const DEFAULT_TRANSACTION = {
   targetAddress: '',
-  ethValue: { value: '0', bigNumberValue: BigNumber.from('0') },
+  ethValue: { value: '0', bigintValue: 0n },
   functionName: '',
   functionSignature: '',
   parameters: '',

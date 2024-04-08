@@ -1,5 +1,5 @@
 import { LinkProps } from '@chakra-ui/react';
-import { ethers } from 'ethers';
+import { zeroAddress } from 'viem';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import EtherscanLinkBase from './EtherscanLinkBase';
 
@@ -17,9 +17,7 @@ function EtherscanLinkERC20({ address, children, ...rest }: Props) {
 
   return (
     <EtherscanLinkBase
-      href={`${etherscanBaseURL}/${
-        address === ethers.constants.AddressZero ? '' : 'token/'
-      }${address}`}
+      href={`${etherscanBaseURL}/${address === zeroAddress ? '' : 'token/'}${address}`}
       {...rest}
     >
       {children}

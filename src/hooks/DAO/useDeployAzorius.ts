@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -102,7 +101,7 @@ const useDeployAzorius = () => {
 
       const proposalData: ProposalExecuteData = {
         targets: [daoAddress, multiSendContract.asProvider.address],
-        values: [BigNumber.from('0'), BigNumber.from('0')],
+        values: [0n, 0n],
         calldatas: [
           safeSingletonContract.asProvider.interface.encodeFunctionData('addOwnerWithThreshold', [
             multiSendContract.asProvider.address,

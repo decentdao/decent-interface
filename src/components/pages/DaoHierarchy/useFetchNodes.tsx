@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
-import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import { getAddress, zeroAddress } from 'viem';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
@@ -39,7 +39,7 @@ export function useFetchNodes(address?: string) {
           azoriusFreezeGuardMasterCopyContract,
           fractalAzoriusMasterCopyContract,
         } = baseContracts;
-        if (safeInfo.guard !== ethers.constants.AddressZero) {
+        if (safeInfo.guard !== zeroAddress) {
           const guard = multisigFreezeGuardMasterCopyContract.asProvider.attach(safeInfo.guard);
           const guardOwner = await guard.owner();
           if (guardOwner !== safeInfo.address) {
@@ -58,7 +58,7 @@ export function useFetchNodes(address?: string) {
               azoriusModule.moduleAddress,
             );
             const azoriusGuardAddress = await azoriusContract.getGuard();
-            if (azoriusGuardAddress !== ethers.constants.AddressZero) {
+            if (azoriusGuardAddress !== zeroAddress) {
               const guard =
                 azoriusFreezeGuardMasterCopyContract.asProvider.attach(azoriusGuardAddress);
               const guardOwner = await guard.owner();
@@ -76,7 +76,6 @@ export function useFetchNodes(address?: string) {
 
   const fetchDAOInfo = useCallback(
     async (safeAddress: string) => {
-      const { getAddress } = ethers.utils;
       if (safeAPI) {
         return (await safeAPI.getSafeInfo(getAddress(safeAddress))) as SafeInfoResponseWithGuard;
       }
@@ -85,7 +84,6 @@ export function useFetchNodes(address?: string) {
   );
 
   const fetchSubDAOs = useCallback(async () => {
-    const { getAddress } = ethers.utils;
     // @remove
     let nodes: any = nodeHierarchy.childNodes;
     if (safe?.address !== address && data && !error) {
@@ -97,7 +95,7 @@ export function useFetchNodes(address?: string) {
       try {
         const safeInfo = await requestWithRetries(() => fetchDAOInfo(subDAO.address), 5, 5000);
         if (safeInfo && safeInfo.guard) {
-          if (safeInfo.guard === ethers.constants.AddressZero) {
+          if (safeInfo.guard === zeroAddress) {
             subDAOs.push(safeInfo);
           } else {
             const owner = await getDAOOwner(safeInfo);

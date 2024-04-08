@@ -15,12 +15,12 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
-  BigNumberValuePair,
+  BigIntValuePair,
   ICreationStepProps,
   TokenAllocation,
 } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberInput } from '../../ui/forms/BigNumberInput';
+import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { AzoriusTokenAllocation } from './AzoriusTokenAllocation';
 
@@ -60,7 +60,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
               {values.erc20Token.tokenAllocations.map((tokenAllocation, index) => {
                 const tokenAllocationError = (
                   errors?.erc20Token?.tokenAllocations as FormikErrors<
-                    TokenAllocation<BigNumberValuePair>[] | undefined
+                    TokenAllocation<BigIntValuePair>[] | undefined
                   >
                 )?.[index];
 
@@ -72,7 +72,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                 const amountErrorMessage =
                   values.erc20Token.tokenSupply.value &&
                   tokenAllocationError?.amount?.value &&
-                  !tokenAllocation.amount.bigNumberValue?.isZero()
+                  !(tokenAllocation.amount.bigintValue ?? 0n === 0n)
                     ? tokenAllocationError.amount.value
                     : null;
 
@@ -83,9 +83,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                     remove={remove}
                     addressErrorMessage={addressErrorMessage}
                     amountErrorMessage={amountErrorMessage}
-                    amountInputValue={
-                      values.erc20Token.tokenAllocations[index].amount.bigNumberValue
-                    }
+                    amountInputValue={values.erc20Token.tokenAllocations[index].amount.bigintValue}
                     allocationLength={values.erc20Token.tokenAllocations.length}
                     {...props}
                   />
@@ -140,14 +138,14 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                           <LabelWrapper
                             errorMessage={
                               (
-                                values.erc20Token.parentAllocationAmount?.bigNumberValue &&
+                                values.erc20Token.parentAllocationAmount?.bigintValue &&
                                 (errors.erc20Token?.parentAllocationAmount as any)
                               )?.value
                             }
                           >
-                            <BigNumberInput
+                            <BigIntInput
                               data-testid="tokenVoting-parentTokenAllocationInput"
-                              value={values.erc20Token.parentAllocationAmount?.bigNumberValue}
+                              value={values.erc20Token.parentAllocationAmount?.bigintValue}
                               onChange={valuePair =>
                                 setFieldValue('erc20Token.parentAllocationAmount', valuePair)
                               }

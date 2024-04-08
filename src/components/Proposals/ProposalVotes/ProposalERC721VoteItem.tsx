@@ -26,7 +26,7 @@ export default function ProposalERC721VoteItem({
       const votingToken = erc721Tokens!.find(token => token.address === address);
       return votingToken!.votingWeight;
     })
-    .reduce((a, b) => a.add(b));
+    .reduce((a, b) => a + b);
 
   return (
     <Grid
@@ -48,7 +48,7 @@ export default function ProposalERC721VoteItem({
         <GridItem colSpan={1}>
           <Text>
             {t('nftVotes', {
-              count: weight.toNumber(),
+              count: Number(weight.toString()),
               ns: 'proposal',
             })}
           </Text>

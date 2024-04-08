@@ -1,5 +1,5 @@
-import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { getAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { CacheKeys, CacheExpiry } from '../../utils/cache/cacheDefaults';
 import { useLocalStorage } from '../../utils/cache/useLocalStorage';
@@ -35,7 +35,7 @@ export const useAccountFavorites = () => {
    */
   const toggleFavorite = useCallback(
     (address: string) => {
-      const normalizedAddress = ethers.utils.getAddress(address);
+      const normalizedAddress = getAddress(address);
       let updatedFavorites: string[] = [];
 
       if (favoritesList.includes(normalizedAddress)) {

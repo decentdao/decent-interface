@@ -1,6 +1,5 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { Check } from '@decent-org/fractal-ui';
-import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -23,13 +22,13 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
   const { votesSummary } = proposal as AzoriusProposal;
   const totalVotesCasted = useMemo(() => {
     if (votesSummary) {
-      return votesSummary.yes.add(votesSummary.no).add(votesSummary.abstain);
+      return votesSummary.yes + votesSummary.no + votesSummary.abstain;
     }
-    return BigNumber.from(0);
+    return 0n;
   }, [votesSummary]);
 
   const votesTokenDecimalsDenominator = useMemo(
-    () => BigNumber.from(10).pow(votesToken?.decimals || 0),
+    () => 10n ** BigInt(votesToken?.decimals || 0),
     [votesToken?.decimals],
   );
 
@@ -50,28 +49,25 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
 
   const strategyQuorum =
     erc721Tokens !== undefined
-      ? votingStrategy.quorumThreshold!.value.toNumber()
+      ? votingStrategy.quorumThreshold!.value
       : votesToken !== undefined
-        ? votingStrategy.quorumPercentage!.value.toNumber()
-        : 0;
+        ? votingStrategy.quorumPercentage!.value
+        : 0n;
   const reachedQuorum =
     erc721Tokens !== undefined
-      ? totalVotesCasted.sub(votesSummary.no).toString()
+      ? totalVotesCasted - votesSummary.no
       : votesToken !== undefined
-        ? totalVotesCasted.sub(votesSummary.no).div(votesTokenDecimalsDenominator).toString()
-        : '0';
-  const totalQuorum = erc721Tokens !== undefined ? strategyQuorum.toString() : 0;
+        ? (totalVotesCasted - votesSummary.no) / votesTokenDecimalsDenominator
+        : 0n;
+  const totalQuorum = erc721Tokens !== undefined ? strategyQuorum : 0n;
 
+  // @todo what is up with the types here?
   const meetsQuorum = votesToken
-    ? votesToken.totalSupply
-        .div(votesTokenDecimalsDenominator)
-        .div(100)
-        .mul(strategyQuorum)
-        .toString()
+    ? (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) * strategyQuorum
     : reachedQuorum >= totalQuorum;
 
   const displayColor =
-    !totalVotesCasted.isZero() && meetsQuorum ? quorumReachedColor : quorumNotReachedColor;
+    totalVotesCasted !== 0n && meetsQuorum ? quorumReachedColor : quorumNotReachedColor;
   return (
     <Box
       rounded="md"

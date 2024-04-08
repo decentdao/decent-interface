@@ -36,7 +36,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const [contractCall, contractCallPending] = useTransaction();
   const loadSafeMultisigProposals = useSafeMultisigProposals();
   const baseContracts = useSafeContracts();
-  if (user.votingWeight.eq(0)) return <></>;
+  if (user.votingWeight === 0n) return <></>;
 
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
 

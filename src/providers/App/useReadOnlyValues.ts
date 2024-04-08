@@ -1,5 +1,5 @@
 import { ERC721__factory } from '@fractal-framework/fractal-contracts';
-import { BigNumber, utils } from 'ethers';
+import { utils } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import useSignerOrProvider from '../../hooks/utils/useSignerOrProvider';
 import {
@@ -13,7 +13,7 @@ import {
 const INITIAL_READ_ONLY_VALUES: ReadOnlyState = {
   user: {
     address: undefined,
-    votingWeight: BigNumber.from(0),
+    votingWeight: 0n,
   },
   dao: null,
 };
@@ -33,27 +33,27 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
       switch (governance.type) {
         case GovernanceType.MULTISIG:
           const isSigner = _account && node.safe?.owners.includes(_account);
-          return isSigner ? BigNumber.from(1) : BigNumber.from(0);
+          return isSigner ? 1n : 0n;
         case GovernanceType.AZORIUS_ERC20:
           const lockedTokenWeight = (governance as DecentGovernance).lockedVotesToken?.votingWeight;
-          const tokenWeight = azoriusGovernance.votesToken?.votingWeight || BigNumber.from(0);
+          const tokenWeight = azoriusGovernance.votesToken?.votingWeight || 0n;
           return lockedTokenWeight || tokenWeight;
         case GovernanceType.AZORIUS_ERC721:
           if (!_account || !azoriusGovernance.erc721Tokens || !signerOrProvider) {
-            return BigNumber.from(0);
+            return 0n;
           }
           const userVotingWeight = (
             await Promise.all(
               azoriusGovernance.erc721Tokens.map(async ({ address, votingWeight }) => {
                 const tokenContract = ERC721__factory.connect(address, signerOrProvider);
                 const userBalance = await tokenContract.balanceOf(_account);
-                return userBalance.mul(votingWeight);
+                return BigInt(userBalance.toString()) * votingWeight;
               }),
             )
-          ).reduce((prev, curr) => prev.add(curr), BigNumber.from(0));
+          ).reduce((prev, curr) => prev + curr, 0n);
           return userVotingWeight;
         default:
-          return BigNumber.from(0);
+          return 0n;
       }
     };
 

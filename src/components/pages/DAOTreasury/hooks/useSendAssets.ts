@@ -1,5 +1,5 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { BigNumber, ethers } from 'ethers';
+import { ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -12,7 +12,7 @@ const useSendAssets = ({
   destinationAddress,
   nonce,
 }: {
-  transferAmount: BigNumber;
+  transferAmount: bigint;
   asset: SafeBalanceUsdResponse;
   destinationAddress: string;
   nonce: number | undefined;
@@ -40,7 +40,7 @@ const useSendAssets = ({
 
     const proposalData: ProposalExecuteData = {
       targets: [isEth ? destinationAddress : asset.tokenAddress],
-      values: [isEth ? transferAmount : BigNumber.from('0')],
+      values: [isEth ? transferAmount : 0n],
       calldatas: isEth ? ['0x'] : calldatas,
       metaData: {
         title: t(isEth ? 'Send Eth' : 'Send Token', { ns: 'proposalMetadata' }),

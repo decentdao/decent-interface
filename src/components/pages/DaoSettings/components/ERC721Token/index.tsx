@@ -90,7 +90,7 @@ export default function ERC721TokensContainer() {
                   textStyle="text-base-sans-regular"
                   color="grayscale.100"
                 >
-                  {token.totalSupply ? token.totalSupply.mul(token.votingWeight).toString() : 'n/a'}
+                  {token.totalSupply ? (token.totalSupply * token.votingWeight).toString() : 'n/a'}
                 </Text>
               </GridItem>
             </Grid>

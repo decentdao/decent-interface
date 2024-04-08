@@ -1,5 +1,6 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { BigNumber, Contract, constants, utils, BigNumberish, Signer } from 'ethers';
+import { Contract, utils, Signer } from 'ethers';
+import { zeroAddress } from 'viem';
 import { sepolia, mainnet } from 'wagmi/chains';
 import { ContractConnection } from '../types';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
@@ -35,7 +36,7 @@ export function getRandomBytes() {
 export const calculateSafeTransactionHash = (
   safe: Contract,
   safeTx: SafeTransaction,
-  chainId: BigNumberish,
+  chainId: number,
 ): string => {
   return utils._TypedDataEncoder.hash(
     { verifyingContract: safe.address, chainId },
@@ -57,7 +58,7 @@ export const buildSignatureBytes = (signatures: SafeSignature[]): string => {
 
 export const buildSafeTransaction = (template: {
   to: string;
-  value?: BigNumber | number | string;
+  value?: bigint | number | string;
   data?: string;
   operation?: number;
   safeTxGas?: number | string;
@@ -75,8 +76,8 @@ export const buildSafeTransaction = (template: {
     safeTxGas: template.safeTxGas || 0,
     baseGas: template.baseGas || 0,
     gasPrice: template.gasPrice || 0,
-    gasToken: template.gasToken || constants.AddressZero,
-    refundReceiver: template.refundReceiver || constants.AddressZero,
+    gasToken: template.gasToken || zeroAddress,
+    refundReceiver: template.refundReceiver || zeroAddress,
     nonce: template.nonce,
   };
 };
@@ -85,7 +86,7 @@ export const safeSignTypedData = async (
   signer: Signer & TypedDataSigner,
   safe: Contract,
   safeTx: SafeTransaction,
-  chainId?: BigNumberish,
+  chainId?: number,
 ): Promise<SafeSignature> => {
   if (!chainId && !signer.provider) throw Error('Provider required to retrieve chainId');
   const cid = chainId || (await signer.provider!.getNetwork()).chainId;
@@ -106,7 +107,7 @@ export const buildSafeAPIPost = async (
   chainId: number,
   template: {
     to: string;
-    value?: BigNumber | number | string;
+    value?: bigint | number | string;
     data?: string;
     operation?: number;
     safeTxGas?: number | string;

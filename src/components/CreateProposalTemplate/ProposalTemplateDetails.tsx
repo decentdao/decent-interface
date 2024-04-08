@@ -73,8 +73,8 @@ export default function ProposalTemplateDetails({
         </HStack>
         <Divider color="chocolate.700" />
         {transactions.map((transaction, i) => {
-          const valueBiggerThanZero = transaction.ethValue.bigNumberValue
-            ? transaction.ethValue.bigNumberValue.gt(0)
+          const valueBiggerThanZero = transaction.ethValue.bigintValue
+            ? transaction.ethValue.bigintValue > 0n
             : false;
           return (
             <Fragment key={i}>

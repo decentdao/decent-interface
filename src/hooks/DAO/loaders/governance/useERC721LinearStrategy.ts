@@ -3,7 +3,6 @@ import {
   VotingPeriodUpdatedEvent,
   QuorumThresholdUpdatedEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
-import { BigNumber } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -47,15 +46,15 @@ export const useERC721LinearStrategy = () => {
     const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, provider);
     const votingData = {
       votingPeriod: {
-        value: BigNumber.from(votingPeriodValue),
+        value: BigInt(votingPeriodValue),
         formatted: getTimeDuration(votingPeriodValue),
       },
       quorumThreshold: {
-        value: quorumThreshold,
+        value: quorumThreshold.toBigInt(),
         formatted: quorumThreshold.toString(),
       },
       timeLockPeriod: {
-        value: BigNumber.from(timeLockPeriodValue),
+        value: BigInt(timeLockPeriodValue),
         formatted: getTimeDuration(timeLockPeriodValue),
       },
       strategyType: VotingStrategyType.LINEAR_ERC721,
@@ -82,7 +81,7 @@ export const useERC721LinearStrategy = () => {
     const listener: TypedListener<VotingPeriodUpdatedEvent> = votingPeriod => {
       action.dispatch({
         type: FractalGovernanceAction.UPDATE_VOTING_PERIOD,
-        payload: BigNumber.from(votingPeriod),
+        payload: BigInt(votingPeriod),
       });
     };
     erc721LinearVotingContract.on(votingPeriodfilter, listener);
@@ -106,7 +105,7 @@ export const useERC721LinearStrategy = () => {
     > = quorumThreshold => {
       action.dispatch({
         type: FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD,
-        payload: quorumThreshold,
+        payload: quorumThreshold.toBigInt(),
       });
     };
     erc721LinearVotingContract.on(quorumThresholdUpdatedFilter, quorumThresholdUpdatedListener);

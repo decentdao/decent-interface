@@ -2,7 +2,7 @@ import { CreateProposalTemplateTransaction } from '../../types/createProposalTem
 
 export const DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION: CreateProposalTemplateTransaction = {
   targetAddress: '',
-  ethValue: { value: '', bigNumberValue: undefined },
+  ethValue: { value: '', bigintValue: undefined },
   functionName: '',
   parameters: [
     {

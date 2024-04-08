@@ -2,7 +2,7 @@ import { VStack, HStack, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalTransaction } from '../../types/createProposal';
 import ExampleLabel from '../ui/forms/ExampleLabel';
-import { BigNumberComponent, InputComponent } from '../ui/forms/InputComponent';
+import { BigIntComponent, InputComponent } from '../ui/forms/InputComponent';
 
 interface TransactionProps {
   transaction: CreateProposalTransaction;
@@ -106,7 +106,7 @@ function Transaction({
         errorMessage={transaction.parameters && txFunctionError ? txFunctionError : undefined}
       />
 
-      <BigNumberComponent
+      <BigIntComponent
         label={t('labelEthValue')}
         helper={t('helperEthValue')}
         isRequired={false}
@@ -118,7 +118,7 @@ function Transaction({
           </HStack>
         }
         errorMessage={undefined}
-        value={transaction.ethValue.bigNumberValue}
+        value={transaction.ethValue.bigintValue}
         onChange={e => {
           setFieldValue(`transactions.${transactionIndex}.ethValue`, e);
         }}

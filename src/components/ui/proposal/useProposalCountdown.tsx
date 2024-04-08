@@ -1,5 +1,4 @@
 import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
-import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
@@ -63,7 +62,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         (async () => {
           try {
             if (dao?.isAzorius) {
-              await updateProposalState(BigNumber.from(proposal.proposalId));
+              await updateProposalState(BigInt(proposal.proposalId));
             } else {
               await loadDAOProposals();
             }
@@ -151,7 +150,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         // If the proposal is executing start the countdown (for Azorius proposals with guards)
         return;
       } else if (isAzoriusGuard && timeLockPeriod && votingDeadlineMs) {
-        guardTimelockPeriod = timeLockPeriod.value.toNumber() * 1000 + votingDeadlineMs;
+        guardTimelockPeriod = Number(timeLockPeriod.value.toString()) * 1000 + votingDeadlineMs;
       }
       startCountdown(guardTimelockPeriod);
       return;

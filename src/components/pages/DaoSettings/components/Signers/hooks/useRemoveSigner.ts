@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -33,13 +32,13 @@ const useRemoveSigner = ({
       safeSingletonContract.asProvider.interface.encodeFunctionData('removeOwner', [
         prevSigner,
         signerToRemove,
-        BigNumber.from(threshold),
+        BigInt(threshold),
       ]),
     ];
 
     const proposalData: ProposalExecuteData = {
       targets: [daoAddress!],
-      values: [BigNumber.from('0')],
+      values: [0n],
       calldatas: calldatas,
       metaData: {
         title: 'Remove Signers',

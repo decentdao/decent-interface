@@ -8,7 +8,6 @@ import {
   GridItem,
   Text,
 } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
 import { ReactNode, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
@@ -70,7 +69,7 @@ function ProposalVotes({
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { t } = useTranslation(['common', 'proposal']);
-  const totalVotesCasted = useMemo(() => yes.add(no).add(abstain), [yes, no, abstain]);
+  const totalVotesCasted = useMemo(() => yes + no + abstain, [yes, no, abstain]);
 
   const isERC20 = useMemo(
     () => azoriusGovernance.type === GovernanceType.AZORIUS_ERC20,
@@ -82,11 +81,11 @@ function ProposalVotes({
   );
 
   const getVotesPercentage = useCallback(
-    (voteTotal: BigNumber): number => {
-      if (totalVotesCasted.eq(0)) {
+    (voteTotal: bigint): number => {
+      if (totalVotesCasted === 0n) {
         return 0;
       }
-      return voteTotal.mul(100).div(totalVotesCasted).toNumber();
+      return Number(((voteTotal * 100n) / totalVotesCasted).toString());
     },
     [totalVotesCasted],
   );
@@ -177,9 +176,7 @@ function ProposalVotes({
                   <ProposalERC20VoteItem
                     key={vote.voter}
                     vote={vote}
-                    govTokenTotalSupply={
-                      azoriusGovernance.votesToken?.totalSupply || BigNumber.from(0)
-                    }
+                    govTokenTotalSupply={azoriusGovernance.votesToken?.totalSupply || 0n}
                     govTokenDecimals={azoriusGovernance.votesToken?.decimals || 0}
                     govTokenSymbol={azoriusGovernance.votesToken?.symbol || ''}
                   />
