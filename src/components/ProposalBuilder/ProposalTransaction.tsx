@@ -2,14 +2,14 @@ import { VStack, HStack, Text, Box, Flex, IconButton } from '@chakra-ui/react';
 import { AddPlus, Minus } from '@decent-org/fractal-ui';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CreateProposalTemplateTransaction } from '../../types/createProposalTemplate';
+import { CreateProposalTransaction } from '../../types/proposalBuilder';
 import ABISelector, { ABIElement } from '../ui/forms/ABISelector';
 import ExampleLabel from '../ui/forms/ExampleLabel';
 import { BigNumberComponent, InputComponent } from '../ui/forms/InputComponent';
-import { DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION } from './constants';
+import { DEFAULT_PROPOSAL_TRANSACTION } from './constants';
 
-interface ProposalTemplateTransactionProps {
-  transaction: CreateProposalTemplateTransaction;
+interface ProposalTransactionProps {
+  transaction: CreateProposalTransaction;
   transactionIndex: number;
   transactionPending: boolean;
   txAddressError?: string;
@@ -17,14 +17,14 @@ interface ProposalTemplateTransactionProps {
   setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void;
 }
 
-export default function ProposalTemplateTransaction({
+export default function ProposalTransaction({
   transaction,
   transactionIndex,
   transactionPending,
   txAddressError,
   txFunctionError,
   setFieldValue,
-}: ProposalTemplateTransactionProps) {
+}: ProposalTransactionProps) {
   const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
   const handleABISelectorChange = useCallback(
     (value: ABIElement) => {
@@ -123,7 +123,7 @@ export default function ProposalTemplateTransaction({
                 onClick={() =>
                   setFieldValue(`transactions.${transactionIndex}.parameters`, [
                     ...transaction.parameters,
-                    DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION,
+                    DEFAULT_PROPOSAL_TRANSACTION,
                   ])
                 }
               >

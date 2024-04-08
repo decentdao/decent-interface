@@ -3,24 +3,20 @@ import { Info } from '@decent-org/fractal-ui';
 import { FormikProps } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  CreateProposalTemplateForm,
-  CreateProposalTemplateFormState,
-} from '../../types/createProposalTemplate';
+import { CreateProposalState } from '../../types';
+import { CreateProposalForm } from '../../types/proposalBuilder';
 import { scrollToBottom } from '../../utils/ui';
-import ProposalTemplateTransactions from './ProposalTemplateTransactions';
-import { DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION } from './constants';
+import ProposalTransactions from './ProposalTransactions';
+import { DEFAULT_PROPOSAL_TRANSACTION } from './constants';
 
-interface ProposalTemplateTransactionsFormProps extends FormikProps<CreateProposalTemplateForm> {
+interface ProposalTransactionsFormProps extends FormikProps<CreateProposalForm> {
   pendingTransaction: boolean;
-  setFormState: (state: CreateProposalTemplateFormState) => void;
+  setFormState: (state: CreateProposalState) => void;
   canUserCreateProposal?: boolean;
   safeNonce?: number;
 }
 
-export default function ProposalTemplateTransactionsForm(
-  props: ProposalTemplateTransactionsFormProps,
-) {
+export default function ProposalTransactionsForm(props: ProposalTransactionsFormProps) {
   const {
     pendingTransaction,
     setFormState,
@@ -41,7 +37,7 @@ export default function ProposalTemplateTransactionsForm(
 
   return (
     <Box>
-      <ProposalTemplateTransactions
+      <ProposalTransactions
         expandedIndecies={expandedIndecies}
         setExpandedIndecies={setExpandedIndecies}
         {...props}
@@ -54,7 +50,7 @@ export default function ProposalTemplateTransactionsForm(
         <Button
           variant="text"
           onClick={() => {
-            setFieldValue('transactions', [...transactions, DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION]);
+            setFieldValue('transactions', [...transactions, DEFAULT_PROPOSAL_TRANSACTION]);
             setExpandedIndecies([transactions.length]);
             scrollToBottom();
           }}
@@ -85,7 +81,7 @@ export default function ProposalTemplateTransactionsForm(
             textStyle="text-md-mono-regular"
             color="gold.500"
             cursor="pointer"
-            onClick={() => setFormState(CreateProposalTemplateFormState.METADATA_FORM)}
+            onClick={() => setFormState(CreateProposalState.METADATA_FORM)}
             mb={4}
           >
             {t('back', { ns: 'common' })}

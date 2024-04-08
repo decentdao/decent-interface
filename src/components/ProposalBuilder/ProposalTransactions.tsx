@@ -12,25 +12,22 @@ import { FormikErrors, FormikProps } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BigNumberValuePair } from '../../types';
-import {
-  CreateProposalTemplateForm,
-  CreateProposalTemplateTransaction,
-} from '../../types/createProposalTemplate';
-import ProposalTemplateTransaction from './ProposalTemplateTransaction';
+import { CreateProposalForm, CreateProposalTransaction } from '../../types/proposalBuilder';
+import ProposalTransaction from './ProposalTransaction';
 
-interface ProposalTemplateTransactionsProps extends FormikProps<CreateProposalTemplateForm> {
+interface ProposalTransactionsProps extends FormikProps<CreateProposalForm> {
   pendingTransaction: boolean;
   expandedIndecies: number[];
   setExpandedIndecies: Dispatch<SetStateAction<number[]>>;
 }
-export default function ProposalTemplateTransactions({
+export default function ProposalTransactions({
   values: { transactions },
   errors,
   setFieldValue,
   pendingTransaction,
   expandedIndecies,
   setExpandedIndecies,
-}: ProposalTemplateTransactionsProps) {
+}: ProposalTransactionsProps) {
   const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
 
   const removeTransaction = (transactionIndex: number) => {
@@ -46,7 +43,7 @@ export default function ProposalTemplateTransactions({
     >
       {transactions.map((_, index) => {
         const txErrors = errors?.transactions?.[index] as
-          | FormikErrors<CreateProposalTemplateTransaction<BigNumberValuePair>>
+          | FormikErrors<CreateProposalTransaction<BigNumberValuePair>>
           | undefined;
         const txAddressError = txErrors?.targetAddress;
         const txFunctionError = txErrors?.functionName;
@@ -101,8 +98,8 @@ export default function ProposalTemplateTransactions({
                   )}
                 </HStack>
                 <AccordionPanel p={0}>
-                  <ProposalTemplateTransaction
-                    transaction={transactions[index]}
+                  <ProposalTransaction
+                    transaction={transactions[index] as CreateProposalTransaction}
                     txFunctionError={txFunctionError}
                     txAddressError={txAddressError}
                     transactionIndex={index}

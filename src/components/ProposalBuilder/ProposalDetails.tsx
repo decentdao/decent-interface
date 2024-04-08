@@ -3,7 +3,7 @@ import { FormikProps } from 'formik';
 import { Fragment, PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
-import { CreateProposalTemplateForm } from '../../types/createProposalTemplate';
+import { CreateProposalForm } from '../../types/proposalBuilder';
 import Markdown from '../ui/proposal/Markdown';
 import '../../assets/css/Markdown.css';
 
@@ -29,10 +29,10 @@ export function TransactionValueContainer({
 }
 
 export default function ProposalTemplateDetails({
-  values: { proposalTemplateMetadata, transactions },
-}: FormikProps<CreateProposalTemplateForm>) {
+  values: { proposalMetadata, transactions },
+}: FormikProps<CreateProposalForm>) {
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
-  const trimmedTitle = proposalTemplateMetadata.title?.trim();
+  const trimmedTitle = proposalMetadata.title?.trim();
 
   return (
     <Box
@@ -67,7 +67,7 @@ export default function ProposalTemplateDetails({
         <HStack justifyContent="space-between">
           <Text color="grayscale.500">{t('proposalTemplateDescription')}</Text>
           <Markdown
-            content={proposalTemplateMetadata.description}
+            content={proposalMetadata.description}
             collapsedLines={2}
           />
         </HStack>

@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { ProposalExecuteData } from '../../../types';
-import { CreateProposalTemplateForm } from '../../../types/createProposalTemplate';
+import { CreateProposalForm } from '../../../types/proposalBuilder';
 import { couldBeENS } from '../../../utils/url';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
@@ -18,7 +18,7 @@ export default function useCreateProposalTemplate() {
   } = useFractal();
 
   const prepareProposalTemplateProposal = useCallback(
-    async (values: CreateProposalTemplateForm) => {
+    async (values: CreateProposalForm) => {
       if (proposalTemplates && signerOrProvider && keyValuePairsContract) {
         const proposalMetadata = {
           title: 'Create Proposal Template',
@@ -28,8 +28,8 @@ export default function useCreateProposalTemplate() {
         };
 
         const proposalTemplateData = {
-          title: values.proposalTemplateMetadata.title.trim(),
-          description: values.proposalTemplateMetadata.description.trim(),
+          title: values.proposalMetadata.title.trim(),
+          description: values.proposalMetadata.description.trim(),
           transactions: await Promise.all(
             values.transactions.map(async tx => ({
               ...tx,

@@ -1,6 +1,6 @@
-import { CreateProposalTemplateTransaction } from '../../types/createProposalTemplate';
+import { CreateProposalTransaction } from '../../types/proposalBuilder';
 
-export const DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION: CreateProposalTemplateTransaction = {
+export const DEFAULT_PROPOSAL_TRANSACTION: CreateProposalTransaction = {
   targetAddress: '',
   ethValue: { value: '', bigNumberValue: undefined },
   functionName: '',
@@ -15,9 +15,9 @@ export const DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION: CreateProposalTemplateTransa
 
 export const DEFAULT_PROPOSAL_TEMPLATE = {
   nonce: undefined,
-  proposalTemplateMetadata: {
+  proposalMetadata: {
     title: '',
     description: '',
   },
-  transactions: [DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION],
+  transactions: [DEFAULT_PROPOSAL_TRANSACTION],
 };

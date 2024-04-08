@@ -20,7 +20,7 @@ import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitP
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { BigNumberValuePair } from '../../../types';
-import { ProposalTemplate } from '../../../types/createProposalTemplate';
+import { ProposalTemplate } from '../../../types/proposalBuilder';
 import { isValidUrl } from '../../../utils/url';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { BigNumberComponent, InputComponent } from '../forms/InputComponent';

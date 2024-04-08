@@ -35,10 +35,10 @@ import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
-import { ProposalTemplate } from './createProposalTemplate';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
+import { ProposalTemplate } from './proposalBuilder';
 import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
 import { BNFormattedPair } from './votingFungibleToken';
 /**

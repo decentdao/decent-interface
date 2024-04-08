@@ -1,22 +1,20 @@
 import { Button, Divider, VStack } from '@chakra-ui/react';
 import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
-import {
-  CreateProposalTemplateForm,
-  CreateProposalTemplateFormState,
-} from '../../types/createProposalTemplate';
+import { CreateProposalState } from '../../types';
+import { CreateProposalForm } from '../../types/proposalBuilder';
 import { InputComponent, TextareaComponent } from '../ui/forms/InputComponent';
 
-export interface ProposalTemplateMetadataProps extends FormikProps<CreateProposalTemplateForm> {
-  setFormState: (state: CreateProposalTemplateFormState) => void;
+export interface ProposalMetadataProps extends FormikProps<CreateProposalForm> {
+  setFormState: (state: CreateProposalState) => void;
 }
 
-export default function ProposalTemplateMetadata({
-  values: { proposalTemplateMetadata },
+export default function ProposalMetadata({
+  values: { proposalMetadata },
   setFieldValue,
-  errors: { proposalTemplateMetadata: proposalTemplateMetadataError },
+  errors: { proposalMetadata: proposalMetadataError },
   setFormState,
-}: ProposalTemplateMetadataProps) {
+}: ProposalMetadataProps) {
   const { t } = useTranslation(['proposalTemplate', 'common']);
 
   return (
@@ -30,8 +28,8 @@ export default function ProposalTemplateMetadata({
           label={t('proposalTemplateTitle')}
           helper={t('proposalTemplateTitleHelperText')}
           isRequired
-          value={proposalTemplateMetadata.title}
-          onChange={e => setFieldValue('proposalTemplateMetadata.title', e.target.value)}
+          value={proposalMetadata.title}
+          onChange={e => setFieldValue('proposalMetadata.title', e.target.value)}
           disabled={false}
           testId="metadata.title"
           maxLength={50}
@@ -41,8 +39,8 @@ export default function ProposalTemplateMetadata({
           subLabel={t('')}
           helper={t('proposalTemplateDescriptionHelperText')}
           isRequired={false}
-          value={proposalTemplateMetadata.description}
-          onChange={e => setFieldValue('proposalTemplateMetadata.description', e.target.value)}
+          value={proposalMetadata.description}
+          onChange={e => setFieldValue('proposalMetadata.description', e.target.value)}
           disabled={false}
           rows={12}
         />
@@ -54,8 +52,8 @@ export default function ProposalTemplateMetadata({
       />
       <Button
         w="100%"
-        onClick={() => setFormState(CreateProposalTemplateFormState.TRANSACTIONS_FORM)}
-        isDisabled={!!proposalTemplateMetadataError || !proposalTemplateMetadata.title}
+        onClick={() => setFormState(CreateProposalState.TRANSACTIONS_FORM)}
+        isDisabled={!!proposalMetadataError || !proposalMetadata.title}
       >
         {t('next', { ns: 'common' })}
       </Button>

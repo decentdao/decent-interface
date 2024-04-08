@@ -11,7 +11,7 @@ import {
   GovernanceType,
   ERC721TokenData,
 } from '../../../types';
-import { ProposalTemplate } from '../../../types/createProposalTemplate';
+import { ProposalTemplate } from '../../../types/proposalBuilder';
 
 export enum FractalGovernanceAction {
   SET_GOVERNANCE_TYPE = 'SET_GOVERNANCE_TYPE',
