@@ -30,7 +30,11 @@ const templateAreaTwoCol = '"content details"';
 const templateAreaSingleCol = `"content"
   "details"`;
 
-export default function ProposalBuilder({ mode, initialValues, prepareProposalData }: IProposalBuilder) {
+export default function ProposalBuilder({
+  mode,
+  initialValues,
+  prepareProposalData,
+}: IProposalBuilder) {
   const [formState, setFormState] = useState(CreateProposalState.METADATA_FORM);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
 
@@ -59,17 +63,17 @@ export default function ProposalBuilder({ mode, initialValues, prepareProposalDa
       enableReinitialize
       onSubmit={async values => {
         if (canUserCreateProposal) {
-            const proposalData = await prepareProposalData(values);
-            if (proposalData) {
-              submitProposal({
-                proposalData,
-                nonce: values?.nonce,
-                pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
-                successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
-                failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-                successCallback,
-              });
-            }
+          const proposalData = await prepareProposalData(values);
+          if (proposalData) {
+            submitProposal({
+              proposalData,
+              nonce: values?.nonce,
+              pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+              successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+              failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+              successCallback,
+            });
+          }
         }
       }}
     >
