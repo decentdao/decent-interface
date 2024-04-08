@@ -3,12 +3,18 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 
 export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
   const { t } = useTranslation('modals');
   const {
     node: { daoAddress },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
+
+  if (!daoAddress) {
+    return null;
+  }
 
   return (
     <Box>
@@ -28,7 +34,7 @@ export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
       >
         {t('confirmAction')}
       </Text>
-      <Link to={DAO_ROUTES.modifyGovernance.relative(daoAddress)}>
+      <Link to={DAO_ROUTES.modifyGovernance.relative(addressPrefix, daoAddress)}>
         <Button
           width="100%"
           onClick={close}

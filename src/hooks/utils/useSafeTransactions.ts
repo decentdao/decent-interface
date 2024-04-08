@@ -21,6 +21,7 @@ import {
 import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
 import { getAverageBlockTime } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
+import useSafeContracts from '../safe/useSafeContracts';
 import { useSafeDecoder } from './useSafeDecoder';
 
 type FreezeGuardData = {
@@ -33,6 +34,7 @@ export const useSafeTransactions = () => {
   const { nativeTokenSymbol } = useNetworkConfig();
   const provider = useEthersProvider();
   const { guardContracts } = useFractal();
+  const baseContracts = useSafeContracts();
   const decode = useSafeDecoder();
 
   const getState = useCallback(
@@ -318,17 +320,18 @@ export const useSafeTransactions = () => {
       let freezeGuard: MultisigFreezeGuard | undefined;
       let freezeGuardData: FreezeGuardData | undefined;
 
-      if (guardContracts.freezeGuardContract) {
+      if (guardContracts.freezeGuardContractAddress && baseContracts) {
         const blockNumber = await provider.getBlockNumber();
-        const averageBlockTime = await getAverageBlockTime(provider);
-        freezeGuard = guardContracts.freezeGuardContract.asProvider as MultisigFreezeGuard;
+        const averageBlockTime = BigNumber.from(Math.round(await getAverageBlockTime(provider)));
+        freezeGuard = baseContracts.multisigFreezeGuardMasterCopyContract.asProvider.attach(
+          guardContracts.freezeGuardContractAddress,
+        );
+
+        const timelockPeriod = BigNumber.from(await freezeGuard.timelockPeriod());
+        const executionPeriod = BigNumber.from(await freezeGuard.executionPeriod());
         freezeGuardData = {
-          guardTimelockPeriodMs: BigNumber.from(
-            (await freezeGuard.timelockPeriod()) * averageBlockTime * 1000,
-          ),
-          guardExecutionPeriodMs: BigNumber.from(
-            (await freezeGuard.executionPeriod()) * averageBlockTime * 1000,
-          ),
+          guardTimelockPeriodMs: timelockPeriod.mul(averageBlockTime).mul(1000),
+          guardExecutionPeriodMs: executionPeriod.mul(averageBlockTime).mul(1000),
           lastBlock: await provider.getBlock(blockNumber),
         };
       }
@@ -337,12 +340,13 @@ export const useSafeTransactions = () => {
       return activitiesWithState;
     },
     [
-      guardContracts.freezeGuardContract,
+      guardContracts,
       getState,
       getTransferTotal,
       decode,
       nativeTokenSymbol,
       provider,
+      baseContracts,
     ],
   );
   return { parseTransactions };

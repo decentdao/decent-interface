@@ -2,8 +2,9 @@ import { Flex, Box, Button } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
-import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { EmptyBox } from '../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import ProposalTemplateCard from './ProposalTemplateCard';
@@ -14,7 +15,8 @@ export default function ProposalTemplates() {
     node: { daoAddress },
     governance: { proposalTemplates },
   } = useFractal();
-  const { canUserCreateProposal } = useSubmitProposal();
+  const { addressPrefix } = useNetworkConfig();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
 
   return (
     <Flex
@@ -36,8 +38,8 @@ export default function ProposalTemplates() {
         ))
       ) : (
         <EmptyBox emptyText={t('emptyProposalTemplates')}>
-          {canUserCreateProposal && (
-            <Link to={DAO_ROUTES.proposalTemplateNew.relative(daoAddress)}>
+          {canUserCreateProposal && daoAddress && (
+            <Link to={DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)}>
               <Button
                 variant="text"
                 textStyle="text-xl-mono-bold"

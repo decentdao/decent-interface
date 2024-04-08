@@ -7,6 +7,7 @@ interface DAOFeatureProps extends BoxProps {
   iconSrc: string;
   title: string;
   desc: string;
+  network: string;
   address: string;
 }
 
@@ -14,6 +15,7 @@ export default function FeaturedDAOCard({
   iconSrc,
   title,
   desc,
+  network,
   address,
   ...rest
 }: DAOFeatureProps) {
@@ -57,7 +59,7 @@ export default function FeaturedDAOCard({
             _hover={{ color: 'gold.500-hover' }}
             alignSelf="end"
             textStyle="text-lg-mono-bold"
-            to={DAO_ROUTES.dao.relative(address)}
+            to={DAO_ROUTES.dao.relative(network, address)}
           >
             {t('featureLink')}
           </Link>

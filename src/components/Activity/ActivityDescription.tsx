@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { Activity, FractalProposal, SnapshotProposal } from '../../types';
 import Markdown from '../ui/proposal/Markdown';
@@ -12,30 +12,35 @@ interface IActivityDescription {
 
 export function ActivityDescription({ activity, showFullDescription }: IActivityDescription) {
   const metaData = useGetMetadata(activity as FractalProposal);
+
   const snapshotProposal = activity as SnapshotProposal;
+
   const description = snapshotProposal.description || metaData.description;
 
   return (
-    <Flex
-      color="grayscale.100"
-      textStyle="text-lg-mono-semibold"
-      gap="0.5rem"
+    <Box
       mr="1rem"
-      flexWrap="wrap"
+      mt="0.5rem"
     >
-      <ProposalTitle activity={activity} />
+      <ProposalTitle
+        activity={activity}
+        showAuthor
+      />
       {description && (
         <Box
-          my={4}
-          minWidth="100%"
+          mt={2}
+          textColor="#B3B3B3"
         >
           <Markdown
             content={description}
             truncate={!showFullDescription}
+            collapsedLines={3}
           />
         </Box>
       )}
-      {!!activity.transaction && <ActivityDescriptionTreasury activity={activity} />}
-    </Flex>
+      <Box mt={2}>
+        {!!activity.transaction && <ActivityDescriptionTreasury activity={activity} />}
+      </Box>
+    </Box>
   );
 }

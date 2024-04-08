@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import useSafeContracts from '../../../safe/useSafeContracts';
@@ -15,13 +15,19 @@ export function useERC20Claim() {
   } = useFractal();
   const baseContracts = useSafeContracts();
   const loadTokenClaimContract = useCallback(async () => {
-    if (!baseContracts || !votesTokenContractAddress) return;
+    if (!baseContracts || !votesTokenContractAddress) {
+      return;
+    }
     const { claimingMasterCopyContract } = baseContracts;
+
     const votesTokenContract =
       baseContracts.votesTokenMasterCopyContract.asProvider.attach(votesTokenContractAddress);
+
     const approvalFilter = votesTokenContract.filters.Approval();
     const approvals = await votesTokenContract.queryFilter(approvalFilter);
-    if (!approvals.length) return;
+    if (!approvals.length) {
+      return;
+    }
     const possibleTokenClaimContract = claimingMasterCopyContract.asProvider.attach(
       approvals[0].args[1],
     );
@@ -39,11 +45,20 @@ export function useERC20Claim() {
       payload: possibleTokenClaimContract,
     });
   }, [baseContracts, votesTokenContractAddress, action]);
+  const loadKey = useRef<string>();
 
   useEffect(() => {
-    if (daoAddress) {
+    if (
+      daoAddress &&
+      votesTokenContractAddress &&
+      daoAddress + votesTokenContractAddress !== loadKey.current
+    ) {
+      loadKey.current = daoAddress + votesTokenContractAddress;
       loadTokenClaimContract();
     }
-  }, [loadTokenClaimContract, daoAddress]);
+    if (!daoAddress || !votesTokenContractAddress) {
+      loadKey.current = undefined;
+    }
+  }, [loadTokenClaimContract, daoAddress, votesTokenContractAddress]);
   return;
 }

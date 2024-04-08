@@ -274,10 +274,16 @@ export default function ProposalTemplateTransaction({
             isRequired={false}
             disabled={transactionPending}
             subLabel={
-              <HStack>
-                <Text>{`${t('example', { ns: 'common' })}:`}</Text>
-                <ExampleLabel>{'1.2'}</ExampleLabel>
-              </HStack>
+              <VStack
+                align={'start'}
+                spacing={0}
+              >
+                <HStack>
+                  <Text>{`${t('example', { ns: 'common' })}:`}</Text>
+                  <ExampleLabel>{'1.2'}</ExampleLabel>
+                </HStack>
+                <Text>{t('ethParemeterHelper', { ns: 'proposalTemplate' })}</Text>
+              </VStack>
             }
             errorMessage={undefined}
             value={transaction.ethValue.bigNumberValue}

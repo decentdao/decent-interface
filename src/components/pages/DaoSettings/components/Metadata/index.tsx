@@ -6,8 +6,10 @@ import { useNavigate } from 'react-router-dom';
 import { SettingsSection } from '..';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
 import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../../../types';
 import { couldBeENS } from '../../../../../utils/url';
 import { InputComponent } from '../../../../ui/forms/InputComponent';
@@ -19,7 +21,8 @@ export default function MetadataContainer() {
   const { t } = useTranslation(['settings', 'proposalMetadata']);
   const navigate = useNavigate();
 
-  const { canUserCreateProposal, submitProposal } = useSubmitProposal();
+  const { submitProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
     baseContracts,
     node: { daoName, daoSnapshotURL, daoAddress, safe },
@@ -27,6 +30,7 @@ export default function MetadataContainer() {
       user: { votingWeight },
     },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
 
   useEffect(() => {
     if (daoName && daoAddress && createAccountSubstring(daoAddress) !== daoName) {
@@ -50,7 +54,11 @@ export default function MetadataContainer() {
 
   const userHasVotingWeight = votingWeight.gt(0);
 
-  const submitProposalSuccessCallback = () => navigate(DAO_ROUTES.proposals.relative(daoAddress));
+  const submitProposalSuccessCallback = () => {
+    if (daoAddress) {
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+    }
+  };
 
   const handleEditDAOName = () => {
     if (!baseContracts) {

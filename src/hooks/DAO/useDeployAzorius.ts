@@ -13,6 +13,7 @@ import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
 } from '../../types';
+import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
@@ -21,6 +22,7 @@ const useDeployAzorius = () => {
   const navigate = useNavigate();
   const {
     contracts: { fallbackHandler },
+    addressPrefix,
   } = useNetworkConfig();
   const {
     node: { daoAddress, safe },
@@ -28,8 +30,8 @@ const useDeployAzorius = () => {
   } = useFractal();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
-  const { submitProposal, canUserCreateProposal } = useSubmitProposal();
-
+  const { submitProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const deployAzorius = useCallback(
     async (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO,
@@ -121,7 +123,7 @@ const useDeployAzorius = () => {
         pendingToastMessage: t('modifyGovernanceSetAzoriusProposalPendingMessage'),
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-        successCallback: () => navigate(DAO_ROUTES.proposals.relative(daoAddress)),
+        successCallback: () => navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)),
       });
     },
     [
@@ -134,6 +136,7 @@ const useDeployAzorius = () => {
       navigate,
       safe,
       fallbackHandler,
+      addressPrefix,
     ],
   );
 

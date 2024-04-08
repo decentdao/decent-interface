@@ -2,9 +2,9 @@ import { useLazyQuery } from '@apollo/client';
 import { utils } from 'ethers';
 import { useCallback } from 'react';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
-import { useSubgraphChainName } from '../../../graphql/utils';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useLazyDAOName } from '../useDAOName';
@@ -14,8 +14,10 @@ export const useLoadDAONode = () => {
   const safeAPI = useSafeAPI();
   const { getDaoName } = useLazyDAOName();
   const lookupModules = useFractalModules();
-  const chainName = useSubgraphChainName();
-  const [getDAOInfo] = useLazyQuery(DAOQueryDocument, { context: { chainName } });
+  const { subgraphChainName } = useNetworkConfig();
+  const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
+    context: { chainName: subgraphChainName },
+  });
 
   const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
     if (!result.data) {

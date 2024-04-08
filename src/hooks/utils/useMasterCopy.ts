@@ -3,7 +3,7 @@ import { Contract, constants } from 'ethers';
 import { useCallback } from 'react';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
-import { CacheKeys } from './cache/cacheDefaults';
+import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
 import { useLocalStorage } from './cache/useLocalStorage';
 
 export function useMasterCopy() {
@@ -57,7 +57,13 @@ export function useMasterCopy() {
 
       const filter = contract.filters.ModuleProxyCreation(proxyAddress, null);
       return contract.queryFilter(filter).then(proxiesCreated => {
+        // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
         if (proxiesCreated.length === 0) {
+          setValue(
+            CacheKeys.MASTER_COPY_PREFIX + proxyAddress,
+            constants.AddressZero,
+            CacheExpiry.ONE_WEEK,
+          );
           return [constants.AddressZero, 'No proxies created'] as const;
         }
         const masterCopyAddress = proxiesCreated[0].args!.masterCopy;

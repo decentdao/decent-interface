@@ -8,7 +8,7 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react';
-import { utils } from 'ethers';
+import { utils, BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -16,11 +16,14 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { logError } from '../../../helpers/errorLogging';
 import { usePrepareProposal } from '../../../hooks/DAO/proposal/usePrepareProposal';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { BigNumberValuePair } from '../../../types';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { isValidUrl } from '../../../utils/url';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
-import { InputComponent } from '../forms/InputComponent';
+import { BigNumberComponent, InputComponent } from '../forms/InputComponent';
 import Markdown from '../proposal/Markdown';
 
 interface IProposalTemplateModalProps {
@@ -35,15 +38,36 @@ export default function ProposalTemplateModal({
   const {
     node: { daoAddress, safe },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
 
   const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
   const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const navigate = useNavigate();
-  const { submitProposal, canUserCreateProposal } = useSubmitProposal();
+  const { submitProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const { prepareProposal } = usePrepareProposal();
 
+  const handleEthValueChange = ({
+    transactionIndex,
+    value,
+  }: {
+    transactionIndex: number;
+    value: BigNumberValuePair;
+  }) => {
+    setFilledProposalTransactions(prevState =>
+      prevState.map((transaction, txIndex) => {
+        if (transactionIndex === txIndex) {
+          return {
+            ...transaction,
+            ethValue: value,
+          };
+        }
+        return transaction;
+      }),
+    );
+  };
   const handleParameterChange = ({
     transactionIndex,
     parameterIndex,
@@ -79,7 +103,7 @@ export default function ProposalTemplateModal({
 
   const successCallback = () => {
     if (daoAddress) {
-      navigate(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
       onClose();
     }
   };
@@ -176,6 +200,27 @@ export default function ProposalTemplateModal({
                   />
                 </Flex>
               ),
+          )}
+          {(showAll ||
+            !transactions[transactionIndex].ethValue.bigNumberValue ||
+            BigNumber.from(transactions[transactionIndex].ethValue.bigNumberValue).eq(0)) && (
+            <Flex
+              width="100%"
+              flexWrap="wrap"
+              marginTop="1.5rem"
+            >
+              <BigNumberComponent
+                label={t('labelEthValue', { ns: 'proposal' })}
+                helper={t('helperEthValue', { ns: 'proposal' })}
+                isRequired={false}
+                errorMessage={undefined}
+                value={BigNumber.from(transaction.ethValue.bigNumberValue || 0)}
+                onChange={value => {
+                  handleEthValueChange({ transactionIndex, value });
+                }}
+                decimalPlaces={18}
+              />
+            </Flex>
           )}
           {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
         </VStack>

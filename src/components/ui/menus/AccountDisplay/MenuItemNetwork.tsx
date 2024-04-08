@@ -1,6 +1,6 @@
 import { Box, Flex, Select, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { useSwitchNetwork } from 'wagmi';
+import { useSwitchChain } from 'wagmi';
 import {
   supportedChains,
   useNetworkConfig,
@@ -12,11 +12,7 @@ import {
 export function MenuItemNetwork() {
   const { t } = useTranslation('menu');
   const { chainId } = useNetworkConfig();
-  const { switchNetwork } = useSwitchNetwork();
-
-  if (!switchNetwork) {
-    return null;
-  }
+  const { switchChain } = useSwitchChain();
 
   return (
     <Box
@@ -43,7 +39,7 @@ export function MenuItemNetwork() {
           cursor="pointer"
           onChange={async e => {
             e.preventDefault();
-            switchNetwork(Number(e.target.value));
+            switchChain({ chainId: Number(e.target.value) });
           }}
           value={chainId}
         >

@@ -2,12 +2,12 @@ import { useQuery } from '@apollo/client';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { DAOQueryDocument } from '../../../../.graphclient';
-import { useSubgraphChainName } from '../../../graphql/utils';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
 import { useAsyncRetry } from '../../../hooks/utils/useAsyncRetry';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { SafeInfoResponseWithGuard } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
 
@@ -22,11 +22,11 @@ export function useFetchNodes(address?: string) {
   const safeAPI = useSafeAPI();
   const { requestWithRetries } = useAsyncRetry();
 
-  const chainName = useSubgraphChainName();
+  const { subgraphChainName } = useNetworkConfig();
   const { data, error } = useQuery(DAOQueryDocument, {
     variables: { daoAddress: address },
     skip: address === safe?.address || !address, // If address === safe.address - we already have hierarchy obtained in the context
-    context: { chainName },
+    context: { chainName: subgraphChainName },
   });
 
   const lookupModules = useFractalModules();
@@ -96,7 +96,7 @@ export function useFetchNodes(address?: string) {
     for await (const subDAO of nodes) {
       try {
         const safeInfo = await requestWithRetries(() => fetchDAOInfo(subDAO.address), 5, 5000);
-        if (safeInfo.guard) {
+        if (safeInfo && safeInfo.guard) {
           if (safeInfo.guard === ethers.constants.AddressZero) {
             subDAOs.push(safeInfo);
           } else {

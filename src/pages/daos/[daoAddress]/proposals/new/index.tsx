@@ -16,7 +16,9 @@ import { DAO_ROUTES } from '../../../../../constants/routes';
 import { usePrepareProposal } from '../../../../../hooks/DAO/proposal/usePrepareProposal';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCreateProposalSchema } from '../../../../../hooks/schemas/proposalCreate/useCreateProposalSchema';
+import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { CreateProposalForm, CreateProposalState, GovernanceType } from '../../../../../types';
 
 const templateAreaTwoCol = '"content details"';
@@ -28,9 +30,11 @@ export default function ProposalCreatePage() {
     node: { daoAddress, safe },
     governance: { type },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const { createProposalValidation } = useCreateProposalSchema();
   const { prepareProposal } = usePrepareProposal();
-  const { submitProposal, pendingCreateTx, canUserCreateProposal } = useSubmitProposal();
+  const { submitProposal, pendingCreateTx } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
 
   const navigate = useNavigate();
   const { t } = useTranslation(['proposal', 'common', 'breadcrumbs']);
@@ -43,7 +47,7 @@ export default function ProposalCreatePage() {
 
   const successCallback = () => {
     if (daoAddress) {
-      navigate(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
     }
   };
 
@@ -84,7 +88,7 @@ export default function ProposalCreatePage() {
                 breadcrumbs={[
                   {
                     terminus: t('proposals', { ns: 'breadcrumbs' }),
-                    path: DAO_ROUTES.proposals.relative(daoAddress),
+                    path: DAO_ROUTES.proposals.relative(addressPrefix, daoAddress),
                   },
                   {
                     terminus: t('proposalNew', { ns: 'breadcrumbs' }),
@@ -93,7 +97,9 @@ export default function ProposalCreatePage() {
                 ]}
                 ButtonIcon={Trash}
                 buttonVariant="secondary"
-                buttonClick={() => navigate(DAO_ROUTES.proposals.relative(daoAddress))}
+                buttonClick={() =>
+                  navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress))
+                }
                 isButtonDisabled={pendingCreateTx}
               />
               <Grid

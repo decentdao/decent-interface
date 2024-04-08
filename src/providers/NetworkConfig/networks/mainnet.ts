@@ -2,10 +2,12 @@ import Azorius from '@fractal-framework/fractal-contracts/deployments/mainnet/Az
 import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/mainnet/AzoriusFreezeGuard.json';
 import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/mainnet/ERC20Claim.json';
 import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/mainnet/ERC20FreezeVoting.json';
+
 import FractalModule from '@fractal-framework/fractal-contracts/deployments/mainnet/FractalModule.json';
 import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/mainnet/FractalRegistry.json';
 import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/mainnet/KeyValuePairs.json';
 import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/mainnet/LinearERC20Voting.json';
+
 import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/mainnet/ModuleProxyFactory.json';
 import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/mainnet/MultisigFreezeGuard.json';
 import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/mainnet/MultisigFreezeVoting.json';
@@ -20,7 +22,6 @@ import {
 import { mainnet } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
-import { isProd } from '../../../utils';
 
 const CHAIN_ID = 1;
 const SAFE_VERSION = '1.3.0';
@@ -28,9 +29,10 @@ const SAFE_VERSION = '1.3.0';
 export const mainnetConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
   etherscanBaseURL: 'https://etherscan.io',
-  etherscanAPIBaseUrl: 'https://api.etherscan.io',
+  etherscanAPIUrl: `https://api.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_MAINNET_API_KEY}`,
   chainId: CHAIN_ID,
   name: mainnet.name,
+  addressPrefix: 'eth',
   color: 'blue.400',
   nativeTokenSymbol: mainnet.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
@@ -74,7 +76,5 @@ export const mainnetConfig: NetworkConfig = {
       withdrawalQueueContractAddress: '0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1',
     },
   },
-  createOptions: isProd()
-    ? [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20]
-    : [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20, GovernanceType.AZORIUS_ERC721],
+  createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };

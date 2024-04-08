@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { Chain } from 'wagmi';
+import { Chain } from 'viem';
 import { GovernanceType } from './fractal';
 
 export type Providers =
@@ -10,9 +10,10 @@ export type Providers =
 export type NetworkConfig = {
   safeBaseURL: string;
   etherscanBaseURL: string;
-  etherscanAPIBaseUrl: string;
+  etherscanAPIUrl: string;
   chainId: number;
   name: string;
+  addressPrefix: string; // copy whatever Safe uses
   color: string;
   nativeTokenSymbol: string;
   nativeTokenIcon: string;

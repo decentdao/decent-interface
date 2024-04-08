@@ -3,7 +3,7 @@ import { Azorius } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { BigNumber, Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
@@ -15,14 +15,8 @@ import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  MetaTransaction,
-  ProposalExecuteData,
-  GovernanceType,
-  ProposalMetadata,
-} from '../../../types';
+import { MetaTransaction, ProposalExecuteData, ProposalMetadata } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
-import { getAverageBlockTime } from '../../../utils/contract';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
@@ -34,7 +28,7 @@ interface ISubmitProposal {
   pendingToastMessage: string;
   failedToastMessage: string;
   successToastMessage: string;
-  successCallback?: (daoAddress: string) => void;
+  successCallback?: (addressPrefix: string, daoAddress: string) => void;
   /**
    * @param safeAddress - provided address of DAO to which proposal will be submitted
    */
@@ -58,17 +52,14 @@ interface ISubmitAzoriusProposal extends ISubmitProposal {
 
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
-  const [canUserCreateProposal, setCanUserCreateProposal] = useState(false);
   const loadDAOProposals = useDAOProposals();
   const signer = useEthersSigner();
   const provider = useEthersProvider();
 
   const {
     node: { safe, fractalModules },
-    guardContracts: { freezeVotingContract },
+    guardContracts: { freezeVotingContractAddress },
     governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
-    governance: { type },
-    readOnly: { user },
   } = useFractal();
   const baseContracts = useSafeContracts();
   const safeAPI = useSafeAPI();
@@ -87,89 +78,8 @@ export default function useSubmitProposal() {
 
   const lookupModules = useFractalModules();
   const signerOrProvider = useSignerOrProvider();
-  const { chainId, safeBaseURL } = useNetworkConfig();
+  const { chainId, safeBaseURL, addressPrefix } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
-
-  /**
-   * Performs a check whether user has access rights to create proposal for DAO
-   * @param {string} safeAddress - parameter to verify that user can create proposal for this specific DAO.
-   * Otherwise - it is checked for DAO from the global context.
-   * @returns {Promise<boolean>} - whether or not user has rights to create proposal either in global scope either for provided `safeAddress`.
-   */
-  const getCanUserCreateProposal = useCallback(
-    async (safeAddress?: string): Promise<boolean> => {
-      if (!user.address || !safeAPI || !signerOrProvider) {
-        return false;
-      }
-
-      const checkIsMultisigOwner = (owners?: string[]) => {
-        return !!owners?.includes(user.address || '');
-      };
-
-      if (safeAddress && baseContracts) {
-        const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(safeAddress));
-        const safeModules = await lookupModules(safeInfo.modules);
-        const azoriusModule = getAzoriusModuleFromModules(safeModules);
-
-        if (azoriusModule && azoriusModule.moduleContract) {
-          const azoriusContract = azoriusModule.moduleContract as Azorius;
-          // @dev assumes the first strategy is the voting contract
-          const votingContractAddress = (
-            await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
-          )[1];
-          const votingContract =
-            baseContracts.linearVotingMasterCopyContract.asProvider.attach(votingContractAddress);
-          const isProposer = await votingContract.isProposer(user.address);
-          return isProposer;
-        } else {
-          return checkIsMultisigOwner(safeInfo.owners);
-        }
-      } else {
-        if (type === GovernanceType.MULTISIG) {
-          const { owners } = safe || {};
-          return checkIsMultisigOwner(owners);
-        } else if (type === GovernanceType.AZORIUS_ERC20) {
-          if (ozLinearVotingContractAddress && user.address && baseContracts) {
-            const ozLinearVotingContract =
-              baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-                ozLinearVotingContractAddress,
-              );
-            return ozLinearVotingContract.isProposer(user.address);
-          }
-        } else if (
-          type === GovernanceType.AZORIUS_ERC721 &&
-          baseContracts &&
-          erc721LinearVotingContractAddress
-        ) {
-          const erc721LinearVotingContract =
-            baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-              erc721LinearVotingContractAddress,
-            );
-          return erc721LinearVotingContract.isProposer(user.address);
-        } else {
-          return false;
-        }
-      }
-      return false;
-    },
-    [
-      safe,
-      type,
-      user,
-      ozLinearVotingContractAddress,
-      erc721LinearVotingContractAddress,
-      lookupModules,
-      safeAPI,
-      signerOrProvider,
-      baseContracts,
-    ],
-  );
-  useEffect(() => {
-    const loadCanUserCreateProposal = async () => {
-      setCanUserCreateProposal(await getCanUserCreateProposal());
-    };
-    loadCanUserCreateProposal();
-  }, [getCanUserCreateProposal]);
 
   const submitMultisigProposal = useCallback(
     async ({
@@ -267,7 +177,7 @@ export default function useSubmitProposal() {
         await new Promise(resolve => setTimeout(resolve, 1000));
         await loadDAOProposals();
         if (successCallback) {
-          successCallback(safeAddress);
+          successCallback(addressPrefix, safeAddress);
         }
         toast(successToastMessage);
       } catch (e) {
@@ -279,7 +189,15 @@ export default function useSubmitProposal() {
         return;
       }
     },
-    [signerOrProvider, safeBaseURL, chainId, loadDAOProposals, ipfsClient, baseContracts],
+    [
+      signerOrProvider,
+      safeBaseURL,
+      chainId,
+      loadDAOProposals,
+      ipfsClient,
+      baseContracts,
+      addressPrefix,
+    ],
   );
 
   const submitAzoriusProposal = useCallback(
@@ -305,7 +223,6 @@ export default function useSubmitProposal() {
       });
 
       setPendingCreateTx(true);
-      let success = false;
       try {
         const transactions = proposalData.targets.map((target, index) => ({
           to: target,
@@ -327,11 +244,10 @@ export default function useSubmitProposal() {
             }),
           )
         ).wait();
-        success = true;
         toast.dismiss(toastId);
         toast(successToastMessage);
         if (successCallback) {
-          successCallback(safeAddress!);
+          successCallback(addressPrefix, safeAddress!);
         }
       } catch (e) {
         toast.dismiss(toastId);
@@ -340,17 +256,8 @@ export default function useSubmitProposal() {
       } finally {
         setPendingCreateTx(false);
       }
-
-      if (success) {
-        const averageBlockTime = await getAverageBlockTime(provider);
-        // Frequently there's an error in loadDAOProposals if we're loading the proposal immediately after proposal creation
-        // The error occurs because block of proposal creation not yet mined and trying to fetch underlying data of voting weight for new proposal fails with that error
-        // The code that throws an error: https://github.com/decent-dao/fractal-contracts/blob/develop/contracts/azorius/LinearERC20Voting.sol#L205-L211
-        // So to avoid showing error toast - we're marking proposal creation as success and only then re-fetching proposals
-        setTimeout(loadDAOProposals, averageBlockTime * 1.5 * 1000);
-      }
     },
-    [loadDAOProposals, provider],
+    [provider, addressPrefix],
   );
 
   const submitProposal = useCallback(
@@ -407,7 +314,7 @@ export default function useSubmitProposal() {
         const votingStrategyAddress =
           ozLinearVotingContractAddress ||
           erc721LinearVotingContractAddress ||
-          freezeVotingContract?.asProvider.address;
+          freezeVotingContractAddress;
 
         if (!globalAzoriusContract || !votingStrategyAddress) {
           await submitMultisigProposal({
@@ -436,7 +343,7 @@ export default function useSubmitProposal() {
     },
     [
       globalAzoriusContract,
-      freezeVotingContract,
+      freezeVotingContractAddress,
       safe,
       lookupModules,
       submitMultisigProposal,
@@ -447,5 +354,5 @@ export default function useSubmitProposal() {
     ],
   );
 
-  return { submitProposal, pendingCreateTx, canUserCreateProposal, getCanUserCreateProposal };
+  return { submitProposal, pendingCreateTx };
 }

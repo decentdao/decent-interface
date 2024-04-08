@@ -2,14 +2,13 @@ import { Box, Button, Divider } from '@chakra-ui/react';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useNetwork } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
-import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
 import { validateAddress } from '../../../hooks/schemas/common/useValidationAddress';
+import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { disconnectedChain } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../../types/createProposalTemplate';
 import { InputComponent } from '../forms/InputComponent';
 
@@ -31,13 +30,13 @@ export default function ForkProposalTemplateModal({
   const { t } = useTranslation('proposalTemplate');
   const navigate = useNavigate();
   const signerOrProvider = useSignerOrProvider();
-  const { chain } = useNetwork();
+  const { name, addressPrefix } = useNetworkConfig();
   const {
     node: { proposalTemplatesHash },
   } = useFractal();
 
   const { isSafe, isSafeLoading } = useIsSafe(targetDAOAddress);
-  const { getCanUserCreateProposal } = useSubmitProposal();
+  const { getCanUserCreateProposal } = useCanUserCreateProposal();
 
   const handleAddressChange: ChangeEventHandler<HTMLInputElement> = e => {
     setInputValue(e.target.value);
@@ -50,7 +49,6 @@ export default function ForkProposalTemplateModal({
       return false;
     }
 
-    const chainName = chain ? chain.name : disconnectedChain.name;
     const {
       validation: { address, isValidAddress },
     } = await validateAddress({ address: inputValue, signerOrProvider });
@@ -67,17 +65,18 @@ export default function ForkProposalTemplateModal({
           return false;
         }
       } else {
-        setError(t('errorFailedSearch', { ns: 'dashboard', chain: chainName }));
+        setError(t('errorFailedSearch', { ns: 'dashboard', chain: name }));
         return false;
       }
     }
 
     return isValidAddress;
-  }, [getCanUserCreateProposal, isSafe, t, inputValue, chain, isSafeLoading, signerOrProvider]);
+  }, [getCanUserCreateProposal, inputValue, isSafe, isSafeLoading, name, signerOrProvider, t]);
 
   const handleSubmit = () => {
     navigate(
       `${DAO_ROUTES.proposalTemplateNew.relative(
+        addressPrefix,
         targetDAOAddress,
       )}?templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`,
     );

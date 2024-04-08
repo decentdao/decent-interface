@@ -6,7 +6,9 @@ import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
 import useRemoveProposalTemplate from '../../hooks/DAO/proposal/useRemoveProposalTemplate';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../types/createProposalTemplate';
 import ContentBox from '../ui/containers/ContentBox';
 import { OptionMenu } from '../ui/menus/OptionMenu';
@@ -28,9 +30,11 @@ export default function ProposalTemplateCard({
   const {
     node: { safe, daoAddress },
   } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
 
   const { prepareRemoveProposalTemplateProposal } = useRemoveProposalTemplate();
-  const { submitProposal, canUserCreateProposal } = useSubmitProposal();
+  const { submitProposal } = useSubmitProposal();
+  const { canUserCreateProposal } = useCanUserCreateProposal();
   const { title, description } = proposalTemplate;
 
   const openProposalForm = useFractalModal(ModalType.CREATE_PROPOSAL_FROM_TEMPLATE, {
@@ -44,9 +48,9 @@ export default function ProposalTemplateCard({
   const successCallback = useCallback(() => {
     if (daoAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      navigate(DAO_ROUTES.proposals.relative(daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
     }
-  }, [navigate, daoAddress]);
+  }, [navigate, daoAddress, addressPrefix]);
 
   const nonce = safe?.nonce;
   const handleRemoveTemplate = useCallback(async () => {

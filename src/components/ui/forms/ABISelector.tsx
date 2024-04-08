@@ -27,14 +27,14 @@ interface IABISelector {
 
 export default function ABISelector({ target, onChange, onFetchABI }: IABISelector) {
   const [abi, setABI] = useState<ABIElement[]>([]);
-  const { etherscanAPIBaseUrl } = useNetworkConfig();
+  const { etherscanAPIUrl } = useNetworkConfig();
   const { t } = useTranslation('common');
   const { data: ensAddress } = useEnsAddress({ name: target });
   const client = usePublicClient();
 
   useEffect(() => {
     const loadABI = async () => {
-      if (target && ((ensAddress && isAddress(ensAddress)) || isAddress(target))) {
+      if (client && target && ((ensAddress && isAddress(ensAddress)) || isAddress(target))) {
         try {
           const requestFunc = ({ method, params }: { method: any; params: any }) =>
             client.request({ method, params });
@@ -42,9 +42,7 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
           const proxy = await detectProxyTarget(ensAddress || target, requestFunc);
 
           const response = await axios.get(
-            `${etherscanAPIBaseUrl}/api?module=contract&action=getabi&address=${
-              proxy || ensAddress || target // Proxy detection might not always work
-            }&apikey=${import.meta.env.VITE_APP_ETHERSCAN_API_KEY}`,
+            `${etherscanAPIUrl}&module=contract&action=getabi&address=${proxy || ensAddress || target}`,
           );
           const responseData = response.data;
 
@@ -70,7 +68,7 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
       }
     };
     loadABI();
-  }, [target, ensAddress, etherscanAPIBaseUrl, onFetchABI, client]);
+  }, [target, ensAddress, etherscanAPIUrl, onFetchABI, client]);
 
   /*
    * This makes component quite scoped to proposal / proposal template creation
