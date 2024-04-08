@@ -8,7 +8,7 @@ import { useTransaction } from './useTransaction';
 const useApproval = (
   tokenContract?: VotesERC20 | VotesERC20Wrapper,
   spenderAddress?: string,
-  userBalance?: BigNumber,
+  userBalance?: BigNumber | null,
 ) => {
   const { address: account } = useAccount();
   const [allowance, setAllowance] = useState(BigNumber.from(0));
