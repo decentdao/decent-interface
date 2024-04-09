@@ -6,8 +6,6 @@ import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { CacheKeys } from '../utils/cache/cacheDefaults';
-import { useLocalStorage } from '../utils/cache/useLocalStorage';
 import { createAccountSubstring } from '../utils/useDisplayName';
 
 /**
@@ -32,7 +30,6 @@ export default function useDAOName({
     address: address as Address,
     chainId,
   });
-  const { getValue } = useLocalStorage();
 
   const getDaoName = useCallback(async () => {
     if (!address || !baseContracts) {
@@ -45,11 +42,6 @@ export default function useDAOName({
       return;
     }
 
-    const cachedName = getValue(CacheKeys.DAO_NAME_PREFIX + address);
-    if (cachedName) {
-      setDAORegistryName(cachedName);
-      return;
-    }
     const { fractalRegistryContract } = baseContracts;
     if (!fractalRegistryContract) {
       setDAORegistryName(createAccountSubstring(address));
@@ -71,7 +63,7 @@ export default function useDAOName({
       const { daoName } = latestEvent.args;
       setDAORegistryName(daoName);
     }
-  }, [address, ensName, baseContracts, getValue, registryName]);
+  }, [address, ensName, baseContracts, registryName]);
 
   useEffect(() => {
     (async () => {
@@ -92,14 +84,9 @@ export default function useDAOName({
  * @dev this is used on initial load of the DAO Node, after subGraph data is loaded
  */
 export function useLazyDAOName() {
-  const { getValue } = useLocalStorage();
   const provider = useEthersProvider();
   const getDaoName = useCallback(
     async (_address: string, _registryName?: string | null): Promise<string> => {
-      const cachedName = getValue(CacheKeys.DAO_NAME_PREFIX + _address);
-      if (cachedName) {
-        return cachedName;
-      }
       if (provider) {
         // check if ens name resolves
         const ensName = await provider.lookupAddress(_address).catch(() => null);
@@ -114,7 +101,7 @@ export function useLazyDAOName() {
 
       return createAccountSubstring(_address);
     },
-    [getValue, provider],
+    [provider],
   );
 
   return { getDaoName };
