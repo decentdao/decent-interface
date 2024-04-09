@@ -52,7 +52,7 @@ export default function ProposalTemplateDetails({
           <Text color="grayscale.500">{t('previewTitle')}</Text>
           <Text textAlign="right">{trimmedTitle}</Text>
         </HStack>
-        {mode === 'template' && (
+        {mode === ProposalBuilderMode.TEMPLATE && (
           <HStack justifyContent="space-between">
             <Text color="grayscale.500">{t('previewThumnbail')}</Text>
             {trimmedTitle && (

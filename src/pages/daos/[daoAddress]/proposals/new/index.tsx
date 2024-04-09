@@ -5,8 +5,9 @@ import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { HEADER_HEIGHT } from '../../../../../constants/common';
 import { usePrepareProposal } from '../../../../../hooks/DAO/proposal/usePrepareProposal';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { ProposalBuilderMode } from '../../../../../types';
 
-export default function ProposalCreatePage() {
+export default function CreateProposalPage() {
   const {
     node: { daoAddress, safe },
     governance: { type },
@@ -24,7 +25,7 @@ export default function ProposalCreatePage() {
   return (
     <ProposalBuilder
       initialValues={{ ...DEFAULT_PROPOSAL, nonce: safe.nonce }}
-      mode="proposal"
+      mode={ProposalBuilderMode.PROPOSAL}
       prepareProposalData={prepareProposal}
     />
   );

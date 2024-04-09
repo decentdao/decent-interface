@@ -6,7 +6,7 @@ import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/cons
 import { logError } from '../../../../../helpers/errorLogging';
 import useCreateProposalTemplate from '../../../../../hooks/DAO/proposal/useCreateProposalTemplate';
 import useIPFSClient from '../../../../../providers/App/hooks/useIPFSClient';
-import { ProposalTemplate } from '../../../../../types/proposalBuilder';
+import { ProposalBuilderMode, ProposalTemplate } from '../../../../../types/proposalBuilder';
 
 export default function CreateProposalTemplatePage() {
   const ipfsClient = useIPFSClient();
@@ -55,7 +55,7 @@ export default function CreateProposalTemplatePage() {
 
   return (
     <ProposalBuilder
-      mode="template"
+      mode={ProposalBuilderMode.TEMPLATE}
       initialValues={initialProposalTemplate}
       prepareProposalData={prepareProposalTemplateProposal}
     />

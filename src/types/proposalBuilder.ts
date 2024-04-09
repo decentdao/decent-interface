@@ -21,7 +21,10 @@ export type CreateProposalMetadata = {
   documentationUrl?: string;
 };
 
-export type ProposalBuilderMode = 'proposal' | 'template';
+export enum ProposalBuilderMode {
+  PROPOSAL = 'PROPOSAL',
+  TEMPLATE = 'TEMPLATE'
+};
 export type CreateProposalForm = {
   transactions: CreateProposalTransaction[];
   proposalMetadata: CreateProposalMetadata;

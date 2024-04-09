@@ -37,7 +37,7 @@ export default function ProposalBuilder({
   const [formState, setFormState] = useState(CreateProposalState.METADATA_FORM);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
 
-  const isProposalMode = mode === 'proposal';
+  const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
 
   const navigate = useNavigate();
   const {

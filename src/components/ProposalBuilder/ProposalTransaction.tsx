@@ -27,7 +27,7 @@ export default function ProposalTransaction({
   setFieldValue,
   mode,
 }: ProposalTransactionProps) {
-  const isProposalMode = mode === 'proposal';
+  const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
   const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
   const handleABISelectorChange = useCallback(
     (value: ABIElement) => {

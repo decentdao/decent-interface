@@ -18,7 +18,7 @@ export default function ProposalMetadata({
   mode,
 }: ProposalMetadataProps) {
   const { t } = useTranslation(['proposalTemplate', 'proposal', 'common']);
-  const isProposalMode = mode === 'proposal';
+  const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
 
   return (
     <>
