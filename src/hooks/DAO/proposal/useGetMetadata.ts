@@ -25,7 +25,7 @@ interface Transaction {
 const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) => {
   const ipfsClient = useIPFSClient();
   const [multisigMetadata, setMultisigMetadata] = useState<
-    undefined | CreateProposalMetadata | null
+    CreateProposalMetadata | null | undefined
   >(undefined);
   const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
 
