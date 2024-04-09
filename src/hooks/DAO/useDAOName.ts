@@ -32,7 +32,7 @@ export default function useDAOName({
     address: address as Address,
     chainId,
   });
-  const { setValue, getValue } = useLocalStorage();
+  const { getValue } = useLocalStorage();
 
   const getDaoName = useCallback(async () => {
     if (!address || !baseContracts) {
@@ -69,10 +69,9 @@ export default function useDAOName({
       }
 
       const { daoName } = latestEvent.args;
-      setValue(CacheKeys.DAO_NAME_PREFIX + address, daoName, 60);
       setDAORegistryName(daoName);
     }
-  }, [address, ensName, baseContracts, getValue, setValue, registryName]);
+  }, [address, ensName, baseContracts, getValue, registryName]);
 
   useEffect(() => {
     (async () => {
@@ -93,7 +92,7 @@ export default function useDAOName({
  * @dev this is used on initial load of the DAO Node, after subGraph data is loaded
  */
 export function useLazyDAOName() {
-  const { setValue, getValue } = useLocalStorage();
+  const { getValue } = useLocalStorage();
   const provider = useEthersProvider();
   const getDaoName = useCallback(
     async (_address: string, _registryName?: string | null): Promise<string> => {
@@ -105,19 +104,17 @@ export function useLazyDAOName() {
         // check if ens name resolves
         const ensName = await provider.lookupAddress(_address).catch(() => null);
         if (ensName) {
-          setValue(CacheKeys.DAO_NAME_PREFIX + _address, ensName, 5);
           return ensName;
         }
       }
 
       if (_registryName) {
-        setValue(CacheKeys.DAO_NAME_PREFIX + _address, _registryName, 5);
         return _registryName;
       }
 
       return createAccountSubstring(_address);
     },
-    [getValue, setValue, provider],
+    [getValue, provider],
   );
 
   return { getDaoName };
