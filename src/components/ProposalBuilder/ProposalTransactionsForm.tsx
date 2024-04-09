@@ -4,7 +4,7 @@ import { FormikProps } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalState } from '../../types';
-import { CreateProposalForm } from '../../types/proposalBuilder';
+import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import { scrollToBottom } from '../../utils/ui';
 import ProposalTransactions from './ProposalTransactions';
 import { DEFAULT_PROPOSAL_TRANSACTION } from './constants';
@@ -14,6 +14,7 @@ interface ProposalTransactionsFormProps extends FormikProps<CreateProposalForm> 
   setFormState: (state: CreateProposalState) => void;
   canUserCreateProposal?: boolean;
   safeNonce?: number;
+  mode: ProposalBuilderMode;
 }
 
 export default function ProposalTransactionsForm(props: ProposalTransactionsFormProps) {

@@ -2,11 +2,12 @@ import { Button, Divider, VStack } from '@chakra-ui/react';
 import { FormikProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalState } from '../../types';
-import { CreateProposalForm } from '../../types/proposalBuilder';
+import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import { InputComponent, TextareaComponent } from '../ui/forms/InputComponent';
 
 export interface ProposalMetadataProps extends FormikProps<CreateProposalForm> {
   setFormState: (state: CreateProposalState) => void;
+  mode: ProposalBuilderMode;
 }
 
 export default function ProposalMetadata({
@@ -14,8 +15,10 @@ export default function ProposalMetadata({
   setFieldValue,
   errors: { proposalMetadata: proposalMetadataError },
   setFormState,
+  mode,
 }: ProposalMetadataProps) {
-  const { t } = useTranslation(['proposalTemplate', 'common']);
+  const { t } = useTranslation(['proposalTemplate', 'proposal', 'common']);
+  const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
 
   return (
     <>
@@ -25,8 +28,14 @@ export default function ProposalMetadata({
         mt={4}
       >
         <InputComponent
-          label={t('proposalTemplateTitle')}
-          helper={t('proposalTemplateTitleHelperText')}
+          label={
+            isProposalMode ? t('proposalTitle', { ns: 'proposal' }) : t('proposalTemplateTitle')
+          }
+          helper={
+            isProposalMode
+              ? t('proposalTitleHelper', { ns: 'proposal' })
+              : t('proposalTemplateTitleHelperText')
+          }
           isRequired
           value={proposalMetadata.title}
           onChange={e => setFieldValue('proposalMetadata.title', e.target.value)}
@@ -35,9 +44,17 @@ export default function ProposalMetadata({
           maxLength={50}
         />
         <TextareaComponent
-          label={t('proposalTemplateDescription')}
+          label={
+            isProposalMode
+              ? t('proposalDescription', { ns: 'proposal' })
+              : t('proposalTemplateDescription')
+          }
           subLabel={t('')}
-          helper={t('proposalTemplateDescriptionHelperText')}
+          helper={
+            isProposalMode
+              ? t('proposalDescriptionHelper', { ns: 'proposal' })
+              : t('proposalTemplateDescriptionHelperText')
+          }
           isRequired={false}
           value={proposalMetadata.description}
           onChange={e => setFieldValue('proposalMetadata.description', e.target.value)}

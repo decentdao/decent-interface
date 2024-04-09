@@ -2,15 +2,15 @@ import { BigNumber } from 'ethers';
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProposalBuilder from '../../../../../components/ProposalBuilder';
-import { DEFAULT_PROPOSAL_TEMPLATE } from '../../../../../components/ProposalBuilder/constants';
+import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { logError } from '../../../../../helpers/errorLogging';
 import useCreateProposalTemplate from '../../../../../hooks/DAO/proposal/useCreateProposalTemplate';
 import useIPFSClient from '../../../../../providers/App/hooks/useIPFSClient';
-import { ProposalTemplate } from '../../../../../types/proposalBuilder';
+import { ProposalBuilderMode, ProposalTemplate } from '../../../../../types/proposalBuilder';
 
 export default function CreateProposalTemplatePage() {
   const ipfsClient = useIPFSClient();
-  const [initialProposalTemplate, setInitialProposalTemplate] = useState(DEFAULT_PROPOSAL_TEMPLATE);
+  const [initialProposalTemplate, setInitialProposalTemplate] = useState(DEFAULT_PROPOSAL);
   const { prepareProposalTemplateProposal } = useCreateProposalTemplate();
   const [searchParams] = useSearchParams();
   const defaultProposalTemplatesHash = useMemo(
@@ -55,7 +55,7 @@ export default function CreateProposalTemplatePage() {
 
   return (
     <ProposalBuilder
-      mode="template"
+      mode={ProposalBuilderMode.TEMPLATE}
       initialValues={initialProposalTemplate}
       prepareProposalData={prepareProposalTemplateProposal}
     />
