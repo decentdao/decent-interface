@@ -23,8 +23,8 @@ export type CreateProposalMetadata = {
 
 export enum ProposalBuilderMode {
   PROPOSAL = 'PROPOSAL',
-  TEMPLATE = 'TEMPLATE'
-};
+  TEMPLATE = 'TEMPLATE',
+}
 export type CreateProposalForm = {
   transactions: CreateProposalTransaction[];
   proposalMetadata: CreateProposalMetadata;
