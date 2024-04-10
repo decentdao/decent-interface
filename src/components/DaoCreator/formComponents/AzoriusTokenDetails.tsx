@@ -56,7 +56,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       const symbol: string = await tokenContract.symbol();
       const decimals: number = await tokenContract.decimals();
 
-      // @todo yo what is going on here
+      // @dev: this turns "total supply" into the human-readable form (without decimals)
       const totalSupply: number = (await tokenContract.totalSupply()) / 10 ** decimals;
 
       setFieldValue(
