@@ -27,8 +27,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
       );
 
       const santitizedParentAddress = utils.getAddress(parentAddress);
-      const parentSafeInfo = await safeAPI.getSafeInfo(santitizedParentAddress);
-      const parentSafeNextNonce = await safeAPI.getNextNonce(santitizedParentAddress);
+      const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
 
       if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
         const abiCoder = new ethers.utils.AbiCoder();
@@ -92,7 +91,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               values: transactions.map(tx => tx.value),
               calldatas: transactions.map(tx => tx.calldata),
             },
-            nonce: parentSafeNextNonce,
+            nonce: parentSafeInfo.nonce,
             pendingToastMessage: t('clawBackPendingToastMessage'),
             failedToastMessage: t('clawBackFailedToastMessage'),
             successToastMessage: t('clawBackSuccessToastMessage'),

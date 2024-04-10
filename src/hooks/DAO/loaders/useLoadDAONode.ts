@@ -56,14 +56,12 @@ export const useLoadDAONode = () => {
           }
 
           const sanitizedDaoAddress = utils.getAddress(_daoAddress);
-          const safeInfo = await safeAPI.getSafeInfo(sanitizedDaoAddress);
-          const nextNonce = await safeAPI.getNextNonce(sanitizedDaoAddress);
-          const safeInfoWithGuard = { ...safeInfo, nonce: nextNonce };
+          const safeInfoWithGuard = await safeAPI.getSafeData(sanitizedDaoAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName: await getDaoName(sanitizedDaoAddress, graphNodeInfo.daoName),
             safe: safeInfoWithGuard,
-            fractalModules: await lookupModules(safeInfo.modules),
+            fractalModules: await lookupModules(safeInfoWithGuard.modules),
           });
 
           // TODO we could cache node here, but should be careful not to cache
