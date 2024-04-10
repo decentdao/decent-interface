@@ -61,9 +61,9 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
         : 0n;
   const totalQuorum = erc721Tokens !== undefined ? strategyQuorum : 0n;
 
-  // @todo what is up with the types here?
   const meetsQuorum = votesToken
-    ? (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) * strategyQuorum
+    ? (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) * strategyQuorum <=
+      reachedQuorum
     : reachedQuorum >= totalQuorum;
 
   const displayColor =

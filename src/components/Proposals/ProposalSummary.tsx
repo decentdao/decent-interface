@@ -90,22 +90,19 @@ export default function ProposalSummary({
 
   const strategyQuorum =
     votesToken && isERC20
-      ? Number(votingStrategy.quorumPercentage!.value)
+      ? votingStrategy.quorumPercentage!.value
       : isERC721
-        ? Number(votingStrategy.quorumThreshold!.value)
-        : 1;
+        ? votingStrategy.quorumThreshold!.value
+        : 1n;
   const reachedQuorum = isERC721
-    ? (totalVotesCasted - no).toString()
+    ? totalVotesCasted - no
     : votesToken
-      ? ((totalVotesCasted - no) / votesTokenDecimalsDenominator).toString()
-      : '0';
+      ? (totalVotesCasted - no) / votesTokenDecimalsDenominator
+      : 0n;
   const totalQuorum = isERC721
-    ? strategyQuorum.toString()
+    ? strategyQuorum
     : votesToken
-      ? (
-          (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) *
-          BigInt(strategyQuorum)
-        ).toString()
+      ? (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) * strategyQuorum
       : undefined;
 
   const ShowVotingPowerButton = (
