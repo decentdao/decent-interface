@@ -48,8 +48,8 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
               10n ** BigInt(asset.token?.decimals || 18);
             tokenFiatBalance =
               tokenFiatBalanceBi >= maxUint256
-                ? Number((tokenFiatBalanceBi / BigInt(multiplicator)).toString())
-                : Number(tokenFiatBalanceBi.toString()) / multiplicator;
+                ? Number(tokenFiatBalanceBi / BigInt(multiplicator))
+                : Number(tokenFiatBalanceBi) / multiplicator;
             newTotalFiatValue += tokenFiatBalance;
           } catch (e) {
             logError('Error while calculating token fiat balance', e);

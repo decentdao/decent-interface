@@ -48,7 +48,7 @@ export default function ProposalERC721VoteItem({
         <GridItem colSpan={1}>
           <Text>
             {t('nftVotes', {
-              count: Number(weight.toString()),
+              count: Number(weight),
               ns: 'proposal',
             })}
           </Text>

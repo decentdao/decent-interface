@@ -150,7 +150,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         // If the proposal is executing start the countdown (for Azorius proposals with guards)
         return;
       } else if (isAzoriusGuard && timeLockPeriod && votingDeadlineMs) {
-        guardTimelockPeriod = Number(timeLockPeriod.value.toString()) * 1000 + votingDeadlineMs;
+        guardTimelockPeriod = Number(timeLockPeriod.value) * 1000 + votingDeadlineMs;
       }
       startCountdown(guardTimelockPeriod);
       return;

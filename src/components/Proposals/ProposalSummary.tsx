@@ -40,7 +40,7 @@ export default function ProposalSummary({
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
-  const startBlockTimeStamp = useBlockTimestamp(Number(startBlock.toString()));
+  const startBlockTimeStamp = useBlockTimestamp(Number(startBlock));
   const [proposalsERC20VotingWeight, setProposalsERC20VotingWeight] = useState('0');
   const totalVotesCasted = useMemo(() => yes + no + abstain, [yes, no, abstain]);
   const totalVotingWeight = useMemo(
@@ -90,9 +90,9 @@ export default function ProposalSummary({
 
   const strategyQuorum =
     votesToken && isERC20
-      ? Number(votingStrategy.quorumPercentage!.value.toString())
+      ? Number(votingStrategy.quorumPercentage!.value)
       : isERC721
-        ? Number(votingStrategy.quorumThreshold!.value.toString())
+        ? Number(votingStrategy.quorumThreshold!.value)
         : 1;
   const reachedQuorum = isERC721
     ? (totalVotesCasted - no).toString()

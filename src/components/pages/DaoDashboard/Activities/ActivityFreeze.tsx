@@ -33,10 +33,10 @@ export function ActivityFreeze() {
   } = useFractal();
   const { t } = useTranslation('dashboard');
   const freezeProposalDeadlineDate = new Date(
-    Number((((freezeProposalCreatedTime || 0n) + (freezeProposalPeriod || 0n)) * 1000n).toString()),
+    Number(((freezeProposalCreatedTime || 0n) + (freezeProposalPeriod || 0n)) * 1000n),
   );
   const freezeDeadlineDate = new Date(
-    Number((((freezeProposalCreatedTime || 0n) + (freezePeriod || 0n)) * 1000n).toString()),
+    Number(((freezeProposalCreatedTime || 0n) + (freezePeriod || 0n)) * 1000n),
   );
   const now = new Date();
 
