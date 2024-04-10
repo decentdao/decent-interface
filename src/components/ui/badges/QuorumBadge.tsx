@@ -62,7 +62,7 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
   const totalQuorum = erc721Tokens !== undefined ? strategyQuorum : 0n;
 
   const meetsQuorum = votesToken
-    ? (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) * strategyQuorum <=
+    ? (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) * strategyQuorum <
       reachedQuorum
     : reachedQuorum >= totalQuorum;
 
