@@ -11,13 +11,13 @@ interface Props extends LinkProps {
 function EtherscanLinkERC20({ address, children, ...rest }: Props) {
   const { etherscanBaseURL } = useNetworkConfig();
 
-  if (!address) {
+  if (!address || address === zeroAddress) {
     return null;
   }
 
   return (
     <EtherscanLinkBase
-      href={`${etherscanBaseURL}/${address === zeroAddress ? '' : 'token/'}${address}`}
+      href={`${etherscanBaseURL}/token/${address}`}
       {...rest}
     >
       {children}
