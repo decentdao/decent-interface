@@ -72,7 +72,7 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                 const amountErrorMessage =
                   values.erc20Token.tokenSupply.value &&
                   tokenAllocationError?.amount?.value &&
-                  !(tokenAllocation.amount.bigintValue ?? 0n === 0n)
+                  (tokenAllocation.amount.bigintValue ?? 0n !== 0n)
                     ? tokenAllocationError.amount.value
                     : null;
 
