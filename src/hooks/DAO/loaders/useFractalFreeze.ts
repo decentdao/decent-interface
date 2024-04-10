@@ -5,8 +5,8 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { FreezeVoteCastEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/ERC20FreezeVoting';
-import { constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
+import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import {
   isWithinFreezeProposalPeriod,
@@ -80,7 +80,7 @@ export const useFractalFreeze = ({
       const freezePeriod = await blocksToSeconds(freezePeriodBlock, provider);
 
       const userHasFreezeVoted = await freezeVotingContract.userHasFreezeVoted(
-        account || constants.AddressZero,
+        account || zeroAddress,
         freezeCreatedBlock,
       );
       const isFrozen = await freezeVotingContract.isFrozen();

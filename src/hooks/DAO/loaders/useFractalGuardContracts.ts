@@ -1,6 +1,6 @@
 import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
-import { constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
+import { zeroAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -51,7 +51,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       if (!!azoriusModule && azoriusModule.moduleContract) {
         const azoriusGuardAddress = await azoriusModule.moduleContract.getGuard();
 
-        if (azoriusGuardAddress === constants.AddressZero) {
+        if (azoriusGuardAddress === zeroAddress) {
           return {
             freezeGuardContractAddress: '',
             freezeVotingContractAddress: '',
@@ -66,7 +66,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         };
         freezeGuardType = FreezeGuardType.AZORIUS;
       } else {
-        const hasNoGuard = _safe.guard === constants.AddressZero;
+        const hasNoGuard = _safe.guard === zeroAddress;
         const masterCopyData = await getZodiacModuleProxyMasterCopyData(guard!);
         if (masterCopyData.isMultisigFreezeGuard && !hasNoGuard) {
           freezeGuardContract = {
