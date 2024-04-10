@@ -1,7 +1,7 @@
 import { Grid, GridItem, Box, Flex, Center } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { ProposalDetails } from '../../../../../components/ProposalCreate/ProposalDetails';
@@ -18,6 +18,8 @@ import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitPropos
 import { useCreateProposalSchema } from '../../../../../hooks/schemas/proposalCreate/useCreateProposalSchema';
 import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useSafeAPI } from '../../../../../providers/App/hooks/useSafeAPI';
+import { NodeAction } from '../../../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { CreateProposalForm, CreateProposalState, GovernanceType } from '../../../../../types';
 
@@ -27,9 +29,11 @@ const templateAreaSingleCol = `"content"
 
 export default function ProposalCreatePage() {
   const {
+    action,
     node: { daoAddress, safe },
     governance: { type },
   } = useFractal();
+  const safeAPI = useSafeAPI();
   const { addressPrefix } = useNetworkConfig();
   const { createProposalValidation } = useCreateProposalSchema();
   const { prepareProposal } = usePrepareProposal();
@@ -50,6 +54,23 @@ export default function ProposalCreatePage() {
       navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
     }
   };
+
+  const isMounted = useRef(false);
+  useEffect(() => {
+    if (!safeAPI || !daoAddress || isMounted.current) {
+      return;
+    }
+
+    (async () => {
+      const safeInfo = await safeAPI.getSafeData(daoAddress);
+      action.dispatch({
+        type: NodeAction.SET_SAFE_INFO,
+        payload: safeInfo,
+      });
+    })();
+
+    isMounted.current = true;
+  }, [action, daoAddress, safeAPI]);
 
   if (!type || !daoAddress || !safe) {
     return (
