@@ -36,12 +36,21 @@ export const wagmiConfig = defaultWagmiConfig({
     ),
     [sepolia.id]: http(
       `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
+      {
+        batch: true,
+      },
     ),
     [polygon.id]: http(
       `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_POLYGON_API_KEY}`,
+      {
+        batch: true,
+      },
     ),
     [baseSepolia.id]: http(
       `https://base-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_BASE_SEPOLIA_API_KEY}`,
+      {
+        batch: true,
+      },
     ),
   },
 });
