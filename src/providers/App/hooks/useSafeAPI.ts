@@ -226,7 +226,7 @@ class CachingSafeServiceClient extends SafeServiceClient {
 }
 
 export function useSafeAPI() {
-  const { safeBaseURL, chainId } = useNetworkConfig();
+  const { safeBaseURL, chain } = useNetworkConfig();
   const signerOrProvider = useSignerOrProvider();
 
   const safeAPI: SafeServiceClient | undefined = useMemo(() => {
@@ -237,11 +237,11 @@ export function useSafeAPI() {
       ethers,
       signerOrProvider,
     });
-    return new CachingSafeServiceClient(chainId, {
+    return new CachingSafeServiceClient(chain.id, {
       txServiceUrl: safeBaseURL,
       ethAdapter,
     });
-  }, [signerOrProvider, chainId, safeBaseURL]);
+  }, [signerOrProvider, chain, safeBaseURL]);
 
   return safeAPI;
 }

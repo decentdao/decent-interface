@@ -1,11 +1,13 @@
 import { QueryClient } from '@tanstack/react-query';
 import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
+import { HttpTransport } from 'viem';
 import { http } from 'wagmi';
-import { hardhat, sepolia, mainnet, Chain, polygon, baseSepolia } from 'wagmi/chains';
-import { supportedChains } from './NetworkConfigProvider';
+import { Chain, hardhat } from 'wagmi/chains';
+import { NetworkConfig } from '../../types/network';
+import { supportedNetworks } from './NetworkConfigProvider';
 
-const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
+const supportedWagmiChains = supportedNetworks.map(network => network.chain);
 
 // allows connection to localhost only in development mode.
 if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
@@ -23,27 +25,18 @@ const wagmiMetadata = {
   icons: [`${import.meta.env.VITE_APP_SITE_URL}favicon.icon`],
 };
 
+const transportsReducer = (accumulator: Record<string, HttpTransport>, network: NetworkConfig) => {
+  accumulator[network.chain.id] = http(network.rpcEndpoint, {
+    batch: true,
+  });
+  return accumulator;
+};
+
 export const wagmiConfig = defaultWagmiConfig({
   chains: supportedWagmiChains as [Chain, ...Chain[]],
   projectId: walletConnectProjectId,
   metadata: wagmiMetadata,
-  transports: {
-    [mainnet.id]: http(
-      `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`,
-      {
-        batch: true,
-      },
-    ),
-    [sepolia.id]: http(
-      `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
-    ),
-    [polygon.id]: http(
-      `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_POLYGON_API_KEY}`,
-    ),
-    [baseSepolia.id]: http(
-      `https://base-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_BASE_SEPOLIA_API_KEY}`,
-    ),
-  },
+  transports: supportedNetworks.reduce(transportsReducer, {}),
 });
 
 if (walletConnectProjectId) {

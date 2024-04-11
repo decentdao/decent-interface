@@ -19,7 +19,7 @@ export interface TokenDisplayData {
 }
 
 export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
-  const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfig();
+  const { chain, nativeTokenIcon } = useNetworkConfig();
   const [totalFiatValue, setTotalFiatValue] = useState(0);
   const [displayData, setDisplayData] = useState<TokenDisplayData[]>([]);
   const { getTokenPrices } = usePriceAPI();
@@ -56,7 +56,7 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
           }
         }
 
-        let symbol = asset.token === null ? nativeTokenSymbol : asset.token.symbol;
+        let symbol = asset.token === null ? chain.nativeCurrency.symbol : asset.token.symbol;
         const formatted: TokenDisplayData = {
           iconUri: asset.token === null ? nativeTokenIcon : asset.token.logoUri,
           address: asset.tokenAddress === null ? zeroAddress : asset.tokenAddress,
@@ -76,7 +76,7 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
     }
 
     loadDisplayData();
-  }, [assets, nativeTokenIcon, nativeTokenSymbol, getTokenPrices]);
+  }, [assets, nativeTokenIcon, chain, getTokenPrices]);
 
   return {
     totalFiatValue,

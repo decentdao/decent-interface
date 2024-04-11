@@ -78,7 +78,7 @@ export default function useSubmitProposal() {
 
   const lookupModules = useFractalModules();
   const signerOrProvider = useSignerOrProvider();
-  const { chainId, safeBaseURL, addressPrefix } = useNetworkConfig();
+  const { chain, safeBaseURL, addressPrefix } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
 
   const submitMultisigProposal = useCallback(
@@ -164,7 +164,7 @@ export default function useSubmitProposal() {
           await buildSafeAPIPost(
             safeContract,
             signerOrProvider as Signer & TypedDataSigner,
-            chainId,
+            chain.id,
             {
               to,
               value,
@@ -192,7 +192,7 @@ export default function useSubmitProposal() {
     [
       signerOrProvider,
       safeBaseURL,
-      chainId,
+      chain,
       loadDAOProposals,
       ipfsClient,
       baseContracts,

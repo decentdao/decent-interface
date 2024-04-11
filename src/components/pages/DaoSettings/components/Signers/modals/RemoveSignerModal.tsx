@@ -38,10 +38,10 @@ function RemoveSignerModal({
   const [prevSigner, setPrevSigner] = useState<string>('');
   const [threshold, setThreshold] = useState<number>(currentThreshold);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const { data: ensName } = useEnsName({
     address: selectedSigner as Address,
-    chainId,
+    chainId: chain.id,
   });
   const { t } = useTranslation(['modals', 'common']);
   const tooltipContainer = useRef<HTMLDivElement>(null);

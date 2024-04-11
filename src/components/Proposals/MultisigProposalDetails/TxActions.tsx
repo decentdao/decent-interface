@@ -29,7 +29,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const signerOrProvider = useSignerOrProvider();
   const safeAPI = useSafeAPI();
 
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
@@ -54,7 +54,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       asyncRequest({
         asyncFunc: () =>
           (signerOrProvider as Signer & TypedDataSigner)._signTypedData(
-            { verifyingContract: safe.address, chainId: chainId },
+            { verifyingContract: safe.address, chainId: chain.id },
             EIP712_SAFE_TX_TYPE,
             safeTx,
           ),

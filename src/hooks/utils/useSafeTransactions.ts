@@ -31,7 +31,7 @@ type FreezeGuardData = {
 };
 
 export const useSafeTransactions = () => {
-  const { nativeTokenSymbol } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const provider = useEthersProvider();
   const { guardContracts } = useFractal();
   const baseContracts = useSafeContracts();
@@ -148,13 +148,13 @@ export const useSafeTransactions = () => {
             if (prevValue) {
               prev.set(zeroAddress, {
                 bi: prevValue.bi + BigInt(cur.value),
-                symbol: nativeTokenSymbol,
+                symbol: chain.nativeCurrency.symbol,
                 decimals: 18,
               });
             }
             prev.set(zeroAddress, {
               bi: BigInt(cur.value),
-              symbol: nativeTokenSymbol,
+              symbol: chain.nativeCurrency.symbol,
               decimals: 18,
             });
           }
@@ -186,7 +186,7 @@ export const useSafeTransactions = () => {
         new Map(),
       );
     },
-    [nativeTokenSymbol],
+    [chain],
   );
 
   const parseTransactions = useCallback(
@@ -239,7 +239,7 @@ export const useSafeTransactions = () => {
 
           if (isEthSend) {
             transferAmountTotals.push(
-              `${formatWeiToValue(multiSigTransaction.value, 18)} ${nativeTokenSymbol}`,
+              `${formatWeiToValue(multiSigTransaction.value, 18)} ${chain.nativeCurrency.symbol}`,
             );
             transferAddresses.push(multiSigTransaction.to);
           }
@@ -339,15 +339,7 @@ export const useSafeTransactions = () => {
       const activitiesWithState = await getState(activities, freezeGuard, freezeGuardData);
       return activitiesWithState;
     },
-    [
-      guardContracts,
-      getState,
-      getTransferTotal,
-      decode,
-      nativeTokenSymbol,
-      provider,
-      baseContracts,
-    ],
+    [guardContracts, getState, getTransferTotal, decode, chain, provider, baseContracts],
   );
   return { parseTransactions };
 };
