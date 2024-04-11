@@ -14,12 +14,12 @@ export const useLoadDAONode = () => {
   const safeAPI = useSafeAPI();
   const { getDaoName } = useLazyDAOName();
   const lookupModules = useFractalModules();
-  const { subgraphSpace, subgraphSlug, subgraphVersion } = useNetworkConfig();
+  const { subgraph } = useNetworkConfig();
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
     context: {
-      subgraphSpace,
-      subgraphSlug,
-      subgraphVersion,
+      subgraphSpace: subgraph.space,
+      subgraphSlug: subgraph.slug,
+      subgraphVersion: subgraph.version,
     },
   });
 

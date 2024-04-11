@@ -36,9 +36,11 @@ export const baseConfig: NetworkConfig = {
   nativeTokenSymbol: base.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: base,
-  subgraphSpace: 71032,
-  subgraphSlug: 'fractal-base',
-  subgraphVersion: 'v0.0.1',
+  subgraph: {
+    space: 71032,
+    slug: 'fractal-base',
+    version: 'v0.0.1',
+  },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,

@@ -17,9 +17,11 @@ export type NetworkConfig = {
   nativeTokenSymbol: string;
   nativeTokenIcon: string;
   wagmiChain: Chain;
-  subgraphSpace: number;
-  subgraphSlug: string;
-  subgraphVersion: string;
+  subgraph: {
+    space: number;
+    slug: string;
+    version: string;
+  };
   contracts: {
     safe: string;
     safeFactory: string;

@@ -22,14 +22,14 @@ export function useFetchNodes(address?: string) {
   const safeAPI = useSafeAPI();
   const { requestWithRetries } = useAsyncRetry();
 
-  const { subgraphSpace, subgraphSlug, subgraphVersion } = useNetworkConfig();
+  const { subgraph } = useNetworkConfig();
   const { data, error } = useQuery(DAOQueryDocument, {
     variables: { daoAddress: address },
     skip: address === safe?.address || !address, // If address === safe.address - we already have hierarchy obtained in the context
     context: {
-      subgraphSpace,
-      subgraphSlug,
-      subgraphVersion,
+      subgraphSpace: subgraph.space,
+      subgraphSlug: subgraph.slug,
+      subgraphVersion: subgraph.version,
     },
   });
 

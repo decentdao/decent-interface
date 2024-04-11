@@ -36,9 +36,11 @@ export const mainnetConfig: NetworkConfig = {
   nativeTokenSymbol: mainnet.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: mainnet,
-  subgraphSpace: 71032,
-  subgraphSlug: 'fractal-mainnet',
-  subgraphVersion: 'v0.0.1',
+  subgraph: {
+    space: 71032,
+    slug: 'fractal-mainnet',
+    version: 'v0.0.1',
+  },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,

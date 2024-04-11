@@ -35,7 +35,7 @@ export const useFractalGovernance = () => {
 
   const ONE_MINUTE = 60 * 1000;
 
-  const { subgraphSpace, subgraphSlug, subgraphVersion } = useNetworkConfig();
+  const { subgraph } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },
@@ -67,9 +67,9 @@ export const useFractalGovernance = () => {
       }
     },
     context: {
-      subgraphSpace,
-      subgraphSlug,
-      subgraphVersion,
+      subgraphSpace: subgraph.space,
+      subgraphSlug: subgraph.slug,
+      subgraphVersion: subgraph.version,
     },
     pollInterval: ONE_MINUTE,
     skip: !daoAddress || !type,
