@@ -6,12 +6,12 @@ import { logError } from '../../../helpers/errorLogging';
 import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
 export default function usePriceAPI() {
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const { t } = useTranslation('treasury');
 
   const getTokenPrices = useCallback(
     async (tokens: SafeBalanceUsdResponse[]) => {
-      if (chainId !== 1) {
+      if (chain.id !== 1) {
         // Support only mainnet for now. CoinGecko does not support Sepolia (obviously, I guess :D) and we don't want to burn API credits to "simulate" prices display
         return;
       }
@@ -49,7 +49,7 @@ export default function usePriceAPI() {
         return;
       }
     },
-    [chainId, t],
+    [chain, t],
   );
   return { getTokenPrices };
 }

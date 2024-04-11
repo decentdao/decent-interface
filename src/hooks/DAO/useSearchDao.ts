@@ -12,7 +12,7 @@ export const useSearchDao = () => {
   const { address, isValidAddress, isAddressLoading } = useAddress(searchString);
   const { isSafe, isSafeLoading } = useIsSafe(address);
   const { t } = useTranslation('dashboard');
-  const { name } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
 
   useEffect(() => {
     setIsLoading(isAddressLoading === true || isSafeLoading === true);
@@ -28,12 +28,12 @@ export const useSearchDao = () => {
       setErrorMessage('');
     } else {
       if (isValidAddress) {
-        setErrorMessage(t('errorFailedSearch', { chain: name }));
+        setErrorMessage(t('errorFailedSearch', { chain: chain.name }));
       } else {
         setErrorMessage(t('errorInvalidSearch'));
       }
     }
-  }, [isLoading, isSafe, isValidAddress, name, searchString, t]);
+  }, [isLoading, isSafe, isValidAddress, chain, searchString, t]);
 
   return {
     errorMessage,

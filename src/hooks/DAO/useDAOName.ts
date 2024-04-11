@@ -24,11 +24,11 @@ export default function useDAOName({
 }) {
   const { baseContracts } = useFractal();
   const [daoRegistryName, setDAORegistryName] = useState<string>('');
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
 
   const { data: ensName } = useEnsName({
     address: address as Address,
-    chainId,
+    chainId: chain.id,
   });
 
   const getDaoName = useCallback(async () => {

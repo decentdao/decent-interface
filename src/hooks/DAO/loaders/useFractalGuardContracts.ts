@@ -23,7 +23,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   } = useFractal();
   const baseContracts = useSafeContracts();
 
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
 
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
@@ -117,17 +117,17 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     if (
       loadOnMount &&
       daoAddress &&
-      daoAddress + chainId !== loadKey.current &&
+      daoAddress + chain.id !== loadKey.current &&
       isHierarchyLoaded &&
       safe
     ) {
-      loadKey.current = daoAddress + chainId;
+      loadKey.current = daoAddress + chain.id;
       setGuardContracts();
     }
 
     if (!daoAddress) {
       loadKey.current = undefined;
     }
-  }, [setGuardContracts, isHierarchyLoaded, loadOnMount, chainId, daoAddress, safe]);
+  }, [setGuardContracts, isHierarchyLoaded, loadOnMount, chain, daoAddress, safe]);
   return loadFractalGuardContracts;
 };

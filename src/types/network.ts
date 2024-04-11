@@ -8,17 +8,19 @@ export type Providers =
   | ethers.providers.BaseProvider;
 
 export type NetworkConfig = {
+  order: number; // any arbitrary integer, used to "order" the networks in the dropdown
+  chain: Chain;
+  rpcEndpoint: string;
   safeBaseURL: string;
   etherscanBaseURL: string;
   etherscanAPIUrl: string;
-  chainId: number;
-  name: string;
   addressPrefix: string; // copy whatever Safe uses
-  color: string;
-  nativeTokenSymbol: string;
   nativeTokenIcon: string;
-  wagmiChain: Chain;
-  subgraphChainName: string;
+  subgraph: {
+    space: number;
+    slug: string;
+    version: string;
+  };
   contracts: {
     safe: string;
     safeFactory: string;
