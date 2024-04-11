@@ -78,7 +78,7 @@ export default function ForkProposalTemplateModal({
       `${DAO_ROUTES.proposalTemplateNew.relative(
         addressPrefix,
         targetDAOAddress,
-      )}?templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`,
+      )}&templatesHash=${proposalTemplatesHash}&templateIndex=${templateIndex}`,
     );
     onClose();
   };

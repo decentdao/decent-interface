@@ -13,12 +13,12 @@ import { BigNumberValuePair } from '../../../types';
 export interface BigNumberInputProps
   extends Omit<InputElementProps, 'value' | 'onChange'>,
     FormControlOptions {
-  value: BigNumber | undefined;
+  value?: BigNumber | null;
   onChange: (value: BigNumberValuePair) => void;
   decimalPlaces?: number;
   min?: string;
   max?: string;
-  maxValue?: BigNumber;
+  maxValue?: BigNumber | null;
 }
 /**
  * This component will add a chakra Input component that accepts and sets a BigNumber
@@ -82,7 +82,7 @@ export function BigNumberInput({
       if (stringValue === '') {
         onChange({
           value: stringValue,
-          bigNumberValue: undefined,
+          bigNumberValue: null,
         });
         setInputValue('');
         return;

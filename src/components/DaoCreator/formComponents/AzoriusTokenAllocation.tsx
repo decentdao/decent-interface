@@ -11,7 +11,7 @@ interface ITokenAllocations {
   setFieldValue: (field: string, value: any) => void;
   addressErrorMessage: string | null;
   amountErrorMessage: string | null;
-  amountInputValue: BigNumber | undefined;
+  amountInputValue?: BigNumber | null;
   allocationLength: number;
 }
 

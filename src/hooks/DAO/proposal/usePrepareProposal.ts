@@ -42,7 +42,9 @@ export function usePrepareProposal() {
 
       return {
         targets,
-        values: transactionsWithEncoding.map(transaction => transaction.ethValue.bigNumberValue!),
+        values: transactionsWithEncoding.map(
+          transaction => transaction.ethValue.bigNumberValue || 0,
+        ),
         calldatas: transactionsWithEncoding.map(transaction => transaction.calldata || ''),
         metaData: {
           title: proposalMetadata.title,

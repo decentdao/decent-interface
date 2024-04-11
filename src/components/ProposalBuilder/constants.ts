@@ -2,7 +2,7 @@ import { CreateProposalTransaction } from '../../types/proposalBuilder';
 
 export const DEFAULT_PROPOSAL_TRANSACTION: CreateProposalTransaction = {
   targetAddress: '',
-  ethValue: { value: '', bigNumberValue: undefined },
+  ethValue: { value: '', bigNumberValue: null },
   functionName: '',
   parameters: [
     {
