@@ -62,7 +62,7 @@ export const getEstimatedNumberOfBlocks = async (
   timeInMinutes: bigint,
   provider: Providers,
 ): Promise<bigint> => {
-  const seconds = timeInMinutes * 60n;
+  const seconds = Number(timeInMinutes) * 60;
   const averageBlockTime = await getAverageBlockTime(provider);
-  return seconds / BigInt(averageBlockTime);
+  return BigInt(Math.ceil(seconds / averageBlockTime));
 };
