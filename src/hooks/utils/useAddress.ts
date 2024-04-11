@@ -14,7 +14,7 @@ const useAddress = (addressInput: string | undefined) => {
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
   const { setValue, getValue } = useLocalStorage();
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
 
   useEffect(() => {
     setIsAddressLoading(true);
@@ -43,7 +43,7 @@ const useAddress = (addressInput: string | undefined) => {
     }
 
     // only continue with ENS checks if the chain actually supports ENS
-    if (!supportsENS(chainId)) {
+    if (!supportsENS(chain.id)) {
       return;
     }
 
@@ -103,7 +103,7 @@ const useAddress = (addressInput: string | undefined) => {
       .finally(() => {
         setIsAddressLoading(false);
       });
-  }, [provider, addressInput, getValue, setValue, chainId]);
+  }, [provider, addressInput, getValue, setValue, chain]);
 
   return { address, isValidAddress, isAddressLoading };
 };

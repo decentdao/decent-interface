@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNetworkConfig } from '../providers/NetworkConfig/NetworkConfigProvider';
 
 function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQueryParam' }) {
-  const { name } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const { t } = useTranslation('common');
 
   return (
@@ -18,7 +18,7 @@ function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQ
         >
           {t('errorSentryFallbackTitle')}
         </Text>
-        <Text>{t(`${type}1`, { chain: name })}</Text>
+        <Text>{t(`${type}1`, { chain: chain.name })}</Text>
         <Text paddingBottom="1rem">{t(`${type}2`)}</Text>
       </VStack>
     </Center>

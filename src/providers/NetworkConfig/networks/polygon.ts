@@ -23,7 +23,6 @@ import { polygon } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 
-const CHAIN_ID = 137;
 const SAFE_VERSION = '1.3.0';
 
 export const polygonConfig: NetworkConfig = {
@@ -33,12 +32,8 @@ export const polygonConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',
   etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
-  chainId: CHAIN_ID,
-  name: polygon.name,
   addressPrefix: 'matic',
-  nativeTokenSymbol: polygon.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
-  wagmiChain: polygon,
   subgraph: {
     space: 71032,
     slug: 'fractal-base-polygon',
@@ -58,20 +53,20 @@ export const polygonConfig: NetworkConfig = {
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
-      network: CHAIN_ID.toString(),
-    })?.networkAddresses[CHAIN_ID.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
-      ?.networkAddresses[CHAIN_ID.toString()]!,
+      network: polygon.id.toString(),
+    })?.networkAddresses[polygon.id.toString()]!,
+    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: polygon.id.toString() })
+      ?.networkAddresses[polygon.id.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
-      network: CHAIN_ID.toString(),
-    })?.networkAddresses[CHAIN_ID.toString()]!,
+      network: polygon.id.toString(),
+    })?.networkAddresses[polygon.id.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
-      network: CHAIN_ID.toString(),
-    })?.networkAddresses[CHAIN_ID.toString()]!,
+      network: polygon.id.toString(),
+    })?.networkAddresses[polygon.id.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },

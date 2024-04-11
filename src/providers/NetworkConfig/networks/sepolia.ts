@@ -23,7 +23,6 @@ import { sepolia } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 
-const CHAIN_ID = 11155111;
 const SAFE_VERSION = '1.3.0';
 
 export const sepoliaConfig: NetworkConfig = {
@@ -33,12 +32,8 @@ export const sepoliaConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.etherscan.io',
   etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
-  chainId: CHAIN_ID,
-  name: sepolia.name,
   addressPrefix: 'sep',
-  nativeTokenSymbol: sepolia.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
-  wagmiChain: sepolia,
   subgraph: {
     space: 71032,
     slug: 'fractal-sepolia',
@@ -58,20 +53,20 @@ export const sepoliaConfig: NetworkConfig = {
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
-      network: CHAIN_ID.toString(),
-    })?.networkAddresses[CHAIN_ID.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
-      ?.networkAddresses[CHAIN_ID.toString()]!,
+      network: sepolia.id.toString(),
+    })?.networkAddresses[sepolia.id.toString()]!,
+    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: sepolia.id.toString() })
+      ?.networkAddresses[sepolia.id.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
-      network: CHAIN_ID.toString(),
-    })?.networkAddresses[CHAIN_ID.toString()]!,
+      network: sepolia.id.toString(),
+    })?.networkAddresses[sepolia.id.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
-      network: CHAIN_ID.toString(),
-    })?.networkAddresses[CHAIN_ID.toString()]!,
+      network: sepolia.id.toString(),
+    })?.networkAddresses[sepolia.id.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },

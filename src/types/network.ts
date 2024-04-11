@@ -14,12 +14,8 @@ export type NetworkConfig = {
   safeBaseURL: string;
   etherscanBaseURL: string;
   etherscanAPIUrl: string;
-  chainId: number;
-  name: string;
   addressPrefix: string; // copy whatever Safe uses
-  nativeTokenSymbol: string;
   nativeTokenIcon: string;
-  wagmiChain: Chain;
   subgraph: {
     space: number;
     slug: string;

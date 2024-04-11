@@ -2,10 +2,10 @@ import { useEnsAvatar } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 const useAvatar = (account?: string) => {
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const { data: avatarURL } = useEnsAvatar({
     name: account,
-    chainId,
+    chainId: chain.id,
   });
 
   return avatarURL;

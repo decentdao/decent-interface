@@ -5,9 +5,9 @@ import { HttpTransport } from 'viem';
 import { http } from 'wagmi';
 import { Chain, hardhat } from 'wagmi/chains';
 import { NetworkConfig } from '../../types/network';
-import { supportedChains } from './NetworkConfigProvider';
+import { supportedNetworks } from './NetworkConfigProvider';
 
-const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
+const supportedWagmiChains = supportedNetworks.map(network => network.chain);
 
 // allows connection to localhost only in development mode.
 if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
@@ -36,7 +36,7 @@ export const wagmiConfig = defaultWagmiConfig({
   chains: supportedWagmiChains as [Chain, ...Chain[]],
   projectId: walletConnectProjectId,
   metadata: wagmiMetadata,
-  transports: supportedChains.reduce(transportsReducer, {}),
+  transports: supportedNetworks.reduce(transportsReducer, {}),
 });
 
 if (walletConnectProjectId) {

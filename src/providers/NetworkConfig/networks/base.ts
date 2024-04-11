@@ -23,7 +23,6 @@ import { base } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 
-const CHAIN_ID = 8453;
 const SAFE_VERSION = '1.3.0';
 
 export const baseConfig: NetworkConfig = {
@@ -33,12 +32,8 @@ export const baseConfig: NetworkConfig = {
   safeBaseURL: 'https://safe-transaction-base.safe.global',
   etherscanBaseURL: 'https://basescan.org/',
   etherscanAPIUrl: `https://api.basescan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_BASE_API_KEY}`,
-  chainId: CHAIN_ID,
-  name: base.name,
   addressPrefix: 'base',
-  nativeTokenSymbol: base.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
-  wagmiChain: base,
   subgraph: {
     space: 71032,
     slug: 'fractal-base',
@@ -58,20 +53,20 @@ export const baseConfig: NetworkConfig = {
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
-      network: CHAIN_ID.toString(),
-    })?.networkAddresses[CHAIN_ID.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: CHAIN_ID.toString() })
-      ?.networkAddresses[CHAIN_ID.toString()]!,
+      network: base.id.toString(),
+    })?.networkAddresses[base.id.toString()]!,
+    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: base.id.toString() })
+      ?.networkAddresses[base.id.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
-      network: CHAIN_ID.toString(),
-    })?.networkAddresses[CHAIN_ID.toString()]!,
+      network: base.id.toString(),
+    })?.networkAddresses[base.id.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
-      network: CHAIN_ID.toString(),
-    })?.networkAddresses[CHAIN_ID.toString()]!,
+      network: base.id.toString(),
+    })?.networkAddresses[base.id.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },

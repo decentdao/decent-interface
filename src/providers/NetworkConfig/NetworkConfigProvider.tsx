@@ -9,10 +9,10 @@ export const NetworkConfigContext = createContext({} as NetworkConfig);
 export const useNetworkConfig = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
-export const supportedChains = Object.values(networks).sort((a, b) => a.order - b.order);
+export const supportedNetworks = Object.values(networks).sort((a, b) => a.order - b.order);
 
 const getNetworkConfig = (chainId: number) => {
-  const foundChain = supportedChains.find(chain => chain.chainId === chainId);
+  const foundChain = supportedNetworks.find(network => network.chain.id === chainId);
   if (foundChain) {
     return foundChain;
   } else {
