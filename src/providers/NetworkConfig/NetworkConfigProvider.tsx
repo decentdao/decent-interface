@@ -1,7 +1,13 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useChainId } from 'wagmi';
 import { NetworkConfig } from '../../types/network';
-import { sepoliaConfig, mainnetConfig, polygonConfig, baseSepoliaConfig } from './networks';
+import {
+  sepoliaConfig,
+  mainnetConfig,
+  polygonConfig,
+  baseSepoliaConfig,
+  baseConfig,
+} from './networks';
 
 export const NetworkConfigContext = createContext({} as NetworkConfig);
 
@@ -13,6 +19,7 @@ export const supportedChains: NetworkConfig[] = [
   sepoliaConfig,
   polygonConfig,
   baseSepoliaConfig,
+  baseConfig,
 ];
 
 const getNetworkConfig = (chainId: number) => {

@@ -2,7 +2,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
 import { http } from 'wagmi';
-import { hardhat, sepolia, mainnet, Chain, polygon, baseSepolia } from 'wagmi/chains';
+import { Chain, hardhat, sepolia, mainnet, polygon, baseSepolia, base } from 'wagmi/chains';
 import { supportedChains } from './NetworkConfigProvider';
 
 const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
@@ -48,6 +48,12 @@ export const wagmiConfig = defaultWagmiConfig({
     ),
     [baseSepolia.id]: http(
       `https://base-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_BASE_SEPOLIA_API_KEY}`,
+      {
+        batch: true,
+      },
+    ),
+    [base.id]: http(
+      `https://base-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_BASE_API_KEY}`,
       {
         batch: true,
       },
