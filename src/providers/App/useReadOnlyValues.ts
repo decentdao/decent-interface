@@ -46,8 +46,8 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
             await Promise.all(
               azoriusGovernance.erc721Tokens.map(async ({ address, votingWeight }) => {
                 const tokenContract = ERC721__factory.connect(address, signerOrProvider);
-                const userBalance = await tokenContract.balanceOf(_account);
-                return BigInt(userBalance.toString()) * votingWeight;
+                const userBalance = (await tokenContract.balanceOf(_account)).toBigInt();
+                return userBalance * votingWeight;
               }),
             )
           ).reduce((prev, curr) => prev + curr, 0n);

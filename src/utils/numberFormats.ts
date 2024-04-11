@@ -34,7 +34,7 @@ const formatCoinUnits = (
   decimals?: number,
   symbol?: string,
 ): number => {
-  if (!rawBalance) rawBalance = '0';
+  if (!rawBalance) rawBalance = 0n;
   return symbol && decimals
     ? parseFloat(formatUnits(BigInt(rawBalance), decimals))
     : parseFloat(formatEther(BigInt(rawBalance)));
