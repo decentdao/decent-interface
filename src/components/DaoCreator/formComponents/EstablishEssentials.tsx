@@ -167,7 +167,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
             isDisabled={snapshotURLDisabled}
             data-testid="essentials-snapshotURL"
             placeholder="example.eth"
-            maxLength={30}
           />
         </LabelWrapper>
       </LabelComponent>
