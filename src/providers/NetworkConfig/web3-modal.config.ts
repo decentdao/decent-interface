@@ -1,8 +1,10 @@
 import { QueryClient } from '@tanstack/react-query';
 import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
+import { HttpTransport } from 'viem';
 import { http } from 'wagmi';
-import { Chain, hardhat, sepolia, mainnet, polygon, baseSepolia, base } from 'wagmi/chains';
+import { Chain, hardhat } from 'wagmi/chains';
+import { NetworkConfig } from '../../types/network';
 import { supportedChains } from './NetworkConfigProvider';
 
 const supportedWagmiChains = supportedChains.map(config => config.wagmiChain);
@@ -23,42 +25,18 @@ const wagmiMetadata = {
   icons: [`${import.meta.env.VITE_APP_SITE_URL}favicon.icon`],
 };
 
+const transportsReducer = (accumulator: Record<string, HttpTransport>, network: NetworkConfig) => {
+  accumulator[network.chain.id] = http(network.rpcEndpoint, {
+    batch: true,
+  });
+  return accumulator;
+};
+
 export const wagmiConfig = defaultWagmiConfig({
   chains: supportedWagmiChains as [Chain, ...Chain[]],
   projectId: walletConnectProjectId,
   metadata: wagmiMetadata,
-  transports: {
-    [mainnet.id]: http(
-      `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`,
-      {
-        batch: true,
-      },
-    ),
-    [sepolia.id]: http(
-      `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
-      {
-        batch: true,
-      },
-    ),
-    [polygon.id]: http(
-      `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_POLYGON_API_KEY}`,
-      {
-        batch: true,
-      },
-    ),
-    [baseSepolia.id]: http(
-      `https://base-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_BASE_SEPOLIA_API_KEY}`,
-      {
-        batch: true,
-      },
-    ),
-    [base.id]: http(
-      `https://base-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_BASE_API_KEY}`,
-      {
-        batch: true,
-      },
-    ),
-  },
+  transports: supportedChains.reduce(transportsReducer, {}),
 });
 
 if (walletConnectProjectId) {

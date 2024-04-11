@@ -27,6 +27,9 @@ const CHAIN_ID = 84532;
 const SAFE_VERSION = '1.3.0';
 
 export const baseSepoliaConfig: NetworkConfig = {
+  order: 40,
+  chain: baseSepolia,
+  rpcEndpoint: `https://base-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_BASE_SEPOLIA_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-base-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.basescan.org/',
   etherscanAPIUrl: `https://api-sepolia.basescan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_BASE_SEPOLIA_API_KEY}`,

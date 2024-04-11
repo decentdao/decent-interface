@@ -1,26 +1,15 @@
 import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useChainId } from 'wagmi';
 import { NetworkConfig } from '../../types/network';
-import {
-  sepoliaConfig,
-  mainnetConfig,
-  polygonConfig,
-  baseSepoliaConfig,
-  baseConfig,
-} from './networks';
+
+import * as networks from './networks';
 
 export const NetworkConfigContext = createContext({} as NetworkConfig);
 
 export const useNetworkConfig = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
-export const supportedChains: NetworkConfig[] = [
-  mainnetConfig,
-  sepoliaConfig,
-  polygonConfig,
-  baseSepoliaConfig,
-  baseConfig,
-];
+export const supportedChains = Object.values(networks).sort((a, b) => a.order - b.order);
 
 const getNetworkConfig = (chainId: number) => {
   const foundChain = supportedChains.find(chain => chain.chainId === chainId);

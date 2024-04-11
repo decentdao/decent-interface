@@ -27,6 +27,9 @@ const CHAIN_ID = 137;
 const SAFE_VERSION = '1.3.0';
 
 export const polygonConfig: NetworkConfig = {
+  order: 20,
+  chain: polygon,
+  rpcEndpoint: `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_POLYGON_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',
   etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
