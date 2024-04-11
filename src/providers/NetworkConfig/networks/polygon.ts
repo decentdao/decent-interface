@@ -33,7 +33,6 @@ export const polygonConfig: NetworkConfig = {
   chainId: CHAIN_ID,
   name: polygon.name,
   addressPrefix: 'matic',
-  color: '#753cd8cc',
   nativeTokenSymbol: polygon.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: polygon,

@@ -33,7 +33,6 @@ export const baseSepoliaConfig: NetworkConfig = {
   chainId: CHAIN_ID,
   name: baseSepolia.name,
   addressPrefix: 'basesep',
-  color: 'gold.300',
   nativeTokenSymbol: baseSepolia.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: baseSepolia,
