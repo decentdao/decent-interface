@@ -4,24 +4,33 @@ export enum CreateProposalState {
   METADATA_FORM,
   TRANSACTIONS_FORM,
 }
-
 export interface CreateProposalTransaction<T = BigNumberValuePair> {
   targetAddress: string;
   ethValue: T;
   functionName: string;
-  functionSignature: string;
-  parameters: string;
-  encodedFunctionData?: string;
+  parameters: {
+    signature: string;
+    label?: string;
+    value?: string;
+  }[];
 }
 
-export type ProposalMetadata = {
+export type CreateProposalMetadata = {
   title: string;
   description: string;
-  documentationUrl: string;
+  documentationUrl?: string;
 };
 
+export enum ProposalBuilderMode {
+  PROPOSAL = 'PROPOSAL',
+  TEMPLATE = 'TEMPLATE',
+}
 export type CreateProposalForm = {
   transactions: CreateProposalTransaction[];
-  proposalMetadata: ProposalMetadata;
+  proposalMetadata: CreateProposalMetadata;
   nonce?: number;
 };
+
+export type ProposalTemplate = {
+  transactions: CreateProposalTransaction[];
+} & CreateProposalMetadata;

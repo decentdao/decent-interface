@@ -3,7 +3,7 @@ import { FormikProps } from 'formik';
 import { Fragment, PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
-import { CreateProposalTemplateForm } from '../../types/createProposalTemplate';
+import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import Markdown from '../ui/proposal/Markdown';
 import '../../assets/css/Markdown.css';
 
@@ -29,10 +29,11 @@ export function TransactionValueContainer({
 }
 
 export default function ProposalTemplateDetails({
-  values: { proposalTemplateMetadata, transactions },
-}: FormikProps<CreateProposalTemplateForm>) {
+  values: { proposalMetadata, transactions },
+  mode,
+}: FormikProps<CreateProposalForm> & { mode: ProposalBuilderMode }) {
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
-  const trimmedTitle = proposalTemplateMetadata.title?.trim();
+  const trimmedTitle = proposalMetadata.title?.trim();
 
   return (
     <Box
@@ -51,23 +52,25 @@ export default function ProposalTemplateDetails({
           <Text color="grayscale.500">{t('previewTitle')}</Text>
           <Text textAlign="right">{trimmedTitle}</Text>
         </HStack>
-        <HStack justifyContent="space-between">
-          <Text color="grayscale.500">{t('previewThumnbail')}</Text>
-          {trimmedTitle && (
-            <Avatar
-              size="sm"
-              w="28px"
-              h="28px"
-              name={trimmedTitle}
-              borderRadius="4px"
-              getInitials={(title: string) => title.slice(0, 2)}
-            />
-          )}
-        </HStack>
+        {mode === ProposalBuilderMode.TEMPLATE && (
+          <HStack justifyContent="space-between">
+            <Text color="grayscale.500">{t('previewThumnbail')}</Text>
+            {trimmedTitle && (
+              <Avatar
+                size="sm"
+                w="28px"
+                h="28px"
+                name={trimmedTitle}
+                borderRadius="4px"
+                getInitials={(title: string) => title.slice(0, 2)}
+              />
+            )}
+          </HStack>
+        )}
         <HStack justifyContent="space-between">
           <Text color="grayscale.500">{t('proposalTemplateDescription')}</Text>
           <Markdown
-            content={proposalTemplateMetadata.description}
+            content={proposalMetadata.description}
             collapsedLines={2}
           />
         </HStack>

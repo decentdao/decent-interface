@@ -2,29 +2,32 @@ import { VStack, HStack, Text, Box, Flex, IconButton } from '@chakra-ui/react';
 import { AddPlus, Minus } from '@decent-org/fractal-ui';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CreateProposalTemplateTransaction } from '../../types/createProposalTemplate';
+import { CreateProposalTransaction, ProposalBuilderMode } from '../../types/proposalBuilder';
 import ABISelector, { ABIElement } from '../ui/forms/ABISelector';
 import ExampleLabel from '../ui/forms/ExampleLabel';
 import { BigNumberComponent, InputComponent } from '../ui/forms/InputComponent';
-import { DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION } from './constants';
+import { DEFAULT_PROPOSAL_TRANSACTION } from './constants';
 
-interface ProposalTemplateTransactionProps {
-  transaction: CreateProposalTemplateTransaction;
+interface ProposalTransactionProps {
+  transaction: CreateProposalTransaction;
   transactionIndex: number;
   transactionPending: boolean;
   txAddressError?: string;
   txFunctionError?: string;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean | undefined) => void;
+  mode: ProposalBuilderMode;
 }
 
-export default function ProposalTemplateTransaction({
+export default function ProposalTransaction({
   transaction,
   transactionIndex,
   transactionPending,
   txAddressError,
   txFunctionError,
   setFieldValue,
-}: ProposalTemplateTransactionProps) {
+  mode,
+}: ProposalTransactionProps) {
+  const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
   const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
   const handleABISelectorChange = useCallback(
     (value: ABIElement) => {
@@ -123,7 +126,7 @@ export default function ProposalTemplateTransaction({
                 onClick={() =>
                   setFieldValue(`transactions.${transactionIndex}.parameters`, [
                     ...transaction.parameters,
-                    DEFAULT_PROPOSAL_TEMPLATE_TRANSACTION,
+                    DEFAULT_PROPOSAL_TRANSACTION,
                   ])
                 }
               >
@@ -170,34 +173,38 @@ export default function ProposalTemplateTransaction({
                 alignItems="center"
                 mt={4}
               >
-                <InputComponent
-                  label={t('labelParameterLabel', { ns: 'proposalTemplate' })}
-                  helper=""
-                  isRequired={!parameter.value}
-                  value={parameter.label || ''}
-                  onChange={e =>
-                    setFieldValue(
-                      `transactions.${transactionIndex}.parameters.${i}.label`,
-                      e.target.value,
-                    )
-                  }
-                  disabled={transactionPending || !!parameter.value}
-                  testId={`transactions.${transactionIndex}.parameters.${i}.label`}
-                  subLabel={
-                    <HStack>
-                      <Text>{t('helperParameterLabel', { ns: 'proposalTemplate' })}</Text>
-                    </HStack>
-                  }
-                  gridContainerProps={{
-                    display: 'inline-flex',
-                    flexWrap: 'wrap',
-                    width: '30%',
-                  }}
-                  inputContainerProps={{
-                    width: '100%',
-                  }}
-                />
-                <Text>{t('or', { ns: 'common' })}</Text>
+                {!isProposalMode && (
+                  <>
+                    <InputComponent
+                      label={t('labelParameterLabel', { ns: 'proposalTemplate' })}
+                      helper=""
+                      isRequired={!parameter.value}
+                      value={parameter.label || ''}
+                      onChange={e =>
+                        setFieldValue(
+                          `transactions.${transactionIndex}.parameters.${i}.label`,
+                          e.target.value,
+                        )
+                      }
+                      disabled={transactionPending || !!parameter.value}
+                      testId={`transactions.${transactionIndex}.parameters.${i}.label`}
+                      subLabel={
+                        <HStack>
+                          <Text>{t('helperParameterLabel', { ns: 'proposalTemplate' })}</Text>
+                        </HStack>
+                      }
+                      gridContainerProps={{
+                        display: 'inline-flex',
+                        flexWrap: 'wrap',
+                        width: '30%',
+                      }}
+                      inputContainerProps={{
+                        width: '100%',
+                      }}
+                    />
+                    <Text>{t('or', { ns: 'common' })}</Text>
+                  </>
+                )}
                 <InputComponent
                   label={t('labelParameterValue', { ns: 'proposalTemplate' })}
                   helper=""
@@ -214,9 +221,11 @@ export default function ProposalTemplateTransaction({
                     <HStack wordBreak="break-all">
                       <Text>
                         {t('example', { ns: 'common' })}: <ExampleLabel>value</ExampleLabel>
-                        <Text as="span">
-                          {t('proposalTemplateLeaveBlank', { ns: 'proposalTemplate' })}
-                        </Text>
+                        {!isProposalMode && (
+                          <Text as="span">
+                            {t('proposalTemplateLeaveBlank', { ns: 'proposalTemplate' })}
+                          </Text>
+                        )}
                       </Text>
                     </HStack>
                   }
@@ -282,7 +291,9 @@ export default function ProposalTemplateTransaction({
                   <Text>{`${t('example', { ns: 'common' })}:`}</Text>
                   <ExampleLabel>{'1.2'}</ExampleLabel>
                 </HStack>
-                <Text>{t('ethParemeterHelper', { ns: 'proposalTemplate' })}</Text>
+                {!isProposalMode && (
+                  <Text>{t('ethParemeterHelper', { ns: 'proposalTemplate' })}</Text>
+                )}
               </VStack>
             }
             errorMessage={undefined}
