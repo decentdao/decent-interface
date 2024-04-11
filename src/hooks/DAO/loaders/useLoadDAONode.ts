@@ -14,9 +14,13 @@ export const useLoadDAONode = () => {
   const safeAPI = useSafeAPI();
   const { getDaoName } = useLazyDAOName();
   const lookupModules = useFractalModules();
-  const { subgraphChainName } = useNetworkConfig();
+  const { subgraphSpace, subgraphSlug, subgraphVersion } = useNetworkConfig();
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
-    context: { chainName: subgraphChainName },
+    context: {
+      subgraphSpace,
+      subgraphSlug,
+      subgraphVersion,
+    },
   });
 
   const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {

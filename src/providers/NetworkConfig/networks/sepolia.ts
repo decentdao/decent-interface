@@ -37,7 +37,9 @@ export const sepoliaConfig: NetworkConfig = {
   nativeTokenSymbol: sepolia.nativeCurrency.symbol,
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   wagmiChain: sepolia,
-  subgraphChainName: 'sepolia',
+  subgraphSpace: 71032,
+  subgraphSlug: 'fractal-sepolia',
+  subgraphVersion: 'v0.0.1',
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,

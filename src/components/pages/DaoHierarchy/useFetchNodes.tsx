@@ -22,11 +22,15 @@ export function useFetchNodes(address?: string) {
   const safeAPI = useSafeAPI();
   const { requestWithRetries } = useAsyncRetry();
 
-  const { subgraphChainName } = useNetworkConfig();
+  const { subgraphSpace, subgraphSlug, subgraphVersion } = useNetworkConfig();
   const { data, error } = useQuery(DAOQueryDocument, {
     variables: { daoAddress: address },
     skip: address === safe?.address || !address, // If address === safe.address - we already have hierarchy obtained in the context
-    context: { chainName: subgraphChainName },
+    context: {
+      subgraphSpace,
+      subgraphSlug,
+      subgraphVersion,
+    },
   });
 
   const lookupModules = useFractalModules();

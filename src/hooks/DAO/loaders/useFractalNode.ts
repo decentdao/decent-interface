@@ -57,7 +57,7 @@ export const useFractalNode = (
     return;
   }, []);
 
-  const { subgraphChainName } = useNetworkConfig();
+  const { subgraphSpace, subgraphSlug, subgraphVersion } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
     variables: { daoAddress },
@@ -78,7 +78,11 @@ export const useFractalNode = (
         });
       }
     },
-    context: { chainName: subgraphChainName },
+    context: {
+      subgraphSpace,
+      subgraphSlug,
+      subgraphVersion,
+    },
     pollInterval: ONE_MINUTE,
   });
 
