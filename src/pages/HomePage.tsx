@@ -1,5 +1,6 @@
 import { Center, VStack, Text, Button, Flex, Box } from '@chakra-ui/react';
 
+import { Info } from '@phosphor-icons/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -13,7 +14,6 @@ import { BASE_ROUTES } from '../constants/routes';
 import { URL_DOCS } from '../constants/url';
 import { useFractal } from '../providers/App/AppProvider';
 import { useNetworkConfig } from '../providers/NetworkConfig/NetworkConfigProvider';
-
 const VALUE_PROPS = [
   {
     iconSrc: '/images/icon-structure.svg',
@@ -110,6 +110,7 @@ export default function HomePage() {
         paddingTop="6.25rem"
         paddingBottom="6.25rem"
       >
+        <Info />
         <Text
           paddingBottom="1.5rem"
           textStyle={{
