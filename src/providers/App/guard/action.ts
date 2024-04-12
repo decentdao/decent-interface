@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { FreezeGuard } from '../../../types';
 export enum FractalGuardAction {
   SET_FREEZE_GUARD = 'SET_FREEZE_GUARD',
@@ -10,7 +9,7 @@ export type FractalGuardActions =
       type: FractalGuardAction.UPDATE_FREEZE_VOTE;
       payload: {
         isVoter: boolean;
-        freezeProposalCreatedTime: BigNumber;
-        votesCast: BigNumber;
+        freezeProposalCreatedTime: bigint;
+        votesCast: bigint;
       };
     };

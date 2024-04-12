@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { logError } from '../helpers/errorLogging';
 import { CacheExpiry } from '../hooks/utils/cache/cacheDefaults';
 import { setValue, getValue } from '../hooks/utils/cache/useLocalStorage';
@@ -60,10 +59,10 @@ export const blocksToSeconds = async (
 };
 
 export const getEstimatedNumberOfBlocks = async (
-  timeInMinutes: BigNumber,
+  timeInMinutes: bigint,
   provider: Providers,
-): Promise<BigNumber> => {
-  const seconds = timeInMinutes.toNumber() * 60;
+): Promise<bigint> => {
+  const seconds = Number(timeInMinutes) * 60;
   const averageBlockTime = await getAverageBlockTime(provider);
-  return BigNumber.from(Math.ceil(seconds / averageBlockTime));
+  return BigInt(Math.ceil(seconds / averageBlockTime));
 };

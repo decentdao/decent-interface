@@ -1,4 +1,3 @@
-import { BigNumber, BigNumberish } from 'ethers';
 import { ProposalMetadata } from './createProposal';
 import { GovernanceActivity } from './fractal';
 import { SafeMultisigConfirmationResponse } from './safeGlobal';
@@ -10,7 +9,7 @@ export interface ProposalExecuteData extends ExecuteData {
 
 export interface ExecuteData {
   targets: string[];
-  values: BigNumberish[];
+  values: bigint[];
   calldatas: string[];
 }
 
@@ -31,7 +30,7 @@ export interface AzoriusProposal extends GovernanceActivity {
   votes: ProposalVote[] | ERC721ProposalVote[];
   /** The deadline timestamp for the proposal, in milliseconds. */
   deadlineMs: number;
-  startBlock: BigNumber;
+  startBlock: bigint;
 }
 
 export interface AzoriusERC721Proposal extends AzoriusProposal {
@@ -114,16 +113,16 @@ export interface ExtendedSnapshotProposal extends SnapshotProposal {
 }
 
 export type ProposalVotesSummary = {
-  yes: BigNumber;
-  no: BigNumber;
-  abstain: BigNumber;
-  quorum: BigNumber;
+  yes: bigint;
+  no: bigint;
+  abstain: bigint;
+  quorum: bigint;
 };
 
 export type ProposalVote = {
   voter: string;
   choice: (typeof VOTE_CHOICES)[number];
-  weight: BigNumber;
+  weight: bigint;
 };
 
 export type ERC721ProposalVote = {

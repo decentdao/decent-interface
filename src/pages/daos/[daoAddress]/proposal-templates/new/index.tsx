@@ -1,6 +1,5 @@
 import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { Trash } from '@decent-org/fractal-ui';
-import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import { useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -82,7 +81,7 @@ export default function CreateProposalTemplatePage() {
                 ...tx,
                 ethValue: {
                   value: tx.ethValue.value,
-                  bigNumberValue: BigNumber.from(tx.ethValue.value || 0),
+                  bigintValue: BigInt(tx.ethValue.value || 0),
                 },
               })),
             };

@@ -50,8 +50,8 @@ export default function ProgressBar({
 interface QuorumProgressBarProps {
   helperText?: string;
   unit?: string;
-  reachedQuorum: string;
-  totalQuorum?: string;
+  reachedQuorum: bigint;
+  totalQuorum?: bigint;
 }
 
 export function QuorumProgressBar({
@@ -66,7 +66,7 @@ export function QuorumProgressBar({
       flexWrap="wrap"
       marginTop={2}
     >
-      {reachedQuorum && totalQuorum && (
+      {totalQuorum !== undefined && (
         <Flex
           width="100%"
           marginTop={2}
@@ -76,19 +76,19 @@ export function QuorumProgressBar({
         >
           <Text textStyle="text-base-sans-regular">{t('quorum', { ns: 'common' })}</Text>
           <Text textStyle="text-base-sans-regular">
-            {parseInt(reachedQuorum) >= parseInt(totalQuorum) && (
+            {reachedQuorum >= totalQuorum && (
               <Check
                 color="green.500"
                 mr={2}
               />
             )}
-            {reachedQuorum}/{totalQuorum}
+            {reachedQuorum.toString()}/{totalQuorum.toString()}
           </Text>
         </Flex>
       )}
       <ProgressBar
-        value={parseInt(reachedQuorum)}
-        max={totalQuorum ? parseInt(totalQuorum) : undefined}
+        value={Number(reachedQuorum)}
+        max={totalQuorum ? Number(totalQuorum) : undefined}
         unit={unit}
         showValueWithinProgressBar={false}
       />

@@ -26,7 +26,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       tokenContract.name(),
       tokenContract.symbol(),
       tokenContract.decimals(),
-      tokenContract.totalSupply(),
+      (await tokenContract.totalSupply()).toBigInt(),
     ]);
     const tokenData = {
       name: tokenName,
@@ -70,9 +70,9 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       baseContracts.votesTokenMasterCopyContract.asProvider.attach(votesTokenContractAddress);
     // @todo We could probably save on some requests here.
     const [tokenBalance, tokenDelegatee, tokenVotingWeight] = await Promise.all([
-      tokenContract.balanceOf(account),
+      (await tokenContract.balanceOf(account)).toBigInt(),
       tokenContract.delegates(account),
-      tokenContract.getVotes(account),
+      (await tokenContract.getVotes(account)).toBigInt(),
     ]);
 
     let delegateChangeEvents: DelegateChangedEvent[];

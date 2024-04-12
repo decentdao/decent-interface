@@ -1,5 +1,5 @@
-import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
+import { getAddress, isAddress } from 'viem';
 import { supportsENS } from '../../helpers';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -35,8 +35,8 @@ const useAddress = (addressInput: string | undefined) => {
       return;
     }
 
-    if (ethers.utils.isAddress(addressInput)) {
-      setAddress(ethers.utils.getAddress(addressInput));
+    if (isAddress(addressInput)) {
+      setAddress(getAddress(addressInput));
       setIsValidAddress(true);
       setIsAddressLoading(false);
       return;

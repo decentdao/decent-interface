@@ -1,7 +1,7 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Azorius } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { BigNumber, Signer, utils } from 'ethers';
+import { Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -123,7 +123,7 @@ export default function useSubmitProposal() {
           };
           const { Hash } = await ipfsClient.add(JSON.stringify(metaData));
           proposalData.targets.push(ADDRESS_MULTISIG_METADATA);
-          proposalData.values.push(BigNumber.from('0'));
+          proposalData.values.push(0n);
           proposalData.calldatas.push(new utils.AbiCoder().encode(['string'], [Hash]));
         }
 
@@ -139,7 +139,7 @@ export default function useSubmitProposal() {
           const tempData = proposalData.targets.map((target, index) => {
             return {
               to: target,
-              value: BigNumber.from(proposalData.values[index]),
+              value: BigInt(proposalData.values[index]),
               data: proposalData.calldatas[index],
               operation: 0,
             } as MetaTransaction;
@@ -153,7 +153,7 @@ export default function useSubmitProposal() {
         } else {
           // Single transaction to post
           to = proposalData.targets[0];
-          value = BigNumber.from(proposalData.values[0]);
+          value = BigInt(proposalData.values[0]);
           data = proposalData.calldatas[0];
           operation = 0;
         }

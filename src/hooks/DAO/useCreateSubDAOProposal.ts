@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -44,7 +43,7 @@ export const useCreateSubDAOProposal = () => {
             multiSendContract.asProvider.address,
             fractalRegistryContract.asProvider.address,
           ],
-          values: [BigNumber.from('0'), BigNumber.from('0')],
+          values: [0n, 0n],
           calldatas: [
             multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [safeTx]),
             fractalRegistryContract.asProvider.interface.encodeFunctionData('declareSubDAO', [

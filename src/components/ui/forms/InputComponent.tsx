@@ -10,7 +10,7 @@ import {
   ResponsiveValue,
 } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumberInput, BigNumberInputProps } from './BigNumberInput';
+import { BigIntInput, BigIntInputProps } from './BigIntInput';
 import { EthAddressInput } from './EthAddressInput';
 
 interface BaseProps {
@@ -46,9 +46,9 @@ interface TextareaProps extends Omit<BaseProps, 'children'> {
   rows?: number;
   resize?: ResponsiveValue<'vertical' | 'horizontal' | 'both' | 'none'>;
 }
-interface BigNumberProps
+interface BigIntProps
   extends Omit<BaseProps, 'children' | 'value'>,
-    Omit<BigNumberInputProps, 'isRequired'> {}
+    Omit<BigIntInputProps, 'isRequired'> {}
 
 export function LabelComponent(props: Omit<BaseProps, 'value'>) {
   const {
@@ -176,14 +176,14 @@ export function TextareaComponent(props: TextareaProps) {
   );
 }
 
-export function BigNumberComponent(props: BigNumberProps) {
+export function BigIntComponent(props: BigIntProps) {
   const { id, value, disabled, onChange, decimalPlaces } = props;
   return (
     <LabelComponent
       {...props}
       disabled={disabled}
     >
-      <BigNumberInput
+      <BigIntInput
         value={value}
         id={id}
         onChange={onChange}

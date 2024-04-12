@@ -3,7 +3,6 @@ import {
   SafeCollectibleResponse,
   TransferResponse,
 } from '@safe-global/safe-service-client';
-import { BigNumber } from 'ethers';
 import { ContractEvent } from './contract';
 import { ActivityBase } from './fractal';
 import { AllTransfersListResponse } from './safeGlobal';
@@ -21,21 +20,21 @@ export interface TokenEvent extends ContractEvent {
 }
 
 export interface TokenDepositEvent extends TokenEvent, EthAddress {
-  amount: BigNumber;
+  amount: bigint;
 }
 
 export interface TokenWithdrawEvent extends TokenEvent {
   addresses: string[];
-  amount: BigNumber;
+  amount: bigint;
 }
 export interface ERC721TokenEvent extends TokenEvent {
   contractAddresses: string[];
-  tokenIds: BigNumber[];
+  tokenIds: bigint[];
 }
 export interface ERC20TokenEvent extends TokenEvent {
   contractAddresses: string[];
   addresses: string[];
-  amounts: BigNumber[];
+  amounts: bigint[];
 }
 
 export type Transaction =
@@ -77,7 +76,7 @@ export interface AssetTransfer extends TransferResponse {
 }
 
 export type AssetTotals = {
-  bn: BigNumber;
+  bi: bigint;
   symbol: string;
   decimals: number;
 };
