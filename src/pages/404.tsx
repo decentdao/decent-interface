@@ -1,6 +1,4 @@
 import { AbsoluteCenter, Button, ChakraProvider, Image, Text, VStack } from '@chakra-ui/react';
-import '@fontsource/ibm-plex-mono';
-import '@fontsource/ibm-plex-sans';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { theme } from '../assets/theme';
