@@ -63,7 +63,7 @@ export function ProposalAction({
 
   const showActionButton =
     (isSnapshotProposal && canVote && isActiveProposal) ||
-    (user.votingWeight.gt(0) &&
+    (user.votingWeight > 0n &&
       (isActiveProposal ||
         proposal.state === FractalProposalState.EXECUTABLE ||
         proposal.state === FractalProposalState.TIMELOCKABLE ||
@@ -106,7 +106,7 @@ export function ProposalAction({
   }
 
   if (expandedView) {
-    if (!isSnapshotProposal && (user.votingWeight.eq(0) || (isActiveProposal && !canVote)))
+    if (!isSnapshotProposal && (user.votingWeight === 0n || (isActiveProposal && !canVote)))
       return null;
 
     return (

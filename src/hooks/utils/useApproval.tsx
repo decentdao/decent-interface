@@ -1,17 +1,17 @@
 import { VotesERC20, VotesERC20Wrapper } from '@fractal-framework/fractal-contracts';
-import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { maxUint256 } from 'viem';
 import { useAccount } from 'wagmi';
 import { useTransaction } from './useTransaction';
 
 const useApproval = (
   tokenContract?: VotesERC20 | VotesERC20Wrapper,
   spenderAddress?: string,
-  userBalance?: BigNumber,
+  userBalance?: bigint,
 ) => {
   const { address: account } = useAccount();
-  const [allowance, setAllowance] = useState(BigNumber.from(0));
+  const [allowance, setAllowance] = useState(0n);
   const [approved, setApproved] = useState(false);
   const [contractCall, pending] = useTransaction();
   const { t } = useTranslation('treasury');
@@ -19,7 +19,7 @@ const useApproval = (
   const fetchAllowance = useCallback(async () => {
     if (!tokenContract || !account || !spenderAddress) return;
 
-    const userAllowance = await tokenContract.allowance(account, spenderAddress);
+    const userAllowance = (await tokenContract.allowance(account, spenderAddress)).toBigInt();
     setAllowance(userAllowance);
   }, [account, tokenContract, spenderAddress]);
 
@@ -27,7 +27,7 @@ const useApproval = (
     if (!tokenContract || !account || !spenderAddress) return;
 
     contractCall({
-      contractFn: () => tokenContract.approve(spenderAddress, BigNumber.from(2).pow(256).sub(1)),
+      contractFn: () => tokenContract.approve(spenderAddress, maxUint256),
       pendingMessage: t('approvalPendingMessage'),
       failedMessage: t('approvalFailedMessage'),
       successMessage: t('approvalSuccessMessage'),
@@ -42,7 +42,7 @@ const useApproval = (
   }, [fetchAllowance]);
 
   useEffect(() => {
-    setApproved(!allowance.isZero() || (!!userBalance && !userBalance.gt(allowance)));
+    setApproved(allowance !== 0n || (!!userBalance && userBalance <= allowance));
   }, [allowance, userBalance]);
 
   return { approved, allowance, approveTransaction, pending };

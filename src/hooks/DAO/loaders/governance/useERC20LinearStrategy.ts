@@ -1,7 +1,6 @@
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { QuorumNumeratorUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/BaseQuorumPercent';
 import { VotingPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
-import { BigNumber } from 'ethers';
 import { useCallback, useEffect } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -32,17 +31,17 @@ export const useERC20LinearStrategy = () => {
     const [votingPeriodBlocks, quorumNumerator, quorumDenominator, timeLockPeriod] =
       await Promise.all([
         ozLinearVotingContract.votingPeriod(),
-        ozLinearVotingContract.quorumNumerator(),
-        ozLinearVotingContract.QUORUM_DENOMINATOR(),
+        (await ozLinearVotingContract.quorumNumerator()).toBigInt(),
+        (await ozLinearVotingContract.QUORUM_DENOMINATOR()).toBigInt(),
         azoriusContract.timelockPeriod(),
       ]);
 
-    const quorumPercentage = quorumNumerator.mul(100).div(quorumDenominator);
+    const quorumPercentage = (quorumNumerator * 100n) / quorumDenominator;
     const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, provider);
     const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, provider);
     const votingData = {
       votingPeriod: {
-        value: BigNumber.from(votingPeriodValue),
+        value: BigInt(votingPeriodValue),
         formatted: getTimeDuration(votingPeriodValue),
       },
       quorumPercentage: {
@@ -50,7 +49,7 @@ export const useERC20LinearStrategy = () => {
         formatted: quorumPercentage.toString() + '%',
       },
       timeLockPeriod: {
-        value: BigNumber.from(timeLockPeriodValue),
+        value: BigInt(timeLockPeriodValue),
         formatted: getTimeDuration(timeLockPeriodValue),
       },
       strategyType: VotingStrategyType.LINEAR_ERC20,
@@ -77,7 +76,7 @@ export const useERC20LinearStrategy = () => {
     const listener: TypedListener<VotingPeriodUpdatedEvent> = votingPeriod => {
       action.dispatch({
         type: FractalGovernanceAction.UPDATE_VOTING_PERIOD,
-        payload: BigNumber.from(votingPeriod),
+        payload: BigInt(votingPeriod),
       });
     };
     ozLinearVotingContract.on(votingPeriodfilter, listener);
@@ -99,7 +98,7 @@ export const useERC20LinearStrategy = () => {
     > = quorumPercentage => {
       action.dispatch({
         type: FractalGovernanceAction.UPDATE_VOTING_QUORUM,
-        payload: quorumPercentage,
+        payload: quorumPercentage.toBigInt(),
       });
     };
     ozLinearVotingContract.on(quorumNumeratorUpdatedFilter, quorumNumeratorUpdatedListener);

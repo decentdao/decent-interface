@@ -1,5 +1,4 @@
 import { Flex, Text, Button, Divider } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -52,7 +51,7 @@ export default function MetadataContainer() {
     setSnapshotURL(e.target.value);
   };
 
-  const userHasVotingWeight = votingWeight.gt(0);
+  const userHasVotingWeight = votingWeight > 0n;
 
   const submitProposalSuccessCallback = () => {
     if (daoAddress) {
@@ -72,7 +71,7 @@ export default function MetadataContainer() {
         documentationUrl: '',
       },
       targets: [fractalRegistryContract.asProvider.address],
-      values: [BigNumber.from(0)],
+      values: [0n],
       calldatas: [
         fractalRegistryContract.asProvider.interface.encodeFunctionData('updateDAOName', [name]),
       ],
@@ -100,7 +99,7 @@ export default function MetadataContainer() {
         documentationUrl: '',
       },
       targets: [keyValuePairsContract.asProvider.address],
-      values: [BigNumber.from(0)],
+      values: [0n],
       calldatas: [
         keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
           ['snapshotURL'],

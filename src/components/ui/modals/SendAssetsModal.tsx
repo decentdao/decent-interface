@@ -1,18 +1,17 @@
 import { Box, Divider, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { BigNumberValuePair } from '../../../types';
+import { BigIntValuePair } from '../../../types';
 import {
   formatCoinFromAsset,
   formatCoinUnitsFromAsset,
   formatUSD,
 } from '../../../utils/numberFormats';
 import useSendAssets from '../../pages/DAOTreasury/hooks/useSendAssets';
-import { BigNumberInput } from '../forms/BigNumberInput';
+import { BigIntInput } from '../forms/BigIntInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { EthAddressInput } from '../forms/EthAddressInput';
 
@@ -29,7 +28,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   const [selectedAsset, setSelectedAsset] = useState<SafeBalanceUsdResponse>(
     fungibleAssetsWithBalance[0],
   );
-  const [inputAmount, setInputAmount] = useState<BigNumberValuePair>();
+  const [inputAmount, setInputAmount] = useState<BigIntValuePair>();
   const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
 
   const [destination, setDestination] = useState<string>('');
@@ -41,18 +40,18 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   );
 
   const sendAssets = useSendAssets({
-    transferAmount: inputAmount?.bigNumberValue || BigNumber.from(0),
+    transferAmount: inputAmount?.bigintValue || 0n,
     asset: selectedAsset,
     destinationAddress: destination,
     nonce: nonceInput,
   });
 
   const handleCoinChange = (index: string) => {
-    setInputAmount({ value: '0', bigNumberValue: BigNumber.from(0) });
+    setInputAmount({ value: '0', bigintValue: 0n });
     setSelectedAsset(fungibleAssetsWithBalance[Number(index)]);
   };
 
-  const onChangeAmount = (value: BigNumberValuePair) => {
+  const onChangeAmount = (value: BigIntValuePair) => {
     setInputAmount(value);
   };
 
@@ -62,8 +61,10 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const overDraft = Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(selectedAsset);
 
-  const isSubmitDisabled =
-    !isValidAddress || !inputAmount || inputAmount?.bigNumberValue?.isZero() || overDraft;
+  // @dev next couple of lines are written like this, to keep typing equivalent during the conversion from BN to bigint
+  const inputBigint = inputAmount?.bigintValue;
+  const inputBigintIsZero = inputBigint ? inputBigint === 0n : undefined;
+  const isSubmitDisabled = !isValidAddress || !inputAmount || inputBigintIsZero || overDraft;
 
   const onSubmit = async () => {
     await sendAssets();
@@ -105,12 +106,12 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           >
             <Text>{t('amountLabel')}</Text>
           </Flex>
-          <BigNumberInput
-            value={inputAmount?.bigNumberValue}
+          <BigIntInput
+            value={inputAmount?.bigintValue}
             onChange={onChangeAmount}
             decimalPlaces={selectedAsset?.token?.decimals}
             placeholder="0"
-            maxValue={BigNumber.from(selectedAsset.balance)}
+            maxValue={BigInt(selectedAsset.balance)}
           />
         </Box>
       </Flex>

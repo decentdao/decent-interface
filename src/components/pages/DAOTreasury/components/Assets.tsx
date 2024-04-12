@@ -1,9 +1,9 @@
 import { Box, Button, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
-import { ethers, BigNumber } from 'ethers';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { zeroAddress } from 'viem';
 import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
@@ -85,7 +85,7 @@ function CoinRow({
             maxWidth="4.7rem"
             isTruncated
           >
-            {asset.address === ethers.constants.AddressZero ? (
+            {asset.address === zeroAddress ? (
               <EtherscanLinkAddress
                 color="grayscale.100"
                 address={safe}
@@ -227,7 +227,7 @@ export function Assets() {
     canUserCreateProposal &&
     Object.keys(staking).length > 0 &&
     ethAsset &&
-    BigNumber.from(ethAsset.balance).gt(0);
+    BigInt(ethAsset.balance) > 0n;
   const openStakingModal = useFractalModal(ModalType.STAKE);
 
   // --- Lido Unstake button setup ---
@@ -270,7 +270,7 @@ export function Assets() {
     getLidoClaimableStatus();
   }, [staking, isLidoClaimable, signerOrProvider, lidoWithdrawelNFT]);
   const handleClickClaimButton = () => {
-    handleClaimUnstakedETH(BigNumber.from(lidoWithdrawelNFT!.id));
+    handleClaimUnstakedETH(BigInt(lidoWithdrawelNFT!.id));
   };
 
   return (

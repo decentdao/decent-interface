@@ -1,6 +1,5 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { BigNumber } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -8,8 +7,8 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import useLidoStaking from '../../../hooks/stake/lido/useLidoStaking';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { BigNumberValuePair } from '../../../types';
-import { BigNumberInput } from '../forms/BigNumberInput';
+import { BigIntValuePair } from '../../../types';
+import { BigIntInput } from '../forms/BigIntInput';
 
 export default function StakeModal({ close }: { close: () => void }) {
   const {
@@ -23,15 +22,15 @@ export default function StakeModal({ close }: { close: () => void }) {
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
   const [selectedAsset] = useState<SafeBalanceUsdResponse>(fungibleAssetsWithBalance[0]);
-  const [inputAmount, setInputAmount] = useState<BigNumberValuePair>();
-  const onChangeAmount = (value: BigNumberValuePair) => {
+  const [inputAmount, setInputAmount] = useState<BigIntValuePair>();
+  const onChangeAmount = (value: BigIntValuePair) => {
     setInputAmount(value);
   };
 
   const { handleStake } = useLidoStaking();
   const handleSubmit = async () => {
-    if (inputAmount?.bigNumberValue) {
-      await handleStake(inputAmount?.bigNumberValue);
+    if (inputAmount?.bigintValue) {
+      await handleStake(inputAmount?.bigintValue);
       close();
       if (daoAddress) {
         navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
@@ -48,12 +47,12 @@ export default function StakeModal({ close }: { close: () => void }) {
         >
           <Text>{t('stakeAmount')}</Text>
         </Flex>
-        <BigNumberInput
-          value={inputAmount?.bigNumberValue}
+        <BigIntInput
+          value={inputAmount?.bigintValue}
           onChange={onChangeAmount}
           decimalPlaces={selectedAsset?.token?.decimals}
           placeholder="0"
-          maxValue={BigNumber.from(selectedAsset.balance)}
+          maxValue={BigInt(selectedAsset.balance)}
         />
       </Box>
       <Button

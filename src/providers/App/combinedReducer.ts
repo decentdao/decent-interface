@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { Fractal, FractalActions, StoreAction } from '../../types';
 import { FractalGovernanceActions } from './governance/action';
 import { governanceReducer, initialGovernanceState } from './governance/reducer';
@@ -27,7 +26,7 @@ export const initialState = {
     dao: null,
     user: {
       address: undefined,
-      votingWeight: BigNumber.from(0),
+      votingWeight: 0n,
     },
   },
 };

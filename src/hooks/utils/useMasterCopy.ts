@@ -1,6 +1,7 @@
 import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
-import { Contract, constants } from 'ethers';
+import { Contract } from 'ethers';
 import { useCallback } from 'react';
+import { zeroAddress } from 'viem';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
@@ -59,12 +60,8 @@ export function useMasterCopy() {
       return contract.queryFilter(filter).then(proxiesCreated => {
         // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
         if (proxiesCreated.length === 0) {
-          setValue(
-            CacheKeys.MASTER_COPY_PREFIX + proxyAddress,
-            constants.AddressZero,
-            CacheExpiry.ONE_WEEK,
-          );
-          return [constants.AddressZero, 'No proxies created'] as const;
+          setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, zeroAddress, CacheExpiry.ONE_WEEK);
+          return [zeroAddress, 'No proxies created'] as const;
         }
         const masterCopyAddress = proxiesCreated[0].args!.masterCopy;
         setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, masterCopyAddress);
