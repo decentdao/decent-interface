@@ -1,4 +1,3 @@
-import { ProposalMetadata } from './createProposal';
 import { GovernanceActivity } from './fractal';
 import { CreateProposalMetadata } from './proposalBuilder';
 import { SafeMultisigConfirmationResponse } from './safeGlobal';

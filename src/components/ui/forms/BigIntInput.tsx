@@ -13,7 +13,7 @@ import { BigIntValuePair } from '../../../types';
 export interface BigIntInputProps
   extends Omit<InputElementProps, 'value' | 'onChange'>,
     FormControlOptions {
-  value: bigint | undefined;
+  value?: bigint;
   onChange: (value: BigIntValuePair) => void;
   decimalPlaces?: number;
   min?: string;

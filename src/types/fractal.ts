@@ -177,10 +177,10 @@ export enum SafeTransferType {
 }
 
 export interface ITokenAccount {
-  userBalance: bigint | undefined;
+  userBalance?: bigint;
   userBalanceString: string | undefined;
   delegatee: string | undefined;
-  votingWeight: bigint | undefined;
+  votingWeight?: bigint;
   votingWeightString: string | undefined;
   isDelegatesSet: boolean | undefined;
 }
