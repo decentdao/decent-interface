@@ -5,8 +5,8 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { FreezeVoteCastEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/ERC20FreezeVoting';
-import { BigNumber, constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
+import { zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import {
   isWithinFreezeProposalPeriod,
@@ -66,10 +66,12 @@ export const useFractalFreeze = ({
       let userHasVotes: boolean = false;
       const freezeCreatedBlock = await freezeVotingContract.freezeProposalCreatedBlock();
 
-      const freezeVotesThreshold = await freezeVotingContract.freezeVotesThreshold();
+      const freezeVotesThreshold = (await freezeVotingContract.freezeVotesThreshold()).toBigInt();
       const freezeProposalCreatedBlock = await freezeVotingContract.freezeProposalCreatedBlock();
       const freezeProposalCreatedTime = await getTimeStamp(freezeProposalCreatedBlock, provider);
-      const freezeProposalVoteCount = await freezeVotingContract.freezeProposalVoteCount();
+      const freezeProposalVoteCount = (
+        await freezeVotingContract.freezeProposalVoteCount()
+      ).toBigInt();
       const freezeProposalBlock = await freezeVotingContract.freezeProposalPeriod();
       // length of time to vote on freeze
       const freezeProposalPeriod = await blocksToSeconds(freezeProposalBlock, provider);
@@ -78,17 +80,17 @@ export const useFractalFreeze = ({
       const freezePeriod = await blocksToSeconds(freezePeriodBlock, provider);
 
       const userHasFreezeVoted = await freezeVotingContract.userHasFreezeVoted(
-        account || constants.AddressZero,
+        account || zeroAddress,
         freezeCreatedBlock,
       );
       const isFrozen = await freezeVotingContract.isFrozen();
 
       const freezeGuard = {
         freezeVotesThreshold,
-        freezeProposalCreatedTime: BigNumber.from(freezeProposalCreatedTime),
+        freezeProposalCreatedTime: BigInt(freezeProposalCreatedTime),
         freezeProposalVoteCount,
-        freezeProposalPeriod: BigNumber.from(freezeProposalPeriod),
-        freezePeriod: BigNumber.from(freezePeriod),
+        freezeProposalPeriod: BigInt(freezeProposalPeriod),
+        freezePeriod: BigInt(freezePeriod),
         userHasFreezeVoted,
         isFrozen,
       };
@@ -115,22 +117,23 @@ export const useFractalFreeze = ({
         const currentTimestamp = await getTimeStamp('latest', provider);
         const isFreezeActive =
           isWithinFreezeProposalPeriod(
-            BigNumber.from(freezeGuard.freezeProposalCreatedTime),
-            BigNumber.from(freezeGuard.freezeProposalPeriod),
-            BigNumber.from(currentTimestamp),
+            freezeGuard.freezeProposalCreatedTime,
+            freezeGuard.freezeProposalPeriod,
+            BigInt(currentTimestamp),
           ) ||
           isWithinFreezePeriod(
-            BigNumber.from(freezeGuard.freezeProposalCreatedTime),
-            BigNumber.from(freezeGuard.freezePeriod),
-            BigNumber.from(currentTimestamp),
+            freezeGuard.freezeProposalCreatedTime,
+            freezeGuard.freezePeriod,
+            BigInt(currentTimestamp),
           );
-        userHasVotes = (
-          !isFreezeActive
+        userHasVotes =
+          (!isFreezeActive
             ? // freeze not active
-              await votesTokenContract.getVotes(account || '')
+              (await votesTokenContract.getVotes(account || '')).toBigInt()
             : // freeze is active
-              await votesTokenContract.getPastVotes(account || '', freezeCreatedBlock)
-        ).gt(0);
+              (
+                await votesTokenContract.getPastVotes(account || '', freezeCreatedBlock)
+              ).toBigInt()) > 0n;
       } else if (freezeVotingType === FreezeVotingType.ERC721) {
         const { totalVotingTokenAddresses } = await getUserERC721VotingTokens(
           undefined,
@@ -196,10 +199,10 @@ export const useFractalFreeze = ({
         type: FractalGuardAction.UPDATE_FREEZE_VOTE,
         payload: {
           isVoter: voter === account,
-          freezeProposalCreatedTime: BigNumber.from(
+          freezeProposalCreatedTime: BigInt(
             await getTimeStamp(freezeProposalCreatedBlock, provider),
           ),
-          votesCast,
+          votesCast: votesCast.toBigInt(),
         },
       });
     };

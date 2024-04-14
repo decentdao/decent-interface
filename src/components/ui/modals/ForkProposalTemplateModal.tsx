@@ -30,7 +30,7 @@ export default function ForkProposalTemplateModal({
   const { t } = useTranslation('proposalTemplate');
   const navigate = useNavigate();
   const signerOrProvider = useSignerOrProvider();
-  const { name, addressPrefix } = useNetworkConfig();
+  const { chain, addressPrefix } = useNetworkConfig();
   const {
     node: { proposalTemplatesHash },
   } = useFractal();
@@ -65,13 +65,13 @@ export default function ForkProposalTemplateModal({
           return false;
         }
       } else {
-        setError(t('errorFailedSearch', { ns: 'dashboard', chain: name }));
+        setError(t('errorFailedSearch', { ns: 'dashboard', chain: chain.name }));
         return false;
       }
     }
 
     return isValidAddress;
-  }, [getCanUserCreateProposal, inputValue, isSafe, isSafeLoading, name, signerOrProvider, t]);
+  }, [getCanUserCreateProposal, inputValue, isSafe, isSafeLoading, chain, signerOrProvider, t]);
 
   const handleSubmit = () => {
     navigate(

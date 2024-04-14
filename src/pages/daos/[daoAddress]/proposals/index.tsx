@@ -27,8 +27,12 @@ export default function ProposalsPage() {
   const canDelegate = useMemo(() => {
     if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC20) {
       const decentGovernance = azoriusGovernance as DecentGovernance;
-      const hasLockedTokenBalance = decentGovernance?.lockedVotesToken?.balance?.gt(0);
-      const hasVotesTokenBalance = azoriusGovernance?.votesToken?.balance?.gt(0);
+
+      const lockedTokenBalance = decentGovernance?.lockedVotesToken?.balance;
+      const hasLockedTokenBalance = lockedTokenBalance ? lockedTokenBalance > 0n : undefined;
+
+      const votesTokenBalance = azoriusGovernance?.votesToken?.balance;
+      const hasVotesTokenBalance = votesTokenBalance ? votesTokenBalance > 0n : undefined;
       return hasVotesTokenBalance || hasLockedTokenBalance;
     }
     return false;
@@ -39,7 +43,7 @@ export default function ProposalsPage() {
   const showUnWrapTokenButton =
     showWrapTokenButton &&
     !!azoriusGovernance.votesToken?.balance &&
-    !azoriusGovernance.votesToken.balance.isZero();
+    azoriusGovernance.votesToken.balance !== 0n;
 
   return (
     <div>

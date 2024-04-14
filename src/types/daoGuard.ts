@@ -4,7 +4,6 @@ import {
   ERC20FreezeVoting,
   MultisigFreezeVoting,
 } from '@fractal-framework/fractal-contracts';
-import { BigNumber } from 'ethers';
 import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 
@@ -15,4 +14,4 @@ export interface IMultisigFreezeContract {
   freezeVotingType: FreezeVotingType;
 }
 
-export type FreezeVoteCastedListener = (voter: string, votesCast: BigNumber, _: any) => void;
+export type FreezeVoteCastedListener = (voter: string, votesCast: bigint, _: any) => void;

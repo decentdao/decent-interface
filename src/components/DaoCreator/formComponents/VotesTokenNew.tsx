@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberInput } from '../../ui/forms/BigNumberInput';
+import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
@@ -52,8 +52,8 @@ export function VotesTokenNew(props: ICreationStepProps) {
         helper={t('helperTokenSupply')}
         isRequired
       >
-        <BigNumberInput
-          value={values.erc20Token.tokenSupply.bigNumberValue}
+        <BigIntInput
+          value={values.erc20Token.tokenSupply.bigintValue}
           onChange={valuePair => setFieldValue('erc20Token.tokenSupply', valuePair)}
           data-testid="tokenVoting-tokenSupplyInput"
           onKeyDown={restrictChars}

@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { CreateProposalTransaction, ProposalBuilderMode } from '../../types/proposalBuilder';
 import ABISelector, { ABIElement } from '../ui/forms/ABISelector';
 import ExampleLabel from '../ui/forms/ExampleLabel';
-import { BigNumberComponent, InputComponent } from '../ui/forms/InputComponent';
+import { BigIntComponent, InputComponent } from '../ui/forms/InputComponent';
 import { DEFAULT_PROPOSAL_TRANSACTION } from './constants';
 
 interface ProposalTransactionProps {
@@ -277,7 +277,7 @@ export default function ProposalTransaction({
           mt={6}
           pl={10}
         >
-          <BigNumberComponent
+          <BigIntComponent
             label={t('labelEthValue')}
             helper={t('helperEthValue')}
             isRequired={false}
@@ -297,7 +297,7 @@ export default function ProposalTransaction({
               </VStack>
             }
             errorMessage={undefined}
-            value={transaction.ethValue.bigNumberValue}
+            value={transaction.ethValue.bigintValue}
             onChange={e => {
               setFieldValue(`transactions.${transactionIndex}.ethValue`, e);
             }}

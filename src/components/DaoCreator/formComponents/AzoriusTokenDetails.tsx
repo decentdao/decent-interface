@@ -1,9 +1,9 @@
 import { Box, Flex, Input, RadioGroup, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumber, constants, ethers, utils } from 'ethers';
+import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20Abi } from 'viem';
+import { erc20Abi, isAddress, zeroAddress } from 'viem';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
@@ -49,18 +49,21 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   const updateImportFields = useCallback(async () => {
     const importAddress = values.erc20Token.tokenImportAddress;
     const importError = errors?.erc20Token?.tokenImportAddress;
-    if (importAddress && !importError && utils.isAddress(importAddress)) {
+    if (importAddress && !importError && isAddress(importAddress)) {
       const isVotesToken = await checkVotesToken(importAddress);
       const tokenContract = new ethers.Contract(importAddress, erc20Abi, provider);
       const name: string = await tokenContract.name();
       const symbol: string = await tokenContract.symbol();
       const decimals: number = await tokenContract.decimals();
+
+      // @dev: this turns "total supply" into the human-readable form (without decimals)
       const totalSupply: number = (await tokenContract.totalSupply()) / 10 ** decimals;
+
       setFieldValue(
         'erc20Token.tokenSupply',
         {
           value: totalSupply,
-          bigNumberValue: BigNumber.from(totalSupply),
+          bigintValue: BigInt(totalSupply),
         },
         true,
       );
@@ -156,7 +159,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                       name="erc20Token.tokenImportAddress"
                       onChange={handleChange}
                       value={values.erc20Token.tokenImportAddress}
-                      placeholder={createAccountSubstring(constants.AddressZero)}
+                      placeholder={createAccountSubstring(zeroAddress)}
                     />
                   </LabelWrapper>
                   {!isImportedVotesToken && !errors.erc20Token?.tokenImportAddress && (

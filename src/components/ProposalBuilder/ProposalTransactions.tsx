@@ -11,7 +11,7 @@ import { ArrowDown, ArrowRight, Minus } from '@decent-org/fractal-ui';
 import { FormikErrors, FormikProps } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BigNumberValuePair } from '../../types';
+import { BigIntValuePair } from '../../types';
 import {
   CreateProposalForm,
   CreateProposalTransaction,
@@ -49,7 +49,7 @@ export default function ProposalTransactions({
     >
       {transactions.map((_, index) => {
         const txErrors = errors?.transactions?.[index] as
-          | FormikErrors<CreateProposalTransaction<BigNumberValuePair>>
+          | FormikErrors<CreateProposalTransaction<BigIntValuePair>>
           | undefined;
         const txAddressError = txErrors?.targetAddress;
         const txFunctionError = txErrors?.functionName;

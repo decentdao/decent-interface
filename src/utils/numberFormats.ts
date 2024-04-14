@@ -1,16 +1,16 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { BigNumber, ethers } from 'ethers';
-import bigDecimal from 'js-big-decimal';
+import BigDecimal from 'js-big-decimal';
+import { formatEther, formatUnits } from 'viem';
 
 export const DEFAULT_DATE_TIME_FORMAT = 'MMM dd, yyyy, h:mm aa O';
 export const DEFAULT_DATE_FORMAT = 'yyyy-MM-dd';
 
 export const formatPercentage = (
-  numerator: BigNumber | number | string,
-  denominator: BigNumber | number | string,
+  numerator: bigint | number | string,
+  denominator: bigint | number | string,
 ) => {
-  const fraction = bigDecimal.divide(numerator.toString(), denominator.toString(), 18);
-  const percent = parseFloat(bigDecimal.multiply(fraction, 100));
+  const fraction = BigDecimal.divide(numerator.toString(), denominator.toString(), 18);
+  const percent = parseFloat(BigDecimal.multiply(fraction, 100));
   if (percent < 0.01) {
     return '< 0.01%';
   }
@@ -29,15 +29,15 @@ export const formatUSD = (rawUSD: number | string) => {
   return decimalIndex != -1 && formatted.length - decimalIndex !== 3 ? formatted + '0' : formatted;
 };
 
-export const formatCoinUnits = (
-  rawBalance: BigNumber | string,
+const formatCoinUnits = (
+  rawBalance: bigint | string,
   decimals?: number,
   symbol?: string,
 ): number => {
-  if (!rawBalance) rawBalance = '0';
-  return symbol
-    ? parseFloat(ethers.utils.formatUnits(rawBalance, decimals))
-    : parseFloat(ethers.utils.formatEther(rawBalance));
+  if (!rawBalance) rawBalance = 0n;
+  return symbol && decimals
+    ? parseFloat(formatUnits(BigInt(rawBalance), decimals))
+    : parseFloat(formatEther(BigInt(rawBalance)));
 };
 
 export const formatCoinUnitsFromAsset = (asset: SafeBalanceUsdResponse): number => {
@@ -45,7 +45,7 @@ export const formatCoinUnitsFromAsset = (asset: SafeBalanceUsdResponse): number 
 };
 
 export const formatCoin = (
-  rawBalance: BigNumber | string,
+  rawBalance: bigint | string,
   truncate: boolean,
   decimals?: number,
   symbol?: string,
@@ -78,6 +78,6 @@ function getNumberSeparator(type: 'group' | 'decimal'): string {
   );
 }
 
-export function formatBigNumberDisplay(num: BigNumber | string | number): string {
+export function formatBigIntDisplay(num: bigint | string | number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, getNumberSeparator('group'));
 }

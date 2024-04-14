@@ -1,4 +1,4 @@
-import { BigNumber, ethers, utils } from 'ethers';
+import { ethers, utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi } from 'viem';
@@ -106,24 +106,23 @@ export function useDAOCreateTests() {
         if (!value) return false;
 
         const formData: CreatorFormState = context.from.reverse()[0].value;
-        const tokenSupply = formData.erc20Token.tokenSupply.bigNumberValue as BigNumber;
+        const tokenSupply = formData.erc20Token.tokenSupply.bigintValue;
         const tokenAllocations = formData.erc20Token.tokenAllocations;
         const parentAllocationAmount =
-          formData.erc20Token.parentAllocationAmount?.bigNumberValue || BigNumber.from(0);
+          formData.erc20Token.parentAllocationAmount?.bigintValue || 0n;
 
         const filteredAllocations = tokenAllocations.filter(
-          allocation =>
-            allocation.amount.bigNumberValue && !allocation.amount.bigNumberValue.isZero(),
+          allocation => allocation.amount.bigintValue && allocation.amount.bigintValue !== 0n,
         );
 
         const allocationSum = filteredAllocations.reduce(
-          (prev, cur) => prev.add(cur.amount.bigNumberValue!),
-          BigNumber.from(0),
+          (prev, cur) => prev + (cur.amount.bigintValue || 0n),
+          0n,
         );
 
-        const totalAllocation = allocationSum.add(parentAllocationAmount);
+        const totalAllocation = allocationSum + parentAllocationAmount;
 
-        if (totalAllocation.isZero() || totalAllocation.gt(tokenSupply)) {
+        if (!tokenSupply || totalAllocation === 0n || totalAllocation > tokenSupply) {
           return false;
         }
         return true;
@@ -178,16 +177,16 @@ export function useDAOCreateTests() {
     };
   }, [provider, t]);
 
-  const isBigNumberValidation = useMemo(() => {
+  const isBigIntValidation = useMemo(() => {
     return {
-      name: 'BigNumber Validation',
-      message: t('errorInvalidBigNumber', { ns: 'common' }),
+      name: 'Bigint Validation',
+      message: t('errorInvalidBigint', { ns: 'common' }),
       test: (value: string | undefined) => {
         if (!value) {
           return false;
         }
         try {
-          BigNumber.from(value);
+          BigInt(value);
           return true;
         } catch (e) {
           return false;
@@ -203,6 +202,6 @@ export function useDAOCreateTests() {
     uniqueAllocationValidationTest,
     validERC20Address,
     validERC721Address,
-    isBigNumberValidation,
+    isBigIntValidation,
   };
 }

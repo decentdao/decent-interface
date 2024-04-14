@@ -2,7 +2,6 @@ import { Text, Box, Button, Divider, Flex, Tooltip } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
-import { BigNumber } from 'ethers';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
@@ -41,19 +40,19 @@ export default function ProposalSummary({
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
-  const startBlockTimeStamp = useBlockTimestamp(startBlock.toNumber());
+  const startBlockTimeStamp = useBlockTimestamp(Number(startBlock));
   const [proposalsERC20VotingWeight, setProposalsERC20VotingWeight] = useState('0');
-  const totalVotesCasted = useMemo(() => yes.add(no).add(abstain), [yes, no, abstain]);
+  const totalVotesCasted = useMemo(() => yes + no + abstain, [yes, no, abstain]);
   const totalVotingWeight = useMemo(
     () =>
       erc721Tokens?.reduce(
-        (prev, curr) => prev.add(curr.totalSupply?.mul(curr.votingWeight) || BigNumber.from(0)),
-        BigNumber.from(0),
+        (prev, curr) => prev + (curr.totalSupply ? curr.totalSupply * curr.votingWeight : 0n),
+        0n,
       ),
     [erc721Tokens],
   );
   const votesTokenDecimalsDenominator = useMemo(
-    () => BigNumber.from(10).pow(votesToken?.decimals || 0),
+    () => 10n ** BigInt(votesToken?.decimals || 0),
     [votesToken?.decimals],
   );
   const [showVotingPower, setShowVotingPower] = useState(false);
@@ -66,9 +65,9 @@ export default function ProposalSummary({
         const tokenContract = baseContracts.votesTokenMasterCopyContract.asProvider.attach(
           votesToken.address,
         );
-        const pastVotingWeight = await tokenContract.getPastVotes(address, startBlock);
+        const pastVotingWeight = (await tokenContract.getPastVotes(address, startBlock)).toBigInt();
         setProposalsERC20VotingWeight(
-          pastVotingWeight.div(votesTokenDecimalsDenominator).toString(),
+          (pastVotingWeight / votesTokenDecimalsDenominator).toString(),
         );
       }
     }
@@ -91,22 +90,20 @@ export default function ProposalSummary({
 
   const strategyQuorum =
     votesToken && isERC20
-      ? votingStrategy.quorumPercentage!.value.toNumber()
+      ? votingStrategy.quorumPercentage!.value
       : isERC721
-        ? votingStrategy.quorumThreshold!.value.toNumber()
-        : 1;
+        ? votingStrategy.quorumThreshold!.value
+        : 1n;
   const reachedQuorum = isERC721
-    ? totalVotesCasted.sub(no).toString()
+    ? totalVotesCasted - no
     : votesToken
-      ? totalVotesCasted.sub(no).div(votesTokenDecimalsDenominator).toString()
-      : '0';
+      ? (totalVotesCasted - no) / votesTokenDecimalsDenominator
+      : 0n;
   const totalQuorum = isERC721
-    ? strategyQuorum.toString()
-    : votesToken?.totalSupply
-        .div(votesTokenDecimalsDenominator)
-        .div(100)
-        .mul(strategyQuorum)
-        .toString();
+    ? strategyQuorum
+    : votesToken
+      ? (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) * strategyQuorum
+      : undefined;
 
   const ShowVotingPowerButton = (
     <Button
@@ -219,7 +216,9 @@ export default function ProposalSummary({
               quorum: strategyQuorum,
               total: isERC721
                 ? totalVotingWeight?.toString()
-                : votesToken?.totalSupply.div(votesTokenDecimalsDenominator).toString(),
+                : votesToken
+                  ? (votesToken.totalSupply / votesTokenDecimalsDenominator).toString()
+                  : undefined,
             },
           )}
           reachedQuorum={reachedQuorum}

@@ -145,7 +145,7 @@ export const useAzoriusProposals = () => {
           );
           const decodedTransactions = await decodeTransactions(
             _decode,
-            proposalCreatedEvent.args.transactions,
+            proposalCreatedEvent.args.transactions.map(t => ({ ...t, value: t.value.toBigInt() })),
           );
           proposalData = {
             metaData: {
@@ -153,7 +153,10 @@ export const useAzoriusProposals = () => {
               description: metadataEvent.description,
               documentationUrl: metadataEvent.documentationUrl,
             },
-            transactions: proposalCreatedEvent.args.transactions,
+            transactions: proposalCreatedEvent.args.transactions.map(t => ({
+              ...t,
+              value: t.value.toBigInt(),
+            })),
             decodedTransactions,
           };
         }
@@ -162,7 +165,7 @@ export const useAzoriusProposals = () => {
           _erc20StrategyContract,
           _erc721StrategyContract,
           _strategyType,
-          proposalCreatedEvent.args.proposalId,
+          proposalCreatedEvent.args.proposalId.toBigInt(),
           proposalCreatedEvent.args.proposer,
           _azoriusContract,
           _provider,

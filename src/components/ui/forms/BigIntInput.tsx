@@ -6,33 +6,33 @@ import {
   InputRightElement,
   Button,
 } from '@chakra-ui/react';
-import { utils, BigNumber, constants } from 'ethers';
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BigNumberValuePair } from '../../../types';
-export interface BigNumberInputProps
+import { parseUnits, formatUnits, maxUint256 } from 'viem';
+import { BigIntValuePair } from '../../../types';
+export interface BigIntInputProps
   extends Omit<InputElementProps, 'value' | 'onChange'>,
     FormControlOptions {
-  value?: BigNumber | null;
-  onChange: (value: BigNumberValuePair) => void;
+  value: bigint | undefined;
+  onChange: (value: BigIntValuePair) => void;
   decimalPlaces?: number;
   min?: string;
   max?: string;
-  maxValue?: BigNumber | null;
+  maxValue?: bigint;
 }
 /**
- * This component will add a chakra Input component that accepts and sets a BigNumber
+ * This component will add a chakra Input component that accepts and sets a bigint
  *
- * @param value input value to the control as a BigNumber. If undefined is set then the component will be blank.
- * @param onChange event is raised whenever the component changes. Sends back a value / BigNumber pair. The value sent back is a string representation of the BigNumber as a decimal number.
- * @param decimalPlaces number of decimal places to be used to parse the value to set the BigNumber
+ * @param value input value to the control as a bigint. If undefined is set then the component will be blank.
+ * @param onChange event is raised whenever the component changes. Sends back a value / bigint pair. The value sent back is a string representation of the bigint as a decimal number.
+ * @param decimalPlaces number of decimal places to be used to parse the value to set the bigint
  * @param min Setting a minimum value will reset the Input value to min when the component's focus is lost. Can set decimal number for minimum, but must respect the decimalPlaces value.
  * @param max Setting this will cause the value of the Input control to be reset to the maximum when a number larger than it is inputted.
  * @param maxValue The maximum value that can be inputted. This is used to set the max value of the Input control.
  * @parma ...rest component accepts all properties for Input and FormControl
  * @returns
  */
-export function BigNumberInput({
+export function BigIntInput({
   value,
   onChange,
   decimalPlaces = 18,
@@ -40,10 +40,10 @@ export function BigNumberInput({
   max,
   maxValue,
   ...rest
-}: BigNumberInputProps) {
+}: BigIntInputProps) {
   const { t } = useTranslation('common');
   const [inputValue, setInputValue] = useState<string>(
-    value && !value.isZero() ? utils.formatUnits(value, decimalPlaces) : '',
+    value && value !== 0n ? formatUnits(value, decimalPlaces) : '',
   );
 
   // this will insure the caret in the input component does not shift to the end of the input when the value is changed
@@ -82,7 +82,7 @@ export function BigNumberInput({
       if (stringValue === '') {
         onChange({
           value: stringValue,
-          bigNumberValue: null,
+          bigintValue: undefined,
         });
         setInputValue('');
         return;
@@ -100,18 +100,19 @@ export function BigNumberInput({
       }
 
       let newValue = truncateDecimalPlaces(stringValue);
-      let bigNumberValue = utils.parseUnits(removeOnlyDecimalPoint(newValue), decimalPlaces);
+
+      let bigintValue = parseUnits(removeOnlyDecimalPoint(newValue), decimalPlaces);
 
       //set value to max if greater than max
-      const maxBigNumber = max ? utils.parseUnits(max, decimalPlaces) : constants.MaxUint256;
-      if (bigNumberValue.gt(maxBigNumber)) {
-        newValue = utils.formatUnits(maxBigNumber, decimalPlaces);
-        bigNumberValue = maxBigNumber;
+      const maxBigint = max ? parseUnits(max, decimalPlaces) : maxUint256;
+      if (bigintValue > maxBigint) {
+        newValue = formatUnits(maxBigint, decimalPlaces);
+        bigintValue = maxBigint;
       }
 
       onChange({
         value: removeOnlyDecimalPoint(newValue),
-        bigNumberValue,
+        bigintValue: bigintValue,
       });
       if (event && newValue !== event.target.value) {
         resetCaretPositionForInput(event);
@@ -127,16 +128,12 @@ export function BigNumberInput({
       if (min) {
         const eventValue = event.target.value;
         const hasValidValue = eventValue && eventValue !== '.';
-        const bigNumberValue = hasValidValue
-          ? utils.parseUnits(eventValue, decimalPlaces)
-          : BigNumber.from('0');
-        const minBigNumber = hasValidValue
-          ? utils.parseUnits(min, decimalPlaces)
-          : BigNumber.from('0');
-        if (bigNumberValue.lte(minBigNumber)) {
+        const bigintValue = hasValidValue ? parseUnits(eventValue, decimalPlaces) : 0n;
+        const minBigint = hasValidValue ? parseUnits(min, decimalPlaces) : 0n;
+        if (bigintValue <= minBigint) {
           onChange({
             value: min,
-            bigNumberValue: BigNumber.from(minBigNumber),
+            bigintValue: minBigint,
           });
           setInputValue(min);
         }
@@ -161,14 +158,14 @@ export function BigNumberInput({
         type="number"
         {...rest}
       />
-      {maxValue && (
+      {maxValue !== undefined && (
         <InputRightElement width="4.5rem">
           <Button
             h="1.75rem"
             onClick={() => {
               const newValue = {
-                value: truncateDecimalPlaces(utils.formatUnits(maxValue, decimalPlaces)),
-                bigNumberValue: maxValue,
+                value: truncateDecimalPlaces(formatUnits(maxValue, decimalPlaces)),
+                bigintValue: maxValue,
               };
               setInputValue(newValue.value);
               onChange(newValue);

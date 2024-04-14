@@ -1,8 +1,6 @@
-import { BigNumber } from 'ethers';
-
-export interface BigNumberValuePair {
+export interface BigIntValuePair {
   value: string;
-  bigNumberValue?: BigNumber | null;
+  bigintValue?: bigint;
 }
 
 export type WithError = { error?: string };

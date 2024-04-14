@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
@@ -31,7 +30,7 @@ export default function useRemoveProposalTemplate() {
         const proposal: ProposalExecuteData = {
           metaData: proposalMetadata,
           targets: [keyValuePairsContract.asProvider.address],
-          values: [BigNumber.from(0)],
+          values: [0n],
           calldatas: [
             keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
               ['proposalTemplates'],

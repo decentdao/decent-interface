@@ -1,5 +1,4 @@
 import { ERC20Claim } from '@fractal-framework/fractal-contracts';
-import { BigNumber } from 'ethers';
 import {
   FractalProposal,
   ProposalVotesSummary,
@@ -48,7 +47,7 @@ type AzoriusVotePayload = {
   votesSummary: ProposalVotesSummary;
 };
 
-export type ERC20VotePayload = { weight: BigNumber } & AzoriusVotePayload;
+export type ERC20VotePayload = { weight: bigint } & AzoriusVotePayload;
 export type ERC721VotePayload = {
   tokenAddresses: string[];
   tokenIds: string[];
@@ -85,19 +84,19 @@ export type FractalGovernanceActions =
     }
   | {
       type: FractalGovernanceAction.UPDATE_VOTING_PERIOD;
-      payload: BigNumber;
+      payload: bigint;
     }
   | {
       type: FractalGovernanceAction.UPDATE_VOTING_QUORUM;
-      payload: BigNumber;
+      payload: bigint;
     }
   | {
       type: FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD;
-      payload: BigNumber;
+      payload: bigint;
     }
   | {
       type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD;
-      payload: BigNumber;
+      payload: bigint;
     }
   | { type: FractalGovernanceAction.SET_ERC721_TOKENS_DATA; payload: ERC721TokenData[] }
   | {

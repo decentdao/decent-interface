@@ -1,6 +1,6 @@
-// eslint-disable-next-line import/named
-import { Store, getStore } from '@netlify/blobs';
-import { ethers } from 'ethers';
+import { getStore } from '@netlify/blobs';
+import type { Store } from '@netlify/blobs';
+import { isAddress } from 'viem';
 
 const PUBLIC_DEMO_API_BASE_URL = 'https://api.coingecko.com/api/v3/';
 const AUTH_QUERY_PARAM = `?x_cg_demo_api_key=${process.env.COINGECKO_API_KEY}`;
@@ -27,7 +27,7 @@ type SupportedNetworks = (typeof SUPPORTED_NETWORKS)[number];
 function sanitizeUserInput(tokensString: string, network: SupportedNetworks) {
   const rawTokenAddresses = tokensString.split(',');
   const needNativeAsset = rawTokenAddresses.map(address => address.toLowerCase()).includes(network);
-  const validTokenAddresses = rawTokenAddresses.filter(address => ethers.utils.isAddress(address));
+  const validTokenAddresses = rawTokenAddresses.filter(address => isAddress(address));
   const lowerCaseTokenAddresses = validTokenAddresses.map(address => address.toLowerCase());
   const tokens = [...new Set(lowerCaseTokenAddresses)];
   if (needNativeAsset) tokens.push(network);

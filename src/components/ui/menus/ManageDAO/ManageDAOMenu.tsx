@@ -1,6 +1,5 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
-import { BigNumber } from 'ethers';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -57,7 +56,7 @@ export function ManageDAOMenu({
     governance: { type },
   } = useFractal();
   const baseContracts = useSafeContracts();
-  const currentTime = BigNumber.from(useBlockTimestamp());
+  const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
   const safeAddress = fractalNode?.daoAddress;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();

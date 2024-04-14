@@ -11,7 +11,7 @@ import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps, VotingStrategyType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberInput } from '../../ui/forms/BigNumberInput';
+import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
@@ -39,8 +39,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           isRequired
         >
           <InputGroup>
-            <BigNumberInput
-              value={values.azorius.votingPeriod.bigNumberValue}
+            <BigIntInput
+              value={values.azorius.votingPeriod.bigintValue}
               onChange={valuePair => setFieldValue('azorius.votingPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -63,8 +63,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             isRequired
           >
             <InputGroup>
-              <BigNumberInput
-                value={values.azorius.quorumPercentage.bigNumberValue}
+              <BigIntInput
+                value={values.azorius.quorumPercentage.bigintValue}
                 onChange={valuePair => setFieldValue('azorius.quorumPercentage', valuePair)}
                 max="100"
                 decimalPlaces={0}
@@ -79,8 +79,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             helper={t('helperQuorumThreshold')}
             isRequired
           >
-            <BigNumberInput
-              value={values.erc721Token.quorumThreshold.bigNumberValue}
+            <BigIntInput
+              value={values.erc721Token.quorumThreshold.bigintValue}
               onChange={valuePair => setFieldValue('erc721Token.quorumThreshold', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -94,8 +94,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           isRequired
         >
           <InputGroup>
-            <BigNumberInput
-              value={values.azorius.timelock.bigNumberValue}
+            <BigIntInput
+              value={values.azorius.timelock.bigintValue}
               onChange={valuePair => setFieldValue('azorius.timelock', valuePair)}
               decimalPlaces={0}
               data-testid="govConfig-timelock"
@@ -116,8 +116,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           isRequired
         >
           <InputGroup>
-            <BigNumberInput
-              value={values.azorius.executionPeriod.bigNumberValue}
+            <BigIntInput
+              value={values.azorius.executionPeriod.bigintValue}
               onChange={valuePair => setFieldValue('azorius.executionPeriod', valuePair)}
               decimalPlaces={0}
               min="1"

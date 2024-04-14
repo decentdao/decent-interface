@@ -8,7 +8,7 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
+import { utils } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -19,10 +19,10 @@ import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { BigNumberValuePair } from '../../../types';
+import { BigIntValuePair } from '../../../types';
 import { ProposalTemplate } from '../../../types/proposalBuilder';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
-import { BigNumberComponent, InputComponent } from '../forms/InputComponent';
+import { BigIntComponent, InputComponent } from '../forms/InputComponent';
 import Markdown from '../proposal/Markdown';
 
 interface IProposalTemplateModalProps {
@@ -53,7 +53,7 @@ export default function ProposalTemplateModal({
     value,
   }: {
     transactionIndex: number;
-    value: BigNumberValuePair;
+    value: BigIntValuePair;
   }) => {
     setFilledProposalTransactions(prevState =>
       prevState.map((transaction, txIndex) => {
@@ -184,19 +184,19 @@ export default function ProposalTemplateModal({
               ),
           )}
           {(showAll ||
-            !transactions[transactionIndex].ethValue.bigNumberValue ||
-            BigNumber.from(transactions[transactionIndex].ethValue.bigNumberValue).eq(0)) && (
+            !transactions[transactionIndex].ethValue.bigintValue ||
+            transactions[transactionIndex].ethValue.bigintValue === 0n) && (
             <Flex
               width="100%"
               flexWrap="wrap"
               marginTop="1.5rem"
             >
-              <BigNumberComponent
+              <BigIntComponent
                 label={t('labelEthValue', { ns: 'proposal' })}
                 helper={t('helperEthValue', { ns: 'proposal' })}
                 isRequired={false}
                 errorMessage={undefined}
-                value={BigNumber.from(transaction.ethValue.bigNumberValue || 0)}
+                value={transaction.ethValue.bigintValue || 0n}
                 onChange={value => {
                   handleEthValueChange({ transactionIndex, value });
                 }}

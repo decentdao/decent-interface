@@ -1,5 +1,4 @@
 import { getSTETHContract, getWithdrawalQueueContract } from '@lido-sdk/contracts';
-import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -20,7 +19,7 @@ export default function useLidoStaking() {
   const { t } = useTranslation('proposal');
 
   const handleStake = useCallback(
-    async (value: BigNumber) => {
+    async (value: bigint) => {
       if (!lido || !daoAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
@@ -81,7 +80,7 @@ export default function useLidoStaking() {
             daoAddress,
           ]),
         ],
-        values: ['0', '0'],
+        values: [0n, 0n],
       };
       await submitProposal({
         proposalData,
@@ -95,7 +94,7 @@ export default function useLidoStaking() {
   );
 
   const handleClaimUnstakedETH = useCallback(
-    async (nftId: BigNumber) => {
+    async (nftId: bigint) => {
       if (!lido || !daoAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
@@ -118,7 +117,7 @@ export default function useLidoStaking() {
         calldatas: [
           withdrawalQueueContract.interface.encodeFunctionData('claimWithdrawal', [nftId]),
         ],
-        values: ['0'],
+        values: [0n],
       };
       await submitProposal({
         proposalData,

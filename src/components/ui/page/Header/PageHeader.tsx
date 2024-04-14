@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { ReactNode, useEffect, useState } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
+import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import AddressCopier from '../../links/AddressCopier';
@@ -56,7 +57,7 @@ function PageHeader({
     if (hasDAOLink && daoAddress) {
       setLinks([
         {
-          terminus: daoName || '',
+          terminus: daoName || (daoAddress && createAccountSubstring(daoAddress)) || '',
           path: DAO_ROUTES.dao.relative(addressPrefix, daoAddress),
         },
         ...breadcrumbs,

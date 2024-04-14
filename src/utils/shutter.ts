@@ -1,5 +1,5 @@
 import { init, encrypt } from '@shutter-network/shutter-crypto';
-import { BigNumber, utils } from 'ethers';
+import { utils } from 'ethers';
 
 export default async function encryptWithShutter(
   choice: string,
@@ -17,7 +17,7 @@ export default async function encryptWithShutter(
   const is32ByteString = id.substring(0, 2) === '0x';
   const proposalId = arrayify(is32ByteString ? id : formatBytes32String(id));
 
-  const sigma = arrayify(BigNumber.from(randomBytes(32)));
+  const sigma = randomBytes(32);
 
   const encryptedMessage = await encrypt(message, eonPublicKey, proposalId, sigma);
 

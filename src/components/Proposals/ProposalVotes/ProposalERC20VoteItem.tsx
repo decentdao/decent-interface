@@ -1,5 +1,4 @@
 import { Grid, GridItem, Text } from '@chakra-ui/react';
-import { BigNumber } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -14,7 +13,7 @@ export default function ProposalERC20VoteItem({
   govTokenSymbol,
 }: {
   vote: ProposalVote;
-  govTokenTotalSupply: BigNumber;
+  govTokenTotalSupply: bigint;
   govTokenDecimals: number;
   govTokenSymbol: string;
 }) {

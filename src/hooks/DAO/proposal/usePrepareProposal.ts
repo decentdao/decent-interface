@@ -43,7 +43,7 @@ export function usePrepareProposal() {
       return {
         targets,
         values: transactionsWithEncoding.map(
-          transaction => transaction.ethValue.bigNumberValue || 0,
+          transaction => transaction.ethValue.bigintValue || 0n,
         ),
         calldatas: transactionsWithEncoding.map(transaction => transaction.calldata || ''),
         metaData: {

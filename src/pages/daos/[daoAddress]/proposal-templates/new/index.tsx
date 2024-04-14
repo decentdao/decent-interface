@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProposalBuilder from '../../../../../components/ProposalBuilder';
@@ -39,7 +38,7 @@ export default function CreateProposalTemplatePage() {
                 ...tx,
                 ethValue: {
                   value: tx.ethValue.value,
-                  bigNumberValue: BigNumber.from(tx.ethValue.value || 0),
+                  bigintValue: BigInt(tx.ethValue.value || 0),
                 },
               })),
             };
