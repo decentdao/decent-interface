@@ -34,10 +34,10 @@ import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
-import { ProposalTemplate } from './createProposalTemplate';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
+import { ProposalTemplate } from './proposalBuilder';
 import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
 import { BIFormattedPair } from './votingFungibleToken';
 /**
@@ -177,10 +177,10 @@ export enum SafeTransferType {
 }
 
 export interface ITokenAccount {
-  userBalance: bigint | undefined;
+  userBalance?: bigint;
   userBalanceString: string | undefined;
   delegatee: string | undefined;
-  votingWeight: bigint | undefined;
+  votingWeight?: bigint;
   votingWeightString: string | undefined;
   isDelegatesSet: boolean | undefined;
 }

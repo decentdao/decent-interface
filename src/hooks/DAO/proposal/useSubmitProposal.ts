@@ -15,7 +15,7 @@ import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction, ProposalExecuteData, ProposalMetadata } from '../../../types';
+import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
@@ -116,7 +116,7 @@ export default function useSubmitProposal() {
           proposalData.metaData.description ||
           proposalData.metaData.documentationUrl
         ) {
-          const metaData: ProposalMetadata = {
+          const metaData: CreateProposalMetadata = {
             title: proposalData.metaData.title || '',
             description: proposalData.metaData.description || '',
             documentationUrl: proposalData.metaData.documentationUrl || '',

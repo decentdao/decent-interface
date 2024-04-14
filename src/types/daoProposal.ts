@@ -1,10 +1,10 @@
-import { ProposalMetadata } from './createProposal';
 import { GovernanceActivity } from './fractal';
+import { CreateProposalMetadata } from './proposalBuilder';
 import { SafeMultisigConfirmationResponse } from './safeGlobal';
 import { MetaTransaction, DecodedTransaction } from './transaction';
 
 export interface ProposalExecuteData extends ExecuteData {
-  metaData: ProposalMetadata;
+  metaData: CreateProposalMetadata;
 }
 
 export interface ExecuteData {
@@ -19,7 +19,7 @@ export type CreateProposalFunc = (proposal: {
 }) => void;
 
 export type ProposalData = {
-  metaData?: ProposalMetadata;
+  metaData?: CreateProposalMetadata;
   transactions?: MetaTransaction[];
   decodedTransactions: DecodedTransaction[];
 };
