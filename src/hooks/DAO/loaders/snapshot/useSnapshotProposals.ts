@@ -9,16 +9,11 @@ import { createClient } from './';
 
 export const useSnapshotProposals = () => {
   const {
-    node: { daoSnapshotURL },
     action,
   } = useFractal();
   const daoSnapshotSpaceName = useSnapshotSpaceName();
   const currentSnapshotURL = useRef<string | undefined>();
-  const client = useMemo(() => {
-    if (daoSnapshotURL) {
-      return createClient(daoSnapshotURL);
-    }
-  }, [daoSnapshotURL]);
+  const client = useMemo(() => createClient(), []);
 
   const loadSnapshotProposals = useCallback(async () => {
     if (client) {

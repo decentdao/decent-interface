@@ -17,17 +17,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   const [extendedSnapshotProposal, setExtendedSnapshotProposal] =
     useState<ExtendedSnapshotProposal>();
   const {
-    node: { daoSnapshotURL },
     readOnly: {
       user: { address },
     },
   } = useFractal();
   const daoSnapshotSpaceName = useSnapshotSpaceName();
-  const client = useMemo(() => {
-    if (daoSnapshotURL) {
-      return createClient(daoSnapshotURL);
-    }
-  }, [daoSnapshotURL]);
+  const client = useMemo(() => createClient(), []);
 
   const snapshotProposal = proposal as SnapshotProposal;
   const isSnapshotProposal = useMemo(
