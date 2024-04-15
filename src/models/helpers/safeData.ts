@@ -1,11 +1,10 @@
 import { GnosisSafeProxyFactory } from '@fractal-framework/fractal-contracts';
-import { ethers } from 'ethers';
 import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { zeroAddress, zeroHash } from 'viem';
 import { MultiSend } from '../../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeMultisigDAO } from '../../types';
-const { AddressZero, HashZero } = ethers.constants;
 
 export const safeData = async (
   multiSendContract: MultiSend,
@@ -26,12 +25,12 @@ export const safeData = async (
   const createSafeCalldata = safeSingletonContract.interface.encodeFunctionData('setup', [
     signers,
     1, // Threshold
-    AddressZero,
-    HashZero,
+    zeroAddress,
+    zeroHash,
     fallbackHandler, // Fallback handler
-    AddressZero,
+    zeroAddress,
     0,
-    AddressZero,
+    zeroAddress,
   ]);
 
   const predictedSafeAddress = getCreate2Address(

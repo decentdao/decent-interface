@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -53,7 +52,7 @@ export default function useExecuteProposal() {
         successMessage: t('successExecute'),
         successCallback: async () => {
           // @todo may need to re-add a loader here
-          updateProposalState(BigNumber.from(proposal.proposalId));
+          updateProposalState(BigInt(proposal.proposalId));
         },
       });
     },

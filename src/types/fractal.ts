@@ -23,7 +23,6 @@ import {
   SafeBalanceUsdResponse,
   SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
-import { BigNumber } from 'ethers';
 import { Dispatch } from 'react';
 import { MultiSend } from '../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
@@ -35,12 +34,12 @@ import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
-import { ProposalTemplate } from './createProposalTemplate';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
+import { ProposalTemplate } from './proposalBuilder';
 import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
-import { BNFormattedPair } from './votingFungibleToken';
+import { BIFormattedPair } from './votingFungibleToken';
 /**
  * The possible states of a DAO proposal, for both Token Voting (Azorius) and Multisignature
  * (Safe) governance, as well as Snapshot specific states.
@@ -178,10 +177,10 @@ export enum SafeTransferType {
 }
 
 export interface ITokenAccount {
-  userBalance: BigNumber | undefined;
+  userBalance?: bigint;
   userBalanceString: string | undefined;
   delegatee: string | undefined;
-  votingWeight: BigNumber | undefined;
+  votingWeight?: bigint;
   votingWeightString: string | undefined;
   isDelegatesSet: boolean | undefined;
 }
@@ -266,11 +265,11 @@ export interface FractalGuardContracts {
 }
 
 export interface FreezeGuard {
-  freezeVotesThreshold: BigNumber | null; // Number of freeze votes required to activate a freeze
-  freezeProposalCreatedTime: BigNumber | null; // Block number the freeze proposal was created at
-  freezeProposalVoteCount: BigNumber | null; // Number of accrued freeze votes
-  freezeProposalPeriod: BigNumber | null; // Number of blocks a freeze proposal has to succeed
-  freezePeriod: BigNumber | null; // Number of blocks a freeze lasts, from time of freeze proposal creation
+  freezeVotesThreshold: bigint | null; // Number of freeze votes required to activate a freeze
+  freezeProposalCreatedTime: bigint | null; // Block number the freeze proposal was created at
+  freezeProposalVoteCount: bigint | null; // Number of accrued freeze votes
+  freezeProposalPeriod: bigint | null; // Number of blocks a freeze proposal has to succeed
+  freezePeriod: bigint | null; // Number of blocks a freeze lasts, from time of freeze proposal creation
   userHasFreezeVoted: boolean;
   isFrozen: boolean;
   userHasVotes: boolean;
@@ -311,7 +310,7 @@ export interface VotingStrategyAzorius extends VotingStrategy {
   strategyType?: VotingStrategyType;
 }
 
-export interface VotingStrategy<Type = BNFormattedPair> {
+export interface VotingStrategy<Type = BIFormattedPair> {
   votingPeriod?: Type;
   quorumPercentage?: Type;
   quorumThreshold?: Type;
@@ -373,7 +372,7 @@ export interface ReadOnlyUser {
   /** The user's wallet address, if connected.  */
   address?: string;
   /** The number of delegated tokens for the connected Azorius DAO, 1 for a Multisig DAO signer */
-  votingWeight: BigNumber;
+  votingWeight: bigint;
 }
 
 export interface ReadOnlyDAO {

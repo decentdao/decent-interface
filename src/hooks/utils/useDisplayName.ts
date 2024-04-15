@@ -17,10 +17,10 @@ export const createAccountSubstring = (account: string) => {
  */
 const useDisplayName = (account?: string | null, truncate?: boolean) => {
   if (truncate === undefined) truncate = true;
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const { data: ensName } = useEnsName({
     address: account as Address,
-    chainId,
+    chainId: chain.id,
   });
 
   const [accountSubstring, setAccountSubstring] = useState<string>();

@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -18,8 +17,8 @@ const useAddSigner = () => {
       close,
     }: {
       newSigner: string;
-      threshold: number | undefined;
-      nonce: number | undefined;
+      threshold: number;
+      nonce: number;
       daoAddress: string | null;
       close: () => void;
     }) => {
@@ -32,13 +31,13 @@ const useAddSigner = () => {
       const calldatas = [
         safeSingletonContract.asSigner.interface.encodeFunctionData('addOwnerWithThreshold', [
           newSigner,
-          BigNumber.from(threshold),
+          BigInt(threshold),
         ]),
       ];
 
       const proposalData: ProposalExecuteData = {
         targets: [daoAddress!],
-        values: [BigNumber.from('0')],
+        values: [0n],
         calldatas: calldatas,
         metaData: {
           title: 'Add Signer',

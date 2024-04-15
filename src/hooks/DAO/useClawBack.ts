@@ -85,7 +85,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                 documentationUrl: '',
               },
               targets: transactions.map(tx => tx.target),
-              values: transactions.map(tx => tx.value),
+              values: transactions.map(tx => BigInt(tx.value)),
               calldatas: transactions.map(tx => tx.calldata),
             },
             nonce: parentSafeInfo.nonce,

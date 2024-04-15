@@ -29,10 +29,10 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
     const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, provider);
     const [tokenAmountTotal, tokenAmountReleased, tokenDelegatee, tokenVotingWeight] =
       await Promise.all([
-        lockReleaseContract.getTotal(account),
-        lockReleaseContract.getReleased(account),
+        (await lockReleaseContract.getTotal(account)).toBigInt(),
+        (await lockReleaseContract.getReleased(account)).toBigInt(),
         lockReleaseContract.delegates(account),
-        lockReleaseContract.getVotes(account),
+        (await lockReleaseContract.getVotes(account)).toBigInt(),
       ]);
 
     let delegateChangeEvents: DelegateChangedEvent[];
@@ -45,7 +45,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
     }
 
     const tokenAccountData = {
-      balance: tokenAmountTotal.sub(tokenAmountReleased),
+      balance: tokenAmountTotal - tokenAmountReleased,
       delegatee: tokenDelegatee,
       votingWeight: tokenVotingWeight,
       isDelegatesSet: delegateChangeEvents.length > 0,

@@ -29,14 +29,14 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const signerOrProvider = useSignerOrProvider();
   const safeAPI = useSafeAPI();
 
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
   const loadSafeMultisigProposals = useSafeMultisigProposals();
   const baseContracts = useSafeContracts();
-  if (user.votingWeight.eq(0)) return <></>;
+  if (user.votingWeight === 0n) return <></>;
 
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
 
@@ -54,7 +54,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       asyncRequest({
         asyncFunc: () =>
           (signerOrProvider as Signer & TypedDataSigner)._signTypedData(
-            { verifyingContract: safe.address, chainId: chainId },
+            { verifyingContract: safe.address, chainId: chain.id },
             EIP712_SAFE_TX_TYPE,
             safeTx,
           ),

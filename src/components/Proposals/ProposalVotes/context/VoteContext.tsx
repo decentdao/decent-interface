@@ -104,14 +104,14 @@ export function VoteContextProvider({
               ozLinearVotingContractAddress,
             );
           newCanVote =
-            (await ozLinearVotingContract.getVotingWeight(user.address, proposal.proposalId))?.gt(
-              0,
-            ) && !hasVoted;
+            (
+              await ozLinearVotingContract.getVotingWeight(user.address, proposal.proposalId)
+            ).toBigInt() > 0n && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
             await getUserERC721VotingTokens();
           }
-          newCanVote = user.votingWeight.gt(0) && remainingTokenIds.length > 0;
+          newCanVote = user.votingWeight > 0 && remainingTokenIds.length > 0;
         } else if (type === GovernanceType.MULTISIG) {
           newCanVote = !!safe?.owners.includes(user.address);
         } else {

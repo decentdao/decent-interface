@@ -1,7 +1,6 @@
 import { Button, Flex, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { VotesERC20Wrapper } from '@fractal-framework/fractal-contracts';
-import { BigNumber } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,9 +13,9 @@ import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
-import { AzoriusGovernance, BigNumberValuePair } from '../../../types';
+import { AzoriusGovernance, BigIntValuePair } from '../../../types';
 import { formatCoin } from '../../../utils';
-import { BigNumberInput } from '../forms/BigNumberInput';
+import { BigIntInput } from '../forms/BigIntInput';
 
 export function UnwrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
@@ -42,7 +41,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
   const { restrictChars } = useFormHelpers();
 
   const handleFormSubmit = useCallback(
-    (amount: BigNumberValuePair) => {
+    (amount: BigIntValuePair) => {
       const { votesTokenContractAddress } = governanceContracts;
       if (!votesTokenContractAddress || !signer || !account) return;
       const votesTokenContract =
@@ -51,7 +50,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
         );
       const wrapperTokenContract = votesTokenContract as VotesERC20Wrapper;
       contractCall({
-        contractFn: () => wrapperTokenContract.withdrawTo(account, amount.bigNumberValue!),
+        contractFn: () => wrapperTokenContract.withdrawTo(account, amount.bigintValue!),
         pendingMessage: t('unwrapTokenPendingMessage'),
         failedMessage: t('unwrapTokenFailedMessage'),
         successMessage: t('unwrapTokenSuccessMessage'),
@@ -78,7 +77,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
   if (
     !azoriusGovernance.votesToken?.balance ||
     !azoriusGovernance.votesToken.decimals ||
-    azoriusGovernance.votesToken.balance?.isZero()
+    azoriusGovernance.votesToken.balance === 0n
   ) {
     return null;
   }
@@ -86,7 +85,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
   return (
     <Formik
       initialValues={{
-        amount: { value: '', bigNumberValue: BigNumber.from(0) },
+        amount: { value: '', bigintValue: 0n },
       }}
       onSubmit={values => {
         const { amount } = values;
@@ -95,17 +94,21 @@ export function UnwrapToken({ close }: { close: () => void }) {
       validationSchema={Yup.object().shape({
         amount: Yup.object({
           value: Yup.string().required(),
-          bigNumberValue: Yup.mixed().required(),
+          bigintValue: Yup.mixed().required(),
         }).test({
           name: 'Unwrap Token Validation',
           message: t('unwrapTokenError'),
           test: amount => {
-            const amountBN = amount.bigNumberValue as BigNumber;
-            if (!amount) return false;
-
-            if (amountBN.isZero()) return false;
-            if (azoriusGovernance.votesToken?.balance!.isZero()) return false;
-            if (amountBN.gt(azoriusGovernance.votesToken?.balance!!)) return false;
+            const amountBi = amount.bigintValue as bigint;
+            if (amountBi === 0n) return false;
+            if (
+              !azoriusGovernance.votesToken ||
+              azoriusGovernance.votesToken.balance === null ||
+              azoriusGovernance.votesToken.balance === undefined ||
+              azoriusGovernance.votesToken.balance === 0n
+            )
+              return false;
+            if (amountBi > azoriusGovernance.votesToken.balance) return false;
             return true;
           },
         }),
@@ -139,8 +142,8 @@ export function UnwrapToken({ close }: { close: () => void }) {
                   ),
                 })}
               >
-                <BigNumberInput
-                  value={values.amount.bigNumberValue}
+                <BigIntInput
+                  value={values.amount.bigintValue}
                   decimalPlaces={azoriusGovernance.votesToken?.decimals}
                   onChange={valuePair => setFieldValue('amount', valuePair)}
                   data-testid="unWrapToken-amount"

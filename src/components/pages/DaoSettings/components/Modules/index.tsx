@@ -1,6 +1,6 @@
 import { Box, Flex, Text, Divider, Center } from '@chakra-ui/react';
-import { ethers } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { zeroAddress } from 'viem';
 import { SettingsSection } from '..';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { FractalModuleType } from '../../../../../types';
@@ -87,7 +87,7 @@ export function ModulesContainer() {
           color="chocolate.400"
           mt={4}
         />
-        {safe?.guard && safe?.guard !== ethers.constants.AddressZero ? (
+        {safe?.guard && safe?.guard !== zeroAddress ? (
           <Box>
             <DisplayAddress address={safe.guard}>
               {safe.guard}

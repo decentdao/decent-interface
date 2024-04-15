@@ -5,8 +5,8 @@ import {
   SafeMultisigTransactionWithTransfersResponse,
   TransferWithTokenInfoResponse,
 } from '@safe-global/safe-service-client';
-import { constants, BigNumber, ethers } from 'ethers';
 import { useCallback } from 'react';
+import { zeroAddress } from 'viem';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
@@ -25,13 +25,13 @@ import useSafeContracts from '../safe/useSafeContracts';
 import { useSafeDecoder } from './useSafeDecoder';
 
 type FreezeGuardData = {
-  guardTimelockPeriodMs: BigNumber;
-  guardExecutionPeriodMs: BigNumber;
-  lastBlock: ethers.providers.Block;
+  guardTimelockPeriodMs: bigint;
+  guardExecutionPeriodMs: bigint;
+  lastBlockTimestamp: number;
 };
 
 export const useSafeTransactions = () => {
-  const { nativeTokenSymbol } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const provider = useEthersProvider();
   const { guardContracts } = useFractal();
   const baseContracts = useSafeContracts();
@@ -85,12 +85,12 @@ export const useSafeTransactions = () => {
                 // the proposal has been timelocked
 
                 const timeLockPeriodEndMs =
-                  timelockedTimestampMs + freezeGuardData.guardTimelockPeriodMs.toNumber();
-                const nowMs = freezeGuardData.lastBlock.timestamp * 1000;
+                  timelockedTimestampMs + Number(freezeGuardData.guardTimelockPeriodMs);
+                const nowMs = freezeGuardData.lastBlockTimestamp * 1000;
                 if (nowMs > timeLockPeriodEndMs) {
                   // Timelock has ended, check execution period
                   const executionPeriodEndMs =
-                    timeLockPeriodEndMs + freezeGuardData.guardExecutionPeriodMs.toNumber();
+                    timeLockPeriodEndMs + Number(freezeGuardData.guardExecutionPeriodMs);
                   if (nowMs < executionPeriodEndMs) {
                     // Within execution period
                     state = FractalProposalState.EXECUTABLE;
@@ -144,23 +144,23 @@ export const useSafeTransactions = () => {
       return transfers.reduce(
         (prev: Map<string, AssetTotals>, cur: TransferWithTokenInfoResponse) => {
           if (cur.type === SafeTransferType.ETHER && cur.value) {
-            const prevValue = prev.get(constants.AddressZero)!;
+            const prevValue = prev.get(zeroAddress)!;
             if (prevValue) {
-              prev.set(constants.AddressZero, {
-                bn: prevValue.bn.add(BigNumber.from(cur.value)),
-                symbol: nativeTokenSymbol,
+              prev.set(zeroAddress, {
+                bi: prevValue.bi + BigInt(cur.value),
+                symbol: chain.nativeCurrency.symbol,
                 decimals: 18,
               });
             }
-            prev.set(constants.AddressZero, {
-              bn: BigNumber.from(cur.value),
-              symbol: nativeTokenSymbol,
+            prev.set(zeroAddress, {
+              bi: BigInt(cur.value),
+              symbol: chain.nativeCurrency.symbol,
               decimals: 18,
             });
           }
           if (cur.type === SafeTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
             prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
-              bn: BigNumber.from(1),
+              bi: 1n,
               symbol: cur.tokenInfo.symbol,
               decimals: 0,
             });
@@ -170,11 +170,11 @@ export const useSafeTransactions = () => {
             if (prevValue) {
               prev.set(cur.tokenInfo.address, {
                 ...prevValue,
-                bn: prevValue.bn.add(BigNumber.from(cur.value)),
+                bi: prevValue.bi + BigInt(cur.value),
               });
             } else {
               prev.set(cur.tokenAddress!, {
-                bn: BigNumber.from(cur.value),
+                bi: BigInt(cur.value),
                 symbol: cur.tokenInfo.symbol,
                 decimals: cur.tokenInfo.decimals,
               });
@@ -186,7 +186,7 @@ export const useSafeTransactions = () => {
         new Map(),
       );
     },
-    [nativeTokenSymbol],
+    [chain],
   );
 
   const parseTransactions = useCallback(
@@ -219,7 +219,7 @@ export const useSafeTransactions = () => {
           // formats totals array into readable string with Symbol ie 1 [NativeSymbol]
           const transferAmountTotals: string[] = Array.from(transferAmountTotalsMap.values()).map(
             token => {
-              const totalAmount = formatWeiToValue(token.bn, token.decimals);
+              const totalAmount = formatWeiToValue(token.bi, token.decimals);
               const symbol = token.symbol;
               return `${totalAmount} ${symbol}`;
             },
@@ -235,11 +235,11 @@ export const useSafeTransactions = () => {
             isMultiSigTransaction &&
             !multiSigTransaction.data &&
             !multiSigTransaction.isExecuted &&
-            !BigNumber.from(multiSigTransaction.value).isZero();
+            BigInt(multiSigTransaction.value) !== 0n;
 
           if (isEthSend) {
             transferAmountTotals.push(
-              `${formatWeiToValue(multiSigTransaction.value, 18)} ${nativeTokenSymbol}`,
+              `${formatWeiToValue(multiSigTransaction.value, 18)} ${chain.nativeCurrency.symbol}`,
             );
             transferAddresses.push(multiSigTransaction.to);
           }
@@ -268,7 +268,7 @@ export const useSafeTransactions = () => {
             !multiSigTransaction.data &&
             multiSigTransaction.to === multiSigTransaction.safe &&
             noncePair &&
-            BigNumber.from(multiSigTransaction.value).isZero();
+            BigInt(multiSigTransaction.value) === 0n;
 
           const confirmations = multiSigTransaction.confirmations
             ? multiSigTransaction.confirmations
@@ -322,32 +322,24 @@ export const useSafeTransactions = () => {
 
       if (guardContracts.freezeGuardContractAddress && baseContracts) {
         const blockNumber = await provider.getBlockNumber();
-        const averageBlockTime = BigNumber.from(Math.round(await getAverageBlockTime(provider)));
+        const averageBlockTime = BigInt(Math.round(await getAverageBlockTime(provider)));
         freezeGuard = baseContracts.multisigFreezeGuardMasterCopyContract.asProvider.attach(
           guardContracts.freezeGuardContractAddress,
         );
 
-        const timelockPeriod = BigNumber.from(await freezeGuard.timelockPeriod());
-        const executionPeriod = BigNumber.from(await freezeGuard.executionPeriod());
+        const timelockPeriod = BigInt(await freezeGuard.timelockPeriod());
+        const executionPeriod = BigInt(await freezeGuard.executionPeriod());
         freezeGuardData = {
-          guardTimelockPeriodMs: timelockPeriod.mul(averageBlockTime).mul(1000),
-          guardExecutionPeriodMs: executionPeriod.mul(averageBlockTime).mul(1000),
-          lastBlock: await provider.getBlock(blockNumber),
+          guardTimelockPeriodMs: timelockPeriod * averageBlockTime * 1000n,
+          guardExecutionPeriodMs: executionPeriod * averageBlockTime * 1000n,
+          lastBlockTimestamp: (await provider.getBlock(blockNumber)).timestamp,
         };
       }
 
       const activitiesWithState = await getState(activities, freezeGuard, freezeGuardData);
       return activitiesWithState;
     },
-    [
-      guardContracts,
-      getState,
-      getTransferTotal,
-      decode,
-      nativeTokenSymbol,
-      provider,
-      baseContracts,
-    ],
+    [guardContracts, getState, getTransferTotal, decode, chain, provider, baseContracts],
   );
   return { parseTransactions };
 };

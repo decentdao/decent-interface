@@ -99,8 +99,8 @@ export default function HomePage() {
     }
   }, [daoAddress, action]);
 
-  const { chainId } = useNetworkConfig();
-  const features = FEATURED_DAOS.get(chainId);
+  const { chain } = useNetworkConfig();
+  const features = FEATURED_DAOS.get(chain.id);
 
   return (
     <Center>

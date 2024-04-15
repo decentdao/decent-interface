@@ -25,7 +25,7 @@ export function useFormatTransfers(
   safeAddress: string,
 ): TransferDisplayData[] {
   let displayData: TransferDisplayData[] = new Array(transfers.length);
-  const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfig();
+  const { chain, nativeTokenIcon } = useNetworkConfig();
 
   for (let i = 0; i < transfers.length; i++) {
     const transfer = transfers[i];
@@ -45,7 +45,7 @@ export function useFormatTransfers(
     }
     let symbol =
       transfer.type === TransferType.ETHER_TRANSFER
-        ? nativeTokenSymbol
+        ? chain.nativeCurrency.symbol
         : transfer?.tokenInfo?.symbol;
     const formatted: TransferDisplayData = {
       eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,

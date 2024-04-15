@@ -7,13 +7,12 @@ import {
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
-import { BigNumber } from 'ethers';
 import { Dispatch, useEffect, useMemo } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import {
-  ProposalMetadata,
+  CreateProposalMetadata,
   VotingStrategyType,
   DecodedTransaction,
   FractalActions,
@@ -49,22 +48,24 @@ const proposalCreatedEventListener = (
       return;
     }
 
-    const metaDataEvent: ProposalMetadata = JSON.parse(metadata);
+    const typedTransactions = transactions.map(t => ({ ...t, value: t.value.toBigInt() }));
+
+    const metaDataEvent: CreateProposalMetadata = JSON.parse(metadata);
     const proposalData = {
       metaData: {
         title: metaDataEvent.title,
         description: metaDataEvent.description,
         documentationUrl: metaDataEvent.documentationUrl,
       },
-      transactions: transactions,
-      decodedTransactions: await decodeTransactions(decode, transactions),
+      transactions: typedTransactions,
+      decodedTransactions: await decodeTransactions(decode, typedTransactions),
     };
 
     const proposal = await mapProposalCreatedEventToProposal(
       erc20StrategyContract,
       erc721StrategyContract,
       strategyType,
-      proposalId,
+      proposalId.toBigInt(),
       proposer,
       azoriusContract,
       provider,
@@ -91,7 +92,7 @@ const erc20VotedEventListener = (
       erc20StrategyContract,
       undefined,
       strategyType,
-      BigNumber.from(proposalId),
+      BigInt(proposalId),
     );
 
     dispatch({
@@ -100,7 +101,7 @@ const erc20VotedEventListener = (
         proposalId: proposalId.toString(),
         voter,
         support: voteType,
-        weight,
+        weight: weight.toBigInt(),
         votesSummary,
       },
     });
@@ -117,7 +118,7 @@ const erc721VotedEventListener = (
       undefined,
       erc721StrategyContract,
       strategyType,
-      BigNumber.from(proposalId),
+      BigInt(proposalId),
     );
 
     dispatch({
@@ -260,7 +261,7 @@ export const useAzoriusListeners = () => {
     const timelockPeriodListener: TypedListener<TimelockPeriodUpdatedEvent> = timelockPeriod => {
       action.dispatch({
         type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD,
-        payload: BigNumber.from(timelockPeriod),
+        payload: BigInt(timelockPeriod),
       });
     };
 

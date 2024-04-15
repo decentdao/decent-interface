@@ -1,6 +1,6 @@
 import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
-import { constants } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
+import { zeroAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -23,7 +23,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   } = useFractal();
   const baseContracts = useSafeContracts();
 
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
 
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
@@ -51,7 +51,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       if (!!azoriusModule && azoriusModule.moduleContract) {
         const azoriusGuardAddress = await azoriusModule.moduleContract.getGuard();
 
-        if (azoriusGuardAddress === constants.AddressZero) {
+        if (azoriusGuardAddress === zeroAddress) {
           return {
             freezeGuardContractAddress: '',
             freezeVotingContractAddress: '',
@@ -66,7 +66,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         };
         freezeGuardType = FreezeGuardType.AZORIUS;
       } else {
-        const hasNoGuard = _safe.guard === constants.AddressZero;
+        const hasNoGuard = _safe.guard === zeroAddress;
         const masterCopyData = await getZodiacModuleProxyMasterCopyData(guard!);
         if (masterCopyData.isMultisigFreezeGuard && !hasNoGuard) {
           freezeGuardContract = {
@@ -117,17 +117,17 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     if (
       loadOnMount &&
       daoAddress &&
-      daoAddress + chainId !== loadKey.current &&
+      daoAddress + chain.id !== loadKey.current &&
       isHierarchyLoaded &&
       safe
     ) {
-      loadKey.current = daoAddress + chainId;
+      loadKey.current = daoAddress + chain.id;
       setGuardContracts();
     }
 
     if (!daoAddress) {
       loadKey.current = undefined;
     }
-  }, [setGuardContracts, isHierarchyLoaded, loadOnMount, chainId, daoAddress, safe]);
+  }, [setGuardContracts, isHierarchyLoaded, loadOnMount, chain, daoAddress, safe]);
   return loadFractalGuardContracts;
 };
