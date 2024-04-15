@@ -1,43 +1,50 @@
-import { ERC721__factory } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
-import { zeroAddress } from 'viem';
+import { Address, erc721Abi, getContract, zeroAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { ERC721TokenData } from '../../../../types';
 import useSafeContracts from '../../../safe/useSafeContracts';
-import useSignerOrProvider from '../../../utils/useSignerOrProvider';
+import useContractClient from '../../../utils/useContractClient';
 
 export default function useERC721Tokens() {
-  const signerOrProvider = useSignerOrProvider();
+  const { walletOrPublicClient } = useContractClient();
   const {
     governanceContracts: { erc721LinearVotingContractAddress },
     action,
   } = useFractal();
   const baseContracts = useSafeContracts();
   const loadERC721Tokens = useCallback(async () => {
-    if (!erc721LinearVotingContractAddress || !signerOrProvider || !baseContracts) {
+    if (
+      !erc721LinearVotingContractAddress ||
+      !walletOrPublicClient ||
+      !baseContracts ||
+      !baseContracts.linearVotingERC721MasterCopyContract
+    ) {
       return;
     }
-    const erc721LinearVotingContract =
-      baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-        erc721LinearVotingContractAddress,
-      );
-    const addresses = await erc721LinearVotingContract.getAllTokenAddresses();
+    const erc721LinearVotingContract = getContract({
+      address: erc721LinearVotingContractAddress,
+      abi: baseContracts.linearVotingERC721MasterCopyContract.asPublic.abi,
+      client: walletOrPublicClient,
+    });
+    const addresses = (await erc721LinearVotingContract.read.getAllTokenAddresses([])) as Address[];
     const erc721Tokens: ERC721TokenData[] = await Promise.all(
       addresses.map(async address => {
-        const tokenContract = ERC721__factory.connect(address, signerOrProvider);
-        const votingWeight = (await erc721LinearVotingContract.getTokenWeight(address)).toBigInt();
-        const name = await tokenContract.name();
-        const symbol = await tokenContract.symbol();
+        const tokenContract = getContract({
+          abi: erc721Abi,
+          address,
+          client: walletOrPublicClient,
+        });
+        const votingWeight = (await erc721LinearVotingContract.read.getTokenWeight([
+          address,
+        ])) as bigint;
+        const name = await tokenContract.read.name();
+        const symbol = await tokenContract.read.symbol();
         let totalSupply = undefined;
         try {
-          const tokenMintEvents = await tokenContract.queryFilter(
-            tokenContract.filters.Transfer(zeroAddress, null),
-          );
-          const tokenBurnEvents = await tokenContract.queryFilter(
-            tokenContract.filters.Transfer(null, zeroAddress),
-          );
+          const tokenMintEvents = await tokenContract.getEvents.Transfer({ from: zeroAddress });
+          const tokenBurnEvents = await tokenContract.getEvents.Transfer({ to: zeroAddress });
           totalSupply = BigInt(tokenMintEvents.length - tokenBurnEvents.length);
         } catch (e) {
           logError('Error while getting ERC721 total supply');
@@ -50,7 +57,7 @@ export default function useERC721Tokens() {
       type: FractalGovernanceAction.SET_ERC721_TOKENS_DATA,
       payload: erc721Tokens,
     });
-  }, [erc721LinearVotingContractAddress, signerOrProvider, action, baseContracts]);
+  }, [erc721LinearVotingContractAddress, walletOrPublicClient, action, baseContracts]);
 
   return loadERC721Tokens;
 }

@@ -1,6 +1,11 @@
-import { ethers } from 'ethers';
-import { zeroAddress } from 'viem';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
+import {
+  Address,
+  PublicClient,
+  WalletClient,
+  zeroAddress,
+  encodeFunctionData,
+  getContract,
+} from 'viem';
 import { buildContractCall, encodeMultiSend } from '../helpers';
 import {
   BaseContracts,
@@ -10,6 +15,8 @@ import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
   VotingStrategyType,
+  SafeL2,
+  Azorius,
 } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
@@ -21,11 +28,11 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private txBuilderFactory: TxBuilderFactory;
 
   // Safe Data
-  private predictedSafeAddress: string;
+  private predictedSafeAddress: Address;
   private readonly createSafeTx: SafeTransaction;
-  private readonly safeContract: GnosisSafeL2;
+  private readonly safeContract: SafeL2;
   private readonly parentStrategyType?: VotingStrategyType;
-  private readonly parentStrategyAddress?: string;
+  private readonly parentStrategyAddress?: Address;
 
   // Fractal Module Txs
   private enableFractalModuleTx: SafeTransaction | undefined;
@@ -34,22 +41,22 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private internalTxs: SafeTransaction[] = [];
 
   constructor(
-    signerOrProvider: ethers.Signer | any,
+    walletOrPublicClient: WalletClient | PublicClient,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
-    saltNum: string,
-    predictedSafeAddress: string,
+    saltNum: bigint,
+    predictedSafeAddress: Address,
     createSafeTx: SafeTransaction,
-    safeContract: GnosisSafeL2,
+    safeContract: SafeL2,
     txBuilderFactory: TxBuilderFactory,
-    parentAddress?: string,
-    parentTokenAddress?: string,
+    parentAddress?: Address,
+    parentTokenAddress?: Address,
     parentStrategyType?: VotingStrategyType,
-    parentStrategyAddress?: string,
+    parentStrategyAddress?: Address,
   ) {
     super(
-      signerOrProvider,
+      walletOrPublicClient,
       baseContracts,
       azoriusContracts,
       daoData,
@@ -95,9 +102,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     if (this.parentAddress) {
       const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
-        azoriusTxBuilder.azoriusContract!.address,
-        azoriusTxBuilder.linearVotingContract?.address ??
-          azoriusTxBuilder.linearERC721VotingContract?.address,
+        azoriusTxBuilder.predictedAzoriusAddress,
+        azoriusTxBuilder.predictedStrategyAddress,
         this.parentStrategyType,
         this.parentStrategyAddress,
       );
@@ -108,7 +114,13 @@ export class DaoTxBuilder extends BaseTxBuilder {
         freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
         freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
         freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
-        freezeGuardTxBuilder.buildSetGuardTx(azoriusTxBuilder.azoriusContract!),
+        freezeGuardTxBuilder.buildSetGuardTx(
+          getContract({
+            address: azoriusTxBuilder.predictedAzoriusAddress!,
+            client: this.walletOrPublicClient,
+            abi: this.azoriusContracts?.fractalAzoriusMasterCopyContract.abi!,
+          }) as unknown as Azorius,
+        ),
       ]);
     }
     const data = this.daoData as AzoriusERC20DAO;
@@ -205,7 +217,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.baseContracts.fractalModuleMasterCopyContract,
       this.baseContracts.zodiacModuleProxyFactoryContract,
       this.safeContract!,
-      this.saltNum,
+      this.saltNum.toString(),
       this.parentAddress,
     );
 
@@ -245,9 +257,11 @@ export class DaoTxBuilder extends BaseTxBuilder {
       [
         this.baseContracts.multiSendContract.address, // to
         '0', // value
-        this.baseContracts.multiSendContract.interface.encodeFunctionData('multiSend', [
-          safeInternalTx,
-        ]), // calldata
+        encodeFunctionData({
+          abi: this.baseContracts.multiSendContract.abi,
+          functionName: 'multiSend',
+          args: [safeInternalTx],
+        }), // calldata
         '1', // operation
         '0', // tx gas
         '0', // base gas

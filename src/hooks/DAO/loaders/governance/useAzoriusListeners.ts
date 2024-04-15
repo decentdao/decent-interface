@@ -1,23 +1,13 @@
-import { LinearERC20Voting, LinearERC721Voting } from '@fractal-framework/fractal-contracts';
-import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
-import { TimelockPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/MultisigFreezeGuard';
-import {
-  Azorius,
-  ProposalCreatedEvent,
-} from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
-import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
-import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { Dispatch, useEffect, useMemo } from 'react';
+import { getContract } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import {
   CreateProposalMetadata,
   VotingStrategyType,
   DecodedTransaction,
   FractalActions,
 } from '../../../../types';
-import { Providers } from '../../../../types/network';
 import {
   getProposalVotesSummary,
   mapProposalCreatedEventToProposal,
@@ -25,6 +15,7 @@ import {
 } from '../../../../utils';
 import { getAverageBlockTime } from '../../../../utils/contract';
 import useSafeContracts from '../../../safe/useSafeContracts';
+import useContractClient from '../../../utils/useContractClient';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
 const proposalCreatedEventListener = (
@@ -144,18 +135,22 @@ export const useAzoriusListeners = () => {
       erc721LinearVotingContractAddress,
     },
   } = useFractal();
+  const { publicClient } = useContractClient();
 
   const baseContracts = useSafeContracts();
-  const provider = useEthersProvider();
   const decode = useSafeDecoder();
 
   const azoriusContract = useMemo(() => {
-    if (!baseContracts || !azoriusContractAddress) {
+    if (!baseContracts || !azoriusContractAddress || !publicClient) {
       return;
     }
 
-    return baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
-  }, [azoriusContractAddress, baseContracts]);
+    return getContract({
+      address: azoriusContractAddress,
+      abi: baseContracts.fractalAzoriusMasterCopyContract.asPublic.abi,
+      client: publicClient,
+    });
+  }, [azoriusContractAddress, baseContracts, publicClient]);
 
   const strategyType = useMemo(() => {
     if (ozLinearVotingContractAddress) {
@@ -168,24 +163,33 @@ export const useAzoriusListeners = () => {
   }, [ozLinearVotingContractAddress, erc721LinearVotingContractAddress]);
 
   const erc20StrategyContract = useMemo(() => {
-    if (!baseContracts || !ozLinearVotingContractAddress) {
+    if (!baseContracts || !ozLinearVotingContractAddress || !publicClient) {
       return undefined;
     }
 
-    return baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-      ozLinearVotingContractAddress,
-    );
-  }, [baseContracts, ozLinearVotingContractAddress]);
+    return getContract({
+      abi: baseContracts.linearVotingMasterCopyContract.asPublic.abi,
+      address: ozLinearVotingContractAddress,
+      client: publicClient,
+    });
+  }, [baseContracts, ozLinearVotingContractAddress, publicClient]);
 
   const erc721StrategyContract = useMemo(() => {
-    if (!baseContracts || !erc721LinearVotingContractAddress) {
+    if (
+      !baseContracts ||
+      !erc721LinearVotingContractAddress ||
+      !baseContracts.linearVotingERC721MasterCopyContract ||
+      !publicClient
+    ) {
       return undefined;
     }
 
-    return baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-      erc721LinearVotingContractAddress,
-    );
-  }, [baseContracts, erc721LinearVotingContractAddress]);
+    return getContract({
+      abi: baseContracts.linearVotingERC721MasterCopyContract.asPublic.abi,
+      address: erc721LinearVotingContractAddress,
+      client: publicClient,
+    });
+  }, [baseContracts, erc721LinearVotingContractAddress, publicClient]);
 
   useEffect(() => {
     if (!azoriusContract || !provider || !strategyType) {
@@ -214,7 +218,7 @@ export const useAzoriusListeners = () => {
     decode,
     erc20StrategyContract,
     erc721StrategyContract,
-    provider,
+    publicClient,
     strategyType,
   ]);
 

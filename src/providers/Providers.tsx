@@ -9,7 +9,6 @@ import { ErrorFallback } from '../components/ui/utils/ErrorFallback';
 import graphQLClient from '../graphql';
 import { FractalErrorBoundary } from '../helpers/errorLogging';
 import { AppProvider } from './App/AppProvider';
-import EthersContextProvider from './Ethers';
 import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
 import { wagmiConfig, queryClient } from './NetworkConfig/web3-modal.config';
 
@@ -24,17 +23,15 @@ export default function Providers({ children }: { children: ReactNode }) {
           <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>
               <NetworkConfigProvider>
-                <EthersContextProvider>
-                  <AppProvider>
-                    <ToastContainer
-                      position="bottom-center"
-                      closeButton={false}
-                      newestOnTop={false}
-                      pauseOnFocusLoss={false}
-                    />
-                    {children}
-                  </AppProvider>
-                </EthersContextProvider>
+                <AppProvider>
+                  <ToastContainer
+                    position="bottom-center"
+                    closeButton={false}
+                    newestOnTop={false}
+                    pauseOnFocusLoss={false}
+                  />
+                  {children}
+                </AppProvider>
               </NetworkConfigProvider>
             </QueryClientProvider>
           </WagmiProvider>

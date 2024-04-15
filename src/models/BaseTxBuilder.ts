@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { Address, PublicClient, WalletClient } from 'viem';
 import {
   BaseContracts,
   AzoriusContracts,
@@ -9,22 +9,22 @@ import {
 } from '../types';
 
 export class BaseTxBuilder {
-  protected readonly signerOrProvider: ethers.Signer | any;
+  protected readonly walletOrPublicClient: WalletClient | PublicClient;
   protected readonly baseContracts: BaseContracts;
   protected readonly azoriusContracts: AzoriusContracts | undefined;
   protected readonly daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO;
-  protected readonly parentAddress?: string;
-  protected readonly parentTokenAddress?: string;
+  protected readonly parentAddress?: Address;
+  protected readonly parentTokenAddress?: Address;
 
   constructor(
-    signerOrProvider: ethers.Signer | any,
+    walletOrPublicClient: WalletClient | PublicClient,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
-    parentAddress?: string,
-    parentTokenAddress?: string,
+    parentAddress?: Address,
+    parentTokenAddress?: Address,
   ) {
-    this.signerOrProvider = signerOrProvider;
+    this.walletOrPublicClient = walletOrPublicClient;
     this.baseContracts = baseContracts;
     this.daoData = daoData;
     this.azoriusContracts = azoriusContracts;

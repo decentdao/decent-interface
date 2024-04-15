@@ -24,13 +24,13 @@ export const initialState: CreatorFormState = {
     tokenSymbol: '',
     tokenAllocations: [
       {
-        address: '',
+        address: undefined,
         amount: {
           value: '',
         },
       },
     ],
-    tokenImportAddress: '',
+    tokenImportAddress: undefined,
     parentAllocationAmount: {
       value: '',
     },
@@ -38,7 +38,7 @@ export const initialState: CreatorFormState = {
   erc721Token: {
     nfts: [
       {
-        tokenAddress: '',
+        tokenAddress: undefined,
         tokenWeight: {
           value: '',
         },

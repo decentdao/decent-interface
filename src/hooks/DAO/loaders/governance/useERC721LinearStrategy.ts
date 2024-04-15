@@ -1,12 +1,8 @@
-import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
-import {
-  VotingPeriodUpdatedEvent,
-  QuorumThresholdUpdatedEvent,
-} from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
+import { getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import useSafeContracts from '../../../safe/useSafeContracts';
@@ -17,41 +13,45 @@ export const useERC721LinearStrategy = () => {
     governanceContracts: { erc721LinearVotingContractAddress, azoriusContractAddress },
     action,
   } = useFractal();
-  const provider = useEthersProvider();
   const { getTimeDuration } = useTimeHelpers();
   const baseContracts = useSafeContracts();
+  const publicClient = usePublicClient();
   const loadERC721Strategy = useCallback(async () => {
     if (
       !erc721LinearVotingContractAddress ||
       !azoriusContractAddress ||
-      !provider ||
+      !publicClient ||
       !baseContracts
     ) {
       return {};
     }
-    const erc721LinearVotingContract =
-      baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-        erc721LinearVotingContractAddress,
-      );
-    const azoriusContract =
-      baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
+    const erc721LinearVotingContract = getContract({
+      client: publicClient,
+      address: erc721LinearVotingContractAddress,
+      abi: baseContracts.linearVotingERC721MasterCopyContract?.asPublic.abi!,
+    });
+    const azoriusContract = getContract({
+      address: azoriusContractAddress,
+      abi: baseContracts.fractalAzoriusMasterCopyContract.asPublic.abi,
+      client: publicClient,
+    });
 
     const [votingPeriodBlocks, quorumThreshold, timeLockPeriod] = await Promise.all([
-      erc721LinearVotingContract.votingPeriod(),
-      erc721LinearVotingContract.quorumThreshold(),
-      azoriusContract.timelockPeriod(),
+      erc721LinearVotingContract.read.votingPeriod([]),
+      erc721LinearVotingContract.read.quorumThreshold([]),
+      azoriusContract.read.timelockPeriod([]),
     ]);
 
-    const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, provider);
-    const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, provider);
+    const votingPeriodValue = await blocksToSeconds(Number(votingPeriodBlocks), publicClient);
+    const timeLockPeriodValue = await blocksToSeconds(Number(timeLockPeriod), publicClient);
     const votingData = {
       votingPeriod: {
         value: BigInt(votingPeriodValue),
         formatted: getTimeDuration(votingPeriodValue),
       },
       quorumThreshold: {
-        value: quorumThreshold.toBigInt(),
-        formatted: quorumThreshold.toString(),
+        value: BigInt(quorumThreshold as bigint),
+        formatted: BigInt(quorumThreshold as bigint).toString(),
       },
       timeLockPeriod: {
         value: BigInt(timeLockPeriodValue),
@@ -65,54 +65,9 @@ export const useERC721LinearStrategy = () => {
     azoriusContractAddress,
     getTimeDuration,
     action,
-    provider,
+    publicClient,
     baseContracts,
   ]);
-
-  useEffect(() => {
-    if (!erc721LinearVotingContractAddress || !baseContracts) {
-      return;
-    }
-    const erc721LinearVotingContract =
-      baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-        erc721LinearVotingContractAddress,
-      );
-    const votingPeriodfilter = erc721LinearVotingContract.filters.VotingPeriodUpdated();
-    const listener: TypedListener<VotingPeriodUpdatedEvent> = votingPeriod => {
-      action.dispatch({
-        type: FractalGovernanceAction.UPDATE_VOTING_PERIOD,
-        payload: BigInt(votingPeriod),
-      });
-    };
-    erc721LinearVotingContract.on(votingPeriodfilter, listener);
-    return () => {
-      erc721LinearVotingContract.off(votingPeriodfilter, listener);
-    };
-  }, [erc721LinearVotingContractAddress, action, baseContracts]);
-
-  useEffect(() => {
-    if (!erc721LinearVotingContractAddress || !baseContracts) {
-      return;
-    }
-    const erc721LinearVotingContract =
-      baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-        erc721LinearVotingContractAddress,
-      );
-    const quorumThresholdUpdatedFilter =
-      erc721LinearVotingContract.filters.QuorumThresholdUpdated();
-    const quorumThresholdUpdatedListener: TypedListener<
-      QuorumThresholdUpdatedEvent
-    > = quorumThreshold => {
-      action.dispatch({
-        type: FractalGovernanceAction.UPDATE_VOTING_QUORUM_THRESHOLD,
-        payload: quorumThreshold.toBigInt(),
-      });
-    };
-    erc721LinearVotingContract.on(quorumThresholdUpdatedFilter, quorumThresholdUpdatedListener);
-    return () => {
-      erc721LinearVotingContract.off(quorumThresholdUpdatedFilter, quorumThresholdUpdatedListener);
-    };
-  }, [erc721LinearVotingContractAddress, action, baseContracts]);
 
   return loadERC721Strategy;
 };

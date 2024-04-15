@@ -1,12 +1,7 @@
-import {
-  FractalModule,
-  FractalModule__factory,
-  ModuleProxyFactory,
-} from '@fractal-framework/fractal-contracts';
-import { ethers } from 'ethers';
-import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
+import { Address, encodeAbiParameters, encodeFunctionData, parseAbiParameters } from 'viem';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
+import { NetworkContract } from '../../types/network';
 import {
   buildDeployZodiacModuleTx,
   generateContractByteCodeLinear,
@@ -21,32 +16,30 @@ export interface FractalModuleData {
 }
 
 export const fractalModuleData = (
-  fractalModuleMasterCopyContract: FractalModule,
-  zodiacModuleProxyFactoryContract: ModuleProxyFactory,
-  safeContract: GnosisSafeL2,
+  fractalModuleMasterCopyContract: NetworkContract,
+  zodiacModuleProxyFactoryContract: NetworkContract,
+  safeContract: NetworkContract,
   saltNum: string,
-  parentAddress?: string,
+  parentAddress?: Address,
 ): FractalModuleData => {
-  const fractalModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData(
-    'setUp',
-    [
-      ethers.utils.defaultAbiCoder.encode(
-        ['address', 'address', 'address', 'address[]'],
-        [
-          parentAddress ?? safeContract.address, // Owner -- Parent DAO or safe contract
-          safeContract.address, // Avatar
-          safeContract.address, // Target
-          [], // Authorized Controllers
-        ],
-      ),
+  const fractalModuleCalldata = encodeFunctionData({
+    functionName: 'setUp',
+    args: [
+      encodeAbiParameters(parseAbiParameters(['address, address, address, address[]']), [
+        parentAddress ?? safeContract.address, // Owner -- Parent DAO or safe contract
+        safeContract.address, // Avatar
+        safeContract.address, // Target
+        [], // Authorized Controllers
+      ]),
     ],
-  );
+    abi: fractalModuleMasterCopyContract.abi,
+  });
 
   const fractalByteCodeLinear = generateContractByteCodeLinear(
-    fractalModuleMasterCopyContract.address.slice(2),
+    fractalModuleMasterCopyContract.address.slice(2) as Address,
   );
 
-  const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
+  const fractalSalt = generateSalt(fractalModuleCalldata, BigInt(saltNum));
   const deployFractalModuleTx = buildDeployZodiacModuleTx(zodiacModuleProxyFactoryContract, [
     fractalModuleMasterCopyContract.address,
     fractalModuleCalldata,

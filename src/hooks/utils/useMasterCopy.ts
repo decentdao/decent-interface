@@ -1,8 +1,5 @@
-import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
-import { Contract } from 'ethers';
 import { useCallback } from 'react';
-import { zeroAddress } from 'viem';
-import { getEventRPC } from '../../helpers';
+import { Address, zeroAddress } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
 import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
 import { useLocalStorage } from './cache/useLocalStorage';
@@ -12,76 +9,67 @@ export function useMasterCopy() {
   const { baseContracts } = useFractal();
 
   const isOzLinearVoting = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === baseContracts?.linearVotingMasterCopyContract.asProvider.address,
+    (masterCopyAddress?: Address) =>
+      masterCopyAddress === baseContracts?.linearVotingMasterCopyContract.asPublic.address,
     [baseContracts],
   );
   const isOzLinearVotingERC721 = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === baseContracts?.linearVotingERC721MasterCopyContract.asProvider.address,
+    (masterCopyAddress?: Address) =>
+      masterCopyAddress === baseContracts?.linearVotingERC721MasterCopyContract.asPublic.address,
     [baseContracts],
   );
   const isMultisigFreezeGuard = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === baseContracts?.multisigFreezeGuardMasterCopyContract.asProvider.address,
+    (masterCopyAddress?: Address) =>
+      masterCopyAddress === baseContracts?.multisigFreezeGuardMasterCopyContract.asPublic.address,
     [baseContracts],
   );
   const isMultisigFreezeVoting = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress ===
-      baseContracts?.freezeMultisigVotingMasterCopyContract.asProvider.address,
+    (masterCopyAddress?: Address) =>
+      masterCopyAddress === baseContracts?.freezeMultisigVotingMasterCopyContract.asPublic.address,
     [baseContracts],
   );
   const isERC721FreezeVoting = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === baseContracts?.freezeERC721VotingMasterCopyContract.asProvider.address,
+    (masterCopyAddress?: Address) =>
+      masterCopyAddress === baseContracts?.freezeERC721VotingMasterCopyContract.asPublic.address,
     [baseContracts],
   );
   const isAzorius = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === baseContracts?.fractalAzoriusMasterCopyContract.asProvider.address,
+    (masterCopyAddress?: Address) =>
+      masterCopyAddress === baseContracts?.fractalAzoriusMasterCopyContract.asPublic.address,
     [baseContracts],
   );
   const isFractalModule = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
-      masterCopyAddress === baseContracts?.fractalModuleMasterCopyContract.asProvider.address,
+    (masterCopyAddress?: Address) =>
+      masterCopyAddress === baseContracts?.fractalModuleMasterCopyContract.asPublic.address,
     [baseContracts],
   );
 
-  const getMasterCopyAddress = useCallback(
-    async function (
-      contract: Contract,
-      proxyAddress: string | `0x${string}`,
-    ): Promise<[string, string | null]> {
-      const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
-      if (cachedValue) return [cachedValue, null] as const;
-
-      const filter = contract.filters.ModuleProxyCreation(proxyAddress, null);
-      return contract.queryFilter(filter).then(proxiesCreated => {
-        // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
-        if (proxiesCreated.length === 0) {
-          setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, zeroAddress, CacheExpiry.ONE_WEEK);
-          return [zeroAddress, 'No proxies created'] as const;
-        }
-        const masterCopyAddress = proxiesCreated[0].args!.masterCopy;
-        setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, masterCopyAddress);
-        return [masterCopyAddress, null] as const;
-      });
-    },
-    [getValue, setValue],
-  );
-
   const getZodiacModuleProxyMasterCopyData = useCallback(
-    async function (proxyAddress: string | `0x${string}`) {
-      let masterCopyAddress = '';
-      let error;
+    async function (proxyAddress: Address) {
+      let masterCopyAddress: Address | undefined;
       if (baseContracts) {
-        const contract = getEventRPC<ModuleProxyFactory>(
-          baseContracts?.zodiacModuleProxyFactoryContract,
-        );
-        [masterCopyAddress, error] = await getMasterCopyAddress(contract, proxyAddress);
-        if (error) {
-          console.error(error);
+        const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
+        if (cachedValue) {
+          masterCopyAddress = cachedValue as Address;
+        } else {
+          masterCopyAddress =
+            await baseContracts.zodiacModuleProxyFactoryContract.asPublic.getEvents
+              .ModuleProxyCreation([proxyAddress, null])
+              .then(proxiesCreated => {
+                // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
+                if (proxiesCreated.length === 0) {
+                  setValue(
+                    CacheKeys.MASTER_COPY_PREFIX + proxyAddress,
+                    zeroAddress,
+                    CacheExpiry.ONE_WEEK,
+                  );
+                  console.error('No proxies created for Zodiac Module Proxy', proxyAddress);
+                  return zeroAddress;
+                }
+                const masterCopy = proxiesCreated[0].topics[0];
+                setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, masterCopy);
+                return masterCopy;
+              });
         }
       }
       return {
@@ -96,7 +84,6 @@ export function useMasterCopy() {
       };
     },
     [
-      getMasterCopyAddress,
       isAzorius,
       isFractalModule,
       isERC721FreezeVoting,
@@ -105,6 +92,8 @@ export function useMasterCopy() {
       isOzLinearVoting,
       isOzLinearVotingERC721,
       baseContracts,
+      getValue,
+      setValue,
     ],
   );
 

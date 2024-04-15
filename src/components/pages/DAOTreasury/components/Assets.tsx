@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
-import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
@@ -240,7 +239,6 @@ export function Assets() {
   };
 
   // --- Lido Claim ETH button setup ---
-  const signerOrProvider = useSignerOrProvider();
   const [isLidoClaimable, setIsLidoClaimable] = useState(false);
   const lidoWithdrawelNFT = assetsNonFungible.find(
     asset => asset.address === staking.lido?.withdrawalQueueContractAddress,
@@ -248,16 +246,11 @@ export function Assets() {
   const showClaimETHButton = canUserCreateProposal && staking.lido && lidoWithdrawelNFT;
   useEffect(() => {
     const getLidoClaimableStatus = async () => {
-      if (
-        !staking.lido?.withdrawalQueueContractAddress ||
-        !lidoWithdrawelNFT ||
-        !signerOrProvider
-      ) {
+      if (!staking.lido?.withdrawalQueueContractAddress || !lidoWithdrawelNFT) {
         return;
       }
       const withdrawalQueueContract = getWithdrawalQueueContract(
         staking.lido.withdrawalQueueContractAddress,
-        signerOrProvider,
       );
       const claimableStatus = (
         await withdrawalQueueContract.getWithdrawalStatus([lidoWithdrawelNFT!.id])
@@ -268,7 +261,7 @@ export function Assets() {
     };
 
     getLidoClaimableStatus();
-  }, [staking, isLidoClaimable, signerOrProvider, lidoWithdrawelNFT]);
+  }, [staking, isLidoClaimable, lidoWithdrawelNFT]);
   const handleClickClaimButton = () => {
     handleClaimUnstakedETH(BigInt(lidoWithdrawelNFT!.id));
   };

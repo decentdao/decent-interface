@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, encodeFunctionData } from 'viem';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -19,7 +20,7 @@ const useAddSigner = () => {
       newSigner: string;
       threshold: number;
       nonce: number;
-      daoAddress: string | null;
+      daoAddress: Address | null;
       close: () => void;
     }) => {
       if (!baseContracts) {
@@ -27,18 +28,18 @@ const useAddSigner = () => {
       }
       const { safeSingletonContract } = baseContracts;
       const description = 'Add Signer';
-
       const calldatas = [
-        safeSingletonContract.asSigner.interface.encodeFunctionData('addOwnerWithThreshold', [
-          newSigner,
-          BigInt(threshold),
-        ]),
+        encodeFunctionData({
+          abi: safeSingletonContract.asWallet.abi,
+          args: [newSigner, BigInt(threshold)],
+          functionName: 'addOwnerWithThreshold',
+        }),
       ];
 
       const proposalData: ProposalExecuteData = {
         targets: [daoAddress!],
         values: [0n],
-        calldatas: calldatas,
+        calldatas,
         metaData: {
           title: 'Add Signer',
           description: description,

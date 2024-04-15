@@ -1,14 +1,5 @@
-import {
-  Azorius,
-  LinearERC20Voting,
-  LinearERC721Voting,
-} from '@fractal-framework/fractal-contracts';
-import { ProposalExecutedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
-import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
-import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { strategyFractalProposalStates } from '../constants/strategy';
-
 import { logError } from '../helpers/errorLogging';
 import {
   FractalProposalState,
@@ -28,7 +19,6 @@ import {
   ERC721ProposalVote,
   MetaTransaction,
 } from '../types';
-import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
 
 export const getAzoriusProposalState = async (
@@ -227,7 +217,7 @@ export const mapProposalCreatedEventToProposal = async (
     proposer,
     startBlock: BigInt(proposalVotes.startBlock),
     transactionHash,
-    deadlineMs: deadlineSeconds * 1000,
+    deadlineMs: BigInt(deadlineSeconds) * 1000n,
     state,
     votes,
     votesSummary,

@@ -1,3 +1,5 @@
+import { Address } from 'viem';
+
 export interface DecodedTransaction {
   target: string;
   value: string;
@@ -7,7 +9,7 @@ export interface DecodedTransaction {
   decodingFailed?: boolean;
 }
 export interface MetaTransaction {
-  to: string;
+  to: Address;
   value: string | number | bigint;
   data: string;
   operation: number;

@@ -1,10 +1,10 @@
 import {
-  MultisigFreezeGuard,
   AzoriusFreezeGuard,
+  ContractConnection,
   ERC20FreezeVoting,
+  MultisigFreezeGuard,
   MultisigFreezeVoting,
-} from '@fractal-framework/fractal-contracts';
-import { ContractConnection } from './contract';
+} from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 
 export interface IMultisigFreezeContract {

@@ -12,10 +12,9 @@ import {
   AzoriusGovernance,
   VotingStrategyType,
 } from '../../types';
-import useSignerOrProvider from '../utils/useSignerOrProvider';
+import useContractClient from '../utils/useContractClient';
 
 const useBuildDAOTx = () => {
-  const signerOrProvider = useSignerOrProvider();
   const {
     createOptions,
     contracts: { fallbackHandler },
@@ -27,6 +26,7 @@ const useBuildDAOTx = () => {
     governance,
     governanceContracts: { erc721LinearVotingContractAddress },
   } = useFractal();
+  const { walletOrPublicClient } = useContractClient();
 
   const buildDao = useCallback(
     async (
@@ -36,7 +36,7 @@ const useBuildDAOTx = () => {
     ) => {
       let azoriusContracts;
 
-      if (!user.address || !signerOrProvider || !baseContracts) {
+      if (!user.address || !walletOrPublicClient || !baseContracts) {
         return;
       }
       const {
@@ -81,36 +81,36 @@ const useBuildDAOTx = () => {
         }
 
         azoriusContracts = {
-          fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asSigner,
-          linearVotingMasterCopyContract: linearVotingMasterCopyContract.asSigner,
-          linearVotingERC721MasterCopyContract: linearVotingERC721MasterCopyContract.asSigner,
-          azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asSigner,
-          votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
-          claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
-          votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asSigner,
+          fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asWallet,
+          linearVotingMasterCopyContract: linearVotingMasterCopyContract.asWallet,
+          linearVotingERC721MasterCopyContract: linearVotingERC721MasterCopyContract.asWallet,
+          azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asWallet,
+          votesTokenMasterCopyContract: votesTokenMasterCopyContract.asWallet,
+          claimingMasterCopyContract: claimingMasterCopyContract.asWallet,
+          votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asWallet,
         } as AzoriusContracts;
       }
 
       const buildrerBaseContracts = {
-        fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asSigner,
-        fractalRegistryContract: fractalRegistryContract.asSigner,
-        safeFactoryContract: safeFactoryContract.asSigner,
-        safeSingletonContract: safeSingletonContract.asSigner,
-        multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
-        multiSendContract: multiSendContract.asSigner,
-        freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
-        freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asSigner,
-        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
-        zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
-        keyValuePairsContract: keyValuePairsContract.asSigner,
+        fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asWallet,
+        fractalRegistryContract: fractalRegistryContract.asWallet,
+        safeFactoryContract: safeFactoryContract.asWallet,
+        safeSingletonContract: safeSingletonContract.asWallet,
+        multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asWallet,
+        multiSendContract: multiSendContract.asWallet,
+        freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asWallet,
+        freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asWallet,
+        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asWallet,
+        zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asWallet,
+        keyValuePairsContract: keyValuePairsContract.asWallet,
       } as BaseContracts;
 
       const txBuilderFactory = new TxBuilderFactory(
-        signerOrProvider,
+        walletOrPublicClient,
         buildrerBaseContracts,
         azoriusContracts,
         daoData,
-        fallbackHandler,
+        fallbackHandler.address,
         parentAddress,
         parentTokenAddress,
       );
@@ -150,7 +150,7 @@ const useBuildDAOTx = () => {
     },
     [
       user.address,
-      signerOrProvider,
+      walletOrPublicClient,
       baseContracts,
       erc721LinearVotingContractAddress,
       dao,

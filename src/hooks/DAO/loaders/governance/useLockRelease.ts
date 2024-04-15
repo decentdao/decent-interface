@@ -1,9 +1,9 @@
-import { DelegateChangedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/VotesERC20';
 import { useCallback, useEffect, useRef } from 'react';
-import { LockRelease__factory } from '../../../../assets/typechain-types/dcnt';
+import { Address, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import LockReleaseABI from '../../../../assets/abi/LockRelease';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { DecentGovernanceAction } from '../../../../providers/App/governance/action';
-import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 
 /**
  * @link https://github.com/decent-dao/dcnt/blob/master/contracts/LockRelease.sol
@@ -18,28 +18,30 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
     action,
     readOnly: { user },
   } = useFractal();
-  const provider = useEthersProvider();
   const account = user.address;
+  const publicClient = usePublicClient();
 
   const loadLockedVotesToken = useCallback(async () => {
-    if (!lockReleaseContractAddress || !account || !provider) {
+    if (!lockReleaseContractAddress || !account || !publicClient) {
       action.dispatch({ type: DecentGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA });
       return;
     }
-    const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, provider);
+    const lockReleaseContract = getContract({
+      abi: LockReleaseABI,
+      address: lockReleaseContractAddress,
+      client: publicClient,
+    });
     const [tokenAmountTotal, tokenAmountReleased, tokenDelegatee, tokenVotingWeight] =
       await Promise.all([
-        (await lockReleaseContract.getTotal(account)).toBigInt(),
-        (await lockReleaseContract.getReleased(account)).toBigInt(),
-        lockReleaseContract.delegates(account),
-        (await lockReleaseContract.getVotes(account)).toBigInt(),
+        (await lockReleaseContract.read.getTotal([account])) as bigint,
+        (await lockReleaseContract.read.getReleased([account])) as bigint,
+        (await lockReleaseContract.read.delegates([account])) as Address,
+        (await lockReleaseContract.read.getVotes([account])) as bigint,
       ]);
 
-    let delegateChangeEvents: DelegateChangedEvent[];
+    let delegateChangeEvents = [];
     try {
-      delegateChangeEvents = await lockReleaseContract.queryFilter(
-        lockReleaseContract.filters.DelegateChanged(),
-      );
+      delegateChangeEvents = await lockReleaseContract.getEvents.DelegateChanged();
     } catch (e) {
       delegateChangeEvents = [];
     }
@@ -54,7 +56,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
       type: DecentGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA,
       payload: tokenAccountData,
     });
-  }, [lockReleaseContractAddress, action, account, provider]);
+  }, [lockReleaseContractAddress, action, account, publicClient]);
 
   useEffect(() => {
     if (
@@ -69,30 +71,42 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
   }, [account, lockReleaseContractAddress, onMount, loadLockedVotesToken]);
 
   useEffect(() => {
-    if (!lockReleaseContractAddress || !onMount || !provider) {
+    if (!lockReleaseContractAddress || !onMount || !publicClient) {
       return;
     }
-    const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, provider);
-    const delegateVotesChangedfilter = lockReleaseContract.filters.DelegateVotesChanged();
-    lockReleaseContract.on(delegateVotesChangedfilter, loadLockedVotesToken);
+    const lockReleaseContract = getContract({
+      abi: LockReleaseABI,
+      address: lockReleaseContractAddress,
+      client: publicClient,
+    });
+    const unsubscribe = lockReleaseContract.watchEvent.DelegateVotesChanged(
+      {},
+      { onLogs: loadLockedVotesToken },
+    );
 
     return () => {
-      lockReleaseContract.off(delegateVotesChangedfilter, loadLockedVotesToken);
+      unsubscribe();
     };
-  }, [lockReleaseContractAddress, loadLockedVotesToken, onMount, provider]);
+  }, [lockReleaseContractAddress, loadLockedVotesToken, onMount, publicClient]);
 
   useEffect(() => {
-    if (!lockReleaseContractAddress || !onMount || !provider) {
+    if (!lockReleaseContractAddress || !onMount || !publicClient) {
       return;
     }
-    const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, provider);
-    const delegateChangedfilter = lockReleaseContract.filters.DelegateChanged();
-    lockReleaseContract.on(delegateChangedfilter, loadLockedVotesToken);
+    const lockReleaseContract = getContract({
+      abi: LockReleaseABI,
+      address: lockReleaseContractAddress,
+      client: publicClient,
+    });
+    const unsubscribe = lockReleaseContract.watchEvent.DelegateChanged(
+      {},
+      { onLogs: loadLockedVotesToken },
+    );
 
     return () => {
-      lockReleaseContract.off(delegateChangedfilter, loadLockedVotesToken);
+      unsubscribe();
     };
-  }, [lockReleaseContractAddress, loadLockedVotesToken, onMount, provider]);
+  }, [lockReleaseContractAddress, loadLockedVotesToken, onMount, publicClient]);
 
   return { loadLockedVotesToken };
 };

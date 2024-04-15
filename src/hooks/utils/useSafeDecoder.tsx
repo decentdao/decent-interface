@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { solidityKeccak256 } from 'ethers/lib/utils.js';
 import { useCallback } from 'react';
+import { encodePacked, keccak256 } from 'viem';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecodedTransaction, DecodedTxParam } from '../../types';
 import { buildSafeApiUrl, parseMultiSendTransactions } from '../../utils';
@@ -31,7 +31,7 @@ export const useSafeDecoder = () => {
       }
 
       const cachedTransactions = await getValue(
-        CacheKeys.DECODED_TRANSACTION_PREFIX + solidityKeccak256(['string'], [to + data]),
+        CacheKeys.DECODED_TRANSACTION_PREFIX + keccak256(encodePacked(['string'], [to + data])),
       );
       if (cachedTransactions) return cachedTransactions;
 
@@ -74,7 +74,7 @@ export const useSafeDecoder = () => {
       }
 
       await setValue(
-        CacheKeys.DECODED_TRANSACTION_PREFIX + solidityKeccak256(['string'], [to + data]),
+        CacheKeys.DECODED_TRANSACTION_PREFIX + keccak256(encodePacked(['string'], [to + data])),
         decoded,
       );
 

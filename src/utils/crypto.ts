@@ -1,4 +1,4 @@
-import { utils } from 'ethers';
+import { encodeFunctionData, parseAbiParameters } from 'viem';
 import { logError } from '../helpers/errorLogging';
 import { ActivityTransactionType } from '../types';
 
@@ -25,13 +25,6 @@ export const encodeFunction = (
   _functionSignature?: string,
   _parameters?: string,
 ) => {
-  let functionSignature = `function ${_functionName}`;
-  if (_functionSignature) {
-    functionSignature = functionSignature.concat(`(${_functionSignature})`);
-  } else {
-    functionSignature = functionSignature.concat('()');
-  }
-
   const parameters = !!_parameters
     ? splitIgnoreBrackets(_parameters).map(p => (p = p.trim()))
     : undefined;
@@ -84,10 +77,11 @@ export const encodeFunction = (
   });
 
   try {
-    return new utils.Interface([functionSignature]).encodeFunctionData(
-      _functionName,
-      parametersFixedWithBool,
-    );
+    return encodeFunctionData({
+      functionName: _functionName,
+      args: parametersFixedWithBool,
+      abi: parseAbiParameters(_functionSignature || ''),
+    });
   } catch (e) {
     logError(e);
     return;

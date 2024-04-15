@@ -6,7 +6,7 @@ import {
   ERC20Claim,
   VotesERC20Wrapper,
   LinearERC721Voting,
-} from '@fractal-framework/fractal-contracts';
+} from './contract';
 
 export interface AzoriusContracts {
   fractalAzoriusMasterCopyContract: Azorius;

@@ -1,8 +1,8 @@
-import { VotesERC20, VotesERC20Wrapper } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { maxUint256 } from 'viem';
 import { useAccount } from 'wagmi';
+import { VotesERC20, VotesERC20Wrapper } from '../../types';
 import { useTransaction } from './useTransaction';
 
 const useApproval = (
@@ -19,15 +19,15 @@ const useApproval = (
   const fetchAllowance = useCallback(async () => {
     if (!tokenContract || !account || !spenderAddress) return;
 
-    const userAllowance = (await tokenContract.allowance(account, spenderAddress)).toBigInt();
-    setAllowance(userAllowance);
+    const userAllowance = await tokenContract.read.allowance([account, spenderAddress]);
+    setAllowance(userAllowance as bigint);
   }, [account, tokenContract, spenderAddress]);
 
   const approveTransaction = useCallback(async () => {
     if (!tokenContract || !account || !spenderAddress) return;
 
     contractCall({
-      contractFn: () => tokenContract.approve(spenderAddress, maxUint256),
+      contractFn: () => tokenContract.write.approve([spenderAddress, maxUint256]),
       pendingMessage: t('approvalPendingMessage'),
       failedMessage: t('approvalFailedMessage'),
       successMessage: t('approvalSuccessMessage'),

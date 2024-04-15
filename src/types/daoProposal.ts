@@ -1,3 +1,4 @@
+import { Address, Hex } from 'viem';
 import { GovernanceActivity } from './fractal';
 import { CreateProposalMetadata } from './proposalBuilder';
 import { SafeMultisigConfirmationResponse } from './safeGlobal';
@@ -8,9 +9,9 @@ export interface ProposalExecuteData extends ExecuteData {
 }
 
 export interface ExecuteData {
-  targets: string[];
+  targets: Address[];
   values: bigint[];
-  calldatas: string[];
+  calldatas: Hex[];
 }
 
 export type CreateProposalFunc = (proposal: {
@@ -29,7 +30,7 @@ export interface AzoriusProposal extends GovernanceActivity {
   votesSummary: ProposalVotesSummary;
   votes: ProposalVote[] | ERC721ProposalVote[];
   /** The deadline timestamp for the proposal, in milliseconds. */
-  deadlineMs: number;
+  deadlineMs: bigint;
   startBlock: bigint;
 }
 

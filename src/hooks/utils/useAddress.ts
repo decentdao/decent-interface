@@ -1,20 +1,19 @@
 import { useEffect, useState } from 'react';
 import { getAddress, isAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { supportsENS } from '../../helpers';
-import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { couldBeENS } from '../../utils/url';
 import { CacheKeys, CacheExpiry } from './cache/cacheDefaults';
 import { useLocalStorage } from './cache/useLocalStorage';
 
 const useAddress = (addressInput: string | undefined) => {
-  const provider = useEthersProvider();
-
   const [address, setAddress] = useState<string>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
   const { setValue, getValue } = useLocalStorage();
   const { chain } = useNetworkConfig();
+  const publicClient = usePublicClient();
 
   useEffect(() => {
     setIsAddressLoading(true);
@@ -70,15 +69,15 @@ const useAddress = (addressInput: string | undefined) => {
       return;
     }
 
-    if (!provider) {
+    if (!publicClient) {
       setAddress(addressInput);
       setIsValidAddress(undefined);
       setIsAddressLoading(false);
       return;
     }
 
-    provider
-      .resolveName(addressInput)
+    publicClient
+      .getEnsAddress({ name: addressInput })
       .then((resolvedAddress: any) => {
         if (!resolvedAddress) {
           // cache an unresolved address as 'undefined' for 20 minutes
@@ -103,7 +102,7 @@ const useAddress = (addressInput: string | undefined) => {
       .finally(() => {
         setIsAddressLoading(false);
       });
-  }, [provider, addressInput, getValue, setValue, chain]);
+  }, [publicClient, addressInput, getValue, setValue, chain]);
 
   return { address, isValidAddress, isAddressLoading };
 };

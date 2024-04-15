@@ -1,28 +1,26 @@
 import { Button, Flex, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { Contract } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20Abi } from 'viem';
+import { erc20Abi, getContract } from 'viem';
 import { useAccount } from 'wagmi';
 import * as Yup from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import useApproval from '../../../hooks/utils/useApproval';
+import useContractClient from '../../../hooks/utils/useContractClient';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
-import { AzoriusGovernance, BigIntValuePair } from '../../../types';
+import { VotesERC20, VotesERC20Wrapper, AzoriusGovernance, BigIntValuePair } from '../../../types';
 import { formatCoin } from '../../../utils';
 import { BigIntInput } from '../forms/BigIntInput';
 
 export function WrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
-  const signer = useEthersSigner();
   const { address: account } = useAccount();
   const [userBalance, setUserBalance] = useState<BigIntValuePair>({
     value: '',
@@ -31,15 +29,18 @@ export function WrapToken({ close }: { close: () => void }) {
   const baseContracts = useSafeContracts();
 
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
+  const { walletClient } = useContractClient();
   const [contractCall, pending] = useTransaction();
   const {
     approved,
     approveTransaction,
     pending: approvalPending,
   } = useApproval(
-    baseContracts?.votesTokenMasterCopyContract?.asSigner.attach(
-      governanceContracts.underlyingTokenAddress!,
-    ),
+    getContract({
+      abi: baseContracts?.votesTokenMasterCopyContract.asWallet.abi!,
+      address: governanceContracts.underlyingTokenAddress!,
+      client: walletClient!,
+    }) as unknown as VotesERC20 | VotesERC20Wrapper,
     azoriusGovernance.votesToken?.address,
     userBalance.bigintValue,
   );
@@ -51,19 +52,19 @@ export function WrapToken({ close }: { close: () => void }) {
     if (
       !azoriusGovernance.votesToken?.decimals ||
       !azoriusGovernance.votesToken.underlyingTokenData ||
-      !signer ||
+      !walletClient ||
       !account
     )
       return;
-    const baseTokenContract = new Contract(
-      azoriusGovernance.votesToken.underlyingTokenData.address,
-      erc20Abi,
-      signer,
-    );
+    const baseTokenContract = getContract({
+      address: azoriusGovernance.votesToken.underlyingTokenData.address,
+      abi: erc20Abi,
+      client: walletClient,
+    });
     try {
       const [balance, decimals]: [bigint, number] = await Promise.all([
-        baseTokenContract.balanceOf(account),
-        baseTokenContract.decimals(),
+        baseTokenContract.read.balanceOf([account]),
+        baseTokenContract.read.decimals(),
       ]);
       setUserBalance({
         value: formatCoin(
@@ -78,7 +79,7 @@ export function WrapToken({ close }: { close: () => void }) {
       logError(e);
       return;
     }
-  }, [account, azoriusGovernance.votesToken, signer]);
+  }, [account, azoriusGovernance.votesToken, walletClient]);
 
   useEffect(() => {
     getUserUnderlyingTokenBalance();
@@ -87,13 +88,14 @@ export function WrapToken({ close }: { close: () => void }) {
   const handleFormSubmit = useCallback(
     (amount: BigIntValuePair) => {
       const { votesTokenContractAddress } = governanceContracts;
-      if (!votesTokenContractAddress || !signer || !account || !baseContracts) return;
-      const wrapperTokenContract =
-        baseContracts.votesERC20WrapperMasterCopyContract.asSigner.attach(
-          votesTokenContractAddress,
-        );
+      if (!votesTokenContractAddress || !account || !baseContracts || !walletClient) return;
+      const votesTokenContract = getContract({
+        abi: baseContracts?.votesERC20WrapperMasterCopyContract.asWallet.abi,
+        address: votesTokenContractAddress,
+        client: walletClient,
+      });
       contractCall({
-        contractFn: () => wrapperTokenContract.depositFor(account, amount.bigintValue!),
+        contractFn: () => votesTokenContract.write.depositFor([account, amount.bigintValue!]),
         pendingMessage: t('wrapTokenPendingMessage'),
         failedMessage: t('wrapTokenFailedMessage'),
         successMessage: t('wrapTokenSuccessMessage'),
@@ -109,11 +111,11 @@ export function WrapToken({ close }: { close: () => void }) {
       account,
       contractCall,
       governanceContracts,
-      signer,
       close,
       t,
       loadERC20TokenAccountData,
       baseContracts,
+      walletClient,
     ],
   );
 

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { Address, encodeFunctionData } from 'viem';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -13,11 +14,11 @@ import {
   AzoriusERC721DAO,
 } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
-import useSignerOrProvider from '../utils/useSignerOrProvider';
+import useContractClient from '../utils/useContractClient';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 const useDeployAzorius = () => {
-  const signerOrProvider = useSignerOrProvider();
+  const { walletOrPublicClient } = useContractClient();
   const navigate = useNavigate();
   const {
     contracts: { fallbackHandler },
@@ -61,38 +62,38 @@ const useDeployAzorius = () => {
       let azoriusContracts;
 
       azoriusContracts = {
-        fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asProvider,
-        linearVotingMasterCopyContract: linearVotingMasterCopyContract.asProvider,
-        azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asProvider,
-        votesTokenMasterCopyContract: votesTokenMasterCopyContract.asProvider,
-        claimingMasterCopyContract: claimingMasterCopyContract.asProvider,
-        votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asProvider,
+        fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asPublic,
+        linearVotingMasterCopyContract: linearVotingMasterCopyContract.asPublic,
+        azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asPublic,
+        votesTokenMasterCopyContract: votesTokenMasterCopyContract.asPublic,
+        claimingMasterCopyContract: claimingMasterCopyContract.asPublic,
+        votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asPublic,
       } as AzoriusContracts;
 
       const builderBaseContracts = {
-        fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asProvider,
-        fractalRegistryContract: fractalRegistryContract.asProvider,
-        safeFactoryContract: safeFactoryContract.asProvider,
-        safeSingletonContract: safeSingletonContract.asProvider,
-        multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asProvider,
-        multiSendContract: multiSendContract.asProvider,
-        freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asProvider,
-        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asProvider,
-        zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asProvider,
-        keyValuePairsContract: keyValuePairsContract.asProvider,
+        fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asPublic,
+        fractalRegistryContract: fractalRegistryContract.asPublic,
+        safeFactoryContract: safeFactoryContract.asPublic,
+        safeSingletonContract: safeSingletonContract.asPublic,
+        multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asPublic,
+        multiSendContract: multiSendContract.asPublic,
+        freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asPublic,
+        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asPublic,
+        zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asPublic,
+        keyValuePairsContract: keyValuePairsContract.asPublic,
       } as BaseContracts;
 
       const txBuilderFactory = new TxBuilderFactory(
-        signerOrProvider,
+        walletOrPublicClient,
         builderBaseContracts,
         azoriusContracts,
         daoData,
-        fallbackHandler,
+        fallbackHandler.address,
         undefined,
         undefined,
       );
 
-      txBuilderFactory.setSafeContract(daoAddress);
+      txBuilderFactory.setSafeContract(daoAddress as Address);
 
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
       const safeTx = await daoTxBuilder.buildAzoriusTx(shouldSetName, shouldSetSnapshot, {
@@ -100,14 +101,19 @@ const useDeployAzorius = () => {
       });
 
       const proposalData: ProposalExecuteData = {
-        targets: [daoAddress, multiSendContract.asProvider.address],
+        targets: [daoAddress as Address, multiSendContract.asPublic.address],
         values: [0n, 0n],
         calldatas: [
-          safeSingletonContract.asProvider.interface.encodeFunctionData('addOwnerWithThreshold', [
-            multiSendContract.asProvider.address,
-            1,
-          ]),
-          multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [safeTx]),
+          encodeFunctionData({
+            abi: safeSingletonContract.asPublic.abi,
+            functionName: 'addOwnerWithThreshold',
+            args: [multiSendContract.asPublic.address, 1],
+          }),
+          encodeFunctionData({
+            abi: multiSendContract.asPublic.abi,
+            functionName: 'multiSend',
+            args: [safeTx],
+          }),
         ],
         metaData: {
           title: '',
@@ -126,7 +132,7 @@ const useDeployAzorius = () => {
       });
     },
     [
-      signerOrProvider,
+      walletOrPublicClient,
       baseContracts,
       t,
       canUserCreateProposal,

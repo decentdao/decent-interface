@@ -1,10 +1,9 @@
 import { Flex, Box, Text } from '@chakra-ui/react';
-import { ethers } from 'ethers';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc721Abi, isAddress } from 'viem';
+import { erc721Abi, isAddress, getContract } from 'viem';
+import useContractClient from '../../../hooks/utils/useContractClient';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { BigIntValuePair, ERC721TokenConfig } from '../../../types';
 import { BarLoader } from '../../ui/loaders/BarLoader';
 
@@ -25,8 +24,8 @@ export default function AzoriusNFTDetail({
   const [tokenDetails, setTokenDetails] = useState<TokenDetails>();
   const { t } = useTranslation('daoCreate');
 
-  const provider = useEthersProvider();
   const { displayName } = useDisplayName(tokenDetails?.address, true);
+  const { walletOrPublicClient } = useContractClient();
 
   useEffect(() => {
     const loadNFTDetails = async () => {
@@ -36,9 +35,16 @@ export default function AzoriusNFTDetail({
 
       setLoading(true);
       try {
-        if (nft.tokenAddress && isAddress(nft.tokenAddress)) {
-          const tokenContract = new ethers.Contract(nft.tokenAddress, erc721Abi, provider);
-          const [name, symbol] = await Promise.all([tokenContract.name(), tokenContract.symbol()]);
+        if (nft.tokenAddress && isAddress(nft.tokenAddress) && !!walletOrPublicClient) {
+          const tokenContract = getContract({
+            address: nft.tokenAddress,
+            abi: erc721Abi,
+            client: walletOrPublicClient,
+          });
+          const [name, symbol] = await Promise.all([
+            tokenContract.read.name(),
+            tokenContract.read.symbol(),
+          ]);
           setTokenDetails({
             name,
             symbol,
@@ -54,7 +60,7 @@ export default function AzoriusNFTDetail({
     };
 
     loadNFTDetails();
-  }, [hasAddressError, nft, provider]);
+  }, [hasAddressError, nft, walletOrPublicClient]);
 
   const showData = !!tokenDetails && !loading && !hasAddressError;
 

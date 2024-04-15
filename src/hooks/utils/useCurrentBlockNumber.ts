@@ -1,14 +1,14 @@
 import { useEffect, useState, useCallback } from 'react';
-import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
+import { usePublicClient } from 'wagmi';
 
 const useCurrentBlockNumber = () => {
   const [currentBlockNumber, setCurrentBlockNumber] = useState<number>();
   const [isLoaded, setIsLoaded] = useState(false);
-  const provider = useEthersProvider();
+  const publicClient = usePublicClient();
 
   const updateBlockNumber = useCallback(
-    (block: number) => {
-      setCurrentBlockNumber(block);
+    (block: bigint) => {
+      setCurrentBlockNumber(Number(block));
       if (!isLoaded) {
         setIsLoaded(true);
       }
@@ -17,17 +17,17 @@ const useCurrentBlockNumber = () => {
   );
 
   useEffect(() => {
-    if (!provider) {
+    if (!publicClient) {
       setCurrentBlockNumber(undefined);
       return;
     }
 
-    provider.on('block', updateBlockNumber);
+    const unsubscribe = publicClient.watchBlockNumber({ onBlockNumber: updateBlockNumber });
 
     return () => {
-      provider.off('block', updateBlockNumber);
+      unsubscribe();
     };
-  }, [provider, updateBlockNumber]);
+  }, [publicClient, updateBlockNumber]);
 
   return { currentBlockNumber, isLoaded };
 };

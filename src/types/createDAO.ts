@@ -1,5 +1,6 @@
 import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { FormikProps } from 'formik';
+import { Address } from 'viem';
 import { DAOCreateMode } from '../components/DaoCreator/formComponents/EstablishEssentials';
 import { BigIntValuePair } from './common';
 import { GovernanceType, VotingStrategyType } from './fractal';
@@ -43,7 +44,7 @@ export type DAOEssentials = {
 
 export type DAOGovernorERC20Token<T = bigint> = {
   tokenCreationType: TokenCreationType;
-  tokenImportAddress?: string;
+  tokenImportAddress?: Address;
   tokenName: string;
   tokenSymbol: string;
   tokenSupply: T;
@@ -52,7 +53,7 @@ export type DAOGovernorERC20Token<T = bigint> = {
 };
 
 export type ERC721TokenConfig<T = bigint> = {
-  tokenAddress: string;
+  tokenAddress?: Address | null;
   tokenWeight: T;
 };
 

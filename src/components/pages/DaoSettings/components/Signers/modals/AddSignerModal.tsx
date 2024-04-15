@@ -14,10 +14,11 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address } from 'viem';
+import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../../../../providers/Ethers/hooks/useEthersSigner';
 import { couldBeENS } from '../../../../../../utils/url';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
@@ -37,29 +38,29 @@ function AddSignerModal({
     node: { daoAddress, safe },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
-  const signer = useEthersSigner();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
   const tooltipContainer = useRef<HTMLDivElement>(null);
 
   const addSigner = useAddSigner();
+  const publicClient = usePublicClient();
 
   const onSubmit = useCallback(
-    async (values: { address: string; threshold: number; nonce: number }) => {
+    async (values: { address: Address; threshold: number; nonce: number }) => {
       const { address, nonce, threshold } = values;
-      let validAddress = address;
-      if (couldBeENS(validAddress)) {
-        validAddress = await signer!.resolveName(address);
+      let validAddress: Address | null = address;
+      if (couldBeENS(validAddress) && publicClient) {
+        validAddress = await publicClient.getEnsAddress({ name: address });
       }
 
       await addSigner({
-        newSigner: validAddress,
+        newSigner: validAddress || address,
         threshold: threshold,
         nonce: nonce,
-        daoAddress: daoAddress,
+        daoAddress: daoAddress as Address,
         close: close,
       });
     },
-    [addSigner, close, daoAddress, signer],
+    [addSigner, close, daoAddress, publicClient],
   );
 
   const addSignerValidationSchema = Yup.object().shape({
@@ -75,7 +76,7 @@ function AddSignerModal({
     <Box>
       <Formik
         initialValues={{
-          address: '',
+          address: '' as Address,
           nonce: safe?.nonce || 0,
           threshold: currentThreshold,
           thresholdOptions: Array.from({ length: signers.length + 1 }, (_, i) => i + 1),

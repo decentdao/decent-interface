@@ -1,6 +1,4 @@
-import { ethers } from 'ethers';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
-import { GnosisSafeL2__factory } from '../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
+import { Address, PublicClient, WalletClient, getContract } from 'viem';
 import { getRandomBytes } from '../helpers';
 import {
   BaseContracts,
@@ -11,6 +9,7 @@ import {
   AzoriusContracts,
   AzoriusERC20DAO,
   VotingStrategyType,
+  SafeL2,
 } from '../types';
 import { AzoriusTxBuilder } from './AzoriusTxBuilder';
 import { BaseTxBuilder } from './BaseTxBuilder';
@@ -20,25 +19,25 @@ import { MultisigTxBuilder } from './MultisigTxBuilder';
 import { safeData } from './helpers/safeData';
 
 export class TxBuilderFactory extends BaseTxBuilder {
-  private readonly saltNum: string;
+  private readonly saltNum: bigint;
 
   // Safe Data
-  public predictedSafeAddress: string | undefined;
+  public predictedSafeAddress: Address | undefined;
   public createSafeTx: SafeTransaction | undefined;
-  private safeContract: GnosisSafeL2 | undefined;
-  public fallbackHandler: string;
+  private safeContract: SafeL2 | undefined;
+  public fallbackHandler: Address;
 
   constructor(
-    signerOrProvider: ethers.Signer | any,
+    walletOrPublicClient: WalletClient | PublicClient | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
-    fallbackHandler: string,
-    parentAddress?: string,
-    parentTokenAddress?: string,
+    fallbackHandler: Address,
+    parentAddress?: Address,
+    parentTokenAddress?: Address,
   ) {
     super(
-      signerOrProvider,
+      walletOrPublicClient,
       baseContracts,
       azoriusContracts,
       daoData,
@@ -47,16 +46,21 @@ export class TxBuilderFactory extends BaseTxBuilder {
     );
 
     this.fallbackHandler = fallbackHandler;
-    this.saltNum = getRandomBytes();
+    this.saltNum = BigInt(getRandomBytes());
   }
 
-  public setSafeContract(safeAddress: string) {
-    const safeContract = GnosisSafeL2__factory.connect(safeAddress, this.signerOrProvider);
-    this.safeContract = safeContract;
+  public setSafeContract(safeAddress: Address) {
+    const safeContract = getContract({
+      address: safeAddress,
+      client: this.walletOrPublicClient,
+      abi: this.baseContracts.safeSingletonContract.abi,
+    });
+    this.safeContract = safeContract as unknown as SafeL2;
   }
 
   public async setupSafeData(): Promise<void> {
     const { predictedSafeAddress, createSafeTx } = await safeData(
+      this.walletOrPublicClient,
       this.baseContracts.multiSendContract,
       this.baseContracts.safeFactoryContract,
       this.baseContracts.safeSingletonContract,
@@ -74,10 +78,10 @@ export class TxBuilderFactory extends BaseTxBuilder {
 
   public createDaoTxBuilder(
     parentStrategyType?: VotingStrategyType,
-    parentStrategyAddress?: string,
+    parentStrategyAddress?: Address,
   ): DaoTxBuilder {
     return new DaoTxBuilder(
-      this.signerOrProvider,
+      this.walletOrPublicClient,
       this.baseContracts,
       this.azoriusContracts,
       this.daoData,
@@ -94,13 +98,13 @@ export class TxBuilderFactory extends BaseTxBuilder {
   }
 
   public createFreezeGuardTxBuilder(
-    azoriusAddress?: string,
-    strategyAddress?: string,
+    azoriusAddress?: Address,
+    strategyAddress?: Address,
     parentStrategyType?: VotingStrategyType,
-    parentStrategyAddress?: string, // User only with ERC-721 parent
+    parentStrategyAddress?: Address, // User only with ERC-721 parent
   ): FreezeGuardTxBuilder {
     return new FreezeGuardTxBuilder(
-      this.signerOrProvider,
+      this.walletOrPublicClient,
       this.baseContracts,
       this.daoData as SubDAO,
       this.safeContract!,
@@ -125,7 +129,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
 
   public async createAzoriusTxBuilder(): Promise<AzoriusTxBuilder> {
     const azoriusTxBuilder = new AzoriusTxBuilder(
-      this.signerOrProvider,
+      this.walletOrPublicClient,
       this.baseContracts,
       this.azoriusContracts!,
       this.daoData as AzoriusERC20DAO,

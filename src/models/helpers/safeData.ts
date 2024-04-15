@@ -1,18 +1,28 @@
-import { GnosisSafeProxyFactory } from '@fractal-framework/fractal-contracts';
-import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
-import { zeroAddress, zeroHash } from 'viem';
-import { MultiSend } from '../../assets/typechain-types/usul';
-import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
+import {
+  getCreate2Address,
+  zeroAddress,
+  zeroHash,
+  keccak256,
+  encodePacked,
+  Address,
+  getContract,
+  WalletClient,
+  PublicClient,
+  Hash,
+  encodeFunctionData,
+} from 'viem';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeMultisigDAO } from '../../types';
+import { NetworkContract } from '../../types/network';
 
 export const safeData = async (
-  multiSendContract: MultiSend,
-  safeFactoryContract: GnosisSafeProxyFactory,
-  safeSingletonContract: GnosisSafeL2,
+  walletOrPublicClient: WalletClient | PublicClient,
+  multiSendContract: NetworkContract,
+  safeFactoryContract: NetworkContract,
+  safeSingletonContract: NetworkContract,
   daoData: SafeMultisigDAO,
-  saltNum: string,
-  fallbackHandler: string,
+  saltNum: bigint,
+  fallbackHandler: Address,
   hasAzorius?: boolean,
 ) => {
   const signers = hasAzorius
@@ -22,28 +32,44 @@ export const safeData = async (
         multiSendContract.address,
       ];
 
-  const createSafeCalldata = safeSingletonContract.interface.encodeFunctionData('setup', [
-    signers,
-    1, // Threshold
-    zeroAddress,
-    zeroHash,
-    fallbackHandler, // Fallback handler
-    zeroAddress,
-    0,
-    zeroAddress,
-  ]);
+  const createSafeCalldata = encodeFunctionData({
+    functionName: 'setup',
+    args: [
+      signers,
+      1, // Threshold
+      zeroAddress,
+      zeroHash,
+      fallbackHandler,
+      zeroAddress,
+      0,
+      zeroAddress,
+    ],
+    abi: safeSingletonContract.abi,
+  });
 
-  const predictedSafeAddress = getCreate2Address(
-    safeFactoryContract.address,
-    solidityKeccak256(
-      ['bytes', 'uint256'],
-      [solidityKeccak256(['bytes'], [createSafeCalldata]), saltNum],
+  const factoryContract = getContract({
+    address: safeFactoryContract.address,
+    client: walletOrPublicClient!,
+    abi: safeFactoryContract.abi,
+  });
+  const predictedSafeAddress = getCreate2Address({
+    from: safeFactoryContract.address,
+    salt: keccak256(
+      encodePacked(
+        ['bytes', 'uint256'],
+        [keccak256(encodePacked(['bytes'], [createSafeCalldata])), saltNum],
+      ),
     ),
-    solidityKeccak256(
-      ['bytes', 'uint256'],
-      [await safeFactoryContract.proxyCreationCode(), safeSingletonContract.address],
-    ),
-  );
+    bytecode: keccak256(
+      encodePacked(
+        ['bytes', 'uint256'],
+        [
+          (await factoryContract.read.proxyCreationCode([])) as Hash,
+          safeSingletonContract.address as unknown as bigint,
+        ],
+      ),
+    ), // @dev - wtf is going on? uint256 but passing address?
+  });
 
   const createSafeTx = buildContractCall(
     safeFactoryContract,

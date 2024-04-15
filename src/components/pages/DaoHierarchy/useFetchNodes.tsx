@@ -1,10 +1,11 @@
 import { useQuery } from '@apollo/client';
 import { useCallback, useEffect, useState } from 'react';
-import { getAddress, zeroAddress } from 'viem';
+import { Address, getAddress, getContract, zeroAddress } from 'viem';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
 import { useAsyncRetry } from '../../../hooks/utils/useAsyncRetry';
+import useContractClient from '../../../hooks/utils/useContractClient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -13,6 +14,7 @@ import { getAzoriusModuleFromModules } from '../../../utils';
 
 export function useFetchNodes(address?: string) {
   const [childNodes, setChildNodes] = useState<SafeInfoResponseWithGuard[]>();
+  const { walletOrPublicClient } = useContractClient();
 
   const {
     node: { safe, nodeHierarchy },
@@ -37,35 +39,44 @@ export function useFetchNodes(address?: string) {
 
   const getDAOOwner = useCallback(
     async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
-      if (safeInfo && safeInfo.guard && baseContracts) {
+      if (safeInfo && safeInfo.guard && baseContracts && walletOrPublicClient) {
         const {
           multisigFreezeGuardMasterCopyContract,
           azoriusFreezeGuardMasterCopyContract,
           fractalAzoriusMasterCopyContract,
         } = baseContracts;
         if (safeInfo.guard !== zeroAddress) {
-          const guard = multisigFreezeGuardMasterCopyContract.asProvider.attach(safeInfo.guard);
-          const guardOwner = await guard.owner();
+          const guard = getContract({
+            abi: multisigFreezeGuardMasterCopyContract.asPublic.abi,
+            address: safeInfo.guard as Address,
+            client: walletOrPublicClient,
+          });
+          const guardOwner = await guard.read.owner();
           if (guardOwner !== safeInfo.address) {
             return guardOwner;
           }
         } else {
-          const modules = await lookupModules(safeInfo.modules || []);
-          if (!modules) return;
+          const modules = await lookupModules((safeInfo.modules as Address[]) || []);
+          if (!modules || !walletOrPublicClient) return;
           const azoriusModule = getAzoriusModuleFromModules(modules);
           if (
             azoriusModule &&
             azoriusFreezeGuardMasterCopyContract &&
             fractalAzoriusMasterCopyContract
           ) {
-            const azoriusContract = fractalAzoriusMasterCopyContract?.asProvider.attach(
-              azoriusModule.moduleAddress,
-            );
-            const azoriusGuardAddress = await azoriusContract.getGuard();
+            const azoriusContract = getContract({
+              abi: fractalAzoriusMasterCopyContract.asPublic.abi,
+              address: azoriusModule.moduleAddress as Address,
+              client: walletOrPublicClient,
+            });
+            const azoriusGuardAddress = await azoriusContract.read.getGuard();
             if (azoriusGuardAddress !== zeroAddress) {
-              const guard =
-                azoriusFreezeGuardMasterCopyContract.asProvider.attach(azoriusGuardAddress);
-              const guardOwner = await guard.owner();
+              const guard = getContract({
+                abi: azoriusFreezeGuardMasterCopyContract.asPublic.abi,
+                address: azoriusGuardAddress as Address,
+                client: walletOrPublicClient,
+              });
+              const guardOwner = await guard.read.owner();
               if (guardOwner !== safeInfo.address) {
                 return guardOwner;
               }
@@ -75,7 +86,7 @@ export function useFetchNodes(address?: string) {
       }
       return undefined;
     },
-    [baseContracts, lookupModules],
+    [baseContracts, lookupModules, walletOrPublicClient],
   );
 
   const fetchDAOInfo = useCallback(

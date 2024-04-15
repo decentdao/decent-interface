@@ -1,12 +1,10 @@
-import { ethers } from 'ethers';
-import { Chain } from 'viem';
+import { Address, Chain } from 'viem';
 import { GovernanceType } from './fractal';
 
-export type Providers =
-  | ethers.providers.Web3Provider
-  | ethers.providers.JsonRpcProvider
-  | ethers.providers.BaseProvider;
-
+export type NetworkContract = {
+  address: Address;
+  abi: any;
+};
 export type NetworkConfig = {
   order: number; // any arbitrary integer, used to "order" the networks in the dropdown
   chain: Chain;
@@ -22,31 +20,31 @@ export type NetworkConfig = {
     version: string;
   };
   contracts: {
-    safe: string;
-    safeFactory: string;
-    fallbackHandler: string;
-    zodiacModuleProxyFactory: string;
-    linearVotingMasterCopy: string;
-    multisend: string;
-    fractalAzoriusMasterCopy: string;
-    fractalModuleMasterCopy: string;
-    fractalRegistry: string;
-    votesERC20MasterCopy: string;
-    linearVotingERC721MasterCopy: string;
-    claimingMasterCopy: string;
-    multisigFreezeGuardMasterCopy: string;
-    azoriusFreezeGuardMasterCopy: string;
-    multisigFreezeVotingMasterCopy: string;
-    erc20FreezeVotingMasterCopy: string;
-    erc721FreezeVotingMasterCopy: string;
-    votesERC20WrapperMasterCopy: string;
-    keyValuePairs: string;
+    safe: NetworkContract;
+    safeFactory: NetworkContract;
+    fallbackHandler: NetworkContract;
+    zodiacModuleProxyFactory: NetworkContract;
+    linearVotingMasterCopy: NetworkContract;
+    multisend: NetworkContract;
+    fractalAzoriusMasterCopy: NetworkContract;
+    fractalModuleMasterCopy: NetworkContract;
+    fractalRegistry: NetworkContract;
+    votesERC20MasterCopy: NetworkContract;
+    linearVotingERC721MasterCopy?: NetworkContract;
+    claimingMasterCopy: NetworkContract;
+    multisigFreezeGuardMasterCopy: NetworkContract;
+    azoriusFreezeGuardMasterCopy: NetworkContract;
+    multisigFreezeVotingMasterCopy: NetworkContract;
+    erc20FreezeVotingMasterCopy: NetworkContract;
+    erc721FreezeVotingMasterCopy?: NetworkContract;
+    votesERC20WrapperMasterCopy: NetworkContract;
+    keyValuePairs: NetworkContract;
   };
   staking: {
     lido?: {
-      stETHContractAddress: string;
-      rewardsAddress: string;
-      withdrawalQueueContractAddress: string;
+      stETHContractAddress: NetworkContract;
+      rewardsAddress: NetworkContract;
+      withdrawalQueueContractAddress: NetworkContract;
     };
   };
   createOptions: GovernanceType[];

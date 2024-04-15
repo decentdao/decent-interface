@@ -15,7 +15,7 @@ export const isValidUrl = (urlString: string) => {
  * Note that ENS names can use DNS TLDs, so they do not necessarily
  * end in '.eth', though that is the most common.
  */
-export const couldBeENS = (ensAddress?: string): boolean => {
+export const couldBeENS = (ensAddress?: string | null): boolean => {
   if (!ensAddress) return false;
 
   // everything up to the last index included, to support subdomains, e.g. blah.decent-dao.eth

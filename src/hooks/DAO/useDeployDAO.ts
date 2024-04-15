@@ -36,7 +36,7 @@ const useDeployDAO = () => {
         const { predictedSafeAddress, safeTx } = builtSafeTx;
 
         contractCallDeploy({
-          contractFn: () => multiSendContract.asSigner.multiSend(safeTx),
+          contractFn: () => multiSendContract.asWallet.write.multiSend([safeTx]),
           pendingMessage: t('pendingDeploySafe'),
           failedMessage: t('failedDeploySafe'),
           successMessage: t('successDeploySafe'),

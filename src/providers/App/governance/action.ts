@@ -1,4 +1,3 @@
-import { ERC20Claim } from '@fractal-framework/fractal-contracts';
 import {
   FractalProposal,
   ProposalVotesSummary,
@@ -9,6 +8,7 @@ import {
   UnderlyingTokenData,
   GovernanceType,
   ERC721TokenData,
+  ERC20Claim,
 } from '../../../types';
 import { ProposalTemplate } from '../../../types/proposalBuilder';
 

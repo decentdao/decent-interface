@@ -1,17 +1,16 @@
 import { Box, Button, Text, Flex } from '@chakra-ui/react';
 import { Check } from '@decent-org/fractal-ui';
-import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
-import { Signer } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
+import { Address, getContract } from 'viem';
+import { useSignTypedData } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeMultisigProposals } from '../../../hooks/DAO/loaders/governance/useSafeMultisigProposals';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
-import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
+import useContractClient from '../../../hooks/utils/useContractClient';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -26,12 +25,13 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     guardContracts: { freezeGuardContractAddress },
     readOnly: { user },
   } = useFractal();
-  const signerOrProvider = useSignerOrProvider();
   const safeAPI = useSafeAPI();
 
   const { chain } = useNetworkConfig();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
+  const { walletClient } = useContractClient();
+  const { signTypedDataAsync } = useSignTypedData();
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
   const loadSafeMultisigProposals = useSafeMultisigProposals();
@@ -43,21 +43,24 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   if (!multisigTx) return null;
 
   const signTransaction = async () => {
-    if (!signerOrProvider || !safe?.address) {
+    if (!walletClient || !safe?.address) {
       return;
     }
     try {
       const safeTx = buildSafeTransaction({
         ...multisigTx,
-      });
+      } as any); // Have to use any because type of multisigTx based on SafeMultisigTransactionWithTransfersResponse where to is string but here we need Address type
 
       asyncRequest({
         asyncFunc: () =>
-          (signerOrProvider as Signer & TypedDataSigner)._signTypedData(
-            { verifyingContract: safe.address, chainId: chain.id },
-            EIP712_SAFE_TX_TYPE,
-            safeTx,
-          ),
+          signTypedDataAsync({
+            domain: { verifyingContract: safe.address as Address, chainId: chain.id },
+            types: EIP712_SAFE_TX_TYPE,
+            primaryType: 'SafeTx',
+            message: {
+              ...safeTx,
+            },
+          }),
         failedMessage: t('failedSign'),
         pendingMessage: t('pendingSign'),
         successMessage: t('successSign'),
@@ -73,24 +76,32 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const timelockTransaction = async () => {
     try {
-      if (!multisigTx.confirmations || !baseContracts || !freezeGuardContractAddress) {
+      if (
+        !multisigTx.confirmations ||
+        !baseContracts ||
+        !freezeGuardContractAddress ||
+        !walletClient
+      ) {
         return;
       }
       const safeTx = buildSafeTransaction({
         ...multisigTx,
-      });
+      } as any);
       const signatures = buildSignatureBytes(
         multisigTx.confirmations.map(confirmation => ({
-          signer: confirmation.owner,
+          signer: confirmation.owner as Address,
           data: confirmation.signature,
         })),
       );
-      const freezeGuard = baseContracts.multisigFreezeGuardMasterCopyContract.asSigner.attach(
-        freezeGuardContractAddress,
-      );
+      const freezeGuard = getContract({
+        address: freezeGuardContractAddress,
+        abi: baseContracts.multisigFreezeGuardMasterCopyContract.asPublic.abi,
+        client: walletClient,
+      });
+
       contractCall({
         contractFn: () =>
-          freezeGuard.timelockTransaction(
+          freezeGuard.write.timelockTransaction([
             safeTx.to,
             safeTx.value,
             safeTx.data,
@@ -102,7 +113,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
             safeTx.refundReceiver,
             signatures,
             safeTx.nonce,
-          ),
+          ]),
         failedMessage: t('failedExecute', { ns: 'transaction' }),
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
@@ -117,22 +128,26 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const executeTransaction = async () => {
     try {
-      if (!signerOrProvider || !safe?.address || !multisigTx.confirmations) {
+      if (!walletClient || !safe?.address || !multisigTx.confirmations || !baseContracts) {
         return;
       }
-      const safeContract = GnosisSafeL2__factory.connect(safe.address, signerOrProvider);
+      const safeContract = getContract({
+        address: safe.address as Address,
+        abi: baseContracts.safeSingletonContract.asPublic.abi,
+        client: walletClient,
+      });
       const safeTx = buildSafeTransaction({
         ...multisigTx,
-      });
+      } as any);
       const signatures = buildSignatureBytes(
         multisigTx.confirmations.map(confirmation => ({
-          signer: confirmation.owner,
+          signer: confirmation.owner as Address,
           data: confirmation.signature,
         })),
       );
       contractCall({
         contractFn: () =>
-          safeContract.execTransaction(
+          safeContract.write.execTransaction([
             safeTx.to,
             safeTx.value,
             safeTx.data,
@@ -143,7 +158,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
             safeTx.gasToken,
             safeTx.refundReceiver,
             signatures,
-          ),
+          ]),
         failedMessage: t('failedExecute', { ns: 'transaction' }),
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),

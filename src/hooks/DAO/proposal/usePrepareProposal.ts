@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
+import { usePublicClient } from 'wagmi';
 import { CreateProposalForm } from '../../../types/proposalBuilder';
 import { encodeFunction } from '../../../utils/crypto';
 import { couldBeENS, isValidUrl } from '../../../utils/url';
 
 export function usePrepareProposal() {
-  const signer = useEthersSigner();
+  const publicClient = usePublicClient();
   const prepareProposal = useCallback(
     async (values: CreateProposalForm) => {
       const { transactions, proposalMetadata } = values;
@@ -33,8 +33,8 @@ export function usePrepareProposal() {
       });
       const targets = await Promise.all(
         transactionsWithEncoding.map(tx => {
-          if (couldBeENS(tx.targetAddress)) {
-            return signer!.resolveName(tx.targetAddress);
+          if (couldBeENS(tx.targetAddress) && publicClient) {
+            return publicClient!.getEnsAddress({ name: tx.targetAddress });
           }
           return tx.targetAddress;
         }),
@@ -51,7 +51,7 @@ export function usePrepareProposal() {
         },
       };
     },
-    [signer],
+    [publicClient],
   );
   return { prepareProposal };
 }

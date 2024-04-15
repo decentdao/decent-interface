@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { encodeFunctionData, Address } from 'viem';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -29,15 +30,15 @@ const useRemoveSigner = ({
     const description = 'Remove Signers';
 
     const calldatas = [
-      safeSingletonContract.asProvider.interface.encodeFunctionData('removeOwner', [
-        prevSigner,
-        signerToRemove,
-        BigInt(threshold),
-      ]),
+      encodeFunctionData({
+        abi: safeSingletonContract.asPublic.abi,
+        functionName: 'removeOwner',
+        args: [prevSigner, signerToRemove, BigInt(threshold)],
+      }),
     ];
 
     const proposalData: ProposalExecuteData = {
-      targets: [daoAddress!],
+      targets: [daoAddress! as Address],
       values: [0n],
       calldatas: calldatas,
       metaData: {

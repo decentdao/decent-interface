@@ -1,10 +1,26 @@
 import {
+  SafeMultisigTransactionWithTransfersResponse,
+  SafeModuleTransactionWithTransfersResponse,
+  EthereumTxWithTransfersResponse,
+  SafeBalanceUsdResponse,
+  SafeCollectibleResponse,
+} from '@safe-global/safe-service-client';
+import { Dispatch } from 'react';
+import { Address } from 'viem';
+import { FractalGovernanceActions } from '../providers/App/governance/action';
+import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
+import { FractalGuardActions } from '../providers/App/guard/action';
+import { GuardContractActions } from '../providers/App/guardContracts/action';
+import { TreasuryActions } from '../providers/App/treasury/action';
+import { NodeActions } from './../providers/App/node/action';
+import { ERC721TokenData, VotesTokenData } from './account';
+import {
+  Azorius,
   FractalModule,
   FractalRegistry,
-  GnosisSafeProxyFactory,
+  SafeProxyFactory,
   ModuleProxyFactory,
   LinearERC20Voting,
-  Azorius,
   AzoriusFreezeGuard,
   ERC20Claim,
   ERC20FreezeVoting,
@@ -15,25 +31,10 @@ import {
   KeyValuePairs,
   ERC721FreezeVoting,
   LinearERC721Voting,
-} from '@fractal-framework/fractal-contracts';
-import {
-  SafeMultisigTransactionWithTransfersResponse,
-  SafeModuleTransactionWithTransfersResponse,
-  EthereumTxWithTransfersResponse,
-  SafeBalanceUsdResponse,
-  SafeCollectibleResponse,
-} from '@safe-global/safe-service-client';
-import { Dispatch } from 'react';
-import { MultiSend } from '../assets/typechain-types/usul';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
-import { FractalGovernanceActions } from '../providers/App/governance/action';
-import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
-import { FractalGuardActions } from '../providers/App/guard/action';
-import { GuardContractActions } from '../providers/App/guardContracts/action';
-import { TreasuryActions } from '../providers/App/treasury/action';
-import { NodeActions } from './../providers/App/node/action';
-import { ERC721TokenData, VotesTokenData } from './account';
-import { ContractConnection } from './contract';
+  MultiSend,
+  SafeL2,
+  ContractConnection,
+} from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
@@ -221,12 +222,12 @@ export interface Fractal {
 }
 
 export interface FractalGovernanceContracts {
-  ozLinearVotingContractAddress?: string;
-  erc721LinearVotingContractAddress?: string;
-  azoriusContractAddress?: string;
-  votesTokenContractAddress?: string;
-  lockReleaseContractAddress?: string;
-  underlyingTokenAddress?: string;
+  ozLinearVotingContractAddress?: Address;
+  erc721LinearVotingContractAddress?: Address;
+  azoriusContractAddress?: Address;
+  votesTokenContractAddress?: Address;
+  lockReleaseContractAddress?: Address;
+  underlyingTokenAddress?: Address;
   isLoaded: boolean;
 }
 
@@ -247,7 +248,7 @@ export interface Node
 
 export interface FractalModuleData {
   moduleContract: Azorius | FractalModule | undefined;
-  moduleAddress: string;
+  moduleAddress: Address;
   moduleType: FractalModuleType;
 }
 
@@ -257,8 +258,8 @@ export enum FractalModuleType {
   UNKNOWN,
 }
 export interface FractalGuardContracts {
-  freezeGuardContractAddress?: string;
-  freezeVotingContractAddress?: string;
+  freezeGuardContractAddress?: Address;
+  freezeVotingContractAddress?: Address;
   freezeGuardType: FreezeGuardType | null;
   freezeVotingType: FreezeVotingType | null;
   isGuardLoaded?: boolean;
@@ -335,11 +336,11 @@ export interface NodeHierarchy {
 
 export interface FractalContracts {
   multiSendContract: ContractConnection<MultiSend>;
-  safeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
+  safeFactoryContract: ContractConnection<SafeProxyFactory>;
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
   linearVotingERC721MasterCopyContract: ContractConnection<LinearERC721Voting>;
-  safeSingletonContract: ContractConnection<GnosisSafeL2>;
+  safeSingletonContract: ContractConnection<SafeL2>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   fractalRegistryContract: ContractConnection<FractalRegistry>;
@@ -370,7 +371,7 @@ export interface ReadOnlyState {
 
 export interface ReadOnlyUser {
   /** The user's wallet address, if connected.  */
-  address?: string;
+  address?: Address;
   /** The number of delegated tokens for the connected Azorius DAO, 1 for a Multisig DAO signer */
   votingWeight: bigint;
 }

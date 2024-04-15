@@ -1,24 +1,31 @@
-import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { Azorius } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { Signer, utils } from 'ethers';
-import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
+import {
+  Address,
+  encodeAbiParameters,
+  getContract,
+  parseAbiParameters,
+  isAddress,
+  getAddress,
+  encodeFunctionData,
+} from 'viem';
+import { useWalletClient } from 'wagmi';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
-import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
+import {
+  Azorius,
+  MetaTransaction,
+  ProposalExecuteData,
+  CreateProposalMetadata,
+} from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
 
@@ -32,7 +39,7 @@ interface ISubmitProposal {
   /**
    * @param safeAddress - provided address of DAO to which proposal will be submitted
    */
-  safeAddress?: string;
+  safeAddress?: Address;
 }
 
 interface ISubmitAzoriusProposal extends ISubmitProposal {
@@ -47,14 +54,13 @@ interface ISubmitAzoriusProposal extends ISubmitProposal {
    * Depending on safeAddress it's either picked from global context
    * either grabbed from the safe info from Safe API & provided Azorius contract.
    */
-  votingStrategyAddress: string;
+  votingStrategyAddress: Address;
 }
 
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
   const loadDAOProposals = useDAOProposals();
-  const signer = useEthersSigner();
-  const provider = useEthersProvider();
+  const walletClient = useWalletClient();
 
   const {
     node: { safe, fractalModules },
@@ -65,19 +71,17 @@ export default function useSubmitProposal() {
   const safeAPI = useSafeAPI();
 
   const globalAzoriusContract = useMemo(() => {
-    if (!signer) {
+    if (!walletClient.data) {
       return undefined;
     }
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
     if (!azoriusModule) {
       return undefined;
     }
-    const moduleContract = azoriusModule.moduleContract as Azorius;
-    return moduleContract.connect(signer);
-  }, [fractalModules, signer]);
+    return azoriusModule.moduleContract as Azorius;
+  }, [fractalModules, walletClient.data]);
 
   const lookupModules = useFractalModules();
-  const signerOrProvider = useSignerOrProvider();
   const { chain, safeBaseURL, addressPrefix } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
 
@@ -104,7 +108,7 @@ export default function useSubmitProposal() {
         progress: 1,
       });
 
-      if (!safeAddress || !signerOrProvider || nonce === undefined) {
+      if (!safeAddress || !walletClient.data || nonce === undefined) {
         toast.dismiss(toastId);
         return;
       }
@@ -124,7 +128,7 @@ export default function useSubmitProposal() {
           const { Hash } = await ipfsClient.add(JSON.stringify(metaData));
           proposalData.targets.push(ADDRESS_MULTISIG_METADATA);
           proposalData.values.push(0n);
-          proposalData.calldatas.push(new utils.AbiCoder().encode(['string'], [Hash]));
+          proposalData.calldatas.push(encodeAbiParameters(parseAbiParameters('string'), [Hash]));
         }
 
         let to, value, data, operation;
@@ -134,7 +138,7 @@ export default function useSubmitProposal() {
             return;
           }
           // Need to wrap it in Multisend function call
-          to = multiSendContract.asProvider.address;
+          to = multiSendContract.asPublic.address;
 
           const tempData = proposalData.targets.map((target, index) => {
             return {
@@ -145,9 +149,11 @@ export default function useSubmitProposal() {
             } as MetaTransaction;
           });
 
-          data = multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [
-            encodeMultiSend(tempData),
-          ]);
+          data = encodeFunctionData({
+            functionName: 'multiSend',
+            args: [encodeMultiSend(tempData)],
+            abi: multiSendContract.asPublic.abi,
+          });
 
           operation = 1;
         } else {
@@ -158,21 +164,20 @@ export default function useSubmitProposal() {
           operation = 0;
         }
 
-        const safeContract = GnosisSafeL2__factory.connect(safeAddress, signerOrProvider);
+        const safeContract = getContract({
+          address: safeAddress,
+          abi: baseContracts.safeSingletonContract.asWallet.abi,
+          client: walletClient.data,
+        });
         await axios.post(
           buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
-          await buildSafeAPIPost(
-            safeContract,
-            signerOrProvider as Signer & TypedDataSigner,
-            chain.id,
-            {
-              to,
-              value,
-              data,
-              operation,
-              nonce,
-            },
-          ),
+          await buildSafeAPIPost(safeContract, walletClient.data, chain.id, {
+            to,
+            value,
+            data,
+            operation,
+            nonce,
+          }),
         );
         await new Promise(resolve => setTimeout(resolve, 1000));
         await loadDAOProposals();
@@ -190,13 +195,13 @@ export default function useSubmitProposal() {
       }
     },
     [
-      signerOrProvider,
       safeBaseURL,
       chain,
       loadDAOProposals,
       ipfsClient,
       baseContracts,
       addressPrefix,
+      walletClient.data,
     ],
   );
 
@@ -211,7 +216,7 @@ export default function useSubmitProposal() {
       failedToastMessage,
       safeAddress,
     }: ISubmitAzoriusProposal) => {
-      if (!proposalData || !provider) {
+      if (!proposalData) {
         return;
       }
       const toastId = toast(pendingToastMessage, {
@@ -232,18 +237,16 @@ export default function useSubmitProposal() {
         }));
 
         // @todo: Implement voting strategy proposal selection when/if we will support multiple strategies on single Azorius instance
-        await (
-          await azoriusContract.submitProposal(
-            votingStrategyAddress,
-            '0x',
-            transactions,
-            JSON.stringify({
-              title: proposalData.metaData.title,
-              description: proposalData.metaData.description,
-              documentationUrl: proposalData.metaData.documentationUrl,
-            }),
-          )
-        ).wait();
+        await azoriusContract.write.submitProposal([
+          votingStrategyAddress,
+          '0x',
+          transactions,
+          JSON.stringify({
+            title: proposalData.metaData.title,
+            description: proposalData.metaData.description,
+            documentationUrl: proposalData.metaData.documentationUrl,
+          }),
+        ]);
         toast.dismiss(toastId);
         toast(successToastMessage);
         if (successCallback) {
@@ -257,7 +260,7 @@ export default function useSubmitProposal() {
         setPendingCreateTx(false);
       }
     },
-    [provider, addressPrefix],
+    [addressPrefix],
   );
 
   const submitProposal = useCallback(
@@ -292,12 +295,17 @@ export default function useSubmitProposal() {
         } else {
           const azoriusModuleContract = azoriusModule.moduleContract as Azorius;
           // @dev assumes the first strategy is the voting contract
-          const votingStrategyAddress = (
-            await azoriusModuleContract.getStrategies(
-              '0x0000000000000000000000000000000000000001',
-              0,
-            )
-          )[1];
+          // const votingStrategyAddress = (
+          //   await azoriusModuleContract.read.getStrategies([
+          //     '0x0000000000000000000000000000000000000001',
+          //     0,
+          //   ])
+          // )[1];
+          const votingStrategyAddresses = (await azoriusModuleContract.read.getStrategies([
+            '0x0000000000000000000000000000000000000001',
+            0,
+          ])) as Address[];
+          const votingStrategyAddress = votingStrategyAddresses[1];
           submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
@@ -324,7 +332,7 @@ export default function useSubmitProposal() {
             failedToastMessage,
             nonce,
             successCallback,
-            safeAddress: safe?.address,
+            safeAddress: safe!.address as Address,
           });
         } else {
           await submitAzoriusProposal({
@@ -336,7 +344,7 @@ export default function useSubmitProposal() {
             successCallback,
             votingStrategyAddress,
             azoriusContract: globalAzoriusContract,
-            safeAddress: safe?.address,
+            safeAddress: safe!.address as Address,
           });
         }
       }

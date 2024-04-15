@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { encodeFunctionData } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { ProposalExecuteData } from '../../../types';
@@ -29,13 +30,14 @@ export default function useRemoveProposalTemplate() {
 
         const proposal: ProposalExecuteData = {
           metaData: proposalMetadata,
-          targets: [keyValuePairsContract.asProvider.address],
+          targets: [keyValuePairsContract.asPublic.address],
           values: [0n],
           calldatas: [
-            keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
-              ['proposalTemplates'],
-              [Hash],
-            ]),
+            encodeFunctionData({
+              abi: keyValuePairsContract.asPublic.abi,
+              functionName: 'updateValues',
+              args: [['proposalTemplates'], [Hash]],
+            }),
           ],
         };
 

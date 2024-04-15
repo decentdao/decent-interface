@@ -1,37 +1,48 @@
 import { useCallback } from 'react';
+import { Address, getContract } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalModuleData, FractalModuleType } from '../../../types';
+import useContractClient from '../../utils/useContractClient';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 
 export const useFractalModules = () => {
   const { baseContracts } = useFractal();
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const { walletOrPublicClient } = useContractClient();
   const lookupModules = useCallback(
-    async (_moduleAddresses: string[]) => {
+    async (_moduleAddresses: Address[]) => {
       const modules = await Promise.all(
         _moduleAddresses.map(async moduleAddress => {
           const masterCopyData = await getZodiacModuleProxyMasterCopyData(moduleAddress);
 
           let safeModule: FractalModuleData;
 
-          if (masterCopyData.isAzorius && baseContracts) {
+          if (masterCopyData.isAzorius && baseContracts && walletOrPublicClient) {
+            const moduleContract = getContract({
+              client: walletOrPublicClient,
+              abi: baseContracts.fractalAzoriusMasterCopyContract.asPublic.abi,
+              address: moduleAddress,
+            });
             safeModule = {
-              moduleContract:
-                baseContracts.fractalAzoriusMasterCopyContract.asSigner.attach(moduleAddress),
-              moduleAddress: moduleAddress,
+              moduleContract,
+              moduleAddress,
               moduleType: FractalModuleType.AZORIUS,
             };
-          } else if (masterCopyData.isFractalModule && baseContracts) {
+          } else if (masterCopyData.isFractalModule && baseContracts && walletOrPublicClient) {
+            const moduleContract = getContract({
+              client: walletOrPublicClient,
+              abi: baseContracts.fractalModuleMasterCopyContract.asPublic.abi,
+              address: moduleAddress,
+            });
             safeModule = {
-              moduleContract:
-                baseContracts.fractalModuleMasterCopyContract.asSigner.attach(moduleAddress),
-              moduleAddress: moduleAddress,
+              moduleContract,
+              moduleAddress,
               moduleType: FractalModuleType.FRACTAL,
             };
           } else {
             safeModule = {
               moduleContract: undefined,
-              moduleAddress: moduleAddress,
+              moduleAddress,
               moduleType: FractalModuleType.UNKNOWN,
             };
           }
@@ -41,7 +52,7 @@ export const useFractalModules = () => {
       );
       return modules;
     },
-    [baseContracts, getZodiacModuleProxyMasterCopyData],
+    [baseContracts, getZodiacModuleProxyMasterCopyData, walletOrPublicClient],
   );
   return lookupModules;
 };

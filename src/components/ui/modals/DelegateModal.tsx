@@ -2,15 +2,15 @@ import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress } from 'viem';
+import { zeroAddress, Address, getContract } from 'viem';
 import * as Yup from 'yup';
-import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
+import LockReleaseABI from '../../../assets/abi/LockRelease';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
+import useContractClient from '../../../hooks/utils/useContractClient';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AzoriusGovernance, DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 import { couldBeENS } from '../../../utils/url';
@@ -28,8 +28,8 @@ export function DelegateModal({ close }: { close: Function }) {
   } = useFractal();
 
   const baseContracts = useSafeContracts();
+  const { publicClient, walletClient } = useContractClient();
 
-  const signer = useEthersSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
   const decentGovernance = azoriusGovernance as DecentGovernance;
   const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken?.delegatee);
@@ -38,36 +38,47 @@ export function DelegateModal({ close }: { close: Function }) {
   const { addressValidationTest } = useValidationAddress();
 
   const submitDelegation = async (values: { address: string }) => {
-    if (!votesTokenContractAddress || !baseContracts) return;
-    let validAddress = values.address;
+    if (!votesTokenContractAddress || !baseContracts || !publicClient || !walletClient) return;
+    let validAddress: Address | null = values.address as Address;
     if (couldBeENS(validAddress)) {
-      validAddress = await signer!.resolveName(values.address);
+      validAddress = await publicClient.getEnsAddress({ name: values.address });
     }
-    const votingTokenContract =
-      baseContracts.votesERC20WrapperMasterCopyContract.asSigner.attach(votesTokenContractAddress);
-    delegateVote({
-      delegatee: validAddress,
-      votingTokenContract,
-      successCallback: () => {
-        close();
-      },
+    const votingTokenContract = getContract({
+      abi: baseContracts.votesERC20WrapperMasterCopyContract.asPublic.abi,
+      address: votesTokenContractAddress,
+      client: walletClient,
     });
+    if (validAddress) {
+      delegateVote({
+        delegatee: validAddress,
+        votingTokenContract,
+        successCallback: () => {
+          close();
+        },
+      });
+    }
   };
   const submitLockedDelegation = async (values: { address: string }) => {
-    if (!lockReleaseContractAddress || !baseContracts || !signer) return;
-    let validAddress = values.address;
+    if (!lockReleaseContractAddress || !baseContracts || !publicClient || !walletClient) return;
+    let validAddress: Address | null = values.address as Address;
     if (couldBeENS(validAddress)) {
-      validAddress = await signer!.resolveName(values.address);
+      validAddress = await publicClient.getEnsAddress({ name: values.address });
     }
-    const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, signer);
-    delegateVote({
-      delegatee: validAddress,
-      votingTokenContract: lockReleaseContract,
-      successCallback: async () => {
-        await loadReadOnlyValues();
-        close();
-      },
-    });
+    if (validAddress) {
+      const lockReleaseContract = getContract({
+        address: lockReleaseContractAddress,
+        client: walletClient,
+        abi: LockReleaseABI,
+      });
+      delegateVote({
+        delegatee: validAddress,
+        votingTokenContract: lockReleaseContract,
+        successCallback: async () => {
+          await loadReadOnlyValues();
+          close();
+        },
+      });
+    }
   };
 
   const delegationValidationSchema = Yup.object().shape({

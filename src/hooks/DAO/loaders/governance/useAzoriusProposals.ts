@@ -1,22 +1,16 @@
-import { LinearERC20Voting, LinearERC721Voting } from '@fractal-framework/fractal-contracts';
-import {
-  Azorius,
-  ProposalExecutedEvent,
-} from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
-import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
-import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { PublicClient, getContract } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { CreateProposalMetadata, VotingStrategyType, DecodedTransaction } from '../../../../types';
 import { AzoriusProposal } from '../../../../types/daoProposal';
-import { Providers } from '../../../../types/network';
 import { mapProposalCreatedEventToProposal, decodeTransactions } from '../../../../utils';
 import useSafeContracts from '../../../safe/useSafeContracts';
+import useContractClient from '../../../utils/useContractClient';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
 export const useAzoriusProposals = () => {
   const currentAzoriusAddress = useRef<string>();
+  const { publicClient } = useContractClient();
 
   const {
     governanceContracts: {
@@ -27,16 +21,19 @@ export const useAzoriusProposals = () => {
   } = useFractal();
 
   const baseContracts = useSafeContracts();
-  const provider = useEthersProvider();
   const decode = useSafeDecoder();
 
   const azoriusContract = useMemo(() => {
-    if (!baseContracts || !azoriusContractAddress) {
+    if (!baseContracts || !azoriusContractAddress || !publicClient) {
       return;
     }
 
-    return baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
-  }, [azoriusContractAddress, baseContracts]);
+    return getContract({
+      address: azoriusContractAddress,
+      abi: baseContracts.fractalAzoriusMasterCopyContract.asPublic.abi,
+      client: publicClient,
+    });
+  }, [azoriusContractAddress, baseContracts, publicClient]);
 
   const strategyType = useMemo(() => {
     if (ozLinearVotingContractAddress) {
@@ -49,24 +46,33 @@ export const useAzoriusProposals = () => {
   }, [ozLinearVotingContractAddress, erc721LinearVotingContractAddress]);
 
   const erc20StrategyContract = useMemo(() => {
-    if (!baseContracts || !ozLinearVotingContractAddress) {
+    if (!baseContracts || !ozLinearVotingContractAddress || !publicClient) {
       return undefined;
     }
 
-    return baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-      ozLinearVotingContractAddress,
-    );
-  }, [baseContracts, ozLinearVotingContractAddress]);
+    return getContract({
+      abi: baseContracts.linearVotingMasterCopyContract.asPublic.abi,
+      address: ozLinearVotingContractAddress,
+      client: publicClient,
+    });
+  }, [baseContracts, ozLinearVotingContractAddress, publicClient]);
 
   const erc721StrategyContract = useMemo(() => {
-    if (!baseContracts || !erc721LinearVotingContractAddress) {
+    if (
+      !baseContracts ||
+      !erc721LinearVotingContractAddress ||
+      !baseContracts.linearVotingERC721MasterCopyContract ||
+      !publicClient
+    ) {
       return undefined;
     }
 
-    return baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-      erc721LinearVotingContractAddress,
-    );
-  }, [baseContracts, erc721LinearVotingContractAddress]);
+    return getContract({
+      abi: baseContracts.linearVotingERC721MasterCopyContract.asPublic.abi,
+      address: erc721LinearVotingContractAddress,
+      client: publicClient,
+    });
+  }, [baseContracts, erc721LinearVotingContractAddress, publicClient]);
 
   const erc20VotedEvents = useMemo(async () => {
     if (!erc20StrategyContract) {
@@ -120,7 +126,7 @@ export const useAzoriusProposals = () => {
       _erc20VotedEvents: Promise<ERC20VotedEvent[] | undefined>,
       _erc721VotedEvents: Promise<ERC721VotedEvent[] | undefined>,
       _executedEvents: Promise<ProposalExecutedEvent[] | undefined>,
-      _provider: Providers | undefined,
+      _provider: PublicClient | undefined,
       _decode: (
         value: string,
         to: string,

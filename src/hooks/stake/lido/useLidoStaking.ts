@@ -5,7 +5,6 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../types';
 import useSubmitProposal from '../../DAO/proposal/useSubmitProposal';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export default function useLidoStaking() {
   const {
@@ -14,18 +13,17 @@ export default function useLidoStaking() {
   const {
     staking: { lido },
   } = useNetworkConfig();
-  const signerOrProvider = useSignerOrProvider();
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation('proposal');
 
   const handleStake = useCallback(
     async (value: bigint) => {
-      if (!lido || !daoAddress || !signerOrProvider) {
+      if (!lido || !daoAddress) {
         // Means it is not supported on current network
         return;
       }
 
-      const stETHContract = getSTETHContract(lido.stETHContractAddress, signerOrProvider);
+      const stETHContract = getSTETHContract(lido.stETHContractAddress);
 
       const proposalData: ProposalExecuteData = {
         metaData: {
@@ -45,19 +43,18 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, signerOrProvider, daoAddress, safe, submitProposal, t],
+    [lido, daoAddress, safe, submitProposal, t],
   );
 
   const handleUnstake = useCallback(
     async (value: string) => {
-      if (!lido || !daoAddress || !signerOrProvider) {
+      if (!lido || !daoAddress) {
         // Means it is not supported on current network
         return;
       }
-      const stETHContract = getSTETHContract(lido.stETHContractAddress, signerOrProvider);
+      const stETHContract = getSTETHContract(lido.stETHContractAddress);
       const withdrawalQueueContract = getWithdrawalQueueContract(
         lido.withdrawalQueueContractAddress,
-        signerOrProvider,
       );
 
       const proposalData: ProposalExecuteData = {
@@ -90,19 +87,18 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t, signerOrProvider],
+    [lido, daoAddress, safe, submitProposal, t],
   );
 
   const handleClaimUnstakedETH = useCallback(
     async (nftId: bigint) => {
-      if (!lido || !daoAddress || !signerOrProvider) {
+      if (!lido || !daoAddress) {
         // Means it is not supported on current network
         return;
       }
 
       const withdrawalQueueContract = getWithdrawalQueueContract(
         lido.withdrawalQueueContractAddress,
-        signerOrProvider,
       );
 
       const proposalData: ProposalExecuteData = {
@@ -127,7 +123,7 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t, signerOrProvider],
+    [lido, daoAddress, safe, submitProposal, t],
   );
 
   return { handleStake, handleUnstake, handleClaimUnstakedETH };

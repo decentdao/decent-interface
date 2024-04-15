@@ -1,4 +1,3 @@
-import { ContractReceipt, ethers } from 'ethers';
 import React, { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -36,7 +35,7 @@ const useTransaction = () => {
       setPending(true);
       params
         .contractFn()
-        .then((txResponse: ethers.ContractTransaction) => {
+        .then(txResponse => {
           return Promise.all([txResponse.wait(), toastId]);
         })
         .then(([txReceipt, toastID]) => {

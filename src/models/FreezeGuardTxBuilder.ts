@@ -1,17 +1,15 @@
 import {
-  Azorius,
-  AzoriusFreezeGuard__factory,
-  ERC20FreezeVoting__factory,
-  MultisigFreezeGuard__factory,
-  MultisigFreezeVoting__factory,
-  ERC721FreezeVoting__factory,
-  MultisigFreezeVoting,
-  ERC20FreezeVoting,
-  ERC721FreezeVoting,
-} from '@fractal-framework/fractal-contracts';
-import { ethers } from 'ethers';
-import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
+  Address,
+  Hex,
+  PublicClient,
+  WalletClient,
+  getCreate2Address,
+  keccak256,
+  encodePacked,
+  encodeFunctionData,
+  parseAbiParameters,
+  encodeAbiParameters,
+} from 'viem';
 import { buildContractCall } from '../helpers';
 import {
   BaseContracts,
@@ -19,6 +17,8 @@ import {
   SubDAO,
   AzoriusContracts,
   VotingStrategyType,
+  SafeL2,
+  Azorius,
 } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import {
@@ -33,40 +33,40 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private readonly saltNum;
 
   // Safe Data
-  private readonly safeContract: GnosisSafeL2;
+  private readonly safeContract: SafeL2;
 
   // Freeze Voting Data
   private freezeVotingType: any;
-  private freezeVotingCallData: string | undefined;
-  private freezeVotingAddress: string | undefined;
+  private freezeVotingCallData: Hex | undefined;
+  private freezeVotingAddress: Address | undefined;
 
   // Freeze Guard Data
-  private freezeGuardCallData: string | undefined;
-  private freezeGuardAddress: string | undefined;
+  private freezeGuardCallData: Hex | undefined;
+  private freezeGuardAddress: Address | undefined;
 
   // Azorius Data
-  private azoriusAddress: string | undefined;
-  private strategyAddress: string | undefined;
+  private azoriusAddress: Address | undefined;
+  private strategyAddress: Address | undefined;
 
   private parentStrategyType: VotingStrategyType | undefined;
-  private parentStrategyAddress: string | undefined;
+  private parentStrategyAddress: Address | undefined;
 
   constructor(
-    signerOrProvider: any,
+    walletOrPublicClient: WalletClient | PublicClient,
     baseContracts: BaseContracts,
     daoData: SubDAO,
-    safeContract: GnosisSafeL2,
-    saltNum: string,
-    parentAddress: string,
-    parentTokenAddress?: string,
+    safeContract: SafeL2,
+    saltNum: bigint,
+    parentAddress: Address,
+    parentTokenAddress?: Address,
     azoriusContracts?: AzoriusContracts,
-    azoriusAddress?: string,
-    strategyAddress?: string,
+    azoriusAddress?: Address,
+    strategyAddress?: Address,
     parentStrategyType?: VotingStrategyType,
-    parentStrategyAddress?: string,
+    parentStrategyAddress?: Address,
   ) {
     super(
-      signerOrProvider,
+      walletOrPublicClient,
       baseContracts,
       azoriusContracts,
       daoData,
@@ -96,10 +96,10 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
       [
-        this.freezeVotingType === ERC20FreezeVoting__factory
+        this.freezeVotingType === this.baseContracts.freezeERC20VotingMasterCopyContract
           ? this.baseContracts.freezeERC20VotingMasterCopyContract.address
-          : this.freezeVotingType === ERC721FreezeVoting__factory
-            ? this.baseContracts.freezeERC721VotingMasterCopyContract.address
+          : this.freezeVotingType === this.baseContracts.freezeERC721VotingMasterCopyContract
+            ? this.baseContracts.freezeERC721VotingMasterCopyContract!.address
             : this.baseContracts.freezeMultisigVotingMasterCopyContract.address,
         this.freezeVotingCallData,
         this.saltNum,
@@ -113,28 +113,25 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     const subDaoData = this.daoData as SubDAO;
 
     return buildContractCall(
-      this.freezeVotingType.connect(this.freezeVotingAddress, this.signerOrProvider),
+      { address: this.freezeVotingAddress!, abi: this.freezeVotingType.abi },
       'setUp',
       [
-        ethers.utils.defaultAbiCoder.encode(
-          ['address', 'uint256', 'uint32', 'uint32', 'address'],
-          [
-            this.parentAddress, // Owner -- Parent DAO
-            subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
-            subDaoData.freezeProposalPeriod, // FreezeProposalPeriod
-            subDaoData.freezePeriod, // FreezePeriod
-            this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
-              ? this.parentStrategyAddress
-              : this.parentTokenAddress ?? this.parentAddress, // Parent Votes Token or Parent Safe Address
-          ],
-        ),
+        encodeAbiParameters(parseAbiParameters('address, uint256, uint32, uint32, address'), [
+          this.parentAddress!, // Owner -- Parent DAO
+          subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
+          Number(subDaoData.freezeProposalPeriod), // FreezeProposalPeriod
+          Number(subDaoData.freezePeriod), // FreezePeriod
+          this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
+            ? this.parentStrategyAddress!
+            : this.parentTokenAddress! ?? this.parentAddress!, // Parent Votes Token or Parent Safe Address
+        ]),
       ],
       0,
       false,
     );
   }
 
-  public buildSetGuardTx(contract: GnosisSafeL2 | Azorius): SafeTransaction {
+  public buildSetGuardTx(contract: SafeL2 | Azorius): SafeTransaction {
     return buildContractCall(contract, 'setGuard', [this.freezeGuardAddress], 0, false);
   }
 
@@ -142,7 +139,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     return buildDeployZodiacModuleTx(this.baseContracts.zodiacModuleProxyFactoryContract, [
       this.getGuardMasterCopyAddress(),
       this.freezeGuardCallData!,
-      this.saltNum,
+      this.saltNum.toString(),
     ]);
   }
 
@@ -154,44 +151,45 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private setFreezeVotingTypeAndCallData() {
     if (this.parentStrategyType) {
       if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
-        this.freezeVotingType = ERC20FreezeVoting__factory;
+        this.freezeVotingType = this.baseContracts.freezeERC20VotingMasterCopyContract;
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
-        this.freezeVotingType = ERC721FreezeVoting__factory;
+        this.freezeVotingType = this.baseContracts.freezeERC721VotingMasterCopyContract!;
       }
     } else {
-      this.freezeVotingType = MultisigFreezeVoting__factory;
+      this.freezeVotingType = this.baseContracts.freezeMultisigVotingMasterCopyContract;
     }
 
-    this.freezeVotingCallData = this.freezeVotingType.createInterface().encodeFunctionData('owner');
+    this.freezeVotingCallData = encodeFunctionData({
+      functionName: 'owner',
+      abi: this.freezeVotingType.abi,
+      args: [],
+    });
   }
 
   private setFreezeVotingAddress() {
-    let freezeVotesMasterCopyContract:
-      | MultisigFreezeVoting
-      | ERC20FreezeVoting
-      | ERC721FreezeVoting = this.baseContracts.freezeMultisigVotingMasterCopyContract;
+    let freezeVotesMasterCopyContract = this.baseContracts.freezeMultisigVotingMasterCopyContract;
     if (this.parentStrategyType) {
       if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
         freezeVotesMasterCopyContract = this.baseContracts.freezeERC20VotingMasterCopyContract;
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
-        freezeVotesMasterCopyContract = this.baseContracts.freezeERC721VotingMasterCopyContract;
+        freezeVotesMasterCopyContract = this.baseContracts.freezeERC721VotingMasterCopyContract!;
       }
     }
 
     const freezeVotingByteCodeLinear = generateContractByteCodeLinear(
-      freezeVotesMasterCopyContract.address.slice(2),
+      freezeVotesMasterCopyContract.address.slice(2) as Address,
     );
 
-    this.freezeVotingAddress = getCreate2Address(
-      this.baseContracts.zodiacModuleProxyFactoryContract.address,
-      generateSalt(this.freezeVotingCallData!, this.saltNum),
-      solidityKeccak256(['bytes'], [freezeVotingByteCodeLinear]),
-    );
+    this.freezeVotingAddress = getCreate2Address({
+      from: this.baseContracts.zodiacModuleProxyFactoryContract.address,
+      salt: generateSalt(this.freezeVotingCallData!, this.saltNum),
+      bytecodeHash: keccak256(encodePacked(['bytes'], [freezeVotingByteCodeLinear])),
+    });
   }
 
   private setFreezeGuardAddress() {
     const freezeGuardByteCodeLinear = generateContractByteCodeLinear(
-      this.getGuardMasterCopyAddress().slice(2),
+      this.getGuardMasterCopyAddress().slice(2) as Address,
     );
     const freezeGuardSalt = generateSalt(this.freezeGuardCallData!, this.saltNum);
 
@@ -213,41 +211,36 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private setFreezeGuardCallDataMultisig() {
     const subDaoData = this.daoData as SubDAO;
 
-    this.freezeGuardCallData = MultisigFreezeGuard__factory.createInterface().encodeFunctionData(
-      'setUp',
-      [
-        ethers.utils.defaultAbiCoder.encode(
-          ['uint256', 'uint256', 'address', 'address', 'address'],
-          [
-            subDaoData.timelockPeriod, // Timelock Period
-            subDaoData.executionPeriod, // Execution Period
-            this.parentAddress, // Owner -- Parent DAO
-            this.freezeVotingAddress, // Freeze Voting
-            this.safeContract.address, // Safe
-          ],
-        ),
+    this.freezeGuardCallData = encodeFunctionData({
+      functionName: 'setUp',
+      abi: this.baseContracts.multisigFreezeGuardMasterCopyContract.abi,
+      args: [
+        encodeAbiParameters(parseAbiParameters('uint256, uint256, address, address, address'), [
+          subDaoData.timelockPeriod, // Timelock Period
+          subDaoData.executionPeriod, // Execution Period
+          this.parentAddress!, // Owner -- Parent DAO
+          this.freezeVotingAddress!, // Freeze Voting
+          this.safeContract.address, // Safe
+        ]),
       ],
-    );
+    });
   }
 
   private setFreezeGuardCallDataAzorius() {
     const subDaoData = this.daoData as SubDAO;
-
-    this.freezeGuardCallData = AzoriusFreezeGuard__factory.createInterface().encodeFunctionData(
-      'setUp',
-      [
-        ethers.utils.defaultAbiCoder.encode(
-          ['address', 'address', 'address', 'address', 'uint256'],
-          [
-            this.parentAddress, // Owner -- Parent DAO
-            this.freezeVotingAddress, // Freeze Voting
-            this.strategyAddress, // Base Strategy
-            this.azoriusAddress, // Azorius
-            subDaoData.executionPeriod, // Execution Period
-          ],
-        ),
+    this.freezeGuardCallData = encodeFunctionData({
+      abi: this.azoriusContracts?.azoriusFreezeGuardMasterCopyContract.abi!,
+      functionName: 'setUp',
+      args: [
+        encodeAbiParameters(parseAbiParameters('address, address, address, address, uint256'), [
+          this.parentAddress!, // Owner -- Parent DAO
+          this.freezeVotingAddress!, // Freeze Voting
+          this.strategyAddress!, // Base Strategy
+          this.azoriusAddress!, // Azorius
+          subDaoData.executionPeriod, // Execution Period
+        ]),
       ],
-    );
+    });
   }
 
   private getGuardMasterCopyAddress(): string {

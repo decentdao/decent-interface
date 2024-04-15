@@ -2,6 +2,7 @@ import { Flex, Text, Button, Divider } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { encodeFunctionData } from 'viem';
 import { SettingsSection } from '..';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -70,10 +71,14 @@ export default function MetadataContainer() {
         description: '',
         documentationUrl: '',
       },
-      targets: [fractalRegistryContract.asProvider.address],
+      targets: [fractalRegistryContract.asPublic.address],
       values: [0n],
       calldatas: [
-        fractalRegistryContract.asProvider.interface.encodeFunctionData('updateDAOName', [name]),
+        encodeFunctionData({
+          functionName: 'updateDAOName',
+          abi: fractalRegistryContract.asPublic.abi,
+          args: [name],
+        }),
       ],
     };
 
@@ -98,13 +103,14 @@ export default function MetadataContainer() {
         description: '',
         documentationUrl: '',
       },
-      targets: [keyValuePairsContract.asProvider.address],
+      targets: [keyValuePairsContract.asPublic.address],
       values: [0n],
       calldatas: [
-        keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
-          ['snapshotURL'],
-          [snapshotURL],
-        ]),
+        encodeFunctionData({
+          functionName: 'updateValues',
+          abi: keyValuePairsContract.asPublic.abi,
+          args: [['snapshotURL'], [snapshotURL]],
+        }),
       ],
     };
 

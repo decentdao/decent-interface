@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { encodeFunctionData } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
 import { SafeMultisigDAO, AzoriusGovernance, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { ProposalExecuteData } from '../../types/daoProposal';
@@ -39,16 +40,19 @@ export const useCreateSubDAOProposal = () => {
         const { safeTx, predictedSafeAddress } = builtSafeTx;
 
         const proposalData: ProposalExecuteData = {
-          targets: [
-            multiSendContract.asProvider.address,
-            fractalRegistryContract.asProvider.address,
-          ],
+          targets: [multiSendContract.asPublic.address, fractalRegistryContract.asPublic.address],
           values: [0n, 0n],
           calldatas: [
-            multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [safeTx]),
-            fractalRegistryContract.asProvider.interface.encodeFunctionData('declareSubDAO', [
-              predictedSafeAddress,
-            ]),
+            encodeFunctionData({
+              abi: multiSendContract.asPublic.abi,
+              functionName: 'multiSend',
+              args: [safeTx],
+            }),
+            encodeFunctionData({
+              abi: fractalRegistryContract.asPublic.abi,
+              functionName: 'declareSubDAO',
+              args: [predictedSafeAddress],
+            }),
           ],
           metaData: {
             title: t('Create a sub-Safe', { ns: 'proposalMetadata' }),

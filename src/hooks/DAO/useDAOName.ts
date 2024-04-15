@@ -1,10 +1,7 @@
-import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
-import { Address } from 'viem';
-import { useEnsName } from 'wagmi';
-import { getEventRPC } from '../../helpers';
+import { Address, decodeEventLog } from 'viem';
+import { useEnsName, usePublicClient } from 'wagmi';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { createAccountSubstring } from '../utils/useDisplayName';
 
@@ -51,16 +48,22 @@ export default function useDAOName({
       // Aka supplied from Subgraph
       setDAORegistryName(registryName);
     } else {
-      const rpc = getEventRPC<FractalRegistry>(fractalRegistryContract);
-      const events = await rpc.queryFilter(rpc.filters.FractalNameUpdated(address));
+      const events = await fractalRegistryContract.asPublic.getEvents.FractalNameUpdated({
+        address: address as any,
+      });
 
       const latestEvent = events.pop();
       if (!latestEvent) {
         setDAORegistryName(createAccountSubstring(address));
         return;
       }
-
-      const { daoName } = latestEvent.args;
+      const decodedLatestEvent = decodeEventLog({
+        topics: latestEvent.topics,
+        data: latestEvent.data,
+        abi: fractalRegistryContract.asPublic.abi,
+      });
+      const args = decodedLatestEvent.args as any[];
+      const daoName = args[0];
       setDAORegistryName(daoName);
     }
   }, [address, ensName, baseContracts, registryName]);
@@ -84,12 +87,12 @@ export default function useDAOName({
  * @dev this is used on initial load of the DAO Node, after subGraph data is loaded
  */
 export function useLazyDAOName() {
-  const provider = useEthersProvider();
+  const publicClient = usePublicClient();
   const getDaoName = useCallback(
     async (_address: string, _registryName?: string | null): Promise<string> => {
-      if (provider) {
+      if (publicClient) {
         // check if ens name resolves
-        const ensName = await provider.lookupAddress(_address).catch(() => null);
+        const ensName = await publicClient.getEnsAddress({ name: _address }).catch(() => null);
         if (ensName) {
           return ensName;
         }
@@ -101,7 +104,7 @@ export function useLazyDAOName() {
 
       return createAccountSubstring(_address);
     },
-    [provider],
+    [publicClient],
   );
 
   return { getDaoName };

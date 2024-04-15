@@ -1,4 +1,3 @@
-import EthersAdapter from '@safe-global/safe-ethers-lib';
 import SafeServiceClient, {
   AllTransactionsListResponse,
   AllTransactionsOptions,
@@ -22,7 +21,6 @@ import SafeServiceClient, {
   TokenInfoResponse,
   TransferListResponse,
 } from '@safe-global/safe-service-client';
-import { ethers } from 'ethers';
 import { useMemo } from 'react';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
 import {
@@ -30,7 +28,7 @@ import {
   getIndexedDBValue,
   setIndexedDBValue,
 } from '../../../hooks/utils/cache/useLocalDB';
-import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
+import useContractClient from '../../../hooks/utils/useContractClient';
 import { SafeMultisigTransactionResponse } from '../../../types';
 import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
@@ -41,8 +39,8 @@ class CachingSafeServiceClient extends SafeServiceClient {
   // endpoint more than once
   requestMap = new Map<string, Promise<any> | null>();
 
-  constructor(chainId: number, { txServiceUrl, ethAdapter }: SafeServiceClientConfig) {
-    super({ txServiceUrl, ethAdapter });
+  constructor(chainId: number, { txServiceUrl }: SafeServiceClientConfig) {
+    super({ txServiceUrl });
     this.CHAINID = chainId;
   }
 
@@ -227,21 +225,16 @@ class CachingSafeServiceClient extends SafeServiceClient {
 
 export function useSafeAPI() {
   const { safeBaseURL, chain } = useNetworkConfig();
-  const signerOrProvider = useSignerOrProvider();
+  const { walletOrPublicClient } = useContractClient();
 
   const safeAPI: SafeServiceClient | undefined = useMemo(() => {
-    if (!signerOrProvider) {
+    if (!walletOrPublicClient) {
       return undefined;
     }
-    const ethAdapter = new EthersAdapter({
-      ethers,
-      signerOrProvider,
-    });
     return new CachingSafeServiceClient(chain.id, {
       txServiceUrl: safeBaseURL,
-      ethAdapter,
     });
-  }, [signerOrProvider, chain, safeBaseURL]);
+  }, [chain, safeBaseURL, walletOrPublicClient]);
 
   return safeAPI;
 }

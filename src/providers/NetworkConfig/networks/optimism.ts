@@ -19,11 +19,29 @@ import {
   getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
 } from '@safe-global/safe-deployments';
+import { Address, Abi } from 'viem';
 import { optimism } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
+
+const fallbackHandler = getCompatibilityFallbackHandlerDeployment({
+  version: SAFE_VERSION,
+  network: optimism.id.toString(),
+})!;
+const safe = getSafeL2SingletonDeployment({
+  version: SAFE_VERSION,
+  network: optimism.id.toString(),
+})!;
+const safeFactory = getProxyFactoryDeployment({
+  version: SAFE_VERSION,
+  network: optimism.id.toString(),
+})!;
+const multiSendCallOnly = getMultiSendCallOnlyDeployment({
+  version: SAFE_VERSION,
+  network: optimism.id.toString(),
+})!;
 
 export const optimismConfig: NetworkConfig = {
   order: 15,
@@ -40,35 +58,70 @@ export const optimismConfig: NetworkConfig = {
     version: 'v0.0.1',
   },
   contracts: {
-    fractalAzoriusMasterCopy: Azorius.address,
-    fractalModuleMasterCopy: FractalModule.address,
-    fractalRegistry: FractalRegistry.address,
-    votesERC20MasterCopy: VotesERC20.address,
-    linearVotingERC721MasterCopy: LinearVotingERC721.address,
-    claimingMasterCopy: ERC20Claim.address,
-    azoriusFreezeGuardMasterCopy: AzoriusFreezeGuard.address,
-    multisigFreezeVotingMasterCopy: MultisigFreezeVoting.address,
-    erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
-    erc721FreezeVotingMasterCopy: ERC721FreezeVoting.address,
-    multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
-    fallbackHandler: getCompatibilityFallbackHandlerDeployment({
-      version: SAFE_VERSION,
-      network: optimism.id.toString(),
-    })?.networkAddresses[optimism.id.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: optimism.id.toString() })
-      ?.networkAddresses[optimism.id.toString()]!,
-    safeFactory: getProxyFactoryDeployment({
-      version: SAFE_VERSION,
-      network: optimism.id.toString(),
-    })?.networkAddresses[optimism.id.toString()]!,
-    zodiacModuleProxyFactory: ModuleProxyFactory.address,
-    linearVotingMasterCopy: LinearERC20Voting.address,
-    multisend: getMultiSendCallOnlyDeployment({
-      version: SAFE_VERSION,
-      network: optimism.id.toString(),
-    })?.networkAddresses[optimism.id.toString()]!,
-    votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
-    keyValuePairs: KeyValuePairs.address,
+    fractalAzoriusMasterCopy: { address: Azorius.address as Address, abi: Azorius.abi as Abi },
+    fractalModuleMasterCopy: {
+      address: FractalModule.address as Address,
+      abi: FractalModule.abi as Abi,
+    },
+    fractalRegistry: {
+      address: FractalRegistry.address as Address,
+      abi: FractalRegistry.abi as Abi,
+    },
+    votesERC20MasterCopy: { address: VotesERC20.address as Address, abi: VotesERC20.abi as Abi },
+    linearVotingERC721MasterCopy: {
+      address: LinearVotingERC721.address as Address,
+      abi: LinearVotingERC721.abi as Abi,
+    },
+    claimingMasterCopy: { address: ERC20Claim.address as Address, abi: ERC20Claim.abi as Abi },
+    azoriusFreezeGuardMasterCopy: {
+      address: AzoriusFreezeGuard.address as Address,
+      abi: AzoriusFreezeGuard.abi as Abi,
+    },
+    multisigFreezeVotingMasterCopy: {
+      address: MultisigFreezeVoting.address as Address,
+      abi: MultisigFreezeVoting.abi as Abi,
+    },
+    erc20FreezeVotingMasterCopy: {
+      address: ERC20FreezeVoting.address as Address,
+      abi: ERC20FreezeVoting.abi as Abi,
+    },
+    erc721FreezeVotingMasterCopy: {
+      address: ERC721FreezeVoting.address as Address,
+      abi: ERC721FreezeVoting.abi as Abi,
+    },
+    multisigFreezeGuardMasterCopy: {
+      address: MultisigFreezeGuard.address as Address,
+      abi: MultisigFreezeGuard.abi as Abi,
+    },
+    fallbackHandler: {
+      address: fallbackHandler.networkAddresses[optimism.id.toString()]! as Address,
+      abi: fallbackHandler.abi as Abi,
+    },
+    safe: {
+      address: safe.networkAddresses[optimism.id.toString()]! as Address,
+      abi: safe.abi as Abi,
+    },
+    safeFactory: {
+      address: safeFactory.networkAddresses[optimism.id.toString()] as Address,
+      abi: safeFactory.abi as Abi,
+    },
+    zodiacModuleProxyFactory: {
+      address: ModuleProxyFactory.address as Address,
+      abi: ModuleProxyFactory.abi as Abi,
+    },
+    linearVotingMasterCopy: {
+      address: LinearERC20Voting.address as Address,
+      abi: LinearERC20Voting.abi as Abi,
+    },
+    multisend: {
+      address: multiSendCallOnly.networkAddresses[optimism.id.toString()]! as Address,
+      abi: multiSendCallOnly.abi as Abi,
+    },
+    votesERC20WrapperMasterCopy: {
+      address: VotesERC20Wrapper.address as Address,
+      abi: VotesERC20Wrapper.abi as Abi,
+    },
+    keyValuePairs: { address: KeyValuePairs.address as Address, abi: KeyValuePairs.abi as Abi },
   },
   staking: {},
   createOptions: [

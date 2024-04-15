@@ -1,18 +1,13 @@
-import {
-  ERC721__factory,
-  Azorius,
-  LinearERC721Voting__factory,
-  LinearERC721Voting,
-} from '@fractal-framework/fractal-contracts';
-import { utils } from 'ethers';
 import { useState, useEffect, useCallback } from 'react';
+import { Address, getAddress, getContract, erc721Abi } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
-import { AzoriusGovernance } from '../../../types';
+import { Azorius, AzoriusGovernance } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
+import useContractClient from '../../utils/useContractClient';
 import { useFractalModules } from '../loaders/useFractalModules';
 
 /**
@@ -34,8 +29,8 @@ export default function useUserERC721VotingTokens(
   const [totalVotingTokenAddresses, setTotalVotingTokenAddresses] = useState<string[]>([]);
   const [remainingTokenIds, setRemainingTokenIds] = useState<string[]>([]);
   const [remainingTokenAddresses, setRemainingTokenAddresses] = useState<string[]>([]);
+  const { walletOrPublicClient } = useContractClient();
 
-  const signerOrProvider = useSignerOrProvider();
   const {
     node: { daoAddress },
     governanceContracts: { erc721LinearVotingContractAddress },
@@ -45,6 +40,7 @@ export default function useUserERC721VotingTokens(
   const baseContracts = useSafeContracts();
   const lookupModules = useFractalModules();
   const safeAPI = useSafeAPI();
+  const publicClient = usePublicClient();
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { erc721Tokens } = azoriusGovernance;
@@ -58,9 +54,9 @@ export default function useUserERC721VotingTokens(
       const userERC721Tokens = new Map<string, Set<string>>();
 
       let govTokens = erc721Tokens;
-      let votingContract: LinearERC721Voting | undefined;
+      let votingContract: any;
 
-      if (!baseContracts || !signerOrProvider || !daoAddress) {
+      if (!baseContracts || !daoAddress || !walletOrPublicClient) {
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
@@ -69,33 +65,37 @@ export default function useUserERC721VotingTokens(
         };
       }
 
-      if (_safeAddress && daoAddress !== _safeAddress) {
+      if (_safeAddress && daoAddress !== _safeAddress && publicClient) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
-        const safeInfo = await safeAPI!.getSafeInfo(utils.getAddress(_safeAddress));
-        const safeModules = await lookupModules(safeInfo.modules);
+        const safeInfo = await safeAPI!.getSafeInfo(getAddress(_safeAddress));
+        const safeModules = await lookupModules(safeInfo.modules as Address[]);
         const azoriusModule = getAzoriusModuleFromModules(safeModules);
         if (azoriusModule && azoriusModule.moduleContract) {
           const azoriusContract = azoriusModule.moduleContract as Azorius;
           // @dev assumes the first strategy is the voting contract
-          const votingContractAddress = (
-            await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
-          )[1];
-          votingContract = LinearERC721Voting__factory.connect(
-            votingContractAddress,
-            signerOrProvider,
-          );
-          const addresses = await votingContract.getAllTokenAddresses();
+          const votingContractAddresses = (await azoriusContract.read.getStrategies([
+            '0x0000000000000000000000000000000000000001',
+            0,
+          ])) as Address[];
+          votingContract = getContract({
+            address: votingContractAddresses[1],
+            client: walletOrPublicClient,
+            abi: baseContracts.linearVotingERC721MasterCopyContract?.asPublic.abi!,
+          });
+          const addresses = (await votingContract?.read.getAllTokenAddresses([])) as Address[];
           govTokens = await Promise.all(
             addresses.map(async tokenAddress => {
-              const tokenContract = ERC721__factory.connect(tokenAddress, signerOrProvider);
-              const votingWeight = (await votingContract!.getTokenWeight(tokenAddress)).toBigInt();
-              const name = await tokenContract.name();
-              const symbol = await tokenContract.symbol();
+              const tokenContract = getContract({
+                address: tokenAddress,
+                abi: erc721Abi,
+                client: publicClient,
+              });
+              const votingWeight = await votingContract?.read.getTokenWeight(tokenAddress);
+              const name = await tokenContract.read.name();
+              const symbol = await tokenContract.read.symbol();
               let totalSupply = undefined;
               try {
-                const tokenSentEvents = await tokenContract.queryFilter(
-                  tokenContract.filters.Transfer(null, null),
-                );
+                const tokenSentEvents = await tokenContract.getEvents.Transfer();
                 totalSupply = BigInt(tokenSentEvents.length);
               } catch (e) {
                 logError('Error while getting ERC721 total supply');
@@ -105,13 +105,15 @@ export default function useUserERC721VotingTokens(
           );
         }
       }
-      if (erc721LinearVotingContractAddress && !votingContract) {
-        votingContract = baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-          erc721LinearVotingContractAddress,
-        );
+      if (erc721LinearVotingContractAddress && !votingContract && publicClient) {
+        votingContract = getContract({
+          address: erc721LinearVotingContractAddress,
+          abi: baseContracts.linearVotingERC721MasterCopyContract?.asPublic.abi!,
+          client: publicClient,
+        });
       }
 
-      if (!govTokens || !votingContract || !user.address) {
+      if (!govTokens || !votingContract || !user.address || !publicClient) {
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
@@ -123,26 +125,30 @@ export default function useUserERC721VotingTokens(
         // Using `map` instead of `forEach` to simplify usage of `Promise.all`
         // and guarantee syncronous contractFn assignment
         govTokens.map(async token => {
-          const tokenContract = ERC721__factory.connect(token.address, signerOrProvider!);
-          if ((await tokenContract.balanceOf(user.address!)).toBigInt() > 0n) {
-            const tokenSentEvents = await tokenContract.queryFilter(
-              tokenContract.filters.Transfer(user.address!, null),
-            );
-            const tokenReceivedEvents = await tokenContract.queryFilter(
-              tokenContract.filters.Transfer(null, user.address),
-            );
+          const tokenContract = getContract({
+            address: token.address,
+            abi: erc721Abi,
+            client: publicClient,
+          });
+          if (((await tokenContract.read.balanceOf([user.address!])) as bigint) > 0n) {
+            const tokenSentEvents = await tokenContract.getEvents.Transfer({ from: user.address });
+            const tokenReceivedEvents = await tokenContract.getEvents.Transfer({
+              to: user.address,
+            });
             const allEvents = tokenSentEvents
               .concat(tokenReceivedEvents)
               .sort(
-                (a, b) => a.blockNumber - b.blockNumber || a.transactionIndex - b.transactionIndex,
+                (a, b) =>
+                  Number(a.blockNumber - b.blockNumber) ||
+                  Number(a.transactionIndex - b.transactionIndex),
               );
 
             const ownedTokenIds = new Set<string>();
             allEvents.forEach(({ args: { to, from, tokenId } }) => {
-              if (to.toLowerCase() === user.address!.toLowerCase()) {
-                ownedTokenIds.add(tokenId.toString());
-              } else if (from.toLowerCase() === user.address!.toLowerCase()) {
-                ownedTokenIds.delete(tokenId.toString());
+              if (to?.toLowerCase() === user.address!.toLowerCase()) {
+                ownedTokenIds.add(tokenId?.toString() || '');
+              } else if (from?.toLowerCase() === user.address!.toLowerCase()) {
+                ownedTokenIds.delete(tokenId?.toString() || '');
               }
             });
             if (ownedTokenIds.size > 0) {
@@ -193,12 +199,13 @@ export default function useUserERC721VotingTokens(
     [
       erc721LinearVotingContractAddress,
       erc721Tokens,
-      signerOrProvider,
       lookupModules,
       safeAPI,
       daoAddress,
       user.address,
       baseContracts,
+      publicClient,
+      walletOrPublicClient,
     ],
   );
 

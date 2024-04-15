@@ -8,7 +8,6 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react';
-import { utils } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

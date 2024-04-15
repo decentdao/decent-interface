@@ -1,12 +1,11 @@
 import snapshot from '@snapshot-labs/snapshot.js';
-import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { getContract } from 'viem';
 import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import {
   AzoriusGovernance,
   GovernanceType,
@@ -15,6 +14,7 @@ import {
 } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
 import useSafeContracts from '../../safe/useSafeContracts';
+import useContractClient from '../../utils/useContractClient';
 import { useTransaction } from '../../utils/useTransaction';
 import useSnapshotSpaceName from '../loaders/snapshot/useSnapshotSpaceName';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';
@@ -39,9 +39,9 @@ const useCastVote = ({
       user: { address },
     },
   } = useFractal();
+  const { walletClient } = useContractClient();
   const baseContracts = useSafeContracts();
   const daoSnapshotSpaceName = useSnapshotSpaceName();
-  const signer = useEthersSigner();
   const client = useMemo(() => {
     if (daoSnapshotURL) {
       const isTestnetSnapshotURL = daoSnapshotURL.includes('testnet');
@@ -90,28 +90,37 @@ const useCastVote = ({
   const castVote = useCallback(
     async (vote: number) => {
       let contractFn;
-      if (type === GovernanceType.AZORIUS_ERC20 && ozLinearVotingContractAddress && baseContracts) {
-        const ozLinearVotingContract = baseContracts.linearVotingMasterCopyContract.asSigner.attach(
-          ozLinearVotingContractAddress,
-        );
-        contractFn = () => ozLinearVotingContract.vote(proposal.proposalId, vote);
+      if (
+        type === GovernanceType.AZORIUS_ERC20 &&
+        ozLinearVotingContractAddress &&
+        baseContracts &&
+        walletClient
+      ) {
+        const ozLinearVotingContract = getContract({
+          address: ozLinearVotingContractAddress,
+          abi: baseContracts.linearVotingMasterCopyContract.asWallet.abi,
+          client: walletClient,
+        });
+        contractFn = () => ozLinearVotingContract.write.vote([proposal.proposalId, vote]);
       } else if (
         type === GovernanceType.AZORIUS_ERC721 &&
         erc721LinearVotingContractAddress &&
-        baseContracts
+        baseContracts &&
+        walletClient
       ) {
-        const erc721LinearVotingContract =
-          baseContracts.linearVotingERC721MasterCopyContract.asSigner.attach(
-            erc721LinearVotingContractAddress,
-          );
+        const erc721LinearVotingContract = getContract({
+          address: erc721LinearVotingContractAddress,
+          abi: baseContracts!.linearVotingERC721MasterCopyContract!.asWallet.abi,
+          client: walletClient,
+        });
 
         contractFn = () =>
-          erc721LinearVotingContract.vote(
+          erc721LinearVotingContract.write.vote([
             proposal.proposalId,
             vote,
             remainingTokenAddresses,
             remainingTokenIds,
-          );
+          ]);
       }
 
       if (contractFn) {
@@ -141,19 +150,13 @@ const useCastVote = ({
       getCanVote,
       getHasVoted,
       baseContracts,
+      walletClient,
     ],
   );
 
   const castSnapshotVote = useCallback(
     async (onSuccess?: () => Promise<void>) => {
-      if (
-        signer &&
-        signer?.provider &&
-        address &&
-        daoSnapshotSpaceName &&
-        extendedSnapshotProposal &&
-        client
-      ) {
+      if (address && daoSnapshotSpaceName && extendedSnapshotProposal && client) {
         let toastId;
         const mappedSnapshotWeightedChoice: { [choiceKey: number]: number } = {};
         if (extendedSnapshotProposal.type === 'weighted') {
@@ -180,7 +183,7 @@ const useCastVote = ({
               JSON.stringify(choice),
               extendedSnapshotProposal.proposalId,
             );
-            await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
+            await client.vote(signer.provider, address, {
               space: daoSnapshotSpaceName,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
@@ -189,7 +192,7 @@ const useCastVote = ({
               app: 'fractal',
             });
           } else {
-            await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
+            await client.vote(signer.provider, address, {
               space: daoSnapshotSpaceName,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
@@ -212,7 +215,6 @@ const useCastVote = ({
       }
     },
     [
-      signer,
       address,
       daoSnapshotSpaceName,
       extendedSnapshotProposal,

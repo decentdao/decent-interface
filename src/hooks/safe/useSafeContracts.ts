@@ -1,32 +1,10 @@
-import {
-  FractalModule__factory,
-  FractalRegistry__factory,
-  AzoriusFreezeGuard__factory,
-  ERC20FreezeVoting__factory,
-  MultisigFreezeGuard__factory,
-  MultisigFreezeVoting__factory,
-  VotesERC20__factory,
-  GnosisSafeProxyFactory__factory,
-  ModuleProxyFactory__factory,
-  LinearERC20Voting__factory,
-  Azorius__factory,
-  ERC20Claim__factory,
-  VotesERC20Wrapper__factory,
-  KeyValuePairs__factory,
-  LinearERC721Voting__factory,
-  ERC721FreezeVoting__factory,
-} from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
-import { MultiSend__factory } from '../../assets/typechain-types/usul';
-import { GnosisSafeL2__factory } from '../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
-import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
+import { getContract } from 'viem';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import useSignerOrProvider from '../utils/useSignerOrProvider';
+import { NetworkContract } from '../../types/network';
+import useContractClient from '../utils/useContractClient';
 
 export default function useSafeContracts() {
-  const signerOrProvider = useSignerOrProvider();
-  const provider = useEthersProvider();
-
   const {
     contracts: {
       safe,
@@ -49,105 +27,63 @@ export default function useSafeContracts() {
       keyValuePairs,
     },
   } = useNetworkConfig();
+  const { walletOrPublicClient, publicClient } = useContractClient();
 
   const daoContracts = useMemo(() => {
-    if (!signerOrProvider || !provider) {
+    if (!walletOrPublicClient || !publicClient) {
       return;
     }
-    const multiSendContract = {
-      asSigner: MultiSend__factory.connect(multisend, signerOrProvider),
-      asProvider: MultiSend__factory.connect(multisend, provider),
+    const getContractConnection = (networkContract: NetworkContract) => {
+      const baseArgs = { address: networkContract.address, abi: networkContract.abi };
+      return {
+        asWallet: getContract({ ...baseArgs, client: walletOrPublicClient }),
+        asPublic: getContract({ ...baseArgs, client: publicClient }),
+      };
     };
+    const multiSendContract = getContractConnection(multisend);
 
-    const safeFactoryContract = {
-      asSigner: GnosisSafeProxyFactory__factory.connect(safeFactory, signerOrProvider),
-      asProvider: GnosisSafeProxyFactory__factory.connect(safeFactory, provider),
-    };
+    const safeFactoryContract = getContractConnection(safeFactory);
 
-    const fractalAzoriusMasterCopyContract = {
-      asSigner: Azorius__factory.connect(fractalAzoriusMasterCopy, signerOrProvider),
-      asProvider: Azorius__factory.connect(fractalAzoriusMasterCopy, provider),
-    };
+    const fractalAzoriusMasterCopyContract = getContractConnection(fractalAzoriusMasterCopy);
 
-    const linearVotingMasterCopyContract = {
-      asSigner: LinearERC20Voting__factory.connect(linearVotingMasterCopy, signerOrProvider),
-      asProvider: LinearERC20Voting__factory.connect(linearVotingMasterCopy, provider),
-    };
-    const linearVotingERC721MasterCopyContract = {
-      asSigner: LinearERC721Voting__factory.connect(linearVotingERC721MasterCopy, signerOrProvider),
-      asProvider: LinearERC721Voting__factory.connect(linearVotingERC721MasterCopy, provider),
-    };
+    const linearVotingMasterCopyContract = getContractConnection(linearVotingMasterCopy);
+    const linearVotingERC721MasterCopyContract = linearVotingERC721MasterCopy
+      ? getContractConnection(linearVotingERC721MasterCopy)
+      : undefined;
 
-    const safeSingletonContract = {
-      asSigner: GnosisSafeL2__factory.connect(safe, signerOrProvider),
-      asProvider: GnosisSafeL2__factory.connect(safe, provider),
-    };
+    const safeSingletonContract = getContractConnection(safe);
 
-    const zodiacModuleProxyFactoryContract = {
-      asSigner: ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory, signerOrProvider),
-      asProvider: ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory, provider),
-    };
+    const zodiacModuleProxyFactoryContract = getContractConnection(zodiacModuleProxyFactory);
 
-    const fractalModuleMasterCopyContract = {
-      asSigner: FractalModule__factory.connect(fractalModuleMasterCopy, signerOrProvider),
-      asProvider: FractalModule__factory.connect(fractalModuleMasterCopy, provider),
-    };
+    const fractalModuleMasterCopyContract = getContractConnection(fractalModuleMasterCopy);
 
-    const fractalRegistryContract = {
-      asSigner: FractalRegistry__factory.connect(fractalRegistry, signerOrProvider),
-      asProvider: FractalRegistry__factory.connect(fractalRegistry, provider),
-    };
+    const fractalRegistryContract = getContractConnection(fractalRegistry);
 
-    const multisigFreezeGuardMasterCopyContract = {
-      asSigner: MultisigFreezeGuard__factory.connect(
-        multisigFreezeGuardMasterCopy,
-        signerOrProvider,
-      ),
-      asProvider: MultisigFreezeGuard__factory.connect(multisigFreezeGuardMasterCopy, provider),
-    };
+    const multisigFreezeGuardMasterCopyContract = getContractConnection(
+      multisigFreezeGuardMasterCopy,
+    );
 
-    const azoriusFreezeGuardMasterCopyContract = {
-      asSigner: AzoriusFreezeGuard__factory.connect(azoriusFreezeGuardMasterCopy, signerOrProvider),
-      asProvider: AzoriusFreezeGuard__factory.connect(azoriusFreezeGuardMasterCopy, provider),
-    };
+    const azoriusFreezeGuardMasterCopyContract = getContractConnection(
+      azoriusFreezeGuardMasterCopy,
+    );
 
-    const freezeMultisigVotingMasterCopyContract = {
-      asSigner: MultisigFreezeVoting__factory.connect(
-        multisigFreezeVotingMasterCopy,
-        signerOrProvider,
-      ),
-      asProvider: MultisigFreezeVoting__factory.connect(multisigFreezeVotingMasterCopy, provider),
-    };
+    const freezeMultisigVotingMasterCopyContract = getContractConnection(
+      multisigFreezeVotingMasterCopy,
+    );
 
-    const freezeERC20VotingMasterCopyContract = {
-      asSigner: ERC20FreezeVoting__factory.connect(erc20FreezeVotingMasterCopy, signerOrProvider),
-      asProvider: ERC20FreezeVoting__factory.connect(erc20FreezeVotingMasterCopy, provider),
-    };
+    const freezeERC20VotingMasterCopyContract = getContractConnection(erc20FreezeVotingMasterCopy);
 
-    const freezeERC721VotingMasterCopyContract = {
-      asSigner: ERC721FreezeVoting__factory.connect(erc721FreezeVotingMasterCopy, signerOrProvider),
-      asProvider: ERC721FreezeVoting__factory.connect(erc721FreezeVotingMasterCopy, provider),
-    };
+    const freezeERC721VotingMasterCopyContract = erc721FreezeVotingMasterCopy
+      ? getContractConnection(erc721FreezeVotingMasterCopy)
+      : undefined;
 
-    const votesTokenMasterCopyContract = {
-      asSigner: VotesERC20__factory.connect(votesERC20MasterCopy, signerOrProvider),
-      asProvider: VotesERC20__factory.connect(votesERC20MasterCopy, provider),
-    };
+    const votesTokenMasterCopyContract = getContractConnection(votesERC20MasterCopy);
 
-    const claimingMasterCopyContract = {
-      asSigner: ERC20Claim__factory.connect(claimingMasterCopy, signerOrProvider),
-      asProvider: ERC20Claim__factory.connect(claimingMasterCopy, provider),
-    };
+    const claimingMasterCopyContract = getContractConnection(claimingMasterCopy);
 
-    const votesERC20WrapperMasterCopyContract = {
-      asSigner: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, signerOrProvider),
-      asProvider: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, provider),
-    };
+    const votesERC20WrapperMasterCopyContract = getContractConnection(votesERC20WrapperMasterCopy);
 
-    const keyValuePairsContract = {
-      asSigner: KeyValuePairs__factory.connect(keyValuePairs, signerOrProvider),
-      asProvider: KeyValuePairs__factory.connect(keyValuePairs, provider),
-    };
+    const keyValuePairsContract = getContractConnection(keyValuePairs);
 
     return {
       multiSendContract,
@@ -188,8 +124,8 @@ export default function useSafeContracts() {
     linearVotingERC721MasterCopy,
     erc721FreezeVotingMasterCopy,
     keyValuePairs,
-    signerOrProvider,
-    provider,
+    walletOrPublicClient,
+    publicClient,
   ]);
 
   return daoContracts;

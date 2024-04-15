@@ -1,24 +1,24 @@
 import { useCallback } from 'react';
+import { encodeFunctionData } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { ProposalExecuteData } from '../../../types';
 import { CreateProposalForm } from '../../../types/proposalBuilder';
 import { couldBeENS } from '../../../utils/url';
 import useSafeContracts from '../../safe/useSafeContracts';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export default function useCreateProposalTemplate() {
-  const signerOrProvider = useSignerOrProvider();
-
   const keyValuePairsContract = useSafeContracts()?.keyValuePairsContract;
   const client = useIPFSClient();
   const {
     governance: { proposalTemplates },
   } = useFractal();
+  const publicClient = usePublicClient();
 
   const prepareProposalTemplateProposal = useCallback(
     async (values: CreateProposalForm) => {
-      if (proposalTemplates && signerOrProvider && keyValuePairsContract) {
+      if (proposalTemplates && publicClient && keyValuePairsContract) {
         const proposalMetadata = {
           title: 'Create Proposal Template',
           description:
@@ -33,7 +33,7 @@ export default function useCreateProposalTemplate() {
             values.transactions.map(async tx => ({
               ...tx,
               targetAddress: couldBeENS(tx.targetAddress)
-                ? await signerOrProvider.resolveName(tx.targetAddress)
+                ? await publicClient.getEnsAddress({ name: tx.targetAddress })
                 : tx.targetAddress,
               parameters: tx.parameters
                 .map(param => {
@@ -55,20 +55,21 @@ export default function useCreateProposalTemplate() {
 
         const proposal: ProposalExecuteData = {
           metaData: proposalMetadata,
-          targets: [keyValuePairsContract.asProvider.address],
+          targets: [keyValuePairsContract.asPublic.address],
           values: [0n],
           calldatas: [
-            keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
-              ['proposalTemplates'],
-              [Hash],
-            ]),
+            encodeFunctionData({
+              abi: keyValuePairsContract.asPublic.abi,
+              functionName: 'updateValues',
+              args: [['proposalTemplates'], [Hash]],
+            }),
           ],
         };
 
         return proposal;
       }
     },
-    [proposalTemplates, keyValuePairsContract, client, signerOrProvider],
+    [proposalTemplates, keyValuePairsContract, client, publicClient],
   );
 
   return { prepareProposalTemplateProposal };

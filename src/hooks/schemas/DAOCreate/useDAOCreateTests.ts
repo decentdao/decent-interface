@@ -1,13 +1,11 @@
-import { ethers, utils } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20Abi } from 'viem';
+import { Address, erc20Abi, getContract, isAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
-import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { couldBeENS } from '../../../utils/url';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { validateAddress } from '../common/useValidationAddress';
 
 /**
@@ -21,9 +19,8 @@ export function useDAOCreateTests() {
    * @dev this is used for any other functions contained within this hook, to lookup resolved addresses in this session without requesting again.
    */
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
-  const provider = useEthersProvider();
-  const signerOrProvider = useSignerOrProvider();
   const { t } = useTranslation(['daoCreate', 'common']);
+  const publicClient = usePublicClient();
 
   const minValueValidation = useMemo(
     () => (minValue: number) => {
@@ -47,14 +44,14 @@ export function useDAOCreateTests() {
       message: t('errorInvalidENSAddress', { ns: 'common' }),
       test: async function (address: string | undefined) {
         if (!address) return false;
-        const { validation } = await validateAddress({ signerOrProvider, address });
+        const { validation } = await validateAddress({ publicClient, address });
         if (validation.isValidAddress) {
           addressValidationMap.current.set(address, validation);
         }
         return validation.isValidAddress;
       },
     };
-  }, [signerOrProvider, addressValidationMap, t]);
+  }, [publicClient, addressValidationMap, t]);
 
   const uniqueAllocationValidationTest = useMemo(() => {
     return {
@@ -70,21 +67,20 @@ export function useDAOCreateTests() {
         // looks up tested value
         let inputValidation = addressValidationMap.current.get(value);
         if (!!value && !inputValidation) {
-          inputValidation = (await validateAddress({ signerOrProvider, address: value }))
-            .validation;
+          inputValidation = (await validateAddress({ publicClient, address: value })).validation;
         }
         // converts all inputs to addresses to compare
         // uses addressValidationMap to save on requests
         const resolvedAddresses: string[] = await Promise.all(
           parentAddressArray.map(async ({ address }: TokenAllocation) => {
             // look up validated values
-            const addressValidation = addressValidationMap.current.get(address);
+            const addressValidation = addressValidationMap.current.get(address!);
             if (addressValidation && addressValidation.isValidAddress) {
               return addressValidation.address;
             }
             // because mapping is not 'state', this catches values that may not be resolved yet
             if (couldBeENS(address)) {
-              const { validation } = await validateAddress({ signerOrProvider, address });
+              const { validation } = await validateAddress({ publicClient, address: address! });
               return validation.address;
             }
             return address;
@@ -97,7 +93,7 @@ export function useDAOCreateTests() {
         return uniqueFilter.length === 1;
       },
     };
-  }, [signerOrProvider, t]);
+  }, [publicClient, t]);
   const maxAllocationValidation = useMemo(() => {
     return {
       name: 'Token Supply validation',
@@ -134,14 +130,14 @@ export function useDAOCreateTests() {
     return {
       name: 'ERC20 Address Validation',
       message: t('errorInvalidERC20Address', { ns: 'common' }),
-      test: async function (address: string | undefined) {
-        if (address && utils.isAddress(address)) {
+      test: async function (address: Address | undefined) {
+        if (address && isAddress(address) && publicClient) {
           try {
-            const tokenContract = new ethers.Contract(address, erc20Abi, provider);
+            const tokenContract = getContract({ address, abi: erc20Abi, client: publicClient });
             const [name, symbol, decimals] = await Promise.all([
-              tokenContract.name(),
-              tokenContract.symbol(),
-              tokenContract.decimals(),
+              tokenContract.read.name(),
+              tokenContract.read.symbol(),
+              tokenContract.read.decimals(),
             ]);
             return !!name && !!symbol && !!decimals;
           } catch (error) {
@@ -151,21 +147,21 @@ export function useDAOCreateTests() {
         return false;
       },
     };
-  }, [provider, t]);
+  }, [publicClient, t]);
 
   const validERC721Address = useMemo(() => {
     return {
       name: 'ERC721 Address Validation',
       message: t('errorInvalidERC721Address', { ns: 'common' }),
       test: async function (address: string | undefined) {
-        if (address && utils.isAddress(address)) {
+        if (address && isAddress(address) && publicClient) {
           try {
             // We're using this instead of erc721ABI from wagmi cause that one doesn't have supportsInterface for whatever reason
             const erc165 = [
               'function supportsInterface(bytes4 interfaceID) external view returns (bool)',
             ];
-            const nftContract = new ethers.Contract(address, erc165, provider);
-            const supportsInterface = await nftContract.supportsInterface('0x80ac58cd'); // Exact same check we have in voting strategy contract
+            const nftContract = getContract({ address, abi: erc165, client: publicClient });
+            const supportsInterface = await nftContract.read.supportsInterface(['0x80ac58cd']); // Exact same check we have in voting strategy contract
             return supportsInterface;
           } catch (error) {
             logError(error);
@@ -175,7 +171,7 @@ export function useDAOCreateTests() {
         return false;
       },
     };
-  }, [provider, t]);
+  }, [publicClient, t]);
 
   const isBigIntValidation = useMemo(() => {
     return {
