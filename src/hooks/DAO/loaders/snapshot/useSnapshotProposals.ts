@@ -8,9 +8,7 @@ import useSnapshotSpaceName from './useSnapshotSpaceName';
 import { createClient } from './';
 
 export const useSnapshotProposals = () => {
-  const {
-    action,
-  } = useFractal();
+  const { action } = useFractal();
   const daoSnapshotSpaceName = useSnapshotSpaceName();
   const currentSnapshotURL = useRef<string | undefined>();
   const client = useMemo(() => createClient(), []);

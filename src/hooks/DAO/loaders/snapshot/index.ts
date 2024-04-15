@@ -11,7 +11,8 @@ const defaultOptions: DefaultOptions = {
   },
 };
 
-export const createClient = () =>  new ApolloClient({
+export const createClient = () =>
+  new ApolloClient({
     uri: 'https://hub.snapshot.org/graphql',
     cache: new InMemoryCache(),
     defaultOptions,
