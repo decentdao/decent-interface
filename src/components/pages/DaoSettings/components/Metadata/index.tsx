@@ -44,10 +44,10 @@ export default function MetadataContainer() {
   const handleSnapshotURLChange: ChangeEventHandler<HTMLInputElement> = e => {
     setSnapshotURL(e.target.value);
     try {
-      ens_normalize(e.target.value)
+      ens_normalize(e.target.value);
       setSnapshotURLValid(true);
     } catch (error) {
-      setSnapshotURLValid(false); 
+      setSnapshotURLValid(false);
     }
   };
 
