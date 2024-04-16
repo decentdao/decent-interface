@@ -23,9 +23,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
 
   const handleClawBack = useCallback(async () => {
     if (childSafeInfo && childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
-      const childSafeBalance = await safeAPI.getBalances(
-        getAddress(childSafeInfo.daoAddress),
-      );
+      const childSafeBalance = await safeAPI.getBalances(getAddress(childSafeInfo.daoAddress));
       const parentSafeInfo = await safeAPI.getSafeInfo(getAddress(parentAddress));
       if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
         const abiCoder = new ethers.utils.AbiCoder();

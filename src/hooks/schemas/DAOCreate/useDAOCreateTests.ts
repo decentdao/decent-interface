@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isAddress , erc20Abi } from 'viem';
+import { isAddress, erc20Abi } from 'viem';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
