@@ -1,3 +1,4 @@
+import { ens_normalize } from '@adraffy/ens-normalize';
 import { Flex, Text, Button, Divider } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +11,6 @@ import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayNam
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../../../types';
-import { couldBeENS } from '../../../../../utils/url';
 import { InputComponent } from '../../../../ui/forms/InputComponent';
 
 export default function MetadataContainer() {
@@ -42,13 +42,13 @@ export default function MetadataContainer() {
   }, [daoName, daoSnapshotURL, daoAddress]);
 
   const handleSnapshotURLChange: ChangeEventHandler<HTMLInputElement> = e => {
-    if (couldBeENS(e.target.value)) {
-      setSnapshotURLValid(true);
-    } else {
-      setSnapshotURLValid(false);
-    }
-
     setSnapshotURL(e.target.value);
+    try {
+      ens_normalize(e.target.value)
+      setSnapshotURLValid(true);
+    } catch (error) {
+      setSnapshotURLValid(false); 
+    }
   };
 
   const userHasVotingWeight = votingWeight > 0n;
