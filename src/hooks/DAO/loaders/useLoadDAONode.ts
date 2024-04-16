@@ -59,7 +59,7 @@ export const useLoadDAONode = () => {
             return { error: 'errorFailedSearch' };
           }
 
-          const sanitizedDaoAddress = utils.getAddress(_daoAddress);
+          const sanitizedDaoAddress = getAddress(_daoAddress);
           const safeInfoWithGuard = await safeAPI.getSafeData(sanitizedDaoAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
