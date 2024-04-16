@@ -1,6 +1,7 @@
+import { ens_normalize } from '@adraffy/ens-normalize';
 import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
@@ -29,6 +30,8 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors, mode } = props;
 
+  const [isSnapshotSpaceValid, setSnapshotSpaceValid] = useState(false);
+
   const {
     node: { daoName, daoSnapshotURL, daoAddress },
   } = useFractal();
@@ -38,13 +41,17 @@ export function EstablishEssentials(props: ICreationStepProps) {
   useEffect(() => {
     if (isEdit) {
       setFieldValue('essentials.daoName', daoName, false);
-      if (createAccountSubstring(daoAddress!) !== daoName)
+      if (createAccountSubstring(daoAddress!) !== daoName) {
+        // Pre-fill the snapshot URL form field when editing
         setFieldValue('essentials.snapshotURL', daoSnapshotURL || '', false);
+      }
     }
   }, [setFieldValue, mode, daoName, daoSnapshotURL, isEdit, daoAddress]);
 
   const daoNameDisabled =
     isEdit && !!daoName && !!daoAddress && createAccountSubstring(daoAddress) !== daoName;
+
+  // If in governance edit mode and snapshot URL is already set, disable the field
   const snapshotURLDisabled = isEdit && !!daoSnapshotURL;
 
   const handleGovernanceChange = (value: string) => {
@@ -55,6 +62,18 @@ export function EstablishEssentials(props: ICreationStepProps) {
     }
 
     setFieldValue('essentials.governance', value);
+  };
+
+  const handleSnapshotSpaceChange = (value: string) => {
+    setFieldValue('essentials.snapshotURL', value, true);
+    try {
+      ens_normalize(value);
+      setSnapshotSpaceValid(true);
+    } catch (error) {
+      console.log(error);
+      // If there's no input in the snapshot URL field, we don't need to check if it's valid
+      setSnapshotSpaceValid(!!value ? false : true);
+    }
   };
 
   const { createOptions } = useNetworkConfig();
@@ -163,7 +182,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
         <LabelWrapper errorMessage={errors?.essentials?.snapshotURL}>
           <Input
             value={values.essentials.snapshotURL}
-            onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
+            onChange={cEvent => handleSnapshotSpaceChange(cEvent.target.value)}
             isDisabled={snapshotURLDisabled}
             data-testid="essentials-snapshotURL"
             placeholder="example.eth"
@@ -178,6 +197,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       <StepButtons
         {...props}
         isNextDisabled={
+          !isSnapshotSpaceValid ||
           values.essentials.daoName.length === 0 || // TODO formik should do this, not sure why it's enabled on first pass
           (isEdit && values.essentials.governance === GovernanceType.MULTISIG)
         }
