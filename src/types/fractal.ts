@@ -238,7 +238,7 @@ export interface FractalNode {
   nodeHierarchy: NodeHierarchy;
   isModulesLoaded?: boolean;
   isHierarchyLoaded?: boolean;
-  daoSnapshotURL?: string;
+  daoSnapshotENS?: string;
   proposalTemplatesHash?: string;
 }
 

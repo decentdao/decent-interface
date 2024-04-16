@@ -33,7 +33,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const [isSnapshotSpaceValid, setSnapshotSpaceValid] = useState(false);
 
   const {
-    node: { daoName, daoSnapshotURL, daoAddress },
+    node: { daoName, daoSnapshotENS, daoAddress },
   } = useFractal();
 
   const isEdit = mode === DAOCreateMode.EDIT;
@@ -43,16 +43,16 @@ export function EstablishEssentials(props: ICreationStepProps) {
       setFieldValue('essentials.daoName', daoName, false);
       if (createAccountSubstring(daoAddress!) !== daoName) {
         // Pre-fill the snapshot URL form field when editing
-        setFieldValue('essentials.snapshotURL', daoSnapshotURL || '', false);
+        setFieldValue('essentials.snapshotURL', daoSnapshotENS || '', false);
       }
     }
-  }, [setFieldValue, mode, daoName, daoSnapshotURL, isEdit, daoAddress]);
+  }, [setFieldValue, mode, daoName, daoSnapshotENS, isEdit, daoAddress]);
 
   const daoNameDisabled =
     isEdit && !!daoName && !!daoAddress && createAccountSubstring(daoAddress) !== daoName;
 
   // If in governance edit mode and snapshot URL is already set, disable the field
-  const snapshotURLDisabled = isEdit && !!daoSnapshotURL;
+  const snapshotURLDisabled = isEdit && !!daoSnapshotENS;
 
   const handleGovernanceChange = (value: string) => {
     if (value === GovernanceType.AZORIUS_ERC20) {

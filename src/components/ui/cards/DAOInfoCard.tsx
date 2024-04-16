@@ -138,7 +138,7 @@ export function DAOInfoCard({
           // empty box to keep snapshot bottom aligned
           <Box />
         )}
-        {node.daoSnapshotURL && <Snapshot snapshotURL={node.daoSnapshotURL} />}
+        {node.daoSnapshotENS && <Snapshot snapshotURL={node.daoSnapshotENS} />}
       </Flex>
     </Flex>
   );

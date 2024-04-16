@@ -39,7 +39,7 @@ export const useLoadDAONode = () => {
         },
         daoName: name as string,
         daoAddress: utils.getAddress(_daoAddress as string),
-        daoSnapshotURL: snapshotURL as string,
+        daoSnapshotENS: snapshotURL as string,
       };
       return currentNode;
     }

@@ -34,7 +34,7 @@ const useCastVote = ({
   const {
     governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
     governance,
-    node: { daoSnapshotURL },
+    node: { daoSnapshotENS },
     readOnly: {
       user: { address },
     },
@@ -43,15 +43,15 @@ const useCastVote = ({
   const daoSnapshotSpaceName = useSnapshotSpaceName();
   const signer = useEthersSigner();
   const client = useMemo(() => {
-    if (daoSnapshotURL) {
-      const isTestnetSnapshotURL = daoSnapshotURL.includes('testnet');
+    if (daoSnapshotENS) {
+      const isTestnetSnapshotURL = daoSnapshotENS.includes('testnet');
       const hub = isTestnetSnapshotURL
         ? 'https://testnet.seq.snapshot.org' // This is not covered in Snapshot docs, but that's where they're sending request on testnet
         : 'https://hub.snapshot.org';
       return new snapshot.Client712(hub);
     }
     return undefined;
-  }, [daoSnapshotURL]);
+  }, [daoSnapshotENS]);
 
   const azoriusGovernance = useMemo(() => governance as AzoriusGovernance, [governance]);
   const { type } = azoriusGovernance;

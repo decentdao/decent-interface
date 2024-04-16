@@ -15,8 +15,8 @@ import { InputComponent } from '../../../../ui/forms/InputComponent';
 
 export default function MetadataContainer() {
   const [name, setName] = useState('');
-  const [snapshotURL, setSnapshotURL] = useState('');
-  const [snapshotURLValid, setSnapshotURLValid] = useState<boolean>();
+  const [snapshotENS, setSnapshotENS] = useState('');
+  const [snapshotENSValid, setSnapshotENSValid] = useState<boolean>();
   const { t } = useTranslation(['settings', 'proposalMetadata']);
   const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ export default function MetadataContainer() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
     baseContracts,
-    node: { daoName, daoSnapshotURL, daoAddress, safe },
+    node: { daoName, daoSnapshotENS, daoAddress, safe },
     readOnly: {
       user: { votingWeight },
     },
@@ -36,18 +36,18 @@ export default function MetadataContainer() {
       setName(daoName);
     }
 
-    if (daoSnapshotURL) {
-      setSnapshotURL(daoSnapshotURL);
+    if (daoSnapshotENS) {
+      setSnapshotENS(daoSnapshotENS);
     }
-  }, [daoName, daoSnapshotURL, daoAddress]);
+  }, [daoName, daoSnapshotENS, daoAddress]);
 
   const handleSnapshotURLChange: ChangeEventHandler<HTMLInputElement> = e => {
-    setSnapshotURL(e.target.value);
+    setSnapshotENS(e.target.value);
     try {
       ens_normalize(e.target.value);
-      setSnapshotURLValid(true);
+      setSnapshotENSValid(true);
     } catch (error) {
-      setSnapshotURLValid(false);
+      setSnapshotENSValid(false);
     }
   };
 
@@ -87,7 +87,7 @@ export default function MetadataContainer() {
     });
   };
 
-  const handleEditDAOSnapshotURL = () => {
+  const handleEditDAOSnapshotENS = () => {
     if (!baseContracts) {
       return;
     }
@@ -103,7 +103,7 @@ export default function MetadataContainer() {
       calldatas: [
         keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
           ['snapshotURL'],
-          [snapshotURL],
+          [snapshotENS],
         ]),
       ],
     };
@@ -182,9 +182,9 @@ export default function MetadataContainer() {
         {canUserCreateProposal && (
           <Button
             variant="tertiary"
-            disabled={!snapshotURLValid || snapshotURL === daoSnapshotURL}
-            isDisabled={!snapshotURLValid || snapshotURL === daoSnapshotURL}
-            onClick={handleEditDAOSnapshotURL}
+            disabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
+            isDisabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
+            onClick={handleEditDAOSnapshotENS}
           >
             {t('proposeChanges')}
           </Button>
@@ -193,7 +193,7 @@ export default function MetadataContainer() {
       <InputComponent
         isRequired={false}
         onChange={handleSnapshotURLChange}
-        value={snapshotURL}
+        value={snapshotENS}
         disabled={!userHasVotingWeight}
         placeholder="httpsexample.eth"
         testId="daoSettings.snapshotUrl"
