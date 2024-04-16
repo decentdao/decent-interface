@@ -25,7 +25,10 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
       const childSafeBalance = await safeAPI.getBalances(
         utils.getAddress(childSafeInfo.daoAddress),
       );
-      const parentSafeInfo = await safeAPI.getSafeInfo(utils.getAddress(parentAddress));
+
+      const santitizedParentAddress = utils.getAddress(parentAddress);
+      const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
+
       if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
         const abiCoder = new ethers.utils.AbiCoder();
         const fractalModule = childSafeInfo.fractalModules!.find(

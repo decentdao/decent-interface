@@ -223,13 +223,20 @@ class CachingSafeServiceClient extends SafeServiceClient {
     });
     return value;
   }
+
+  async getSafeData(safeAddress: string): Promise<SafeInfoResponse> {
+    const safeInfoResponse = await this.getSafeInfo(safeAddress);
+    const nextNonce = await this.getNextNonce(safeAddress);
+    const safeInfo = { ...safeInfoResponse, nonce: nextNonce };
+    return safeInfo;
+  }
 }
 
 export function useSafeAPI() {
   const { safeBaseURL, chain } = useNetworkConfig();
   const signerOrProvider = useSignerOrProvider();
 
-  const safeAPI: SafeServiceClient | undefined = useMemo(() => {
+  const safeAPI = useMemo(() => {
     if (!signerOrProvider) {
       return undefined;
     }
