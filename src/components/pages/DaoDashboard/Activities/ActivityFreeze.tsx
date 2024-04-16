@@ -33,10 +33,10 @@ export function ActivityFreeze() {
   } = useFractal();
   const { t } = useTranslation('dashboard');
   const freezeProposalDeadlineDate = new Date(
-    freezeProposalCreatedTime!.add(freezeProposalPeriod!).mul(1000).toNumber(),
+    Number(((freezeProposalCreatedTime || 0n) + (freezeProposalPeriod || 0n)) * 1000n),
   );
   const freezeDeadlineDate = new Date(
-    freezeProposalCreatedTime!.add(freezePeriod!).mul(1000).toNumber(),
+    Number(((freezeProposalCreatedTime || 0n) + (freezePeriod || 0n)) * 1000n),
   );
   const now = new Date();
 
@@ -68,7 +68,7 @@ export function ActivityFreeze() {
           gap="2rem"
         >
           <Text textStyle="text-base-sans-regular">
-            {!isFrozen && freezeVotesThreshold!.gt(0) && (
+            {!isFrozen && freezeVotesThreshold !== null && freezeVotesThreshold > 0n && (
               <Tooltip
                 label={t('tipFreeze', { amount: voteToThreshold })}
                 placement="bottom"

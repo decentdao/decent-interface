@@ -120,8 +120,8 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
         {!!proposal.quorum && (
           <Box marginTop={4}>
             <QuorumProgressBar
-              reachedQuorum={totalVotesCasted.toString()}
-              totalQuorum={proposal.quorum?.toString()}
+              reachedQuorum={BigInt(totalVotesCasted)}
+              totalQuorum={proposal.quorum ? BigInt(proposal.quorum) : undefined}
               unit=""
             />
           </Box>

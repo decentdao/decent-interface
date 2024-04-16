@@ -56,20 +56,20 @@ export const getValue = (key: string, chainId: number): any => {
  * the value, array, or object you would like to cache.
  */
 export const useLocalStorage = () => {
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
 
   const set = useCallback(
     (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
-      setValue(key, value, chainId, expirationMinutes);
+      setValue(key, value, chain.id, expirationMinutes);
     },
-    [chainId],
+    [chain],
   );
 
   const get = useCallback(
     (key: string) => {
-      return getValue(key, chainId);
+      return getValue(key, chain.id);
     },
-    [chainId],
+    [chain],
   );
 
   return { setValue: set, getValue: get };

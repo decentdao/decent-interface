@@ -8,7 +8,6 @@ import {
   VotesERC20,
   VotesERC20__factory,
 } from '@fractal-framework/fractal-contracts';
-import { BigNumber } from 'ethers';
 import { defaultAbiCoder, getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, getRandomBytes } from '../helpers';
@@ -105,7 +104,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       if (
         this.parentTokenAddress &&
         azoriusDAOData.parentAllocationAmount &&
-        !azoriusDAOData.parentAllocationAmount.isZero()
+        azoriusDAOData.parentAllocationAmount !== 0n
       ) {
         this.setEncodedSetupTokenClaimData();
         this.setPredictedTokenClaimAddress();
@@ -291,22 +290,22 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   private calculateTokenAllocations(
     azoriusGovernanceDaoData: AzoriusERC20DAO,
-  ): [string[], BigNumber[]] {
+  ): [string[], bigint[]] {
     const tokenAllocationsOwners = azoriusGovernanceDaoData.tokenAllocations.map(
       tokenAllocation => tokenAllocation.address,
     );
     const tokenAllocationsValues = azoriusGovernanceDaoData.tokenAllocations.map(
-      tokenAllocation => tokenAllocation.amount || BigNumber.from(0),
+      tokenAllocation => tokenAllocation.amount || 0n,
     );
     const tokenAllocationSum = tokenAllocationsValues.reduce((accumulator, tokenAllocation) => {
-      return tokenAllocation!.add(accumulator);
-    }, BigNumber.from(0));
+      return tokenAllocation + accumulator;
+    }, 0n);
 
     // Send any un-allocated tokens to the Safe Treasury
-    if (azoriusGovernanceDaoData.tokenSupply.gt(tokenAllocationSum)) {
+    if (azoriusGovernanceDaoData.tokenSupply > tokenAllocationSum) {
       // TODO -- verify this doesn't need to be the predicted safe address (that they are the same)
       tokenAllocationsOwners.push(this.safeContract.address);
-      tokenAllocationsValues.push(azoriusGovernanceDaoData.tokenSupply.sub(tokenAllocationSum));
+      tokenAllocationsValues.push(azoriusGovernanceDaoData.tokenSupply - tokenAllocationSum);
     }
 
     return [tokenAllocationsOwners, tokenAllocationsValues];
@@ -381,8 +380,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private async setPredictedStrategyAddress() {
     const azoriusGovernanceDaoData = this.daoData as AzoriusGovernanceDAO;
     if (azoriusGovernanceDaoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
-      const quorumDenominator =
-        await this.azoriusContracts!.linearVotingMasterCopyContract.QUORUM_DENOMINATOR();
+      const quorumDenominator = (
+        await this.azoriusContracts!.linearVotingMasterCopyContract.QUORUM_DENOMINATOR()
+      ).toBigInt();
       const encodedStrategyInitParams = defaultAbiCoder.encode(
         ['address', 'address', 'address', 'uint32', 'uint256', 'uint256', 'uint256'],
         [
@@ -390,9 +390,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
           this.predictedTokenAddress, // governance token
           '0x0000000000000000000000000000000000000001', // Azorius module
           azoriusGovernanceDaoData.votingPeriod,
-          BigNumber.from(1), // proposer weight, how much is needed to create a proposal.
-          azoriusGovernanceDaoData.quorumPercentage.mul(quorumDenominator.div(100)), // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
-          BigNumber.from(500000), // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
+          1n, // proposer weight, how much is needed to create a proposal.
+          (azoriusGovernanceDaoData.quorumPercentage * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
+          500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
         ],
       );
 
@@ -430,8 +430,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
           '0x0000000000000000000000000000000000000001', // Azorius module
           azoriusGovernanceDaoData.votingPeriod,
           daoData.quorumThreshold, // quorom threshold. Since smart contract can't know total of NFTs minted - we need to provide it manually
-          BigNumber.from(1), // proposer weight, how much is needed to create a proposal.
-          BigNumber.from(500000), // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
+          1n, // proposer weight, how much is needed to create a proposal.
+          500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
         ],
       );
 

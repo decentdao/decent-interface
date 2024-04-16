@@ -17,7 +17,7 @@ export const useFractalTreasury = () => {
   } = useFractal();
   const safeAPI = useSafeAPI();
 
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
 
   const { safeBaseURL } = useNetworkConfig();
 
@@ -53,15 +53,15 @@ export const useFractalTreasury = () => {
   }, [daoAddress, safeAPI, safeBaseURL, action]);
 
   useEffect(() => {
-    if (daoAddress && chainId + daoAddress !== loadKey.current) {
-      loadKey.current = chainId + daoAddress;
+    if (daoAddress && chain.id + daoAddress !== loadKey.current) {
+      loadKey.current = chain.id + daoAddress;
       setMethodOnInterval(loadTreasury);
     }
     if (!daoAddress) {
       loadKey.current = null;
       clearIntervals();
     }
-  }, [chainId, daoAddress, loadTreasury, setMethodOnInterval, clearIntervals]);
+  }, [chain, daoAddress, loadTreasury, setMethodOnInterval, clearIntervals]);
 
   return;
 };

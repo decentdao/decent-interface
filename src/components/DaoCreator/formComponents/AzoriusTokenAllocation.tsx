@@ -1,9 +1,8 @@
 import { IconButton, Box } from '@chakra-ui/react';
 import { LabelWrapper, Minus } from '@decent-org/fractal-ui';
-import { BigNumber } from 'ethers';
 import { Field, FieldAttributes } from 'formik';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
-import { BigNumberInput } from '../../ui/forms/BigNumberInput';
+import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 interface ITokenAllocations {
   index: number;
@@ -11,7 +10,7 @@ interface ITokenAllocations {
   setFieldValue: (field: string, value: any) => void;
   addressErrorMessage: string | null;
   amountErrorMessage: string | null;
-  amountInputValue: BigNumber | undefined;
+  amountInputValue?: bigint;
   allocationLength: number;
 }
 
@@ -39,7 +38,7 @@ export function AzoriusTokenAllocation({
         </Field>
       </LabelWrapper>
       <LabelWrapper errorMessage={amountErrorMessage}>
-        <BigNumberInput
+        <BigIntInput
           value={amountInputValue}
           onChange={valuePair =>
             setFieldValue(`erc20Token.tokenAllocations.${index}.amount`, valuePair)

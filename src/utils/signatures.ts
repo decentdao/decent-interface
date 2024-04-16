@@ -1,4 +1,4 @@
-import { BigNumberish, Signer, utils } from 'ethers';
+import { Signer, utils } from 'ethers';
 import { logError } from '../helpers/errorLogging';
 import { SafeAPITransaction } from '../types';
 
@@ -38,7 +38,7 @@ export interface SafeSignature {
 export const calculateSafeTransactionHash = (
   safeAddress: string,
   safeTx: SafeAPITransaction,
-  chainId: BigNumberish,
+  chainId: number,
 ): string => {
   return utils._TypedDataEncoder.hash(
     { verifyingContract: safeAddress, chainId },
@@ -69,7 +69,7 @@ export const safeSignMessage = async (
   signer: Signer,
   safeAddress: string,
   safeTx: SafeAPITransaction,
-  chainId?: BigNumberish,
+  chainId?: number,
 ): Promise<SafeSignature> => {
   const cid = chainId || (await signer.provider!.getNetwork()).chainId;
   return signHash(signer, calculateSafeTransactionHash(safeAddress, safeTx, cid));

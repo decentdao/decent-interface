@@ -1,6 +1,5 @@
 import { Alert, AlertTitle, Button, Flex, Text } from '@chakra-ui/react';
 import { Alert as AlertIcon } from '@decent-org/fractal-ui';
-import { BigNumber } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
@@ -9,7 +8,7 @@ import { AzoriusGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 
 export function ERCO20Claim() {
-  const [userClaimable, setUserClaimable] = useState(BigNumber.from(0));
+  const [userClaimable, setUserClaimable] = useState(0n);
   const {
     governance,
     readOnly: { user },
@@ -24,7 +23,7 @@ export function ERCO20Claim() {
     if (!tokenClaimContract || !type || !account) {
       return;
     }
-    const claimableAmount = await tokenClaimContract.getClaimAmount(account);
+    const claimableAmount = (await tokenClaimContract.getClaimAmount(account)).toBigInt();
     setUserClaimable(claimableAmount);
   }, [tokenClaimContract, type, account]);
 
@@ -61,7 +60,7 @@ export function ERCO20Claim() {
     });
   };
 
-  if (!azoriusGovernance.votesToken || userClaimable.isZero()) return null;
+  if (!azoriusGovernance.votesToken || userClaimable === 0n) return null;
   const claimableString = formatCoin(
     userClaimable,
     false,

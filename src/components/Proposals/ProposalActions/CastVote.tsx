@@ -59,7 +59,7 @@ function Vote({
     !isSnapshotProposal &&
       isCurrentBlockLoaded &&
       currentBlockNumber &&
-      azoriusProposal.startBlock.gte(currentBlockNumber),
+      azoriusProposal.startBlock >= currentBlockNumber,
   );
 
   const disabled =

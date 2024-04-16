@@ -1,6 +1,6 @@
 import { Button, Flex, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumber, Contract } from 'ethers';
+import { Contract } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,18 +15,18 @@ import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
-import { AzoriusGovernance, BigNumberValuePair } from '../../../types';
+import { AzoriusGovernance, BigIntValuePair } from '../../../types';
 import { formatCoin } from '../../../utils';
-import { BigNumberInput } from '../forms/BigNumberInput';
+import { BigIntInput } from '../forms/BigIntInput';
 
 export function WrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
   const signer = useEthersSigner();
   const { address: account } = useAccount();
-  const [userBalance, setUserBalance] = useState<BigNumberValuePair>({
+  const [userBalance, setUserBalance] = useState<BigIntValuePair>({
     value: '',
-    bigNumberValue: BigNumber.from(0),
+    bigintValue: 0n,
   });
   const baseContracts = useSafeContracts();
 
@@ -41,7 +41,7 @@ export function WrapToken({ close }: { close: () => void }) {
       governanceContracts.underlyingTokenAddress!,
     ),
     azoriusGovernance.votesToken?.address,
-    userBalance.bigNumberValue,
+    userBalance.bigintValue,
   );
 
   const { t } = useTranslation(['modals', 'treasury']);
@@ -61,7 +61,7 @@ export function WrapToken({ close }: { close: () => void }) {
       signer,
     );
     try {
-      const [balance, decimals]: [BigNumber, number] = await Promise.all([
+      const [balance, decimals]: [bigint, number] = await Promise.all([
         baseTokenContract.balanceOf(account),
         baseTokenContract.decimals(),
       ]);
@@ -72,7 +72,7 @@ export function WrapToken({ close }: { close: () => void }) {
           decimals,
           azoriusGovernance.votesToken?.underlyingTokenData?.symbol,
         ),
-        bigNumberValue: balance,
+        bigintValue: balance,
       });
     } catch (e) {
       logError(e);
@@ -85,7 +85,7 @@ export function WrapToken({ close }: { close: () => void }) {
   }, [getUserUnderlyingTokenBalance]);
 
   const handleFormSubmit = useCallback(
-    (amount: BigNumberValuePair) => {
+    (amount: BigIntValuePair) => {
       const { votesTokenContractAddress } = governanceContracts;
       if (!votesTokenContractAddress || !signer || !account || !baseContracts) return;
       const wrapperTokenContract =
@@ -93,7 +93,7 @@ export function WrapToken({ close }: { close: () => void }) {
           votesTokenContractAddress,
         );
       contractCall({
-        contractFn: () => wrapperTokenContract.depositFor(account, amount.bigNumberValue!),
+        contractFn: () => wrapperTokenContract.depositFor(account, amount.bigintValue!),
         pendingMessage: t('wrapTokenPendingMessage'),
         failedMessage: t('wrapTokenFailedMessage'),
         successMessage: t('wrapTokenSuccessMessage'),
@@ -117,10 +117,16 @@ export function WrapToken({ close }: { close: () => void }) {
     ],
   );
 
+  // @dev next couple of lines are written like this, to keep typing equivalent during the conversion from BN to bigint
+  const userBalanceBigIntValue = userBalance.bigintValue;
+  const userBalanceBigIntValueIsZero = userBalanceBigIntValue
+    ? userBalanceBigIntValue === 0n
+    : undefined;
+
   if (
     !azoriusGovernance.votesToken?.decimals ||
     !azoriusGovernance.votesToken.underlyingTokenData ||
-    userBalance.bigNumberValue?.isZero()
+    userBalanceBigIntValueIsZero
   ) {
     return null;
   }
@@ -128,7 +134,7 @@ export function WrapToken({ close }: { close: () => void }) {
   return (
     <Formik
       initialValues={{
-        amount: { value: '', bigNumberValue: BigNumber.from(0) },
+        amount: { value: '', bigintValue: 0n },
       }}
       onSubmit={values => {
         const { amount } = values;
@@ -137,17 +143,17 @@ export function WrapToken({ close }: { close: () => void }) {
       validationSchema={Yup.object().shape({
         amount: Yup.object({
           value: Yup.string().required(),
-          bigNumberValue: Yup.mixed().required(),
+          bigintValue: Yup.mixed().required(),
         }).test({
           name: 'Wrap Token Validation',
           message: t('wrapTokenError'),
           test: amount => {
-            const amountBN = amount.bigNumberValue as BigNumber;
+            const amountBN = amount.bigintValue as bigint;
             if (!amount) return false;
 
-            if (amountBN.isZero()) return false;
-            if (userBalance.bigNumberValue!.isZero()) return false;
-            if (amountBN.gt(userBalance.bigNumberValue!)) return false;
+            if (amountBN === 0n) return false;
+            if (userBalance.bigintValue! === 0n) return false;
+            if (amountBN > userBalance.bigintValue!) return false;
             return true;
           },
         }),
@@ -174,13 +180,13 @@ export function WrapToken({ close }: { close: () => void }) {
                 label={t('assetWrapAmountLabel')}
                 subLabel={t('selectSublabel', { balance: userBalance.value })}
               >
-                <BigNumberInput
-                  value={values.amount.bigNumberValue}
+                <BigIntInput
+                  value={values.amount.bigintValue}
                   decimalPlaces={azoriusGovernance.votesToken?.decimals}
                   onChange={valuePair => setFieldValue('amount', valuePair)}
                   data-testid="wrapToken-amount"
                   onKeyDown={restrictChars}
-                  maxValue={userBalance.bigNumberValue}
+                  maxValue={userBalance.bigintValue}
                 />
               </LabelWrapper>
 

@@ -8,20 +8,20 @@ import {
   Divider,
 } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
-import { BigNumber, ethers } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatUnits } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ICreationStepProps,
-  BigNumberValuePair,
+  BigIntValuePair,
   GovernanceType,
   CreatorSteps,
   AzoriusGovernance,
 } from '../../../types';
-import { formatBigNumberDisplay } from '../../../utils/numberFormats';
+import { formatBigIntDisplay } from '../../../utils/numberFormats';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberInput } from '../../ui/forms/BigNumberInput';
+import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
@@ -38,7 +38,7 @@ function GuardDetails(props: ICreationStepProps) {
   } = useFractal();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
-  const [totalParentVotes, setTotalParentVotes] = useState<BigNumber>();
+  const [totalParentVotes, setTotalParentVotes] = useState<bigint>();
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
   const azoriusGovernance = governance as AzoriusGovernance;
@@ -63,7 +63,7 @@ function GuardDetails(props: ICreationStepProps) {
     if (!totalParentVotes) {
       if (!type) return;
 
-      let parentVotes: BigNumber;
+      let parentVotes: bigint;
 
       switch (type) {
         case GovernanceType.AZORIUS_ERC20:
@@ -74,38 +74,38 @@ function GuardDetails(props: ICreationStepProps) {
           )
             return;
           if (azoriusGovernance.votesToken) {
-            const normalized = ethers.utils.formatUnits(
+            const normalized = formatUnits(
               azoriusGovernance.votesToken.totalSupply,
               azoriusGovernance.votesToken.decimals,
             );
 
-            parentVotes = BigNumber.from(normalized.substring(0, normalized.indexOf('.')));
+            parentVotes = BigInt(normalized.substring(0, normalized.indexOf('.')));
           } else if (azoriusGovernance.erc721Tokens) {
             parentVotes = azoriusGovernance.erc721Tokens!.reduce(
-              (prev, curr) => curr.votingWeight.mul(curr.totalSupply || 1).add(prev),
-              BigNumber.from(0),
+              (prev, curr) => curr.votingWeight * (curr.totalSupply || 1n) + prev,
+              0n,
             );
           } else {
-            parentVotes = BigNumber.from(1);
+            parentVotes = 1n;
           }
           break;
         case GovernanceType.MULTISIG:
         default:
           if (!safe) return;
-          parentVotes = BigNumber.from(safe.owners.length);
+          parentVotes = BigInt(safe.owners.length);
       }
 
-      let thresholdDefault: BigNumberValuePair;
+      let thresholdDefault: BigIntValuePair;
 
-      if (parentVotes.eq(1)) {
+      if (parentVotes === 1n) {
         thresholdDefault = {
           value: '1',
-          bigNumberValue: parentVotes,
+          bigintValue: parentVotes,
         };
       } else {
         thresholdDefault = {
           value: parentVotes.toString(),
-          bigNumberValue: parentVotes.div(2),
+          bigintValue: parentVotes / 2n,
         };
       }
 
@@ -122,7 +122,7 @@ function GuardDetails(props: ICreationStepProps) {
   ]);
 
   const freezeHelper = totalParentVotes
-    ? t('helperFreezeVotesThreshold', { totalVotes: formatBigNumberDisplay(totalParentVotes) })
+    ? t('helperFreezeVotesThreshold', { totalVotes: formatBigIntDisplay(totalParentVotes) })
     : null;
 
   return (
@@ -145,8 +145,8 @@ function GuardDetails(props: ICreationStepProps) {
               isRequired
             >
               <InputGroup>
-                <BigNumberInput
-                  value={values.freeze.timelockPeriod.bigNumberValue}
+                <BigIntInput
+                  value={values.freeze.timelockPeriod.bigintValue}
                   onChange={valuePair => setFieldValue('freeze.timelockPeriod', valuePair)}
                   decimalPlaces={0}
                   min="1"
@@ -168,8 +168,8 @@ function GuardDetails(props: ICreationStepProps) {
               isRequired
             >
               <InputGroup>
-                <BigNumberInput
-                  value={values.freeze.executionPeriod.bigNumberValue}
+                <BigIntInput
+                  value={values.freeze.executionPeriod.bigintValue}
                   onChange={valuePair => setFieldValue('freeze.executionPeriod', valuePair)}
                   decimalPlaces={0}
                   min="1"
@@ -193,8 +193,8 @@ function GuardDetails(props: ICreationStepProps) {
           helper={freezeHelper || ''}
           isRequired
         >
-          <BigNumberInput
-            value={values.freeze.freezeVotesThreshold.bigNumberValue}
+          <BigIntInput
+            value={values.freeze.freezeVotesThreshold.bigintValue}
             onChange={valuePair => setFieldValue('freeze.freezeVotesThreshold', valuePair)}
             decimalPlaces={0}
             data-testid="guardConfig-freezeVotesThreshold"
@@ -206,8 +206,8 @@ function GuardDetails(props: ICreationStepProps) {
           isRequired
         >
           <InputGroup>
-            <BigNumberInput
-              value={values.freeze.freezeProposalPeriod.bigNumberValue}
+            <BigIntInput
+              value={values.freeze.freezeProposalPeriod.bigintValue}
               onChange={valuePair => setFieldValue('freeze.freezeProposalPeriod', valuePair)}
               decimalPlaces={0}
               min="1"
@@ -229,8 +229,8 @@ function GuardDetails(props: ICreationStepProps) {
           isRequired
         >
           <InputGroup>
-            <BigNumberInput
-              value={values.freeze.freezePeriod.bigNumberValue}
+            <BigIntInput
+              value={values.freeze.freezePeriod.bigintValue}
               onChange={valuePair => setFieldValue('freeze.freezePeriod', valuePair)}
               decimalPlaces={0}
               min="1"
