@@ -1,6 +1,14 @@
 import { GnosisSafeProxyFactory } from '@fractal-framework/fractal-contracts';
-import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
-import { zeroAddress, zeroHash } from 'viem';
+import {
+  getCreate2Address,
+  zeroAddress,
+  zeroHash,
+  keccak256,
+  encodePacked,
+  Address,
+  Hash,
+  encodeFunctionData,
+ } from 'viem';
 import { MultiSend } from '../../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../../helpers/crypto';
@@ -22,28 +30,39 @@ export const safeData = async (
         multiSendContract.address,
       ];
 
-  const createSafeCalldata = safeSingletonContract.interface.encodeFunctionData('setup', [
-    signers,
-    1, // Threshold
-    zeroAddress,
-    zeroHash,
-    fallbackHandler, // Fallback handler
-    zeroAddress,
-    0,
-    zeroAddress,
-  ]);
+      const createSafeCalldata = encodeFunctionData({
+        functionName: 'setup',
+        args: [
+          signers,
+          1, // Threshold
+          zeroAddress,
+          zeroHash,
+          fallbackHandler,
+          zeroAddress,
+          0,
+          zeroAddress,
+        ],
+        abi: safeSingletonContract, // TODO: Get ABI here
+      });
 
-  const predictedSafeAddress = getCreate2Address(
-    safeFactoryContract.address,
-    solidityKeccak256(
-      ['bytes', 'uint256'],
-      [solidityKeccak256(['bytes'], [createSafeCalldata]), saltNum],
+  const predictedSafeAddress = getCreate2Address({
+    from: safeFactoryContract.address as Address,
+    salt: keccak256(
+      encodePacked(
+        ['bytes', 'uint256'],
+        [keccak256(encodePacked(['bytes'], [createSafeCalldata])), saltNum as any],
+      ),
     ),
-    solidityKeccak256(
-      ['bytes', 'uint256'],
-      [await safeFactoryContract.proxyCreationCode(), safeSingletonContract.address],
+    bytecode: keccak256(
+      encodePacked(
+        ['bytes', 'uint256'],
+        [
+          (await safeFactoryContract.proxyCreationCode()) as Hash,
+          safeSingletonContract.address as unknown as bigint, // @dev - wtf is going on? uint256 but passing address?
+        ],
+      ),
     ),
-  );
+  });
 
   const createSafeTx = buildContractCall(
     safeFactoryContract,

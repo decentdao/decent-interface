@@ -1,6 +1,6 @@
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
-import { ethers } from 'ethers';
+import { keccak256, encodePacked } from 'viem';
 import { buildSignatureBytes } from '../helpers/crypto';
 import { Activity } from '../types';
 import { Providers } from '../types/network';
@@ -19,7 +19,7 @@ export async function getTxTimelockedTimestamp(
       data: confirmation.signature,
     })),
   );
-  const signaturesHash = ethers.utils.solidityKeccak256(['bytes'], [signatures]);
+  const signaturesHash = keccak256(encodePacked(['bytes'], [signatures]));
 
   const timelockedTimestamp = await getTimeStamp(
     await freezeGuard.getTransactionTimelockedBlock(signaturesHash),

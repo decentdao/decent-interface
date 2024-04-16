@@ -1,19 +1,17 @@
 import axios from 'axios';
-import { solidityKeccak256 } from 'ethers/lib/utils.js';
 import { useCallback } from 'react';
+import { encodePacked, keccak256 } from 'viem';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecodedTransaction, DecodedTxParam } from '../../types';
 import { buildSafeApiUrl, parseMultiSendTransactions } from '../../utils';
 import { CacheKeys } from './cache/cacheDefaults';
 import { DBObjectKeys, useIndexedDB } from './cache/useLocalDB';
-
 /**
  * Handles decoding and caching transactions via the Safe API.
  */
 export const useSafeDecoder = () => {
   const { safeBaseURL } = useNetworkConfig();
   const [setValue, getValue] = useIndexedDB(DBObjectKeys.DECODED_TRANSACTIONS);
-
   const decode = useCallback(
     async (value: string, to: string, data?: string): Promise<DecodedTransaction[]> => {
       if (!data || data.length <= 2) {
@@ -31,7 +29,7 @@ export const useSafeDecoder = () => {
       }
 
       const cachedTransactions = await getValue(
-        CacheKeys.DECODED_TRANSACTION_PREFIX + solidityKeccak256(['string'], [to + data]),
+        CacheKeys.DECODED_TRANSACTION_PREFIX + keccak256(encodePacked(['string'], [to + data])),
       );
       if (cachedTransactions) return cachedTransactions;
 
@@ -43,7 +41,6 @@ export const useSafeDecoder = () => {
             data: data,
           })
         ).data;
-
         if (decodedData.parameters && decodedData.method === 'multiSend') {
           const internalTransactionsMap = new Map<number, DecodedTransaction>();
           parseMultiSendTransactions(internalTransactionsMap, decodedData.parameters);
@@ -74,7 +71,7 @@ export const useSafeDecoder = () => {
       }
 
       await setValue(
-        CacheKeys.DECODED_TRANSACTION_PREFIX + solidityKeccak256(['string'], [to + data]),
+        CacheKeys.DECODED_TRANSACTION_PREFIX + keccak256(encodePacked(['string'], [to + data])),
         decoded,
       );
 
@@ -82,6 +79,5 @@ export const useSafeDecoder = () => {
     },
     [getValue, safeBaseURL, setValue],
   );
-
   return decode;
 };

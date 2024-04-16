@@ -1,6 +1,6 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { Contract, utils, Signer } from 'ethers';
-import { zeroAddress } from 'viem';
+import { Contract, Signer } from 'ethers';
+import { hashTypedData , Hash , zeroAddress, Address, toHex, toBytes, encodePacked } from 'viem';
 import { sepolia, mainnet } from 'wagmi/chains';
 import { ContractConnection } from '../types';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
@@ -38,14 +38,15 @@ export const calculateSafeTransactionHash = (
   safeTx: SafeTransaction,
   chainId: number,
 ): string => {
-  return utils._TypedDataEncoder.hash(
-    { verifyingContract: safe.address, chainId },
-    EIP712_SAFE_TX_TYPE,
-    safeTx,
-  );
+  return hashTypedData({
+    domain: { verifyingContract: safe.address as Address, chainId },
+    types: EIP712_SAFE_TX_TYPE,
+    primaryType: 'SafeTx',
+    message: { ...safeTx },
+  });
 };
 
-export const buildSignatureBytes = (signatures: SafeSignature[]): string => {
+export const buildSignatureBytes = (signatures: SafeSignature[]): Hash => {
   signatures.sort((left, right) =>
     left.signer.toLowerCase().localeCompare(right.signer.toLowerCase()),
   );
@@ -53,7 +54,7 @@ export const buildSignatureBytes = (signatures: SafeSignature[]): string => {
   for (const sig of signatures) {
     signatureBytes += sig.data.slice(2);
   }
-  return signatureBytes;
+  return signatureBytes as Hash;
 };
 
 export const buildSafeTransaction = (template: {
@@ -171,10 +172,10 @@ export const buildContractCall = (
 };
 
 const encodeMetaTransaction = (tx: MetaTransaction): string => {
-  const data = utils.arrayify(tx.data);
-  const encoded = utils.solidityPack(
+  const data = toHex(toBytes(tx.data));
+  const encoded = encodePacked(
     ['uint8', 'address', 'uint256', 'uint256', 'bytes'],
-    [tx.operation, tx.to, tx.value, data.length, data],
+    [tx.operation, tx.to as Address, BigInt(tx.value), BigInt(data.length), data],
   );
   return encoded.slice(2);
 };
