@@ -44,11 +44,7 @@ const useCastVote = ({
   const signer = useEthersSigner();
   const client = useMemo(() => {
     if (daoSnapshotENS) {
-      const isTestnetSnapshotURL = daoSnapshotENS.includes('testnet');
-      const hub = isTestnetSnapshotURL
-        ? 'https://testnet.seq.snapshot.org' // This is not covered in Snapshot docs, but that's where they're sending request on testnet
-        : 'https://hub.snapshot.org';
-      return new snapshot.Client712(hub);
+      return new snapshot.Client712('https://hub.snapshot.org');
     }
     return undefined;
   }, [daoSnapshotENS]);
