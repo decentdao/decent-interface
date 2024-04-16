@@ -104,13 +104,9 @@ export const useFractalNode = (
 
       try {
         if (!safeAPI) throw new Error('SafeAPI not set');
-        safeInfo = await safeAPI.getSafeInfo(getAddress(_daoAddress));
+        const address = getAddress(_daoAddress);
+        safeInfo = await safeAPI.getSafeData(address);
       } catch (e) {
-        reset({ error: true });
-        return;
-      }
-
-      if (!safeInfo) {
         reset({ error: true });
         return;
       }

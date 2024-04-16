@@ -58,14 +58,14 @@ export const useLoadDAONode = () => {
             logError('graphQL query failed');
             return { error: 'errorFailedSearch' };
           }
-          const safe = await safeAPI.getSafeInfo(_daoAddress);
-          const fractalModules = await lookupModules(safe.modules);
-          const daoName = await getDaoName(getAddress(safe.address), graphNodeInfo.daoName);
+
+          const sanitizedDaoAddress = utils.getAddress(_daoAddress);
+          const safeInfoWithGuard = await safeAPI.getSafeData(sanitizedDaoAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
-            daoName,
-            safe,
-            fractalModules,
+            daoName: await getDaoName(sanitizedDaoAddress, graphNodeInfo.daoName),
+            safe: safeInfoWithGuard,
+            fractalModules: await lookupModules(safeInfoWithGuard.modules),
           });
 
           // TODO we could cache node here, but should be careful not to cache
