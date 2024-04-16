@@ -1,7 +1,7 @@
-import { ethers, utils } from 'ethers';
+import { ethers } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20Abi } from 'viem';
+import { isAddress , erc20Abi } from 'viem';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
@@ -135,7 +135,7 @@ export function useDAOCreateTests() {
       name: 'ERC20 Address Validation',
       message: t('errorInvalidERC20Address', { ns: 'common' }),
       test: async function (address: string | undefined) {
-        if (address && utils.isAddress(address)) {
+        if (address && isAddress(address)) {
           try {
             const tokenContract = new ethers.Contract(address, erc20Abi, provider);
             const [name, symbol, decimals] = await Promise.all([
@@ -158,7 +158,7 @@ export function useDAOCreateTests() {
       name: 'ERC721 Address Validation',
       message: t('errorInvalidERC721Address', { ns: 'common' }),
       test: async function (address: string | undefined) {
-        if (address && utils.isAddress(address)) {
+        if (address && isAddress(address)) {
           try {
             // We're using this instead of erc721ABI from wagmi cause that one doesn't have supportsInterface for whatever reason
             const erc165 = [

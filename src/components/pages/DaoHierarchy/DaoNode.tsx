@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
-import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
+import { getAddress } from 'viem';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -39,7 +39,7 @@ export function DaoNode({
 
   useEffect(() => {
     if (daoAddress) {
-      loadDao(utils.getAddress(daoAddress)).then(_node => {
+      loadDao(getAddress(daoAddress)).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
           // calculates the total number of descendants below the given node
