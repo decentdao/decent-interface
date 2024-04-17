@@ -29,10 +29,16 @@ function DaoCreator({
         onSubmit={async values => {
           const choosenGovernance = values.essentials.governance;
           const freezeGuard = isSubDAO ? values.freeze : undefined;
+
+          const valuesEssentialsWithSnapshotURL = {
+            ...values.essentials,
+            snapshotURL: values.essentials.snapshotENS,
+          };
+
           switch (choosenGovernance) {
             case GovernanceType.MULTISIG: {
               const data = await prepareMultisigFormData({
-                ...values.essentials,
+                ...valuesEssentialsWithSnapshotURL,
                 ...values.multisig,
                 freezeGuard,
               });
@@ -43,7 +49,7 @@ function DaoCreator({
             }
             case GovernanceType.AZORIUS_ERC20: {
               const data = await prepareAzoriusERC20FormData({
-                ...values.essentials,
+                ...valuesEssentialsWithSnapshotURL,
                 ...values.azorius,
                 ...values.erc20Token,
                 freezeGuard,
@@ -55,7 +61,7 @@ function DaoCreator({
             }
             case GovernanceType.AZORIUS_ERC721: {
               const data = await prepareAzoriusERC721FormData({
-                ...values.essentials,
+                ...valuesEssentialsWithSnapshotURL,
                 ...values.azorius,
                 ...values.erc721Token,
                 freezeGuard,

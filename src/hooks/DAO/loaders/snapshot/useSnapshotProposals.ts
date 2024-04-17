@@ -10,7 +10,7 @@ import { createClient } from './';
 export const useSnapshotProposals = () => {
   const { action } = useFractal();
   const daoSnapshotSpaceName = useSnapshotSpaceName();
-  const currentSnapshotURL = useRef<string | undefined>();
+  const currentSnapshotENS = useRef<string | undefined>();
   const client = useMemo(() => createClient(), []);
 
   const loadSnapshotProposals = useCallback(async () => {
@@ -76,8 +76,8 @@ export const useSnapshotProposals = () => {
   }, [action, daoSnapshotSpaceName, client]);
 
   useEffect(() => {
-    if (!daoSnapshotSpaceName || daoSnapshotSpaceName === currentSnapshotURL.current) return;
-    currentSnapshotURL.current = daoSnapshotSpaceName;
+    if (!daoSnapshotSpaceName || daoSnapshotSpaceName === currentSnapshotENS.current) return;
+    currentSnapshotENS.current = daoSnapshotSpaceName;
     loadSnapshotProposals();
   }, [daoSnapshotSpaceName, loadSnapshotProposals]);
 };

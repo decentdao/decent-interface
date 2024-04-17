@@ -43,7 +43,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       setFieldValue('essentials.daoName', daoName, false);
       if (createAccountSubstring(daoAddress!) !== daoName) {
         // Pre-fill the snapshot URL form field when editing
-        setFieldValue('essentials.snapshotURL', daoSnapshotENS || '', false);
+        setFieldValue('essentials.snapshotENS', daoSnapshotENS || '', false);
       }
     }
   }, [setFieldValue, mode, daoName, daoSnapshotENS, isEdit, daoAddress]);
@@ -52,7 +52,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
     isEdit && !!daoName && !!daoAddress && createAccountSubstring(daoAddress) !== daoName;
 
   // If in governance edit mode and snapshot URL is already set, disable the field
-  const snapshotURLDisabled = isEdit && !!daoSnapshotENS;
+  const snapshotENSDisabled = isEdit && !!daoSnapshotENS;
 
   const handleGovernanceChange = (value: string) => {
     if (value === GovernanceType.AZORIUS_ERC20) {
@@ -65,7 +65,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
   };
 
   const handleSnapshotSpaceChange = (value: string) => {
-    setFieldValue('essentials.snapshotURL', value, true);
+    setFieldValue('essentials.snapshotENS', value, true);
     try {
       ens_normalize(value);
       setSnapshotSpaceValid(true);
@@ -179,12 +179,12 @@ export function EstablishEssentials(props: ICreationStepProps) {
         helper={t('snapshotHelper')}
         isRequired={false}
       >
-        <LabelWrapper errorMessage={errors?.essentials?.snapshotURL}>
+        <LabelWrapper errorMessage={errors?.essentials?.snapshotENS}>
           <Input
-            value={values.essentials.snapshotURL}
+            value={values.essentials.snapshotENS}
             onChange={cEvent => handleSnapshotSpaceChange(cEvent.target.value)}
-            isDisabled={snapshotURLDisabled}
-            data-testid="essentials-snapshotURL"
+            isDisabled={snapshotENSDisabled}
+            data-testid="essentials-snapshotENS"
             placeholder="example.eth"
           />
         </LabelWrapper>

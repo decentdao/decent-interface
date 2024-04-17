@@ -41,7 +41,7 @@ export default function MetadataContainer() {
     }
   }, [daoName, daoSnapshotENS, daoAddress]);
 
-  const handleSnapshotURLChange: ChangeEventHandler<HTMLInputElement> = e => {
+  const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
     setSnapshotENS(e.target.value);
     try {
       ens_normalize(e.target.value);
@@ -102,7 +102,7 @@ export default function MetadataContainer() {
       values: [0n],
       calldatas: [
         keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
-          ['snapshotURL'],
+          ['snapshotENS'],
           [snapshotENS],
         ]),
       ],
@@ -192,11 +192,11 @@ export default function MetadataContainer() {
       </Flex>
       <InputComponent
         isRequired={false}
-        onChange={handleSnapshotURLChange}
+        onChange={handleSnapshotENSChange}
         value={snapshotENS}
         disabled={!userHasVotingWeight}
         placeholder="httpsexample.eth"
-        testId="daoSettings.snapshotUrl"
+        testId="daoSettings.snapshotENS"
         gridContainerProps={{
           display: 'inline-flex',
           flexWrap: 'wrap',
