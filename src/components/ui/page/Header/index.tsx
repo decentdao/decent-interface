@@ -11,7 +11,7 @@ import {
   Show,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FractalBrandBurger, FractalBrand } from '@decent-org/fractal-ui';
+import { DecentLogo } from '@decent-org/fractal-ui';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -52,7 +52,7 @@ function HeaderLogo() {
             minW={0}
             variant="unstyled"
             icon={
-              <FractalBrandBurger
+              <DecentLogo
                 aria-hidden
                 boxSize="2rem"
               />
@@ -108,7 +108,7 @@ function HeaderLogo() {
           to={BASE_ROUTES.landing}
           aria-label={t('ariaLabelFractalBrand')}
         >
-          <FractalBrand
+          <DecentLogo
             aria-hidden
             boxSize="4.25rem"
           />
