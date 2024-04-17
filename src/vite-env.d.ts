@@ -8,10 +8,16 @@ interface ImportMetaEnv {
   readonly VITE_APP_ALCHEMY_MAINNET_API_KEY: string;
   readonly VITE_APP_ALCHEMY_POLYGON_API_KEY: string;
   readonly VITE_APP_ALCHEMY_SEPOLIA_API_KEY: string;
+  readonly VITE_APP_ALCHEMY_BASE_SEPOLIA_API_KEY: string;
+  readonly VITE_APP_ALCHEMY_BASE_API_KEY: string;
+  readonly VITE_APP_ALCHEMY_OPTIMISM_API_KEY: string;
 
   readonly VITE_APP_ETHERSCAN_MAINNET_API_KEY: string;
   readonly VITE_APP_ETHERSCAN_POLYGON_API_KEY: string;
   readonly VITE_APP_ETHERSCAN_SEPOLIA_API_KEY: string;
+  readonly VITE_APP_ETHERSCAN_BASE_SEPOLIA_API_KEY: string;
+  readonly VITE_APP_ETHERSCAN_BASE_API_KEY: string;
+  readonly VITE_APP_ETHERSCAN_OPTIMISM_API_KEY: string;
 
   readonly VITE_APP_INFURA_IPFS_API_KEY: string;
   readonly VITE_APP_INFURA_IPFS_API_SECRET: string;

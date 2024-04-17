@@ -1,7 +1,7 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Azorius } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { BigNumber, Signer, utils } from 'ethers';
+import { Signer, utils } from 'ethers';
 import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -15,7 +15,7 @@ import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction, ProposalExecuteData, ProposalMetadata } from '../../../types';
+import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
@@ -78,7 +78,7 @@ export default function useSubmitProposal() {
 
   const lookupModules = useFractalModules();
   const signerOrProvider = useSignerOrProvider();
-  const { chainId, safeBaseURL, addressPrefix } = useNetworkConfig();
+  const { chain, safeBaseURL, addressPrefix } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
 
   const submitMultisigProposal = useCallback(
@@ -116,14 +116,14 @@ export default function useSubmitProposal() {
           proposalData.metaData.description ||
           proposalData.metaData.documentationUrl
         ) {
-          const metaData: ProposalMetadata = {
+          const metaData: CreateProposalMetadata = {
             title: proposalData.metaData.title || '',
             description: proposalData.metaData.description || '',
             documentationUrl: proposalData.metaData.documentationUrl || '',
           };
           const { Hash } = await ipfsClient.add(JSON.stringify(metaData));
           proposalData.targets.push(ADDRESS_MULTISIG_METADATA);
-          proposalData.values.push(BigNumber.from('0'));
+          proposalData.values.push(0n);
           proposalData.calldatas.push(new utils.AbiCoder().encode(['string'], [Hash]));
         }
 
@@ -139,7 +139,7 @@ export default function useSubmitProposal() {
           const tempData = proposalData.targets.map((target, index) => {
             return {
               to: target,
-              value: BigNumber.from(proposalData.values[index]),
+              value: BigInt(proposalData.values[index]),
               data: proposalData.calldatas[index],
               operation: 0,
             } as MetaTransaction;
@@ -153,7 +153,7 @@ export default function useSubmitProposal() {
         } else {
           // Single transaction to post
           to = proposalData.targets[0];
-          value = BigNumber.from(proposalData.values[0]);
+          value = BigInt(proposalData.values[0]);
           data = proposalData.calldatas[0];
           operation = 0;
         }
@@ -164,7 +164,7 @@ export default function useSubmitProposal() {
           await buildSafeAPIPost(
             safeContract,
             signerOrProvider as Signer & TypedDataSigner,
-            chainId,
+            chain.id,
             {
               to,
               value,
@@ -192,7 +192,7 @@ export default function useSubmitProposal() {
     [
       signerOrProvider,
       safeBaseURL,
-      chainId,
+      chain,
       loadDAOProposals,
       ipfsClient,
       baseContracts,

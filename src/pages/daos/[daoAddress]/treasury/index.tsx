@@ -17,7 +17,7 @@ export default function Treasury() {
   const { t } = useTranslation('treasury');
   const treasuryTotal = useTreasuryTotalBN();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const showButton = canUserCreateProposal && !treasuryTotal.isZero();
+  const showButton = canUserCreateProposal && treasuryTotal !== 0n;
 
   return (
     <div>

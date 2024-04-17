@@ -1,5 +1,5 @@
 import { TransferWithTokenInfoResponse } from '@safe-global/safe-service-client';
-import { constants, BigNumber } from 'ethers';
+import { zeroAddress } from 'viem';
 import { AssetTotals, SafeTransferType } from '../types';
 
 /**
@@ -13,23 +13,23 @@ export const totalsReducer = (
   cur: TransferWithTokenInfoResponse,
 ) => {
   if (cur.type === SafeTransferType.ETHER && cur.value) {
-    const prevValue = prev.get(constants.AddressZero)!;
+    const prevValue = prev.get(zeroAddress)!;
     if (prevValue) {
-      prev.set(constants.AddressZero, {
-        bn: prevValue.bn.add(BigNumber.from(cur.value)),
+      prev.set(zeroAddress, {
+        bi: prevValue.bi + BigInt(cur.value),
         symbol: 'ETHER',
         decimals: 18,
       });
     }
-    prev.set(constants.AddressZero, {
-      bn: BigNumber.from(cur.value),
+    prev.set(zeroAddress, {
+      bi: BigInt(cur.value),
       symbol: 'ETHER',
       decimals: 18,
     });
   }
   if (cur.type === SafeTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
     prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
-      bn: BigNumber.from(1),
+      bi: 1n,
       symbol: cur.tokenInfo.symbol,
       decimals: 0,
     });
@@ -39,11 +39,11 @@ export const totalsReducer = (
     if (prevValue) {
       prev.set(cur.tokenInfo.address, {
         ...prevValue,
-        bn: prevValue.bn.add(BigNumber.from(cur.value)),
+        bi: prevValue.bi + BigInt(cur.value),
       });
     } else {
       prev.set(cur.tokenAddress!, {
-        bn: BigNumber.from(cur.value),
+        bi: BigInt(cur.value),
         symbol: cur.tokenInfo.symbol,
         decimals: cur.tokenInfo.decimals,
       });

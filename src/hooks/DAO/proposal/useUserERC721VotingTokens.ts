@@ -4,7 +4,7 @@ import {
   LinearERC721Voting__factory,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
-import { utils, BigNumber } from 'ethers';
+import { utils } from 'ethers';
 import { useState, useEffect, useCallback } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -88,7 +88,7 @@ export default function useUserERC721VotingTokens(
           govTokens = await Promise.all(
             addresses.map(async tokenAddress => {
               const tokenContract = ERC721__factory.connect(tokenAddress, signerOrProvider);
-              const votingWeight = await votingContract!.getTokenWeight(tokenAddress);
+              const votingWeight = (await votingContract!.getTokenWeight(tokenAddress)).toBigInt();
               const name = await tokenContract.name();
               const symbol = await tokenContract.symbol();
               let totalSupply = undefined;
@@ -96,7 +96,7 @@ export default function useUserERC721VotingTokens(
                 const tokenSentEvents = await tokenContract.queryFilter(
                   tokenContract.filters.Transfer(null, null),
                 );
-                totalSupply = BigNumber.from(tokenSentEvents.length);
+                totalSupply = BigInt(tokenSentEvents.length);
               } catch (e) {
                 logError('Error while getting ERC721 total supply');
               }
@@ -124,7 +124,7 @@ export default function useUserERC721VotingTokens(
         // and guarantee syncronous contractFn assignment
         govTokens.map(async token => {
           const tokenContract = ERC721__factory.connect(token.address, signerOrProvider!);
-          if ((await tokenContract.balanceOf(user.address!)).gt(0)) {
+          if ((await tokenContract.balanceOf(user.address!)).toBigInt() > 0n) {
             const tokenSentEvents = await tokenContract.queryFilter(
               tokenContract.filters.Transfer(user.address!, null),
             );

@@ -1,8 +1,7 @@
 import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
-import { BigNumber } from 'ethers';
 import { FormikProps } from 'formik';
 import { DAOCreateMode } from '../components/DaoCreator/formComponents/EstablishEssentials';
-import { BigNumberValuePair } from './common';
+import { BigIntValuePair } from './common';
 import { GovernanceType, VotingStrategyType } from './fractal';
 import { EthAddress } from './utils';
 
@@ -27,7 +26,7 @@ export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 
   mode: DAOCreateMode;
 }
 
-export interface CreatorFormState<T = BigNumberValuePair> {
+export interface CreatorFormState<T = BigIntValuePair> {
   essentials: DAOEssentials;
   multisig: SafeConfiguration;
   azorius: DAOGovernorModuleConfig<T>;
@@ -39,10 +38,10 @@ export interface CreatorFormState<T = BigNumberValuePair> {
 export type DAOEssentials = {
   daoName: string;
   governance: GovernanceType;
-  snapshotURL: string;
+  snapshotENS: string;
 };
 
-export type DAOGovernorERC20Token<T = BigNumber> = {
+export type DAOGovernorERC20Token<T = bigint> = {
   tokenCreationType: TokenCreationType;
   tokenImportAddress?: string;
   tokenName: string;
@@ -52,17 +51,17 @@ export type DAOGovernorERC20Token<T = BigNumber> = {
   parentAllocationAmount: T;
 };
 
-export type ERC721TokenConfig<T = BigNumber> = {
+export type ERC721TokenConfig<T = bigint> = {
   tokenAddress: string;
   tokenWeight: T;
 };
 
-export type DAOGovernorERC721Token<T = BigNumber> = {
+export type DAOGovernorERC721Token<T = bigint> = {
   nfts: ERC721TokenConfig<T>[];
   quorumThreshold: T;
 };
 
-export type DAOGovernorModuleConfig<T = BigNumber> = {
+export type DAOGovernorModuleConfig<T = bigint> = {
   votingStrategyType: VotingStrategyType;
   quorumPercentage: T;
   timelock: T;
@@ -70,7 +69,7 @@ export type DAOGovernorModuleConfig<T = BigNumber> = {
   executionPeriod: T;
 };
 
-export type DAOFreezeGuardConfig<T = BigNumber> = {
+export type DAOFreezeGuardConfig<T = bigint> = {
   executionPeriod: T;
   timelockPeriod: T;
   freezeVotesThreshold: T;
@@ -85,23 +84,23 @@ export interface SafeConfiguration {
   customNonce: number;
 }
 
-export interface SubDAO<T = BigNumber>
+export interface SubDAO<T = bigint>
   extends SafeConfiguration,
     AzoriusGovernanceDAO<T>,
     DAOFreezeGuardConfig<T> {}
 
-export interface AzoriusGovernanceDAO<T = BigNumber>
+export interface AzoriusGovernanceDAO<T = bigint>
   extends DAOEssentials,
     DAOGovernorModuleConfig<T> {}
 
-export interface AzoriusERC20DAO<T = BigNumber>
+export interface AzoriusERC20DAO<T = bigint>
   extends AzoriusGovernanceDAO<T>,
     DAOGovernorERC20Token<T> {
   isVotesToken?: boolean;
   isTokenImported?: boolean;
 }
 
-export interface AzoriusERC721DAO<T = BigNumber>
+export interface AzoriusERC721DAO<T = bigint>
   extends AzoriusGovernanceDAO<T>,
     DAOGovernorERC721Token<T> {}
 
@@ -120,14 +119,14 @@ export type AddressValidation = {
 
 export type TokenToFund = {
   asset: SafeBalanceUsdResponse;
-  amount: BigNumberValuePair;
+  amount: BigIntValuePair;
 };
 
 export type NFTToFund = {
   asset: SafeCollectibleResponse;
 };
 
-export type TokenAllocation<T = BigNumber> = {
+export type TokenAllocation<T = bigint> = {
   amount: T;
 } & EthAddress;
 

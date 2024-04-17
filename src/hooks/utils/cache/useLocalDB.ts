@@ -131,20 +131,20 @@ export const getIndexedDBValue = async (
 };
 
 export const useIndexedDB = (objectStoreName: string) => {
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
 
   const set = useCallback(
     async (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
-      await setIndexedDBValue(objectStoreName, key, value, chainId, expirationMinutes);
+      await setIndexedDBValue(objectStoreName, key, value, chain.id, expirationMinutes);
     },
-    [chainId, objectStoreName],
+    [chain, objectStoreName],
   );
 
   const get = useCallback(
     async (key: string) => {
-      return getIndexedDBValue(objectStoreName, key, chainId);
+      return getIndexedDBValue(objectStoreName, key, chain.id);
     },
-    [chainId, objectStoreName],
+    [chain, objectStoreName],
   );
 
   return [set, get] as const;

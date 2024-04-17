@@ -6,7 +6,7 @@ import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner
 import {
   SafeMultisigDAO,
   DAOFreezeGuardConfig,
-  BigNumberValuePair,
+  BigIntValuePair,
   TokenCreationType,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
@@ -14,7 +14,7 @@ import {
 import { getEstimatedNumberOfBlocks } from '../../../utils/contract';
 import { couldBeENS } from '../../../utils/url';
 
-type FreezeGuardConfigParam = { freezeGuard?: DAOFreezeGuardConfig<BigNumberValuePair> };
+type FreezeGuardConfigParam = { freezeGuard?: DAOFreezeGuardConfig<BigIntValuePair> };
 
 export function usePrepareFormData() {
   const signer = useEthersSigner();
@@ -23,25 +23,25 @@ export function usePrepareFormData() {
   // Helper function to prepare freezeGuard data
   const prepareFreezeGuardData = useCallback(
     async (
-      freezeGuard: DAOFreezeGuardConfig<BigNumberValuePair>,
+      freezeGuard: DAOFreezeGuardConfig<BigIntValuePair>,
     ): Promise<DAOFreezeGuardConfig | undefined> => {
       if (provider) {
         return {
           executionPeriod: await getEstimatedNumberOfBlocks(
-            freezeGuard.executionPeriod.bigNumberValue!,
+            freezeGuard.executionPeriod.bigintValue!,
             provider,
           ),
           timelockPeriod: await getEstimatedNumberOfBlocks(
-            freezeGuard.timelockPeriod.bigNumberValue!,
+            freezeGuard.timelockPeriod.bigintValue!,
             provider,
           ),
-          freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigNumberValue!,
+          freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigintValue!,
           freezeProposalPeriod: await getEstimatedNumberOfBlocks(
-            freezeGuard.freezeProposalPeriod.bigNumberValue!,
+            freezeGuard.freezeProposalPeriod.bigintValue!,
             provider,
           ),
           freezePeriod: await getEstimatedNumberOfBlocks(
-            freezeGuard.freezePeriod.bigNumberValue!,
+            freezeGuard.freezePeriod.bigintValue!,
             provider,
           ),
         };
@@ -107,7 +107,7 @@ export function usePrepareFormData() {
       tokenImportAddress,
       tokenCreationType,
       ...rest
-    }: AzoriusERC20DAO<BigNumberValuePair> & FreezeGuardConfigParam): Promise<
+    }: AzoriusERC20DAO<BigIntValuePair> & FreezeGuardConfigParam): Promise<
       AzoriusERC20DAO | undefined
     > => {
       if (provider) {
@@ -117,7 +117,7 @@ export function usePrepareFormData() {
             if (couldBeENS(address)) {
               address = await signer!.resolveName(allocation.address);
             }
-            return { amount: allocation.amount.bigNumberValue!, address: address };
+            return { amount: allocation.amount.bigintValue!, address: address };
           }),
         );
         let freezeGuardData;
@@ -131,15 +131,12 @@ export function usePrepareFormData() {
           isVotesToken = await checkVotesToken(tokenImportAddress);
         }
         return {
-          tokenSupply: tokenSupply.bigNumberValue!,
-          parentAllocationAmount: parentAllocationAmount?.bigNumberValue!,
-          quorumPercentage: quorumPercentage.bigNumberValue!,
-          timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
-          executionPeriod: await getEstimatedNumberOfBlocks(
-            executionPeriod.bigNumberValue!,
-            provider,
-          ),
-          votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
+          tokenSupply: tokenSupply.bigintValue!,
+          parentAllocationAmount: parentAllocationAmount?.bigintValue!,
+          quorumPercentage: quorumPercentage.bigintValue!,
+          timelock: await getEstimatedNumberOfBlocks(timelock.bigintValue!, provider),
+          executionPeriod: await getEstimatedNumberOfBlocks(executionPeriod.bigintValue!, provider),
+          votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigintValue!, provider),
           tokenAllocations: resolvedTokenAllocations,
           tokenImportAddress,
           tokenCreationType,
@@ -163,7 +160,7 @@ export function usePrepareFormData() {
       nfts,
       quorumThreshold,
       ...rest
-    }: AzoriusERC721DAO<BigNumberValuePair> & FreezeGuardConfigParam): Promise<
+    }: AzoriusERC721DAO<BigIntValuePair> & FreezeGuardConfigParam): Promise<
       AzoriusERC721DAO | undefined
     > => {
       if (provider) {
@@ -180,21 +177,18 @@ export function usePrepareFormData() {
             }
             return {
               tokenAddress: address,
-              tokenWeight: nft.tokenWeight.bigNumberValue!,
+              tokenWeight: nft.tokenWeight.bigintValue!,
             };
           }),
         );
 
         return {
-          quorumPercentage: quorumPercentage.bigNumberValue!,
-          timelock: await getEstimatedNumberOfBlocks(timelock.bigNumberValue!, provider),
-          executionPeriod: await getEstimatedNumberOfBlocks(
-            executionPeriod.bigNumberValue!,
-            provider,
-          ),
-          votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigNumberValue!, provider),
+          quorumPercentage: quorumPercentage.bigintValue!,
+          timelock: await getEstimatedNumberOfBlocks(timelock.bigintValue!, provider),
+          executionPeriod: await getEstimatedNumberOfBlocks(executionPeriod.bigintValue!, provider),
+          votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigintValue!, provider),
           nfts: resolvedNFTs,
-          quorumThreshold: quorumThreshold.bigNumberValue!,
+          quorumThreshold: quorumThreshold.bigintValue!,
           ...freezeGuardData,
           ...rest,
         };

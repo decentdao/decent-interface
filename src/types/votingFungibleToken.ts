@@ -1,7 +1,6 @@
-import { BigNumber } from 'ethers';
 import { ITokenAccount } from './fractal';
 
-export type TransferListener = (from: string, to: string, value: BigNumber, _: any) => void;
+export type TransferListener = (from: string, to: string, value: bigint, _: any) => void;
 export type DelegateChangedListener = (
   delegator: string,
   fromDelegate: string,
@@ -10,15 +9,15 @@ export type DelegateChangedListener = (
 ) => void;
 export type DelegateVotesChangedListener = (
   delegate: string,
-  previousBalance: BigNumber,
-  currentBalance: BigNumber,
+  previousBalance: bigint,
+  currentBalance: bigint,
   _: any,
 ) => void;
 export type ClaimListener = (
   parentToken: string,
   childToken: string,
   claimer: string,
-  amount: BigNumber,
+  amount: bigint,
   _: any,
 ) => void;
 
@@ -27,21 +26,21 @@ export interface ITokenData {
   symbol: string | undefined;
   decimals: number | undefined;
   address: string | undefined;
-  totalSupply: BigNumber | undefined;
+  totalSupply: bigint | undefined;
 }
 
 export interface IGoveranceTokenData extends ITokenData, ITokenAccount, VotingTokenConfig {
   isLoading?: boolean;
 }
 
-export interface VotingTokenConfig<Type = BNFormattedPair> {
+export interface VotingTokenConfig<Type = BIFormattedPair> {
   votingPeriod?: Type;
   quorumPercentage?: Type;
   timeLockPeriod?: Type;
 }
 
-export interface BNFormattedPair {
-  value: BigNumber;
+export interface BIFormattedPair {
+  value: bigint;
   formatted?: string;
 }
 

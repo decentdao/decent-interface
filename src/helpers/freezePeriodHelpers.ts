@@ -1,29 +1,25 @@
-import { BigNumber } from 'ethers';
-
 export const secondsLeftInFreezePeriod = (
-  freezeProposalCreatedTime: BigNumber,
-  freezePeriod: BigNumber,
-  currentTime: BigNumber,
-): BigNumber => {
-  const secondsLeft = freezeProposalCreatedTime.add(freezePeriod).sub(currentTime);
-
+  freezeProposalCreatedTime: bigint,
+  freezePeriod: bigint,
+  currentTime: bigint,
+): bigint => {
+  const secondsLeft = freezeProposalCreatedTime + freezePeriod - currentTime;
   return secondsLeft;
 };
 
 export const secondsLeftInFreezeProposalPeriod = (
-  freezeProposalCreatedTime: BigNumber,
-  freezeProposalPeriod: BigNumber,
-  currentTime: BigNumber,
-): BigNumber => {
-  const secondsLeft = freezeProposalCreatedTime.add(freezeProposalPeriod).sub(currentTime);
-
+  freezeProposalCreatedTime: bigint,
+  freezeProposalPeriod: bigint,
+  currentTime: bigint,
+): bigint => {
+  const secondsLeft = freezeProposalCreatedTime + freezeProposalPeriod - currentTime;
   return secondsLeft;
 };
 
 export const isWithinFreezePeriod = (
-  freezeProposalCreatedTime: BigNumber,
-  freezePeriod: BigNumber,
-  currentTime: BigNumber,
+  freezeProposalCreatedTime: bigint,
+  freezePeriod: bigint,
+  currentTime: bigint,
 ): boolean => {
   const secondsLeft = secondsLeftInFreezePeriod(
     freezeProposalCreatedTime,
@@ -31,13 +27,13 @@ export const isWithinFreezePeriod = (
     currentTime,
   );
 
-  return secondsLeft.gt(0);
+  return secondsLeft > 0n;
 };
 
 export const isWithinFreezeProposalPeriod = (
-  freezeProposalCreatedTime: BigNumber,
-  freezeProposalPeriod: BigNumber,
-  currentTime: BigNumber,
+  freezeProposalCreatedTime: bigint,
+  freezeProposalPeriod: bigint,
+  currentTime: bigint,
 ): boolean => {
   const secondsLeft = secondsLeftInFreezeProposalPeriod(
     freezeProposalCreatedTime,
@@ -45,5 +41,5 @@ export const isWithinFreezeProposalPeriod = (
     currentTime,
   );
 
-  return secondsLeft.gt(0);
+  return secondsLeft > 0n;
 };

@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import {
   CreatorFormState,
   GovernanceType,
@@ -8,11 +7,13 @@ import {
 
 export const DEFAULT_TOKEN_DECIMALS = 18;
 
+// @todo make the time lengths dynamic for whatever real-life values we're targeting here
+
 export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
     governance: GovernanceType.MULTISIG,
-    snapshotURL: '',
+    snapshotENS: '',
   },
   erc20Token: {
     tokenCreationType: TokenCreationType.NEW,
@@ -45,7 +46,7 @@ export const initialState: CreatorFormState = {
     ],
     quorumThreshold: {
       value: '10',
-      bigNumberValue: BigNumber.from(10),
+      bigintValue: 10n,
     },
   },
   /**
@@ -58,42 +59,42 @@ export const initialState: CreatorFormState = {
   azorius: {
     quorumPercentage: {
       value: '4',
-      bigNumberValue: BigNumber.from(4),
+      bigintValue: 4n,
     },
     timelock: {
       value: '1440',
-      bigNumberValue: BigNumber.from(1440),
+      bigintValue: 1440n,
     },
     votingPeriod: {
       value: '10080',
-      bigNumberValue: BigNumber.from(10080),
+      bigintValue: 10080n,
     },
     executionPeriod: {
       value: '2880',
-      bigNumberValue: BigNumber.from(2880),
+      bigintValue: 2880n,
     },
     votingStrategyType: VotingStrategyType.LINEAR_ERC20,
   },
   freeze: {
     executionPeriod: {
       value: '2880',
-      bigNumberValue: BigNumber.from(2880),
+      bigintValue: 2880n,
     },
     timelockPeriod: {
       value: '1440',
-      bigNumberValue: BigNumber.from(1440),
+      bigintValue: 1440n,
     },
     freezeVotesThreshold: {
       value: '1',
-      bigNumberValue: BigNumber.from(1),
+      bigintValue: 1n,
     },
     freezeProposalPeriod: {
       value: '10080',
-      bigNumberValue: BigNumber.from(10080),
+      bigintValue: 10080n,
     },
     freezePeriod: {
       value: '10080',
-      bigNumberValue: BigNumber.from(10080),
+      bigintValue: 10080n,
     },
   },
   multisig: {

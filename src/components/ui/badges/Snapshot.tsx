@@ -2,13 +2,13 @@ import { Button, ButtonProps, Image, Link } from '@chakra-ui/react';
 import { t } from 'i18next';
 
 interface Props extends ButtonProps {
-  snapshotURL: string;
+  snapshotENS: string;
 }
 
-export default function Snapshot({ snapshotURL, mt }: Props) {
+export default function Snapshot({ snapshotENS, mt }: Props) {
   return (
     <Button
-      href={snapshotURL}
+      href={`https://snapshot.org/#${snapshotENS}`}
       as={Link}
       target="_blank"
       variant="secondary"

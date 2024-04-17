@@ -1,12 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import {
-  DAOEssentials,
-  BigNumberValuePair,
-  TokenCreationType,
-  GovernanceType,
-} from '../../../types';
+import { DAOEssentials, BigIntValuePair, TokenCreationType, GovernanceType } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
 import { useDAOCreateTests } from './useDAOCreateTests';
 
@@ -28,7 +23,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
     uniqueAllocationValidationTest,
     validERC20Address,
     validERC721Address,
-    isBigNumberValidation,
+    isBigIntValidation,
   } = useDAOCreateTests();
 
   const { t } = useTranslation(['daoCreate']);
@@ -39,7 +34,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         essentials: Yup.object().shape({
           daoName: Yup.string().required(),
           governance: Yup.string().required(),
-          snapshotURL: Yup.string(),
+          snapshotENS: Yup.string(),
         }),
         multisig: Yup.object().when('essentials', {
           is: ({ governance }: DAOEssentials) => governance === GovernanceType.MULTISIG,
@@ -89,7 +84,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                   __schema.test(addressValidationTestSimple).test(validERC20Address),
               }),
               parentAllocationAmount: Yup.object().when({
-                is: (value: BigNumberValuePair) => !!value.value,
+                is: (value: BigIntValuePair) => !!value.value,
                 then: schema =>
                   schema.shape({
                     value: Yup.string().test(maxAllocationValidation),
@@ -128,7 +123,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                     tokenWeight: Yup.object()
                       .required()
                       .shape({
-                        value: Yup.string().test(isBigNumberValidation).test(minValueValidation(1)), // Otherwise "0" treated as proper value
+                        value: Yup.string().test(isBigIntValidation).test(minValueValidation(1)), // Otherwise "0" treated as proper value
                       }),
                   }),
                 ),
@@ -170,7 +165,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
       uniqueAllocationValidationTest,
       uniqueNFTAddressValidationTest,
       minValueValidation,
-      isBigNumberValidation,
+      isBigIntValidation,
     ],
   );
   return { createDAOValidation };

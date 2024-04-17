@@ -1,16 +1,15 @@
-import { BigNumber, BigNumberish } from 'ethers';
-import { ProposalMetadata } from './createProposal';
 import { GovernanceActivity } from './fractal';
+import { CreateProposalMetadata } from './proposalBuilder';
 import { SafeMultisigConfirmationResponse } from './safeGlobal';
 import { MetaTransaction, DecodedTransaction } from './transaction';
 
 export interface ProposalExecuteData extends ExecuteData {
-  metaData: ProposalMetadata;
+  metaData: CreateProposalMetadata;
 }
 
 export interface ExecuteData {
   targets: string[];
-  values: BigNumberish[];
+  values: bigint[];
   calldatas: string[];
 }
 
@@ -20,7 +19,7 @@ export type CreateProposalFunc = (proposal: {
 }) => void;
 
 export type ProposalData = {
-  metaData?: ProposalMetadata;
+  metaData?: CreateProposalMetadata;
   transactions?: MetaTransaction[];
   decodedTransactions: DecodedTransaction[];
 };
@@ -31,7 +30,7 @@ export interface AzoriusProposal extends GovernanceActivity {
   votes: ProposalVote[] | ERC721ProposalVote[];
   /** The deadline timestamp for the proposal, in milliseconds. */
   deadlineMs: number;
-  startBlock: BigNumber;
+  startBlock: bigint;
 }
 
 export interface AzoriusERC721Proposal extends AzoriusProposal {
@@ -114,16 +113,16 @@ export interface ExtendedSnapshotProposal extends SnapshotProposal {
 }
 
 export type ProposalVotesSummary = {
-  yes: BigNumber;
-  no: BigNumber;
-  abstain: BigNumber;
-  quorum: BigNumber;
+  yes: bigint;
+  no: bigint;
+  abstain: bigint;
+  quorum: bigint;
 };
 
 export type ProposalVote = {
   voter: string;
   choice: (typeof VOTE_CHOICES)[number];
-  weight: BigNumber;
+  weight: bigint;
 };
 
 export type ERC721ProposalVote = {

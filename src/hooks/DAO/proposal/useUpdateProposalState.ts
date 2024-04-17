@@ -1,4 +1,3 @@
-import { BigNumber } from 'ethers';
 import { useCallback, Dispatch } from 'react';
 import {
   FractalGovernanceAction,
@@ -19,7 +18,7 @@ export default function useUpdateProposalState({
 }: IUseUpdateProposalState) {
   const baseContracts = useSafeContracts();
   const updateProposalState = useCallback(
-    async (proposalId: BigNumber) => {
+    async (proposalId: bigint) => {
       if (!azoriusContractAddress || !baseContracts) {
         return;
       }

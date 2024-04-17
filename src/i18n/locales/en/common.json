@@ -43,7 +43,7 @@
   "errorInvalidENSName": "Invalid ENS name",
   "errorInvalidERC20Address": "Invalid ERC-20 token address",
   "errorInvalidERC721Address": "Invalid ERC-721 token address",
-  "errorInvalidBigNumber": "Invalid number value",
+  "errorInvalidBigint": "Invalid number value",
   "errorMinimumValue": "This value can't be less then {{minValue}}",
   "errorInvalidAddress": "Invalid ETH address",
   "errorNotProposer": "You don't have permissions to create proposal for this Safe.",

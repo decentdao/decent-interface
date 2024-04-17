@@ -38,7 +38,9 @@ export function Activities() {
         flexDirection="column"
         gap="1rem"
       >
-        {freezeVotingContractAddress && guard.freezeProposalVoteCount?.gt(0) && <ActivityFreeze />}
+        {freezeVotingContractAddress &&
+          guard.freezeProposalVoteCount !== null &&
+          guard.freezeProposalVoteCount > 0n && <ActivityFreeze />}
         {!type ? (
           <InfoBoxLoader />
         ) : sortedActivities.length ? (

@@ -19,7 +19,7 @@ export function guardReducer(state: FreezeGuard, action: FractalGuardActions) {
     }
     case FractalGuardAction.UPDATE_FREEZE_VOTE: {
       const { isVoter, votesCast, freezeProposalCreatedTime } = action.payload;
-      const isFrozen = votesCast.gte(state.freezeVotesThreshold || 0);
+      const isFrozen = votesCast >= (state.freezeVotesThreshold || 0);
       const userHasFreezeVoted = isVoter || state.userHasVotes;
       const userHasVotes = !userHasFreezeVoted || state.userHasVotes;
       return {

@@ -8,10 +8,10 @@ import {
   ICreationStepProps,
   CreatorSteps,
   ERC721TokenConfig,
-  BigNumberValuePair,
+  BigIntValuePair,
 } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
-import { BigNumberInput } from '../../ui/forms/BigNumberInput';
+import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
@@ -70,7 +70,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
             {values.erc721Token.nfts.map((nft, i) => {
               const nftError = (
                 errors?.erc721Token?.nfts as FormikErrors<
-                  ERC721TokenConfig<BigNumberValuePair>[] | undefined
+                  ERC721TokenConfig<BigIntValuePair>[] | undefined
                 >
               )?.[i];
               const addressErrorMessage =
@@ -135,8 +135,8 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                     }}
                   >
                     <Flex>
-                      <BigNumberInput
-                        value={nft.tokenWeight.bigNumberValue}
+                      <BigIntInput
+                        value={nft.tokenWeight.bigintValue}
                         onChange={valuePair =>
                           setFieldValue(`erc721Token.nfts.${i}.tokenWeight`, valuePair)
                         }
@@ -198,7 +198,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
             {values.erc721Token.nfts.map((nft, i) => {
               const nftError = (
                 errors?.erc721Token?.nfts as FormikErrors<
-                  ERC721TokenConfig<BigNumberValuePair>[] | undefined
+                  ERC721TokenConfig<BigIntValuePair>[] | undefined
                 >
               )?.[i];
               const addressErrorMessage =

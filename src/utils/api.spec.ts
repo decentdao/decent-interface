@@ -1,4 +1,4 @@
-import { constants } from 'ethers';
+import { zeroAddress } from 'viem';
 import { buildSafeApiUrl } from './api';
 
 describe('Safe URL builder tests', () => {
@@ -16,11 +16,11 @@ describe('Safe URL builder tests', () => {
   test('Creates Safe Transaction Service URL, with params', async () => {
     const safeTransactionURL = buildSafeApiUrl(
       'https://safe-transaction-sepolia.safe.global',
-      `/safes/${constants.AddressZero}/multisig-transactions`,
-      { target: constants.AddressZero },
+      `/safes/${zeroAddress}/multisig-transactions`,
+      { target: zeroAddress },
       'v1',
     );
-    const EXPECTED_URL = `https://safe-transaction-sepolia.safe.global/api/v1/safes/${constants.AddressZero}/multisig-transactions?target=${constants.AddressZero}`;
+    const EXPECTED_URL = `https://safe-transaction-sepolia.safe.global/api/v1/safes/${zeroAddress}/multisig-transactions?target=${zeroAddress}`;
     expect(safeTransactionURL).toEqual(EXPECTED_URL);
   });
 });

@@ -14,9 +14,13 @@ export const useLoadDAONode = () => {
   const safeAPI = useSafeAPI();
   const { getDaoName } = useLazyDAOName();
   const lookupModules = useFractalModules();
-  const { subgraphChainName } = useNetworkConfig();
+  const { subgraph } = useNetworkConfig();
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
-    context: { chainName: subgraphChainName },
+    context: {
+      subgraphSpace: subgraph.space,
+      subgraphSlug: subgraph.slug,
+      subgraphVersion: subgraph.version,
+    },
   });
 
   const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
@@ -26,7 +30,7 @@ export const useLoadDAONode = () => {
     const { daos } = result.data;
     const dao = daos[0];
     if (dao) {
-      const { parentAddress, name, hierarchy, snapshotURL } = dao;
+      const { parentAddress, name, hierarchy, snapshotURL: snapshotENS } = dao;
 
       const currentNode: Node = {
         nodeHierarchy: {
@@ -35,7 +39,7 @@ export const useLoadDAONode = () => {
         },
         daoName: name as string,
         daoAddress: utils.getAddress(_daoAddress as string),
-        daoSnapshotURL: snapshotURL as string,
+        daoSnapshotENS: snapshotENS as string,
       };
       return currentNode;
     }
@@ -54,14 +58,14 @@ export const useLoadDAONode = () => {
             logError('graphQL query failed');
             return { error: 'errorFailedSearch' };
           }
-          const safe = await safeAPI.getSafeInfo(_daoAddress);
-          const fractalModules = await lookupModules(safe.modules);
-          const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo.daoName);
+
+          const sanitizedDaoAddress = utils.getAddress(_daoAddress);
+          const safeInfoWithGuard = await safeAPI.getSafeData(sanitizedDaoAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
-            daoName,
-            safe,
-            fractalModules,
+            daoName: await getDaoName(sanitizedDaoAddress, graphNodeInfo.daoName),
+            safe: safeInfoWithGuard,
+            fractalModules: await lookupModules(safeInfoWithGuard.modules),
           });
 
           // TODO we could cache node here, but should be careful not to cache

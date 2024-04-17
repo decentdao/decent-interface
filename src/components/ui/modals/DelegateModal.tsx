@@ -1,8 +1,8 @@
 import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { BigNumber, constants } from 'ethers';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { zeroAddress } from 'viem';
 import * as Yup from 'yup';
 import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
@@ -93,7 +93,7 @@ export function DelegateModal({ close }: { close: Function }) {
           color="grayscale.100"
         >
           {formatCoin(
-            azoriusGovernance.votesToken.balance || BigNumber.from(0),
+            azoriusGovernance.votesToken.balance || 0n,
             false,
             azoriusGovernance.votesToken.decimals,
             azoriusGovernance.votesToken.symbol,
@@ -109,7 +109,7 @@ export function DelegateModal({ close }: { close: Function }) {
           align="end"
           color="grayscale.100"
         >
-          {azoriusGovernance.votesToken.delegatee === constants.AddressZero ? (
+          {azoriusGovernance.votesToken.delegatee === zeroAddress ? (
             '--'
           ) : (
             <EtherscanLinkAddress address={azoriusGovernance.votesToken.delegatee}>
@@ -118,48 +118,49 @@ export function DelegateModal({ close }: { close: Function }) {
           )}
         </Text>
       </SimpleGrid>
-      {decentGovernance.lockedVotesToken?.balance && (
-        <SimpleGrid
-          columns={2}
-          color="chocolate.200"
-        >
-          <Text
-            align="start"
-            marginBottom="0.5rem"
+      {decentGovernance.lockedVotesToken?.balance !== null &&
+        decentGovernance.lockedVotesToken?.balance !== undefined && (
+          <SimpleGrid
+            columns={2}
+            color="chocolate.200"
           >
-            {t('titleLockedBalance')}
-          </Text>
-          <Text
-            align="end"
-            color="grayscale.100"
-          >
-            {formatCoin(
-              decentGovernance.lockedVotesToken.balance || BigNumber.from(0),
-              false,
-              azoriusGovernance.votesToken.decimals,
-              azoriusGovernance.votesToken.symbol,
-            )}
-          </Text>
-          <Text
-            align="start"
-            marginBottom="1rem"
-          >
-            {t('titleDelegatedTo')}
-          </Text>
-          <Text
-            align="end"
-            color="grayscale.100"
-          >
-            {decentGovernance.lockedVotesToken.delegatee === constants.AddressZero ? (
-              '--'
-            ) : (
-              <EtherscanLinkAddress address={decentGovernance.lockedVotesToken.delegatee}>
-                {lockedDelegateeDisplayName.displayName}
-              </EtherscanLinkAddress>
-            )}
-          </Text>
-        </SimpleGrid>
-      )}
+            <Text
+              align="start"
+              marginBottom="0.5rem"
+            >
+              {t('titleLockedBalance')}
+            </Text>
+            <Text
+              align="end"
+              color="grayscale.100"
+            >
+              {formatCoin(
+                decentGovernance.lockedVotesToken.balance || 0n,
+                false,
+                azoriusGovernance.votesToken.decimals,
+                azoriusGovernance.votesToken.symbol,
+              )}
+            </Text>
+            <Text
+              align="start"
+              marginBottom="1rem"
+            >
+              {t('titleDelegatedTo')}
+            </Text>
+            <Text
+              align="end"
+              color="grayscale.100"
+            >
+              {decentGovernance.lockedVotesToken.delegatee === zeroAddress ? (
+                '--'
+              ) : (
+                <EtherscanLinkAddress address={decentGovernance.lockedVotesToken.delegatee}>
+                  {lockedDelegateeDisplayName.displayName}
+                </EtherscanLinkAddress>
+              )}
+            </Text>
+          </SimpleGrid>
+        )}
       <Divider
         color="chocolate.700"
         marginBottom="1rem"
@@ -212,21 +213,22 @@ export function DelegateModal({ close }: { close: Function }) {
             >
               {t('buttonDelegate')}
             </Button>
-            {decentGovernance.lockedVotesToken?.balance && (
-              <Button
-                marginTop="2rem"
-                width="100%"
-                onClick={() => submitLockedDelegation({ address: values.address })}
-                isDisabled={
-                  !!errors.address ||
-                  contractCallPending ||
-                  !values.address ||
-                  values.address === decentGovernance.lockedVotesToken.delegatee
-                }
-              >
-                {t('buttonLockedDelegate')}
-              </Button>
-            )}
+            {decentGovernance.lockedVotesToken?.balance !== null &&
+              decentGovernance.lockedVotesToken?.balance !== undefined && (
+                <Button
+                  marginTop="2rem"
+                  width="100%"
+                  onClick={() => submitLockedDelegation({ address: values.address })}
+                  isDisabled={
+                    !!errors.address ||
+                    contractCallPending ||
+                    !values.address ||
+                    values.address === decentGovernance.lockedVotesToken.delegatee
+                  }
+                >
+                  {t('buttonLockedDelegate')}
+                </Button>
+              )}
           </form>
         )}
       </Formik>

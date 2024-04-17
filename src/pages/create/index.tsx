@@ -1,8 +1,8 @@
-import { ethers } from 'ethers';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { getAddress } from 'viem';
 import DaoCreator from '../../components/DaoCreator';
 import { DAOCreateMode } from '../../components/DaoCreator/formComponents/EstablishEssentials';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
@@ -23,7 +23,6 @@ export default function DaoCreatePage() {
   const successCallback = useCallback(
     async (addressPrefix: string, daoAddress: string) => {
       setRedirectPending(true);
-      const { getAddress } = ethers.utils;
       const daoFound = await requestWithRetries(
         async () => (safeAPI ? safeAPI.getSafeCreationInfo(getAddress(daoAddress)) : undefined),
         8,

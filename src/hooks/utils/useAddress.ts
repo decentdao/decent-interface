@@ -1,5 +1,5 @@
-import { ethers } from 'ethers';
 import { useEffect, useState } from 'react';
+import { getAddress, isAddress } from 'viem';
 import { supportsENS } from '../../helpers';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -14,7 +14,7 @@ const useAddress = (addressInput: string | undefined) => {
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
   const { setValue, getValue } = useLocalStorage();
-  const { chainId } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
 
   useEffect(() => {
     setIsAddressLoading(true);
@@ -35,15 +35,15 @@ const useAddress = (addressInput: string | undefined) => {
       return;
     }
 
-    if (ethers.utils.isAddress(addressInput)) {
-      setAddress(ethers.utils.getAddress(addressInput));
+    if (isAddress(addressInput)) {
+      setAddress(getAddress(addressInput));
       setIsValidAddress(true);
       setIsAddressLoading(false);
       return;
     }
 
     // only continue with ENS checks if the chain actually supports ENS
-    if (!supportsENS(chainId)) {
+    if (!supportsENS(chain.id)) {
       return;
     }
 
@@ -103,7 +103,7 @@ const useAddress = (addressInput: string | undefined) => {
       .finally(() => {
         setIsAddressLoading(false);
       });
-  }, [provider, addressInput, getValue, setValue, chainId]);
+  }, [provider, addressInput, getValue, setValue, chain]);
 
   return { address, isValidAddress, isAddressLoading };
 };

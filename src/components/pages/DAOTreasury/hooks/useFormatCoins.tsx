@@ -1,6 +1,6 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { BigNumber, constants } from 'ethers';
 import { useEffect, useState } from 'react';
+import { maxUint256, zeroAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
 import usePriceAPI from '../../../../providers/App/hooks/usePriceAPI';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -19,7 +19,7 @@ export interface TokenDisplayData {
 }
 
 export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
-  const { nativeTokenSymbol, nativeTokenIcon } = useNetworkConfig();
+  const { chain, nativeTokenIcon } = useNetworkConfig();
   const [totalFiatValue, setTotalFiatValue] = useState(0);
   const [displayData, setDisplayData] = useState<TokenDisplayData[]>([]);
   const { getTokenPrices } = usePriceAPI();
@@ -42,22 +42,24 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
         if (tokenPrice && asset.balance) {
           try {
             const multiplicator = 10000;
-            const tokenFiatBalanceBn = BigNumber.from(asset.balance)
-              .mul(Math.round(parseFloat(tokenPrice.toFixed(5)) * multiplicator)) // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off
-              .div(BigNumber.from(10).pow(asset.token?.decimals || 18));
-            tokenFiatBalance = tokenFiatBalanceBn.gte(constants.MaxUint256)
-              ? tokenFiatBalanceBn.div(multiplicator).toNumber()
-              : tokenFiatBalanceBn.toNumber() / multiplicator;
+            const tokenFiatBalanceBi =
+              (BigInt(asset.balance) *
+                BigInt(Math.round(parseFloat(tokenPrice.toFixed(5)) * multiplicator))) / // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off
+              10n ** BigInt(asset.token?.decimals || 18);
+            tokenFiatBalance =
+              tokenFiatBalanceBi >= maxUint256
+                ? Number(tokenFiatBalanceBi / BigInt(multiplicator))
+                : Number(tokenFiatBalanceBi) / multiplicator;
             newTotalFiatValue += tokenFiatBalance;
           } catch (e) {
             logError('Error while calculating token fiat balance', e);
           }
         }
 
-        let symbol = asset.token === null ? nativeTokenSymbol : asset.token.symbol;
+        let symbol = asset.token === null ? chain.nativeCurrency.symbol : asset.token.symbol;
         const formatted: TokenDisplayData = {
           iconUri: asset.token === null ? nativeTokenIcon : asset.token.logoUri,
-          address: asset.tokenAddress === null ? constants.AddressZero : asset.tokenAddress,
+          address: asset.tokenAddress === null ? zeroAddress : asset.tokenAddress,
           truncatedCoinTotal: formatCoin(asset.balance, true, asset?.token?.decimals, symbol),
           fiatValue: tokenFiatBalance,
           symbol: symbol,
@@ -74,7 +76,7 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
     }
 
     loadDisplayData();
-  }, [assets, nativeTokenIcon, nativeTokenSymbol, getTokenPrices]);
+  }, [assets, nativeTokenIcon, chain, getTokenPrices]);
 
   return {
     totalFiatValue,

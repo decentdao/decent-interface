@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { zeroAddress } from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, encodeMultiSend } from '../helpers';
 import {
@@ -13,8 +14,6 @@ import {
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
 import { fractalModuleData, FractalModuleData } from './helpers/fractalModuleData';
-
-const { AddressZero } = ethers.constants;
 
 export class DaoTxBuilder extends BaseTxBuilder {
   private readonly saltNum;
@@ -86,7 +85,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     }
 
     if (shouldSetSnapshot) {
-      this.internalTxs = this.internalTxs.concat(this.buildUpdateDAOSnapshotURLTx());
+      this.internalTxs = this.internalTxs.concat(this.buildUpdateDAOSnapshotENSTx());
     }
 
     this.internalTxs = this.internalTxs.concat(
@@ -135,7 +134,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     // If subDAO and parentAllocation, deploy claim module
     let tokenClaimTx: SafeTransaction | undefined;
     const parentAllocation = (this.daoData as AzoriusERC20DAO).parentAllocationAmount;
-    if (this.parentTokenAddress && parentAllocation && !parentAllocation.isZero()) {
+    if (this.parentTokenAddress && parentAllocation && parentAllocation !== 0n) {
       tokenClaimTx = azoriusTxBuilder.buildDeployTokenClaim();
       const tokenApprovalTx = azoriusTxBuilder.buildApproveClaimAllocation();
       this.internalTxs.push(tokenApprovalTx);
@@ -160,7 +159,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     const multisigTxBuilder = this.txBuilderFactory.createMultiSigTxBuilder();
 
     this.internalTxs.push(this.buildUpdateDAONameTx());
-    this.internalTxs.push(this.buildUpdateDAOSnapshotURLTx());
+    this.internalTxs.push(this.buildUpdateDAOSnapshotENSTx());
 
     // subDAO case, add freeze guard
     if (this.parentAddress) {
@@ -228,11 +227,11 @@ export class DaoTxBuilder extends BaseTxBuilder {
     );
   }
 
-  private buildUpdateDAOSnapshotURLTx(): SafeTransaction {
+  private buildUpdateDAOSnapshotENSTx(): SafeTransaction {
     return buildContractCall(
       this.baseContracts.keyValuePairsContract,
       'updateValues',
-      [['snapshotURL'], [this.daoData.snapshotURL]],
+      [['snapshotURL'], [this.daoData.snapshotENS]],
       0,
       false,
     );
@@ -253,8 +252,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
         '0', // tx gas
         '0', // base gas
         '0', // gas price
-        AddressZero, // gas token
-        AddressZero, // receiver
+        zeroAddress, // gas token
+        zeroAddress, // receiver
         signatures, // sigs
       ],
       0,
