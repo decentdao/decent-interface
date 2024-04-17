@@ -36,7 +36,7 @@ export default function ModifyGovernancePage() {
     deployAzorius(
       daoData as AzoriusERC20DAO | AzoriusERC721DAO,
       !daoName || createAccountSubstring(daoAddress!) === daoName,
-      !daoSnapshotENS && !!daoData.snapshotURL,
+      !daoSnapshotENS && !!daoData.snapshotENS,
     );
   };
 

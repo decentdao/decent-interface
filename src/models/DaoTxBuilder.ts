@@ -231,7 +231,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     return buildContractCall(
       this.baseContracts.keyValuePairsContract,
       'updateValues',
-      [['snapshotURL'], [this.daoData.snapshotURL]],
+      [['snapshotURL'], [this.daoData.snapshotENS]],
       0,
       false,
     );

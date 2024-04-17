@@ -41,16 +41,6 @@ export type DAOEssentials = {
   snapshotENS: string;
 };
 
-/**
- * `DAOEssentialsEdge` is a transitionary type that is used in place of the in-app-only `DAOEssentials` type.
- * `DAOEssentialsEdge` has a `snapshotURL` field in place of a `snapshotENS` field.
- *
- * A recent update necessitated the renaming of references to `snapshotURL` to `snapshotENS`,
- * but as the contracts and subgraph already use `snapshotURL`, this type is used to maintain compatibility
- * of the app with the contracts and subgraph of the outside world.
- */
-type DAOEssentialsEdge = Omit<DAOEssentials, 'snapshotENS'> & { snapshotURL: string };
-
 export type DAOGovernorERC20Token<T = bigint> = {
   tokenCreationType: TokenCreationType;
   tokenImportAddress?: string;
@@ -100,7 +90,7 @@ export interface SubDAO<T = bigint>
     DAOFreezeGuardConfig<T> {}
 
 export interface AzoriusGovernanceDAO<T = bigint>
-  extends DAOEssentialsEdge,
+  extends DAOEssentials,
     DAOGovernorModuleConfig<T> {}
 
 export interface AzoriusERC20DAO<T = bigint>
@@ -114,7 +104,7 @@ export interface AzoriusERC721DAO<T = bigint>
   extends AzoriusGovernanceDAO<T>,
     DAOGovernorERC721Token<T> {}
 
-export interface SafeMultisigDAO extends DAOEssentialsEdge, SafeConfiguration {}
+export interface SafeMultisigDAO extends DAOEssentials, SafeConfiguration {}
 
 export type DAOTrigger = (
   daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
