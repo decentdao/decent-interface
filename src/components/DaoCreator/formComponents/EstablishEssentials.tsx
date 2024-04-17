@@ -30,7 +30,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors, mode } = props;
 
-  const [isSnapshotSpaceValid, setSnapshotSpaceValid] = useState(false);
+  const [isSnapshotSpaceValid, setSnapshotSpaceValid] = useState(true);
 
   const {
     node: { daoName, daoSnapshotENS, daoAddress },
