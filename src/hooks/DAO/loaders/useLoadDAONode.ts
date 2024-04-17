@@ -30,7 +30,7 @@ export const useLoadDAONode = () => {
     const { daos } = result.data;
     const dao = daos[0];
     if (dao) {
-      const { parentAddress, name, hierarchy, snapshotURL } = dao;
+      const { parentAddress, name, hierarchy, snapshotURL: snapshotENS } = dao;
 
       const currentNode: Node = {
         nodeHierarchy: {
@@ -39,7 +39,7 @@ export const useLoadDAONode = () => {
         },
         daoName: name as string,
         daoAddress: utils.getAddress(_daoAddress as string),
-        daoSnapshotURL: snapshotURL as string,
+        daoSnapshotENS: snapshotENS as string,
       };
       return currentNode;
     }

@@ -1,6 +1,7 @@
+import { ens_normalize } from '@adraffy/ens-normalize';
 import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
@@ -29,8 +30,10 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors, mode } = props;
 
+  const [isSnapshotSpaceValid, setSnapshotSpaceValid] = useState(true);
+
   const {
-    node: { daoName, daoSnapshotURL, daoAddress },
+    node: { daoName, daoSnapshotENS, daoAddress },
   } = useFractal();
 
   const isEdit = mode === DAOCreateMode.EDIT;
@@ -38,14 +41,18 @@ export function EstablishEssentials(props: ICreationStepProps) {
   useEffect(() => {
     if (isEdit) {
       setFieldValue('essentials.daoName', daoName, false);
-      if (createAccountSubstring(daoAddress!) !== daoName)
-        setFieldValue('essentials.snapshotURL', daoSnapshotURL || '', false);
+      if (createAccountSubstring(daoAddress!) !== daoName) {
+        // Pre-fill the snapshot URL form field when editing
+        setFieldValue('essentials.snapshotENS', daoSnapshotENS || '', false);
+      }
     }
-  }, [setFieldValue, mode, daoName, daoSnapshotURL, isEdit, daoAddress]);
+  }, [setFieldValue, mode, daoName, daoSnapshotENS, isEdit, daoAddress]);
 
   const daoNameDisabled =
     isEdit && !!daoName && !!daoAddress && createAccountSubstring(daoAddress) !== daoName;
-  const snapshotURLDisabled = isEdit && !!daoSnapshotURL;
+
+  // If in governance edit mode and snapshot URL is already set, disable the field
+  const snapshotENSDisabled = isEdit && !!daoSnapshotENS;
 
   const handleGovernanceChange = (value: string) => {
     if (value === GovernanceType.AZORIUS_ERC20) {
@@ -55,6 +62,24 @@ export function EstablishEssentials(props: ICreationStepProps) {
     }
 
     setFieldValue('essentials.governance', value);
+  };
+
+  const handleSnapshotSpaceChange = (value: string) => {
+    setFieldValue('essentials.snapshotENS', value, true);
+
+    // If there's no input in the snapshot URL field, we don't need to check if it's valid
+    if (!value) {
+      setSnapshotSpaceValid(true);
+      return;
+    }
+
+    try {
+      ens_normalize(value);
+      setSnapshotSpaceValid(true);
+    } catch (error) {
+      console.log(error);
+      setSnapshotSpaceValid(false);
+    }
   };
 
   const { createOptions } = useNetworkConfig();
@@ -160,14 +185,13 @@ export function EstablishEssentials(props: ICreationStepProps) {
         helper={t('snapshotHelper')}
         isRequired={false}
       >
-        <LabelWrapper errorMessage={errors?.essentials?.snapshotURL}>
+        <LabelWrapper errorMessage={errors?.essentials?.snapshotENS}>
           <Input
-            value={values.essentials.snapshotURL}
-            onChange={cEvent => setFieldValue('essentials.snapshotURL', cEvent.target.value, true)}
-            isDisabled={snapshotURLDisabled}
-            data-testid="essentials-snapshotURL"
+            value={values.essentials.snapshotENS}
+            onChange={cEvent => handleSnapshotSpaceChange(cEvent.target.value)}
+            isDisabled={snapshotENSDisabled}
+            data-testid="essentials-snapshotENS"
             placeholder="example.eth"
-            maxLength={30}
           />
         </LabelWrapper>
       </LabelComponent>
@@ -179,6 +203,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       <StepButtons
         {...props}
         isNextDisabled={
+          !isSnapshotSpaceValid ||
           values.essentials.daoName.length === 0 || // TODO formik should do this, not sure why it's enabled on first pass
           (isEdit && values.essentials.governance === GovernanceType.MULTISIG)
         }
