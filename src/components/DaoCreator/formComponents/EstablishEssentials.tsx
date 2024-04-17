@@ -66,13 +66,19 @@ export function EstablishEssentials(props: ICreationStepProps) {
 
   const handleSnapshotSpaceChange = (value: string) => {
     setFieldValue('essentials.snapshotENS', value, true);
+
+    // If there's no input in the snapshot URL field, we don't need to check if it's valid
+    if (!value) {  
+        setSnapshotSpaceValid(true);  
+        return;  
+    }  
+
     try {
       ens_normalize(value);
       setSnapshotSpaceValid(true);
     } catch (error) {
       console.log(error);
-      // If there's no input in the snapshot URL field, we don't need to check if it's valid
-      setSnapshotSpaceValid(!!value ? false : true);
+      setSnapshotSpaceValid(false);
     }
   };
 
