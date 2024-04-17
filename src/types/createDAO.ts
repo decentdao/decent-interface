@@ -41,14 +41,14 @@ export type DAOEssentials = {
   snapshotENS: string;
 };
 
-/** 
-* `DAOEssentialsEdge` is a transitionary type that is used in place of the in-app-only `DAOEssentials` type.
-* `DAOEssentialsEdge` has a `snapshotURL` field in place of a `snapshotENS` field.
-* 
-* A recent update necessitated the renaming of references to `snapshotURL` to `snapshotENS`,
-* but as the contracts and subgraph already use `snapshotURL`, this type is used to maintain compatibility
-* of the app with the contracts and subgraph of the outside world.
-*/
+/**
+ * `DAOEssentialsEdge` is a transitionary type that is used in place of the in-app-only `DAOEssentials` type.
+ * `DAOEssentialsEdge` has a `snapshotURL` field in place of a `snapshotENS` field.
+ *
+ * A recent update necessitated the renaming of references to `snapshotURL` to `snapshotENS`,
+ * but as the contracts and subgraph already use `snapshotURL`, this type is used to maintain compatibility
+ * of the app with the contracts and subgraph of the outside world.
+ */
 type DAOEssentialsEdge = Omit<DAOEssentials, 'snapshotENS'> & { snapshotURL: string };
 
 export type DAOGovernorERC20Token<T = bigint> = {

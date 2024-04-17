@@ -11,7 +11,7 @@ import {
   SnapshotWeightedVotingChoice,
 } from '../../../../types';
 import useSnapshotSpaceName from './useSnapshotSpaceName';
-import { createClient } from './';
+import { createSnapshotGraphQlClient } from './';
 
 export default function useSnapshotProposal(proposal: FractalProposal | null | undefined) {
   const [extendedSnapshotProposal, setExtendedSnapshotProposal] =
@@ -22,7 +22,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     },
   } = useFractal();
   const daoSnapshotSpaceName = useSnapshotSpaceName();
-  const client = useMemo(() => createClient(), []);
+  const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphQlClient(), []);
 
   const snapshotProposal = proposal as SnapshotProposal;
   const isSnapshotProposal = useMemo(
@@ -31,8 +31,8 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
   );
 
   const loadProposal = useCallback(async () => {
-    if (snapshotProposal?.snapshotProposalId && client) {
-      const proposalQueryResult = await client
+    if (snapshotProposal?.snapshotProposalId && snaphshotGraphQlClient) {
+      const proposalQueryResult = await snaphshotGraphQlClient
         .query({
           query: gql`
           query ExtendedSnapshotProposal {
@@ -72,7 +72,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
           },
         );
 
-      const votesQueryResult = await client
+      const votesQueryResult = await snaphshotGraphQlClient
         .query({
           query: gql`query SnapshotProposalVotes {
           votes(where: {proposal: "${snapshotProposal.snapshotProposalId}"}, first: 500) {
@@ -194,7 +194,12 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
         votes: votesQueryResult,
       } as ExtendedSnapshotProposal);
     }
-  }, [snapshotProposal?.snapshotProposalId, proposal, snapshotProposal?.state, client]);
+  }, [
+    snapshotProposal?.snapshotProposalId,
+    proposal,
+    snapshotProposal?.state,
+    snaphshotGraphQlClient,
+  ]);
 
   const loadVotingWeight = useCallback(async () => {
     const emptyVotingWeight = {
@@ -202,8 +207,8 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       votingWeightByStrategy: [0],
       votingState: '',
     };
-    if (snapshotProposal?.snapshotProposalId && client) {
-      const queryResult = await client
+    if (snapshotProposal?.snapshotProposalId && snaphshotGraphQlClient) {
+      const queryResult = await snaphshotGraphQlClient
         .query({
           query: gql`
       query UserVotingWeight {
@@ -234,7 +239,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     }
 
     return emptyVotingWeight;
-  }, [address, snapshotProposal?.snapshotProposalId, client, daoSnapshotSpaceName]);
+  }, [address, snapshotProposal?.snapshotProposalId, snaphshotGraphQlClient, daoSnapshotSpaceName]);
 
   return {
     loadVotingWeight,
