@@ -195,7 +195,7 @@ export default function MetadataContainer() {
         onChange={handleSnapshotENSChange}
         value={snapshotENS}
         disabled={!userHasVotingWeight}
-        placeholder="httpsexample.eth"
+        placeholder="example.eth"
         testId="daoSettings.snapshotENS"
         gridContainerProps={{
           display: 'inline-flex',
