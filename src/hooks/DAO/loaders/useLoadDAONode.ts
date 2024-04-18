@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
-import { utils } from 'ethers';
 import { useCallback } from 'react';
+import { isAddress, getAddress } from 'viem';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -38,7 +38,7 @@ export const useLoadDAONode = () => {
           childNodes: mapChildNodes(hierarchy),
         },
         daoName: name as string,
-        daoAddress: utils.getAddress(_daoAddress as string),
+        daoAddress: getAddress(_daoAddress as string),
         daoSnapshotENS: snapshotENS as string,
       };
       return currentNode;
@@ -48,7 +48,7 @@ export const useLoadDAONode = () => {
 
   const loadDao = useCallback(
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
-      if (utils.isAddress(_daoAddress) && safeAPI) {
+      if (isAddress(_daoAddress) && safeAPI) {
         try {
           const graphNodeInfo = formatDAOQuery(
             await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
@@ -59,7 +59,7 @@ export const useLoadDAONode = () => {
             return { error: 'errorFailedSearch' };
           }
 
-          const sanitizedDaoAddress = utils.getAddress(_daoAddress);
+          const sanitizedDaoAddress = getAddress(_daoAddress);
           const safeInfoWithGuard = await safeAPI.getSafeData(sanitizedDaoAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {

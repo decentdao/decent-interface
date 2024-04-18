@@ -1,6 +1,6 @@
 import { Azorius } from '@fractal-framework/fractal-contracts';
-import { utils } from 'ethers';
 import { useState, useCallback, useEffect } from 'react';
+import { getAddress } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { GovernanceType } from '../../types';
@@ -36,7 +36,7 @@ export function useCanUserCreateProposal() {
       };
 
       if (safeAddress && baseContracts) {
-        const safeInfo = await safeAPI.getSafeInfo(utils.getAddress(safeAddress));
+        const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
         const safeModules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(safeModules);
 

@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
-import { utils } from 'ethers';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { getAddress } from 'viem';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -54,7 +54,7 @@ export const useFractalNode = (
           childNodes: mapChildNodes(hierarchy),
         },
         daoName: name as string,
-        daoAddress: utils.getAddress(_daoAddress as string),
+        daoAddress: getAddress(_daoAddress as string),
         daoSnapshotENS: snapshotENS as string,
         proposalTemplatesHash: proposalTemplatesHash as string,
       };
@@ -70,7 +70,7 @@ export const useFractalNode = (
     onCompleted: async data => {
       if (!daoAddress) return;
       const graphNodeInfo = formatDAOQuery({ data }, daoAddress);
-      const daoName = await getDaoName(utils.getAddress(daoAddress), graphNodeInfo?.daoName);
+      const daoName = await getDaoName(getAddress(daoAddress), graphNodeInfo?.daoName);
 
       if (!!graphNodeInfo) {
         action.dispatch({
@@ -110,7 +110,7 @@ export const useFractalNode = (
 
       try {
         if (!safeAPI) throw new Error('SafeAPI not set');
-        const address = utils.getAddress(_daoAddress);
+        const address = getAddress(_daoAddress);
         safeInfo = await safeAPI.getSafeData(address);
       } catch (e) {
         reset({ error: true });
