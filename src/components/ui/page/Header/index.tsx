@@ -54,7 +54,8 @@ function HeaderLogo() {
             icon={
               <DecentLogo
                 aria-hidden
-                boxSize="2rem"
+                h="2.5rem"
+                w="2.125rem"
               />
             }
           />
@@ -110,7 +111,9 @@ function HeaderLogo() {
         >
           <DecentLogo
             aria-hidden
-            boxSize="4.25rem"
+            h="2.5rem"
+            w="2.125rem"
+            mx="2rem"
           />
         </Link>
       </Show>
