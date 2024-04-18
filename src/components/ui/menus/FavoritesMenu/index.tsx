@@ -1,5 +1,5 @@
-import { Flex, Menu, MenuButton, Show, Text } from '@chakra-ui/react';
-import { ArrowDown, StarGoldSolid } from '@decent-org/fractal-ui';
+import { Button, Flex, Menu, MenuButton, Show, Text } from '@chakra-ui/react';
+import { CaretDown, Star } from '@phosphor-icons/react';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FavoritesList } from './FavoritesList';
@@ -10,31 +10,33 @@ export function FavoritesMenu() {
     <Menu>
       {({ isOpen }) => (
         <Fragment>
-          <MenuButton
+          <Button
+            as={MenuButton}
+            variant="tertiary"
             data-testid="header-favoritesMenuButton"
-            h="full"
-            mx="1.5rem"
-            color="gold.500"
-            _hover={{
-              color: 'gold.500-hover',
-            }}
+            my="0.75rem"
+            mx="1rem"
           >
             <Flex alignItems="center">
-              <StarGoldSolid
-                boxSize="1.5rem"
-                fill="currentColor"
+              <Star
+                size="1.5rem"
+                color="var(--chakra-colors-neutral-8)"
+                weight="fill"
               />
               <Show above="md">
                 <Text
                   mx="0.5rem"
-                  textStyle="text-sm-mono-medium"
+                  textStyle="button-base"
                 >
                   {t('titleFavorites')}
                 </Text>
-                <ArrowDown />
+                <CaretDown
+                  color="var(--chakra-colors-neutral-8)"
+                  size="1.5rem"
+                />
               </Show>
             </Flex>
-          </MenuButton>
+          </Button>
           {isOpen && <FavoritesList />}
         </Fragment>
       )}

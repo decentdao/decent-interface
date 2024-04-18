@@ -15,7 +15,7 @@ function Navigation() {
       justifyContent="space-between"
       flexGrow={1}
     >
-        <Box></Box>
+      <Box></Box>
       <Show above="md">
         <NavigationLinks
           showDAOLinks={showDAOLinks}

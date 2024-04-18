@@ -1,21 +1,20 @@
-import { Menu, MenuButton } from '@chakra-ui/react';
-import { Fragment } from 'react';
+import { Button, Menu, MenuButton } from '@chakra-ui/react';
 import { MenuButtonDisplay } from './MenuButtonDisplay';
 import { MenuItems } from './MenuItems';
 
 export function AccountDisplay() {
   return (
     <Menu>
-      <Fragment>
-        <MenuButton
-          data-testid="header-accountMenu"
-          pr="1rem"
-          _hover={{ color: 'gold.200' }}
-        >
-          <MenuButtonDisplay />
-        </MenuButton>
-        <MenuItems />
-      </Fragment>
+      <Button
+        as={MenuButton}
+        variant="tertiary"
+        data-testid="header-accountMenu"
+        pr="1rem"
+        my="0.75rem"
+      >
+        <MenuButtonDisplay />
+      </Button>
+      <MenuItems />
     </Menu>
   );
 }

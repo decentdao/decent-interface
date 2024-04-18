@@ -1,5 +1,5 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
-import { ArrowDown } from '@decent-org/fractal-ui';
+import { Box, Flex } from '@chakra-ui/react';
+import { CaretDown } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
@@ -13,8 +13,11 @@ export function NotConnected() {
       alignItems="center"
       gap="1"
     >
-      <Text textStyle="text-sm-mono-medium">{t('connectWallet')}</Text>
-      <ArrowDown fill="currentColor" />
+      {t('connectWallet')}
+      <CaretDown
+        color="var(--chakra-colors-neutral-8)"
+        size="1.5rem"
+      />
     </Flex>
   );
 }
@@ -36,14 +39,17 @@ export function Connected() {
       alignItems="center"
       gap="0.75rem"
     >
-      <Box mt="0.125rem">
+      <Box>
         <Avatar
           address={account}
           url={avatarURL}
         />
       </Box>
-      <Text textStyle="text-sm-mono-semibold">{accountDisplayName}</Text>
-      <ArrowDown fill="currentColor" />
+      {accountDisplayName}
+      <CaretDown
+        color="var(--chakra-colors-neutral-8)"
+        size="1.5rem"
+      />
     </Flex>
   );
 }
