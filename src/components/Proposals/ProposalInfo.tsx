@@ -20,7 +20,7 @@ export function ProposalInfo({
   const metaData = useGetMetadata(proposal);
   const { t } = useTranslation('proposal');
   const {
-    node: { daoSnapshotURL },
+    node: { daoSnapshotENS },
   } = useFractal();
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
 
@@ -36,7 +36,7 @@ export function ProposalInfo({
         {isSnapshotProposal && (
           <>
             <Snapshot
-              snapshotURL={`${daoSnapshotURL}/proposal/${proposal.proposalId}`}
+              snapshotENS={`https://snapshot.org/#${daoSnapshotENS}/proposal/${proposal.proposalId}`}
               mt={0}
             />
             {(proposal as ExtendedSnapshotProposal).privacy === 'shutter' && (

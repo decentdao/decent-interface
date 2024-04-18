@@ -29,6 +29,7 @@ function DaoCreator({
         onSubmit={async values => {
           const choosenGovernance = values.essentials.governance;
           const freezeGuard = isSubDAO ? values.freeze : undefined;
+
           switch (choosenGovernance) {
             case GovernanceType.MULTISIG: {
               const data = await prepareMultisigFormData({

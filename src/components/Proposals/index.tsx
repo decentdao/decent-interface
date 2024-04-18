@@ -42,7 +42,7 @@ const FILTERS_SNAPSHOT = [FractalProposalState.CLOSED, FractalProposalState.PEND
 
 export default function Proposals() {
   const {
-    node: { daoSnapshotURL },
+    node: { daoSnapshotENS },
     governance: { type },
     guardContracts,
   } = useFractal();
@@ -72,12 +72,12 @@ export default function Proposals() {
         }
         break;
     }
-    if (daoSnapshotURL) {
+    if (daoSnapshotENS) {
       options = [...options, ...FILTERS_SNAPSHOT];
     }
     setAllOptions(options);
     setFilters(options);
-  }, [daoSnapshotURL, guardContracts.freezeGuardContractAddress, type]);
+  }, [daoSnapshotENS, guardContracts.freezeGuardContractAddress, type]);
 
   const toggleFilter = (filter: FractalProposalState) => {
     setFilters(prevState => {
