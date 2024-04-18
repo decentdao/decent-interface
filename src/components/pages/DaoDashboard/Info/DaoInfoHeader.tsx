@@ -11,7 +11,7 @@ import { InfoProposals } from './InfoProposals';
 import { InfoTreasury } from './InfoTreasury';
 import { ParentLink } from './ParentLink';
 
-export function Info() {
+export function DaoInfoHeader() {
   const {
     node: { daoAddress },
   } = useFractal();
