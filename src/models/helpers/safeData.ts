@@ -8,7 +8,8 @@ import {
   Address,
   Hash,
   encodeFunctionData,
- } from 'viem';
+} from 'viem';
+import SafeL2ABI from '../../assets/abi/SafeL2';
 import { MultiSend } from '../../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../../helpers/crypto';
@@ -30,20 +31,20 @@ export const safeData = async (
         multiSendContract.address,
       ];
 
-      const createSafeCalldata = encodeFunctionData({
-        functionName: 'setup',
-        args: [
-          signers,
-          1, // Threshold
-          zeroAddress,
-          zeroHash,
-          fallbackHandler,
-          zeroAddress,
-          0,
-          zeroAddress,
-        ],
-        abi: safeSingletonContract, // TODO: Get ABI here
-      });
+  const createSafeCalldata = encodeFunctionData({
+    functionName: 'setup',
+    args: [
+      signers,
+      1, // Threshold
+      zeroAddress,
+      zeroHash,
+      fallbackHandler,
+      zeroAddress,
+      0,
+      zeroAddress,
+    ],
+    abi: SafeL2ABI,
+  });
 
   const predictedSafeAddress = getCreate2Address({
     from: safeFactoryContract.address as Address,

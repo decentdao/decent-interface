@@ -2,6 +2,7 @@ import { VEllipsis } from '@decent-org/fractal-ui';
 import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Address } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -95,7 +96,7 @@ export function ManageDAOMenu({
                 0,
               )
             )[1];
-            const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingContractAddress);
+            const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingContractAddress as Address);
 
             if (masterCopyData.isOzLinearVoting) {
               result = GovernanceType.AZORIUS_ERC20;

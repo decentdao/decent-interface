@@ -3,7 +3,7 @@ import {
   FractalModule__factory,
   ModuleProxyFactory,
 } from '@fractal-framework/fractal-contracts';
-import { ethers } from 'ethers';
+import { Address, Hash, encodeAbiParameters, parseAbiParameters } from 'viem';
 import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
@@ -30,20 +30,17 @@ export const fractalModuleData = (
   const fractalModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData(
     'setUp',
     [
-      ethers.utils.defaultAbiCoder.encode(
-        ['address', 'address', 'address', 'address[]'],
-        [
-          parentAddress ?? safeContract.address, // Owner -- Parent DAO or safe contract
-          safeContract.address, // Avatar
-          safeContract.address, // Target
-          [], // Authorized Controllers
-        ],
-      ),
+      encodeAbiParameters(parseAbiParameters(['address, address, address, address[]']), [
+        (parentAddress ?? safeContract.address) as Address, // Owner -- Parent DAO or safe contract
+        safeContract.address as Address, // Avatar
+        safeContract.address as Address, // Target
+        [], // Authorized Controllers
+      ]),
     ],
-  );
+  ) as Hash;
 
   const fractalByteCodeLinear = generateContractByteCodeLinear(
-    fractalModuleMasterCopyContract.address.slice(2),
+    fractalModuleMasterCopyContract.address.slice(2) as Address,
   );
 
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
@@ -53,7 +50,7 @@ export const fractalModuleData = (
     saltNum,
   ]);
   const predictedFractalModuleAddress = generatePredictedModuleAddress(
-    zodiacModuleProxyFactoryContract.address,
+    zodiacModuleProxyFactoryContract.address as Address,
     fractalSalt,
     fractalByteCodeLinear,
   );

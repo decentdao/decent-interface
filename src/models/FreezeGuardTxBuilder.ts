@@ -10,7 +10,7 @@ import {
   ERC721FreezeVoting,
 } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
-import { getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { getCreate2Address, keccak256, encodePacked, Address, Hash } from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../helpers';
 import {
@@ -37,19 +37,19 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   // Freeze Voting Data
   private freezeVotingType: any;
-  private freezeVotingCallData: string | undefined;
-  private freezeVotingAddress: string | undefined;
+  private freezeVotingCallData: Hash | undefined;
+  private freezeVotingAddress: Address | undefined;
 
   // Freeze Guard Data
-  private freezeGuardCallData: string | undefined;
-  private freezeGuardAddress: string | undefined;
+  private freezeGuardCallData: Hash | undefined;
+  private freezeGuardAddress: Address | undefined;
 
   // Azorius Data
-  private azoriusAddress: string | undefined;
-  private strategyAddress: string | undefined;
+  private azoriusAddress: Address | undefined;
+  private strategyAddress: Address | undefined;
 
   private parentStrategyType: VotingStrategyType | undefined;
-  private parentStrategyAddress: string | undefined;
+  private parentStrategyAddress: Address | undefined;
 
   constructor(
     signerOrProvider: any,
@@ -57,13 +57,13 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     daoData: SubDAO,
     safeContract: GnosisSafeL2,
     saltNum: string,
-    parentAddress: string,
-    parentTokenAddress?: string,
+    parentAddress: Address,
+    parentTokenAddress?: Address,
     azoriusContracts?: AzoriusContracts,
-    azoriusAddress?: string,
-    strategyAddress?: string,
+    azoriusAddress?: Address,
+    strategyAddress?: Address,
     parentStrategyType?: VotingStrategyType,
-    parentStrategyAddress?: string,
+    parentStrategyAddress?: Address,
   ) {
     super(
       signerOrProvider,
@@ -179,24 +179,24 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     }
 
     const freezeVotingByteCodeLinear = generateContractByteCodeLinear(
-      freezeVotesMasterCopyContract.address.slice(2),
+      freezeVotesMasterCopyContract.address.slice(2) as Address,
     );
 
-    this.freezeVotingAddress = getCreate2Address(
-      this.baseContracts.zodiacModuleProxyFactoryContract.address,
-      generateSalt(this.freezeVotingCallData!, this.saltNum),
-      solidityKeccak256(['bytes'], [freezeVotingByteCodeLinear]),
-    );
+    this.freezeVotingAddress = getCreate2Address({
+      from: this.baseContracts.zodiacModuleProxyFactoryContract.address as Address,
+      salt: generateSalt(this.freezeVotingCallData!, this.saltNum),
+      bytecodeHash: keccak256(encodePacked(['bytes'], [freezeVotingByteCodeLinear])),
+    });
   }
 
   private setFreezeGuardAddress() {
     const freezeGuardByteCodeLinear = generateContractByteCodeLinear(
-      this.getGuardMasterCopyAddress().slice(2),
+      this.getGuardMasterCopyAddress().slice(2) as Address,
     );
     const freezeGuardSalt = generateSalt(this.freezeGuardCallData!, this.saltNum);
 
     this.freezeGuardAddress = generatePredictedModuleAddress(
-      this.baseContracts.zodiacModuleProxyFactoryContract.address,
+      this.baseContracts.zodiacModuleProxyFactoryContract.address as Address,
       freezeGuardSalt,
       freezeGuardByteCodeLinear,
     );
@@ -227,7 +227,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
           ],
         ),
       ],
-    );
+    ) as Hash;
   }
 
   private setFreezeGuardCallDataAzorius() {
@@ -247,7 +247,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
           ],
         ),
       ],
-    );
+    ) as Hash;
   }
 
   private getGuardMasterCopyAddress(): string {

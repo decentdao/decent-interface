@@ -8,7 +8,16 @@ import {
   VotesERC20,
   VotesERC20__factory,
 } from '@fractal-framework/fractal-contracts';
-import { defaultAbiCoder, getCreate2Address, solidityKeccak256 } from 'ethers/lib/utils';
+import { defaultAbiCoder } from 'ethers/lib/utils';
+import {
+  getCreate2Address,
+  Address,
+  Hash,
+  encodePacked,
+  keccak256,
+  encodeAbiParameters,
+  parseAbiParameters,
+} from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, getRandomBytes } from '../helpers';
 import {
@@ -25,18 +34,18 @@ import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
 
 export class AzoriusTxBuilder extends BaseTxBuilder {
   private readonly safeContract: GnosisSafeL2;
-  private readonly predictedSafeAddress: string;
+  private readonly predictedSafeAddress: Address;
 
-  private encodedSetupTokenData: string | undefined;
-  private encodedSetupERC20WrapperData: string | undefined;
-  private encodedStrategySetupData: string | undefined;
-  private encodedSetupAzoriusData: string | undefined;
-  private encodedSetupTokenClaimData: string | undefined;
+  private encodedSetupTokenData: Address | undefined;
+  private encodedSetupERC20WrapperData: Hash | undefined;
+  private encodedStrategySetupData: Hash | undefined;
+  private encodedSetupAzoriusData: Hash | undefined;
+  private encodedSetupTokenClaimData: Hash | undefined;
 
-  private predictedTokenAddress: string | undefined;
-  private predictedStrategyAddress: string | undefined;
-  private predictedAzoriusAddress: string | undefined;
-  private predictedTokenClaimAddress: string | undefined;
+  private predictedTokenAddress: Address | undefined;
+  private predictedStrategyAddress: Address | undefined;
+  private predictedAzoriusAddress: Address | undefined;
+  private predictedTokenClaimAddress: Address | undefined;
 
   public azoriusContract: Azorius | undefined;
   public linearVotingContract: LinearERC20Voting | undefined;
@@ -54,9 +63,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     azoriusContracts: AzoriusContracts,
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
     safeContract: GnosisSafeL2,
-    predictedSafeAddress: string,
-    parentAddress?: string,
-    parentTokenAddress?: string,
+    predictedSafeAddress: Address,
+    parentAddress?: Address,
+    parentTokenAddress?: Address,
   ) {
     super(
       signerOrProvider,
@@ -82,7 +91,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         this.setPredictedTokenAddress();
       } else {
         if (daoData.isVotesToken) {
-          this.predictedTokenAddress = daoData.tokenImportAddress;
+          this.predictedTokenAddress = daoData.tokenImportAddress as Address;
         } else {
           this.setEncodedSetupERC20WrapperData();
           this.setPredictedERC20WrapperAddress();
@@ -262,21 +271,21 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       this.azoriusContracts!.votesERC20WrapperMasterCopyContract.interface.encodeFunctionData(
         'setUp',
         [encodedInitTokenData],
-      );
+      ) as Hash;
   }
 
   public setPredictedERC20WrapperAddress() {
     const tokenByteCodeLinear = generateContractByteCodeLinear(
-      this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address.slice(2),
+      this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address.slice(2) as Address,
     );
 
     const tokenSalt = generateSalt(this.encodedSetupERC20WrapperData!, this.tokenNonce);
 
-    this.predictedTokenAddress = getCreate2Address(
-      this.baseContracts.zodiacModuleProxyFactoryContract.address,
-      tokenSalt,
-      solidityKeccak256(['bytes'], [tokenByteCodeLinear]),
-    );
+    this.predictedTokenAddress = getCreate2Address({
+      from: this.baseContracts.zodiacModuleProxyFactoryContract.address as Address,
+      salt: tokenSalt,
+      bytecodeHash: keccak256(encodePacked(['bytes'], [tokenByteCodeLinear])),
+    });
   }
 
   public signatures = (): string => {
@@ -329,21 +338,21 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.encodedSetupTokenData =
       this.azoriusContracts!.votesTokenMasterCopyContract.interface.encodeFunctionData('setUp', [
         encodedInitTokenData,
-      ]);
+      ]) as Hash;
   }
 
   private setPredictedTokenAddress() {
     const tokenByteCodeLinear = generateContractByteCodeLinear(
-      this.azoriusContracts!.votesTokenMasterCopyContract.address.slice(2),
+      this.azoriusContracts!.votesTokenMasterCopyContract.address.slice(2) as Address,
     );
 
     const tokenSalt = generateSalt(this.encodedSetupTokenData!, this.tokenNonce);
 
-    this.predictedTokenAddress = getCreate2Address(
-      this.baseContracts.zodiacModuleProxyFactoryContract.address,
-      tokenSalt,
-      solidityKeccak256(['bytes'], [tokenByteCodeLinear]),
-    );
+    this.predictedTokenAddress = getCreate2Address({
+      from: this.baseContracts.zodiacModuleProxyFactoryContract.address as Address,
+      salt: tokenSalt,
+      bytecodeHash: keccak256(encodePacked(['bytes'], [tokenByteCodeLinear])),
+    });
   }
 
   private setEncodedSetupTokenClaimData() {
@@ -360,21 +369,21 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.encodedSetupTokenClaimData =
       this.azoriusContracts!.claimingMasterCopyContract.interface.encodeFunctionData('setUp', [
         encodedInitTokenData,
-      ]);
+      ]) as Hash;
   }
 
   private setPredictedTokenClaimAddress() {
     const tokenByteCodeLinear = generateContractByteCodeLinear(
-      this.azoriusContracts!.claimingMasterCopyContract.address.slice(2),
+      this.azoriusContracts!.claimingMasterCopyContract.address.slice(2) as Address,
     );
 
     const tokenSalt = generateSalt(this.encodedSetupTokenClaimData!, this.claimNonce);
 
-    this.predictedTokenClaimAddress = getCreate2Address(
-      this.baseContracts.zodiacModuleProxyFactoryContract.address,
-      tokenSalt,
-      solidityKeccak256(['bytes'], [tokenByteCodeLinear]),
-    );
+    this.predictedTokenClaimAddress = getCreate2Address({
+      from: this.baseContracts.zodiacModuleProxyFactoryContract.address as Address,
+      salt: tokenSalt,
+      bytecodeHash: keccak256(encodePacked(['bytes'], [tokenByteCodeLinear])),
+    });
   }
 
   private async setPredictedStrategyAddress() {
@@ -400,35 +409,42 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         this.azoriusContracts!.linearVotingMasterCopyContract.interface.encodeFunctionData(
           'setUp',
           [encodedStrategyInitParams],
-        );
+        ) as Hash;
 
       const strategyByteCodeLinear = generateContractByteCodeLinear(
-        this.azoriusContracts!.linearVotingMasterCopyContract.address.slice(2),
+        this.azoriusContracts!.linearVotingMasterCopyContract.address.slice(2) as Address,
       );
 
-      const strategySalt = solidityKeccak256(
-        ['bytes32', 'uint256'],
-        [solidityKeccak256(['bytes'], [encodedStrategySetupData]), this.strategyNonce],
+      const strategySalt = keccak256(
+        encodePacked(
+          ['bytes32', 'uint256'],
+          [
+            keccak256(encodePacked(['bytes'], [encodedStrategySetupData])),
+            this.strategyNonce as unknown as bigint,
+          ],
+        ),
       );
 
       this.encodedStrategySetupData = encodedStrategySetupData;
 
-      this.predictedStrategyAddress = getCreate2Address(
-        this.baseContracts.zodiacModuleProxyFactoryContract.address,
-        strategySalt,
-        solidityKeccak256(['bytes'], [strategyByteCodeLinear]),
-      );
+      this.predictedStrategyAddress = getCreate2Address({
+        from: this.baseContracts.zodiacModuleProxyFactoryContract.address as Address,
+        salt: strategySalt,
+        bytecodeHash: keccak256(encodePacked(['bytes'], [strategyByteCodeLinear])),
+      });
     } else if (azoriusGovernanceDaoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
       const daoData = azoriusGovernanceDaoData as AzoriusERC721DAO;
 
-      const encodedStrategyInitParams = defaultAbiCoder.encode(
-        ['address', 'address[]', 'uint256[]', 'address', 'uint32', 'uint256', 'uint256', 'uint256'],
+      const encodedStrategyInitParams = encodeAbiParameters(
+        parseAbiParameters(
+          'address, address[], uint256[], address, uint32, uint256, uint256, uint256',
+        ),
         [
-          this.safeContract.address, // owner
+          this.safeContract.address as Address, // owner
           daoData.nfts.map(nft => nft.tokenAddress), // governance tokens addresses
           daoData.nfts.map(nft => nft.tokenWeight), // governance tokens weights
           '0x0000000000000000000000000000000000000001', // Azorius module
-          azoriusGovernanceDaoData.votingPeriod,
+          Number(azoriusGovernanceDaoData.votingPeriod),
           daoData.quorumThreshold, // quorom threshold. Since smart contract can't know total of NFTs minted - we need to provide it manually
           1n, // proposer weight, how much is needed to create a proposal.
           500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)
@@ -439,39 +455,44 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         this.azoriusContracts!.linearVotingERC721MasterCopyContract.interface.encodeFunctionData(
           'setUp',
           [encodedStrategyInitParams],
-        );
+        ) as Hash;
 
       const strategyByteCodeLinear = generateContractByteCodeLinear(
-        this.azoriusContracts!.linearVotingERC721MasterCopyContract.address.slice(2),
+        this.azoriusContracts!.linearVotingERC721MasterCopyContract.address.slice(2) as Address,
       );
 
-      const strategySalt = solidityKeccak256(
-        ['bytes32', 'uint256'],
-        [solidityKeccak256(['bytes'], [encodedStrategySetupData]), this.strategyNonce],
+      const strategySalt = keccak256(
+        encodePacked(
+          ['bytes32', 'uint256'],
+          [
+            keccak256(encodePacked(['bytes'], [encodedStrategySetupData])),
+            this.strategyNonce as unknown as bigint,
+          ],
+        ),
       );
 
       this.encodedStrategySetupData = encodedStrategySetupData;
 
-      this.predictedStrategyAddress = getCreate2Address(
-        this.baseContracts.zodiacModuleProxyFactoryContract.address,
-        strategySalt,
-        solidityKeccak256(['bytes'], [strategyByteCodeLinear]),
-      );
+      this.predictedStrategyAddress = getCreate2Address({
+        from: this.baseContracts.zodiacModuleProxyFactoryContract.address as Address,
+        salt: strategySalt,
+        bytecodeHash: keccak256(encodePacked(['bytes'], [strategyByteCodeLinear])),
+      });
     }
   }
 
   // TODO - verify we can use safe contract address
   private setPredictedAzoriusAddress() {
     const azoriusGovernanceDaoData = this.daoData as AzoriusGovernanceDAO;
-    const encodedInitAzoriusData = defaultAbiCoder.encode(
-      ['address', 'address', 'address', 'address[]', 'uint32', 'uint32'],
+    const encodedInitAzoriusData = encodeAbiParameters(
+      parseAbiParameters(['address, address, address, address[], uint32, uint32']),
       [
-        this.safeContract.address,
-        this.safeContract.address,
-        this.safeContract.address,
-        [this.predictedStrategyAddress],
-        azoriusGovernanceDaoData.timelock, // timelock period in blocks
-        azoriusGovernanceDaoData.executionPeriod, // execution period in blocks
+        this.safeContract.address as Address,
+        this.safeContract.address as Address,
+        this.safeContract.address as Address,
+        [this.predictedStrategyAddress!],
+        Number(azoriusGovernanceDaoData.timelock), // timelock period in blocks
+        Number(azoriusGovernanceDaoData.executionPeriod), // execution period in blocks
       ],
     );
 
@@ -479,19 +500,19 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       this.azoriusContracts!.fractalAzoriusMasterCopyContract.interface.encodeFunctionData(
         'setUp',
         [encodedInitAzoriusData],
-      );
+      ) as Hash;
 
     const azoriusByteCodeLinear = generateContractByteCodeLinear(
-      this.azoriusContracts!.fractalAzoriusMasterCopyContract.address.slice(2),
+      this.azoriusContracts!.fractalAzoriusMasterCopyContract.address.slice(2) as Address,
     );
     const azoriusSalt = generateSalt(encodedSetupAzoriusData, this.azoriusNonce);
 
     this.encodedSetupAzoriusData = encodedSetupAzoriusData;
-    this.predictedAzoriusAddress = getCreate2Address(
-      this.baseContracts.zodiacModuleProxyFactoryContract.address,
-      azoriusSalt,
-      solidityKeccak256(['bytes'], [azoriusByteCodeLinear]),
-    );
+    this.predictedAzoriusAddress = getCreate2Address({
+      from: this.baseContracts.zodiacModuleProxyFactoryContract.address as Address,
+      salt: azoriusSalt,
+      bytecodeHash: keccak256(encodePacked(['bytes'], [azoriusByteCodeLinear])),
+    });
   }
 
   private setContracts() {

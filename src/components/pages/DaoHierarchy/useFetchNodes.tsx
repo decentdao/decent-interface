@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useCallback, useEffect, useState } from 'react';
-import { getAddress, zeroAddress } from 'viem';
+import { Address, getAddress, zeroAddress } from 'viem';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
@@ -50,7 +50,7 @@ export function useFetchNodes(address?: string) {
             return guardOwner;
           }
         } else {
-          const modules = await lookupModules(safeInfo.modules || []);
+          const modules = await lookupModules(safeInfo.modules as Address[] || []);
           if (!modules) return;
           const azoriusModule = getAzoriusModuleFromModules(modules);
           if (

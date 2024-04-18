@@ -1,6 +1,6 @@
 import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
-import { zeroAddress } from 'viem';
+import { Address, zeroAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -67,7 +67,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         freezeGuardType = FreezeGuardType.AZORIUS;
       } else {
         const hasNoGuard = _safe.guard === zeroAddress;
-        const masterCopyData = await getZodiacModuleProxyMasterCopyData(guard!);
+        const masterCopyData = await getZodiacModuleProxyMasterCopyData(guard! as Address);
         if (masterCopyData.isMultisigFreezeGuard && !hasNoGuard) {
           freezeGuardContract = {
             asSigner: multisigFreezeGuardMasterCopyContract.asSigner.attach(guard!),
@@ -79,7 +79,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
       if (!!freezeGuardContract) {
         const votingAddress = await freezeGuardContract.asProvider.freezeVoting();
-        const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingAddress);
+        const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingAddress as Address);
         const freezeVotingType = masterCopyData.isMultisigFreezeVoting
           ? FreezeVotingType.MULTISIG
           : masterCopyData.isERC721FreezeVoting

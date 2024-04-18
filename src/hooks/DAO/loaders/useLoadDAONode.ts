@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
 import { useCallback } from 'react';
-import { isAddress, getAddress } from 'viem';
+import { isAddress, getAddress, Address } from 'viem';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -65,7 +65,7 @@ export const useLoadDAONode = () => {
           const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName: await getDaoName(sanitizedDaoAddress, graphNodeInfo.daoName),
             safe: safeInfoWithGuard,
-            fractalModules: await lookupModules(safeInfoWithGuard.modules),
+            fractalModules: await lookupModules(safeInfoWithGuard.modules as Address[]),
           });
 
           // TODO we could cache node here, but should be careful not to cache

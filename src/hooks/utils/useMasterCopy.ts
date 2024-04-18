@@ -1,7 +1,7 @@
 import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
 import { Contract } from 'ethers';
 import { useCallback } from 'react';
-import { zeroAddress } from 'viem';
+import { Address, zeroAddress } from 'viem';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
@@ -12,38 +12,38 @@ export function useMasterCopy() {
   const { baseContracts } = useFractal();
 
   const isOzLinearVoting = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
+    (masterCopyAddress: Address) =>
       masterCopyAddress === baseContracts?.linearVotingMasterCopyContract.asProvider.address,
     [baseContracts],
   );
   const isOzLinearVotingERC721 = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
+    (masterCopyAddress: Address) =>
       masterCopyAddress === baseContracts?.linearVotingERC721MasterCopyContract.asProvider.address,
     [baseContracts],
   );
   const isMultisigFreezeGuard = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
+    (masterCopyAddress: Address) =>
       masterCopyAddress === baseContracts?.multisigFreezeGuardMasterCopyContract.asProvider.address,
     [baseContracts],
   );
   const isMultisigFreezeVoting = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
+    (masterCopyAddress: Address) =>
       masterCopyAddress ===
       baseContracts?.freezeMultisigVotingMasterCopyContract.asProvider.address,
     [baseContracts],
   );
   const isERC721FreezeVoting = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
+    (masterCopyAddress: Address) =>
       masterCopyAddress === baseContracts?.freezeERC721VotingMasterCopyContract.asProvider.address,
     [baseContracts],
   );
   const isAzorius = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
+    (masterCopyAddress: Address) =>
       masterCopyAddress === baseContracts?.fractalAzoriusMasterCopyContract.asProvider.address,
     [baseContracts],
   );
   const isFractalModule = useCallback(
-    (masterCopyAddress: string | `0x${string}`) =>
+    (masterCopyAddress: Address) =>
       masterCopyAddress === baseContracts?.fractalModuleMasterCopyContract.asProvider.address,
     [baseContracts],
   );
@@ -51,8 +51,8 @@ export function useMasterCopy() {
   const getMasterCopyAddress = useCallback(
     async function (
       contract: Contract,
-      proxyAddress: string | `0x${string}`,
-    ): Promise<[string, string | null]> {
+      proxyAddress: Address,
+    ): Promise<[Address, string | null]> {
       const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
       if (cachedValue) return [cachedValue, null] as const;
 
@@ -72,8 +72,8 @@ export function useMasterCopy() {
   );
 
   const getZodiacModuleProxyMasterCopyData = useCallback(
-    async function (proxyAddress: string | `0x${string}`) {
-      let masterCopyAddress = '';
+    async function (proxyAddress: Address) {
+      let masterCopyAddress = zeroAddress as Address;
       let error;
       if (baseContracts) {
         const contract = getEventRPC<ModuleProxyFactory>(

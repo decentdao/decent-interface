@@ -1,6 +1,7 @@
 import { Azorius } from '@fractal-framework/fractal-contracts';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
+import { Address } from 'viem';
 import { LockRelease, LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
@@ -49,7 +50,7 @@ export const useGovernanceContracts = () => {
         await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
       )[1];
 
-      const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingStrategyAddress);
+      const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingStrategyAddress as Address);
       const isOzLinearVoting = masterCopyData.isOzLinearVoting;
       const isOzLinearVotingERC721 = masterCopyData.isOzLinearVotingERC721;
 
