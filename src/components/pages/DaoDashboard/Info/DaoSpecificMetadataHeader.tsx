@@ -1,20 +1,17 @@
 import { Box, Flex, Image, Menu, MenuButton, MenuList, Text } from '@chakra-ui/react';
 import { ArrowAngleUp, Burger } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
-import useDAOMetadata from '../../../../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { DAOMetadata } from '../../../../types';
 import ExternalLink from '../../../ui/links/ExternalLink';
 
-export default function InfoHeader() {
+export function DaoSpecificMetadataHeader(props: {metadata: DAOMetadata}) {
   const {
     node: { daoName },
   } = useFractal();
-  const daoMetadata = useDAOMetadata();
   const { t } = useTranslation();
 
-  if (!daoMetadata) {
-    return null;
-  }
+  const { metadata: daoMetadata } = props;
 
   return (
     <Flex
