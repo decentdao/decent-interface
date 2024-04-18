@@ -8,7 +8,7 @@ import {
   useDisclosure,
   useOutsideClick,
 } from '@chakra-ui/react';
-import { Search } from '@decent-org/fractal-ui';
+import { MagnifyingGlass } from '@phosphor-icons/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
@@ -41,7 +41,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
       ref={ref}
       width="full"
       maxW={{ base: 'full', md: '31.125rem' }}
-      height="4rem"
+      height="full"
     >
       <Popover
         matchWidth
@@ -54,9 +54,9 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             justifyContent="center"
           >
             <InputLeftElement mt="3">
-              <Search
-                boxSize="1.5rem"
-                color="grayscale.300"
+              <MagnifyingGlass
+                size="1.5rem"
+                color="var(--chakra-colors-neutral-5)"
               />
             </InputLeftElement>
             <Input
