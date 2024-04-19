@@ -38,9 +38,8 @@ export function SnapshotButton({ snapshotURL }: Props) {
       _hover={{ textDecoration: 'none', bg: 'neutral-4' }}
       _active={{ bg: 'neutral-3', borderColor: 'neutral-4' }}
       size={'sm'}
-
-      // h={6}
-      // w={32}
+      p={'0.25rem 0.75rem'}
+      width={'fit-content'}
     >
       <SnapshotIcon />
       {t('snapshot')}
