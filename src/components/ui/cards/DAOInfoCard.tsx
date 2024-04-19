@@ -112,7 +112,7 @@ export function DAOInfoCard({
                 _active={{ bg: 'neutral-3' }}
                 bg="neutral-3"
                 color="lilac-0"
-                borderRadius="624.9375rem"
+                borderRadius="625rem"
                 p="0.25rem 0.75rem"
                 textStyle="button-base"
               >
