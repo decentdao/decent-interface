@@ -5,7 +5,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { DAOMetadata } from '../../../../types';
 import ExternalLink from '../../../ui/links/ExternalLink';
 
-export function DaoSpecificMetadataHeader(props: {metadata: DAOMetadata}) {
+export function DaoSpecificMetadataHeader(props: { metadata: DAOMetadata }) {
   const {
     node: { daoName },
   } = useFractal();

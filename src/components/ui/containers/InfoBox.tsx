@@ -22,11 +22,7 @@ export function InfoBox({
   return (
     <Box
       cursor={to ? 'pointer' : undefined}
-      onClick={
-        to
-          ? () => navigate(to)
-          : undefined
-      }
+      onClick={to ? () => navigate(to) : undefined}
       minWidth={minWidth}
       h="100%"
       minHeight={minHeight}

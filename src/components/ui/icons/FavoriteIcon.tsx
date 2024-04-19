@@ -26,7 +26,7 @@ export default function FavoriteIcon({ safeAddress, ...rest }: Props) {
           color={'lilac-0'}
           borderRadius="0.25rem"
           _hover={{ color: 'lilac--1', backgroundColor: 'white-alpha-04' }}
-          _active={{ color: 'lilac--2'}}
+          _active={{ color: 'lilac--2' }}
           icon={<Star weight={isFavorite ? 'fill' : 'regular'} />}
           onClick={() => toggleFavorite(safeAddress)}
           aria-label={t('favoriteTooltip')}
