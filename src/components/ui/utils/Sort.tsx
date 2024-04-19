@@ -1,5 +1,5 @@
-import { Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
-import { ArrowDownSm } from '@decent-org/fractal-ui';
+import { Divider, Flex, Icon, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
+import { CaretDown } from "@phosphor-icons/react";
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SortBy } from '../../../types';
@@ -45,27 +45,28 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
     <Menu direction="ltr">
       <MenuButton
         data-testid="sort-openMenu"
-        color="gold.500"
+        color="lilac-0"
+        p="0.25rem 0.5rem"
         sx={{
           '&:hover': {
-            color: 'gold.500-hover',
+            color: 'lilac--1',
+            bg: 'white-alpha-04',
+            borderRadius: '0.25rem',
           },
         }}
         {...buttonProps}
       >
-        <Flex
-          alignItems="center"
-          color="gold.500"
-        >
-          <Text textStyle="text-sm-mono-medium">{t(sortBy)}</Text>
-          <ArrowDownSm boxSize="1.5rem" />
+        <Flex alignItems="center">
+          <Text>{t(sortBy)}</Text>
+          <Icon ml="0.25rem" p={1.25} as={CaretDown} />
         </Flex>
       </MenuButton>
+
       <MenuList
-        border="none"
-        rounded="lg"
-        shadow="menu-gold"
-        bg="grayscale.black"
+        borderWidth="1px"
+        borderColor="neutral-3"
+        borderRadius="0.5rem"
+        bg="neutral-2" // neutral-2-84 ??
         p="0.5rem 1rem"
         minWidth="min-content"
         zIndex={5}
@@ -75,6 +76,8 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
           testId="sort-newest"
           onClick={() => setSortBy(SortBy.Newest)}
         />
+        {/* TODO Divider look doesn't quite match */}
+        <Divider color="neutral-3" />
         <SortMenuItem
           labelKey={SortBy.Oldest}
           testId="sort-oldest"

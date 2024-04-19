@@ -25,8 +25,9 @@ export function Activities() {
   return (
     <Box>
       <Flex
-        justifyContent="flex-end"
+        justifyContent="flex-start"
         alignItems="center"
+        mx="0.5rem"
         my="1rem"
       >
         <Sort
