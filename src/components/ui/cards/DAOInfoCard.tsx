@@ -95,7 +95,6 @@ export function DAOInfoCard({
               textStyle="text-2xl-mono-regular"
               color="grayscale.100"
               data-testid="DAOInfo-name"
-              noOfLines={1}
             >
               {node.daoName || displayName}
             </Text>
