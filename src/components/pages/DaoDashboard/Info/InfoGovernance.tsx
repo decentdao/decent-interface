@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { Govern } from '@decent-org/fractal-ui';
+import { Bank } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
@@ -85,22 +85,14 @@ export function InfoGovernance() {
   const governanceAzorius = dao?.isAzorius ? (governance as AzoriusGovernance) : undefined;
 
   return (
-    <Box
-      data-testid="dashboard-daoGovernance"
-      textStyle="text-sm-sans-regular"
-    >
+    <Box data-testid="dashboard-daoGovernance">
       <Flex
         alignItems="center"
         gap="0.4rem"
         mb="0.5rem"
       >
-        <Govern />
-        <Text
-          textStyle="text-sm-sans-regular"
-          color="grayscale.100"
-        >
-          {t('titleGovernance')}
-        </Text>
+        <Bank size="1.5rem" />
+        <Text textStyle="display-lg">{t('titleGovernance')}</Text>
       </Flex>
 
       <Flex
@@ -108,18 +100,8 @@ export function InfoGovernance() {
         justifyContent="space-between"
         mb="0.25rem"
       >
-        <Text
-          textStyle="text-base-sans-regular"
-          color="chocolate.200"
-        >
-          {t('titleType')}
-        </Text>
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-        >
-          {governance.type ? t(governance.type.toString(), { ns: 'daoCreate' }) : ''}
-        </Text>
+        <Text color="neutral-7">{t('titleType')}</Text>
+        <Text>{governance.type ? t(governance.type.toString(), { ns: 'daoCreate' }) : ''}</Text>
       </Flex>
 
       {governanceAzorius?.votingStrategy?.votingPeriod && (
@@ -128,16 +110,8 @@ export function InfoGovernance() {
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('titleVotingPeriod')}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
+          <Text color="neutral-7">{t('titleVotingPeriod')}</Text>
+          <Text textStyle="text-base-sans-regular">
             {governanceAzorius.votingStrategy?.votingPeriod?.formatted}
           </Text>
         </Flex>
@@ -148,16 +122,8 @@ export function InfoGovernance() {
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('titleQuorum')}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
+          <Text color="neutral-7">{t('titleQuorum')}</Text>
+          <Text textStyle="text-base-sans-regular">
             {governanceAzorius.votingStrategy.quorumPercentage.formatted}
           </Text>
         </Flex>
@@ -168,18 +134,8 @@ export function InfoGovernance() {
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('titleQuorum')}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
-            {governanceAzorius.votingStrategy.quorumThreshold.formatted}
-          </Text>
+          <Text color="neutral-7">{t('titleQuorum')}</Text>
+          <Text>{governanceAzorius.votingStrategy.quorumThreshold.formatted}</Text>
         </Flex>
       )}
       {timelockPeriod && (
@@ -188,18 +144,8 @@ export function InfoGovernance() {
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('timelock', { ns: 'common' })}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
-            {timelockPeriod}
-          </Text>
+          <Text color="neutral-7">{t('timelock', { ns: 'common' })}</Text>
+          <Text>{timelockPeriod}</Text>
         </Flex>
       )}
       {executionPeriod && (
@@ -208,18 +154,8 @@ export function InfoGovernance() {
           justifyContent="space-between"
           mb="0.25rem"
         >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('execution', { ns: 'common' })}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
-            {executionPeriod}
-          </Text>
+          <Text color="neutral-7">{t('execution', { ns: 'common' })}</Text>
+          <Text>{executionPeriod}</Text>
         </Flex>
       )}
     </Box>
