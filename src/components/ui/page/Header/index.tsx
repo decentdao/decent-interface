@@ -44,10 +44,8 @@ function HeaderLogo() {
           <IconButton
             ref={btnRef}
             onClick={onOpen}
-            display="flex"
             boxSize="4rem"
-            justifyContent="center"
-            alignItems="center"
+            w={0}
             aria-label="navigation"
             minW={0}
             variant="unstyled"
@@ -56,6 +54,7 @@ function HeaderLogo() {
                 aria-hidden
                 h="2.5rem"
                 w="2.125rem"
+                mx="1.75rem"
               />
             }
           />
@@ -113,7 +112,7 @@ function HeaderLogo() {
             aria-hidden
             h="2.5rem"
             w="2.125rem"
-            mx="2rem"
+            mx="1.75rem"
           />
         </Link>
       </Show>
