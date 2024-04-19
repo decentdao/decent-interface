@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Spacer, HStack, FlexProps, Link, Center } from '@chakra-ui/react';
+import { Box, Flex, Text, Spacer, HStack, FlexProps, Link, Center, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -66,79 +66,79 @@ export function DAOInfoCard({
   const isCurrentDAO = displayedAddress === currentDAOAddress;
 
   return (
-    <Flex
-      w="full"
-      minH="full"
-      {...rest}
-    >
-      <Flex
-        flexDirection="column"
-        gap="0.4rem"
+    <Box {...rest}>
+      <VStack
+        gap="1.5rem"
+        alignItems={'left'}
       >
-        <HStack>
-          <Link
-            as={RouterLink}
-            pointerEvents={isCurrentDAO ? 'none' : undefined}
-            to={DAO_ROUTES.dao.relative(addressPrefix, displayedAddress)}
-            _hover={{ textDecoration: 'none' }}
-            onClick={() => {
-              // if we're not on the current DAO, reset
-              // the DAO data, so the one you're clicking
-              // into will load properly
-              if (!isCurrentDAO) {
-                action.resetDAO();
-              }
-            }}
-          >
-            <Text
-              as="h1"
-              textStyle="text-2xl-mono-regular"
-              color="grayscale.100"
-              data-testid="DAOInfo-name"
-            >
-              {node.daoName || displayName}
-            </Text>
-          </Link>
-          <FavoriteIcon
-            safeAddress={displayedAddress}
-            data-testid="DAOInfo-favorite"
-          />
-          {childCount && childCount > 0 && (
+        {/* DAO NAME AND ACTIONS */}
+        <Flex
+          direction="row"
+          alignItems={'center'}
+        >
+          <HStack>
+            {/* DAO NAME */}
             <Link
-              to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
+              textStyle="display-4xl"
+              mr="0.5rem"
               as={RouterLink}
+              pointerEvents={isCurrentDAO ? 'none' : undefined}
+              to={DAO_ROUTES.dao.relative(addressPrefix, displayedAddress)}
+              _hover={{ textDecoration: 'none' }}
+              onClick={() => {
+                // if we're not on the current DAO, reset
+                // the DAO data, so the one you're clicking
+                // into will load properly
+                if (!isCurrentDAO) {
+                  action.resetDAO();
+                }
+              }}
             >
-              <Box
-                bg="chocolate.500"
-                borderRadius="4px"
-                p="0.25rem 0.5rem"
-              >
-                <Text textStyle="text-sm-mono-semibold">{childCount}</Text>
-              </Box>
+              <Text data-testid="DAOInfo-name">{node.daoName || displayName}</Text>
             </Link>
+
+            {/* FAVORITE ICON */}
+            <FavoriteIcon
+              safeAddress={displayedAddress}
+              data-testid="DAOInfo-favorite"
+            />
+
+            {/* PARENT TAG */}
+            {childCount && childCount > 0 && (
+              <Link
+                to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
+                as={RouterLink}
+                _hover={{ textDecoration: 'none', bg: 'neutral-4' }}
+                _active={{ bg: 'neutral-3' }}
+                bg="neutral-3"
+                color="lilac-0"
+                borderRadius="624.9375rem"
+                p="0.25rem 0.75rem"
+                textStyle="button-base"
+              >
+                Parent
+              </Link>
+            )}
+          </HStack>
+
+          <Spacer />
+
+          {!!user.address && (
+            <ManageDAOMenu
+              parentAddress={parentAddress}
+              fractalNode={node}
+              freezeGuard={freezeGuard}
+              guardContracts={guardContracts}
+            />
           )}
-        </HStack>
+        </Flex>
+
+        {/* DAO ADDRESS */}
         <AddressCopier address={displayedAddress} />
-      </Flex>
-      <Spacer />
-      <Flex
-        flexDirection="column"
-        alignItems="end"
-        justifyContent="space-between"
-      >
-        {!!user.address ? (
-          <ManageDAOMenu
-            parentAddress={parentAddress}
-            fractalNode={node}
-            freezeGuard={freezeGuard}
-            guardContracts={guardContracts}
-          />
-        ) : (
-          // empty box to keep snapshot bottom aligned
-          <Box />
-        )}
+
+        {/* SNAPSHOT ICON LINK */}
         {node.daoSnapshotURL && <Snapshot snapshotURL={node.daoSnapshotURL} />}
-      </Flex>
-    </Flex>
+      </VStack>
+    </Box>
   );
 }

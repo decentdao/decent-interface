@@ -1,24 +1,9 @@
 import { Box, Flex, MenuItem, Checkbox, Divider, Text } from '@chakra-ui/react';
 import { ChangeEvent, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IOption, IOptionsList } from './types';
 
-export interface IOption {
-  optionKey: string;
-  count?: number;
-  onClick: () => void;
-  isSelected?: boolean;
-}
-
-export interface IOptionsList {
-  options: IOption[];
-  closeOnSelect?: boolean;
-  showOptionCount?: boolean;
-  showOptionSelected?: boolean;
-  namespace: string;
-  titleKey?: string;
-}
-
-export default function OptionsList({
+export function OptionsList({
   options,
   showOptionSelected,
   closeOnSelect,

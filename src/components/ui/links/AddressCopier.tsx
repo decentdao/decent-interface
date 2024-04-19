@@ -25,7 +25,7 @@ export default function AddressCopier({ address, ...rest }: Props) {
       gap="0.25rem"
       cursor="pointer"
       color="celery-0"
-      lineHeight="1.25rem"
+      textStyle="button-base"
       {...rest}
     >
       <EtherscanLinkAddress address={address}>

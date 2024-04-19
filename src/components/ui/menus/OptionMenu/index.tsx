@@ -1,14 +1,15 @@
 import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip } from '@chakra-ui/react';
 import { MouseEvent, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import OptionsList, { IOption, IOptionsList } from './components';
+import { OptionsList } from './OptionsList';
+import { IOption, IOptionsList } from './types';
 
 interface IOptionMenu extends Omit<MenuProps, 'children'>, IOptionsList {
   trigger: ReactNode;
   tooltipKey?: string;
   options: IOption[];
   buttonAs?: As;
-  buttonProps?: Record<string, string | boolean | number>;
+  buttonProps?: Record<string, string | boolean | number | Record<string, any>>;
   children?: ReactNode;
 }
 
@@ -44,7 +45,6 @@ export function OptionMenu({
           onClick={(event: MouseEvent<HTMLButtonElement>) => {
             event.stopPropagation();
           }}
-          _hover={{ color: 'gold.500-hover' }}
           {...buttonProps}
         >
           {trigger}
