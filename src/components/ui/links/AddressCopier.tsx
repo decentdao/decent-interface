@@ -30,7 +30,7 @@ export default function AddressCopier({ address, ...rest }: Props) {
       borderColor={'transparent'}
       textStyle="button-base"
       _hover={{ bg: 'celery--6', borderColor: 'celery--6' }}
-      _active={{ bg: 'celery--6', borderWidth: "1px", borderColor: 'celery--5'}}
+      _active={{ bg: 'celery--6', borderWidth: '1px', borderColor: 'celery--5' }}
       {...rest}
     >
       <EtherscanLinkAddress address={address}>

@@ -5,7 +5,7 @@ import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FreezeGuard, FractalGuardContracts, FractalNode } from '../../../types';
-import Snapshot from '../badges/Snapshot';
+import { SnapshotButton } from '../badges/Snapshot';
 import FavoriteIcon from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
 import { BarLoader } from '../loaders/BarLoader';
@@ -108,8 +108,10 @@ export function DAOInfoCard({
               <Link
                 to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
                 as={RouterLink}
+                borderWidth="1px"
+                borderColor="transparent"
                 _hover={{ textDecoration: 'none', bg: 'neutral-4' }}
-                _active={{ bg: 'neutral-3' }}
+                _active={{ bg: 'neutral-3', borderColor: 'neutral-4' }}
                 bg="neutral-3"
                 color="lilac-0"
                 borderRadius="625rem"
@@ -137,7 +139,7 @@ export function DAOInfoCard({
         <AddressCopier address={displayedAddress} />
 
         {/* SNAPSHOT ICON LINK */}
-        {node.daoSnapshotURL && <Snapshot snapshotURL={node.daoSnapshotURL} />}
+        {node.daoSnapshotURL && <SnapshotButton snapshotURL={node.daoSnapshotURL} />}
       </VStack>
     </Box>
   );
