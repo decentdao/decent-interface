@@ -19,9 +19,7 @@ function SortMenuItem({
       py="0.5rem"
       color="grayscale.100"
       sx={{
-        '&:hover': {
-          color: 'gold.500',
-        },
+        '&:hover': { bg: 'neutral-3' },
       }}
       data-testid={testId}
       onClick={onClick}

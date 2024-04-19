@@ -50,13 +50,14 @@ export function OptionMenu({
           {trigger}
         </MenuButton>
       </Tooltip>
+
       <MenuList
-        rounded="lg"
-        shadow="menu-gold"
+        borderWidth="1px"
+        borderColor="neutral-3"
+        borderRadius="0.5rem"
+        bg="neutral-2" // neutral-2-84 ??
+        p="0.5rem 1rem"
         mr={['auto', '1rem']}
-        bg="grayscale.black"
-        border="none"
-        padding="1rem"
         zIndex={1000}
       >
         {children}
