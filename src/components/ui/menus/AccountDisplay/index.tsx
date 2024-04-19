@@ -10,7 +10,6 @@ export function AccountDisplay() {
         variant="tertiary"
         data-testid="header-accountMenu"
         pr="1rem"
-        my="0.75rem"
       >
         <MenuButtonDisplay />
       </Button>

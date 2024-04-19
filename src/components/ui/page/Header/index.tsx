@@ -15,6 +15,7 @@ import { DecentLogo } from '@decent-org/fractal-ui';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { HEADER_HEIGHT } from '../../../../constants/common';
 import { BASE_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { AccountDisplay } from '../../menus/AccountDisplay';
@@ -124,8 +125,8 @@ function Header() {
     <Flex
       w="full"
       justifyContent="space-between"
-      pr="1.5rem"
       alignItems="center"
+      pr="1.5rem"
     >
       <HeaderLogo />
       <Show above="md">
@@ -133,7 +134,9 @@ function Header() {
       </Show>
       <Flex
         w="full"
+        h={HEADER_HEIGHT}
         justifyContent="flex-end"
+        alignItems="center"
       >
         <FavoritesMenu />
         <AccountDisplay />
