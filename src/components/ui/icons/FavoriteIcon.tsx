@@ -1,5 +1,5 @@
 import { Box, BoxProps, IconButton, Tooltip } from '@chakra-ui/react';
-import { StarGoldSolid, StarOutline } from '@decent-org/fractal-ui';
+import { Star } from '@phosphor-icons/react';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -20,11 +20,14 @@ export default function FavoriteIcon({ safeAddress, ...rest }: Props) {
     <Box {...rest}>
       <Tooltip label={t('favoriteTooltip')}>
         <IconButton
-          color="gold.500"
-          _hover={{ color: 'gold.500-hover' }}
           variant="ghost"
-          minWidth="0px"
-          icon={isFavorite ? <StarGoldSolid boxSize="1.5rem" /> : <StarOutline boxSize="1.5rem" />}
+          p="0.5rem"
+          size="md"
+          color={'lilac-0'}
+          borderRadius="0.25rem"
+          _hover={{ color: 'lilac--1', backgroundColor: 'white-alpha-04' }}
+          _active={{ color: 'lilac--2'}}
+          icon={<Star weight={isFavorite ? 'fill' : 'regular'} />}
           onClick={() => toggleFavorite(safeAddress)}
           aria-label={t('favoriteTooltip')}
         />
