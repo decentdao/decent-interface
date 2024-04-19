@@ -20,7 +20,11 @@ export function OptionsList({
   return (
     <>
       {titleKey && (
-        <Text marginBottom="0.5rem" textStyle="helper-text-small" color="neutral-7">
+        <Text
+          marginBottom="0.5rem"
+          textStyle="helper-text-small"
+          color="neutral-7"
+        >
           {t(titleKey)}
         </Text>
       )}

@@ -1,5 +1,5 @@
 import { Divider, Flex, Icon, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
-import { CaretDown } from "@phosphor-icons/react";
+import { CaretDown } from '@phosphor-icons/react';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SortBy } from '../../../types';
@@ -56,7 +56,11 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
       >
         <Flex alignItems="center">
           <Text>{t(sortBy)}</Text>
-          <Icon ml="0.25rem" p={1.25} as={CaretDown} />
+          <Icon
+            ml="0.25rem"
+            p={1.25}
+            as={CaretDown}
+          />
         </Flex>
       </MenuButton>
 
