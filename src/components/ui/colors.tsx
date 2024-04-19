@@ -6,5 +6,3 @@ export enum Green {
 export enum Red {
   _600 = '#BA5F5F', // TODO what should the number be here?
 }
-
-export const iconColor = (chakraUIColor: string) => `var(--chakra-colors-${chakraUIColor})`;
