@@ -32,7 +32,7 @@ export function DaoInfoHeader() {
       <Flex
         flexWrap="wrap"
         justifyContent="space-between"
-        mb="1rem"
+        mb="2rem"
       >
         <Box
           width={{ base: '100%', md: '100%', lg: '33%', xl: '40%' }}
@@ -130,6 +130,7 @@ export function DaoInfoHeader() {
                 <InfoGovernance />
               </InfoBox>
             </Box>
+
             <Box
               width={{ base: '100%', md: '33.3%', lg: '19%', xl: '20%' }}
               ps={{ base: NONE, md: PAD }}
@@ -141,6 +142,7 @@ export function DaoInfoHeader() {
                 <InfoProposals />
               </InfoBox>
             </Box>
+
             <Box
               width={{ base: '100%', md: '33.3%', lg: '23%', xl: '20%' }}
               ps={{ base: NONE, md: PAD }}
