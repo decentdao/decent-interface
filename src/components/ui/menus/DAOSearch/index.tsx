@@ -53,7 +53,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             flexDirection="column"
             justifyContent="center"
           >
-            <InputLeftElement mt="3">
+            <InputLeftElement>
               <MagnifyingGlass
                 size="1.5rem"
                 color="var(--chakra-colors-neutral-5)"

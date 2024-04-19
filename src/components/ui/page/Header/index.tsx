@@ -123,10 +123,9 @@ function HeaderLogo() {
 function Header() {
   return (
     <Flex
-      h="full"
       w="full"
       justifyContent="space-between"
-      pe="0.5rem"
+      pr="1.5rem"
       alignItems="center"
     >
       <HeaderLogo />
@@ -134,7 +133,6 @@ function Header() {
         <DAOSearch />
       </Show>
       <Flex
-        h="full"
         w="full"
         justifyContent="flex-end"
       >
