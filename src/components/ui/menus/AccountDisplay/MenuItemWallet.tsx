@@ -44,7 +44,6 @@ export function MenuItemWallet() {
         alignItems="center"
         aria-label="copy address"
         data-testid="walletmenu-copyAddress"
-        
         onClick={() => copyTextToClipboard(account)}
         whiteSpace="pre-wrap"
         wordBreak="break-all"

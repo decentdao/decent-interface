@@ -4,7 +4,10 @@ import { MenuItems } from './MenuItems';
 
 export function AccountDisplay() {
   return (
-    <Menu placement="bottom-end" offset={[0,16]}>
+    <Menu
+      placement="bottom-end"
+      offset={[0, 16]}
+    >
       <Button
         as={MenuButton}
         variant="tertiary"

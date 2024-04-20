@@ -24,13 +24,12 @@ export function MenuItemNetwork() {
       <Flex
         direction="column"
         gap="2"
-        
-        >
+      >
         <Text
           px="0.5rem"
           textStyle="helper-text-small"
           color="neutral-7"
-          >
+        >
           {t('network')}
         </Text>
         <Box
