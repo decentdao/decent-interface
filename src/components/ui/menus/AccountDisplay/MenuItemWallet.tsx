@@ -27,9 +27,9 @@ export function MenuItemWallet() {
   return (
     <Box
       data-testid="accountMenu-wallet"
-      bg="neutral-3"
       cursor="default"
       pt="0.5rem"
+      bg="neutral-3"
     >
       <Text
         px="0.5rem"
@@ -44,6 +44,7 @@ export function MenuItemWallet() {
         alignItems="center"
         aria-label="copy address"
         data-testid="walletmenu-copyAddress"
+        
         onClick={() => copyTextToClipboard(account)}
         whiteSpace="pre-wrap"
         wordBreak="break-all"

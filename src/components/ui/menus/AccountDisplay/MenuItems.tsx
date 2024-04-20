@@ -19,19 +19,11 @@ export function MenuItems() {
   return (
     <MenuList
       w="16.25rem"
-      rounded="lg"
+      rounded="0.5rem"
       boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
       bg="rgba(38, 33, 42, 0.74)"
       border="1px solid"
       borderColor="neutral-3"
-      sx={{
-        '& > :nth-of-type(1)': {
-          borderTopRadius: 'lg',
-        },
-        '& > :last-child': {
-          borderBottomRadius: 'lg',
-        },
-      }}
     >
       {user.address && (
         <>

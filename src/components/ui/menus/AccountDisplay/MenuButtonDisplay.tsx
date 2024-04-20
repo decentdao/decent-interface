@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Icon } from '@chakra-ui/react';
 import { CaretDown } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import useAvatar from '../../../../hooks/utils/useAvatar';
@@ -14,9 +14,9 @@ export function NotConnected() {
       gap="1"
     >
       {t('connectWallet')}
-      <CaretDown
-        color="var(--chakra-colors-neutral-8)"
-        size="1.5rem"
+      <Icon
+        as={CaretDown}
+        boxSize="1.5rem"
       />
     </Flex>
   );
@@ -46,9 +46,9 @@ export function Connected() {
         />
       </Box>
       {accountDisplayName}
-      <CaretDown
-        color="var(--chakra-colors-neutral-8)"
-        size="1.5rem"
+      <Icon
+        as={CaretDown}
+        boxSize="1.5rem"
       />
     </Flex>
   );
