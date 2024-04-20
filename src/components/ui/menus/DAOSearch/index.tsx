@@ -42,6 +42,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
       width="full"
       maxW={{ base: 'full', md: '31.125rem' }}
       height="full"
+      position="relative"
     >
       <Popover
         matchWidth
@@ -69,15 +70,17 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
           </InputGroup>
         </PopoverTrigger>
         <Box
-          marginTop="0.5rem"
+          marginTop="1.25rem"
           padding="1rem 1rem"
-          border="none"
-          rounded="lg"
-          shadow="menu-gold"
-          bg="grayscale.black"
+          rounded="0.5rem"
+          bg="neutral-3"
+          boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
+          border="1px solid"
+          borderColor={!!errorMessage ? 'red-1' : 'neutral-3'}
+          position="absolute"
           hidden={!errorMessage && !address}
-          position="relative"
           zIndex="modal"
+          w="full"
         >
           <SearchDisplay
             loading={isLoading}
