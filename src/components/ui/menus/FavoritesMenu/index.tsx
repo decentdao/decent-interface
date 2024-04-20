@@ -1,4 +1,4 @@
-import { Button, Flex, Menu, MenuButton, Show, Text } from '@chakra-ui/react';
+import { Button, Flex, Icon, Menu, MenuButton, Show, Text } from '@chakra-ui/react';
 import { CaretDown, Star } from '@phosphor-icons/react';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,35 +7,36 @@ import { FavoritesList } from './FavoritesList';
 export function FavoritesMenu() {
   const { t } = useTranslation('dashboard');
   return (
-    <Menu>
+    <Menu
+      placement="bottom-end"
+      offset={[0, 16]}
+    >
       {({ isOpen }) => (
         <Fragment>
-          <Button
-            as={MenuButton}
+          <MenuButton
+            as={Button}
             variant="tertiary"
             data-testid="header-favoritesMenuButton"
             mx="1rem"
           >
-            <Flex alignItems="center">
-              <Star
-                size="1.5rem"
-                color="var(--chakra-colors-neutral-8)"
+            <Flex
+              alignItems="center"
+              gap={2}
+            >
+              <Icon
+                as={Star}
+                boxSize="1.5rem"
                 weight="fill"
               />
               <Show above="md">
-                <Text
-                  mx="0.5rem"
-                  textStyle="button-base"
-                >
-                  {t('titleFavorites')}
-                </Text>
-                <CaretDown
-                  color="var(--chakra-colors-neutral-8)"
-                  size="1.5rem"
+                <Text>{t('titleFavorites')}</Text>
+                <Icon
+                  as={CaretDown}
+                  boxSize="1.5rem"
                 />
               </Show>
             </Flex>
-          </Button>
+          </MenuButton>
           {isOpen && <FavoritesList />}
         </Fragment>
       )}
