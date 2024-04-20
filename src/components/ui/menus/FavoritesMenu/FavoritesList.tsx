@@ -42,15 +42,13 @@ export function FavoritesList() {
               },
             }}
           >
-            {favoritesList.map(
-              favorite => (
-                <Favorite
-                  key={favorite}
-                  network={addressPrefix}
-                  address={favorite}
-                />
-              ),
-            )}
+            {favoritesList.map(favorite => (
+              <Favorite
+                key={favorite}
+                network={addressPrefix}
+                address={favorite}
+              />
+            ))}
           </Box>
         )}
       </Box>

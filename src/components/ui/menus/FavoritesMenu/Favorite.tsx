@@ -24,16 +24,20 @@ export function Favorite({ network, address }: IFavorite) {
       <MenuItem
         as={Button}
         variant="tertiary"
+        w="full"
         h="3rem"
         onClick={onClickNav}
         noOfLines={1}
         data-testid={'favorites-' + daoRegistryName}
-        maxWidth="12rem"
         display="flex"
         alignItems="center"
+        justifyContent="flex-start"
         gap={2}
       >
-        <Star size="1.5rem" weight="fill" />
+        <Star
+          size="1.5rem"
+          weight="fill"
+        />
         {daoRegistryName}
       </MenuItem>
     </Box>
