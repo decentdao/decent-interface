@@ -34,12 +34,7 @@ export default function Layout() {
       <GridItem area={'header'}>
         <Box
           bg="#26212AD6"
-          h="4rem"
-          sx={{
-            '& > *': {
-              backdropFilter: 'blur(12px)',
-            },
-          }}
+          backdropFilter="blur(12px)"
           position="fixed"
           zIndex={5}
           w="full"
