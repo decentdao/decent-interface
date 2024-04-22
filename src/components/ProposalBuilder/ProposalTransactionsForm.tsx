@@ -1,9 +1,8 @@
-import { Button, Box, Flex, Text, VStack, Divider, Alert, AlertTitle } from '@chakra-ui/react';
+import { Button, Box, Text, VStack, Alert, AlertTitle } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { FormikProps } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CreateProposalState } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import { scrollToBottom } from '../../utils/ui';
 import ProposalTransactions from './ProposalTransactions';
@@ -11,8 +10,6 @@ import { DEFAULT_PROPOSAL_TRANSACTION } from './constants';
 
 interface ProposalTransactionsFormProps extends FormikProps<CreateProposalForm> {
   pendingTransaction: boolean;
-  setFormState: (state: CreateProposalState) => void;
-  canUserCreateProposal?: boolean;
   safeNonce?: number;
   mode: ProposalBuilderMode;
 }
@@ -20,11 +17,8 @@ interface ProposalTransactionsFormProps extends FormikProps<CreateProposalForm> 
 export default function ProposalTransactionsForm(props: ProposalTransactionsFormProps) {
   const {
     pendingTransaction,
-    setFormState,
     setFieldValue,
     values: { transactions },
-    errors: { transactions: transactionsError, nonce: nonceError },
-    canUserCreateProposal,
     safeNonce,
   } = props;
   const { t } = useTranslation(['proposalTemplate', 'proposal', 'common']);
@@ -75,29 +69,6 @@ export default function ProposalTransactionsForm(props: ProposalTransactionsForm
             </Text>
           </AlertTitle>
         </Alert>
-        <Divider color="chocolate.700" />
-        <Flex>
-          <Button
-            variant="text"
-            textStyle="text-md-mono-regular"
-            color="gold.500"
-            cursor="pointer"
-            onClick={() => setFormState(CreateProposalState.METADATA_FORM)}
-            mb={4}
-          >
-            {t('back', { ns: 'common' })}
-          </Button>
-
-          <Button
-            w="100%"
-            type="submit"
-            isDisabled={
-              !canUserCreateProposal || !!transactionsError || !!nonceError || pendingTransaction
-            }
-          >
-            {t('createProposal', { ns: 'proposal' })}
-          </Button>
-        </Flex>
       </VStack>
     </Box>
   );

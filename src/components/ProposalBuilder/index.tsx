@@ -4,7 +4,6 @@ import { Formik, FormikProps } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { DAO_ROUTES, BASE_ROUTES } from '../../constants/routes';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import useCreateProposalSchema from '../../hooks/schemas/proposalBuilder/useCreateProposalSchema';
@@ -18,16 +17,13 @@ import PageHeader from '../ui/page/Header/PageHeader';
 import ProposalDetails from './ProposalDetails';
 import ProposalMetadata from './ProposalMetadata';
 import ProposalTransactionsForm from './ProposalTransactionsForm';
+import StateButtons from './StateButtons';
 
 interface IProposalBuilder {
   mode: ProposalBuilderMode;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
   initialValues: CreateProposalForm;
 }
-
-const templateAreaTwoCol = '"content details"';
-const templateAreaSingleCol = `"content"
-  "details"`;
 
 export default function ProposalBuilder({
   mode,
@@ -131,10 +127,9 @@ export default function ProposalBuilder({
               <Grid
                 gap={4}
                 templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
-                gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}
                 templateAreas={{
-                  base: templateAreaSingleCol,
-                  lg: templateAreaTwoCol,
+                  base: '"content" "details"',
+                  lg: '"content details"',
                 }}
               >
                 <GridItem area="content">
@@ -146,11 +141,10 @@ export default function ProposalBuilder({
                       marginBottom="2rem"
                       rounded="lg"
                       p="1rem"
-                      bg={BACKGROUND_SEMI_TRANSPARENT}
+                      bg="neutral-2"
                     >
                       {formState === CreateProposalState.METADATA_FORM ? (
                         <ProposalMetadata
-                          setFormState={setFormState}
                           mode={mode}
                           {...formikProps}
                         />
@@ -173,8 +167,6 @@ export default function ProposalBuilder({
                             />
                           </Flex>
                           <ProposalTransactionsForm
-                            setFormState={setFormState}
-                            canUserCreateProposal={canUserCreateProposal}
                             pendingTransaction={pendingCreateTx}
                             safeNonce={safe?.nonce}
                             mode={mode}
@@ -183,6 +175,14 @@ export default function ProposalBuilder({
                         </>
                       )}
                     </Box>
+                    <StateButtons
+                      {...formikProps}
+                      mode={mode}
+                      formState={formState}
+                      setFormState={setFormState}
+                      canUserCreateProposal={canUserCreateProposal}
+                      pendingTransaction={pendingCreateTx}
+                    />
                   </Flex>
                 </GridItem>
                 <GridItem
