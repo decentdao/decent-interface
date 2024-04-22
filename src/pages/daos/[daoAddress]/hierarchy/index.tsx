@@ -1,6 +1,6 @@
 import { Center } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { DaoNode } from '../../../../components/pages/DaoHierarchy/DaoNode';
+import { DaoHierarchyNode } from '../../../../components/pages/DaoHierarchy/DaoNode';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { HEADER_HEIGHT } from '../../../../constants/common';
@@ -39,7 +39,7 @@ export default function HierarchyPage() {
           },
         ]}
       />
-      <DaoNode
+      <DaoHierarchyNode
         daoAddress={parentAddress || daoAddress}
         depth={0}
       />

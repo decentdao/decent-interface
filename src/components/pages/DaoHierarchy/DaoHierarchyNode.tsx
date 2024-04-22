@@ -1,4 +1,5 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Icon } from '@chakra-ui/react';
+import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
@@ -17,7 +18,7 @@ import { NodeLineVertical } from './NodeLines';
  * From this initial DAO info, the component will get the DAO's children
  * and display another DaoNode for each child, and so on for their children.
  */
-export function DaoNode({
+export function DaoHierarchyNode({
   parentAddress,
   daoAddress,
   depth,
@@ -92,18 +93,13 @@ export function DaoNode({
         freezeGuard={daoData?.freezeGuard}
         depth={depth}
       />
-      <NodeLineVertical
-        trueDepth={depth}
-        lastChildDescendants={lastChildDescendants}
-        isCurrentDAO={isCurrentDAO}
-      />
       {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
         <Box
           key={childNode.daoAddress}
           ml={24}
           position="relative"
         >
-          <DaoNode
+          <DaoHierarchyNode
             parentAddress={daoAddress}
             daoAddress={childNode.daoAddress || undefined}
             depth={depth + 1}
