@@ -16,7 +16,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import AddressCopier from '../../links/AddressCopier';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
-interface IPageHeader {
+interface PageHeaderProps {
   title?: string;
   address?: string;
   breadcrumbs: Crumb[];
@@ -45,7 +45,7 @@ function PageHeader({
   buttonTestId,
   isButtonDisabled,
   children,
-}: IPageHeader) {
+}: PageHeaderProps) {
   const {
     node: { daoAddress, daoName },
   } = useFractal();
@@ -105,14 +105,13 @@ function PageHeader({
         {children}
       </Flex>
       <Divider
+        borderColor="neutral-3"
         marginTop="1rem"
-        borderColor="chocolate.400"
       />
       {title && (
         <Text
           marginTop="2rem"
-          textStyle="text-2xl-mono-regular"
-          color="grayscale.100"
+          textStyle="display-2xl"
         >
           {title}
         </Text>
