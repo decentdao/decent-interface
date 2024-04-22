@@ -4,15 +4,13 @@ export type Crumb = {
   terminus: string;
   path: string;
 };
-interface IBreadcrumbs {
+interface BreadcrumbsProps {
   links: Crumb[];
 }
 
-export default function Breadcrumbs({ links }: IBreadcrumbs) {
+export default function Breadcrumbs({ links }: BreadcrumbsProps) {
   return (
     <Breadcrumb
-      color="chocolate.200"
-      height="36px"
       display="flex"
       alignItems="center"
       w={{ base: 'min-content', sm: 'initial' }}
@@ -25,11 +23,12 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
             overflow="hidden"
             whiteSpace="nowrap"
             textOverflow="ellipsis"
-            textStyle="text-base-mono-regular"
+            textStyle="helper-text-base"
           >
             {title}
           </Text>
         );
+
         return (
           <BreadcrumbItem
             key={path}
@@ -43,8 +42,8 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
                 to={path}
                 display="flex"
                 alignItems="center"
-                color={isCurrentPage ? 'chocolate.200' : 'gold.500'}
-                _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
+                color={isCurrentPage ? 'neutral-7' : 'neutral-6'}
+                _hover={{ textDecoration: 'none', color: 'neutral-7' }} // Guessed. Probaby incorrect, couldn't find on figma
               >
                 {crumbText}
               </BreadcrumbLink>
