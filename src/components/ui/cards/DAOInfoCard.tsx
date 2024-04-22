@@ -21,13 +21,6 @@ export interface InfoProps extends FlexProps {
 
 /**
  * Info card used on the DAO homepage.
- *
- * It is *very* important to understand that all DAO info needs to be passed into
- * this component, as this card is independent of your current DAO context, since
- * it is used in the hierarchy, where there are multiple DAO nodes being displayed.
- *
- * Simply using the useFractal() hook to get info will end up with the current DAO's
- * context being displayed in ALL the node cards in a hierarchy, which is incorrect.
  */
 export function DAOInfoCard({
   parentAddress,
