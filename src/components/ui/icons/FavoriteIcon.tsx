@@ -1,8 +1,8 @@
 import { Box, BoxProps, IconButton, Tooltip } from '@chakra-ui/react';
 import { StarGoldSolid, StarOutline } from '@decent-org/fractal-ui';
-import { utils } from 'ethers';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 
 interface Props extends BoxProps {
@@ -12,7 +12,7 @@ interface Props extends BoxProps {
 export default function FavoriteIcon({ safeAddress, ...rest }: Props) {
   const { favoritesList, toggleFavorite } = useAccountFavorites();
   const isFavorite = useMemo(
-    () => (!!safeAddress ? favoritesList.includes(utils.getAddress(safeAddress)) : false),
+    () => (!!safeAddress ? favoritesList.includes(getAddress(safeAddress)) : false),
     [favoritesList, safeAddress],
   );
   const { t } = useTranslation();

@@ -9,7 +9,7 @@ import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitP
 import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { ProposalTemplate } from '../../../types/createProposalTemplate';
+import { ProposalTemplate } from '../../../types/proposalBuilder';
 import { InputComponent } from '../forms/InputComponent';
 
 interface IForkProposalTemplateModalProps {

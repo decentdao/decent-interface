@@ -2,8 +2,8 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function useSnapshotSpaceName() {
   const {
-    node: { daoSnapshotURL },
+    node: { daoSnapshotENS },
   } = useFractal();
 
-  return daoSnapshotURL?.split('/').pop();
+  return daoSnapshotENS;
 }
