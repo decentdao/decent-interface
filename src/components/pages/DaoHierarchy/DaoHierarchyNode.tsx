@@ -80,6 +80,7 @@ export function DaoHierarchyNode({
         <HStack
           minH={`${NODE_HEIGHT_REM}rem`}
           key={childNode.daoAddress}
+          gap="1.25rem"
         >
           <Icon
             as={ArrowElbowDownRight}
