@@ -3,18 +3,17 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOMetadata from '../../../../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { DAOInfoCard } from '../../../ui/cards/DAOInfoCard';
 import { InfoBox } from '../../../ui/containers/InfoBox';
 import ExternalLink from '../../../ui/links/ExternalLink';
-import { InfoDAO } from './InfoDAO';
 import { InfoGovernance } from './InfoGovernance';
 import { InfoProposals } from './InfoProposals';
 import { InfoTreasury } from './InfoTreasury';
 import { ParentLink } from './ParentLink';
 
 export function DaoInfoHeader() {
-  const {
-    node: { daoAddress },
-  } = useFractal();
+  const { node, guardContracts, guard } = useFractal();
+  const { daoAddress } = node;
   const { addressPrefix } = useNetworkConfig();
   const daoMetadata = useDAOMetadata();
 
@@ -40,7 +39,13 @@ export function DaoInfoHeader() {
           pb={{ sm: PAD, lg: NONE }}
         >
           <InfoBox>
-            <InfoDAO />
+            <DAOInfoCard
+              parentAddress={node.nodeHierarchy.parentAddress || undefined}
+              node={node}
+              childCount={node.nodeHierarchy.childNodes.length}
+              freezeGuard={guard}
+              guardContracts={guardContracts}
+            />
           </InfoBox>
         </Box>
         {daoMetadata ? (
