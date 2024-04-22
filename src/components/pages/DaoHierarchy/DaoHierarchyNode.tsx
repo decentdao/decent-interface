@@ -1,13 +1,11 @@
-import { Box, Icon } from '@chakra-ui/react';
+import { Flex, HStack, Icon } from '@chakra-ui/react';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { utils } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalNode, WithError } from '../../../types';
-import { DAONodeRow } from '../../ui/cards/DAONodeRow';
-import { NodeLineVertical } from './NodeLines';
+import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../../ui/cards/DAONodeInfoCard';
 
 /**
  * A recursive component that displays a "hierarchy" of DAOInfoCards.
@@ -30,43 +28,23 @@ export function DaoHierarchyNode({
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
   const { daoData } = useLoadDAOData(fractalNode, parentAddress);
-  const [lastChildDescendants, setLastChildDescendants] = useState<number>(0);
 
-  const {
-    node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
-  } = useFractal();
-
-  const isCurrentDAO = daoAddress === currentDAOAddress;
+  // calculates the total number of descendants below the given node
+  const getTotalDescendants = useCallback((node: FractalNode): number => {
+    let count = node.nodeHierarchy.childNodes.length;
+    node.nodeHierarchy.childNodes.forEach(child => {
+      count += getTotalDescendants(child as FractalNode);
+    });
+    return count;
+  }, []);
 
   useEffect(() => {
     if (daoAddress) {
       loadDao(utils.getAddress(daoAddress)).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
-          // calculates the total number of descendants below the given node
-          const getTotalDescendants = (node: FractalNode): number => {
-            let count = node.nodeHierarchy.childNodes.length;
-            node.nodeHierarchy.childNodes.forEach(child => {
-              count += getTotalDescendants(child as FractalNode);
-            });
-            return count;
-          };
-
           const fnode = _node as FractalNode;
           setNode(fnode);
-          // calculate the total number of descendants of the last child
-          // in the current hierarchy level
-          // this allows us to properly calculate how far down the vertical
-          // line should extend
-          setLastChildDescendants(
-            fnode.nodeHierarchy.childNodes.length > 0
-              ? getTotalDescendants(
-                  fnode.nodeHierarchy.childNodes[
-                    fnode.nodeHierarchy.childNodes.length - 1
-                  ] as FractalNode,
-                )
-              : 0,
-          );
         } else if (errorNode.error === 'errorFailedSearch') {
           setNode({
             daoName: null,
@@ -81,31 +59,40 @@ export function DaoHierarchyNode({
         }
       });
     }
-  }, [loadDao, daoAddress, depth]);
+  }, [loadDao, daoAddress, depth, getTotalDescendants]);
 
   return (
-    <Box position="relative">
-      <DAONodeRow
+    <Flex
+      flexDirection="column"
+      alignItems="stretch"
+      gap="1.25rem"
+      width="100%"
+    >
+      <DAONodeInfoCard
         parentAddress={parentAddress}
         node={fractalNode}
-        childCount={fractalNode?.nodeHierarchy.childNodes.length}
-        guardContracts={daoData?.freezeGuardContracts}
         freezeGuard={daoData?.freezeGuard}
-        depth={depth}
+        guardContracts={daoData?.freezeGuardContracts}
       />
+
+      {/* CHILD NODES */}
       {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
-        <Box
+        <HStack
+          minH={`${NODE_HEIGHT_REM}rem`}
           key={childNode.daoAddress}
-          ml={24}
-          position="relative"
         >
+          <Icon
+            as={ArrowElbowDownRight}
+            boxSize="32px"
+            color="neutral-6"
+          />
           <DaoHierarchyNode
             parentAddress={daoAddress}
             daoAddress={childNode.daoAddress || undefined}
             depth={depth + 1}
           />
-        </Box>
+        </HStack>
       ))}
-    </Box>
+    </Flex>
   );
 }
