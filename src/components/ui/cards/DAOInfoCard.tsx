@@ -20,8 +20,7 @@ export interface InfoProps extends FlexProps {
 }
 
 /**
- * Info card used on both the DAO homepage, as well as each DAO in the
- * hierarchy page.
+ * Info card used on the DAO homepage.
  *
  * It is *very* important to understand that all DAO info needs to be passed into
  * this component, as this card is independent of your current DAO context, since
@@ -39,11 +38,10 @@ export function DAOInfoCard({
   ...rest
 }: InfoProps) {
   const {
-    node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
-    action,
     readOnly: { user },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
+
   // for non Fractal Safes
   const { displayName } = useDisplayName(node?.daoAddress);
 
@@ -63,7 +61,6 @@ export function DAOInfoCard({
   }
 
   const displayedAddress = node.daoAddress;
-  const isCurrentDAO = displayedAddress === currentDAOAddress;
 
   return (
     <Box {...rest}>
@@ -78,24 +75,13 @@ export function DAOInfoCard({
         >
           <HStack>
             {/* DAO NAME */}
-            <Link
+            <Text
               textStyle="display-4xl"
               mr="0.5rem"
-              as={RouterLink}
-              pointerEvents={isCurrentDAO ? 'none' : undefined}
-              to={DAO_ROUTES.dao.relative(addressPrefix, displayedAddress)}
-              _hover={{ textDecoration: 'none' }}
-              onClick={() => {
-                // if we're not on the current DAO, reset
-                // the DAO data, so the one you're clicking
-                // into will load properly
-                if (!isCurrentDAO) {
-                  action.resetDAO();
-                }
-              }}
+              data-testid="DAOInfo-name"
             >
-              <Text data-testid="DAOInfo-name">{node.daoName || displayName}</Text>
-            </Link>
+              {node.daoName || displayName}
+            </Text>
 
             {/* FAVORITE ICON */}
             <FavoriteIcon
