@@ -8,7 +8,6 @@ import {
   Switch,
   VStack,
 } from '@chakra-ui/react';
-import { utils } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -20,8 +19,7 @@ import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitP
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { BigIntValuePair } from '../../../types';
-import { ProposalTemplate } from '../../../types/createProposalTemplate';
-import { isValidUrl } from '../../../utils/url';
+import { ProposalTemplate } from '../../../types/proposalBuilder';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { BigIntComponent, InputComponent } from '../forms/InputComponent';
 import Markdown from '../proposal/Markdown';
@@ -115,27 +113,10 @@ export default function ProposalTemplateModal({
       documentationUrl: '',
     };
 
-    const proposalTransactions = filledProposalTransactions.map(
-      ({ targetAddress, ethValue, functionName, parameters }) => {
-        return {
-          targetAddress: utils.getAddress(targetAddress), // Safe proposal creation/execution might fail if targetAddress is not checksummed
-          ethValue,
-          functionName,
-          functionSignature: parameters.map(parameter => parameter.signature.trim()).join(', '),
-          parameters: parameters
-            .map(parameter =>
-              isValidUrl(parameter.value!.trim())
-                ? encodeURIComponent(parameter.value!.trim()) // If parameter.value is valid URL with special symbols like ":" or "?" - decoding might fail, thus we need to encode URL
-                : parameter.value!.trim(),
-            )
-            .join(', '),
-        };
-      },
-    );
     try {
       const proposalData = await prepareProposal({
         proposalMetadata,
-        transactions: proposalTransactions,
+        transactions: filledProposalTransactions,
       });
 
       submitProposal({

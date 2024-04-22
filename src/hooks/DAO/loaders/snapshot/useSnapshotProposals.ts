@@ -5,24 +5,17 @@ import { FractalGovernanceAction } from '../../../../providers/App/governance/ac
 import { ActivityEventType, FractalProposalState } from '../../../../types';
 import { SnapshotProposal } from '../../../../types/daoProposal';
 import useSnapshotSpaceName from './useSnapshotSpaceName';
-import { createClient } from './';
+import { createSnapshotGraphQlClient } from './';
 
 export const useSnapshotProposals = () => {
-  const {
-    node: { daoSnapshotURL },
-    action,
-  } = useFractal();
+  const { action } = useFractal();
   const daoSnapshotSpaceName = useSnapshotSpaceName();
-  const currentSnapshotURL = useRef<string | undefined>();
-  const client = useMemo(() => {
-    if (daoSnapshotURL) {
-      return createClient(daoSnapshotURL);
-    }
-  }, [daoSnapshotURL]);
+  const currentSnapshotENS = useRef<string | undefined>();
+  const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphQlClient(), []);
 
   const loadSnapshotProposals = useCallback(async () => {
-    if (client) {
-      client
+    if (snaphshotGraphQlClient) {
+      snaphshotGraphQlClient
         .query({
           query: gql`
       query Proposals {
@@ -80,11 +73,11 @@ export const useSnapshotProposals = () => {
           });
         });
     }
-  }, [action, daoSnapshotSpaceName, client]);
+  }, [action, daoSnapshotSpaceName, snaphshotGraphQlClient]);
 
   useEffect(() => {
-    if (!daoSnapshotSpaceName || daoSnapshotSpaceName === currentSnapshotURL.current) return;
-    currentSnapshotURL.current = daoSnapshotSpaceName;
+    if (!daoSnapshotSpaceName || daoSnapshotSpaceName === currentSnapshotENS.current) return;
+    currentSnapshotENS.current = daoSnapshotSpaceName;
     loadSnapshotProposals();
   }, [daoSnapshotSpaceName, loadSnapshotProposals]);
 };

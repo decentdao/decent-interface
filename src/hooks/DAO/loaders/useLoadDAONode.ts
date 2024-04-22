@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
-import { utils } from 'ethers';
 import { useCallback } from 'react';
+import { isAddress, getAddress } from 'viem';
 import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -30,7 +30,7 @@ export const useLoadDAONode = () => {
     const { daos } = result.data;
     const dao = daos[0];
     if (dao) {
-      const { parentAddress, name, hierarchy, snapshotURL } = dao;
+      const { parentAddress, name, hierarchy, snapshotURL: snapshotENS } = dao;
 
       const currentNode: Node = {
         nodeHierarchy: {
@@ -38,8 +38,8 @@ export const useLoadDAONode = () => {
           childNodes: mapChildNodes(hierarchy),
         },
         daoName: name as string,
-        daoAddress: utils.getAddress(_daoAddress as string),
-        daoSnapshotURL: snapshotURL as string,
+        daoAddress: getAddress(_daoAddress as string),
+        daoSnapshotENS: snapshotENS as string,
       };
       return currentNode;
     }
@@ -48,7 +48,7 @@ export const useLoadDAONode = () => {
 
   const loadDao = useCallback(
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
-      if (utils.isAddress(_daoAddress) && safeAPI) {
+      if (isAddress(_daoAddress) && safeAPI) {
         try {
           const graphNodeInfo = formatDAOQuery(
             await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
@@ -58,14 +58,14 @@ export const useLoadDAONode = () => {
             logError('graphQL query failed');
             return { error: 'errorFailedSearch' };
           }
-          const safe = await safeAPI.getSafeInfo(_daoAddress);
-          const fractalModules = await lookupModules(safe.modules);
-          const daoName = await getDaoName(utils.getAddress(safe.address), graphNodeInfo.daoName);
+
+          const sanitizedDaoAddress = getAddress(_daoAddress);
+          const safeInfoWithGuard = await safeAPI.getSafeData(sanitizedDaoAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
-            daoName,
-            safe,
-            fractalModules,
+            daoName: await getDaoName(sanitizedDaoAddress, graphNodeInfo.daoName),
+            safe: safeInfoWithGuard,
+            fractalModules: await lookupModules(safeInfoWithGuard.modules),
           });
 
           // TODO we could cache node here, but should be careful not to cache

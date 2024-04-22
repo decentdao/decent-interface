@@ -1,6 +1,6 @@
 import { ERC721__factory } from '@fractal-framework/fractal-contracts';
-import { utils } from 'ethers';
 import { useEffect, useState, useCallback } from 'react';
+import { getAddress } from 'viem';
 import useSignerOrProvider from '../../hooks/utils/useSignerOrProvider';
 import {
   ReadOnlyState,
@@ -59,7 +59,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
 
     setReadOnlyValues({
       user: {
-        address: _account ? utils.getAddress(_account) : undefined,
+        address: _account ? getAddress(_account) : undefined,
         votingWeight: await getVotingWeight(),
       },
       dao: !node.daoAddress

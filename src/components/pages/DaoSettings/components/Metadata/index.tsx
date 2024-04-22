@@ -1,3 +1,4 @@
+import { ens_normalize } from '@adraffy/ens-normalize';
 import { Flex, Text, Button, Divider } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,13 +11,12 @@ import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayNam
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../../../types';
-import { couldBeENS } from '../../../../../utils/url';
 import { InputComponent } from '../../../../ui/forms/InputComponent';
 
 export default function MetadataContainer() {
   const [name, setName] = useState('');
-  const [snapshotURL, setSnapshotURL] = useState('');
-  const [snapshotURLValid, setSnapshotURLValid] = useState<boolean>();
+  const [snapshotENS, setSnapshotENS] = useState('');
+  const [snapshotENSValid, setSnapshotENSValid] = useState<boolean>();
   const { t } = useTranslation(['settings', 'proposalMetadata']);
   const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ export default function MetadataContainer() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
     baseContracts,
-    node: { daoName, daoSnapshotURL, daoAddress, safe },
+    node: { daoName, daoSnapshotENS, daoAddress, safe },
     readOnly: {
       user: { votingWeight },
     },
@@ -36,19 +36,19 @@ export default function MetadataContainer() {
       setName(daoName);
     }
 
-    if (daoSnapshotURL) {
-      setSnapshotURL(daoSnapshotURL);
+    if (daoSnapshotENS) {
+      setSnapshotENS(daoSnapshotENS);
     }
-  }, [daoName, daoSnapshotURL, daoAddress]);
+  }, [daoName, daoSnapshotENS, daoAddress]);
 
-  const handleSnapshotURLChange: ChangeEventHandler<HTMLInputElement> = e => {
-    if (couldBeENS(e.target.value)) {
-      setSnapshotURLValid(true);
-    } else {
-      setSnapshotURLValid(false);
+  const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
+    setSnapshotENS(e.target.value);
+    try {
+      ens_normalize(e.target.value);
+      setSnapshotENSValid(true);
+    } catch (error) {
+      setSnapshotENSValid(false);
     }
-
-    setSnapshotURL(e.target.value);
   };
 
   const userHasVotingWeight = votingWeight > 0n;
@@ -87,7 +87,7 @@ export default function MetadataContainer() {
     });
   };
 
-  const handleEditDAOSnapshotURL = () => {
+  const handleEditDAOSnapshotENS = () => {
     if (!baseContracts) {
       return;
     }
@@ -102,8 +102,8 @@ export default function MetadataContainer() {
       values: [0n],
       calldatas: [
         keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
-          ['snapshotURL'],
-          [snapshotURL],
+          ['snapshotENS'],
+          [snapshotENS],
         ]),
       ],
     };
@@ -182,9 +182,9 @@ export default function MetadataContainer() {
         {canUserCreateProposal && (
           <Button
             variant="tertiary"
-            disabled={!snapshotURLValid || snapshotURL === daoSnapshotURL}
-            isDisabled={!snapshotURLValid || snapshotURL === daoSnapshotURL}
-            onClick={handleEditDAOSnapshotURL}
+            disabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
+            isDisabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
+            onClick={handleEditDAOSnapshotENS}
           >
             {t('proposeChanges')}
           </Button>
@@ -192,11 +192,11 @@ export default function MetadataContainer() {
       </Flex>
       <InputComponent
         isRequired={false}
-        onChange={handleSnapshotURLChange}
-        value={snapshotURL}
+        onChange={handleSnapshotENSChange}
+        value={snapshotENS}
         disabled={!userHasVotingWeight}
-        placeholder="httpsexample.eth"
-        testId="daoSettings.snapshotUrl"
+        placeholder="example.eth"
+        testId="daoSettings.snapshotENS"
         gridContainerProps={{
           display: 'inline-flex',
           flexWrap: 'wrap',

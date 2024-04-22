@@ -38,7 +38,7 @@ export interface CreatorFormState<T = BigIntValuePair> {
 export type DAOEssentials = {
   daoName: string;
   governance: GovernanceType;
-  snapshotURL: string;
+  snapshotENS: string;
 };
 
 export type DAOGovernorERC20Token<T = bigint> = {

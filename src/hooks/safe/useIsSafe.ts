@@ -1,5 +1,5 @@
-import { isAddress } from 'ethers/lib/utils';
 import { useEffect, useState } from 'react';
+import { isAddress } from 'viem';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 
 /**

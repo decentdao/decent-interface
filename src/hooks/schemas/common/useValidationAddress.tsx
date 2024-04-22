@@ -1,6 +1,7 @@
-import { Signer, utils } from 'ethers';
+import { Signer } from 'ethers';
 import { useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isAddress } from 'viem';
 import { AnyObject } from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
@@ -57,7 +58,7 @@ export async function validateAddress({
       };
     }
   }
-  const isValidAddress = utils.isAddress(address);
+  const isValidAddress = isAddress(address);
   if (isValidAddress) {
     return {
       validation: {

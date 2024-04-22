@@ -1,7 +1,8 @@
 import { ERC20__factory, FractalModule } from '@fractal-framework/fractal-contracts';
-import { ethers, utils } from 'ethers';
+import { ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { FractalModuleType, FractalNode } from '../../types';
@@ -22,10 +23,11 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
 
   const handleClawBack = useCallback(async () => {
     if (childSafeInfo && childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
-      const childSafeBalance = await safeAPI.getBalances(
-        utils.getAddress(childSafeInfo.daoAddress),
-      );
-      const parentSafeInfo = await safeAPI.getSafeInfo(utils.getAddress(parentAddress));
+      const childSafeBalance = await safeAPI.getBalances(getAddress(childSafeInfo.daoAddress));
+
+      const santitizedParentAddress = getAddress(parentAddress);
+      const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
+
       if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
         const abiCoder = new ethers.utils.AbiCoder();
         const fractalModule = childSafeInfo.fractalModules!.find(

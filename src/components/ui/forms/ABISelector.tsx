@@ -1,9 +1,9 @@
 import { Select, Text } from '@chakra-ui/react';
 import axios from 'axios';
-import { isAddress } from 'ethers/lib/utils';
 import detectProxyTarget from 'evm-proxy-detection';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isAddress } from 'viem';
 import { useEnsAddress, usePublicClient } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';

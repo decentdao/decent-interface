@@ -1,5 +1,5 @@
-import { utils } from 'ethers';
 import { useSearchParams } from 'react-router-dom';
+import { isAddress } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useAzoriusListeners } from './loaders/governance/useAzoriusListeners';
@@ -24,7 +24,7 @@ export default function useDAOController() {
   const invalidQuery =
     addressWithPrefix === null ||
     !validDaoQueryString.test(addressWithPrefix) ||
-    !utils.isAddress(daoAddress || '');
+    !isAddress(daoAddress || '');
 
   const { addressPrefix: connectedAddressPrefix } = useNetworkConfig();
   const wrongNetwork = addressPrefix !== connectedAddressPrefix;
