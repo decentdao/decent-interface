@@ -17,14 +17,13 @@ function SortMenuItem({
   return (
     <MenuItem
       py="0.5rem"
-      color="grayscale.100"
       sx={{
         '&:hover': { bg: 'neutral-3' },
       }}
       data-testid={testId}
       onClick={onClick}
     >
-      <Text textStyle="text-sm-mono-semibold">{t(labelKey)}</Text>
+      <Text>{t(labelKey)}</Text>
     </MenuItem>
   );
 }

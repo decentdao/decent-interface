@@ -111,7 +111,7 @@ export function InfoGovernance() {
           mb="0.25rem"
         >
           <Text color="neutral-7">{t('titleVotingPeriod')}</Text>
-          <Text textStyle="text-base-sans-regular">
+          <Text>
             {governanceAzorius.votingStrategy?.votingPeriod?.formatted}
           </Text>
         </Flex>
@@ -123,7 +123,7 @@ export function InfoGovernance() {
           mb="0.25rem"
         >
           <Text color="neutral-7">{t('titleQuorum')}</Text>
-          <Text textStyle="text-base-sans-regular">
+          <Text>
             {governanceAzorius.votingStrategy.quorumPercentage.formatted}
           </Text>
         </Flex>

@@ -47,7 +47,6 @@ export function OptionsList({
                   <Checkbox
                     isChecked={option.isSelected}
                     onChange={clickListener}
-                    iconColor="black.900"
                     marginEnd="0.5rem"
                   />
                   {t(option.optionKey)}

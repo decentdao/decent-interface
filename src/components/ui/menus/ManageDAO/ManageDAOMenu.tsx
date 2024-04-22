@@ -1,3 +1,4 @@
+import { Button } from '@chakra-ui/react';
 import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { GearFine } from '@phosphor-icons/react';
 import { useMemo, useCallback, useState, useEffect } from 'react';
@@ -247,13 +248,12 @@ export function ManageDAOMenu({
       titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
       options={options}
       namespace="menu"
+      buttonAs={Button}
       buttonProps={{
+        variant: 'tertiary',
         borderRadius: '0.25rem',
         p: '0.5rem',
         color: 'lilac-0',
-        variant: 'ghost',
-        _hover: { color: 'lilac--1', backgroundColor: 'white-alpha-04' },
-        _active: { color: 'lilac--2' },
       }}
     />
   );
