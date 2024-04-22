@@ -111,9 +111,7 @@ export function InfoGovernance() {
           mb="0.25rem"
         >
           <Text color="neutral-7">{t('titleVotingPeriod')}</Text>
-          <Text>
-            {governanceAzorius.votingStrategy?.votingPeriod?.formatted}
-          </Text>
+          <Text>{governanceAzorius.votingStrategy?.votingPeriod?.formatted}</Text>
         </Flex>
       )}
       {governanceAzorius?.votingStrategy?.quorumPercentage && (
@@ -123,9 +121,7 @@ export function InfoGovernance() {
           mb="0.25rem"
         >
           <Text color="neutral-7">{t('titleQuorum')}</Text>
-          <Text>
-            {governanceAzorius.votingStrategy.quorumPercentage.formatted}
-          </Text>
+          <Text>{governanceAzorius.votingStrategy.quorumPercentage.formatted}</Text>
         </Flex>
       )}
       {governanceAzorius?.votingStrategy?.quorumThreshold && (

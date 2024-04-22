@@ -50,11 +50,7 @@ export function SettingsSection({
             {descriptionTitle}
           </Text>
         )}
-        {descriptionContent || (
-          <Text mt={2}>
-            {descriptionText}
-          </Text>
-        )}
+        {descriptionContent || <Text mt={2}>{descriptionText}</Text>}
       </StyledBox>
     </Flex>
   );

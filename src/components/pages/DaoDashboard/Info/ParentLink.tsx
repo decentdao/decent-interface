@@ -37,9 +37,7 @@ export function ParentLink() {
           src="/images/arrow-up-left.svg"
           alt={t('parentLink')}
         />
-        <Text flexWrap="wrap">
-          {t('parentLink')}
-        </Text>
+        <Text flexWrap="wrap">{t('parentLink')}</Text>
       </HStack>
     </Link>
   );

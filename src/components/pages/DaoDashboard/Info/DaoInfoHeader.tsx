@@ -98,9 +98,7 @@ export function DaoInfoHeader() {
                       backgroundPosition="50%"
                     />
                   )}
-                  <Text marginBottom={2}>
-                    {section.title}
-                  </Text>
+                  <Text marginBottom={2}>{section.title}</Text>
                   <Text>
                     {section.link && section.link.position === 'start' && (
                       <ExternalLink href={section.link.url}>{section.link.text}</ExternalLink>
