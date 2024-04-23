@@ -54,14 +54,7 @@ export function OptionsList({
               ) : (
                 t(option.optionKey)
               )}
-              {showOptionCount && (
-                <Text
-                  textStyle="text-base-mono-medium"
-                  as="span"
-                >
-                  {option.count}
-                </Text>
-              )}
+              {showOptionCount && <Text as="span">{option.count}</Text>}
             </MenuItem>
             {options[options.length - 1] !== option && (
               <Divider
