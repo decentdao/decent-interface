@@ -1,6 +1,9 @@
 import { Box, BoxProps } from '@chakra-ui/react';
 
-export default function Divider({ variant = 'dark', ...rest }: { variant?: 'light' | 'dark' } & BoxProps) {
+export default function Divider({
+  variant = 'dark',
+  ...rest
+}: { variant?: 'light' | 'dark' } & BoxProps) {
   const isDark = variant === 'dark';
   return (
     <Box

@@ -135,9 +135,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       >
         {formatUSD(selectedAsset.fiatBalance)}
       </Text>
-      <Divider
-        my="0.75rem"
-      />
+      <Divider my="0.75rem" />
       <LabelWrapper
         label={t('destinationLabel')}
         subLabel={t('destinationSublabel')}
@@ -150,9 +148,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           }}
         />
       </LabelWrapper>
-      <Divider
-        my="0.75rem"
-      />
+      <Divider my="0.75rem" />
       <CustomNonceInput
         nonce={nonceInput}
         onChange={nonce => setNonceInput(nonce ? nonce : undefined)}

@@ -1,11 +1,4 @@
-import {
-  Text,
-  InputGroup,
-  InputRightElement,
-  Flex,
-  Alert,
-  AlertTitle,
-} from '@chakra-ui/react';
+import { Text, InputGroup, InputRightElement, Flex, Alert, AlertTitle } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -258,18 +251,14 @@ function GuardDetails(props: ICreationStepProps) {
             </Text>
           </AlertTitle>
         </Alert>
-        <Divider
-          mb={4}
-        />
+        <Divider mb={4} />
         {showCustomNonce && (
           <>
             <CustomNonceInput
               nonce={values.multisig.customNonce}
               onChange={handleNonceChange}
             />
-            <Divider
-              my={4}
-            />
+            <Divider my={4} />
           </>
         )}
         <StepButtons

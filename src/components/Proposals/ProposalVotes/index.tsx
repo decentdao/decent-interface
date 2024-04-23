@@ -161,9 +161,7 @@ function ProposalVotes({
       {votes.length !== 0 && (
         <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
-          <Divider
-            my={4}
-          />
+          <Divider my={4} />
           <Flex
             flexWrap="wrap"
             gap={4}

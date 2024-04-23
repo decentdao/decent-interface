@@ -22,9 +22,7 @@ function CoinHeader() {
   const { t } = useTranslation('treasury');
   return (
     <Box>
-      <Divider
-        my="1.5rem"
-      />
+      <Divider my="1.5rem" />
       <HStack marginBottom="0.5rem">
         <Text
           w="33%"

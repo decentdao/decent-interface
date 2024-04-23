@@ -114,9 +114,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
             ShowVotingPowerButton
           )}
         </Flex>
-        <Divider
-          marginTop={4}
-        />
+        <Divider marginTop={4} />
         {!!proposal.quorum && (
           <Box marginTop={4}>
             <QuorumProgressBar

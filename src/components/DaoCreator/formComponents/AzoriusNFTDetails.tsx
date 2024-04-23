@@ -191,9 +191,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
             p={4}
           >
             <ContentBoxTitle>{t('titleNFTDetails')}</ContentBoxTitle>
-            <Divider
-              my="1rem"
-            />
+            <Divider my="1rem" />
             {values.erc721Token.nfts.map((nft, i) => {
               const nftError = (
                 errors?.erc721Token?.nfts as FormikErrors<
@@ -210,11 +208,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                     nft={nft}
                     hasAddressError={!!addressErrorMessage}
                   />
-                  {i < values.erc721Token.nfts.length - 1 && (
-                    <Divider
-                      my="2rem"
-                    />
-                  )}
+                  {i < values.erc721Token.nfts.length - 1 && <Divider my="2rem" />}
                 </Fragment>
               );
             })}

@@ -97,7 +97,7 @@ export default function ProposalTransaction({
           />
         </Box>
       )}
-        <Divider my="1.5rem"/>
+      <Divider my="1.5rem" />
       <Box>
         <Text
           textStyle="display-lg"
@@ -329,7 +329,11 @@ export default function ProposalTransaction({
                                 ) : undefined
                               }
                               isRequired={!!parameter.signature && !parameter.label}
-                              helper={isProposalMode ? t('helperFunctionParameterValue', { ns: 'proposalTemplate'}) : undefined}
+                              helper={
+                                isProposalMode
+                                  ? t('helperFunctionParameterValue', { ns: 'proposalTemplate' })
+                                  : undefined
+                              }
                               value={parameter.value || ''}
                               placeholder="100"
                               onChange={e =>
@@ -350,13 +354,19 @@ export default function ProposalTransaction({
                               testId={`transactions.${transactionIndex}.parameters.${i}.value`}
                             />
                           </Box>
-                            <Divider variant="light" my="1rem"/>
+                          <Divider
+                            variant="light"
+                            my="1rem"
+                          />
                         </Box>
                       </Flex>
                     </AccordionPanel>
                   </Box>
                   {!isExpanded && (
-                      <Divider variant="light" mt="0.5rem"/>
+                    <Divider
+                      variant="light"
+                      mt="0.5rem"
+                    />
                   )}
                   {i === transaction.parameters.length - 1 && (
                     <Button

@@ -177,9 +177,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
           </RadioGroup>
         </LabelComponent>
       </Box>
-      <Divider
-        mb="2rem"
-      />
+      <Divider mb="2rem" />
       <LabelComponent
         label={t('snapshot')}
         helper={t('snapshotHelper')}
@@ -195,9 +193,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
           />
         </LabelWrapper>
       </LabelComponent>
-      <Divider
-        my="2rem"
-      />
+      <Divider my="2rem" />
       <StepButtons
         {...props}
         isNextDisabled={

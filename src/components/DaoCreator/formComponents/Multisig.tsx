@@ -1,11 +1,4 @@
-import {
-  Box,
-  Flex,
-  Grid,
-  IconButton,
-  NumberInput,
-  NumberInputField,
-} from '@chakra-ui/react';
+import { Box, Flex, Grid, IconButton, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { LabelWrapper, Minus } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -169,9 +162,7 @@ export function Multisig(props: ICreationStepProps) {
           </LabelComponent>
         </Box>
       </Flex>
-      <Divider
-        my="2rem"
-      />
+      <Divider my="2rem" />
       <StepButtons
         {...props}
         nextStep={CreatorSteps.FREEZE_DETAILS}

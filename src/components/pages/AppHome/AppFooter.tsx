@@ -11,9 +11,7 @@ export function AppFooter({ ...rest }: BoxProps) {
       w="100%"
       {...rest}
     >
-      <Divider
-        paddingTop="2.5rem"
-      />
+      <Divider paddingTop="2.5rem" />
       <Flex paddingTop="2rem">
         <Text
           color="grayscale.500"

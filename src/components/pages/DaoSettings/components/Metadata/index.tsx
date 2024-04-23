@@ -165,9 +165,7 @@ export default function MetadataContainer() {
           width: '100%',
         }}
       />
-      <Divider
-        my={4}
-      />
+      <Divider my={4} />
       <Flex
         justifyContent="space-between"
         alignItems="center"

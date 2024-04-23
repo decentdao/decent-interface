@@ -25,9 +25,7 @@ export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
       >
         {t('confirmModifyGovernanceDescription')}
       </Text>
-      <Divider
-        marginBottom="1rem"
-      />
+      <Divider marginBottom="1rem" />
       <Text
         marginBottom="1rem"
         textStyle="text-xl-mono-medium"

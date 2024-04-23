@@ -119,9 +119,7 @@ export default function ForkProposalTemplateModal({
           width: '100%',
         }}
       />
-      <Divider
-        my={4}
-      />
+      <Divider my={4} />
       <Button
         onClick={handleSubmit}
         variant="primary"

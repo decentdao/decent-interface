@@ -77,9 +77,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
           <Text textStyle="text-lg-mono-medium">
             {t('votesTitle')} ({votes.length})
           </Text>
-          <Divider
-            my={4}
-          />
+          <Divider my={4} />
           <Flex
             flexWrap="wrap"
             gap={4}

@@ -84,9 +84,7 @@ export function ModulesContainer() {
           <BarLoader />
         )}
         <Text textStyle="text-lg-mono-bold">{t('guardTitle')}</Text>
-        <Divider
-          mt={4}
-        />
+        <Divider mt={4} />
         {safe?.guard && safe?.guard !== zeroAddress ? (
           <Box>
             <DisplayAddress address={safe.guard}>

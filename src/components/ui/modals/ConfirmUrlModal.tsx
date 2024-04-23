@@ -12,9 +12,7 @@ export function ConfirmUrlModal({ url, close }: { url: string; close: () => void
       >
         {url}
       </Text>
-      <Divider
-        marginBottom="1rem"
-      />
+      <Divider marginBottom="1rem" />
       <Text marginBottom="1rem">{t('confirmAction')}</Text>
       <a
         href={url}

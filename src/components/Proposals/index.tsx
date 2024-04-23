@@ -151,9 +151,7 @@ export default function Proposals() {
                 <Text color="grayscale.100">{t('clear', { ns: 'common' })}</Text>
               </Button>
             </Flex>
-            <Divider
-              my={4}
-            />
+            <Divider my={4} />
           </Box>
         </OptionMenu>
         <Sort

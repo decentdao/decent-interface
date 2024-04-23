@@ -162,9 +162,7 @@ export function DelegateModal({ close }: { close: Function }) {
             </Text>
           </SimpleGrid>
         )}
-      <Divider
-        marginBottom="1rem"
-      />
+      <Divider marginBottom="1rem" />
       <Formik
         initialValues={{
           address: '',

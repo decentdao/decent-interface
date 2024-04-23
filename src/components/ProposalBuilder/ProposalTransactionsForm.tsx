@@ -38,7 +38,7 @@ export default function ProposalTransactionsForm(props: ProposalTransactionsForm
         setExpandedIndecies={setExpandedIndecies}
         {...props}
       />
-        <Divider my="1.5rem"/>
+      <Divider my="1.5rem" />
       <Button
         variant="text"
         onClick={() => {

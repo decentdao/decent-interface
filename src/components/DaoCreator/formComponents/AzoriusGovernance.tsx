@@ -1,11 +1,4 @@
-import {
-  Alert,
-  AlertTitle,
-  Flex,
-  InputGroup,
-  InputRightElement,
-  Text,
-} from '@chakra-ui/react';
+import { Alert, AlertTitle, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps, VotingStrategyType } from '../../../types';
@@ -144,9 +137,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             </Text>
           </AlertTitle>
         </Alert>
-        <Divider
-          mb={4}
-        />
+        <Divider mb={4} />
         <StepButtons
           {...props}
           prevStep={

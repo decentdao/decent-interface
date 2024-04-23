@@ -62,9 +62,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
       </LabelComponent>
       <Divider />
       <AzoriusTokenAllocations {...props} />
-      <Divider
-        mb={4}
-      />
+      <Divider mb={4} />
       <StepButtons
         {...props}
         prevStep={CreatorSteps.ESSENTIALS}

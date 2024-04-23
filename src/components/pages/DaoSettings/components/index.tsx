@@ -33,9 +33,7 @@ export function SettingsSection({
         minWidth="65%"
       >
         {contentHeader || <Text>{contentTitle}</Text>}
-        <Divider
-          marginTop="1rem"
-        />
+        <Divider marginTop="1rem" />
         {children}
       </StyledBox>
       <StyledBox
