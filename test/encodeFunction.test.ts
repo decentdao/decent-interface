@@ -3,22 +3,26 @@ import { expect, test } from 'vitest';
 import { encodeFunction } from '../src/utils/crypto';
 
 test.skip('Function encoding with no parameters', () => {
-  const abiItems = [{
-    name: 'foo',
-    stateMutability: 'view',
-    type: 'function',
-  }]
+  const abiItems = [
+    {
+      name: 'foo',
+      stateMutability: 'view',
+      type: 'function',
+    },
+  ];
   const encoded = encodeFunctionData({ functionName: 'foo', abi: abiItems, args: [] });
   expect(encodeFunction('foo')).toEqual(encoded);
 });
 
 test.skip('Function encoding with [boolean=true]', () => {
-  const abiItems = [{
-    name: 'foo',
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'foo', type: 'boolean' }],
-  }]
+  const abiItems = [
+    {
+      name: 'foo',
+      stateMutability: 'view',
+      type: 'function',
+      inputs: [{ name: 'foo', type: 'boolean' }],
+    },
+  ];
   const encoded = encodeFunctionData({
     functionName: 'foo',
     abi: abiItems,
@@ -28,12 +32,14 @@ test.skip('Function encoding with [boolean=true]', () => {
 });
 
 test.skip('Function encoding with [boolean=false]', () => {
-  const abiItems = [{
-    name: 'foo',
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'foo', type: 'boolean' }],
-  }]
+  const abiItems = [
+    {
+      name: 'foo',
+      stateMutability: 'view',
+      type: 'function',
+      inputs: [{ name: 'foo', type: 'boolean' }],
+    },
+  ];
   const encoded = encodeFunctionData({
     functionName: 'foo',
     abi: abiItems,
@@ -43,12 +49,14 @@ test.skip('Function encoding with [boolean=false]', () => {
 });
 
 test.skip('Function encoding with [uint=0]', () => {
-  const abiItems = [{
-    name: 'foo',
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'foo', type: 'uint' }],
-  }]
+  const abiItems = [
+    {
+      name: 'foo',
+      stateMutability: 'view',
+      type: 'function',
+      inputs: [{ name: 'foo', type: 'uint' }],
+    },
+  ];
   const encoded = encodeFunctionData({
     functionName: 'foo',
     abi: abiItems,
@@ -58,12 +66,14 @@ test.skip('Function encoding with [uint=0]', () => {
 });
 
 test.skip('Function encoding with [uint256=0]', () => {
-  const abiItems = [{
-    name: 'foo',
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'foo', type: 'uint256' }],
-  }]
+  const abiItems = [
+    {
+      name: 'foo',
+      stateMutability: 'view',
+      type: 'function',
+      inputs: [{ name: 'foo', type: 'uint256' }],
+    },
+  ];
   const encoded = encodeFunctionData({
     functionName: 'foo',
     abi: abiItems,
@@ -73,12 +83,14 @@ test.skip('Function encoding with [uint256=0]', () => {
 });
 
 test.skip('Function encoding with [uint8=0]', () => {
-  const abiItems = [{
-    name: 'foo',
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'foo', type: 'uint8' }],
-  }]
+  const abiItems = [
+    {
+      name: 'foo',
+      stateMutability: 'view',
+      type: 'function',
+      inputs: [{ name: 'foo', type: 'uint8' }],
+    },
+  ];
   const encoded = encodeFunctionData({
     functionName: 'foo',
     abi: abiItems,
@@ -88,12 +100,14 @@ test.skip('Function encoding with [uint8=0]', () => {
 });
 
 test.skip('Function encoding with [uint8=100]', () => {
-  const abiItems = [{
-    name: 'foo',
-    stateMutability: 'view',
-    type: 'function',
-    inputs: [{ name: 'foo', type: 'uint8' }],
-  }]
+  const abiItems = [
+    {
+      name: 'foo',
+      stateMutability: 'view',
+      type: 'function',
+      inputs: [{ name: 'foo', type: 'uint8' }],
+    },
+  ];
   const encoded = encodeFunctionData({
     functionName: 'foo',
     abi: abiItems,
