@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address } from 'viem';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useIsSafe } from '../safe/useIsSafe';
 import useAddress from '../utils/useAddress';
 
 export const useSearchDao = () => {
-  const [searchString, setSearchString] = useState<string | undefined>();
+  const [searchString, setSearchString] = useState<Address | undefined>();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 

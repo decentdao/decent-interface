@@ -442,7 +442,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         ),
         [
           this.safeContract.address as Address, // owner
-          daoData.nfts.map(nft => nft.tokenAddress), // governance tokens addresses
+          daoData.nfts.map(nft => nft.tokenAddress!), // governance tokens addresses
           daoData.nfts.map(nft => nft.tokenWeight), // governance tokens weights
           '0x0000000000000000000000000000000000000001', // Azorius module
           Number(azoriusGovernanceDaoData.votingPeriod),

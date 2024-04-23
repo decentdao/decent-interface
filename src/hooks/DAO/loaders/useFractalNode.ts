@@ -44,7 +44,7 @@ export const useFractalNode = (
 
       const currentNode: Node = {
         nodeHierarchy: {
-          parentAddress: parentAddress as string,
+          parentAddress: parentAddress as Address,
           childNodes: mapChildNodes(hierarchy),
         },
         daoName: name as string,

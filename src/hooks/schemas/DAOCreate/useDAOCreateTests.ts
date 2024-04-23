@@ -1,7 +1,7 @@
 import { ERC165__factory } from '@fractal-framework/fractal-contracts'; // TODO: Add this ABI into fractal-contracts
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isAddress, erc20Abi, getContract } from 'viem';
+import { isAddress, erc20Abi, getContract, Address } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
@@ -161,7 +161,7 @@ export function useDAOCreateTests() {
     return {
       name: 'ERC721 Address Validation',
       message: t('errorInvalidERC721Address', { ns: 'common' }),
-      test: async function (address: string | undefined) {
+      test: async function (address: Address | undefined) {
         if (address && isAddress(address)) {
           try {
             const nftContract = getContract({

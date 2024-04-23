@@ -29,7 +29,7 @@ import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
-  parentAddress?: string | null;
+  parentAddress?: Address | null;
   fractalNode?: FractalNode;
   freezeGuard?: FreezeGuard;
   guardContracts?: FractalGuardContracts;

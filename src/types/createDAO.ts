@@ -53,7 +53,7 @@ export type DAOGovernorERC20Token<T = bigint> = {
 };
 
 export type ERC721TokenConfig<T = bigint> = {
-  tokenAddress: Address;
+  tokenAddress?: Address;
   tokenWeight: T;
 };
 

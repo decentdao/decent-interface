@@ -173,7 +173,7 @@ export function usePrepareFormData() {
           nfts.map(async nft => {
             let address = nft.tokenAddress;
             if (couldBeENS(address)) {
-              address = await signer!.resolveName(nft.tokenAddress) as Address;
+              address = await signer!.resolveName(nft.tokenAddress!) as Address;
             }
             return {
               tokenAddress: address,
