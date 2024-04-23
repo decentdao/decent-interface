@@ -6,7 +6,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FreezeGuard, FractalGuardContracts, FractalNode } from '../../../types';
 import { SnapshotButton } from '../badges/Snapshot';
-import FavoriteIcon from '../icons/FavoriteIcon';
+import { FavoriteIcon } from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
 import { BarLoader } from '../loaders/BarLoader';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
@@ -139,7 +139,7 @@ export function DAOInfoCard({
         <AddressCopier address={displayedAddress} />
 
         {/* SNAPSHOT ICON LINK */}
-        {node.daoSnapshotURL && <SnapshotButton snapshotURL={node.daoSnapshotURL} />}
+        {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
       </VStack>
     </Box>
   );

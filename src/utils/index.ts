@@ -4,6 +4,5 @@ export * from './crypto';
 export * from './currency';
 export * from './numberFormats';
 export * from './safeData';
-export * from './signatures';
 export * from './time';
 export * from './azorius';

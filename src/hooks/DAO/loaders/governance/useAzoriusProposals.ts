@@ -8,7 +8,7 @@ import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contr
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
-import { ProposalMetadata, VotingStrategyType, DecodedTransaction } from '../../../../types';
+import { CreateProposalMetadata, VotingStrategyType, DecodedTransaction } from '../../../../types';
 import { AzoriusProposal } from '../../../../types/daoProposal';
 import { Providers } from '../../../../types/network';
 import { mapProposalCreatedEventToProposal, decodeTransactions } from '../../../../utils';
@@ -140,7 +140,9 @@ export const useAzoriusProposals = () => {
       for (const proposalCreatedEvent of proposalCreatedEvents) {
         let proposalData;
         if (proposalCreatedEvent.args.metadata) {
-          const metadataEvent: ProposalMetadata = JSON.parse(proposalCreatedEvent.args.metadata);
+          const metadataEvent: CreateProposalMetadata = JSON.parse(
+            proposalCreatedEvent.args.metadata,
+          );
           const decodedTransactions = await decodeTransactions(
             _decode,
             proposalCreatedEvent.args.transactions.map(t => ({ ...t, value: t.value.toBigInt() })),

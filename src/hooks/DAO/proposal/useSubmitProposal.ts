@@ -2,9 +2,9 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Azorius } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { Signer, utils } from 'ethers';
-import { getAddress, isAddress } from 'ethers/lib/utils';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
+import { isAddress, getAddress } from 'viem';
 import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
@@ -15,7 +15,7 @@ import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction, ProposalExecuteData, ProposalMetadata } from '../../../types';
+import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
@@ -116,7 +116,7 @@ export default function useSubmitProposal() {
           proposalData.metaData.description ||
           proposalData.metaData.documentationUrl
         ) {
-          const metaData: ProposalMetadata = {
+          const metaData: CreateProposalMetadata = {
             title: proposalData.metaData.title || '',
             description: proposalData.metaData.description || '',
             documentationUrl: proposalData.metaData.documentationUrl || '',
