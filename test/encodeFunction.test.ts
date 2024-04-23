@@ -3,65 +3,95 @@ import { expect, test } from 'vitest';
 import { encodeFunction } from '../src/utils/crypto';
 
 test('Function encoding with no parameters', () => {
-  const encoded = encodeFunctionData({ functionName: 'foo', abi: ['']})
+  const encoded = encodeFunctionData({ functionName: 'foo', abi: [''] });
   expect(encodeFunction('foo')).toEqual(encoded);
 });
 
 test('Function encoding with [boolean=true]', () => {
-  const encoded = encodeFunctionData({ functionName: 'foo', abi: parseAbiParameters('bool',), args: [true]})
+  const encoded = encodeFunctionData({
+    functionName: 'foo',
+    abi: parseAbiParameters('bool'),
+    args: [true],
+  });
   expect(encodeFunction('foo', 'bool', 'true')).toEqual(encoded);
 });
 
 test('Function encoding with [boolean=false]', () => {
-  const encoded = encodeFunctionData({ functionName: 'foo', abi: parseAbiParameters('bool',), args: [false]})
+  const encoded = encodeFunctionData({
+    functionName: 'foo',
+    abi: parseAbiParameters('bool'),
+    args: [false],
+  });
   expect(encodeFunction('foo', 'bool', 'false')).toEqual(encoded);
 });
 
 test('Function encoding with [uint=0]', () => {
-  const encoded = encodeFunctionData({ functionName: 'foo', abi: parseAbiParameters('uint',), args: [0]})
+  const encoded = encodeFunctionData({
+    functionName: 'foo',
+    abi: parseAbiParameters('uint'),
+    args: [0],
+  });
   expect(encodeFunction('foo', 'uint', '0')).toEqual(encoded);
 });
 
 test('Function encoding with [uint256=0]', () => {
-  const encoded = encodeFunctionData({ functionName: 'foo', abi: parseAbiParameters('uint256',), args: [0n]})
+  const encoded = encodeFunctionData({
+    functionName: 'foo',
+    abi: parseAbiParameters('uint256'),
+    args: [0n],
+  });
   expect(encodeFunction('foo', 'uint256', '0')).toEqual(encoded);
 });
 
 test('Function encoding with [uint8=0]', () => {
-  const encoded = encodeFunctionData({ functionName: 'foo', abi: parseAbiParameters('uint8',), args: [0]})
+  const encoded = encodeFunctionData({
+    functionName: 'foo',
+    abi: parseAbiParameters('uint8'),
+    args: [0],
+  });
   expect(encodeFunction('foo', 'uint8', '0')).toEqual(encoded);
 });
 
 test('Function encoding with [uint8=100]', () => {
-  const encoded = encodeFunctionData({ functionName: 'foo', abi: parseAbiParameters('uint8',), args: [100]})
+  const encoded = encodeFunctionData({
+    functionName: 'foo',
+    abi: parseAbiParameters('uint8'),
+    args: [100],
+  });
   expect(encodeFunction('foo', 'uint8', '100')).toEqual(encoded);
 });
 
 test('Function encoding with tuple', () => {
-  const abi = parseAbiParameters('(address,address,address,uint88,uint88,uint88,uint88,uint88,uint64,uint64,uint40,uint40,uint40,uint40,bool,bytes32),uint256,uint256,bytes32')
-  const encoded = encodeFunctionData({functionName: 'someFooWithTupleAndLargeNumbers', abi, args: [
-    [
-      '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
-      '0x7f63C82b83B9375c21efbEAd2010F003d7FAD746',
-      '0xE19f640d1FC22FeAf12DbD86b52bEa8Ac7d43E41',
-      0,
-      0,
-      '309485009821345068724781055',
-      '309485009821345068724781055',
-      '309485009821345068724781055',
-      '990000000000000000',
-      '10000000000000000',
-      1708516800,
-      1708905540,
-      0,
-      0,
-      true,
-      '0x0000000000000000000000000000000000000000000000000000000000000000',
+  const abi = parseAbiParameters(
+    '(address,address,address,uint88,uint88,uint88,uint88,uint88,uint64,uint64,uint40,uint40,uint40,uint40,bool,bytes32),uint256,uint256,bytes32',
+  );
+  const encoded = encodeFunctionData({
+    functionName: 'someFooWithTupleAndLargeNumbers',
+    abi,
+    args: [
+      [
+        '0x7b79995e5f793A07Bc00c21412e50Ecae098E7f9',
+        '0x7f63C82b83B9375c21efbEAd2010F003d7FAD746',
+        '0xE19f640d1FC22FeAf12DbD86b52bEa8Ac7d43E41',
+        0,
+        0,
+        '309485009821345068724781055',
+        '309485009821345068724781055',
+        '309485009821345068724781055',
+        '990000000000000000',
+        '10000000000000000',
+        1708516800,
+        1708905540,
+        0,
+        0,
+        true,
+        '0x0000000000000000000000000000000000000000000000000000000000000000',
+      ],
+      '40000000000000000000000000',
+      '1000000000000000000',
+      '0x1111111111111111111111111111111111111111111111111111111111111111',
     ],
-    '40000000000000000000000000',
-    '1000000000000000000',
-    '0x1111111111111111111111111111111111111111111111111111111111111111',
-  ]});
+  });
   expect(
     encodeFunction(
       'someFooWithTupleAndLargeNumbers',

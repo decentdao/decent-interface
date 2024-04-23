@@ -60,7 +60,7 @@ export function WrapToken({ close }: { close: () => void }) {
       address: azoriusGovernance.votesToken.underlyingTokenData.address as Address,
       abi: erc20Abi,
       client: { wallet: walletClient, public: publicClient! },
-  });
+    });
     try {
       const [balance, decimals]: [bigint, number] = await Promise.all([
         baseTokenContract.read.balanceOf([account]),

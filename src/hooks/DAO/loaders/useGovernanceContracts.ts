@@ -73,7 +73,7 @@ export const useGovernanceContracts = () => {
           address: govTokenAddress as Address,
           abi: LockRelease__factory.abi,
           client: { public: publicClient! },
-      });
+        });
 
         const lockedTokenAddress = await possibleLockRelease.read.token().catch(() => {
           // if the underlying token is not an ERC20Wrapper, this will throw an error,

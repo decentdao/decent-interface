@@ -51,13 +51,19 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     const importError = errors?.erc20Token?.tokenImportAddress;
     if (importAddress && !importError && isAddress(importAddress)) {
       const isVotesToken = await checkVotesToken(importAddress);
-      const tokenContract = getContract({address: importAddress, abi: erc20Abi, client: { wallet: walletClient, public: publicClient!}});
+      const tokenContract = getContract({
+        address: importAddress,
+        abi: erc20Abi,
+        client: { wallet: walletClient, public: publicClient! },
+      });
       const name: string = await tokenContract.read.name();
       const symbol: string = await tokenContract.read.symbol();
       const decimals = await tokenContract.read.decimals();
 
       // @dev: this turns "total supply" into the human-readable form (without decimals)
-      const totalSupply: number = Number((await tokenContract.read.totalSupply()) / 10n ** BigInt(decimals));
+      const totalSupply: number = Number(
+        (await tokenContract.read.totalSupply()) / 10n ** BigInt(decimals),
+      );
 
       setFieldValue(
         'erc20Token.tokenSupply',

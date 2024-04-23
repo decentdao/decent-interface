@@ -38,8 +38,15 @@ export default function AzoriusNFTDetail({
       setLoading(true);
       try {
         if (nft.tokenAddress && isAddress(nft.tokenAddress)) {
-          const tokenContract = getContract({address: nft.tokenAddress, abi: erc721Abi, client: { public: publicClient!, wallet: walletClient }});
-          const [name, symbol] = await Promise.all([tokenContract.read.name(), tokenContract.read.symbol()]);
+          const tokenContract = getContract({
+            address: nft.tokenAddress,
+            abi: erc721Abi,
+            client: { public: publicClient!, wallet: walletClient },
+          });
+          const [name, symbol] = await Promise.all([
+            tokenContract.read.name(),
+            tokenContract.read.symbol(),
+          ]);
           setTokenDetails({
             name,
             symbol,
