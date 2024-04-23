@@ -8,9 +8,9 @@ export default function Layout() {
   return (
     <Grid
       templateAreas={{
-        base: `"nav header"
+        base: `"header header"
 "main main"`,
-        md: `"nav header"
+        md: `"header header"
 "nav main"`,
       }}
       gridTemplateColumns="4.25rem 1fr"
@@ -33,12 +33,11 @@ export default function Layout() {
       </GridItem>
       <GridItem area={'header'}>
         <Box
-          as="header"
-          bg="chocolate.900"
-          h="4rem"
+          bg="#26212AD6"
+          backdropFilter="blur(12px)"
           position="fixed"
           zIndex={5}
-          w="calc(100% - 4.25rem)"
+          w="full"
         >
           <Header />
         </Box>
@@ -49,7 +48,6 @@ export default function Layout() {
         display="flex"
         flexDirection="column"
         flexGrow="1"
-        bg="chocolate.900"
         position="fixed"
         w="4.25rem"
         minHeight={{ base: undefined, md: '100vh' }}
