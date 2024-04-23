@@ -17,47 +17,44 @@ export default function ProposalMetadata({
   const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
 
   return (
-    <>
-      <VStack
-        align="left"
-        spacing={4}
-        mt={4}
-      >
-        <InputComponent
-          label={
-            isProposalMode ? t('proposalTitle', { ns: 'proposal' }) : t('proposalTemplateTitle')
-          }
-          helper={
-            isProposalMode
-              ? t('proposalTitleHelper', { ns: 'proposal' })
-              : t('proposalTemplateTitleHelperText')
-          }
-          isRequired
-          value={proposalMetadata.title}
-          onChange={e => setFieldValue('proposalMetadata.title', e.target.value)}
-          disabled={false}
-          testId="metadata.title"
-          maxLength={50}
-        />
-        <TextareaComponent
-          label={
-            isProposalMode
-              ? t('proposalDescription', { ns: 'proposal' })
-              : t('proposalTemplateDescription')
-          }
-          subLabel={t('')}
-          helper={
-            isProposalMode
-              ? t('proposalDescriptionHelper', { ns: 'proposal' })
-              : t('proposalTemplateDescriptionHelperText')
-          }
-          isRequired={false}
-          value={proposalMetadata.description}
-          onChange={e => setFieldValue('proposalMetadata.description', e.target.value)}
-          disabled={false}
-          rows={12}
-        />
-      </VStack>
-    </>
+    <VStack
+      align="left"
+      spacing={8}
+    >
+      <InputComponent
+        label={isProposalMode ? t('proposalTitle', { ns: 'proposal' }) : t('proposalTemplateTitle')}
+        helper={
+          isProposalMode
+            ? t('proposalTitleHelper', { ns: 'proposal' })
+            : t('proposalTemplateTitleHelperText')
+        }
+        placeholder={t('proposalTitlePlaceholder', { ns: 'proposal' })}
+        isRequired
+        value={proposalMetadata.title}
+        onChange={e => setFieldValue('proposalMetadata.title', e.target.value)}
+        disabled={false}
+        testId="metadata.title"
+        maxLength={50}
+      />
+      <TextareaComponent
+        label={
+          isProposalMode
+            ? t('proposalDescription', { ns: 'proposal' })
+            : t('proposalTemplateDescription')
+        }
+        subLabel={t('')}
+        helper={
+          isProposalMode
+            ? t('proposalDescriptionHelper', { ns: 'proposal' })
+            : t('proposalTemplateDescriptionHelperText')
+        }
+        placeholder={t('proposalDescriptionPlaceholder', { ns: 'proposal' })}
+        isRequired={false}
+        value={proposalMetadata.description}
+        onChange={e => setFieldValue('proposalMetadata.description', e.target.value)}
+        disabled={false}
+        rows={12}
+      />
+    </VStack>
   );
 }

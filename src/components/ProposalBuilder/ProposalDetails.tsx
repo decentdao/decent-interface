@@ -1,26 +1,22 @@
-import { Avatar, Box, Divider, HStack, Text, VStack } from '@chakra-ui/react';
+import { Avatar, Box, HStack, Text, VStack } from '@chakra-ui/react';
 import { FormikProps } from 'formik';
 import { Fragment, PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import Markdown from '../ui/proposal/Markdown';
+import Divider from '../ui/utils/Divider';
 import '../../assets/css/Markdown.css';
 
-export function TransactionValueContainer({
-  children,
-  isValue = true,
-}: PropsWithChildren<{ isValue?: boolean }>) {
+export function TransactionValueContainer({ children }: PropsWithChildren<{}>) {
   return (
     <Box
-      bg={isValue ? 'black.900' : 'chocolate.800'}
-      borderRadius="8px"
-      px={4}
-      py={2}
+      bg="neutral-2"
+      borderRadius={4}
+      padding={2}
     >
       <Text
-        color="grayscale.100"
-        fontStyle={isValue ? 'normal' : 'italic'}
+        color="neutral-grayscale-100"
+        fontStyle="code-snippet-helper"
       >
         {children}
       </Text>
@@ -38,23 +34,29 @@ export default function ProposalTemplateDetails({
   return (
     <Box
       rounded="lg"
-      p={4}
-      bg={BACKGROUND_SEMI_TRANSPARENT}
-      width="416px"
+      border="1px solid"
+      borderColor="neutral-3"
+      p={6}
+      maxWidth="400px"
     >
       <VStack
         spacing={3}
         align="left"
       >
-        <Text textStyle="text-lg-mono-medium">{t('preview')}</Text>
-        <Divider color="chocolate.700" />
+        <Text textStyle="display-lg">{t('preview')}</Text>
+        <Divider />
         <HStack justifyContent="space-between">
-          <Text color="grayscale.500">{t('previewTitle')}</Text>
-          <Text textAlign="right">{trimmedTitle}</Text>
+          <Text color="neutral-7">{t('previewTitle')}</Text>
+          <Text
+            textAlign="right"
+            width="66%"
+          >
+            {trimmedTitle}
+          </Text>
         </HStack>
         {mode === ProposalBuilderMode.TEMPLATE && (
           <HStack justifyContent="space-between">
-            <Text color="grayscale.500">{t('previewThumnbail')}</Text>
+            <Text color="neutral-7">{t('previewThumnbail')}</Text>
             {trimmedTitle && (
               <Avatar
                 size="sm"
@@ -68,50 +70,49 @@ export default function ProposalTemplateDetails({
           </HStack>
         )}
         <HStack justifyContent="space-between">
-          <Text color="grayscale.500">{t('proposalTemplateDescription')}</Text>
+          <Text color="neutral-7">{t('proposalTemplateDescription')}</Text>
           <Markdown
             content={proposalMetadata.description}
-            collapsedLines={2}
+            collapsedLines={1}
+            hideCollapsed
           />
         </HStack>
-        <Divider color="chocolate.700" />
+        <Divider />
         {transactions.map((transaction, i) => {
           const valueBiggerThanZero = transaction.ethValue.bigintValue
             ? transaction.ethValue.bigintValue > 0n
             : false;
           return (
             <Fragment key={i}>
-              <Text color="grayscale.500">{t('labelTargetAddress', { ns: 'proposal' })}</Text>
+              <Text color="neutral-7">{t('labelTargetAddress', { ns: 'proposal' })}</Text>
               {transaction.targetAddress && (
                 <TransactionValueContainer>{transaction.targetAddress}</TransactionValueContainer>
               )}
-              <Divider color="chocolate.700" />
-              <Text color="grayscale.500">{t('labelFunctionName', { ns: 'proposal' })}</Text>
+              <Divider />
+              <Text color="neutral-7">{t('labelFunctionName', { ns: 'proposal' })}</Text>
               {transaction.functionName && (
                 <TransactionValueContainer>{transaction.functionName}</TransactionValueContainer>
               )}
               {transaction.parameters.map((parameter, parameterIndex) => (
                 <Fragment key={parameterIndex}>
-                  <Text color="grayscale.500">{t('parameter')}</Text>
+                  <Text color="neutral-7">{t('parameter')}</Text>
                   {parameter.signature && (
                     <TransactionValueContainer>{parameter.signature}</TransactionValueContainer>
                   )}
-                  <Text color="grayscale.500">
-                    {!!parameter.label ? parameter.label : t('value')}
-                  </Text>
+                  <Text color="neutral-7">{!!parameter.label ? parameter.label : t('value')}</Text>
                   {(parameter.label || parameter.value) && (
-                    <TransactionValueContainer isValue={!!parameter.value}>
+                    <TransactionValueContainer>
                       {parameter.value || t('userInput')}
                     </TransactionValueContainer>
                   )}
                 </Fragment>
               ))}
-              <Divider color="chocolate.700" />
+              <Divider />
               <HStack justifyContent="space-between">
-                <Text color="grayscale.500">{t('eth')}</Text>
+                <Text color="neutral-7">{t('eth')}</Text>
                 <Text
                   textAlign="right"
-                  color={valueBiggerThanZero ? 'white' : 'grayscale.500'}
+                  color={valueBiggerThanZero ? 'white-0' : 'neutral-7'}
                   wordBreak="break-all"
                 >
                   {valueBiggerThanZero ? transaction.ethValue.value : 'n/a'}

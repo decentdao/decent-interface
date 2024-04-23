@@ -1,4 +1,5 @@
-import { Flex, Button } from '@chakra-ui/react';
+import { Flex, Button, Icon } from '@chakra-ui/react';
+import { CaretRight, CaretLeft } from '@phosphor-icons/react';
 import { FormikProps } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,26 +35,34 @@ export default function StateButtons(props: StateButtonsProps) {
         w="100%"
         onClick={() => setFormState(CreateProposalState.TRANSACTIONS_FORM)}
         isDisabled={!!proposalMetadataError || !proposalMetadata.title}
+        mt="1.75rem"
       >
         {t('next', { ns: 'common' })}
+        <CaretRight />
       </Button>
     );
   }
   return (
-    <Flex>
+    <Flex
+      mt="1.5rem"
+      gap="1rem"
+    >
       <Button
+        width="100%"
         variant="text"
-        textStyle="text-md-mono-regular"
-        color="gold.500"
-        cursor="pointer"
+        color="lilac-0"
         onClick={() => setFormState(CreateProposalState.METADATA_FORM)}
-        mb={4}
       >
+        <Icon
+          bg="transparent"
+          aria-label="Back"
+          as={CaretLeft}
+          color="lilac-0"
+        />
         {t('back', { ns: 'common' })}
       </Button>
-
       <Button
-        w="100%"
+        width="100%"
         type="submit"
         isDisabled={
           !canUserCreateProposal || !!transactionsError || !!nonceError || pendingTransaction

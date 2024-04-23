@@ -1,5 +1,5 @@
-import { Button, Box, Text, VStack, Alert, AlertTitle } from '@chakra-ui/react';
-import { Info } from '@decent-org/fractal-ui';
+import { Button, Box, VStack, Icon } from '@chakra-ui/react';
+import { Plus } from '@phosphor-icons/react';
 import { FormikProps } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -52,23 +52,11 @@ export default function ProposalTransactionsForm(props: ProposalTransactionsForm
           disabled={pendingTransaction}
           w="fit-content"
           pl={0}
+          color="celery-0"
         >
+          <Icon as={Plus} />
           {t('labelAddTransaction', { ns: 'proposal' })}
         </Button>
-        <Alert
-          status="info"
-          w="fit-full"
-        >
-          <Info boxSize="1.5rem" />
-          <AlertTitle>
-            <Text
-              textStyle="text-lg-mono-medium"
-              whiteSpace="pre-wrap"
-            >
-              {t('transactionExecutionAlertMessage', { ns: 'proposal' })}
-            </Text>
-          </AlertTitle>
-        </Alert>
       </VStack>
     </Box>
   );

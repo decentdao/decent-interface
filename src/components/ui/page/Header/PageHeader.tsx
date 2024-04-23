@@ -1,14 +1,5 @@
-import {
-  Box,
-  Button,
-  ComponentWithAs,
-  Divider,
-  Flex,
-  IconButton,
-  IconProps,
-  Spacer,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Divider, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
+import { Icon } from '@phosphor-icons/react';
 import { ReactNode, useEffect, useState } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
@@ -22,7 +13,7 @@ interface IPageHeader {
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
   buttonVariant?: 'text' | 'secondary';
-  ButtonIcon?: ComponentWithAs<'svg', IconProps>;
+  ButtonIcon?: Icon;
   buttonText?: string;
   buttonClick?: () => void;
   buttonTestId?: string;
@@ -90,12 +81,16 @@ function PageHeader({
         {ButtonIcon && (
           <IconButton
             aria-label="navigate"
-            icon={<ButtonIcon boxSize="1.5rem" />}
+            icon={<ButtonIcon />}
             onClick={buttonClick}
             minWidth="0"
-            px="1rem"
+            padding={1}
+            border="1px solid"
+            borderColor="lilac-0"
+            color="lilac-0"
+            borderRadius={4}
             data-testid={buttonTestId}
-            size="base"
+            size="small"
             variant={buttonVariant}
             isDisabled={isButtonDisabled}
           >
@@ -106,11 +101,11 @@ function PageHeader({
       </Flex>
       <Divider
         marginTop="1rem"
-        borderColor="chocolate.400"
+        borderColor="neutral-3"
       />
       {title && (
         <Text
-          marginTop="2rem"
+          marginTop="1rem"
           textStyle="display-2xl"
           color="white-0"
         >

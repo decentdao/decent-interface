@@ -35,10 +35,16 @@ const MarkdownComponents: Components = {
 interface IMarkdown {
   truncate?: boolean;
   collapsedLines?: number;
+  hideCollapsed?: boolean;
   content: string;
 }
 
-export default function Markdown({ truncate, content, collapsedLines = 6 }: IMarkdown) {
+export default function Markdown({
+  truncate,
+  content,
+  collapsedLines = 6,
+  hideCollapsed = false,
+}: IMarkdown) {
   const { t } = useTranslation('common');
   const [collapsed, setCollapsed] = useState(true);
   const [totalLines, setTotalLines] = useState(0);
@@ -87,22 +93,27 @@ export default function Markdown({ truncate, content, collapsedLines = 6 }: IMar
         noOfLines={collapsed || truncate ? collapsedLines : undefined}
         ref={markdownTextContainerRef}
         maxWidth="100%"
+        width="100%"
       >
-        <ReactMarkdown
-          remarkPlugins={truncate ? [] : [remarkGfm]}
-          urlTransform={handleTransformURI}
-          components={MarkdownComponents}
-          className="markdown-body"
-        >
-          {content}
-        </ReactMarkdown>
+        {!hideCollapsed && !collapsed && (
+          <ReactMarkdown
+            remarkPlugins={truncate ? [] : [remarkGfm]}
+            urlTransform={handleTransformURI}
+            components={MarkdownComponents}
+            className="markdown-body"
+          >
+            {content}
+          </ReactMarkdown>
+        )}
       </Box>
 
-      {totalLines > collapsedLines && !totalLinesError && !truncate && (
+      {((hideCollapsed && content) ||
+        (totalLines > collapsedLines && !totalLinesError && !truncate)) && (
         <Button
-          marginTop={4}
-          paddingLeft={0}
+          py={1}
+          px={3}
           variant="text"
+          color="celery-0"
           onClick={handleToggleCollapse}
         >
           {t(collapsed ? 'showMore' : 'showLess')}

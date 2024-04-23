@@ -1,5 +1,5 @@
-import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
-import { Trash } from '@decent-org/fractal-ui';
+import { Box, Flex, Grid, GridItem } from '@chakra-ui/react';
+import { Trash } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +38,7 @@ export default function ProposalBuilder({
   const navigate = useNavigate();
   const {
     node: { daoAddress, safe },
+    readOnly: { dao },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
@@ -126,6 +127,7 @@ export default function ProposalBuilder({
               />
               <Grid
                 gap={4}
+                marginTop="3rem"
                 templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
                 templateAreas={{
                   base: '"content" "details"',
@@ -140,7 +142,7 @@ export default function ProposalBuilder({
                     <Box
                       marginBottom="2rem"
                       rounded="lg"
-                      p="1rem"
+                      p="1.5rem"
                       bg="neutral-2"
                     >
                       {formState === CreateProposalState.METADATA_FORM ? (
@@ -149,32 +151,30 @@ export default function ProposalBuilder({
                           {...formikProps}
                         />
                       ) : (
-                        <>
-                          <Flex
-                            alignItems="center"
-                            justifyContent="space-between"
-                          >
-                            <Text
-                              textStyle="text-xl-mono-medium"
-                              mb={4}
-                            >
-                              {formikProps.values.proposalMetadata.title}
-                            </Text>
-                            <CustomNonceInput
-                              nonce={formikProps.values.nonce}
-                              onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-                              align="end"
-                            />
-                          </Flex>
-                          <ProposalTransactionsForm
-                            pendingTransaction={pendingCreateTx}
-                            safeNonce={safe?.nonce}
-                            mode={mode}
-                            {...formikProps}
-                          />
-                        </>
+                        <ProposalTransactionsForm
+                          pendingTransaction={pendingCreateTx}
+                          safeNonce={safe?.nonce}
+                          mode={mode}
+                          {...formikProps}
+                        />
                       )}
                     </Box>
+                    {formState === CreateProposalState.TRANSACTIONS_FORM && !dao?.isAzorius && (
+                      <Flex
+                        alignItems="center"
+                        justifyContent="space-between"
+                        marginBottom="2rem"
+                        rounded="lg"
+                        p="1.5rem"
+                        bg="neutral-2"
+                      >
+                        <CustomNonceInput
+                          nonce={formikProps.values.nonce}
+                          onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
+                          align="end"
+                        />
+                      </Flex>
+                    )}
                     <StateButtons
                       {...formikProps}
                       mode={mode}
