@@ -85,7 +85,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     }
 
     if (shouldSetSnapshot) {
-      this.internalTxs = this.internalTxs.concat(this.buildUpdateDAOSnapshotURLTx());
+      this.internalTxs = this.internalTxs.concat(this.buildUpdateDAOSnapshotENSTx());
     }
 
     this.internalTxs = this.internalTxs.concat(
@@ -159,7 +159,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     const multisigTxBuilder = this.txBuilderFactory.createMultiSigTxBuilder();
 
     this.internalTxs.push(this.buildUpdateDAONameTx());
-    this.internalTxs.push(this.buildUpdateDAOSnapshotURLTx());
+    this.internalTxs.push(this.buildUpdateDAOSnapshotENSTx());
 
     // subDAO case, add freeze guard
     if (this.parentAddress) {
@@ -227,11 +227,11 @@ export class DaoTxBuilder extends BaseTxBuilder {
     );
   }
 
-  private buildUpdateDAOSnapshotURLTx(): SafeTransaction {
+  private buildUpdateDAOSnapshotENSTx(): SafeTransaction {
     return buildContractCall(
       this.baseContracts.keyValuePairsContract,
       'updateValues',
-      [['snapshotURL'], [this.daoData.snapshotURL]],
+      [['snapshotENS'], [this.daoData.snapshotENS]],
       0,
       false,
     );

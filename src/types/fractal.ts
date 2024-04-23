@@ -132,13 +132,13 @@ export enum FractalProposalState {
   /**
    * The proposal is pending, meaning it has been created, but voting has not yet begun. This state
    * has nothing to do with Fractal, and is used for Snapshot proposals only, which appear if the
-   * DAO's snapshotURL is set.
+   * DAO's snapshotENS is set.
    */
   PENDING = 'statePending',
 
   /**
    * The proposal is closed, and no longer able to be signed. This state has nothing to do with Fractal,
-   * and is used for Snapshot proposals only, which appear if the DAO's snapshotURL is set.
+   * and is used for Snapshot proposals only, which appear if the DAO's snapshotENS is set.
    */
   CLOSED = 'stateClosed',
 }
@@ -238,7 +238,7 @@ export interface FractalNode {
   nodeHierarchy: NodeHierarchy;
   isModulesLoaded?: boolean;
   isHierarchyLoaded?: boolean;
-  daoSnapshotURL?: string;
+  daoSnapshotENS?: string;
   proposalTemplatesHash?: string;
 }
 
