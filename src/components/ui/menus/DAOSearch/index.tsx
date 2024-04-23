@@ -8,7 +8,7 @@ import {
   useDisclosure,
   useOutsideClick,
 } from '@chakra-ui/react';
-import { Search } from '@decent-org/fractal-ui';
+import { MagnifyingGlass } from '@phosphor-icons/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
@@ -41,7 +41,8 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
       ref={ref}
       width="full"
       maxW={{ base: 'full', md: '31.125rem' }}
-      height="4rem"
+      height="full"
+      position="relative"
     >
       <Popover
         matchWidth
@@ -53,10 +54,10 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             flexDirection="column"
             justifyContent="center"
           >
-            <InputLeftElement mt="3">
-              <Search
-                boxSize="1.5rem"
-                color="grayscale.300"
+            <InputLeftElement>
+              <MagnifyingGlass
+                size="1.5rem"
+                color="var(--chakra-colors-neutral-5)"
               />
             </InputLeftElement>
             <Input
@@ -69,15 +70,17 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
           </InputGroup>
         </PopoverTrigger>
         <Box
-          marginTop="0.5rem"
+          marginTop="1.25rem"
           padding="1rem 1rem"
-          border="none"
-          rounded="lg"
-          shadow="menu-gold"
-          bg="grayscale.black"
+          rounded="0.5rem"
+          bg="neutral-3"
+          boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
+          border="1px solid"
+          borderColor={!!errorMessage ? 'red-1' : 'neutral-3'}
+          position="absolute"
           hidden={!errorMessage && !address}
-          position="relative"
           zIndex="modal"
+          w="full"
         >
           <SearchDisplay
             loading={isLoading}

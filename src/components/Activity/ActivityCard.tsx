@@ -39,6 +39,7 @@ export function ActivityCard({
             mb="1rem"
           >
             {Badge}
+            {/* TODO: replace with <SnapshotIcon /> */}
             {isSnapshot && (
               <Image
                 src="/images/snapshot-icon-fill.svg"

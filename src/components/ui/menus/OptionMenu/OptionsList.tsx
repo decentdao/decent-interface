@@ -1,24 +1,9 @@
 import { Box, Flex, MenuItem, Checkbox, Divider, Text } from '@chakra-ui/react';
 import { ChangeEvent, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { IOption, IOptionsList } from './types';
 
-export interface IOption {
-  optionKey: string;
-  count?: number;
-  onClick: () => void;
-  isSelected?: boolean;
-}
-
-export interface IOptionsList {
-  options: IOption[];
-  closeOnSelect?: boolean;
-  showOptionCount?: boolean;
-  showOptionSelected?: boolean;
-  namespace: string;
-  titleKey?: string;
-}
-
-export default function OptionsList({
+export function OptionsList({
   options,
   showOptionSelected,
   closeOnSelect,
@@ -36,9 +21,9 @@ export default function OptionsList({
     <>
       {titleKey && (
         <Text
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
           marginBottom="0.5rem"
+          textStyle="helper-text-small"
+          color="neutral-7"
         >
           {t(titleKey)}
         </Text>
@@ -51,11 +36,8 @@ export default function OptionsList({
               as={showOptionSelected ? Box : Text}
               onClick={clickListener}
               cursor="pointer"
-              textStyle="text-base-mono-medium"
-              color="grayscale.100"
-              _hover={{ color: 'gold.200', textDecoration: 'none' }}
-              paddingStart="0rem"
-              paddingEnd="0rem"
+              _hover={{ bg: 'neutral-3', textDecoration: 'none' }}
+              p="0.5rem 1rem"
               gap={2}
               closeOnSelect={closeOnSelect}
               data-testid={'optionMenu-' + option.optionKey}
@@ -65,8 +47,6 @@ export default function OptionsList({
                   <Checkbox
                     isChecked={option.isSelected}
                     onChange={clickListener}
-                    colorScheme="gold"
-                    iconColor="black.900"
                     marginEnd="0.5rem"
                   />
                   {t(option.optionKey)}
@@ -74,21 +54,13 @@ export default function OptionsList({
               ) : (
                 t(option.optionKey)
               )}
-              {showOptionCount && (
-                <Text
-                  textStyle="text-base-mono-medium"
-                  color={option.count ? 'grayscale.100' : 'grayscale.500'}
-                  as="span"
-                >
-                  {option.count}
-                </Text>
-              )}
+              {showOptionCount && <Text as="span">{option.count}</Text>}
             </MenuItem>
             {options[options.length - 1] !== option && (
               <Divider
                 marginTop="0.25rem"
                 marginBottom="0.25rem"
-                color="chocolate.700"
+                color="neutral-3"
               />
             )}
           </Box>

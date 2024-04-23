@@ -1,5 +1,5 @@
-import { MenuList } from '@chakra-ui/react';
-import { Connect, Disconnect } from '@decent-org/fractal-ui';
+import { Divider, MenuList } from '@chakra-ui/react';
+import { Link, Plugs } from '@phosphor-icons/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useTranslation } from 'react-i18next';
 import { useDisconnect } from 'wagmi';
@@ -18,29 +18,26 @@ export function MenuItems() {
 
   return (
     <MenuList
-      p="0"
       w="16.25rem"
-      rounded="lg"
-      shadow="menu-gold"
-      mr={['auto', '1rem']}
-      bg="grayscale.black"
-      border="none"
-      sx={{
-        '& > :nth-of-type(1)': {
-          borderTopRadius: 'lg',
-        },
-        '& > :last-child': {
-          borderBottomRadius: 'lg',
-        },
-      }}
+      rounded="0.5rem"
+      boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
+      bg="rgba(38, 33, 42, 0.74)"
+      border="1px solid"
+      borderColor="neutral-3"
     >
-      {user.address && <MenuItemWallet />}
+      {user.address && (
+        <>
+          <MenuItemWallet />
+          <Divider color="neutral-3" />
+        </>
+      )}
       <MenuItemNetwork />
+      <Divider color="neutral-3" />
       {!user.address && (
         <MenuItemButton
           testId="accountMenu-connect"
           label={t('connect')}
-          Icon={Connect}
+          Icon={Link}
           onClick={() => open()}
         />
       )}
@@ -48,7 +45,7 @@ export function MenuItems() {
         <MenuItemButton
           testId="accountMenu-disconnect"
           label={t('disconnect')}
-          Icon={Disconnect}
+          Icon={Plugs}
           onClick={disconnect}
         />
       )}

@@ -1,5 +1,6 @@
-import { VEllipsis } from '@decent-org/fractal-ui';
+import { Button } from '@chakra-ui/react';
 import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
+import { GearFine } from '@phosphor-icons/react';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -36,7 +37,7 @@ interface IManageDAOMenu {
 }
 
 /**
- * The dropdown (vertical ellipses) for managing a DAO.
+ * The dropdown for managing a DAO.
  *
  * It is important to note that you cannot rely on the useFractal()
  * hook to supply information to this menu, as it is used within the
@@ -243,15 +244,17 @@ export function ManageDAOMenu({
 
   return (
     <OptionMenu
-      trigger={
-        <VEllipsis
-          boxSize="1.5rem"
-          mt="0.25rem"
-        />
-      }
+      trigger={<GearFine size="1.25rem" />}
       titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
       options={options}
       namespace="menu"
+      buttonAs={Button}
+      buttonProps={{
+        variant: 'tertiary',
+        borderRadius: '0.25rem',
+        p: '0.5rem',
+        color: 'lilac-0',
+      }}
     />
   );
 }

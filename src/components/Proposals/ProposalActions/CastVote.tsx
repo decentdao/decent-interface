@@ -130,6 +130,7 @@ function Vote({
           <Text>{t('poweredBy')}</Text>
           <Flex>
             <Flex mr={1}>
+              {/* TODO: replace with <SnapshotIcon /> */}
               <Image
                 src="/images/snapshot-icon.svg"
                 alt="Snapshot icon"

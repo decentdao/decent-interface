@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
 import { Icon } from '@phosphor-icons/react';
 import { ReactNode, useEffect, useState } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -6,8 +6,9 @@ import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import AddressCopier from '../../links/AddressCopier';
+import Divider from '../../utils/Divider';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
-interface IPageHeader {
+interface PageHeaderProps {
   title?: string;
   address?: string;
   breadcrumbs: Crumb[];
@@ -36,7 +37,7 @@ function PageHeader({
   buttonTestId,
   isButtonDisabled,
   children,
-}: IPageHeader) {
+}: PageHeaderProps) {
   const {
     node: { daoAddress, daoName },
   } = useFractal();
@@ -99,13 +100,12 @@ function PageHeader({
         )}
         {children}
       </Flex>
-      <Divider
-        marginTop="1rem"
-        borderColor="neutral-3"
-      />
+      <Box marginTop="1rem">
+        <Divider />
+      </Box>
       {title && (
         <Text
-          marginTop="1rem"
+          marginTop="2rem"
           textStyle="display-2xl"
           color="white-0"
         >

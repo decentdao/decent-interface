@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { Proposals } from '@decent-org/fractal-ui';
+import { Scroll } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalProposalState } from '../../../../types';
@@ -51,13 +51,8 @@ export function InfoProposals({}: IDAOGovernance) {
         gap="0.4rem"
         mb="0.5rem"
       >
-        <Proposals />
-        <Text
-          textStyle="text-sm-sans-regular"
-          color="grayscale.100"
-        >
-          {t('titleProposals')}
-        </Text>
+        <Scroll size="1.5rem" />
+        <Text>{t('titleProposals')}</Text>
       </Flex>
 
       <Flex
@@ -65,36 +60,16 @@ export function InfoProposals({}: IDAOGovernance) {
         justifyContent="space-between"
         mb="0.25rem"
       >
-        <Text
-          textStyle="text-base-sans-regular"
-          color="chocolate.200"
-        >
-          {t('titlePending')}
-        </Text>
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-        >
-          {active}
-        </Text>
+        <Text color="neutral-7">{t('titlePending')}</Text>
+        <Text>{active}</Text>
       </Flex>
       <Flex
         alignItems="center"
         justifyContent="space-between"
         mb="0.25rem"
       >
-        <Text
-          textStyle="text-base-sans-regular"
-          color="chocolate.200"
-        >
-          {t('titlePassed')}
-        </Text>
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-        >
-          {passed}
-        </Text>
+        <Text color="neutral-7">{t('titlePassed')}</Text>
+        <Text>{passed}</Text>
       </Flex>
     </Box>
   );
