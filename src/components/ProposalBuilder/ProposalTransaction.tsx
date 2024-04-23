@@ -300,13 +300,17 @@ export default function ProposalTransaction({
                             />
                           </Flex>
                           <Box my="1rem">
-                            <Divider variant='light'/>
+                            <Divider variant="light" />
                           </Box>
                         </Box>
                       </Flex>
                     </AccordionPanel>
                   </Box>
-                  {!isExpanded && <Box mt="0.5rem"><Divider variant="light"/></Box>}
+                  {!isExpanded && (
+                    <Box mt="0.5rem">
+                      <Divider variant="light" />
+                    </Box>
+                  )}
                   {i === transaction.parameters.length - 1 && (
                     <Button
                       onClick={() => {
