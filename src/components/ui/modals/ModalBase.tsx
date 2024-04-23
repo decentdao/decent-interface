@@ -1,5 +1,4 @@
 import {
-  Divider,
   Flex,
   HStack,
   Modal,
@@ -11,6 +10,7 @@ import {
 import { Alert, CloseX } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import Divider from '../utils/Divider';
 
 interface ModuleBaseProps {
   title: string;
@@ -59,7 +59,6 @@ export function ModalBase(props: ModuleBaseProps) {
           />
         </Flex>
         <Divider
-          color="chocolate.700"
           marginBottom="1rem"
         />
         {props.children}

@@ -1,6 +1,5 @@
 import {
   Box,
-  Divider,
   Flex,
   Grid,
   IconButton,
@@ -13,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { DAOCreateMode } from './EstablishEssentials';
@@ -170,9 +170,7 @@ export function Multisig(props: ICreationStepProps) {
         </Box>
       </Flex>
       <Divider
-        color="chocolate.700"
-        mt="2rem"
-        mb="2rem"
+        my="2rem"
       />
       <StepButtons
         {...props}

@@ -1,9 +1,10 @@
-import { Divider, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import { Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { ExtendedSnapshotProposal, FractalProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
+import Divider from '../../ui/utils/Divider';
 import { VotesPercentage } from '../ProposalVotes';
 import SnapshotProposalVoteItem from './SnapshotProposalVoteItem';
 import useTotalVotes from './hooks/useTotalVotes';
@@ -77,9 +78,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
             {t('votesTitle')} ({votes.length})
           </Text>
           <Divider
-            color="chocolate.700"
-            marginTop={4}
-            marginBottom={4}
+            my={4}
           />
           <Flex
             flexWrap="wrap"

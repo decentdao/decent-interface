@@ -1,7 +1,6 @@
 import {
   Alert,
   AlertTitle,
-  Divider,
   Flex,
   InputGroup,
   InputRightElement,
@@ -13,6 +12,7 @@ import { ICreationStepProps, CreatorSteps, VotingStrategyType } from '../../../t
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { DAOCreateMode } from './EstablishEssentials';
@@ -145,7 +145,6 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           </AlertTitle>
         </Alert>
         <Divider
-          color="chocolate.700"
           mb={4}
         />
         <StepButtons

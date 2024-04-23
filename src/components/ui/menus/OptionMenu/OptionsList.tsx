@@ -1,6 +1,7 @@
-import { Box, Flex, MenuItem, Checkbox, Divider, Text } from '@chakra-ui/react';
+import { Box, Flex, MenuItem, Checkbox, Text } from '@chakra-ui/react';
 import { ChangeEvent, MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import Divider from '../../utils/Divider';
 import { IOption, IOptionsList } from './types';
 
 export function OptionsList({
@@ -60,7 +61,6 @@ export function OptionsList({
               <Divider
                 marginTop="0.25rem"
                 marginBottom="0.25rem"
-                color="neutral-3"
               />
             )}
           </Box>

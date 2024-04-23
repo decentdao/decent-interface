@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, GridItem, Input, Divider, Button } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Input, Button } from '@chakra-ui/react';
 import { AddPlus, Minus } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, FormikErrors } from 'formik';
 import { Fragment } from 'react';
@@ -13,6 +13,7 @@ import {
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import AzoriusNFTDetail from './AzoriusNFTDetail';
@@ -172,7 +173,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
               />
               {t('addNFTButton')}
             </Button>
-            <Divider color="chocolate.700" />
+            <Divider />
             <StepButtons
               {...props}
               prevStep={CreatorSteps.ESSENTIALS}
@@ -191,9 +192,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
           >
             <ContentBoxTitle>{t('titleNFTDetails')}</ContentBoxTitle>
             <Divider
-              color="chocolate.700"
-              mt="1rem"
-              mb="1rem"
+              my="1rem"
             />
             {values.erc721Token.nfts.map((nft, i) => {
               const nftError = (
@@ -213,9 +212,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                   />
                   {i < values.erc721Token.nfts.length - 1 && (
                     <Divider
-                      color="chocolate.700"
-                      mt="2rem"
-                      mb="2rem"
+                      my="2rem"
                     />
                   )}
                 </Fragment>

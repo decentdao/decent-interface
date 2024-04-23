@@ -1,4 +1,4 @@
-import { Box, Button, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { useState, useEffect } from 'react';
@@ -15,6 +15,7 @@ import EtherscanLinkERC20 from '../../../ui/links/EtherscanLinkERC20';
 import EtherscanLinkERC721 from '../../../ui/links/EtherscanLinkERC721';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../ui/modals/useFractalModal';
+import Divider from '../../../ui/utils/Divider';
 import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 
 function CoinHeader() {
@@ -22,9 +23,7 @@ function CoinHeader() {
   return (
     <Box>
       <Divider
-        color="chocolate.700"
-        marginTop="1.5rem"
-        marginBottom="1.5rem"
+        my="1.5rem"
       />
       <HStack marginBottom="0.5rem">
         <Text
@@ -148,7 +147,6 @@ function NFTHeader() {
   return (
     <Box>
       <Divider
-        color="chocolate.700"
         marginTop="0.75rem"
         marginBottom="1.5rem"
       />
@@ -293,7 +291,6 @@ export function Assets() {
       {(showStakeButton || showUnstakeButton || showClaimETHButton) && (
         <>
           <Divider
-            color="chocolate.700"
             marginTop="1.5rem"
             marginBottom="1.5rem"
           />

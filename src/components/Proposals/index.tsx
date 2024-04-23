@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Text, Button } from '@chakra-ui/react';
+import { Box, Flex, Text, Button } from '@chakra-ui/react';
 import { ArrowDown } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,7 @@ import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { useFractal } from '../../providers/App/AppProvider';
 import { SortBy, GovernanceType, FractalProposalState } from '../../types';
 import { OptionMenu } from '../ui/menus/OptionMenu';
+import Divider from '../ui/utils/Divider';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
 
@@ -151,7 +152,6 @@ export default function Proposals() {
               </Button>
             </Flex>
             <Divider
-              color="chocolate.700"
               my={4}
             />
           </Box>

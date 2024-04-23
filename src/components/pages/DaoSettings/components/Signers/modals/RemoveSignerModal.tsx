@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   HStack,
   Select,
@@ -18,6 +17,7 @@ import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
+import Divider from '../../../../../ui/utils/Divider';
 import useRemoveSigner from '../hooks/useRemoveSigner';
 
 function RemoveSignerModal({
@@ -92,7 +92,6 @@ function RemoveSignerModal({
       <Divider
         mt={5}
         mb={4}
-        borderColor="chocolate.700"
       />
       <HStack>
         <Text

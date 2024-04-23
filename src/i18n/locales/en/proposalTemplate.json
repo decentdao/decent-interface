@@ -16,6 +16,7 @@
   "labelParameterValue": "Parameter Value",
   "labelParameterValueWithLabel": "Assign a value",
   "labelParameterValueHelper": "Or hardcode a value into the smart contract here.",
+  "helperFunctionParameterValue": "Value of the above parameter to pass into the function above.",
   "proposalTemplateLeaveBlank": "or leave blank to allow for user input",
   "parameter": "Parameter",
   "value": "Value",

@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +16,7 @@ import { formatCoin } from '../../../utils/numberFormats';
 import { couldBeENS } from '../../../utils/url';
 import { AddressInput } from '../forms/EthAddressInput';
 import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
+import Divider from '../utils/Divider';
 
 export function DelegateModal({ close }: { close: Function }) {
   const { t } = useTranslation(['modals', 'common']);
@@ -162,7 +163,6 @@ export function DelegateModal({ close }: { close: Function }) {
           </SimpleGrid>
         )}
       <Divider
-        color="chocolate.700"
         marginBottom="1rem"
       />
       <Formik

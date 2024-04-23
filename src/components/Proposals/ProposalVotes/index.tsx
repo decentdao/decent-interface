@@ -2,7 +2,6 @@ import {
   Box,
   CircularProgress,
   CircularProgressLabel,
-  Divider,
   Flex,
   Grid,
   GridItem,
@@ -20,6 +19,7 @@ import {
 } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
+import Divider from '../../ui/utils/Divider';
 import ProgressBar from '../../ui/utils/ProgressBar';
 import ProposalERC20VoteItem from './ProposalERC20VoteItem';
 import ProposalERC721VoteItem from './ProposalERC721VoteItem';
@@ -162,9 +162,7 @@ function ProposalVotes({
         <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
           <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
           <Divider
-            color="chocolate.700"
-            marginTop={4}
-            marginBottom={4}
+            my={4}
           />
           <Flex
             flexWrap="wrap"

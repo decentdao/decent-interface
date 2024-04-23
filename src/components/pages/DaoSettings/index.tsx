@@ -1,7 +1,8 @@
-import { Divider, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceType } from '../../../types';
 import { BarLoader } from '../../ui/loaders/BarLoader';
+import Divider from '../../ui/utils/Divider';
 import ERC20TokenContainer from './components/ERC20Token';
 import ERC721TokensContainer from './components/ERC721Token';
 import MetadataContainer from './components/Metadata';
@@ -37,13 +38,11 @@ export function Settings() {
         <SignersContainer />
       ) : null}
       <Divider
-        color="chocolate.700"
         mt={10}
         mb={10}
       />
       <ModulesContainer />
       <Divider
-        color="chocolate.700"
         mt={10}
         mb={10}
       />

@@ -1,5 +1,6 @@
-import { Box, Divider, Text } from '@chakra-ui/react';
+import { Box, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
+import Divider from '../utils/Divider';
 import { StyledBox } from './StyledBox';
 
 export function TitledInfoBox({
@@ -28,7 +29,7 @@ export function TitledInfoBox({
           >
             {title}
           </Text>
-          <Divider color="chocolate.700" />
+          <Divider />
         </Box>
       )}
       {children}

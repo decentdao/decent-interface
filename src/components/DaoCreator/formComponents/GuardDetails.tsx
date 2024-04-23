@@ -5,7 +5,6 @@ import {
   Flex,
   Alert,
   AlertTitle,
-  Divider,
 } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useEffect, useState, useCallback } from 'react';
@@ -24,6 +23,7 @@ import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { DAOCreateMode } from './EstablishEssentials';
@@ -259,7 +259,6 @@ function GuardDetails(props: ICreationStepProps) {
           </AlertTitle>
         </Alert>
         <Divider
-          color="chocolate.700"
           mb={4}
         />
         {showCustomNonce && (
@@ -269,7 +268,6 @@ function GuardDetails(props: ICreationStepProps) {
               onChange={handleNonceChange}
             />
             <Divider
-              color="chocolate.700"
               my={4}
             />
           </>

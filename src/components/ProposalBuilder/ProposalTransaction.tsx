@@ -71,6 +71,7 @@ export default function ProposalTransaction({
       <InputComponent
         label={t('labelTargetAddress')}
         helper={t('helperTargetAddress')}
+        placeholder="0x0000"
         isRequired
         disabled={transactionPending}
         subLabel={
@@ -96,9 +97,7 @@ export default function ProposalTransaction({
           />
         </Box>
       )}
-      <Box my="1.5rem">
-        <Divider />
-      </Box>
+        <Divider my="1.5rem"/>
       <Box>
         <Text
           textStyle="display-lg"
@@ -327,11 +326,10 @@ export default function ProposalTransaction({
                                       </Text>
                                     </Box>
                                   </Radio>
-                                ) : (
-                                  t('labelParameterValue', { ns: 'proposalTemplate' })
-                                )
+                                ) : undefined
                               }
                               isRequired={!!parameter.signature && !parameter.label}
+                              helper={isProposalMode ? t('helperFunctionParameterValue', { ns: 'proposalTemplate'}) : undefined}
                               value={parameter.value || ''}
                               placeholder="100"
                               onChange={e =>
@@ -352,17 +350,13 @@ export default function ProposalTransaction({
                               testId={`transactions.${transactionIndex}.parameters.${i}.value`}
                             />
                           </Box>
-                          <Box my="1rem">
-                            <Divider variant="light" />
-                          </Box>
+                            <Divider variant="light" my="1rem"/>
                         </Box>
                       </Flex>
                     </AccordionPanel>
                   </Box>
                   {!isExpanded && (
-                    <Box mt="0.5rem">
-                      <Divider variant="light" />
-                    </Box>
+                      <Divider variant="light" mt="0.5rem"/>
                   )}
                   {i === transaction.parameters.length - 1 && (
                     <Button

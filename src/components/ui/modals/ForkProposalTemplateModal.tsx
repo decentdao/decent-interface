@@ -1,4 +1,4 @@
-import { Box, Button, Divider } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../../types/proposalBuilder';
 import { InputComponent } from '../forms/InputComponent';
+import Divider from '../utils/Divider';
 
 interface IForkProposalTemplateModalProps {
   proposalTemplate: ProposalTemplate;
@@ -119,7 +120,6 @@ export default function ForkProposalTemplateModal({
         }}
       />
       <Divider
-        color="chocolate.700"
         my={4}
       />
       <Button

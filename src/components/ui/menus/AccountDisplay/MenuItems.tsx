@@ -1,9 +1,10 @@
-import { Divider, MenuList } from '@chakra-ui/react';
+import { MenuList } from '@chakra-ui/react';
 import { Link, Plugs } from '@phosphor-icons/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useTranslation } from 'react-i18next';
 import { useDisconnect } from 'wagmi';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import Divider from '../../utils/Divider';
 import { MenuItemButton } from './MenuItemButton';
 import { MenuItemNetwork } from './MenuItemNetwork';
 import { MenuItemWallet } from './MenuItemWallet';
@@ -28,11 +29,11 @@ export function MenuItems() {
       {user.address && (
         <>
           <MenuItemWallet />
-          <Divider color="neutral-3" />
+          <Divider />
         </>
       )}
       <MenuItemNetwork />
-      <Divider color="neutral-3" />
+      <Divider />
       {!user.address && (
         <MenuItemButton
           testId="accountMenu-connect"
