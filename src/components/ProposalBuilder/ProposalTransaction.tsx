@@ -11,6 +11,7 @@ import {
   AccordionPanel,
   AccordionItem,
   AccordionButton,
+  Radio,
 } from '@chakra-ui/react';
 import { Plus, MinusCircle, CaretDown, CaretRight } from '@phosphor-icons/react';
 import { useCallback, useState } from 'react';
@@ -108,6 +109,7 @@ export default function ProposalTransaction({
         <InputComponent
           label={t('labelFunctionName')}
           helper={t('helperFunctionName')}
+          placeholder="functionName"
           isRequired={false}
           value={transaction.functionName}
           onChange={e =>
@@ -201,7 +203,8 @@ export default function ProposalTransaction({
                           <InputComponent
                             label={t('labelFunctionParameter', { ns: 'proposalTemplate' })}
                             helper={t('helperFunctionParameter', { ns: 'proposalTemplate' })}
-                            isRequired
+                            placeholder="parameterType parameterName"
+                            isRequired={!!parameter.value || !!parameter.label}
                             value={parameter.signature}
                             onChange={e =>
                               setFieldValue(
@@ -222,18 +225,55 @@ export default function ProposalTransaction({
                             }
                             testId={`transactions.${transactionIndex}.parameters.${i}.signature`}
                           />
-                          <Flex
-                            gap={4}
-                            alignItems="center"
-                            mt={4}
-                          >
+                          <Box mt={4}>
+                            <Text
+                              textStyle="body-base"
+                              mb="1.5rem"
+                            >
+                              {t('labelParameterValue', { ns: 'proposalTemplate' })}
+                            </Text>
                             {!isProposalMode && (
-                              <>
+                              <Box my="1rem">
                                 <InputComponent
-                                  label={t('labelParameterLabel', { ns: 'proposalTemplate' })}
-                                  helper=""
-                                  isRequired={!parameter.value}
+                                  label={
+                                    <Radio
+                                      // TODO: Probably we wanna focus proper input
+                                      onChange={event => {
+                                        event.preventDefault();
+                                      }}
+                                      checked={!!parameter.label}
+                                      disabled={!parameter.signature || !!parameter.value}
+                                      isDisabled={!parameter.signature || !!parameter.value}
+                                      bg="black-0"
+                                      color="lilac--3"
+                                      size="md"
+                                      _disabled={{ bg: 'neutral-6', color: 'neutral-5' }}
+                                      _hover={{ bg: 'black-0', color: 'lilac--4' }}
+                                      _checked={{
+                                        bg: 'black-0',
+                                        color: 'lilac--3',
+                                        borderWidth: '4px',
+                                      }}
+                                    >
+                                      <Box ml="1rem">
+                                        <Text>
+                                          {t('labelParameterLabel', {
+                                            ns: 'proposalTemplate',
+                                          })}
+                                        </Text>
+                                        <Text color="neutral-7">
+                                          {t('labelParameterLabelHelper', {
+                                            ns: 'proposalTemplate',
+                                          })}
+                                        </Text>
+                                      </Box>
+                                    </Radio>
+                                  }
+                                  isRequired={!!parameter.signature && !parameter.value}
                                   value={parameter.label || ''}
+                                  placeholder={t('parameterLabelPlaceholder', {
+                                    ns: 'proposalTemplate',
+                                  })}
                                   onChange={e =>
                                     setFieldValue(
                                       `transactions.${transactionIndex}.parameters.${i}.label`,
@@ -249,23 +289,51 @@ export default function ProposalTransaction({
                                       </Text>
                                     </HStack>
                                   }
-                                  gridContainerProps={{
-                                    display: 'inline-flex',
-                                    flexWrap: 'wrap',
-                                    width: '30%',
-                                  }}
-                                  inputContainerProps={{
-                                    width: '100%',
-                                  }}
                                 />
-                                <Text>{t('or', { ns: 'common' })}</Text>
-                              </>
+                              </Box>
                             )}
                             <InputComponent
-                              label={t('labelParameterValue', { ns: 'proposalTemplate' })}
-                              helper=""
-                              isRequired={!parameter.label}
+                              label={
+                                !isProposalMode ? (
+                                  <Radio
+                                    // TODO: Probably we wanna focus proper input
+                                    onChange={event => {
+                                      event.preventDefault();
+                                    }}
+                                    checked={!!parameter.value}
+                                    disabled={!parameter.signature || !!parameter.label}
+                                    isDisabled={!parameter.signature || !!parameter.label}
+                                    bg="black-0"
+                                    color="lilac--3"
+                                    size="md"
+                                    _disabled={{ bg: 'neutral-6', color: 'neutral-5' }}
+                                    _hover={{ bg: 'black-0', color: 'lilac--4' }}
+                                    _checked={{
+                                      bg: 'black-0',
+                                      color: 'lilac--3',
+                                      borderWidth: '4px',
+                                    }}
+                                  >
+                                    <Box ml="1rem">
+                                      <Text>
+                                        {t('labelParameterValueWithLabel', {
+                                          ns: 'proposalTemplate',
+                                        })}
+                                      </Text>
+                                      <Text color="neutral-7">
+                                        {t('labelParameterLabelHelper', {
+                                          ns: 'proposalTemplate',
+                                        })}
+                                      </Text>
+                                    </Box>
+                                  </Radio>
+                                ) : (
+                                  t('labelParameterValue', { ns: 'proposalTemplate' })
+                                )
+                              }
+                              isRequired={!!parameter.signature && !parameter.label}
                               value={parameter.value || ''}
+                              placeholder="100"
                               onChange={e =>
                                 setFieldValue(
                                   `transactions.${transactionIndex}.parameters.${i}.value`,
@@ -277,28 +345,13 @@ export default function ProposalTransaction({
                                 <HStack wordBreak="break-all">
                                   <Text>
                                     {t('example', { ns: 'common' })}:{' '}
-                                    <ExampleLabel bg="neutral-4">value</ExampleLabel>
-                                    {!isProposalMode && (
-                                      <Text as="span">
-                                        {t('proposalTemplateLeaveBlank', {
-                                          ns: 'proposalTemplate',
-                                        })}
-                                      </Text>
-                                    )}
+                                    <ExampleLabel bg="neutral-4">1.2</ExampleLabel>
                                   </Text>
                                 </HStack>
                               }
                               testId={`transactions.${transactionIndex}.parameters.${i}.value`}
-                              gridContainerProps={{
-                                display: 'inline-flex',
-                                flexWrap: 'wrap',
-                                flex: '1',
-                              }}
-                              inputContainerProps={{
-                                width: '100%',
-                              }}
                             />
-                          </Flex>
+                          </Box>
                           <Box my="1rem">
                             <Divider variant="light" />
                           </Box>
@@ -323,8 +376,14 @@ export default function ProposalTransaction({
                       }}
                       variant="text"
                       color="celery-0"
-                      pl={0}
+                      padding="0.25rem 0.75rem"
                       mt={1}
+                      gap="0.25rem"
+                      borderRadius="625rem"
+                      borderColor="transparent"
+                      borderWidth="1px"
+                      _hover={{ bg: 'celery--6', borderColor: 'celery--6' }}
+                      _active={{ bg: 'celery--6', borderWidth: '1px', borderColor: 'celery--5' }}
                     >
                       <Icon as={Plus} />
                       {t('addParameter')}

@@ -105,6 +105,8 @@
   "badQueryParam2": "",
   "showMore": "Show More",
   "showLess": "Show Less",
+  "show": "Show",
+  "hide": "Hide",
   "poweredBy": "Powered by",
   "goTo": "Go to"
 }
