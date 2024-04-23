@@ -1,5 +1,5 @@
-import { MenuItem, Text } from '@chakra-ui/react';
-import { StarGoldSolid } from '@decent-org/fractal-ui';
+import { Box, Button, MenuItem } from '@chakra-ui/react';
+import { Star } from '@phosphor-icons/react';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
@@ -20,33 +20,26 @@ export function Favorite({ network, address }: IFavorite) {
   };
 
   return (
-    <MenuItem
-      display="flex"
-      alignItems="center"
-      gap="2"
-      my={1}
-      width="full"
-      px="0px"
-      onClick={onClickNav}
-      data-testid={'favorites-' + daoRegistryName}
-    >
-      <StarGoldSolid
-        color="gold.500"
-        _hover={{
-          color: 'gold.500-hover',
-        }}
-      />
-      <Text
-        maxWidth="9rem"
+    <Box bg="neutral-3">
+      <MenuItem
+        as={Button}
+        variant="tertiary"
+        w="full"
+        h="3rem"
+        onClick={onClickNav}
         noOfLines={1}
-        color="grayscale.100"
-        textStyle="text-base-sans-medium"
-        _hover={{
-          color: 'gold.500-hover',
-        }}
+        data-testid={'favorites-' + daoRegistryName}
+        display="flex"
+        alignItems="center"
+        justifyContent="flex-start"
+        gap={2}
       >
+        <Star
+          size="1.5rem"
+          weight="fill"
+        />
         {daoRegistryName}
-      </Text>
-    </MenuItem>
+      </MenuItem>
+    </Box>
   );
 }

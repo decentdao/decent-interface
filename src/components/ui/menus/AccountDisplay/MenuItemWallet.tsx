@@ -1,11 +1,10 @@
-import { Box, Flex, MenuItem, Text } from '@chakra-ui/react';
-import { Copy } from '@decent-org/fractal-ui';
+import { Box, Button, Flex, MenuItem, Text } from '@chakra-ui/react';
+import { CopySimple } from '@phosphor-icons/react/dist/ssr';
 import { useTranslation } from 'react-i18next';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import EtherscanLinkAddress from '../../links/EtherscanLinkAddress';
 import Avatar from '../../page/Header/Avatar';
 
 /**
@@ -28,58 +27,46 @@ export function MenuItemWallet() {
   return (
     <Box
       data-testid="accountMenu-wallet"
-      bg="black.900"
       cursor="default"
-      p="1rem 1.5rem"
-      borderBottomRadius="lg"
+      pt="0.5rem"
+      bg="neutral-3"
     >
-      <Flex
-        alignItems="center"
-        justifyContent="space-between"
-        w="full"
+      <Text
+        px="0.5rem"
+        textStyle="helper-text-small"
+        color="neutral-7"
       >
-        <Flex
-          direction="column"
-          gap="2"
-        >
-          <Text
-            textStyle="text-sm-sans-regular"
-            color="chocolate.100"
-          >
-            {t('wallet')}
-          </Text>
-          <MenuItem
-            padding={0}
-            alignItems="center"
-            gap="2"
-            aria-label="copy address"
-            data-testid="walletmenu-copyAddress"
-            onClick={() => copyTextToClipboard(account)}
-            cursor="pointer"
-          >
-            <Text
-              maxWidth="8rem"
-              whiteSpace="nowrap"
-              overflowX="hidden"
-              textOverflow="ellipsis"
-              data-testid="walletMenu-accountDisplay"
-              textStyle="text-base-mono-medium"
-              color="grayscale.100"
-            >
-              {accountDisplayName}
-            </Text>
-            <Copy boxSize="1.5rem" />
-          </MenuItem>
-        </Flex>
-        <EtherscanLinkAddress address={account}>
+        {t('wallet')}
+      </Text>
+      <MenuItem
+        as={Button}
+        variant="tertiary"
+        alignItems="center"
+        aria-label="copy address"
+        data-testid="walletmenu-copyAddress"
+        onClick={() => copyTextToClipboard(account)}
+        whiteSpace="pre-wrap"
+        wordBreak="break-all"
+        h="3rem"
+        textOverflow="ellipsis"
+        rightIcon={
           <Avatar
             size="lg"
             address={account}
             url={avatarURL}
             data-testid="walletMenu-avatar"
           />
-        </EtherscanLinkAddress>
-      </Flex>
+        }
+      >
+        <Flex
+          alignItems="center"
+          gap={2}
+          w="full"
+        >
+          {accountDisplayName}
+          <CopySimple size="1.5rem" />
+        </Flex>
+      </MenuItem>
     </Box>
   );
 }

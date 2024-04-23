@@ -11,36 +11,34 @@ export function FavoritesList() {
   const { t } = useTranslation('dashboard');
   return (
     <MenuList
-      rounded="lg"
-      shadow="menu-gold"
-      mr={['auto', '1rem']}
-      bg="grayscale.black"
-      border="none"
-      padding="0rem"
+      rounded="0.5rem"
+      boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
+      bg="rgba(38, 33, 42, 0.74)"
+      border="1px solid"
+      borderColor="neutral-3"
     >
       <Box>
         {favoritesList.length === 0 ? (
           <Box p="1rem 1rem">{t('emptyFavorites')}</Box>
         ) : (
           <Box
-            p="0.5rem 1rem"
             maxHeight="20rem"
             overflowY="scroll"
             sx={{
               '&::-webkit-scrollbar': {
-                background: 'transparent',
+                background: 'neutral-3',
                 width: '0.5rem',
                 height: '0.5rem',
               },
               '&::-webkit-scrollbar-thumb': {
                 border: 'none',
                 boxShadow: 'none',
-                background: 'grayscale.500',
+                background: 'neutral-4',
                 borderRadius: '0.5rem',
                 minHeight: '2.5rem',
               },
               '&::-webkit-scrollbar-thumb:hover': {
-                backgroundColor: 'grayscale.300',
+                backgroundColor: 'neutral-4',
               },
             }}
           >
