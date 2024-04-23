@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { Address } from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { GnosisSafeL2__factory } from '../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { getRandomBytes } from '../helpers';
@@ -105,13 +106,13 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.daoData as SubDAO,
       this.safeContract!,
       this.saltNum,
-      this.parentAddress!,
-      this.parentTokenAddress,
+      this.parentAddress! as Address,
+      this.parentTokenAddress as Address,
       this.azoriusContracts,
-      azoriusAddress,
-      strategyAddress,
+      azoriusAddress as Address,
+      strategyAddress as Address,
       parentStrategyType,
-      parentStrategyAddress,
+      parentStrategyAddress as Address,
     );
   }
 
@@ -130,9 +131,9 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.azoriusContracts!,
       this.daoData as AzoriusERC20DAO,
       this.safeContract!,
-      this.predictedSafeAddress!,
-      this.parentAddress,
-      this.parentTokenAddress,
+      this.predictedSafeAddress! as Address,
+      this.parentAddress as Address,
+      this.parentTokenAddress as Address,
     );
 
     await azoriusTxBuilder.init();

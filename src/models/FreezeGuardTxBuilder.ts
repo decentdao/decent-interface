@@ -9,8 +9,15 @@ import {
   ERC20FreezeVoting,
   ERC721FreezeVoting,
 } from '@fractal-framework/fractal-contracts';
-import { ethers } from 'ethers';
-import { getCreate2Address, keccak256, encodePacked, Address, Hash } from 'viem';
+import {
+  getCreate2Address,
+  keccak256,
+  encodePacked,
+  Address,
+  Hash,
+  encodeAbiParameters,
+  parseAbiParameters,
+} from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../helpers';
 import {
@@ -116,18 +123,15 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       this.freezeVotingType.connect(this.freezeVotingAddress, this.signerOrProvider),
       'setUp',
       [
-        ethers.utils.defaultAbiCoder.encode(
-          ['address', 'uint256', 'uint32', 'uint32', 'address'],
-          [
-            this.parentAddress, // Owner -- Parent DAO
-            subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
-            subDaoData.freezeProposalPeriod, // FreezeProposalPeriod
-            subDaoData.freezePeriod, // FreezePeriod
-            this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
-              ? this.parentStrategyAddress
-              : this.parentTokenAddress ?? this.parentAddress, // Parent Votes Token or Parent Safe Address
-          ],
-        ),
+        encodeAbiParameters(parseAbiParameters('address, uint256, uint32, uint32, address'), [
+          this.parentAddress as Address, // Owner -- Parent DAO
+          subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
+          Number(subDaoData.freezeProposalPeriod), // FreezeProposalPeriod
+          Number(subDaoData.freezePeriod), // FreezePeriod
+          (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
+            ? this.parentStrategyAddress
+            : this.parentTokenAddress ?? this.parentAddress) as Address, // Parent Votes Token or Parent Safe Address
+        ]),
       ],
       0,
       false,
@@ -216,16 +220,13 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.freezeGuardCallData = MultisigFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
       [
-        ethers.utils.defaultAbiCoder.encode(
-          ['uint256', 'uint256', 'address', 'address', 'address'],
-          [
-            subDaoData.timelockPeriod, // Timelock Period
-            subDaoData.executionPeriod, // Execution Period
-            this.parentAddress, // Owner -- Parent DAO
-            this.freezeVotingAddress, // Freeze Voting
-            this.safeContract.address, // Safe
-          ],
-        ),
+        encodeAbiParameters(parseAbiParameters('uint256, uint256, address, address, address'), [
+          subDaoData.timelockPeriod, // Timelock Period
+          subDaoData.executionPeriod, // Execution Period
+          this.parentAddress as Address, // Owner -- Parent DAO
+          this.freezeVotingAddress as Address, // Freeze Voting
+          this.safeContract.address as Address, // Safe
+        ]),
       ],
     ) as Hash;
   }
@@ -236,16 +237,13 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.freezeGuardCallData = AzoriusFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
       [
-        ethers.utils.defaultAbiCoder.encode(
-          ['address', 'address', 'address', 'address', 'uint256'],
-          [
-            this.parentAddress, // Owner -- Parent DAO
-            this.freezeVotingAddress, // Freeze Voting
-            this.strategyAddress, // Base Strategy
-            this.azoriusAddress, // Azorius
-            subDaoData.executionPeriod, // Execution Period
-          ],
-        ),
+        encodeAbiParameters(parseAbiParameters('address, address, address, address, uint256'), [
+          this.parentAddress as Address, // Owner -- Parent DAO
+          this.freezeVotingAddress as Address, // Freeze Voting
+          this.strategyAddress as Address, // Base Strategy
+          this.azoriusAddress as Address, // Azorius
+          subDaoData.executionPeriod, // Execution Period
+        ]),
       ],
     ) as Hash;
   }

@@ -1,7 +1,6 @@
 import { InputElementProps, FormControlOptions, Input, InputProps } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
+import { Address } from 'viem';
 import useAddress from '../../../hooks/utils/useAddress';
 
 /**
@@ -12,8 +11,8 @@ export interface EthAddressInputProps
   extends Omit<InputElementProps, 'onChange' | 'placeholder' | 'type'>,
     FormControlOptions {
   value?: string;
-  setValue?: Dispatch<SetStateAction<string>>;
-  onAddressChange: (address: string, isValid: boolean) => void;
+  setValue?: Dispatch<SetStateAction<Address>>;
+  onAddressChange: (address: Address | undefined, isValid: boolean) => void;
 }
 
 /**
@@ -30,10 +29,12 @@ export function EthAddressInput({
   const [valInternal, setValInternal] = useState<string>('');
   const [actualInputValue, setActualInputValue] =
     value && setValue ? [value, setValue] : [valInternal, setValInternal];
-  const { address, isAddressLoading, isValidAddress } = useAddress(actualInputValue.toLowerCase());
+  const { address, isAddressLoading, isValidAddress } = useAddress(
+    actualInputValue.toLowerCase() as Address,
+  );
 
   useEffect(() => {
-    onAddressChange(address || '', isValidAddress || false);
+    onAddressChange(address, isValidAddress || false);
   }, [address, actualInputValue, isValidAddress, onAddressChange]);
 
   return (
@@ -50,7 +51,7 @@ export function EthAddressInput({
         if (val.trim().includes(' ') || val.indexOf('.') !== val.lastIndexOf('.')) {
           return;
         }
-        setActualInputValue(event.target.value.trim());
+        setActualInputValue(event.target.value.trim() as Address);
       }}
       {...rest}
     />

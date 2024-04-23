@@ -50,7 +50,7 @@ export function useFetchNodes(address?: string) {
             return guardOwner;
           }
         } else {
-          const modules = await lookupModules(safeInfo.modules as Address[] || []);
+          const modules = await lookupModules((safeInfo.modules as Address[]) || []);
           if (!modules) return;
           const azoriusModule = getAzoriusModuleFromModules(modules);
           if (

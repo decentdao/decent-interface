@@ -8,7 +8,6 @@ import {
   VotesERC20,
   VotesERC20__factory,
 } from '@fractal-framework/fractal-contracts';
-import { defaultAbiCoder } from 'ethers/lib/utils';
 import {
   getCreate2Address,
   Address,
@@ -265,7 +264,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   public setEncodedSetupERC20WrapperData() {
     const { tokenImportAddress } = this.daoData as AzoriusERC20DAO;
 
-    const encodedInitTokenData = defaultAbiCoder.encode(['address'], [tokenImportAddress!]);
+    const encodedInitTokenData = encodeAbiParameters(parseAbiParameters('address'), [
+      tokenImportAddress! as Address,
+    ]);
 
     this.encodedSetupERC20WrapperData =
       this.azoriusContracts!.votesERC20WrapperMasterCopyContract.interface.encodeFunctionData(
@@ -325,12 +326,12 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const [tokenAllocationsOwners, tokenAllocationsValues] =
       this.calculateTokenAllocations(azoriusGovernanceDaoData);
 
-    const encodedInitTokenData = defaultAbiCoder.encode(
-      ['string', 'string', 'address[]', 'uint256[]'],
+    const encodedInitTokenData = encodeAbiParameters(
+      parseAbiParameters('string, string, address[], uint256[]'),
       [
         azoriusGovernanceDaoData.tokenName,
         azoriusGovernanceDaoData.tokenSymbol,
-        tokenAllocationsOwners,
+        tokenAllocationsOwners as Address[],
         tokenAllocationsValues,
       ],
     );
@@ -357,12 +358,12 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   private setEncodedSetupTokenClaimData() {
     const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
-    const encodedInitTokenData = defaultAbiCoder.encode(
-      ['address', 'address', 'address', 'uint256'],
+    const encodedInitTokenData = encodeAbiParameters(
+      parseAbiParameters('address, address, address, uint256'),
       [
-        this.safeContract.address,
-        this.parentTokenAddress,
-        this.predictedTokenAddress,
+        this.safeContract.address as Address,
+        this.parentTokenAddress as Address,
+        this.predictedTokenAddress as Address,
         azoriusGovernanceDaoData.parentAllocationAmount,
       ],
     );
@@ -392,13 +393,13 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       const quorumDenominator = (
         await this.azoriusContracts!.linearVotingMasterCopyContract.QUORUM_DENOMINATOR()
       ).toBigInt();
-      const encodedStrategyInitParams = defaultAbiCoder.encode(
-        ['address', 'address', 'address', 'uint32', 'uint256', 'uint256', 'uint256'],
+      const encodedStrategyInitParams = encodeAbiParameters(
+        parseAbiParameters('address, address, address, uint32, uint256, uint256, uint256'),
         [
-          this.safeContract.address, // owner
-          this.predictedTokenAddress, // governance token
+          this.safeContract.address as Address, // owner
+          this.predictedTokenAddress as Address, // governance token
           '0x0000000000000000000000000000000000000001', // Azorius module
-          azoriusGovernanceDaoData.votingPeriod,
+          Number(azoriusGovernanceDaoData.votingPeriod),
           1n, // proposer weight, how much is needed to create a proposal.
           (azoriusGovernanceDaoData.quorumPercentage * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
           500000n, // basis numerator, denominator is 1,000,000, so basis percentage is 50% (simple majority)

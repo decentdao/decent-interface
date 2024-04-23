@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAddress, isAddress } from 'viem';
+import { Address, getAddress, isAddress } from 'viem';
 import { supportsENS } from '../../helpers';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -7,10 +7,10 @@ import { couldBeENS } from '../../utils/url';
 import { CacheKeys, CacheExpiry } from './cache/cacheDefaults';
 import { useLocalStorage } from './cache/useLocalStorage';
 
-const useAddress = (addressInput: string | undefined) => {
+const useAddress = (addressInput: Address | undefined) => {
   const provider = useEthersProvider();
 
-  const [address, setAddress] = useState<string>();
+  const [address, setAddress] = useState<Address>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
   const { setValue, getValue } = useLocalStorage();

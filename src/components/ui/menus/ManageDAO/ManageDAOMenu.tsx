@@ -96,7 +96,9 @@ export function ManageDAOMenu({
                 0,
               )
             )[1];
-            const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingContractAddress as Address);
+            const masterCopyData = await getZodiacModuleProxyMasterCopyData(
+              votingContractAddress as Address,
+            );
 
             if (masterCopyData.isOzLinearVoting) {
               result = GovernanceType.AZORIUS_ERC20;

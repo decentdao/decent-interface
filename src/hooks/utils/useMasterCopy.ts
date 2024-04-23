@@ -49,10 +49,7 @@ export function useMasterCopy() {
   );
 
   const getMasterCopyAddress = useCallback(
-    async function (
-      contract: Contract,
-      proxyAddress: Address,
-    ): Promise<[Address, string | null]> {
+    async function (contract: Contract, proxyAddress: Address): Promise<[Address, string | null]> {
       const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
       if (cachedValue) return [cachedValue, null] as const;
 

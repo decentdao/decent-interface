@@ -1,7 +1,7 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
-import { ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, encodeAbiParameters, parseAbiParameters } from 'viem';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
@@ -14,7 +14,7 @@ const useSendAssets = ({
 }: {
   transferAmount: bigint;
   asset: SafeBalanceUsdResponse;
-  destinationAddress: string;
+  destinationAddress: Address;
   nonce: number | undefined;
 }) => {
   const { submitProposal } = useSubmitProposal();
@@ -30,9 +30,8 @@ const useSendAssets = ({
       asset?.token?.symbol,
     );
 
-    const funcSignature = 'function transfer(address to, uint256 value)';
     const calldatas = [
-      new ethers.utils.Interface([funcSignature]).encodeFunctionData('transfer', [
+      encodeAbiParameters(parseAbiParameters(['address, uint256']), [
         destinationAddress,
         transferAmount,
       ]),

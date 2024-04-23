@@ -1,10 +1,10 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Azorius } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { Signer, utils } from 'ethers';
+import { Signer } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { isAddress, getAddress } from 'viem';
+import { isAddress, getAddress, Address, encodeAbiParameters, parseAbiParameters } from 'viem';
 import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
@@ -124,7 +124,7 @@ export default function useSubmitProposal() {
           const { Hash } = await ipfsClient.add(JSON.stringify(metaData));
           proposalData.targets.push(ADDRESS_MULTISIG_METADATA);
           proposalData.values.push(0n);
-          proposalData.calldatas.push(new utils.AbiCoder().encode(['string'], [Hash]));
+          proposalData.calldatas.push(encodeAbiParameters(parseAbiParameters(['string']), [Hash]));
         }
 
         let to, value, data, operation;
@@ -277,7 +277,7 @@ export default function useSubmitProposal() {
       if (safeAddress && isAddress(safeAddress)) {
         // Submitting proposal to any DAO out of global context
         const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
-        const modules = await lookupModules(safeInfo.modules);
+        const modules = await lookupModules(safeInfo.modules as Address[]);
         const azoriusModule = getAzoriusModuleFromModules(modules);
         if (!azoriusModule) {
           submitMultisigProposal({
