@@ -11,29 +11,36 @@ import { ArrowDown, ArrowRight, Minus } from '@decent-org/fractal-ui';
 import { FormikErrors, FormikProps } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BigIntValuePair, CreateProposalForm, CreateProposalTransaction } from '../../types';
-import Transaction from './Transaction';
+import { BigIntValuePair } from '../../types';
+import {
+  CreateProposalForm,
+  CreateProposalTransaction,
+  ProposalBuilderMode,
+} from '../../types/proposalBuilder';
+import ProposalTransaction from './ProposalTransaction';
 
-interface TransactionsProps extends FormikProps<CreateProposalForm> {
-  isVisible: boolean;
+interface ProposalTransactionsProps extends FormikProps<CreateProposalForm> {
   pendingTransaction: boolean;
   expandedIndecies: number[];
   setExpandedIndecies: Dispatch<SetStateAction<number[]>>;
+  mode: ProposalBuilderMode;
 }
-function Transactions({
+export default function ProposalTransactions({
   values: { transactions },
   errors,
   setFieldValue,
   pendingTransaction,
   expandedIndecies,
   setExpandedIndecies,
-}: TransactionsProps) {
-  const { t } = useTranslation(['proposal', 'common']);
+  mode,
+}: ProposalTransactionsProps) {
+  const { t } = useTranslation(['proposal', 'proposalTemplate', 'common']);
 
   const removeTransaction = (transactionIndex: number) => {
-    const transactionsArr = [...transactions];
-    transactionsArr.splice(transactionIndex, 1);
-    setFieldValue('transactions', transactionsArr);
+    setFieldValue(
+      'transactions',
+      transactions.filter((tx, i) => i !== transactionIndex),
+    );
   };
   return (
     <Accordion
@@ -45,7 +52,7 @@ function Transactions({
           | FormikErrors<CreateProposalTransaction<BigIntValuePair>>
           | undefined;
         const txAddressError = txErrors?.targetAddress;
-        const txFunctionError = txErrors?.encodedFunctionData;
+        const txFunctionError = txErrors?.functionName;
 
         return (
           <AccordionItem
@@ -90,20 +97,21 @@ function Transactions({
                       _hover={{ color: 'gold.500' }}
                       _disabled={{ opacity: 0.4, cursor: 'default' }}
                       sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
-                      isDisabled={pendingTransaction}
+                      disabled={pendingTransaction}
                     />
                   ) : (
                     <Box h="2.25rem" />
                   )}
                 </HStack>
                 <AccordionPanel p={0}>
-                  <Transaction
-                    transaction={transactions[index]}
-                    txAddressError={txAddressError}
+                  <ProposalTransaction
+                    transaction={transactions[index] as CreateProposalTransaction}
                     txFunctionError={txFunctionError}
+                    txAddressError={txAddressError}
                     transactionIndex={index}
                     setFieldValue={setFieldValue}
                     transactionPending={pendingTransaction}
+                    mode={mode}
                   />
                 </AccordionPanel>
               </Box>
@@ -114,5 +122,3 @@ function Transactions({
     </Accordion>
   );
 }
-
-export default Transactions;

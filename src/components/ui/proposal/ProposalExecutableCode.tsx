@@ -11,8 +11,8 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
-import { utils } from 'ethers';
 import { useTranslation } from 'react-i18next';
+import { isAddress } from 'viem';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { DecodedTransaction, FractalProposal } from '../../../types';
 import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
@@ -38,7 +38,7 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
         ml={{ base: 0, md: '0.5rem' }}
         maxW={{ base: '100%', md: '70%' }}
       >
-        {utils.isAddress(value) ? (
+        {isAddress(value) ? (
           <EtherscanLinkAddress address={value}>{value}</EtherscanLinkAddress>
         ) : (
           value

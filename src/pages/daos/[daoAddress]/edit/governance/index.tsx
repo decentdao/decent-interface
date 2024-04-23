@@ -21,7 +21,7 @@ import {
 
 export default function ModifyGovernancePage() {
   const {
-    node: { daoAddress, safe, daoName, daoSnapshotURL },
+    node: { daoAddress, safe, daoName, daoSnapshotENS },
     governance: { type },
     readOnly: { user },
   } = useFractal();
@@ -36,7 +36,7 @@ export default function ModifyGovernancePage() {
     deployAzorius(
       daoData as AzoriusERC20DAO | AzoriusERC721DAO,
       !daoName || createAccountSubstring(daoAddress!) === daoName,
-      !daoSnapshotURL && !!daoData.snapshotURL,
+      !daoSnapshotENS && !!daoData.snapshotENS,
     );
   };
 

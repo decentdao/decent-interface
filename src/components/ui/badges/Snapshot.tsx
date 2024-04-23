@@ -3,7 +3,7 @@ import { Button, ButtonProps, Icon, Link } from '@chakra-ui/react';
 import { t } from 'i18next';
 
 interface Props extends ButtonProps {
-  snapshotURL: string;
+  snapshotENS: string;
 }
 
 const SnapshotIconSVG = () => (
@@ -23,10 +23,10 @@ const SnapshotIconSVG = () => (
 
 export const SnapshotIcon = () => <Icon as={SnapshotIconSVG} />;
 
-export function SnapshotButton({ snapshotURL }: Props) {
+export function SnapshotButton({ snapshotENS }: Props) {
   return (
     <Button
-      href={snapshotURL}
+      href={`https://snapshot.org/#${snapshotENS}`}
       as={Link}
       target="_blank"
       variant="primary"

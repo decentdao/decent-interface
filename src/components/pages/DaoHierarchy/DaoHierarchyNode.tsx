@@ -1,7 +1,7 @@
 import { Flex, HStack, Icon } from '@chakra-ui/react';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
-import { utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+import { getAddress } from 'viem';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { FractalNode, WithError } from '../../../types';
@@ -40,7 +40,7 @@ export function DaoHierarchyNode({
 
   useEffect(() => {
     if (daoAddress) {
-      loadDao(utils.getAddress(daoAddress)).then(_node => {
+      loadDao(getAddress(daoAddress)).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
           const fnode = _node as FractalNode;
