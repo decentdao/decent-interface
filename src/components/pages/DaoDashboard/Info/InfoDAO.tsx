@@ -10,7 +10,6 @@ export function InfoDAO() {
   const { node, guardContracts, guard } = useFractal();
   return (
     <DAOInfoCard
-      h="8.5rem"
       parentAddress={node.nodeHierarchy.parentAddress || undefined}
       node={node}
       childCount={node.nodeHierarchy.childNodes.length}

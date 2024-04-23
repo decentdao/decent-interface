@@ -52,6 +52,7 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
               size="sm"
               proposal={proposal}
             />
+            {/* TODO: replace with <SnapshotIcon /> */}
             {isSnapshotProposal && (
               <Image
                 src="/images/snapshot-icon-fill.svg"

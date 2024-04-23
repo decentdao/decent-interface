@@ -1,5 +1,5 @@
 import { Flex, FlexProps, Text } from '@chakra-ui/react';
-import { Copy } from '@decent-org/fractal-ui';
+import { CopySimple } from '@phosphor-icons/react';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import EtherscanLinkAddress from './EtherscanLinkAddress';
@@ -20,23 +20,24 @@ export default function AddressCopier({ address, ...rest }: Props) {
     <Flex
       alignItems="center"
       onClick={() => copyToClipboard(address)}
-      gap="0.5rem"
+      py="0.25rem"
+      px="0.75rem"
+      gap="0.25rem"
       cursor="pointer"
-      w="fit-content"
-      color="grayscale.100"
+      color="celery-0"
+      borderRadius="625rem"
+      borderWidth="1px"
+      borderColor={'transparent'}
+      textStyle="button-base"
+      width="fit-content"
+      _hover={{ bg: 'celery--6', borderColor: 'celery--6' }}
+      _active={{ bg: 'celery--6', borderWidth: '1px', borderColor: 'celery--5' }}
       {...rest}
     >
-      <EtherscanLinkAddress
-        address={address}
-        color="grayscale.100"
-      >
-        <Text textStyle="text-base-mono-regular">{accountSubstring}</Text>
+      <EtherscanLinkAddress address={address}>
+        <Text>{accountSubstring}</Text>
       </EtherscanLinkAddress>
-      <Copy
-        _hover={{ color: 'gold.500-hover' }}
-        boxSize="1.5rem"
-        fill="currentColor"
-      />
+      <CopySimple fill="currentColor" />
     </Flex>
   );
 }

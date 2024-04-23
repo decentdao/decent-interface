@@ -6,7 +6,7 @@ import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../providers/App/AppProvider';
 import { ExtendedSnapshotProposal, FractalProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
-import Snapshot from '../ui/badges/Snapshot';
+import { SnapshotButton } from '../ui/badges/Snapshot';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
@@ -35,9 +35,8 @@ export function ProposalInfo({
         <ProposalStateBox state={proposal.state} />
         {isSnapshotProposal && (
           <>
-            <Snapshot
+            <SnapshotButton
               snapshotENS={`https://snapshot.org/#${daoSnapshotENS}/proposal/${proposal.proposalId}`}
-              mt={0}
             />
             {(proposal as ExtendedSnapshotProposal).privacy === 'shutter' && (
               <Button

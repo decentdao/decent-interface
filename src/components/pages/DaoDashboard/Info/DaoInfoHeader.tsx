@@ -11,7 +11,7 @@ import { InfoProposals } from './InfoProposals';
 import { InfoTreasury } from './InfoTreasury';
 import { ParentLink } from './ParentLink';
 
-export function Info() {
+export function DaoInfoHeader() {
   const {
     node: { daoAddress },
   } = useFractal();
@@ -32,7 +32,7 @@ export function Info() {
       <Flex
         flexWrap="wrap"
         justifyContent="space-between"
-        mb="1rem"
+        mb="2rem"
       >
         <Box
           width={{ base: '100%', md: '100%', lg: '33%', xl: '40%' }}
@@ -98,13 +98,8 @@ export function Info() {
                       backgroundPosition="50%"
                     />
                   )}
-                  <Text
-                    textStyle="text-lg-mono-regular"
-                    marginBottom={2}
-                  >
-                    {section.title}
-                  </Text>
-                  <Text textStyle="text-base-mono-regular">
+                  <Text marginBottom={2}>{section.title}</Text>
+                  <Text>
                     {section.link && section.link.position === 'start' && (
                       <ExternalLink href={section.link.url}>{section.link.text}</ExternalLink>
                     )}
@@ -130,6 +125,7 @@ export function Info() {
                 <InfoGovernance />
               </InfoBox>
             </Box>
+
             <Box
               width={{ base: '100%', md: '33.3%', lg: '19%', xl: '20%' }}
               ps={{ base: NONE, md: PAD }}
@@ -141,6 +137,7 @@ export function Info() {
                 <InfoProposals />
               </InfoBox>
             </Box>
+
             <Box
               width={{ base: '100%', md: '33.3%', lg: '23%', xl: '20%' }}
               ps={{ base: NONE, md: PAD }}
