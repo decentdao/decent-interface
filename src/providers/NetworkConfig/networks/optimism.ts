@@ -37,7 +37,7 @@ export const optimismConfig: NetworkConfig = {
   subgraph: {
     space: 71032,
     slug: 'fractal-optimism',
-    version: 'v0.0.1',
+    version: 'v0.0.2',
   },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
