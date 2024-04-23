@@ -1,10 +1,11 @@
-import { Button, Box, VStack, Icon } from '@chakra-ui/react';
+import { Button, Box, Icon } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { FormikProps } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import { scrollToBottom } from '../../utils/ui';
+import Divider from '../ui/utils/Divider';
 import ProposalTransactions from './ProposalTransactions';
 import { DEFAULT_PROPOSAL_TRANSACTION } from './constants';
 
@@ -37,27 +38,24 @@ export default function ProposalTransactionsForm(props: ProposalTransactionsForm
         setExpandedIndecies={setExpandedIndecies}
         {...props}
       />
-      <VStack
-        align="left"
-        spacing={6}
-        pt={2}
+      <Box my="1.5rem">
+        <Divider />
+      </Box>
+      <Button
+        variant="text"
+        onClick={() => {
+          setFieldValue('transactions', [...transactions, DEFAULT_PROPOSAL_TRANSACTION]);
+          setExpandedIndecies([transactions.length]);
+          scrollToBottom();
+        }}
+        disabled={pendingTransaction}
+        w="fit-content"
+        pl={0}
+        color="celery-0"
       >
-        <Button
-          variant="text"
-          onClick={() => {
-            setFieldValue('transactions', [...transactions, DEFAULT_PROPOSAL_TRANSACTION]);
-            setExpandedIndecies([transactions.length]);
-            scrollToBottom();
-          }}
-          disabled={pendingTransaction}
-          w="fit-content"
-          pl={0}
-          color="celery-0"
-        >
-          <Icon as={Plus} />
-          {t('labelAddTransaction', { ns: 'proposal' })}
-        </Button>
-      </VStack>
+        <Icon as={Plus} />
+        {t('labelAddTransaction', { ns: 'proposal' })}
+      </Button>
     </Box>
   );
 }

@@ -61,6 +61,7 @@ export default function ProposalTransactions({
             key={index}
             borderTop="none"
             borderBottom="none"
+            my="1.5rem"
           >
             {({ isExpanded }) => (
               <Box

@@ -28,21 +28,21 @@ export function CustomNonceInput({
   return (
     <VStack alignItems={align}>
       <InputComponent
-          label={t('customNonce', { ns: 'proposal' })}
-          helper={t('customNonceTooltip', { ns: 'proposal' })}
-          isRequired={false}
-          value={nonce?.toString() || ''}
-          onChange={e => onChange(e.target.value ? Number(e.target.value) : undefined)}
-          disabled={disabled}
-          subLabel={
-            <HStack>
-              <Text>
-                {t('example', { ns: 'common' })}: <ExampleLabel bg="neutral-4">14</ExampleLabel>{' '}
-              </Text>
-            </HStack>
-          }
-          testId={`custom-nonce`}
-        />
+        label={t('customNonce', { ns: 'proposal' })}
+        helper={t('customNonceTooltip', { ns: 'proposal' })}
+        isRequired={false}
+        value={nonce?.toString() || ''}
+        onChange={e => onChange(e.target.value ? Number(e.target.value) : undefined)}
+        disabled={disabled}
+        subLabel={
+          <HStack>
+            <Text>
+              {t('example', { ns: 'common' })}: <ExampleLabel bg="neutral-4">14</ExampleLabel>{' '}
+            </Text>
+          </HStack>
+        }
+        testId={`custom-nonce`}
+      />
       {errorMessage && (
         <Text
           color="alert-red.normal"

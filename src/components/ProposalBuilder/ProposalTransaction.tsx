@@ -139,187 +139,194 @@ export default function ProposalTransaction({
               bg="neutral-3"
             >
               {({ isExpanded }) => (
-                <Box>
-                  <HStack justify="space-between">
-                    <AccordionButton
-                      onClick={() => {
-                        setExpandedIndecies(indexArray => {
-                          if (indexArray.includes(i)) {
-                            const newTxArr = [...indexArray];
-                            newTxArr.splice(newTxArr.indexOf(i), 1);
-                            return newTxArr;
-                          } else {
-                            return [...indexArray, i];
-                          }
-                        });
-                      }}
-                      p={0}
-                      textStyle="display-lg"
-                      color="lilac-0"
-                    >
-                      <Text textStyle="display-lg">
-                        <Flex
-                          alignItems="center"
-                          gap={2}
-                        >
-                          {isExpanded ? <CaretDown /> : <CaretRight />}
-                          {t('parameter')} {i + 1}
-                        </Flex>
-                      </Text>
-                    </AccordionButton>
-                    {i !== 0 || transaction.parameters.length !== 1 ? (
-                      <IconButton
-                        icon={<MinusCircle />}
-                        aria-label={t('removetransactionlabel')}
-                        variant="unstyled"
-                        onClick={() =>
-                          setFieldValue(
-                            `transactions.${transactionIndex}.parameters`,
-                            transaction.parameters.filter(
-                              (parameterToRemove, parameterToRemoveIndex) =>
-                                parameterToRemoveIndex !== i,
-                            ),
-                          )
-                        }
-                        minWidth="auto"
+                <>
+                  <Box>
+                    <HStack justify="space-between">
+                      <AccordionButton
+                        onClick={() => {
+                          setExpandedIndecies(indexArray => {
+                            if (indexArray.includes(i)) {
+                              const newTxArr = [...indexArray];
+                              newTxArr.splice(newTxArr.indexOf(i), 1);
+                              return newTxArr;
+                            } else {
+                              return [...indexArray, i];
+                            }
+                          });
+                        }}
+                        p={0}
+                        textStyle="display-lg"
                         color="lilac-0"
-                        _disabled={{ opacity: 0.4, cursor: 'default' }}
-                        sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
-                        disabled={transactionPending}
-                      />
-                    ) : (
-                      <Box h="2.25rem" />
-                    )}
-                  </HStack>
-                  <AccordionPanel p={0}>
-                    <Flex
-                      gap={2}
-                      mt={6}
-                    >
-                      <Box>
-                        <InputComponent
-                          label={t('labelFunctionParameter', { ns: 'proposalTemplate' })}
-                          helper={t('helperFunctionParameter', { ns: 'proposalTemplate' })}
-                          isRequired
-                          value={parameter.signature}
-                          onChange={e =>
+                      >
+                        <Text textStyle="display-lg">
+                          <Flex
+                            alignItems="center"
+                            gap={2}
+                          >
+                            {isExpanded ? <CaretDown /> : <CaretRight />}
+                            {t('parameter')} {i + 1}
+                          </Flex>
+                        </Text>
+                      </AccordionButton>
+                      {i !== 0 || transaction.parameters.length !== 1 ? (
+                        <IconButton
+                          icon={<MinusCircle />}
+                          aria-label={t('removetransactionlabel')}
+                          variant="unstyled"
+                          onClick={() =>
                             setFieldValue(
-                              `transactions.${transactionIndex}.parameters.${i}.signature`,
-                              e.target.value,
+                              `transactions.${transactionIndex}.parameters`,
+                              transaction.parameters.filter(
+                                (parameterToRemove, parameterToRemoveIndex) =>
+                                  parameterToRemoveIndex !== i,
+                              ),
                             )
                           }
+                          minWidth="auto"
+                          color="lilac-0"
+                          _disabled={{ opacity: 0.4, cursor: 'default' }}
+                          sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
                           disabled={transactionPending}
-                          subLabel={
-                            <HStack>
-                              <Text>
-                                {t('example', { ns: 'common' })}:{' '}
-                                <ExampleLabel bg="neutral-4">address to</ExampleLabel>{' '}
-                                {t('or', { ns: 'common' })}{' '}
-                                <ExampleLabel bg="neutral-4">uint amount</ExampleLabel>
-                              </Text>
-                            </HStack>
-                          }
-                          testId={`transactions.${transactionIndex}.parameters.${i}.signature`}
                         />
-                        <Flex
-                          gap={4}
-                          alignItems="center"
-                          mt={4}
-                        >
-                          {!isProposalMode && (
-                            <>
-                              <InputComponent
-                                label={t('labelParameterLabel', { ns: 'proposalTemplate' })}
-                                helper=""
-                                isRequired={!parameter.value}
-                                value={parameter.label || ''}
-                                onChange={e =>
-                                  setFieldValue(
-                                    `transactions.${transactionIndex}.parameters.${i}.label`,
-                                    e.target.value,
-                                  )
-                                }
-                                disabled={transactionPending || !!parameter.value}
-                                testId={`transactions.${transactionIndex}.parameters.${i}.label`}
-                                subLabel={
-                                  <HStack>
-                                    <Text>
-                                      {t('helperParameterLabel', { ns: 'proposalTemplate' })}
-                                    </Text>
-                                  </HStack>
-                                }
-                                gridContainerProps={{
-                                  display: 'inline-flex',
-                                  flexWrap: 'wrap',
-                                  width: '30%',
-                                }}
-                                inputContainerProps={{
-                                  width: '100%',
-                                }}
-                              />
-                              <Text>{t('or', { ns: 'common' })}</Text>
-                            </>
-                          )}
+                      ) : (
+                        <Box h="2.25rem" />
+                      )}
+                    </HStack>
+                    <AccordionPanel p={0}>
+                      <Flex
+                        gap={2}
+                        mt={6}
+                      >
+                        <Box>
                           <InputComponent
-                            label={t('labelParameterValue', { ns: 'proposalTemplate' })}
-                            helper=""
-                            isRequired={!parameter.label}
-                            value={parameter.value || ''}
+                            label={t('labelFunctionParameter', { ns: 'proposalTemplate' })}
+                            helper={t('helperFunctionParameter', { ns: 'proposalTemplate' })}
+                            isRequired
+                            value={parameter.signature}
                             onChange={e =>
                               setFieldValue(
-                                `transactions.${transactionIndex}.parameters.${i}.value`,
+                                `transactions.${transactionIndex}.parameters.${i}.signature`,
                                 e.target.value,
                               )
                             }
-                            disabled={transactionPending || !!parameter.label}
+                            disabled={transactionPending}
                             subLabel={
-                              <HStack wordBreak="break-all">
+                              <HStack>
                                 <Text>
                                   {t('example', { ns: 'common' })}:{' '}
-                                  <ExampleLabel bg="neutral-4">value</ExampleLabel>
-                                  {!isProposalMode && (
-                                    <Text as="span">
-                                      {t('proposalTemplateLeaveBlank', { ns: 'proposalTemplate' })}
-                                    </Text>
-                                  )}
+                                  <ExampleLabel bg="neutral-4">address to</ExampleLabel>{' '}
+                                  {t('or', { ns: 'common' })}{' '}
+                                  <ExampleLabel bg="neutral-4">uint amount</ExampleLabel>
                                 </Text>
                               </HStack>
                             }
-                            testId={`transactions.${transactionIndex}.parameters.${i}.value`}
-                            gridContainerProps={{
-                              display: 'inline-flex',
-                              flexWrap: 'wrap',
-                              flex: '1',
-                            }}
-                            inputContainerProps={{
-                              width: '100%',
-                            }}
+                            testId={`transactions.${transactionIndex}.parameters.${i}.signature`}
                           />
-                        </Flex>
-                        <Box my="1rem">
-                          <Divider />
-                        </Box>
-                        {i === transaction.parameters.length - 1 && (
-                          <Button
-                            onClick={() => {
-                              setFieldValue(`transactions.${transactionIndex}.parameters`, [
-                                ...transaction.parameters,
-                                DEFAULT_PROPOSAL_TRANSACTION,
-                              ]);
-                              setExpandedIndecies([transaction.parameters.length]);
-                              scrollToBottom();
-                            }}
-                            variant="text"
-                            color="celery-0"
+                          <Flex
+                            gap={4}
+                            alignItems="center"
+                            mt={4}
                           >
-                            <Icon as={Plus} />
-                            {t('addParameter')}
-                          </Button>
-                        )}
-                      </Box>
-                    </Flex>
-                  </AccordionPanel>
-                </Box>
+                            {!isProposalMode && (
+                              <>
+                                <InputComponent
+                                  label={t('labelParameterLabel', { ns: 'proposalTemplate' })}
+                                  helper=""
+                                  isRequired={!parameter.value}
+                                  value={parameter.label || ''}
+                                  onChange={e =>
+                                    setFieldValue(
+                                      `transactions.${transactionIndex}.parameters.${i}.label`,
+                                      e.target.value,
+                                    )
+                                  }
+                                  disabled={transactionPending || !!parameter.value}
+                                  testId={`transactions.${transactionIndex}.parameters.${i}.label`}
+                                  subLabel={
+                                    <HStack>
+                                      <Text>
+                                        {t('helperParameterLabel', { ns: 'proposalTemplate' })}
+                                      </Text>
+                                    </HStack>
+                                  }
+                                  gridContainerProps={{
+                                    display: 'inline-flex',
+                                    flexWrap: 'wrap',
+                                    width: '30%',
+                                  }}
+                                  inputContainerProps={{
+                                    width: '100%',
+                                  }}
+                                />
+                                <Text>{t('or', { ns: 'common' })}</Text>
+                              </>
+                            )}
+                            <InputComponent
+                              label={t('labelParameterValue', { ns: 'proposalTemplate' })}
+                              helper=""
+                              isRequired={!parameter.label}
+                              value={parameter.value || ''}
+                              onChange={e =>
+                                setFieldValue(
+                                  `transactions.${transactionIndex}.parameters.${i}.value`,
+                                  e.target.value,
+                                )
+                              }
+                              disabled={transactionPending || !!parameter.label}
+                              subLabel={
+                                <HStack wordBreak="break-all">
+                                  <Text>
+                                    {t('example', { ns: 'common' })}:{' '}
+                                    <ExampleLabel bg="neutral-4">value</ExampleLabel>
+                                    {!isProposalMode && (
+                                      <Text as="span">
+                                        {t('proposalTemplateLeaveBlank', {
+                                          ns: 'proposalTemplate',
+                                        })}
+                                      </Text>
+                                    )}
+                                  </Text>
+                                </HStack>
+                              }
+                              testId={`transactions.${transactionIndex}.parameters.${i}.value`}
+                              gridContainerProps={{
+                                display: 'inline-flex',
+                                flexWrap: 'wrap',
+                                flex: '1',
+                              }}
+                              inputContainerProps={{
+                                width: '100%',
+                              }}
+                            />
+                          </Flex>
+                          <Box my="1rem">
+                            <Divider variant='light'/>
+                          </Box>
+                        </Box>
+                      </Flex>
+                    </AccordionPanel>
+                  </Box>
+                  {!isExpanded && <Box mt="0.5rem"><Divider variant="light"/></Box>}
+                  {i === transaction.parameters.length - 1 && (
+                    <Button
+                      onClick={() => {
+                        setFieldValue(`transactions.${transactionIndex}.parameters`, [
+                          ...transaction.parameters,
+                          DEFAULT_PROPOSAL_TRANSACTION,
+                        ]);
+                        setExpandedIndecies([transaction.parameters.length]);
+                        scrollToBottom();
+                      }}
+                      variant="text"
+                      color="celery-0"
+                      pl={0}
+                      mt={1}
+                    >
+                      <Icon as={Plus} />
+                      {t('addParameter')}
+                    </Button>
+                  )}
+                </>
               )}
             </AccordionItem>
           ))}
