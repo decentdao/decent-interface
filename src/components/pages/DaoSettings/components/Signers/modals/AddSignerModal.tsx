@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Divider,
   Flex,
   HStack,
   Select,
@@ -22,6 +21,7 @@ import { couldBeENS } from '../../../../../../utils/url';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
 import { AddressInput } from '../../../../../ui/forms/EthAddressInput';
+import Divider from '../../../../../ui/utils/Divider';
 import useAddSigner from '../hooks/useAddSigner';
 
 function AddSignerModal({
@@ -105,7 +105,6 @@ function AddSignerModal({
               <Divider
                 mt={6}
                 mb={4}
-                color="chocolate.700"
               />
               <HStack>
                 <Text
@@ -178,7 +177,6 @@ function AddSignerModal({
                 </AlertTitle>
               </Alert>
               <Divider
-                color="chocolate.700"
                 mt={6}
                 mb={6}
               />

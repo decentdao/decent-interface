@@ -10,19 +10,20 @@ import {
   ResponsiveValue,
 } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
+import { ReactNode } from 'react';
 import { BigIntInput, BigIntInputProps } from './BigIntInput';
 import { EthAddressInput } from './EthAddressInput';
 
 interface BaseProps {
-  label?: string;
+  label?: string | ReactNode;
   id?: string;
   helper?: string;
   isRequired: boolean;
   value: string;
   disabled?: boolean;
-  subLabel?: React.ReactNode;
+  subLabel?: ReactNode;
   errorMessage?: string;
-  children: React.ReactNode;
+  children: ReactNode;
   gridContainerProps?: GridProps;
   inputContainerProps?: GridItemProps;
   maxLength?: number;
@@ -63,31 +64,30 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
     disabled,
     helperSlot = 'start',
   } = props;
+
+  const isStringLabel = typeof label === 'string';
+
   return (
     <Grid
-      columnGap={3}
-      templateColumns={{ base: '1fr', md: '1fr 2fr' }}
-      fontSize="14px"
+      columnGap={4}
+      templateColumns={{ base: '1fr', md: '2fr 3fr' }}
       alignItems="start"
       cursor={disabled ? 'not-allowed' : 'default'}
       {...gridContainerProps}
     >
       <GridItem>
-        <HStack
-          pb={1}
-          textStyle="text-md-sans-regular"
-        >
-          <Text color={disabled ? 'grayscale.500' : 'grayscale.100'}>{label}</Text>
-          {isRequired && <Text color="gold.500">*</Text>}
-        </HStack>
-        {helperSlot === 'start' && (
-          <Text
-            color="grayscale.500"
-            mr={10}
+        {isStringLabel ? (
+          <HStack
+            pb={1}
+            textStyle="body-base"
           >
-            {helper}
-          </Text>
+            <Text color={disabled ? 'white-0' : 'white-2'}>{label}</Text>
+            {isRequired && <Text color="lilac-0">*</Text>}
+          </HStack>
+        ) : (
+          label
         )}
+        {helperSlot === 'start' && <Text color="neutral-7">{helper}</Text>}
       </GridItem>
       <GridItem {...inputContainerProps}>
         <LabelWrapper
@@ -99,7 +99,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
       </GridItem>
       {helperSlot === 'end' && (
         <GridItem>
-          <Text color="grayscale.500">{helper}</Text>
+          <Text color="neutral-7">{helper}</Text>
         </GridItem>
       )}
     </Grid>
@@ -167,7 +167,6 @@ export function TextareaComponent(props: TextareaProps) {
         isDisabled={disabled}
         rows={rows}
         placeholder={placeholder}
-        borderColor="black.400"
         size="base"
         p="0.5rem 1rem"
         maxLength={maxLength}
@@ -188,7 +187,7 @@ export function BigIntComponent(props: BigIntProps) {
         id={id}
         onChange={onChange}
         decimalPlaces={decimalPlaces}
-        placeholder="0"
+        placeholder="0.0"
         isDisabled={disabled}
       />
     </LabelComponent>

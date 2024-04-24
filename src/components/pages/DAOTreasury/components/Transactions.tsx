@@ -1,4 +1,4 @@
-import { Box, Divider, HStack, Image, Spacer, Text, Tooltip } from '@chakra-ui/react';
+import { Box, HStack, Image, Spacer, Text, Tooltip } from '@chakra-ui/react';
 import { SquareSolidArrowDown, SquareSolidArrowUp } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
@@ -7,6 +7,7 @@ import { TransferType, AssetTransfer } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
 import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
 import EtherscanLinkTransaction from '../../../ui/links/EtherscanLinkTransaction';
+import Divider from '../../../ui/utils/Divider';
 import {
   TokenEventType,
   TransferDisplayData,
@@ -99,7 +100,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
           />
         </HStack>
       </HStack>
-      {!displayData.isLast && <Divider color="chocolate.700" />}
+      {!displayData.isLast && <Divider />}
     </Box>
   );
 }

@@ -27,7 +27,7 @@ export default function AddressCopier({ address, ...rest }: Props) {
       color="celery-0"
       borderRadius="625rem"
       borderWidth="1px"
-      borderColor={'transparent'}
+      borderColor="transparent"
       textStyle="button-base"
       width="fit-content"
       _hover={{ bg: 'celery--6', borderColor: 'celery--6' }}

@@ -1,16 +1,8 @@
-import {
-  Divider,
-  Flex,
-  HStack,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Spacer,
-  Text,
-} from '@chakra-ui/react';
+import { Flex, HStack, Modal, ModalContent, ModalOverlay, Spacer, Text } from '@chakra-ui/react';
 import { Alert, CloseX } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import Divider from '../utils/Divider';
 
 interface ModuleBaseProps {
   title: string;
@@ -58,10 +50,7 @@ export function ModalBase(props: ModuleBaseProps) {
             onClick={props.onClose}
           />
         </Flex>
-        <Divider
-          color="chocolate.700"
-          marginBottom="1rem"
-        />
+        <Divider marginBottom="1rem" />
         {props.children}
       </ModalContent>
     </Modal>

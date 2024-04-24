@@ -4,7 +4,7 @@
   "yes": "Yes",
   "skip": "Skip",
   "next": "Next",
-  "back": "< Back",
+  "back": "Back",
   "accept": "Accept",
   "add": "Add",
   "approve": "Approve",
@@ -81,7 +81,7 @@
   "example": "Example",
   "or": "or",
   "abi": "ABI",
-  "abiSelectorHelper": "Select from the contract's predefined functions",
+  "abiSelectorHelper": "Select from the contract's pre-defined functions",
   "abiSelectorDescription": "Autopopulate with verified functions",
   "titleNodes": "Hierarchy",
   "404Title": "Page not found",
@@ -105,6 +105,8 @@
   "badQueryParam2": "",
   "showMore": "Show More",
   "showLess": "Show Less",
+  "show": "Show",
+  "hide": "Hide",
   "poweredBy": "Powered by",
   "goTo": "Go to"
 }

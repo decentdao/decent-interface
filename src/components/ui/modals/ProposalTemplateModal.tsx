@@ -1,13 +1,4 @@
-import {
-  Box,
-  Button,
-  Divider,
-  Flex,
-  FormControl,
-  FormLabel,
-  Switch,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, FormLabel, Switch, VStack } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -23,6 +14,7 @@ import { ProposalTemplate } from '../../../types/proposalBuilder';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { BigIntComponent, InputComponent } from '../forms/InputComponent';
 import Markdown from '../proposal/Markdown';
+import Divider from '../utils/Divider';
 
 interface IProposalTemplateModalProps {
   proposalTemplate: ProposalTemplate;
@@ -142,7 +134,7 @@ export default function ProposalTemplateModal({
       {description && (
         <>
           <Markdown content={description} />
-          <Divider color="chocolate.700" />
+          <Divider />
         </>
       )}
       {filledProposalTransactions.map((transaction, transactionIndex) => (
@@ -203,7 +195,7 @@ export default function ProposalTemplateModal({
               />
             </Flex>
           )}
-          {transaction.parameters.length > 0 && <Divider color="chocolate.700" />}
+          {transaction.parameters.length > 0 && <Divider />}
         </VStack>
       ))}
       <FormControl
@@ -220,7 +212,7 @@ export default function ProposalTemplateModal({
           borderRadius="9999px"
         />
       </FormControl>
-      <Divider color="chocolate.700" />
+      <Divider />
       <Box marginTop="1.5rem">
         <CustomNonceInput
           nonce={nonce}

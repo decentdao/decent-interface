@@ -1,5 +1,5 @@
 import { ens_normalize } from '@adraffy/ens-normalize';
-import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
+import { Box, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
@@ -17,6 +17,7 @@ import {
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import ExternalLink from '../../ui/links/ExternalLink';
+import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 
@@ -176,10 +177,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
           </RadioGroup>
         </LabelComponent>
       </Box>
-      <Divider
-        color="chocolate.700"
-        mb="2rem"
-      />
+      <Divider mb="2rem" />
       <LabelComponent
         label={t('snapshot')}
         helper={t('snapshotHelper')}
@@ -195,11 +193,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
           />
         </LabelWrapper>
       </LabelComponent>
-      <Divider
-        color="chocolate.700"
-        mt="2rem"
-        mb="2rem"
-      />
+      <Divider my="2rem" />
       <StepButtons
         {...props}
         isNextDisabled={

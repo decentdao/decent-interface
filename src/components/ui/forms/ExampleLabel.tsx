@@ -4,12 +4,12 @@ import { PropsWithChildren } from 'react';
 export default function ExampleLabel({ children, ...rest }: PropsWithChildren<TextProps>) {
   return (
     <Text
-      bg="chocolate.700"
-      borderRadius="4px"
-      px="4px"
-      py="1px"
-      color="grayscale.100"
-      fontSize="12px"
+      bg="neutral-3"
+      borderRadius="2px"
+      px="6px"
+      py="2px"
+      color="white-0"
+      textStyle="code-snippet-helper-small"
       as="span"
       {...rest}
     >

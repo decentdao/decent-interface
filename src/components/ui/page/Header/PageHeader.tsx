@@ -1,20 +1,12 @@
-import {
-  Box,
-  Button,
-  ComponentWithAs,
-  Divider,
-  Flex,
-  IconButton,
-  IconProps,
-  Spacer,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
+import { Icon } from '@phosphor-icons/react';
 import { ReactNode, useEffect, useState } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import AddressCopier from '../../links/AddressCopier';
+import Divider from '../../utils/Divider';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface PageHeaderProps {
   title?: string;
@@ -22,7 +14,7 @@ interface PageHeaderProps {
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
   buttonVariant?: 'text' | 'secondary';
-  ButtonIcon?: ComponentWithAs<'svg', IconProps>;
+  ButtonIcon?: Icon;
   buttonText?: string;
   buttonClick?: () => void;
   buttonTestId?: string;
@@ -90,12 +82,16 @@ function PageHeader({
         {ButtonIcon && (
           <IconButton
             aria-label="navigate"
-            icon={<ButtonIcon boxSize="1.5rem" />}
+            icon={<ButtonIcon />}
             onClick={buttonClick}
             minWidth="0"
-            px="1rem"
+            padding={1}
+            border="1px solid"
+            borderColor="lilac-0"
+            color="lilac-0"
+            borderRadius={4}
             data-testid={buttonTestId}
-            size="base"
+            size="small"
             variant={buttonVariant}
             isDisabled={isButtonDisabled}
           >
@@ -104,14 +100,14 @@ function PageHeader({
         )}
         {children}
       </Flex>
-      <Divider
-        borderColor="neutral-3"
-        marginTop="1rem"
-      />
+      <Box marginTop="1rem">
+        <Divider />
+      </Box>
       {title && (
         <Text
           marginTop="2rem"
           textStyle="display-2xl"
+          color="white-0"
         >
           {title}
         </Text>

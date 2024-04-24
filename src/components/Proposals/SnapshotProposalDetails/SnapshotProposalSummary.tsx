@@ -1,4 +1,4 @@
-import { Text, Box, Button, Divider, Flex, Tooltip } from '@chakra-ui/react';
+import { Text, Box, Button, Flex, Tooltip } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
@@ -10,6 +10,7 @@ import ContentBox from '../../ui/containers/ContentBox';
 import ExternalLink from '../../ui/links/ExternalLink';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
 import InfoRow from '../../ui/proposal/InfoRow';
+import Divider from '../../ui/utils/Divider';
 import { QuorumProgressBar } from '../../ui/utils/ProgressBar';
 import useSnapshotUserVotingWeight from './hooks/useSnapshotUserVotingWeight';
 import useTotalVotes from './hooks/useTotalVotes';
@@ -67,7 +68,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
-        <Divider color="chocolate.700" />
+        <Divider />
         <InfoRow
           property={t('votingSystem')}
           value={t(getVotingSystemTitle())}
@@ -113,10 +114,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
             ShowVotingPowerButton
           )}
         </Flex>
-        <Divider
-          color="chocolate.700"
-          marginTop={4}
-        />
+        <Divider marginTop={4} />
         {!!proposal.quorum && (
           <Box marginTop={4}>
             <QuorumProgressBar

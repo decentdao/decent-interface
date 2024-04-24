@@ -1,4 +1,4 @@
-import { Text, Box, Button, Divider, Flex, Tooltip } from '@chakra-ui/react';
+import { Text, Box, Button, Flex, Tooltip } from '@chakra-ui/react';
 import { ArrowAngleUp } from '@decent-org/fractal-ui';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -16,6 +16,7 @@ import DisplayTransaction from '../ui/links/DisplayTransaction';
 import EtherscanLinkBlock from '../ui/links/EtherscanLinkBlock';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import InfoRow from '../ui/proposal/InfoRow';
+import Divider from '../ui/utils/Divider';
 import { QuorumProgressBar } from '../ui/utils/ProgressBar';
 
 export default function ProposalSummary({
@@ -129,7 +130,7 @@ export default function ProposalSummary({
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
-        <Divider color="chocolate.700" />
+        <Divider />
         <InfoRow
           property={t('votingSystem')}
           value={t('singleSnapshotVotingSystem')}
@@ -202,7 +203,7 @@ export default function ProposalSummary({
             <DisplayTransaction txHash={transactionHash} />
           </Flex>
         )}
-        <Divider color="chocolate.700" />
+        <Divider />
       </Box>
       <Box marginTop={4}>
         <QuorumProgressBar

@@ -1,7 +1,8 @@
-import { Box, BoxProps, Divider, Flex, Link, Spacer, Text } from '@chakra-ui/react';
+import { Box, BoxProps, Flex, Link, Spacer, Text } from '@chakra-ui/react';
 import { Trans, useTranslation } from 'react-i18next';
 import { URL_DECENT } from '../../../constants/url';
 import ExternalLink from '../../ui/links/ExternalLink';
+import Divider from '../../ui/utils/Divider';
 
 export function AppFooter({ ...rest }: BoxProps) {
   const { t } = useTranslation('home');
@@ -10,10 +11,7 @@ export function AppFooter({ ...rest }: BoxProps) {
       w="100%"
       {...rest}
     >
-      <Divider
-        paddingTop="2.5rem"
-        color="chocolate.400"
-      />
+      <Divider paddingTop="2.5rem" />
       <Flex paddingTop="2rem">
         <Text
           color="grayscale.500"

@@ -1,5 +1,5 @@
 import { ens_normalize } from '@adraffy/ens-normalize';
-import { Flex, Text, Button, Divider } from '@chakra-ui/react';
+import { Flex, Text, Button } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -12,6 +12,7 @@ import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../../../types';
 import { InputComponent } from '../../../../ui/forms/InputComponent';
+import Divider from '../../../../ui/utils/Divider';
 
 export default function MetadataContainer() {
   const [name, setName] = useState('');
@@ -164,11 +165,7 @@ export default function MetadataContainer() {
           width: '100%',
         }}
       />
-      <Divider
-        color="chocolate.400"
-        mt={4}
-        mb={4}
-      />
+      <Divider my={4} />
       <Flex
         justifyContent="space-between"
         alignItems="center"

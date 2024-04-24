@@ -1,4 +1,4 @@
-import { Flex, Input, Divider } from '@chakra-ui/react';
+import { Flex, Input } from '@chakra-ui/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
@@ -6,6 +6,7 @@ import { ICreationStepProps, CreatorSteps } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
 
@@ -59,12 +60,9 @@ export function VotesTokenNew(props: ICreationStepProps) {
           onKeyDown={restrictChars}
         />
       </LabelComponent>
-      <Divider color="chocolate.700" />
+      <Divider />
       <AzoriusTokenAllocations {...props} />
-      <Divider
-        color="chocolate.700"
-        mb={4}
-      />
+      <Divider mb={4} />
       <StepButtons
         {...props}
         prevStep={CreatorSteps.ESSENTIALS}

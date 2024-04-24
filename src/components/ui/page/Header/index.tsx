@@ -1,6 +1,5 @@
 import {
   Box,
-  Divider,
   Drawer,
   DrawerCloseButton,
   DrawerContent,
@@ -21,6 +20,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { FavoritesMenu } from '../../menus/FavoritesMenu';
+import Divider from '../../utils/Divider';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 function HeaderLogo() {
@@ -92,7 +92,7 @@ function HeaderLogo() {
                 px={8}
                 pt={8}
               >
-                <Divider color="chocolate.700" />
+                <Divider />
                 <NavigationLinks
                   showDAOLinks={showDAOLinks}
                   address={daoAddress}

@@ -1,4 +1,4 @@
-import { Box, Divider, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
+import { Box, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { useState } from 'react';
@@ -14,6 +14,7 @@ import useSendAssets from '../../pages/DAOTreasury/hooks/useSendAssets';
 import { BigIntInput } from '../forms/BigIntInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { EthAddressInput } from '../forms/EthAddressInput';
+import Divider from '../utils/Divider';
 
 // @todo add Yup and Formik to this modal
 export function SendAssetsModal({ close }: { close: () => void }) {
@@ -134,11 +135,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       >
         {formatUSD(selectedAsset.fiatBalance)}
       </Text>
-      <Divider
-        color="chocolate.700"
-        marginTop="0.75rem"
-        marginBottom="0.75rem"
-      />
+      <Divider my="0.75rem" />
       <LabelWrapper
         label={t('destinationLabel')}
         subLabel={t('destinationSublabel')}
@@ -151,11 +148,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           }}
         />
       </LabelWrapper>
-      <Divider
-        color="chocolate.700"
-        marginTop="0.75rem"
-        marginBottom="0.75rem"
-      />
+      <Divider my="0.75rem" />
       <CustomNonceInput
         nonce={nonceInput}
         onChange={nonce => setNonceInput(nonce ? nonce : undefined)}

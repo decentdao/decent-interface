@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { Trash } from '@decent-org/fractal-ui';
+import { Trash } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

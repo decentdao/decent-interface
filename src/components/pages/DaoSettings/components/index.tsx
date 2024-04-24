@@ -1,6 +1,7 @@
-import { Flex, Text, Divider } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { StyledBox } from '../../../ui/containers/StyledBox';
+import Divider from '../../../ui/utils/Divider';
 
 interface ISettingsSection {
   contentTitle: string;
@@ -32,10 +33,7 @@ export function SettingsSection({
         minWidth="65%"
       >
         {contentHeader || <Text>{contentTitle}</Text>}
-        <Divider
-          marginTop="1rem"
-          color="chocolate.400"
-        />
+        <Divider marginTop="1rem" />
         {children}
       </StyledBox>
       <StyledBox

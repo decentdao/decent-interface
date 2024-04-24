@@ -1,18 +1,11 @@
-import {
-  Alert,
-  AlertTitle,
-  Divider,
-  Flex,
-  InputGroup,
-  InputRightElement,
-  Text,
-} from '@chakra-ui/react';
+import { Alert, AlertTitle, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps, VotingStrategyType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { DAOCreateMode } from './EstablishEssentials';
@@ -144,10 +137,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             </Text>
           </AlertTitle>
         </Alert>
-        <Divider
-          color="chocolate.700"
-          mb={4}
-        />
+        <Divider mb={4} />
         <StepButtons
           {...props}
           prevStep={

@@ -1,4 +1,4 @@
-import { Divider, Flex } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import {
   Home,
   Tree,
@@ -13,6 +13,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
 import { LanguageSwitcher } from '../../../../i18n/LanguageSwitcher';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import Divider from '../../utils/Divider';
 import { NavigationExternalLink } from './NavigationExternalLink';
 import { NavigationLink } from './NavigationLink';
 
@@ -83,7 +84,7 @@ export function NavigationLinks({
         mb={8}
         justifyContent={{ base: 'flex-start' }}
       >
-        <Divider color="chocolate.700" />
+        <Divider />
         <NavigationExternalLink
           href={URL_FAQ}
           ariaLabelKey="ariaLabelFAQ"
