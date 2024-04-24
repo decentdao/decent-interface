@@ -22,7 +22,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
     <Box
       width="full"
       mt={4}
-      mb={8}
+      mb={6}
     >
       <Flex
         alignItems={{ base: 'flex-start', md: 'center' }}
