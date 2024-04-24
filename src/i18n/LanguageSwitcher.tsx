@@ -23,9 +23,10 @@ export function LanguageSwitcher() {
             gap={8}
             justifyContent="space-between"
             alignItems="center"
+            my={3}
           >
             <Globe
-              boxSize="1.5rem"
+              boxSize={6}
               minWidth="auto"
             />
             <Hide above="md">

@@ -39,6 +39,7 @@ export function NavigationExternalLink({
           justifyContent="space-between"
           alignItems="center"
           _hover={{ color: 'gold.500-hover', cursor: 'pointer' }}
+          my={3}
         >
           <Icon boxSize="1.5rem" />
           <Hide above="md">

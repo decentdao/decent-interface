@@ -1,4 +1,4 @@
-import { Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import {
   Home,
   Tree,
@@ -13,7 +13,6 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
 import { LanguageSwitcher } from '../../../../i18n/LanguageSwitcher';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import Divider from '../../utils/Divider';
 import { NavigationExternalLink } from './NavigationExternalLink';
 import { NavigationLink } from './NavigationLink';
 
@@ -79,12 +78,18 @@ export function NavigationLinks({
       <Flex
         alignItems={{ base: 'flex-start', md: 'center' }}
         direction="column"
-        gap="2rem"
         w="full"
-        mb={8}
+        mb={'px'}
         justifyContent={{ base: 'flex-start' }}
+        bg={'neutral-2'}
+        borderTopRadius={8}
+        borderTopWidth={1}
+        borderLeftWidth={1}
+        borderRightWidth={1}
+        borderTopColor={'neutral-3'}
+        borderLeftColor={'neutral-3'}
+        borderRightColor={'neutral-3'}
       >
-        <Divider />
         <NavigationExternalLink
           href={URL_FAQ}
           ariaLabelKey="ariaLabelFAQ"
@@ -109,10 +114,17 @@ export function NavigationLinks({
           Icon={Documents}
           closeDrawer={closeDrawer}
         />
-
-        <Divider color="chocolate.700" />
-        <LanguageSwitcher data-testid="navigation-language" />
       </Flex>
+      <Box
+        w="full"
+        mb={8}
+        bg={'neutral-2'}
+        borderBottomRadius={8}
+        borderWidth={1}
+        borderColor={'neutral-3'}
+      >
+        <LanguageSwitcher data-testid="navigation-language" />
+      </Box>
     </>
   );
 }
