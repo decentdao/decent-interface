@@ -1,5 +1,5 @@
 import { Box, Hide, Text } from '@chakra-ui/react';
-import { Icon as PhospherIcon } from '@phosphor-icons/react';
+import { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { NavigationTooltip } from './NavigationTooltip';
 
@@ -9,7 +9,7 @@ interface INavigationLink {
   href: string;
   testId: string;
   routeKey?: string;
-  Icon: PhospherIcon;
+  Icon: PhosphorIcon;
   closeDrawer?: () => void;
 }
 
