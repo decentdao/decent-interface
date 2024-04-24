@@ -1,5 +1,4 @@
 import { Box, Hide, Text } from '@chakra-ui/react';
-import { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useMatch } from 'react-router-dom';
@@ -10,7 +9,7 @@ interface INavigationLink {
   labelKey: string;
   tooltipKey?: string;
   testId: string;
-  Icon: PhosphorIcon;
+  Icon: JSX.Element;
   target?: string;
   rel?: string;
   closeDrawer?: () => void;
@@ -56,7 +55,7 @@ export function NavigationLink({
           my={3}
           {...activeColors()}
         >
-          <Icon size={'1.5rem'} />
+          {Icon}
           <Hide above="md">
             <Text textStyle="text-md-mono-medium">{t(labelKey)}</Text>
           </Hide>

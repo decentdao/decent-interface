@@ -25,7 +25,7 @@ export function LanguageSwitcher() {
             alignItems="center"
             my={3}
           >
-            <GlobeSimple size="1.5rem" />
+            <GlobeSimple size={24} />
             <Hide above="md">
               <Text textStyle="text-md-mono-medium">{t(i18n.language.slice(0, 2))}</Text>
             </Hide>

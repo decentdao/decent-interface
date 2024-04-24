@@ -1,5 +1,4 @@
 import { Box, Flex } from '@chakra-ui/react';
-// import { SupportQuestion, Discord, Documents } from '@decent-org/fractal-ui';
 import {
   House,
   GitFork,
@@ -44,7 +43,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           ariaLabelKey="ariaLabelFAQ"
           tooltipKey="faq"
           testId="navigationExternal-faq"
-          Icon={Question}
+          Icon={<Question size={24} />}
           closeDrawer={closeDrawer}
         />
         <NavigationExternalLink
@@ -52,7 +51,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           ariaLabelKey="ariaLabelDiscord"
           tooltipKey="discord"
           testId="navigationExternal-discord"
-          Icon={DiscordLogo}
+          Icon={<DiscordLogo size={24} />}
           closeDrawer={closeDrawer}
         />
         <NavigationExternalLink
@@ -60,7 +59,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           ariaLabelKey="ariaLabelDocumentation"
           tooltipKey="documentation"
           testId="navigationExternal-documentation"
-          Icon={BookOpen}
+          Icon={<BookOpen size={24} />}
           closeDrawer={closeDrawer}
         />
       </Flex>
@@ -114,35 +113,35 @@ export function NavigationLinks({
             href={DAO_ROUTES.dao.relative(addressPrefix, address)}
             labelKey="home"
             testId="navigation-daoHomeLink"
-            Icon={House}
+            Icon={<House size={24} />}
             closeDrawer={closeDrawer}
           />
           <NavigationLink
             href={DAO_ROUTES.hierarchy.relative(addressPrefix, address)}
             labelKey="nodes"
             testId="navigation-hierarchy"
-            Icon={GitFork}
+            Icon={<GitFork size={24} />}
             closeDrawer={closeDrawer}
           />
           <NavigationLink
             href={DAO_ROUTES.proposals.relative(addressPrefix, address)}
             labelKey="proposals"
             testId="navigation-proposalsLink"
-            Icon={Scroll}
+            Icon={<Scroll size={24} />}
             closeDrawer={closeDrawer}
           />
           <NavigationLink
             href={DAO_ROUTES.treasury.relative(addressPrefix, address)}
             labelKey="treasury"
             testId="navigation-treasuryLink"
-            Icon={Coins}
+            Icon={<Coins size={24} />}
             closeDrawer={closeDrawer}
           />
           <NavigationLink
             href={DAO_ROUTES.proposalTemplates.relative(addressPrefix, address)}
             labelKey="proposalTemplates"
             testId="navigation-proposalTemplatesLink"
-            Icon={SquaresFour}
+            Icon={<SquaresFour size={24} />}
             closeDrawer={closeDrawer}
           />
         </Flex>
