@@ -1,5 +1,5 @@
 import { Box, Center, Hide, Text } from '@chakra-ui/react';
-import { Globe } from '@decent-org/fractal-ui';
+import { GlobeSimple } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { OptionMenu } from '../components/ui/menus/OptionMenu';
 import { supportedLanguages } from '.';
@@ -25,10 +25,7 @@ export function LanguageSwitcher() {
             alignItems="center"
             my={3}
           >
-            <Globe
-              boxSize={6}
-              minWidth="auto"
-            />
+            <GlobeSimple size="1.5rem" />
             <Hide above="md">
               <Text textStyle="text-md-mono-medium">{t(i18n.language.slice(0, 2))}</Text>
             </Hide>

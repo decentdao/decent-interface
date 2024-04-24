@@ -1,4 +1,5 @@
-import { Box, ComponentWithAs, Hide, IconProps, Text } from '@chakra-ui/react';
+import { Box, Hide, Text } from '@chakra-ui/react';
+import { Icon as PhospherIcon } from '@phosphor-icons/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useMatch } from 'react-router-dom';
@@ -9,7 +10,7 @@ interface INavigationLink {
   labelKey: string;
   tooltipKey?: string;
   testId: string;
-  Icon: ComponentWithAs<'svg', IconProps>;
+  Icon: PhospherIcon;
   target?: string;
   rel?: string;
   closeDrawer?: () => void;
@@ -55,16 +56,7 @@ export function NavigationLink({
           my={3}
           {...activeColors()}
         >
-          <Icon
-            boxSize="1.5rem"
-            sx={{
-              'g path': {
-                transitionProperty: 'all',
-                transitionDuration: '300ms',
-                transitionTimingFunction: 'ease-out',
-              },
-            }}
-          />
+          <Icon size={'1.5rem'} />
           <Hide above="md">
             <Text textStyle="text-md-mono-medium">{t(labelKey)}</Text>
           </Hide>

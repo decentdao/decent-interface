@@ -1,4 +1,5 @@
-import { Box, ComponentWithAs, Hide, IconProps, Text } from '@chakra-ui/react';
+import { Box, Hide, Text } from '@chakra-ui/react';
+import { Icon as PhospherIcon } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { NavigationTooltip } from './NavigationTooltip';
 
@@ -8,7 +9,7 @@ interface INavigationLink {
   href: string;
   testId: string;
   routeKey?: string;
-  Icon: ComponentWithAs<'svg', IconProps>;
+  Icon: PhospherIcon;
   closeDrawer?: () => void;
 }
 
@@ -41,7 +42,7 @@ export function NavigationExternalLink({
           _hover={{ color: 'gold.500-hover', cursor: 'pointer' }}
           my={3}
         >
-          <Icon boxSize="1.5rem" />
+          <Icon size="1.5rem" />
           <Hide above="md">
             <Text textStyle="text-md-mono-medium">{t(tooltipKey)}</Text>
           </Hide>
