@@ -12,7 +12,7 @@ function Navigation() {
     <Flex
       alignItems="center"
       direction="column"
-      justifyContent="end"
+      justifyContent="flex-end"
       flexGrow={1}
     >
       <Show above="md">

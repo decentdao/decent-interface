@@ -52,6 +52,7 @@ export function NavigationLink({
           gap={8}
           justifyContent="space-between"
           alignItems="center"
+          my={3}
           {...activeColors()}
         >
           <Icon
