@@ -22,7 +22,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       width="full"
       mt={4}
       mb={6}
-      maxWidth={{ base: 12, '2xl': '100%' }}
+      maxWidth={{ base: 12, '3xl': '100%' }}
       _hover={{ maxWidth: '100%' }}
       transitionDuration="0.5s"
     >
@@ -102,6 +102,9 @@ export function NavigationLinks({
           width="full"
           height="full"
           marginY="auto"
+          // maxWidth={{ base: 12, '2xl': '100%' }}
+          // _hover={{ maxWidth: '100%' }}
+          // transitionDuration="0.5s"
         >
           <Flex
             alignItems={{ base: 'flex-start', md: 'center' }}
