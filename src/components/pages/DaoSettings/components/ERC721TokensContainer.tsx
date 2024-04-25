@@ -24,72 +24,66 @@ export function ERC721TokensContainer() {
           <Grid
             templateColumns="repeat(5, 1fr)"
             width="100%"
-            mt={4}
           >
+            {/* HEADER TITLES */}
             <GridItem colSpan={2}>
               <Text
-                textStyle="text-sm-mono-regular"
-                color="chocolate.200"
+                textStyle="label-small"
+                color="neutral-7"
               >
                 {t('governanceTokenNameLabel')}
               </Text>
             </GridItem>
             <GridItem colSpan={1}>
               <Text
-                textStyle="text-sm-mono-regular"
-                color="chocolate.200"
+                textStyle="label-small"
+                color="neutral-7"
               >
                 {t('governanceTokenSymbolLabel')}
               </Text>
             </GridItem>
             <GridItem colSpan={1}>
               <Text
-                textStyle="text-sm-mono-regular"
-                color="chocolate.200"
+                textStyle="label-small"
+                color="neutral-7"
               >
                 {t('governanceTokenWeightLabel')}
               </Text>
             </GridItem>
             <GridItem colSpan={1}>
               <Text
-                textStyle="text-sm-mono-regular"
-                color="chocolate.200"
+                textStyle="label-small"
+                color="neutral-7"
               >
                 {t('governanceTokenTotalWeightLabel')}
               </Text>
             </GridItem>
           </Grid>
+
+          {/* TOKEN DETAILS */}
           {erc721Tokens.map(token => (
             <Grid
               key={token.address}
               width="100%"
               templateColumns="repeat(5, 1fr)"
-              mt={2}
+              mt="0.5rem"
             >
               <GridItem colSpan={2}>
-                <DisplayAddress address={token.address}>{token.name}</DisplayAddress>
+                <Flex>
+                  <DisplayAddress address={token.address}>{token.name}</DisplayAddress>
+                </Flex>
               </GridItem>
+
               <GridItem colSpan={1}>
-                <Text
-                  textStyle="text-base-sans-regular"
-                  color="grayscale.100"
-                >
-                  {token.symbol}
-                </Text>
+                <Text>{token.symbol}</Text>
               </GridItem>
+
               <GridItem colSpan={1}>
-                <Text
-                  textStyle="text-base-sans-regular"
-                  color="grayscale.100"
-                >
-                  {token.votingWeight.toString()}
-                </Text>
+                <Text>{token.votingWeight.toString()}</Text>
               </GridItem>
+
               <GridItem colSpan={1}>
-                <Text
-                  textStyle="text-base-sans-regular"
-                  color="grayscale.100"
-                >
+                <Text>
                   {token.totalSupply ? (token.totalSupply * token.votingWeight).toString() : 'n/a'}
                 </Text>
               </GridItem>

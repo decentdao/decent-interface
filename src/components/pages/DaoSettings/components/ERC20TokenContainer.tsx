@@ -27,7 +27,12 @@ export function ERC20TokenContainer() {
         >
           {/* TOKEN NAME */}
           <Box>
-            <Text  color="neutral-7"  textStyle="label-small">{t('governanceTokenNameLabel')}</Text>
+            <Text
+              color="neutral-7"
+              textStyle="label-small"
+            >
+              {t('governanceTokenNameLabel')}
+            </Text>
             <Flex mt="0.5rem">
               <DisplayAddress address={votesToken.address}>{votesToken.name}</DisplayAddress>
             </Flex>
@@ -35,14 +40,24 @@ export function ERC20TokenContainer() {
 
           {/* TOKEN SYMBOL */}
           <Box>
-            <Text  color="neutral-7"  textStyle="label-small">{t('governanceTokenSymbolLabel')}</Text>
+            <Text
+              color="neutral-7"
+              textStyle="label-small"
+            >
+              {t('governanceTokenSymbolLabel')}
+            </Text>
             <Text mt="0.5rem">{votesToken.symbol}</Text>
           </Box>
 
           {/* TOTAL SUPPLY */}
           <Box>
             {' '}
-            <Text color="neutral-7" textStyle="label-small">{t('governanceTokenSupplyLabel')}</Text>
+            <Text
+              color="neutral-7"
+              textStyle="label-small"
+            >
+              {t('governanceTokenSupplyLabel')}
+            </Text>
             <Text mt="0.5rem">
               {formatCoin(
                 votesToken.totalSupply,
