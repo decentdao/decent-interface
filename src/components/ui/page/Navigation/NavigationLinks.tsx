@@ -20,19 +20,16 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
   return (
     <Box
       width="full"
-      mt={4}
+      mt={3}
       mb={6}
       maxWidth={{ base: 12, '3xl': '100%' }}
       _hover={{ maxWidth: '100%' }}
       transitionDuration="0.5s"
     >
-      <Flex
-        alignItems="flex-start"
-        direction="column"
+      <Box
         pl={'11px'}
         w="full"
         mb={'px'}
-        justifyContent={{ base: 'flex-start' }}
         bg={'neutral-2'}
         borderTopRadius={8}
         borderTopWidth={1}
@@ -65,13 +62,13 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           Icon={<BookOpen size={24} />}
           closeDrawer={closeDrawer}
         />
-      </Flex>
+      </Box>
       <Box
         bg={'neutral-2'}
         borderBottomRadius={8}
         borderWidth={1}
         borderColor={'neutral-3'}
-        pt={3}
+        pt="10.5px"
         pb="5px"
         pl="11px"
         overflow="hidden"
