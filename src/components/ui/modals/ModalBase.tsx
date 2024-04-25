@@ -36,9 +36,7 @@ export function ModalBase(props: ModuleBaseProps) {
           marginBottom="1rem"
         >
           <HStack>
-            {props.warn && (
-              <Warning size="20" />
-            )}
+            {props.warn && <Warning size="20" />}
             <Text
               color="white-0"
               textStyle="display-lg"

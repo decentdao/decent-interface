@@ -86,14 +86,10 @@ function AddSignerModal({
         {({ handleSubmit, errors, values, setFieldValue }) => {
           return (
             <form onSubmit={handleSubmit}>
-              <Text
-                textStyle="text-base-sans-regular"
-                color="grayscale.100"
-              >
-                {t('addSignerLabel', { ns: 'modals' })}
-              </Text>
+              <Text>{t('addSignerLabel', { ns: 'modals' })}</Text>
               <Field name={'address'}>
                 {({ field }: FieldAttributes<any>) => (
+                  // LabelWrapper title styling needs to updated on @decent-org/fractal-ui, it seems
                   <LabelWrapper
                     subLabel={t('addSignerSublabel', { ns: 'modals' })}
                     errorMessage={field.value && errors.address}
@@ -116,6 +112,7 @@ function AddSignerModal({
                 <Flex ref={tooltipContainer}>
                   <SupportTooltip
                     containerRef={tooltipContainer}
+                    color="lilac-0"
                     label={t('updateSignersTooltip')}
                     mx="2"
                     mt="1"
@@ -127,8 +124,8 @@ function AddSignerModal({
                   onChange={e => setFieldValue('threshold', Number(e.target.value))}
                   mt={4}
                   width="8rem"
-                  bgColor="#2c2c2c"
-                  borderColor="#4d4d4d"
+                  bgColor="neutral-1"
+                  borderColor="neutral-3"
                   rounded="sm"
                   cursor="pointer"
                 >
@@ -143,8 +140,6 @@ function AddSignerModal({
                 </Select>
                 <Flex>
                   <Text
-                    textStyle="text-sm-mono-regular"
-                    color="grayscale.100"
                     mt={3}
                     ml={2}
                   >{`${t('signersRequired1', { ns: 'modals' })} ${signers.length + 1} ${t(
@@ -163,23 +158,13 @@ function AddSignerModal({
                   alt="alert triangle"
                   w="1.5rem"
                   h="1.5rem"
-                  ml={3}
-                  mr={3}
-                  textColor="blue.500"
+                  mx={3}
                 />
                 <AlertTitle>
-                  <Text
-                    textStyle="text-sm-mono-regular"
-                    whiteSpace="pre-wrap"
-                  >
-                    {t('updateSignerWarning', { ns: 'modals' })}
-                  </Text>
+                  <Text whiteSpace="pre-wrap">{t('updateSignerWarning', { ns: 'modals' })}</Text>
                 </AlertTitle>
               </Alert>
-              <Divider
-                mt={6}
-                mb={6}
-              />
+              <Divider my={6} />
               <CustomNonceInput
                 nonce={values.nonce}
                 onChange={newNonce => setFieldValue('nonce', newNonce ? newNonce : undefined)}

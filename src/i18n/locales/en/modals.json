@@ -32,7 +32,7 @@
   "submit": "Submit",
   "createProposal": "Create Proposal",
   "removeSignerTitle": "Remove Signer",
-  "removeSignerLabel": "Review the signer to remove",
+  "removeSignerLabel": "Removing signer",
   "addSignerPendingToastMessage": "Creating proposal to add signer",
   "addSignerSuccessToastMessage": "Add signer proposal successfully created",
   "addSignerFailureToastMessage": "Add signer proposal failed",
