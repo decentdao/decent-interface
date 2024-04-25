@@ -22,7 +22,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       width="full"
       mt={4}
       mb={6}
-      maxWidth={12}
+      maxWidth={{ base: 12, '2xl': '100%' }}
       _hover={{ maxWidth: '100%' }}
       transitionDuration="0.5s"
     >
