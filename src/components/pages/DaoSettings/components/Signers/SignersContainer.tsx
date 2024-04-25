@@ -1,5 +1,5 @@
 import { Button, Flex, HStack, Radio, RadioGroup, Show, Text } from '@chakra-ui/react';
-import { AddPlus, Minus } from '@decent-org/fractal-ui';
+import { PlusCircle, MinusCircle } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -67,39 +67,34 @@ export function SignersContainer() {
 
   return (
     <SettingsSection
-      contentTitle={''}
-      contentHeader={
-        <Flex justifyContent="space-between">
-          <Text
-            textStyle="text-lg-mono-bold"
-            color="grayscale.100"
-          >
-            {t('signers', { ns: 'common' })}
-          </Text>
-          {userIsSigner && (
-            <Flex gap={4}>
-              <Button
-                minW={0}
-                px={2}
-                onClick={addSigner}
-              >
-                <AddPlus />
-                <Show above="sm">{t('add')}</Show>
-              </Button>
-              <Button
-                minW={0}
-                px={2}
-                onClick={removeSigner}
-                disabled={removeButtonDisabled}
-                isDisabled={removeButtonDisabled}
-                variant="tertiary"
-              >
-                <Minus />
-                <Show above="sm">{t('remove')}</Show>
-              </Button>
-            </Flex>
-          )}
-        </Flex>
+      title={t('signers', { ns: 'common' })}
+      headerRight={
+        userIsSigner && (
+          <Flex gap="0.5rem">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={addSigner}
+              leftIcon={<PlusCircle size="16" />}
+              iconSpacing="0"
+            >
+              <Show above="sm">
+                <Text>{t('add')}</Text>
+              </Show>
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={removeSigner}
+              disabled={removeButtonDisabled}
+              isDisabled={removeButtonDisabled}
+              iconSpacing="0"
+              leftIcon={<MinusCircle size="16" />}
+            >
+              <Show above="sm">{t('remove')}</Show>
+            </Button>
+          </Flex>
+        )
       }
       descriptionTitle={t('signersRequired', { ns: 'common' })}
       descriptionHeader={

@@ -121,29 +121,19 @@ export function MetadataContainer() {
 
   return (
     <SettingsSection
-      contentTitle={''}
-      contentHeader={
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Text
-            textStyle="text-lg-mono-bold"
-            color="grayscale.100"
+      title={t('daoMetadataName')}
+      headerRight={
+        canUserCreateProposal && (
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={name === daoName}
+            isDisabled={name === daoName}
+            onClick={handleEditDAOName}
           >
-            {t('daoMetadataName')}
-          </Text>
-          {canUserCreateProposal && (
-            <Button
-              variant="tertiary"
-              disabled={name === daoName}
-              isDisabled={name === daoName}
-              onClick={handleEditDAOName}
-            >
-              {t('proposeChanges')}
-            </Button>
-          )}
-        </Flex>
+            {t('proposeChanges')}
+          </Button>
+        )
       }
       descriptionTitle={t('daoMetadataDescriptionTitle')}
       descriptionText={t('daoMetadataDescriptionText')}
@@ -178,7 +168,8 @@ export function MetadataContainer() {
         </Text>
         {canUserCreateProposal && (
           <Button
-            variant="tertiary"
+            variant="secondary"
+            size="sm"
             disabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
             isDisabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
             onClick={handleEditDAOSnapshotENS}

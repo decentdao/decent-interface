@@ -4,8 +4,8 @@ import { StyledBox } from '../../../ui/containers/StyledBox';
 import Divider from '../../../ui/utils/Divider';
 
 interface SettingsSectionProps {
-  contentTitle: string;
-  contentHeader?: ReactNode;
+  title: string;
+  headerRight?: ReactNode;
   descriptionTitle: string;
   descriptionHeader?: ReactNode;
   descriptionText: string;
@@ -14,12 +14,12 @@ interface SettingsSectionProps {
 }
 
 export function SettingsSection({
+  title,
+  headerRight,
   descriptionHeader,
   descriptionText,
   descriptionContent,
   descriptionTitle,
-  contentTitle,
-  contentHeader,
   children,
 }: SettingsSectionProps) {
   return (
@@ -32,7 +32,12 @@ export function SettingsSection({
         minHeight="6.25rem"
         minWidth="65%"
       >
-        {contentHeader || <Text>{contentTitle}</Text>}
+        <Flex justifyContent="space-between">
+          <Text>{title}</Text>
+
+          {/* OPTIONAL HEADER RIGHT COMPONENT */}
+          {headerRight}
+        </Flex>
         <Divider my="1rem" />
         {children}
       </StyledBox>

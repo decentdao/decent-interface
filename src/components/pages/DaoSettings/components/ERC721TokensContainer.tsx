@@ -15,7 +15,7 @@ export function ERC721TokensContainer() {
 
   return (
     <SettingsSection
-      contentTitle={t('governanceERC721TokenTitle')}
+      title={t('governanceERC721TokenTitle')}
       descriptionTitle={t('governanceERC721TokenTitle')}
       descriptionText={t('governanceERC721TokenDescription')}
     >

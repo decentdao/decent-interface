@@ -28,7 +28,10 @@ export function DAOSettingsContent() {
   }
 
   return (
-    <Flex flexDir="column" gap="3rem">
+    <Flex
+      flexDir="column"
+      gap="3rem"
+    >
       {type === GovernanceType.AZORIUS_ERC20 ? (
         <ERC20TokenContainer />
       ) : type === GovernanceType.AZORIUS_ERC721 ? (

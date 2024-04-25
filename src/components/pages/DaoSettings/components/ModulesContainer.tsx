@@ -32,7 +32,7 @@ export function ModulesContainer() {
 
   return (
     <SettingsSection
-      contentTitle={t('modulesTitle')}
+      title={t('modulesTitle')}
       descriptionTitle={t('modulesAndGuardsTitle')}
       descriptionText={t('modulesAndGuardsDescription1')}
       descriptionContent={
