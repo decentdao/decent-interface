@@ -9,7 +9,7 @@ import { ModalType } from '../../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../ui/modals/useFractalModal';
 import { SettingsSection } from '../SettingsSection';
 
-function Signer({ signer, disabled}: { signer: string; disabled: boolean }) {
+function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
   return (
     <HStack
       key={signer}
@@ -18,15 +18,15 @@ function Signer({ signer, disabled}: { signer: string; disabled: boolean }) {
       {!disabled && (
         <Radio
           value={signer}
-          color={"lilac--3"}
-          bgColor={"black-0"}
+          color={'lilac--3'}
+          bgColor={'black-0'}
           _checked={{
             bg: 'lilac--3',
             color: 'lilac--4',
             _hover: {
               bg: 'lilac--4',
               color: 'lilac--4',
-            }
+            },
           }}
           borderRadius="0.13rem"
           _hover={{
