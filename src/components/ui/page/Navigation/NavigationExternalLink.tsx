@@ -1,6 +1,5 @@
 import { Box, Hide, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { NavigationTooltip } from './NavigationTooltip';
 
 interface INavigationLink {
   tooltipKey: string;
@@ -24,29 +23,24 @@ export function NavigationExternalLink({
   const { t } = useTranslation('navigation');
 
   return (
-    <NavigationTooltip label={t(tooltipKey)}>
-      <a
-        data-testid={testId}
-        aria-label={t(ariaLabelKey)}
-        {...rest}
-        onClick={closeDrawer}
-        target="_blank"
-        rel="noreferrer noopener"
+    <a
+      data-testid={testId}
+      aria-label={t(ariaLabelKey)}
+      {...rest}
+      onClick={closeDrawer}
+      target="_blank"
+      rel="noreferrer noopener"
+    >
+      <Box
+        display={{ base: 'flex', md: undefined }}
+        my={3}
       >
-        <Box
-          display={{ base: 'flex', md: undefined }}
-          gap={8}
-          justifyContent="space-between"
-          alignItems="center"
-          _hover={{ color: 'gold.500-hover', cursor: 'pointer' }}
-          my={3}
-        >
-          {Icon}
-          <Hide above="md">
-            <Text textStyle="text-md-mono-medium">{t(tooltipKey)}</Text>
-          </Hide>
-        </Box>
-      </a>
-    </NavigationTooltip>
+        {Icon}
+        <Box mx={3}>{t(tooltipKey)}</Box>
+        <Hide above="md">
+          <Text textStyle="text-md-mono-medium">{t(tooltipKey)}</Text>
+        </Hide>
+      </Box>
+    </a>
   );
 }

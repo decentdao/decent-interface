@@ -41,7 +41,6 @@ export function OptionMenu({
       >
         <MenuButton
           as={buttonAs}
-          h="fit-content"
           onClick={(event: MouseEvent<HTMLButtonElement>) => {
             event.stopPropagation();
           }}

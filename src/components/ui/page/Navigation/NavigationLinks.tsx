@@ -22,10 +22,14 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       width="full"
       mt={4}
       mb={6}
+      maxWidth={12}
+      _hover={{ maxWidth: '100%' }}
+      transitionDuration="0.5s"
     >
       <Flex
-        alignItems={{ base: 'flex-start', md: 'center' }}
+        alignItems="flex-start"
         direction="column"
+        pl={'11px'}
         w="full"
         mb={'px'}
         justifyContent={{ base: 'flex-start' }}
@@ -37,6 +41,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         borderTopColor={'neutral-3'}
         borderLeftColor={'neutral-3'}
         borderRightColor={'neutral-3'}
+        overflow={'hidden'}
       >
         <NavigationExternalLink
           href={URL_FAQ}
@@ -64,11 +69,14 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         />
       </Flex>
       <Box
-        w="full"
         bg={'neutral-2'}
         borderBottomRadius={8}
         borderWidth={1}
         borderColor={'neutral-3'}
+        pt={3}
+        pb="5px"
+        pl="11px"
+        overflow="hidden"
       >
         <LanguageSwitcher data-testid="navigation-language" />
       </Box>
@@ -88,7 +96,7 @@ export function NavigationLinks({
   const { addressPrefix } = useNetworkConfig();
 
   return (
-    <>
+    <Box width={'full'}>
       {showDAOLinks && address && (
         <Box
           width="full"
@@ -145,6 +153,6 @@ export function NavigationLinks({
         </Box>
       )}
       <ExternalLinks closeDrawer={closeDrawer} />
-    </>
+    </Box>
   );
 }

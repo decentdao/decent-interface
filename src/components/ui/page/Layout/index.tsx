@@ -49,7 +49,6 @@ export default function Layout() {
         flexDirection="column"
         flexGrow="1"
         position="fixed"
-        w={12}
         ml={6}
         minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
       >

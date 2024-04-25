@@ -1,4 +1,4 @@
-import { Box, Center, Hide, Text } from '@chakra-ui/react';
+import { Box, Hide, Text, Flex } from '@chakra-ui/react';
 import { GlobeSimple } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { OptionMenu } from '../components/ui/menus/OptionMenu';
@@ -14,27 +14,19 @@ export function LanguageSwitcher() {
     };
   });
   return (
-    <Center>
-      <OptionMenu
-        offset={[16, 8]}
-        trigger={
-          <Box
-            display={{ base: 'flex', md: undefined }}
-            gap={8}
-            justifyContent="space-between"
-            alignItems="center"
-            my={3}
-          >
-            <GlobeSimple size={24} />
-            <Hide above="md">
-              <Text textStyle="text-md-mono-medium">{t(i18n.language.slice(0, 2))}</Text>
-            </Hide>
-          </Box>
-        }
-        options={supported}
-        namespace="languages"
-        tooltipKey="tooltipTitle"
-      />
-    </Center>
+    <OptionMenu
+      offset={[16, 8]}
+      trigger={
+        <Flex>
+          <GlobeSimple size={24} />
+          <Box ml={3}>{t('tooltipTitle')}</Box>
+          <Hide above="md">
+            <Text textStyle="text-md-mono-medium">{t(i18n.language.slice(0, 2))}</Text>
+          </Hide>
+        </Flex>
+      }
+      options={supported}
+      namespace="languages"
+    />
   );
 }
