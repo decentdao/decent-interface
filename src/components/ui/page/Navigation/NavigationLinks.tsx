@@ -87,65 +87,63 @@ export function NavigationLinks({
 }) {
   const { addressPrefix } = useNetworkConfig();
 
-  if (!showDAOLinks || !address) {
-    return <ExternalLinks closeDrawer={closeDrawer} />;
-  }
-
   return (
     <>
-      <Box
-        width="full"
-        height="full"
-        marginY="auto"
-      >
-        <Flex
-          alignItems={{ base: 'flex-start', md: 'center' }}
-          direction="column"
-          w="full"
-          mt={8}
-          mb={4}
-          bg={'neutral-2'}
-          borderRadius={8}
-          borderWidth={1}
-          borderColor={'neutral-3'}
+      {showDAOLinks && address && (
+        <Box
+          width="full"
+          height="full"
+          marginY="auto"
         >
-          <NavigationLink
-            href={DAO_ROUTES.dao.relative(addressPrefix, address)}
-            labelKey="home"
-            testId="navigation-daoHomeLink"
-            Icon={<House size={24} />}
-            closeDrawer={closeDrawer}
-          />
-          <NavigationLink
-            href={DAO_ROUTES.hierarchy.relative(addressPrefix, address)}
-            labelKey="nodes"
-            testId="navigation-hierarchy"
-            Icon={<GitFork size={24} />}
-            closeDrawer={closeDrawer}
-          />
-          <NavigationLink
-            href={DAO_ROUTES.proposals.relative(addressPrefix, address)}
-            labelKey="proposals"
-            testId="navigation-proposalsLink"
-            Icon={<Scroll size={24} />}
-            closeDrawer={closeDrawer}
-          />
-          <NavigationLink
-            href={DAO_ROUTES.treasury.relative(addressPrefix, address)}
-            labelKey="treasury"
-            testId="navigation-treasuryLink"
-            Icon={<Coins size={24} />}
-            closeDrawer={closeDrawer}
-          />
-          <NavigationLink
-            href={DAO_ROUTES.proposalTemplates.relative(addressPrefix, address)}
-            labelKey="proposalTemplates"
-            testId="navigation-proposalTemplatesLink"
-            Icon={<SquaresFour size={24} />}
-            closeDrawer={closeDrawer}
-          />
-        </Flex>
-      </Box>
+          <Flex
+            alignItems={{ base: 'flex-start', md: 'center' }}
+            direction="column"
+            w="full"
+            mt={8}
+            mb={4}
+            bg={'neutral-2'}
+            borderRadius={8}
+            borderWidth={1}
+            borderColor={'neutral-3'}
+          >
+            <NavigationLink
+              href={DAO_ROUTES.dao.relative(addressPrefix, address)}
+              labelKey="home"
+              testId="navigation-daoHomeLink"
+              Icon={<House size={24} />}
+              closeDrawer={closeDrawer}
+            />
+            <NavigationLink
+              href={DAO_ROUTES.hierarchy.relative(addressPrefix, address)}
+              labelKey="nodes"
+              testId="navigation-hierarchy"
+              Icon={<GitFork size={24} />}
+              closeDrawer={closeDrawer}
+            />
+            <NavigationLink
+              href={DAO_ROUTES.proposals.relative(addressPrefix, address)}
+              labelKey="proposals"
+              testId="navigation-proposalsLink"
+              Icon={<Scroll size={24} />}
+              closeDrawer={closeDrawer}
+            />
+            <NavigationLink
+              href={DAO_ROUTES.treasury.relative(addressPrefix, address)}
+              labelKey="treasury"
+              testId="navigation-treasuryLink"
+              Icon={<Coins size={24} />}
+              closeDrawer={closeDrawer}
+            />
+            <NavigationLink
+              href={DAO_ROUTES.proposalTemplates.relative(addressPrefix, address)}
+              labelKey="proposalTemplates"
+              testId="navigation-proposalTemplatesLink"
+              Icon={<SquaresFour size={24} />}
+              closeDrawer={closeDrawer}
+            />
+          </Flex>
+        </Box>
+      )}
       <ExternalLinks closeDrawer={closeDrawer} />
     </>
   );
