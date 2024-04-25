@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -46,14 +46,14 @@ export function ModulesContainer() {
         title: t('guardTitle'),
         children:
           safe?.guard && safe?.guard !== zeroAddress ? (
-            <Box>
+            <Flex>
               <DisplayAddress address={safe.guard}>
                 {safe.guard}
                 {!!freezeGuardContractAddress || !!freezeVotingContractAddress
                   ? ' (Freeze Guard)'
                   : ''}
               </DisplayAddress>
-            </Box>
+            </Flex>
           ) : (
             <NoModuleAttached translationKey="noGuardAttached" />
           ),
@@ -66,12 +66,8 @@ export function ModulesContainer() {
       >
         {isModulesLoaded ? (
           fractalModules.length > 0 ? (
-            fractalModules.map(({ moduleAddress, moduleType }, i) => (
-              <Box
-                key={moduleAddress}
-                mt={1}
-                mb={i === 0 ? 1 : 4}
-              >
+            fractalModules.map(({ moduleAddress, moduleType }) => (
+              <Flex key={moduleAddress}>
                 <DisplayAddress address={moduleAddress}>
                   {moduleAddress}
                   {moduleType === FractalModuleType.AZORIUS
@@ -80,7 +76,7 @@ export function ModulesContainer() {
                       ? ' (Fractal Module)'
                       : ''}
                 </DisplayAddress>
-              </Box>
+              </Flex>
             ))
           ) : (
             <NoModuleAttached translationKey="noModulesAttached" />
