@@ -17,8 +17,8 @@ export function ERC20TokenContainer() {
   return (
     <SettingsSection
       title={t('governanceTokenTitle')}
-      descriptionTitle={t('governanceTokenTitle')}
-      descriptionText={t('governanceTokenDescription')}
+      descriptionHeader={t('governanceTokenTitle')}
+      descriptionContent={t('governanceTokenDescription')}
     >
       {votesToken ? (
         <Flex

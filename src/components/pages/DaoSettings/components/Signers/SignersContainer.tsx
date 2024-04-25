@@ -96,7 +96,6 @@ export function SignersContainer() {
           </Flex>
         )
       }
-      descriptionTitle={t('signersRequired', { ns: 'common' })}
       descriptionHeader={
         <Flex justifyContent="space-between">
           <Text
@@ -111,7 +110,7 @@ export function SignersContainer() {
           >{`${safe?.threshold}/${safe?.owners.length}`}</Text>
         </Flex>
       }
-      descriptionText={t('signersDescription')}
+      descriptionContent={t('signersDescription')}
     >
       <RadioGroup
         onChange={e => setSelectedSigner(e)}

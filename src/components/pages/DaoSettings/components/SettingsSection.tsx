@@ -1,4 +1,4 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { StyledBox } from '../../../ui/containers/StyledBox';
 import Divider from '../../../ui/utils/Divider';
@@ -6,10 +6,8 @@ import Divider from '../../../ui/utils/Divider';
 interface SettingsSectionProps {
   title: string;
   headerRight?: ReactNode;
-  descriptionTitle: string;
-  descriptionHeader?: ReactNode;
-  descriptionText: string;
-  descriptionContent?: ReactNode;
+  descriptionHeader: ReactNode;
+  descriptionContent: ReactNode;
   children: ReactNode;
 }
 
@@ -17,17 +15,17 @@ export function SettingsSection({
   title,
   headerRight,
   descriptionHeader,
-  descriptionText,
   descriptionContent,
-  descriptionTitle,
   children,
 }: SettingsSectionProps) {
   return (
     <Flex
-      gap={4}
+      gap="1.5rem"
       alignItems="flex-start"
     >
+      {/* SETTINGS SECTION CONTENT */}
       <StyledBox
+        bg="neutral-2"
         maxHeight="fit-content"
         minHeight="6.25rem"
         minWidth="65%"
@@ -41,20 +39,27 @@ export function SettingsSection({
         <Divider my="1rem" />
         {children}
       </StyledBox>
-      <StyledBox
-        maxHeight="fit-content"
-        minHeight="6.25rem"
+
+      {/* SETTINGS SECTION DESCRIPTION */}
+      <Flex
+        gap="0.5rem"
+        flexDir="column"
+        justifyContent="flex-start"
       >
-        {descriptionHeader || (
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
-            {descriptionTitle}
-          </Text>
-        )}
-        {descriptionContent || <Text mt={2}>{descriptionText}</Text>}
-      </StyledBox>
+        <Box
+          color="white-0"
+          textStyle="display-lg"
+        >
+          {descriptionHeader}
+        </Box>
+
+        <Box
+          color="neutral-7"
+          textStyle="body-base"
+        >
+          {descriptionContent}
+        </Box>
+      </Flex>
     </Flex>
   );
 }

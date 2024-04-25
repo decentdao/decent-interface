@@ -16,8 +16,8 @@ export function ERC721TokensContainer() {
   return (
     <SettingsSection
       title={t('governanceERC721TokenTitle')}
-      descriptionTitle={t('governanceERC721TokenTitle')}
-      descriptionText={t('governanceERC721TokenDescription')}
+      descriptionHeader={t('governanceERC721TokenTitle')}
+      descriptionContent={t('governanceERC721TokenDescription')}
     >
       {erc721Tokens ? (
         <Flex flexWrap="wrap">

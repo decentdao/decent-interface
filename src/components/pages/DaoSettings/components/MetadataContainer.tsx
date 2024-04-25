@@ -135,8 +135,8 @@ export function MetadataContainer() {
           </Button>
         )
       }
-      descriptionTitle={t('daoMetadataDescriptionTitle')}
-      descriptionText={t('daoMetadataDescriptionText')}
+      descriptionHeader={t('daoMetadataDescriptionTitle')}
+      descriptionContent={t('daoMetadataDescriptionText')}
     >
       <InputComponent
         isRequired={false}
