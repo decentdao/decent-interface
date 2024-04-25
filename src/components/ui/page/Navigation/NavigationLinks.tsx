@@ -94,7 +94,7 @@ export function NavigationLinks({
   const { addressPrefix } = useNetworkConfig();
 
   return (
-    <Box width={'full'}>
+    <>
       {showDAOLinks && address && (
         <Box
           width="full"
@@ -154,6 +154,6 @@ export function NavigationLinks({
         </Box>
       )}
       <ExternalLinks closeDrawer={closeDrawer} />
-    </Box>
+    </>
   );
 }
