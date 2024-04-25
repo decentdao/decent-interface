@@ -20,7 +20,7 @@ export function SettingsPage() {
     );
   }
   return (
-    <Box mt={12}>
+    <Box>
       <PageHeader
         title={t('headerTitle', {
           daoName,
