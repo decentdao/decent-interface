@@ -1,26 +1,16 @@
-import { Box, Flex, Text, Center } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalModuleType } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
-import Divider from '../../../ui/utils/Divider';
 import { SettingsSection } from './SettingsSection';
 
 function NoModuleAttached({ translationKey }: { translationKey: string }) {
   const { t } = useTranslation('settings');
 
-  return (
-    <Center my={4}>
-      <Text
-        color="chocolate.200"
-        textStyle="text-lg-mono-bold"
-      >
-        {t(translationKey)}
-      </Text>
-    </Center>
-  );
+  return <Text color="neutral-5">{t(translationKey)}</Text>;
 }
 
 export function ModulesContainer() {
@@ -52,6 +42,22 @@ export function ModulesContainer() {
           </Text>
         </>
       }
+      nestedSection={{
+        title: t('guardTitle'),
+        children:
+          safe?.guard && safe?.guard !== zeroAddress ? (
+            <Box>
+              <DisplayAddress address={safe.guard}>
+                {safe.guard}
+                {!!freezeGuardContractAddress || !!freezeVotingContractAddress
+                  ? ' (Freeze Guard)'
+                  : ''}
+              </DisplayAddress>
+            </Box>
+          ) : (
+            <NoModuleAttached translationKey="noGuardAttached" />
+          ),
+      }}
     >
       <Flex
         flexDirection="column"
@@ -81,20 +87,6 @@ export function ModulesContainer() {
           )
         ) : (
           <BarLoader />
-        )}
-        <Text textStyle="text-lg-mono-bold">{t('guardTitle')}</Text>
-        <Divider mt={4} />
-        {safe?.guard && safe?.guard !== zeroAddress ? (
-          <Box>
-            <DisplayAddress address={safe.guard}>
-              {safe.guard}
-              {!!freezeGuardContractAddress || !!freezeVotingContractAddress
-                ? ' (Freeze Guard)'
-                : ''}
-            </DisplayAddress>
-          </Box>
-        ) : (
-          <NoModuleAttached translationKey="noGuardAttached" />
         )}
       </Flex>
     </SettingsSection>

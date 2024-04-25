@@ -3,12 +3,18 @@ import { ReactNode } from 'react';
 import { StyledBox } from '../../../ui/containers/StyledBox';
 import Divider from '../../../ui/utils/Divider';
 
+type NestedSettingsSectionProps = Omit<
+  SettingsSectionProps,
+  'nestedSection' | 'descriptionHeader' | 'descriptionContent'
+>;
+
 interface SettingsSectionProps {
   title: string;
   headerRight?: ReactNode;
   descriptionHeader: ReactNode;
   descriptionContent: ReactNode;
   children: ReactNode;
+  nestedSection?: NestedSettingsSectionProps;
 }
 
 export function SettingsSection({
@@ -17,12 +23,10 @@ export function SettingsSection({
   descriptionHeader,
   descriptionContent,
   children,
+  nestedSection,
 }: SettingsSectionProps) {
   return (
-    <Flex
-      gap="1.5rem"
-      alignItems="flex-start"
-    >
+    <Flex gap="1.5rem">
       {/* SETTINGS SECTION CONTENT */}
       <StyledBox
         bg="neutral-2"
@@ -30,14 +34,28 @@ export function SettingsSection({
         minHeight="6.25rem"
         minWidth="65%"
       >
+        {/* TITLE AND OPTIONAL RIGHT COMPONENT */}
         <Flex justifyContent="space-between">
-          <Text>{title}</Text>
-
-          {/* OPTIONAL HEADER RIGHT COMPONENT */}
+          <Text textStyle="display-lg">{title}</Text>
           {headerRight}
         </Flex>
         <Divider my="1rem" />
         {children}
+
+        {/* NESTED SETTINGS SECTION, for when a section has an extra header-content content */}
+        {nestedSection && (
+          <Flex
+            flexDir="column"
+            mt="2rem"
+          >
+            <Flex justifyContent="space-between">
+              <Text textStyle="display-lg">{nestedSection.title}</Text>
+              {nestedSection.headerRight}
+            </Flex>
+            <Divider my="1rem" />
+            {nestedSection.children}
+          </Flex>
+        )}
       </StyledBox>
 
       {/* SETTINGS SECTION DESCRIPTION */}
