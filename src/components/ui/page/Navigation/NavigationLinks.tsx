@@ -94,15 +94,20 @@ export function NavigationLinks({
   const { addressPrefix } = useNetworkConfig();
 
   return (
-    <>
+    <Flex
+      alignItems="start"
+      direction="column"
+      justifyContent="flex-end"
+      flexGrow={1}
+    >
       {showDAOLinks && address && (
         <Box
           width="full"
           height="full"
           marginY="auto"
-          // maxWidth={{ base: 12, '2xl': '100%' }}
-          // _hover={{ maxWidth: '100%' }}
-          // transitionDuration="0.5s"
+          maxWidth={{ base: 12, '3xl': '100%' }}
+          _hover={{ maxWidth: '100%' }}
+          transitionDuration="0.5s"
         >
           <Flex
             alignItems={{ base: 'flex-start', md: 'center' }}
@@ -154,6 +159,6 @@ export function NavigationLinks({
         </Box>
       )}
       <ExternalLinks closeDrawer={closeDrawer} />
-    </>
+    </Flex>
   );
 }

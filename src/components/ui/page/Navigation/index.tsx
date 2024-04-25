@@ -1,4 +1,4 @@
-import { Flex, Show } from '@chakra-ui/react';
+import { Show } from '@chakra-ui/react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { NavigationLinks } from './NavigationLinks';
 
@@ -9,19 +9,12 @@ function Navigation() {
 
   const showDAOLinks = !!daoAddress;
   return (
-    <Flex
-      alignItems="center"
-      direction="column"
-      justifyContent="flex-end"
-      flexGrow={1}
-    >
-      <Show above="md">
-        <NavigationLinks
-          showDAOLinks={showDAOLinks}
-          address={daoAddress}
-        />
-      </Show>
-    </Flex>
+    <Show above="md">
+      <NavigationLinks
+        showDAOLinks={showDAOLinks}
+        address={daoAddress}
+      />
+    </Show>
   );
 }
 
