@@ -1,6 +1,6 @@
 import { Box, Center } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { DAOSettings } from '../../../components/pages/DaoSettings/DAOSettings';
+import { DAOSettingsContent } from '../../../components/pages/DaoSettings/DAOSettingsContent';
 import { BarLoader } from '../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
 import { HEADER_HEIGHT } from '../../../constants/common';
@@ -33,7 +33,7 @@ export function SettingsPage() {
           },
         ]}
       />
-      <DAOSettings />
+      <DAOSettingsContent />
     </Box>
   );
 }

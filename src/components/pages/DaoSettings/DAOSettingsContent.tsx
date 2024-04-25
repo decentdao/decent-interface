@@ -9,7 +9,7 @@ import { MetadataContainer } from './components/MetadataContainer';
 import { ModulesContainer } from './components/ModulesContainer';
 import { SignersContainer } from './components/Signers/SignersContainer';
 
-export function DAOSettings() {
+export function DAOSettingsContent() {
   const {
     node: { safe },
     governance: { type },
