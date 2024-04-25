@@ -38,9 +38,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         borderTopWidth={1}
         borderLeftWidth={1}
         borderRightWidth={1}
-        borderTopColor={'neutral-3'}
-        borderLeftColor={'neutral-3'}
-        borderRightColor={'neutral-3'}
+        borderColor={'neutral-3'}
         overflow={'hidden'}
       >
         <NavigationExternalLink
