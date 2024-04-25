@@ -2,7 +2,6 @@ import { Flex } from '@chakra-ui/react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceType } from '../../../types';
 import { BarLoader } from '../../ui/loaders/BarLoader';
-import Divider from '../../ui/utils/Divider';
 import { ERC20TokenContainer } from './components/ERC20TokenContainer';
 import { ERC721TokensContainer } from './components/ERC721TokensContainer';
 import { MetadataContainer } from './components/MetadataContainer';
@@ -29,7 +28,7 @@ export function DAOSettingsContent() {
   }
 
   return (
-    <>
+    <Flex flexDir="column" gap="3rem">
       {type === GovernanceType.AZORIUS_ERC20 ? (
         <ERC20TokenContainer />
       ) : type === GovernanceType.AZORIUS_ERC721 ? (
@@ -37,16 +36,8 @@ export function DAOSettingsContent() {
       ) : type === GovernanceType.MULTISIG ? (
         <SignersContainer />
       ) : null}
-      <Divider
-        mt={10}
-        mb={10}
-      />
       <ModulesContainer />
-      <Divider
-        mt={10}
-        mb={10}
-      />
       <MetadataContainer />
-    </>
+    </Flex>
   );
 }
