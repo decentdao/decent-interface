@@ -3,18 +3,18 @@ import { Flex, Text, Button } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { SettingsSection } from '..';
-import { DAO_ROUTES } from '../../../../../constants/routes';
-import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
-import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
-import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayName';
-import { useFractal } from '../../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { ProposalExecuteData } from '../../../../../types';
-import { InputComponent } from '../../../../ui/forms/InputComponent';
-import Divider from '../../../../ui/utils/Divider';
+import { DAO_ROUTES } from '../../../../constants/routes';
+import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
+import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { ProposalExecuteData } from '../../../../types';
+import { InputComponent } from '../../../ui/forms/InputComponent';
+import Divider from '../../../ui/utils/Divider';
+import { SettingsSection } from './SettingsSection';
 
-export default function MetadataContainer() {
+export function MetadataContainer() {
   const [name, setName] = useState('');
   const [snapshotENS, setSnapshotENS] = useState('');
   const [snapshotENSValid, setSnapshotENSValid] = useState<boolean>();

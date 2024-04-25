@@ -1,12 +1,12 @@
 import { Box, Flex, Text, Center } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
-import { SettingsSection } from '..';
-import { useFractal } from '../../../../../providers/App/AppProvider';
-import { FractalModuleType } from '../../../../../types';
-import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
-import { BarLoader } from '../../../../ui/loaders/BarLoader';
-import Divider from '../../../../ui/utils/Divider';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { FractalModuleType } from '../../../../types';
+import { DisplayAddress } from '../../../ui/links/DisplayAddress';
+import { BarLoader } from '../../../ui/loaders/BarLoader';
+import Divider from '../../../ui/utils/Divider';
+import { SettingsSection } from './SettingsSection';
 
 function NoModuleAttached({ translationKey }: { translationKey: string }) {
   const { t } = useTranslation('settings');

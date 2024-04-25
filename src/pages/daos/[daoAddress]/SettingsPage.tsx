@@ -1,12 +1,12 @@
 import { Box, Center } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Settings } from '../../../../components/pages/DaoSettings';
-import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
-import PageHeader from '../../../../components/ui/page/Header/PageHeader';
-import { HEADER_HEIGHT } from '../../../../constants/common';
-import { useFractal } from '../../../../providers/App/AppProvider';
+import { DAOSettings } from '../../../components/pages/DaoSettings/DAOSettings';
+import { BarLoader } from '../../../components/ui/loaders/BarLoader';
+import PageHeader from '../../../components/ui/page/Header/PageHeader';
+import { HEADER_HEIGHT } from '../../../constants/common';
+import { useFractal } from '../../../providers/App/AppProvider';
 
-export default function SettingsPage() {
+export function SettingsPage() {
   const { t } = useTranslation('breadcrumbs');
   const {
     node: { daoAddress, daoName },
@@ -33,7 +33,7 @@ export default function SettingsPage() {
           },
         ]}
       />
-      <Settings />
+      <DAOSettings />
     </Box>
   );
 }

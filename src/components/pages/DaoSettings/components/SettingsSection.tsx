@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { StyledBox } from '../../../ui/containers/StyledBox';
 import Divider from '../../../ui/utils/Divider';
 
-interface ISettingsSection {
+interface SettingsSectionProps {
   contentTitle: string;
   contentHeader?: ReactNode;
   descriptionTitle: string;
@@ -21,7 +21,7 @@ export function SettingsSection({
   contentTitle,
   contentHeader,
   children,
-}: ISettingsSection) {
+}: SettingsSectionProps) {
   return (
     <Flex
       gap={4}

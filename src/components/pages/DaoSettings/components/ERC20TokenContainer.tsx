@@ -1,13 +1,13 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { SettingsSection } from '..';
-import { useFractal } from '../../../../../providers/App/AppProvider';
-import { AzoriusGovernance } from '../../../../../types';
-import { formatCoin } from '../../../../../utils';
-import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
-import { BarLoader } from '../../../../ui/loaders/BarLoader';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { AzoriusGovernance } from '../../../../types';
+import { formatCoin } from '../../../../utils';
+import { DisplayAddress } from '../../../ui/links/DisplayAddress';
+import { BarLoader } from '../../../ui/loaders/BarLoader';
+import { SettingsSection } from './SettingsSection';
 
-export default function ERC20TokenContainer() {
+export function ERC20TokenContainer() {
   const { t } = useTranslation(['settings']);
   const { governance } = useFractal();
 

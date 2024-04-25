@@ -3,11 +3,11 @@ import { AddPlus, Minus } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import { SettingsSection } from '..';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
 import { ModalType } from '../../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../ui/modals/useFractalModal';
+import { SettingsSection } from '../SettingsSection';
 
 function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
   return (
@@ -32,7 +32,7 @@ function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
   );
 }
 
-export default function SignersContainer() {
+export function SignersContainer() {
   const {
     node: { safe },
   } = useFractal();
