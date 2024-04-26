@@ -98,10 +98,7 @@ function RemoveSignerModal({
         mb={4}
       />
       <HStack>
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-        >
+        <Text>
           {t('updateThreshold', { ns: 'modals' })}
         </Text>
         <Flex ref={tooltipContainer}>
@@ -158,7 +155,7 @@ function RemoveSignerModal({
         <Icon
           color="yellow-0"
           as={WarningCircle}
-          boxSize="24px"
+          boxSize="1.5rem"
         />
         <Text
           color="yellow-0"
@@ -169,7 +166,6 @@ function RemoveSignerModal({
         </Text>
       </Flex>
       <Divider
-        color="chocolate.700"
         mt={6}
         mb={6}
       />

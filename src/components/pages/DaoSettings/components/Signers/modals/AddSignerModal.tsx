@@ -5,11 +5,10 @@ import {
   HStack,
   Select,
   Text,
-  Alert,
-  AlertTitle,
-  Image,
+  Icon,
 } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
+import { WarningCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -148,22 +147,34 @@ function AddSignerModal({
                   )}`}</Text>
                 </Flex>
               </HStack>
-              <Alert
-                status="info"
-                w="fit-full"
-                mt={6}
-              >
-                <Image
-                  src="/images/alert-triangle.svg"
-                  alt="alert triangle"
-                  w="1.5rem"
-                  h="1.5rem"
-                  mx={3}
-                />
-                <AlertTitle>
-                  <Text whiteSpace="pre-wrap">{t('updateSignerWarning', { ns: 'modals' })}</Text>
-                </AlertTitle>
-              </Alert>
+              
+              
+<Flex
+        w="fit-full"
+        mt={6}
+        p="1rem"
+        border="1px"
+        borderColor="yellow--1"
+        bg="yellow--2"
+        borderRadius="0.25rem"
+        alignItems="center"
+        gap="1rem"
+      >
+        <Icon
+          color="yellow-0"
+          as={WarningCircle}
+          boxSize="1.5rem"
+        />
+        <Text
+          color="yellow-0"
+          textStyle="body-base-strong"
+          whiteSpace="pre-wrap"
+        >
+          {t('updateSignerWarning', { ns: 'modals' })}
+        </Text>
+      </Flex>
+
+
               <Divider my={6} />
               <CustomNonceInput
                 nonce={values.nonce}
