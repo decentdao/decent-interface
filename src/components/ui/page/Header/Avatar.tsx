@@ -16,12 +16,11 @@ function BlockieAvatar({ address, size }: { size: AvatarSize; address: string })
     <Box
       h={avatarSizes[size]}
       w={avatarSizes[size]}
-      borderRadius={'50%'}
-      overflow={'hidden'}
     >
-      <img
-        alt={address}
+      <Image
+        borderRadius="full"
         src={blo(getAddress(address))}
+        alt={address}
       />
     </Box>
   );
