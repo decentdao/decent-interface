@@ -97,14 +97,14 @@ export function NavigationLinks({
     >
       {showDAOLinks && address && (
         <Box
-          // width="full"
-          // height="full"
           marginY="auto"
           maxWidth={{ base: 12, '3xl': '100%' }}
           _hover={{ maxWidth: '100%' }}
           transitionDuration="0.5s"
         >
           <Box
+            mt={12}
+            mb={3}
             bg="neutral-2"
             pl="11px"
             overflow="hidden"
