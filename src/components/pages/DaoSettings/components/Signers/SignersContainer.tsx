@@ -113,9 +113,7 @@ export function SignersContainer() {
       }
       descriptionHeader={
         <Flex justifyContent="space-between">
-          <Text>
-            {t('signersRequired', { ns: 'common' })}
-          </Text>
+          <Text>{t('signersRequired', { ns: 'common' })}</Text>
           <Text>{`${safe?.threshold}/${safe?.owners.length}`}</Text>
         </Flex>
       }

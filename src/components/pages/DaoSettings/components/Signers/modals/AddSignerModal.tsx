@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  HStack,
-  Select,
-  Text,
-  Icon,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Select, Text, Icon } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { WarningCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes, Formik } from 'formik';
@@ -102,12 +94,7 @@ function AddSignerModal({
                 mb={4}
               />
               <HStack>
-                <Text
-                  textStyle="text-base-sans-regular"
-                  color="grayscale.100"
-                >
-                  {t('updateThreshold', { ns: 'modals' })}
-                </Text>
+                <Text>{t('updateThreshold', { ns: 'modals' })}</Text>
                 <Flex ref={tooltipContainer}>
                   <SupportTooltip
                     containerRef={tooltipContainer}
@@ -147,33 +134,31 @@ function AddSignerModal({
                   )}`}</Text>
                 </Flex>
               </HStack>
-              
-              
-<Flex
-        w="fit-full"
-        mt={6}
-        p="1rem"
-        border="1px"
-        borderColor="yellow--1"
-        bg="yellow--2"
-        borderRadius="0.25rem"
-        alignItems="center"
-        gap="1rem"
-      >
-        <Icon
-          color="yellow-0"
-          as={WarningCircle}
-          boxSize="1.5rem"
-        />
-        <Text
-          color="yellow-0"
-          textStyle="body-base-strong"
-          whiteSpace="pre-wrap"
-        >
-          {t('updateSignerWarning', { ns: 'modals' })}
-        </Text>
-      </Flex>
 
+              <Flex
+                w="fit-full"
+                mt={6}
+                p="1rem"
+                border="1px"
+                borderColor="yellow--1"
+                bg="yellow--2"
+                borderRadius="0.25rem"
+                alignItems="center"
+                gap="1rem"
+              >
+                <Icon
+                  color="yellow-0"
+                  as={WarningCircle}
+                  boxSize="1.5rem"
+                />
+                <Text
+                  color="yellow-0"
+                  textStyle="body-base-strong"
+                  whiteSpace="pre-wrap"
+                >
+                  {t('updateSignerWarning', { ns: 'modals' })}
+                </Text>
+              </Flex>
 
               <Divider my={6} />
               <CustomNonceInput
