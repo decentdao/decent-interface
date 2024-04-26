@@ -114,35 +114,35 @@ export function NavigationLinks({
               href={DAO_ROUTES.dao.relative(addressPrefix, address)}
               labelKey="home"
               testId="navigation-daoHomeLink"
-              Icon={<House size={24} />}
+              NavigationIcon={House}
               closeDrawer={closeDrawer}
             />
             <NavigationLink
               href={DAO_ROUTES.hierarchy.relative(addressPrefix, address)}
               labelKey="nodes"
               testId="navigation-hierarchy"
-              Icon={<GitFork size={24} />}
+              NavigationIcon={GitFork}
               closeDrawer={closeDrawer}
             />
             <NavigationLink
               href={DAO_ROUTES.proposals.relative(addressPrefix, address)}
               labelKey="proposals"
               testId="navigation-proposalsLink"
-              Icon={<Scroll size={24} />}
+              NavigationIcon={Scroll}
               closeDrawer={closeDrawer}
             />
             <NavigationLink
               href={DAO_ROUTES.treasury.relative(addressPrefix, address)}
               labelKey="treasury"
               testId="navigation-treasuryLink"
-              Icon={<Coins size={24} />}
+              NavigationIcon={Coins}
               closeDrawer={closeDrawer}
             />
             <NavigationLink
               href={DAO_ROUTES.proposalTemplates.relative(addressPrefix, address)}
               labelKey="proposalTemplates"
               testId="navigation-proposalTemplatesLink"
-              Icon={<SquaresFour size={24} />}
+              NavigationIcon={SquaresFour}
               closeDrawer={closeDrawer}
             />
           </Box>

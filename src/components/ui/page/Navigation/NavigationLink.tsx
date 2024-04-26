@@ -1,4 +1,5 @@
 import { Box, Hide, Text, Flex } from '@chakra-ui/react';
+import { Icon } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
@@ -6,7 +7,7 @@ interface INavigationLink {
   href: string;
   labelKey: string;
   testId: string;
-  Icon: JSX.Element;
+  NavigationIcon: Icon;
   target?: string;
   rel?: string;
   closeDrawer?: () => void;
@@ -15,7 +16,7 @@ interface INavigationLink {
 export function NavigationLink({
   labelKey,
   testId,
-  Icon,
+  NavigationIcon,
   closeDrawer,
   href,
   ...rest
@@ -32,7 +33,7 @@ export function NavigationLink({
         onClick={closeDrawer}
       >
         <Flex>
-          <Box w={6}>{Icon}</Box>
+          <Box w={6}>{<NavigationIcon size={24} />}</Box>
           <Box
             mx={3}
             whiteSpace={'nowrap'}
