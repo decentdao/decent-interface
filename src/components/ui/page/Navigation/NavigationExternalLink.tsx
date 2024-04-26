@@ -1,4 +1,5 @@
 import { Box, Hide, Text, Flex } from '@chakra-ui/react';
+import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface INavigationLink {
@@ -7,7 +8,7 @@ interface INavigationLink {
   href: string;
   testId: string;
   routeKey?: string;
-  Icon: JSX.Element;
+  Icon: ReactElement;
   closeDrawer?: () => void;
 }
 
@@ -36,7 +37,7 @@ export function NavigationExternalLink({
           <Box w={6}>{Icon}</Box>
           <Box
             mx={3}
-            whiteSpace={'nowrap'}
+            whiteSpace="nowrap"
           >
             {t(tooltipKey)}
           </Box>

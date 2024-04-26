@@ -36,7 +36,7 @@ export function NavigationLink({
           <Box w={6}>{<NavigationIcon size={24} />}</Box>
           <Box
             mx={3}
-            whiteSpace={'nowrap'}
+            whiteSpace="nowrap"
           >
             {t(labelKey)}
           </Box>
