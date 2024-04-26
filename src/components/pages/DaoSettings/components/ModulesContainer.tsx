@@ -26,11 +26,7 @@ export function ModulesContainer() {
       descriptionHeader={t('modulesAndGuardsTitle')}
       descriptionContent={
         <>
-          <Text
-            textStyle="text-sm-sans-regular"
-            color="chocolate.200"
-            mt={2}
-          >
+          <Text mt={2}>
             {t('modulesAndGuardsDescription1')}
           </Text>
           <Text
