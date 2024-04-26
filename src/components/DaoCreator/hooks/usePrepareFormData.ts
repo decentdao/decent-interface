@@ -1,6 +1,6 @@
 import { IVotes__factory } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
-import { Address } from 'viem';
+import { getAddress } from 'viem';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import {
@@ -173,7 +173,7 @@ export function usePrepareFormData() {
           nfts.map(async nft => {
             let address = nft.tokenAddress;
             if (couldBeENS(address)) {
-              address = (await signer!.resolveName(nft.tokenAddress!)) as Address;
+              address = getAddress(await signer!.resolveName(nft.tokenAddress!));
             }
             return {
               tokenAddress: address,

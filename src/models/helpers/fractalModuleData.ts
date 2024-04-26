@@ -3,7 +3,7 @@ import {
   FractalModule__factory,
   ModuleProxyFactory,
 } from '@fractal-framework/fractal-contracts';
-import { Address, Hash, encodeAbiParameters, parseAbiParameters } from 'viem';
+import { encodeAbiParameters, parseAbiParameters, getAddress, isHex } from 'viem';
 import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
@@ -24,23 +24,27 @@ export const fractalModuleData = (
   fractalModuleMasterCopyContract: FractalModule,
   zodiacModuleProxyFactoryContract: ModuleProxyFactory,
   safeContract: GnosisSafeL2,
-  saltNum: string,
+  saltNum: bigint,
   parentAddress?: string,
 ): FractalModuleData => {
   const fractalModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData(
     'setUp',
     [
       encodeAbiParameters(parseAbiParameters(['address, address, address, address[]']), [
-        (parentAddress ?? safeContract.address) as Address, // Owner -- Parent DAO or safe contract
-        safeContract.address as Address, // Avatar
-        safeContract.address as Address, // Target
+        getAddress(parentAddress ?? safeContract.address), // Owner -- Parent DAO or safe contract
+        getAddress(safeContract.address), // Avatar
+        getAddress(safeContract.address), // Target
         [], // Authorized Controllers
       ]),
     ],
-  ) as Hash;
+  );
+
+  if (!isHex(fractalModuleCalldata)) {
+    throw new Error("Error encoding fractal module call data")
+  }
 
   const fractalByteCodeLinear = generateContractByteCodeLinear(
-    fractalModuleMasterCopyContract.address.slice(2) as Address,
+    getAddress(fractalModuleMasterCopyContract.address),
   );
 
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
@@ -50,7 +54,7 @@ export const fractalModuleData = (
     saltNum,
   ]);
   const predictedFractalModuleAddress = generatePredictedModuleAddress(
-    zodiacModuleProxyFactoryContract.address as Address,
+    getAddress(zodiacModuleProxyFactoryContract.address),
     fractalSalt,
     fractalByteCodeLinear,
   );

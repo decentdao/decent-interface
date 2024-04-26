@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Signer } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { isAddress, getAddress, Address, encodeAbiParameters, parseAbiParameters } from 'viem';
+import { isAddress, getAddress, encodeAbiParameters, parseAbiParameters } from 'viem';
 import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
@@ -277,7 +277,7 @@ export default function useSubmitProposal() {
       if (safeAddress && isAddress(safeAddress)) {
         // Submitting proposal to any DAO out of global context
         const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
-        const modules = await lookupModules(safeInfo.modules as Address[]);
+        const modules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(modules);
         if (!azoriusModule) {
           submitMultisigProposal({

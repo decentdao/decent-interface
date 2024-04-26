@@ -1,6 +1,6 @@
 import { Azorius } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
-import { Address, getContract } from 'viem';
+import { Address, getContract, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -20,7 +20,7 @@ export const useGovernanceContracts = () => {
   const { fractalModules, isModulesLoaded, daoAddress } = node;
 
   const loadGovernanceContracts = useCallback(async () => {
-    if (!baseContracts) {
+    if (!baseContracts || !publicClient) {
       return;
     }
     const {
@@ -50,7 +50,7 @@ export const useGovernanceContracts = () => {
       )[1];
 
       const masterCopyData = await getZodiacModuleProxyMasterCopyData(
-        votingStrategyAddress as Address,
+        getAddress(votingStrategyAddress),
       );
       const isOzLinearVoting = masterCopyData.isOzLinearVoting;
       const isOzLinearVotingERC721 = masterCopyData.isOzLinearVotingERC721;
@@ -70,20 +70,20 @@ export const useGovernanceContracts = () => {
           return undefined;
         });
         const possibleLockRelease = getContract({
-          address: govTokenAddress as Address,
+          address: getAddress(govTokenAddress),
           abi: LockRelease__factory.abi,
-          client: { public: publicClient! },
+          client: { public: publicClient },
         });
 
         const lockedTokenAddress = await possibleLockRelease.read.token().catch(() => {
           // if the underlying token is not an ERC20Wrapper, this will throw an error,
           // so we catch it and return undefined
           return undefined;
-        });
+        }) as Address | undefined;
 
         if (lockedTokenAddress) {
           lockReleaseContractAddress = govTokenAddress;
-          votesTokenContractAddress = lockedTokenAddress as Address;
+          votesTokenContractAddress = lockedTokenAddress;
         } else {
           // @dev if the underlying token is an ERC20Wrapper, we use the underlying token as the token contract
           // @dev if the no underlying token, we use the governance token as the token contract

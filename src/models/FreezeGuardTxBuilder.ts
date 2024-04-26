@@ -10,13 +10,15 @@ import {
   ERC721FreezeVoting,
 } from '@fractal-framework/fractal-contracts';
 import {
+  getAddress,
   getCreate2Address,
   keccak256,
   encodePacked,
   Address,
-  Hash,
+  Hex,
   encodeAbiParameters,
   parseAbiParameters,
+  isHex,
 } from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../helpers';
@@ -44,11 +46,11 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   // Freeze Voting Data
   private freezeVotingType: any;
-  private freezeVotingCallData: Hash | undefined;
+  private freezeVotingCallData: Hex | undefined;
   private freezeVotingAddress: Address | undefined;
 
   // Freeze Guard Data
-  private freezeGuardCallData: Hash | undefined;
+  private freezeGuardCallData: Hex | undefined;
   private freezeGuardAddress: Address | undefined;
 
   // Azorius Data
@@ -63,7 +65,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     baseContracts: BaseContracts,
     daoData: SubDAO,
     safeContract: GnosisSafeL2,
-    saltNum: string,
+    saltNum: bigint,
     parentAddress: Address,
     parentTokenAddress?: Address,
     azoriusContracts?: AzoriusContracts,
@@ -119,18 +121,23 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   public buildFreezeVotingSetupTx(): SafeTransaction {
     const subDaoData = this.daoData as SubDAO;
 
+    const parentStrategyAddress =this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
+    ? this.parentStrategyAddress
+    : this.parentTokenAddress ?? this.parentAddress;
+    if (!this.parentAddress || !parentStrategyAddress) {
+      throw new Error("Error building contract call for setting up freeze voting - required addresses were not provided.")
+    }
+
     return buildContractCall(
       this.freezeVotingType.connect(this.freezeVotingAddress, this.signerOrProvider),
       'setUp',
       [
         encodeAbiParameters(parseAbiParameters('address, uint256, uint32, uint32, address'), [
-          this.parentAddress as Address, // Owner -- Parent DAO
+          getAddress(this.parentAddress), // Owner -- Parent DAO
           subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
           Number(subDaoData.freezeProposalPeriod), // FreezeProposalPeriod
           Number(subDaoData.freezePeriod), // FreezePeriod
-          (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
-            ? this.parentStrategyAddress
-            : this.parentTokenAddress ?? this.parentAddress) as Address, // Parent Votes Token or Parent Safe Address
+          getAddress(parentStrategyAddress), // Parent Votes Token or Parent Safe Address
         ]),
       ],
       0,
@@ -183,11 +190,11 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     }
 
     const freezeVotingByteCodeLinear = generateContractByteCodeLinear(
-      freezeVotesMasterCopyContract.address.slice(2) as Address,
+      getAddress(freezeVotesMasterCopyContract.address),
     );
 
     this.freezeVotingAddress = getCreate2Address({
-      from: this.baseContracts.zodiacModuleProxyFactoryContract.address as Address,
+      from: getAddress(this.baseContracts.zodiacModuleProxyFactoryContract.address),
       salt: generateSalt(this.freezeVotingCallData!, this.saltNum),
       bytecodeHash: keccak256(encodePacked(['bytes'], [freezeVotingByteCodeLinear])),
     });
@@ -195,12 +202,12 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   private setFreezeGuardAddress() {
     const freezeGuardByteCodeLinear = generateContractByteCodeLinear(
-      this.getGuardMasterCopyAddress().slice(2) as Address,
+      getAddress(this.getGuardMasterCopyAddress()),
     );
     const freezeGuardSalt = generateSalt(this.freezeGuardCallData!, this.saltNum);
 
     this.freezeGuardAddress = generatePredictedModuleAddress(
-      this.baseContracts.zodiacModuleProxyFactoryContract.address as Address,
+      getAddress(this.baseContracts.zodiacModuleProxyFactoryContract.address),
       freezeGuardSalt,
       freezeGuardByteCodeLinear,
     );
@@ -217,35 +224,50 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private setFreezeGuardCallDataMultisig() {
     const subDaoData = this.daoData as SubDAO;
 
-    this.freezeGuardCallData = MultisigFreezeGuard__factory.createInterface().encodeFunctionData(
+    if (!this.parentAddress || !this.freezeVotingAddress) {
+      throw new Error('Error encoding freeze guard call data - parent address or freeze voting address not provided')
+    }
+    const freezeGuardCallData = MultisigFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
       [
         encodeAbiParameters(parseAbiParameters('uint256, uint256, address, address, address'), [
           subDaoData.timelockPeriod, // Timelock Period
           subDaoData.executionPeriod, // Execution Period
-          this.parentAddress as Address, // Owner -- Parent DAO
-          this.freezeVotingAddress as Address, // Freeze Voting
-          this.safeContract.address as Address, // Safe
+          getAddress(this.parentAddress), // Owner -- Parent DAO
+          getAddress(this.freezeVotingAddress), // Freeze Voting
+          getAddress(this.safeContract.address), // Safe
         ]),
       ],
-    ) as Hash;
+    );
+    if (!isHex(freezeGuardCallData)) {
+      throw new Error('Error encoding freeze guard call data')
+    }
+    this.freezeGuardCallData = freezeGuardCallData
   }
 
   private setFreezeGuardCallDataAzorius() {
     const subDaoData = this.daoData as SubDAO;
 
-    this.freezeGuardCallData = AzoriusFreezeGuard__factory.createInterface().encodeFunctionData(
+    if (!this.parentAddress || !this.freezeVotingAddress || !this.strategyAddress || !this.azoriusAddress) {
+      throw new Error("Error encoding freeze guard call data - required addresses were not provided")
+    }
+    const freezeGuardCallData = AzoriusFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
       [
         encodeAbiParameters(parseAbiParameters('address, address, address, address, uint256'), [
-          this.parentAddress as Address, // Owner -- Parent DAO
-          this.freezeVotingAddress as Address, // Freeze Voting
-          this.strategyAddress as Address, // Base Strategy
-          this.azoriusAddress as Address, // Azorius
+          getAddress(this.parentAddress), // Owner -- Parent DAO
+          getAddress(this.freezeVotingAddress), // Freeze Voting
+          getAddress(this.strategyAddress), // Base Strategy
+          getAddress(this.azoriusAddress), // Azorius
           subDaoData.executionPeriod, // Execution Period
         ]),
       ],
-    ) as Hash;
+    );
+    if (!isHex(freezeGuardCallData)) {
+      throw new Error('Error encoding freeze guard call data')
+    }
+
+    this.freezeGuardCallData = freezeGuardCallData
   }
 
   private getGuardMasterCopyAddress(): string {

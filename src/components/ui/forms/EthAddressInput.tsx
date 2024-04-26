@@ -1,6 +1,5 @@
 import { InputElementProps, FormControlOptions, Input, InputProps } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Address } from 'viem';
 import useAddress from '../../../hooks/utils/useAddress';
 
 /**
@@ -11,8 +10,8 @@ export interface EthAddressInputProps
   extends Omit<InputElementProps, 'onChange' | 'placeholder' | 'type'>,
     FormControlOptions {
   value?: string;
-  setValue?: Dispatch<SetStateAction<Address>>;
-  onAddressChange: (address: Address | undefined, isValid: boolean) => void;
+  setValue?: Dispatch<SetStateAction<string>>;
+  onAddressChange: (address: string | undefined, isValid: boolean) => void;
 }
 
 /**
@@ -30,7 +29,7 @@ export function EthAddressInput({
   const [actualInputValue, setActualInputValue] =
     value && setValue ? [value, setValue] : [valInternal, setValInternal];
   const { address, isAddressLoading, isValidAddress } = useAddress(
-    actualInputValue.toLowerCase() as Address,
+    actualInputValue.toLowerCase(),
   );
 
   useEffect(() => {
@@ -51,7 +50,7 @@ export function EthAddressInput({
         if (val.trim().includes(' ') || val.indexOf('.') !== val.lastIndexOf('.')) {
           return;
         }
-        setActualInputValue(event.target.value.trim() as Address);
+        setActualInputValue(event.target.value.trim());
       }}
       {...rest}
     />

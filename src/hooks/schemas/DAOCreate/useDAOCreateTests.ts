@@ -1,7 +1,6 @@
-import { ERC165__factory } from '@fractal-framework/fractal-contracts'; // TODO: Add this ABI into fractal-contracts
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isAddress, erc20Abi, getContract, Address } from 'viem';
+import { isAddress, erc20Abi, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
@@ -135,12 +134,12 @@ export function useDAOCreateTests() {
       name: 'ERC20 Address Validation',
       message: t('errorInvalidERC20Address', { ns: 'common' }),
       test: async function (address: string | undefined) {
-        if (address && isAddress(address)) {
+        if (address && isAddress(address) && publicClient) {
           try {
             const tokenContract = getContract({
               address,
               abi: erc20Abi,
-              client: { public: publicClient! },
+              client: { public: publicClient },
             });
             const [name, symbol, decimals] = await Promise.all([
               tokenContract.read.name(),
@@ -161,15 +160,46 @@ export function useDAOCreateTests() {
     return {
       name: 'ERC721 Address Validation',
       message: t('errorInvalidERC721Address', { ns: 'common' }),
-      test: async function (address: Address | undefined) {
-        if (address && isAddress(address)) {
+      test: async function (address: string | undefined) {
+        if (address && isAddress(address) && publicClient) {
           try {
+            const abi = [
+              {
+              inputs: [],
+              payable: false,
+              stateMutability: 'nonpayable',
+              type: 'constructor',
+              },
+              {
+              constant: true,
+              inputs: [
+                  {
+                  internalType: 'bytes4',
+                  name: 'interfaceId',
+                  type: 'bytes4',
+                  },
+              ],
+              name: 'supportsInterface',
+              outputs: [
+                  {
+                  internalType: 'bool',
+                  name: '',
+                  type: 'bool',
+                  },
+              ],
+              payable: false,
+              stateMutability: 'view',
+              type: 'function',
+              },
+          ] as const;
             const nftContract = getContract({
               address,
-              abi: ERC165__factory.abi,
-              client: { public: publicClient! },
+              abi,
+              client: { public: publicClient },
             });
-            const supportsInterface = await nftContract.read.supportsInterface(['0x80ac58cd']); // Exact same check we have in voting strategy contract
+
+            // Exact same check we have in voting strategy contract
+            const supportsInterface = await nftContract.read.supportsInterface(['0x80ac58cd']);
             return supportsInterface;
           } catch (error) {
             logError(error);

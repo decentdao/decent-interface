@@ -5,9 +5,10 @@ import {
   zeroHash,
   keccak256,
   encodePacked,
-  Address,
-  Hash,
+  getAddress,
   encodeFunctionData,
+  isHex,
+  hexToBigInt,
 } from 'viem';
 import SafeL2ABI from '../../assets/abi/SafeL2';
 import { MultiSend } from '../../assets/typechain-types/usul';
@@ -20,7 +21,7 @@ export const safeData = async (
   safeFactoryContract: GnosisSafeProxyFactory,
   safeSingletonContract: GnosisSafeL2,
   daoData: SafeMultisigDAO,
-  saltNum: string,
+  saltNum: bigint,
   fallbackHandler: string,
   hasAzorius?: boolean,
 ) => {
@@ -46,20 +47,25 @@ export const safeData = async (
     abi: SafeL2ABI,
   });
 
+  const safeFactoryContractProxyCreationCode = await safeFactoryContract.proxyCreationCode();
+  if (!isHex(safeFactoryContractProxyCreationCode)) {
+    throw new Error("Error retrieving proxy creation code from Safe Factory Contract ")
+  }
+
   const predictedSafeAddress = getCreate2Address({
-    from: safeFactoryContract.address as Address,
+    from: getAddress(safeFactoryContract.address),
     salt: keccak256(
       encodePacked(
         ['bytes', 'uint256'],
-        [keccak256(encodePacked(['bytes'], [createSafeCalldata])), saltNum as any],
+        [keccak256(encodePacked(['bytes'], [createSafeCalldata])), saltNum],
       ),
     ),
     bytecode: keccak256(
       encodePacked(
         ['bytes', 'uint256'],
         [
-          (await safeFactoryContract.proxyCreationCode()) as Hash,
-          safeSingletonContract.address as unknown as bigint, // @dev - wtf is going on? uint256 but passing address?
+          safeFactoryContractProxyCreationCode,
+          hexToBigInt(getAddress(safeSingletonContract.address)),
         ],
       ),
     ),

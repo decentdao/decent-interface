@@ -5,7 +5,7 @@ import {
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
 import { useState, useEffect, useCallback } from 'react';
-import { Address, getAddress } from 'viem';
+import { getAddress } from 'viem';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -72,7 +72,7 @@ export default function useUserERC721VotingTokens(
       if (_safeAddress && daoAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
         const safeInfo = await safeAPI!.getSafeInfo(getAddress(_safeAddress));
-        const safeModules = await lookupModules(safeInfo.modules as Address[]);
+        const safeModules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(safeModules);
         if (azoriusModule && azoriusModule.moduleContract) {
           const azoriusContract = azoriusModule.moduleContract as Azorius;
@@ -100,7 +100,7 @@ export default function useUserERC721VotingTokens(
               } catch (e) {
                 logError('Error while getting ERC721 total supply');
               }
-              return { name, symbol, address: tokenAddress, votingWeight, totalSupply };
+              return { name, symbol, address: getAddress(tokenAddress), votingWeight, totalSupply };
             }),
           );
         }

@@ -19,7 +19,7 @@ interface Parameter {
 }
 
 interface Transaction {
-  data: string;
+  data: Hash;
 }
 
 const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) => {
@@ -61,7 +61,7 @@ const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) =>
     // data from IPFS
     if (encodedMetadata) {
       try {
-        const decoded = decodeAbiParameters(parseAbiParameters('string'), encodedMetadata as Hash);
+        const decoded = decodeAbiParameters(parseAbiParameters('string'), encodedMetadata);
         const ipfsHash = decoded[0];
         const meta: CreateProposalMetadata = await ipfsClient.cat(ipfsHash);
 

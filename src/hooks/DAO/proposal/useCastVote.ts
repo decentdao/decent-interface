@@ -1,4 +1,5 @@
 import snapshot from '@snapshot-labs/snapshot.js';
+import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -175,7 +176,7 @@ const useCastVote = ({
               JSON.stringify(choice),
               extendedSnapshotProposal.proposalId,
             );
-            await client.vote(signer.provider as any, address, {
+            await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
               space: daoSnapshotSpaceName,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
@@ -184,7 +185,7 @@ const useCastVote = ({
               app: 'fractal',
             });
           } else {
-            await client.vote(signer.provider as any, address, {
+            await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
               space: daoSnapshotSpaceName,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,

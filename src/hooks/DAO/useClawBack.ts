@@ -1,7 +1,7 @@
 import { ERC20__factory, FractalModule } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, Hash, encodeAbiParameters, getAddress, parseAbiParameters } from 'viem';
+import { Address, encodeAbiParameters, getAddress, isHex, parseAbiParameters } from 'viem';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { FractalModuleType, FractalNode } from '../../types';
@@ -56,9 +56,12 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                 parentAddress,
                 asset.balance,
               ]);
+              if (!isHex(clawBackCalldata)) {
+                throw new Error("Error encoding clawback call data")
+              }
               const txData = encodeAbiParameters(
                 parseAbiParameters('address, uint256, bytes, uint8'),
-                [asset.tokenAddress as Address, 0n, clawBackCalldata as Hash, 0],
+                [getAddress(asset.tokenAddress), 0n, clawBackCalldata, 0],
               );
 
               const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(

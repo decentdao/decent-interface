@@ -1,7 +1,7 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, encodeAbiParameters, parseAbiParameters } from 'viem';
+import { encodeAbiParameters, parseAbiParameters, isAddress } from 'viem';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
@@ -14,7 +14,7 @@ const useSendAssets = ({
 }: {
   transferAmount: bigint;
   asset: SafeBalanceUsdResponse;
-  destinationAddress: Address;
+  destinationAddress: string | undefined;
   nonce: number | undefined;
 }) => {
   const { submitProposal } = useSubmitProposal();
@@ -30,31 +30,33 @@ const useSendAssets = ({
       asset?.token?.symbol,
     );
 
-    const calldatas = [
-      encodeAbiParameters(parseAbiParameters(['address, uint256']), [
-        destinationAddress,
-        transferAmount,
-      ]),
-    ];
-
-    const proposalData: ProposalExecuteData = {
-      targets: [isEth ? destinationAddress : asset.tokenAddress],
-      values: [isEth ? transferAmount : 0n],
-      calldatas: isEth ? ['0x'] : calldatas,
-      metaData: {
-        title: t(isEth ? 'Send Eth' : 'Send Token', { ns: 'proposalMetadata' }),
-        description: description,
-        documentationUrl: '',
-      },
-    };
-
-    await submitProposal({
-      proposalData,
-      nonce,
-      pendingToastMessage: t('sendAssetsPendingToastMessage'),
-      successToastMessage: t('sendAssetsSuccessToastMessage'),
-      failedToastMessage: t('sendAssetsFailureToastMessage'),
-    });
+    if (destinationAddress && isAddress(destinationAddress)) {
+      const calldatas = [
+        encodeAbiParameters(parseAbiParameters('address, uint256'), [
+          destinationAddress,
+          transferAmount,
+        ]),
+      ];
+  
+      const proposalData: ProposalExecuteData = {
+        targets: [isEth ? destinationAddress : asset.tokenAddress],
+        values: [isEth ? transferAmount : 0n],
+        calldatas: isEth ? ['0x'] : calldatas,
+        metaData: {
+          title: t(isEth ? 'Send Eth' : 'Send Token', { ns: 'proposalMetadata' }),
+          description: description,
+          documentationUrl: '',
+        },
+      };
+  
+      await submitProposal({
+        proposalData,
+        nonce,
+        pendingToastMessage: t('sendAssetsPendingToastMessage'),
+        successToastMessage: t('sendAssetsSuccessToastMessage'),
+        failedToastMessage: t('sendAssetsFailureToastMessage'),
+      });
+    }
   }, [
     asset.tokenAddress,
     asset?.token?.decimals,

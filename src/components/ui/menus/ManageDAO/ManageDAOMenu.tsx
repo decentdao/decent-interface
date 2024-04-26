@@ -2,7 +2,7 @@ import { VEllipsis } from '@decent-org/fractal-ui';
 import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Address } from 'viem';
+import { Address, getAddress } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -97,7 +97,7 @@ export function ManageDAOMenu({
               )
             )[1];
             const masterCopyData = await getZodiacModuleProxyMasterCopyData(
-              votingContractAddress as Address,
+              getAddress(votingContractAddress),
             );
 
             if (masterCopyData.isOzLinearVoting) {

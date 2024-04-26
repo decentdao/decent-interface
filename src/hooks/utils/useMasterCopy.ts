@@ -70,7 +70,7 @@ export function useMasterCopy() {
 
   const getZodiacModuleProxyMasterCopyData = useCallback(
     async function (proxyAddress: Address) {
-      let masterCopyAddress = zeroAddress as Address;
+      let masterCopyAddress: Address = zeroAddress;
       let error;
       if (baseContracts) {
         const contract = getEventRPC<ModuleProxyFactory>(

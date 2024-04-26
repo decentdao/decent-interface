@@ -3,7 +3,7 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, erc20Abi, getContract } from 'viem';
+import { erc20Abi, getContract } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
 import { logError } from '../../../helpers/errorLogging';
@@ -57,12 +57,12 @@ export function WrapToken({ close }: { close: () => void }) {
     )
       return;
     const baseTokenContract = getContract({
-      address: azoriusGovernance.votesToken.underlyingTokenData.address as Address,
+      address: azoriusGovernance.votesToken.underlyingTokenData.address,
       abi: erc20Abi,
-      client: { wallet: walletClient, public: publicClient! },
+      client: { wallet: walletClient, public: publicClient },
     });
     try {
-      const [balance, decimals]: [bigint, number] = await Promise.all([
+      const [balance, decimals] = await Promise.all([
         baseTokenContract.read.balanceOf([account]),
         baseTokenContract.read.decimals(),
       ]);

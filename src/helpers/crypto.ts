@@ -1,6 +1,6 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Contract, Signer } from 'ethers';
-import { hashTypedData, Hash, zeroAddress, Address, toHex, toBytes, encodePacked } from 'viem';
+import { hashTypedData, Hash, zeroAddress, toHex, toBytes, encodePacked, getAddress, Address, bytesToBigInt } from 'viem';
 import { sepolia, mainnet } from 'wagmi/chains';
 import { ContractConnection } from '../types';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
@@ -27,10 +27,7 @@ export const EIP712_SAFE_TX_TYPE = {
 };
 
 export function getRandomBytes() {
-  const bytes8Array = new Uint8Array(32);
-  self.crypto.getRandomValues(bytes8Array);
-  const bytes32 = '0x' + bytes8Array.reduce((o, v) => o + ('00' + v.toString(16)).slice(-2), '');
-  return bytes32;
+  return bytesToBigInt(self.crypto.getRandomValues(new Uint8Array(32)));
 }
 
 export const calculateSafeTransactionHash = (
@@ -39,26 +36,26 @@ export const calculateSafeTransactionHash = (
   chainId: number,
 ): string => {
   return hashTypedData({
-    domain: { verifyingContract: safe.address as Address, chainId },
+    domain: { verifyingContract: getAddress(safe.address), chainId },
     types: EIP712_SAFE_TX_TYPE,
     primaryType: 'SafeTx',
-    message: { ...safeTx },
+    message: { safeTx },
   });
 };
 
-export const buildSignatureBytes = (signatures: SafeSignature[]): Hash => {
+export const buildSignatureBytes = (signatures: SafeSignature[]) => {
   signatures.sort((left, right) =>
     left.signer.toLowerCase().localeCompare(right.signer.toLowerCase()),
   );
-  let signatureBytes = '0x';
+  let signatureBytes: Hash = '0x';
   for (const sig of signatures) {
     signatureBytes += sig.data.slice(2);
   }
-  return signatureBytes as Hash;
+  return signatureBytes;
 };
 
 export const buildSafeTransaction = (template: {
-  to: string;
+  to: Address;
   value?: bigint | number | string;
   data?: string;
   operation?: number;
@@ -107,7 +104,7 @@ export const buildSafeAPIPost = async (
   signerOrProvider: Signer & TypedDataSigner,
   chainId: number,
   template: {
-    to: string;
+    to: Address;
     value?: bigint | number | string;
     data?: string;
     operation?: number;
@@ -175,7 +172,7 @@ const encodeMetaTransaction = (tx: MetaTransaction): string => {
   const data = toHex(toBytes(tx.data));
   const encoded = encodePacked(
     ['uint8', 'address', 'uint256', 'uint256', 'bytes'],
-    [tx.operation, tx.to as Address, BigInt(tx.value), BigInt(data.length), data],
+    [tx.operation, tx.to, BigInt(tx.value), BigInt(data.length), data],
   );
   return encoded.slice(2);
 };

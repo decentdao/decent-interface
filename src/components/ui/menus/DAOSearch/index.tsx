@@ -11,13 +11,12 @@ import {
 import { Search } from '@decent-org/fractal-ui';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address } from 'viem';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
 export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { t } = useTranslation(['dashboard']);
-  const [localInput, setLocalInput] = useState<Address>();
+  const [localInput, setLocalInput] = useState<string>();
   const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
   const { onClose } = useDisclosure(); // popover close function
   const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -63,7 +62,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             <Input
               size="baseAddonLeft"
               placeholder={t('searchDAOPlaceholder')}
-              onChange={e => setLocalInput(e.target.value.trim() as Address)}
+              onChange={e => setLocalInput(e.target.value.trim())}
               value={localInput}
               data-testid="search-input"
             />

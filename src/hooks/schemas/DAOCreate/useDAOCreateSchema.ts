@@ -120,7 +120,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
                     tokenAddress: Yup.string()
                       .test(addressValidationTestSimple)
                       .test(uniqueNFTAddressValidationTest)
-                      .test(validERC721Address as any),
+                      .test(validERC721Address),
                     tokenWeight: Yup.object()
                       .required()
                       .shape({

@@ -31,7 +31,7 @@ export default function AzoriusNFTDetail({
 
   useEffect(() => {
     const loadNFTDetails = async () => {
-      if (hasAddressError) {
+      if (hasAddressError || !publicClient) {
         return;
       }
 
@@ -41,7 +41,7 @@ export default function AzoriusNFTDetail({
           const tokenContract = getContract({
             address: nft.tokenAddress,
             abi: erc721Abi,
-            client: { public: publicClient!, wallet: walletClient },
+            client: { public: publicClient, wallet: walletClient },
           });
           const [name, symbol] = await Promise.all([
             tokenContract.read.name(),
