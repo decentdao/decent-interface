@@ -165,33 +165,33 @@ export function useDAOCreateTests() {
           try {
             const abi = [
               {
-              inputs: [],
-              payable: false,
-              stateMutability: 'nonpayable',
-              type: 'constructor',
+                inputs: [],
+                payable: false,
+                stateMutability: 'nonpayable',
+                type: 'constructor',
               },
               {
-              constant: true,
-              inputs: [
+                constant: true,
+                inputs: [
                   {
-                  internalType: 'bytes4',
-                  name: 'interfaceId',
-                  type: 'bytes4',
+                    internalType: 'bytes4',
+                    name: 'interfaceId',
+                    type: 'bytes4',
                   },
-              ],
-              name: 'supportsInterface',
-              outputs: [
+                ],
+                name: 'supportsInterface',
+                outputs: [
                   {
-                  internalType: 'bool',
-                  name: '',
-                  type: 'bool',
+                    internalType: 'bool',
+                    name: '',
+                    type: 'bool',
                   },
-              ],
-              payable: false,
-              stateMutability: 'view',
-              type: 'function',
+                ],
+                payable: false,
+                stateMutability: 'view',
+                type: 'function',
               },
-          ] as const;
+            ] as const;
             const nftContract = getContract({
               address,
               abi,

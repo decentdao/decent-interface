@@ -266,21 +266,24 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const { tokenImportAddress } = this.daoData as AzoriusERC20DAO;
 
     if (!tokenImportAddress || !isAddress(tokenImportAddress)) {
-      throw new Error("Error encoding setup ERC-20 Wrapper data - provided token import address is not an address")
+      throw new Error(
+        'Error encoding setup ERC-20 Wrapper data - provided token import address is not an address',
+      );
     }
 
     const encodedInitTokenData = encodeAbiParameters(parseAbiParameters('address'), [
       tokenImportAddress,
     ]);
 
-    const encodedSetupERC20WrapperData =       this.azoriusContracts!.votesERC20WrapperMasterCopyContract.interface.encodeFunctionData(
-      'setUp',
-      [encodedInitTokenData],
-    );
+    const encodedSetupERC20WrapperData =
+      this.azoriusContracts!.votesERC20WrapperMasterCopyContract.interface.encodeFunctionData(
+        'setUp',
+        [encodedInitTokenData],
+      );
     if (!isHex(encodedSetupERC20WrapperData)) {
-      throw new Error("Error encoding setup ERC-20 Wrapper data - interface encoding failed")
+      throw new Error('Error encoding setup ERC-20 Wrapper data - interface encoding failed');
     }
-    this.encodedSetupERC20WrapperData =encodedSetupERC20WrapperData;
+    this.encodedSetupERC20WrapperData = encodedSetupERC20WrapperData;
   }
 
   public setPredictedERC20WrapperAddress() {
@@ -309,8 +312,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private calculateTokenAllocations(
     azoriusGovernanceDaoData: AzoriusERC20DAO,
   ): [Address[], bigint[]] {
-    const tokenAllocationsOwners = azoriusGovernanceDaoData.tokenAllocations.map(
-      tokenAllocation => getAddress(tokenAllocation.address),
+    const tokenAllocationsOwners = azoriusGovernanceDaoData.tokenAllocations.map(tokenAllocation =>
+      getAddress(tokenAllocation.address),
     );
     const tokenAllocationsValues = azoriusGovernanceDaoData.tokenAllocations.map(
       tokenAllocation => tokenAllocation.amount || 0n,
@@ -344,11 +347,12 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       ],
     );
 
-    const encodedSetupTokenData =       this.azoriusContracts!.votesTokenMasterCopyContract.interface.encodeFunctionData('setUp', [
-      encodedInitTokenData,
-    ]);
+    const encodedSetupTokenData =
+      this.azoriusContracts!.votesTokenMasterCopyContract.interface.encodeFunctionData('setUp', [
+        encodedInitTokenData,
+      ]);
     if (!isHex(encodedSetupTokenData)) {
-      throw new Error('Error encoding setup token data')
+      throw new Error('Error encoding setup token data');
     }
     this.encodedSetupTokenData = encodedSetupTokenData;
   }
@@ -381,13 +385,14 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         azoriusGovernanceDaoData.parentAllocationAmount,
       ],
     );
-    const encodedSetupTokenClaimData = this.azoriusContracts!.claimingMasterCopyContract.interface.encodeFunctionData('setUp', [
-      encodedInitTokenData,
-    ]);
+    const encodedSetupTokenClaimData =
+      this.azoriusContracts!.claimingMasterCopyContract.interface.encodeFunctionData('setUp', [
+        encodedInitTokenData,
+      ]);
     if (!isHex(encodedSetupTokenClaimData)) {
-      throw new Error("Error ecnoding setup token claim data")
+      throw new Error('Error ecnoding setup token claim data');
     }
-    this.encodedSetupTokenClaimData =encodedSetupTokenClaimData;
+    this.encodedSetupTokenClaimData = encodedSetupTokenClaimData;
   }
 
   private setPredictedTokenClaimAddress() {
@@ -408,7 +413,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const azoriusGovernanceDaoData = this.daoData as AzoriusGovernanceDAO;
     if (azoriusGovernanceDaoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       if (!this.predictedTokenAddress) {
-        throw new Error('Error predicting strategy address - predicted token address was not provided')
+        throw new Error(
+          'Error predicting strategy address - predicted token address was not provided',
+        );
       }
       const quorumDenominator = (
         await this.azoriusContracts!.linearVotingMasterCopyContract.QUORUM_DENOMINATOR()
@@ -431,9 +438,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
           'setUp',
           [encodedStrategyInitParams],
         );
-        if (!isHex(encodedStrategySetupData)) {
-          throw new Error('Error encoding strategy setup data')
-        }
+      if (!isHex(encodedStrategySetupData)) {
+        throw new Error('Error encoding strategy setup data');
+      }
 
       const strategyByteCodeLinear = generateContractByteCodeLinear(
         getAddress(this.azoriusContracts!.linearVotingMasterCopyContract.address),
@@ -442,10 +449,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       const strategySalt = keccak256(
         encodePacked(
           ['bytes32', 'uint256'],
-          [
-            keccak256(encodePacked(['bytes'], [encodedStrategySetupData])),
-            this.strategyNonce,
-          ],
+          [keccak256(encodePacked(['bytes'], [encodedStrategySetupData])), this.strategyNonce],
         ),
       );
 
@@ -481,9 +485,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
           [encodedStrategyInitParams],
         );
 
-        if (!isHex(encodedStrategySetupData)) {
-          throw new Error('Error encoding strategy setup data')
-        }
+      if (!isHex(encodedStrategySetupData)) {
+        throw new Error('Error encoding strategy setup data');
+      }
 
       const strategyByteCodeLinear = generateContractByteCodeLinear(
         getAddress(this.azoriusContracts!.linearVotingERC721MasterCopyContract.address),
@@ -492,10 +496,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       const strategySalt = keccak256(
         encodePacked(
           ['bytes32', 'uint256'],
-          [
-            keccak256(encodePacked(['bytes'], [encodedStrategySetupData])),
-            this.strategyNonce,
-          ],
+          [keccak256(encodePacked(['bytes'], [encodedStrategySetupData])), this.strategyNonce],
         ),
       );
 
@@ -531,9 +532,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         [encodedInitAzoriusData],
       );
 
-      if (!isHex(encodedSetupAzoriusData)) {
-        throw new Error('Error encoding setup azorius data')
-      }
+    if (!isHex(encodedSetupAzoriusData)) {
+      throw new Error('Error encoding setup azorius data');
+    }
 
     const azoriusByteCodeLinear = generateContractByteCodeLinear(
       getAddress(this.azoriusContracts!.fractalAzoriusMasterCopyContract.address),

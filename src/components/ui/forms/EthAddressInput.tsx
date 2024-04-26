@@ -28,9 +28,7 @@ export function EthAddressInput({
   const [valInternal, setValInternal] = useState<string>('');
   const [actualInputValue, setActualInputValue] =
     value && setValue ? [value, setValue] : [valInternal, setValInternal];
-  const { address, isAddressLoading, isValidAddress } = useAddress(
-    actualInputValue.toLowerCase(),
-  );
+  const { address, isAddressLoading, isValidAddress } = useAddress(actualInputValue.toLowerCase());
 
   useEffect(() => {
     onAddressChange(address, isValidAddress || false);

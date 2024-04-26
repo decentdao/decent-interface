@@ -121,11 +121,14 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   public buildFreezeVotingSetupTx(): SafeTransaction {
     const subDaoData = this.daoData as SubDAO;
 
-    const parentStrategyAddress =this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
-    ? this.parentStrategyAddress
-    : this.parentTokenAddress ?? this.parentAddress;
+    const parentStrategyAddress =
+      this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
+        ? this.parentStrategyAddress
+        : this.parentTokenAddress ?? this.parentAddress;
     if (!this.parentAddress || !parentStrategyAddress) {
-      throw new Error("Error building contract call for setting up freeze voting - required addresses were not provided.")
+      throw new Error(
+        'Error building contract call for setting up freeze voting - required addresses were not provided.',
+      );
     }
 
     return buildContractCall(
@@ -225,7 +228,9 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     const subDaoData = this.daoData as SubDAO;
 
     if (!this.parentAddress || !this.freezeVotingAddress) {
-      throw new Error('Error encoding freeze guard call data - parent address or freeze voting address not provided')
+      throw new Error(
+        'Error encoding freeze guard call data - parent address or freeze voting address not provided',
+      );
     }
     const freezeGuardCallData = MultisigFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
@@ -240,16 +245,23 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       ],
     );
     if (!isHex(freezeGuardCallData)) {
-      throw new Error('Error encoding freeze guard call data')
+      throw new Error('Error encoding freeze guard call data');
     }
-    this.freezeGuardCallData = freezeGuardCallData
+    this.freezeGuardCallData = freezeGuardCallData;
   }
 
   private setFreezeGuardCallDataAzorius() {
     const subDaoData = this.daoData as SubDAO;
 
-    if (!this.parentAddress || !this.freezeVotingAddress || !this.strategyAddress || !this.azoriusAddress) {
-      throw new Error("Error encoding freeze guard call data - required addresses were not provided")
+    if (
+      !this.parentAddress ||
+      !this.freezeVotingAddress ||
+      !this.strategyAddress ||
+      !this.azoriusAddress
+    ) {
+      throw new Error(
+        'Error encoding freeze guard call data - required addresses were not provided',
+      );
     }
     const freezeGuardCallData = AzoriusFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
@@ -264,10 +276,10 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       ],
     );
     if (!isHex(freezeGuardCallData)) {
-      throw new Error('Error encoding freeze guard call data')
+      throw new Error('Error encoding freeze guard call data');
     }
 
-    this.freezeGuardCallData = freezeGuardCallData
+    this.freezeGuardCallData = freezeGuardCallData;
   }
 
   private getGuardMasterCopyAddress(): string {

@@ -40,7 +40,7 @@ export const fractalModuleData = (
   );
 
   if (!isHex(fractalModuleCalldata)) {
-    throw new Error("Error encoding fractal module call data")
+    throw new Error('Error encoding fractal module call data');
   }
 
   const fractalByteCodeLinear = generateContractByteCodeLinear(

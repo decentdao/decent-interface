@@ -57,7 +57,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                 asset.balance,
               ]);
               if (!isHex(clawBackCalldata)) {
-                throw new Error("Error encoding clawback call data")
+                throw new Error('Error encoding clawback call data');
               }
               const txData = encodeAbiParameters(
                 parseAbiParameters('address, uint256, bytes, uint8'),

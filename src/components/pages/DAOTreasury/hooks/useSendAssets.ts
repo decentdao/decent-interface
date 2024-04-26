@@ -37,7 +37,7 @@ const useSendAssets = ({
           transferAmount,
         ]),
       ];
-  
+
       const proposalData: ProposalExecuteData = {
         targets: [isEth ? destinationAddress : asset.tokenAddress],
         values: [isEth ? transferAmount : 0n],
@@ -48,7 +48,7 @@ const useSendAssets = ({
           documentationUrl: '',
         },
       };
-  
+
       await submitProposal({
         proposalData,
         nonce,

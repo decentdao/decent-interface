@@ -59,7 +59,11 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         abi: erc20Abi,
         client: { wallet: walletClient, public: publicClient },
       });
-      const [name, symbol, decimals] = await Promise.all([tokenContract.read.name(), tokenContract.read.symbol(), tokenContract.read.decimals()]);
+      const [name, symbol, decimals] = await Promise.all([
+        tokenContract.read.name(),
+        tokenContract.read.symbol(),
+        tokenContract.read.decimals(),
+      ]);
 
       // @dev: this turns "total supply" into the human-readable form (without decimals)
       const totalSupply = Number(

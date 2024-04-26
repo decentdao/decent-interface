@@ -49,7 +49,7 @@ export const safeData = async (
 
   const safeFactoryContractProxyCreationCode = await safeFactoryContract.proxyCreationCode();
   if (!isHex(safeFactoryContractProxyCreationCode)) {
-    throw new Error("Error retrieving proxy creation code from Safe Factory Contract ")
+    throw new Error('Error retrieving proxy creation code from Safe Factory Contract ');
   }
 
   const predictedSafeAddress = getCreate2Address({

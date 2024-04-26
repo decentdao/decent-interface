@@ -14,10 +14,7 @@ export const generateContractByteCodeLinear = (contractAddress: Address): Hash =
 
 export const generateSalt = (calldata: Hash, saltNum: bigint): Hash => {
   return keccak256(
-    encodePacked(
-      ['bytes32', 'uint256'],
-      [keccak256(encodePacked(['bytes'], [calldata])), saltNum],
-    ),
+    encodePacked(['bytes32', 'uint256'], [keccak256(encodePacked(['bytes'], [calldata])), saltNum]),
   );
 };
 

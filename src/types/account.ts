@@ -1,4 +1,4 @@
-import { Address } from "viem";
+import { Address } from 'viem';
 
 export interface VotesTokenData extends VotesData, ERC20TokenData {}
 export interface VotesData {

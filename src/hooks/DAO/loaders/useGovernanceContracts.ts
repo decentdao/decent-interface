@@ -75,11 +75,11 @@ export const useGovernanceContracts = () => {
           client: { public: publicClient },
         });
 
-        const lockedTokenAddress = await possibleLockRelease.read.token().catch(() => {
+        const lockedTokenAddress = (await possibleLockRelease.read.token().catch(() => {
           // if the underlying token is not an ERC20Wrapper, this will throw an error,
           // so we catch it and return undefined
           return undefined;
-        }) as Address | undefined;
+        })) as Address | undefined;
 
         if (lockedTokenAddress) {
           lockReleaseContractAddress = govTokenAddress;

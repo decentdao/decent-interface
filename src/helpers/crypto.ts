@@ -1,6 +1,16 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Contract, Signer } from 'ethers';
-import { hashTypedData, Hash, zeroAddress, toHex, toBytes, encodePacked, getAddress, Address, bytesToBigInt } from 'viem';
+import {
+  hashTypedData,
+  Hash,
+  zeroAddress,
+  toHex,
+  toBytes,
+  encodePacked,
+  getAddress,
+  Address,
+  bytesToBigInt,
+} from 'viem';
 import { sepolia, mainnet } from 'wagmi/chains';
 import { ContractConnection } from '../types';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
