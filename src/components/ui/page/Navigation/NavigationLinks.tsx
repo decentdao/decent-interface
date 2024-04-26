@@ -13,7 +13,6 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
 import { LanguageSwitcher } from '../../../../i18n/LanguageSwitcher';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { NavigationExternalLink } from './NavigationExternalLink';
 import { NavigationLink } from './NavigationLink';
 
 function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
@@ -36,28 +35,28 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         borderLeftWidth={1}
         borderRightWidth={1}
       >
-        <NavigationExternalLink
+        <NavigationLink
           href={URL_FAQ}
-          ariaLabelKey="ariaLabelFAQ"
-          tooltipKey="faq"
+          labelKey="faq"
           testId="navigationExternal-faq"
           NavigationIcon={Question}
+          scope="external"
           closeDrawer={closeDrawer}
         />
-        <NavigationExternalLink
+        <NavigationLink
           href={URL_DISCORD}
-          ariaLabelKey="ariaLabelDiscord"
-          tooltipKey="discord"
+          labelKey="discord"
           testId="navigationExternal-discord"
           NavigationIcon={DiscordLogo}
+          scope="external"
           closeDrawer={closeDrawer}
         />
-        <NavigationExternalLink
+        <NavigationLink
           href={URL_DOCS}
-          ariaLabelKey="ariaLabelDocumentation"
-          tooltipKey="documentation"
+          labelKey="documentation"
           testId="navigationExternal-documentation"
           NavigationIcon={BookOpen}
+          scope="external"
           closeDrawer={closeDrawer}
         />
       </Box>
@@ -112,6 +111,7 @@ function InternalLinks({
           labelKey="home"
           testId="navigation-daoHomeLink"
           NavigationIcon={House}
+          scope="internal"
           closeDrawer={closeDrawer}
         />
         <NavigationLink
@@ -119,6 +119,7 @@ function InternalLinks({
           labelKey="nodes"
           testId="navigation-hierarchy"
           NavigationIcon={GitFork}
+          scope="internal"
           closeDrawer={closeDrawer}
         />
         <NavigationLink
@@ -126,6 +127,7 @@ function InternalLinks({
           labelKey="proposals"
           testId="navigation-proposalsLink"
           NavigationIcon={Scroll}
+          scope="internal"
           closeDrawer={closeDrawer}
         />
         <NavigationLink
@@ -133,6 +135,7 @@ function InternalLinks({
           labelKey="treasury"
           testId="navigation-treasuryLink"
           NavigationIcon={Coins}
+          scope="internal"
           closeDrawer={closeDrawer}
         />
         <NavigationLink
@@ -140,6 +143,7 @@ function InternalLinks({
           labelKey="proposalTemplates"
           testId="navigation-proposalTemplatesLink"
           NavigationIcon={SquaresFour}
+          scope="internal"
           closeDrawer={closeDrawer}
         />
       </Box>
