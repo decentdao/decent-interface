@@ -130,7 +130,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.azoriusContracts!,
       this.daoData as AzoriusERC20DAO,
       this.safeContract!,
-      this.predictedSafeAddress!,
       this.parentAddress,
       this.parentTokenAddress,
     );

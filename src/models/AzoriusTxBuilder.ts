@@ -25,7 +25,6 @@ import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
 
 export class AzoriusTxBuilder extends BaseTxBuilder {
   private readonly safeContract: GnosisSafeL2;
-  private readonly predictedSafeAddress: string;
 
   private encodedSetupTokenData: string | undefined;
   private encodedSetupERC20WrapperData: string | undefined;
@@ -54,7 +53,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     azoriusContracts: AzoriusContracts,
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
     safeContract: GnosisSafeL2,
-    predictedSafeAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
   ) {
@@ -68,7 +66,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     );
 
     this.safeContract = safeContract;
-    this.predictedSafeAddress = predictedSafeAddress;
 
     this.tokenNonce = getRandomBytes();
     this.claimNonce = getRandomBytes();
