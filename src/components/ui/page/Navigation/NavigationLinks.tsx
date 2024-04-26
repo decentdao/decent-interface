@@ -41,7 +41,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           ariaLabelKey="ariaLabelFAQ"
           tooltipKey="faq"
           testId="navigationExternal-faq"
-          Icon={<Question size={24} />}
+          NavigationIcon={Question}
           closeDrawer={closeDrawer}
         />
         <NavigationExternalLink
@@ -49,7 +49,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           ariaLabelKey="ariaLabelDiscord"
           tooltipKey="discord"
           testId="navigationExternal-discord"
-          Icon={<DiscordLogo size={24} />}
+          NavigationIcon={DiscordLogo}
           closeDrawer={closeDrawer}
         />
         <NavigationExternalLink
@@ -57,7 +57,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           ariaLabelKey="ariaLabelDocumentation"
           tooltipKey="documentation"
           testId="navigationExternal-documentation"
-          Icon={<BookOpen size={24} />}
+          NavigationIcon={BookOpen}
           closeDrawer={closeDrawer}
         />
       </Box>

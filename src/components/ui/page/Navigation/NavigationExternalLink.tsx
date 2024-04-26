@@ -1,5 +1,5 @@
 import { Box, Hide, Text, Flex } from '@chakra-ui/react';
-import { ReactElement } from 'react';
+import { Icon } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 interface INavigationLink {
@@ -8,7 +8,7 @@ interface INavigationLink {
   href: string;
   testId: string;
   routeKey?: string;
-  Icon: ReactElement;
+  NavigationIcon: Icon;
   closeDrawer?: () => void;
 }
 
@@ -16,7 +16,7 @@ export function NavigationExternalLink({
   tooltipKey,
   ariaLabelKey,
   testId,
-  Icon,
+  NavigationIcon,
   routeKey,
   closeDrawer,
   ...rest
@@ -34,7 +34,7 @@ export function NavigationExternalLink({
         rel="noreferrer noopener"
       >
         <Flex>
-          <Box w={6}>{Icon}</Box>
+          <Box w={6}>{<NavigationIcon size={24} />}</Box>
           <Box
             mx={3}
             whiteSpace="nowrap"
