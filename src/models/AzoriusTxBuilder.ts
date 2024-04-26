@@ -346,8 +346,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private setEncodedSetupTokenClaimData() {
     const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
     const encodedInitTokenData = defaultAbiCoder.encode(
-      ['address', 'address', 'address', 'uint256'],
+      ['uint32', 'address', 'address', 'address', 'uint256'],
       [
+        0, // deadlineBlock. do we capture this in the UI?
         this.safeContract.address,
         this.parentTokenAddress,
         this.predictedTokenAddress,
