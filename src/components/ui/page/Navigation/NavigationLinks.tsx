@@ -96,13 +96,11 @@ export function NavigationLinks({
       flexGrow={1}
     >
       {showDAOLinks && address && (
-        <Box
-          marginY="auto"
-          maxWidth={{ base: 12, '3xl': '100%' }}
-          _hover={{ maxWidth: '100%' }}
-          transitionDuration="0.5s"
-        >
+        <Box marginY="auto">
           <Box
+            maxWidth={{ base: 12, '3xl': '100%' }}
+            _hover={{ maxWidth: '100%' }}
+            transitionDuration="0.5s"
             mt={12}
             mb={3}
             bg="neutral-2"
