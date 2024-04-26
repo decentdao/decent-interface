@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import ProposalBuilder from '../../../../../components/ProposalBuilder';
+import { ProposalBuilder } from '../../../../../components/ProposalBuilder';
 import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { logError } from '../../../../../helpers/errorLogging';
 import useCreateProposalTemplate from '../../../../../hooks/DAO/proposal/useCreateProposalTemplate';

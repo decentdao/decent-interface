@@ -41,7 +41,7 @@ export default function ProposalTransactions({
   const removeTransaction = (transactionIndex: number) => {
     setFieldValue(
       'transactions',
-      transactions.filter((tx, i) => i !== transactionIndex),
+      transactions.filter((_, i) => i !== transactionIndex),
     );
   };
   return (

@@ -1,6 +1,6 @@
 import { Center } from '@chakra-ui/react';
 import { useRef, useEffect } from 'react';
-import ProposalBuilder from '../../../../../components/ProposalBuilder';
+import { ProposalBuilder } from '../../../../../components/ProposalBuilder';
 import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import { HEADER_HEIGHT } from '../../../../../constants/common';
