@@ -22,7 +22,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       mb={6}
       maxWidth={{ base: 12, '3xl': '100%' }}
       _hover={{ maxWidth: '100%' }}
-      transitionDuration="0.5s"
+      transitionDuration="0.2s"
     >
       <Box
         bg="neutral-2"
@@ -96,7 +96,7 @@ function InternalLinks({
       <Box
         maxWidth={{ base: 12, '3xl': '100%' }}
         _hover={{ maxWidth: '100%' }}
-        transitionDuration="0.5s"
+        transitionDuration="0.2s"
         mt={12}
         mb={3}
         pl="11px"
