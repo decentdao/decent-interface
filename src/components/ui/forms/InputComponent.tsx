@@ -10,7 +10,6 @@ import {
   ResponsiveValue,
 } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { Address } from 'viem';
 import { BigIntInput, BigIntInputProps } from './BigIntInput';
 import { EthAddressInput } from './EthAddressInput';
 
@@ -38,7 +37,7 @@ interface InputProps extends Omit<BaseProps, 'children'> {
 }
 
 interface EthAddressProps extends Omit<BaseProps, 'children' | 'value'> {
-  onAddressChange: (address: Address | undefined, isValid: boolean) => void;
+  onAddressChange: (address: string | undefined, isValid: boolean) => void;
 }
 
 interface TextareaProps extends Omit<BaseProps, 'children'> {

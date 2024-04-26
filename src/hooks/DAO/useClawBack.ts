@@ -45,8 +45,11 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                 'execTx',
                 [txData],
               );
+              if (!isHex(fractalModuleCalldata)) {
+                throw new Error('Error encoding clawback call data');
+              }
               return {
-                target: fractalModuleContract.address,
+                target: getAddress(fractalModuleContract.address),
                 value: 0,
                 calldata: fractalModuleCalldata,
               };
@@ -69,8 +72,12 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                 [txData],
               );
 
+              if (!isHex(fractalModuleCalldata)) {
+                throw new Error('Error encoding clawback call data');
+              }
+
               return {
-                target: fractalModuleContract.address,
+                target: getAddress(fractalModuleContract.address),
                 value: 0,
                 calldata: fractalModuleCalldata,
               };

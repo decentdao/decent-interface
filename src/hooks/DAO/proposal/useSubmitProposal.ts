@@ -134,7 +134,7 @@ export default function useSubmitProposal() {
             return;
           }
           // Need to wrap it in Multisend function call
-          to = multiSendContract.asProvider.address;
+          to = getAddress(multiSendContract.asProvider.address);
 
           const tempData = proposalData.targets.map((target, index) => {
             return {

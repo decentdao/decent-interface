@@ -6,6 +6,7 @@ import {
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { getAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
@@ -150,6 +151,7 @@ export const useAzoriusProposals = () => {
               _decode,
               proposalCreatedEvent.args.transactions.map(t => ({
                 ...t,
+                to: getAddress(t.to),
                 value: t.value.toBigInt(),
               })),
             );
@@ -161,6 +163,7 @@ export const useAzoriusProposals = () => {
               },
               transactions: proposalCreatedEvent.args.transactions.map(t => ({
                 ...t,
+                to: getAddress(t.to),
                 value: t.value.toBigInt(),
               })),
               decodedTransactions,
