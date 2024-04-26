@@ -51,7 +51,6 @@ export function ERC20TokenContainer() {
 
           {/* TOTAL SUPPLY */}
           <Box>
-            {' '}
             <Text
               color="neutral-7"
               textStyle="label-small"

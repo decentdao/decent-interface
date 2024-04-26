@@ -158,7 +158,7 @@ function RemoveSignerModal({
         <Icon
           color="yellow-0"
           as={WarningCircle}
-          boxSize={'24px'}
+          boxSize="24px"
         />
         <Text
           color="yellow-0"

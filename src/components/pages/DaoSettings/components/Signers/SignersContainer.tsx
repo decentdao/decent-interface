@@ -18,8 +18,8 @@ function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
       {!disabled && (
         <Radio
           value={signer}
-          color={'lilac--3'}
-          bgColor={'black-0'}
+          color="lilac--3"
+          bgColor="black-0"
           _checked={{
             bg: 'lilac--3',
             color: 'lilac--4',
@@ -113,16 +113,10 @@ export function SignersContainer() {
       }
       descriptionHeader={
         <Flex justifyContent="space-between">
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
+          <Text>
             {t('signersRequired', { ns: 'common' })}
           </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >{`${safe?.threshold}/${safe?.owners.length}`}</Text>
+          <Text>{`${safe?.threshold}/${safe?.owners.length}`}</Text>
         </Flex>
       }
       descriptionContent={t('signersDescription')}

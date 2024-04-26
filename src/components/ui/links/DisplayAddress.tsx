@@ -1,4 +1,4 @@
-import { HStack, Text } from '@chakra-ui/react';
+import { HStack, Icon, Text } from '@chakra-ui/react';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -28,9 +28,12 @@ export function DisplayAddress({
       address={address}
       textAlign="center"
     >
-      <HStack color="lilac-0">
+      <HStack>
         <Text pb="1px">{children || displayAddress.displayName}</Text>
-        <ArrowUpRight />
+        <Icon
+          as={ArrowUpRight}
+          color="lilac-0"
+        />
       </HStack>
     </EtherscanLinkAddress>
   );

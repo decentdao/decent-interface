@@ -126,7 +126,6 @@ export function MetadataContainer() {
           <Button
             variant="secondary"
             size="sm"
-            disabled={name === daoName}
             isDisabled={name === daoName}
             onClick={handleEditDAOName}
           >
