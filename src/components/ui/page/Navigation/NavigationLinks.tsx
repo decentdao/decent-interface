@@ -19,7 +19,6 @@ import { NavigationLink } from './NavigationLink';
 function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
   return (
     <Box
-      width="full"
       mt={3}
       mb={6}
       maxWidth={{ base: 12, '3xl': '100%' }}
@@ -27,16 +26,15 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       transitionDuration="0.5s"
     >
       <Box
-        pl={'11px'}
-        w="full"
-        mb={'px'}
-        bg={'neutral-2'}
+        bg="neutral-2"
+        pl="11px"
+        overflow="hidden"
+        borderColor="neutral-3"
+        mb="1px"
         borderTopRadius={8}
         borderTopWidth={1}
         borderLeftWidth={1}
         borderRightWidth={1}
-        borderColor={'neutral-3'}
-        overflow={'hidden'}
       >
         <NavigationExternalLink
           href={URL_FAQ}
@@ -64,14 +62,14 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         />
       </Box>
       <Box
-        bg={'neutral-2'}
-        borderBottomRadius={8}
-        borderWidth={1}
-        borderColor={'neutral-3'}
-        pt="10.5px"
-        pb="5px"
+        bg="neutral-2"
         pl="11px"
         overflow="hidden"
+        borderColor="neutral-3"
+        borderWidth={1}
+        borderBottomRadius={8}
+        pt="10.5px"
+        pb="5px"
       >
         <LanguageSwitcher data-testid="navigation-language" />
       </Box>
@@ -99,23 +97,20 @@ export function NavigationLinks({
     >
       {showDAOLinks && address && (
         <Box
-          width="full"
-          height="full"
+          // width="full"
+          // height="full"
           marginY="auto"
           maxWidth={{ base: 12, '3xl': '100%' }}
           _hover={{ maxWidth: '100%' }}
           transitionDuration="0.5s"
         >
-          <Flex
-            alignItems={{ base: 'flex-start', md: 'center' }}
-            direction="column"
-            w="full"
-            mt={8}
-            mb={4}
-            bg={'neutral-2'}
+          <Box
+            bg="neutral-2"
+            pl="11px"
+            overflow="hidden"
+            borderColor="neutral-3"
             borderRadius={8}
             borderWidth={1}
-            borderColor={'neutral-3'}
           >
             <NavigationLink
               href={DAO_ROUTES.dao.relative(addressPrefix, address)}
@@ -152,7 +147,7 @@ export function NavigationLinks({
               Icon={<SquaresFour size={24} />}
               closeDrawer={closeDrawer}
             />
-          </Flex>
+          </Box>
         </Box>
       )}
       <ExternalLinks closeDrawer={closeDrawer} />

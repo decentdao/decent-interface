@@ -18,7 +18,9 @@ export function LanguageSwitcher() {
       offset={[16, 8]}
       trigger={
         <Flex>
-          <GlobeSimple size={24} />
+          <Box w={6}>
+            <GlobeSimple size={24} />
+          </Box>
           <Box ml={3}>{t('tooltipTitle')}</Box>
           <Hide above="md">
             <Text textStyle="text-md-mono-medium">{t(i18n.language.slice(0, 2))}</Text>
@@ -27,6 +29,9 @@ export function LanguageSwitcher() {
       }
       options={supported}
       namespace="languages"
+      buttonProps={{
+        width: 'full',
+      }}
     />
   );
 }

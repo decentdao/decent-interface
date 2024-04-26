@@ -1,13 +1,10 @@
-import { Box, Hide, Text } from '@chakra-ui/react';
-import { useCallback } from 'react';
+import { Box, Hide, Text, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Link, useMatch } from 'react-router-dom';
-import { NavigationTooltip } from './NavigationTooltip';
+import { Link } from 'react-router-dom';
 
 interface INavigationLink {
   href: string;
   labelKey: string;
-  tooltipKey?: string;
   testId: string;
   Icon: JSX.Element;
   target?: string;
@@ -19,48 +16,34 @@ export function NavigationLink({
   labelKey,
   testId,
   Icon,
-  tooltipKey,
   closeDrawer,
   href,
   ...rest
 }: INavigationLink) {
-  const tooltipTranslationKey = tooltipKey || labelKey;
-
   const { t } = useTranslation('navigation');
-  const isActive = useMatch(href);
-
-  const activeColors = useCallback(() => {
-    return {
-      color: isActive ? 'gold.500' : 'inherit',
-      _hover: {
-        color: 'gold.500-hover',
-      },
-    };
-  }, [isActive]);
 
   return (
-    <NavigationTooltip label={t(tooltipTranslationKey)}>
+    <Box py={3}>
       <Link
         data-testid={testId}
-        aria-label={t(tooltipTranslationKey)}
+        aria-label={t(labelKey)}
         to={href}
         {...rest}
         onClick={closeDrawer}
       >
-        <Box
-          display={{ base: 'flex', md: undefined }}
-          gap={8}
-          justifyContent="space-between"
-          alignItems="center"
-          my={3}
-          {...activeColors()}
-        >
-          {Icon}
+        <Flex>
+          <Box w={6}>{Icon}</Box>
+          <Box
+            mx={3}
+            whiteSpace={'nowrap'}
+          >
+            {t(labelKey)}
+          </Box>
           <Hide above="md">
             <Text textStyle="text-md-mono-medium">{t(labelKey)}</Text>
           </Hide>
-        </Box>
+        </Flex>
       </Link>
-    </NavigationTooltip>
+    </Box>
   );
 }

@@ -34,7 +34,12 @@ export function NavigationExternalLink({
       >
         <Flex>
           <Box w={6}>{Icon}</Box>
-          <Box mx={3}>{t(tooltipKey)}</Box>
+          <Box
+            mx={3}
+            whiteSpace={'nowrap'}
+          >
+            {t(tooltipKey)}
+          </Box>
           <Hide above="md">
             <Text textStyle="text-md-mono-medium">{t(tooltipKey)}</Text>
           </Hide>
