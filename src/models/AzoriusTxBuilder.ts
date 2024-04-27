@@ -348,7 +348,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const encodedInitTokenData = defaultAbiCoder.encode(
       ['uint32', 'address', 'address', 'address', 'uint256'],
       [
-        0, // deadlineBlock. do we capture this in the UI?
+        0, // deadlineBlock. We don't capture this in the UI. 0 means no deadline to claim.
         this.safeContract.address,
         this.parentTokenAddress,
         this.predictedTokenAddress,
