@@ -1,4 +1,4 @@
-import { Address } from 'viem';
+import { Address, Hex } from 'viem';
 
 export interface DecodedTransaction {
   target: string;
@@ -10,8 +10,8 @@ export interface DecodedTransaction {
 }
 export interface MetaTransaction {
   to: Address;
-  value: string | number | bigint;
-  data: string;
+  value: bigint;
+  data: Hex;
   operation: number;
 }
 export interface SafePostTransaction extends SafeTransaction {
@@ -35,10 +35,10 @@ export type DecodedTxParam = {
 };
 
 export interface SafeAPITransaction {
-  to: string; //'<checksummed address>'
+  to: Address; //'<checksummed address>'
   value: bigint; // Value in wei
-  data: string; // '<0x prefixed hex string>'
-  operation: number; // 0 CALL, 1 DELEGATE_CALL
+  data: Hex; // '<0x prefixed hex string>'
+  operation: 0 | 1; // 0 CALL, 1 DELEGATE_CALL
   gasToken: string; // Token address (hold by the Safe) to be used as a refund to the sender, if `null` is Ether
   safeTxGas: bigint; // Max gas to use in the transaction
   baseGas: bigint; // Gas costs not related to the transaction execution (signature check, refund payment...)

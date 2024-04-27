@@ -75,17 +75,20 @@ export const useGovernanceContracts = () => {
           client: { public: publicClient },
         });
 
-        const lockedTokenAddress = (await possibleLockRelease.read.token().catch(() => {
+        let lockedTokenAddress = undefined;
+        try {
+          lockedTokenAddress = (await possibleLockRelease.read.token()) as Address;
+        } catch {
+          // no-op
           // if the underlying token is not an ERC20Wrapper, this will throw an error,
-          // so we catch it and return undefined
-          return undefined;
-        })) as Address | undefined;
+          // so we catch it and do nothing
+        }
 
         if (lockedTokenAddress) {
           lockReleaseContractAddress = govTokenAddress;
+          // @dev if the underlying token is an ERC20Wrapper, we use the underlying token as the token contract
           votesTokenContractAddress = lockedTokenAddress;
         } else {
-          // @dev if the underlying token is an ERC20Wrapper, we use the underlying token as the token contract
           // @dev if the no underlying token, we use the governance token as the token contract
           votesTokenContractAddress = govTokenAddress;
         }

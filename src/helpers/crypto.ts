@@ -10,6 +10,8 @@ import {
   getAddress,
   Address,
   bytesToBigInt,
+  Hex,
+  isHex,
 } from 'viem';
 import { sepolia, mainnet } from 'wagmi/chains';
 import { ContractConnection } from '../types';
@@ -17,7 +19,7 @@ import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/
 
 export interface SafeSignature {
   signer: string;
-  data: string;
+  data: Hex;
 }
 
 export const EIP712_SAFE_TX_TYPE = {
@@ -66,9 +68,9 @@ export const buildSignatureBytes = (signatures: SafeSignature[]) => {
 
 export const buildSafeTransaction = (template: {
   to: Address;
-  value?: bigint | number | string;
-  data?: string;
-  operation?: number;
+  value?: bigint;
+  data?: Hex;
+  operation?: 0 | 1;
   safeTxGas?: number | string;
   baseGas?: number | string;
   gasPrice?: number | string;
@@ -78,7 +80,7 @@ export const buildSafeTransaction = (template: {
 }): SafeTransaction => {
   return {
     to: template.to,
-    value: template.value?.toString() || 0,
+    value: template.value || 0n,
     data: template.data || '0x',
     operation: template.operation || 0,
     safeTxGas: template.safeTxGas || 0,
@@ -99,13 +101,17 @@ export const safeSignTypedData = async (
   if (!chainId && !signer.provider) throw Error('Provider required to retrieve chainId');
   const cid = chainId || (await signer.provider!.getNetwork()).chainId;
   const signerAddress = await signer.getAddress();
+  const signedData = await signer._signTypedData(
+    { verifyingContract: safe.address, chainId: cid },
+    EIP712_SAFE_TX_TYPE,
+    safeTx,
+  );
+  if (!isHex(signedData)) {
+    throw new Error('Error signing message');
+  }
   return {
     signer: signerAddress,
-    data: await signer._signTypedData(
-      { verifyingContract: safe.address, chainId: cid },
-      EIP712_SAFE_TX_TYPE,
-      safeTx,
-    ),
+    data: signedData,
   };
 };
 
@@ -115,9 +121,9 @@ export const buildSafeAPIPost = async (
   chainId: number,
   template: {
     to: Address;
-    value?: bigint | number | string;
-    data?: string;
-    operation?: number;
+    value?: bigint;
+    data?: Hex;
+    operation?: 0 | 1;
     safeTxGas?: number | string;
     baseGas?: number | string;
     gasPrice?: number | string;
@@ -165,12 +171,13 @@ export const buildContractCall = (
   overrides?: Partial<SafeTransaction>,
 ): SafeTransaction => {
   const data = contract.interface.encodeFunctionData(method, params);
+  const operation: 0 | 1 = delegateCall ? 1 : 0;
   return buildSafeTransaction(
     Object.assign(
       {
         to: contract.address,
         data,
-        operation: delegateCall ? 1 : 0,
+        operation,
         nonce,
       },
       overrides,

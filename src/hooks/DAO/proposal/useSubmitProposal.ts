@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Signer } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { isAddress, getAddress, encodeAbiParameters, parseAbiParameters } from 'viem';
+import { isAddress, getAddress, encodeAbiParameters, parseAbiParameters, isHex } from 'viem';
 import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
@@ -127,7 +127,7 @@ export default function useSubmitProposal() {
           proposalData.calldatas.push(encodeAbiParameters(parseAbiParameters(['string']), [Hash]));
         }
 
-        let to, value, data, operation;
+        let to, value, data, operation: 0 | 1;
         if (proposalData.targets.length > 1) {
           if (!multiSendContract) {
             toast.dismiss(toastId);
@@ -148,6 +148,10 @@ export default function useSubmitProposal() {
           data = multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [
             encodeMultiSend(tempData),
           ]);
+
+          if (!isHex(data)) {
+            throw new Error('Error encoding proposal data');
+          }
 
           operation = 1;
         } else {

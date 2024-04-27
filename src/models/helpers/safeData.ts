@@ -10,7 +10,7 @@ import {
   isHex,
   hexToBigInt,
 } from 'viem';
-import SafeL2ABI from '../../assets/abi/SafeL2';
+import GnosisSafeL2ABI from '../../assets/abi/GnosisSafeL2';
 import { MultiSend } from '../../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../../helpers/crypto';
@@ -44,7 +44,7 @@ export const safeData = async (
       0,
       zeroAddress,
     ],
-    abi: SafeL2ABI,
+    abi: GnosisSafeL2ABI,
   });
 
   const safeFactoryContractProxyCreationCode = await safeFactoryContract.proxyCreationCode();

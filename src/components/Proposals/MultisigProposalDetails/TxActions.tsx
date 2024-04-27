@@ -4,7 +4,7 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
+import { Hex, getAddress, isHex } from 'viem';
 import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
@@ -44,13 +44,16 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   if (!multisigTx) return null;
 
   const signTransaction = async () => {
-    if (!signerOrProvider || !safe?.address) {
+    if (!signerOrProvider || !safe?.address || (multisigTx.data && !isHex(multisigTx.data))) {
       return;
     }
     try {
       const safeTx = buildSafeTransaction({
         ...multisigTx,
         to: getAddress(multisigTx.to),
+        value: BigInt(multisigTx.value),
+        data: multisigTx.data as Hex | undefined,
+        operation: multisigTx.operation as 0 | 1,
       });
 
       asyncRequest({
@@ -75,18 +78,31 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const timelockTransaction = async () => {
     try {
-      if (!multisigTx.confirmations || !baseContracts || !freezeGuardContractAddress) {
+      if (
+        !multisigTx.confirmations ||
+        !baseContracts ||
+        !freezeGuardContractAddress ||
+        (multisigTx.data && !isHex(multisigTx.data))
+      ) {
         return;
       }
       const safeTx = buildSafeTransaction({
         ...multisigTx,
         to: getAddress(multisigTx.to),
+        value: BigInt(multisigTx.value),
+        data: multisigTx.data as Hex | undefined,
+        operation: multisigTx.operation as 0 | 1,
       });
       const signatures = buildSignatureBytes(
-        multisigTx.confirmations.map(confirmation => ({
-          signer: confirmation.owner,
-          data: confirmation.signature,
-        })),
+        multisigTx.confirmations.map(confirmation => {
+          if (!isHex(confirmation.signature)) {
+            throw new Error('Confirmation signature is malfunctioned');
+          }
+          return {
+            signer: confirmation.owner,
+            data: confirmation.signature,
+          };
+        }),
       );
       const freezeGuard = baseContracts.multisigFreezeGuardMasterCopyContract.asSigner.attach(
         freezeGuardContractAddress,
@@ -120,19 +136,32 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const executeTransaction = async () => {
     try {
-      if (!signerOrProvider || !safe?.address || !multisigTx.confirmations) {
+      if (
+        !signerOrProvider ||
+        !safe?.address ||
+        !multisigTx.confirmations ||
+        (multisigTx.data && !isHex(multisigTx.data))
+      ) {
         return;
       }
       const safeContract = GnosisSafeL2__factory.connect(safe.address, signerOrProvider);
       const safeTx = buildSafeTransaction({
         ...multisigTx,
         to: getAddress(multisigTx.to),
+        value: BigInt(multisigTx.value),
+        data: multisigTx.data as Hex | undefined,
+        operation: multisigTx.operation as 0 | 1,
       });
       const signatures = buildSignatureBytes(
-        multisigTx.confirmations.map(confirmation => ({
-          signer: confirmation.owner,
-          data: confirmation.signature,
-        })),
+        multisigTx.confirmations.map(confirmation => {
+          if (!isHex(confirmation.signature)) {
+            throw new Error('Confirmation signature is malfunctioned');
+          }
+          return {
+            signer: confirmation.owner,
+            data: confirmation.signature,
+          };
+        }),
       );
       contractCall({
         contractFn: () =>

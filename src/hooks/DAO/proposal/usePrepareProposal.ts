@@ -34,8 +34,8 @@ export function usePrepareProposal() {
       });
       const targets = await Promise.all(
         transactionsWithEncoding.map(async tx => {
-          if (couldBeENS(tx.targetAddress)) {
-            return getAddress(await signer!.resolveName(tx.targetAddress));
+          if (couldBeENS(tx.targetAddress) && signer) {
+            return getAddress(await signer.resolveName(tx.targetAddress));
           }
           return getAddress(tx.targetAddress);
         }),
