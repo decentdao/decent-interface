@@ -142,7 +142,6 @@ export function ProposalBuilder({
                     <Box
                       marginBottom="2rem"
                       rounded="lg"
-                      p="1.5rem"
                       bg="neutral-2"
                     >
                       {formState === CreateProposalState.METADATA_FORM ? (

@@ -61,15 +61,14 @@ export default function ProposalTransactions({
             key={index}
             borderTop="none"
             borderBottom="none"
-            my="1.5rem"
           >
             {({ isExpanded }) => (
-              <Box
-                borderRadius={4}
-                p={3}
-                my="2"
-              >
-                <HStack justify="space-between">
+              <Box borderRadius={4}>
+                {/* TRANSACTION HEADER */}
+                <HStack
+                  px="1.5rem"
+                  justify="space-between"
+                >
                   <AccordionButton
                     onClick={() => {
                       setExpandedIndecies(indexArray => {
@@ -82,7 +81,7 @@ export default function ProposalTransactions({
                         }
                       });
                     }}
-                    p={0}
+                    p="0.25rem"
                     textStyle="display-lg"
                     color="lilac-0"
                   >
@@ -112,6 +111,7 @@ export default function ProposalTransactions({
                     <Box h="2.25rem" />
                   )}
                 </HStack>
+
                 <AccordionPanel p={0}>
                   <ProposalTransaction
                     transaction={transactions[index] as CreateProposalTransaction}
