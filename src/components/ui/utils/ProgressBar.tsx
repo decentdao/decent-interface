@@ -9,6 +9,8 @@ interface ProgressBarProps {
   max?: number;
   unit?: string;
   label: string;
+  labelWidth?: string;
+  bg?: string;
 }
 export default function ProgressBar({
   value,
@@ -16,6 +18,8 @@ export default function ProgressBar({
   max = 100,
   unit = '%',
   label,
+  labelWidth,
+  bg,
 }: ProgressBarProps) {
   return (
     <Box
@@ -28,7 +32,7 @@ export default function ProgressBar({
         position="absolute"
         zIndex={2}
         top={0}
-        width={value > 16 ? `${Math.min(value, 100)}%` : '20%'}
+        width={labelWidth ? labelWidth : value > 16 ? `${Math.min(value, 100)}%` : '20%'}
         px="1rem"
         py="2px"
         height="24px"
@@ -53,6 +57,7 @@ export default function ProgressBar({
         value={max !== 100 ? value : Math.min(value, 100)}
         max={max}
         maxWidth="100%"
+        bg={bg}
       />
     </Box>
   );
@@ -82,6 +87,8 @@ export function QuorumProgressBar({
         max={totalQuorum ? Number(totalQuorum) : undefined}
         unit={unit}
         label={t('quorum', { ns: 'common' })}
+        bg="neutral-4"
+        labelWidth="100%"
         customValue={
           totalQuorum ? (
             <Text textStyle="label-small">

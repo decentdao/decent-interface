@@ -240,6 +240,7 @@ export default function ProposalTransaction({
                                         event.preventDefault();
                                       }}
                                       checked={!!parameter.label}
+                                      isChecked={!!parameter.label}
                                       disabled={!parameter.signature || !!parameter.value}
                                       isDisabled={!parameter.signature || !!parameter.value}
                                       bg="black-0"
@@ -298,6 +299,7 @@ export default function ProposalTransaction({
                                     onChange={event => {
                                       event.preventDefault();
                                     }}
+                                    isChecked={!!parameter.value}
                                     checked={!!parameter.value}
                                     disabled={!parameter.signature || !!parameter.label}
                                     isDisabled={!parameter.signature || !!parameter.label}

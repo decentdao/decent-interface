@@ -17,19 +17,18 @@ import InfoRow from '../ui/proposal/InfoRow';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import Divider from '../ui/utils/Divider';
 import { QuorumProgressBar } from '../ui/utils/ProgressBar';
+import { ProposalAction } from './ProposalActions/ProposalAction';
+import { VoteContextProvider } from './ProposalVotes/context/VoteContext';
 
-export default function ProposalSummary({
-  proposal: {
+export default function ProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
+  const {
     eventDate,
     startBlock,
     votesSummary: { yes, no, abstain },
     deadlineMs,
     proposer,
     transactionHash,
-  },
-}: {
-  proposal: AzoriusProposal;
-}) {
+  } = proposal;
   const {
     governance,
     readOnly: {
@@ -232,6 +231,17 @@ export default function ProposalSummary({
           unit={isERC20 ? '%' : ''}
         />
       </Box>
+      {address && (
+        <>
+          <Divider my="1.5rem" />
+          <VoteContextProvider proposal={proposal}>
+            <ProposalAction
+              proposal={proposal}
+              expandedView
+            />
+          </VoteContextProvider>
+        </>
+      )}
     </ContentBox>
   );
 }

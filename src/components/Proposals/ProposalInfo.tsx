@@ -7,11 +7,11 @@ import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../providers/App/AppProvider';
 import { ExtendedSnapshotProposal, FractalProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
+import { Badge } from '../ui/badges/Badge';
 import { SnapshotButton } from '../ui/badges/Snapshot';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
-import ProposalStateBox from '../ui/proposal/ProposalStateBox';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
 
 export function ProposalInfo({
@@ -39,7 +39,13 @@ export function ProposalInfo({
         gap={4}
         alignItems="center"
       >
-        <ProposalStateBox state={proposal.state} />
+        {proposal.state && (
+          <Badge
+            size="base"
+            labelKey={proposal.state}
+            proposal={proposal}
+          />
+        )}
         {isSnapshotProposal && (
           <>
             <SnapshotButton
