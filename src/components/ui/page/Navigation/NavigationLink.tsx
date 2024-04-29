@@ -1,13 +1,8 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { Icon } from '@phosphor-icons/react';
 import { TFunction } from 'i18next';
-import { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-
-function LinkContainer({ link }: { link: ReactElement }) {
-  return <Box py={3}>{link}</Box>;
-}
 
 function LinkContent({
   labelKey,
@@ -59,39 +54,33 @@ export function NavigationLink({
 
   if (scope === 'internal') {
     return (
-      <LinkContainer
-        link={
-          <Link
-            data-testid={testId}
-            aria-label={t(labelKey)}
-            to={href}
-            onClick={closeDrawer}
-            {...rest}
-          >
-            {linkContent}
-          </Link>
-        }
-      />
+      <Link
+        data-testid={testId}
+        aria-label={t(labelKey)}
+        to={href}
+        onClick={closeDrawer}
+        style={{ display: 'block', paddingTop: '0.75rem', paddingBottom: '0.75rem' }}
+        {...rest}
+      >
+        {linkContent}
+      </Link>
     );
   }
 
   if (scope === 'external') {
     return (
-      <LinkContainer
-        link={
-          <a
-            data-testid={testId}
-            aria-label={t(labelKey)}
-            href={href}
-            onClick={closeDrawer}
-            {...rest}
-            target="_blank"
-            rel="noreferrer noopener"
-          >
-            {linkContent}
-          </a>
-        }
-      />
+      <a
+        data-testid={testId}
+        aria-label={t(labelKey)}
+        href={href}
+        onClick={closeDrawer}
+        {...rest}
+        target="_blank"
+        rel="noreferrer noopener"
+        style={{ display: 'block', paddingTop: '0.75rem', paddingBottom: '0.75rem' }}
+      >
+        {linkContent}
+      </a>
     );
   }
 
