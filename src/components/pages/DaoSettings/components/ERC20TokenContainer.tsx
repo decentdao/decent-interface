@@ -1,13 +1,13 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { SettingsSection } from '..';
-import { useFractal } from '../../../../../providers/App/AppProvider';
-import { AzoriusGovernance } from '../../../../../types';
-import { formatCoin } from '../../../../../utils';
-import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
-import { BarLoader } from '../../../../ui/loaders/BarLoader';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { AzoriusGovernance } from '../../../../types';
+import { formatCoin } from '../../../../utils';
+import { DisplayAddress } from '../../../ui/links/DisplayAddress';
+import { BarLoader } from '../../../ui/loaders/BarLoader';
+import { SettingsSection } from './SettingsSection';
 
-export default function ERC20TokenContainer() {
+export function ERC20TokenContainer() {
   const { t } = useTranslation(['settings']);
   const { governance } = useFractal();
 
@@ -16,53 +16,48 @@ export default function ERC20TokenContainer() {
 
   return (
     <SettingsSection
-      contentTitle={t('governanceTokenTitle')}
-      descriptionTitle={t('governanceTokenTitle')}
-      descriptionText={t('governanceTokenDescription')}
+      title={t('governanceTokenTitle')}
+      descriptionHeader={t('governanceTokenTitle')}
+      descriptionContent={t('governanceTokenDescription')}
     >
       {votesToken ? (
         <Flex
           justifyContent="space-between"
           mt={4}
         >
+          {/* TOKEN NAME */}
           <Box>
             <Text
-              textStyle="text-sm-mono-regular"
-              color="chocolate.200"
+              color="neutral-7"
+              textStyle="label-small"
             >
               {t('governanceTokenNameLabel')}
             </Text>
-            <Box mt={2}>
+            <Flex mt="0.5rem">
               <DisplayAddress address={votesToken.address}>{votesToken.name}</DisplayAddress>
-            </Box>
+            </Flex>
           </Box>
+
+          {/* TOKEN SYMBOL */}
           <Box>
             <Text
-              textStyle="text-sm-mono-regular"
-              color="chocolate.200"
+              color="neutral-7"
+              textStyle="label-small"
             >
               {t('governanceTokenSymbolLabel')}
             </Text>
-            <Text
-              textStyle="text-base-sans-regular"
-              color="grayscale.100"
-              mt={2}
-            >
-              {votesToken.symbol}
-            </Text>
+            <Text mt="0.5rem">{votesToken.symbol}</Text>
           </Box>
+
+          {/* TOTAL SUPPLY */}
           <Box>
             <Text
-              textStyle="text-sm-mono-regular"
-              color="chocolate.200"
+              color="neutral-7"
+              textStyle="label-small"
             >
               {t('governanceTokenSupplyLabel')}
             </Text>
-            <Text
-              textStyle="text-base-sans-regular"
-              color="grayscale.100"
-              mt={2}
-            >
+            <Text mt="0.5rem">
               {formatCoin(
                 votesToken.totalSupply,
                 false,

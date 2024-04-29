@@ -8,8 +8,8 @@
   "governanceTokenWeightLabel": "Token Weight",
   "governanceTokenTotalWeightLabel": "Total Weight",
   "governanceTokenSupplyLabel": "Total Supply",
-  "noModulesAttached": "No Modules Attached",
-  "noGuardAttached": "No Guard Attached",
+  "noModulesAttached": "No modules attached",
+  "noGuardAttached": "No guard attached",
   "modulesTitle": "Modules",
   "guardTitle": "Guard",
   "modulesAndGuardsTitle": "Modules and Guards",
@@ -19,5 +19,5 @@
   "daoMetadataSnapshot": "Snapshot Space",
   "daoMetadataDescriptionTitle": "Safe Metadata & Off-chain",
   "daoMetadataDescriptionText": "Activities or transactions that occur outside of the blockchain network or aren't stored on-chain.",
-  "proposeChanges": "Propose Changes"
+  "proposeChanges": "Propose Change"
 }

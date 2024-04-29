@@ -13,6 +13,7 @@ export default function Breadcrumbs({ links }: BreadcrumbsProps) {
     <Breadcrumb
       display="flex"
       alignItems="center"
+      color="neutral-7"
       w={{ base: 'min-content', sm: 'initial' }}
     >
       {links.map(({ terminus: title, path }, i) => {
