@@ -1,11 +1,10 @@
-import { ButtonProps, Text } from '@chakra-ui/react';
+import { Text, Icon, LinkProps } from '@chakra-ui/react';
 import { CopySimple } from '@phosphor-icons/react';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import CeleryButtonWithIcon from '../utils/CeleryButtonWithIcon';
 import EtherscanLinkAddress from './EtherscanLinkAddress';
 
-interface Props extends ButtonProps {
+interface Props extends LinkProps {
   address: string;
 }
 
@@ -18,15 +17,25 @@ export default function AddressCopier({ address, ...rest }: Props) {
   const copyToClipboard = useCopyText();
 
   return (
-    <CeleryButtonWithIcon
-      onClick={() => copyToClipboard(address)}
-      icon={CopySimple}
-      iconPosition="end"
+    <EtherscanLinkAddress
+      address={address}
+      onClick={e => {
+        e.preventDefault();
+        copyToClipboard(address);
+      }}
+      width="fit-content"
       {...rest}
     >
-      <EtherscanLinkAddress address={address}>
-        <Text>{accountSubstring}</Text>
-      </EtherscanLinkAddress>
-    </CeleryButtonWithIcon>
+      <Text
+        alignItems="center"
+        display="flex"
+      >
+        {accountSubstring}
+        <Icon
+          ml="0.5rem"
+          as={CopySimple}
+        />
+      </Text>
+    </EtherscanLinkAddress>
   );
 }
