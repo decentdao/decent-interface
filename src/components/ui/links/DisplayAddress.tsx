@@ -1,5 +1,5 @@
-import { HStack, Text } from '@chakra-ui/react';
-import { ArrowAngleUp } from '@decent-org/fractal-ui';
+import { HStack, Icon, Text } from '@chakra-ui/react';
+import { ArrowUpRight } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import EtherscanLinkAddress from './EtherscanLinkAddress';
@@ -15,14 +15,25 @@ export function DisplayAddress({
 }) {
   const displayAddress = useDisplayName(address, truncate);
   return (
-    <EtherscanLinkAddress address={address}>
-      <HStack
-        color="gold.500"
-        _hover={{ color: 'gold.500-hover' }}
-        textStyle="text-base-sm-regular"
-      >
-        <Text>{children || displayAddress.displayName}</Text>
-        <ArrowAngleUp />
+    <EtherscanLinkAddress
+      border="1px"
+      borderColor="neutral-3"
+      bg="neutral-3"
+      px="0.75rem"
+      borderRadius="625rem"
+      _hover={{
+        bg: 'neutral-4',
+        borderColor: 'lilac-0',
+      }}
+      address={address}
+      textAlign="center"
+    >
+      <HStack>
+        <Text pb="1px">{children || displayAddress.displayName}</Text>
+        <Icon
+          as={ArrowUpRight}
+          color="lilac-0"
+        />
       </HStack>
     </EtherscanLinkAddress>
   );
