@@ -93,6 +93,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
       <GridItem {...inputContainerProps}>
         <LabelWrapper
           subLabel={subLabel}
+          // TODO: LabelWrapper error message design is out of date
           errorMessage={errorMessage}
         >
           {children}
