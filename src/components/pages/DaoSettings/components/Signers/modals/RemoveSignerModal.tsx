@@ -88,8 +88,7 @@ function RemoveSignerModal({
           textStyle="helper-text-base"
           color="red-0"
         >
-          {/* TODO: should be i18n-d */}
-          This signer will be removed from the the organization
+          {t('removeSignerWarning', { ns: 'modals' })}
         </Text>
       </HStack>
 
