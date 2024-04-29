@@ -1,8 +1,6 @@
 import { GridItem } from '@chakra-ui/react';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusProposal } from '../../../types';
-import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { useProposalCountdown } from '../../ui/proposal/useProposalCountdown';
 import { ProposalAction } from '../ProposalActions/ProposalAction';
@@ -19,10 +17,11 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
 
   return (
     <ProposalDetailsGrid>
-      <GridItem colSpan={2}>
-        <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-          <ProposalInfo proposal={proposal} />
-        </ContentBox>
+      <GridItem
+        colSpan={2}
+        gap="1.5rem"
+      >
+        <ProposalInfo proposal={proposal} />
         <ProposalVotes proposal={proposal} />
       </GridItem>
       <GridItem>

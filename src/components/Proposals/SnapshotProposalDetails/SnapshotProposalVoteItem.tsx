@@ -29,7 +29,10 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
       width="100%"
     >
       <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">
+        <Text
+          textStyle="body-base"
+          color="neutral-7"
+        >
           {displayName}
           {user.address === vote.voter && t('isMeSuffix')}
         </Text>
@@ -46,7 +49,10 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
               }
               return (
                 <StatusBox key={choiceIdx}>
-                  <Text textStyle="text-sm-mono-semibold">
+                  <Text
+                    textStyle="body-base"
+                    color="neutral-7"
+                  >
                     {proposal.choices[(choiceIdx as number) - 1]}
                   </Text>
                 </StatusBox>
@@ -55,14 +61,20 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
           </Flex>
         ) : (
           <StatusBox>
-            <Text textStyle="text-sm-mono-semibold">
+            <Text
+              textStyle="body-base"
+              color="neutral-7"
+            >
               {proposal.choices[(vote.choice as number) - 1]}
             </Text>
           </StatusBox>
         )}
       </GridItem>
       <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">
+        <Text
+          textStyle="body-base"
+          color="neutral-7"
+        >
           {vote.votingWeight} {proposal.strategies[0].params.symbol}
         </Text>
       </GridItem>

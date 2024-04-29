@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -127,10 +126,18 @@ export default function ProposalSummary({
   );
 
   return (
-    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-      <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
+    <ContentBox
+      containerBoxProps={{
+        bg: 'neutral-2',
+        border: '1px solid',
+        borderColor: 'neutral-3',
+        borderRadius: '0.5rem',
+        my: 0,
+      }}
+    >
+      <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
-        <Divider />
+        <Divider variant="darker" />
         <InfoRow
           property={t('votingSystem')}
           value={t('singleSnapshotVotingSystem')}
@@ -157,7 +164,10 @@ export default function ProposalSummary({
           >
             {t('snapshotTaken')}
           </Text>
-          <EtherscanLinkBlock blockNumber={startBlock.toString()}>
+          <EtherscanLinkBlock
+            blockNumber={startBlock.toString()}
+            textAlign="end"
+          >
             {format(eventDate, DEFAULT_DATE_TIME_FORMAT)} <Icon as={ArrowUpRight} />
           </EtherscanLinkBlock>
         </Flex>
@@ -195,7 +205,10 @@ export default function ProposalSummary({
             <DisplayTransaction txHash={transactionHash} />
           </Flex>
         )}
-        <Divider />
+        <Divider
+          my="0.5rem"
+          variant="darker"
+        />
       </Box>
       <Box marginTop={4}>
         <QuorumProgressBar

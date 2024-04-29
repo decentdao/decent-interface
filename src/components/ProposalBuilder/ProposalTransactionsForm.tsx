@@ -1,4 +1,4 @@
-import { Box, Icon } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { FormikProps } from 'formik';
 import { useEffect, useState } from 'react';
@@ -49,7 +49,6 @@ export default function ProposalTransactionsForm(props: ProposalTransactionsForm
         disabled={pendingTransaction}
         icon={Plus}
       >
-        <Icon as={Plus} />
         {t('labelAddTransaction', { ns: 'proposal' })}
       </CeleryButtonWithIcon>
     </Box>

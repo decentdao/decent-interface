@@ -22,7 +22,12 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
         my: 0,
       }}
     >
-      <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
+      <Text
+        textStyle="display-lg"
+        variant="darker"
+      >
+        {t('proposalSummaryTitle')}
+      </Text>
       <Box marginTop={4}>
         <Divider />
         <InfoRow

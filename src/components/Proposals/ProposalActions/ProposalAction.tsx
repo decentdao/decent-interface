@@ -1,7 +1,6 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ExtendedSnapshotProposal, FractalProposal, FractalProposalState } from '../../../types';
@@ -110,9 +109,16 @@ export function ProposalAction({
       return null;
 
     return (
-      <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
+      <ContentBox
+        containerBoxProps={{
+          border: '1px solid',
+          borderColor: 'neutral-3',
+          borderRadius: '0.5rem',
+          bg: 'neutral-2',
+        }}
+      >
         <Flex justifyContent="space-between">
-          <Text textStyle="text-lg-mono-medium">
+          <Text textStyle="body-base">
             {t(labelKey, {
               ns: isActiveProposal ? 'common' : 'proposal',
             })}
