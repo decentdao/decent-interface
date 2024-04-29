@@ -3,7 +3,6 @@ import {
   Drawer,
   DrawerCloseButton,
   DrawerContent,
-  DrawerOverlay,
   Flex,
   Hide,
   IconButton,
@@ -66,14 +65,14 @@ function HeaderLogo() {
             size="full"
             isFullHeight
           >
-            <DrawerOverlay />
             <DrawerContent
-              bg="chocolate.900"
+              bg="#26212A"
               border="none"
             >
               <DrawerCloseButton
                 size="lg"
                 zIndex="banner"
+                color="lilac-0"
               />
 
               <Box
