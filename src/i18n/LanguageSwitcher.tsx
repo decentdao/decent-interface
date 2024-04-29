@@ -1,4 +1,4 @@
-import { Box, Hide, Text, Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { GlobeSimple } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { OptionMenu } from '../components/ui/menus/OptionMenu';
