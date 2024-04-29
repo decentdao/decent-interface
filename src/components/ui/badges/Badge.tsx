@@ -13,117 +13,89 @@ type BadgeType = {
   };
 };
 
-const greenText = '#8BDA8B';
-const greenBG = '#0A320A';
-const greenHoverText = '#78D378';
-const greenHover = '#0E440E';
-
-const redText = '#FFB2B2';
-const redBG = '#640E0D';
-const redHoverText = '#FF9999';
-const redHover = '#4D0B0A';
-
-const sandBG = '#C18D5A';
-const sandHover = '#B97F46';
-const sandText = '#2C1A08';
-const sandHoverText = '#150D04  ';
-
-const grayBG = '#9A979D';
-const grayHover = '#8C8990';
-
-const freezeBG = '#A3B9EC';
-const freezeHover = '#8DA8E7';
-const freezeText = '#0D2356';
-const freezeHoverText = '#09193E';
-
-const frozenBG = '#09193E';
-const frozenText = '#D1DCF5';
-const frozenHoverText = '#BCCCF0';
-const frozenHover = '#17326E';
-
 const BADGE_MAPPING: BadgeType = {
   [FractalProposalState.ACTIVE]: {
     tooltipKey: 'stateActiveTip',
-    bg: greenBG,
-    textColor: greenText,
-    _hover: { bg: greenHover, textColor: greenHoverText },
+    bg: 'lilac-0',
+    textColor: 'cosmic-nebula-0',
+    _hover: { bg: 'lilac--1', textColor: 'cosmic-nebula-0' },
   },
   [FractalProposalState.TIMELOCKED]: {
     tooltipKey: 'stateTimelockedTip',
-    bg: greenBG,
-    textColor: greenText,
-    _hover: { bg: greenHover, textColor: greenHoverText },
+    bg: 'neutral-8',
+    textColor: 'neutral-4',
+    _hover: { bg: 'neutral-7', textColor: 'neutral-4' },
   },
   [FractalProposalState.EXECUTED]: {
     tooltipKey: 'stateExecutedTip',
-    bg: greenBG,
-    textColor: greenText,
-    _hover: { bg: greenHover, textColor: greenHoverText },
+    bg: 'celery--5',
+    textColor: 'white-0',
+    _hover: { bg: 'celery--6', textColor: 'white-0' },
   },
   [FractalProposalState.EXECUTABLE]: {
     tooltipKey: 'stateExecutableTip',
-    bg: greenBG,
-    textColor: greenText,
-    _hover: { bg: greenHover, textColor: greenHoverText },
+    bg: 'celery--2',
+    textColor: 'black-0',
+    _hover: { bg: 'celery--3', textColor: 'black-0' },
   },
   [FractalProposalState.FAILED]: {
     tooltipKey: 'stateFailedTip',
-    bg: redBG,
-    textColor: redText,
-    _hover: { bg: redHover, textColor: redHoverText },
+    bg: 'red-0',
+    textColor: 'red-4',
+    _hover: { bg: 'red--1', textColor: 'red-4' },
   },
   [FractalProposalState.TIMELOCKABLE]: {
     tooltipKey: 'stateTimelockableTip',
-    bg: greenBG,
-    textColor: greenText,
-    _hover: { bg: greenHover, textColor: greenHoverText },
+    bg: 'lilac-0',
+    textColor: 'cosmic-nebula-0',
+    _hover: { bg: 'lilac--1', textColor: 'cosmic-nebula-0' },
   },
   [FractalProposalState.MODULE]: {
     tooltipKey: 'stateModuleTip',
-    bg: greenBG,
-    textColor: greenText,
-    _hover: { bg: greenHover, textColor: greenHoverText },
+    bg: 'lilac-0',
+    textColor: 'cosmic-nebula-0',
+    _hover: { bg: 'lilac--1', textColor: 'cosmic-nebula-0' },
   },
   [FractalProposalState.EXPIRED]: {
     tooltipKey: 'stateExpiredTip',
-    bg: redBG,
-    textColor: redText,
-    _hover: { bg: redHover, textColor: redHoverText },
+    bg: 'neutral-4',
+    textColor: 'neutral-7',
+    _hover: { bg: 'neutral-2', textColor: 'neutral-7' },
   },
   [FractalProposalState.REJECTED]: {
     tooltipKey: 'stateRejectedTip',
-    bg: redBG,
-    textColor: redText,
-    _hover: { bg: redHover, textColor: redHoverText },
+    bg: 'red-0',
+    textColor: 'red-4',
+    _hover: { bg: 'red--1', textColor: 'red-4' },
   },
   [FractalProposalState.PENDING]: {
     tooltipKey: 'statePendingTip',
-    bg: sandBG,
-    textColor: sandText,
-    _hover: { bg: sandHover, textColor: sandHoverText },
+    bg: 'yellow-0',
+    textColor: 'black-0',
+    _hover: { bg: 'yellow-0', textColor: 'yellow--2' },
   },
   [FractalProposalState.CLOSED]: {
     tooltipKey: 'stateClosedTip',
-    bg: grayBG,
-    textColor: '#000',
-    _hover: { bg: grayHover, textColor: '#000' },
+    bg: 'neutral-8',
+    textColor: 'neutral-4',
+    _hover: { bg: 'neutral-7', textColor: 'neutral-4' },
   },
   [DAOState.freezeInit]: {
     tooltipKey: 'stateFreezeInitTip',
-    bg: freezeBG,
-    textColor: freezeText,
-    _hover: { bg: freezeHover, textColor: freezeHoverText },
+    bg: 'blue-2',
+    textColor: 'blue-0',
+    _hover: { bg: 'blue-1', textColor: 'blue-0' },
   },
   [DAOState.frozen]: {
     tooltipKey: 'stateFrozenTip',
-    bg: frozenBG,
-    textColor: frozenText,
-    _hover: { bg: frozenHover, textColor: frozenHoverText },
+    bg: 'blue-1',
+    textColor: 'blue--1',
+    _hover: { bg: 'blue-2', textColor: 'blue--1' },
   },
   ownerApproved: {
-    bg: 'sand.700',
-    textColor: sandText,
-    _hover: { bg: sandBG, textColor: sandHoverText },
+    bg: 'yellow-0',
+    textColor: 'black-0',
+    _hover: { bg: 'yellow-0', textColor: 'yellow--2' },
   },
 };
 
@@ -169,7 +141,7 @@ export function Badge({ labelKey, size, proposal }: IBadge) {
           h="0.5rem"
         />
         <Text
-          textStyle="text-md-sans-regular"
+          textStyle="label-base"
           lineHeight="1"
         >
           {t(labelKey)}
@@ -179,7 +151,7 @@ export function Badge({ labelKey, size, proposal }: IBadge) {
             proposal={proposal}
             showIcon={false}
             textColor={colors.textColor}
-            textStyle="text-md-sans-regular"
+            textStyle="label-base"
           />
         )}
       </Flex>

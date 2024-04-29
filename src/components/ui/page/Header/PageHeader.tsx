@@ -60,7 +60,7 @@ function PageHeader({
   return (
     <Box
       marginTop="3rem"
-      marginBottom="2rem"
+      marginBottom="1.5rem"
     >
       <Flex
         alignItems="center"

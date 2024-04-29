@@ -13,6 +13,7 @@ export default function Breadcrumbs({ links }: BreadcrumbsProps) {
     <Breadcrumb
       display="flex"
       alignItems="center"
+      color="neutral-7"
       w={{ base: 'min-content', sm: 'initial' }}
     >
       {links.map(({ terminus: title, path }, i) => {
@@ -24,6 +25,7 @@ export default function Breadcrumbs({ links }: BreadcrumbsProps) {
             whiteSpace="nowrap"
             textOverflow="ellipsis"
             textStyle="helper-text-base"
+            color={isCurrentPage ? 'neutral-7' : 'neutral-6'}
           >
             {title}
           </Text>
@@ -33,6 +35,8 @@ export default function Breadcrumbs({ links }: BreadcrumbsProps) {
           <BreadcrumbItem
             key={path}
             isCurrentPage={isCurrentPage}
+            color="neutral-7"
+            textStyle="helper-text-base"
           >
             {isCurrentPage ? (
               crumbText
@@ -42,7 +46,6 @@ export default function Breadcrumbs({ links }: BreadcrumbsProps) {
                 to={path}
                 display="flex"
                 alignItems="center"
-                color={isCurrentPage ? 'neutral-7' : 'neutral-6'}
                 _hover={{ textDecoration: 'none', color: 'neutral-7' }} // Guessed. Probaby incorrect, couldn't find on figma
               >
                 {crumbText}

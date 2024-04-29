@@ -1,27 +1,37 @@
 import { Button, Flex, HStack, Radio, RadioGroup, Show, Text } from '@chakra-ui/react';
-import { AddPlus, Minus } from '@decent-org/fractal-ui';
+import { PlusCircle, MinusCircle } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
-import { SettingsSection } from '..';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
 import { ModalType } from '../../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../ui/modals/useFractalModal';
+import { SettingsSection } from '../SettingsSection';
 
 function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
   return (
     <HStack
       key={signer}
-      my={3}
+      my="1rem"
     >
       {!disabled && (
         <Radio
           value={signer}
-          colorScheme="blackAlpha"
-          textColor="gold.500"
-          borderColor="gold.500"
-          size="md"
+          color="lilac--3"
+          bgColor="black-0"
+          _hover={{
+            color: 'lilac--4',
+          }}
+          _checked={{
+            bg: 'black-0',
+            color: 'lilac--3',
+            borderWidth: '0.30rem',
+
+            _hover: {
+              color: 'lilac--4',
+            },
+          }}
         />
       )}
       <DisplayAddress
@@ -32,7 +42,7 @@ function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
   );
 }
 
-export default function SignersContainer() {
+export function SignersContainer() {
   const {
     node: { safe },
   } = useFractal();
@@ -67,56 +77,42 @@ export default function SignersContainer() {
 
   return (
     <SettingsSection
-      contentTitle={''}
-      contentHeader={
-        <Flex justifyContent="space-between">
-          <Text
-            textStyle="text-lg-mono-bold"
-            color="grayscale.100"
-          >
-            {t('signers', { ns: 'common' })}
-          </Text>
-          {userIsSigner && (
-            <Flex gap={4}>
-              <Button
-                minW={0}
-                px={2}
-                onClick={addSigner}
-              >
-                <AddPlus />
-                <Show above="sm">{t('add')}</Show>
-              </Button>
-              <Button
-                minW={0}
-                px={2}
-                onClick={removeSigner}
-                disabled={removeButtonDisabled}
-                isDisabled={removeButtonDisabled}
-                variant="tertiary"
-              >
-                <Minus />
-                <Show above="sm">{t('remove')}</Show>
-              </Button>
-            </Flex>
-          )}
-        </Flex>
+      title={t('signers', { ns: 'common' })}
+      headerRight={
+        userIsSigner && (
+          <Flex gap="0.5rem">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={addSigner}
+              leftIcon={<PlusCircle size="16" />}
+              iconSpacing="0"
+            >
+              <Show above="sm">
+                <Text>{t('add')}</Text>
+              </Show>
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={removeSigner}
+              disabled={removeButtonDisabled}
+              isDisabled={removeButtonDisabled}
+              iconSpacing="0"
+              leftIcon={<MinusCircle size="16" />}
+            >
+              <Show above="sm">{t('remove')}</Show>
+            </Button>
+          </Flex>
+        )
       }
-      descriptionTitle={t('signersRequired', { ns: 'common' })}
       descriptionHeader={
         <Flex justifyContent="space-between">
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >
-            {t('signersRequired', { ns: 'common' })}
-          </Text>
-          <Text
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-          >{`${safe?.threshold}/${safe?.owners.length}`}</Text>
+          <Text>{t('signersRequired', { ns: 'common' })}</Text>
+          <Text>{`${safe?.threshold}/${safe?.owners.length}`}</Text>
         </Flex>
       }
-      descriptionText={t('signersDescription')}
+      descriptionContent={t('signersDescription')}
     >
       <RadioGroup
         onChange={e => setSelectedSigner(e)}
