@@ -79,7 +79,7 @@
   "filterProposalsNSelected": "Filter {{count}}",
   "filter": "Filter",
   "transaction": "Transaction",
-  "parameter": "Paramter",
+  "parameter": "Parameter",
   "proposal": "Proposal",
   "transactionExecutionAlertMessage": "Transactions execute in the order they are added",
   "labelProposalVotingPeriod": "Voting Period",

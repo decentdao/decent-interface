@@ -19,17 +19,17 @@ import ProposalMetadata from './ProposalMetadata';
 import ProposalTransactionsForm from './ProposalTransactionsForm';
 import StateButtons from './StateButtons';
 
-interface IProposalBuilder {
+interface ProposalBuilderProps {
   mode: ProposalBuilderMode;
   prepareProposalData: (values: CreateProposalForm) => Promise<ProposalExecuteData | undefined>;
   initialValues: CreateProposalForm;
 }
 
-export default function ProposalBuilder({
+export function ProposalBuilder({
   mode,
   initialValues,
   prepareProposalData,
-}: IProposalBuilder) {
+}: ProposalBuilderProps) {
   const [formState, setFormState] = useState(CreateProposalState.METADATA_FORM);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
 
@@ -142,7 +142,6 @@ export default function ProposalBuilder({
                     <Box
                       marginBottom="2rem"
                       rounded="lg"
-                      p="1.5rem"
                       bg="neutral-2"
                     >
                       {formState === CreateProposalState.METADATA_FORM ? (
