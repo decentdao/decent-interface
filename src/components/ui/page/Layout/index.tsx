@@ -1,10 +1,15 @@
-import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import Header from '../Header';
-import Navigation from '../Navigation';
+import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 export default function Layout() {
+  const {
+    node: { daoAddress },
+  } = useFractal();
+
   return (
     <Grid
       templateAreas={{
@@ -51,7 +56,12 @@ export default function Layout() {
         ml={6}
         minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
       >
-        <Navigation />
+        <Show above="md">
+          <NavigationLinks
+            showDAOLinks={!!daoAddress}
+            address={daoAddress}
+          />
+        </Show>
       </GridItem>
     </Grid>
   );
