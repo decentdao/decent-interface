@@ -3,7 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import Header from '../Header';
-import { NavigationLinks } from '../Navigation/NavigationLinks';
+import { NavigationLinksSidebar } from '../Navigation/NavigationLinksSidebar';
 
 export default function Layout() {
   const {
@@ -57,7 +57,7 @@ export default function Layout() {
         minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
       >
         <Show above="md">
-          <NavigationLinks
+          <NavigationLinksSidebar
             showDAOLinks={!!daoAddress}
             address={daoAddress}
           />

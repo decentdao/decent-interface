@@ -21,7 +21,7 @@ import { AccountDisplay } from '../../menus/AccountDisplay';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { FavoritesMenu } from '../../menus/FavoritesMenu';
 import Divider from '../../utils/Divider';
-import { NavigationLinks } from '../Navigation/NavigationLinks';
+import { NavigationLinksMobile } from '../Navigation/NavigationLinksMobile';
 
 function HeaderLogo() {
   const { t } = useTranslation('navigation');
@@ -93,7 +93,7 @@ function HeaderLogo() {
                 pt={8}
               >
                 <Divider />
-                <NavigationLinks
+                <NavigationLinksMobile
                   showDAOLinks={showDAOLinks}
                   address={daoAddress}
                   closeDrawer={onClose}

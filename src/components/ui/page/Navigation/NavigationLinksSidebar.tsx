@@ -151,7 +151,7 @@ function InternalLinks({
   );
 }
 
-export function NavigationLinks({
+export function NavigationLinksSidebar({
   address,
   showDAOLinks,
   closeDrawer,
