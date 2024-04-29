@@ -22,9 +22,6 @@ export function LanguageSwitcher() {
             <GlobeSimple size={24} />
           </Box>
           <Box ml={3}>{t('tooltipTitle')}</Box>
-          <Hide above="md">
-            <Text textStyle="text-md-mono-medium">{t(i18n.language.slice(0, 2))}</Text>
-          </Hide>
         </Flex>
       }
       options={supported}

@@ -1,4 +1,4 @@
-import { Box, Hide, Text, Flex } from '@chakra-ui/react';
+import { Box, Flex } from '@chakra-ui/react';
 import { Icon } from '@phosphor-icons/react';
 import { TFunction } from 'i18next';
 import { ReactElement } from 'react';
@@ -27,9 +27,6 @@ function LinkContent({
       >
         {t(labelKey)}
       </Box>
-      <Hide above="md">
-        <Text textStyle="text-md-mono-medium">{t(labelKey)}</Text>
-      </Hide>
     </Flex>
   );
 }
