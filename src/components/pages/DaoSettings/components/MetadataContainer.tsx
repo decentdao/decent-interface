@@ -141,7 +141,6 @@ export function MetadataContainer() {
           <Button
             variant="secondary"
             size="sm"
-            disabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
             isDisabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
             onClick={handleEditDAOSnapshotENS}
           >

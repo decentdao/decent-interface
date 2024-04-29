@@ -27,13 +27,7 @@ export function ModulesContainer() {
       descriptionContent={
         <>
           <Text mt={2}>{t('modulesAndGuardsDescription1')}</Text>
-          <Text
-            textStyle="text-sm-sans-regular"
-            color="chocolate.200"
-            mt={4}
-          >
-            {t('modulesAndGuardsDescription2')}
-          </Text>
+          <Text mt={4}>{t('modulesAndGuardsDescription2')}</Text>
         </>
       }
       nestedSection={{
