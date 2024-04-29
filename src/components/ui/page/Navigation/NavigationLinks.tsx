@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Hide } from '@chakra-ui/react';
 import {
   House,
   GitFork,
@@ -18,22 +18,23 @@ import { NavigationLink } from './NavigationLink';
 function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
   return (
     <Box
-      mt={3}
       mb={6}
-      maxWidth={{ base: 12, '3xl': '100%' }}
+      mt={{ base: 0, md: 6 }}
+      maxWidth={{ md: 12, '3xl': '100%' }}
       _hover={{ maxWidth: '100%' }}
       transitionDuration="0.2s"
+      width={{ base: 'full', md: 'auto' }}
     >
       <Box
-        bg="neutral-2"
-        pl="11px"
-        overflow="hidden"
-        borderColor="neutral-3"
-        mb="1px"
-        borderTopRadius={8}
-        borderTopWidth={1}
-        borderLeftWidth={1}
-        borderRightWidth={1}
+        bg={{ md: 'neutral-2' }}
+        pl={{ md: '11px' }}
+        overflow={{ md: 'hidden' }}
+        borderColor={{ md: 'neutral-3' }}
+        mb={{ md: '1px' }}
+        borderTopRadius={{ md: 8 }}
+        borderTopWidth={{ md: 1 }}
+        borderLeftWidth={{ md: 1 }}
+        borderRightWidth={{ md: 1 }}
       >
         <NavigationLink
           href={URL_FAQ}
@@ -60,15 +61,22 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
       </Box>
+      <Hide above="md">
+        <Box
+          borderTop="1px"
+          borderColor="neutral-3"
+          mx={-6}
+        />
+      </Hide>
       <Box
-        bg="neutral-2"
-        overflow="hidden"
-        borderColor="neutral-3"
-        borderWidth={1}
-        borderBottomRadius={8}
-        pl="11px"
-        pt="11px"
-        pb="4px"
+        bg={{ md: 'neutral-2' }}
+        overflow={{ md: 'hidden' }}
+        borderColor={{ md: 'neutral-3' }}
+        borderWidth={{ md: 1 }}
+        borderBottomRadius={{ md: 8 }}
+        pl={{ md: '11px' }}
+        pt={{ base: 3, md: '11px' }}
+        pb={{ md: '4px' }}
       >
         <LanguageSwitcher data-testid="navigation-language" />
       </Box>
@@ -92,19 +100,22 @@ function InternalLinks({
   }
 
   return (
-    <Box marginY="auto">
+    <Box
+      width="full"
+      marginY="auto"
+    >
       <Box
-        maxWidth={{ base: 12, '3xl': '100%' }}
+        maxWidth={{ md: 12, '3xl': '100%' }}
         _hover={{ maxWidth: '100%' }}
         transitionDuration="0.2s"
-        mt={12}
-        mb={3}
-        pl="11px"
-        bg="neutral-2"
-        overflow="hidden"
-        borderColor="neutral-3"
-        borderRadius={8}
-        borderWidth={1}
+        mt={{ md: 12 }}
+        mb={{ md: 3 }}
+        pl={{ md: '11px' }}
+        bg={{ md: 'neutral-2' }}
+        overflow={{ md: 'hidden' }}
+        borderColor={{ md: 'neutral-3' }}
+        borderRadius={{ md: 8 }}
+        borderWidth={{ md: 1 }}
       >
         <NavigationLink
           href={DAO_ROUTES.dao.relative(addressPrefix, address)}
@@ -146,12 +157,19 @@ function InternalLinks({
           scope="internal"
           closeDrawer={closeDrawer}
         />
+        <Hide above="md">
+          <Box
+            borderTop="1px"
+            borderColor="neutral-3"
+            mx={-6}
+          />
+        </Hide>
       </Box>
     </Box>
   );
 }
 
-export function NavigationLinksSidebar({
+export function NavigationLinks({
   address,
   showDAOLinks,
   closeDrawer,

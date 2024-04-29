@@ -19,7 +19,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { FavoritesMenu } from '../../menus/FavoritesMenu';
-import { NavigationLinksMobile } from '../Navigation/NavigationLinksMobile';
+import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 function HeaderLogo() {
   const { t } = useTranslation('navigation');
@@ -106,7 +106,7 @@ function HeaderLogo() {
                 px={6}
                 pt={8}
               >
-                <NavigationLinksMobile
+                <NavigationLinks
                   showDAOLinks={showDAOLinks}
                   address={daoAddress}
                   closeDrawer={onClose}
