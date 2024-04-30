@@ -1,23 +1,25 @@
-import { Tooltip, TooltipProps } from '@chakra-ui/react';
-import { SupportQuestion } from '@decent-org/fractal-ui';
+import { Tooltip, TooltipProps, Icon } from '@chakra-ui/react';
+import { Icon as PhosphorIcon, Question } from '@phosphor-icons/react';
 import { RefObject } from 'react';
 import { TOOLTIP_MAXW } from '../../../constants/common';
 import ModalTooltip from '../modals/ModalTooltip';
 
 interface Props extends Omit<TooltipProps, 'children'> {
   containerRef?: RefObject<HTMLElement | null>;
+  IconComponent?: PhosphorIcon;
 }
 
 /**
  * Displays a circle in question mark, along with the provided tooltip, via
  * the 'label' Tooltip prop.
  */
-export default function SupportTooltip({ containerRef, ...rest }: Props) {
-  const question = (
-    <SupportQuestion
+export default function SupportTooltip({ containerRef, IconComponent, ...rest }: Props) {
+  const icon = (
+    <Icon
       boxSize="1.5rem"
       minWidth="auto"
       color={rest.color}
+      as={IconComponent || Question}
     />
   );
 
@@ -29,7 +31,7 @@ export default function SupportTooltip({ containerRef, ...rest }: Props) {
         placement="top"
         {...rest}
       >
-        {question}
+        {icon}
       </ModalTooltip>
     );
   }
@@ -41,7 +43,7 @@ export default function SupportTooltip({ containerRef, ...rest }: Props) {
       {...rest}
       color="white"
     >
-      {question}
+      {icon}
     </Tooltip>
   );
 }

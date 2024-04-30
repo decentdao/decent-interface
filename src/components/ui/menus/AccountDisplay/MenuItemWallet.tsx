@@ -1,5 +1,5 @@
 import { Box, Button, Flex, MenuItem, Text } from '@chakra-ui/react';
-import { CopySimple } from '@phosphor-icons/react/dist/ssr';
+import { CopySimple } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../../hooks/utils/useCopyText';

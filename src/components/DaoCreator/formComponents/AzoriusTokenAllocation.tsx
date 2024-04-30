@@ -1,5 +1,6 @@
 import { IconButton, Box } from '@chakra-ui/react';
-import { LabelWrapper, Minus } from '@decent-org/fractal-ui';
+import { LabelWrapper } from '@decent-org/fractal-ui';
+import { MinusCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
@@ -32,6 +33,7 @@ export function AzoriusTokenAllocation({
           {({ field }: FieldAttributes<any>) => (
             <AddressInput
               {...field}
+              marginTop="-0.25rem" // Freaking LabelWrapper
               data-testid={'tokenVoting-tokenAllocationAddressInput-' + index}
             />
           )}
@@ -39,28 +41,25 @@ export function AzoriusTokenAllocation({
       </LabelWrapper>
       <LabelWrapper errorMessage={amountErrorMessage}>
         <BigIntInput
+          marginTop="-0.25rem" // Freaking LabelWrapper
           value={amountInputValue}
           onChange={valuePair =>
             setFieldValue(`erc20Token.tokenAllocations.${index}.amount`, valuePair)
           }
           data-testid={'tokenVoting-tokenAllocationAmountInput-' + index}
           onKeyDown={restrictChars}
+          placeholder="100,000"
         />
       </LabelWrapper>
       {allocationLength > 1 ? (
         <IconButton
           aria-label="remove allocation"
+          icon={<MinusCircle size="24" />}
           variant="unstyled"
-          minW="0"
-          color="gold.500"
-          _hover={{ color: 'gold.500-hover' }}
-          mt={2}
-          icon={
-            <Minus
-              fill="currentColor"
-              boxSize="1.5rem"
-            />
-          }
+          minWidth="auto"
+          color="lilac-0"
+          _disabled={{ opacity: 0.4, cursor: 'default' }}
+          sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
           type="button"
           onClick={() => remove(index)}
           data-testid={'tokenVoting-tokenAllocationRemoveButton-' + index}

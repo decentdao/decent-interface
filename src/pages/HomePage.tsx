@@ -167,7 +167,13 @@ export default function HomePage() {
         </Flex>
         <CTABox
           leftSlot={
-            <ExternalLink href={URL_DOCS}>
+            <ExternalLink
+              href={URL_DOCS}
+              border="none"
+              padding={0}
+              _hover={{ bg: 'transparent' }}
+              _active={{ bg: 'transparent' }}
+            >
               <Button>{t('getStartedButton')}</Button>
             </ExternalLink>
           }

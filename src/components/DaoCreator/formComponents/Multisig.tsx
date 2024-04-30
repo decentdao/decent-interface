@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
-import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { DAOCreateMode } from './EstablishEssentials';
@@ -71,98 +70,99 @@ export function Multisig(props: ICreationStepProps) {
   };
 
   return (
-    <StepWrapper
-      mode={mode}
-      isSubDAO={isSubDAO}
-      isFormSubmitting={!!isSubmitting || transactionPending}
-      titleKey="titleSafeConfig"
-    >
-      <Flex
-        flexDirection="column"
-        gap={4}
+    <>
+      <StepWrapper
+        mode={mode}
+        isSubDAO={isSubDAO}
+        isFormSubmitting={!!isSubmitting || transactionPending}
+        titleKey="titleSafeConfig"
       >
-        <LabelComponent
-          label={t('labelSigners')}
-          helper={t('helperSigners')}
-          isRequired
+        <Flex
+          flexDirection="column"
+          gap={4}
         >
-          <NumberInput
-            value={values.multisig.numOfSigners}
-            onChange={value => validateTotalSigners(value)}
-          >
-            <NumberInputField data-testid="safeConfig-numberOfSignerInput" />
-          </NumberInput>
-        </LabelComponent>
-        <LabelComponent
-          label={t('labelSigThreshold')}
-          helper={t('helperSigThreshold')}
-          errorMessage={
-            values.multisig.signatureThreshold ? errors.multisig?.signatureThreshold : undefined
-          }
-          isRequired
-        >
-          <NumberInput
-            value={values.multisig.signatureThreshold}
-            onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
-          >
-            <NumberInputField data-testid="safeConfig-thresholdInput" />
-          </NumberInput>
-        </LabelComponent>
-        <Box my={4}>
           <LabelComponent
-            label={t('titleSignerAddresses')}
-            helper={t('subTitleSignerAddresses')}
-            isRequired={false}
+            label={t('labelSigners')}
+            helper={t('helperSigners')}
+            isRequired
           >
-            {values.multisig.trustedAddresses.map((trustedAddress, i) => {
-              const errorMessage =
-                errors?.multisig?.trustedAddresses?.[i] && trustedAddress.length
-                  ? errors?.multisig?.trustedAddresses?.[i]
-                  : null;
+            <NumberInput
+              value={values.multisig.numOfSigners}
+              onChange={value => validateTotalSigners(value)}
+            >
+              <NumberInputField data-testid="safeConfig-numberOfSignerInput" />
+            </NumberInput>
+          </LabelComponent>
+          <LabelComponent
+            label={t('labelSigThreshold')}
+            helper={t('helperSigThreshold')}
+            errorMessage={
+              values.multisig.signatureThreshold ? errors.multisig?.signatureThreshold : undefined
+            }
+            isRequired
+          >
+            <NumberInput
+              value={values.multisig.signatureThreshold}
+              onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
+            >
+              <NumberInputField data-testid="safeConfig-thresholdInput" />
+            </NumberInput>
+          </LabelComponent>
+          <Box my={4}>
+            <LabelComponent
+              label={t('titleSignerAddresses')}
+              helper={t('subTitleSignerAddresses')}
+              isRequired={false}
+            >
+              {values.multisig.trustedAddresses.map((trustedAddress, i) => {
+                const errorMessage =
+                  errors?.multisig?.trustedAddresses?.[i] && trustedAddress.length
+                    ? errors?.multisig?.trustedAddresses?.[i]
+                    : null;
 
-              return (
-                <LabelWrapper
-                  key={i}
-                  errorMessage={errorMessage}
-                >
-                  <Grid
-                    templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
-                    alignItems="center"
+                return (
+                  <LabelWrapper
+                    key={i}
+                    errorMessage={errorMessage}
                   >
-                    <Field name={`multisig.trustedAddresses.${i}`}>
-                      {({ field }: FieldAttributes<any>) => (
-                        <AddressInput
-                          {...field}
-                          data-testid={'safeConfig-signer-' + i}
+                    <Grid
+                      templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
+                      alignItems="center"
+                    >
+                      <Field name={`multisig.trustedAddresses.${i}`}>
+                        {({ field }: FieldAttributes<any>) => (
+                          <AddressInput
+                            {...field}
+                            data-testid={'safeConfig-signer-' + i}
+                          />
+                        )}
+                      </Field>
+                      {values.multisig.trustedAddresses.length > 1 && (
+                        <IconButton
+                          aria-label="remove allocation"
+                          variant="unstyled"
+                          minW={16}
+                          icon={
+                            <Minus
+                              color="gold.500"
+                              boxSize="1.5rem"
+                            />
+                          }
+                          type="button"
+                          onClick={async () => {
+                            deleteIndex(i);
+                          }}
+                          data-testid={'multisig.numOfSigners-' + i}
                         />
                       )}
-                    </Field>
-                    {values.multisig.trustedAddresses.length > 1 && (
-                      <IconButton
-                        aria-label="remove allocation"
-                        variant="unstyled"
-                        minW={16}
-                        icon={
-                          <Minus
-                            color="gold.500"
-                            boxSize="1.5rem"
-                          />
-                        }
-                        type="button"
-                        onClick={async () => {
-                          deleteIndex(i);
-                        }}
-                        data-testid={'multisig.numOfSigners-' + i}
-                      />
-                    )}
-                  </Grid>
-                </LabelWrapper>
-              );
-            })}
-          </LabelComponent>
-        </Box>
-      </Flex>
-      <Divider my="2rem" />
+                    </Grid>
+                  </LabelWrapper>
+                );
+              })}
+            </LabelComponent>
+          </Box>
+        </Flex>
+      </StepWrapper>
       <StepButtons
         {...props}
         nextStep={CreatorSteps.FREEZE_DETAILS}
@@ -170,6 +170,6 @@ export function Multisig(props: ICreationStepProps) {
         isLastStep={!isSubDAO}
         isEdit={mode === DAOCreateMode.EDIT}
       />
-    </StepWrapper>
+    </>
   );
 }

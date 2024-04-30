@@ -198,7 +198,7 @@ function Vote({
             _checked={{
               bg: 'black-0',
               color: 'lilac--3',
-              borderWidth: '4px',
+              borderWidth: '6px',
             }}
           >
             {t(choice, { ns: 'common' })}
