@@ -1,4 +1,5 @@
-import { Link, HStack, Image, Text } from '@chakra-ui/react';
+import { Link, HStack, Image, Text, Icon } from '@chakra-ui/react';
+import { ArrowBendLeftUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -30,12 +31,11 @@ export function ParentLink() {
       as={RouterLink}
     >
       <HStack>
-        <Image
-          alignSelf="center"
+        <Icon
+          color="lilac-0"
+          as={ArrowBendLeftUp}
           width="1.5rem"
           height="1.5rem"
-          src="/images/arrow-up-left.svg"
-          alt={t('parentLink')}
         />
         <Text flexWrap="wrap">{t('parentLink')}</Text>
       </HStack>
