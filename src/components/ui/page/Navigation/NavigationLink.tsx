@@ -17,6 +17,8 @@ function LinkContent({
     <Flex
       py={3}
       pl="11px"
+      bg={{ md: 'neutral-2' }}
+      overflow={{ md: 'hidden' }}
     >
       <Box w={6}>{<NavigationIcon size={24} />}</Box>
       <Box
