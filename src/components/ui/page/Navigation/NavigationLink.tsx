@@ -9,11 +9,13 @@ function LinkContent({
   NavigationIcon,
   t,
   isActive,
+  scope,
 }: {
   labelKey: string;
   NavigationIcon: Icon;
   t: TFunction;
   isActive: boolean;
+  scope: 'internal' | 'external';
 }) {
   return (
     <Flex
@@ -21,9 +23,9 @@ function LinkContent({
       pl="11px"
       borderRadius={{ md: 8 }}
       _hover={{ bgColor: 'neutral-3' }}
-      borderWidth={isActive ? '1px' : '0px'}
+      borderWidth={scope === 'internal' && isActive ? '1px' : '0px'}
       borderColor="neutral-4"
-      bgColor={isActive ? 'neutral-3' : 'auto'}
+      bgColor={scope === 'internal' && isActive ? 'neutral-3' : 'auto'}
     >
       <Box w={6}>{<NavigationIcon size={24} />}</Box>
       <Box
@@ -61,6 +63,7 @@ export function NavigationLink({
       NavigationIcon={NavigationIcon}
       t={t}
       isActive={!!isActive}
+      scope={scope}
     />
   );
 

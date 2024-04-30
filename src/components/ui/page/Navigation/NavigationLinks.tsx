@@ -73,7 +73,7 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         borderColor={{ md: 'neutral-3' }}
         borderWidth={{ md: 1 }}
         borderBottomRadius={{ md: 8 }}
-        pl={{ md: '11px' }}
+        pl="11px"
         pt={{ base: 3, md: '11px' }}
         pb={{ md: '4px' }}
       >
