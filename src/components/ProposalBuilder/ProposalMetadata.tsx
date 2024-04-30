@@ -20,6 +20,7 @@ export default function ProposalMetadata({
     <VStack
       align="left"
       spacing={8}
+      p="1.5rem"
     >
       <InputComponent
         label={isProposalMode ? t('proposalTitle', { ns: 'proposal' }) : t('proposalTemplateTitle')}
