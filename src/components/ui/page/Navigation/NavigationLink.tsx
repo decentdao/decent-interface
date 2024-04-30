@@ -2,21 +2,28 @@ import { Box, Flex } from '@chakra-ui/react';
 import { Icon } from '@phosphor-icons/react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useMatch } from 'react-router-dom';
 
 function LinkContent({
   labelKey,
   NavigationIcon,
   t,
+  isActive,
 }: {
   labelKey: string;
   NavigationIcon: Icon;
   t: TFunction;
+  isActive: boolean;
 }) {
   return (
     <Flex
       py={3}
       pl="11px"
+      borderRadius={{ md: 8 }}
+      _hover={{ bgColor: 'neutral-3' }}
+      borderWidth={isActive ? '1px' : '0px'}
+      borderColor="neutral-4"
+      bgColor={isActive ? 'neutral-3' : 'auto'}
     >
       <Box w={6}>{<NavigationIcon size={24} />}</Box>
       <Box
@@ -46,12 +53,14 @@ export function NavigationLink({
   closeDrawer?: () => void;
 }) {
   const { t } = useTranslation('navigation');
+  const isActive = useMatch(href.substring(0, href.indexOf('?')));
 
   const linkContent = (
     <LinkContent
       labelKey={labelKey}
       NavigationIcon={NavigationIcon}
       t={t}
+      isActive={!!isActive}
     />
   );
 
@@ -62,7 +71,6 @@ export function NavigationLink({
         aria-label={t(labelKey)}
         to={href}
         onClick={closeDrawer}
-        style={{ display: 'block' }}
         {...rest}
       >
         {linkContent}
@@ -80,7 +88,6 @@ export function NavigationLink({
         {...rest}
         target="_blank"
         rel="noreferrer noopener"
-        style={{ display: 'block' }}
       >
         {linkContent}
       </a>
