@@ -1,10 +1,8 @@
 import { GridItem } from '@chakra-ui/react';
 import { useEffect } from 'react';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { SnapshotProposal } from '../../../types';
-import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { useProposalCountdown } from '../../ui/proposal/useProposalCountdown';
 import { ProposalAction } from '../ProposalActions/ProposalAction';
@@ -32,9 +30,7 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
   return (
     <ProposalDetailsGrid>
       <GridItem colSpan={2}>
-        <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-          <ProposalInfo proposal={extendedSnapshotProposal || proposal} />
-        </ContentBox>
+        <ProposalInfo proposal={extendedSnapshotProposal || proposal} />
         {!!extendedSnapshotProposal && (
           <SnapshotProposalVotes proposal={extendedSnapshotProposal} />
         )}

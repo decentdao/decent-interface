@@ -47,7 +47,7 @@
   "createProposal": "Create Proposal",
   "labelAddTransaction": "Add another transaction",
   "errorInvalidFragments": "Invalid combination of function signature and parameters",
-  "proposalSummaryTitle": "Proposal Details",
+  "proposalSummaryTitle": "Details",
   "proposalSummaryStartDate": "Start Date",
   "proposalSummaryEndDate": "End Date",
   "snapshotTaken": "Snapshot taken",

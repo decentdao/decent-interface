@@ -7,9 +7,11 @@ function ProposalCreatedBy({ proposer }: { proposer: string }) {
   return (
     <Flex
       width="100%"
+      justifyContent="space-between"
+      alignItems="center"
       gap={2}
     >
-      <Text>{t('proposedBy')}</Text>
+      <Text color="neutral-7">{t('proposedBy')}</Text>
       <DisplayAddress address={proposer} />
     </Flex>
   );

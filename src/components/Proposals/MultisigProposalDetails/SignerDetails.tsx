@@ -1,7 +1,6 @@
 import { Box, Grid, GridItem, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { MultisigProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
@@ -25,6 +24,8 @@ function OwnerInfoRow({
     <Grid
       templateColumns="1fr auto 1fr"
       my="0.75rem"
+      color="neutral-7"
+      alignItems="center"
     >
       <GridItem colSpan={1}>
         <ActivityAddress
@@ -42,10 +43,13 @@ function OwnerInfoRow({
       </GridItem>
       <GridItem
         colSpan={1}
-        placeSelf="end"
+        justifyContent="flex-end"
+        display="flex"
       >
         {ownerConfirmed && (
-          <Text>{format(new Date(ownerConfirmed.submissionDate), DEFAULT_DATE_TIME_FORMAT)}</Text>
+          <Text as="span">
+            {format(new Date(ownerConfirmed.submissionDate), DEFAULT_DATE_TIME_FORMAT)}
+          </Text>
         )}
       </GridItem>
     </Grid>
@@ -62,8 +66,15 @@ export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
     return null;
   }
   return (
-    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-      <Text textStyle="text-lg-mono-medium">{t('signers')}</Text>
+    <ContentBox
+      containerBoxProps={{
+        bg: 'transparent',
+        border: '1px solid',
+        borderColor: 'neutral-3',
+        borderRadius: '0.5rem',
+      }}
+    >
+      <Text textStyle="display-lg">{t('signers')}</Text>
       <Box marginTop={4}>
         <Divider />
         <Box marginTop={4}>

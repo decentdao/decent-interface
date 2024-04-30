@@ -106,7 +106,12 @@ export function ProposalTitle({
         gap={2}
         flexWrap="wrap"
       >
-        <Text as="span">{titleText}</Text>
+        <Text
+          as="span"
+          textStyle="display-xl"
+        >
+          {titleText}
+        </Text>
         {showAuthor && <ProposalAuthor activity={activity} />}
       </Flex>
       <Box mt={2}>

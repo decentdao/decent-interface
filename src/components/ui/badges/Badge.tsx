@@ -93,9 +93,9 @@ const BADGE_MAPPING: BadgeType = {
     _hover: { bg: 'blue-2', textColor: 'blue--1' },
   },
   ownerApproved: {
-    bg: 'yellow-0',
-    textColor: 'black-0',
-    _hover: { bg: 'yellow-0', textColor: 'yellow--2' },
+    bg: 'neutral-4',
+    textColor: 'neutral-7',
+    _hover: { bg: 'neutral-2', textColor: 'neutral-7' },
   },
 };
 

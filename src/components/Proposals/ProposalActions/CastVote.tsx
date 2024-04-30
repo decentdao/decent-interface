@@ -1,5 +1,5 @@
-import { Button, Tooltip, Box, Text, Image, Flex } from '@chakra-ui/react';
-import { CloseX, Check, SingleCheckOutline } from '@decent-org/fractal-ui';
+import { Button, Tooltip, Box, Text, Image, Flex, Radio, RadioGroup, Icon } from '@chakra-ui/react';
+import { Check, CheckCircle } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
@@ -11,6 +11,7 @@ import {
   FractalProposalState,
   AzoriusVoteChoice,
   ExtendedSnapshotProposal,
+  VOTE_CHOICES,
 } from '../../../types';
 import WeightedInput from '../../ui/forms/WeightedInput';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
@@ -25,6 +26,7 @@ function Vote({
   onCastSnapshotVote?: () => Promise<void>;
 }) {
   const [pending, setPending] = useState<boolean>(false);
+  const [voteChoice, setVoiceChoice] = useState<AzoriusVoteChoice>();
   const { t } = useTranslation(['common', 'proposal', 'transaction']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
 
@@ -95,7 +97,12 @@ function Vote({
                 onClick={() => handleSelectSnapshotChoice(i)}
                 marginTop={5}
               >
-                {selectedChoice === i && <Check boxSize="1.5rem" />}
+                {selectedChoice === i && (
+                  <Icon
+                    as={Check}
+                    boxSize="1.5rem"
+                  />
+                )}
                 {choice}
               </Button>
             ))}
@@ -104,19 +111,22 @@ function Vote({
           isDisabled={voteDisabled}
           onClick={() => castSnapshotVote(onCastSnapshotVote)}
           marginTop={5}
+          padding="1.5rem 6rem"
+          height="auto"
         >
           {t('vote')}
         </Button>
         {hasVoted && (
           <Box
             mt={4}
-            color="grayscale.500"
+            color="neutral-6"
             fontWeight="600"
           >
             <Flex>
-              <SingleCheckOutline
+              <Icon
                 boxSize="1.5rem"
                 mr={2}
+                as={CheckCircle}
               />
               <Text>{t('successCastVote', { ns: 'transaction' })}</Text>
             </Flex>
@@ -125,7 +135,7 @@ function Vote({
         )}
         <Box
           mt={4}
-          color="grayscale.700"
+          color="neutral-7"
         >
           <Text>{t('poweredBy')}</Text>
           <Flex>
@@ -165,34 +175,46 @@ function Vote({
             : undefined
       }
     >
-      <>
+      <RadioGroup>
+        {VOTE_CHOICES.map((choice, index) => (
+          <Radio
+            key={choice}
+            onChange={event => {
+              event.preventDefault();
+              if (!disabled) {
+                setVoiceChoice(index);
+              }
+            }}
+            width="100%"
+            checked={index === voteChoice}
+            isChecked={index === voteChoice}
+            disabled={disabled}
+            isDisabled={disabled}
+            bg="black-0"
+            color="lilac--3"
+            size="md"
+            _disabled={{ bg: 'neutral-6', color: 'neutral-5' }}
+            _hover={{ bg: 'black-0', color: 'lilac--4' }}
+            _checked={{
+              bg: 'black-0',
+              color: 'lilac--3',
+              borderWidth: '4px',
+            }}
+          >
+            {t(choice, { ns: 'common' })}
+          </Radio>
+        ))}
         <Button
+          marginTop={5}
+          padding="1.5rem 6rem"
+          height="auto"
           width="full"
           isDisabled={disabled}
-          onClick={() => castVote(AzoriusVoteChoice.Yes)}
-          marginTop={5}
+          onClick={() => voteChoice && castVote(voteChoice)}
         >
-          {t('approve')}
-          <Check fill="black" />
+          {t('vote')}
         </Button>
-        <Button
-          marginTop={5}
-          width="full"
-          isDisabled={disabled}
-          onClick={() => castVote(AzoriusVoteChoice.No)}
-        >
-          {t('reject')}
-          <CloseX />
-        </Button>
-        <Button
-          marginTop={5}
-          width="full"
-          isDisabled={disabled}
-          onClick={() => castVote(AzoriusVoteChoice.Abstain)}
-        >
-          {t('abstain')}
-        </Button>
-      </>
+      </RadioGroup>
     </Tooltip>
   );
 }

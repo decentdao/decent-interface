@@ -1,16 +1,18 @@
-import { Box, Flex, Text, Image, Button, Link } from '@chakra-ui/react';
+import { Box, Flex, Button, Link } from '@chakra-ui/react';
 import { Shield } from '@decent-org/fractal-ui';
+import { ArrowUpRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import useSnapshotProposal from '../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../providers/App/AppProvider';
 import { ExtendedSnapshotProposal, FractalProposal } from '../../types';
 import { ActivityDescription } from '../Activity/ActivityDescription';
+import { Badge } from '../ui/badges/Badge';
 import { SnapshotButton } from '../ui/badges/Snapshot';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
-import ProposalStateBox from '../ui/proposal/ProposalStateBox';
+import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
 
 export function ProposalInfo({
   proposal,
@@ -27,12 +29,23 @@ export function ProposalInfo({
   const confirmUrl = useFractalModal(ModalType.CONFIRM_URL, { url: metaData.documentationUrl });
 
   return (
-    <Box>
+    <Box
+      borderRadius={8}
+      border="1px solid"
+      borderColor="neutral-3"
+      padding="1.5rem"
+    >
       <Flex
         gap={4}
         alignItems="center"
       >
-        <ProposalStateBox state={proposal.state} />
+        {proposal.state && (
+          <Badge
+            size="base"
+            labelKey={proposal.state}
+            proposal={proposal}
+          />
+        )}
         {isSnapshotProposal && (
           <>
             <SnapshotButton
@@ -62,29 +75,16 @@ export function ProposalInfo({
         <ActivityDescription
           activity={proposal}
           showFullDescription
+          showAuthor={false}
         />
         {metaData.documentationUrl && (
-          <Text
+          <CeleryButtonWithIcon
+            iconPosition="end"
+            icon={ArrowUpRight}
             onClick={confirmUrl}
-            color="gold.500"
-            as="b"
-            cursor="pointer"
           >
-            <Flex
-              ps="0.5rem"
-              pe="0.5rem"
-            >
-              <Image
-                src="/images/external-link.svg"
-                alt={''}
-                w="1rem"
-                h="1rem"
-                my={1}
-                mr={2}
-              />
-              {metaData.documentationUrl}
-            </Flex>
-          </Text>
+            {metaData.documentationUrl}
+          </CeleryButtonWithIcon>
         )}
         <ProposalExecutableCode proposal={proposal} />
       </Box>

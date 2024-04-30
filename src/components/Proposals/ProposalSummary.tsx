@@ -1,36 +1,34 @@
-import { Text, Box, Button, Flex, Tooltip } from '@chakra-ui/react';
-import { ArrowAngleUp } from '@decent-org/fractal-ui';
+import { Text, Box, Button, Flex, Tooltip, Icon } from '@chakra-ui/react';
+import { ArrowUpRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
-import { DisplayAddress } from '../ui/links/DisplayAddress';
 import DisplayTransaction from '../ui/links/DisplayTransaction';
 import EtherscanLinkBlock from '../ui/links/EtherscanLinkBlock';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import InfoRow from '../ui/proposal/InfoRow';
+import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import Divider from '../ui/utils/Divider';
 import { QuorumProgressBar } from '../ui/utils/ProgressBar';
+import { ProposalAction } from './ProposalActions/ProposalAction';
+import { VoteContextProvider } from './ProposalVotes/context/VoteContext';
 
-export default function ProposalSummary({
-  proposal: {
+export default function ProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
+  const {
     eventDate,
     startBlock,
     votesSummary: { yes, no, abstain },
     deadlineMs,
     proposer,
     transactionHash,
-  },
-}: {
-  proposal: AzoriusProposal;
-}) {
+  } = proposal;
   const {
     governance,
     readOnly: {
@@ -113,9 +111,9 @@ export default function ProposalSummary({
       height="auto"
       justifyContent="flex-end"
       alignItems="flex-start"
-      variant="link"
-      textStyle="text-base-sans-regular"
-      color="gold.500"
+      variant="text"
+      textStyle="body-base"
+      color="celery-0"
       onClick={toggleShowVotingPower}
     >
       {showVotingPower
@@ -127,10 +125,18 @@ export default function ProposalSummary({
   );
 
   return (
-    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-      <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
+    <ContentBox
+      containerBoxProps={{
+        bg: 'neutral-2',
+        border: '1px solid',
+        borderColor: 'neutral-3',
+        borderRadius: '0.5rem',
+        my: 0,
+      }}
+    >
+      <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
-        <Divider />
+        <Divider variant="darker" />
         <InfoRow
           property={t('votingSystem')}
           value={t('singleSnapshotVotingSystem')}
@@ -145,40 +151,34 @@ export default function ProposalSummary({
           value={format(deadlineMs, DEFAULT_DATE_TIME_FORMAT)}
           tooltip={formatInTimeZone(deadlineMs, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
         />
+        <ProposalCreatedBy proposer={proposer} />
         <Flex
           marginTop={4}
           justifyContent="space-between"
+          alignItems="center"
         >
           <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
-          >
-            {t('proposedBy')}
-          </Text>
-          <DisplayAddress address={proposer} />
-        </Flex>
-        <Flex
-          marginTop={4}
-          justifyContent="space-between"
-        >
-          <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
+            textStyle="body-base"
+            color="neutral-7"
           >
             {t('snapshotTaken')}
           </Text>
-          <EtherscanLinkBlock blockNumber={startBlock.toString()}>
-            {format(eventDate, DEFAULT_DATE_TIME_FORMAT)} <ArrowAngleUp />
+          <EtherscanLinkBlock
+            blockNumber={startBlock.toString()}
+            textAlign="end"
+          >
+            {format(eventDate, DEFAULT_DATE_TIME_FORMAT)} <Icon as={ArrowUpRight} />
           </EtherscanLinkBlock>
         </Flex>
         <Flex
           marginTop={4}
           marginBottom={transactionHash ? 0 : 4}
           justifyContent="space-between"
+          alignItems="center"
         >
           <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
+            textStyle="body-base"
+            color="neutral-7"
           >
             {t('votingPower')}
           </Text>
@@ -193,17 +193,21 @@ export default function ProposalSummary({
             marginTop={4}
             marginBottom={4}
             justifyContent="space-between"
+            alignItems="center"
           >
             <Text
-              textStyle="text-base-sans-regular"
-              color="chocolate.200"
+              textStyle="body-base"
+              color="neutral-7"
             >
               {t('transactionHash')}
             </Text>
             <DisplayTransaction txHash={transactionHash} />
           </Flex>
         )}
-        <Divider />
+        <Divider
+          my="0.5rem"
+          variant="darker"
+        />
       </Box>
       <Box marginTop={4}>
         <QuorumProgressBar
@@ -227,6 +231,17 @@ export default function ProposalSummary({
           unit={isERC20 ? '%' : ''}
         />
       </Box>
+      {address && (
+        <>
+          <Divider my="1.5rem" />
+          <VoteContextProvider proposal={proposal}>
+            <ProposalAction
+              proposal={proposal}
+              expandedView
+            />
+          </VoteContextProvider>
+        </>
+      )}
     </ContentBox>
   );
 }

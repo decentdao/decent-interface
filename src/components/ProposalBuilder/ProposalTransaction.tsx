@@ -4,9 +4,7 @@ import {
   Text,
   Box,
   Flex,
-  Icon,
   IconButton,
-  Button,
   Accordion,
   AccordionPanel,
   AccordionItem,
@@ -21,6 +19,7 @@ import { scrollToBottom } from '../../utils/ui';
 import ABISelector, { ABIElement } from '../ui/forms/ABISelector';
 import ExampleLabel from '../ui/forms/ExampleLabel';
 import { BigIntComponent, InputComponent } from '../ui/forms/InputComponent';
+import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
 import Divider from '../ui/utils/Divider';
 import { DEFAULT_PROPOSAL_TRANSACTION } from './constants';
 
@@ -254,6 +253,7 @@ export default function ProposalTransaction({
                                         event.preventDefault();
                                       }}
                                       checked={!!parameter.label}
+                                      isChecked={!!parameter.label}
                                       disabled={!parameter.signature || !!parameter.value}
                                       isDisabled={!parameter.signature || !!parameter.value}
                                       bg="black-0"
@@ -312,6 +312,7 @@ export default function ProposalTransaction({
                                     onChange={event => {
                                       event.preventDefault();
                                     }}
+                                    isChecked={!!parameter.value}
                                     checked={!!parameter.value}
                                     disabled={!parameter.signature || !!parameter.label}
                                     isDisabled={!parameter.signature || !!parameter.label}
@@ -385,7 +386,7 @@ export default function ProposalTransaction({
 
                   {/* ADD PARAMETER BUTTON */}
                   {i === transaction.parameters.length - 1 && (
-                    <Button
+                    <CeleryButtonWithIcon
                       onClick={() => {
                         setFieldValue(`transactions.${transactionIndex}.parameters`, [
                           ...transaction.parameters,
@@ -394,20 +395,10 @@ export default function ProposalTransaction({
                         setExpandedIndecies([transaction.parameters.length]);
                         scrollToBottom();
                       }}
-                      variant="text"
-                      color="celery-0"
-                      mt={1}
-                      mx="1.5rem"
-                      gap="0.25rem"
-                      borderRadius="625rem"
-                      borderColor="transparent"
-                      borderWidth="1px"
-                      _hover={{ bg: 'celery--6', borderColor: 'celery--6' }}
-                      _active={{ bg: 'celery--6', borderWidth: '1px', borderColor: 'celery--5' }}
+                      icon={Plus}
                     >
-                      <Icon as={Plus} />
                       {t('addParameter')}
-                    </Button>
+                    </CeleryButtonWithIcon>
                   )}
                 </>
               )}

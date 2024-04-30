@@ -1,20 +1,33 @@
-import { Box, Text } from '@chakra-ui/react';
+import { Box, Text, Flex } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { MultisigProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
 import InfoRow from '../../ui/proposal/InfoRow';
+import ProposalCreatedBy from '../../ui/proposal/ProposalCreatedBy';
 import Divider from '../../ui/utils/Divider';
 
 export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
   const { t } = useTranslation('proposal');
   return (
-    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-      <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
+    <ContentBox
+      containerBoxProps={{
+        bg: 'neutral-2',
+        border: '1px solid',
+        borderColor: 'neutral-3',
+        borderRadius: '0.5rem',
+        my: 0,
+      }}
+    >
+      <Text
+        textStyle="display-lg"
+        variant="darker"
+      >
+        {t('proposalSummaryTitle')}
+      </Text>
       <Box marginTop={4}>
         <Divider />
         <InfoRow
@@ -34,6 +47,9 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
           value={format(proposal.eventDate, DEFAULT_DATE_TIME_FORMAT)}
           tooltip={formatInTimeZone(proposal.eventDate, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
         />
+        <Flex mt="1rem">
+          <ProposalCreatedBy proposer={proposal.confirmations[0].owner} />
+        </Flex>
         <InfoRow
           property={t('transactionHash')}
           value={proposal.transactionHash ? undefined : '-'}

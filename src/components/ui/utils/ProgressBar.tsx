@@ -1,47 +1,63 @@
-import { Box, Flex, Progress, Text } from '@chakra-ui/react';
-import { Check } from '@decent-org/fractal-ui';
+import { Box, Flex, Progress, Text, Icon } from '@chakra-ui/react';
+import { Check } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface ProgressBarProps {
   value: number;
-  children?: ReactNode;
+  customValue?: ReactNode;
   max?: number;
   unit?: string;
-  showValueWithinProgressBar?: boolean;
+  label: string;
+  labelWidth?: string;
+  bg?: string;
 }
 export default function ProgressBar({
   value,
-  children,
+  customValue,
   max = 100,
   unit = '%',
-  showValueWithinProgressBar = true,
+  label,
+  labelWidth,
+  bg,
 }: ProgressBarProps) {
   return (
-    <Box width="full">
-      {((showValueWithinProgressBar && value > 0) || children) && (
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          {children}
-          {showValueWithinProgressBar && value > 0 && (
-            <Text
-              display="inline-flex"
-              alignItems="center"
-              height="100%"
-              right="0"
-            >
-              {Math.min(value, 100)}
-              {unit}
-            </Text>
-          )}
-        </Flex>
-      )}
+    <Box
+      width="full"
+      position="relative"
+    >
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        position="absolute"
+        zIndex={2}
+        top={0}
+        width={labelWidth ? labelWidth : value > 16 ? `${Math.min(value, 100)}%` : '20%'}
+        px="1rem"
+        py="2px"
+        height="24px"
+      >
+        <Text textStyle="label-small">{label}</Text>
+        {customValue ? (
+          <>{customValue}</>
+        ) : (
+          <Text
+            textStyle="label-small"
+            display="inline-flex"
+            alignItems="center"
+            height="100%"
+            right="0"
+          >
+            {Math.min(value, 100)}
+            {unit}
+          </Text>
+        )}
+      </Flex>
       <Progress
         value={max !== 100 ? value : Math.min(value, 100)}
         max={max}
         maxWidth="100%"
+        bg={bg}
       />
     </Box>
   );
@@ -66,35 +82,32 @@ export function QuorumProgressBar({
       flexWrap="wrap"
       marginTop={2}
     >
-      {totalQuorum !== undefined && (
-        <Flex
-          width="100%"
-          marginTop={2}
-          marginBottom={3}
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Text textStyle="text-base-sans-regular">{t('quorum', { ns: 'common' })}</Text>
-          <Text textStyle="text-base-sans-regular">
-            {reachedQuorum >= totalQuorum && (
-              <Check
-                color="green.500"
-                mr={2}
-              />
-            )}
-            {reachedQuorum.toString()}/{totalQuorum.toString()}
-          </Text>
-        </Flex>
-      )}
       <ProgressBar
         value={Number(reachedQuorum)}
         max={totalQuorum ? Number(totalQuorum) : undefined}
         unit={unit}
-        showValueWithinProgressBar={false}
+        label={t('quorum', { ns: 'common' })}
+        bg="neutral-4"
+        labelWidth="100%"
+        customValue={
+          totalQuorum ? (
+            <Text textStyle="label-small">
+              {reachedQuorum >= totalQuorum && (
+                <Icon
+                  color="lilac-0"
+                  mr={2}
+                  as={Check}
+                />
+              )}
+              {reachedQuorum.toString()} / {totalQuorum.toString()}
+            </Text>
+          ) : undefined
+        }
       />
       {helperText && (
         <Text
-          textStyle="text-sm-sans-regular"
+          textStyle="body-base"
+          color="neutral-7"
           marginTop={3}
         >
           {helperText}

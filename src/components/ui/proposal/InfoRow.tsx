@@ -14,12 +14,12 @@ export default function InfoRow({
 }) {
   return (
     <Flex
-      marginTop={4}
+      marginTop="1rem"
       justifyContent="space-between"
     >
       <Text
-        textStyle="text-base-sans-regular"
-        color="chocolate.200"
+        textStyle="body-base"
+        color="neutral-7"
       >
         {property}
       </Text>
@@ -31,7 +31,7 @@ export default function InfoRow({
         )
       ) : (
         <Tooltip label={tooltip}>
-          {txHash ? <DisplayTransaction txHash={txHash} /> : <Text>{value}</Text>}
+          {txHash ? <DisplayTransaction txHash={txHash} /> : <Text color="white-0">{value}</Text>}
         </Tooltip>
       )}
     </Flex>
