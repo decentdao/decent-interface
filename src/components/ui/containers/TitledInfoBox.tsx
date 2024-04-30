@@ -1,38 +1,39 @@
 import { Box, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import Divider from '../utils/Divider';
-import { StyledBox } from './StyledBox';
 
 export function TitledInfoBox({
   minWidth,
   title,
   titleTestId,
   children,
+  bg,
 }: {
-  minWidth?: { [key: string]: string };
-  title?: string;
-  titleTestId?: string;
-  children?: ReactNode;
+  minWidth: { [key: string]: string };
+  title: string;
+  titleTestId: string;
+  children: ReactNode;
+  bg?: string;
 }) {
   return (
-    <StyledBox
+    <Box
       flexGrow={1}
       minWidth={minWidth}
+      p="1.5rem"
+      borderRadius="0.5rem"
+      bg={bg}
     >
-      {title && (
-        <Box>
-          <Text
-            data-testid={titleTestId}
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-            marginBottom="0.75rem"
-          >
-            {title}
-          </Text>
-          <Divider />
-        </Box>
-      )}
+      <Text
+        data-testid={titleTestId}
+        textStyle="display-lg"
+      >
+        {title}
+      </Text>
+      <Divider
+        my="1rem"
+        variant="darker"
+      />
       {children}
-    </StyledBox>
+    </Box>
   );
 }

@@ -123,7 +123,6 @@ export default function ForkProposalTemplateModal({
       <Button
         onClick={handleSubmit}
         variant="primary"
-        disabled={!isValidDAOAddress}
         isDisabled={!isValidDAOAddress}
         width="100%"
       >

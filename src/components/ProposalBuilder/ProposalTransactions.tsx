@@ -105,7 +105,7 @@ export default function ProposalTransactions({
                       color="lilac-0"
                       _disabled={{ opacity: 0.4, cursor: 'default' }}
                       sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
-                      disabled={pendingTransaction}
+                      isDisabled={pendingTransaction}
                     />
                   ) : (
                     <Box h="2.25rem" />

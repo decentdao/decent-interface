@@ -1,4 +1,4 @@
-import { Box, Button, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, Button, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { useState, useEffect } from 'react';
@@ -21,28 +21,30 @@ import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 function CoinHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box>
-      <Divider my="1.5rem" />
-      <HStack marginBottom="0.5rem">
+    <Box mb="1rem">
+      <Divider
+        my="1rem"
+        variant="darker"
+      />
+      <HStack>
         <Text
-          w="33%"
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
+          w="35%"
+          textStyle="label-small"
+          color="neutral-7"
         >
           {t('columnCoins')}
         </Text>
         <Text
-          w="33%"
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
+          w="35%"
+          textStyle="label-small"
+          color="neutral-7"
         >
           {t('columnValue')}
         </Text>
         <Text
-          w="33%"
-          align="end"
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
+          w="30%"
+          textStyle="label-small"
+          color="neutral-7"
         >
           {t('columnAllocation')}
         </Text>
@@ -61,12 +63,15 @@ function CoinRow({
   asset: TokenDisplayData;
 }) {
   return (
-    <HStack
-      align="top"
-      marginBottom="0.75rem"
+    <Flex
+      my="0.5rem"
+      justifyContent="space-between"
     >
-      <Box w="35%">
-        <HStack marginEnd="1rem">
+      <Flex
+        w="35%"
+        alignItems="flex-start"
+      >
+        <HStack>
           <Image
             src={asset.iconUri}
             fallbackSrc="/images/coin-icon-default.svg"
@@ -76,22 +81,31 @@ function CoinRow({
           />
           <Text
             height="auto"
-            textStyle="text-base-sans-regular"
+            display="inline-flex"
             data-testid="link-token-symbol"
             noOfLines={2}
+            width="100%"
             maxWidth="4.7rem"
             isTruncated
           >
             {asset.address === zeroAddress ? (
               <EtherscanLinkAddress
-                color="grayscale.100"
+                color="white-0"
+                _hover={{ bg: 'transparent' }}
+                textStyle="body-base"
+                padding={0}
+                borderWidth={0}
                 address={safe}
               >
                 {asset.symbol}
               </EtherscanLinkAddress>
             ) : (
               <EtherscanLinkERC20
-                color="grayscale.100"
+                color="white-0"
+                _hover={{ bg: 'transparent' }}
+                textStyle="body-base"
+                padding={0}
+                borderWidth={0}
                 address={asset.address}
               >
                 {asset.symbol}
@@ -99,13 +113,15 @@ function CoinRow({
             )}
           </Text>
         </HStack>
-      </Box>
-      <Box w="35%">
+      </Flex>
+      <Flex
+        w="35%"
+        alignItems="flex-start"
+        flexWrap="wrap"
+      >
         <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-          marginBottom="0.25rem"
           maxWidth="23.8rem"
+          width="100%"
           isTruncated
         >
           <Tooltip
@@ -116,8 +132,9 @@ function CoinRow({
           </Tooltip>
         </Text>
         <Text
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
+          textStyle="label-small"
+          color="neutral-7"
+          width="100%"
         >
           <Tooltip
             label={asset.fiatConversion}
@@ -126,33 +143,30 @@ function CoinRow({
             {formatUSD(asset.fiatValue)}
           </Tooltip>
         </Text>
-      </Box>
-      <Box w={'30%'}>
-        <Text
-          align="end"
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-        >
-          {totalFiat > 0 && formatPercentage(asset.fiatValue, totalFiat)}
-        </Text>
-      </Box>
-    </HStack>
+      </Flex>
+      <Flex
+        w="30%"
+        alignItems="flex-start"
+      >
+        <Text>{totalFiat > 0 && formatPercentage(asset.fiatValue, totalFiat)}</Text>
+      </Flex>
+    </Flex>
   );
 }
 
 function NFTHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box>
+    <Box marginBottom="1rem">
       <Divider
+        variant="darker"
         marginTop="0.75rem"
         marginBottom="1.5rem"
       />
       <Text
-        w="33%"
-        textStyle="text-sm-sans-regular"
-        color="chocolate.200"
-        marginBottom="1rem"
+        w="25%"
+        textStyle="label-small"
+        color="neutral-7"
       >
         {t('columnNFTs')}
       </Text>
@@ -164,44 +178,46 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
   const image = asset.imageUri ? asset.imageUri : asset.logoUri;
   const name = asset.name ? asset.name : asset.tokenName;
   const id = asset.id.toString();
+
   return (
     <HStack marginBottom={isLast ? '0rem' : '1.5rem'}>
-      <EtherscanLinkERC721
-        address={asset.address}
-        tokenId={id}
-        data-testid="link-nft-image"
-      >
-        <Image
-          src={image}
-          fallbackSrc="/images/nft-image-default.svg"
-          alt={name}
-          w="3rem"
-          h="3rem"
-          marginRight="0.75rem"
-        />
-      </EtherscanLinkERC721>
-      <Text
-        textStyle="text-base-sans-regular"
-        color="grayscale.100"
-        data-testid="link-nft-name"
-        noOfLines={1}
-      >
-        <EtherscanLinkAddress address={asset.address}>{name}</EtherscanLinkAddress>
-      </Text>
-      <EtherscanLinkERC721
-        address={asset.address}
-        tokenId={id}
-      >
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-          data-testid="link-nft-id"
-          maxWidth="5rem"
-          noOfLines={1}
+      <Flex width="15%">
+        <EtherscanLinkERC721
+          address={asset.address}
+          tokenId={id}
+          data-testid="link-nft-image"
+          padding={0}
+          _hover={{ bg: 'transparent' }}
+        >
+          <Image
+            src={image}
+            fallbackSrc="/images/nft-image-default.svg"
+            alt={name}
+            w="3rem"
+            h="3rem"
+            marginRight="0.75rem"
+          />
+        </EtherscanLinkERC721>
+      </Flex>
+      <Flex width="65%">
+        <EtherscanLinkAddress
+          address={asset.address}
+          color="white-0"
+          textStyle="body-base"
+        >
+          {name}
+        </EtherscanLinkAddress>
+      </Flex>
+      <Flex width="25%">
+        <EtherscanLinkERC721
+          address={asset.address}
+          tokenId={id}
+          color="white-0"
+          textStyle="body-base"
         >
           #{id}
-        </Text>
-      </EtherscanLinkERC721>
+        </EtherscanLinkERC721>
+      </Flex>
     </HStack>
   );
 }
@@ -272,31 +288,19 @@ export function Assets() {
   return (
     <Box>
       <Text
-        textStyle="text-sm-sans-regular"
-        color="chocolate.200"
-        marginTop="1.5rem"
-        marginBottom="0.5rem"
+        textStyle="label-small"
+        color="neutral-7"
       >
         {t('subtitleCoinBalance')}
       </Text>
-      <Text
-        data-testid="text-usd-total"
-        textStyle="text-lg-mono-regular"
-        color="grayscale.100"
-      >
-        {formatUSD(coinDisplay.totalFiatValue)}
-      </Text>
+      <Text data-testid="text-usd-total">{formatUSD(coinDisplay.totalFiatValue)}</Text>
       {(showStakeButton || showUnstakeButton || showClaimETHButton) && (
         <>
-          <Divider
-            marginTop="1.5rem"
-            marginBottom="1.5rem"
-          />
+          <Divider my="1rem" />
           <Text
-            textStyle="text-sm-sans-regular"
-            color="chocolate.200"
-            marginTop="1.5rem"
-            marginBottom="1rem"
+            textStyle="label-small"
+            color="neutral-7"
+            my="1rem"
           >
             {t('subtitleStaking')}
           </Text>

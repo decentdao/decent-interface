@@ -33,7 +33,6 @@ export default function ProposalMetadata({
         isRequired
         value={proposalMetadata.title}
         onChange={e => setFieldValue('proposalMetadata.title', e.target.value)}
-        disabled={false}
         testId="metadata.title"
         maxLength={50}
       />
@@ -53,7 +52,6 @@ export default function ProposalMetadata({
         isRequired={false}
         value={proposalMetadata.description}
         onChange={e => setFieldValue('proposalMetadata.description', e.target.value)}
-        disabled={false}
         rows={12}
       />
     </VStack>

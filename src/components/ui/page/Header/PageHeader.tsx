@@ -100,9 +100,10 @@ function PageHeader({
         )}
         {children}
       </Flex>
-      <Box marginTop="1rem">
-        <Divider />
-      </Box>
+      <Divider
+        variant="darker"
+        mt="1rem"
+      />
       {title && (
         <Text
           marginTop="2rem"
@@ -116,6 +117,7 @@ function PageHeader({
         <AddressCopier
           marginTop="0.5rem"
           address={address}
+          display="inline-flex"
         />
       )}
     </Box>

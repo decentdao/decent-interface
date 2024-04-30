@@ -2,12 +2,10 @@ import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Assets } from '../../../../components/pages/DAOTreasury/components/Assets';
 import { Transactions } from '../../../../components/pages/DAOTreasury/components/Transactions';
-import { useTreasuryTotalBN } from '../../../../components/pages/DAOTreasury/hooks/useTreasuryTotalBN';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
-import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function Treasury() {
@@ -15,9 +13,6 @@ export default function Treasury() {
     node: { daoName, daoAddress },
   } = useFractal();
   const { t } = useTranslation('treasury');
-  const treasuryTotal = useTreasuryTotalBN();
-  const { canUserCreateProposal } = useCanUserCreateProposal();
-  const showButton = canUserCreateProposal && treasuryTotal !== 0n;
 
   return (
     <div>
@@ -34,7 +29,7 @@ export default function Treasury() {
             path: '',
           },
         ]}
-        buttonText={showButton ? t('buttonSendAssets') : undefined}
+        buttonText={t('buttonSendAssets')}
         buttonClick={useFractalModal(ModalType.SEND_ASSETS)}
         buttonTestId="link-send-assets"
       />
@@ -48,6 +43,7 @@ export default function Treasury() {
           minWidth={{ sm: '100%', xl: '55%' }}
           title={t('titleTransactions')}
           titleTestId="title-transactions"
+          bg="neutral-2"
         >
           <Transactions />
         </TitledInfoBox>

@@ -2,18 +2,19 @@ import { Button, ButtonProps, Icon } from '@chakra-ui/react';
 import { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 
-interface ICeleryButtonWithIcon extends ButtonProps {
+type CeleryButtonWithIconProps = {
   icon?: PhosphorIcon;
   children: ReactNode;
   iconPosition?: 'start' | 'end';
-}
+} & ButtonProps;
+
 export default function CeleryButtonWithIcon({
   icon,
   onClick,
   children,
   iconPosition = 'start',
   ...rest
-}: ICeleryButtonWithIcon) {
+}: CeleryButtonWithIconProps) {
   return (
     <Button
       variant="text"
