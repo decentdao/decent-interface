@@ -39,7 +39,7 @@ export function AppFooter({ ...rest }: BoxProps) {
         </Text>
         <ExternalLink
           href={
-            'https://github.com/decentdao/fractal-interface/commit/' +
+            'https://github.com/decentdao/decent-interface/commit/' +
             import.meta.env.VITE_APP_GIT_HASH
           }
           textStyle="text-sm-mono-bold"

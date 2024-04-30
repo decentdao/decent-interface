@@ -49,7 +49,7 @@ $ docker compose up --build
 
 ### Running Tests
 
-To run all tests in all 3 browser types (Chromium, Firefox, Webkit) use the following command in a new terminal within the `fractal-interface` project:
+To run all tests in all 3 browser types (Chromium, Firefox, Webkit) use the following command in a new terminal within the `decent-interface` project:
 
 ```shell
 $ npx playwright test
