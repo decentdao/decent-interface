@@ -83,7 +83,5 @@ So at any given time, there are effectively three builds out there, and they are
 
 1. dev site
    - url: https://app.dev.fractalframework.xyz
-2. staging site
-   - url: https://app.staging.fractalframework.xyz
-3. prod site
+2. prod site
    - url: https://app.fractalframework.xyz

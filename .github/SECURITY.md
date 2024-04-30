@@ -2,11 +2,11 @@
 
 We at Fractal encourage security researchers to contact us directly and privately to report any potential security vulnerabilities in either our smart contracts or front end code.
 
-If the issue you are reporting is not a security vulnerability, simply [open a new GitHub issue](https://github.com/decent-dao/fractal-interface/issues/new/choose).
+If the issue you are reporting is not a security vulnerability, simply [open a new GitHub issue](https://github.com/decentdao/fractal-interface/issues/new/choose).
 
 ## Reporting a Vulnerability
 
-If you would like to disclose a vulnerability in Fractal, please send a new email to [security@decent-dao.org](mailto:security@decent-dao.org).
+If you would like to disclose a vulnerability in Fractal, please send a new email to [security@decentdao.org](mailto:security@decentdao.org).
 
 Please include the following information in your email:
 
@@ -19,4 +19,4 @@ Please include the following information in your email:
 
 If you prefer secure communication, please use the following GPG key:
 
-https://keys.openpgp.org/search?q=security%40decent-dao.org
+https://keys.openpgp.org/search?q=security%40decentdao.org
