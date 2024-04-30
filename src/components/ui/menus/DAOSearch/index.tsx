@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
   useDisclosure,
   useOutsideClick,
+  Icon,
 } from '@chakra-ui/react';
 import { MagnifyingGlass } from '@phosphor-icons/react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -17,6 +18,7 @@ import { SearchDisplay } from './SearchDisplay';
 export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { t } = useTranslation(['dashboard']);
   const [localInput, setLocalInput] = useState('');
+  const [hasFocus, setHasFocus] = useState(false);
   const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
   const { onClose } = useDisclosure(); // popover close function
   const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -55,15 +57,18 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             justifyContent="center"
           >
             <InputLeftElement>
-              <MagnifyingGlass
+              <Icon
+                as={MagnifyingGlass}
                 size="1.5rem"
-                color="var(--chakra-colors-neutral-5)"
+                color={localInput || hasFocus ? 'white-0' : 'neutral-5'}
               />
             </InputLeftElement>
             <Input
               size="baseAddonLeft"
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => setLocalInput(e.target.value.trim())}
+              onFocus={() => setHasFocus(true)}
+              onBlur={() => setHasFocus(false)}
               value={localInput}
               data-testid="search-input"
             />
