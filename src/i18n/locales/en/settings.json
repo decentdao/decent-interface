@@ -14,10 +14,10 @@
   "guardTitle": "Guard",
   "modulesAndGuardsTitle": "Modules and Guards",
   "modulesAndGuardsDescription1": "Modules are contracts added to extends a Safe's capabilities.",
-  "modulesAndGuardsDescription2": "A Freeze Guard is added to all sub-Safes created on Fractal. A Freeze Guard allow the parent Safe's members to block the sub-Safe's access to funds and freeze active proposals.",
+  "modulesAndGuardsDescription2": "A Freeze Guard is added to all child Safes created on Decent. A Freeze Guard allow the parent Safe's members to block the sub-Safe's access to funds and freeze active proposals.",
   "daoMetadataName": "Safe Name",
   "daoMetadataSnapshot": "Snapshot Space",
-  "daoMetadataDescriptionTitle": "Safe Metadata & Off-chain",
+  "daoMetadataDescriptionTitle": "Safe Metadata & offchain",
   "daoMetadataDescriptionText": "Activities or transactions that occur outside of the blockchain network or aren't stored on-chain.",
   "proposeChanges": "Propose Change"
 }

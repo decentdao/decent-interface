@@ -13,7 +13,7 @@
 
 - Add your translations in the last column of the output CSV file. Feel free to improve existing translations!
 
-- When finished translating, run `2_csv_to_json.py` to generate the required `.json` files for the Fractal app:
+- When finished translating, run `2_csv_to_json.py` to generate the required `.json` files for the Decent app:
 
   ```console
   python3 2_csv_to_json.py
@@ -21,11 +21,11 @@
 
 - Submit a pull request with these changes, as detailed in [CONTRIBUTING.md](../.github/CONTRIBUTING.md).
 
-- We encourage anyone to try cloning the Fractal repo and submitting a PR with translations (you can definitely do it!), however if you get stuck the Fractal team can provide you with a CSV to edit and return to us, simply add your request to the related Github issue.
+- We encourage anyone to try cloning the Decent repo and submitting a PR with translations (you can definitely do it!), however if you get stuck the Decent team can provide you with a CSV to edit and return to us, simply add your request to the related Github issue.
 
 ### Translation Guidelines
 
-- The app name is Fractal, which is a project of Decent DAO. Unless used as their non product specific meanings (e.g. John is a decent fellow who loves fractals.), these words should not be translated.
+- The app name is Decent, which is a project of Decent DAO. Unless used as their non product specific meanings (e.g. John is a decent fellow who loves decent projects.), these words should not be translated.
 
 - Content within curly brackets (e.g. `{{count}}`), indicates a variable that is replaced within the app logic, and neither the brackets, nor the content within should be altered. _You may place these bracketed variables anywhere in your translation text_.
 

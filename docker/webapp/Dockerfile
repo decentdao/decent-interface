@@ -11,7 +11,7 @@ ENV VITE_APP_LOCAL_CHAIN_ID=$VITE_APP_LOCAL_CHAIN_ID
 ENV VITE_APP_LOCAL_PROVIDER_URL=$VITE_APP_LOCAL_PROVIDER_URL
 
 # Set working directory
-WORKDIR /fractal-webapp/
+WORKDIR /decent-webapp/
 
 # Copy package.json and package-lock.json files
 COPY package*.json ./

@@ -1,4 +1,4 @@
-# Fractal Interface
+# Decent Interface
 
 ## Local Development
 

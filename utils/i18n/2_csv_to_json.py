@@ -23,7 +23,7 @@ while True:
 chosenLang = {}
 
 # process the .csv into a dictionary of dictionaries for the chosen language
-# e.g. {'common.json': {'accept': 'Acepto'}, 'daoCreate.json': {'buttonCreate': 'Crear un Fractal'}}
+# e.g. {'common.json': {'accept': 'Acepto'}, 'daoCreate.json': {'buttonCreate': 'Crear un Decent'}}
 with open(chosenCsv, 'r') as f:
     reader = csv.reader(f)
     next(reader, None) # skip headers

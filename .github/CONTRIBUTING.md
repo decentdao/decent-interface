@@ -1,4 +1,4 @@
-## Contributing to Fractal Interface
+## Contributing to Decent Interface
 
 ### Submitting an Issue
 
@@ -6,7 +6,7 @@
 
 - If this is a potential security vulnerability in Decent, please see our [Security Policy](https://github.com/decentdao/decent-interface/blob/HEAD/.github/SECURITY.md) for instructions on privately reporting to our security team.
 
-- Otherwise, simply create a new issue and the Fractal development team will respond in a timely manner. Please be as descriptive of the issue as possible.
+- Otherwise, simply create a new issue and the Decent development team will respond in a timely manner. Please be as descriptive of the issue as possible.
 
 - If looking to contribute a bug fix or feature, please discuss the change via the bug ticket or a new Github issue before submitting a pull request for the greatest likelihood of being accepted.
 
@@ -22,7 +22,7 @@
   automation tests in the [test directory](https://github.com/decentdao/decent-interface/tree/HEAD/tests).
 - All of your components should be composed of [Chakra UI](https://chakra-ui.com/) base components, using our custom theme.
 
-- A member of the Fractal engineering team will respond with any further discussion or requested changes and once approved
+- A member of the Decent engineering team will respond with any further discussion or requested changes and once approved
   you are free to merge.
 - We appreciate the collaboration!
 
