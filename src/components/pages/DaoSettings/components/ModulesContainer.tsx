@@ -61,7 +61,7 @@ export function ModulesContainer() {
                   {moduleType === FractalModuleType.AZORIUS
                     ? ' (Azorius Module)'
                     : moduleType === FractalModuleType.FRACTAL
-                      ? ' (Fractal Module)' // TODO rename this?
+                      ? ' (Fractal Module)' // TODO rename this after renaming and redeploying contracts
                       : ''}
                 </DisplayAddress>
               </Flex>
