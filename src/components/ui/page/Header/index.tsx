@@ -3,7 +3,6 @@ import {
   Drawer,
   DrawerCloseButton,
   DrawerContent,
-  DrawerOverlay,
   Flex,
   Hide,
   IconButton,
@@ -20,7 +19,6 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { FavoritesMenu } from '../../menus/FavoritesMenu';
-import Divider from '../../utils/Divider';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 function HeaderLogo() {
@@ -66,39 +64,54 @@ function HeaderLogo() {
             size="full"
             isFullHeight
           >
-            <DrawerOverlay />
             <DrawerContent
-              bg="chocolate.900"
+              bg="#221D25D6" // TODO get this into `decent-ui` repo
               border="none"
+              backdropFilter="auto"
+              backdropBlur="10px"
             >
-              <DrawerCloseButton
-                size="lg"
-                zIndex="banner"
-              />
+              <Flex
+                mt={4}
+                justifyContent="space-between"
+              >
+                <Link
+                  data-testid="navigationLogo-homeLink"
+                  to={BASE_ROUTES.landing}
+                  aria-label={t('ariaLabelFractalBrand')}
+                  onClick={onClose}
+                >
+                  <DecentLogo
+                    aria-hidden
+                    h="2.5rem"
+                    w="2.125rem"
+                    ml="1.75rem"
+                  />
+                </Link>
+                <DrawerCloseButton
+                  size="lg"
+                  zIndex="banner"
+                  color="lilac-0"
+                  position="relative"
+                  top="0px"
+                />
+              </Flex>
 
               <Box
-                mt={12}
-                px={8}
-                position="relative"
+                mt={8}
+                px={6}
               >
                 <DAOSearch closeDrawer={onClose} />
               </Box>
-              <Flex
-                alignItems="center"
-                direction="column"
-                justifyContent={showDAOLinks ? 'space-evenly' : 'flex-start'}
-                flexGrow={1}
-                overflowY="auto"
-                px={8}
+              <Box
+                px={6}
                 pt={8}
               >
-                <Divider />
                 <NavigationLinks
                   showDAOLinks={showDAOLinks}
                   address={daoAddress}
                   closeDrawer={onClose}
                 />
-              </Flex>
+              </Box>
             </DrawerContent>
           </Drawer>
         </>

@@ -1,74 +1,98 @@
-import { Box, ComponentWithAs, Hide, IconProps, Text } from '@chakra-ui/react';
-import { useCallback } from 'react';
+import { Box, Flex } from '@chakra-ui/react';
+import { Icon } from '@phosphor-icons/react';
+import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { Link, useMatch } from 'react-router-dom';
-import { NavigationTooltip } from './NavigationTooltip';
 
-interface INavigationLink {
-  href: string;
+function LinkContent({
+  labelKey,
+  NavigationIcon,
+  t,
+  isActive,
+}: {
   labelKey: string;
-  tooltipKey?: string;
-  testId: string;
-  Icon: ComponentWithAs<'svg', IconProps>;
-  target?: string;
-  rel?: string;
-  closeDrawer?: () => void;
+  NavigationIcon: Icon;
+  t: TFunction;
+  isActive: boolean;
+}) {
+  return (
+    <Flex
+      py={3}
+      pl="11px"
+      borderRadius={{ md: 8 }}
+      _hover={{ bgColor: 'neutral-3' }}
+      borderWidth={isActive ? '1px' : '0px'}
+      borderColor="neutral-4"
+      bgColor={isActive ? 'neutral-3' : 'auto'}
+    >
+      <Box w={6}>{<NavigationIcon size={24} />}</Box>
+      <Box
+        mx={3}
+        whiteSpace="nowrap"
+      >
+        {t(labelKey)}
+      </Box>
+    </Flex>
+  );
 }
 
 export function NavigationLink({
+  href,
   labelKey,
   testId,
-  Icon,
-  tooltipKey,
+  NavigationIcon,
+  scope,
   closeDrawer,
-  href,
   ...rest
-}: INavigationLink) {
-  const tooltipTranslationKey = tooltipKey || labelKey;
-
+}: {
+  href: string;
+  labelKey: string;
+  testId: string;
+  NavigationIcon: Icon;
+  scope: 'internal' | 'external';
+  closeDrawer?: () => void;
+}) {
   const { t } = useTranslation('navigation');
-  const isActive = useMatch(href);
+  const isActive = useMatch(href.substring(0, href.indexOf('?')));
 
-  const activeColors = useCallback(() => {
-    return {
-      color: isActive ? 'gold.500' : 'inherit',
-      _hover: {
-        color: 'gold.500-hover',
-      },
-    };
-  }, [isActive]);
+  const linkContent = (
+    <LinkContent
+      labelKey={labelKey}
+      NavigationIcon={NavigationIcon}
+      t={t}
+      isActive={!!isActive}
+    />
+  );
 
-  return (
-    <NavigationTooltip label={t(tooltipTranslationKey)}>
+  if (scope === 'internal') {
+    return (
       <Link
         data-testid={testId}
-        aria-label={t(tooltipTranslationKey)}
+        aria-label={t(labelKey)}
         to={href}
-        {...rest}
         onClick={closeDrawer}
+        {...rest}
       >
-        <Box
-          display={{ base: 'flex', md: undefined }}
-          gap={8}
-          justifyContent="space-between"
-          alignItems="center"
-          {...activeColors()}
-        >
-          <Icon
-            boxSize="1.5rem"
-            sx={{
-              'g path': {
-                transitionProperty: 'all',
-                transitionDuration: '300ms',
-                transitionTimingFunction: 'ease-out',
-              },
-            }}
-          />
-          <Hide above="md">
-            <Text textStyle="text-md-mono-medium">{t(labelKey)}</Text>
-          </Hide>
-        </Box>
+        {linkContent}
       </Link>
-    </NavigationTooltip>
-  );
+    );
+  }
+
+  if (scope === 'external') {
+    return (
+      <a
+        data-testid={testId}
+        aria-label={t(labelKey)}
+        href={href}
+        onClick={closeDrawer}
+        {...rest}
+        target="_blank"
+        rel="noreferrer noopener"
+      >
+        {linkContent}
+      </a>
+    );
+  }
+
+  return null;
 }
