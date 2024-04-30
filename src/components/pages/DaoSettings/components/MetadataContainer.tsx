@@ -1,20 +1,19 @@
 import { ens_normalize } from '@adraffy/ens-normalize';
-import { Flex, Text, Button } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { SettingsSection } from '..';
-import { DAO_ROUTES } from '../../../../../constants/routes';
-import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
-import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
-import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayName';
-import { useFractal } from '../../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { ProposalExecuteData } from '../../../../../types';
-import { InputComponent } from '../../../../ui/forms/InputComponent';
-import Divider from '../../../../ui/utils/Divider';
+import { DAO_ROUTES } from '../../../../constants/routes';
+import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
+import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { ProposalExecuteData } from '../../../../types';
+import { InputComponent } from '../../../ui/forms/InputComponent';
+import { SettingsSection } from './SettingsSection';
 
-export default function MetadataContainer() {
+export function MetadataContainer() {
   const [name, setName] = useState('');
   const [snapshotENS, setSnapshotENS] = useState('');
   const [snapshotENSValid, setSnapshotENSValid] = useState<boolean>();
@@ -121,32 +120,53 @@ export default function MetadataContainer() {
 
   return (
     <SettingsSection
-      contentTitle={''}
-      contentHeader={
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
-        >
-          <Text
-            textStyle="text-lg-mono-bold"
-            color="grayscale.100"
+      title={t('daoMetadataName')}
+      headerRight={
+        canUserCreateProposal && (
+          <Button
+            variant="secondary"
+            size="sm"
+            isDisabled={name === daoName}
+            onClick={handleEditDAOName}
           >
-            {t('daoMetadataName')}
-          </Text>
-          {canUserCreateProposal && (
-            <Button
-              variant="tertiary"
-              disabled={name === daoName}
-              isDisabled={name === daoName}
-              onClick={handleEditDAOName}
-            >
-              {t('proposeChanges')}
-            </Button>
-          )}
-        </Flex>
+            {t('proposeChanges')}
+          </Button>
+        )
       }
-      descriptionTitle={t('daoMetadataDescriptionTitle')}
-      descriptionText={t('daoMetadataDescriptionText')}
+      descriptionHeader={t('daoMetadataDescriptionTitle')}
+      descriptionContent={t('daoMetadataDescriptionText')}
+      nestedSection={{
+        title: t('daoMetadataSnapshot'),
+        headerRight: canUserCreateProposal && (
+          <Button
+            variant="secondary"
+            size="sm"
+            isDisabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
+            onClick={handleEditDAOSnapshotENS}
+          >
+            {t('proposeChanges')}
+          </Button>
+        ),
+        children: (
+          <InputComponent
+            isRequired={false}
+            onChange={handleSnapshotENSChange}
+            value={snapshotENS}
+            disabled={!userHasVotingWeight}
+            placeholder="example.eth"
+            testId="daoSettings.snapshotENS"
+            gridContainerProps={{
+              display: 'inline-flex',
+              flexWrap: 'wrap',
+              flex: '1',
+              width: '100%',
+            }}
+            inputContainerProps={{
+              width: '100%',
+            }}
+          />
+        ),
+      }}
     >
       <InputComponent
         isRequired={false}
@@ -155,45 +175,6 @@ export default function MetadataContainer() {
         value={name}
         placeholder="Amazing DAO"
         testId="daoSettings.name"
-        gridContainerProps={{
-          display: 'inline-flex',
-          flexWrap: 'wrap',
-          flex: '1',
-          width: '100%',
-        }}
-        inputContainerProps={{
-          width: '100%',
-        }}
-      />
-      <Divider my={4} />
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Text
-          textStyle="text-lg-mono-bold"
-          color="grayscale.100"
-        >
-          {t('daoMetadataSnapshot')}
-        </Text>
-        {canUserCreateProposal && (
-          <Button
-            variant="tertiary"
-            disabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
-            isDisabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
-            onClick={handleEditDAOSnapshotENS}
-          >
-            {t('proposeChanges')}
-          </Button>
-        )}
-      </Flex>
-      <InputComponent
-        isRequired={false}
-        onChange={handleSnapshotENSChange}
-        value={snapshotENS}
-        disabled={!userHasVotingWeight}
-        placeholder="example.eth"
-        testId="daoSettings.snapshotENS"
         gridContainerProps={{
           display: 'inline-flex',
           flexWrap: 'wrap',

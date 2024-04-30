@@ -10,8 +10,6 @@ import {
   SnapshotProposal,
 } from '../../../types';
 
-const quorumNotReachedColor = '#838383';
-const quorumReachedColor = '#56A355';
 export default function QuorumBadge({ proposal }: { proposal: FractalProposal }) {
   const { governance } = useFractal();
   const { t } = useTranslation('common');
@@ -66,12 +64,11 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
       reachedQuorum
     : reachedQuorum >= totalQuorum;
 
-  const displayColor =
-    totalVotesCasted !== 0n && meetsQuorum ? quorumReachedColor : quorumNotReachedColor;
+  const displayColor = totalVotesCasted !== 0n && meetsQuorum ? 'celery--3' : 'neutral-7';
   return (
     <Box
       rounded="md"
-      textStyle="text-md-sans-regular"
+      textStyle="label-base"
       borderColor={displayColor}
       textColor={displayColor}
       border="1px solid"

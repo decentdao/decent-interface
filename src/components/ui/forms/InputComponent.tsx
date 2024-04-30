@@ -89,9 +89,11 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
         )}
         {helperSlot === 'start' && <Text color="neutral-7">{helper}</Text>}
       </GridItem>
+
       <GridItem {...inputContainerProps}>
         <LabelWrapper
           subLabel={subLabel}
+          // TODO: LabelWrapper error message design is out of date
           errorMessage={errorMessage}
         >
           {children}

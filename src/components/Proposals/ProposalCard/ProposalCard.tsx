@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -10,6 +10,7 @@ import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { ActivityDescription } from '../../Activity/ActivityDescription';
 import { Badge } from '../../ui/badges/Badge';
 import QuorumBadge from '../../ui/badges/QuorumBadge';
+import { SnapshotIcon } from '../../ui/badges/Snapshot';
 
 function ProposalCard({ proposal }: { proposal: FractalProposal }) {
   const {
@@ -36,8 +37,12 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
     <Link to={DAO_ROUTES.proposal.relative(addressPrefix, daoAddress, proposal.proposalId)}>
       <Box
         minHeight="6.25rem"
-        bg="chocolate.900"
-        _hover={{ bg: '#0B0A09' }}
+        bg="neutral-2"
+        _hover={{ bg: 'neutral-3' }}
+        _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
+        transitionDuration="200ms"
+        transitionProperty="all"
+        transitionTimingFunction="ease-out"
         p="1.5rem"
         borderRadius="0.5rem"
       >
@@ -52,13 +57,10 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
               size="sm"
               proposal={proposal}
             />
-            {/* TODO: replace with <SnapshotIcon /> */}
             {isSnapshotProposal && (
-              <Image
-                src="/images/snapshot-icon-fill.svg"
-                alt={t('snapshot')}
-                ml={1}
-              />
+              <Box ml={1}>
+                <SnapshotIcon />
+              </Box>
             )}
           </Flex>
           <QuorumBadge proposal={proposal} />
@@ -68,8 +70,8 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
           {proposal.eventDate && (
             <Text
               mt={2}
-              textStyle="text-base-sans-regular"
-              color="#838383"
+              textStyle="helper-text-base"
+              color="neutral-6"
             >
               {eventDateLabel} {format(proposal.eventDate, DEFAULT_DATE_FORMAT)}
             </Text>
