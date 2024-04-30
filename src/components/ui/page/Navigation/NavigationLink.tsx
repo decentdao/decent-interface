@@ -14,7 +14,10 @@ function LinkContent({
   t: TFunction;
 }) {
   return (
-    <Flex py={3}>
+    <Flex
+      py={3}
+      pl="11px"
+    >
       <Box w={6}>{<NavigationIcon size={24} />}</Box>
       <Box
         mx={3}

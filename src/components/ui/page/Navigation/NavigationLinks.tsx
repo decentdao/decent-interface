@@ -27,7 +27,6 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
     >
       <Box
         bg={{ md: 'neutral-2' }}
-        pl={{ md: '11px' }}
         overflow={{ md: 'hidden' }}
         borderColor={{ md: 'neutral-3' }}
         mb={{ md: '1px' }}
@@ -110,7 +109,6 @@ function InternalLinks({
         transitionDuration="0.2s"
         mt={{ md: 12 }}
         mb={{ md: 3 }}
-        pl={{ md: '11px' }}
         bg={{ md: 'neutral-2' }}
         overflow={{ md: 'hidden' }}
         borderColor={{ md: 'neutral-3' }}
