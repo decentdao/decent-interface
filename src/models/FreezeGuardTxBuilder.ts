@@ -217,7 +217,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       'setUp',
       [
         ethers.utils.defaultAbiCoder.encode(
-          ['uint256', 'uint256', 'address', 'address', 'address'],
+          ['uint32', 'uint32', 'address', 'address', 'address'],
           [
             subDaoData.timelockPeriod, // Timelock Period
             subDaoData.executionPeriod, // Execution Period
@@ -231,19 +231,14 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   }
 
   private setFreezeGuardCallDataAzorius() {
-    const subDaoData = this.daoData as SubDAO;
-
     this.freezeGuardCallData = AzoriusFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
       [
         ethers.utils.defaultAbiCoder.encode(
-          ['address', 'address', 'address', 'address', 'uint256'],
+          ['address', 'address'],
           [
             this.parentAddress, // Owner -- Parent DAO
             this.freezeVotingAddress, // Freeze Voting
-            this.strategyAddress, // Base Strategy
-            this.azoriusAddress, // Azorius
-            subDaoData.executionPeriod, // Execution Period
           ],
         ),
       ],
