@@ -1,9 +1,10 @@
-import { Box, Flex, Grid, GridItem, Input, Button } from '@chakra-ui/react';
-import { AddPlus, Minus } from '@decent-org/fractal-ui';
+import { Box, Flex, Grid, GridItem, Input, IconButton } from '@chakra-ui/react';
+import { MinusCircle, Plus } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FormikErrors } from 'formik';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import { zeroAddress } from 'viem';
+import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import {
   ICreationStepProps,
   CreatorSteps,
@@ -13,14 +14,11 @@ import {
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import CeleryButtonWithIcon from '../../ui/utils/CeleryButtonWithIcon';
 import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import AzoriusNFTDetail from './AzoriusNFTDetail';
-
-const templateAreaTwoCol = '"content details"';
-const templateAreaSingleCol = `"content"
-  "details"`;
 
 export default function AzoriusNFTDetails(props: ICreationStepProps) {
   const { transactionPending, isSubDAO, setFieldValue, values, isSubmitting, mode, errors } = props;
@@ -41,180 +39,187 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
   };
 
   return (
-    <StepWrapper
-      mode={mode}
-      isSubDAO={isSubDAO}
-      isFormSubmitting={!!isSubmitting || transactionPending}
-      titleKey="titleNFTConfig"
-      shouldWrapChildren={false}
-    >
-      <Grid
-        gap={4}
-        templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
-        gridTemplateRows={{ base: '1fr', lg: '5.1em 1fr' }}
-        templateAreas={{
-          base: templateAreaSingleCol,
-          lg: templateAreaTwoCol,
-        }}
+    <>
+      <StepWrapper
+        mode={mode}
+        isSubDAO={isSubDAO}
+        isFormSubmitting={!!isSubmitting || transactionPending}
+        titleKey="titleNFTConfig"
+        shouldWrapChildren={false}
       >
-        <GridItem area="content">
-          <Flex
-            flexDirection="column"
-            gap={5}
-            alignItems="flex-start"
-            bg={BACKGROUND_SEMI_TRANSPARENT}
-            rounded="lg"
-            px={4}
-            py={8}
-          >
-            <ContentBoxTitle>{t('titleNFTsParams')}</ContentBoxTitle>
-            {values.erc721Token.nfts.map((nft, i) => {
-              const nftError = (
-                errors?.erc721Token?.nfts as FormikErrors<
-                  ERC721TokenConfig<BigIntValuePair>[] | undefined
-                >
-              )?.[i];
-              const addressErrorMessage =
-                nftError?.tokenAddress && nft.tokenAddress.length
-                  ? nftError.tokenAddress
-                  : undefined;
-              const weightErrorMessage =
-                nftError?.tokenWeight && nftError.tokenWeight.value && nft.tokenWeight.value.length
-                  ? nftError.tokenWeight.value
-                  : undefined;
-
-              const isFirstElement = i === 0;
-              return (
-                <Flex
-                  key={i}
-                  gap={4}
-                  alignItems="flex-start"
-                  width="100%"
-                >
-                  <LabelComponent
-                    label={isFirstElement ? t('labelNFTAddress') : undefined}
-                    helper={isFirstElement ? t('helperNFTAddress') : undefined}
-                    isRequired={isFirstElement}
-                    helperSlot="end"
-                    errorMessage={addressErrorMessage}
-                    gridContainerProps={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      width: '65%',
-                    }}
-                    inputContainerProps={{
-                      width: '100%',
-                    }}
-                  >
-                    <Field name={`erc721Token.nfts.${i}.tokenAddress`}>
-                      {({ field }: FieldAttributes<any>) => (
-                        <Input
-                          {...field}
-                          value={nft.tokenAddress}
-                          onChange={e =>
-                            setFieldValue(`erc721Token.nfts.${i}.tokenAddress`, e.target.value)
-                          }
-                          data-testid={`erc721Token.nfts.${i}.tokenAddressInput`}
-                          minWidth="100%"
-                        />
-                      )}
-                    </Field>
-                  </LabelComponent>
-                  <LabelComponent
-                    label={isFirstElement ? t('labelNFTWeight') : undefined}
-                    helper={isFirstElement ? t('helperNFTWeight') : undefined}
-                    isRequired={isFirstElement}
-                    errorMessage={weightErrorMessage}
-                    helperSlot="end"
-                    gridContainerProps={{
-                      display: 'flex',
-                      flexWrap: 'wrap',
-                      width: '35%',
-                    }}
-                    inputContainerProps={{
-                      width: '100%',
-                    }}
-                  >
-                    <Flex>
-                      <BigIntInput
-                        value={nft.tokenWeight.bigintValue}
-                        onChange={valuePair =>
-                          setFieldValue(`erc721Token.nfts.${i}.tokenWeight`, valuePair)
-                        }
-                        data-testid={`erc721Token.nfts.${i}.tokenWeightInput`}
-                        decimalPlaces={0}
-                        isRequired
-                        min="1"
-                      />
-                      {values.erc721Token.nfts.length > 1 && (
-                        <Minus
-                          cursor="pointer"
-                          color="gold.500"
-                          boxSize="1.5rem"
-                          ms="1.5rem"
-                          me="0.5rem"
-                          onClick={() => handleRemoveNFT(i)}
-                          alignSelf={'center'}
-                        />
-                      )}
-                    </Flex>
-                  </LabelComponent>
-                </Flex>
-              );
-            })}
-            <Button
-              variant="text"
-              onClick={handleAddNFT}
-              paddingLeft={0}
-            >
-              <AddPlus
-                width="24px"
-                height="24px"
-              />
-              {t('addNFTButton')}
-            </Button>
-            <Divider />
-            <StepButtons
-              {...props}
-              prevStep={CreatorSteps.ESSENTIALS}
-              nextStep={CreatorSteps.AZORIUS_DETAILS}
-            />
-          </Flex>
-        </GridItem>
-        <GridItem
-          area="details"
-          width="100%"
+        <Grid
+          gap={4}
+          templateColumns={{ base: '1fr', lg: '2fr 1fr' }}
+          templateAreas={{
+            base: '"content" "details"',
+            lg: '"content details"',
+          }}
         >
-          <Box
-            bg={BACKGROUND_SEMI_TRANSPARENT}
-            rounded="lg"
-            p={4}
+          <GridItem area="content">
+            <Flex
+              flexDirection="column"
+              gap={5}
+              alignItems="flex-start"
+              mt="1.5rem"
+              padding="1.5rem"
+              bg="neutral-2"
+              borderRadius="0.25rem"
+            >
+              <ContentBoxTitle>{t('titleNFTsParams')}</ContentBoxTitle>
+              {values.erc721Token.nfts.map((nft, i) => {
+                const nftError = (
+                  errors?.erc721Token?.nfts as FormikErrors<
+                    ERC721TokenConfig<BigIntValuePair>[] | undefined
+                  >
+                )?.[i];
+                const addressErrorMessage =
+                  nftError?.tokenAddress && nft.tokenAddress.length
+                    ? nftError.tokenAddress
+                    : undefined;
+                const weightErrorMessage =
+                  nftError?.tokenWeight &&
+                  nftError.tokenWeight.value &&
+                  nft.tokenWeight.value.length
+                    ? nftError.tokenWeight.value
+                    : undefined;
+
+                const isFirstElement = i === 0;
+                const isLastElement = i === values.erc721Token.nfts.length - 1;
+                return (
+                  <Flex
+                    key={i}
+                    gap={4}
+                    alignItems="flex-start"
+                    width="100%"
+                  >
+                    <LabelComponent
+                      label={isFirstElement ? t('labelNFTAddress') : undefined}
+                      helper={isLastElement ? t('helperNFTAddress') : undefined}
+                      isRequired={isFirstElement}
+                      helperSlot="end"
+                      errorMessage={addressErrorMessage}
+                      gridContainerProps={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        width: '65%',
+                      }}
+                      inputContainerProps={{
+                        width: '100%',
+                      }}
+                    >
+                      <Field name={`erc721Token.nfts.${i}.tokenAddress`}>
+                        {({ field }: FieldAttributes<any>) => (
+                          <Input
+                            {...field}
+                            value={nft.tokenAddress}
+                            onChange={e =>
+                              setFieldValue(`erc721Token.nfts.${i}.tokenAddress`, e.target.value)
+                            }
+                            data-testid={`erc721Token.nfts.${i}.tokenAddressInput`}
+                            minWidth="100%"
+                            placeholder={createAccountSubstring(zeroAddress)}
+                          />
+                        )}
+                      </Field>
+                    </LabelComponent>
+                    <LabelComponent
+                      label={isFirstElement ? t('labelNFTWeight') : undefined}
+                      helper={isLastElement ? t('helperNFTWeight') : undefined}
+                      isRequired={isFirstElement}
+                      errorMessage={weightErrorMessage}
+                      helperSlot="end"
+                      gridContainerProps={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        width: '35%',
+                      }}
+                      inputContainerProps={{
+                        width: '100%',
+                      }}
+                    >
+                      <Flex>
+                        <BigIntInput
+                          value={nft.tokenWeight.bigintValue}
+                          onChange={valuePair =>
+                            setFieldValue(`erc721Token.nfts.${i}.tokenWeight`, valuePair)
+                          }
+                          data-testid={`erc721Token.nfts.${i}.tokenWeightInput`}
+                          decimalPlaces={0}
+                          isRequired
+                          min="1"
+                          placeholder="1"
+                        />
+                        {values.erc721Token.nfts.length > 1 && (
+                          <IconButton
+                            aria-label="remove NFT from the list"
+                            icon={<MinusCircle size="24" />}
+                            variant="unstyled"
+                            minWidth="auto"
+                            color="lilac-0"
+                            _disabled={{ opacity: 0.4, cursor: 'default' }}
+                            sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
+                            type="button"
+                            onClick={() => handleRemoveNFT(i)}
+                            mt="-0.25rem"
+                            ml="0.5rem"
+                          />
+                        )}
+                      </Flex>
+                    </LabelComponent>
+                  </Flex>
+                );
+              })}
+              <CeleryButtonWithIcon
+                onClick={handleAddNFT}
+                icon={Plus}
+              >
+                {t('addNFTButton')}
+              </CeleryButtonWithIcon>
+            </Flex>
+          </GridItem>
+          <GridItem
+            area="details"
+            width="100%"
           >
-            <ContentBoxTitle>{t('titleNFTDetails')}</ContentBoxTitle>
-            <Divider my="1rem" />
-            {values.erc721Token.nfts.map((nft, i) => {
-              const nftError = (
-                errors?.erc721Token?.nfts as FormikErrors<
-                  ERC721TokenConfig<BigIntValuePair>[] | undefined
-                >
-              )?.[i];
-              const addressErrorMessage =
-                nftError?.tokenAddress && nft.tokenAddress.length
-                  ? nftError.tokenAddress
-                  : undefined;
-              return (
-                <Fragment key={i}>
-                  <AzoriusNFTDetail
-                    nft={nft}
-                    hasAddressError={!!addressErrorMessage}
-                  />
-                  {i < values.erc721Token.nfts.length - 1 && <Divider my="2rem" />}
-                </Fragment>
-              );
-            })}
-          </Box>
-        </GridItem>
-      </Grid>
-    </StepWrapper>
+            <Box
+              rounded="lg"
+              border="1px solid"
+              borderColor="neutral-3"
+              p={6}
+              maxWidth="400px"
+              mt="1.5rem"
+            >
+              <ContentBoxTitle>{t('titleNFTDetails')}</ContentBoxTitle>
+              <Divider my="1rem" />
+              {values.erc721Token.nfts.map((nft, i) => {
+                const nftError = (
+                  errors?.erc721Token?.nfts as FormikErrors<
+                    ERC721TokenConfig<BigIntValuePair>[] | undefined
+                  >
+                )?.[i];
+                const addressErrorMessage =
+                  nftError?.tokenAddress && nft.tokenAddress.length
+                    ? nftError.tokenAddress
+                    : undefined;
+                return (
+                  <Fragment key={i}>
+                    <AzoriusNFTDetail
+                      nft={nft}
+                      hasAddressError={!!addressErrorMessage}
+                    />
+                    {i < values.erc721Token.nfts.length - 1 && <Divider my="2rem" />}
+                  </Fragment>
+                );
+              })}
+            </Box>
+          </GridItem>
+        </Grid>
+      </StepWrapper>
+      <StepButtons
+        {...props}
+        prevStep={CreatorSteps.ESSENTIALS}
+        nextStep={CreatorSteps.AZORIUS_DETAILS}
+      />
+    </>
   );
 }

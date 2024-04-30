@@ -264,7 +264,7 @@ export default function ProposalTransaction({
                                       _checked={{
                                         bg: 'black-0',
                                         color: 'lilac--3',
-                                        borderWidth: '4px',
+                                        borderWidth: '6px',
                                       }}
                                     >
                                       <Box ml="1rem">
@@ -324,7 +324,7 @@ export default function ProposalTransaction({
                                     _checked={{
                                       bg: 'black-0',
                                       color: 'lilac--3',
-                                      borderWidth: '4px',
+                                      borderWidth: '6px',
                                     }}
                                   >
                                     <Box ml="1rem">

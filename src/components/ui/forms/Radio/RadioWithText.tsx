@@ -27,20 +27,27 @@ export function RadioWithText({
         data-testid={testId}
         type="radio"
         isDisabled={disabled}
-        textColor="gold.500"
-        colorScheme="blackAlpha"
-        borderColor="gold.500"
+        disabled={disabled}
+        bg="black-0"
+        color="lilac--3"
+        _disabled={{ bg: 'neutral-6', color: 'neutral-5' }}
+        _hover={{ bg: 'black-0', color: 'lilac--4' }}
+        _checked={{
+          bg: 'black-0',
+          color: 'lilac--3',
+          borderWidth: '6px',
+        }}
         size="lg"
         value={value}
       >
         <Box
-          ml="4"
-          p="0.5rem 1rem"
+          p="0.5rem 0"
+          ml="0.25rem"
         >
           <HStack>
             <Text
-              textStyle="text-base-sans-regular"
-              color={disabled ? 'grayscale.400' : 'grayscale.100'}
+              textStyle="body-base"
+              color={disabled ? 'neutral-5' : 'white-0'}
             >
               {label}
             </Text>
@@ -48,13 +55,14 @@ export function RadioWithText({
               <SupportTooltip
                 label={tooltip}
                 closeDelay={1000}
-                pointerEvents={'all'}
+                pointerEvents="all"
+                color="lilac-0"
               />
             )}
           </HStack>
           <Text
-            textStyle="text-md-sans-regular"
-            color={disabled ? 'grayscale.400' : 'grayscale.500'}
+            textStyle="body-base"
+            color={disabled ? 'neutral-5' : 'neutral-7'}
           >
             {description}
           </Text>

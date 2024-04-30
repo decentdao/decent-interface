@@ -26,7 +26,7 @@ function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
           _checked={{
             bg: 'black-0',
             color: 'lilac--3',
-            borderWidth: '0.30rem',
+            borderWidth: '6px',
 
             _hover: {
               color: 'lilac--4',

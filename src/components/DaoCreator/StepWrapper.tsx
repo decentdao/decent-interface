@@ -3,7 +3,6 @@ import { Trash } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -44,8 +43,8 @@ export function StepWrapper({
             w="full"
           >
             <Text
-              textStyle="text-2xl-mono-regular"
-              color="grayscale.100"
+              textStyle="display-2xl"
+              color="white-0"
             >
               {t(titleKey)}
             </Text>
@@ -75,11 +74,10 @@ export function StepWrapper({
       )}
       {shouldWrapChildren ? (
         <Box
-          bg={BACKGROUND_SEMI_TRANSPARENT}
-          rounded="lg"
-          mt={8}
-          px={4}
-          py={8}
+          mt="1.5rem"
+          padding="1.5rem"
+          bg="neutral-2"
+          borderRadius="0.25rem"
         >
           {children}
         </Box>

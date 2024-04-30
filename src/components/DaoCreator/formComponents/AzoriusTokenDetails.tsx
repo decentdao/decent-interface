@@ -1,19 +1,21 @@
 import { Box, Flex, Input, RadioGroup, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
+import { Info } from '@phosphor-icons/react';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, isAddress, zeroAddress } from 'viem';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
-import { TokenCreationType, ICreationStepProps } from '../../../types';
+import { TokenCreationType, ICreationStepProps, CreatorSteps } from '../../../types';
 import SupportTooltip from '../../ui/badges/SupportTooltip';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
+import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { usePrepareFormData } from '../hooks/usePrepareFormData';
+import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
 import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
 
@@ -103,20 +105,18 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
           flexDirection="column"
           gap={4}
         >
-          <ContentBoxTitle>{t('titleSelectToken')}</ContentBoxTitle>
+          <ContentBoxTitle>{t('titleTokenSupply')}</ContentBoxTitle>
           <LabelComponent
+            label={t('labelSelectToken')}
             helper={t('helperSelectToken')}
-            isRequired={false}
+            isRequired
           >
             <RadioGroup
-              bg={BACKGROUND_SEMI_TRANSPARENT}
-              px={8}
-              py={4}
-              rounded="lg"
               display="flex"
               flexDirection="column"
               name="erc20Token.tokenCreationType"
               gap={4}
+              mt="-0.5rem" // RadioGroup renders empty paragraph with margin, seems like this is only feasible way to align this group
               id="erc20Token.tokenCreationType"
               value={values.erc20Token.tokenCreationType}
               onChange={value => {
@@ -154,12 +154,14 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                         ? errors.erc20Token.tokenImportAddress
                         : undefined
                     }
+                    isRequired
                   >
                     <Input
                       name="erc20Token.tokenImportAddress"
                       onChange={handleChange}
                       value={values.erc20Token.tokenImportAddress}
                       placeholder={createAccountSubstring(zeroAddress)}
+                      isRequired
                     />
                   </LabelWrapper>
                   {!isImportedVotesToken && !errors.erc20Token?.tokenImportAddress && (
@@ -167,17 +169,18 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                       gap={4}
                       alignItems="center"
                     >
+                      <SupportTooltip
+                        IconComponent={Info}
+                        label={t('warningExistingTokenTooltip')}
+                        color="neutral-7"
+                      />
                       <Text
-                        color="blue.400"
-                        textStyle="text-base-sans-medium"
+                        color="neutral-7"
+                        textStyle="helper-text-base"
                         whiteSpace="pre-wrap"
                       >
                         {t('warningExistingToken')}
                       </Text>
-                      <SupportTooltip
-                        label={t('warningExistingTokenTooltip')}
-                        color="blue.400"
-                      />
                     </Flex>
                   )}
                 </>
@@ -187,14 +190,28 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         </Flex>
       </StepWrapper>
       <Box
-        bg={BACKGROUND_SEMI_TRANSPARENT}
-        rounded="lg"
-        mt={8}
-        px={4}
-        py={8}
+        mt="1.5rem"
+        padding="1.5rem"
+        bg="neutral-2"
+        borderRadius="0.25rem"
       >
         <TokenConfigDisplay {...props} />
       </Box>
+      {values.erc20Token.tokenCreationType === TokenCreationType.NEW && (
+        <Box
+          mt="1.5rem"
+          padding="1.5rem"
+          bg="neutral-2"
+          borderRadius="0.25rem"
+        >
+          <AzoriusTokenAllocations {...props} />
+        </Box>
+      )}
+      <StepButtons
+        {...props}
+        prevStep={CreatorSteps.ESSENTIALS}
+        nextStep={CreatorSteps.AZORIUS_DETAILS}
+      />
     </>
   );
 }
