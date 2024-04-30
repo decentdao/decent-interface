@@ -13,10 +13,7 @@ export function AppFooter({ ...rest }: BoxProps) {
     >
       <Divider paddingTop="2.5rem" />
       <Flex paddingTop="2rem">
-        <Text
-          color="grayscale.500"
-          textStyle="text-sm-mono-bold"
-        >
+        <Text>
           <Trans
             t={t}
             i18nKey="homeAttribution"
@@ -33,15 +30,8 @@ export function AppFooter({ ...rest }: BoxProps) {
           </Trans>
         </Text>
         <Spacer />
-        <ExternalLink
-          href="/docs/fractal_audit.pdf"
-          textStyle="text-sm-mono-bold"
-        >
-          {t('audit')}
-        </ExternalLink>
+        <ExternalLink href="/docs/fractal_audit.pdf">{t('audit')}</ExternalLink>
         <Text
-          color="grayscale.100"
-          textStyle="text-sm-mono-bold"
           paddingStart="1rem"
           paddingEnd="1rem"
         >
