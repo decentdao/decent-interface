@@ -64,9 +64,10 @@ export default function ProposalTransaction({
   return (
     <VStack
       align="left"
-      spacing={4}
+      px="1.5rem"
       mt={6}
     >
+      {/* TRANSACTION TARGET ADDRESS */}
       <InputComponent
         label={t('labelTargetAddress')}
         helper={t('helperTargetAddress')}
@@ -74,7 +75,7 @@ export default function ProposalTransaction({
         isRequired
         disabled={transactionPending}
         subLabel={
-          <HStack>
+          <HStack textStyle="helper-text-base">
             <Text>{t('example', { ns: 'common' })}:</Text>
             <ExampleLabel>yourdomain.eth</ExampleLabel>
             <Text>{t('or', { ns: 'common' })}</Text>
@@ -96,7 +97,10 @@ export default function ProposalTransaction({
           />
         </Box>
       )}
+
       <Divider my="1.5rem" />
+
+      {/* FUNCTION SPECIFICATION */}
       <Box>
         <Text
           textStyle="display-lg"
@@ -124,7 +128,9 @@ export default function ProposalTransaction({
           testId="transaction.functionName"
         />
       </Box>
-      <Box>
+
+      {/* TRANSACTION PARAMETERS LIST */}
+      <Box mt="1.5rem">
         <Accordion
           allowMultiple
           index={expandedIndecies}
@@ -137,11 +143,17 @@ export default function ProposalTransaction({
               padding="1rem"
               borderRadius={4}
               bg="neutral-3"
+              px={0}
+              py="1.5rem"
             >
               {({ isExpanded }) => (
                 <>
                   <Box>
-                    <HStack justify="space-between">
+                    {/* TRANSACTION PARAMETER HEADER */}
+                    <HStack
+                      px="1.5rem"
+                      justify="space-between"
+                    >
                       <AccordionButton
                         onClick={() => {
                           setExpandedIndecies(indexArray => {
@@ -168,6 +180,8 @@ export default function ProposalTransaction({
                           </Flex>
                         </Text>
                       </AccordionButton>
+
+                      {/* Remove parameter button */}
                       {i !== 0 || transaction.parameters.length !== 1 ? (
                         <IconButton
                           icon={<MinusCircle />}
@@ -192,12 +206,11 @@ export default function ProposalTransaction({
                         <Box h="2.25rem" />
                       )}
                     </HStack>
+
+                    {/* TRANSACTION PARAMETER SECTION */}
                     <AccordionPanel p={0}>
-                      <Flex
-                        gap={2}
-                        mt={6}
-                      >
-                        <Box>
+                      <Flex mt="1rem">
+                        <Box px="1.5rem">
                           <InputComponent
                             label={t('labelFunctionParameter', { ns: 'proposalTemplate' })}
                             helper={t('helperFunctionParameter', { ns: 'proposalTemplate' })}
@@ -363,12 +376,15 @@ export default function ProposalTransaction({
                       </Flex>
                     </AccordionPanel>
                   </Box>
+
                   {!isExpanded && (
                     <Divider
                       variant="light"
                       mt="0.5rem"
                     />
                   )}
+
+                  {/* ADD PARAMETER BUTTON */}
                   {i === transaction.parameters.length - 1 && (
                     <CeleryButtonWithIcon
                       onClick={() => {
@@ -389,6 +405,8 @@ export default function ProposalTransaction({
             </AccordionItem>
           ))}
         </Accordion>
+
+        {/* ETH VALUE */}
         <Box mt={6}>
           <BigIntComponent
             label={t('labelEthValue')}
