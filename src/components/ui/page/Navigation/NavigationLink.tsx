@@ -14,7 +14,7 @@ function LinkContent({
   t: TFunction;
 }) {
   return (
-    <Flex>
+    <Flex py={3}>
       <Box w={6}>{<NavigationIcon size={24} />}</Box>
       <Box
         mx={3}
@@ -59,7 +59,7 @@ export function NavigationLink({
         aria-label={t(labelKey)}
         to={href}
         onClick={closeDrawer}
-        style={{ display: 'block', paddingTop: '0.75rem', paddingBottom: '0.75rem' }}
+        style={{ display: 'block' }}
         {...rest}
       >
         {linkContent}
@@ -77,7 +77,7 @@ export function NavigationLink({
         {...rest}
         target="_blank"
         rel="noreferrer noopener"
-        style={{ display: 'block', paddingTop: '0.75rem', paddingBottom: '0.75rem' }}
+        style={{ display: 'block' }}
       >
         {linkContent}
       </a>
