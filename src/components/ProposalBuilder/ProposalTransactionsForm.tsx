@@ -33,7 +33,7 @@ export default function ProposalTransactionsForm(props: ProposalTransactionsForm
   }, [safeNonce, setFieldValue]);
 
   return (
-    <Box>
+    <Box py="1.5rem">
       <ProposalTransactions
         expandedIndecies={expandedIndecies}
         setExpandedIndecies={setExpandedIndecies}
