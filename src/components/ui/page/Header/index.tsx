@@ -65,7 +65,7 @@ function HeaderLogo() {
             isFullHeight
           >
             <DrawerContent
-              bg="#221D25D6"
+              bg="#221D25D6" // TODO get this into `decent-ui` repo
               border="none"
               backdropFilter="auto"
               backdropBlur="10px"
