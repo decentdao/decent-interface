@@ -11,7 +11,7 @@ function LinkContent({
 }: {
   labelKey: string;
   NavigationIcon: Icon;
-  t: TFunction<'navigation', undefined>;
+  t: TFunction;
 }) {
   return (
     <Flex>
