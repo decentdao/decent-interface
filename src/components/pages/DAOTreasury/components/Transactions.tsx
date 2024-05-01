@@ -74,7 +74,10 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             </Text>
           </Tooltip>
         </HStack>
-        <HStack w="40%" justifyContent="flex-end">
+        <HStack
+          w="40%"
+          justifyContent="flex-end"
+        >
           <DisplayAddress
             data-testid="link-transfer-address"
             address={displayData.transferAddress}
