@@ -1,4 +1,11 @@
 import * as Sentry from '@sentry/react';
+import { useEffect } from 'react';
+import {
+  useLocation,
+  useNavigationType,
+  createRoutesFromChildren,
+  matchRoutes,
+} from 'react-router-dom';
 
 /**
  * Initializes error logging.
@@ -13,7 +20,16 @@ function initErrorLogging() {
 
   Sentry.init({
     dsn: import.meta.env.VITE_APP_SENTRY_DSN_URL,
-    integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
+    integrations: [
+      Sentry.reactRouterV6BrowserTracingIntegration({
+        useEffect,
+        useLocation,
+        useNavigationType,
+        createRoutesFromChildren,
+        matchRoutes,
+      }),
+      Sentry.replayIntegration(),
+    ],
 
     // Set tracesSampleRate to 1.0 to capture 100%
     // of transactions for performance monitoring.
