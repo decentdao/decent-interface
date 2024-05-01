@@ -1,12 +1,29 @@
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react-swc';
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { checker } from 'vite-plugin-checker';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [nodePolyfills(), react(), checker({ typescript: true })],
-  server: {
-    port: 3000,
-  },
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), 'SENTRY_');
+  return {
+    plugins: [
+      nodePolyfills(),
+      react(),
+      checker({ typescript: true }),
+      sentryVitePlugin({
+        org: env.SENTRY_ORG,
+        project: env.SENTRY_PROJECT,
+        authToken: env.SENTRY_AUTH_TOKEN,
+      }),
+    ],
+
+    server: {
+      port: 3000,
+    },
+
+    build: {
+      sourcemap: true,
+    },
+  };
 });
