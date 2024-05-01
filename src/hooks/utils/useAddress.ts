@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getAddress, isAddress } from 'viem';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { couldBeENS } from '../../utils/url';
-import { CacheKeys, CacheExpiry } from './cache/cacheDefaults';
-import { useLocalStorage } from './cache/useLocalStorage';
 
 const useAddress = (addressInput: string | undefined) => {
   const provider = useEthersProvider();
@@ -12,8 +9,6 @@ const useAddress = (addressInput: string | undefined) => {
   const [address, setAddress] = useState<string>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
-  const { setValue, getValue } = useLocalStorage();
-  const { chain } = useNetworkConfig();
 
   useEffect(() => {
     setIsAddressLoading(true);
@@ -49,21 +44,6 @@ const useAddress = (addressInput: string | undefined) => {
       return;
     }
 
-    // check our cache for a potential resolved address (name.eth -> 0x0)
-    const cachedResolvedAddress = getValue(addressInput);
-    if (cachedResolvedAddress) {
-      setAddress(cachedResolvedAddress);
-      setIsValidAddress(true);
-      setIsAddressLoading(false);
-      return;
-    } else if (cachedResolvedAddress === undefined) {
-      // a previous lookup did not resolve
-      setAddress(addressInput);
-      setIsValidAddress(false);
-      setIsAddressLoading(false);
-      return;
-    }
-
     if (!provider) {
       setAddress(addressInput);
       setIsValidAddress(undefined);
@@ -73,19 +53,11 @@ const useAddress = (addressInput: string | undefined) => {
 
     provider
       .resolveName(addressInput)
-      .then((resolvedAddress: any) => {
+      .then(resolvedAddress => {
         if (!resolvedAddress) {
-          // cache an unresolved address as 'undefined' for 20 minutes
-          setValue(CacheKeys.ENS_RESOLVE_PREFIX + addressInput, undefined, 20);
           setAddress(addressInput);
           setIsValidAddress(false);
         } else {
-          // cache a resolved address for a week
-          setValue(
-            CacheKeys.ENS_RESOLVE_PREFIX + addressInput,
-            resolvedAddress,
-            CacheExpiry.ONE_WEEK,
-          );
           setAddress(resolvedAddress);
           setIsValidAddress(true);
         }
@@ -97,7 +69,7 @@ const useAddress = (addressInput: string | undefined) => {
       .finally(() => {
         setIsAddressLoading(false);
       });
-  }, [provider, addressInput, getValue, setValue, chain]);
+  }, [addressInput, provider]);
 
   return { address, isValidAddress, isAddressLoading };
 };
