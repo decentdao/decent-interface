@@ -64,7 +64,7 @@
     "dev": "VITE_APP_GIT_HASH=`git rev-parse HEAD` vite --force",
     "start": "vite start",
     "preview": "vite preview",
-    "build": "VITE_APP_GIT_HASH=`git rev-parse HEAD` vite build",
+    "build": "VITE_APP_GIT_HASH=`git rev-parse HEAD` NODE_OPTIONS=--max-old-space-size=8192 vite build",
     "graphql:build": "graphclient build",
     "graphql:dev-server": "graphclient serve-dev",
     "test": "vitest --dir=test",
