@@ -43,10 +43,10 @@ export const router = (addressPrefix: string) =>
               <button
                 type="button"
                 onClick={() => {
-                  throw new Error('Crashing even harder for Sentry');
+                  throw new Error('Crash 123');
                 }}
               >
-                crash me more
+                Crash 123
               </button>
             </Center>
           ),
