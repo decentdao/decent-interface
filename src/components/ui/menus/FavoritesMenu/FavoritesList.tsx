@@ -1,5 +1,6 @@
 import { Box, MenuList } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Favorite } from './Favorite';
@@ -12,8 +13,7 @@ export function FavoritesList() {
   return (
     <MenuList
       rounded="0.5rem"
-      boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
-      bg="rgba(38, 33, 42, 0.74)"
+      bg={NEUTRAL_2_82_TRANSPARENT}
       border="1px solid"
       borderColor="neutral-3"
     >
@@ -26,7 +26,6 @@ export function FavoritesList() {
             overflowY="scroll"
             sx={{
               '&::-webkit-scrollbar': {
-                background: 'neutral-3',
                 width: '0.5rem',
                 height: '0.5rem',
               },

@@ -20,7 +20,7 @@ export function Favorite({ network, address }: IFavorite) {
   };
 
   return (
-    <Box bg="neutral-3">
+    <Box>
       <MenuItem
         as={Button}
         variant="tertiary"
