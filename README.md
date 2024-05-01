@@ -1,4 +1,4 @@
-# Fractal Interface
+# Decent Interface
 
 ## Local Development
 
@@ -49,7 +49,7 @@ $ docker compose up --build
 
 ### Running Tests
 
-To run all tests in all 3 browser types (Chromium, Firefox, Webkit) use the following command in a new terminal within the `fractal-interface` project:
+To run all tests in all 3 browser types (Chromium, Firefox, Webkit) use the following command in a new terminal within the `decent-interface` project:
 
 ```shell
 $ npx playwright test
@@ -83,7 +83,5 @@ So at any given time, there are effectively three builds out there, and they are
 
 1. dev site
    - url: https://app.dev.fractalframework.xyz
-2. staging site
-   - url: https://app.staging.fractalframework.xyz
-3. prod site
+2. prod site
    - url: https://app.fractalframework.xyz

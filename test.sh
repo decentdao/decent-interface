@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# A script to facilitate booting Docker and the Fractal containers if they are not already running before running Playwright tests.
+# A script to facilitate booting Docker and the Decent containers if they are not already running before running Playwright tests.
 # Usage:
 #   `source test.sh` - to run all Playwright tests, for all browsers
 #   `source test.sh tests/{path to test}` - to run a specific test, for all browsers
@@ -19,18 +19,18 @@ then
   echo "Docker is running!";
 fi
 
-# Step 2: if the Fractal containers aren't running, start those as well
+# Step 2: if the Decent containers aren't running, start those as well
 currentHash=`git rev-parse HEAD`;
 if [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q blockchain)` ]
 then
   docker compose up --build &>/dev/null & disown;
-  echo "Waiting for Fractal containers..."
+  echo "Waiting for Decent containers..."
   while [ -z `docker ps -q --no-trunc | grep $(docker-compose ps -q blockchain)` ]
   do
     sleep 5;
   done
   sleep 60; # TODO containers take almost a full minute after they're up before they're ready ¯\_(ツ)_/¯
-  echo "Fractal containers are running!";
+  echo "Decent containers are running!";
 elif [ "$PLAYWRIGHT_TEST_HASH" != "$currentHash" ]
 then
   # if our git hash has changed, rebuild the containers so we're not testing on an old app version 

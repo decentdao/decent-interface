@@ -142,7 +142,7 @@ function Vote({
             <Flex mr={1}>
               {/* TODO: replace with <SnapshotIcon /> */}
               <Image
-                src="/images/snapshot-icon.svg"
+                src="/images/snapshot-icon-fill.svg"
                 alt="Snapshot icon"
                 mr={1}
               />

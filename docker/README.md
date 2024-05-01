@@ -17,7 +17,7 @@ A pretty simply configured Hardhat node. Setup files are in the directory, `./do
 
 ### Webapp
 
-Runs a dockerized version of `fractal-interface`. Setup files are in the directory, `./docker/webapp`:
+Runs a dockerized version of `decent-interface`. Setup files are in the directory, `./docker/webapp`:
 
 - `Dockerfile` see comments in file. Creation script for webapp Docker container
 - `entrypoint.sh` executes the package.json script to start.

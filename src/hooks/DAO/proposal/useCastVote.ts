@@ -182,7 +182,7 @@ const useCastVote = ({
               type: extendedSnapshotProposal.type,
               privacy: extendedSnapshotProposal.privacy,
               choice: encryptedChoice!,
-              app: 'fractal',
+              app: 'decent',
             });
           } else {
             await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
@@ -190,7 +190,7 @@ const useCastVote = ({
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
               choice,
-              app: 'fractal',
+              app: 'decent',
             });
           }
           toast.dismiss(toastId);
