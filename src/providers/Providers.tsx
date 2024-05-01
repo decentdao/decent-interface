@@ -5,7 +5,7 @@ import { ReactNode } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { WagmiProvider } from 'wagmi';
 import { theme } from '../assets/theme';
-import { ErrorFallback } from '../components/ui/utils/ErrorFallback';
+import { TopErrorFallback } from '../components/ui/utils/TopErrorFallback';
 import graphQLClient from '../graphql';
 import { FractalErrorBoundary } from '../helpers/errorLogging';
 import { AppProvider } from './App/AppProvider';
@@ -19,7 +19,7 @@ export default function Providers({ children }: { children: ReactNode }) {
       theme={theme}
       resetCSS
     >
-      <FractalErrorBoundary fallback={<ErrorFallback />}>
+      <FractalErrorBoundary fallback={<TopErrorFallback />}>
         <ApolloProvider client={graphQLClient}>
           <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>

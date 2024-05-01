@@ -4,7 +4,7 @@ import { Trans, useTranslation } from 'react-i18next';
 import { CONTENT_HEIGHT } from '../../../constants/common';
 import { URL_DISCORD } from '../../../constants/url';
 
-export function ErrorFallback() {
+export function TopErrorFallback() {
   const { t } = useTranslation();
   return (
     <Center h={CONTENT_HEIGHT}>
