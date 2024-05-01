@@ -1,6 +1,5 @@
 import { Box, MenuList } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Favorite } from './Favorite';
@@ -13,7 +12,7 @@ export function FavoritesList() {
   return (
     <MenuList
       rounded="0.5rem"
-      bg={NEUTRAL_2_82_TRANSPARENT}
+      bg="neutral-2"
       border="1px solid"
       borderColor="neutral-3"
     >
