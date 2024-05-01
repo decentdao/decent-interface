@@ -23,8 +23,8 @@ export function ParentLink() {
 
   return (
     <Link
-      color="gold.500"
-      _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
+      color="celery-0"
+      _hover={{ textDecoration: 'none', color: 'celery--6' }}
       to={DAO_ROUTES.dao.relative(addressPrefix, nodeHierarchy.parentAddress)}
       onClick={action.resetDAO}
       marginBottom="1rem"

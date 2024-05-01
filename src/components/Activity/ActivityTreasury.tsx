@@ -1,5 +1,5 @@
-import { Button } from '@chakra-ui/react';
-import { SquareSolidArrowDown, ArrowAngleUp, SquareSolidArrowUp } from '@decent-org/fractal-ui';
+import { Button, Icon } from '@chakra-ui/react';
+import { ArrowUp, ArrowDown, ArrowUpRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -25,11 +25,12 @@ export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
   return (
     <ActivityCard
       Badge={
-        activity.isDeposit ? (
-          <SquareSolidArrowDown color="sand.700" />
-        ) : (
-          <SquareSolidArrowUp color="sand.700" />
-        )
+        <Icon
+          as={activity.isDeposit ? ArrowUp : ArrowDown}
+          w="1.25rem"
+          h="1.25rem"
+          color="neutral-7"
+        />
       }
       description={<ActivityDescription activity={activity} />}
       RightElement={
@@ -39,13 +40,8 @@ export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
               variant="text"
               size="lg"
               px="0px"
-              _hover={{ color: 'gold.500-hover' }}
-              rightIcon={
-                <ArrowAngleUp
-                  boxSize="1.5rem"
-                  fill="currentColor"
-                />
-              }
+              _hover={{ color: 'celery-0' }}
+              rightIcon={<ArrowUpRight />}
             >
               {t('labelEtherscan')}
             </Button>

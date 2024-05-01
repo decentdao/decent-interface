@@ -200,7 +200,7 @@ export default function ProposalTransaction({
                           color="lilac-0"
                           _disabled={{ opacity: 0.4, cursor: 'default' }}
                           sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
-                          disabled={transactionPending}
+                          isDisabled={transactionPending}
                         />
                       ) : (
                         <Box h="2.25rem" />
@@ -252,9 +252,7 @@ export default function ProposalTransaction({
                                       onChange={event => {
                                         event.preventDefault();
                                       }}
-                                      checked={!!parameter.label}
                                       isChecked={!!parameter.label}
-                                      disabled={!parameter.signature || !!parameter.value}
                                       isDisabled={!parameter.signature || !!parameter.value}
                                       bg="black-0"
                                       color="lilac--3"
@@ -313,8 +311,6 @@ export default function ProposalTransaction({
                                       event.preventDefault();
                                     }}
                                     isChecked={!!parameter.value}
-                                    checked={!!parameter.value}
-                                    disabled={!parameter.signature || !!parameter.label}
                                     isDisabled={!parameter.signature || !!parameter.label}
                                     bg="black-0"
                                     color="lilac--3"

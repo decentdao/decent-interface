@@ -27,7 +27,6 @@ export function RadioWithText({
         data-testid={testId}
         type="radio"
         isDisabled={disabled}
-        disabled={disabled}
         bg="black-0"
         color="lilac--3"
         _disabled={{ bg: 'neutral-6', color: 'neutral-5' }}

@@ -207,8 +207,8 @@ export default function ProposalTemplateModal({
         <Switch
           isChecked={showAll}
           onChange={() => setShowAll(!showAll)}
-          colorScheme="gold"
-          bg="grayscale.300"
+          colorScheme="lilac"
+          bg="neutral-7"
           borderRadius="9999px"
         />
       </FormControl>

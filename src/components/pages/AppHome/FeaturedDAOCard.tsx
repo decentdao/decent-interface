@@ -36,29 +36,18 @@ export default function FeaturedDAOCard({
               src={iconSrc}
               alt={title}
             />
-            <Text
-              color="grayscale.100"
-              textStyle="text-lg-mono-bold"
-              paddingStart="1.25rem"
-            >
-              {title}
-            </Text>
+            <Text paddingStart="1.25rem">{title}</Text>
           </HStack>
-          <Text
-            marginBottom="0.5rem"
-            color="grayscale.500"
-          >
-            {desc}
-          </Text>
+          <Text marginBottom="0.5rem">{desc}</Text>
         </Box>
         <Flex>
           <Spacer />
           <Link
             as={RouterLink}
-            color="gold.500"
-            _hover={{ color: 'gold.500-hover' }}
+            color="celery-0"
+            _hover={{ color: 'celery--6' }}
             alignSelf="end"
-            textStyle="text-lg-mono-bold"
+            textStyle="display-xl"
             to={DAO_ROUTES.dao.relative(network, address)}
           >
             {t('featureLink')}

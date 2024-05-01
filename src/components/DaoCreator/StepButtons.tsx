@@ -48,7 +48,6 @@ export function StepButtons({
           data-testid="create-prevButton"
           variant="text"
           isDisabled={transactionPending || isSubmitting}
-          disabled={transactionPending || isSubmitting}
           onClick={() => updateStep(prevStep)}
           color="lilac-0"
           width="50%"
@@ -60,7 +59,6 @@ export function StepButtons({
       <Button
         w={prevStep ? '50%' : 'full'}
         type={buttonType}
-        disabled={transactionPending || isSubmitting || !!errors[step] || isNextDisabled}
         isDisabled={transactionPending || isSubmitting || !!errors[step] || isNextDisabled}
         onClick={() => {
           if (!isLastStep && nextStep) {

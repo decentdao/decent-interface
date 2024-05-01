@@ -2,7 +2,6 @@ import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Assets } from '../../../../components/pages/DAOTreasury/components/Assets';
 import { Transactions } from '../../../../components/pages/DAOTreasury/components/Transactions';
-import { useTreasuryTotalBN } from '../../../../components/pages/DAOTreasury/hooks/useTreasuryTotalBN';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
@@ -15,9 +14,8 @@ export default function Treasury() {
     node: { daoName, daoAddress },
   } = useFractal();
   const { t } = useTranslation('treasury');
-  const treasuryTotal = useTreasuryTotalBN();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const showButton = canUserCreateProposal && treasuryTotal !== 0n;
+  const openSendAsset = useFractalModal(ModalType.SEND_ASSETS);
 
   return (
     <div>
@@ -34,8 +32,8 @@ export default function Treasury() {
             path: '',
           },
         ]}
-        buttonText={showButton ? t('buttonSendAssets') : undefined}
-        buttonClick={useFractalModal(ModalType.SEND_ASSETS)}
+        buttonText={canUserCreateProposal ? t('buttonSendAssets') : undefined}
+        buttonClick={canUserCreateProposal ? openSendAsset : undefined}
         buttonTestId="link-send-assets"
       />
       <Flex
@@ -48,6 +46,7 @@ export default function Treasury() {
           minWidth={{ sm: '100%', xl: '55%' }}
           title={t('titleTransactions')}
           titleTestId="title-transactions"
+          bg="neutral-2"
         >
           <Transactions />
         </TitledInfoBox>

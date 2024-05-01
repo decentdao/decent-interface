@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 interface ProgressBarProps {
   value: number;
-  customValue?: ReactNode;
+  customValueComponent?: ReactNode;
   max?: number;
   unit?: string;
   label: string;
@@ -14,7 +14,7 @@ interface ProgressBarProps {
 }
 export default function ProgressBar({
   value,
-  customValue,
+  customValueComponent,
   max = 100,
   unit = '%',
   label,
@@ -38,8 +38,8 @@ export default function ProgressBar({
         height="24px"
       >
         <Text textStyle="label-small">{label}</Text>
-        {customValue ? (
-          <>{customValue}</>
+        {customValueComponent ? (
+          <>{customValueComponent}</>
         ) : (
           <Text
             textStyle="label-small"
@@ -89,7 +89,7 @@ export function QuorumProgressBar({
         label={t('quorum', { ns: 'common' })}
         bg="neutral-4"
         labelWidth="100%"
-        customValue={
+        customValueComponent={
           totalQuorum ? (
             <Text textStyle="label-small">
               {reachedQuorum >= totalQuorum && (

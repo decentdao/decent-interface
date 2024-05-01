@@ -186,9 +186,7 @@ function Vote({
               }
             }}
             width="100%"
-            checked={index === voteChoice}
             isChecked={index === voteChoice}
-            disabled={disabled}
             isDisabled={disabled}
             bg="black-0"
             color="lilac--3"

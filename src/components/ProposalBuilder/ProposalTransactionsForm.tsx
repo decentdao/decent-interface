@@ -46,7 +46,7 @@ export default function ProposalTransactionsForm(props: ProposalTransactionsForm
           setExpandedIndecies([transactions.length]);
           scrollToBottom();
         }}
-        disabled={pendingTransaction}
+        isDisabled={pendingTransaction}
         icon={Plus}
       >
         {t('labelAddTransaction', { ns: 'proposal' })}

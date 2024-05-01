@@ -96,7 +96,6 @@ export function SignersContainer() {
               variant="secondary"
               size="sm"
               onClick={removeSigner}
-              disabled={removeButtonDisabled}
               isDisabled={removeButtonDisabled}
               iconSpacing="0"
               leftIcon={<MinusCircle size="16" />}
