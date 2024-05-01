@@ -177,14 +177,7 @@ export default function HomePage() {
               <Button>{t('getStartedButton')}</Button>
             </ExternalLink>
           }
-          rightSlot={
-            <Text
-              textStyle="text-xl-mono-bold"
-              color="chocolate.100"
-            >
-              {t('learnCTA')}
-            </Text>
-          }
+          rightSlot={<Text>{t('learnCTA')}</Text>}
         />
         {features && features.length > 0 ? (
           <>
@@ -234,14 +227,7 @@ export default function HomePage() {
           <Box h="2rem"></Box>
         )}
         <CTABox
-          leftSlot={
-            <Text
-              textStyle="text-xl-mono-bold"
-              color="chocolate.100"
-            >
-              {t('readyCTA')}
-            </Text>
-          }
+          leftSlot={<Text>{t('readyCTA')}</Text>}
           rightSlot={
             <Button
               data-testid="home-linkCreate"

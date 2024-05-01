@@ -8,7 +8,7 @@ export function ConfirmUrlModal({ url, close }: { url: string; close: () => void
     <Box>
       <Text
         marginBottom="1rem"
-        color="chocolate.200"
+        color="neutral-7"
       >
         {url}
       </Text>
