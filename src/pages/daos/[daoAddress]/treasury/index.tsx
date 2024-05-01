@@ -15,7 +15,7 @@ export default function Treasury() {
   } = useFractal();
   const { t } = useTranslation('treasury');
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const openSendAsset = useFractalModal(ModalType.SEND_ASSETS)
+  const openSendAsset = useFractalModal(ModalType.SEND_ASSETS);
 
   return (
     <div>
