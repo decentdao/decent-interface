@@ -1,6 +1,10 @@
 export const HEADER_HEIGHT = '4.5rem';
 export const CONTENT_HEIGHT = `calc(100vh - ${HEADER_HEIGHT})`;
+
+// TODO get these into `decent-ui` repo
 export const BACKGROUND_SEMI_TRANSPARENT = '#10041480';
+export const NEUTRAL_2_82_TRANSPARENT = '#221D25D6';
+
 /**
  * Max width for most informational Tooltips. However we don't add max width
  * to some Tooltips that shouldn't wrap no matter how long, such as token amounts.

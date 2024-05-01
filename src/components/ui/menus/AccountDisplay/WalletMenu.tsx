@@ -3,13 +3,14 @@ import { Link, Plugs } from '@phosphor-icons/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
 import { useTranslation } from 'react-i18next';
 import { useDisconnect } from 'wagmi';
+import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import Divider from '../../utils/Divider';
+import { ConnectedWalletMenuItem } from './ConnectedWalletMenuItem';
 import { MenuItemButton } from './MenuItemButton';
-import { MenuItemNetwork } from './MenuItemNetwork';
-import { MenuItemWallet } from './MenuItemWallet';
+import { NetworkSelector } from './NetworkSelector';
 
-export function MenuItems() {
+export function WalletMenu() {
   const {
     readOnly: { user },
   } = useFractal();
@@ -21,18 +22,17 @@ export function MenuItems() {
     <MenuList
       w="16.25rem"
       rounded="0.5rem"
-      boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
-      bg="rgba(38, 33, 42, 0.74)"
+      bg={NEUTRAL_2_82_TRANSPARENT}
       border="1px solid"
       borderColor="neutral-3"
     >
       {user.address && (
         <>
-          <MenuItemWallet />
+          <ConnectedWalletMenuItem />
           <Divider />
         </>
       )}
-      <MenuItemNetwork />
+      <NetworkSelector />
       <Divider />
       {!user.address && (
         <MenuItemButton

@@ -6,7 +6,7 @@ import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import Avatar from '../../page/Header/Avatar';
 
-export function NotConnected() {
+function ConnectWalletButton() {
   const { t } = useTranslation('menu');
   return (
     <Flex
@@ -22,7 +22,7 @@ export function NotConnected() {
   );
 }
 
-export function Connected() {
+function WalletMenuButton() {
   const {
     readOnly: { user },
   } = useFractal();
@@ -54,12 +54,10 @@ export function Connected() {
   );
 }
 
-export function MenuButtonDisplay() {
+export function AccountMenuButton() {
   const {
     readOnly: { user },
   } = useFractal();
-  if (!user.address) {
-    return <NotConnected />;
-  }
-  return <Connected />;
+
+  return user.address ? <WalletMenuButton /> : <ConnectWalletButton />;
 }

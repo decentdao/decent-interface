@@ -1,6 +1,6 @@
 import { Button, Menu, MenuButton } from '@chakra-ui/react';
-import { MenuButtonDisplay } from './MenuButtonDisplay';
-import { MenuItems } from './MenuItems';
+import { AccountMenuButton } from './AccountMenuButton';
+import { WalletMenu } from './WalletMenu';
 
 export function AccountDisplay() {
   return (
@@ -14,9 +14,10 @@ export function AccountDisplay() {
         data-testid="header-accountMenu"
         pr="1rem"
       >
-        <MenuButtonDisplay />
+        <AccountMenuButton />
       </Button>
-      <MenuItems />
+      
+      <WalletMenu />
     </Menu>
   );
 }
