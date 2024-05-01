@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { getAddress, isAddress } from 'viem';
-import { supportsENS } from '../../helpers';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { couldBeENS } from '../../utils/url';
@@ -39,11 +38,6 @@ const useAddress = (addressInput: string | undefined) => {
       setAddress(getAddress(addressInput));
       setIsValidAddress(true);
       setIsAddressLoading(false);
-      return;
-    }
-
-    // only continue with ENS checks if the chain actually supports ENS
-    if (!supportsENS(chain.id)) {
       return;
     }
 

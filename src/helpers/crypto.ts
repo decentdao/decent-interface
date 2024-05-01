@@ -1,7 +1,6 @@
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Contract, utils, Signer } from 'ethers';
 import { zeroAddress } from 'viem';
-import { sepolia, mainnet } from 'wagmi/chains';
 import { ContractConnection } from '../types';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
 
@@ -188,8 +187,4 @@ export const encodeMultiSend = (txs: MetaTransaction[]): string => {
  */
 export function getEventRPC<T>(connection: ContractConnection<T>): T {
   return connection.asProvider;
-}
-
-export function supportsENS(chainId: number): boolean {
-  return chainId === sepolia.id || chainId == mainnet.id || chainId == sepolia.id;
 }
