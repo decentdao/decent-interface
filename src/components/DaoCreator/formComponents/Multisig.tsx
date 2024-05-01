@@ -1,5 +1,6 @@
 import { Box, Flex, Grid, IconButton, NumberInput, NumberInputField } from '@chakra-ui/react';
-import { LabelWrapper, Minus } from '@decent-org/fractal-ui';
+import { LabelWrapper } from '@decent-org/fractal-ui';
+import { MinusCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
@@ -142,12 +143,7 @@ export function Multisig(props: ICreationStepProps) {
                           aria-label="remove allocation"
                           variant="unstyled"
                           minW={16}
-                          icon={
-                            <Minus
-                              color="gold.500"
-                              boxSize="1.5rem"
-                            />
-                          }
+                          icon={<MinusCircle size="24" />}
                           type="button"
                           onClick={async () => {
                             deleteIndex(i);
