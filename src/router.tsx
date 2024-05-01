@@ -43,7 +43,7 @@ export const router = (addressPrefix: string) =>
               <button
                 type="button"
                 onClick={() => {
-                  throw new Error('Crash for Sentry');
+                  throw new Error('Crashing even harder for Sentry');
                 }}
               >
                 crash me
