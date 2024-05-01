@@ -22,6 +22,7 @@ export function OptionsList({
     <>
       {titleKey && (
         <Text
+          mt="0.5rem"
           px="0.5rem"
           marginBottom="0.5rem"
           textStyle="helper-text-small"
