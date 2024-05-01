@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Button, Icon } from '@chakra-ui/react';
+import { Box, Flex, Button, Icon } from '@chakra-ui/react';
 import { Funnel, CaretDown } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,6 @@ import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { useFractal } from '../../providers/App/AppProvider';
 import { SortBy, GovernanceType, FractalProposalState } from '../../types';
 import { OptionMenu } from '../ui/menus/OptionMenu';
-import Divider from '../ui/utils/Divider';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
 
@@ -139,7 +138,10 @@ export default function Proposals() {
           showOptionCount
         >
           <Box>
-            <Flex justifyContent="space-between">
+            <Flex
+              px="0.5rem"
+              justifyContent="space-between"
+            >
               <Button
                 variant="text"
                 paddingLeft={0}
@@ -147,8 +149,14 @@ export default function Proposals() {
                 justifyContent="flex-start"
                 onClick={() => setFilters(allOptions)}
               >
-                <Text color="grayscale.100">{t('selectAll', { ns: 'common' })}</Text>
+                <Button
+                  variant="tertiary"
+                  size="sm"
+                >
+                  {t('selectAll', { ns: 'common' })}
+                </Button>
               </Button>
+              <Box width="1.5rem" />
               <Button
                 variant="text"
                 paddingLeft={0}
@@ -156,12 +164,17 @@ export default function Proposals() {
                 justifyContent="flex-end"
                 onClick={() => setFilters([])}
               >
-                <Text color="grayscale.100">{t('clear', { ns: 'common' })}</Text>
+                <Button
+                  variant="tertiary"
+                  size="sm"
+                >
+                  {t('clear', { ns: 'common' })}
+                </Button>
               </Button>
             </Flex>
-            <Divider my={4} />
           </Box>
         </OptionMenu>
+
         <Sort
           sortBy={sortBy}
           setSortBy={setSortBy}

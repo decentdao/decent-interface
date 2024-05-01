@@ -22,6 +22,7 @@ export function OptionsList({
     <>
       {titleKey && (
         <Text
+          px="0.5rem"
           marginBottom="0.5rem"
           textStyle="helper-text-small"
           color="neutral-7"
@@ -38,7 +39,8 @@ export function OptionsList({
               onClick={clickListener}
               cursor="pointer"
               _hover={{ bg: 'neutral-3', textDecoration: 'none' }}
-              p="0.5rem 1rem"
+              p="0.75rem 0.5rem"
+              borderRadius="0.75rem"
               gap={2}
               closeOnSelect={closeOnSelect}
               data-testid={'optionMenu-' + option.optionKey}
@@ -57,12 +59,7 @@ export function OptionsList({
               )}
               {showOptionCount && <Text as="span">{option.count}</Text>}
             </MenuItem>
-            {options[options.length - 1] !== option && (
-              <Divider
-                marginTop="0.25rem"
-                marginBottom="0.25rem"
-              />
-            )}
+            {options[options.length - 1] !== option && <Divider />}
           </Box>
         );
       })}
