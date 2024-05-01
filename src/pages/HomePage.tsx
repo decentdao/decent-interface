@@ -1,8 +1,10 @@
 import { Center, VStack, Text, Button, Flex, Box } from '@chakra-ui/react';
+
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { mainnet, sepolia } from 'wagmi/chains';
+import { AppFooter } from '../components/pages/AppHome/AppFooter';
 import { CTABox } from '../components/pages/AppHome/CTABox';
 import FeaturedDAOCard from '../components/pages/AppHome/FeaturedDAOCard';
 import ValueProposition from '../components/pages/AppHome/ValueProposition';
@@ -237,6 +239,7 @@ export default function HomePage() {
             </Button>
           }
         />
+        <AppFooter />
       </VStack>
     </Center>
   );
