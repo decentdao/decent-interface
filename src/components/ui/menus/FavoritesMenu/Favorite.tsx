@@ -34,10 +34,12 @@ export function Favorite({ network, address }: IFavorite) {
         justifyContent="flex-start"
         gap={2}
       >
-        {daoRegistryName && <Star
-          size="1.5rem"
-          weight="fill"
-        />}
+        {daoRegistryName && (
+          <Star
+            size="1.5rem"
+            weight="fill"
+          />
+        )}
         {daoRegistryName}
       </MenuItem>
     </Box>
