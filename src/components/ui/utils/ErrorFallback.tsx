@@ -19,7 +19,6 @@ export function ErrorFallback() {
             <Alert />
             <Text
               textStyle="text-2xl-mono-regular"
-              color="grayscale.100"
               marginTop="1.5rem"
               marginBottom="1.5rem"
             >
@@ -29,7 +28,7 @@ export function ErrorFallback() {
               <Trans i18nKey="errorSentryFallbackMessage">
                 placeholder
                 <Link
-                  color="gold.500"
+                  color="celery-0"
                   href={URL_DISCORD}
                   target="_blank"
                 />
