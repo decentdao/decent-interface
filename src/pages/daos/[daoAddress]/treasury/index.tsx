@@ -6,6 +6,7 @@ import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBo
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function Treasury() {
@@ -13,6 +14,8 @@ export default function Treasury() {
     node: { daoName, daoAddress },
   } = useFractal();
   const { t } = useTranslation('treasury');
+  const { canUserCreateProposal } = useCanUserCreateProposal();
+  const openSendAsset = useFractalModal(ModalType.SEND_ASSETS)
 
   return (
     <div>
@@ -29,8 +32,8 @@ export default function Treasury() {
             path: '',
           },
         ]}
-        buttonText={t('buttonSendAssets')}
-        buttonClick={useFractalModal(ModalType.SEND_ASSETS)}
+        buttonText={canUserCreateProposal ? t('buttonSendAssets') : undefined}
+        buttonClick={canUserCreateProposal ? openSendAsset : undefined}
         buttonTestId="link-send-assets"
       />
       <Flex
