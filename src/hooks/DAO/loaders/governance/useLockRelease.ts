@@ -6,7 +6,7 @@ import { DecentGovernanceAction } from '../../../../providers/App/governance/act
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 
 /**
- * @link https://github.com/decent-dao/dcnt/blob/master/contracts/LockRelease.sol
+ * @link https://github.com/decentdao/dcnt/blob/master/contracts/LockRelease.sol
  * This hook is specifically for the LockRelease.sol contract used for the DCNT token.
  */
 export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {

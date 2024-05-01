@@ -1,4 +1,5 @@
-import { AbsoluteCenter, Button, ChakraProvider, Image, Text, VStack } from '@chakra-ui/react';
+import { AbsoluteCenter, Button, ChakraProvider, Icon, Text, VStack } from '@chakra-ui/react';
+import { DecentLogo } from '@decent-org/fractal-ui';
 import { I18nextProvider, useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { theme } from '../assets/theme';
@@ -16,11 +17,10 @@ export default function FourOhFourPage() {
       <I18nextProvider i18n={i18n}>
         <AbsoluteCenter>
           <VStack>
-            <Image
-              width={252}
-              height={48}
-              src="/images/fractal-text-logo.svg"
-              alt="Fractal Logo"
+            <Icon
+              as={DecentLogo}
+              width={20}
+              height={20}
             />
             <Text
               paddingTop="3.25rem"

@@ -1,5 +1,5 @@
 {
-  "name": "fractal-interface",
+  "name": "decent-interface",
   "private": true,
   "dependencies": {
     "@adraffy/ens-normalize": "^1.10.1",
