@@ -1,4 +1,4 @@
-import { Box, HStack, Image, Spacer, Text, Tooltip, Icon, Flex } from '@chakra-ui/react';
+import { Box, HStack, Image, Text, Tooltip, Icon, Flex } from '@chakra-ui/react';
 import { ArrowUp, ArrowDown, ArrowUpRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
@@ -21,7 +21,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
         align="center"
         marginBottom={displayData.isLast ? 0 : '0.5rem'}
       >
-        <HStack w="33%">
+        <HStack w="30%">
           <EtherscanLinkTransaction txHash={displayData.transactionHash}>
             <Icon
               as={displayData.eventType == TokenEventType.WITHDRAW ? ArrowUp : ArrowDown}
@@ -40,7 +40,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             <Text>{useDateTimeDisplay(new Date(displayData.executionDate))}</Text>
           </Box>
         </HStack>
-        <HStack w="33%">
+        <HStack w="30%">
           <Image
             src={displayData.image}
             fallbackSrc={
@@ -74,11 +74,11 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             </Text>
           </Tooltip>
         </HStack>
-        <HStack w="33%">
-          <Spacer />
+        <HStack w="40%" justifyContent="flex-end">
           <DisplayAddress
             data-testid="link-transfer-address"
             address={displayData.transferAddress}
+            textAlign="end"
           />
         </HStack>
       </HStack>

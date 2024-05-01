@@ -1,4 +1,4 @@
-import { Text, Icon } from '@chakra-ui/react';
+import { Text, Icon, LinkProps } from '@chakra-ui/react';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -8,17 +8,19 @@ export function DisplayAddress({
   address,
   truncate,
   children,
+  ...rest
 }: {
   address: string;
   truncate?: boolean | undefined;
   children?: ReactNode;
-}) {
+} & LinkProps) {
   const displayAddress = useDisplayName(address, truncate);
   return (
     <EtherscanLinkAddress
       address={address}
       alignItems="center"
       display="flex"
+      {...rest}
     >
       <Text as="span">{children || displayAddress.displayName}</Text>
       <Icon
