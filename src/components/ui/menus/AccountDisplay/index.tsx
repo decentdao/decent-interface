@@ -16,7 +16,7 @@ export function AccountDisplay() {
       >
         <AccountMenuButton />
       </Button>
-      
+
       <WalletMenu />
     </Menu>
   );

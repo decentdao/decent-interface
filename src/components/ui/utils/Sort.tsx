@@ -71,8 +71,8 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
         borderColor="neutral-3"
         borderRadius="0.5rem"
         bg={NEUTRAL_2_82_TRANSPARENT}
-              backdropFilter="auto"
-              backdropBlur="10px"
+        backdropFilter="auto"
+        backdropBlur="10px"
         minWidth="min-content"
         zIndex={5}
       >
