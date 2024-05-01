@@ -46,7 +46,7 @@ export const router = (addressPrefix: string) =>
                   throw new Error('Crashing even harder for Sentry');
                 }}
               >
-                crash me
+                crash me more
               </button>
             </Center>
           ),
