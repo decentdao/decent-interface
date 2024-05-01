@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react';
-import { useEffect } from 'react';
+import { JSXElementConstructor, ReactElement, useEffect } from 'react';
 import {
   useLocation,
   useNavigationType,
@@ -60,19 +60,21 @@ export function logError(error: any, ...optionalParams: any[]) {
   }
 }
 
-/**
- * Extension of Sentry's ErrorBoundary class which simply logs the error to
- * console as well.
- */
-export class FractalErrorBoundary extends Sentry.ErrorBoundary {
-  componentDidCatch(
-    error: Error & {
-      cause?: Error;
-    },
-    errorInfo: React.ErrorInfo,
-  ) {
-    logError(error, errorInfo);
-    if (process.env.NODE_ENV === 'development') return;
-    super.componentDidCatch(error, errorInfo);
-  }
+export function ErrorBoundary({
+  children,
+  fallback,
+  showDialog,
+}: {
+  children: React.ReactNode;
+  fallback?: ReactElement<any, string | JSXElementConstructor<any>> | Sentry.FallbackRender;
+  showDialog?: boolean;
+}) {
+  return (
+    <Sentry.ErrorBoundary
+      fallback={fallback}
+      showDialog={showDialog}
+    >
+      {children}
+    </Sentry.ErrorBoundary>
+  );
 }

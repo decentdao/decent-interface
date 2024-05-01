@@ -7,7 +7,7 @@ import { WagmiProvider } from 'wagmi';
 import { theme } from '../assets/theme';
 import { TopErrorFallback } from '../components/ui/utils/TopErrorFallback';
 import graphQLClient from '../graphql';
-import { FractalErrorBoundary } from '../helpers/errorLogging';
+import { ErrorBoundary } from '../helpers/errorLogging';
 import { AppProvider } from './App/AppProvider';
 import EthersContextProvider from './Ethers';
 import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
@@ -19,7 +19,10 @@ export default function Providers({ children }: { children: ReactNode }) {
       theme={theme}
       resetCSS
     >
-      <FractalErrorBoundary fallback={<TopErrorFallback />}>
+      <ErrorBoundary
+        fallback={<TopErrorFallback />}
+        showDialog
+      >
         <ApolloProvider client={graphQLClient}>
           <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>
@@ -39,7 +42,7 @@ export default function Providers({ children }: { children: ReactNode }) {
             </QueryClientProvider>
           </WagmiProvider>
         </ApolloProvider>
-      </FractalErrorBoundary>
+      </ErrorBoundary>
     </ChakraProvider>
   );
 }
