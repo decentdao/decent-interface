@@ -11,13 +11,6 @@ import {
  * Initializes error logging.
  */
 function initErrorLogging() {
-  if (
-    process.env.NODE_ENV === 'development' ||
-    import.meta.env.VITE_APP_SENTRY_DSN_URL === undefined
-  ) {
-    return;
-  }
-
   Sentry.init({
     dsn: import.meta.env.VITE_APP_SENTRY_DSN_URL,
     integrations: [
