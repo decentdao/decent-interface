@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Button, Icon } from '@chakra-ui/react';
+import { Box, Flex, Button, Icon } from '@chakra-ui/react';
 import { Funnel, CaretDown } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,7 +6,6 @@ import useProposals from '../../hooks/DAO/proposal/useProposals';
 import { useFractal } from '../../providers/App/AppProvider';
 import { SortBy, GovernanceType, FractalProposalState } from '../../types';
 import { OptionMenu } from '../ui/menus/OptionMenu';
-import Divider from '../ui/utils/Divider';
 import { Sort } from '../ui/utils/Sort';
 import { ProposalsList } from './ProposalsList';
 
@@ -139,29 +138,31 @@ export default function Proposals() {
           showOptionCount
         >
           <Box>
-            <Flex justifyContent="space-between">
+            <Flex
+              px="0.5rem"
+              justifyContent="space-between"
+              gap="1.5rem"
+            >
               <Button
-                variant="text"
-                paddingLeft={0}
-                paddingRight={0}
-                justifyContent="flex-start"
+                variant="tertiary"
+                size="sm"
+                mt="0.5rem"
                 onClick={() => setFilters(allOptions)}
               >
-                <Text color="grayscale.100">{t('selectAll', { ns: 'common' })}</Text>
+                {t('selectAll', { ns: 'common' })}
               </Button>
               <Button
-                variant="text"
-                paddingLeft={0}
-                paddingRight={0}
-                justifyContent="flex-end"
+                variant="tertiary"
+                size="sm"
+                mt="0.5rem"
                 onClick={() => setFilters([])}
               >
-                <Text color="grayscale.100">{t('clear', { ns: 'common' })}</Text>
+                {t('clear', { ns: 'common' })}
               </Button>
             </Flex>
-            <Divider my={4} />
           </Box>
         </OptionMenu>
+
         <Sort
           sortBy={sortBy}
           setSortBy={setSortBy}

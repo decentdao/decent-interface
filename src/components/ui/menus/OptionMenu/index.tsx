@@ -1,6 +1,7 @@
 import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip } from '@chakra-ui/react';
 import { MouseEvent, ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { OptionsList } from './OptionsList';
 import { IOption, IOptionsList } from './types';
 
@@ -53,9 +54,10 @@ export function OptionMenu({
       <MenuList
         borderWidth="1px"
         borderColor="neutral-3"
-        borderRadius="0.5rem"
-        bg="neutral-2" // neutral-2-84 ??
-        p="0.5rem 1rem"
+        borderRadius="0.75rem"
+        bg={NEUTRAL_2_82_TRANSPARENT}
+        backdropFilter="auto"
+        backdropBlur="10px"
         mr={['auto', '1rem']}
         zIndex={1000}
       >

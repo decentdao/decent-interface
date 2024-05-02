@@ -71,6 +71,7 @@
   "labelYearsLeft_one": "{{count}} year left",
   "labelYearsLeft_other": "{{count}} years left",
   "toastClipboardCopy": "Copied to clipboard",
+  "sortTitle": "Sort",
   "newest": "Newest",
   "oldest": "Oldest",
   "filter": "Filter",

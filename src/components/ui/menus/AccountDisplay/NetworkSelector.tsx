@@ -10,7 +10,7 @@ import {
 /**
  * Network display for menu
  */
-export function MenuItemNetwork() {
+export function NetworkSelector() {
   const { t } = useTranslation('menu');
   const { chain } = useNetworkConfig();
   const { switchChain } = useSwitchChain();
@@ -18,7 +18,6 @@ export function MenuItemNetwork() {
   return (
     <Box
       cursor="default"
-      bg="neutral-3"
       pt="0.5rem"
     >
       <Flex

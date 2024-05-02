@@ -1,8 +1,10 @@
-import { Divider, Flex, Icon, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
+import { Flex, Icon, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import { CaretDown } from '@phosphor-icons/react';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
+import { NEUTRAL_2_82_TRANSPARENT } from '../../../constants/common';
 import { SortBy } from '../../../types';
+import Divider from './Divider';
 
 function SortMenuItem({
   labelKey,
@@ -16,7 +18,8 @@ function SortMenuItem({
   const { t } = useTranslation();
   return (
     <MenuItem
-      py="0.5rem"
+      borderRadius="0.5rem"
+      p="0.75rem 0.5rem"
       sx={{
         '&:hover': { bg: 'neutral-3' },
       }}
@@ -67,18 +70,26 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
         borderWidth="1px"
         borderColor="neutral-3"
         borderRadius="0.5rem"
-        bg="neutral-2" // neutral-2-84 ??
-        p="0.5rem 1rem"
+        bg={NEUTRAL_2_82_TRANSPARENT}
+        backdropFilter="auto"
+        backdropBlur="10px"
         minWidth="min-content"
         zIndex={5}
       >
+        <Text
+          px="0.5rem"
+          mt={2}
+          textStyle="helper-text-small"
+          color="neutral-7"
+        >
+          {t('sortTitle')}
+        </Text>
         <SortMenuItem
           labelKey={SortBy.Newest}
           testId="sort-newest"
           onClick={() => setSortBy(SortBy.Newest)}
         />
-        {/* TODO Divider look doesn't quite match */}
-        <Divider color="neutral-3" />
+        <Divider />
         <SortMenuItem
           labelKey={SortBy.Oldest}
           testId="sort-oldest"

@@ -12,8 +12,7 @@ export function FavoritesList() {
   return (
     <MenuList
       rounded="0.5rem"
-      boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
-      bg="rgba(38, 33, 42, 0.74)"
+      bg="neutral-2"
       border="1px solid"
       borderColor="neutral-3"
     >
@@ -26,7 +25,6 @@ export function FavoritesList() {
             overflowY="scroll"
             sx={{
               '&::-webkit-scrollbar': {
-                background: 'neutral-3',
                 width: '0.5rem',
                 height: '0.5rem',
               },

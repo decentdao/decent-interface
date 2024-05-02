@@ -13,7 +13,7 @@ import { DecentLogo } from '@decent-org/fractal-ui';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { HEADER_HEIGHT } from '../../../../constants/common';
+import { HEADER_HEIGHT, NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { BASE_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { AccountDisplay } from '../../menus/AccountDisplay';
@@ -65,7 +65,7 @@ function HeaderLogo() {
             isFullHeight
           >
             <DrawerContent
-              bg="#221D25D6" // TODO get this into `decent-ui` repo
+              bg={NEUTRAL_2_82_TRANSPARENT}
               border="none"
               backdropFilter="auto"
               backdropBlur="10px"

@@ -11,7 +11,7 @@ import Avatar from '../../page/Header/Avatar';
  * Display to show a users connected wallet information
  * Allows for copying of address
  */
-export function MenuItemWallet() {
+export function ConnectedWalletMenuItem() {
   const {
     readOnly: { user },
   } = useFractal();
@@ -29,7 +29,6 @@ export function MenuItemWallet() {
       data-testid="accountMenu-wallet"
       cursor="default"
       pt="0.5rem"
-      bg="neutral-3"
     >
       <Text
         px="0.5rem"

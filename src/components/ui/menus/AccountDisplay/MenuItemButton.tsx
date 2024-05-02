@@ -16,7 +16,7 @@ export function MenuItemButton({
   onClick?: () => void;
 }) {
   return (
-    <Box bg="neutral-3">
+    <Box>
       <MenuItem
         as={Button}
         variant="tertiary"
