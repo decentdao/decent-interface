@@ -1,7 +1,7 @@
 import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
-import { ErrorBoundary } from '../../../../helpers/errorLogging';
+import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
 import Header from '../Header';
 import Navigation from '../Navigation';

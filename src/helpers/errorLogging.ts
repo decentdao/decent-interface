@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react';
-import { JSXElementConstructor, ReactElement, useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   useLocation,
   useNavigationType,
@@ -61,23 +61,4 @@ export function logError(error: any, ...optionalParams: any[]) {
   } else {
     Sentry.captureException(error);
   }
-}
-
-export function ErrorBoundary({
-  children,
-  fallback,
-  showDialog,
-}: {
-  children: React.ReactNode;
-  fallback?: ReactElement<any, string | JSXElementConstructor<any>> | Sentry.FallbackRender;
-  showDialog?: boolean;
-}) {
-  return (
-    <Sentry.ErrorBoundary
-      fallback={fallback}
-      showDialog={showDialog}
-    >
-      {children}
-    </Sentry.ErrorBoundary>
-  );
 }
