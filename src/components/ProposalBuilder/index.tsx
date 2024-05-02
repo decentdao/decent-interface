@@ -171,6 +171,7 @@ export function ProposalBuilder({
                           nonce={formikProps.values.nonce}
                           onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
                           align="end"
+                          renderTrimmed={false}
                         />
                       </Flex>
                     )}
