@@ -51,7 +51,7 @@ export const calculateSafeTransactionHash = (
     domain: { verifyingContract: getAddress(safe.address), chainId },
     types: EIP712_SAFE_TX_TYPE,
     primaryType: 'SafeTx',
-    message: { safeTx },
+    message: { ...safeTx },
   });
 };
 
