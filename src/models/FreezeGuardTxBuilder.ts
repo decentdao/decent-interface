@@ -235,9 +235,9 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     const freezeGuardCallData = MultisigFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
       [
-        encodeAbiParameters(parseAbiParameters('uint256, uint256, address, address, address'), [
-          subDaoData.timelockPeriod, // Timelock Period
-          subDaoData.executionPeriod, // Execution Period
+        encodeAbiParameters(parseAbiParameters('uint32, uint32, address, address, address'), [
+          Number(subDaoData.timelockPeriod), // Timelock Period
+          Number(subDaoData.executionPeriod), // Execution Period
           getAddress(this.parentAddress), // Owner -- Parent DAO
           getAddress(this.freezeVotingAddress), // Freeze Voting
           getAddress(this.safeContract.address), // Safe
@@ -251,8 +251,6 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   }
 
   private setFreezeGuardCallDataAzorius() {
-    const subDaoData = this.daoData as SubDAO;
-
     if (
       !this.parentAddress ||
       !this.freezeVotingAddress ||
@@ -266,12 +264,9 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     const freezeGuardCallData = AzoriusFreezeGuard__factory.createInterface().encodeFunctionData(
       'setUp',
       [
-        encodeAbiParameters(parseAbiParameters('address, address, address, address, uint256'), [
+        encodeAbiParameters(parseAbiParameters('address, address'), [
           getAddress(this.parentAddress), // Owner -- Parent DAO
           getAddress(this.freezeVotingAddress), // Freeze Voting
-          getAddress(this.strategyAddress), // Base Strategy
-          getAddress(this.azoriusAddress), // Azorius
-          subDaoData.executionPeriod, // Execution Period
         ]),
       ],
     );

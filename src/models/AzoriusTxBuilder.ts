@@ -64,7 +64,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     azoriusContracts: AzoriusContracts,
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
     safeContract: GnosisSafeL2,
-    predictedSafeAddress: Address,
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
@@ -377,8 +376,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       throw new Error('Parent token address or predicted token address were not provided');
     }
     const encodedInitTokenData = encodeAbiParameters(
-      parseAbiParameters('address, address, address, uint256'),
+      parseAbiParameters('uint32, address, address, address, uint256'),
       [
+        0, // `deadlineBlock`, 0 means never expires, currently no UI for setting this in the app.
         getAddress(this.safeContract.address),
         getAddress(this.parentTokenAddress),
         getAddress(this.predictedTokenAddress),
