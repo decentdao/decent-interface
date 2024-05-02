@@ -1,4 +1,3 @@
-import { Center } from '@chakra-ui/react';
 import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
@@ -35,21 +34,6 @@ export const router = (addressPrefix: string) =>
         {
           index: true,
           element: <HomePage />,
-        },
-        {
-          path: 'crash',
-          element: (
-            <Center>
-              <button
-                type="button"
-                onClick={() => {
-                  throw new Error('Crash 123');
-                }}
-              >
-                Crash 123
-              </button>
-            </Center>
-          ),
         },
         {
           path: 'create',
