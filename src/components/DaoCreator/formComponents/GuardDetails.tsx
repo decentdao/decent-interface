@@ -255,6 +255,7 @@ function GuardDetails(props: ICreationStepProps) {
             <CustomNonceInput
               nonce={values.multisig.customNonce}
               onChange={handleNonceChange}
+              renderTrimmed={false}
             />
           )}
         </Flex>

@@ -75,7 +75,7 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
       cursor={disabled ? 'not-allowed' : 'default'}
       {...gridContainerProps}
     >
-      <GridItem>
+      <GridItem alignSelf="center">
         {isStringLabel ? (
           <HStack
             pb={1}
