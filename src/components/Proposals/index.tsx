@@ -141,35 +141,23 @@ export default function Proposals() {
             <Flex
               px="0.5rem"
               justifyContent="space-between"
+              gap="1.5rem"
             >
               <Button
-                variant="text"
-                paddingLeft={0}
-                paddingRight={0}
-                justifyContent="flex-start"
+                variant="tertiary"
+                size="sm"
+                mt="0.5rem"
                 onClick={() => setFilters(allOptions)}
               >
-                <Button
-                  variant="tertiary"
-                  size="sm"
-                >
-                  {t('selectAll', { ns: 'common' })}
-                </Button>
+                {t('selectAll', { ns: 'common' })}
               </Button>
-              <Box width="1.5rem" />
               <Button
-                variant="text"
-                paddingLeft={0}
-                paddingRight={0}
-                justifyContent="flex-end"
+                variant="tertiary"
+                size="sm"
+                mt="0.5rem"
                 onClick={() => setFilters([])}
               >
-                <Button
-                  variant="tertiary"
-                  size="sm"
-                >
-                  {t('clear', { ns: 'common' })}
-                </Button>
+                {t('clear', { ns: 'common' })}
               </Button>
             </Flex>
           </Box>
