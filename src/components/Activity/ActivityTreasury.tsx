@@ -38,8 +38,7 @@ export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
           <EtherscanLinkTransaction txHash={activity.transactionHash}>
             <Button
               variant="text"
-              size="lg"
-              px="0px"
+              size="sm"
               _hover={{ color: 'celery-0' }}
               rightIcon={<ArrowUpRight />}
             >
