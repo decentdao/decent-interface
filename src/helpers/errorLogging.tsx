@@ -29,6 +29,9 @@ function initErrorLogging() {
         matchRoutes,
       }),
       Sentry.replayIntegration(),
+      Sentry.feedbackIntegration({
+        colorScheme: 'system',
+      }),
     ],
 
     // Set tracesSampleRate to 1.0 to capture 100%
