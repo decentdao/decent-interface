@@ -55,7 +55,6 @@ initErrorLogging();
  */
 export function logError(error: any, ...optionalParams: any[]) {
   console.error(error, optionalParams);
-  if (process.env.NODE_ENV === 'development') return;
   if (typeof error === 'string' || error instanceof String) {
     Sentry.captureMessage(error + ': ' + optionalParams);
   } else {
