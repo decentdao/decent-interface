@@ -89,7 +89,6 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
           testId="sort-newest"
           onClick={() => setSortBy(SortBy.Newest)}
         />
-        {/* TODO Divider look doesn't quite match */}
         <Divider />
         <SortMenuItem
           labelKey={SortBy.Oldest}

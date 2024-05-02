@@ -1,5 +1,6 @@
-import { Box, Button, MenuItem } from '@chakra-ui/react';
+import { Box, Button, MenuItem, Text } from '@chakra-ui/react';
 import { Star } from '@phosphor-icons/react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
@@ -13,6 +14,8 @@ export function Favorite({ network, address }: IFavorite) {
   const { daoRegistryName } = useDAOName({ address });
   const { action } = useFractal();
   const navigate = useNavigate();
+
+  const { t } = useTranslation('dashboard');
 
   const onClickNav = () => {
     action.resetDAO();
@@ -34,13 +37,14 @@ export function Favorite({ network, address }: IFavorite) {
         justifyContent="flex-start"
         gap={2}
       >
-        {daoRegistryName && (
-          <Star
-            size="1.5rem"
-            weight="fill"
-          />
-        )}
-        {daoRegistryName}
+        <Star
+          size="1.5rem"
+          weight="fill"
+        />
+
+        <Text color={daoRegistryName ? 'white-0' : 'neutral-6'}>
+          {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
+        </Text>
       </MenuItem>
     </Box>
   );
