@@ -1,4 +1,4 @@
-import { VStack, Text, Flex, Box, HStack, Button } from '@chakra-ui/react';
+import { VStack, Text, Flex, Box, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -79,7 +79,7 @@ export default function HomePage() {
   const ctaBaseProps = {
     gap: '3rem',
     px: '1.5rem',
-    w: '50%',
+    w: { base: '100%', lg: 'calc(50% - 0.75rem)' },
     h: '10rem',
     alignItems: 'center',
     overflow: 'hidden',
@@ -95,10 +95,11 @@ export default function HomePage() {
         px="1.5rem"
       >
         <Text textStyle="display-xl">{t('homeTitle')}</Text>
-        <HStack
+        <Flex
           mt="1.5rem"
           gap="1.5rem"
           w="full"
+          flexWrap="wrap"
         >
           <Flex
             {...ctaBaseProps}
@@ -136,7 +137,7 @@ export default function HomePage() {
               <DocsIllustration />
             </Flex>
           </Flex>
-        </HStack>
+        </Flex>
         {featuredDaos && featuredDaos.length > 0 ? (
           <VStack
             alignItems="flex-start"
