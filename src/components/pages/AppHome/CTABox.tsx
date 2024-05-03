@@ -1,7 +1,7 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { ReactNode } from 'react';
 
 export default function CTABox({
   Icon,
