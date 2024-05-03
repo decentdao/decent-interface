@@ -1,18 +1,22 @@
-import { Box, BoxProps, Flex, Link, Spacer, Text } from '@chakra-ui/react';
+import { Flex, Link, Spacer, Text } from '@chakra-ui/react';
 import { Trans, useTranslation } from 'react-i18next';
 import { URL_DECENT } from '../../../constants/url';
 import ExternalLink from '../../ui/links/ExternalLink';
 import Divider from '../../ui/utils/Divider';
 
-export function AppFooter({ ...rest }: BoxProps) {
+export function AppFooter() {
   const { t } = useTranslation('home');
   return (
-    <Box
+    <Flex
       w="100%"
-      {...rest}
+      flexWrap="wrap"
+      alignSelf="flex-end"
     >
       <Divider paddingTop="2.5rem" />
-      <Flex paddingTop="2rem">
+      <Flex
+        paddingTop="2rem"
+        w="full"
+      >
         <Text>
           <Trans
             t={t}
@@ -47,6 +51,6 @@ export function AppFooter({ ...rest }: BoxProps) {
           {import.meta.env.VITE_APP_GIT_HASH.substring(0, 7)}
         </ExternalLink>
       </Flex>
-    </Box>
+    </Flex>
   );
 }

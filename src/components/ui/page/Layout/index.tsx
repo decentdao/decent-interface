@@ -23,7 +23,7 @@ export default function Layout() {
       position="relative"
     >
       <GridItem
-        area={'main'}
+        area="main"
         mx="1.5rem"
       >
         <Container
@@ -36,7 +36,7 @@ export default function Layout() {
           <Outlet />
         </Container>
       </GridItem>
-      <GridItem area={'header'}>
+      <GridItem area="header">
         <Box
           bg="#26212AD6"
           backdropFilter="blur(12px)"
@@ -49,7 +49,7 @@ export default function Layout() {
       </GridItem>
 
       <GridItem
-        area={'nav'}
+        area="nav"
         display="flex"
         flexDirection="column"
         position="fixed"

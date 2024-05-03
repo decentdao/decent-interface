@@ -4,7 +4,7 @@ import { StyledBox } from './StyledBox';
 
 export function ActivityBox({
   children,
-  borderColor,
+  borderColor = 'transparent',
   ...rest
 }: {
   children?: ReactNode;
@@ -12,15 +12,14 @@ export function ActivityBox({
 }) {
   return (
     <SlideFade
-      offsetY={'-100%'}
-      in={true}
+      offsetY="-100%"
+      in
     >
       <StyledBox
         maxHeight="fit-content"
         minHeight="6.25rem"
         border="1px"
-        borderColor={borderColor ? borderColor : 'transparent'}
-        bg="neutral-2"
+        borderColor={borderColor}
         _hover={{ bg: 'neutral-3' }}
         _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
         {...rest}
