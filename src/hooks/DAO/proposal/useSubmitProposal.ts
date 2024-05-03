@@ -139,7 +139,7 @@ export default function useSubmitProposal() {
           const tempData = proposalData.targets.map((target, index) => {
             return {
               to: target,
-              value: BigInt(proposalData.values[index]),
+              value: proposalData.values[index],
               data: proposalData.calldatas[index],
               operation: 0,
             } as MetaTransaction;
