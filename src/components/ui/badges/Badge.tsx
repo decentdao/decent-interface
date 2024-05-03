@@ -1,19 +1,18 @@
 import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
 import { FractalProposalState, DAOState, FractalProposal } from '../../../types';
 import { ProposalCountdown } from '../proposal/ProposalCountdown';
 
 type BadgeType = {
-  [key: string]: {
-    tooltipKey?: string;
-    bg: string;
-    _hover: { bg: string; textColor: string };
-    textColor: string;
-  };
+  tooltipKey?: string;
+  bg: string;
+  _hover: { bg: string; textColor: string };
+  textColor: string;
 };
 
-const BADGE_MAPPING: BadgeType = {
+const BADGE_MAPPING: Record<FractalProposalState | DAOState | 'ownerApproved', BadgeType> = {
   [FractalProposalState.ACTIVE]: {
     tooltipKey: 'stateActiveTip',
     bg: 'lilac-0',
@@ -99,19 +98,21 @@ const BADGE_MAPPING: BadgeType = {
   },
 };
 
-type BadgeSize = { [key: string]: { minWidth: string; height: string } };
-const BADGE_SIZES: BadgeSize = {
+type Size = 'sm' | 'base';
+type BadgeSize = { minWidth: string; height: string };
+const BADGE_SIZES: Record<Size, BadgeSize> = {
   sm: { minWidth: '5rem', height: '1.375rem' },
   base: { minWidth: '5.4375rem', height: '1.375rem' },
 };
 
 interface IBadge {
-  size: 'sm' | 'base';
-  labelKey: FractalProposalState | DAOState | string;
+  size: Size;
+  labelKey: keyof typeof BADGE_MAPPING;
+  children?: ReactNode;
   proposal?: FractalProposal;
 }
 
-export function Badge({ labelKey, size, proposal }: IBadge) {
+export function Badge({ labelKey, children, size, proposal }: IBadge) {
   const { tooltipKey, ...colors } = BADGE_MAPPING[labelKey];
   const sizes = BADGE_SIZES[size];
 
@@ -144,7 +145,7 @@ export function Badge({ labelKey, size, proposal }: IBadge) {
           textStyle="label-base"
           lineHeight="1"
         >
-          {t(labelKey)}
+          {children || t(labelKey)}
         </Text>
         {proposal && (
           <ProposalCountdown

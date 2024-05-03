@@ -29,7 +29,6 @@ export function SettingsSection({
     <Flex gap="1.5rem">
       {/* SETTINGS SECTION CONTENT */}
       <StyledBox
-        bg="neutral-2"
         maxHeight="fit-content"
         minHeight="6.25rem"
         minWidth="65%"
