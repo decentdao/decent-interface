@@ -27,10 +27,7 @@ export const safeData = async (
 ) => {
   const signers = hasAzorius
     ? [multiSendContract.address]
-    : [
-        ...daoData.trustedAddresses.map(trustedAddress => trustedAddress),
-        multiSendContract.address,
-      ];
+    : [...daoData.trustedAddresses, multiSendContract.address];
 
   const createSafeCalldata = encodeFunctionData({
     functionName: 'setup',
