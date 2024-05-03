@@ -73,7 +73,7 @@ export const encodeFunction = (
 
   const abi = [
     {
-      inputs: parseAbiParameters(_functionSignature),
+      inputs: _functionSignature ? parseAbiParameters(_functionSignature) : [],
       name: _functionName,
       type: 'function',
     },
