@@ -4,6 +4,7 @@ import { Formik, FormikProps } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { DAO_ROUTES, BASE_ROUTES } from '../../constants/routes';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
@@ -61,7 +62,11 @@ export default function ProposalBuilder({
       initialValues={initialValues}
       enableReinitialize
       onSubmit={async values => {
-        if (canUserCreateProposal) {
+        if (!canUserCreateProposal) {
+          toast(t('errorNotProposer', { ns: 'common' }));
+        }
+
+        try {
           const proposalData = await prepareProposalData(values);
           if (proposalData) {
             submitProposal({
@@ -73,6 +78,8 @@ export default function ProposalBuilder({
               successCallback,
             });
           }
+        } catch {
+          toast(t('encodingFailedMessage', { ns: 'proposal' }));
         }
       }}
     >
