@@ -186,10 +186,11 @@ export const buildContractCall = (
 };
 
 const encodeMetaTransaction = (tx: MetaTransaction): string => {
-  const data = toHex(toBytes(tx.data));
+  const txDataBytes = toBytes(tx.data);
+  const txDataHex = toHex(txDataBytes);
   const encoded = encodePacked(
     ['uint8', 'address', 'uint256', 'uint256', 'bytes'],
-    [tx.operation, tx.to, BigInt(tx.value), BigInt(data.length), data],
+    [tx.operation, tx.to, BigInt(tx.value), BigInt(txDataBytes.length), txDataHex],
   );
   return encoded.slice(2);
 };
