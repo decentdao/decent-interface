@@ -1,5 +1,4 @@
 import { encodeFunctionData, parseAbiParameters } from 'viem';
-import { logError } from '../helpers/errorLogging';
 import { ActivityTransactionType } from '../types';
 
 function splitIgnoreBrackets(str: string): string[] {
@@ -72,16 +71,11 @@ export const encodeFunction = (
     }
   });
 
-  try {
-    return encodeFunctionData({
-      functionName: _functionName,
-      args: parametersFixedWithBool,
-      abi: parseAbiParameters(_functionSignature || ''),
-    });
-  } catch (e) {
-    logError(e);
-    return;
-  }
+  return encodeFunctionData({
+    functionName: _functionName,
+    args: parametersFixedWithBool,
+    abi: parseAbiParameters(_functionSignature || ''),
+  });
 };
 
 export function isMultiSigTx(transaction: ActivityTransactionType): boolean {
