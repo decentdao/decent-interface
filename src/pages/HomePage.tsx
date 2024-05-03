@@ -75,7 +75,16 @@ export default function HomePage() {
 
   const { chain } = useNetworkConfig();
   const featuredDaos = FEATURED_DAOS.get(chain.id);
-
+  const ctaBaseProps = {
+    gap: '3rem',
+    px: '1.5rem',
+    w: '50%',
+    h: '10rem',
+    alignItems: 'center',
+    overflow: 'hidden',
+    borderRadius: 8,
+    as: Link,
+  };
   return (
     <Flex flexWrap="wrap">
       <VStack
@@ -91,15 +100,8 @@ export default function HomePage() {
           w="full"
         >
           <Flex
-            gap="3rem"
+            {...ctaBaseProps}
             bg="lilac-0"
-            px="1.5rem"
-            w="50%"
-            h="10rem"
-            overflow="hidden"
-            alignItems="center"
-            borderRadius={8}
-            as={Link}
             to={BASE_ROUTES.create}
           >
             <Box width="50%">
@@ -116,15 +118,9 @@ export default function HomePage() {
             </Box>
           </Flex>
           <Flex
-            gap="3rem"
+            {...ctaBaseProps}
+            pr={0}
             bg="neutral-3"
-            pl="1.5rem"
-            w="50%"
-            h="10rem"
-            overflow="hidden"
-            alignItems="center"
-            borderRadius={8}
-            as={Link}
             to={URL_DOCS}
             target="_blank"
           >
