@@ -1,5 +1,5 @@
-import { VStack, Text, Flex, Box, HStack } from '@chakra-ui/react';
-import { useEffect } from 'react';
+import { VStack, Text, Flex, Box, HStack, Button } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { mainnet, sepolia } from 'wagmi/chains';
@@ -61,6 +61,7 @@ const FEATURED_DAOS = new Map<number, FeaturedDAO[]>([
 ]);
 
 export default function HomePage() {
+  const [shownItemsCount, setShownItemsCount] = useState(4);
   const { t } = useTranslation('home');
   const {
     node: { daoAddress },
@@ -149,18 +150,34 @@ export default function HomePage() {
               mt="1.5rem"
               w="full"
             >
-              {featuredDaos.map(dao => (
+              {featuredDaos.slice(0, shownItemsCount).map(dao => (
                 <FeaturedDAOCard
                   key={dao.titleKey}
                   item={dao}
                 />
               ))}
             </Flex>
+            {featuredDaos.length > shownItemsCount && (
+              <Flex
+                w="full"
+                justifyContent="center"
+                mt="2.5rem"
+              >
+                {/* @todo This is supposed to be themed button but it seems like this is only instance of it in the app. Either keep it as is or style properly through Chakra theming */}
+                <Button
+                  variant="tertiary"
+                  borderRadius="625rem"
+                  bg="neutral-3"
+                  py="0.25rem"
+                  px="0.75rem"
+                  onClick={() => setShownItemsCount(prevState => prevState + 4)}
+                >
+                  {t('textMoreDAOs')}
+                </Button>
+              </Flex>
+            )}
           </VStack>
-        ) : (
-          // if there are no features just show padding
-          <Box h="2rem" />
-        )}
+        ) : null}
       </VStack>
       <AppFooter />
     </Flex>
