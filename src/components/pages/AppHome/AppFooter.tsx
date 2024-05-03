@@ -1,55 +1,55 @@
-import { Flex, Link, Spacer, Text } from '@chakra-ui/react';
-import { Trans, useTranslation } from 'react-i18next';
+import { Flex, Text } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
 import { URL_DECENT } from '../../../constants/url';
 import ExternalLink from '../../ui/links/ExternalLink';
-import Divider from '../../ui/utils/Divider';
+import { DecentFooterLogo } from '../../ui/proposal/Icons';
 
 export function AppFooter() {
   const { t } = useTranslation('home');
+  const commitHash = import.meta.env.VITE_APP_GIT_HASH;
   return (
     <Flex
       w="100%"
       flexWrap="wrap"
       alignSelf="flex-end"
+      justifyContent="flex-end"
+      py="1rem"
+      mt="2rem"
     >
-      <Divider paddingTop="2.5rem" />
+      <ExternalLink href="/docs/fractal_audit.pdf">{t('audit')}</ExternalLink>
+      <ExternalLink href={`https://github.com/decentdao/decent-interface/commit/${commitHash}`}>
+        {commitHash.substring(0, 7)}
+      </ExternalLink>
       <Flex
-        paddingTop="2rem"
-        w="full"
+        alignItems="center"
+        ml="2rem"
       >
-        <Text>
-          <Trans
-            t={t}
-            i18nKey="homeAttribution"
-          >
-            Made with 💜 by
-            <Link
-              target="_blank"
-              rel="noreferrer"
-              textDecoration="underline"
-              href={URL_DECENT}
-            >
-              Decent DAO
-            </Link>
-          </Trans>
-        </Text>
-        <Spacer />
-        <ExternalLink href="/docs/fractal_audit.pdf">{t('audit')}</ExternalLink>
         <Text
-          paddingStart="1rem"
-          paddingEnd="1rem"
+          color="neutral-6"
+          as="span"
         >
-          |
+          {t('homeAttribution')}
         </Text>
-        <ExternalLink
-          href={
-            'https://github.com/decentdao/decent-interface/commit/' +
-            import.meta.env.VITE_APP_GIT_HASH
-          }
-          textStyle="text-sm-mono-bold"
+        <Flex
+          as="a"
+          target="_blank"
+          rel="noreferrer"
+          textDecoration="none"
+          href={URL_DECENT}
+          color="neutral-6"
+          ml="0.5rem"
+          alignItems="center"
         >
-          {import.meta.env.VITE_APP_GIT_HASH.substring(0, 7)}
-        </ExternalLink>
+          {/* @todo This should be replaced with proper logo that will include DAO word */}
+          <DecentFooterLogo />
+          <Text
+            display="inline-flex"
+            pt="2px"
+            ml="0.25rem"
+          >
+            DAO
+          </Text>
+        </Flex>
       </Flex>
     </Flex>
   );
