@@ -147,7 +147,7 @@ export const buildSafeAPIPost = async (
   return {
     safe: safeContract.address,
     to: safeTx.to,
-    value: safeTx.value,
+    value: safeTx.value ? safeTx.value.toString() : '0',
     data: safeTx.data,
     operation: safeTx.operation,
     safeTxGas: safeTx.safeTxGas,

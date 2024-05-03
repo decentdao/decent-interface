@@ -14,12 +14,21 @@ export interface MetaTransaction {
   data: Hex;
   operation: number;
 }
-export interface SafePostTransaction extends SafeTransaction {
-  safe: string;
-  contractTransactionHash: string;
-  sender: string;
-  signature: string;
-}
+
+type Modify<T, R> = Omit<T, keyof R> & R;
+
+export interface SafePostTransaction
+  extends Modify<
+    SafeTransaction,
+    {
+      safe: string;
+      contractTransactionHash: string;
+      sender: string;
+      signature: string;
+      value: string;
+    }
+  > {}
+
 export interface SafeTransaction extends MetaTransaction {
   safeTxGas: string | number;
   baseGas: string | number;
