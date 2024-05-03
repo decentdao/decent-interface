@@ -284,7 +284,7 @@ export default function useSubmitProposal() {
         const modules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(modules);
         if (!azoriusModule) {
-          submitMultisigProposal({
+          await submitMultisigProposal({
             proposalData,
             pendingToastMessage,
             successToastMessage,
