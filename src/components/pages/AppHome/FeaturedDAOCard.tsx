@@ -14,21 +14,18 @@ export interface FeaturedDAO {
   votingStrategy: string;
   address: string;
 }
-interface FeaturedDAOCardProps {
-  item: FeaturedDAO;
-}
+
+interface FeaturedDAOCardProps extends FeaturedDAO {}
 
 export default function FeaturedDAOCard({
-  item: {
-    iconSrc,
-    iconBg = 'lilac-0',
-    iconRounded = false,
-    titleKey,
-    network,
-    address,
-    networkName,
-    votingStrategy,
-  },
+  iconSrc,
+  iconBg = 'lilac-0',
+  iconRounded = false,
+  titleKey,
+  network,
+  address,
+  networkName,
+  votingStrategy,
 }: FeaturedDAOCardProps) {
   const { t } = useTranslation('home');
   return (

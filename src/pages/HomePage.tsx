@@ -1,9 +1,9 @@
-import { VStack, Text, Flex, Box, Button } from '@chakra-ui/react';
+import { VStack, Text, Flex, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
 import { mainnet, sepolia } from 'wagmi/chains';
 import { AppFooter } from '../components/pages/AppHome/AppFooter';
+import CTABox from '../components/pages/AppHome/CTABox';
 import FeaturedDAOCard, { FeaturedDAO } from '../components/pages/AppHome/FeaturedDAOCard';
 import { CreateDAOIllustration, DocsIllustration } from '../components/ui/proposal/Icons';
 import { BASE_ROUTES } from '../constants/routes';
@@ -76,16 +76,6 @@ export default function HomePage() {
 
   const { chain } = useNetworkConfig();
   const featuredDaos = FEATURED_DAOS.get(chain.id);
-  const ctaBaseProps = {
-    gap: '3rem',
-    px: '1.5rem',
-    w: { base: '100%', lg: 'calc(50% - 0.75rem)' },
-    h: '10rem',
-    alignItems: 'center',
-    overflow: 'hidden',
-    borderRadius: 8,
-    as: Link,
-  };
   return (
     <Flex flexWrap="wrap">
       <VStack
@@ -101,42 +91,24 @@ export default function HomePage() {
           w="full"
           flexWrap="wrap"
         >
-          <Flex
-            {...ctaBaseProps}
-            bg="lilac-0"
+          <CTABox
+            titleKey="createCTA"
+            descKey="createDesc"
             to={BASE_ROUTES.create}
-          >
-            <Box width="50%">
-              <Text
-                textStyle="display-2xl"
-                color="cosmic-nebula-0"
-              >
-                {t('createCTA')}
-              </Text>
-              <Text color="cosmic-nebula-0">{t('createDesc')}</Text>
-            </Box>
-            <Box width="50%">
-              <CreateDAOIllustration />
-            </Box>
-          </Flex>
-          <Flex
-            {...ctaBaseProps}
-            pr={0}
-            bg="neutral-3"
+            Icon={<CreateDAOIllustration />}
+            titleColor="cosmic-nebula-0"
+            descColor="cosmic-nebula-0"
+            bg="lilac-0"
+          />
+          <CTABox
             to={URL_DOCS}
             target="_blank"
-          >
-            <Box width="50%">
-              <Text textStyle="display-2xl">{t('docsCTA')}</Text>
-              <Text color="neutral-7">{t('docsDesc')}</Text>
-            </Box>
-            <Flex
-              width="50%"
-              justifyContent="flex-end"
-            >
-              <DocsIllustration />
-            </Flex>
-          </Flex>
+            titleKey="docsCTA"
+            descKey="docsDesc"
+            Icon={<DocsIllustration />}
+            pr={0}
+            iconContainerJustify="flex-end"
+          />
         </Flex>
         {featuredDaos && featuredDaos.length > 0 ? (
           <VStack
@@ -154,7 +126,7 @@ export default function HomePage() {
               {featuredDaos.slice(0, shownItemsCount).map(dao => (
                 <FeaturedDAOCard
                   key={dao.titleKey}
-                  item={dao}
+                  {...dao}
                 />
               ))}
             </Flex>
