@@ -97,12 +97,12 @@ export const useGovernanceContracts = () => {
         erc721LinearVotingContractAddress = votingStrategyAddress;
       }
 
-      if (!!votesTokenContractAddress) {
+      if (votesTokenContractAddress || erc721LinearVotingContractAddress) {
         action.dispatch({
           type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
           payload: {
-            ozLinearVotingContractAddress: ozLinearVotingContractAddress,
-            erc721LinearVotingContractAddress: erc721LinearVotingContractAddress,
+            ozLinearVotingContractAddress,
+            erc721LinearVotingContractAddress,
             azoriusContractAddress: azoriusModuleContract.address,
             votesTokenContractAddress,
             underlyingTokenAddress,
