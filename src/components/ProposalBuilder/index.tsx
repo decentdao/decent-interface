@@ -78,7 +78,8 @@ export default function ProposalBuilder({
               successCallback,
             });
           }
-        } catch {
+        } catch (e) {
+          console.error(e);
           toast(t('encodingFailedMessage', { ns: 'proposal' }));
         }
       }}
