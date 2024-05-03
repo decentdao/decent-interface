@@ -48,7 +48,7 @@
   "errorInvalidAddress": "Invalid ETH address",
   "errorNotProposer": "You don't have permissions to create proposal for this Safe.",
   "errorSentryFallbackTitle": "Oops!",
-  "errorSentryFallbackMessage": "An unexpected error occurred. Try reloading or <1>ask the devs to do something</1>.",
+  "errorSentryFallbackMessage": "An unexpected error occurred.",
   "errorGeneral": "An unexpected error occurred. Please try again later.",
   "labelNowishAgo": "just now",
   "labelMinutesAgo": "{{count}} minutes ago",
