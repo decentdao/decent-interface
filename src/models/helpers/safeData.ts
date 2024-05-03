@@ -60,7 +60,7 @@ export const safeData = async (
         [keccak256(encodePacked(['bytes'], [createSafeCalldata])), saltNum],
       ),
     ),
-    bytecode: keccak256(
+    bytecodeHash: keccak256(
       encodePacked(
         ['bytes', 'uint256'],
         [
