@@ -11,7 +11,7 @@ test.skip('Function encoding with no parameters', () => {
     },
   ];
   const encoded = encodeFunctionData({ functionName: 'foo', abi: abiItems, args: [] });
-  expect(encodeFunction('foo')).toEqual(encoded);
+  expect(encodeFunction('foo', '', '')).toEqual(encoded);
 });
 
 test.skip('Function encoding with [boolean=true]', () => {

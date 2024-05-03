@@ -20,8 +20,8 @@ function splitIgnoreBrackets(str: string): string[] {
  */
 export const encodeFunction = (
   _functionName: string,
-  _functionSignature?: string,
-  _parameters?: string,
+  _functionSignature: string,
+  _parameters: string,
 ) => {
   const parameters = !!_parameters
     ? splitIgnoreBrackets(_parameters).map(p => (p = p.trim()))
