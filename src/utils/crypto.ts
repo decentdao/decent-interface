@@ -71,11 +71,20 @@ export const encodeFunction = (
     }
   });
 
-  return encodeFunctionData({
-    functionName: _functionName,
+  const abi = [
+    {
+      inputs: parseAbiParameters(_functionSignature),
+      name: _functionName,
+      type: 'function',
+    },
+  ];
+
+  const functionData = encodeFunctionData({
     args: parametersFixedWithBool,
-    abi: parseAbiParameters(_functionSignature || ''),
+    abi,
   });
+
+  return functionData;
 };
 
 export function isMultiSigTx(transaction: ActivityTransactionType): boolean {
