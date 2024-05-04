@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAddress, isAddress } from 'viem';
+import { Address, getAddress, isAddress } from 'viem';
 import { supportsENS } from '../../helpers';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -10,7 +10,7 @@ import { useLocalStorage } from './cache/useLocalStorage';
 const useAddress = (addressInput: string | undefined) => {
   const provider = useEthersProvider();
 
-  const [address, setAddress] = useState<string>();
+  const [address, setAddress] = useState<Address>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
   const { setValue, getValue } = useLocalStorage();
@@ -29,7 +29,7 @@ const useAddress = (addressInput: string | undefined) => {
     }
 
     if (!addressInput || addressInput.trim() === '') {
-      setAddress(addressInput);
+      setAddress(undefined);
       setIsValidAddress(false);
       setIsAddressLoading(false);
       return;
@@ -49,7 +49,7 @@ const useAddress = (addressInput: string | undefined) => {
 
     // if it can't be an ENS address, validation is false
     if (!couldBeENS(addressInput)) {
-      setAddress(addressInput);
+      setAddress(getAddress(addressInput));
       setIsValidAddress(false);
       setIsAddressLoading(false);
       return;
@@ -64,14 +64,14 @@ const useAddress = (addressInput: string | undefined) => {
       return;
     } else if (cachedResolvedAddress === undefined) {
       // a previous lookup did not resolve
-      setAddress(addressInput);
+      setAddress(getAddress(addressInput));
       setIsValidAddress(false);
       setIsAddressLoading(false);
       return;
     }
 
     if (!provider) {
-      setAddress(addressInput);
+      setAddress(getAddress(addressInput));
       setIsValidAddress(undefined);
       setIsAddressLoading(false);
       return;
@@ -83,7 +83,7 @@ const useAddress = (addressInput: string | undefined) => {
         if (!resolvedAddress) {
           // cache an unresolved address as 'undefined' for 20 minutes
           setValue(CacheKeys.ENS_RESOLVE_PREFIX + addressInput, undefined, 20);
-          setAddress(addressInput);
+          setAddress(getAddress(addressInput));
           setIsValidAddress(false);
         } else {
           // cache a resolved address for a week
@@ -97,7 +97,7 @@ const useAddress = (addressInput: string | undefined) => {
         }
       })
       .catch(() => {
-        setAddress(addressInput);
+        setAddress(getAddress(addressInput));
         setIsValidAddress(false);
       })
       .finally(() => {

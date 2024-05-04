@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isHex, getAddress } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
 import { SafeMultisigDAO, AzoriusGovernance, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { ProposalExecuteData } from '../../types/daoProposal';
@@ -38,18 +39,24 @@ export const useCreateSubDAOProposal = () => {
 
         const { safeTx, predictedSafeAddress } = builtSafeTx;
 
+        const encodedMultisend = multiSendContract.asProvider.interface.encodeFunctionData(
+          'multiSend',
+          [safeTx],
+        );
+        const encodedDeclareSubDAO =
+          fractalRegistryContract.asProvider.interface.encodeFunctionData('declareSubDAO', [
+            predictedSafeAddress,
+          ]);
+        if (!isHex(encodedMultisend) || !isHex(encodedDeclareSubDAO)) {
+          return;
+        }
         const proposalData: ProposalExecuteData = {
           targets: [
-            multiSendContract.asProvider.address,
-            fractalRegistryContract.asProvider.address,
+            getAddress(multiSendContract.asProvider.address),
+            getAddress(fractalRegistryContract.asProvider.address),
           ],
           values: [0n, 0n],
-          calldatas: [
-            multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [safeTx]),
-            fractalRegistryContract.asProvider.interface.encodeFunctionData('declareSubDAO', [
-              predictedSafeAddress,
-            ]),
-          ],
+          calldatas: [encodedMultisend, encodedDeclareSubDAO],
           metaData: {
             title: t('Create a sub-Safe', { ns: 'proposalMetadata' }),
             description: '',

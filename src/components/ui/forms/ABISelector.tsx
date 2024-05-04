@@ -21,11 +21,10 @@ interface IABISelector {
    * @param target - target contract address or ENS name
    */
   target?: string;
-  onFetchABI?: (abi: ABIElement[], success: boolean) => void;
   onChange: (value: ABIElement) => void;
 }
 
-export default function ABISelector({ target, onChange, onFetchABI }: IABISelector) {
+export default function ABISelector({ target, onChange }: IABISelector) {
   const [abi, setABI] = useState<ABIElement[]>([]);
   const { etherscanAPIUrl } = useNetworkConfig();
   const { t } = useTranslation('common');
@@ -49,26 +48,14 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
           if (responseData.status === '1') {
             const fetchedABI = JSON.parse(responseData.result);
             setABI(fetchedABI);
-            if (onFetchABI) {
-              onFetchABI(fetchedABI, true);
-            }
-          } else {
-            if (onFetchABI) {
-              setABI([]);
-              onFetchABI([], false);
-            }
           }
         } catch (e) {
           logError(e, 'Error fetching ABI for smart contract');
-          if (onFetchABI) {
-            setABI([]);
-            onFetchABI([], false);
-          }
         }
       }
     };
     loadABI();
-  }, [target, ensAddress, etherscanAPIUrl, onFetchABI, client]);
+  }, [target, ensAddress, etherscanAPIUrl, client]);
 
   /*
    * This makes component quite scoped to proposal / proposal template creation
@@ -108,7 +95,8 @@ export default function ABISelector({ target, onChange, onFetchABI }: IABISelect
           const selectedFunction = abiFunctions.find(
             (abiFunction: ABIElement) => abiFunction.name === e.target.value,
           );
-          onChange(selectedFunction!);
+          if (!selectedFunction) throw new Error('Issue finding selected function');
+          onChange(selectedFunction);
         }}
         sx={{ '> option, > optgroup': { bg: 'input.background' } }}
       >
