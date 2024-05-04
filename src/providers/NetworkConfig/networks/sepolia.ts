@@ -25,9 +25,11 @@ import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
+const chain = sepolia;
+
 export const sepoliaConfig: NetworkConfig = {
   order: 30,
-  chain: sepolia,
+  chain,
   rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.etherscan.io',
@@ -53,20 +55,20 @@ export const sepoliaConfig: NetworkConfig = {
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
-      network: sepolia.id.toString(),
-    })?.networkAddresses[sepolia.id.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: sepolia.id.toString() })
-      ?.networkAddresses[sepolia.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
+    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: chain.id.toString() })
+      ?.networkAddresses[chain.id.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
-      network: sepolia.id.toString(),
-    })?.networkAddresses[sepolia.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
-      network: sepolia.id.toString(),
-    })?.networkAddresses[sepolia.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },

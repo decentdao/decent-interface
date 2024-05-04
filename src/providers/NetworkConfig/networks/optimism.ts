@@ -25,9 +25,11 @@ import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
+const chain = optimism;
+
 export const optimismConfig: NetworkConfig = {
   order: 15,
-  chain: optimism,
+  chain,
   rpcEndpoint: `https://opt-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_OPTIMISM_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-optimism.safe.global',
   etherscanBaseURL: 'https://optimistic.etherscan.io/',
@@ -53,20 +55,20 @@ export const optimismConfig: NetworkConfig = {
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
-      network: optimism.id.toString(),
-    })?.networkAddresses[optimism.id.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: optimism.id.toString() })
-      ?.networkAddresses[optimism.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
+    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: chain.id.toString() })
+      ?.networkAddresses[chain.id.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
-      network: optimism.id.toString(),
-    })?.networkAddresses[optimism.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
-      network: optimism.id.toString(),
-    })?.networkAddresses[optimism.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },

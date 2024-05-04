@@ -25,9 +25,11 @@ import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
+const chain = polygon;
+
 export const polygonConfig: NetworkConfig = {
   order: 20,
-  chain: polygon,
+  chain,
   rpcEndpoint: `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_POLYGON_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',
@@ -53,20 +55,20 @@ export const polygonConfig: NetworkConfig = {
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
-      network: polygon.id.toString(),
-    })?.networkAddresses[polygon.id.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: polygon.id.toString() })
-      ?.networkAddresses[polygon.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
+    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: chain.id.toString() })
+      ?.networkAddresses[chain.id.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
-      network: polygon.id.toString(),
-    })?.networkAddresses[polygon.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
-      network: polygon.id.toString(),
-    })?.networkAddresses[polygon.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
