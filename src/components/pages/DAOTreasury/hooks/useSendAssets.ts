@@ -1,7 +1,7 @@
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20Abi, encodeFunctionData, Address } from 'viem';
+import { encodeAbiParameters, parseAbiParameters, isAddress, getAddress, Hex } from 'viem';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
@@ -14,7 +14,7 @@ const useSendAssets = ({
 }: {
   transferAmount: bigint;
   asset: SafeBalanceUsdResponse;
-  destinationAddress: Address;
+  destinationAddress: string | undefined;
   nonce: number | undefined;
 }) => {
   const { submitProposal } = useSubmitProposal();
@@ -30,18 +30,22 @@ const useSendAssets = ({
       asset?.token?.symbol,
     );
 
-    const calldatas = [
-      encodeFunctionData({
-        abi: erc20Abi,
-        functionName: 'transfer',
-        args: [destinationAddress, transferAmount],
-      }),
-    ];
+    let calldatas = ['0x' as Hex];
+    let target =
+      isEth && destinationAddress ? getAddress(destinationAddress) : getAddress(asset.tokenAddress);
+    if (!isEth && destinationAddress && isAddress(destinationAddress)) {
+      calldatas = [
+        encodeAbiParameters(parseAbiParameters('address, uint256'), [
+          destinationAddress,
+          transferAmount,
+        ]),
+      ];
+    }
 
     const proposalData: ProposalExecuteData = {
-      targets: [isEth ? destinationAddress : asset.tokenAddress],
+      targets: [target],
       values: [isEth ? transferAmount : 0n],
-      calldatas: isEth ? ['0x'] : calldatas,
+      calldatas,
       metaData: {
         title: t(isEth ? 'Send Eth' : 'Send Token', { ns: 'proposalMetadata' }),
         description: description,

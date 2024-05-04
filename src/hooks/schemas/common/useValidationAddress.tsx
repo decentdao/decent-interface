@@ -1,7 +1,7 @@
+import { Signer } from 'ethers';
 import { useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PublicClient, isAddress } from 'viem';
-import { normalize } from 'viem/ens';
+import { isAddress } from 'viem';
 import { AnyObject } from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AddressValidationMap, ERC721TokenConfig } from '../../../types';

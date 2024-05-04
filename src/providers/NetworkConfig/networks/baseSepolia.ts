@@ -55,7 +55,7 @@ export const baseSepoliaConfig: NetworkConfig = {
   subgraph: {
     space: 71032,
     slug: 'fractal-base-sepolia',
-    version: 'v0.0.1',
+    version: 'v0.0.2',
   },
   contracts: {
     fractalAzoriusMasterCopy: { address: Azorius.address as Address, abi: Azorius.abi as Abi },

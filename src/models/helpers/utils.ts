@@ -1,4 +1,6 @@
-import { getCreate2Address, keccak256, encodePacked, Hash, Address } from 'viem';
+// Prefix and postfix strings come from Zodiac contracts
+import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
+import { Address, Hash, getCreate2Address, keccak256, encodePacked } from 'viem';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
 import { NetworkContract } from '../../types/network';
@@ -8,9 +10,7 @@ import { NetworkContract } from '../../types/network';
  * @link https://github.com/gnosis/module-factory/blob/master/contracts/ModuleProxyFactory.sol
  */
 export const generateContractByteCodeLinear = (contractAddress: Address): Hash => {
-  return ('0x602d8060093d393df3363d3d373d3d3d363d73' +
-    contractAddress +
-    '5af43d82803e903d91602b57fd5bf3') as Hash;
+  return `0x602d8060093d393df3363d3d373d3d3d363d73${contractAddress.slice(2)}5af43d82803e903d91602b57fd5bf3`;
 };
 
 export const generateSalt = (calldata: Hash, saltNum: bigint): Hash => {
@@ -32,8 +32,8 @@ export const generatePredictedModuleAddress = (
 };
 
 export const buildDeployZodiacModuleTx = (
-  zodiacProxyFactoryContract: NetworkContract,
-  params: string[],
+  zodiacProxyFactoryContract: ModuleProxyFactory,
+  params: (string | bigint)[],
 ): SafeTransaction => {
   return buildContractCall(zodiacProxyFactoryContract, 'deployModule', params, 0, false);
 };

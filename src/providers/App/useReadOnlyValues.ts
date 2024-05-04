@@ -1,6 +1,7 @@
+import { ERC721__factory } from '@fractal-framework/fractal-contracts';
 import { useEffect, useState, useCallback } from 'react';
-import { getAddress, erc721Abi, getContract, Address } from 'viem';
-import useContractClient from '../../hooks/utils/useContractClient';
+import { getAddress } from 'viem';
+import useSignerOrProvider from '../../hooks/utils/useSignerOrProvider';
 import {
   ReadOnlyState,
   Fractal,

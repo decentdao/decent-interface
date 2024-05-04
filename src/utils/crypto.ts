@@ -1,5 +1,4 @@
 import { encodeFunctionData, parseAbiParameters } from 'viem';
-import { logError } from '../helpers/errorLogging';
 import { ActivityTransactionType } from '../types';
 
 function splitIgnoreBrackets(str: string): string[] {
@@ -11,7 +10,6 @@ function splitIgnoreBrackets(str: string): string[] {
     .map(match => (match = match.trim()));
   return result;
 }
-
 /**
  * Encodes a smart contract function, given the provided function name, input types, and input values.
  *
@@ -22,13 +20,12 @@ function splitIgnoreBrackets(str: string): string[] {
  */
 export const encodeFunction = (
   _functionName: string,
-  _functionSignature?: string,
-  _parameters?: string,
+  _functionSignature: string,
+  _parameters: string,
 ) => {
   const parameters = !!_parameters
     ? splitIgnoreBrackets(_parameters).map(p => (p = p.trim()))
     : undefined;
-
   const parametersFixed: Array<string | string[]> | undefined = parameters ? [] : undefined;
   let tupleIndex: number | undefined = undefined;
   parameters?.forEach((param, i) => {
@@ -53,7 +50,6 @@ export const encodeFunction = (
       parametersFixed!!.push(param);
     }
   });
-
   const boolify = (parameter: string) => {
     if (['false'].includes(parameter.toLowerCase())) {
       return false;
@@ -63,7 +59,6 @@ export const encodeFunction = (
       return parameter;
     }
   };
-
   const parametersFixedWithBool = parametersFixed?.map(parameter => {
     if (typeof parameter === 'string') {
       return boolify(parameter);
@@ -76,16 +71,20 @@ export const encodeFunction = (
     }
   });
 
-  try {
-    return encodeFunctionData({
-      functionName: _functionName,
-      args: parametersFixedWithBool,
-      abi: parseAbiParameters(_functionSignature || ''),
-    });
-  } catch (e) {
-    logError(e);
-    return;
-  }
+  const abi = [
+    {
+      inputs: _functionSignature ? parseAbiParameters(_functionSignature) : [],
+      name: _functionName,
+      type: 'function',
+    },
+  ];
+
+  const functionData = encodeFunctionData({
+    args: parametersFixedWithBool,
+    abi,
+  });
+
+  return functionData;
 };
 
 export function isMultiSigTx(transaction: ActivityTransactionType): boolean {

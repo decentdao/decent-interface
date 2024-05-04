@@ -47,9 +47,9 @@ function AddSignerModal({
   const onSubmit = useCallback(
     async (values: { address: Address; threshold: number; nonce: number }) => {
       const { address, nonce, threshold } = values;
-      let validAddress: Address | null = address;
-      if (couldBeENS(validAddress) && publicClient) {
-        validAddress = await publicClient.getEnsAddress({ name: address });
+      let validAddress = address;
+      if (couldBeENS(validAddress) && signer) {
+        validAddress = await signer.resolveName(address);
       }
 
       await addSigner({

@@ -31,10 +31,26 @@ import {
   KeyValuePairs,
   ERC721FreezeVoting,
   LinearERC721Voting,
-  MultiSend,
-  SafeL2,
-  ContractConnection,
-} from './contract';
+} from '@fractal-framework/fractal-contracts';
+import {
+  SafeMultisigTransactionWithTransfersResponse,
+  SafeModuleTransactionWithTransfersResponse,
+  EthereumTxWithTransfersResponse,
+  SafeBalanceUsdResponse,
+  SafeCollectibleResponse,
+} from '@safe-global/safe-service-client';
+import { Dispatch } from 'react';
+import { Address } from 'viem';
+import { MultiSend } from '../assets/typechain-types/usul';
+import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
+import { FractalGovernanceActions } from '../providers/App/governance/action';
+import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
+import { FractalGuardActions } from '../providers/App/guard/action';
+import { GuardContractActions } from '../providers/App/guardContracts/action';
+import { TreasuryActions } from '../providers/App/treasury/action';
+import { NodeActions } from './../providers/App/node/action';
+import { ERC721TokenData, VotesTokenData } from './account';
+import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
@@ -133,13 +149,13 @@ export enum FractalProposalState {
   /**
    * The proposal is pending, meaning it has been created, but voting has not yet begun. This state
    * has nothing to do with Fractal, and is used for Snapshot proposals only, which appear if the
-   * DAO's snapshotURL is set.
+   * DAO's snapshotENS is set.
    */
   PENDING = 'statePending',
 
   /**
    * The proposal is closed, and no longer able to be signed. This state has nothing to do with Fractal,
-   * and is used for Snapshot proposals only, which appear if the DAO's snapshotURL is set.
+   * and is used for Snapshot proposals only, which appear if the DAO's snapshotENS is set.
    */
   CLOSED = 'stateClosed',
 }
@@ -233,13 +249,13 @@ export interface FractalGovernanceContracts {
 
 export interface FractalNode {
   daoName: string | null;
-  daoAddress: string | null;
+  daoAddress: Address | null;
   safe: SafeInfoResponseWithGuard | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
   isModulesLoaded?: boolean;
   isHierarchyLoaded?: boolean;
-  daoSnapshotURL?: string;
+  daoSnapshotENS?: string;
   proposalTemplatesHash?: string;
 }
 
@@ -330,7 +346,7 @@ export enum VotingStrategyType {
 }
 
 export interface NodeHierarchy {
-  parentAddress: string | null;
+  parentAddress: Address | null;
   childNodes: Node[];
 }
 

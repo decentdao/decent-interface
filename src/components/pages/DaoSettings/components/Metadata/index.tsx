@@ -1,8 +1,9 @@
+import { ens_normalize } from '@adraffy/ens-normalize';
 import { Flex, Text, Button, Divider } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { encodeFunctionData } from 'viem';
+import { isHex, getAddress } from 'viem';
 import { SettingsSection } from '..';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -11,13 +12,12 @@ import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayNam
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../../../types';
-import { couldBeENS } from '../../../../../utils/url';
 import { InputComponent } from '../../../../ui/forms/InputComponent';
 
 export default function MetadataContainer() {
   const [name, setName] = useState('');
-  const [snapshotURL, setSnapshotURL] = useState('');
-  const [snapshotURLValid, setSnapshotURLValid] = useState<boolean>();
+  const [snapshotENS, setSnapshotENS] = useState('');
+  const [snapshotENSValid, setSnapshotENSValid] = useState<boolean>();
   const { t } = useTranslation(['settings', 'proposalMetadata']);
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ export default function MetadataContainer() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
     baseContracts,
-    node: { daoName, daoSnapshotURL, daoAddress, safe },
+    node: { daoName, daoSnapshotENS, daoAddress, safe },
     readOnly: {
       user: { votingWeight },
     },
@@ -37,19 +37,19 @@ export default function MetadataContainer() {
       setName(daoName);
     }
 
-    if (daoSnapshotURL) {
-      setSnapshotURL(daoSnapshotURL);
+    if (daoSnapshotENS) {
+      setSnapshotENS(daoSnapshotENS);
     }
-  }, [daoName, daoSnapshotURL, daoAddress]);
+  }, [daoName, daoSnapshotENS, daoAddress]);
 
-  const handleSnapshotURLChange: ChangeEventHandler<HTMLInputElement> = e => {
-    if (couldBeENS(e.target.value)) {
-      setSnapshotURLValid(true);
-    } else {
-      setSnapshotURLValid(false);
+  const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
+    setSnapshotENS(e.target.value);
+    try {
+      ens_normalize(e.target.value);
+      setSnapshotENSValid(true);
+    } catch (error) {
+      setSnapshotENSValid(false);
     }
-
-    setSnapshotURL(e.target.value);
   };
 
   const userHasVotingWeight = votingWeight > 0n;
@@ -65,21 +65,22 @@ export default function MetadataContainer() {
       return;
     }
     const { fractalRegistryContract } = baseContracts;
+    const encodedUpdateDAOName = fractalRegistryContract.asProvider.interface.encodeFunctionData(
+      'updateDAOName',
+      [name],
+    );
+    if (!isHex(encodedUpdateDAOName)) {
+      return;
+    }
     const proposalData: ProposalExecuteData = {
       metaData: {
         title: t('Update Safe Name', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },
-      targets: [fractalRegistryContract.asPublic.address],
+      targets: [getAddress(fractalRegistryContract.asProvider.address)],
       values: [0n],
-      calldatas: [
-        encodeFunctionData({
-          functionName: 'updateDAOName',
-          abi: fractalRegistryContract.asPublic.abi,
-          args: [name],
-        }),
-      ],
+      calldatas: [encodedUpdateDAOName],
     };
 
     submitProposal({
@@ -92,26 +93,27 @@ export default function MetadataContainer() {
     });
   };
 
-  const handleEditDAOSnapshotURL = () => {
+  const handleEditDAOSnapshotENS = () => {
     if (!baseContracts) {
       return;
     }
     const { keyValuePairsContract } = baseContracts;
+    const encodedUpdateValues = keyValuePairsContract.asProvider.interface.encodeFunctionData(
+      'updateValues',
+      [['snapshotENS'], [snapshotENS]],
+    );
+    if (!isHex(encodedUpdateValues)) {
+      return;
+    }
     const proposalData: ProposalExecuteData = {
       metaData: {
         title: t('Update Snapshot Space', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },
-      targets: [keyValuePairsContract.asPublic.address],
+      targets: [getAddress(keyValuePairsContract.asProvider.address)],
       values: [0n],
-      calldatas: [
-        encodeFunctionData({
-          functionName: 'updateValues',
-          abi: keyValuePairsContract.asPublic.abi,
-          args: [['snapshotURL'], [snapshotURL]],
-        }),
-      ],
+      calldatas: [encodedUpdateValues],
     };
 
     submitProposal({
@@ -188,9 +190,9 @@ export default function MetadataContainer() {
         {canUserCreateProposal && (
           <Button
             variant="tertiary"
-            disabled={!snapshotURLValid || snapshotURL === daoSnapshotURL}
-            isDisabled={!snapshotURLValid || snapshotURL === daoSnapshotURL}
-            onClick={handleEditDAOSnapshotURL}
+            disabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
+            isDisabled={!snapshotENSValid || snapshotENS === daoSnapshotENS}
+            onClick={handleEditDAOSnapshotENS}
           >
             {t('proposeChanges')}
           </Button>
@@ -198,11 +200,11 @@ export default function MetadataContainer() {
       </Flex>
       <InputComponent
         isRequired={false}
-        onChange={handleSnapshotURLChange}
-        value={snapshotURL}
+        onChange={handleSnapshotENSChange}
+        value={snapshotENS}
         disabled={!userHasVotingWeight}
-        placeholder="httpsexample.eth"
-        testId="daoSettings.snapshotUrl"
+        placeholder="example.eth"
+        testId="daoSettings.snapshotENS"
         gridContainerProps={{
           display: 'inline-flex',
           flexWrap: 'wrap',

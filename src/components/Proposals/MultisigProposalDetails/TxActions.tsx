@@ -2,8 +2,8 @@ import { Box, Button, Text, Flex } from '@chakra-ui/react';
 import { Check } from '@decent-org/fractal-ui';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { useTranslation } from 'react-i18next';
-import { Address, getContract } from 'viem';
-import { useSignTypedData } from 'wagmi';
+import { Hex, getAddress, isHex } from 'viem';
+import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -43,13 +43,17 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   if (!multisigTx) return null;
 
   const signTransaction = async () => {
-    if (!walletClient || !safe?.address) {
+    if (!signerOrProvider || !safe?.address || (multisigTx.data && !isHex(multisigTx.data))) {
       return;
     }
     try {
       const safeTx = buildSafeTransaction({
         ...multisigTx,
-      } as any); // Have to use any because type of multisigTx based on SafeMultisigTransactionWithTransfersResponse where to is string but here we need Address type
+        to: getAddress(multisigTx.to),
+        value: BigInt(multisigTx.value),
+        data: multisigTx.data as Hex | undefined,
+        operation: multisigTx.operation as 0 | 1,
+      });
 
       asyncRequest({
         asyncFunc: () =>
@@ -80,18 +84,27 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         !multisigTx.confirmations ||
         !baseContracts ||
         !freezeGuardContractAddress ||
-        !walletClient
+        (multisigTx.data && !isHex(multisigTx.data))
       ) {
         return;
       }
       const safeTx = buildSafeTransaction({
         ...multisigTx,
-      } as any);
+        to: getAddress(multisigTx.to),
+        value: BigInt(multisigTx.value),
+        data: multisigTx.data as Hex | undefined,
+        operation: multisigTx.operation as 0 | 1,
+      });
       const signatures = buildSignatureBytes(
-        multisigTx.confirmations.map(confirmation => ({
-          signer: confirmation.owner as Address,
-          data: confirmation.signature,
-        })),
+        multisigTx.confirmations.map(confirmation => {
+          if (!isHex(confirmation.signature)) {
+            throw new Error('Confirmation signature is malfunctioned');
+          }
+          return {
+            signer: confirmation.owner,
+            data: confirmation.signature,
+          };
+        }),
       );
       const freezeGuard = getContract({
         address: freezeGuardContractAddress,
@@ -128,7 +141,12 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const executeTransaction = async () => {
     try {
-      if (!walletClient || !safe?.address || !multisigTx.confirmations || !baseContracts) {
+      if (
+        !signerOrProvider ||
+        !safe?.address ||
+        !multisigTx.confirmations ||
+        (multisigTx.data && !isHex(multisigTx.data))
+      ) {
         return;
       }
       const safeContract = getContract({
@@ -138,12 +156,21 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       });
       const safeTx = buildSafeTransaction({
         ...multisigTx,
-      } as any);
+        to: getAddress(multisigTx.to),
+        value: BigInt(multisigTx.value),
+        data: multisigTx.data as Hex | undefined,
+        operation: multisigTx.operation as 0 | 1,
+      });
       const signatures = buildSignatureBytes(
-        multisigTx.confirmations.map(confirmation => ({
-          signer: confirmation.owner as Address,
-          data: confirmation.signature,
-        })),
+        multisigTx.confirmations.map(confirmation => {
+          if (!isHex(confirmation.signature)) {
+            throw new Error('Confirmation signature is malfunctioned');
+          }
+          return {
+            signer: confirmation.owner,
+            data: confirmation.signature,
+          };
+        }),
       );
       contractCall({
         contractFn: () =>

@@ -2,7 +2,8 @@ import { Box, Flex, Input, RadioGroup, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20Abi, isAddress, zeroAddress, getContract } from 'viem';
+import { erc20Abi, getContract, isAddress, zeroAddress } from 'viem';
+import { usePublicClient, useWalletClient } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useContractClient from '../../../hooks/utils/useContractClient';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
@@ -40,12 +41,17 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   } = props;
 
   const { t } = useTranslation('daoCreate');
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
 
   const { checkVotesToken } = usePrepareFormData();
   const [isImportedVotesToken, setIsImportedVotesToken] = useState(false);
   const { walletOrPublicClient } = useContractClient();
 
   const updateImportFields = useCallback(async () => {
+    if (!publicClient) {
+      return;
+    }
     const importAddress = values.erc20Token.tokenImportAddress;
     const importError = errors?.erc20Token?.tokenImportAddress;
     if (importAddress && !importError && isAddress(importAddress) && !!walletOrPublicClient) {
@@ -53,15 +59,17 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
       const tokenContract = getContract({
         address: importAddress,
         abi: erc20Abi,
-        client: walletOrPublicClient,
+        client: { wallet: walletClient, public: publicClient },
       });
-      const name: string = await tokenContract.read.name();
-      const symbol: string = await tokenContract.read.symbol();
-      const decimals: number = await tokenContract.read.decimals();
+      const [name, symbol, decimals] = await Promise.all([
+        tokenContract.read.name(),
+        tokenContract.read.symbol(),
+        tokenContract.read.decimals(),
+      ]);
 
       // @dev: this turns "total supply" into the human-readable form (without decimals)
-      const totalSupply: number = Number(
-        (await tokenContract.read.totalSupply()) / BigInt(10 ** decimals),
+      const totalSupply = Number(
+        (await tokenContract.read.totalSupply()) / 10n ** BigInt(decimals),
       );
 
       setFieldValue(
@@ -88,7 +96,8 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     checkVotesToken,
     errors?.erc20Token?.tokenImportAddress,
     setFieldValue,
-    walletOrPublicClient,
+    publicClient,
+    walletClient,
     values.erc20Token.tokenImportAddress,
   ]);
 

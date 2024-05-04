@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Address, getContract } from 'viem';
+import { getAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalModuleData, FractalModuleType } from '../../../types';
 import useContractClient from '../../utils/useContractClient';
@@ -13,7 +13,9 @@ export const useFractalModules = () => {
     async (_moduleAddresses: Address[]) => {
       const modules = await Promise.all(
         _moduleAddresses.map(async moduleAddress => {
-          const masterCopyData = await getZodiacModuleProxyMasterCopyData(moduleAddress);
+          const masterCopyData = await getZodiacModuleProxyMasterCopyData(
+            getAddress(moduleAddress),
+          );
 
           let safeModule: FractalModuleData;
 

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { parseAbiParameters, decodeAbiParameters, Hash } from 'viem';
+import { decodeAbiParameters, parseAbiParameters, Hash } from 'viem';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import {
   FractalProposal,

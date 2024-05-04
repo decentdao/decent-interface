@@ -4,7 +4,7 @@ import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
@@ -21,6 +21,9 @@ import { BigIntInput } from '../forms/BigIntInput';
 export function WrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
+  const signer = useEthersSigner();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
   const { address: account } = useAccount();
   const [userBalance, setUserBalance] = useState<BigIntValuePair>({
     value: '',
@@ -52,17 +55,17 @@ export function WrapToken({ close }: { close: () => void }) {
     if (
       !azoriusGovernance.votesToken?.decimals ||
       !azoriusGovernance.votesToken.underlyingTokenData ||
-      !walletClient ||
+      !publicClient ||
       !account
     )
       return;
     const baseTokenContract = getContract({
       address: azoriusGovernance.votesToken.underlyingTokenData.address,
       abi: erc20Abi,
-      client: walletClient,
+      client: { wallet: walletClient, public: publicClient },
     });
     try {
-      const [balance, decimals]: [bigint, number] = await Promise.all([
+      const [balance, decimals] = await Promise.all([
         baseTokenContract.read.balanceOf([account]),
         baseTokenContract.read.decimals(),
       ]);
@@ -79,7 +82,7 @@ export function WrapToken({ close }: { close: () => void }) {
       logError(e);
       return;
     }
-  }, [account, azoriusGovernance.votesToken, walletClient]);
+  }, [account, azoriusGovernance.votesToken, publicClient, walletClient]);
 
   useEffect(() => {
     getUserUnderlyingTokenBalance();

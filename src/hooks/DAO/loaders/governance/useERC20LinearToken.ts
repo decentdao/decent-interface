@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { Address, getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { getAddress } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import useSafeContracts from '../../../safe/useSafeContracts';
@@ -34,10 +33,10 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       (await tokenContract.read.totalSupply([])) as bigint,
     ]);
     const tokenData = {
-      name: tokenName as string,
-      symbol: tokenSymbol as string,
-      decimals: Number(tokenDecimals as bigint),
-      address: votesTokenContractAddress,
+      name: tokenName,
+      symbol: tokenSymbol,
+      decimals: tokenDecimals,
+      address: getAddress(votesTokenContractAddress),
       totalSupply,
     };
     isTokenLoaded.current = true;
@@ -59,9 +58,9 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       tokenContract.read.symbol([]),
     ]);
     const tokenData = {
-      name: tokenName as string,
-      symbol: tokenSymbol as string,
-      address: underlyingTokenAddress,
+      name: tokenName,
+      symbol: tokenSymbol,
+      address: getAddress(underlyingTokenAddress),
     };
     action.dispatch({
       type: FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA,

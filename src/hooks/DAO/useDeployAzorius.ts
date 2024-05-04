@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Address, encodeFunctionData } from 'viem';
+import { getAddress, isHex } from 'viem';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -100,21 +100,25 @@ const useDeployAzorius = () => {
         owners: safe.owners,
       });
 
+      const encodedAddOwnerWithThreshold =
+        safeSingletonContract.asProvider.interface.encodeFunctionData('addOwnerWithThreshold', [
+          multiSendContract.asProvider.address,
+          1,
+        ]);
+      if (!isHex(encodedAddOwnerWithThreshold)) {
+        return;
+      }
+      const encodedMultisend = multiSendContract.asProvider.interface.encodeFunctionData(
+        'multiSend',
+        [safeTx],
+      );
+      if (!isHex(encodedMultisend)) {
+        return;
+      }
       const proposalData: ProposalExecuteData = {
-        targets: [daoAddress as Address, multiSendContract.asPublic.address],
+        targets: [daoAddress, getAddress(multiSendContract.asProvider.address)],
         values: [0n, 0n],
-        calldatas: [
-          encodeFunctionData({
-            abi: safeSingletonContract.asPublic.abi,
-            functionName: 'addOwnerWithThreshold',
-            args: [multiSendContract.asPublic.address, 1],
-          }),
-          encodeFunctionData({
-            abi: multiSendContract.asPublic.abi,
-            functionName: 'multiSend',
-            args: [safeTx],
-          }),
-        ],
+        calldatas: [encodedAddOwnerWithThreshold, encodedMultisend],
         metaData: {
           title: '',
           description: '',

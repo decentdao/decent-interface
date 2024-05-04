@@ -1,5 +1,6 @@
+import { Azorius } from '@fractal-framework/fractal-contracts';
 import { useState, useCallback, useEffect } from 'react';
-import { Address, getAddress, getContract } from 'viem';
+import { getAddress } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { Azorius, GovernanceType } from '../../types';

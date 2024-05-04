@@ -1,8 +1,8 @@
 import { Flex, Box, Text } from '@chakra-ui/react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc721Abi, isAddress, getContract } from 'viem';
-import useContractClient from '../../../hooks/utils/useContractClient';
+import { erc721Abi, getContract, isAddress } from 'viem';
+import { usePublicClient, useWalletClient } from 'wagmi';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { BigIntValuePair, ERC721TokenConfig } from '../../../types';
 import { BarLoader } from '../../ui/loaders/BarLoader';
@@ -24,22 +24,25 @@ export default function AzoriusNFTDetail({
   const [tokenDetails, setTokenDetails] = useState<TokenDetails>();
   const { t } = useTranslation('daoCreate');
 
+  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+
   const { displayName } = useDisplayName(tokenDetails?.address, true);
   const { walletOrPublicClient } = useContractClient();
 
   useEffect(() => {
     const loadNFTDetails = async () => {
-      if (hasAddressError) {
+      if (hasAddressError || !publicClient) {
         return;
       }
 
       setLoading(true);
       try {
-        if (nft.tokenAddress && isAddress(nft.tokenAddress) && !!walletOrPublicClient) {
+        if (nft.tokenAddress && isAddress(nft.tokenAddress)) {
           const tokenContract = getContract({
             address: nft.tokenAddress,
             abi: erc721Abi,
-            client: walletOrPublicClient,
+            client: { public: publicClient, wallet: walletClient },
           });
           const [name, symbol] = await Promise.all([
             tokenContract.read.name(),
@@ -60,7 +63,7 @@ export default function AzoriusNFTDetail({
     };
 
     loadNFTDetails();
-  }, [hasAddressError, nft, walletOrPublicClient]);
+  }, [hasAddressError, nft, publicClient, walletClient]);
 
   const showData = !!tokenDetails && !loading && !hasAddressError;
 

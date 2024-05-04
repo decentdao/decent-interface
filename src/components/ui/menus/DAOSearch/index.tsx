@@ -16,7 +16,7 @@ import { SearchDisplay } from './SearchDisplay';
 
 export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { t } = useTranslation(['dashboard']);
-  const [localInput, setLocalInput] = useState('');
+  const [localInput, setLocalInput] = useState<string>();
   const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
   const { onClose } = useDisclosure(); // popover close function
   const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -27,8 +27,8 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
 
   const resetSearch = () => {
     onClose();
-    setLocalInput('');
-    setSearchString('');
+    setLocalInput(undefined);
+    setSearchString(undefined);
   };
 
   useOutsideClick({

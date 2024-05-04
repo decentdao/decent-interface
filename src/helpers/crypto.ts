@@ -1,14 +1,17 @@
+import { TypedDataSigner } from '@ethersproject/abstract-signer';
+import { Contract, Signer } from 'ethers';
 import {
-  zeroAddress,
-  WalletClient,
-  toBytes,
-  encodePacked,
-  toHex,
-  encodeFunctionData,
   hashTypedData,
   Hash,
+  zeroAddress,
+  toHex,
+  toBytes,
+  encodePacked,
+  getAddress,
   Address,
+  bytesToBigInt,
   Hex,
+  isHex,
 } from 'viem';
 import { sepolia, mainnet } from 'wagmi/chains';
 import { SafeL2 } from '../types';
@@ -16,7 +19,7 @@ import { NetworkContract } from '../types/network';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
 
 export interface SafeSignature {
-  signer: Address;
+  signer: string;
   data: Hex;
 }
 
@@ -37,10 +40,7 @@ export const EIP712_SAFE_TX_TYPE = {
 };
 
 export function getRandomBytes() {
-  const bytes8Array = new Uint8Array(32);
-  self.crypto.getRandomValues(bytes8Array);
-  const bytes32 = '0x' + bytes8Array.reduce((o, v) => o + ('00' + v.toString(16)).slice(-2), '');
-  return bytes32;
+  return bytesToBigInt(self.crypto.getRandomValues(new Uint8Array(32)));
 }
 
 export const calculateSafeTransactionHash = (
@@ -49,18 +49,18 @@ export const calculateSafeTransactionHash = (
   chainId: number,
 ): string => {
   return hashTypedData({
-    domain: { verifyingContract: safe.address, chainId },
+    domain: { verifyingContract: getAddress(safe.address), chainId },
     types: EIP712_SAFE_TX_TYPE,
     primaryType: 'SafeTx',
     message: { ...safeTx },
   });
 };
 
-export const buildSignatureBytes = (signatures: SafeSignature[]): Hash => {
+export const buildSignatureBytes = (signatures: SafeSignature[]) => {
   signatures.sort((left, right) =>
     left.signer.toLowerCase().localeCompare(right.signer.toLowerCase()),
   );
-  let signatureBytes = '0x';
+  let signatureBytes: Hash = '0x';
   for (const sig of signatures) {
     signatureBytes += sig.data.slice(2);
   }
@@ -69,9 +69,9 @@ export const buildSignatureBytes = (signatures: SafeSignature[]): Hash => {
 
 export const buildSafeTransaction = (template: {
   to: Address;
-  value?: bigint | number | string;
-  data?: string;
-  operation?: number;
+  value?: bigint;
+  data?: Hex;
+  operation?: 0 | 1;
   safeTxGas?: number | string;
   baseGas?: number | string;
   gasPrice?: number | string;
@@ -81,7 +81,7 @@ export const buildSafeTransaction = (template: {
 }): SafeTransaction => {
   return {
     to: template.to,
-    value: template.value?.toString() || 0,
+    value: template.value || 0n,
     data: template.data || '0x',
     operation: template.operation || 0,
     safeTxGas: template.safeTxGas || 0,
@@ -99,21 +99,20 @@ export const safeSignTypedData = async (
   safeTx: SafeTransaction,
   chainId?: number,
 ): Promise<SafeSignature> => {
-  if (!chainId && !client.account?.address)
-    throw Error('Wallet client required to retrieve chainId');
-  const cid = chainId || (await client.getChainId());
-  const signerAddress = client.account!.address;
+  if (!chainId && !signer.provider) throw Error('Provider required to retrieve chainId');
+  const cid = chainId || (await signer.provider!.getNetwork()).chainId;
+  const signerAddress = await signer.getAddress();
+  const signedData = await signer._signTypedData(
+    { verifyingContract: safe.address, chainId: cid },
+    EIP712_SAFE_TX_TYPE,
+    safeTx,
+  );
+  if (!isHex(signedData)) {
+    throw new Error('Error signing message');
+  }
   return {
     signer: signerAddress,
-    data: await client.signTypedData({
-      types: EIP712_SAFE_TX_TYPE,
-      primaryType: 'SafeTx',
-      domain: { verifyingContract: safe.address, chainId: cid },
-      account: client.account!,
-      message: {
-        ...safeTx,
-      },
-    }),
+    data: signedData,
   };
 };
 
@@ -123,9 +122,9 @@ export const buildSafeAPIPost = async (
   chainId: number,
   template: {
     to: Address;
-    value?: bigint | number | string;
+    value?: bigint;
     data?: Hex;
-    operation?: number;
+    operation?: 0 | 1;
     safeTxGas?: number | string;
     baseGas?: number | string;
     gasPrice?: number | string;
@@ -142,7 +141,7 @@ export const buildSafeAPIPost = async (
   return {
     safe: safeContract.address,
     to: safeTx.to,
-    value: safeTx.value,
+    value: safeTx.value ? safeTx.value.toString() : '0',
     data: safeTx.data,
     operation: safeTx.operation,
     safeTxGas: safeTx.safeTxGas,
@@ -165,14 +164,14 @@ export const buildContractCall = (
   delegateCall?: boolean,
   overrides?: Partial<SafeTransaction>,
 ): SafeTransaction => {
-  // @todo: Typing this encodeFunctionData is a nightmare. Figure this out, future me :(
-  const data = encodeFunctionData({ abi: contract.abi, functionName, args: params } as any);
+  const data = contract.interface.encodeFunctionData(method, params);
+  const operation: 0 | 1 = delegateCall ? 1 : 0;
   return buildSafeTransaction(
     Object.assign(
       {
         to: contract.address,
         data,
-        operation: delegateCall ? 1 : 0,
+        operation,
         nonce,
       },
       overrides,
@@ -181,10 +180,11 @@ export const buildContractCall = (
 };
 
 const encodeMetaTransaction = (tx: MetaTransaction): string => {
-  const data = toHex(toBytes(tx.data));
+  const txDataBytes = toBytes(tx.data);
+  const txDataHex = toHex(txDataBytes);
   const encoded = encodePacked(
     ['uint8', 'address', 'uint256', 'uint256', 'bytes'],
-    [tx.operation, tx.to, BigInt(tx.value), BigInt(data.length), data],
+    [tx.operation, tx.to, BigInt(tx.value), BigInt(txDataBytes.length), txDataHex],
   );
   return encoded.slice(2);
 };

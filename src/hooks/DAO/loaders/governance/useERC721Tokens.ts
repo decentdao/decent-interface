@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Address, erc721Abi, getContract, zeroAddress } from 'viem';
+import { getAddress, zeroAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -49,7 +49,7 @@ export default function useERC721Tokens() {
         } catch (e) {
           logError('Error while getting ERC721 total supply');
         }
-        return { name, symbol, address, votingWeight, totalSupply };
+        return { name, symbol, address: getAddress(address), votingWeight, totalSupply };
       }),
     );
 

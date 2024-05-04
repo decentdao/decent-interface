@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address } from 'viem';
 import * as Yup from 'yup';
 import { DAOEssentials, BigIntValuePair, TokenCreationType, GovernanceType } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
@@ -34,7 +35,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         essentials: Yup.object().shape({
           daoName: Yup.string().required(),
           governance: Yup.string().required(),
-          snapshotURL: Yup.string(),
+          snapshotENS: Yup.string(),
         }),
         multisig: Yup.object().when('essentials', {
           is: ({ governance }: DAOEssentials) => governance === GovernanceType.MULTISIG,
@@ -43,7 +44,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
               trustedAddresses: Yup.array()
                 .min(1)
                 .when({
-                  is: (array: string[]) => array && array.length > 1,
+                  is: (array: Address[]) => array && array.length > 1,
                   then: schema =>
                     schema.of(
                       Yup.string().test(addressValidationTest).test(uniqueAddressValidationTest),

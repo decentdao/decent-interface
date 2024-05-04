@@ -1,5 +1,5 @@
 import { Dispatch, useEffect, useMemo } from 'react';
-import { getContract } from 'viem';
+import { getAddress, Hex } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import {
@@ -39,7 +39,12 @@ const proposalCreatedEventListener = (
       return;
     }
 
-    const typedTransactions = transactions.map(t => ({ ...t, value: t.value.toBigInt() }));
+    const typedTransactions = transactions.map(t => ({
+      ...t,
+      to: getAddress(t.to),
+      data: t.data as Hex, // @todo - this type casting shouldn't be needed after migrating to getContract
+      value: t.value.toBigInt(),
+    }));
 
     const metaDataEvent: CreateProposalMetadata = JSON.parse(metadata);
     const proposalData = {

@@ -1,16 +1,9 @@
 import axios from 'axios';
+import { Signer } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import {
-  Address,
-  encodeAbiParameters,
-  getContract,
-  parseAbiParameters,
-  isAddress,
-  getAddress,
-  encodeFunctionData,
-} from 'viem';
-import { useWalletClient } from 'wagmi';
+import { isAddress, getAddress, encodeAbiParameters, parseAbiParameters, isHex } from 'viem';
+import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -128,22 +121,22 @@ export default function useSubmitProposal() {
           const { Hash } = await ipfsClient.add(JSON.stringify(metaData));
           proposalData.targets.push(ADDRESS_MULTISIG_METADATA);
           proposalData.values.push(0n);
-          proposalData.calldatas.push(encodeAbiParameters(parseAbiParameters('string'), [Hash]));
+          proposalData.calldatas.push(encodeAbiParameters(parseAbiParameters(['string']), [Hash]));
         }
 
-        let to, value, data, operation;
+        let to, value, data, operation: 0 | 1;
         if (proposalData.targets.length > 1) {
           if (!multiSendContract) {
             toast.dismiss(toastId);
             return;
           }
           // Need to wrap it in Multisend function call
-          to = multiSendContract.asPublic.address;
+          to = getAddress(multiSendContract.asProvider.address);
 
           const tempData = proposalData.targets.map((target, index) => {
             return {
               to: target,
-              value: BigInt(proposalData.values[index]),
+              value: proposalData.values[index],
               data: proposalData.calldatas[index],
               operation: 0,
             } as MetaTransaction;
@@ -154,6 +147,10 @@ export default function useSubmitProposal() {
             args: [encodeMultiSend(tempData)],
             abi: multiSendContract.asPublic.abi,
           });
+
+          if (!isHex(data)) {
+            throw new Error('Error encoding proposal data');
+          }
 
           operation = 1;
         } else {
@@ -283,7 +280,7 @@ export default function useSubmitProposal() {
         const modules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(modules);
         if (!azoriusModule) {
-          submitMultisigProposal({
+          await submitMultisigProposal({
             proposalData,
             pendingToastMessage,
             successToastMessage,

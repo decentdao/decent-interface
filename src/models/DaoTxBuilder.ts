@@ -28,7 +28,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private txBuilderFactory: TxBuilderFactory;
 
   // Safe Data
-  private predictedSafeAddress: Address;
   private readonly createSafeTx: SafeTransaction;
   private readonly safeContract: SafeL2;
   private readonly parentStrategyType?: VotingStrategyType;
@@ -46,7 +45,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
     azoriusContracts: AzoriusContracts | undefined,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
     saltNum: bigint,
-    predictedSafeAddress: Address,
     createSafeTx: SafeTransaction,
     safeContract: SafeL2,
     txBuilderFactory: TxBuilderFactory,
@@ -64,7 +62,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
       parentTokenAddress,
     );
 
-    this.predictedSafeAddress = predictedSafeAddress;
     this.createSafeTx = createSafeTx;
     this.safeContract = safeContract;
     this.txBuilderFactory = txBuilderFactory;
@@ -92,7 +89,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     }
 
     if (shouldSetSnapshot) {
-      this.internalTxs = this.internalTxs.concat(this.buildUpdateDAOSnapshotURLTx());
+      this.internalTxs = this.internalTxs.concat(this.buildUpdateDAOSnapshotENSTx());
     }
 
     this.internalTxs = this.internalTxs.concat(
@@ -171,7 +168,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     const multisigTxBuilder = this.txBuilderFactory.createMultiSigTxBuilder();
 
     this.internalTxs.push(this.buildUpdateDAONameTx());
-    this.internalTxs.push(this.buildUpdateDAOSnapshotURLTx());
+    this.internalTxs.push(this.buildUpdateDAOSnapshotENSTx());
 
     // subDAO case, add freeze guard
     if (this.parentAddress) {
@@ -239,11 +236,11 @@ export class DaoTxBuilder extends BaseTxBuilder {
     );
   }
 
-  private buildUpdateDAOSnapshotURLTx(): SafeTransaction {
+  private buildUpdateDAOSnapshotENSTx(): SafeTransaction {
     return buildContractCall(
       this.baseContracts.keyValuePairsContract,
       'updateValues',
-      [['snapshotURL'], [this.daoData.snapshotURL]],
+      [['snapshotENS'], [this.daoData.snapshotENS]],
       0,
       false,
     );

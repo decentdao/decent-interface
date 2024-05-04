@@ -13,7 +13,7 @@ export const initialState: CreatorFormState = {
   essentials: {
     daoName: '',
     governance: GovernanceType.MULTISIG,
-    snapshotURL: '',
+    snapshotENS: '',
   },
   erc20Token: {
     tokenCreationType: TokenCreationType.NEW,

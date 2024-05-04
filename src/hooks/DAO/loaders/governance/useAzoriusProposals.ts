@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { PublicClient, getContract } from 'viem';
+import { Hex, getAddress } from 'viem';
+import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { CreateProposalMetadata, VotingStrategyType, DecodedTransaction } from '../../../../types';
 import { AzoriusProposal } from '../../../../types/daoProposal';
@@ -146,25 +147,45 @@ export const useAzoriusProposals = () => {
       for (const proposalCreatedEvent of proposalCreatedEvents) {
         let proposalData;
         if (proposalCreatedEvent.args.metadata) {
-          const metadataEvent: CreateProposalMetadata = JSON.parse(
-            proposalCreatedEvent.args.metadata,
-          );
-          const decodedTransactions = await decodeTransactions(
-            _decode,
-            proposalCreatedEvent.args.transactions.map(t => ({ ...t, value: t.value.toBigInt() })),
-          );
-          proposalData = {
-            metaData: {
-              title: metadataEvent.title,
-              description: metadataEvent.description,
-              documentationUrl: metadataEvent.documentationUrl,
-            },
-            transactions: proposalCreatedEvent.args.transactions.map(t => ({
-              ...t,
-              value: t.value.toBigInt(),
-            })),
-            decodedTransactions,
-          };
+          try {
+            const metadataEvent: CreateProposalMetadata = JSON.parse(
+              proposalCreatedEvent.args.metadata,
+            );
+
+            const decodedTransactions = await decodeTransactions(
+              _decode,
+              proposalCreatedEvent.args.transactions.map(t => ({
+                ...t,
+                to: getAddress(t.to),
+                // @dev if decodeTransactions worked - we can be certain that this is Hex so type casting should be save.
+                // Also this will change and this casting won't be needed after migrating to viem's getContract
+                data: t.data as Hex,
+                value: t.value.toBigInt(),
+              })),
+            );
+            proposalData = {
+              metaData: {
+                title: metadataEvent.title,
+                description: metadataEvent.description,
+                documentationUrl: metadataEvent.documentationUrl,
+              },
+              transactions: proposalCreatedEvent.args.transactions.map(t => ({
+                ...t,
+                to: getAddress(t.to),
+                value: t.value.toBigInt(),
+                data: t.data as Hex, // @dev Same here
+              })),
+              decodedTransactions,
+            };
+          } catch {
+            logError(
+              'Unable to parse proposal metadata or transactions.',
+              'metadata:',
+              proposalCreatedEvent.args.metadata,
+              'transactions:',
+              proposalCreatedEvent.args.transactions,
+            );
+          }
         }
 
         const proposal = await mapProposalCreatedEventToProposal(

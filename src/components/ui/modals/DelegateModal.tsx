@@ -2,7 +2,7 @@ import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress, Address, getContract } from 'viem';
+import { zeroAddress, getAddress } from 'viem';
 import * as Yup from 'yup';
 import LockReleaseABI from '../../../assets/abi/LockRelease';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
@@ -38,10 +38,10 @@ export function DelegateModal({ close }: { close: Function }) {
   const { addressValidationTest } = useValidationAddress();
 
   const submitDelegation = async (values: { address: string }) => {
-    if (!votesTokenContractAddress || !baseContracts || !publicClient || !walletClient) return;
-    let validAddress: Address | null = values.address as Address;
-    if (couldBeENS(validAddress)) {
-      validAddress = await publicClient.getEnsAddress({ name: values.address });
+    if (!votesTokenContractAddress || !baseContracts) return;
+    let validAddress = values.address;
+    if (couldBeENS(validAddress) && signer) {
+      validAddress = getAddress(await signer.resolveName(values.address));
     }
     const votingTokenContract = getContract({
       abi: baseContracts.votesERC20WrapperMasterCopyContract.asPublic.abi,
@@ -62,7 +62,7 @@ export function DelegateModal({ close }: { close: Function }) {
     if (!lockReleaseContractAddress || !baseContracts || !publicClient || !walletClient) return;
     let validAddress: Address | null = values.address as Address;
     if (couldBeENS(validAddress)) {
-      validAddress = await publicClient.getEnsAddress({ name: values.address });
+      validAddress = await signer.resolveName(values.address);
     }
     if (validAddress) {
       const lockReleaseContract = getContract({

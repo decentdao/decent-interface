@@ -1,7 +1,7 @@
 import { VEllipsis } from '@decent-org/fractal-ui';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Address, getContract } from 'viem';
+import { Address, getAddress } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -88,12 +88,15 @@ export function ManageDAOMenu({
             });
 
             // @dev assumes the first strategy is the voting contract
-            const votingContractAddresses = (await azoriusContract.read.getStrategies([
-              '0x0000000000000000000000000000000000000001',
-              0,
-            ])) as Address[];
-            const votingContractAddress = votingContractAddresses[1];
-            const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingContractAddress);
+            const votingContractAddress = (
+              await azoriusContract.asProvider.getStrategies(
+                '0x0000000000000000000000000000000000000001',
+                0,
+              )
+            )[1];
+            const masterCopyData = await getZodiacModuleProxyMasterCopyData(
+              getAddress(votingContractAddress),
+            );
 
             if (masterCopyData.isOzLinearVoting) {
               result = GovernanceType.AZORIUS_ERC20;

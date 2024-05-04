@@ -1,5 +1,5 @@
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
-import { PublicClient, keccak256, encodePacked, Address, Hex } from 'viem';
+import { keccak256, encodePacked, isHex } from 'viem';
 import { buildSignatureBytes } from '../helpers/crypto';
 import { Activity, MultisigFreezeGuard } from '../types';
 import { getTimeStamp } from './contract';
@@ -11,11 +11,21 @@ export async function getTxTimelockedTimestamp(
 ) {
   const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
+  if (!multiSigTransaction.confirmations) {
+    throw new Error(
+      'Error getting transaction timelocked timestamp - invalid format of multisig transaction',
+    );
+  }
   const signatures = buildSignatureBytes(
-    multiSigTransaction.confirmations!.map(confirmation => ({
-      signer: confirmation.owner as Address,
-      data: confirmation.signature as Hex,
-    })),
+    multiSigTransaction.confirmations.map(confirmation => {
+      if (!isHex(confirmation.signature)) {
+        throw new Error('Confirmation signature is malfunctioned');
+      }
+      return {
+        signer: confirmation.owner,
+        data: confirmation.signature,
+      };
+    }),
   );
   const signaturesHash = keccak256(encodePacked(['bytes'], [signatures]));
 

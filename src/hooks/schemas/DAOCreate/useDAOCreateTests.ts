@@ -1,6 +1,6 @@
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, erc20Abi, getContract, isAddress } from 'viem';
+import { isAddress, erc20Abi, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
@@ -19,6 +19,7 @@ export function useDAOCreateTests() {
    * @dev this is used for any other functions contained within this hook, to lookup resolved addresses in this session without requesting again.
    */
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
+  const signerOrProvider = useSignerOrProvider();
   const { t } = useTranslation(['daoCreate', 'common']);
   const publicClient = usePublicClient();
 
@@ -130,10 +131,14 @@ export function useDAOCreateTests() {
     return {
       name: 'ERC20 Address Validation',
       message: t('errorInvalidERC20Address', { ns: 'common' }),
-      test: async function (address: Address | undefined) {
+      test: async function (address: string | undefined) {
         if (address && isAddress(address) && publicClient) {
           try {
-            const tokenContract = getContract({ address, abi: erc20Abi, client: publicClient });
+            const tokenContract = getContract({
+              address,
+              abi: erc20Abi,
+              client: { public: publicClient },
+            });
             const [name, symbol, decimals] = await Promise.all([
               tokenContract.read.name(),
               tokenContract.read.symbol(),
@@ -147,7 +152,7 @@ export function useDAOCreateTests() {
         return false;
       },
     };
-  }, [publicClient, t]);
+  }, [t, publicClient]);
 
   const validERC721Address = useMemo(() => {
     return {
@@ -156,12 +161,43 @@ export function useDAOCreateTests() {
       test: async function (address: string | undefined) {
         if (address && isAddress(address) && publicClient) {
           try {
-            // We're using this instead of erc721ABI from wagmi cause that one doesn't have supportsInterface for whatever reason
-            const erc165 = [
-              'function supportsInterface(bytes4 interfaceID) external view returns (bool)',
-            ];
-            const nftContract = getContract({ address, abi: erc165, client: publicClient });
-            const supportsInterface = await nftContract.read.supportsInterface(['0x80ac58cd']); // Exact same check we have in voting strategy contract
+            const abi = [
+              {
+                inputs: [],
+                payable: false,
+                stateMutability: 'nonpayable',
+                type: 'constructor',
+              },
+              {
+                constant: true,
+                inputs: [
+                  {
+                    internalType: 'bytes4',
+                    name: 'interfaceId',
+                    type: 'bytes4',
+                  },
+                ],
+                name: 'supportsInterface',
+                outputs: [
+                  {
+                    internalType: 'bool',
+                    name: '',
+                    type: 'bool',
+                  },
+                ],
+                payable: false,
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ] as const;
+            const nftContract = getContract({
+              address,
+              abi,
+              client: { public: publicClient },
+            });
+
+            // Exact same check we have in voting strategy contract
+            const supportsInterface = await nftContract.read.supportsInterface(['0x80ac58cd']);
             return supportsInterface;
           } catch (error) {
             logError(error);
@@ -171,7 +207,7 @@ export function useDAOCreateTests() {
         return false;
       },
     };
-  }, [publicClient, t]);
+  }, [t, publicClient]);
 
   const isBigIntValidation = useMemo(() => {
     return {

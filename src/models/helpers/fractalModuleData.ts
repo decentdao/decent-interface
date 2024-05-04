@@ -1,4 +1,10 @@
-import { Address, encodeAbiParameters, encodeFunctionData, parseAbiParameters } from 'viem';
+import {
+  FractalModule,
+  FractalModule__factory,
+  ModuleProxyFactory,
+} from '@fractal-framework/fractal-contracts';
+import { encodeAbiParameters, parseAbiParameters, getAddress, isHex } from 'viem';
+import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
 import { NetworkContract } from '../../types/network';
@@ -16,27 +22,31 @@ export interface FractalModuleData {
 }
 
 export const fractalModuleData = (
-  fractalModuleMasterCopyContract: NetworkContract,
-  zodiacModuleProxyFactoryContract: NetworkContract,
-  safeContract: NetworkContract,
-  saltNum: string,
-  parentAddress?: Address,
+  fractalModuleMasterCopyContract: FractalModule,
+  zodiacModuleProxyFactoryContract: ModuleProxyFactory,
+  safeContract: GnosisSafeL2,
+  saltNum: bigint,
+  parentAddress?: string,
 ): FractalModuleData => {
-  const fractalModuleCalldata = encodeFunctionData({
-    functionName: 'setUp',
-    args: [
+  const fractalModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData(
+    'setUp',
+    [
       encodeAbiParameters(parseAbiParameters(['address, address, address, address[]']), [
-        parentAddress ?? safeContract.address, // Owner -- Parent DAO or safe contract
-        safeContract.address, // Avatar
-        safeContract.address, // Target
+        getAddress(parentAddress ?? safeContract.address), // Owner -- Parent DAO or safe contract
+        getAddress(safeContract.address), // Avatar
+        getAddress(safeContract.address), // Target
         [], // Authorized Controllers
       ]),
     ],
     abi: fractalModuleMasterCopyContract.abi,
   });
 
+  if (!isHex(fractalModuleCalldata)) {
+    throw new Error('Error encoding fractal module call data');
+  }
+
   const fractalByteCodeLinear = generateContractByteCodeLinear(
-    fractalModuleMasterCopyContract.address.slice(2) as Address,
+    getAddress(fractalModuleMasterCopyContract.address),
   );
 
   const fractalSalt = generateSalt(fractalModuleCalldata, BigInt(saltNum));
@@ -46,7 +56,7 @@ export const fractalModuleData = (
     saltNum,
   ]);
   const predictedFractalModuleAddress = generatePredictedModuleAddress(
-    zodiacModuleProxyFactoryContract.address,
+    getAddress(zodiacModuleProxyFactoryContract.address),
     fractalSalt,
     fractalByteCodeLinear,
   );

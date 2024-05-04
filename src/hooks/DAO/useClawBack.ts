@@ -1,13 +1,7 @@
+import { ERC20__factory, FractalModule } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  erc20Abi,
-  getAddress,
-  encodeAbiParameters,
-  parseAbiParameters,
-  encodeFunctionData,
-  Address,
-} from 'viem';
+import { Address, encodeAbiParameters, getAddress, isHex, parseAbiParameters } from 'viem';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { FractalModuleType, FractalNode, FractalModule } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
@@ -25,9 +19,12 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const { canUserCreateProposal } = useCanUserCreateProposal();
 
   const handleClawBack = useCallback(async () => {
-    if (childSafeInfo && childSafeInfo.daoAddress && parentAddress && safeAPI) {
+    if (childSafeInfo && childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
       const childSafeBalance = await safeAPI.getBalances(getAddress(childSafeInfo.daoAddress));
-      const parentSafeInfo = await safeAPI.getSafeInfo(getAddress(parentAddress));
+
+      const santitizedParentAddress = getAddress(parentAddress);
+      const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
+
       if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
         const fractalModule = childSafeInfo.fractalModules!.find(
           module => module.moduleType === FractalModuleType.FRACTAL,
@@ -41,34 +38,44 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                 parseAbiParameters('address, uint256, bytes, uint8'),
                 [parentAddress, BigInt(asset.balance), '0x', 0],
               );
-              const fractalModuleCalldata = encodeFunctionData({
-                abi: fractalModuleContract.abi,
-                functionName: 'execTx',
-                args: [txData],
-              });
+
+              const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
+                'execTx',
+                [txData],
+              );
+              if (!isHex(fractalModuleCalldata)) {
+                throw new Error('Error encoding clawback call data');
+              }
               return {
-                target: fractalModuleContract.address,
+                target: getAddress(fractalModuleContract.address),
                 value: 0,
                 calldata: fractalModuleCalldata,
               };
             } else {
-              const clawBackCalldata = encodeFunctionData({
-                abi: erc20Abi,
-                functionName: 'transfer',
-                args: [parentAddress, BigInt(asset.balance)],
-              });
+              const tokenContract = ERC20__factory.connect(asset.tokenAddress, provider);
+              const clawBackCalldata = tokenContract.interface.encodeFunctionData('transfer', [
+                parentAddress,
+                asset.balance,
+              ]);
+              if (!isHex(clawBackCalldata)) {
+                throw new Error('Error encoding clawback call data');
+              }
               const txData = encodeAbiParameters(
                 parseAbiParameters('address, uint256, bytes, uint8'),
-                [asset.tokenAddress as Address, 0n, clawBackCalldata, 0],
+                [getAddress(asset.tokenAddress), 0n, clawBackCalldata, 0],
               );
-              const fractalModuleCalldata = encodeFunctionData({
-                abi: fractalModuleContract.abi,
-                functionName: 'execTx',
-                args: [txData],
-              });
+
+              const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
+                'execTx',
+                [txData],
+              );
+
+              if (!isHex(fractalModuleCalldata)) {
+                throw new Error('Error encoding clawback call data');
+              }
 
               return {
-                target: fractalModuleContract.address,
+                target: getAddress(fractalModuleContract.address),
                 value: 0,
                 calldata: fractalModuleCalldata,
               };
