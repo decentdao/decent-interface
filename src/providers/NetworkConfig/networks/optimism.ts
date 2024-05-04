@@ -1,3 +1,5 @@
+import Deployments from '@fractal-framework/fractal-contracts-new/deployments';
+
 import Azorius from '@fractal-framework/fractal-contracts/deployments/optimism/Azorius.json';
 import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/optimism/AzoriusFreezeGuard.json';
 import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/optimism/ERC20Claim.json';
@@ -12,7 +14,6 @@ import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments
 import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/optimism/MultisigFreezeGuard.json';
 import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/optimism/MultisigFreezeVoting.json';
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/optimism/VotesERC20.json';
-import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/optimism/VotesERC20Wrapper.json';
 import {
   getProxyFactoryDeployment,
   getMultiSendCallOnlyDeployment,
@@ -26,6 +27,7 @@ import { NetworkConfig } from '../../../types/network';
 const SAFE_VERSION = '1.3.0';
 
 const chain = optimism;
+const contracts = Deployments[chain.id][0].contracts;
 
 export const optimismConfig: NetworkConfig = {
   order: 15,
@@ -69,7 +71,7 @@ export const optimismConfig: NetworkConfig = {
       version: SAFE_VERSION,
       network: chain.id.toString(),
     })?.networkAddresses[chain.id.toString()]!,
-    votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
+    votesERC20WrapperMasterCopy: contracts.VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
   },
   staking: {},
