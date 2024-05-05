@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { getAddress, getContract } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
-import VotesERC20Wrapper from '../../../assets/abi/VotesERC20Wrapper';
+import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import useApproval from '../../../hooks/utils/useApproval';
@@ -47,7 +47,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
       if (!votesTokenContractAddress || !account || !walletClient) return;
 
       const wrapperTokenContract = getContract({
-        abi: VotesERC20Wrapper,
+        abi: VotesERC20WrapperAbi,
         address: getAddress(votesTokenContractAddress),
         client: walletClient,
       });

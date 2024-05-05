@@ -2,7 +2,7 @@ import { Azorius } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { Address, getContract, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import VotesERC20Wrapper from '../../../assets/abi/VotesERC20Wrapper';
+import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
 import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
@@ -61,7 +61,7 @@ export const useGovernanceContracts = () => {
         govTokenAddress = await ozLinearVotingContract.governanceToken();
 
         const possibleERC20Wrapper = getContract({
-          abi: VotesERC20Wrapper,
+          abi: VotesERC20WrapperAbi,
           address: getAddress(govTokenAddress),
           client: publicClient,
         });

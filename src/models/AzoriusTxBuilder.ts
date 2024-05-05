@@ -21,7 +21,7 @@ import {
   isHex,
   encodeFunctionData,
 } from 'viem';
-import VotesERC20Wrapper from '../assets/abi/VotesERC20Wrapper';
+import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, getRandomBytes } from '../helpers';
 import {
@@ -278,7 +278,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     ]);
 
     const encodedSetupERC20WrapperData = encodeFunctionData({
-      abi: VotesERC20Wrapper,
+      abi: VotesERC20WrapperAbi,
       functionName: 'setUp',
       args: [encodedInitTokenData],
     });
