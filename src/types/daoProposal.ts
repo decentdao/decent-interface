@@ -34,10 +34,6 @@ export interface AzoriusProposal extends GovernanceActivity {
   startBlock: bigint;
 }
 
-export interface AzoriusERC721Proposal extends AzoriusProposal {
-  votes: ERC721ProposalVote[];
-}
-
 export interface MultisigProposal extends GovernanceActivity {
   confirmations: SafeMultisigConfirmationResponse[];
   signersThreshold?: number;
