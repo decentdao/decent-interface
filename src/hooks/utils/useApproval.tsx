@@ -1,15 +1,11 @@
-import { VotesERC20, VotesERC20Wrapper } from '@fractal-framework/fractal-contracts';
+import { VotesERC20 } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { maxUint256 } from 'viem';
 import { useAccount } from 'wagmi';
 import { useTransaction } from './useTransaction';
 
-const useApproval = (
-  tokenContract?: VotesERC20 | VotesERC20Wrapper,
-  spenderAddress?: string,
-  userBalance?: bigint,
-) => {
+const useApproval = (tokenContract?: VotesERC20, spenderAddress?: string, userBalance?: bigint) => {
   const { address: account } = useAccount();
   const [allowance, setAllowance] = useState(0n);
   const [approved, setApproved] = useState(false);
