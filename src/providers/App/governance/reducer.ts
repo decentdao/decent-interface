@@ -25,7 +25,6 @@ export const initialVotesTokenAccountData = {
   balance: null,
   delegatee: null,
   votingWeight: null,
-  isDelegatesSet: null,
 };
 
 export const governanceReducer = (state: FractalGovernance, action: FractalGovernanceActions) => {
