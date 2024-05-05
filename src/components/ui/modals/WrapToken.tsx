@@ -3,9 +3,10 @@ import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20Abi, getContract } from 'viem';
-import { useAccount, usePublicClient } from 'wagmi';
+import { erc20Abi, getAddress, getContract } from 'viem';
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
+import VotesERC20Wrapper from '../../../assets/abi/VotesERC20Wrapper';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
@@ -22,6 +23,7 @@ export function WrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
   const signer = useEthersSigner();
+  const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const { address: account } = useAccount();
   const [userBalance, setUserBalance] = useState<BigIntValuePair>({
@@ -31,7 +33,7 @@ export function WrapToken({ close }: { close: () => void }) {
   const baseContracts = useSafeContracts();
 
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
-  const [contractCall, pending] = useTransaction();
+  const [, pending, contractCallViem] = useTransaction();
   const {
     approved,
     approveTransaction,
@@ -87,13 +89,17 @@ export function WrapToken({ close }: { close: () => void }) {
   const handleFormSubmit = useCallback(
     (amount: BigIntValuePair) => {
       const { votesTokenContractAddress } = governanceContracts;
-      if (!votesTokenContractAddress || !signer || !account || !baseContracts) return;
-      const wrapperTokenContract =
-        baseContracts.votesERC20WrapperMasterCopyContract.asSigner.attach(
-          votesTokenContractAddress,
-        );
-      contractCall({
-        contractFn: () => wrapperTokenContract.depositFor(account, amount.bigintValue!),
+      if (!votesTokenContractAddress || !signer || !account || !baseContracts || !walletClient)
+        return;
+
+      const wrapperTokenContract = getContract({
+        abi: VotesERC20Wrapper,
+        address: getAddress(votesTokenContractAddress),
+        client: walletClient,
+      });
+
+      contractCallViem({
+        contractFn: () => wrapperTokenContract.write.depositFor([account, amount.bigintValue!]),
         pendingMessage: t('wrapTokenPendingMessage'),
         failedMessage: t('wrapTokenFailedMessage'),
         successMessage: t('wrapTokenSuccessMessage'),
@@ -107,13 +113,14 @@ export function WrapToken({ close }: { close: () => void }) {
     },
     [
       account,
-      contractCall,
+      contractCallViem,
       governanceContracts,
       signer,
       close,
       t,
       loadERC20TokenAccountData,
       baseContracts,
+      walletClient,
     ],
   );
 

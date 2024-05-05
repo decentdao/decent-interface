@@ -29,12 +29,15 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private safeContract: GnosisSafeL2 | undefined;
   public fallbackHandler: string;
 
+  private votesERC20WrapperMasterCopyAddress: string;
+
   constructor(
     signerOrProvider: ethers.Signer | any,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
     fallbackHandler: string,
+    votesERC20WrapperMasterCopyAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
   ) {
@@ -49,6 +52,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
 
     this.fallbackHandler = fallbackHandler;
     this.saltNum = getRandomBytes();
+    this.votesERC20WrapperMasterCopyAddress = votesERC20WrapperMasterCopyAddress;
   }
 
   public setSafeContract(safeAddress: string) {
@@ -130,6 +134,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.azoriusContracts!,
       this.daoData as AzoriusERC20DAO,
       this.safeContract!,
+      this.votesERC20WrapperMasterCopyAddress,
       this.parentAddress ? getAddress(this.parentAddress) : undefined,
       this.parentTokenAddress ? getAddress(this.parentTokenAddress) : undefined,
     );

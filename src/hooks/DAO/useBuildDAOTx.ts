@@ -18,7 +18,7 @@ const useBuildDAOTx = () => {
   const signerOrProvider = useSignerOrProvider();
   const {
     createOptions,
-    contracts: { fallbackHandler },
+    contracts: { fallbackHandler, votesERC20WrapperMasterCopy },
   } = useNetworkConfig();
 
   const {
@@ -56,7 +56,6 @@ const useBuildDAOTx = () => {
         freezeERC721VotingMasterCopyContract,
         votesTokenMasterCopyContract,
         claimingMasterCopyContract,
-        votesERC20WrapperMasterCopyContract,
         keyValuePairsContract,
       } = baseContracts;
 
@@ -87,7 +86,6 @@ const useBuildDAOTx = () => {
           azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asSigner,
           votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
           claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
-          votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asSigner,
         };
       }
 
@@ -111,6 +109,7 @@ const useBuildDAOTx = () => {
         azoriusContracts,
         daoData,
         fallbackHandler,
+        votesERC20WrapperMasterCopy,
         parentAddress,
         parentTokenAddress,
       );
@@ -157,6 +156,7 @@ const useBuildDAOTx = () => {
       governance,
       createOptions,
       fallbackHandler,
+      votesERC20WrapperMasterCopy,
     ],
   );
 

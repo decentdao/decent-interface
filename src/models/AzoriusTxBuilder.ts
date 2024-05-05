@@ -19,7 +19,9 @@ import {
   getAddress,
   isAddress,
   isHex,
+  encodeFunctionData,
 } from 'viem';
+import VotesERC20Wrapper from '../assets/abi/VotesERC20Wrapper';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, getRandomBytes } from '../helpers';
 import {
@@ -53,6 +55,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   public linearERC721VotingContract: LinearERC721Voting | undefined;
   public votesTokenContract: VotesERC20 | undefined;
 
+  private votesERC20WrapperMasterCopyAddress: string;
+
   private tokenNonce: bigint;
   private strategyNonce: bigint;
   private azoriusNonce: bigint;
@@ -64,6 +68,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     azoriusContracts: AzoriusContracts,
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
     safeContract: GnosisSafeL2,
+    votesERC20WrapperMasterCopyAddress: string,
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
@@ -82,6 +87,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.claimNonce = getRandomBytes();
     this.strategyNonce = getRandomBytes();
     this.azoriusNonce = getRandomBytes();
+
+    this.votesERC20WrapperMasterCopyAddress = votesERC20WrapperMasterCopyAddress;
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       daoData = daoData as AzoriusERC20DAO;
@@ -251,11 +258,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     return buildContractCall(
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
-      [
-        this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address,
-        this.encodedSetupERC20WrapperData,
-        this.tokenNonce,
-      ],
+      [this.votesERC20WrapperMasterCopyAddress, this.encodedSetupERC20WrapperData, this.tokenNonce],
       0,
       false,
     );
@@ -274,11 +277,12 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       tokenImportAddress,
     ]);
 
-    const encodedSetupERC20WrapperData =
-      this.azoriusContracts!.votesERC20WrapperMasterCopyContract.interface.encodeFunctionData(
-        'setUp',
-        [encodedInitTokenData],
-      );
+    const encodedSetupERC20WrapperData = encodeFunctionData({
+      abi: VotesERC20Wrapper,
+      functionName: 'setUp',
+      args: [encodedInitTokenData],
+    });
+
     if (!isHex(encodedSetupERC20WrapperData)) {
       throw new Error('Error encoding setup ERC-20 Wrapper data - interface encoding failed');
     }
@@ -287,7 +291,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public setPredictedERC20WrapperAddress() {
     const tokenByteCodeLinear = generateContractByteCodeLinear(
-      getAddress(this.azoriusContracts!.votesERC20WrapperMasterCopyContract.address),
+      getAddress(this.votesERC20WrapperMasterCopyAddress),
     );
 
     const tokenSalt = generateSalt(this.encodedSetupERC20WrapperData!, this.tokenNonce);

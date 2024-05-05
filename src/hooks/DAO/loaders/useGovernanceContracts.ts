@@ -2,6 +2,7 @@ import { Azorius } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { Address, getContract, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import VotesERC20Wrapper from '../../../assets/abi/VotesERC20Wrapper';
 import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
@@ -23,11 +24,7 @@ export const useGovernanceContracts = () => {
     if (!baseContracts || !publicClient) {
       return;
     }
-    const {
-      fractalAzoriusMasterCopyContract,
-      votesERC20WrapperMasterCopyContract,
-      linearVotingMasterCopyContract,
-    } = baseContracts;
+    const { fractalAzoriusMasterCopyContract, linearVotingMasterCopyContract } = baseContracts;
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
     const azoriusModuleContract = azoriusModule?.moduleContract as Azorius;
 
@@ -62,9 +59,14 @@ export const useGovernanceContracts = () => {
           ozLinearVotingContractAddress,
         );
         govTokenAddress = await ozLinearVotingContract.governanceToken();
-        const possibleERC20Wrapper =
-          votesERC20WrapperMasterCopyContract.asProvider.attach(govTokenAddress);
-        underlyingTokenAddress = await possibleERC20Wrapper.underlying().catch(() => {
+
+        const possibleERC20Wrapper = getContract({
+          abi: VotesERC20Wrapper,
+          address: getAddress(govTokenAddress),
+          client: publicClient,
+        });
+
+        underlyingTokenAddress = await possibleERC20Wrapper.read.underlying().catch(() => {
           // if the underlying token is not an ERC20Wrapper, this will throw an error,
           // so we catch it and return undefined
           return undefined;
