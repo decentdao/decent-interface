@@ -277,16 +277,11 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       tokenImportAddress,
     ]);
 
-    const encodedSetupERC20WrapperData = encodeFunctionData({
+    this.encodedSetupERC20WrapperData = encodeFunctionData({
       abi: VotesERC20WrapperAbi,
       functionName: 'setUp',
       args: [encodedInitTokenData],
     });
-
-    if (!isHex(encodedSetupERC20WrapperData)) {
-      throw new Error('Error encoding setup ERC-20 Wrapper data - interface encoding failed');
-    }
-    this.encodedSetupERC20WrapperData = encodedSetupERC20WrapperData;
   }
 
   public setPredictedERC20WrapperAddress() {
