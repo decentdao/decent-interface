@@ -1,6 +1,7 @@
-import { IVotes__factory } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
-import { getAddress } from 'viem';
+import { getAddress, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import IVotesAbi from '../../../assets/abi/IVotes';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import {
@@ -19,6 +20,8 @@ type FreezeGuardConfigParam = { freezeGuard?: DAOFreezeGuardConfig<BigIntValuePa
 export function usePrepareFormData() {
   const signer = useEthersSigner();
   const provider = useEthersProvider();
+
+  const publicClient = usePublicClient();
 
   // Helper function to prepare freezeGuard data
   const prepareFreezeGuardData = useCallback(
@@ -52,18 +55,24 @@ export function usePrepareFormData() {
 
   const checkVotesToken = useCallback(
     async (address: string) => {
-      if (provider) {
+      if (publicClient) {
         try {
-          const votesContract = IVotes__factory.connect(address, provider);
-          await votesContract.delegates('0x0000000000000000000000000000000000000001');
-          await votesContract.getVotes('0x0000000000000000000000000000000000000001');
+          const votesContract = getContract({
+            abi: IVotesAbi,
+            address: getAddress(address),
+            client: publicClient,
+          });
+          await Promise.all([
+            votesContract.read.delegates(['0x0000000000000000000000000000000000000001']),
+            votesContract.read.getVotes(['0x0000000000000000000000000000000000000001']),
+          ]);
           return true;
         } catch (error) {
           return false;
         }
       }
     },
-    [provider],
+    [publicClient],
   );
 
   const prepareMultisigFormData = useCallback(
