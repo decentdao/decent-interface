@@ -34,7 +34,7 @@ const useBuildDAOTx = () => {
       parentAddress?: string,
       parentTokenAddress?: string,
     ) => {
-      let azoriusContracts;
+      let azoriusContracts: AzoriusContracts | undefined;
 
       if (!user.address || !signerOrProvider || !baseContracts) {
         return;
@@ -88,7 +88,7 @@ const useBuildDAOTx = () => {
           votesTokenMasterCopyContract: votesTokenMasterCopyContract.asSigner,
           claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
           votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asSigner,
-        } as AzoriusContracts;
+        };
       }
 
       const buildrerBaseContracts = {
