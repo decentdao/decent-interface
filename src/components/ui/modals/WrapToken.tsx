@@ -4,7 +4,7 @@ import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract } from 'viem';
-import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
+import { useAccount, usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
@@ -22,7 +22,6 @@ export function WrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
   const signer = useEthersSigner();
-  const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const { address: account } = useAccount();
   const [userBalance, setUserBalance] = useState<BigIntValuePair>({
@@ -59,7 +58,7 @@ export function WrapToken({ close }: { close: () => void }) {
     const baseTokenContract = getContract({
       address: azoriusGovernance.votesToken.underlyingTokenData.address,
       abi: erc20Abi,
-      client: { wallet: walletClient, public: publicClient },
+      client: publicClient,
     });
     try {
       const [balance, decimals] = await Promise.all([
@@ -79,7 +78,7 @@ export function WrapToken({ close }: { close: () => void }) {
       logError(e);
       return;
     }
-  }, [account, azoriusGovernance.votesToken, publicClient, walletClient]);
+  }, [account, azoriusGovernance.votesToken, publicClient]);
 
   useEffect(() => {
     getUserUnderlyingTokenBalance();
