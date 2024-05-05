@@ -19,15 +19,18 @@ import {
   getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
 } from '@safe-global/safe-deployments';
+import { getAddress } from 'viem';
 import { base } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
+const chain = base;
+
 export const baseConfig: NetworkConfig = {
   order: 10,
-  chain: base,
+  chain,
   rpcEndpoint: `https://base-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_BASE_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-base.safe.global',
   etherscanBaseURL: 'https://basescan.org/',
@@ -53,21 +56,21 @@ export const baseConfig: NetworkConfig = {
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
-      network: base.id.toString(),
-    })?.networkAddresses[base.id.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: base.id.toString() })
-      ?.networkAddresses[base.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
+    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: chain.id.toString() })
+      ?.networkAddresses[chain.id.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
-      network: base.id.toString(),
-    })?.networkAddresses[base.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
-      network: base.id.toString(),
-    })?.networkAddresses[base.id.toString()]!,
-    votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
+    votesERC20WrapperMasterCopy: getAddress(VotesERC20Wrapper.address),
     keyValuePairs: KeyValuePairs.address,
   },
   staking: {},

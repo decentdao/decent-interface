@@ -19,15 +19,18 @@ import {
   getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
 } from '@safe-global/safe-deployments';
+import { getAddress } from 'viem';
 import { mainnet } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
+const chain = mainnet;
+
 export const mainnetConfig: NetworkConfig = {
   order: 0,
-  chain: mainnet,
+  chain,
   rpcEndpoint: `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
   etherscanBaseURL: 'https://etherscan.io',
@@ -53,21 +56,21 @@ export const mainnetConfig: NetworkConfig = {
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
-      network: mainnet.id.toString(),
-    })?.networkAddresses[mainnet.id.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: mainnet.id.toString() })
-      ?.networkAddresses[mainnet.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
+    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: chain.id.toString() })
+      ?.networkAddresses[chain.id.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
-      network: mainnet.id.toString(),
-    })?.networkAddresses[mainnet.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
-      network: mainnet.id.toString(),
-    })?.networkAddresses[mainnet.id.toString()]!,
-    votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
+    votesERC20WrapperMasterCopy: getAddress(VotesERC20Wrapper.address),
     keyValuePairs: KeyValuePairs.address,
   },
   staking: {

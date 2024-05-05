@@ -1,18 +1,18 @@
 import { Button, Flex, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { VotesERC20Wrapper } from '@fractal-framework/fractal-contracts';
 import { Formik, FormikProps } from 'formik';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
+import { getAddress, getContract } from 'viem';
+import { useAccount, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
+import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import useApproval from '../../../hooks/utils/useApproval';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AzoriusGovernance, BigIntValuePair } from '../../../types';
 import { formatCoin } from '../../../utils';
 import { BigIntInput } from '../forms/BigIntInput';
@@ -20,12 +20,11 @@ import { BigIntInput } from '../forms/BigIntInput';
 export function UnwrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
-  const signer = useEthersSigner();
   const { address: account } = useAccount();
   const baseContracts = useSafeContracts();
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
 
-  const [contractCall, pending] = useTransaction();
+  const [, pending, contractCallViem] = useTransaction();
   const {
     approved,
     approveTransaction,
@@ -40,17 +39,21 @@ export function UnwrapToken({ close }: { close: () => void }) {
   const { t } = useTranslation(['modals', 'treasury']);
   const { restrictChars } = useFormHelpers();
 
+  const { data: walletClient } = useWalletClient();
+
   const handleFormSubmit = useCallback(
     (amount: BigIntValuePair) => {
       const { votesTokenContractAddress } = governanceContracts;
-      if (!votesTokenContractAddress || !signer || !account) return;
-      const votesTokenContract =
-        baseContracts?.votesERC20WrapperMasterCopyContract?.asSigner.attach(
-          votesTokenContractAddress,
-        );
-      const wrapperTokenContract = votesTokenContract as VotesERC20Wrapper;
-      contractCall({
-        contractFn: () => wrapperTokenContract.withdrawTo(account, amount.bigintValue!),
+      if (!votesTokenContractAddress || !account || !walletClient) return;
+
+      const wrapperTokenContract = getContract({
+        abi: VotesERC20WrapperAbi,
+        address: getAddress(votesTokenContractAddress),
+        client: walletClient,
+      });
+
+      contractCallViem({
+        contractFn: () => wrapperTokenContract.write.withdrawTo([account, amount.bigintValue!]),
         pendingMessage: t('unwrapTokenPendingMessage'),
         failedMessage: t('unwrapTokenFailedMessage'),
         successMessage: t('unwrapTokenSuccessMessage'),
@@ -64,13 +67,12 @@ export function UnwrapToken({ close }: { close: () => void }) {
     },
     [
       account,
-      contractCall,
+      contractCallViem,
       governanceContracts,
-      signer,
+      walletClient,
       close,
       t,
       loadERC20TokenAccountData,
-      baseContracts,
     ],
   );
 
