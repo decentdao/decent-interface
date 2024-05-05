@@ -21,6 +21,7 @@ import {
   isHex,
   encodeFunctionData,
 } from 'viem';
+import VotesERC20Abi from '../assets/abi/VotesERC20';
 import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, getRandomBytes } from '../helpers';
@@ -56,6 +57,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   public votesTokenContract: VotesERC20 | undefined;
 
   private votesERC20WrapperMasterCopyAddress: string;
+  private votesERC20MasterCopyAddress: string;
 
   private tokenNonce: bigint;
   private strategyNonce: bigint;
@@ -69,6 +71,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
     safeContract: GnosisSafeL2,
     votesERC20WrapperMasterCopyAddress: string,
+    votesERC20MasterCopyAddress: string,
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
@@ -89,6 +92,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.azoriusNonce = getRandomBytes();
 
     this.votesERC20WrapperMasterCopyAddress = votesERC20WrapperMasterCopyAddress;
+    this.votesERC20MasterCopyAddress = votesERC20MasterCopyAddress;
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       daoData = daoData as AzoriusERC20DAO;
@@ -187,11 +191,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     return buildContractCall(
       this.baseContracts.zodiacModuleProxyFactoryContract,
       'deployModule',
-      [
-        this.azoriusContracts!.votesTokenMasterCopyContract.address,
-        this.encodedSetupTokenData,
-        this.tokenNonce,
-      ],
+      [this.votesERC20MasterCopyAddress, this.encodedSetupTokenData, this.tokenNonce],
       0,
       false,
     );
@@ -345,19 +345,16 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       ],
     );
 
-    const encodedSetupTokenData =
-      this.azoriusContracts!.votesTokenMasterCopyContract.interface.encodeFunctionData('setUp', [
-        encodedInitTokenData,
-      ]);
-    if (!isHex(encodedSetupTokenData)) {
-      throw new Error('Error encoding setup token data');
-    }
-    this.encodedSetupTokenData = encodedSetupTokenData;
+    this.encodedSetupTokenData = encodeFunctionData({
+      abi: VotesERC20Abi,
+      functionName: 'setUp',
+      args: [encodedInitTokenData],
+    });
   }
 
   private setPredictedTokenAddress() {
     const tokenByteCodeLinear = generateContractByteCodeLinear(
-      getAddress(this.azoriusContracts!.votesTokenMasterCopyContract.address),
+      getAddress(this.votesERC20MasterCopyAddress),
     );
 
     const tokenSalt = generateSalt(this.encodedSetupTokenData!, this.tokenNonce);
