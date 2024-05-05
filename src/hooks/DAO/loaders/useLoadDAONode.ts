@@ -34,11 +34,11 @@ export const useLoadDAONode = () => {
 
       const currentNode: Node = {
         nodeHierarchy: {
-          parentAddress: parentAddress as string,
+          parentAddress,
           childNodes: mapChildNodes(dao),
         },
         daoName: name as string,
-        daoAddress: getAddress(_daoAddress as string),
+        daoAddress: getAddress(_daoAddress),
         daoSnapshotENS: snapshotENS as string,
       };
       return currentNode;

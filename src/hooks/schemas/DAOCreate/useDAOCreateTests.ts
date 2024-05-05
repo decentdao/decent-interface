@@ -1,10 +1,9 @@
-import { ethers } from 'ethers';
 import { useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isAddress, erc20Abi } from 'viem';
+import { isAddress, erc20Abi, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
-import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { couldBeENS } from '../../../utils/url';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
@@ -21,9 +20,9 @@ export function useDAOCreateTests() {
    * @dev this is used for any other functions contained within this hook, to lookup resolved addresses in this session without requesting again.
    */
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
-  const provider = useEthersProvider();
   const signerOrProvider = useSignerOrProvider();
   const { t } = useTranslation(['daoCreate', 'common']);
+  const publicClient = usePublicClient();
 
   const minValueValidation = useMemo(
     () => (minValue: number) => {
@@ -135,13 +134,17 @@ export function useDAOCreateTests() {
       name: 'ERC20 Address Validation',
       message: t('errorInvalidERC20Address', { ns: 'common' }),
       test: async function (address: string | undefined) {
-        if (address && isAddress(address)) {
+        if (address && isAddress(address) && publicClient) {
           try {
-            const tokenContract = new ethers.Contract(address, erc20Abi, provider);
+            const tokenContract = getContract({
+              address,
+              abi: erc20Abi,
+              client: { public: publicClient },
+            });
             const [name, symbol, decimals] = await Promise.all([
-              tokenContract.name(),
-              tokenContract.symbol(),
-              tokenContract.decimals(),
+              tokenContract.read.name(),
+              tokenContract.read.symbol(),
+              tokenContract.read.decimals(),
             ]);
             return !!name && !!symbol && !!decimals;
           } catch (error) {
@@ -151,21 +154,52 @@ export function useDAOCreateTests() {
         return false;
       },
     };
-  }, [provider, t]);
+  }, [t, publicClient]);
 
   const validERC721Address = useMemo(() => {
     return {
       name: 'ERC721 Address Validation',
       message: t('errorInvalidERC721Address', { ns: 'common' }),
       test: async function (address: string | undefined) {
-        if (address && isAddress(address)) {
+        if (address && isAddress(address) && publicClient) {
           try {
-            // We're using this instead of erc721ABI from wagmi cause that one doesn't have supportsInterface for whatever reason
-            const erc165 = [
-              'function supportsInterface(bytes4 interfaceID) external view returns (bool)',
-            ];
-            const nftContract = new ethers.Contract(address, erc165, provider);
-            const supportsInterface = await nftContract.supportsInterface('0x80ac58cd'); // Exact same check we have in voting strategy contract
+            const abi = [
+              {
+                inputs: [],
+                payable: false,
+                stateMutability: 'nonpayable',
+                type: 'constructor',
+              },
+              {
+                constant: true,
+                inputs: [
+                  {
+                    internalType: 'bytes4',
+                    name: 'interfaceId',
+                    type: 'bytes4',
+                  },
+                ],
+                name: 'supportsInterface',
+                outputs: [
+                  {
+                    internalType: 'bool',
+                    name: '',
+                    type: 'bool',
+                  },
+                ],
+                payable: false,
+                stateMutability: 'view',
+                type: 'function',
+              },
+            ] as const;
+            const nftContract = getContract({
+              address,
+              abi,
+              client: { public: publicClient },
+            });
+
+            // Exact same check we have in voting strategy contract
+            const supportsInterface = await nftContract.read.supportsInterface(['0x80ac58cd']);
             return supportsInterface;
           } catch (error) {
             logError(error);
@@ -175,7 +209,7 @@ export function useDAOCreateTests() {
         return false;
       },
     };
-  }, [provider, t]);
+  }, [t, publicClient]);
 
   const isBigIntValidation = useMemo(() => {
     return {

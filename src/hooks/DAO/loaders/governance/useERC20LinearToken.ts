@@ -1,5 +1,6 @@
 import { DelegateChangedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/VotesERC20';
 import { useCallback, useEffect, useRef } from 'react';
+import { getAddress } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import useSafeContracts from '../../../safe/useSafeContracts';
@@ -32,7 +33,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       name: tokenName,
       symbol: tokenSymbol,
       decimals: tokenDecimals,
-      address: votesTokenContractAddress,
+      address: getAddress(votesTokenContractAddress),
       totalSupply,
     };
     isTokenLoaded.current = true;
@@ -53,7 +54,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     const tokenData = {
       name: tokenName,
       symbol: tokenSymbol,
-      address: underlyingTokenAddress,
+      address: getAddress(underlyingTokenAddress),
     };
     action.dispatch({
       type: FractalGovernanceAction.SET_UNDERLYING_TOKEN_DATA,
