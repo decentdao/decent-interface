@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { zeroAddress } from 'viem';
+import { PublicClient, zeroAddress } from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, encodeMultiSend } from '../helpers';
 import {
@@ -34,6 +34,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   constructor(
     signerOrProvider: ethers.Signer | any,
+    publicClient: PublicClient,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
@@ -48,6 +49,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   ) {
     super(
       signerOrProvider,
+      publicClient,
       baseContracts,
       azoriusContracts,
       daoData,
@@ -131,9 +133,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
     // If subDAO and parentAllocation, deploy claim module
     let tokenClaimTx: SafeTransaction | undefined;
     const parentAllocation = (this.daoData as AzoriusERC20DAO).parentAllocationAmount;
-    if (this.parentTokenAddress && parentAllocation && parentAllocation !== 0n) {
+    const tokenApprovalTx = azoriusTxBuilder.buildApproveClaimAllocation();
+    if (this.parentTokenAddress && parentAllocation && parentAllocation !== 0n && tokenApprovalTx) {
       tokenClaimTx = azoriusTxBuilder.buildDeployTokenClaim();
-      const tokenApprovalTx = azoriusTxBuilder.buildApproveClaimAllocation();
       this.internalTxs.push(tokenApprovalTx);
     }
 

@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getAddress, isHex } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -32,13 +33,15 @@ const useDeployAzorius = () => {
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
+  const publicClient = usePublicClient();
+
   const deployAzorius = useCallback(
     async (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO,
       shouldSetName?: boolean,
       shouldSetSnapshot?: boolean,
     ) => {
-      if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts) {
+      if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts || !publicClient) {
         return;
       }
       const {
@@ -81,6 +84,7 @@ const useDeployAzorius = () => {
 
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
+        publicClient,
         builderBaseContracts,
         azoriusContracts,
         daoData,
@@ -135,6 +139,7 @@ const useDeployAzorius = () => {
     },
     [
       signerOrProvider,
+      publicClient,
       baseContracts,
       t,
       canUserCreateProposal,

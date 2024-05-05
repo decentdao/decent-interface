@@ -19,6 +19,7 @@ import {
   encodeAbiParameters,
   parseAbiParameters,
   isHex,
+  PublicClient,
 } from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../helpers';
@@ -62,6 +63,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   constructor(
     signerOrProvider: any,
+    publicClient: PublicClient,
     baseContracts: BaseContracts,
     daoData: SubDAO,
     safeContract: GnosisSafeL2,
@@ -76,6 +78,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   ) {
     super(
       signerOrProvider,
+      publicClient,
       baseContracts,
       azoriusContracts,
       daoData,
