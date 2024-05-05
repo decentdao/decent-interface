@@ -6,7 +6,6 @@ import {
 } from '@fractal-framework/fractal-contracts';
 import { useState, useEffect, useCallback } from 'react';
 import { getAddress } from 'viem';
-import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
@@ -91,16 +90,7 @@ export default function useUserERC721VotingTokens(
               const votingWeight = (await votingContract!.getTokenWeight(tokenAddress)).toBigInt();
               const name = await tokenContract.name();
               const symbol = await tokenContract.symbol();
-              let totalSupply = undefined;
-              try {
-                const tokenSentEvents = await tokenContract.queryFilter(
-                  tokenContract.filters.Transfer(null, null),
-                );
-                totalSupply = BigInt(tokenSentEvents.length);
-              } catch (e) {
-                logError('Error while getting ERC721 total supply');
-              }
-              return { name, symbol, address: getAddress(tokenAddress), votingWeight, totalSupply };
+              return { name, symbol, address: getAddress(tokenAddress), votingWeight };
             }),
           );
         }
