@@ -11,7 +11,7 @@ import {
 import {
   getCreate2Address,
   Address,
-  Hash,
+  Hex,
   encodePacked,
   keccak256,
   encodeAbiParameters,
@@ -39,11 +39,11 @@ import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
 export class AzoriusTxBuilder extends BaseTxBuilder {
   private readonly safeContract: GnosisSafeL2;
 
-  private encodedSetupTokenData: Address | undefined;
-  private encodedSetupERC20WrapperData: Hash | undefined;
-  private encodedStrategySetupData: Hash | undefined;
-  private encodedSetupAzoriusData: Hash | undefined;
-  private encodedSetupTokenClaimData: Hash | undefined;
+  private encodedSetupTokenData: Hex | undefined;
+  private encodedSetupERC20WrapperData: Hex | undefined;
+  private encodedStrategySetupData: Hex | undefined;
+  private encodedSetupAzoriusData: Hex | undefined;
+  private encodedSetupTokenClaimData: Hex | undefined;
 
   private predictedTokenAddress: Address | undefined;
   private predictedStrategyAddress: Address | undefined;
