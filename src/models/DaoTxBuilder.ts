@@ -21,7 +21,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private txBuilderFactory: TxBuilderFactory;
 
   // Safe Data
-  private predictedSafeAddress: string;
   private readonly createSafeTx: SafeTransaction;
   private readonly safeContract: GnosisSafeL2;
   private readonly parentStrategyType?: VotingStrategyType;
@@ -38,8 +37,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
-    saltNum: string,
-    predictedSafeAddress: string,
+    saltNum: bigint,
     createSafeTx: SafeTransaction,
     safeContract: GnosisSafeL2,
     txBuilderFactory: TxBuilderFactory,
@@ -57,7 +55,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
       parentTokenAddress,
     );
 
-    this.predictedSafeAddress = predictedSafeAddress;
     this.createSafeTx = createSafeTx;
     this.safeContract = safeContract;
     this.txBuilderFactory = txBuilderFactory;

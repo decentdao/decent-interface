@@ -47,8 +47,8 @@ function AddSignerModal({
     async (values: { address: string; threshold: number; nonce: number }) => {
       const { address, nonce, threshold } = values;
       let validAddress = address;
-      if (couldBeENS(validAddress)) {
-        validAddress = await signer!.resolveName(address);
+      if (couldBeENS(validAddress) && signer) {
+        validAddress = await signer.resolveName(address);
       }
 
       await addSigner({

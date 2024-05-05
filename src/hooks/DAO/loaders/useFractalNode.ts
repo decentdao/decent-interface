@@ -44,11 +44,11 @@ export const useFractalNode = (
 
       const currentNode: Node = {
         nodeHierarchy: {
-          parentAddress: parentAddress as string,
+          parentAddress,
           childNodes: mapChildNodes(hierarchy),
         },
         daoName: name as string,
-        daoAddress: getAddress(_daoAddress as string),
+        daoAddress: getAddress(_daoAddress),
         daoSnapshotENS: snapshotENS as string,
         proposalTemplatesHash: proposalTemplatesHash as string,
       };

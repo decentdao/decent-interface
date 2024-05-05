@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { getAddress, isAddress } from 'viem';
+import { Address, getAddress, isAddress } from 'viem';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { couldBeENS } from '../../utils/url';
 
 const useAddress = (addressInput: string | undefined) => {
   const provider = useEthersProvider();
 
-  const [address, setAddress] = useState<string>();
+  const [address, setAddress] = useState<Address>();
   const [isValidAddress, setIsValidAddress] = useState<boolean>();
   const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
 
@@ -23,7 +23,7 @@ const useAddress = (addressInput: string | undefined) => {
     }
 
     if (!addressInput || addressInput.trim() === '') {
-      setAddress(addressInput);
+      setAddress(undefined);
       setIsValidAddress(false);
       setIsAddressLoading(false);
       return;
@@ -38,14 +38,14 @@ const useAddress = (addressInput: string | undefined) => {
 
     // if it can't be an ENS address, validation is false
     if (!couldBeENS(addressInput)) {
-      setAddress(addressInput);
+      setAddress(getAddress(addressInput));
       setIsValidAddress(false);
       setIsAddressLoading(false);
       return;
     }
 
     if (!provider) {
-      setAddress(addressInput);
+      setAddress(getAddress(addressInput));
       setIsValidAddress(undefined);
       setIsAddressLoading(false);
       return;
@@ -55,15 +55,15 @@ const useAddress = (addressInput: string | undefined) => {
       .resolveName(addressInput)
       .then(resolvedAddress => {
         if (!resolvedAddress) {
-          setAddress(addressInput);
+          setAddress(getAddress(addressInput));
           setIsValidAddress(false);
         } else {
-          setAddress(resolvedAddress);
+          setAddress(getAddress(resolvedAddress));
           setIsValidAddress(true);
         }
       })
       .catch(() => {
-        setAddress(addressInput);
+        setAddress(getAddress(addressInput));
         setIsValidAddress(false);
       })
       .finally(() => {
