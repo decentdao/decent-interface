@@ -10,7 +10,6 @@ import {
   ERC20FreezeVoting,
   MultisigFreezeVoting,
   MultisigFreezeGuard,
-  KeyValuePairs,
   ERC721FreezeVoting,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
@@ -347,7 +346,6 @@ export interface FractalContracts {
   freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   freezeERC721VotingMasterCopyContract: ContractConnection<ERC721FreezeVoting>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
-  keyValuePairsContract: ContractConnection<KeyValuePairs>;
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;

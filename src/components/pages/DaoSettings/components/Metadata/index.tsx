@@ -3,8 +3,9 @@ import { Flex, Text, Button, Divider } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { isHex, getAddress } from 'viem';
+import { isHex, getAddress, encodeFunctionData } from 'viem';
 import { SettingsSection } from '..';
+import KeyValuePairsAbi from '../../../../../assets/abi/KeyValuePairs';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../../hooks/utils/useCanUserSubmitProposal';
@@ -30,7 +31,10 @@ export default function MetadataContainer() {
       user: { votingWeight },
     },
   } = useFractal();
-  const { addressPrefix } = useNetworkConfig();
+  const {
+    addressPrefix,
+    contracts: { keyValuePairs },
+  } = useNetworkConfig();
 
   useEffect(() => {
     if (daoName && daoAddress && createAccountSubstring(daoAddress) !== daoName) {
@@ -94,24 +98,19 @@ export default function MetadataContainer() {
   };
 
   const handleEditDAOSnapshotENS = () => {
-    if (!baseContracts) {
-      return;
-    }
-    const { keyValuePairsContract } = baseContracts;
-    const encodedUpdateValues = keyValuePairsContract.asProvider.interface.encodeFunctionData(
-      'updateValues',
-      [['snapshotENS'], [snapshotENS]],
-    );
-    if (!isHex(encodedUpdateValues)) {
-      return;
-    }
+    const encodedUpdateValues = encodeFunctionData({
+      abi: KeyValuePairsAbi,
+      functionName: 'updateValues',
+      args: [['snapshotENS'], [snapshotENS]],
+    });
+
     const proposalData: ProposalExecuteData = {
       metaData: {
         title: t('Update Snapshot Space', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },
-      targets: [getAddress(keyValuePairsContract.asProvider.address)],
+      targets: [keyValuePairs],
       values: [0n],
       calldatas: [encodedUpdateValues],
     };
