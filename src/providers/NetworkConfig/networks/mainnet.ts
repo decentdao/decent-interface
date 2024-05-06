@@ -46,7 +46,7 @@ export const mainnetConfig: NetworkConfig = {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,
     fractalRegistry: FractalRegistry.address,
-    votesERC20MasterCopy: VotesERC20.address,
+    votesERC20MasterCopy: getAddress(VotesERC20.address),
     linearVotingERC721MasterCopy: '', // TODO - Add actual address once contract is deployed on mainnet
     claimingMasterCopy: ERC20Claim.address,
     azoriusFreezeGuardMasterCopy: AzoriusFreezeGuard.address,
