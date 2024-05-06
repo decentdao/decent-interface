@@ -3,14 +3,20 @@ import { Alert } from '@decent-org/fractal-ui';
 import { Trans, useTranslation } from 'react-i18next';
 import { CONTENT_HEIGHT } from '../../../constants/common';
 import { URL_DISCORD } from '../../../constants/url';
-import { InfoBox } from '../containers/InfoBox';
 
-export function ErrorFallback() {
+export function TopErrorFallback() {
   const { t } = useTranslation();
   return (
     <Center h={CONTENT_HEIGHT}>
       <Box maxWidth="fit-content">
-        <InfoBox>
+        <Box
+          minWidth="100%"
+          h="100%"
+          minHeight="10.6rem"
+          bg="black.900-semi-transparent"
+          p="1rem"
+          borderRadius="0.5rem"
+        >
           <Flex
             alignItems="center"
             direction="column"
@@ -37,7 +43,7 @@ export function ErrorFallback() {
             </Text>
             <Button onClick={() => window.location.reload()}>{t('reload')}</Button>
           </Flex>
-        </InfoBox>
+        </Box>
       </Box>
     </Center>
   );
