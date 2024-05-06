@@ -5,7 +5,6 @@ export interface VotesData {
   balance: bigint | null;
   delegatee: string | null;
   votingWeight: bigint | null;
-  isDelegatesSet: boolean | null;
 }
 export type UnderlyingTokenData = Omit<
   ERC20TokenData,

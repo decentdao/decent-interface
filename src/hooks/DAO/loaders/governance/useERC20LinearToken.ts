@@ -1,4 +1,3 @@
-import { DelegateChangedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/VotesERC20';
 import { useCallback, useEffect, useRef } from 'react';
 import { getAddress } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -76,20 +75,10 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
       (await tokenContract.getVotes(account)).toBigInt(),
     ]);
 
-    let delegateChangeEvents: DelegateChangedEvent[];
-    try {
-      delegateChangeEvents = await tokenContract.queryFilter(
-        tokenContract.filters.DelegateChanged(),
-      );
-    } catch (e) {
-      delegateChangeEvents = [];
-    }
-
     const tokenAccountData = {
       balance: tokenBalance,
       delegatee: tokenDelegatee,
       votingWeight: tokenVotingWeight,
-      isDelegatesSet: delegateChangeEvents.length > 0,
     };
 
     action.dispatch({

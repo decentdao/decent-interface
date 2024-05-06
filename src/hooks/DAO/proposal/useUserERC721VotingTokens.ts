@@ -1,12 +1,12 @@
 import {
-  ERC721__factory,
   Azorius,
   LinearERC721Voting__factory,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
 import { useState, useEffect, useCallback } from 'react';
-import { getAddress } from 'viem';
-import { logError } from '../../../helpers/errorLogging';
+import { erc721Abi, getAddress, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
@@ -45,6 +45,7 @@ export default function useUserERC721VotingTokens(
   const baseContracts = useSafeContracts();
   const lookupModules = useFractalModules();
   const safeAPI = useSafeAPI();
+  const publicClient = usePublicClient();
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { erc721Tokens } = azoriusGovernance;
@@ -60,7 +61,7 @@ export default function useUserERC721VotingTokens(
       let govTokens = erc721Tokens;
       let votingContract: LinearERC721Voting | undefined;
 
-      if (!baseContracts || !signerOrProvider || !daoAddress) {
+      if (!baseContracts || !signerOrProvider || !daoAddress || !publicClient || !safeAPI) {
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
@@ -71,14 +72,14 @@ export default function useUserERC721VotingTokens(
 
       if (_safeAddress && daoAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
-        const safeInfo = await safeAPI!.getSafeInfo(getAddress(_safeAddress));
+        const safeInfo = await safeAPI.getSafeInfo(getAddress(_safeAddress));
         const safeModules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(safeModules);
         if (azoriusModule && azoriusModule.moduleContract) {
           const azoriusContract = azoriusModule.moduleContract as Azorius;
           // @dev assumes the first strategy is the voting contract
           const votingContractAddress = (
-            await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
+            await azoriusContract.getStrategies(SENTINEL_ADDRESS, 0)
           )[1];
           votingContract = LinearERC721Voting__factory.connect(
             votingContractAddress,
@@ -87,24 +88,24 @@ export default function useUserERC721VotingTokens(
           const addresses = await votingContract.getAllTokenAddresses();
           govTokens = await Promise.all(
             addresses.map(async tokenAddress => {
-              const tokenContract = ERC721__factory.connect(tokenAddress, signerOrProvider);
-              const votingWeight = (await votingContract!.getTokenWeight(tokenAddress)).toBigInt();
-              const name = await tokenContract.name();
-              const symbol = await tokenContract.symbol();
-              let totalSupply = undefined;
-              try {
-                const tokenSentEvents = await tokenContract.queryFilter(
-                  tokenContract.filters.Transfer(null, null),
-                );
-                totalSupply = BigInt(tokenSentEvents.length);
-              } catch (e) {
-                logError('Error while getting ERC721 total supply');
-              }
-              return { name, symbol, address: getAddress(tokenAddress), votingWeight, totalSupply };
+              const tokenContract = getContract({
+                abi: erc721Abi,
+                address: getAddress(tokenAddress),
+                client: publicClient,
+              });
+
+              const [votingWeight, name, symbol] = await Promise.all([
+                (await votingContract!.getTokenWeight(tokenAddress)).toBigInt(),
+                tokenContract.read.name(),
+                tokenContract.read.symbol(),
+              ]);
+
+              return { name, symbol, address: getAddress(tokenAddress), votingWeight };
             }),
           );
         }
       }
+
       if (erc721LinearVotingContractAddress && !votingContract) {
         votingContract = baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
           erc721LinearVotingContractAddress,
@@ -119,29 +120,36 @@ export default function useUserERC721VotingTokens(
           remainingTokenIds: tokenIds,
         };
       }
+
+      const userAddress = getAddress(user.address);
       await Promise.all(
         // Using `map` instead of `forEach` to simplify usage of `Promise.all`
         // and guarantee syncronous contractFn assignment
         govTokens.map(async token => {
-          const tokenContract = ERC721__factory.connect(token.address, signerOrProvider!);
-          if ((await tokenContract.balanceOf(user.address!)).toBigInt() > 0n) {
-            const tokenSentEvents = await tokenContract.queryFilter(
-              tokenContract.filters.Transfer(user.address!, null),
-            );
-            const tokenReceivedEvents = await tokenContract.queryFilter(
-              tokenContract.filters.Transfer(null, user.address),
-            );
+          const tokenContract = getContract({
+            abi: erc721Abi,
+            address: token.address,
+            client: publicClient,
+          });
+          if ((await tokenContract.read.balanceOf([userAddress])) > 0n) {
+            const tokenSentEvents = await tokenContract.getEvents.Transfer({ from: userAddress });
+            const tokenReceivedEvents = await tokenContract.getEvents.Transfer({ to: userAddress });
+
             const allEvents = tokenSentEvents
               .concat(tokenReceivedEvents)
               .sort(
-                (a, b) => a.blockNumber - b.blockNumber || a.transactionIndex - b.transactionIndex,
+                (a, b) =>
+                  Number(a.blockNumber - b.blockNumber) || a.transactionIndex - b.transactionIndex,
               );
 
             const ownedTokenIds = new Set<string>();
             allEvents.forEach(({ args: { to, from, tokenId } }) => {
-              if (to.toLowerCase() === user.address!.toLowerCase()) {
+              if (!to || !from || !tokenId) {
+                throw new Error('An ERC721 event has undefiend data');
+              }
+              if (to.toLowerCase() === userAddress.toLowerCase()) {
                 ownedTokenIds.add(tokenId.toString());
-              } else if (from.toLowerCase() === user.address!.toLowerCase()) {
+              } else if (from.toLowerCase() === userAddress.toLowerCase()) {
                 ownedTokenIds.delete(tokenId.toString());
               }
             });
@@ -191,14 +199,15 @@ export default function useUserERC721VotingTokens(
       };
     },
     [
+      baseContracts,
+      daoAddress,
       erc721LinearVotingContractAddress,
       erc721Tokens,
-      signerOrProvider,
       lookupModules,
+      publicClient,
       safeAPI,
-      daoAddress,
+      signerOrProvider,
       user.address,
-      baseContracts,
     ],
   );
 

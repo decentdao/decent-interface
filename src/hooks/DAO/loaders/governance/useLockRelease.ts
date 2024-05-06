@@ -1,4 +1,3 @@
-import { DelegateChangedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/VotesERC20';
 import { useCallback, useEffect, useRef } from 'react';
 import { LockRelease__factory } from '../../../../assets/typechain-types/dcnt';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -35,20 +34,10 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
         (await lockReleaseContract.getVotes(account)).toBigInt(),
       ]);
 
-    let delegateChangeEvents: DelegateChangedEvent[];
-    try {
-      delegateChangeEvents = await lockReleaseContract.queryFilter(
-        lockReleaseContract.filters.DelegateChanged(),
-      );
-    } catch (e) {
-      delegateChangeEvents = [];
-    }
-
     const tokenAccountData = {
       balance: tokenAmountTotal - tokenAmountReleased,
       delegatee: tokenDelegatee,
       votingWeight: tokenVotingWeight,
-      isDelegatesSet: delegateChangeEvents.length > 0,
     };
     action.dispatch({
       type: DecentGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA,
