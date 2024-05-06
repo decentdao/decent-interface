@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react';
 import { useEffect, useState, useCallback } from 'react';
 import { erc721Abi, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
@@ -60,9 +61,12 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
       }
     };
 
+    const address = _account ? getAddress(_account) : undefined;
+    Sentry.setUser(address ? { id: address } : null);
+
     setReadOnlyValues({
       user: {
-        address: _account ? getAddress(_account) : undefined,
+        address,
         votingWeight: await getVotingWeight(),
       },
       dao: !node.daoAddress
