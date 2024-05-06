@@ -3,6 +3,7 @@ import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/frac
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress } from 'viem';
+import { SENTINEL_ADDRESS } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -91,10 +92,7 @@ export function ManageDAOMenu({
 
             // @dev assumes the first strategy is the voting contract
             const votingContractAddress = (
-              await azoriusContract.asProvider.getStrategies(
-                '0x0000000000000000000000000000000000000001',
-                0,
-              )
+              await azoriusContract.asProvider.getStrategies(SENTINEL_ADDRESS, 0)
             )[1];
             const masterCopyData = await getZodiacModuleProxyMasterCopyData(
               getAddress(votingContractAddress),

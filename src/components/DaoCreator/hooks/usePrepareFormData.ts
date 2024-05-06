@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import IVotesAbi from '../../../assets/abi/IVotes';
+import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import {
@@ -63,8 +64,8 @@ export function usePrepareFormData() {
             client: publicClient,
           });
           await Promise.all([
-            votesContract.read.delegates(['0x0000000000000000000000000000000000000001']),
-            votesContract.read.getVotes(['0x0000000000000000000000000000000000000001']),
+            votesContract.read.delegates([SENTINEL_ADDRESS]),
+            votesContract.read.getVotes([SENTINEL_ADDRESS]),
           ]);
           return true;
         } catch (error) {

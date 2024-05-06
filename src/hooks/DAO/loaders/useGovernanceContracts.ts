@@ -4,6 +4,7 @@ import { Address, getContract, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
 import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
+import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
 import { getAzoriusModuleFromModules } from '../../../utils';
@@ -42,9 +43,7 @@ export const useGovernanceContracts = () => {
       let lockReleaseContractAddress: string | undefined;
 
       // @dev assumes the first strategy is the voting contract
-      const votingStrategyAddress = (
-        await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
-      )[1];
+      const votingStrategyAddress = (await azoriusContract.getStrategies(SENTINEL_ADDRESS, 0))[1];
 
       const masterCopyData = await getZodiacModuleProxyMasterCopyData(
         getAddress(votingStrategyAddress),

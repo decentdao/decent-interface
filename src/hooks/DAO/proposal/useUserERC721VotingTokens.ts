@@ -6,6 +6,7 @@ import {
 import { useState, useEffect, useCallback } from 'react';
 import { erc721Abi, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
+import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
@@ -78,7 +79,7 @@ export default function useUserERC721VotingTokens(
           const azoriusContract = azoriusModule.moduleContract as Azorius;
           // @dev assumes the first strategy is the voting contract
           const votingContractAddress = (
-            await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
+            await azoriusContract.getStrategies(SENTINEL_ADDRESS, 0)
           )[1];
           votingContract = LinearERC721Voting__factory.connect(
             votingContractAddress,
