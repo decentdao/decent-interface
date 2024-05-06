@@ -21,7 +21,7 @@ const useDeployAzorius = () => {
   const signerOrProvider = useSignerOrProvider();
   const navigate = useNavigate();
   const {
-    contracts: { fallbackHandler, votesERC20WrapperMasterCopy },
+    contracts: { fallbackHandler, votesERC20WrapperMasterCopy, votesERC20MasterCopy },
     addressPrefix,
   } = useNetworkConfig();
   const {
@@ -54,7 +54,6 @@ const useDeployAzorius = () => {
         azoriusFreezeGuardMasterCopyContract,
         freezeMultisigVotingMasterCopyContract,
         freezeERC20VotingMasterCopyContract,
-        votesTokenMasterCopyContract,
         claimingMasterCopyContract,
         keyValuePairsContract,
       } = baseContracts;
@@ -64,7 +63,6 @@ const useDeployAzorius = () => {
         fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asProvider,
         linearVotingMasterCopyContract: linearVotingMasterCopyContract.asProvider,
         azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asProvider,
-        votesTokenMasterCopyContract: votesTokenMasterCopyContract.asProvider,
         claimingMasterCopyContract: claimingMasterCopyContract.asProvider,
       } as AzoriusContracts;
 
@@ -88,6 +86,7 @@ const useDeployAzorius = () => {
         daoData,
         fallbackHandler,
         votesERC20WrapperMasterCopy,
+        votesERC20MasterCopy,
         undefined,
         undefined,
       );
@@ -146,6 +145,7 @@ const useDeployAzorius = () => {
       fallbackHandler,
       addressPrefix,
       votesERC20WrapperMasterCopy,
+      votesERC20MasterCopy,
     ],
   );
 

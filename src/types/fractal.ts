@@ -9,7 +9,6 @@ import {
   ERC20Claim,
   ERC20FreezeVoting,
   MultisigFreezeVoting,
-  VotesERC20,
   MultisigFreezeGuard,
   KeyValuePairs,
   ERC721FreezeVoting,
@@ -347,7 +346,6 @@ export interface FractalContracts {
   freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
   freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   freezeERC721VotingMasterCopyContract: ContractConnection<ERC721FreezeVoting>;
-  votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
   keyValuePairsContract: ContractConnection<KeyValuePairs>;
 }
