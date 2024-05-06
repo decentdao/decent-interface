@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { getAddress } from 'viem';
+import { PublicClient, getAddress } from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { GnosisSafeL2__factory } from '../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { getRandomBytes } from '../helpers';
@@ -34,6 +34,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
 
   constructor(
     signerOrProvider: ethers.Signer | any,
+    publicClient: PublicClient,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts | undefined,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
@@ -45,6 +46,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   ) {
     super(
       signerOrProvider,
+      publicClient,
       baseContracts,
       azoriusContracts,
       daoData,
@@ -86,6 +88,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   ): DaoTxBuilder {
     return new DaoTxBuilder(
       this.signerOrProvider,
+      this.publicClient,
       this.baseContracts,
       this.azoriusContracts,
       this.daoData,
@@ -108,6 +111,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   ): FreezeGuardTxBuilder {
     return new FreezeGuardTxBuilder(
       this.signerOrProvider,
+      this.publicClient,
       this.baseContracts,
       this.daoData as SubDAO,
       this.safeContract!,
@@ -133,6 +137,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   public async createAzoriusTxBuilder(): Promise<AzoriusTxBuilder> {
     const azoriusTxBuilder = new AzoriusTxBuilder(
       this.signerOrProvider,
+      this.publicClient,
       this.baseContracts,
       this.azoriusContracts!,
       this.daoData as AzoriusERC20DAO,
