@@ -9,7 +9,6 @@ import * as Yup from 'yup';
 import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
-import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import useApproval from '../../../hooks/utils/useApproval';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
@@ -30,7 +29,6 @@ export function WrapToken({ close }: { close: () => void }) {
     value: '',
     bigintValue: 0n,
   });
-  const baseContracts = useSafeContracts();
 
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
   const [, pending, contractCallViem] = useTransaction();
@@ -39,9 +37,7 @@ export function WrapToken({ close }: { close: () => void }) {
     approveTransaction,
     pending: approvalPending,
   } = useApproval(
-    baseContracts?.votesTokenMasterCopyContract?.asSigner.attach(
-      governanceContracts.underlyingTokenAddress!,
-    ),
+    governanceContracts.underlyingTokenAddress,
     azoriusGovernance.votesToken?.address,
     userBalance.bigintValue,
   );
@@ -89,8 +85,7 @@ export function WrapToken({ close }: { close: () => void }) {
   const handleFormSubmit = useCallback(
     (amount: BigIntValuePair) => {
       const { votesTokenContractAddress } = governanceContracts;
-      if (!votesTokenContractAddress || !signer || !account || !baseContracts || !walletClient)
-        return;
+      if (!votesTokenContractAddress || !signer || !account || !walletClient) return;
 
       const wrapperTokenContract = getContract({
         abi: VotesERC20WrapperAbi,
@@ -119,7 +114,6 @@ export function WrapToken({ close }: { close: () => void }) {
       close,
       t,
       loadERC20TokenAccountData,
-      baseContracts,
       walletClient,
     ],
   );

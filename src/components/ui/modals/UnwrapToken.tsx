@@ -8,7 +8,6 @@ import { useAccount, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
 import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
-import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import useApproval from '../../../hooks/utils/useApproval';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
@@ -21,7 +20,6 @@ export function UnwrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
   const { address: account } = useAccount();
-  const baseContracts = useSafeContracts();
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
 
   const [, pending, contractCallViem] = useTransaction();
@@ -30,9 +28,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
     approveTransaction,
     pending: approvalPending,
   } = useApproval(
-    baseContracts?.votesTokenMasterCopyContract?.asSigner.attach(
-      governanceContracts.underlyingTokenAddress!,
-    ),
+    governanceContracts.underlyingTokenAddress,
     azoriusGovernance.votesToken?.address,
   );
 
