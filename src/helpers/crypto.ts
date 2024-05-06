@@ -12,6 +12,8 @@ import {
   bytesToBigInt,
   Hex,
   isHex,
+  encodeFunctionData,
+  Abi,
 } from 'viem';
 import { ContractConnection } from '../types';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
@@ -161,6 +163,27 @@ export const buildSafeAPIPost = async (
   };
 };
 
+const finishBuildingConractCall = (
+  data: Hex,
+  nonce: number,
+  contractAddress: Address,
+  delegateCall?: boolean,
+  overrides?: Partial<SafeTransaction>,
+) => {
+  const operation: 0 | 1 = delegateCall ? 1 : 0;
+  return buildSafeTransaction(
+    Object.assign(
+      {
+        to: contractAddress,
+        data,
+        operation,
+        nonce,
+      },
+      overrides,
+    ),
+  );
+};
+
 export const buildContractCall = (
   contract: Contract,
   method: string,
@@ -170,18 +193,34 @@ export const buildContractCall = (
   overrides?: Partial<SafeTransaction>,
 ): SafeTransaction => {
   const data = contract.interface.encodeFunctionData(method, params);
-  const operation: 0 | 1 = delegateCall ? 1 : 0;
-  return buildSafeTransaction(
-    Object.assign(
-      {
-        to: contract.address,
-        data,
-        operation,
-        nonce,
-      },
-      overrides,
-    ),
+  if (!isHex(data)) {
+    throw new Error('encoded function data not hexadecimal');
+  }
+  return finishBuildingConractCall(
+    data,
+    nonce,
+    getAddress(contract.address),
+    delegateCall,
+    overrides,
   );
+};
+
+export const buildContractCallViem = (
+  contractAbi: Abi,
+  contractAddress: Address,
+  method: string,
+  params: any[],
+  nonce: number,
+  delegateCall?: boolean,
+  overrides?: Partial<SafeTransaction>,
+): SafeTransaction => {
+  const data = encodeFunctionData({
+    abi: contractAbi,
+    functionName: method,
+    args: params,
+  });
+
+  return finishBuildingConractCall(data, nonce, contractAddress, delegateCall, overrides);
 };
 
 const encodeMetaTransaction = (tx: MetaTransaction): string => {
