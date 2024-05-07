@@ -1,5 +1,4 @@
 import {
-  ModuleProxyFactory,
   FractalModule,
   MultisigFreezeGuard,
   MultisigFreezeVoting,
@@ -26,5 +25,4 @@ export interface BaseContracts {
   freezeERC20VotingMasterCopyContract: ERC20FreezeVoting;
   freezeERC721VotingMasterCopyContract: ERC721FreezeVoting;
   freezeMultisigVotingMasterCopyContract: MultisigFreezeVoting;
-  zodiacModuleProxyFactoryContract: ModuleProxyFactory;
 }

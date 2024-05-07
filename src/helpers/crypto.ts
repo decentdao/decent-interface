@@ -15,7 +15,6 @@ import {
   encodeFunctionData,
   Abi,
 } from 'viem';
-import { ContractConnection } from '../types';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
 
 export interface SafeSignature {
@@ -236,10 +235,3 @@ const encodeMetaTransaction = (tx: MetaTransaction): string => {
 export const encodeMultiSend = (txs: MetaTransaction[]): string => {
   return '0x' + txs.map(tx => encodeMetaTransaction(tx)).join('');
 };
-
-/**
- * TODO: Remove getEventRPC usage as whole
- */
-export function getEventRPC<T>(connection: ContractConnection<T>): T {
-  return connection.asProvider;
-}

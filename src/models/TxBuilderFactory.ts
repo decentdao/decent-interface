@@ -35,6 +35,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private keyValuePairsAddress: string;
   private fractalRegistryAddress: string;
   private gnosisSafeProxyFactoryAddress: string;
+  private moduleProxyFactoryAddress: string;
 
   constructor(
     signerOrProvider: ethers.Signer | any,
@@ -48,6 +49,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     keyValuePairsAddress: string,
     fractalRegistryAddress: string,
     gnosisSafeProxyFactoryAddress: string,
+    moduleProxyFactoryAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
   ) {
@@ -68,6 +70,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.keyValuePairsAddress = keyValuePairsAddress;
     this.fractalRegistryAddress = fractalRegistryAddress;
     this.gnosisSafeProxyFactoryAddress = gnosisSafeProxyFactoryAddress;
+    this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
   }
 
   public setSafeContract(safeAddress: string) {
@@ -113,6 +116,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this,
       this.keyValuePairsAddress,
       this.fractalRegistryAddress,
+      this.moduleProxyFactoryAddress,
       this.parentAddress,
       this.parentTokenAddress,
       parentStrategyType,
@@ -134,6 +138,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.safeContract!,
       this.saltNum,
       getAddress(this.parentAddress!),
+      getAddress(this.moduleProxyFactoryAddress),
       this.parentTokenAddress ? getAddress(this.parentTokenAddress) : undefined,
       this.azoriusContracts,
       azoriusAddress ? getAddress(azoriusAddress) : undefined,
@@ -161,6 +166,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.safeContract!,
       this.votesERC20WrapperMasterCopyAddress,
       this.votesERC20MasterCopyAddress,
+      getAddress(this.moduleProxyFactoryAddress),
       this.parentAddress ? getAddress(this.parentAddress) : undefined,
       this.parentTokenAddress ? getAddress(this.parentTokenAddress) : undefined,
     );

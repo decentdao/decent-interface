@@ -1,18 +1,19 @@
+import { FractalModule, FractalModule__factory } from '@fractal-framework/fractal-contracts';
 import {
-  FractalModule,
-  FractalModule__factory,
-  ModuleProxyFactory,
-} from '@fractal-framework/fractal-contracts';
-import { encodeAbiParameters, parseAbiParameters, getAddress, isHex } from 'viem';
+  encodeAbiParameters,
+  parseAbiParameters,
+  getAddress,
+  isHex,
+  Address,
+  getCreate2Address,
+  keccak256,
+  encodePacked,
+} from 'viem';
+import ModuleProxyFactoryAbi from '../../assets/abi/ModuleProxyFactory';
 import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
-import { buildContractCall } from '../../helpers/crypto';
+import { buildContractCall, buildContractCallViem } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
-import {
-  buildDeployZodiacModuleTx,
-  generateContractByteCodeLinear,
-  generatePredictedModuleAddress,
-  generateSalt,
-} from './utils';
+import { generateContractByteCodeLinear, generateSalt } from './utils';
 
 export interface FractalModuleData {
   predictedFractalModuleAddress: string;
@@ -22,7 +23,7 @@ export interface FractalModuleData {
 
 export const fractalModuleData = (
   fractalModuleMasterCopyContract: FractalModule,
-  zodiacModuleProxyFactoryContract: ModuleProxyFactory,
+  moduleProxyFactoryAddress: Address,
   safeContract: GnosisSafeL2,
   saltNum: bigint,
   parentAddress?: string,
@@ -48,16 +49,21 @@ export const fractalModuleData = (
   );
 
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
-  const deployFractalModuleTx = buildDeployZodiacModuleTx(zodiacModuleProxyFactoryContract, [
-    fractalModuleMasterCopyContract.address,
-    fractalModuleCalldata,
-    saltNum,
-  ]);
-  const predictedFractalModuleAddress = generatePredictedModuleAddress(
-    getAddress(zodiacModuleProxyFactoryContract.address),
-    fractalSalt,
-    fractalByteCodeLinear,
+
+  const deployFractalModuleTx = buildContractCallViem(
+    ModuleProxyFactoryAbi,
+    moduleProxyFactoryAddress,
+    'deployModule',
+    [fractalModuleMasterCopyContract.address, fractalModuleCalldata, saltNum],
+    0,
+    false,
   );
+
+  const predictedFractalModuleAddress = getCreate2Address({
+    from: moduleProxyFactoryAddress,
+    salt: fractalSalt,
+    bytecodeHash: keccak256(encodePacked(['bytes'], [fractalByteCodeLinear])),
+  });
 
   const enableFractalModuleTx = buildContractCall(
     safeContract,

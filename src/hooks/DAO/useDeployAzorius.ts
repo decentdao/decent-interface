@@ -29,6 +29,7 @@ const useDeployAzorius = () => {
       keyValuePairs,
       fractalRegistry,
       safeFactory,
+      zodiacModuleProxyFactory,
     },
     addressPrefix,
   } = useNetworkConfig();
@@ -57,7 +58,6 @@ const useDeployAzorius = () => {
         linearVotingMasterCopyContract,
         linearVotingERC721MasterCopyContract,
         fractalAzoriusMasterCopyContract,
-        zodiacModuleProxyFactoryContract,
         fractalModuleMasterCopyContract,
         multisigFreezeGuardMasterCopyContract,
         azoriusFreezeGuardMasterCopyContract,
@@ -84,7 +84,6 @@ const useDeployAzorius = () => {
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asProvider,
         freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asProvider,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asProvider,
-        zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asProvider,
       };
 
       const txBuilderFactory = new TxBuilderFactory(
@@ -99,6 +98,7 @@ const useDeployAzorius = () => {
         keyValuePairs,
         fractalRegistry,
         safeFactory,
+        zodiacModuleProxyFactory,
         undefined,
         undefined,
       );
@@ -162,6 +162,7 @@ const useDeployAzorius = () => {
       keyValuePairs,
       fractalRegistry,
       safeFactory,
+      zodiacModuleProxyFactory,
     ],
   );
 
