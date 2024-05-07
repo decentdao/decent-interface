@@ -1,6 +1,5 @@
 import {
   FractalModule__factory,
-  FractalRegistry__factory,
   AzoriusFreezeGuard__factory,
   ERC20FreezeVoting__factory,
   MultisigFreezeGuard__factory,
@@ -33,7 +32,6 @@ export default function useSafeContracts() {
       multisend,
       fractalAzoriusMasterCopy,
       fractalModuleMasterCopy,
-      fractalRegistry,
       multisigFreezeGuardMasterCopy,
       azoriusFreezeGuardMasterCopy,
       multisigFreezeVotingMasterCopy,
@@ -87,11 +85,6 @@ export default function useSafeContracts() {
       asProvider: FractalModule__factory.connect(fractalModuleMasterCopy, provider),
     };
 
-    const fractalRegistryContract = {
-      asSigner: FractalRegistry__factory.connect(fractalRegistry, signerOrProvider),
-      asProvider: FractalRegistry__factory.connect(fractalRegistry, provider),
-    };
-
     const multisigFreezeGuardMasterCopyContract = {
       asSigner: MultisigFreezeGuard__factory.connect(
         multisigFreezeGuardMasterCopy,
@@ -136,7 +129,6 @@ export default function useSafeContracts() {
       safeSingletonContract,
       zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
-      fractalRegistryContract,
       multisigFreezeGuardMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
@@ -153,7 +145,6 @@ export default function useSafeContracts() {
     fractalAzoriusMasterCopy,
     multisend,
     fractalModuleMasterCopy,
-    fractalRegistry,
     multisigFreezeGuardMasterCopy,
     azoriusFreezeGuardMasterCopy,
     multisigFreezeVotingMasterCopy,
