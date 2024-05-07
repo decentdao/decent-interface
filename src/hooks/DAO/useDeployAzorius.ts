@@ -22,7 +22,12 @@ const useDeployAzorius = () => {
   const signerOrProvider = useSignerOrProvider();
   const navigate = useNavigate();
   const {
-    contracts: { fallbackHandler, votesERC20WrapperMasterCopy, votesERC20MasterCopy },
+    contracts: {
+      fallbackHandler,
+      votesERC20WrapperMasterCopy,
+      votesERC20MasterCopy,
+      keyValuePairs,
+    },
     addressPrefix,
   } = useNetworkConfig();
   const {
@@ -58,7 +63,6 @@ const useDeployAzorius = () => {
         freezeMultisigVotingMasterCopyContract,
         freezeERC20VotingMasterCopyContract,
         claimingMasterCopyContract,
-        keyValuePairsContract,
       } = baseContracts;
       let azoriusContracts;
 
@@ -79,7 +83,6 @@ const useDeployAzorius = () => {
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asProvider,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asProvider,
         zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asProvider,
-        keyValuePairsContract: keyValuePairsContract.asProvider,
       } as BaseContracts;
 
       const txBuilderFactory = new TxBuilderFactory(
@@ -91,6 +94,7 @@ const useDeployAzorius = () => {
         fallbackHandler,
         votesERC20WrapperMasterCopy,
         votesERC20MasterCopy,
+        keyValuePairs,
         undefined,
         undefined,
       );
@@ -151,6 +155,7 @@ const useDeployAzorius = () => {
       addressPrefix,
       votesERC20WrapperMasterCopy,
       votesERC20MasterCopy,
+      keyValuePairs,
     ],
   );
 

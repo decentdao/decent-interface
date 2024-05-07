@@ -6,7 +6,6 @@ import {
   MultisigFreezeGuard,
   MultisigFreezeVoting,
   ERC20FreezeVoting,
-  KeyValuePairs,
   ERC721FreezeVoting,
 } from '@fractal-framework/fractal-contracts';
 import { MultiSend } from '../assets/typechain-types/usul';
@@ -32,5 +31,4 @@ export interface BaseContracts {
   freezeERC721VotingMasterCopyContract: ERC721FreezeVoting;
   freezeMultisigVotingMasterCopyContract: MultisigFreezeVoting;
   zodiacModuleProxyFactoryContract: ModuleProxyFactory;
-  keyValuePairsContract: KeyValuePairs;
 }
