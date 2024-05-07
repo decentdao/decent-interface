@@ -5,8 +5,6 @@ import {
   LinearERC20Voting__factory,
   LinearERC721Voting,
   LinearERC721Voting__factory,
-  VotesERC20,
-  VotesERC20__factory,
 } from '@fractal-framework/fractal-contracts';
 import {
   getCreate2Address,
@@ -20,12 +18,13 @@ import {
   isAddress,
   isHex,
   encodeFunctionData,
+  PublicClient,
 } from 'viem';
 import VotesERC20Abi from '../assets/abi/VotesERC20';
 import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { SENTINEL_ADDRESS } from '../constants/common';
-import { buildContractCall, getRandomBytes } from '../helpers';
+import { buildContractCall, buildContractCallViem, getRandomBytes } from '../helpers';
 import {
   BaseContracts,
   SafeTransaction,
@@ -55,7 +54,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   public azoriusContract: Azorius | undefined;
   public linearVotingContract: LinearERC20Voting | undefined;
   public linearERC721VotingContract: LinearERC721Voting | undefined;
-  public votesTokenContract: VotesERC20 | undefined;
+  public votesTokenContractAddress: Address | undefined;
 
   private votesERC20WrapperMasterCopyAddress: string;
   private votesERC20MasterCopyAddress: string;
@@ -67,6 +66,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   constructor(
     signerOrProvider: any,
+    publicClient: PublicClient,
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts,
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
@@ -78,6 +78,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   ) {
     super(
       signerOrProvider,
+      publicClient,
       baseContracts,
       azoriusContracts,
       daoData,
@@ -245,9 +246,14 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildApproveClaimAllocation() {
+    if (!this.votesTokenContractAddress) {
+      return;
+    }
+
     const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
-    return buildContractCall(
-      this.votesTokenContract!,
+    return buildContractCallViem(
+      VotesERC20Abi,
+      this.votesTokenContractAddress,
       'approve',
       [this.predictedTokenClaimAddress, azoriusGovernanceDaoData.parentAllocationAmount],
       0,
@@ -547,6 +553,10 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   private setContracts() {
+    if (!this.predictedTokenAddress) {
+      return;
+    }
+
     const daoData = this.daoData as AzoriusGovernanceDAO;
     this.azoriusContract = Azorius__factory.connect(
       this.predictedAzoriusAddress!,
@@ -557,10 +567,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         this.predictedStrategyAddress!,
         this.signerOrProvider,
       );
-      this.votesTokenContract = VotesERC20__factory.connect(
-        this.predictedTokenAddress!,
-        this.signerOrProvider,
-      );
+      this.votesTokenContractAddress = this.predictedTokenAddress;
     } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
       this.linearERC721VotingContract = LinearERC721Voting__factory.connect(
         this.predictedStrategyAddress!,

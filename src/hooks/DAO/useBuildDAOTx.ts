@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { usePublicClient } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -27,6 +28,7 @@ const useBuildDAOTx = () => {
     governance,
     governanceContracts: { erc721LinearVotingContractAddress },
   } = useFractal();
+  const publicClient = usePublicClient();
 
   const buildDao = useCallback(
     async (
@@ -36,7 +38,7 @@ const useBuildDAOTx = () => {
     ) => {
       let azoriusContracts: AzoriusContracts | undefined;
 
-      if (!user.address || !signerOrProvider || !baseContracts) {
+      if (!user.address || !signerOrProvider || !baseContracts || !publicClient) {
         return;
       }
       const {
@@ -102,6 +104,7 @@ const useBuildDAOTx = () => {
 
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
+        publicClient,
         buildrerBaseContracts,
         azoriusContracts,
         daoData,
@@ -148,6 +151,7 @@ const useBuildDAOTx = () => {
     [
       user.address,
       signerOrProvider,
+      publicClient,
       baseContracts,
       erc721LinearVotingContractAddress,
       dao,
