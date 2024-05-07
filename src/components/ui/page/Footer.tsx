@@ -21,7 +21,9 @@ export function Footer() {
         placement="top"
         label={t('currentBuild', { hash: commitHash })}
       >
-        <ExtrernalLinkWrappable href={`https://github.com/decentdao/decent-interface/commit/${commitHash}`}>
+        <ExtrernalLinkWrappable
+          href={`https://github.com/decentdao/decent-interface/commit/${commitHash}`}
+        >
           {commitHash.substring(0, 7)}
         </ExtrernalLinkWrappable>
       </Tooltip>
