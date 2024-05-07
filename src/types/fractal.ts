@@ -1,6 +1,5 @@
 import {
   FractalModule,
-  FractalRegistry,
   GnosisSafeProxyFactory,
   ModuleProxyFactory,
   LinearERC20Voting,
@@ -339,7 +338,6 @@ export interface FractalContracts {
   safeSingletonContract: ContractConnection<GnosisSafeL2>;
   zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
-  fractalRegistryContract: ContractConnection<FractalRegistry>;
   multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
   azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
   freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;

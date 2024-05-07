@@ -3,8 +3,9 @@ import { Flex, Text, Button, Divider } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { isHex, getAddress, encodeFunctionData } from 'viem';
+import { encodeFunctionData } from 'viem';
 import { SettingsSection } from '..';
+import FractalRegistryAbi from '../../../../../assets/abi/FractalRegistry';
 import KeyValuePairsAbi from '../../../../../assets/abi/KeyValuePairs';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -25,7 +26,6 @@ export default function MetadataContainer() {
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
-    baseContracts,
     node: { daoName, daoSnapshotENS, daoAddress, safe },
     readOnly: {
       user: { votingWeight },
@@ -33,7 +33,7 @@ export default function MetadataContainer() {
   } = useFractal();
   const {
     addressPrefix,
-    contracts: { keyValuePairs },
+    contracts: { keyValuePairs, fractalRegistry },
   } = useNetworkConfig();
 
   useEffect(() => {
@@ -65,24 +65,19 @@ export default function MetadataContainer() {
   };
 
   const handleEditDAOName = () => {
-    if (!baseContracts) {
-      return;
-    }
-    const { fractalRegistryContract } = baseContracts;
-    const encodedUpdateDAOName = fractalRegistryContract.asProvider.interface.encodeFunctionData(
-      'updateDAOName',
-      [name],
-    );
-    if (!isHex(encodedUpdateDAOName)) {
-      return;
-    }
+    const encodedUpdateDAOName = encodeFunctionData({
+      abi: FractalRegistryAbi,
+      functionName: 'updateDAOName',
+      args: [name],
+    });
+
     const proposalData: ProposalExecuteData = {
       metaData: {
         title: t('Update Safe Name', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },
-      targets: [getAddress(fractalRegistryContract.asProvider.address)],
+      targets: [fractalRegistry],
       values: [0n],
       calldatas: [encodedUpdateDAOName],
     };

@@ -73,6 +73,7 @@ export function useMasterCopy() {
       let masterCopyAddress: Address = zeroAddress;
       let error;
       if (baseContracts) {
+        // TODO after removing this moduleproxyfactorycontract from basecontracts, kill getEventRPC
         const contract = getEventRPC<ModuleProxyFactory>(
           baseContracts?.zodiacModuleProxyFactoryContract,
         );

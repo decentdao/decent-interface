@@ -10,7 +10,7 @@ interface IFavorite {
   address: string;
 }
 export function Favorite({ network, address }: IFavorite) {
-  const { daoRegistryName } = useDAOName({ address });
+  const { daoRegistryName } = useDAOName(address);
   const { action } = useFractal();
   const navigate = useNavigate();
 
