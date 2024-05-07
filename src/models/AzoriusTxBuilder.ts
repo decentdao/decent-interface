@@ -18,7 +18,6 @@ import {
   isAddress,
   isHex,
   encodeFunctionData,
-  GetContractReturnType,
   PublicClient,
   getContract,
 } from 'viem';
@@ -56,7 +55,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   public azoriusContract: Azorius | undefined;
   public linearVotingContract: LinearERC20Voting | undefined;
   public linearERC721VotingContract: LinearERC721Voting | undefined;
-  public votesTokenContract: GetContractReturnType<typeof VotesERC20Abi> | undefined;
+  public votesTokenContractAddress: Address | undefined;
 
   private votesERC20WrapperMasterCopyAddress: string;
   private votesERC20MasterCopyAddress: string;
@@ -248,14 +247,14 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildApproveClaimAllocation() {
-    if (!this.votesTokenContract) {
+    if (!this.votesTokenContractAddress) {
       return;
     }
 
     const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
     return buildContractCallViem(
       VotesERC20Abi,
-      this.votesTokenContract.address,
+      this.votesTokenContractAddress,
       'approve',
       [this.predictedTokenClaimAddress, azoriusGovernanceDaoData.parentAllocationAmount],
       0,
@@ -569,11 +568,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         this.predictedStrategyAddress!,
         this.signerOrProvider,
       );
-      this.votesTokenContract = getContract({
-        abi: VotesERC20Abi,
-        address: this.predictedTokenAddress,
-        client: this.publicClient,
-      });
+      this.votesTokenContractAddress = this.predictedTokenAddress;
     } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
       this.linearERC721VotingContract = LinearERC721Voting__factory.connect(
         this.predictedStrategyAddress!,
