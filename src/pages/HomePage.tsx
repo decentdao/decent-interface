@@ -2,7 +2,6 @@ import { VStack, Text, Flex, Button } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { mainnet, sepolia } from 'wagmi/chains';
-import { AppFooter } from '../components/pages/AppHome/AppFooter';
 import CTABox from '../components/pages/AppHome/CTABox';
 import FeaturedDAOCard, { FeaturedDAO } from '../components/pages/AppHome/FeaturedDAOCard';
 import { CreateDAOIllustration, DocsIllustration } from '../components/ui/proposal/Icons';
@@ -51,6 +50,7 @@ const FEATURED_DAOS = new Map<number, FeaturedDAO[]>([
       {
         iconSrc: '/images/icon-myosin.svg',
         titleKey: 'myosinTitle',
+        iconBg: 'neutral-3',
         network: 'sep',
         networkName: 'Sepolia',
         votingStrategy: 'ERC-20',
@@ -152,7 +152,6 @@ export default function HomePage() {
           </VStack>
         ) : null}
       </VStack>
-      <AppFooter />
     </Flex>
   );
 }
