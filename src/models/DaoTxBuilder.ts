@@ -1,7 +1,8 @@
 import { ethers } from 'ethers';
-import { PublicClient, zeroAddress } from 'viem';
+import { PublicClient, getAddress, zeroAddress } from 'viem';
+import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
-import { buildContractCall, encodeMultiSend } from '../helpers';
+import { buildContractCall, buildContractCallViem, encodeMultiSend } from '../helpers';
 import {
   BaseContracts,
   SafeMultisigDAO,
@@ -32,6 +33,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   private internalTxs: SafeTransaction[] = [];
 
+  private readonly keyValuePairsAddress: string;
+
   constructor(
     signerOrProvider: ethers.Signer | any,
     publicClient: PublicClient,
@@ -42,6 +45,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     createSafeTx: SafeTransaction,
     safeContract: GnosisSafeL2,
     txBuilderFactory: TxBuilderFactory,
+    keyValuePairsAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
     parentStrategyType?: VotingStrategyType,
@@ -63,6 +67,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.saltNum = saltNum;
     this.parentStrategyType = parentStrategyType;
     this.parentStrategyAddress = parentStrategyAddress;
+
+    this.keyValuePairsAddress = keyValuePairsAddress;
 
     // Prep fractal module txs for setting up subDAOs
     this.setFractalModuleTxs();
@@ -231,8 +237,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
   }
 
   private buildUpdateDAOSnapshotENSTx(): SafeTransaction {
-    return buildContractCall(
-      this.baseContracts.keyValuePairsContract,
+    return buildContractCallViem(
+      KeyValuePairsAbi,
+      getAddress(this.keyValuePairsAddress),
       'updateValues',
       [['snapshotENS'], [this.daoData.snapshotENS]],
       0,

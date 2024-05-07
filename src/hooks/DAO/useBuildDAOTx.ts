@@ -19,7 +19,12 @@ const useBuildDAOTx = () => {
   const signerOrProvider = useSignerOrProvider();
   const {
     createOptions,
-    contracts: { fallbackHandler, votesERC20WrapperMasterCopy, votesERC20MasterCopy },
+    contracts: {
+      fallbackHandler,
+      votesERC20WrapperMasterCopy,
+      votesERC20MasterCopy,
+      keyValuePairs,
+    },
   } = useNetworkConfig();
 
   const {
@@ -111,6 +116,7 @@ const useBuildDAOTx = () => {
         fallbackHandler,
         votesERC20WrapperMasterCopy,
         votesERC20MasterCopy,
+        keyValuePairs,
         parentAddress,
         parentTokenAddress,
       );
@@ -160,6 +166,7 @@ const useBuildDAOTx = () => {
       fallbackHandler,
       votesERC20WrapperMasterCopy,
       votesERC20MasterCopy,
+      keyValuePairs,
     ],
   );
 
