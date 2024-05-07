@@ -6,8 +6,9 @@ import {
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { FreezeVoteCastEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/ERC20FreezeVoting';
 import { useCallback, useEffect, useRef } from 'react';
-import { zeroAddress } from 'viem';
-import { useAccount } from 'wagmi';
+import { getAddress, getContract, zeroAddress } from 'viem';
+import { useAccount, usePublicClient } from 'wagmi';
+import VotesERC20Abi from '../../../assets/abi/VotesERC20';
 import {
   isWithinFreezeProposalPeriod,
   isWithinFreezePeriod,
@@ -42,6 +43,7 @@ export const useFractalFreeze = ({
   );
 
   const provider = useEthersProvider();
+  const publicClient = usePublicClient();
 
   const loadFractalFreezeGuard = useCallback(
     async ({
@@ -53,7 +55,8 @@ export const useFractalFreeze = ({
         !freezeVotingContractAddress ||
         !account ||
         !provider ||
-        !baseContracts
+        !baseContracts ||
+        !publicClient
       ) {
         return;
       }
@@ -95,11 +98,7 @@ export const useFractalFreeze = ({
         isFrozen,
       };
 
-      const {
-        votesTokenMasterCopyContract,
-        safeSingletonContract,
-        freezeERC20VotingMasterCopyContract,
-      } = baseContracts;
+      const { safeSingletonContract, freezeERC20VotingMasterCopyContract } = baseContracts;
 
       if (freezeVotingType === FreezeVotingType.MULTISIG) {
         const safeContract = safeSingletonContract!.asProvider.attach(
@@ -111,9 +110,13 @@ export const useFractalFreeze = ({
         const freezeERC20VotingContract = freezeERC20VotingMasterCopyContract.asProvider.attach(
           freezeVotingContractAddress,
         );
-        const votesTokenContract = votesTokenMasterCopyContract!.asProvider.attach(
-          await freezeERC20VotingContract.votesERC20(),
-        );
+
+        const votesTokenContract = getContract({
+          abi: VotesERC20Abi,
+          address: getAddress(await freezeERC20VotingContract.votesERC20()),
+          client: publicClient,
+        });
+
         const currentTimestamp = await getTimeStamp('latest', provider);
         const isFreezeActive =
           isWithinFreezeProposalPeriod(
@@ -129,11 +132,12 @@ export const useFractalFreeze = ({
         userHasVotes =
           (!isFreezeActive
             ? // freeze not active
-              (await votesTokenContract.getVotes(account || '')).toBigInt()
+              await votesTokenContract.read.getVotes([account || ''])
             : // freeze is active
-              (
-                await votesTokenContract.getPastVotes(account || '', freezeCreatedBlock)
-              ).toBigInt()) > 0n;
+              await votesTokenContract.read.getPastVotes([
+                account || '',
+                BigInt(freezeCreatedBlock),
+              ])) > 0n;
       } else if (freezeVotingType === FreezeVotingType.ERC721) {
         const { totalVotingTokenAddresses } = await getUserERC721VotingTokens(
           undefined,
@@ -149,7 +153,7 @@ export const useFractalFreeze = ({
       isFreezeSet.current = true;
       return freeze;
     },
-    [account, provider, baseContracts, getUserERC721VotingTokens, parentSafeAddress],
+    [account, provider, baseContracts, publicClient, getUserERC721VotingTokens, parentSafeAddress],
   );
 
   const setFractalFreezeGuard = useCallback(

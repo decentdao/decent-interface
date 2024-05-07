@@ -1,9 +1,10 @@
+import { Address } from 'viem';
+
 export interface VotesTokenData extends VotesData, ERC20TokenData {}
 export interface VotesData {
   balance: bigint | null;
   delegatee: string | null;
   votingWeight: bigint | null;
-  isDelegatesSet: boolean | null;
 }
 export type UnderlyingTokenData = Omit<
   ERC20TokenData,
@@ -13,7 +14,7 @@ export type UnderlyingTokenData = Omit<
 export interface BaseTokenData {
   name: string;
   symbol: string;
-  address: string;
+  address: Address;
 }
 export interface ERC20TokenData extends BaseTokenData {
   decimals: number;

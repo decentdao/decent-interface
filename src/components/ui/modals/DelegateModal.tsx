@@ -2,13 +2,16 @@ import { Box, Button, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress } from 'viem';
+import { zeroAddress, getAddress, getContract } from 'viem';
+import { useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
+import VotesERC20Abi from '../../../assets/abi/VotesERC20';
 import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AzoriusGovernance, DecentGovernance } from '../../../types';
@@ -36,19 +39,28 @@ export function DelegateModal({ close }: { close: Function }) {
   const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken?.delegatee);
   const lockedDelegateeDisplayName = useDisplayName(decentGovernance?.lockedVotesToken?.delegatee);
   const { delegateVote, contractCallPending } = useDelegateVote();
+  const [, contractCallPendingViem, contractCallViem] = useTransaction();
   const { addressValidationTest } = useValidationAddress();
+  const { data: walletClient } = useWalletClient();
 
   const submitDelegation = async (values: { address: string }) => {
-    if (!votesTokenContractAddress || !baseContracts) return;
-    let validAddress = values.address;
-    if (couldBeENS(validAddress)) {
-      validAddress = await signer!.resolveName(values.address);
+    if (!votesTokenContractAddress || !baseContracts || !walletClient) return;
+    let validAddress = getAddress(values.address);
+    if (couldBeENS(validAddress) && signer) {
+      validAddress = getAddress(await signer.resolveName(values.address));
     }
-    const votingTokenContract =
-      baseContracts.votesERC20WrapperMasterCopyContract.asSigner.attach(votesTokenContractAddress);
-    delegateVote({
-      delegatee: validAddress,
-      votingTokenContract,
+
+    const votingTokenContract = getContract({
+      abi: VotesERC20Abi,
+      address: getAddress(votesTokenContractAddress),
+      client: walletClient,
+    });
+
+    contractCallViem({
+      contractFn: () => votingTokenContract.write.delegate([validAddress]),
+      pendingMessage: t('pendingDelegateVote'),
+      failedMessage: t('failedDelegateVote'),
+      successMessage: t('successDelegateVote'),
       successCallback: () => {
         close();
       },
@@ -58,7 +70,7 @@ export function DelegateModal({ close }: { close: Function }) {
     if (!lockReleaseContractAddress || !baseContracts || !signer) return;
     let validAddress = values.address;
     if (couldBeENS(validAddress)) {
-      validAddress = await signer!.resolveName(values.address);
+      validAddress = await signer.resolveName(values.address);
     }
     const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, signer);
     delegateVote({
@@ -204,6 +216,7 @@ export function DelegateModal({ close }: { close: Function }) {
               isDisabled={
                 !!errors.address ||
                 contractCallPending ||
+                contractCallPendingViem ||
                 !values.address ||
                 values.address === azoriusGovernance.votesToken?.delegatee
               }
@@ -219,6 +232,7 @@ export function DelegateModal({ close }: { close: Function }) {
                   isDisabled={
                     !!errors.address ||
                     contractCallPending ||
+                    contractCallPendingViem ||
                     !values.address ||
                     values.address === decentGovernance.lockedVotesToken.delegatee
                   }

@@ -4,7 +4,9 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import useSafeContracts from '../../hooks/safe/useSafeContracts';
+import { getAddress, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import VotesERC20Abi from '../../assets/abi/VotesERC20';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
@@ -35,7 +37,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
       user: { votingWeight, address },
     },
   } = useFractal();
-  const baseContracts = useSafeContracts();
+
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
@@ -58,13 +60,21 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
 
   const toggleShowVotingPower = () => setShowVotingPower(prevState => !prevState);
 
+  const publicClient = usePublicClient();
+
   useEffect(() => {
     async function loadProposalVotingWeight() {
-      if (address && baseContracts && votesToken) {
-        const tokenContract = baseContracts.votesTokenMasterCopyContract.asProvider.attach(
-          votesToken.address,
-        );
-        const pastVotingWeight = (await tokenContract.getPastVotes(address, startBlock)).toBigInt();
+      if (address && votesToken && publicClient) {
+        const tokenContract = getContract({
+          abi: VotesERC20Abi,
+          address: votesToken.address,
+          client: publicClient,
+        });
+
+        const pastVotingWeight = await tokenContract.read.getPastVotes([
+          getAddress(address),
+          startBlock,
+        ]);
         setProposalsERC20VotingWeight(
           (pastVotingWeight / votesTokenDecimalsDenominator).toString(),
         );
@@ -72,7 +82,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
     }
 
     loadProposalVotingWeight();
-  }, [address, startBlock, votesTokenDecimalsDenominator, baseContracts, votesToken]);
+  }, [address, publicClient, startBlock, votesToken, votesTokenDecimalsDenominator]);
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;

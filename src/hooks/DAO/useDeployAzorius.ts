@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { getAddress, isHex } from 'viem';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -20,7 +21,7 @@ const useDeployAzorius = () => {
   const signerOrProvider = useSignerOrProvider();
   const navigate = useNavigate();
   const {
-    contracts: { fallbackHandler },
+    contracts: { fallbackHandler, votesERC20WrapperMasterCopy, votesERC20MasterCopy },
     addressPrefix,
   } = useNetworkConfig();
   const {
@@ -53,9 +54,7 @@ const useDeployAzorius = () => {
         azoriusFreezeGuardMasterCopyContract,
         freezeMultisigVotingMasterCopyContract,
         freezeERC20VotingMasterCopyContract,
-        votesTokenMasterCopyContract,
         claimingMasterCopyContract,
-        votesERC20WrapperMasterCopyContract,
         keyValuePairsContract,
       } = baseContracts;
       let azoriusContracts;
@@ -64,9 +63,7 @@ const useDeployAzorius = () => {
         fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asProvider,
         linearVotingMasterCopyContract: linearVotingMasterCopyContract.asProvider,
         azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asProvider,
-        votesTokenMasterCopyContract: votesTokenMasterCopyContract.asProvider,
         claimingMasterCopyContract: claimingMasterCopyContract.asProvider,
-        votesERC20WrapperMasterCopyContract: votesERC20WrapperMasterCopyContract.asProvider,
       } as AzoriusContracts;
 
       const builderBaseContracts = {
@@ -88,6 +85,8 @@ const useDeployAzorius = () => {
         azoriusContracts,
         daoData,
         fallbackHandler,
+        votesERC20WrapperMasterCopy,
+        votesERC20MasterCopy,
         undefined,
         undefined,
       );
@@ -99,16 +98,25 @@ const useDeployAzorius = () => {
         owners: safe.owners,
       });
 
+      const encodedAddOwnerWithThreshold =
+        safeSingletonContract.asProvider.interface.encodeFunctionData('addOwnerWithThreshold', [
+          multiSendContract.asProvider.address,
+          1,
+        ]);
+      if (!isHex(encodedAddOwnerWithThreshold)) {
+        return;
+      }
+      const encodedMultisend = multiSendContract.asProvider.interface.encodeFunctionData(
+        'multiSend',
+        [safeTx],
+      );
+      if (!isHex(encodedMultisend)) {
+        return;
+      }
       const proposalData: ProposalExecuteData = {
-        targets: [daoAddress, multiSendContract.asProvider.address],
+        targets: [daoAddress, getAddress(multiSendContract.asProvider.address)],
         values: [0n, 0n],
-        calldatas: [
-          safeSingletonContract.asProvider.interface.encodeFunctionData('addOwnerWithThreshold', [
-            multiSendContract.asProvider.address,
-            1,
-          ]),
-          multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [safeTx]),
-        ],
+        calldatas: [encodedAddOwnerWithThreshold, encodedMultisend],
         metaData: {
           title: '',
           description: '',
@@ -136,6 +144,8 @@ const useDeployAzorius = () => {
       safe,
       fallbackHandler,
       addressPrefix,
+      votesERC20WrapperMasterCopy,
+      votesERC20MasterCopy,
     ],
   );
 

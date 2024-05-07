@@ -1,10 +1,12 @@
 import { Azorius } from '@fractal-framework/fractal-contracts';
-import { ethers } from 'ethers';
 import { useCallback, useEffect, useRef } from 'react';
-import { LockRelease, LockRelease__factory } from '../../../assets/typechain-types/dcnt';
+import { Address, getContract, getAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
+import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
+import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
+import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
-import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
 import { useMasterCopy } from '../../utils/useMasterCopy';
@@ -15,19 +17,15 @@ export const useGovernanceContracts = () => {
   const { node, action } = useFractal();
   const baseContracts = useSafeContracts();
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
-  const provider = useEthersProvider();
+  const publicClient = usePublicClient();
 
   const { fractalModules, isModulesLoaded, daoAddress } = node;
 
   const loadGovernanceContracts = useCallback(async () => {
-    if (!baseContracts) {
+    if (!baseContracts || !publicClient) {
       return;
     }
-    const {
-      fractalAzoriusMasterCopyContract,
-      votesERC20WrapperMasterCopyContract,
-      linearVotingMasterCopyContract,
-    } = baseContracts;
+    const { fractalAzoriusMasterCopyContract, linearVotingMasterCopyContract } = baseContracts;
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
     const azoriusModuleContract = azoriusModule?.moduleContract as Azorius;
 
@@ -45,11 +43,11 @@ export const useGovernanceContracts = () => {
       let lockReleaseContractAddress: string | undefined;
 
       // @dev assumes the first strategy is the voting contract
-      const votingStrategyAddress = (
-        await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
-      )[1];
+      const votingStrategyAddress = (await azoriusContract.getStrategies(SENTINEL_ADDRESS, 0))[1];
 
-      const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingStrategyAddress);
+      const masterCopyData = await getZodiacModuleProxyMasterCopyData(
+        getAddress(votingStrategyAddress),
+      );
       const isOzLinearVoting = masterCopyData.isOzLinearVoting;
       const isOzLinearVotingERC721 = masterCopyData.isOzLinearVotingERC721;
 
@@ -60,30 +58,38 @@ export const useGovernanceContracts = () => {
           ozLinearVotingContractAddress,
         );
         govTokenAddress = await ozLinearVotingContract.governanceToken();
-        const possibleERC20Wrapper =
-          votesERC20WrapperMasterCopyContract.asProvider.attach(govTokenAddress);
-        underlyingTokenAddress = await possibleERC20Wrapper.underlying().catch(() => {
-          // if the underlying token is not an ERC20Wrapper, this will throw an error,
-          // so we catch it and return undefined
-          return undefined;
-        });
-        const possibleLockRelease = new ethers.Contract(
-          govTokenAddress,
-          LockRelease__factory.abi,
-          provider,
-        ) as LockRelease;
 
-        const lockedTokenAddress = await possibleLockRelease.token().catch(() => {
+        const possibleERC20Wrapper = getContract({
+          abi: VotesERC20WrapperAbi,
+          address: getAddress(govTokenAddress),
+          client: publicClient,
+        });
+
+        underlyingTokenAddress = await possibleERC20Wrapper.read.underlying().catch(() => {
           // if the underlying token is not an ERC20Wrapper, this will throw an error,
           // so we catch it and return undefined
           return undefined;
         });
+        const possibleLockRelease = getContract({
+          address: getAddress(govTokenAddress),
+          abi: LockRelease__factory.abi,
+          client: { public: publicClient },
+        });
+
+        let lockedTokenAddress = undefined;
+        try {
+          lockedTokenAddress = (await possibleLockRelease.read.token()) as Address;
+        } catch {
+          // no-op
+          // if the underlying token is not an ERC20Wrapper, this will throw an error,
+          // so we catch it and do nothing
+        }
 
         if (lockedTokenAddress) {
           lockReleaseContractAddress = govTokenAddress;
+          // @dev if the underlying token is an ERC20Wrapper, we use the underlying token as the token contract
           votesTokenContractAddress = lockedTokenAddress;
         } else {
-          // @dev if the underlying token is an ERC20Wrapper, we use the underlying token as the token contract
           // @dev if the no underlying token, we use the governance token as the token contract
           votesTokenContractAddress = govTokenAddress;
         }
@@ -92,12 +98,12 @@ export const useGovernanceContracts = () => {
         erc721LinearVotingContractAddress = votingStrategyAddress;
       }
 
-      if (!!votesTokenContractAddress) {
+      if (votesTokenContractAddress || erc721LinearVotingContractAddress) {
         action.dispatch({
           type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
           payload: {
-            ozLinearVotingContractAddress: ozLinearVotingContractAddress,
-            erc721LinearVotingContractAddress: erc721LinearVotingContractAddress,
+            ozLinearVotingContractAddress,
+            erc721LinearVotingContractAddress,
             azoriusContractAddress: azoriusModuleContract.address,
             votesTokenContractAddress,
             underlyingTokenAddress,
@@ -112,7 +118,7 @@ export const useGovernanceContracts = () => {
         payload: {},
       });
     }
-  }, [action, provider, getZodiacModuleProxyMasterCopyData, baseContracts, fractalModules]);
+  }, [action, getZodiacModuleProxyMasterCopyData, baseContracts, fractalModules, publicClient]);
 
   useEffect(() => {
     if (currentValidAddress.current !== daoAddress && isModulesLoaded) {

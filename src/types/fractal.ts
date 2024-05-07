@@ -9,9 +9,7 @@ import {
   ERC20Claim,
   ERC20FreezeVoting,
   MultisigFreezeVoting,
-  VotesERC20,
   MultisigFreezeGuard,
-  VotesERC20Wrapper,
   KeyValuePairs,
   ERC721FreezeVoting,
   LinearERC721Voting,
@@ -24,6 +22,7 @@ import {
   SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
 import { Dispatch } from 'react';
+import { Address } from 'viem';
 import { MultiSend } from '../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
@@ -182,7 +181,6 @@ export interface ITokenAccount {
   delegatee: string | undefined;
   votingWeight?: bigint;
   votingWeightString: string | undefined;
-  isDelegatesSet: boolean | undefined;
 }
 
 /**
@@ -232,7 +230,7 @@ export interface FractalGovernanceContracts {
 
 export interface FractalNode {
   daoName: string | null;
-  daoAddress: string | null;
+  daoAddress: Address | null;
   safe: SafeInfoResponseWithGuard | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
@@ -329,7 +327,7 @@ export enum VotingStrategyType {
 }
 
 export interface NodeHierarchy {
-  parentAddress: string | null;
+  parentAddress: Address | null;
   childNodes: Node[];
 }
 
@@ -348,9 +346,7 @@ export interface FractalContracts {
   freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
   freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   freezeERC721VotingMasterCopyContract: ContractConnection<ERC721FreezeVoting>;
-  votesTokenMasterCopyContract: ContractConnection<VotesERC20>;
   claimingMasterCopyContract: ContractConnection<ERC20Claim>;
-  votesERC20WrapperMasterCopyContract: ContractConnection<VotesERC20Wrapper>;
   keyValuePairsContract: ContractConnection<KeyValuePairs>;
 }
 

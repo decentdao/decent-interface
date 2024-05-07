@@ -110,6 +110,7 @@
   "customNonce": "Custom Nonce (advanced)",
   "customNonceTrimmed": "Custom Nonce",
   "customNonceTooltip": "Optionally set a custom proposal nonce to avoid collisions.",
+  "encodingFailedMessage": "Unable to encode proposal data.",
   "nonce": "Nonce",
   "votingTooltip": "Time remaining to cast your vote.",
   "timeLockedTooltip": "This proposal can be executed once its timelock period has passed.",

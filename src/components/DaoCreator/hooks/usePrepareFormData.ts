@@ -1,6 +1,8 @@
-import { IVotes__factory } from '@fractal-framework/fractal-contracts';
-
 import { useCallback } from 'react';
+import { getAddress, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import IVotesAbi from '../../../assets/abi/IVotes';
+import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import {
@@ -19,6 +21,8 @@ type FreezeGuardConfigParam = { freezeGuard?: DAOFreezeGuardConfig<BigIntValuePa
 export function usePrepareFormData() {
   const signer = useEthersSigner();
   const provider = useEthersProvider();
+
+  const publicClient = usePublicClient();
 
   // Helper function to prepare freezeGuard data
   const prepareFreezeGuardData = useCallback(
@@ -52,18 +56,24 @@ export function usePrepareFormData() {
 
   const checkVotesToken = useCallback(
     async (address: string) => {
-      if (provider) {
+      if (publicClient) {
         try {
-          const votesContract = IVotes__factory.connect(address, provider);
-          await votesContract.delegates('0x0000000000000000000000000000000000000001');
-          await votesContract.getVotes('0x0000000000000000000000000000000000000001');
+          const votesContract = getContract({
+            abi: IVotesAbi,
+            address: getAddress(address),
+            client: publicClient,
+          });
+          await Promise.all([
+            votesContract.read.delegates([SENTINEL_ADDRESS]),
+            votesContract.read.getVotes([SENTINEL_ADDRESS]),
+          ]);
           return true;
         } catch (error) {
           return false;
         }
       }
     },
-    [provider],
+    [publicClient],
   );
 
   const prepareMultisigFormData = useCallback(
@@ -74,8 +84,8 @@ export function usePrepareFormData() {
     }: SafeMultisigDAO & FreezeGuardConfigParam) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
-          if (couldBeENS(inputValue)) {
-            const resolvedAddress = await signer!.resolveName(inputValue);
+          if (couldBeENS(inputValue) && signer) {
+            const resolvedAddress = await signer.resolveName(inputValue);
             return resolvedAddress;
           }
           return inputValue;
@@ -114,8 +124,8 @@ export function usePrepareFormData() {
         const resolvedTokenAllocations = await Promise.all(
           tokenAllocations.map(async allocation => {
             let address = allocation.address;
-            if (couldBeENS(address)) {
-              address = await signer!.resolveName(allocation.address);
+            if (couldBeENS(address) && signer) {
+              address = await signer.resolveName(allocation.address);
             }
             return { amount: allocation.amount.bigintValue!, address: address };
           }),
@@ -163,7 +173,7 @@ export function usePrepareFormData() {
     }: AzoriusERC721DAO<BigIntValuePair> & FreezeGuardConfigParam): Promise<
       AzoriusERC721DAO | undefined
     > => {
-      if (provider) {
+      if (provider && signer) {
         let freezeGuardData;
         if (freezeGuard) {
           freezeGuardData = await prepareFreezeGuardData(freezeGuard);
@@ -172,8 +182,8 @@ export function usePrepareFormData() {
         const resolvedNFTs = await Promise.all(
           nfts.map(async nft => {
             let address = nft.tokenAddress;
-            if (couldBeENS(address)) {
-              address = await signer!.resolveName(nft.tokenAddress);
+            if (couldBeENS(address) && nft.tokenAddress) {
+              address = getAddress(await signer.resolveName(nft.tokenAddress));
             }
             return {
               tokenAddress: address,

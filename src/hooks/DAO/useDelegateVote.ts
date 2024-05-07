@@ -1,4 +1,3 @@
-import { VotesERC20 } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { LockRelease } from '../../assets/typechain-types/dcnt';
@@ -16,7 +15,7 @@ const useDelegateVote = () => {
       successCallback,
     }: {
       delegatee: string;
-      votingTokenContract: VotesERC20 | LockRelease;
+      votingTokenContract: LockRelease;
       successCallback?: () => void;
     }) => {
       contractCallDelegateVote({

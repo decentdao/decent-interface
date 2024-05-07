@@ -5,13 +5,11 @@ import {
   ERC20FreezeVoting__factory,
   MultisigFreezeGuard__factory,
   MultisigFreezeVoting__factory,
-  VotesERC20__factory,
   GnosisSafeProxyFactory__factory,
   ModuleProxyFactory__factory,
   LinearERC20Voting__factory,
   Azorius__factory,
   ERC20Claim__factory,
-  VotesERC20Wrapper__factory,
   KeyValuePairs__factory,
   LinearERC721Voting__factory,
   ERC721FreezeVoting__factory,
@@ -42,9 +40,7 @@ export default function useSafeContracts() {
       multisigFreezeVotingMasterCopy,
       erc20FreezeVotingMasterCopy,
       erc721FreezeVotingMasterCopy,
-      votesERC20MasterCopy,
       claimingMasterCopy,
-      votesERC20WrapperMasterCopy,
       linearVotingERC721MasterCopy,
       keyValuePairs,
     },
@@ -129,19 +125,9 @@ export default function useSafeContracts() {
       asProvider: ERC721FreezeVoting__factory.connect(erc721FreezeVotingMasterCopy, provider),
     };
 
-    const votesTokenMasterCopyContract = {
-      asSigner: VotesERC20__factory.connect(votesERC20MasterCopy, signerOrProvider),
-      asProvider: VotesERC20__factory.connect(votesERC20MasterCopy, provider),
-    };
-
     const claimingMasterCopyContract = {
       asSigner: ERC20Claim__factory.connect(claimingMasterCopy, signerOrProvider),
       asProvider: ERC20Claim__factory.connect(claimingMasterCopy, provider),
-    };
-
-    const votesERC20WrapperMasterCopyContract = {
-      asSigner: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, signerOrProvider),
-      asProvider: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, provider),
     };
 
     const keyValuePairsContract = {
@@ -163,9 +149,7 @@ export default function useSafeContracts() {
       freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
       freezeERC721VotingMasterCopyContract,
-      votesTokenMasterCopyContract,
       claimingMasterCopyContract,
-      votesERC20WrapperMasterCopyContract,
       linearVotingERC721MasterCopyContract,
       keyValuePairsContract,
     };
@@ -182,9 +166,7 @@ export default function useSafeContracts() {
     azoriusFreezeGuardMasterCopy,
     multisigFreezeVotingMasterCopy,
     erc20FreezeVotingMasterCopy,
-    votesERC20MasterCopy,
     claimingMasterCopy,
-    votesERC20WrapperMasterCopy,
     linearVotingERC721MasterCopy,
     erc721FreezeVotingMasterCopy,
     keyValuePairs,

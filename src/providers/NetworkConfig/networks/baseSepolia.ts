@@ -19,15 +19,18 @@ import {
   getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
 } from '@safe-global/safe-deployments';
+import { getAddress } from 'viem';
 import { baseSepolia } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
+const chain = baseSepolia;
+
 export const baseSepoliaConfig: NetworkConfig = {
   order: 40,
-  chain: baseSepolia,
+  chain,
   rpcEndpoint: `https://base-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_BASE_SEPOLIA_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-base-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.basescan.org/',
@@ -43,7 +46,7 @@ export const baseSepoliaConfig: NetworkConfig = {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,
     fractalRegistry: FractalRegistry.address,
-    votesERC20MasterCopy: VotesERC20.address,
+    votesERC20MasterCopy: getAddress(VotesERC20.address),
     linearVotingERC721MasterCopy: LinearVotingERC721.address,
     claimingMasterCopy: ERC20Claim.address,
     azoriusFreezeGuardMasterCopy: AzoriusFreezeGuard.address,
@@ -53,23 +56,23 @@ export const baseSepoliaConfig: NetworkConfig = {
     multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
     fallbackHandler: getCompatibilityFallbackHandlerDeployment({
       version: SAFE_VERSION,
-      network: baseSepolia.id.toString(),
-    })?.networkAddresses[baseSepolia.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     safe: getSafeL2SingletonDeployment({
       version: SAFE_VERSION,
-      network: baseSepolia.id.toString(),
-    })?.networkAddresses[baseSepolia.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     safeFactory: getProxyFactoryDeployment({
       version: SAFE_VERSION,
-      network: baseSepolia.id.toString(),
-    })?.networkAddresses[baseSepolia.id.toString()]!,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
     zodiacModuleProxyFactory: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
-      network: baseSepolia.id.toString(),
-    })?.networkAddresses[baseSepolia.id.toString()]!,
-    votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
+      network: chain.id.toString(),
+    })?.networkAddresses[chain.id.toString()]!,
+    votesERC20WrapperMasterCopy: getAddress(VotesERC20Wrapper.address),
     keyValuePairs: KeyValuePairs.address,
   },
   staking: {},

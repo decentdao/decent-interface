@@ -1,6 +1,6 @@
-import { utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { decodeAbiParameters, parseAbiParameters, Hash } from 'viem';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import {
   FractalProposal,
@@ -19,7 +19,7 @@ interface Parameter {
 }
 
 interface Transaction {
-  data: string;
+  data: Hash;
 }
 
 const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) => {
@@ -61,8 +61,8 @@ const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) =>
     // data from IPFS
     if (encodedMetadata) {
       try {
-        const decoded = new utils.AbiCoder().decode(['string'], encodedMetadata);
-        const ipfsHash = (decoded as string[])[0];
+        const decoded = decodeAbiParameters(parseAbiParameters('string'), encodedMetadata);
+        const ipfsHash = decoded[0];
         const meta: CreateProposalMetadata = await ipfsClient.cat(ipfsHash);
 
         // cache the metadata JSON
