@@ -92,7 +92,7 @@ const useBuildDAOTx = () => {
         };
       }
 
-      const buildrerBaseContracts = {
+      const buildrerBaseContracts: BaseContracts = {
         fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asSigner,
         fractalRegistryContract: fractalRegistryContract.asSigner,
         safeFactoryContract: safeFactoryContract.asSigner,
@@ -103,7 +103,7 @@ const useBuildDAOTx = () => {
         freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asSigner,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
         zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
-      } as BaseContracts;
+      };
 
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
