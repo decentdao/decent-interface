@@ -132,7 +132,6 @@ export const useFractalFreeze = ({
         userHasVotes =
           (!isFreezeActive
             ? // freeze not active
-              // TODO should this be a comparison??
               await votesTokenContract.read.getVotes([account || ''])
             : // freeze is active
               await votesTokenContract.read.getPastVotes([
