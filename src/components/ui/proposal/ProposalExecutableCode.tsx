@@ -38,6 +38,7 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
         wordBreak="break-word"
         ml={{ base: 0, md: '0.5rem' }}
         maxW={{ base: '100%', md: '70%' }}
+        display={isAddress(value) ? 'inline-flex' : undefined}
       >
         {isAddress(value) ? (
           <EtherscanLinkAddress address={value}>{value}</EtherscanLinkAddress>

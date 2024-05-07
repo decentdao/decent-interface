@@ -1,4 +1,4 @@
-import { Box, LinkProps } from '@chakra-ui/react';
+import { Box, Flex, LinkProps } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ModalTooltip from '../modals/ModalTooltip';
@@ -20,8 +20,8 @@ export default function EtherscanBase({ children, ...rest }: LinkProps) {
           placement="bottom"
           containerRef={containerRef}
         >
-          {/* Box here allows multiple children to be wrapped by a single tooltip */}
-          <Box>{children}</Box>
+          {/* Flex here allows multiple children to be wrapped by a single tooltip */}
+          <Flex alignItems="center">{children}</Flex>
         </ModalTooltip>
       </Box>
     </ExternalLink>
