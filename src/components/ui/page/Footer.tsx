@@ -1,10 +1,10 @@
-import { Flex, Text } from '@chakra-ui/react';
+import { Flex, Text, Tooltip } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { URL_DECENT } from '../../../constants/url';
-import ExternalLink from '../../ui/links/ExternalLink';
-import { DecentFooterLogo } from '../../ui/proposal/Icons';
+import ExternalLink, { ExtrernalLinkWrappable } from '../links/ExternalLink';
+import { DecentFooterLogo } from '../proposal/Icons';
 
-export function AppFooter() {
+export function Footer() {
   const { t } = useTranslation('home');
   const commitHash = import.meta.env.VITE_APP_GIT_HASH;
   return (
@@ -14,12 +14,17 @@ export function AppFooter() {
       alignSelf="flex-end"
       justifyContent="flex-end"
       py="1rem"
-      mt="2rem"
+      px="3rem"
     >
       <ExternalLink href="/docs/fractal_audit.pdf">{t('audit')}</ExternalLink>
-      <ExternalLink href={`https://github.com/decentdao/decent-interface/commit/${commitHash}`}>
-        {commitHash.substring(0, 7)}
-      </ExternalLink>
+      <Tooltip
+        placement="top"
+        label={t('currentBuild', { hash: commitHash })}
+      >
+        <ExtrernalLinkWrappable href={`https://github.com/decentdao/decent-interface/commit/${commitHash}`}>
+          {commitHash.substring(0, 7)}
+        </ExtrernalLinkWrappable>
+      </Tooltip>
       <Flex
         alignItems="center"
         ml="2rem"

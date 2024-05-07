@@ -1,6 +1,7 @@
 import { Link, LinkProps } from '@chakra-ui/react';
+import { Ref, forwardRef } from 'react'
 
-export default function ExternalLink({ children, ...rest }: LinkProps) {
+export default function ExternalLink({ children, internalRef, ...rest }: LinkProps & { internalRef?: Ref<any>}) {
   return (
     <Link
       color="celery-0"
@@ -14,9 +15,13 @@ export default function ExternalLink({ children, ...rest }: LinkProps) {
       target="_blank"
       rel="noreferrer"
       textDecoration="none"
+      ref={internalRef}
       {...rest}
     >
       {children}
     </Link>
   );
 }
+
+export const ExtrernalLinkWrappable = forwardRef(({ children, ...props}: LinkProps, ref) => <ExternalLink {...props} internalRef={ref} >{children}</ExternalLink>);
+ExtrernalLinkWrappable.displayName = 'ExtrernalLinkWrappable';

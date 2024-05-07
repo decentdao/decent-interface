@@ -12,5 +12,6 @@
   "myosinTitle": "Myosin",
   "textMoreDAOs": "Load More",
   "homeAttribution": "Made with love by",
+  "currentBuild": "Current Build: {{hash}}",
   "audit": "Audit"
 }
