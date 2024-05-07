@@ -19,7 +19,6 @@ import {
   isHex,
   encodeFunctionData,
   PublicClient,
-  getContract,
 } from 'viem';
 import VotesERC20Abi from '../assets/abi/VotesERC20';
 import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
