@@ -1,6 +1,5 @@
 import {
   FractalModule,
-  GnosisSafeProxyFactory,
   ModuleProxyFactory,
   LinearERC20Voting,
   Azorius,
@@ -331,7 +330,6 @@ export interface NodeHierarchy {
 
 export interface FractalContracts {
   multiSendContract: ContractConnection<MultiSend>;
-  safeFactoryContract: ContractConnection<GnosisSafeProxyFactory>;
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
   linearVotingERC721MasterCopyContract: ContractConnection<LinearERC721Voting>;

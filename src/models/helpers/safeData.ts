@@ -1,4 +1,3 @@
-import { GnosisSafeProxyFactory } from '@fractal-framework/fractal-contracts';
 import {
   getCreate2Address,
   zeroAddress,
@@ -9,16 +8,19 @@ import {
   encodeFunctionData,
   isHex,
   hexToBigInt,
+  GetContractReturnType,
+  PublicClient,
 } from 'viem';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
+import GnosisSafeProxyFactoryAbi from '../../assets/abi/GnosisSafeProxyFactory';
 import { MultiSend } from '../../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
-import { buildContractCall } from '../../helpers/crypto';
+import { buildContractCallViem } from '../../helpers/crypto';
 import { SafeMultisigDAO } from '../../types';
 
 export const safeData = async (
   multiSendContract: MultiSend,
-  safeFactoryContract: GnosisSafeProxyFactory,
+  safeFactoryContract: GetContractReturnType<typeof GnosisSafeProxyFactoryAbi, PublicClient>,
   safeSingletonContract: GnosisSafeL2,
   daoData: SafeMultisigDAO,
   saltNum: bigint,
@@ -44,7 +46,7 @@ export const safeData = async (
     abi: GnosisSafeL2Abi,
   });
 
-  const safeFactoryContractProxyCreationCode = await safeFactoryContract.proxyCreationCode();
+  const safeFactoryContractProxyCreationCode = await safeFactoryContract.read.proxyCreationCode();
   if (!isHex(safeFactoryContractProxyCreationCode)) {
     throw new Error('Error retrieving proxy creation code from Safe Factory Contract ');
   }
@@ -68,8 +70,9 @@ export const safeData = async (
     ),
   });
 
-  const createSafeTx = buildContractCall(
-    safeFactoryContract,
+  const createSafeTx = buildContractCallViem(
+    GnosisSafeProxyFactoryAbi,
+    safeFactoryContract.address,
     'createProxyWithNonce',
     [safeSingletonContract.address, createSafeCalldata, saltNum],
     0,

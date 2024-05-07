@@ -25,6 +25,7 @@ const useBuildDAOTx = () => {
       votesERC20MasterCopy,
       keyValuePairs,
       fractalRegistry,
+      safeFactory,
     },
   } = useNetworkConfig();
 
@@ -49,7 +50,6 @@ const useBuildDAOTx = () => {
       }
       const {
         multiSendContract,
-        safeFactoryContract,
         safeSingletonContract,
         linearVotingMasterCopyContract,
         linearVotingERC721MasterCopyContract,
@@ -94,7 +94,6 @@ const useBuildDAOTx = () => {
 
       const buildrerBaseContracts: BaseContracts = {
         fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asSigner,
-        safeFactoryContract: safeFactoryContract.asSigner,
         safeSingletonContract: safeSingletonContract.asSigner,
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
         multiSendContract: multiSendContract.asSigner,
@@ -115,6 +114,7 @@ const useBuildDAOTx = () => {
         votesERC20MasterCopy,
         keyValuePairs,
         fractalRegistry,
+        safeFactory,
         parentAddress,
         parentTokenAddress,
       );
@@ -166,6 +166,7 @@ const useBuildDAOTx = () => {
       votesERC20MasterCopy,
       keyValuePairs,
       fractalRegistry,
+      safeFactory,
     ],
   );
 

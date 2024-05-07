@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
-import { PublicClient, getAddress } from 'viem';
+import { PublicClient, getAddress, getContract } from 'viem';
+import GnosisSafeProxyFactoryAbi from '../assets/abi/GnosisSafeProxyFactory';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { GnosisSafeL2__factory } from '../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { getRandomBytes } from '../helpers';
@@ -33,6 +34,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private votesERC20MasterCopyAddress: string;
   private keyValuePairsAddress: string;
   private fractalRegistryAddress: string;
+  private gnosisSafeProxyFactoryAddress: string;
 
   constructor(
     signerOrProvider: ethers.Signer | any,
@@ -45,6 +47,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     votesERC20MasterCopyAddress: string,
     keyValuePairsAddress: string,
     fractalRegistryAddress: string,
+    gnosisSafeProxyFactoryAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
   ) {
@@ -64,6 +67,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.votesERC20MasterCopyAddress = votesERC20MasterCopyAddress;
     this.keyValuePairsAddress = keyValuePairsAddress;
     this.fractalRegistryAddress = fractalRegistryAddress;
+    this.gnosisSafeProxyFactoryAddress = gnosisSafeProxyFactoryAddress;
   }
 
   public setSafeContract(safeAddress: string) {
@@ -72,9 +76,14 @@ export class TxBuilderFactory extends BaseTxBuilder {
   }
 
   public async setupSafeData(): Promise<void> {
+    const safeProxyFactoryContract = getContract({
+      abi: GnosisSafeProxyFactoryAbi,
+      address: getAddress(this.gnosisSafeProxyFactoryAddress),
+      client: this.publicClient,
+    });
     const { predictedSafeAddress, createSafeTx } = await safeData(
       this.baseContracts.multiSendContract,
-      this.baseContracts.safeFactoryContract,
+      safeProxyFactoryContract,
       this.baseContracts.safeSingletonContract,
       this.daoData as SafeMultisigDAO,
       this.saltNum,
