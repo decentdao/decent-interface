@@ -1,5 +1,6 @@
 export const HEADER_HEIGHT = '4.5rem';
-export const CONTENT_HEIGHT = `calc(100vh - ${HEADER_HEIGHT})`;
+export const FOOTER_HEIGHT = '4.125rem';
+export const CONTENT_HEIGHT = `calc(100vh - ${HEADER_HEIGHT} - ${FOOTER_HEIGHT})`;
 
 // TODO get these into `decent-ui` repo
 export const BACKGROUND_SEMI_TRANSPARENT = '#10041480';
