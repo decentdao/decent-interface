@@ -10,7 +10,6 @@ import {
   LinearERC20Voting__factory,
   Azorius__factory,
   ERC20Claim__factory,
-  KeyValuePairs__factory,
   LinearERC721Voting__factory,
   ERC721FreezeVoting__factory,
 } from '@fractal-framework/fractal-contracts';
@@ -42,7 +41,6 @@ export default function useSafeContracts() {
       erc721FreezeVotingMasterCopy,
       claimingMasterCopy,
       linearVotingERC721MasterCopy,
-      keyValuePairs,
     },
   } = useNetworkConfig();
 
@@ -130,11 +128,6 @@ export default function useSafeContracts() {
       asProvider: ERC20Claim__factory.connect(claimingMasterCopy, provider),
     };
 
-    const keyValuePairsContract = {
-      asSigner: KeyValuePairs__factory.connect(keyValuePairs, signerOrProvider),
-      asProvider: KeyValuePairs__factory.connect(keyValuePairs, provider),
-    };
-
     return {
       multiSendContract,
       safeFactoryContract,
@@ -151,7 +144,6 @@ export default function useSafeContracts() {
       freezeERC721VotingMasterCopyContract,
       claimingMasterCopyContract,
       linearVotingERC721MasterCopyContract,
-      keyValuePairsContract,
     };
   }, [
     safeFactory,
@@ -169,7 +161,6 @@ export default function useSafeContracts() {
     claimingMasterCopy,
     linearVotingERC721MasterCopy,
     erc721FreezeVotingMasterCopy,
-    keyValuePairs,
     signerOrProvider,
     provider,
   ]);
