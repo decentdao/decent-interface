@@ -71,7 +71,7 @@ export const mainnetConfig: NetworkConfig = {
       network: chain.id.toString(),
     })?.networkAddresses[chain.id.toString()]!,
     votesERC20WrapperMasterCopy: getAddress(VotesERC20Wrapper.address),
-    keyValuePairs: KeyValuePairs.address,
+    keyValuePairs: getAddress(KeyValuePairs.address),
   },
   staking: {
     lido: {

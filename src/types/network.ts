@@ -40,7 +40,7 @@ export type NetworkConfig = {
     erc20FreezeVotingMasterCopy: string;
     erc721FreezeVotingMasterCopy: string;
     votesERC20WrapperMasterCopy: Address;
-    keyValuePairs: string;
+    keyValuePairs: Address;
   };
   staking: {
     lido?: {
