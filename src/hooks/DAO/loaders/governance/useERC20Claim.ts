@@ -1,4 +1,7 @@
 import { useEffect, useCallback, useRef } from 'react';
+import { getContract, getAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
+import VotesERC20Abi from '../../../../assets/abi/VotesERC20';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import useSafeContracts from '../../../safe/useSafeContracts';
@@ -14,22 +17,30 @@ export function useERC20Claim() {
     action,
   } = useFractal();
   const baseContracts = useSafeContracts();
+  const publicClient = usePublicClient();
+
   const loadTokenClaimContract = useCallback(async () => {
-    if (!baseContracts || !votesTokenContractAddress) {
+    if (!baseContracts || !votesTokenContractAddress || !publicClient) {
       return;
     }
     const { claimingMasterCopyContract } = baseContracts;
 
-    const votesTokenContract =
-      baseContracts.votesTokenMasterCopyContract.asProvider.attach(votesTokenContractAddress);
+    const votesTokenContract = getContract({
+      abi: VotesERC20Abi,
+      address: getAddress(votesTokenContractAddress),
+      client: publicClient,
+    });
 
-    const approvalFilter = votesTokenContract.filters.Approval();
-    const approvals = await votesTokenContract.queryFilter(approvalFilter);
-    if (!approvals.length) {
+    // TODO here be dark programming...
+
+    const approvals = await votesTokenContract.getEvents.Approval();
+
+    if (approvals.length === 0 || !approvals[0].args.spender) {
       return;
     }
+
     const possibleTokenClaimContract = claimingMasterCopyContract.asProvider.attach(
-      approvals[0].args[1],
+      getAddress(approvals[0].args.spender),
     );
     const tokenClaimFilter = possibleTokenClaimContract.filters.ERC20ClaimCreated();
     const tokenClaimArray = await possibleTokenClaimContract
@@ -44,7 +55,8 @@ export function useERC20Claim() {
       type: FractalGovernanceAction.SET_CLAIMING_CONTRACT,
       payload: possibleTokenClaimContract,
     });
-  }, [baseContracts, votesTokenContractAddress, action]);
+  }, [action, baseContracts, publicClient, votesTokenContractAddress]);
+
   const loadKey = useRef<string>();
 
   useEffect(() => {
