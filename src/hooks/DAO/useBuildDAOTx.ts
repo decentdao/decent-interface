@@ -24,6 +24,7 @@ const useBuildDAOTx = () => {
       votesERC20WrapperMasterCopy,
       votesERC20MasterCopy,
       keyValuePairs,
+      fractalRegistry,
     },
   } = useNetworkConfig();
 
@@ -54,7 +55,6 @@ const useBuildDAOTx = () => {
         linearVotingERC721MasterCopyContract,
         fractalAzoriusMasterCopyContract,
         zodiacModuleProxyFactoryContract,
-        fractalRegistryContract,
         fractalModuleMasterCopyContract,
         multisigFreezeGuardMasterCopyContract,
         azoriusFreezeGuardMasterCopyContract,
@@ -94,7 +94,6 @@ const useBuildDAOTx = () => {
 
       const buildrerBaseContracts: BaseContracts = {
         fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asSigner,
-        fractalRegistryContract: fractalRegistryContract.asSigner,
         safeFactoryContract: safeFactoryContract.asSigner,
         safeSingletonContract: safeSingletonContract.asSigner,
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
@@ -115,6 +114,7 @@ const useBuildDAOTx = () => {
         votesERC20WrapperMasterCopy,
         votesERC20MasterCopy,
         keyValuePairs,
+        fractalRegistry,
         parentAddress,
         parentTokenAddress,
       );
@@ -165,6 +165,7 @@ const useBuildDAOTx = () => {
       votesERC20WrapperMasterCopy,
       votesERC20MasterCopy,
       keyValuePairs,
+      fractalRegistry,
     ],
   );
 

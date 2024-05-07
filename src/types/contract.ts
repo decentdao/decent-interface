@@ -2,7 +2,6 @@ import {
   GnosisSafeProxyFactory,
   ModuleProxyFactory,
   FractalModule,
-  FractalRegistry,
   MultisigFreezeGuard,
   MultisigFreezeVoting,
   ERC20FreezeVoting,
@@ -22,7 +21,6 @@ export type ContractConnection<T> = {
 
 export interface BaseContracts {
   fractalModuleMasterCopyContract: FractalModule;
-  fractalRegistryContract: FractalRegistry;
   safeFactoryContract: GnosisSafeProxyFactory;
   safeSingletonContract: GnosisSafeL2;
   multisigFreezeGuardMasterCopyContract: MultisigFreezeGuard;

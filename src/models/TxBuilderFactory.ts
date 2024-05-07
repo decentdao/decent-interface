@@ -32,6 +32,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private votesERC20WrapperMasterCopyAddress: string;
   private votesERC20MasterCopyAddress: string;
   private keyValuePairsAddress: string;
+  private fractalRegistryAddress: string;
 
   constructor(
     signerOrProvider: ethers.Signer | any,
@@ -43,6 +44,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     votesERC20WrapperMasterCopyAddress: string,
     votesERC20MasterCopyAddress: string,
     keyValuePairsAddress: string,
+    fractalRegistryAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
   ) {
@@ -61,6 +63,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.votesERC20WrapperMasterCopyAddress = votesERC20WrapperMasterCopyAddress;
     this.votesERC20MasterCopyAddress = votesERC20MasterCopyAddress;
     this.keyValuePairsAddress = keyValuePairsAddress;
+    this.fractalRegistryAddress = fractalRegistryAddress;
   }
 
   public setSafeContract(safeAddress: string) {
@@ -100,6 +103,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.safeContract!,
       this,
       this.keyValuePairsAddress,
+      this.fractalRegistryAddress,
       this.parentAddress,
       this.parentTokenAddress,
       parentStrategyType,

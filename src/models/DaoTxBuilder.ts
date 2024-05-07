@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { PublicClient, getAddress, zeroAddress } from 'viem';
+import FractalRegistryAbi from '../assets/abi/FractalRegistry';
 import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, buildContractCallViem, encodeMultiSend } from '../helpers';
@@ -34,6 +35,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private internalTxs: SafeTransaction[] = [];
 
   private readonly keyValuePairsAddress: string;
+  private readonly fractalRegistryAddress: string;
 
   constructor(
     signerOrProvider: ethers.Signer | any,
@@ -46,6 +48,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     safeContract: GnosisSafeL2,
     txBuilderFactory: TxBuilderFactory,
     keyValuePairsAddress: string,
+    fractalRegistryAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
     parentStrategyType?: VotingStrategyType,
@@ -69,6 +72,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.parentStrategyAddress = parentStrategyAddress;
 
     this.keyValuePairsAddress = keyValuePairsAddress;
+    this.fractalRegistryAddress = fractalRegistryAddress;
 
     // Prep fractal module txs for setting up subDAOs
     this.setFractalModuleTxs();
@@ -227,8 +231,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
   //
 
   private buildUpdateDAONameTx(): SafeTransaction {
-    return buildContractCall(
-      this.baseContracts.fractalRegistryContract,
+    return buildContractCallViem(
+      FractalRegistryAbi,
+      getAddress(this.fractalRegistryAddress),
       'updateDAOName',
       [this.daoData.daoName],
       0,
