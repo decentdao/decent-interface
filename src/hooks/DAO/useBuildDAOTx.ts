@@ -62,7 +62,6 @@ const useBuildDAOTx = () => {
         freezeERC20VotingMasterCopyContract,
         freezeERC721VotingMasterCopyContract,
         claimingMasterCopyContract,
-        keyValuePairsContract,
       } = baseContracts;
 
       if (
@@ -104,7 +103,6 @@ const useBuildDAOTx = () => {
         freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asSigner,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
         zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
-        keyValuePairsContract: keyValuePairsContract.asSigner,
       } as BaseContracts;
 
       const txBuilderFactory = new TxBuilderFactory(
