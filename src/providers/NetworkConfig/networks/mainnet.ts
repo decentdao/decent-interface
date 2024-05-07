@@ -19,7 +19,7 @@ import {
   getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
 } from '@safe-global/safe-deployments';
-import { getAddress } from 'viem';
+import { getAddress, zeroAddress } from 'viem';
 import { mainnet } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
@@ -43,33 +43,41 @@ export const mainnetConfig: NetworkConfig = {
     version: 'v0.0.2',
   },
   contracts: {
-    fractalAzoriusMasterCopy: Azorius.address,
-    fractalModuleMasterCopy: FractalModule.address,
-    fractalRegistry: FractalRegistry.address,
+    fractalAzoriusMasterCopy: getAddress(Azorius.address),
+    fractalModuleMasterCopy: getAddress(FractalModule.address),
+    fractalRegistry: getAddress(FractalRegistry.address),
     votesERC20MasterCopy: getAddress(VotesERC20.address),
-    linearVotingERC721MasterCopy: '', // TODO - Add actual address once contract is deployed on mainnet
-    claimingMasterCopy: ERC20Claim.address,
-    azoriusFreezeGuardMasterCopy: AzoriusFreezeGuard.address,
-    multisigFreezeVotingMasterCopy: MultisigFreezeVoting.address,
-    erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
-    erc721FreezeVotingMasterCopy: '', // TODO - Add actual address once contract is deployed on mainnet
-    multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
-    fallbackHandler: getCompatibilityFallbackHandlerDeployment({
-      version: SAFE_VERSION,
-      network: chain.id.toString(),
-    })?.networkAddresses[chain.id.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: chain.id.toString() })
-      ?.networkAddresses[chain.id.toString()]!,
-    safeFactory: getProxyFactoryDeployment({
-      version: SAFE_VERSION,
-      network: chain.id.toString(),
-    })?.networkAddresses[chain.id.toString()]!,
-    zodiacModuleProxyFactory: ModuleProxyFactory.address,
-    linearVotingMasterCopy: LinearERC20Voting.address,
-    multisend: getMultiSendCallOnlyDeployment({
-      version: SAFE_VERSION,
-      network: chain.id.toString(),
-    })?.networkAddresses[chain.id.toString()]!,
+    linearVotingERC721MasterCopy: zeroAddress, // TODO - Add actual address once contract is deployed on mainnet
+    claimingMasterCopy: getAddress(ERC20Claim.address),
+    azoriusFreezeGuardMasterCopy: getAddress(AzoriusFreezeGuard.address),
+    multisigFreezeVotingMasterCopy: getAddress(MultisigFreezeVoting.address),
+    erc20FreezeVotingMasterCopy: getAddress(ERC20FreezeVoting.address),
+    erc721FreezeVotingMasterCopy: zeroAddress, // TODO - Add actual address once contract is deployed on mainnet
+    multisigFreezeGuardMasterCopy: getAddress(MultisigFreezeGuard.address),
+    fallbackHandler: getAddress(
+      getCompatibilityFallbackHandlerDeployment({
+        version: SAFE_VERSION,
+        network: chain.id.toString(),
+      })?.networkAddresses[chain.id.toString()]!,
+    ),
+    safe: getAddress(
+      getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: chain.id.toString() })
+        ?.networkAddresses[chain.id.toString()]!,
+    ),
+    safeFactory: getAddress(
+      getProxyFactoryDeployment({
+        version: SAFE_VERSION,
+        network: chain.id.toString(),
+      })?.networkAddresses[chain.id.toString()]!,
+    ),
+    zodiacModuleProxyFactory: getAddress(ModuleProxyFactory.address),
+    linearVotingMasterCopy: getAddress(LinearERC20Voting.address),
+    multisend: getAddress(
+      getMultiSendCallOnlyDeployment({
+        version: SAFE_VERSION,
+        network: chain.id.toString(),
+      })?.networkAddresses[chain.id.toString()]!,
+    ),
     votesERC20WrapperMasterCopy: getAddress(VotesERC20Wrapper.address),
     keyValuePairs: getAddress(KeyValuePairs.address),
   },
