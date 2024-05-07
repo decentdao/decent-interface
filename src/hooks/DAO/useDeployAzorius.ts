@@ -27,6 +27,7 @@ const useDeployAzorius = () => {
       votesERC20WrapperMasterCopy,
       votesERC20MasterCopy,
       keyValuePairs,
+      fractalRegistry,
     },
     addressPrefix,
   } = useNetworkConfig();
@@ -54,36 +55,38 @@ const useDeployAzorius = () => {
         safeFactoryContract,
         safeSingletonContract,
         linearVotingMasterCopyContract,
+        linearVotingERC721MasterCopyContract,
         fractalAzoriusMasterCopyContract,
         zodiacModuleProxyFactoryContract,
-        fractalRegistryContract,
         fractalModuleMasterCopyContract,
         multisigFreezeGuardMasterCopyContract,
         azoriusFreezeGuardMasterCopyContract,
         freezeMultisigVotingMasterCopyContract,
         freezeERC20VotingMasterCopyContract,
+        freezeERC721VotingMasterCopyContract,
         claimingMasterCopyContract,
       } = baseContracts;
-      let azoriusContracts;
+      let azoriusContracts: AzoriusContracts;
 
       azoriusContracts = {
         fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asProvider,
         linearVotingMasterCopyContract: linearVotingMasterCopyContract.asProvider,
+        linearVotingERC721MasterCopyContract: linearVotingERC721MasterCopyContract.asProvider,
         azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asProvider,
         claimingMasterCopyContract: claimingMasterCopyContract.asProvider,
-      } as AzoriusContracts;
+      };
 
-      const builderBaseContracts = {
+      const builderBaseContracts: BaseContracts = {
         fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asProvider,
-        fractalRegistryContract: fractalRegistryContract.asProvider,
         safeFactoryContract: safeFactoryContract.asProvider,
         safeSingletonContract: safeSingletonContract.asProvider,
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asProvider,
         multiSendContract: multiSendContract.asProvider,
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asProvider,
+        freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asProvider,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asProvider,
         zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asProvider,
-      } as BaseContracts;
+      };
 
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
@@ -95,6 +98,7 @@ const useDeployAzorius = () => {
         votesERC20WrapperMasterCopy,
         votesERC20MasterCopy,
         keyValuePairs,
+        fractalRegistry,
         undefined,
         undefined,
       );
@@ -156,6 +160,7 @@ const useDeployAzorius = () => {
       votesERC20WrapperMasterCopy,
       votesERC20MasterCopy,
       keyValuePairs,
+      fractalRegistry,
     ],
   );
 
