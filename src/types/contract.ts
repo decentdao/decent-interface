@@ -1,5 +1,4 @@
 import {
-  GnosisSafeProxyFactory,
   ModuleProxyFactory,
   FractalModule,
   MultisigFreezeGuard,
@@ -21,7 +20,6 @@ export type ContractConnection<T> = {
 
 export interface BaseContracts {
   fractalModuleMasterCopyContract: FractalModule;
-  safeFactoryContract: GnosisSafeProxyFactory;
   safeSingletonContract: GnosisSafeL2;
   multisigFreezeGuardMasterCopyContract: MultisigFreezeGuard;
   multiSendContract: MultiSend;
