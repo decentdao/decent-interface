@@ -19,7 +19,6 @@ import {
 } from '@safe-global/safe-service-client';
 import { Dispatch } from 'react';
 import { Address } from 'viem';
-import { MultiSend } from '../assets/typechain-types/usul';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
 import { FractalGuardActions } from '../providers/App/guard/action';
@@ -327,7 +326,6 @@ export interface NodeHierarchy {
 }
 
 export interface FractalContracts {
-  multiSendContract: ContractConnection<MultiSend>;
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
   linearVotingERC721MasterCopyContract: ContractConnection<LinearERC721Voting>;

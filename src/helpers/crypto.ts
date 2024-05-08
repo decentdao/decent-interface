@@ -237,6 +237,6 @@ const encodeMetaTransaction = (tx: MetaTransaction): string => {
   return encoded.slice(2);
 };
 
-export const encodeMultiSend = (txs: MetaTransaction[]): string => {
-  return '0x' + txs.map(tx => encodeMetaTransaction(tx)).join('');
+export const encodeMultiSend = (txs: MetaTransaction[]): Hex => {
+  return `0x${txs.map(tx => encodeMetaTransaction(tx)).join('')}`;
 };

@@ -10,15 +10,15 @@ import {
   hexToBigInt,
   GetContractReturnType,
   PublicClient,
+  Address,
 } from 'viem';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../../assets/abi/GnosisSafeProxyFactory';
-import { MultiSend } from '../../assets/typechain-types/usul';
 import { buildContractCallViem } from '../../helpers/crypto';
 import { SafeMultisigDAO } from '../../types';
 
 export const safeData = async (
-  multiSendContract: MultiSend,
+  multiSendCallOnlyAddress: Address,
   safeFactoryContract: GetContractReturnType<typeof GnosisSafeProxyFactoryAbi, PublicClient>,
   safeSingletonContract: GetContractReturnType<typeof GnosisSafeL2Abi, PublicClient>,
   daoData: SafeMultisigDAO,
@@ -27,8 +27,8 @@ export const safeData = async (
   hasAzorius?: boolean,
 ) => {
   const signers = hasAzorius
-    ? [multiSendContract.address]
-    : [...daoData.trustedAddresses, multiSendContract.address];
+    ? [multiSendCallOnlyAddress]
+    : [...daoData.trustedAddresses, multiSendCallOnlyAddress];
 
   const createSafeCalldata = encodeFunctionData({
     functionName: 'setup',

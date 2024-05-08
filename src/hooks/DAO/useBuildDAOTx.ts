@@ -28,6 +28,7 @@ const useBuildDAOTx = () => {
       safeFactory,
       safe: safeSingleton,
       zodiacModuleProxyFactory,
+      multisend: multiSendCallOnly,
     },
   } = useNetworkConfig();
 
@@ -51,7 +52,6 @@ const useBuildDAOTx = () => {
         return;
       }
       const {
-        multiSendContract,
         linearVotingMasterCopyContract,
         linearVotingERC721MasterCopyContract,
         fractalAzoriusMasterCopyContract,
@@ -95,7 +95,6 @@ const useBuildDAOTx = () => {
       const buildrerBaseContracts: BaseContracts = {
         fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asSigner,
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
-        multiSendContract: multiSendContract.asSigner,
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
         freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asSigner,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
@@ -115,6 +114,7 @@ const useBuildDAOTx = () => {
         safeFactory,
         safeSingleton,
         zodiacModuleProxyFactory,
+        multiSendCallOnly,
         parentAddress,
         parentTokenAddress,
       );
@@ -169,6 +169,7 @@ const useBuildDAOTx = () => {
       safeFactory,
       safeSingleton,
       zodiacModuleProxyFactory,
+      multiSendCallOnly,
     ],
   );
 

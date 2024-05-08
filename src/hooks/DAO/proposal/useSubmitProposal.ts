@@ -2,8 +2,16 @@ import { Azorius } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { isAddress, getAddress, encodeAbiParameters, parseAbiParameters, isHex } from 'viem';
+import {
+  isAddress,
+  getAddress,
+  encodeAbiParameters,
+  parseAbiParameters,
+  isHex,
+  encodeFunctionData,
+} from 'viem';
 import { useWalletClient } from 'wagmi';
+import MultiSendCallOnlyAbi from '../../../assets/abi/MultiSendCallOnly';
 import { ADDRESS_MULTISIG_METADATA, SENTINEL_ADDRESS } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -14,7 +22,6 @@ import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
-import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
@@ -58,7 +65,6 @@ export default function useSubmitProposal() {
     guardContracts: { freezeVotingContractAddress },
     governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
   } = useFractal();
-  const baseContracts = useSafeContracts();
   const safeAPI = useSafeAPI();
 
   const globalAzoriusContract = useMemo(() => {
@@ -75,7 +81,12 @@ export default function useSubmitProposal() {
 
   const lookupModules = useFractalModules();
   const signerOrProvider = useSignerOrProvider();
-  const { chain, safeBaseURL, addressPrefix } = useNetworkConfig();
+  const {
+    chain,
+    safeBaseURL,
+    addressPrefix,
+    contracts: { multisend: multiSendCallOnly },
+  } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
 
   const submitMultisigProposal = useCallback(
@@ -88,10 +99,9 @@ export default function useSubmitProposal() {
       successCallback,
       safeAddress,
     }: ISubmitProposal) => {
-      if (!proposalData || !baseContracts || !walletClient) {
+      if (!proposalData || !walletClient) {
         return;
       }
-      const { multiSendContract } = baseContracts;
 
       const toastId = toast(pendingToastMessage, {
         autoClose: false,
@@ -124,14 +134,15 @@ export default function useSubmitProposal() {
           proposalData.calldatas.push(encodeAbiParameters(parseAbiParameters(['string']), [Hash]));
         }
 
-        let to, value, data, operation: 0 | 1;
+        let to = proposalData.targets[0];
+        let value = proposalData.values[0];
+        let data = proposalData.calldatas[0];
+        let operation: 0 | 1 = 0;
+
         if (proposalData.targets.length > 1) {
-          if (!multiSendContract) {
-            toast.dismiss(toastId);
-            return;
-          }
           // Need to wrap it in Multisend function call
-          to = getAddress(multiSendContract.asProvider.address);
+          to = multiSendCallOnly;
+          value = 0n;
 
           const tempData = proposalData.targets.map((target, index) => {
             return {
@@ -142,21 +153,17 @@ export default function useSubmitProposal() {
             } as MetaTransaction;
           });
 
-          data = multiSendContract.asProvider.interface.encodeFunctionData('multiSend', [
-            encodeMultiSend(tempData),
-          ]);
+          data = encodeFunctionData({
+            abi: MultiSendCallOnlyAbi,
+            functionName: 'multiSend',
+            args: [encodeMultiSend(tempData)],
+          });
 
           if (!isHex(data)) {
             throw new Error('Error encoding proposal data');
           }
 
           operation = 1;
-        } else {
-          // Single transaction to post
-          to = proposalData.targets[0];
-          value = BigInt(proposalData.values[0]);
-          data = proposalData.calldatas[0];
-          operation = 0;
         }
 
         await axios.post(
@@ -186,10 +193,10 @@ export default function useSubmitProposal() {
     },
     [
       addressPrefix,
-      baseContracts,
       chain.id,
       ipfsClient,
       loadDAOProposals,
+      multiSendCallOnly,
       safeBaseURL,
       signerOrProvider,
       walletClient,

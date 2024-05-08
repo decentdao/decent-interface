@@ -36,6 +36,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private gnosisSafeProxyFactoryAddress: string;
   private gnosisSafeSingletonAddress: string;
   private moduleProxyFactoryAddress: string;
+  private multiSendCallOnlyAddress: string;
 
   constructor(
     signerOrProvider: ethers.Signer | any,
@@ -51,6 +52,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     gnosisSafeProxyFactoryAddress: string,
     gnosisSafeSingletonAddress: string,
     moduleProxyFactoryAddress: string,
+    multiSendCallOnlyAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
   ) {
@@ -73,6 +75,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.gnosisSafeProxyFactoryAddress = gnosisSafeProxyFactoryAddress;
     this.gnosisSafeSingletonAddress = gnosisSafeSingletonAddress;
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
+    this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
   }
 
   public setSafeContract(safeAddress: Address) {
@@ -91,7 +94,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       client: this.publicClient,
     });
     const { predictedSafeAddress, createSafeTx } = await safeData(
-      this.baseContracts.multiSendContract,
+      getAddress(this.multiSendCallOnlyAddress),
       safeProxyFactoryContract,
       safeSingletonContract,
       this.daoData as SafeMultisigDAO,
@@ -123,6 +126,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.keyValuePairsAddress,
       this.fractalRegistryAddress,
       this.moduleProxyFactoryAddress,
+      this.multiSendCallOnlyAddress,
       this.parentAddress,
       this.parentTokenAddress,
       parentStrategyType,
@@ -156,7 +160,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
 
   public createMultiSigTxBuilder(): MultisigTxBuilder {
     return new MultisigTxBuilder(
-      this.baseContracts,
+      getAddress(this.multiSendCallOnlyAddress),
       this.daoData as SafeMultisigDAO,
       getAddress(this.safeContractAddress!),
     );
@@ -173,6 +177,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.votesERC20WrapperMasterCopyAddress,
       this.votesERC20MasterCopyAddress,
       getAddress(this.moduleProxyFactoryAddress),
+      getAddress(this.multiSendCallOnlyAddress),
       this.parentAddress ? getAddress(this.parentAddress) : undefined,
       this.parentTokenAddress ? getAddress(this.parentTokenAddress) : undefined,
     );

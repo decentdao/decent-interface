@@ -1,8 +1,9 @@
 import { ethers } from 'ethers';
-import { Address, PublicClient, getAddress, zeroAddress } from 'viem';
+import { Address, PublicClient, encodeFunctionData, getAddress, zeroAddress } from 'viem';
 import FractalRegistryAbi from '../assets/abi/FractalRegistry';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
+import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
 import { buildContractCallViem, encodeMultiSend } from '../helpers';
 import {
   BaseContracts,
@@ -37,6 +38,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private readonly keyValuePairsAddress: string;
   private readonly fractalRegistryAddress: string;
   private readonly moduleProxyFactoryAddress: string;
+  private readonly multiSendCallOnlyAddress: string;
 
   constructor(
     signerOrProvider: ethers.Signer | any,
@@ -51,6 +53,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     keyValuePairsAddress: string,
     fractalRegistryAddress: string,
     moduleProxyFactoryAddress: string,
+    multiSendCallOnlyAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
     parentStrategyType?: VotingStrategyType,
@@ -76,6 +79,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.keyValuePairsAddress = keyValuePairsAddress;
     this.fractalRegistryAddress = fractalRegistryAddress;
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
+    this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
 
     // Prep fractal module txs for setting up subDAOs
     this.setFractalModuleTxs();
@@ -262,11 +266,13 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.safeContractAddress,
       'execTransaction',
       [
-        this.baseContracts.multiSendContract.address, // to
+        this.multiSendCallOnlyAddress, // to
         '0', // value
-        this.baseContracts.multiSendContract.interface.encodeFunctionData('multiSend', [
-          safeInternalTx,
-        ]), // calldata
+        encodeFunctionData({
+          abi: MultiSendCallOnlyAbi,
+          functionName: 'multiSend',
+          args: [safeInternalTx],
+        }), // calldata
         '1', // operation
         '0', // tx gas
         '0', // base gas
