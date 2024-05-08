@@ -67,7 +67,6 @@
     "graphql:build": "graphclient build",
     "graphql:dev-server": "graphclient serve-dev",
     "test": "vitest --dir=test",
-    "tests": "playwright test",
     "postinstall": "npm run graphql:build"
   },
   "engines": {
@@ -88,7 +87,6 @@
   },
   "devDependencies": {
     "@graphprotocol/client-cli": "^2.2.20",
-    "@playwright/test": "^1.32.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.2.1",
     "@types/react": "^18.0.17",
@@ -104,7 +102,6 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "jsdom": "^24.0.0",
-    "playwright": "^1.32.3",
     "prettier": "^3.2.5",
     "typescript": "^5.3.3",
     "url": "^0.11.0",
