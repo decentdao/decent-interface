@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isHex, getAddress, encodeFunctionData } from 'viem';
 import FractalRegistryAbi from '../../assets/abi/FractalRegistry';
+import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { SafeMultisigDAO, AzoriusGovernance, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
@@ -11,7 +12,6 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 import useBuildDAOTx from './useBuildDAOTx';
 
 export const useCreateSubDAOProposal = () => {
-  const { baseContracts } = useFractal();
   const { t } = useTranslation(['daoCreate', 'proposal', 'proposalMetadata']);
 
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
@@ -22,7 +22,7 @@ export const useCreateSubDAOProposal = () => {
     governance,
   } = useFractal();
   const {
-    contracts: { fractalRegistry },
+    contracts: { fractalRegistry, multisend: multiSendCallOnly },
   } = useNetworkConfig();
   const azoriusGovernance = governance as AzoriusGovernance;
   const proposeDao = useCallback(
@@ -32,10 +32,9 @@ export const useCreateSubDAOProposal = () => {
       successCallback: (addressPrefix: string, daoAddress: string) => void,
     ) => {
       const propose = async () => {
-        if (!baseContracts || !daoAddress) {
+        if (!daoAddress) {
           return;
         }
-        const { multiSendContract } = baseContracts;
 
         const builtSafeTx = await build(daoData, daoAddress, azoriusGovernance.votesToken?.address);
         if (!builtSafeTx) {
@@ -44,10 +43,15 @@ export const useCreateSubDAOProposal = () => {
 
         const { safeTx, predictedSafeAddress } = builtSafeTx;
 
-        const encodedMultisend = multiSendContract.asProvider.interface.encodeFunctionData(
-          'multiSend',
-          [safeTx],
-        );
+        if (!isHex(safeTx)) {
+          throw new Error('Built safeTx is not a hex string');
+        }
+
+        const encodedMultisend = encodeFunctionData({
+          abi: MultiSendCallOnlyAbi,
+          functionName: 'multiSend',
+          args: [safeTx],
+        });
 
         if (!isHex(encodedMultisend)) {
           throw new Error('encodedMultisend data is not hex??');
@@ -60,7 +64,7 @@ export const useCreateSubDAOProposal = () => {
         });
 
         const proposalData: ProposalExecuteData = {
-          targets: [getAddress(multiSendContract.asProvider.address), fractalRegistry],
+          targets: [multiSendCallOnly, fractalRegistry],
           values: [0n, 0n],
           calldatas: [encodedMultisend, encodedDeclareSubDAO],
           metaData: {
@@ -82,10 +86,10 @@ export const useCreateSubDAOProposal = () => {
     },
     [
       azoriusGovernance.votesToken?.address,
-      baseContracts,
       build,
       daoAddress,
       fractalRegistry,
+      multiSendCallOnly,
       submitProposal,
       t,
     ],

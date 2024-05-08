@@ -1,19 +1,19 @@
 import { Address } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import { buildContractCallViem } from '../helpers';
-import { BaseContracts, SafeMultisigDAO, SafeTransaction } from '../types';
+import { SafeMultisigDAO, SafeTransaction } from '../types';
 
 export class MultisigTxBuilder {
-  private baseContracts: BaseContracts;
+  private multiSendCallOnlyAddress: Address;
   private readonly daoData: SafeMultisigDAO;
   private readonly safeContractAddress: Address;
 
   constructor(
-    baseContracts: BaseContracts,
+    multiSendCallOnlyAddress: Address,
     daoData: SafeMultisigDAO,
     safeContractAddress: Address,
   ) {
-    this.baseContracts = baseContracts;
+    this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
     this.daoData = daoData;
     this.safeContractAddress = safeContractAddress;
   }
@@ -21,7 +21,7 @@ export class MultisigTxBuilder {
   public signatures = (): string => {
     return (
       '0x000000000000000000000000' +
-      this.baseContracts.multiSendContract.address.slice(2) +
+      this.multiSendCallOnlyAddress.slice(2) +
       '0000000000000000000000000000000000000000000000000000000000000000' +
       '01'
     );
@@ -34,7 +34,7 @@ export class MultisigTxBuilder {
       'removeOwner',
       [
         this.daoData.trustedAddresses[this.daoData.trustedAddresses.length - 1],
-        this.baseContracts.multiSendContract.address,
+        this.multiSendCallOnlyAddress,
         this.daoData.signatureThreshold,
       ],
       0,

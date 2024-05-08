@@ -60,6 +60,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private votesERC20WrapperMasterCopyAddress: string;
   private votesERC20MasterCopyAddress: string;
   private moduleProxyFactoryAddress: Address;
+  private multiSendCallOnlyAddress: Address;
 
   private tokenNonce: bigint;
   private strategyNonce: bigint;
@@ -76,6 +77,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     votesERC20WrapperMasterCopyAddress: string,
     votesERC20MasterCopyAddress: string,
     moduleProxyFactoryAddress: Address,
+    multiSendCallOnlyAddress: Address,
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
@@ -99,6 +101,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.votesERC20WrapperMasterCopyAddress = votesERC20WrapperMasterCopyAddress;
     this.votesERC20MasterCopyAddress = votesERC20MasterCopyAddress;
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
+    this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       daoData = daoData as AzoriusERC20DAO;
@@ -143,7 +146,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         GnosisSafeL2Abi,
         this.safeContractAddress,
         'removeOwner',
-        [this.baseContracts.multiSendContract.address, owner, 1],
+        [this.multiSendCallOnlyAddress, owner, 1],
         0,
         false,
       ),
@@ -191,7 +194,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'removeOwner',
-      [this.azoriusContract!.address, this.baseContracts.multiSendContract.address, 1],
+      [this.azoriusContract!.address, this.multiSendCallOnlyAddress, 1],
       0,
       false,
     );
@@ -321,7 +324,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   public signatures = (): string => {
     return (
       '0x000000000000000000000000' +
-      this.baseContracts.multiSendContract.address.slice(2) +
+      this.multiSendCallOnlyAddress.slice(2) +
       '0000000000000000000000000000000000000000000000000000000000000000' +
       '01'
     );

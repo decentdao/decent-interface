@@ -11,7 +11,6 @@ import {
   ERC721FreezeVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
-import { MultiSend__factory } from '../../assets/typechain-types/usul';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
@@ -23,7 +22,6 @@ export default function useSafeContracts() {
   const {
     contracts: {
       linearVotingMasterCopy,
-      multisend,
       fractalAzoriusMasterCopy,
       fractalModuleMasterCopy,
       multisigFreezeGuardMasterCopy,
@@ -40,10 +38,6 @@ export default function useSafeContracts() {
     if (!signerOrProvider || !provider) {
       return;
     }
-    const multiSendContract = {
-      asSigner: MultiSend__factory.connect(multisend, signerOrProvider),
-      asProvider: MultiSend__factory.connect(multisend, provider),
-    };
 
     const fractalAzoriusMasterCopyContract = {
       asSigner: Azorius__factory.connect(fractalAzoriusMasterCopy, signerOrProvider),
@@ -101,7 +95,6 @@ export default function useSafeContracts() {
     };
 
     return {
-      multiSendContract,
       fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
       fractalModuleMasterCopyContract,
@@ -116,7 +109,6 @@ export default function useSafeContracts() {
   }, [
     linearVotingMasterCopy,
     fractalAzoriusMasterCopy,
-    multisend,
     fractalModuleMasterCopy,
     multisigFreezeGuardMasterCopy,
     azoriusFreezeGuardMasterCopy,
