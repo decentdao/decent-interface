@@ -9,9 +9,9 @@ import {
   keccak256,
   encodePacked,
 } from 'viem';
+import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../../assets/abi/ModuleProxyFactory';
-import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
-import { buildContractCall, buildContractCallViem } from '../../helpers/crypto';
+import { buildContractCallViem } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
 import { generateContractByteCodeLinear, generateSalt } from './utils';
 
@@ -24,17 +24,17 @@ export interface FractalModuleData {
 export const fractalModuleData = (
   fractalModuleMasterCopyContract: FractalModule,
   moduleProxyFactoryAddress: Address,
-  safeContract: GnosisSafeL2,
+  safeAddress: Address,
   saltNum: bigint,
-  parentAddress?: string,
+  parentAddress?: Address,
 ): FractalModuleData => {
   const fractalModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData(
     'setUp',
     [
       encodeAbiParameters(parseAbiParameters(['address, address, address, address[]']), [
-        getAddress(parentAddress ?? safeContract.address), // Owner -- Parent DAO or safe contract
-        getAddress(safeContract.address), // Avatar
-        getAddress(safeContract.address), // Target
+        parentAddress ?? safeAddress, // Owner -- Parent DAO or safe contract
+        safeAddress, // Avatar
+        safeAddress, // Target
         [], // Authorized Controllers
       ]),
     ],
@@ -65,8 +65,9 @@ export const fractalModuleData = (
     bytecodeHash: keccak256(encodePacked(['bytes'], [fractalByteCodeLinear])),
   });
 
-  const enableFractalModuleTx = buildContractCall(
-    safeContract,
+  const enableFractalModuleTx = buildContractCallViem(
+    GnosisSafeL2Abi,
+    safeAddress,
     'enableModule',
     [predictedFractalModuleAddress],
     0,

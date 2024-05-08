@@ -220,9 +220,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
     const { enableFractalModuleTx, deployFractalModuleTx }: FractalModuleData = fractalModuleData(
       this.baseContracts.fractalModuleMasterCopyContract,
       getAddress(this.moduleProxyFactoryAddress),
-      this.safeContract!,
+      getAddress(this.safeContract.address),
       this.saltNum,
-      this.parentAddress,
+      !this.parentAddress ? undefined : getAddress(this.parentAddress),
     );
 
     this.enableFractalModuleTx = enableFractalModuleTx;
