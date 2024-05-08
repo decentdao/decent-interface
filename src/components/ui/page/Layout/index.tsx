@@ -52,6 +52,7 @@ export default function Layout() {
 
         <GridItem
           area="nav"
+          zIndex="modal"
           display="flex"
           flexDirection="column"
           position="fixed"
