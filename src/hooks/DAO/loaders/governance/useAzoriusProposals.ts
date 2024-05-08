@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Hex, getAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { CreateProposalMetadata, VotingStrategyType, DecodedTransaction } from '../../../../types';
 import { AzoriusProposal } from '../../../../types/daoProposal';
@@ -28,6 +29,7 @@ export const useAzoriusProposals = () => {
       ozLinearVotingContractAddress,
       erc721LinearVotingContractAddress,
     },
+    action,
   } = useFractal();
 
   const baseContracts = useSafeContracts();
@@ -141,9 +143,17 @@ export const useAzoriusProposals = () => {
         await _azoriusContract.queryFilter(proposalCreatedFilter)
       ).reverse();
 
+      action.dispatch({
+        type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+        payload: true,
+      });
+
       for (const proposalCreatedEvent of proposalCreatedEvents) {
         let proposalData;
-        if (proposalCreatedEvent.args.metadata) {
+        if (
+          proposalCreatedEvent.args.metadata &&
+          !skipProposals.includes(proposalCreatedEvent.args.proposalId.toHexString())
+        ) {
           try {
             const metadataEvent: CreateProposalMetadata = JSON.parse(
               proposalCreatedEvent.args.metadata,
@@ -183,6 +193,8 @@ export const useAzoriusProposals = () => {
               proposalCreatedEvent.args.transactions,
             );
           }
+        } else {
+          // unhandled, in which case `proposalData` remains undefined. But how likely?
         }
 
         const proposal = await mapProposalCreatedEventToProposal(
@@ -206,9 +218,19 @@ export const useAzoriusProposals = () => {
         }
 
         _proposalLoaded(proposal);
+
+        action.dispatch({
+          type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+          payload: false,
+        });
       }
+
+      action.dispatch({
+        type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+        payload: false,
+      });
     },
-    [azoriusContractAddress],
+    [action, azoriusContractAddress],
   );
 
   return (proposalLoaded: OnProposalLoaded) =>
