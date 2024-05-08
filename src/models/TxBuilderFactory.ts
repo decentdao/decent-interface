@@ -76,7 +76,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
   }
 
   public setSafeContract(safeAddress: Address) {
-    // const safeContract = GnosisSafeL2__factory.connect(safeAddress, this.signerOrProvider);
     this.safeContractAddress = safeAddress;
   }
 
