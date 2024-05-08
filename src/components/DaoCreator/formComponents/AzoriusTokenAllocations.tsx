@@ -90,9 +90,8 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
               onClick={() => push({ address: '', amount: { value: '' } })}
               data-testid="tokenVoting-addAllocation"
               icon={Plus}
-            >
-              {t('labelAddAllocation')}
-            </CeleryButtonWithIcon>
+              text={t('labelAddAllocation')}
+            />
             {canReceiveParentAllocations && (
               <Accordion allowToggle>
                 <AccordionItem
