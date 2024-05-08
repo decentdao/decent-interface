@@ -43,7 +43,7 @@ export default function Treasury() {
         flexWrap="wrap"
       >
         <TitledInfoBox
-          minWidth={{ sm: '100%', xl: '55%' }}
+          width={{ sm: '100%', xl: '55%' }}
           title={t('titleTransactions')}
           titleTestId="title-transactions"
           bg="neutral-2"
@@ -51,7 +51,7 @@ export default function Treasury() {
           <Transactions />
         </TitledInfoBox>
         <TitledInfoBox
-          minWidth={{ sm: '100%', xl: '35%' }}
+          width={{ sm: '100%', xl: '35%' }}
           title={t('titleAssets')}
           titleTestId="title-assets"
         >

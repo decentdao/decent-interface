@@ -145,7 +145,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           textStyle="helper-text-base"
           as="span"
         >
-          {formatUSD(selectedAsset.fiatBalance)}
+          {formatUSD(selectedAsset?.fiatBalance || 0)}
         </Text>
       </HStack>
       <Divider my="1.5rem" />
