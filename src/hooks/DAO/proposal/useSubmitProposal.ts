@@ -1,18 +1,15 @@
-import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Azorius } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
-import { Signer } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { isAddress, getAddress, encodeAbiParameters, parseAbiParameters, isHex } from 'viem';
-import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
+import { useWalletClient } from 'wagmi';
 import { ADDRESS_MULTISIG_METADATA, SENTINEL_ADDRESS } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
-import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
@@ -54,7 +51,7 @@ export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
   const loadDAOProposals = useDAOProposals();
   const signer = useEthersSigner();
-  const provider = useEthersProvider();
+  const { data: walletClient } = useWalletClient();
 
   const {
     node: { safe, fractalModules },
@@ -91,7 +88,7 @@ export default function useSubmitProposal() {
       successCallback,
       safeAddress,
     }: ISubmitProposal) => {
-      if (!proposalData || !baseContracts) {
+      if (!proposalData || !baseContracts || !walletClient) {
         return;
       }
       const { multiSendContract } = baseContracts;
@@ -162,21 +159,15 @@ export default function useSubmitProposal() {
           operation = 0;
         }
 
-        const safeContract = GnosisSafeL2__factory.connect(safeAddress, signerOrProvider);
         await axios.post(
           buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
-          await buildSafeAPIPost(
-            safeContract,
-            signerOrProvider as Signer & TypedDataSigner,
-            chain.id,
-            {
-              to,
-              value,
-              data,
-              operation,
-              nonce,
-            },
-          ),
+          await buildSafeAPIPost(getAddress(safeAddress), walletClient, chain.id, {
+            to,
+            value,
+            data,
+            operation,
+            nonce,
+          }),
         );
         await new Promise(resolve => setTimeout(resolve, 1000));
         await loadDAOProposals();
@@ -194,13 +185,14 @@ export default function useSubmitProposal() {
       }
     },
     [
-      signerOrProvider,
-      safeBaseURL,
-      chain,
-      loadDAOProposals,
-      ipfsClient,
-      baseContracts,
       addressPrefix,
+      baseContracts,
+      chain.id,
+      ipfsClient,
+      loadDAOProposals,
+      safeBaseURL,
+      signerOrProvider,
+      walletClient,
     ],
   );
 
@@ -215,7 +207,7 @@ export default function useSubmitProposal() {
       failedToastMessage,
       safeAddress,
     }: ISubmitAzoriusProposal) => {
-      if (!proposalData || !provider) {
+      if (!proposalData) {
         return;
       }
       const toastId = toast(pendingToastMessage, {
@@ -261,7 +253,7 @@ export default function useSubmitProposal() {
         setPendingCreateTx(false);
       }
     },
-    [provider, addressPrefix],
+    [addressPrefix],
   );
 
   const submitProposal = useCallback(

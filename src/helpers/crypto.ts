@@ -1,5 +1,4 @@
-import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { Contract, Signer } from 'ethers';
+import { Contract } from 'ethers';
 import {
   hashTypedData,
   Hash,
@@ -14,6 +13,7 @@ import {
   isHex,
   encodeFunctionData,
   Abi,
+  WalletClient,
 } from 'viem';
 import { MetaTransaction, SafePostTransaction, SafeTransaction } from '../types/transaction';
 
@@ -43,12 +43,12 @@ export function getRandomBytes() {
 }
 
 export const calculateSafeTransactionHash = (
-  safe: Contract,
+  safeAddress: Address,
   safeTx: SafeTransaction,
   chainId: number,
 ): string => {
   return hashTypedData({
-    domain: { verifyingContract: getAddress(safe.address), chainId },
+    domain: { verifyingContract: safeAddress, chainId },
     types: EIP712_SAFE_TX_TYPE,
     primaryType: 'SafeTx',
     message: { ...safeTx },
@@ -93,22 +93,33 @@ export const buildSafeTransaction = (template: {
 };
 
 export const safeSignTypedData = async (
-  signer: Signer & TypedDataSigner,
-  safe: Contract,
+  walletClient: WalletClient,
+  contractAddress: Address,
   safeTx: SafeTransaction,
-  chainId?: number,
+  chainId: number,
 ): Promise<SafeSignature> => {
-  if (!chainId && !signer.provider) throw Error('Provider required to retrieve chainId');
-  const cid = chainId || (await signer.provider!.getNetwork()).chainId;
-  const signerAddress = await signer.getAddress();
-  const signedData = await signer._signTypedData(
-    { verifyingContract: safe.address, chainId: cid },
-    EIP712_SAFE_TX_TYPE,
-    safeTx,
-  );
-  if (!isHex(signedData)) {
-    throw new Error('Error signing message');
-  }
+  if (!walletClient.account) throw new Error("Signer doesn't have account");
+
+  const signerAddress = walletClient.account.address;
+  const signedData = await walletClient.signTypedData({
+    account: signerAddress,
+    domain: { verifyingContract: contractAddress, chainId },
+    types: EIP712_SAFE_TX_TYPE,
+    primaryType: 'SafeTx',
+    message: {
+      to: safeTx.to,
+      value: safeTx.value,
+      data: safeTx.data,
+      operation: safeTx.operation,
+      safeTxGas: safeTx.safeTxGas,
+      baseGas: safeTx.baseGas,
+      gasPrice: safeTx.gasPrice,
+      gasToken: safeTx.gasToken,
+      refundReceiver: safeTx.refundReceiver,
+      nonce: safeTx.nonce,
+    },
+  });
+
   return {
     signer: signerAddress,
     data: signedData,
@@ -116,8 +127,8 @@ export const safeSignTypedData = async (
 };
 
 export const buildSafeAPIPost = async (
-  safeContract: Contract,
-  signerOrProvider: Signer & TypedDataSigner,
+  safeAddress: Address,
+  walletClient: WalletClient,
   chainId: number,
   template: {
     to: Address;
@@ -132,20 +143,14 @@ export const buildSafeAPIPost = async (
     nonce: number;
   },
 ): Promise<SafePostTransaction> => {
-  const safeTx = buildSafeTransaction(template);
+  if (!walletClient.account) throw new Error("Signer doesn't have account");
 
-  const txHash = calculateSafeTransactionHash(safeContract, safeTx, chainId);
-  const sig = [
-    await safeSignTypedData(
-      signerOrProvider as Signer & TypedDataSigner,
-      safeContract,
-      safeTx,
-      chainId,
-    ),
-  ];
+  const safeTx = buildSafeTransaction(template);
+  const txHash = calculateSafeTransactionHash(safeAddress, safeTx, chainId);
+  const sig = [await safeSignTypedData(walletClient, safeAddress, safeTx, chainId)];
   const signatureBytes = buildSignatureBytes(sig);
   return {
-    safe: safeContract.address,
+    safe: safeAddress,
     to: safeTx.to,
     value: safeTx.value ? safeTx.value.toString() : '0',
     data: safeTx.data,
@@ -157,7 +162,7 @@ export const buildSafeAPIPost = async (
     refundReceiver: safeTx.refundReceiver,
     nonce: safeTx.nonce,
     contractTransactionHash: txHash,
-    sender: await signerOrProvider.getAddress(),
+    sender: walletClient.account.address,
     signature: signatureBytes,
   };
 };
