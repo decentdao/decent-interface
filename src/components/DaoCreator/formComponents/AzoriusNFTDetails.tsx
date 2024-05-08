@@ -172,9 +172,8 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
               <CeleryButtonWithIcon
                 onClick={handleAddNFT}
                 icon={Plus}
-              >
-                {t('addNFTButton')}
-              </CeleryButtonWithIcon>
+                text={t('addNFTButton')}
+              />
             </Flex>
           </GridItem>
           <GridItem
