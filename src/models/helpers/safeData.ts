@@ -10,7 +10,7 @@ import {
   isHex,
   hexToBigInt,
 } from 'viem';
-import GnosisSafeL2ABI from '../../assets/abi/GnosisSafeL2';
+import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import { MultiSend } from '../../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../../helpers/crypto';
@@ -32,16 +32,16 @@ export const safeData = async (
   const createSafeCalldata = encodeFunctionData({
     functionName: 'setup',
     args: [
-      signers,
-      1, // Threshold
+      signers.map(signer => getAddress(signer)),
+      1n, // Threshold
       zeroAddress,
       zeroHash,
-      fallbackHandler,
+      getAddress(fallbackHandler),
       zeroAddress,
-      0,
+      0n,
       zeroAddress,
     ],
-    abi: GnosisSafeL2ABI,
+    abi: GnosisSafeL2Abi,
   });
 
   const safeFactoryContractProxyCreationCode = await safeFactoryContract.proxyCreationCode();

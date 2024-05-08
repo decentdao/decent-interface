@@ -11,7 +11,6 @@ import {
   LinearERC20Voting__factory,
   Azorius__factory,
   ERC20Claim__factory,
-  VotesERC20Wrapper__factory,
   KeyValuePairs__factory,
   LinearERC721Voting__factory,
   ERC721FreezeVoting__factory,
@@ -44,7 +43,6 @@ export default function useSafeContracts() {
       erc721FreezeVotingMasterCopy,
       votesERC20MasterCopy,
       claimingMasterCopy,
-      votesERC20WrapperMasterCopy,
       linearVotingERC721MasterCopy,
       keyValuePairs,
     },
@@ -139,11 +137,6 @@ export default function useSafeContracts() {
       asProvider: ERC20Claim__factory.connect(claimingMasterCopy, provider),
     };
 
-    const votesERC20WrapperMasterCopyContract = {
-      asSigner: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, signerOrProvider),
-      asProvider: VotesERC20Wrapper__factory.connect(votesERC20WrapperMasterCopy, provider),
-    };
-
     const keyValuePairsContract = {
       asSigner: KeyValuePairs__factory.connect(keyValuePairs, signerOrProvider),
       asProvider: KeyValuePairs__factory.connect(keyValuePairs, provider),
@@ -165,7 +158,6 @@ export default function useSafeContracts() {
       freezeERC721VotingMasterCopyContract,
       votesTokenMasterCopyContract,
       claimingMasterCopyContract,
-      votesERC20WrapperMasterCopyContract,
       linearVotingERC721MasterCopyContract,
       keyValuePairsContract,
     };
@@ -184,7 +176,6 @@ export default function useSafeContracts() {
     erc20FreezeVotingMasterCopy,
     votesERC20MasterCopy,
     claimingMasterCopy,
-    votesERC20WrapperMasterCopy,
     linearVotingERC721MasterCopy,
     erc721FreezeVotingMasterCopy,
     keyValuePairs,
