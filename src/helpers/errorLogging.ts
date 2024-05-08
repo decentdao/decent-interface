@@ -23,7 +23,7 @@ function initErrorLogging() {
       }),
       Sentry.replayIntegration(),
       Sentry.feedbackIntegration({
-        colorScheme: 'system',
+        colorScheme: 'dark',
       }),
     ],
 
