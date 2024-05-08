@@ -4,7 +4,6 @@ import {
   ERC20FreezeVoting__factory,
   MultisigFreezeGuard__factory,
   MultisigFreezeVoting__factory,
-  ModuleProxyFactory__factory,
   LinearERC20Voting__factory,
   Azorius__factory,
   ERC20Claim__factory,
@@ -25,7 +24,6 @@ export default function useSafeContracts() {
   const {
     contracts: {
       safe,
-      zodiacModuleProxyFactory,
       linearVotingMasterCopy,
       multisend,
       fractalAzoriusMasterCopy,
@@ -66,11 +64,6 @@ export default function useSafeContracts() {
     const safeSingletonContract = {
       asSigner: GnosisSafeL2__factory.connect(safe, signerOrProvider),
       asProvider: GnosisSafeL2__factory.connect(safe, provider),
-    };
-
-    const zodiacModuleProxyFactoryContract = {
-      asSigner: ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory, signerOrProvider),
-      asProvider: ModuleProxyFactory__factory.connect(zodiacModuleProxyFactory, provider),
     };
 
     const fractalModuleMasterCopyContract = {
@@ -119,7 +112,6 @@ export default function useSafeContracts() {
       fractalAzoriusMasterCopyContract,
       linearVotingMasterCopyContract,
       safeSingletonContract,
-      zodiacModuleProxyFactoryContract,
       fractalModuleMasterCopyContract,
       multisigFreezeGuardMasterCopyContract,
       azoriusFreezeGuardMasterCopyContract,
@@ -131,7 +123,6 @@ export default function useSafeContracts() {
     };
   }, [
     safe,
-    zodiacModuleProxyFactory,
     linearVotingMasterCopy,
     fractalAzoriusMasterCopy,
     multisend,
