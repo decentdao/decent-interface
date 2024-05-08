@@ -4,8 +4,9 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
 import { useTranslation } from 'react-i18next';
-import { Hex, getAddress, isHex } from 'viem';
-import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
+import { Hex, getAddress, getContract, isHex } from 'viem';
+import { useWalletClient } from 'wagmi';
+import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
@@ -34,9 +35,11 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
-  const [contractCall, contractCallPending] = useTransaction();
+  const [contractCall, contractCallPending, contractCallViem] = useTransaction();
   const loadSafeMultisigProposals = useSafeMultisigProposals();
   const baseContracts = useSafeContracts();
+  const { data: walletClient } = useWalletClient();
+
   if (user.votingWeight === 0n) return <></>;
 
   const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
@@ -140,11 +143,17 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         !signerOrProvider ||
         !safe?.address ||
         !multisigTx.confirmations ||
-        (multisigTx.data && !isHex(multisigTx.data))
+        (multisigTx.data && !isHex(multisigTx.data)) ||
+        !walletClient
       ) {
         return;
       }
-      const safeContract = GnosisSafeL2__factory.connect(safe.address, signerOrProvider);
+
+      const safeContract = getContract({
+        abi: GnosisSafeL2Abi,
+        address: getAddress(safe.address),
+        client: walletClient,
+      });
       const safeTx = buildSafeTransaction({
         ...multisigTx,
         to: getAddress(multisigTx.to),
@@ -163,20 +172,20 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
           };
         }),
       );
-      contractCall({
+      contractCallViem({
         contractFn: () =>
-          safeContract.execTransaction(
+          safeContract.write.execTransaction([
             safeTx.to,
             safeTx.value,
             safeTx.data,
             safeTx.operation,
-            safeTx.safeTxGas,
-            safeTx.baseGas,
-            safeTx.gasPrice,
-            safeTx.gasToken,
-            safeTx.refundReceiver,
+            BigInt(safeTx.safeTxGas),
+            BigInt(safeTx.baseGas),
+            BigInt(safeTx.gasPrice),
+            getAddress(safeTx.gasToken),
+            getAddress(safeTx.refundReceiver),
             signatures,
-          ),
+          ]),
         failedMessage: t('failedExecute', { ns: 'transaction' }),
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
