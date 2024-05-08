@@ -36,6 +36,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   private readonly keyValuePairsAddress: string;
   private readonly fractalRegistryAddress: string;
+  private readonly moduleProxyFactoryAddress: string;
 
   constructor(
     signerOrProvider: ethers.Signer | any,
@@ -49,6 +50,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     txBuilderFactory: TxBuilderFactory,
     keyValuePairsAddress: string,
     fractalRegistryAddress: string,
+    moduleProxyFactoryAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
     parentStrategyType?: VotingStrategyType,
@@ -73,6 +75,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     this.keyValuePairsAddress = keyValuePairsAddress;
     this.fractalRegistryAddress = fractalRegistryAddress;
+    this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
 
     // Prep fractal module txs for setting up subDAOs
     this.setFractalModuleTxs();
@@ -216,7 +219,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private setFractalModuleTxs(): void {
     const { enableFractalModuleTx, deployFractalModuleTx }: FractalModuleData = fractalModuleData(
       this.baseContracts.fractalModuleMasterCopyContract,
-      this.baseContracts.zodiacModuleProxyFactoryContract,
+      getAddress(this.moduleProxyFactoryAddress),
       this.safeContract!,
       this.saltNum,
       this.parentAddress,

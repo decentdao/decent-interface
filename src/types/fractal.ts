@@ -1,6 +1,5 @@
 import {
   FractalModule,
-  ModuleProxyFactory,
   LinearERC20Voting,
   Azorius,
   AzoriusFreezeGuard,
@@ -334,7 +333,6 @@ export interface FractalContracts {
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
   linearVotingERC721MasterCopyContract: ContractConnection<LinearERC721Voting>;
   safeSingletonContract: ContractConnection<GnosisSafeL2>;
-  zodiacModuleProxyFactoryContract: ContractConnection<ModuleProxyFactory>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
   azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;

@@ -26,6 +26,7 @@ const useBuildDAOTx = () => {
       keyValuePairs,
       fractalRegistry,
       safeFactory,
+      zodiacModuleProxyFactory,
     },
   } = useNetworkConfig();
 
@@ -54,7 +55,6 @@ const useBuildDAOTx = () => {
         linearVotingMasterCopyContract,
         linearVotingERC721MasterCopyContract,
         fractalAzoriusMasterCopyContract,
-        zodiacModuleProxyFactoryContract,
         fractalModuleMasterCopyContract,
         multisigFreezeGuardMasterCopyContract,
         azoriusFreezeGuardMasterCopyContract,
@@ -100,7 +100,6 @@ const useBuildDAOTx = () => {
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
         freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asSigner,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
-        zodiacModuleProxyFactoryContract: zodiacModuleProxyFactoryContract.asSigner,
       };
 
       const txBuilderFactory = new TxBuilderFactory(
@@ -115,6 +114,7 @@ const useBuildDAOTx = () => {
         keyValuePairs,
         fractalRegistry,
         safeFactory,
+        zodiacModuleProxyFactory,
         parentAddress,
         parentTokenAddress,
       );
@@ -167,6 +167,7 @@ const useBuildDAOTx = () => {
       keyValuePairs,
       fractalRegistry,
       safeFactory,
+      zodiacModuleProxyFactory,
     ],
   );
 
