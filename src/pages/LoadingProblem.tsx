@@ -1,5 +1,6 @@
 import { Center, Text, VStack } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../constants/common';
 import { useNetworkConfig } from '../providers/NetworkConfig/NetworkConfigProvider';
 
 function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQueryParam' }) {
@@ -11,10 +12,9 @@ function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQ
       padding="3rem"
       textColor="neutral-7"
     >
-      <VStack>
+      <VStack padding="3rem" bg={BACKGROUND_SEMI_TRANSPARENT}>
         <Text
-          paddingTop="3rem"
-          textStyle="text-6xl-mono-regular"
+          textStyle="display-2xl"
         >
           {t('errorSentryFallbackTitle')}
         </Text>

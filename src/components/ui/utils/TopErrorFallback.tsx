@@ -1,7 +1,7 @@
-import { Box, Button, Center, Flex, Text, Link } from '@chakra-ui/react';
-import { Alert } from '@decent-org/fractal-ui';
+import { Box, Button, Center, Flex, Text, Link, Icon } from '@chakra-ui/react';
+import { Warning } from '@phosphor-icons/react'
 import { Trans, useTranslation } from 'react-i18next';
-import { CONTENT_HEIGHT } from '../../../constants/common';
+import { BACKGROUND_SEMI_TRANSPARENT, CONTENT_HEIGHT } from '../../../constants/common';
 import { URL_DISCORD } from '../../../constants/url';
 
 export function TopErrorFallback() {
@@ -13,7 +13,7 @@ export function TopErrorFallback() {
           minWidth="100%"
           h="100%"
           minHeight="10.6rem"
-          bg="black.900-semi-transparent"
+          bg={BACKGROUND_SEMI_TRANSPARENT}
           p="1rem"
           borderRadius="0.5rem"
         >
@@ -22,9 +22,9 @@ export function TopErrorFallback() {
             direction="column"
             padding="1rem"
           >
-            <Alert />
+            <Icon as={Warning} boxSize="2rem" />
             <Text
-              textStyle="text-2xl-mono-regular"
+              textStyle="display-2xl"
               marginTop="1.5rem"
               marginBottom="1.5rem"
             >
