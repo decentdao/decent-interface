@@ -17,6 +17,8 @@ import { mapProposalCreatedEventToProposal, decodeTransactions } from '../../../
 import useSafeContracts from '../../../safe/useSafeContracts';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
+type OnProposalLoaded = (proposal: AzoriusProposal) => void;
+
 export const useAzoriusProposals = () => {
   const currentAzoriusAddress = useRef<string>();
 
@@ -128,7 +130,7 @@ export const useAzoriusProposals = () => {
         to: string,
         data?: string | undefined,
       ) => Promise<DecodedTransaction[]>,
-      _proposalLoaded: (proposal: AzoriusProposal) => void,
+      _proposalLoaded: OnProposalLoaded,
     ) => {
       if (!_strategyType || !_azoriusContract || !_provider) {
         return;
@@ -209,8 +211,8 @@ export const useAzoriusProposals = () => {
     [azoriusContractAddress],
   );
 
-  return (proposalLoaded: (proposal: AzoriusProposal) => void) => {
-    return loadAzoriusProposals(
+  return (proposalLoaded: OnProposalLoaded) =>
+    loadAzoriusProposals(
       azoriusContract,
       erc20StrategyContract,
       erc721StrategyContract,
@@ -222,5 +224,4 @@ export const useAzoriusProposals = () => {
       decode,
       proposalLoaded,
     );
-  };
 };
