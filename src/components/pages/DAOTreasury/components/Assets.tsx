@@ -214,8 +214,9 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
           tokenId={id}
           color="white-0"
           textStyle="body-base"
+          maxW="100%"
         >
-          #{id}
+          {`#${id}`}
         </EtherscanLinkERC721>
       </Flex>
     </HStack>

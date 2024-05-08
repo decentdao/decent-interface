@@ -1,5 +1,5 @@
-import { Box, Button, Center, Flex, Text, Link } from '@chakra-ui/react';
-import { Alert } from '@decent-org/fractal-ui';
+import { Box, Button, Center, Flex, Text, Link, Icon } from '@chakra-ui/react';
+import { Warning } from '@phosphor-icons/react';
 import { Trans, useTranslation } from 'react-i18next';
 import { CONTENT_HEIGHT } from '../../../constants/common';
 import { URL_DISCORD } from '../../../constants/url';
@@ -22,9 +22,12 @@ export function TopErrorFallback() {
             direction="column"
             padding="1rem"
           >
-            <Alert />
+            <Icon
+              as={Warning}
+              boxSize="2rem"
+            />
             <Text
-              textStyle="text-2xl-mono-regular"
+              textStyle="display-2xl"
               marginTop="1.5rem"
               marginBottom="1.5rem"
             >

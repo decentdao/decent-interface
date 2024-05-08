@@ -82,9 +82,8 @@ export function ProposalInfo({
             iconPosition="end"
             icon={ArrowUpRight}
             onClick={confirmUrl}
-          >
-            {metaData.documentationUrl}
-          </CeleryButtonWithIcon>
+            text={metaData.documentationUrl}
+          />
         )}
         <ProposalExecutableCode proposal={proposal} />
       </Box>

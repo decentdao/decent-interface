@@ -5,13 +5,14 @@ import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { OptionsList } from './OptionsList';
 import { IOption, IOptionsList } from './types';
 
-interface IOptionMenu extends Omit<MenuProps, 'children'>, IOptionsList {
+interface OptionMenuProps extends Omit<MenuProps, 'children'>, IOptionsList {
   trigger: ReactNode;
   tooltipKey?: string;
   options: IOption[];
   buttonAs?: As;
   buttonProps?: Record<string, string | boolean | number | Record<string, any>>;
   children?: ReactNode;
+  menuListMr?: string;
 }
 
 export function OptionMenu({
@@ -26,8 +27,9 @@ export function OptionMenu({
   buttonProps,
   children,
   closeOnSelect = true,
+  menuListMr,
   ...rest
-}: IOptionMenu) {
+}: OptionMenuProps) {
   const { t } = useTranslation(namespace);
   return (
     <Menu
@@ -58,7 +60,7 @@ export function OptionMenu({
         bg={NEUTRAL_2_82_TRANSPARENT}
         backdropFilter="auto"
         backdropBlur="10px"
-        mr={['auto', '1rem']}
+        mr={menuListMr || ['auto', '1rem']}
         zIndex={1000}
       >
         {children}

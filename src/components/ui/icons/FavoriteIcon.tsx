@@ -22,6 +22,8 @@ export function FavoriteIcon({ safeAddress, ...rest }: Props) {
         <IconButton
           variant="tertiary"
           p="0.5rem"
+          w="1.25rem"
+          h="1.25rem"
           size="md"
           as={Button}
           icon={<Star weight={isFavorite ? 'fill' : 'regular'} />}

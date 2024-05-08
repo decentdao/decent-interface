@@ -21,8 +21,8 @@ export function ActivityDescriptionModule({ activity }: { activity: FractalPropo
   );
   return (
     <Box
-      color="grayscale.100"
-      textStyle="text-lg-mono-semibold"
+      color="neutral-7"
+      textStyle="body-base-strong"
     >
       <Flex
         flexWrap="wrap"
@@ -48,8 +48,8 @@ export function ActivityDescriptionModule({ activity }: { activity: FractalPropo
         {activity.eventDate && (
           <Text
             mt={2}
-            textStyle="text-base-sans-regular"
-            color="#838383"
+            textStyle="body-base-strong"
+            color="#838383" // @todo - should be placed in theme
           >
             {eventDateLabel} {format(activity.eventDate, DEFAULT_DATE_FORMAT)}
           </Text>

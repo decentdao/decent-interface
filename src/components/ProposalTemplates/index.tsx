@@ -42,7 +42,7 @@ export default function ProposalTemplates() {
             <Link to={DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)}>
               <Button
                 variant="text"
-                textStyle="text-xl-mono-bold"
+                textStyle="display-xl"
               >
                 {t('emptyProposalTemplatesCreateMessage')}
               </Button>

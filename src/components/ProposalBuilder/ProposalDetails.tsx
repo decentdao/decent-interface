@@ -15,12 +15,7 @@ export function TransactionValueContainer({ children }: PropsWithChildren<{}>) {
       borderRadius={4}
       padding={2}
     >
-      <Text
-        color="neutral-grayscale-100"
-        fontStyle="code-snippet-helper"
-      >
-        {children}
-      </Text>
+      <Text fontStyle="code-snippet-helper">{children}</Text>
     </Box>
   );
 }
@@ -74,9 +69,10 @@ export default function ProposalTemplateDetails({
         <HStack justifyContent="space-between">
           <Text color="neutral-7">{t('proposalTemplateDescription')}</Text>
           {proposalMetadata.description && (
-            <CeleryButtonWithIcon onClick={() => setDescriptionCollapsed(prevState => !prevState)}>
-              {t(descriptionCollapsed ? 'show' : 'hide', { ns: 'common' })}
-            </CeleryButtonWithIcon>
+            <CeleryButtonWithIcon
+              onClick={() => setDescriptionCollapsed(prevState => !prevState)}
+              text={t(descriptionCollapsed ? 'show' : 'hide', { ns: 'common' })}
+            />
           )}
         </HStack>
         {!descriptionCollapsed && (

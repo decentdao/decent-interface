@@ -1,5 +1,5 @@
-import { Box, Button, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
-import { Icon } from '@phosphor-icons/react';
+import { Box, Button, Flex, Icon, IconButton, Spacer, Text } from '@chakra-ui/react';
+import { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { ReactNode, useEffect, useState } from 'react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
@@ -14,7 +14,7 @@ interface PageHeaderProps {
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
   buttonVariant?: 'text' | 'secondary';
-  ButtonIcon?: Icon;
+  ButtonIcon?: PhosphorIcon;
   buttonText?: string;
   buttonClick?: () => void;
   buttonTestId?: string;
@@ -82,7 +82,12 @@ function PageHeader({
         {ButtonIcon && (
           <IconButton
             aria-label="navigate"
-            icon={<ButtonIcon />}
+            icon={
+              <Icon
+                as={ButtonIcon}
+                boxSize="1.25rem"
+              />
+            }
             onClick={buttonClick}
             minWidth="0"
             padding={1}

@@ -13,6 +13,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
 import { LanguageSwitcher } from '../../../../i18n/LanguageSwitcher';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import Divider from '../../utils/Divider';
 import { NavigationLink } from './NavigationLink';
 
 function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
@@ -24,61 +25,38 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       _hover={{ maxWidth: '100%' }}
       transitionDuration="0.2s"
       width={{ base: 'full', md: 'auto' }}
+      borderRadius={{ md: 8 }}
+      borderWidth={{ md: 1 }}
+      borderColor={{ md: 'neutral-3' }}
+      bg={{ md: 'neutral-2' }}
+      overflow={{ md: 'hidden' }}
     >
-      <Box
-        borderColor={{ md: 'neutral-3' }}
-        bg={{ md: 'neutral-2' }}
-        mb={{ md: '1px' }}
-        overflow={{ md: 'hidden' }}
-        borderTopRadius={{ md: 8 }}
-        borderTopWidth={{ md: 1 }}
-        borderLeftWidth={{ md: 1 }}
-        borderRightWidth={{ md: 1 }}
-      >
-        <NavigationLink
-          href={URL_FAQ}
-          labelKey="faq"
-          testId="navigationExternal-faq"
-          NavigationIcon={Question}
-          scope="external"
-          closeDrawer={closeDrawer}
-        />
-        <NavigationLink
-          href={URL_DISCORD}
-          labelKey="discord"
-          testId="navigationExternal-discord"
-          NavigationIcon={DiscordLogo}
-          scope="external"
-          closeDrawer={closeDrawer}
-        />
-        <NavigationLink
-          href={URL_DOCS}
-          labelKey="documentation"
-          testId="navigationExternal-documentation"
-          NavigationIcon={BookOpen}
-          scope="external"
-          closeDrawer={closeDrawer}
-        />
-      </Box>
-      <Hide above="md">
-        <Box
-          borderTop="1px"
-          borderColor="neutral-3"
-          mx={-6}
-        />
-      </Hide>
-      <Box
-        bg={{ md: 'neutral-2' }}
-        overflow={{ md: 'hidden' }}
-        borderColor={{ md: 'neutral-3' }}
-        borderWidth={{ md: 1 }}
-        borderBottomRadius={{ md: 8 }}
-        pl="11px"
-        pt={{ base: 3, md: '11px' }}
-        pb={{ md: '4px' }}
-      >
-        <LanguageSwitcher data-testid="navigation-language" />
-      </Box>
+      <NavigationLink
+        href={URL_FAQ}
+        labelKey="faq"
+        testId="navigationExternal-faq"
+        NavigationIcon={Question}
+        scope="external"
+        closeDrawer={closeDrawer}
+      />
+      <NavigationLink
+        href={URL_DISCORD}
+        labelKey="discord"
+        testId="navigationExternal-discord"
+        NavigationIcon={DiscordLogo}
+        scope="external"
+        closeDrawer={closeDrawer}
+      />
+      <NavigationLink
+        href={URL_DOCS}
+        labelKey="documentation"
+        testId="navigationExternal-documentation"
+        NavigationIcon={BookOpen}
+        scope="external"
+        closeDrawer={closeDrawer}
+      />
+      <Divider />
+      <LanguageSwitcher data-testid="navigation-language" />
     </Box>
   );
 }
@@ -156,11 +134,7 @@ function InternalLinks({
           closeDrawer={closeDrawer}
         />
         <Hide above="md">
-          <Box
-            borderTop="1px"
-            borderColor="neutral-3"
-            mx={-6}
-          />
+          <Divider mx={-6} />
         </Hide>
       </Box>
     </Box>

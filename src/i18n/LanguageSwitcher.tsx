@@ -15,9 +15,14 @@ export function LanguageSwitcher() {
   });
   return (
     <OptionMenu
-      offset={[16, 8]}
+      offset={[-64, 8]}
+      placement="right"
       trigger={
-        <Flex>
+        <Flex
+          pt={2}
+          pb={3}
+          pl="11px"
+        >
           <Box w={6}>
             <GlobeSimple size={24} />
           </Box>

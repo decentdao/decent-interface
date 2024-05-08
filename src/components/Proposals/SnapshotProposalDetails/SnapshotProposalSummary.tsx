@@ -116,7 +116,12 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
             {t('votingPower')}
           </Text>
           {showVotingPower ? (
-            <Tooltip label={t('votingPowerTooltip')}>{ShowVotingPowerButton}</Tooltip>
+            <Tooltip
+              label={t('votingPowerTooltip')}
+              placement="top"
+            >
+              {ShowVotingPowerButton}
+            </Tooltip>
           ) : (
             ShowVotingPowerButton
           )}
