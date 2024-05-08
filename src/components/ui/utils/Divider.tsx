@@ -15,7 +15,7 @@ export default function Divider({
       borderTop="1px solid"
       borderTopColor={isDarker ? '#000000AD' : isDark ? 'neutral-1' : 'neutral-2'}
       borderBottom="1px solid"
-      borderBottomColor={isDarker ? '#FFFFFF0A' : isDark ? 'neutral-3' : 'neutral-4'}
+      borderBottomColor={isDarker ? 'white-alpha-08' : isDark ? 'neutral-3' : 'neutral-4'}
       {...rest}
     />
   );

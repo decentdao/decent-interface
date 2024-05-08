@@ -15,12 +15,7 @@ export function TransactionValueContainer({ children }: PropsWithChildren<{}>) {
       borderRadius={4}
       padding={2}
     >
-      <Text
-        color="neutral-grayscale-100"
-        fontStyle="code-snippet-helper"
-      >
-        {children}
-      </Text>
+      <Text fontStyle="code-snippet-helper">{children}</Text>
     </Box>
   );
 }
