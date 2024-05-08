@@ -20,10 +20,10 @@ import {
   encodeFunctionData,
   PublicClient,
 } from 'viem';
+import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import VotesERC20Abi from '../assets/abi/VotesERC20';
 import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { SENTINEL_ADDRESS } from '../constants/common';
 import { buildContractCall, buildContractCallViem, getRandomBytes } from '../helpers';
 import {
@@ -39,7 +39,7 @@ import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
 
 export class AzoriusTxBuilder extends BaseTxBuilder {
-  private readonly safeContract: GnosisSafeL2;
+  private readonly safeContractAddress: Address;
 
   private encodedSetupTokenData: Hex | undefined;
   private encodedSetupERC20WrapperData: Hex | undefined;
@@ -72,7 +72,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     baseContracts: BaseContracts,
     azoriusContracts: AzoriusContracts,
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
-    safeContract: GnosisSafeL2,
+    safeContractAddress: Address,
     votesERC20WrapperMasterCopyAddress: string,
     votesERC20MasterCopyAddress: string,
     moduleProxyFactoryAddress: Address,
@@ -89,7 +89,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       parentTokenAddress,
     );
 
-    this.safeContract = safeContract;
+    this.safeContractAddress = safeContractAddress;
 
     this.tokenNonce = getRandomBytes();
     this.claimNonce = getRandomBytes();
@@ -139,8 +139,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildRemoveOwners(owners: string[]): SafeTransaction[] {
     const removeOwnerTxs = owners.map(owner =>
-      buildContractCall(
-        this.safeContract!,
+      buildContractCallViem(
+        GnosisSafeL2Abi,
+        this.safeContractAddress,
         'removeOwner',
         [this.baseContracts.multiSendContract.address, owner, 1],
         0,
@@ -164,8 +165,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildEnableAzoriusModuleTx(): SafeTransaction {
-    return buildContractCall(
-      this.safeContract!,
+    return buildContractCallViem(
+      GnosisSafeL2Abi,
+      this.safeContractAddress,
       'enableModule',
       [this.azoriusContract!.address],
       0,
@@ -174,8 +176,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildAddAzoriusContractAsOwnerTx(): SafeTransaction {
-    return buildContractCall(
-      this.safeContract!,
+    return buildContractCallViem(
+      GnosisSafeL2Abi,
+      this.safeContractAddress,
       'addOwnerWithThreshold',
       [this.azoriusContract!.address, 1],
       0,
@@ -184,8 +187,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildRemoveMultiSendOwnerTx(): SafeTransaction {
-    return buildContractCall(
-      this.safeContract!,
+    return buildContractCallViem(
+      GnosisSafeL2Abi,
+      this.safeContractAddress,
       'removeOwner',
       [this.azoriusContract!.address, this.baseContracts.multiSendContract.address, 1],
       0,
@@ -339,7 +343,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     // Send any un-allocated tokens to the Safe Treasury
     if (azoriusGovernanceDaoData.tokenSupply > tokenAllocationSum) {
       // TODO -- verify this doesn't need to be the predicted safe address (that they are the same)
-      tokenAllocationsOwners.push(getAddress(this.safeContract.address));
+      tokenAllocationsOwners.push(this.safeContractAddress);
       tokenAllocationsValues.push(azoriusGovernanceDaoData.tokenSupply - tokenAllocationSum);
     }
 
@@ -391,7 +395,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       parseAbiParameters('uint32, address, address, address, uint256'),
       [
         0, // `deadlineBlock`, 0 means never expires, currently no UI for setting this in the app.
-        getAddress(this.safeContract.address),
+        this.safeContractAddress,
         getAddress(this.parentTokenAddress),
         getAddress(this.predictedTokenAddress),
         azoriusGovernanceDaoData.parentAllocationAmount,
@@ -435,7 +439,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       const encodedStrategyInitParams = encodeAbiParameters(
         parseAbiParameters('address, address, address, uint32, uint256, uint256, uint256'),
         [
-          getAddress(this.safeContract.address), // owner
+          this.safeContractAddress, // owner
           getAddress(this.predictedTokenAddress), // governance token
           SENTINEL_ADDRESS, // Azorius module
           Number(azoriusGovernanceDaoData.votingPeriod),
@@ -480,7 +484,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
           'address, address[], uint256[], address, uint32, uint256, uint256, uint256',
         ),
         [
-          getAddress(this.safeContract.address), // owner
+          this.safeContractAddress, // owner
           daoData.nfts.map(nft => nft.tokenAddress!), // governance tokens addresses
           daoData.nfts.map(nft => nft.tokenWeight), // governance tokens weights
           SENTINEL_ADDRESS, // Azorius module
@@ -525,7 +529,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   // TODO - verify we can use safe contract address
   private setPredictedAzoriusAddress() {
     const azoriusGovernanceDaoData = this.daoData as AzoriusGovernanceDAO;
-    const safeContractAddress = getAddress(this.safeContract.address);
+    const safeContractAddress = this.safeContractAddress;
     const encodedInitAzoriusData = encodeAbiParameters(
       parseAbiParameters(['address, address, address, address[], uint32, uint32']),
       [

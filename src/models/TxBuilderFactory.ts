@@ -1,9 +1,7 @@
 import { ethers } from 'ethers';
-import { PublicClient, getAddress, getContract } from 'viem';
+import { Address, PublicClient, getAddress, getContract } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../assets/abi/GnosisSafeProxyFactory';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
-import { GnosisSafeL2__factory } from '../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { getRandomBytes } from '../helpers';
 import {
   BaseContracts,
@@ -28,7 +26,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   // Safe Data
   public predictedSafeAddress: string | undefined;
   public createSafeTx: SafeTransaction | undefined;
-  private safeContract: GnosisSafeL2 | undefined;
+  private safeContractAddress: Address | undefined;
   public fallbackHandler: string;
 
   private votesERC20WrapperMasterCopyAddress: string;
@@ -77,9 +75,9 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
   }
 
-  public setSafeContract(safeAddress: string) {
-    const safeContract = GnosisSafeL2__factory.connect(safeAddress, this.signerOrProvider);
-    this.safeContract = safeContract;
+  public setSafeContract(safeAddress: Address) {
+    // const safeContract = GnosisSafeL2__factory.connect(safeAddress, this.signerOrProvider);
+    this.safeContractAddress = safeAddress;
   }
 
   public async setupSafeData(): Promise<void> {
@@ -121,7 +119,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.daoData,
       this.saltNum,
       this.createSafeTx!,
-      this.safeContract!,
+      this.safeContractAddress!,
       this,
       this.keyValuePairsAddress,
       this.fractalRegistryAddress,
@@ -144,7 +142,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.publicClient,
       this.baseContracts,
       this.daoData as SubDAO,
-      this.safeContract!,
+      this.safeContractAddress!,
       this.saltNum,
       getAddress(this.parentAddress!),
       getAddress(this.moduleProxyFactoryAddress),
@@ -161,7 +159,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     return new MultisigTxBuilder(
       this.baseContracts,
       this.daoData as SafeMultisigDAO,
-      this.safeContract!,
+      getAddress(this.safeContractAddress!),
     );
   }
 
@@ -172,7 +170,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.baseContracts,
       this.azoriusContracts!,
       this.daoData as AzoriusERC20DAO,
-      this.safeContract!,
+      this.safeContractAddress!,
       this.votesERC20WrapperMasterCopyAddress,
       this.votesERC20MasterCopyAddress,
       getAddress(this.moduleProxyFactoryAddress),

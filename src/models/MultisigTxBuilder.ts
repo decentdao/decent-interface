@@ -1,16 +1,21 @@
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
-import { buildContractCall } from '../helpers';
+import { Address } from 'viem';
+import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
+import { buildContractCallViem } from '../helpers';
 import { BaseContracts, SafeMultisigDAO, SafeTransaction } from '../types';
 
 export class MultisigTxBuilder {
   private baseContracts: BaseContracts;
   private readonly daoData: SafeMultisigDAO;
-  private readonly safeContract: GnosisSafeL2;
+  private readonly safeContractAddress: Address;
 
-  constructor(baseContracts: BaseContracts, daoData: SafeMultisigDAO, safeContract: GnosisSafeL2) {
+  constructor(
+    baseContracts: BaseContracts,
+    daoData: SafeMultisigDAO,
+    safeContractAddress: Address,
+  ) {
     this.baseContracts = baseContracts;
     this.daoData = daoData;
-    this.safeContract = safeContract;
+    this.safeContractAddress = safeContractAddress;
   }
 
   public signatures = (): string => {
@@ -23,8 +28,9 @@ export class MultisigTxBuilder {
   };
 
   public buildRemoveMultiSendOwnerTx(): SafeTransaction {
-    return buildContractCall(
-      this.safeContract!,
+    return buildContractCallViem(
+      GnosisSafeL2Abi,
+      this.safeContractAddress,
       'removeOwner',
       [
         this.daoData.trustedAddresses[this.daoData.trustedAddresses.length - 1],

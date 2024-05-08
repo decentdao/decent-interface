@@ -21,8 +21,8 @@ import {
   isHex,
   PublicClient,
 } from 'viem';
+import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, buildContractCallViem } from '../helpers';
 import {
   BaseContracts,
@@ -39,7 +39,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private readonly saltNum;
 
   // Safe Data
-  private readonly safeContract: GnosisSafeL2;
+  private readonly safeContractAddress: Address;
 
   // Freeze Voting Data
   private freezeVotingType: any;
@@ -63,7 +63,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     publicClient: PublicClient,
     baseContracts: BaseContracts,
     daoData: SubDAO,
-    safeContract: GnosisSafeL2,
+    safeContractAddress: Address,
     saltNum: bigint,
     parentAddress: Address,
     moduleProxyFactoryAddress: Address,
@@ -84,7 +84,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       parentTokenAddress,
     );
 
-    this.safeContract = safeContract;
+    this.safeContractAddress = safeContractAddress;
     this.saltNum = saltNum;
     this.azoriusAddress = azoriusAddress;
     this.strategyAddress = strategyAddress;
@@ -151,8 +151,19 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     );
   }
 
-  public buildSetGuardTx(contract: GnosisSafeL2 | Azorius): SafeTransaction {
+  public buildSetGuardTx(contract: Azorius): SafeTransaction {
     return buildContractCall(contract, 'setGuard', [this.freezeGuardAddress], 0, false);
+  }
+
+  public buildSetGuardTxSafe(safeAddress: Address): SafeTransaction {
+    return buildContractCallViem(
+      GnosisSafeL2Abi,
+      safeAddress,
+      'setGuard',
+      [this.freezeGuardAddress],
+      0,
+      false,
+    );
   }
 
   public buildDeployFreezeGuardTx() {
@@ -246,7 +257,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
           Number(subDaoData.executionPeriod), // Execution Period
           getAddress(this.parentAddress), // Owner -- Parent DAO
           getAddress(this.freezeVotingAddress), // Freeze Voting
-          getAddress(this.safeContract.address), // Safe
+          this.safeContractAddress, // Safe
         ]),
       ],
     );
