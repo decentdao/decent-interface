@@ -182,7 +182,6 @@ export interface ITokenAccount {
   delegatee: string | undefined;
   votingWeight?: bigint;
   votingWeightString: string | undefined;
-  isDelegatesSet: boolean | undefined;
 }
 
 /**

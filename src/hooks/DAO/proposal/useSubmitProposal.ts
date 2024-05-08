@@ -6,7 +6,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { isAddress, getAddress, encodeAbiParameters, parseAbiParameters, isHex } from 'viem';
 import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
-import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
+import { ADDRESS_MULTISIG_METADATA, SENTINEL_ADDRESS } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -297,10 +297,7 @@ export default function useSubmitProposal() {
           const azoriusModuleContract = azoriusModule.moduleContract as Azorius;
           // @dev assumes the first strategy is the voting contract
           const votingStrategyAddress = (
-            await azoriusModuleContract.getStrategies(
-              '0x0000000000000000000000000000000000000001',
-              0,
-            )
+            await azoriusModuleContract.getStrategies(SENTINEL_ADDRESS, 0)
           )[1];
           submitAzoriusProposal({
             proposalData,

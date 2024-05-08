@@ -1,8 +1,7 @@
-import { ERC721__factory } from '@fractal-framework/fractal-contracts';
 import * as Sentry from '@sentry/react';
 import { useEffect, useState, useCallback } from 'react';
-import { getAddress } from 'viem';
-import useSignerOrProvider from '../../hooks/utils/useSignerOrProvider';
+import { erc721Abi, getAddress, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
 import {
   ReadOnlyState,
   Fractal,
@@ -26,7 +25,7 @@ const INITIAL_READ_ONLY_VALUES: ReadOnlyState = {
  */
 export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: string) => {
   const [readOnlyValues, setReadOnlyValues] = useState<ReadOnlyState>(INITIAL_READ_ONLY_VALUES);
-  const signerOrProvider = useSignerOrProvider();
+  const publicClient = usePublicClient();
 
   const loadReadOnlyValues = useCallback(async () => {
     const getVotingWeight = async () => {
@@ -40,14 +39,18 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
           const tokenWeight = azoriusGovernance.votesToken?.votingWeight || 0n;
           return lockedTokenWeight || tokenWeight;
         case GovernanceType.AZORIUS_ERC721:
-          if (!_account || !azoriusGovernance.erc721Tokens || !signerOrProvider) {
+          if (!_account || !azoriusGovernance.erc721Tokens || !publicClient) {
             return 0n;
           }
           const userVotingWeight = (
             await Promise.all(
               azoriusGovernance.erc721Tokens.map(async ({ address, votingWeight }) => {
-                const tokenContract = ERC721__factory.connect(address, signerOrProvider);
-                const userBalance = (await tokenContract.balanceOf(_account)).toBigInt();
+                const tokenContract = getContract({
+                  abi: erc721Abi,
+                  address: address,
+                  client: publicClient,
+                });
+                const userBalance = await tokenContract.read.balanceOf([getAddress(_account)]);
                 return userBalance * votingWeight;
               }),
             )
@@ -74,7 +77,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
               governance.type === GovernanceType.AZORIUS_ERC721,
           },
     });
-  }, [node, governance, _account, signerOrProvider]);
+  }, [node, governance, _account, publicClient]);
   useEffect(() => {
     loadReadOnlyValues();
   }, [loadReadOnlyValues]);
