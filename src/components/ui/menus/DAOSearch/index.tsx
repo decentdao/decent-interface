@@ -59,8 +59,8 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             <InputLeftElement>
               <Icon
                 as={MagnifyingGlass}
-                size="1.5rem"
-                color={localInput || hasFocus ? 'white-0' : 'neutral-5'}
+                boxSize="1.5rem"
+                color={!!errorMessage ? 'red-0' : localInput || hasFocus ? 'white-0' : 'neutral-5'}
               />
             </InputLeftElement>
             <Input
@@ -70,6 +70,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
               onFocus={() => setHasFocus(true)}
               onBlur={() => setHasFocus(false)}
               value={localInput}
+              isInvalid={!!errorMessage}
               data-testid="search-input"
             />
           </InputGroup>
