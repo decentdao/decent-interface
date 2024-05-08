@@ -3,6 +3,7 @@ import { Address, PublicClient, encodeFunctionData, getAddress, zeroAddress } fr
 import FractalRegistryAbi from '../assets/abi/FractalRegistry';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
+import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
 import { buildContractCallViem, encodeMultiSend } from '../helpers';
 import {
   BaseContracts,
@@ -16,7 +17,6 @@ import {
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
 import { fractalModuleData, FractalModuleData } from './helpers/fractalModuleData';
-import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
 
 export class DaoTxBuilder extends BaseTxBuilder {
   private readonly saltNum;
