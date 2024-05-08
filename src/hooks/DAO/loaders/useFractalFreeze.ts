@@ -8,6 +8,7 @@ import { FreezeVoteCastEvent } from '@fractal-framework/fractal-contracts/dist/t
 import { useCallback, useEffect, useRef } from 'react';
 import { getAddress, getContract, zeroAddress } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
+import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import VotesERC20Abi from '../../../assets/abi/VotesERC20';
 import {
   isWithinFreezeProposalPeriod,
@@ -98,13 +99,17 @@ export const useFractalFreeze = ({
         isFrozen,
       };
 
-      const { safeSingletonContract, freezeERC20VotingMasterCopyContract } = baseContracts;
+      const { freezeERC20VotingMasterCopyContract } = baseContracts;
 
       if (freezeVotingType === FreezeVotingType.MULTISIG) {
-        const safeContract = safeSingletonContract!.asProvider.attach(
-          await (freezeVotingContract as MultisigFreezeVoting).parentGnosisSafe(),
-        );
-        const owners = await safeContract.getOwners();
+        const safeContract = getContract({
+          abi: GnosisSafeL2Abi,
+          address: getAddress(
+            await (freezeVotingContract as MultisigFreezeVoting).parentGnosisSafe(),
+          ),
+          client: publicClient,
+        });
+        const owners = await safeContract.read.getOwners();
         userHasVotes = owners.find(owner => owner === account) !== undefined;
       } else if (freezeVotingType === FreezeVotingType.ERC20) {
         const freezeERC20VotingContract = freezeERC20VotingMasterCopyContract.asProvider.attach(
