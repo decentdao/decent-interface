@@ -6,7 +6,6 @@ import {
   ERC721FreezeVoting,
 } from '@fractal-framework/fractal-contracts';
 import { MultiSend } from '../assets/typechain-types/usul';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 
 export interface ContractEvent {
   blockTimestamp: number;
@@ -19,7 +18,6 @@ export type ContractConnection<T> = {
 
 export interface BaseContracts {
   fractalModuleMasterCopyContract: FractalModule;
-  safeSingletonContract: GnosisSafeL2;
   multisigFreezeGuardMasterCopyContract: MultisigFreezeGuard;
   multiSendContract: MultiSend;
   freezeERC20VotingMasterCopyContract: ERC20FreezeVoting;
