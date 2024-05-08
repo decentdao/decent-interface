@@ -14,14 +14,13 @@ import {
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../../assets/abi/GnosisSafeProxyFactory';
 import { MultiSend } from '../../assets/typechain-types/usul';
-import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCallViem } from '../../helpers/crypto';
 import { SafeMultisigDAO } from '../../types';
 
 export const safeData = async (
   multiSendContract: MultiSend,
   safeFactoryContract: GetContractReturnType<typeof GnosisSafeProxyFactoryAbi, PublicClient>,
-  safeSingletonContract: GnosisSafeL2,
+  safeSingletonContract: GetContractReturnType<typeof GnosisSafeL2Abi, PublicClient>,
   daoData: SafeMultisigDAO,
   saltNum: bigint,
   fallbackHandler: string,
@@ -52,7 +51,7 @@ export const safeData = async (
   }
 
   const predictedSafeAddress = getCreate2Address({
-    from: getAddress(safeFactoryContract.address),
+    from: safeFactoryContract.address,
     salt: keccak256(
       encodePacked(
         ['bytes', 'uint256'],
@@ -62,10 +61,7 @@ export const safeData = async (
     bytecodeHash: keccak256(
       encodePacked(
         ['bytes', 'uint256'],
-        [
-          safeFactoryContractProxyCreationCode,
-          hexToBigInt(getAddress(safeSingletonContract.address)),
-        ],
+        [safeFactoryContractProxyCreationCode, hexToBigInt(safeSingletonContract.address)],
       ),
     ),
   });

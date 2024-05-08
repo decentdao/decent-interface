@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, isHex } from 'viem';
+import { encodeFunctionData, getAddress } from 'viem';
+import GnosisSafeL2Abi from '../../../../../../assets/abi/GnosisSafeL2';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -26,16 +27,14 @@ const useAddSigner = () => {
       if (!baseContracts || !daoAddress) {
         return;
       }
-      const { safeSingletonContract } = baseContracts;
       const description = 'Add Signer';
 
-      const encodedAddOwner = safeSingletonContract.asSigner.interface.encodeFunctionData(
-        'addOwnerWithThreshold',
-        [newSigner, BigInt(threshold)],
-      );
-      if (!isHex(encodedAddOwner)) {
-        return;
-      }
+      const encodedAddOwner = encodeFunctionData({
+        abi: GnosisSafeL2Abi,
+        functionName: 'addOwnerWithThreshold',
+        args: [getAddress(newSigner), BigInt(threshold)],
+      });
+
       const calldatas = [encodedAddOwner];
 
       const proposalData: ProposalExecuteData = {

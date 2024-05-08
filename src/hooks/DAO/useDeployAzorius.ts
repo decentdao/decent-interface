@@ -1,8 +1,9 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress, isHex } from 'viem';
+import { encodeFunctionData, getAddress, isHex } from 'viem';
 import { usePublicClient } from 'wagmi';
+import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -29,6 +30,7 @@ const useDeployAzorius = () => {
       keyValuePairs,
       fractalRegistry,
       safeFactory,
+      safe: safeSingleton,
       zodiacModuleProxyFactory,
     },
     addressPrefix,
@@ -54,7 +56,6 @@ const useDeployAzorius = () => {
       }
       const {
         multiSendContract,
-        safeSingletonContract,
         linearVotingMasterCopyContract,
         linearVotingERC721MasterCopyContract,
         fractalAzoriusMasterCopyContract,
@@ -78,7 +79,6 @@ const useDeployAzorius = () => {
 
       const builderBaseContracts: BaseContracts = {
         fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asProvider,
-        safeSingletonContract: safeSingletonContract.asProvider,
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asProvider,
         multiSendContract: multiSendContract.asProvider,
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asProvider,
@@ -98,6 +98,7 @@ const useDeployAzorius = () => {
         keyValuePairs,
         fractalRegistry,
         safeFactory,
+        safeSingleton,
         zodiacModuleProxyFactory,
         undefined,
         undefined,
@@ -110,14 +111,12 @@ const useDeployAzorius = () => {
         owners: safe.owners,
       });
 
-      const encodedAddOwnerWithThreshold =
-        safeSingletonContract.asProvider.interface.encodeFunctionData('addOwnerWithThreshold', [
-          multiSendContract.asProvider.address,
-          1,
-        ]);
-      if (!isHex(encodedAddOwnerWithThreshold)) {
-        return;
-      }
+      const encodedAddOwnerWithThreshold = encodeFunctionData({
+        abi: GnosisSafeL2Abi,
+        functionName: 'addOwnerWithThreshold',
+        args: [getAddress(multiSendContract.asProvider.address), 1n],
+      });
+
       const encodedMultisend = multiSendContract.asProvider.interface.encodeFunctionData(
         'multiSend',
         [safeTx],
@@ -162,6 +161,7 @@ const useDeployAzorius = () => {
       keyValuePairs,
       fractalRegistry,
       safeFactory,
+      safeSingleton,
       zodiacModuleProxyFactory,
     ],
   );

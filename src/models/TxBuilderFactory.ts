@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { PublicClient, getAddress, getContract } from 'viem';
+import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../assets/abi/GnosisSafeProxyFactory';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { GnosisSafeL2__factory } from '../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
@@ -35,6 +36,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private keyValuePairsAddress: string;
   private fractalRegistryAddress: string;
   private gnosisSafeProxyFactoryAddress: string;
+  private gnosisSafeSingletonAddress: string;
   private moduleProxyFactoryAddress: string;
 
   constructor(
@@ -49,6 +51,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     keyValuePairsAddress: string,
     fractalRegistryAddress: string,
     gnosisSafeProxyFactoryAddress: string,
+    gnosisSafeSingletonAddress: string,
     moduleProxyFactoryAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
@@ -70,6 +73,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.keyValuePairsAddress = keyValuePairsAddress;
     this.fractalRegistryAddress = fractalRegistryAddress;
     this.gnosisSafeProxyFactoryAddress = gnosisSafeProxyFactoryAddress;
+    this.gnosisSafeSingletonAddress = gnosisSafeSingletonAddress;
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
   }
 
@@ -84,10 +88,15 @@ export class TxBuilderFactory extends BaseTxBuilder {
       address: getAddress(this.gnosisSafeProxyFactoryAddress),
       client: this.publicClient,
     });
+    const safeSingletonContract = getContract({
+      abi: GnosisSafeL2Abi,
+      address: getAddress(this.gnosisSafeSingletonAddress),
+      client: this.publicClient,
+    });
     const { predictedSafeAddress, createSafeTx } = await safeData(
       this.baseContracts.multiSendContract,
       safeProxyFactoryContract,
-      this.baseContracts.safeSingletonContract,
+      safeSingletonContract,
       this.daoData as SafeMultisigDAO,
       this.saltNum,
       this.fallbackHandler,

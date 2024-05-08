@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isHex, getAddress } from 'viem';
+import { getAddress, encodeFunctionData } from 'viem';
+import GnosisSafeL2Abi from '../../../../../../assets/abi/GnosisSafeL2';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -26,17 +27,13 @@ const useRemoveSigner = ({
     if (!baseContracts || !daoAddress) {
       return;
     }
-    const { safeSingletonContract } = baseContracts;
     const description = 'Remove Signers';
 
-    const encodedRemoveOwner = safeSingletonContract.asProvider.interface.encodeFunctionData(
-      'removeOwner',
-      [prevSigner, signerToRemove, BigInt(threshold)],
-    );
-
-    if (!isHex(encodedRemoveOwner)) {
-      return;
-    }
+    const encodedRemoveOwner = encodeFunctionData({
+      abi: GnosisSafeL2Abi,
+      functionName: 'removeOwner',
+      args: [getAddress(prevSigner), getAddress(signerToRemove), BigInt(threshold)],
+    });
 
     const calldatas = [encodedRemoveOwner];
 

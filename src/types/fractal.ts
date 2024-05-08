@@ -20,7 +20,6 @@ import {
 import { Dispatch } from 'react';
 import { Address } from 'viem';
 import { MultiSend } from '../assets/typechain-types/usul';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
 import { FractalGuardActions } from '../providers/App/guard/action';
@@ -332,7 +331,6 @@ export interface FractalContracts {
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
   linearVotingMasterCopyContract: ContractConnection<LinearERC20Voting>;
   linearVotingERC721MasterCopyContract: ContractConnection<LinearERC721Voting>;
-  safeSingletonContract: ContractConnection<GnosisSafeL2>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
   azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
