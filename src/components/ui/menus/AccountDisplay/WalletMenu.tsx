@@ -23,6 +23,8 @@ export function WalletMenu() {
       w="16.25rem"
       rounded="0.5rem"
       bg={NEUTRAL_2_82_TRANSPARENT}
+      backdropFilter="auto"
+      backdropBlur="10px"
       border="1px solid"
       borderColor="neutral-3"
     >

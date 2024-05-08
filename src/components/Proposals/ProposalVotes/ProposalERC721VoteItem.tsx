@@ -34,14 +34,14 @@ export default function ProposalERC721VoteItem({
       width="100%"
     >
       <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">
+        <Text>
           {displayName}
           {user.address === voter && t('isMeSuffix')}
         </Text>
       </GridItem>
       <GridItem colSpan={1}>
         <StatusBox>
-          <Text textStyle="text-sm-mono-semibold">{t(choice)}</Text>
+          <Text>{t(choice)}</Text>
         </StatusBox>
       </GridItem>
       {votedTokens && (

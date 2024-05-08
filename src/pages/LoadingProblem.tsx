@@ -9,7 +9,7 @@ function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQ
   return (
     <Center
       padding="3rem"
-      textColor="grayscale.100"
+      textColor="neutral-7"
     >
       <VStack>
         <Text

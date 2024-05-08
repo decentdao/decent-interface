@@ -36,40 +36,24 @@ export function DaoSpecificMetadataHeader(props: { metadata: DAOMetadata }) {
           <MenuButton>
             <Flex alignItems="center">
               <Burger boxSize="1.5rem" />
-              <Text
-                textStyle="text-lg-mono-regular"
-                ml={4}
-              >
-                {daoName}
-              </Text>
+              <Text ml={4}>{daoName}</Text>
             </Flex>
           </MenuButton>
           <MenuList
             rounded="lg"
-            shadow="menu-gold"
             mr={['auto', '1rem']}
-            bg="grayscale.black"
             border="none"
             padding="1rem 1.5rem"
             zIndex={1000}
           >
-            <Text
-              textStyle="text-sm-sans-regular"
-              color="chocolate.200"
-              marginBottom="0.5rem"
-            >
-              {t('goTo')}
-            </Text>
+            <Text marginBottom="0.5rem">{t('goTo')}</Text>
             <Flex
               gap={4}
               flexDirection="column"
             >
               {daoMetadata.links.map(link => (
                 <Box key={link.url}>
-                  <ExternalLink
-                    href={link.url}
-                    color="grayscale.100"
-                  >
+                  <ExternalLink href={link.url}>
                     {link.title}{' '}
                     <ArrowAngleUp
                       boxSize="1.5rem"
