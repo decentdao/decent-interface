@@ -3,6 +3,7 @@ import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/frac
 import { GearFine } from '@phosphor-icons/react';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Address, getAddress } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -29,7 +30,7 @@ import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
-  parentAddress?: string | null;
+  parentAddress?: Address | null;
   fractalNode?: FractalNode;
   freezeGuard?: FreezeGuard;
   guardContracts?: FractalGuardContracts;
@@ -96,7 +97,9 @@ export function ManageDAOMenu({
                 0,
               )
             )[1];
-            const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingContractAddress);
+            const masterCopyData = await getZodiacModuleProxyMasterCopyData(
+              getAddress(votingContractAddress),
+            );
 
             if (masterCopyData.isOzLinearVoting) {
               result = GovernanceType.AZORIUS_ERC20;

@@ -1,3 +1,4 @@
+import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
@@ -18,7 +19,7 @@ import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 
 export const router = (addressPrefix: string) =>
-  createBrowserRouter([
+  wrapCreateBrowserRouter(createBrowserRouter)([
     {
       path: '/',
       element: (
@@ -102,6 +103,7 @@ export const router = (addressPrefix: string) =>
           // this exists to keep old links working
           // /daos/0x0123/* will redirect to /home?dao=0x0123
           path: 'daos/:daoAddress/*',
+          // @ts-ignore:next-line
           loader: ({ params: { daoAddress } }) =>
             redirect(`/home?dao=${addressPrefix}:${daoAddress}`),
         },

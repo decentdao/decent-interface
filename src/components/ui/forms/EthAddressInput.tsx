@@ -1,7 +1,5 @@
 import { InputElementProps, FormControlOptions, Input, InputProps } from '@chakra-ui/react';
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useAddress from '../../../hooks/utils/useAddress';
 
 /**
@@ -13,7 +11,7 @@ export interface EthAddressInputProps
     FormControlOptions {
   value?: string;
   setValue?: Dispatch<SetStateAction<string>>;
-  onAddressChange: (address: string, isValid: boolean) => void;
+  onAddressChange: (address: string | undefined, isValid: boolean) => void;
 }
 
 /**
@@ -33,7 +31,7 @@ export function EthAddressInput({
   const { address, isAddressLoading, isValidAddress } = useAddress(actualInputValue.toLowerCase());
 
   useEffect(() => {
-    onAddressChange(address || '', isValidAddress || false);
+    onAddressChange(address, isValidAddress || false);
   }, [address, actualInputValue, isValidAddress, onAddressChange]);
 
   return (

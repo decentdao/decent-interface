@@ -1,6 +1,6 @@
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
-import { ethers } from 'ethers';
+import { keccak256, encodePacked, isHex } from 'viem';
 import { buildSignatureBytes } from '../helpers/crypto';
 import { Activity } from '../types';
 import { Providers } from '../types/network';
@@ -13,13 +13,23 @@ export async function getTxTimelockedTimestamp(
 ) {
   const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
+  if (!multiSigTransaction.confirmations) {
+    throw new Error(
+      'Error getting transaction timelocked timestamp - invalid format of multisig transaction',
+    );
+  }
   const signatures = buildSignatureBytes(
-    multiSigTransaction.confirmations!.map(confirmation => ({
-      signer: confirmation.owner,
-      data: confirmation.signature,
-    })),
+    multiSigTransaction.confirmations.map(confirmation => {
+      if (!isHex(confirmation.signature)) {
+        throw new Error('Confirmation signature is malfunctioned');
+      }
+      return {
+        signer: confirmation.owner,
+        data: confirmation.signature,
+      };
+    }),
   );
-  const signaturesHash = ethers.utils.solidityKeccak256(['bytes'], [signatures]);
+  const signaturesHash = keccak256(encodePacked(['bytes'], [signatures]));
 
   const timelockedTimestamp = await getTimeStamp(
     await freezeGuard.getTransactionTimelockedBlock(signaturesHash),

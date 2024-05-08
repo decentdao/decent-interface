@@ -100,7 +100,7 @@ export default function useUserERC721VotingTokens(
               } catch (e) {
                 logError('Error while getting ERC721 total supply');
               }
-              return { name, symbol, address: tokenAddress, votingWeight, totalSupply };
+              return { name, symbol, address: getAddress(tokenAddress), votingWeight, totalSupply };
             }),
           );
         }
