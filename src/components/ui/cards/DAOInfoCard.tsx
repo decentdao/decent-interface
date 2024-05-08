@@ -1,5 +1,6 @@
 import { Box, Flex, Text, Spacer, HStack, FlexProps, Link, Center, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
+import { Address } from 'viem';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -12,7 +13,7 @@ import { BarLoader } from '../loaders/BarLoader';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
 export interface InfoProps extends FlexProps {
-  parentAddress?: string;
+  parentAddress?: Address;
   node?: FractalNode;
   childCount?: number;
   freezeGuard?: FreezeGuard;

@@ -40,15 +40,15 @@ export const useFractalNode = (
     const { daos } = result.data;
     const dao = daos[0];
     if (dao) {
-      const { parentAddress, name, hierarchy, snapshotENS, proposalTemplatesHash } = dao;
+      const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
 
       const currentNode: Node = {
         nodeHierarchy: {
-          parentAddress: parentAddress as string,
-          childNodes: mapChildNodes(hierarchy),
+          parentAddress,
+          childNodes: mapChildNodes(dao),
         },
         daoName: name as string,
-        daoAddress: getAddress(_daoAddress as string),
+        daoAddress: getAddress(_daoAddress),
         daoSnapshotENS: snapshotENS as string,
         proposalTemplatesHash: proposalTemplatesHash as string,
       };

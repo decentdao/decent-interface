@@ -2,6 +2,8 @@ import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { CONTENT_HEIGHT, FOOTER_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { ErrorBoundary } from '../../utils/ErrorBoundary';
+import { TopErrorFallback } from '../../utils/TopErrorFallback';
 import { Footer } from '../Footer';
 import Header from '../Header';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
@@ -35,7 +37,12 @@ export default function Layout() {
             minH={CONTENT_HEIGHT}
             paddingBottom="2rem"
           >
-            <Outlet />
+            <ErrorBoundary
+              fallback={<TopErrorFallback />}
+              showDialog
+            >
+              <Outlet />
+            </ErrorBoundary>
           </Container>
         </GridItem>
         <GridItem area="header">

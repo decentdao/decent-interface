@@ -1,11 +1,10 @@
 import { Button, Flex, Input } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { Contract } from 'ethers';
 import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { erc20Abi } from 'viem';
-import { useAccount } from 'wagmi';
+import { erc20Abi, getContract } from 'viem';
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
@@ -23,6 +22,8 @@ export function WrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
   const signer = useEthersSigner();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
   const { address: account } = useAccount();
   const [userBalance, setUserBalance] = useState<BigIntValuePair>({
     value: '',
@@ -51,19 +52,19 @@ export function WrapToken({ close }: { close: () => void }) {
     if (
       !azoriusGovernance.votesToken?.decimals ||
       !azoriusGovernance.votesToken.underlyingTokenData ||
-      !signer ||
+      !publicClient ||
       !account
     )
       return;
-    const baseTokenContract = new Contract(
-      azoriusGovernance.votesToken.underlyingTokenData.address,
-      erc20Abi,
-      signer,
-    );
+    const baseTokenContract = getContract({
+      address: azoriusGovernance.votesToken.underlyingTokenData.address,
+      abi: erc20Abi,
+      client: { wallet: walletClient, public: publicClient },
+    });
     try {
-      const [balance, decimals]: [bigint, number] = await Promise.all([
-        baseTokenContract.balanceOf(account),
-        baseTokenContract.decimals(),
+      const [balance, decimals] = await Promise.all([
+        baseTokenContract.read.balanceOf([account]),
+        baseTokenContract.read.decimals(),
       ]);
       setUserBalance({
         value: formatCoin(
@@ -78,7 +79,7 @@ export function WrapToken({ close }: { close: () => void }) {
       logError(e);
       return;
     }
-  }, [account, azoriusGovernance.votesToken, signer]);
+  }, [account, azoriusGovernance.votesToken, publicClient, walletClient]);
 
   useEffect(() => {
     getUserUnderlyingTokenBalance();

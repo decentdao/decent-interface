@@ -2,7 +2,7 @@ import { Box, Button, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress } from 'viem';
+import { zeroAddress, getAddress } from 'viem';
 import * as Yup from 'yup';
 import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
@@ -41,8 +41,8 @@ export function DelegateModal({ close }: { close: Function }) {
   const submitDelegation = async (values: { address: string }) => {
     if (!votesTokenContractAddress || !baseContracts) return;
     let validAddress = values.address;
-    if (couldBeENS(validAddress)) {
-      validAddress = await signer!.resolveName(values.address);
+    if (couldBeENS(validAddress) && signer) {
+      validAddress = getAddress(await signer.resolveName(values.address));
     }
     const votingTokenContract =
       baseContracts.votesERC20WrapperMasterCopyContract.asSigner.attach(votesTokenContractAddress);
@@ -58,7 +58,7 @@ export function DelegateModal({ close }: { close: Function }) {
     if (!lockReleaseContractAddress || !baseContracts || !signer) return;
     let validAddress = values.address;
     if (couldBeENS(validAddress)) {
-      validAddress = await signer!.resolveName(values.address);
+      validAddress = await signer.resolveName(values.address);
     }
     const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, signer);
     delegateVote({

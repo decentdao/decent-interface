@@ -3,6 +3,7 @@ import { Button } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { isHex, getAddress } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
@@ -64,17 +65,22 @@ export function MetadataContainer() {
       return;
     }
     const { fractalRegistryContract } = baseContracts;
+    const encodedUpdateDAOName = fractalRegistryContract.asProvider.interface.encodeFunctionData(
+      'updateDAOName',
+      [name],
+    );
+    if (!isHex(encodedUpdateDAOName)) {
+      return;
+    }
     const proposalData: ProposalExecuteData = {
       metaData: {
         title: t('Update Safe Name', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },
-      targets: [fractalRegistryContract.asProvider.address],
+      targets: [getAddress(fractalRegistryContract.asProvider.address)],
       values: [0n],
-      calldatas: [
-        fractalRegistryContract.asProvider.interface.encodeFunctionData('updateDAOName', [name]),
-      ],
+      calldatas: [encodedUpdateDAOName],
     };
 
     submitProposal({
@@ -92,20 +98,22 @@ export function MetadataContainer() {
       return;
     }
     const { keyValuePairsContract } = baseContracts;
+    const encodedUpdateValues = keyValuePairsContract.asProvider.interface.encodeFunctionData(
+      'updateValues',
+      [['snapshotENS'], [snapshotENS]],
+    );
+    if (!isHex(encodedUpdateValues)) {
+      return;
+    }
     const proposalData: ProposalExecuteData = {
       metaData: {
         title: t('Update Snapshot Space', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },
-      targets: [keyValuePairsContract.asProvider.address],
+      targets: [getAddress(keyValuePairsContract.asProvider.address)],
       values: [0n],
-      calldatas: [
-        keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
-          ['snapshotENS'],
-          [snapshotENS],
-        ]),
-      ],
+      calldatas: [encodedUpdateValues],
     };
 
     submitProposal({
