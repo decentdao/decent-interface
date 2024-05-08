@@ -193,7 +193,12 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
             {t('votingPower')}
           </Text>
           {showVotingPower ? (
-            <Tooltip label={t('votingPowerTooltip')} placement="top">{ShowVotingPowerButton}</Tooltip>
+            <Tooltip
+              label={t('votingPowerTooltip')}
+              placement="top"
+            >
+              {ShowVotingPowerButton}
+            </Tooltip>
           ) : (
             ShowVotingPowerButton
           )}

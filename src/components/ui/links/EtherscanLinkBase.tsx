@@ -21,7 +21,15 @@ export default function EtherscanBase({ children, ...rest }: LinkProps) {
           containerRef={containerRef}
         >
           {/* Flex here allows multiple children to be wrapped by a single tooltip */}
-          <Flex alignItems="center" maxW="calc(100% - 2px)" overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">{children}</Flex>
+          <Flex
+            alignItems="center"
+            maxW="calc(100% - 2px)"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+          >
+            {children}
+          </Flex>
         </ModalTooltip>
       </Box>
     </ExternalLink>

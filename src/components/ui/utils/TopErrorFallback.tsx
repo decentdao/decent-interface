@@ -1,5 +1,5 @@
 import { Box, Button, Center, Flex, Text, Link, Icon } from '@chakra-ui/react';
-import { Warning } from '@phosphor-icons/react'
+import { Warning } from '@phosphor-icons/react';
 import { Trans, useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT, CONTENT_HEIGHT } from '../../../constants/common';
 import { URL_DISCORD } from '../../../constants/url';
@@ -22,7 +22,10 @@ export function TopErrorFallback() {
             direction="column"
             padding="1rem"
           >
-            <Icon as={Warning} boxSize="2rem" />
+            <Icon
+              as={Warning}
+              boxSize="2rem"
+            />
             <Text
               textStyle="display-2xl"
               marginTop="1.5rem"

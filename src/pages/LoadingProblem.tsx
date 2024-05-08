@@ -12,12 +12,11 @@ function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQ
       padding="3rem"
       textColor="neutral-7"
     >
-      <VStack padding="3rem" bg={BACKGROUND_SEMI_TRANSPARENT}>
-        <Text
-          textStyle="display-2xl"
-        >
-          {t('errorSentryFallbackTitle')}
-        </Text>
+      <VStack
+        padding="3rem"
+        bg={BACKGROUND_SEMI_TRANSPARENT}
+      >
+        <Text textStyle="display-2xl">{t('errorSentryFallbackTitle')}</Text>
         <Text>{t(`${type}1`, { chain: chain.name })}</Text>
         <Text paddingBottom="1rem">{t(`${type}2`)}</Text>
       </VStack>

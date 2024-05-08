@@ -51,12 +51,13 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
       : votesToken !== undefined
         ? votingStrategy.quorumPercentage!.value
         : 0n;
-  const reachedQuorum = votesSummary ?
-    erc721Tokens !== undefined
+  const reachedQuorum = votesSummary
+    ? erc721Tokens !== undefined
       ? totalVotesCasted - votesSummary.no
       : votesToken !== undefined
         ? (totalVotesCasted - votesSummary.no) / votesTokenDecimalsDenominator
-        : 0n : 0n;
+        : 0n
+    : 0n;
   const totalQuorum = erc721Tokens !== undefined ? strategyQuorum : 0n;
 
   const meetsQuorum = votesToken
