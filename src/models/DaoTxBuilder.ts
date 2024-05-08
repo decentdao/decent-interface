@@ -1,9 +1,9 @@
 import { ethers } from 'ethers';
-import { PublicClient, getAddress, zeroAddress } from 'viem';
+import { Address, PublicClient, getAddress, zeroAddress } from 'viem';
 import FractalRegistryAbi from '../assets/abi/FractalRegistry';
+import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
-import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
-import { buildContractCall, buildContractCallViem, encodeMultiSend } from '../helpers';
+import { buildContractCallViem, encodeMultiSend } from '../helpers';
 import {
   BaseContracts,
   SafeMultisigDAO,
@@ -24,7 +24,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   // Safe Data
   private readonly createSafeTx: SafeTransaction;
-  private readonly safeContract: GnosisSafeL2;
+  private readonly safeContractAddress: Address;
   private readonly parentStrategyType?: VotingStrategyType;
   private readonly parentStrategyAddress?: string;
 
@@ -46,7 +46,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
     saltNum: bigint,
     createSafeTx: SafeTransaction,
-    safeContract: GnosisSafeL2,
+    safeContractAddress: Address,
     txBuilderFactory: TxBuilderFactory,
     keyValuePairsAddress: string,
     fractalRegistryAddress: string,
@@ -67,7 +67,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     );
 
     this.createSafeTx = createSafeTx;
-    this.safeContract = safeContract;
+    this.safeContractAddress = safeContractAddress;
     this.txBuilderFactory = txBuilderFactory;
     this.saltNum = saltNum;
     this.parentStrategyType = parentStrategyType;
@@ -192,7 +192,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
         freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
         freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
         freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
-        freezeGuardTxBuilder.buildSetGuardTx(this.safeContract),
+        freezeGuardTxBuilder.buildSetGuardTxSafe(this.safeContractAddress),
       ]);
     }
 
@@ -220,9 +220,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
     const { enableFractalModuleTx, deployFractalModuleTx }: FractalModuleData = fractalModuleData(
       this.baseContracts.fractalModuleMasterCopyContract,
       getAddress(this.moduleProxyFactoryAddress),
-      this.safeContract!,
+      this.safeContractAddress,
       this.saltNum,
-      this.parentAddress,
+      !this.parentAddress ? undefined : getAddress(this.parentAddress),
     );
 
     this.enableFractalModuleTx = enableFractalModuleTx;
@@ -257,8 +257,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   private buildExecInternalSafeTx(signatures: string): SafeTransaction {
     const safeInternalTx = encodeMultiSend(this.internalTxs);
-    return buildContractCall(
-      this.safeContract!,
+    return buildContractCallViem(
+      GnosisSafeL2Abi,
+      this.safeContractAddress,
       'execTransaction',
       [
         this.baseContracts.multiSendContract.address, // to
