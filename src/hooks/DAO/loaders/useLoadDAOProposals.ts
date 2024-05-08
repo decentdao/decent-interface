@@ -6,7 +6,7 @@ import { useUpdateTimer } from '../../utils/useUpdateTimer';
 import { useAzoriusProposals } from './governance/useAzoriusProposals';
 import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals';
 
-export const useDAOProposals = () => {
+export const useLoadDAOProposals = () => {
   const {
     node: { daoAddress },
     governance: { type },
