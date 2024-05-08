@@ -12,6 +12,7 @@ interface OptionMenuProps extends Omit<MenuProps, 'children'>, IOptionsList {
   buttonAs?: As;
   buttonProps?: Record<string, string | boolean | number | Record<string, any>>;
   children?: ReactNode;
+  menuListMr?: string;
 }
 
 export function OptionMenu({
@@ -26,6 +27,7 @@ export function OptionMenu({
   buttonProps,
   children,
   closeOnSelect = true,
+  menuListMr,
   ...rest
 }: OptionMenuProps) {
   const { t } = useTranslation(namespace);
@@ -58,7 +60,7 @@ export function OptionMenu({
         bg={NEUTRAL_2_82_TRANSPARENT}
         backdropFilter="auto"
         backdropBlur="10px"
-        mr={['auto', '1rem']}
+        mr={menuListMr || ['auto', '1rem']}
         zIndex={1000}
       >
         {children}
