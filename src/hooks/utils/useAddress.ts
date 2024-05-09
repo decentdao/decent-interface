@@ -37,7 +37,7 @@ const useAddress = (addressInput: string | undefined) => {
     }
 
     // if it can't be an ENS address, validation is false
-    if (!couldBeENS(addressInput)) {
+    if (!couldBeENS(addressInput) && isAddress(addressInput)) {
       setAddress(getAddress(addressInput));
       setIsValidAddress(false);
       setIsAddressLoading(false);
@@ -63,7 +63,7 @@ const useAddress = (addressInput: string | undefined) => {
         }
       })
       .catch(() => {
-        setAddress(getAddress(addressInput));
+        setAddress(undefined);
         setIsValidAddress(false);
       })
       .finally(() => {
