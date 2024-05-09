@@ -15,6 +15,7 @@ import {
 
 export const initialGovernanceState: FractalGovernance = {
   loadingProposals: true,
+  allProposalsLoaded: false,
   proposals: null,
   proposalTemplates: null,
   type: undefined,
@@ -32,6 +33,8 @@ export const initialVotesTokenAccountData = {
 export const governanceReducer = (state: FractalGovernance, action: FractalGovernanceActions) => {
   const { proposals } = state;
   switch (action.type) {
+    case FractalGovernanceAction.SET_ALL_PROPOSALS_LOADED:
+      return { ...state, allProposalsLoaded: action.payload };
     case FractalGovernanceAction.SET_LOADING_PROPOSALS:
       return { ...state, loadingProposals: action.payload };
     case FractalGovernanceAction.SET_GOVERNANCE_TYPE:

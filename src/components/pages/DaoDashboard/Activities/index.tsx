@@ -16,7 +16,7 @@ export function Activities() {
   const {
     guardContracts: { freezeVotingContractAddress },
     guard,
-    governance: { type, loadingProposals },
+    governance: { type, loadingProposals, allProposalsLoaded },
   } = useFractal();
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
   const { sortedActivities } = useActivities(sortBy);
@@ -42,7 +42,7 @@ export function Activities() {
         {freezeVotingContractAddress &&
           guard.freezeProposalVoteCount !== null &&
           guard.freezeProposalVoteCount > 0n && <ActivityFreeze />}
-        {!!sortedActivities.length && (!type || loadingProposals) ? (
+        {!type || loadingProposals ? (
           <InfoBoxLoader />
         ) : sortedActivities.length ? (
           <Flex
@@ -73,6 +73,7 @@ export function Activities() {
                 />
               );
             })}
+            {!allProposalsLoaded && <InfoBoxLoader />}
           </Flex>
         ) : (
           <EmptyBox emptyText={t('noActivity')} />

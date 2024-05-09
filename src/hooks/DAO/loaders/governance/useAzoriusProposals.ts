@@ -142,6 +142,11 @@ export const useAzoriusProposals = () => {
       const proposalCreatedEvents = (
         await _azoriusContract.queryFilter(proposalCreatedFilter)
       ).reverse();
+      
+      action.dispatch({
+        type: FractalGovernanceAction.SET_ALL_PROPOSALS_LOADED,
+        payload: false,
+      });
 
       action.dispatch({
         type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
@@ -228,6 +233,11 @@ export const useAzoriusProposals = () => {
       action.dispatch({
         type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
         payload: false,
+      });
+
+      action.dispatch({
+        type: FractalGovernanceAction.SET_ALL_PROPOSALS_LOADED,
+        payload: true,
       });
     },
     [action, azoriusContractAddress],

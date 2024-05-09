@@ -305,6 +305,7 @@ export interface SafeMultisigGovernance extends Governance {}
 export interface Governance {
   type?: GovernanceType;
   loadingProposals: boolean;
+  allProposalsLoaded: boolean;
   proposals: FractalProposal[] | null;
   proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContract?: ERC20Claim;
