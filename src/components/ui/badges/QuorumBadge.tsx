@@ -3,28 +3,18 @@ import { Check } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import {
-  AzoriusGovernance,
-  AzoriusProposal,
-  FractalProposal,
-  SnapshotProposal,
-} from '../../../types';
+import { AzoriusGovernance, AzoriusProposal } from '../../../types';
 
-export default function QuorumBadge({ proposal }: { proposal: FractalProposal }) {
+export default function QuorumBadge({ proposal }: { proposal: AzoriusProposal }) {
   const { governance } = useFractal();
   const { t } = useTranslation('common');
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken, erc721Tokens, votingStrategy } = azoriusGovernance;
 
-  const { votesSummary } = proposal as AzoriusProposal;
+  const { votesSummary } = proposal;
 
-  const totalVotesCasted = useMemo(() => {
-    if (votesSummary) {
-      return votesSummary.yes + votesSummary.no + votesSummary.abstain;
-    }
-    return 0n;
-  }, [votesSummary]);
+  const totalVotesCasted = votesSummary.yes + votesSummary.no + votesSummary.abstain;
 
   const votesTokenDecimalsDenominator = useMemo(
     () => 10n ** BigInt(votesToken?.decimals || 0),
@@ -32,21 +22,16 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
   );
 
   const reachedQuorum = useMemo(() => {
-    if (votesSummary && erc721Tokens !== undefined) {
+    if (erc721Tokens !== undefined) {
       return totalVotesCasted - votesSummary.no;
     }
 
-    if (votesSummary && votesToken !== undefined) {
+    if (votesToken !== undefined) {
       return (totalVotesCasted - votesSummary.no) / votesTokenDecimalsDenominator;
     }
 
     return 0n;
   }, [erc721Tokens, totalVotesCasted, votesSummary, votesToken, votesTokenDecimalsDenominator]);
-
-  // @dev only azorius governance has quorum
-  if ((proposal as SnapshotProposal).snapshotProposalId || !votingStrategy) {
-    return null;
-  }
 
   if (votesToken !== undefined && erc721Tokens !== undefined) {
     return null;

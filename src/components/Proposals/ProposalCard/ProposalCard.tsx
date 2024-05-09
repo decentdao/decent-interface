@@ -5,7 +5,12 @@ import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { ActivityEventType, FractalProposal, SnapshotProposal } from '../../../types';
+import {
+  ActivityEventType,
+  AzoriusProposal,
+  FractalProposal,
+  SnapshotProposal,
+} from '../../../types';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { ActivityDescription } from '../../Activity/ActivityDescription';
 import { Badge } from '../../ui/badges/Badge';
@@ -28,6 +33,7 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
   );
 
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
+  const isAzoriusProposal = !!(proposal as AzoriusProposal).votesSummary;
 
   if (!daoAddress) {
     return null;
@@ -63,7 +69,7 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
               </Box>
             )}
           </Flex>
-          <QuorumBadge proposal={proposal} />
+          {isAzoriusProposal && <QuorumBadge proposal={proposal as AzoriusProposal} />}
         </Flex>
         <ActivityDescription activity={proposal} />
         <Box>
