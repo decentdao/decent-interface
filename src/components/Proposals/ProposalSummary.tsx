@@ -21,14 +21,12 @@ import { ProposalAction } from './ProposalActions/ProposalAction';
 import { VoteContextProvider } from './ProposalVotes/context/VoteContext';
 
 export default function ProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
-  const {
-    eventDate,
-    startBlock,
-    votesSummary: { yes, no, abstain },
-    deadlineMs,
-    proposer,
-    transactionHash,
-  } = proposal;
+  const { eventDate, startBlock, votesSummary, deadlineMs, proposer, transactionHash } = proposal;
+
+  const yes = votesSummary?.yes || 0n;
+  const no = votesSummary?.no || 0n;
+  const abstain = votesSummary?.abstain || 0n;
+
   const {
     governance,
     readOnly: {
@@ -76,6 +74,17 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;
+
+  const reachedQuorum = useMemo(
+    () =>
+      isERC721
+        ? totalVotesCasted - no
+        : votesToken
+          ? (totalVotesCasted - no) / votesTokenDecimalsDenominator
+          : 0n,
+    [isERC721, no, totalVotesCasted, votesToken, votesTokenDecimalsDenominator],
+  );
+
   if (
     (isERC20 && (!votesToken || !votesToken.totalSupply)) ||
     (isERC721 && (!erc721Tokens || !votingStrategy.quorumThreshold))
@@ -93,11 +102,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
       : isERC721
         ? votingStrategy.quorumThreshold!.value
         : 1n;
-  const reachedQuorum = isERC721
-    ? totalVotesCasted - no
-    : votesToken
-      ? (totalVotesCasted - no) / votesTokenDecimalsDenominator
-      : 0n;
+
   const totalQuorum = isERC721
     ? strategyQuorum
     : votesToken

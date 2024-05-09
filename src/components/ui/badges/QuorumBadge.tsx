@@ -18,6 +18,7 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
   const { votesToken, erc721Tokens, votingStrategy } = azoriusGovernance;
 
   const { votesSummary } = proposal as AzoriusProposal;
+
   const totalVotesCasted = useMemo(() => {
     if (votesSummary) {
       return votesSummary.yes + votesSummary.no + votesSummary.abstain;
@@ -29,6 +30,18 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
     () => 10n ** BigInt(votesToken?.decimals || 0),
     [votesToken?.decimals],
   );
+
+  const reachedQuorum = useMemo(() => {
+    if (votesSummary && erc721Tokens !== undefined) {
+      return totalVotesCasted - votesSummary.no;
+    }
+
+    if (votesSummary && votesToken !== undefined) {
+      return (totalVotesCasted - votesSummary.no) / votesTokenDecimalsDenominator;
+    }
+
+    return 0n;
+  }, [erc721Tokens, totalVotesCasted, votesSummary, votesToken, votesTokenDecimalsDenominator]);
 
   // @dev only azorius governance has quorum
   if ((proposal as SnapshotProposal).snapshotProposalId || !votingStrategy) {
@@ -51,13 +64,7 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
       : votesToken !== undefined
         ? votingStrategy.quorumPercentage!.value
         : 0n;
-  const reachedQuorum = votesSummary
-    ? erc721Tokens !== undefined
-      ? totalVotesCasted - votesSummary.no
-      : votesToken !== undefined
-        ? (totalVotesCasted - votesSummary.no) / votesTokenDecimalsDenominator
-        : 0n
-    : 0n;
+
   const totalQuorum = erc721Tokens !== undefined ? strategyQuorum : 0n;
 
   const meetsQuorum = votesToken
