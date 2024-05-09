@@ -70,6 +70,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
               onFocus={() => setHasFocus(true)}
               onBlur={() => setHasFocus(false)}
               value={localInput}
+              spellCheck="false"
               isInvalid={!!errorMessage}
               data-testid="search-input"
             />

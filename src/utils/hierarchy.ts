@@ -1,18 +1,7 @@
 import { DAO } from '../../.graphclient';
 import { Node } from '../types';
 
-type DAOQueryNode = Pick<
-  DAO,
-  | 'id'
-  | 'address'
-  | 'parentAddress'
-  | 'name'
-  | 'snapshotENS'
-  | 'proposalTemplatesHash'
-  | 'hierarchy'
->;
-
-export const mapChildNodes = (dao: DAOQueryNode) => {
+export const mapChildNodes = (dao: DAO) => {
   return dao.hierarchy.map((node: DAO): Node => {
     return {
       nodeHierarchy: {
