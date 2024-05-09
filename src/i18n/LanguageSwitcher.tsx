@@ -15,7 +15,7 @@ export function LanguageSwitcher() {
   });
   return (
     <OptionMenu
-      offset={[-64, 8]}
+      offset={[-26, 8]}
       placement="right"
       trigger={
         <Flex
