@@ -133,6 +133,7 @@ export const useAzoriusProposals = () => {
         data?: string | undefined,
       ) => Promise<DecodedTransaction[]>,
       _proposalLoaded: OnProposalLoaded,
+      { skipProposals }: { skipProposals: Array<string> },
     ) => {
       if (!_strategyType || !_azoriusContract || !_provider) {
         return;
@@ -243,6 +244,9 @@ export const useAzoriusProposals = () => {
     [action, azoriusContractAddress],
   );
 
+  // load cached proposal ids from state
+  const skipProposals: string[] = [];
+
   return (proposalLoaded: OnProposalLoaded) =>
     loadAzoriusProposals(
       azoriusContract,
@@ -255,5 +259,6 @@ export const useAzoriusProposals = () => {
       provider,
       decode,
       proposalLoaded,
+      { skipProposals },
     );
 };

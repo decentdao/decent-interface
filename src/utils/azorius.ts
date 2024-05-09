@@ -234,6 +234,8 @@ export const mapProposalCreatedEventToProposal = async (
     data,
   };
 
+  // cache fossilised proposals here
+
   return proposal;
 };
 
