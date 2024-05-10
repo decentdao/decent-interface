@@ -96,7 +96,7 @@
   "warningExistingTokenTooltip": "Decent will deploy a new ERC-20 governance token to wrap this one. Holders can deposit their tokens to vote with or withdraw them at any time.",
   "snapshot": "Snapshot",
   "snapshotHelper": "Does your Safe DAO have a Snapshot space?",
-  "tooltipMultisig": "Multisig is useful when you only have a small group of decision makers that all need to sign a transaction for it pass. <1>Learn more</1>",
+  "tooltipMultisig": "Multisig is useful when you have a small group of decision makers, a subset of whom are needed to approve proposals. <1>Learn more</1>",
   "tooltipTokenVoting": "Token Voting is a method to give a larger group of ERC-20 token holders governance power to propose and vote on transactions. <1>Learn more</1>",
   "toastDisconnected": "Connect an account to proceed!",
   "tooltipNftVoting": "NFT Voting is good practice to give a group ERC-721 (aka NFT) holders to propose and vote on transactions. Multiple NFT addresses may be used. Learn more with <1>Decent Docs</1>"
