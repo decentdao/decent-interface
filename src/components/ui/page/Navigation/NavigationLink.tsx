@@ -20,8 +20,8 @@ function LinkContent({
   return (
     <Box p="0.25rem">
       <Flex
-        py={2}
-        pl="7px"
+        py="6px"
+        px="6px"
         borderRadius={{ md: 4 }}
         _hover={{ bgColor: 'neutral-3' }}
         borderWidth={scope === 'internal' ? '1px' : '0px'}
