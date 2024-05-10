@@ -21,7 +21,10 @@ function initErrorLogging() {
         createRoutesFromChildren,
         matchRoutes,
       }),
-      Sentry.replayIntegration(),
+      Sentry.replayIntegration({
+        maskAllText: false,
+        maskAllInputs: false,
+      }),
       Sentry.feedbackIntegration({
         colorScheme: 'dark',
       }),
