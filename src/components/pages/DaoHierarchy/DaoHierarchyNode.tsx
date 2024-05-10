@@ -1,4 +1,4 @@
-import { Flex, HStack, Icon } from '@chakra-ui/react';
+import { Flex, Icon } from '@chakra-ui/react';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, getAddress } from 'viem';
@@ -77,13 +77,15 @@ export function DaoHierarchyNode({
 
       {/* CHILD NODES */}
       {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
-        <HStack
+        <Flex
           minH={`${NODE_HEIGHT_REM}rem`}
           key={childNode.daoAddress}
           gap="1.25rem"
         >
           <Icon
             as={ArrowElbowDownRight}
+            my={`${NODE_HEIGHT_REM / 2.5}rem`}
+            ml="0.5rem"
             boxSize="32px"
             color="neutral-6"
           />
