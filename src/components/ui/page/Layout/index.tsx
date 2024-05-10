@@ -1,6 +1,6 @@
 import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
-import { CONTENT_HEIGHT, FOOTER_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
+import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
@@ -32,7 +32,6 @@ export default function Layout() {
           bg="#26212AD6"
           backdropFilter="blur(12px)"
           position="fixed"
-          zIndex={5}
           w="full"
         >
           <Header />
@@ -45,7 +44,8 @@ export default function Layout() {
         flexDirection="column"
         position="fixed"
         ml={6}
-        minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT} - ${FOOTER_HEIGHT})` }}
+        top={`${HEADER_HEIGHT}`}
+        minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
       >
         <Show above="md">
           <NavigationLinks
