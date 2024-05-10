@@ -26,7 +26,7 @@ export const SnapshotIcon = () => <Icon as={SnapshotIconSVG} />;
 export function SnapshotButton({ snapshotENS }: Props) {
   return (
     <Button
-      href={`https://snapshot.org/#${snapshotENS}`}
+      href={`https://snapshot.org/#/${snapshotENS}`}
       as={Link}
       target="_blank"
       variant="primary"

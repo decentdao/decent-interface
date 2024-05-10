@@ -48,9 +48,7 @@ export function ProposalInfo({
         )}
         {isSnapshotProposal && (
           <>
-            <SnapshotButton
-              snapshotENS={`https://snapshot.org/#${daoSnapshotENS}/proposal/${proposal.proposalId}`}
-            />
+            <SnapshotButton snapshotENS={`${daoSnapshotENS}/proposal/${proposal.proposalId}`} />
             {(proposal as ExtendedSnapshotProposal).privacy === 'shutter' && (
               <Button
                 as={Link}
