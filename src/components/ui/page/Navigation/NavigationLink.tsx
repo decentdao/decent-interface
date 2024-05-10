@@ -24,7 +24,7 @@ function LinkContent({
         px="6px"
         borderRadius={{ md: 4 }}
         _hover={{ bgColor: 'neutral-3' }}
-        borderWidth={scope === 'internal' ? '1px' : '0px'}
+        borderWidth="1px"
         borderColor={scope === 'internal' && isActive ? 'neutral-4' : 'neutral-2'}
         bgColor={scope === 'internal' && isActive ? 'neutral-3' : undefined}
       >
