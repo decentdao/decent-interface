@@ -82,11 +82,7 @@ function PageHeader({
         {ButtonIcon && (
           <IconButton
             aria-label="navigate"
-            icon={
-              <Icon
-                as={ButtonIcon}
-              />
-            }
+            icon={<Icon as={ButtonIcon} />}
             onClick={buttonClick}
             variant="tertiary"
             w="1.25rem"
