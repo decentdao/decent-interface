@@ -6,13 +6,12 @@ import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
+import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
 import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
-import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
-import EtherscanLinkERC20 from '../../../ui/links/EtherscanLinkERC20';
-import EtherscanLinkERC721 from '../../../ui/links/EtherscanLinkERC721';
+import EtherscanLink from '../../../ui/links/EtherscanLink';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../ui/modals/useFractalModal';
 import Divider from '../../../ui/utils/Divider';
@@ -88,29 +87,17 @@ function CoinRow({
             maxWidth="4.7rem"
             isTruncated
           >
-            {asset.address === zeroAddress ? (
-              <EtherscanLinkAddress
-                color="white-0"
-                _hover={{ bg: 'transparent' }}
-                textStyle="body-base"
-                padding={0}
-                borderWidth={0}
-                address={safe}
-              >
-                {asset.symbol}
-              </EtherscanLinkAddress>
-            ) : (
-              <EtherscanLinkERC20
-                color="white-0"
-                _hover={{ bg: 'transparent' }}
-                textStyle="body-base"
-                padding={0}
-                borderWidth={0}
-                address={asset.address}
-              >
-                {asset.symbol}
-              </EtherscanLinkERC20>
-            )}
+            <EtherscanLink
+              color="white-0"
+              _hover={{ bg: 'transparent' }}
+              textStyle="body-base"
+              padding={0}
+              borderWidth={0}
+              value={asset.address === zeroAddress ? safe : asset.address}
+              type="token"
+            >
+              {asset.symbol}
+            </EtherscanLink>
           </Text>
         </HStack>
       </Flex>
@@ -182,9 +169,10 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
   return (
     <HStack marginBottom={isLast ? '0rem' : '1.5rem'}>
       <Flex width="15%">
-        <EtherscanLinkERC721
-          address={asset.address}
-          tokenId={id}
+        <EtherscanLink
+          type="token"
+          value={asset.address}
+          secondaryValue={id}
           data-testid="link-nft-image"
           padding={0}
           _hover={{ bg: 'transparent' }}
@@ -197,27 +185,31 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
             h="3rem"
             marginRight="0.75rem"
           />
-        </EtherscanLinkERC721>
+        </EtherscanLink>
       </Flex>
       <Flex width="65%">
-        <EtherscanLinkAddress
-          address={asset.address}
+        <EtherscanLink
+          type="address"
+          value={asset.address}
+          _hover={{ bg: 'transparent' }}
           color="white-0"
           textStyle="body-base"
         >
           {name}
-        </EtherscanLinkAddress>
+        </EtherscanLink>
       </Flex>
       <Flex width="25%">
-        <EtherscanLinkERC721
-          address={asset.address}
-          tokenId={id}
+        <EtherscanLink
+          type="token"
+          value={asset.address}
+          secondaryValue={id}
           color="white-0"
           textStyle="body-base"
+          _hover={{ bg: 'transparent' }}
           maxW="100%"
         >
-          {`#${id}`}
-        </EtherscanLinkERC721>
+          <Text as="span">{`#${id.length > 12 ? createAccountSubstring(id) : id}`}</Text>
+        </EtherscanLink>
       </Flex>
     </HStack>
   );
