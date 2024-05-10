@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TOOLTIP_MAXW } from '../../constants/common';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -186,6 +187,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
             <Tooltip
               label={t('votingPowerTooltip')}
               placement="top"
+              maxW={TOOLTIP_MAXW}
             >
               {ShowVotingPowerButton}
             </Tooltip>
