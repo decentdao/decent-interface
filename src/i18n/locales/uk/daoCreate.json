@@ -48,5 +48,5 @@
   "createSubDAOPendingToastMessage": "Створюємо пропозицію subDAO деплойменту",
   "createSubDAOSuccessToastMessage": "Деплоймент закінчено успішно",
   "createSubDAOFailureToastMessage": "Несподівана бавовна. Деплоймент провалено",
-  "helperAllocations": "Неросподілені токени будуть надіслани до скарбниці вашого DAO"
+  "helperAllocations": "Неросподілені токени будуть надіслани до скарбниці вашого DAO."
 }
