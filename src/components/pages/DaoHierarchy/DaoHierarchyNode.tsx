@@ -74,9 +74,7 @@ export function DaoHierarchyNode({
     >
       <Box
         border={currenDAOAddress === getAddress(daoAddress || '') ? '4px solid' : 'none'}
-        borderColor={
-          currenDAOAddress === getAddress(daoAddress || '') ? 'neutral-4' : 'none'
-        }
+        borderColor={currenDAOAddress === getAddress(daoAddress || '') ? 'neutral-4' : 'none'}
       >
         <DAONodeInfoCard
           parentAddress={parentAddress}
