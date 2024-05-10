@@ -22,7 +22,7 @@ function LinkContent({
       <Flex
         py={2}
         pl="7px"
-        borderRadius={{ md: 8 }}
+        borderRadius={{ md: 4 }}
         _hover={{ bgColor: 'neutral-3' }}
         borderWidth={scope === 'internal' && isActive ? '1px' : '0px'}
         borderColor="neutral-4"
