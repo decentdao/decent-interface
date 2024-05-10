@@ -85,15 +85,13 @@ function PageHeader({
             icon={
               <Icon
                 as={ButtonIcon}
-                boxSize="1rem"
               />
             }
             onClick={buttonClick}
             variant="tertiary"
+            w="1.25rem"
+            h="1.25rem"
             p="0.25rem"
-            w="1rem"
-            h="1rem"
-            size="sm"
             data-testid={buttonTestId}
             isDisabled={isButtonDisabled}
             as={Button}
