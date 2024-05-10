@@ -71,7 +71,7 @@
   "descAzoriusErc20Gov": "ERC-20 token voting governance on a Safe",
   "labelAzoriusErc721Gov": "NFT Voting Safe",
   "descAzoriusErc721Gov": "Assign voting rights and ownership privileges to ERC-721 token holders",
-  "labelDAOName": "DAO name",
+  "labelDAOName": "DAO Name",
   "daoNamePlaceholder": "Name",
   "helperDAOName": "What is your DAO called?",
   "titleProposalSettings": "Proposal Settings",
