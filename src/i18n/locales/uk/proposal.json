@@ -78,7 +78,7 @@
   "paramTypes": "тип параметрів",
   "paramInputs": "значення параметрів",
   "paramValue": "значення транзакції",
-  "decodingFailedMessage": "Неможливо декодувати дані транзакції",
+  "decodingFailedMessage": "Нам не вдалось отримати деталі транзакції цього разу",
   "customNonce": "Власний Nonce",
   "customNonceTooltip": "Зазначте власний nonce пропозиції, якщо необхідно, щоб попередити колізію",
   "nonce": "Nonce",
