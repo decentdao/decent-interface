@@ -85,7 +85,7 @@
   "createSubDAOPendingToastMessage": "Creating your child Safe proposal",
   "createSubDAOSuccessToastMessage": "Deployment successful",
   "createSubDAOFailureToastMessage": "Deployment failed",
-  "helperAllocations": "Unallocated tokens will be placed in your Safe DAO's treasury",
+  "helperAllocations": "Unallocated tokens will be placed in your Safe DAO's treasury.",
   "labelSelectToken": "Select Token",
   "helperSelectToken": "Create a new token or use an existing ERC-20 token.",
   "radioLabelNewToken": "New Token",
