@@ -10,7 +10,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { DecentLogo } from '@decent-org/fractal-ui';
-import { useRef } from 'react';
+import { useRef, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { HEADER_HEIGHT, NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
@@ -133,7 +133,7 @@ function HeaderLogo() {
     </Flex>
   );
 }
-function Header() {
+function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivElement | null> }) {
   return (
     <Flex
       w="full"
@@ -152,7 +152,7 @@ function Header() {
         alignItems="center"
       >
         <FavoritesMenu />
-        <AccountDisplay />
+        <AccountDisplay containerRef={headerContainerRef} />
       </Flex>
     </Flex>
   );
