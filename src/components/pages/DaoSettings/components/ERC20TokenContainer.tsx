@@ -23,10 +23,11 @@ export function ERC20TokenContainer() {
       {votesToken ? (
         <Flex
           justifyContent="space-between"
+          flexWrap={{ base: 'wrap', md: 'nowrap'}}
           mt={4}
         >
           {/* TOKEN NAME */}
-          <Box>
+          <Box w={{ base: 'full', sm: 'auto'}}>
             <Text
               color="neutral-7"
               textStyle="label-small"
@@ -39,7 +40,7 @@ export function ERC20TokenContainer() {
           </Box>
 
           {/* TOKEN SYMBOL */}
-          <Box>
+          <Box w={{ base: 'full', sm: 'auto'}}>
             <Text
               color="neutral-7"
               textStyle="label-small"
@@ -50,7 +51,7 @@ export function ERC20TokenContainer() {
           </Box>
 
           {/* TOTAL SUPPLY */}
-          <Box>
+          <Box w={{ base: 'full', sm: 'auto'}}>
             <Text
               color="neutral-7"
               textStyle="label-small"
