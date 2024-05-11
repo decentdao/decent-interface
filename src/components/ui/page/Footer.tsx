@@ -12,24 +12,31 @@ export function Footer() {
       w="100%"
       flexWrap="wrap"
       alignSelf="flex-end"
-      justifyContent="flex-end"
+      justifyContent="center"
       py="1rem"
       px="3rem"
+      gap={{ base: 4, md: 8 }}
     >
-      <ExternalLink href="/docs/fractal_audit.pdf">{t('audit')}</ExternalLink>
-      <Tooltip
-        placement="top"
-        label={t('currentBuild', { hash: commitHash })}
-      >
-        <ExtrernalLinkWrappable
-          href={`https://github.com/decentdao/decent-interface/commit/${commitHash}`}
+      <Flex gap={4}>
+        <ExternalLink href="/docs/fractal_audit.pdf">{t('audit')}</ExternalLink>
+        <Tooltip
+          placement="top"
+          label={t('currentBuild', { hash: commitHash })}
         >
-          {commitHash.substring(0, 7)}
-        </ExtrernalLinkWrappable>
-      </Tooltip>
+          <ExtrernalLinkWrappable
+            href={`https://github.com/decentdao/decent-interface/commit/${commitHash}`}
+          >
+            {commitHash.substring(0, 7)}
+          </ExtrernalLinkWrappable>
+        </Tooltip>
+      </Flex>
       <Flex
+        backgroundImage="/images/footer-logo-border.svg"
         alignItems="center"
-        ml="2rem"
+        justifyContent="center"
+        gap="0.5rem"
+        height="38px"
+        width="278px"
       >
         <Text
           color="neutral-6"
@@ -44,15 +51,13 @@ export function Footer() {
           textDecoration="none"
           href={URL_DECENT}
           color="neutral-6"
-          ml="0.5rem"
           alignItems="center"
+          gap="0.5rem"
         >
-          {/* @todo This should be replaced with proper logo that will include DAO word */}
           <DecentFooterLogo />
           <Text
-            display="inline-flex"
-            pt="2px"
-            ml="0.25rem"
+            as="span"
+            color="neutral-7"
           >
             DAO
           </Text>
