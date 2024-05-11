@@ -102,7 +102,9 @@ export function InfoGovernance() {
       >
         <Text color="neutral-7">{t('titleType')}</Text>
         <Text textAlign="right">
-          {governance.type ? t(governance.type.toString(), { ns: 'daoCreate' }) : t('loading', { ns: 'common' })}
+          {governance.type
+            ? t(governance.type.toString(), { ns: 'daoCreate' })
+            : t('loading', { ns: 'common' })}
         </Text>
       </Flex>
 
