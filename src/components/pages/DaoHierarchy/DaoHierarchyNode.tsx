@@ -1,7 +1,7 @@
 import { Box, Flex, Icon } from '@chakra-ui/react';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
-import { Address, getAddress } from 'viem';
+import { Address, getAddress, zeroAddress } from 'viem';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -27,7 +27,7 @@ export function DaoHierarchyNode({
   depth: number;
 }) {
   const {
-    node: { daoAddress: currenDAOAddress },
+    node: { daoAddress: currentDAOAddress },
   } = useFractal();
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
@@ -73,8 +73,8 @@ export function DaoHierarchyNode({
       width="100%"
     >
       <Box
-        border={currenDAOAddress === getAddress(daoAddress || '') ? '4px solid' : 'none'}
-        borderColor={currenDAOAddress === getAddress(daoAddress || '') ? 'neutral-4' : 'none'}
+        border={currentDAOAddress === getAddress(daoAddress || zeroAddress) ? '4px solid' : 'none'}
+        borderColor={currentDAOAddress === getAddress(daoAddress || zeroAddress) ? 'neutral-4' : 'none'}
       >
         <DAONodeInfoCard
           parentAddress={parentAddress}
@@ -98,7 +98,7 @@ export function DaoHierarchyNode({
             ml="0.5rem"
             boxSize="32px"
             color={
-              currenDAOAddress === getAddress(childNode.daoAddress || '') ? 'celery-0' : 'neutral-6'
+              currentDAOAddress === getAddress(childNode.daoAddress || zeroAddress) ? 'celery-0' : 'neutral-6'
             }
           />
 
