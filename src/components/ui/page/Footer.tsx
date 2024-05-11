@@ -1,8 +1,7 @@
-import { Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Flex, Link, Tooltip, Image } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { URL_DECENT } from '../../../constants/url';
 import ExternalLink, { ExtrernalLinkWrappable } from '../links/ExternalLink';
-import { DecentFooterLogo } from '../proposal/Icons';
 
 export function Footer() {
   const { t } = useTranslation('home');
@@ -13,8 +12,8 @@ export function Footer() {
       flexWrap="wrap"
       alignSelf="flex-end"
       justifyContent="center"
-      py="1rem"
-      px="3rem"
+      p="3rem"
+      pt="1.5rem"
       gap={{ base: 4, md: 8 }}
     >
       <Flex gap={4}>
@@ -30,39 +29,18 @@ export function Footer() {
           </ExtrernalLinkWrappable>
         </Tooltip>
       </Flex>
-      <Flex
-        backgroundImage="/images/footer-logo-border.svg"
-        alignItems="center"
-        justifyContent="center"
-        gap="0.5rem"
-        height="38px"
-        width="278px"
+      <Link
+        target="_blank"
+        rel="noreferrer"
+        href={URL_DECENT}
       >
-        <Text
-          color="neutral-6"
-          as="span"
-        >
-          {t('homeAttribution')}
-        </Text>
-        <Flex
-          as="a"
-          target="_blank"
-          rel="noreferrer"
-          textDecoration="none"
-          href={URL_DECENT}
-          color="neutral-6"
-          alignItems="center"
-          gap="0.5rem"
-        >
-          <DecentFooterLogo />
-          <Text
-            as="span"
-            color="neutral-7"
-          >
-            DAO
-          </Text>
-        </Flex>
-      </Flex>
+        <Image
+          src="/images/footer-logo.svg"
+          width="279px"
+          height="38px"
+          alt="Made with love by Decent DAO"
+        />
+      </Link>
     </Flex>
   );
 }
