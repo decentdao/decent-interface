@@ -167,7 +167,7 @@ function Vote({
 
   return (
     <Tooltip
-      placement="top"
+      placement="left"
       maxW={TOOLTIP_MAXW}
       title={
         proposalStartBlockNotFinalized

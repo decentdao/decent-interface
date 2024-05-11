@@ -119,7 +119,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           {showVotingPower ? (
             <Tooltip
               label={t('votingPowerTooltip')}
-              placement="top"
+              placement="left"
               maxW={TOOLTIP_MAXW}
             >
               {ShowVotingPowerButton}
