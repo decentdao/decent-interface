@@ -30,11 +30,10 @@ import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
-  parentAddress?: Address | null;
-  fractalNode?: FractalNode;
-  freezeGuard?: FreezeGuard;
-  guardContracts?: FractalGuardContracts;
-  governanceType?: GovernanceType;
+  parentAddress: Address | null;
+  fractalNode: FractalNode;
+  freezeGuard: FreezeGuard;
+  guardContracts: FractalGuardContracts;
 }
 
 /**
@@ -60,10 +59,10 @@ export function ManageDAOMenu({
   const baseContracts = useSafeContracts();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = fractalNode?.daoAddress;
+  const safeAddress = fractalNode.daoAddress;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, safeAddress, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, undefined, false);
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeInfo: fractalNode,
@@ -76,9 +75,9 @@ export function ManageDAOMenu({
         // are the same - we can simply grab governance type from global scope and avoid double-fetching
         setGovernanceType(type);
       } else {
-        if (fractalNode?.fractalModules && baseContracts) {
+        if (baseContracts) {
           let result = GovernanceType.MULTISIG;
-          const azoriusModule = getAzoriusModuleFromModules(fractalNode?.fractalModules);
+          const azoriusModule = getAzoriusModuleFromModules(fractalNode.fractalModules);
           const { fractalAzoriusMasterCopyContract } = baseContracts;
           if (!!azoriusModule) {
             const azoriusContract = {
@@ -143,7 +142,7 @@ export function ManageDAOMenu({
               freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting
             ).castFreezeVote();
           } else if (freezeVotingType === FreezeVotingType.ERC721) {
-            getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo => {
+            getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
               const freezeERC721VotingContract =
                 baseContracts!.freezeERC721VotingMasterCopyContract.asSigner.attach(
                   guardContracts!.freezeVotingContractAddress!,
@@ -186,7 +185,6 @@ export function ManageDAOMenu({
     };
 
     if (
-      freezeGuard &&
       freezeGuard.freezeProposalCreatedTime &&
       freezeGuard.freezeProposalPeriod &&
       freezeGuard.freezePeriod &&
@@ -208,7 +206,6 @@ export function ManageDAOMenu({
         return [createSubDAOOption, freezeOption, settingsOption];
       }
     } else if (
-      freezeGuard &&
       freezeGuard.freezeProposalCreatedTime &&
       freezeGuard.freezePeriod &&
       isWithinFreezePeriod(
