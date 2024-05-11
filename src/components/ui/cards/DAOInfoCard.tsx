@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Spacer, HStack, FlexProps, Link, Center, VStack } from '@chakra-ui/react';
+import { Box, Flex, Text, Spacer, HStack, Link, Center, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -13,7 +13,7 @@ import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 /**
  * Info card used on the DAO homepage.
  */
-export function DAOInfoCard({ ...rest }: FlexProps) {
+export function DAOInfoCard() {
   const {
     node,
     guardContracts,
@@ -35,7 +35,6 @@ export function DAOInfoCard({ ...rest }: FlexProps) {
       <Flex
         w="full"
         minH="full"
-        {...rest}
       >
         <Center w="100%">
           <BarLoader />
@@ -47,7 +46,7 @@ export function DAOInfoCard({ ...rest }: FlexProps) {
   const displayedAddress = node.daoAddress;
 
   return (
-    <Box {...rest}>
+    <Box>
       <VStack
         gap="1.5rem"
         alignItems={'left'}
