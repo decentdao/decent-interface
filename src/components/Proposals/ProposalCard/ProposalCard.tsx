@@ -53,10 +53,15 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
         borderRadius="0.5rem"
       >
         {/* Top Row */}
-        <Flex justifyContent="space-between">
+        <Flex
+          justifyContent="space-between"
+          flexWrap="wrap"
+          gap="1rem"
+        >
           <Flex
             gap={2}
             alignItems="center"
+            w={{ base: '100%', md: 'auto' }}
           >
             <Badge
               labelKey={proposal.state!}

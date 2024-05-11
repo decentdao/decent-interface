@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Icon, IconButton, Spacer, Text } from '@chakra-ui/react';
 import { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { ReactNode, useEffect, useState } from 'react';
+import { CONTENT_MAXW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -61,6 +62,7 @@ function PageHeader({
     <Box
       marginTop="3rem"
       marginBottom="1.5rem"
+      maxW={CONTENT_MAXW}
     >
       <Flex
         alignItems="center"

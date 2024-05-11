@@ -53,7 +53,7 @@ function HeaderLogo() {
                 aria-hidden
                 h="2.5rem"
                 w="2.125rem"
-                mx="1.75rem"
+                mx={{ base: '0.75rem', md: '1.75rem' }}
               />
             }
           />

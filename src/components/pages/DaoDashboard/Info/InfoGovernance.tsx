@@ -101,7 +101,9 @@ export function InfoGovernance() {
         mb="0.25rem"
       >
         <Text color="neutral-7">{t('titleType')}</Text>
-        <Text>{governance.type ? t(governance.type.toString(), { ns: 'daoCreate' }) : ''}</Text>
+        <Text textAlign="right">
+          {governance.type ? t(governance.type.toString(), { ns: 'daoCreate' }) : t('loading', { ns: 'common' })}
+        </Text>
       </Flex>
 
       {governanceAzorius?.votingStrategy?.votingPeriod && (

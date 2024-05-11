@@ -17,7 +17,7 @@ export function FavoritesMenu() {
             as={Button}
             variant="tertiary"
             data-testid="header-favoritesMenuButton"
-            mx="1rem"
+            mx={{ base: '0.25rem', md: '1rem' }}
           >
             <Flex
               alignItems="center"
