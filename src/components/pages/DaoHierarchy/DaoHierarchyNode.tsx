@@ -87,7 +87,6 @@ export function DaoHierarchyNode({
       {/* CHILD NODES */}
       {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
         <Flex
-          flexDirection="row"
           minH={`${NODE_HEIGHT_REM}rem`}
           key={childNode.daoAddress}
           gap="1.25rem"
