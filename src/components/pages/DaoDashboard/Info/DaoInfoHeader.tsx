@@ -82,7 +82,6 @@ export function DaoInfoHeader() {
                   position="relative"
                   minWidth="auto"
                   width="50%"
-                  p="1.5rem"
                   key={index}
                 >
                   {section.background && (

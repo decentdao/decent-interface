@@ -1,17 +1,10 @@
 import { Box, BoxProps } from '@chakra-ui/react';
-import { ReactNode } from 'react';
 
-type InfoBoxProps = {
-  minHeight?: string;
-  background?: string;
-  children: ReactNode;
-} & BoxProps;
-
-export function InfoBox({ minHeight = '10.6rem', children, ...rest }: InfoBoxProps) {
+export function InfoBox({ children, ...rest }: BoxProps) {
   return (
     <Box
       h="100%"
-      minHeight={minHeight}
+      minHeight="10.6rem"
       p="1.5rem"
       mx="0.3rem"
       borderWidth="0.06rem"
