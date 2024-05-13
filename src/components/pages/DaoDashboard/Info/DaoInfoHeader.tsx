@@ -35,14 +35,7 @@ export function DaoInfoHeader() {
           pb={{ sm: PAD, lg: NONE }}
         >
           <InfoBox>
-            {/* TODO: The call to `useFractal` can probably be now safely moved into `DAOInfoCard`, so this prop passing can be trimmed out */}
-            <DAOInfoCard
-              parentAddress={node.nodeHierarchy.parentAddress || undefined}
-              node={node}
-              childCount={node.nodeHierarchy.childNodes.length}
-              freezeGuard={guard}
-              guardContracts={guardContracts}
-            />
+            <DAOInfoCard />
           </InfoBox>
         </Box>
         {daoMetadata ? (
