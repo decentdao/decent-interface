@@ -1,5 +1,6 @@
 import { Box, Flex, Icon, Text } from '@chakra-ui/react';
 import { CaretDown } from '@phosphor-icons/react';
+import { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSwitchChain } from 'wagmi';
 import {
@@ -11,7 +12,11 @@ import { OptionMenu } from '../OptionMenu';
 /**
  * Network display for menu
  */
-export function NetworkSelector() {
+export function NetworkSelector({
+  containerRef,
+}: {
+  containerRef: RefObject<HTMLDivElement | null>;
+}) {
   const { t } = useTranslation('menu');
   const { chain } = useNetworkConfig();
   const { switchChain } = useSwitchChain();
@@ -41,6 +46,7 @@ export function NetworkSelector() {
           matchWidth
           menuListMr="0"
           options={networksOptions}
+          containerRef={containerRef}
           buttonProps={{
             w: 'full',
             borderRadius: '4px',

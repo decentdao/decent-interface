@@ -1,9 +1,15 @@
-import { Button, Menu, MenuButton } from '@chakra-ui/react';
+import { Button, Menu, MenuButton, Portal } from '@chakra-ui/react';
+import { RefObject } from 'react';
 import { AccountMenuButton } from './AccountMenuButton';
 import { WalletMenu } from './WalletMenu';
 
-export function AccountDisplay() {
+interface AccountDisplayProps {
+  containerRef: RefObject<HTMLDivElement | null>;
+}
+
+export function AccountDisplay({ containerRef }: AccountDisplayProps) {
   return (
+    // Portal here needed in order to
     <Menu
       placement="bottom-end"
       offset={[0, 16]}
@@ -17,7 +23,9 @@ export function AccountDisplay() {
         <AccountMenuButton />
       </Button>
 
-      <WalletMenu />
+      <Portal containerRef={containerRef}>
+        <WalletMenu containerRef={containerRef} />
+      </Portal>
     </Menu>
   );
 }
