@@ -1,8 +1,6 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOMetadata from '../../../../hooks/DAO/useDAOMetadata';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DAOInfoCard } from '../../../ui/cards/DAOInfoCard';
 import { InfoBox } from '../../../ui/containers/InfoBox';
 import ExternalLink from '../../../ui/links/ExternalLink';
@@ -12,10 +10,7 @@ import { InfoTreasury } from './InfoTreasury';
 import { ParentLink } from './ParentLink';
 
 export function DaoInfoHeader() {
-  const {
-    node: { daoAddress },
-  } = useFractal();
-  const { addressPrefix } = useNetworkConfig();
+  const { node, guardContracts, guard } = useFractal();
   const daoMetadata = useDAOMetadata();
 
   // using this gap method instead of 'gap' to make width percentages more precise, since they
@@ -80,7 +75,6 @@ export function DaoInfoHeader() {
                   position="relative"
                   minWidth="auto"
                   width="50%"
-                  p="1.5rem"
                   key={index}
                 >
                   {section.background && (
@@ -133,7 +127,7 @@ export function DaoInfoHeader() {
               pb={{ sm: PAD, md: NONE }}
               pt={{ sm: PAD, lg: NONE }}
             >
-              <InfoBox to={DAO_ROUTES.proposals.relative(addressPrefix, daoAddress || '')}>
+              <InfoBox>
                 <InfoProposals />
               </InfoBox>
             </Box>
@@ -143,7 +137,7 @@ export function DaoInfoHeader() {
               ps={{ base: NONE, md: PAD }}
               pt={{ sm: PAD, lg: NONE }}
             >
-              <InfoBox to={DAO_ROUTES.treasury.relative(addressPrefix, daoAddress || '')}>
+              <InfoBox>
                 <InfoTreasury />
               </InfoBox>
             </Box>
