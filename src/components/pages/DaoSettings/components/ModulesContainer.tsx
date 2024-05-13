@@ -57,12 +57,13 @@ export function ModulesContainer() {
             fractalModules.map(({ moduleAddress, moduleType }) => (
               <Flex key={moduleAddress}>
                 <DisplayAddress address={moduleAddress}>
-                  {moduleAddress}
-                  {moduleType === FractalModuleType.AZORIUS
-                    ? ' (Azorius Module)'
-                    : moduleType === FractalModuleType.FRACTAL
-                      ? ' (Fractal Module)' // TODO rename this after renaming and redeploying contracts
-                      : ''}
+                  {`${moduleAddress}${
+                    moduleType === FractalModuleType.AZORIUS
+                      ? ' (Azorius Module)'
+                      : moduleType === FractalModuleType.FRACTAL
+                        ? ' (Fractal Module)' // TODO rename this after renaming and redeploying contracts
+                        : ''
+                  }`}
                 </DisplayAddress>
               </Flex>
             ))
