@@ -17,12 +17,9 @@ export function DisplayAddress({
   const displayAddress = useDisplayName(address, truncate);
   return (
     <EtherscanLink
-      // @dev - This is really weird stuff. It works perfectly fine in all the places passing plain string, but here TypeScript yells.
-      // Only here -_-
-      // Also using `"address" as EtherscanLinkProps['type']` or `"address" as const` doesn't work.
-      type={'address' as any}
-      value={address}
       {...rest}
+      type="address"
+      value={address}
     >
       <Flex
         justifyContent="space-between"
