@@ -14,9 +14,7 @@ export const NODE_HEIGHT_REM = 6.75;
 export const NODE_MARGIN_TOP_REM = 1.25;
 
 export interface InfoProps extends FlexProps {
-  parentAddress?: string;
   node?: FractalNode;
-  childCount?: number;
   freezeGuard?: FreezeGuard;
   guardContracts?: FractalGuardContracts;
 }
@@ -31,14 +29,7 @@ export interface InfoProps extends FlexProps {
  * Simply using the useFractal() hook to get info will end up with the current DAO's
  * context being displayed in ALL the node cards in a hierarchy, which is incorrect.
  */
-export function DAONodeInfoCard({
-  parentAddress,
-  node,
-  childCount,
-  freezeGuard,
-  guardContracts,
-  ...rest
-}: InfoProps) {
+export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: InfoProps) {
   const {
     node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
     action,
@@ -75,8 +66,6 @@ export function DAONodeInfoCard({
       p="1.5rem"
       width="100%"
       borderRadius="0.5rem"
-      // position="relative"
-      // {...border}
     >
       <VStack
         gap="0.5rem"

@@ -40,6 +40,7 @@ export default function HierarchyPage() {
         ]}
       />
       <DaoHierarchyNode
+        parentAddress={null}
         daoAddress={parentAddress || daoAddress}
         depth={0}
       />

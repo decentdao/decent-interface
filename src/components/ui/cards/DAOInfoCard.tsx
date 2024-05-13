@@ -1,39 +1,29 @@
-import { Box, Flex, Text, Spacer, HStack, FlexProps, Link, Center, VStack } from '@chakra-ui/react';
+import { Box, Flex, Text, Spacer, HStack, Link, Center, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
-import { Address } from 'viem';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { FreezeGuard, FractalGuardContracts, FractalNode } from '../../../types';
 import { SnapshotButton } from '../badges/Snapshot';
 import { FavoriteIcon } from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
 import { BarLoader } from '../loaders/BarLoader';
 import { ManageDAOMenu } from '../menus/ManageDAO/ManageDAOMenu';
 
-export interface InfoProps extends FlexProps {
-  parentAddress?: Address;
-  node?: FractalNode;
-  childCount?: number;
-  freezeGuard?: FreezeGuard;
-  guardContracts?: FractalGuardContracts;
-}
-
 /**
  * Info card used on the DAO homepage.
  */
-export function DAOInfoCard({
-  parentAddress,
-  node,
-  childCount,
-  freezeGuard,
-  guardContracts,
-  ...rest
-}: InfoProps) {
+export function DAOInfoCard() {
   const {
+    node,
+    guardContracts,
+    guard,
     readOnly: { user },
   } = useFractal();
+
+  const parentAddress = node.nodeHierarchy.parentAddress;
+  const childCount = node.nodeHierarchy.childNodes.length;
+
   const { addressPrefix } = useNetworkConfig();
 
   // for non Fractal Safes
@@ -45,7 +35,6 @@ export function DAOInfoCard({
       <Flex
         w="full"
         minH="full"
-        {...rest}
       >
         <Center w="100%">
           <BarLoader />
@@ -57,7 +46,7 @@ export function DAOInfoCard({
   const displayedAddress = node.daoAddress;
 
   return (
-    <Box {...rest}>
+    <Box>
       <VStack
         gap="1.5rem"
         alignItems={'left'}
@@ -109,7 +98,7 @@ export function DAOInfoCard({
             <ManageDAOMenu
               parentAddress={parentAddress}
               fractalNode={node}
-              freezeGuard={freezeGuard}
+              freezeGuard={guard}
               guardContracts={guardContracts}
             />
           )}
