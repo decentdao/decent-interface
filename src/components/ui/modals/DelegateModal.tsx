@@ -15,7 +15,7 @@ import { AzoriusGovernance, DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 import { couldBeENS } from '../../../utils/url';
 import { AddressInput } from '../forms/EthAddressInput';
-import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
+import EtherscanLink from '../links/EtherscanLink';
 import Divider from '../utils/Divider';
 
 export function DelegateModal({ close }: { close: Function }) {
@@ -113,9 +113,12 @@ export function DelegateModal({ close }: { close: Function }) {
           {azoriusGovernance.votesToken.delegatee === zeroAddress ? (
             '--'
           ) : (
-            <EtherscanLinkAddress address={azoriusGovernance.votesToken.delegatee}>
+            <EtherscanLink
+              type="address"
+              value={azoriusGovernance.votesToken.delegatee}
+            >
               {delegateeDisplayName.displayName}
-            </EtherscanLinkAddress>
+            </EtherscanLink>
           )}
         </Text>
       </SimpleGrid>
@@ -155,9 +158,12 @@ export function DelegateModal({ close }: { close: Function }) {
               {decentGovernance.lockedVotesToken.delegatee === zeroAddress ? (
                 '--'
               ) : (
-                <EtherscanLinkAddress address={decentGovernance.lockedVotesToken.delegatee}>
+                <EtherscanLink
+                  type="address"
+                  value={decentGovernance.lockedVotesToken.delegatee}
+                >
                   {lockedDelegateeDisplayName.displayName}
-                </EtherscanLinkAddress>
+                </EtherscanLink>
               )}
             </Text>
           </SimpleGrid>

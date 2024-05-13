@@ -22,8 +22,8 @@ export function DaoHierarchyNode({
   daoAddress,
   depth,
 }: {
-  parentAddress?: Address;
-  daoAddress?: Address;
+  parentAddress: Address | null;
+  daoAddress: Address | null;
   depth: number;
 }) {
   const {
@@ -31,7 +31,7 @@ export function DaoHierarchyNode({
   } = useFractal();
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
-  const { daoData } = useLoadDAOData(fractalNode, parentAddress);
+  const { daoData } = useLoadDAOData(parentAddress, fractalNode);
 
   // calculates the total number of descendants below the given node
   const getTotalDescendants = useCallback((node: FractalNode): number => {
@@ -84,7 +84,6 @@ export function DaoHierarchyNode({
         }
       >
         <DAONodeInfoCard
-          parentAddress={parentAddress}
           node={fractalNode}
           freezeGuard={daoData?.freezeGuard}
           guardContracts={daoData?.freezeGuardContracts}
@@ -112,7 +111,7 @@ export function DaoHierarchyNode({
 
           <DaoHierarchyNode
             parentAddress={daoAddress}
-            daoAddress={childNode.daoAddress || undefined}
+            daoAddress={childNode.daoAddress}
             depth={depth + 1}
           />
         </Flex>

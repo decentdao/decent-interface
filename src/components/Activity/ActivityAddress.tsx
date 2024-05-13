@@ -1,6 +1,7 @@
+import { Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../hooks/utils/useDisplayName';
-import EtherscanLinkAddress from '../ui/links/EtherscanLinkAddress';
+import EtherscanLink from '../ui/links/EtherscanLink';
 
 export function ActivityAddress({
   address,
@@ -14,10 +15,15 @@ export function ActivityAddress({
   const { displayName } = useDisplayName(address);
   const { t } = useTranslation();
   return (
-    <EtherscanLinkAddress address={address}>
-      {displayName}
-      {isMe && t('isMeSuffix')}
-      {addComma && ', '}
-    </EtherscanLinkAddress>
+    <EtherscanLink
+      type="address"
+      value={address}
+    >
+      <Text w="full">
+        {displayName}
+        {isMe && t('isMeSuffix')}
+        {addComma && ', '}
+      </Text>
+    </EtherscanLink>
   );
 }

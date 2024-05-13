@@ -11,7 +11,7 @@ import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
  * A hook for loading guard and freeze guard contract data for the provided
  * FractalNode.
  */
-export function useLoadDAOData(fractalNode?: FractalNode, parentAddress?: string) {
+export function useLoadDAOData(parentAddress: string | null, fractalNode?: FractalNode) {
   const [daoData, setDAOData] = useState<DAOData>();
   const loadFractalGuardContracts = useFractalGuardContracts({ loadOnMount: false });
   const loadFractalFreezeGuard = useFractalFreeze({
