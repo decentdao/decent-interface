@@ -73,6 +73,7 @@ export function DaoHierarchyNode({
       width="100%"
     >
       <Box
+        borderRadius="0.5rem"
         border={
           currentDAOAddress === getAddress(daoAddress || zeroAddress) && !!fractalNode
             ? '4px solid'
