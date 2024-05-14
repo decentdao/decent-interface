@@ -7,10 +7,9 @@ import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 
 interface Props extends BoxProps {
   safeAddress: string;
-  variant?: 'lil-smaller';
 }
 
-export function FavoriteIcon({ safeAddress, variant, ...rest }: Props) {
+export function FavoriteIcon({ safeAddress, ...rest }: Props) {
   const { favoritesList, toggleFavorite } = useAccountFavorites();
   const isFavorite = useMemo(
     () => (!!safeAddress ? favoritesList.includes(getAddress(safeAddress)) : false),
@@ -26,7 +25,7 @@ export function FavoriteIcon({ safeAddress, variant, ...rest }: Props) {
           as={Button}
           onClick={() => toggleFavorite(safeAddress)}
           aria-label={t('favoriteTooltip')}
-          padding={variant === 'lil-smaller' ? '0.3rem' : '0.5rem'}
+          padding="0.25rem"
           height="fit-content"
         >
           <Icon

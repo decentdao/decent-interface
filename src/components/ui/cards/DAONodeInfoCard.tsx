@@ -91,7 +91,6 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
 
           {/* FAVORITE ICON */}
           <FavoriteIcon
-            variant="lil-smaller"
             safeAddress={displayedAddress}
             data-testid="DAOInfo-favorite"
           />
