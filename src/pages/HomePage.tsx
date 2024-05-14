@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { mainnet, sepolia } from 'wagmi/chains';
 import CTABox from '../components/pages/AppHome/CTABox';
 import FeaturedDAOCard, { FeaturedDAO } from '../components/pages/AppHome/FeaturedDAOCard';
-import { CreateDAOIllustration, DocsIllustration } from '../components/ui/proposal/Icons';
+import { CreateDAOIllustration, DocsIllustration } from '../components/ui/icons/Icons';
 import { CONTENT_MAXW } from '../constants/common';
 import { BASE_ROUTES } from '../constants/routes';
 import { URL_DOCS } from '../constants/url';
