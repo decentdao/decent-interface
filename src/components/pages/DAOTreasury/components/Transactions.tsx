@@ -5,8 +5,7 @@ import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { TransferType, AssetTransfer } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
-import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
-import EtherscanLinkTransaction from '../../../ui/links/EtherscanLinkTransaction';
+import EtherscanLink from '../../../ui/links/EtherscanLink';
 import {
   TokenEventType,
   TransferDisplayData,
@@ -22,14 +21,17 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
         marginBottom={displayData.isLast ? 0 : '0.5rem'}
       >
         <HStack w="30%">
-          <EtherscanLinkTransaction txHash={displayData.transactionHash}>
+          <EtherscanLink
+            type="tx"
+            value={displayData.transactionHash}
+          >
             <Icon
               as={displayData.eventType == TokenEventType.WITHDRAW ? ArrowUp : ArrowDown}
               w="1.25rem"
               h="1.25rem"
               color="neutral-7"
             />
-          </EtherscanLinkTransaction>
+          </EtherscanLink>
           <Box paddingStart="0.5rem">
             <Text
               textStyle="label-small"
@@ -111,12 +113,13 @@ function MoreTransactions({ address }: { address: string | null }) {
       justifyContent="center"
       mt="1rem"
     >
-      <EtherscanLinkAddress
-        address={address}
+      <EtherscanLink
+        type="address"
+        value={address}
         display="inline-flex"
       >
         {t('textMoreTransactions')} <Icon as={ArrowUpRight} />
-      </EtherscanLinkAddress>
+      </EtherscanLink>
     </Flex>
   );
 }

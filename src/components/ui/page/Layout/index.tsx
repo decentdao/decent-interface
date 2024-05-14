@@ -1,4 +1,5 @@
 import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
+import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -12,6 +13,7 @@ export default function Layout() {
   const {
     node: { daoAddress },
   } = useFractal();
+  const headerContainerRef = useRef<HTMLDivElement>(null);
 
   return (
     <Grid
@@ -27,7 +29,10 @@ export default function Layout() {
       gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
     >
-      <GridItem area="header">
+      <GridItem
+        area="header"
+        ref={headerContainerRef}
+      >
         <Box
           bg="#26212AD6"
           backdropFilter="blur(12px)"
@@ -36,7 +41,7 @@ export default function Layout() {
           maxW="100vw"
           zIndex="1"
         >
-          <Header />
+          <Header headerContainerRef={headerContainerRef} />
         </Box>
       </GridItem>
       <GridItem

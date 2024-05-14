@@ -19,7 +19,7 @@ const useCastFreezeVote = ({
     },
   } = useFractal();
   const baseContracts = useSafeContracts();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, undefined, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(null, undefined, false);
 
   useEffect(() => {
     setPending(contractCallPending);
@@ -36,7 +36,7 @@ const useCastFreezeVote = ({
             baseContracts.freezeERC721VotingMasterCopyContract.asSigner.attach(
               freezeVotingContractAddress,
             );
-          return getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo =>
+          return getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo =>
             freezeERC721VotingContract['castFreezeVote(address[],uint256[])'](
               tokensInfo.totalVotingTokenAddresses,
               tokensInfo.totalVotingTokenIds,

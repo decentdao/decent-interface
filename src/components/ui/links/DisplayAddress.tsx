@@ -1,8 +1,8 @@
-import { Text, Icon, LinkProps } from '@chakra-ui/react';
+import { Flex, Text, Icon, LinkProps } from '@chakra-ui/react';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import EtherscanLinkAddress from './EtherscanLinkAddress';
+import EtherscanLink from './EtherscanLink';
 
 export function DisplayAddress({
   address,
@@ -16,17 +16,27 @@ export function DisplayAddress({
 } & LinkProps) {
   const displayAddress = useDisplayName(address, truncate);
   return (
-    <EtherscanLinkAddress
-      address={address}
-      alignItems="center"
-      display="flex"
+    <EtherscanLink
       {...rest}
+      type="address"
+      value={address}
     >
-      <Text as="span">{children || displayAddress.displayName}</Text>
-      <Icon
-        as={ArrowUpRight}
-        ml="0.5rem"
-      />
-    </EtherscanLinkAddress>
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        minW="fit-content"
+      >
+        <Text
+          as="span"
+          isTruncated
+        >
+          {children || displayAddress.displayName}
+        </Text>
+        <Icon
+          as={ArrowUpRight}
+          ml="0.5rem"
+        />
+      </Flex>
+    </EtherscanLink>
   );
 }

@@ -4,6 +4,7 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TOOLTIP_MAXW } from '../../constants/common';
 import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -11,7 +12,7 @@ import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types'
 import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
 import DisplayTransaction from '../ui/links/DisplayTransaction';
-import EtherscanLinkBlock from '../ui/links/EtherscanLinkBlock';
+import EtherscanLink from '../ui/links/EtherscanLink';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import InfoRow from '../ui/proposal/InfoRow';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
@@ -163,12 +164,18 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
           >
             {t('snapshotTaken')}
           </Text>
-          <EtherscanLinkBlock
-            blockNumber={startBlock.toString()}
+          <EtherscanLink
+            type="block"
+            value={startBlock.toString()}
             textAlign="end"
           >
-            {format(eventDate, DEFAULT_DATE_TIME_FORMAT)} <Icon as={ArrowUpRight} />
-          </EtherscanLinkBlock>
+            <Flex
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              {format(eventDate, DEFAULT_DATE_TIME_FORMAT)} <Icon as={ArrowUpRight} />
+            </Flex>
+          </EtherscanLink>
         </Flex>
         <Flex
           marginTop={4}
@@ -185,7 +192,8 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
           {showVotingPower ? (
             <Tooltip
               label={t('votingPowerTooltip')}
-              placement="top"
+              placement="left"
+              maxW={TOOLTIP_MAXW}
             >
               {ShowVotingPowerButton}
             </Tooltip>
