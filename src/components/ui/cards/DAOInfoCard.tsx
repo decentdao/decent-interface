@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Spacer, HStack, Link, Center, VStack } from '@chakra-ui/react';
+import { Box, Flex, Text, Link, Center } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -47,61 +47,67 @@ export function DAOInfoCard() {
 
   return (
     <Box>
-      <VStack
+      <Flex
+        direction="column"
         gap="1.5rem"
-        alignItems={'left'}
       >
         {/* DAO NAME AND ACTIONS */}
+
         <Flex
-          direction="row"
-          alignItems={'center'}
+          alignItems="flex-start"
+          columnGap="0.5rem"
         >
-          <HStack>
-            {/* DAO NAME */}
-            <Text
-              textStyle="display-4xl"
-              mr="0.5rem"
-              data-testid="DAOInfo-name"
+          {/* DAO NAME */}
+          <Text
+            textStyle="display-4xl"
+            data-testid="DAOInfo-name"
+          >
+            {node.daoName || displayName}
+          </Text>
+
+          <Flex
+            alignItems="center"
+            columnGap="0.5rem"
+            justifyContent="space-between"
+            mt="0.25rem"
+            flexGrow={1}
+          >
+            <Flex
+              alignItems="center"
+              columnGap="0.5rem"
             >
-              {node.daoName || displayName}
-            </Text>
+              {/* FAVORITE ICON */}
+              <FavoriteIcon safeAddress={displayedAddress} />
 
-            {/* FAVORITE ICON */}
-            <FavoriteIcon
-              safeAddress={displayedAddress}
-              data-testid="DAOInfo-favorite"
-            />
-
-            {/* PARENT TAG */}
-            {childCount && childCount > 0 && (
-              <Link
-                to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
-                as={RouterLink}
-                borderWidth="1px"
-                borderColor="transparent"
-                _hover={{ textDecoration: 'none', bg: 'neutral-4' }}
-                _active={{ bg: 'neutral-3', borderColor: 'neutral-4' }}
-                bg="neutral-3"
-                color="lilac-0"
-                borderRadius="625rem"
-                p="0.25rem 0.75rem"
-                textStyle="button-base"
-              >
-                Parent
-              </Link>
+              {/* PARENT TAG */}
+              {!!childCount && childCount > 0 && (
+                <Link
+                  to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
+                  as={RouterLink}
+                  borderWidth="1px"
+                  borderColor="transparent"
+                  _hover={{ textDecoration: 'none', bg: 'neutral-4' }}
+                  _active={{ bg: 'neutral-3', borderColor: 'neutral-4' }}
+                  bg="neutral-3"
+                  color="lilac-0"
+                  borderRadius="625rem"
+                  p="0.25rem 0.75rem"
+                  textStyle="button-base"
+                >
+                  Parent
+                </Link>
+              )}
+            </Flex>
+            {/* SETTINGS MENU BUTTON */}
+            {!!user.address && (
+              <ManageDAOMenu
+                parentAddress={parentAddress}
+                fractalNode={node}
+                freezeGuard={guard}
+                guardContracts={guardContracts}
+              />
             )}
-          </HStack>
-
-          <Spacer />
-
-          {!!user.address && (
-            <ManageDAOMenu
-              parentAddress={parentAddress}
-              fractalNode={node}
-              freezeGuard={guard}
-              guardContracts={guardContracts}
-            />
-          )}
+          </Flex>
         </Flex>
 
         {/* DAO ADDRESS */}
@@ -109,7 +115,7 @@ export function DAOInfoCard() {
 
         {/* SNAPSHOT ICON LINK */}
         {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
-      </VStack>
+      </Flex>
     </Box>
   );
 }

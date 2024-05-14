@@ -1,4 +1,4 @@
-import { Flex, Text, HStack, FlexProps, Link, Center, VStack } from '@chakra-ui/react';
+import { Flex, Text, FlexProps, Link, Center, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -56,9 +56,6 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
   const displayedAddress = node.daoAddress;
   const isCurrentDAO = displayedAddress === currentDAOAddress;
 
-  // needed?
-  // const border = isCurrentDAO ? { border: '1px solid', borderColor: 'neutral-4' } : undefined;
-
   return (
     <Flex
       minH={`${NODE_HEIGHT_REM}rem`}
@@ -69,42 +66,38 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
     >
       <VStack
         gap="0.5rem"
-        alignItems={'left'}
+        alignItems="left"
       >
         {/* DAO NAME */}
-        <Flex
-          direction="row"
-          alignItems={'center'}
-        >
-          <HStack>
-            {/* DAO NAME */}
-            <Link
-              textStyle="display-xl"
-              as={RouterLink}
-              pointerEvents={isCurrentDAO ? 'none' : undefined}
-              to={DAO_ROUTES.dao.relative(addressPrefix, displayedAddress)}
-              _hover={{ textDecoration: 'none', color: 'lilac-0' }}
-              onClick={() => {
-                // if we're not on the current DAO, reset
-                // the DAO data, so the one you're clicking
-                // into will load properly
-                if (!isCurrentDAO) {
-                  action.resetDAO();
-                }
-              }}
-            >
-              <Text>{node.daoName || displayName}</Text>
-            </Link>
+        <Flex columnGap="0.5rem">
+          {/* DAO NAME */}
+          <Link
+            textStyle="display-xl"
+            as={RouterLink}
+            pointerEvents={isCurrentDAO ? 'none' : undefined}
+            to={DAO_ROUTES.dao.relative(addressPrefix, displayedAddress)}
+            _hover={{ textDecoration: 'none', color: 'lilac-0' }}
+            onClick={() => {
+              // if we're not on the current DAO, reset
+              // the DAO data, so the one you're clicking
+              // into will load properly
+              if (!isCurrentDAO) {
+                action.resetDAO();
+              }
+            }}
+          >
+            <Text>{node.daoName || displayName}</Text>
+          </Link>
 
-            {/* FAVORITE ICON */}
-            <FavoriteIcon
-              safeAddress={displayedAddress}
-              data-testid="DAOInfo-favorite"
-            />
+          {/* FAVORITE ICON */}
+          <FavoriteIcon
+            variant="lil-smaller"
+            safeAddress={displayedAddress}
+            data-testid="DAOInfo-favorite"
+          />
 
-            {/* SNAPSHOT ICON LINK */}
-            {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
-          </HStack>
+          {/* SNAPSHOT ICON LINK */}
+          {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
         </Flex>
 
         {/* DAO ADDRESS */}
