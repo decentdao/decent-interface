@@ -63,6 +63,8 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
       p="1.5rem"
       width="100%"
       borderRadius="0.5rem"
+      border={isCurrentDAO ? '4px solid' : 'none'}
+      borderColor={isCurrentDAO ? 'neutral-4' : 'none'}
     >
       <VStack
         gap="0.5rem"
