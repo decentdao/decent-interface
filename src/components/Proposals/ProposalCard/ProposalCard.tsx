@@ -16,6 +16,7 @@ import { ActivityDescription } from '../../Activity/ActivityDescription';
 import { Badge } from '../../ui/badges/Badge';
 import QuorumBadge from '../../ui/badges/QuorumBadge';
 import { SnapshotIcon } from '../../ui/badges/Snapshot';
+import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
 function ProposalCard({ proposal }: { proposal: FractalProposal }) {
   const {
@@ -66,7 +67,12 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
             <Badge
               labelKey={proposal.state!}
               size="sm"
+            />
+            <ProposalCountdown
               proposal={proposal}
+              showIcon={false}
+              textColor="neutral-7"
+              textStyle="label-base"
             />
             {isSnapshotProposal && (
               <Box ml={1}>
