@@ -1,6 +1,10 @@
-import { Center, Text, VStack } from '@chakra-ui/react';
+import { Center, Text, Flex, Box, Show, Hide } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../constants/common';
+import {
+  StetoscopeIllustrationMobile,
+  StetoscopeIllustrationDesktop,
+} from '../components/ui/proposal/Icons';
+import { CONTENT_MAXW } from '../constants/common';
 import { useNetworkConfig } from '../providers/NetworkConfig/NetworkConfigProvider';
 
 function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQueryParam' }) {
@@ -9,17 +13,50 @@ function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQ
 
   return (
     <Center
-      padding="3rem"
-      textColor="neutral-7"
+      px={{ base: 0, lg: '3.5rem' }}
+      maxW={CONTENT_MAXW}
     >
-      <VStack
-        padding="3rem"
-        bg={BACKGROUND_SEMI_TRANSPARENT}
+      <Flex
+        bg="neutral-2"
+        border="1px solid"
+        borderColor="neutral-3"
+        borderRadius={8}
+        justifyContent={{ base: 'center', lg: 'space-between' }}
+        w={{ base: '100%', lg: '93%' }}
+        pl={{ base: '1.5rem', lg: '3rem' }}
+        pr={{ base: '1.5rem', lg: 0 }}
+        pt={{ base: '1.5rem', lg: '2rem' }}
+        flexWrap={{ base: 'wrap', lg: 'nowrap' }}
       >
-        <Text textStyle="display-2xl">{t('errorSentryFallbackTitle')}</Text>
-        <Text>{t(`${type}1`, { chain: chain.name })}</Text>
-        <Text paddingBottom="1rem">{t(`${type}2`)}</Text>
-      </VStack>
+        <Box
+          w={{ base: 'full', lg: '250px' }}
+          color="white-0"
+          pt={{ base: 0, lg: '2.25rem' }}
+          pb={{ base: '1.5rem', lg: '4.5rem' }}
+        >
+          <Text
+            w="full"
+            textStyle={{ base: 'display-2xl', lg: 'display-4xl' }}
+          >
+            {t('errorSentryFallbackTitle')}
+          </Text>
+          <Text
+            textStyle={{ base: 'display-lg', lg: 'display-xl' }}
+            mt="0.5rem"
+          >
+            {t(`${type}1`, { chain: chain.name })}
+          </Text>
+          <Text textStyle={{ base: 'display-lg', lg: 'display-xl' }}>{t(`${type}2`)}</Text>
+        </Box>
+        <Flex alignItems="flex-end">
+          <Hide above="lg">
+            <StetoscopeIllustrationMobile />
+          </Hide>
+          <Show above="lg">
+            <StetoscopeIllustrationDesktop />
+          </Show>
+        </Flex>
+      </Flex>
     </Center>
   );
 }
