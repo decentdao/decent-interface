@@ -256,7 +256,7 @@ export function ManageDAOMenu({
       buttonAs={Button}
       buttonProps={{
         variant: 'tertiary',
-        p: '0.5rem',
+        p: '0.25rem',
         h: 'fit-content',
         color: 'lilac-0',
         sx: {

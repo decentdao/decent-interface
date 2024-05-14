@@ -69,7 +69,7 @@ export function DAOInfoCard() {
             alignItems="center"
             columnGap="0.5rem"
             justifyContent="space-between"
-            mt="0.25rem"
+            mt="0.5rem"
             flexGrow={1}
           >
             <Flex
@@ -84,8 +84,6 @@ export function DAOInfoCard() {
                 <Link
                   to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
                   as={RouterLink}
-                  borderWidth="1px"
-                  borderColor="transparent"
                   _hover={{ textDecoration: 'none', bg: 'neutral-4' }}
                   _active={{ bg: 'neutral-3', borderColor: 'neutral-4' }}
                   bg="neutral-3"
