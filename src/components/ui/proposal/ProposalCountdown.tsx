@@ -95,7 +95,7 @@ export function ProposalCountdown({
           >
             {showDays && `${zeroPad(daysLeft)}:`}
             {showHours && `${zeroPad(hoursLeft)}:`}
-            {showMinutes ? `${zeroPad(minutesLeft)}:`: '00:'}
+            {showMinutes ? `${zeroPad(minutesLeft)}:` : '00:'}
             {showSeconds && `${zeroPad(secondsLeft)}`}
           </Text>
         </Flex>
