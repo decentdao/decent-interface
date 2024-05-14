@@ -17,7 +17,6 @@ import {
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
 import { fractalModuleData, FractalModuleData } from './helpers/fractalModuleData';
-import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
 
 export class DaoTxBuilder extends BaseTxBuilder {
   private readonly saltNum;
