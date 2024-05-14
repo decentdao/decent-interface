@@ -37,7 +37,7 @@ export function ProposalInfo({
       padding="1.5rem"
     >
       <Flex
-        gap={4}
+        gap={2}
         alignItems="center"
       >
         {proposal.state && (
