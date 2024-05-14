@@ -1,4 +1,4 @@
-import { Flex, Text, FlexProps, Link, Center, VStack, Box } from '@chakra-ui/react';
+import { Flex, Text, FlexProps, Link, Center, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -57,58 +57,57 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
   const isCurrentDAO = displayedAddress === currentDAOAddress;
 
   return (
-    <Flex
-      minH={`${NODE_HEIGHT_REM}rem`}
-      bg="neutral-2"
-      p="1.5rem"
-      width="100%"
-      borderRadius="0.5rem"
-      border={isCurrentDAO ? '4px solid' : 'none'}
-      borderColor={isCurrentDAO ? 'neutral-4' : 'none'}
+    <Link
+      as={RouterLink}
+      pointerEvents={isCurrentDAO ? 'none' : undefined}
+      to={DAO_ROUTES.dao.relative(addressPrefix, displayedAddress)}
+      _hover={{ textDecoration: 'none' }}
+      onClick={() => {
+        // if we're not on the current DAO, reset
+        // the DAO data, so the one you're clicking
+        // into will load properly
+        if (!isCurrentDAO) {
+          action.resetDAO();
+        }
+      }}
     >
-      <VStack
-        gap="0.5rem"
-        alignItems="left"
+      <Flex
+        minH={`${NODE_HEIGHT_REM}rem`}
+        bg="neutral-2"
+        _hover={{ bg: 'neutral-4' }}
+        p="1.5rem"
+        width="100%"
+        borderRadius="0.5rem"
+        border={isCurrentDAO ? '4px solid' : 'none'}
+        borderColor={isCurrentDAO ? 'neutral-4' : 'none'}
       >
-        {/* DAO NAME */}
-        <Flex
-          columnGap="0.5rem"
-          alignItems="flex-start"
+        <VStack
+          gap="0.5rem"
+          alignItems="left"
         >
           {/* DAO NAME */}
-          <Link
-            textStyle="display-xl"
-            as={RouterLink}
-            pointerEvents={isCurrentDAO ? 'none' : undefined}
-            to={DAO_ROUTES.dao.relative(addressPrefix, displayedAddress)}
-            _hover={{ textDecoration: 'none', color: 'lilac-0' }}
-            onClick={() => {
-              // if we're not on the current DAO, reset
-              // the DAO data, so the one you're clicking
-              // into will load properly
-              if (!isCurrentDAO) {
-                action.resetDAO();
-              }
-            }}
+          <Flex
+            gap="0.5rem"
+            alignItems="center"
           >
-            <Text>{node.daoName || displayName}</Text>
-          </Link>
+            {/* DAO NAME */}
 
-          {/* FAVORITE ICON */}
-          <Box mt="0.125rem">
-            <FavoriteIcon
-              safeAddress={displayedAddress}
-              data-testid="DAOInfo-favorite"
-            />
-          </Box>
+            <Text textStyle="display-xl">{node.daoName || displayName}</Text>
 
-          {/* SNAPSHOT ICON LINK */}
-          {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
-        </Flex>
+            {/* FAVORITE ICON */}
+              <FavoriteIcon
+                safeAddress={displayedAddress}
+                data-testid="DAOInfo-favorite"
+              />
 
-        {/* DAO ADDRESS */}
-        <AddressCopier address={displayedAddress} />
-      </VStack>
-    </Flex>
+            {/* SNAPSHOT ICON LINK */}
+            {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
+          </Flex>
+
+          {/* DAO ADDRESS */}
+          <AddressCopier address={displayedAddress} />
+        </VStack>
+      </Flex>
+    </Link>
   );
 }
