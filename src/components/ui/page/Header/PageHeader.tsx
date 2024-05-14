@@ -84,12 +84,10 @@ function PageHeader({
         {ButtonIcon && (
           <IconButton
             aria-label="navigate"
-            icon={<Icon as={ButtonIcon} />}
+            icon={<Icon boxSize="1.25rem" as={ButtonIcon} />}
             onClick={buttonClick}
             variant="tertiary"
-            w="1.25rem"
-            h="1.25rem"
-            p="0.25rem"
+            size="icon-sm"
             data-testid={buttonTestId}
             isDisabled={isButtonDisabled}
             as={Button}
