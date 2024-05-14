@@ -66,7 +66,7 @@ export default function useDAOName(address: string) {
 }
 
 /**
- * Gets the 'display name' for a Fractal DAO, in the following order of preference:
+ * Gets the 'display name' for a DAO, in the following order of preference:
  *
  * 1. Primary ENS Name (reverse record)
  * 2. Fractal name registry name

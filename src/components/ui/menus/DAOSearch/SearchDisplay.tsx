@@ -1,9 +1,10 @@
-import { Box, Flex, Text, Button } from '@chakra-ui/react';
+import { Flex, Text, Spinner, Button, Icon } from '@chakra-ui/react';
+import { WarningCircle } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
@@ -17,8 +18,8 @@ interface ISearchDisplay {
 }
 
 function DAONameDisplay({ address }: { address: string }) {
-  const { displayName } = useDisplayName(address);
-  return <Text textStyle="text-base-sans-medium">{displayName}</Text>;
+  const { daoRegistryName } = useDAOName(address);
+  return <Text textStyle="display-lg">{daoRegistryName}</Text>;
 }
 
 export function SearchDisplay({
@@ -38,16 +39,38 @@ export function SearchDisplay({
   }, [node, address]);
   if (loading && address) {
     return (
-      <Box>
-        <Text textStyle="text-base-mono-regular">{t('loading')}</Text>
-      </Box>
+      <Flex
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Spinner
+          thickness="4px"
+          speed="0.75s"
+          emptyColor="neutral-3"
+          color="neutral-7"
+          size="lg"
+        />
+      </Flex>
     );
   }
   if (errorMessage && !loading) {
     return (
-      <Box>
-        <Text textStyle="text-base-sans-medium">{errorMessage}</Text>
-      </Box>
+      <Flex
+        alignItems="center"
+        gap="2"
+      >
+        <Icon
+          as={WarningCircle}
+          color="red-1"
+          boxSize="1.5rem"
+        />
+        <Text
+          textStyle="display-lg"
+          color="red-1"
+        >
+          {errorMessage}
+        </Text>
+      </Flex>
     );
   }
   if (validAddress && address && !loading) {
@@ -56,15 +79,20 @@ export function SearchDisplay({
         py={2}
         cursor={isCurrentSafe ? 'not-allowed' : 'default'}
         justifyContent="space-between"
+        gap={8}
+        w="full"
       >
         <Flex
           justifyContent="space-between"
           alignItems="center"
         >
-          <Flex flexDirection="column">
+          <Flex
+            flexDirection="column"
+            gap={2}
+          >
             <Text
-              textStyle="text-sm-sans-regular"
-              color="chocolate.100"
+              textStyle="label-base"
+              color="white-0"
             >
               {t(isCurrentSafe ? 'labelCurrentDAO' : 'labelDAOFound')}
             </Text>

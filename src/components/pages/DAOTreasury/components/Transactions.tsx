@@ -1,12 +1,11 @@
-import { Box, Divider, HStack, Image, Spacer, Text, Tooltip } from '@chakra-ui/react';
-import { SquareSolidArrowDown, SquareSolidArrowUp } from '@decent-org/fractal-ui';
+import { Box, HStack, Image, Text, Tooltip, Icon, Flex } from '@chakra-ui/react';
+import { ArrowUp, ArrowDown, ArrowUpRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { TransferType, AssetTransfer } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
-import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
-import EtherscanLinkTransaction from '../../../ui/links/EtherscanLinkTransaction';
+import EtherscanLink from '../../../ui/links/EtherscanLink';
 import {
   TokenEventType,
   TransferDisplayData,
@@ -19,41 +18,31 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
     <Box>
       <HStack
         align="center"
-        marginTop="1rem"
-        marginBottom={displayData.isLast ? '0rem' : '1rem'}
+        marginBottom={displayData.isLast ? 0 : '0.5rem'}
       >
-        <HStack w="33%">
-          <EtherscanLinkTransaction txHash={displayData.transactionHash}>
-            {displayData.eventType == TokenEventType.WITHDRAW ? (
-              <SquareSolidArrowUp
-                w="1.5rem"
-                h="1.5rem"
-                color="grayscale.100"
-              />
-            ) : (
-              <SquareSolidArrowDown
-                w="1.5rem"
-                h="1.5rem"
-                color="#60B55E"
-              />
-            )}
-          </EtherscanLinkTransaction>
+        <HStack w="30%">
+          <EtherscanLink
+            type="tx"
+            value={displayData.transactionHash}
+          >
+            <Icon
+              as={displayData.eventType == TokenEventType.WITHDRAW ? ArrowUp : ArrowDown}
+              w="1.25rem"
+              h="1.25rem"
+              color="neutral-7"
+            />
+          </EtherscanLink>
           <Box paddingStart="0.5rem">
             <Text
-              textStyle="text-sm-sans-regular"
-              color="grayscale.100"
+              textStyle="label-small"
+              color="neutral-7"
             >
               {t(displayData.eventType == TokenEventType.WITHDRAW ? 'labelSent' : 'labelReceived')}
             </Text>
-            <Text
-              textStyle="text-base-sans-regular"
-              color="chocolate.200"
-            >
-              {useDateTimeDisplay(new Date(displayData.executionDate))}
-            </Text>
+            <Text>{useDateTimeDisplay(new Date(displayData.executionDate))}</Text>
           </Box>
         </HStack>
-        <HStack w="33%">
+        <HStack w="30%">
           <Image
             src={displayData.image}
             fallbackSrc={
@@ -62,8 +51,8 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
                 : '/images/coin-icon-default.svg'
             }
             alt={displayData.assetDisplay}
-            w="1.5rem"
-            h="1.5rem"
+            w="1.25rem"
+            h="1.25rem"
           />
           <Tooltip
             label={
@@ -74,12 +63,8 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             placement="top-start"
           >
             <Text
-              textStyle="text-base-sans-regular"
               maxWidth="15rem"
               noOfLines={1}
-              color={
-                displayData.eventType === TokenEventType.WITHDRAW ? 'grayscale.100' : '#60B55E'
-              }
               data-testid={
                 displayData.transferType === TransferType.ERC721_TRANSFER
                   ? 'link-token-name'
@@ -91,15 +76,17 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             </Text>
           </Tooltip>
         </HStack>
-        <HStack w="33%">
-          <Spacer />
+        <HStack
+          w="40%"
+          justifyContent="flex-end"
+        >
           <DisplayAddress
             data-testid="link-transfer-address"
             address={displayData.transferAddress}
+            textAlign="end"
           />
         </HStack>
       </HStack>
-      {!displayData.isLast && <Divider color="chocolate.700" />}
     </Box>
   );
 }
@@ -108,8 +95,8 @@ function EmptyTransactions() {
   const { t } = useTranslation('treasury');
   return (
     <Text
-      textStyle="text-base-sans-regular"
-      color="grayscale.100"
+      textStyle="body-base-strong"
+      color="neutral-7"
       data-testid="text-empty-transactions"
       marginTop="1rem"
       align="center"
@@ -122,17 +109,18 @@ function EmptyTransactions() {
 function MoreTransactions({ address }: { address: string | null }) {
   const { t } = useTranslation('treasury');
   return (
-    <EtherscanLinkAddress address={address}>
-      <Text
-        textStyle="text-sm-sans-regular"
-        color="grayscale.100"
-        data-testid="link-more-transactions"
-        marginTop="1rem"
-        align="center"
+    <Flex
+      justifyContent="center"
+      mt="1rem"
+    >
+      <EtherscanLink
+        type="address"
+        value={address}
+        display="inline-flex"
       >
-        {t('textMoreTransactions')}
-      </Text>
-    </EtherscanLinkAddress>
+        {t('textMoreTransactions')} <Icon as={ArrowUpRight} />
+      </EtherscanLink>
+    </Flex>
   );
 }
 

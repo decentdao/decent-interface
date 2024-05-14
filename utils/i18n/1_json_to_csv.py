@@ -59,7 +59,7 @@ def main():
 	print('There ARE missing strings!' if missingStrings else 'NO missing strings! Party!')
 
 # gets the existing json translation files for the given language as a dictionary of dictionaries
-# e.g. {'common.json': {'accept': 'Acepto'}, 'daoCreate.json': {'buttonCreate': 'Crear un Fractal'}}
+# e.g. {'common.json': {'accept': 'Acepto'}, 'daoCreate.json': {'buttonCreate': 'Crear un Decent'}}
 def getJsonData(langCode):
 	if not os.path.exists(reactPath + langCode):
 		os.makedirs(reactPath + langCode)

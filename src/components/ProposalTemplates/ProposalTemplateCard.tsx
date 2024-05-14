@@ -1,5 +1,5 @@
-import { Avatar, Flex, Text } from '@chakra-ui/react';
-import { VEllipsis } from '@decent-org/fractal-ui';
+import { Avatar, Flex, Text, Icon } from '@chakra-ui/react';
+import { GearFine } from '@phosphor-icons/react';
 import { useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -104,14 +104,18 @@ export default function ProposalTemplateCard({
           w="50px"
           h="50px"
           name={title}
-          borderRadius="4px"
+          borderRadius={0}
           getInitials={(_title: string) => _title.slice(0, 2)}
+          textStyle="display-2xl"
+          color="white-0"
         />
         <OptionMenu
           trigger={
-            <VEllipsis
-              boxSize="1.5rem"
-              mt="0.25rem"
+            <Icon
+              as={GearFine}
+              color="lilac-0"
+              width="1.25rem"
+              height="1.25rem"
             />
           }
           titleKey="titleManageProposalTemplate"
@@ -120,10 +124,9 @@ export default function ProposalTemplateCard({
         />
       </Flex>
       <Text
-        textStyle="text-lg-mono-regular"
-        color="grayscale.100"
-        marginTop="2rem"
-        marginBottom="0.5rem"
+        textStyle="display-lg"
+        color="white-0"
+        my="0.5rem"
       >
         {title}
       </Text>

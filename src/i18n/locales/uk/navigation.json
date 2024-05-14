@@ -4,8 +4,5 @@
   "treasury": "Скарбниця",
   "faq": "FAQ",
   "documentation": "Документація",
-  "ariaLabelFractalBrand": "Перейти до Головної",
-  "ariaLabelFAQ": "Посилання на FAQ",
-  "ariaLabelDiscord": "Посилання на Discord",
-  "ariaLabelDocumentation": "Посилання на документацію"
+  "ariaLabelFractalBrand": "Перейти до Головної"
 }

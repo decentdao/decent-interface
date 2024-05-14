@@ -29,8 +29,6 @@ yarn-error.log*
 
 .gitconfig
 /test-results
-/playwright-report
-/playwright/.cache
 
 # translation script outputs
 *.csv

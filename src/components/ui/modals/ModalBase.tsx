@@ -1,16 +1,8 @@
-import {
-  Divider,
-  Flex,
-  HStack,
-  Modal,
-  ModalContent,
-  ModalOverlay,
-  Spacer,
-  Text,
-} from '@chakra-ui/react';
-import { Alert, CloseX } from '@decent-org/fractal-ui';
+import { Flex, HStack, Modal, ModalContent, ModalOverlay, Spacer, Text } from '@chakra-ui/react';
+import { X, Warning } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import Divider from '../utils/Divider';
 
 interface ModuleBaseProps {
   title: string;
@@ -33,35 +25,32 @@ export function ModalBase(props: ModuleBaseProps) {
     >
       <ModalOverlay backgroundColor={BACKGROUND_SEMI_TRANSPARENT} />
       <ModalContent
-        backgroundColor="black.900"
+        bg="neutral-2"
+        borderWidth="1px"
+        borderRadius="0.5rem"
+        borderColor="neutral-4"
         padding="1.5rem"
-        shadow="menu-gold"
       >
-        <Flex marginBottom="1rem">
+        <Flex
+          color="lilac-0"
+          marginBottom="1rem"
+        >
           <HStack>
-            {props.warn && (
-              <Alert
-                w="1.25rem"
-                h="1.25rem"
-              />
-            )}
+            {props.warn && <Warning size="20" />}
             <Text
-              color="grayscale.100"
-              textStyle="text-lg-mono-medium"
+              color="white-0"
+              textStyle="display-lg"
             >
               {props.title}
             </Text>
           </HStack>
           <Spacer />
-          <CloseX
+          <X
             cursor="pointer"
             onClick={props.onClose}
           />
         </Flex>
-        <Divider
-          color="chocolate.700"
-          marginBottom="1rem"
-        />
+        <Divider marginBottom="1rem" />
         {props.children}
       </ModalContent>
     </Modal>

@@ -18,7 +18,7 @@ export const isValidUrl = (urlString: string) => {
 export const couldBeENS = (ensAddress?: string): boolean => {
   if (!ensAddress) return false;
 
-  // everything up to the last index included, to support subdomains, e.g. blah.decent-dao.eth
+  // everything up to the last index included, to support subdomains, e.g. blah.decentdao.eth
   const name = ensAddress.substring(0, ensAddress.lastIndexOf('.')).trim();
   const tld = ensAddress.substring(ensAddress.lastIndexOf('.') + 1).trim();
 

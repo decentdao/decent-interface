@@ -1,5 +1,5 @@
-import { Box, Divider, Flex, Text, Button } from '@chakra-ui/react';
-import { ArrowDown } from '@decent-org/fractal-ui';
+import { Box, Flex, Button, Icon } from '@chakra-ui/react';
+import { Funnel, CaretDown } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useProposals from '../../hooks/DAO/proposal/useProposals';
@@ -108,14 +108,18 @@ export default function Proposals() {
   return (
     <>
       <Flex
-        gap={6}
+        gap={3}
         mb="1.5rem"
       >
         <OptionMenu
           trigger={
-            <Box>
-              {filterTitle} <ArrowDown boxSize="1.5rem" />
-            </Box>
+            <Flex
+              alignItems="center"
+              justifyContent="space-between"
+              gap="0.25rem"
+            >
+              <Icon as={Funnel} /> {filterTitle} <Icon as={CaretDown} />
+            </Flex>
           }
           options={options}
           namespace="proposal"
@@ -123,6 +127,10 @@ export default function Proposals() {
           buttonAs={Button}
           buttonProps={{
             variant: 'tertiary',
+            paddingLeft: '0.5rem',
+            paddingRight: '0.5rem',
+            paddingTop: '0.25rem',
+            paddingBottom: '0.25rem',
             disabled: !proposals,
           }}
           closeOnSelect={false}
@@ -130,32 +138,31 @@ export default function Proposals() {
           showOptionCount
         >
           <Box>
-            <Flex justifyContent="space-between">
+            <Flex
+              px="0.5rem"
+              justifyContent="space-between"
+              gap="1.5rem"
+            >
               <Button
-                variant="text"
-                paddingLeft={0}
-                paddingRight={0}
-                justifyContent="flex-start"
+                variant="tertiary"
+                size="sm"
+                mt="0.5rem"
                 onClick={() => setFilters(allOptions)}
               >
-                <Text color="grayscale.100">{t('selectAll', { ns: 'common' })}</Text>
+                {t('selectAll', { ns: 'common' })}
               </Button>
               <Button
-                variant="text"
-                paddingLeft={0}
-                paddingRight={0}
-                justifyContent="flex-end"
+                variant="tertiary"
+                size="sm"
+                mt="0.5rem"
                 onClick={() => setFilters([])}
               >
-                <Text color="grayscale.100">{t('clear', { ns: 'common' })}</Text>
+                {t('clear', { ns: 'common' })}
               </Button>
             </Flex>
-            <Divider
-              color="chocolate.700"
-              my={4}
-            />
           </Box>
         </OptionMenu>
+
         <Sort
           sortBy={sortBy}
           setSortBy={setSortBy}

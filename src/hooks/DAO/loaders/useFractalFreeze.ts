@@ -28,7 +28,7 @@ export const useFractalFreeze = ({
   parentSafeAddress,
 }: {
   loadOnMount?: boolean;
-  parentSafeAddress?: string | null;
+  parentSafeAddress: string | null;
 }) => {
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();
@@ -38,8 +38,8 @@ export const useFractalFreeze = ({
   const baseContracts = useSafeContracts();
   const { address: account } = useAccount();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(
-    undefined,
     parentSafeAddress,
+    undefined,
     loadOnMount,
   );
 
@@ -145,8 +145,8 @@ export const useFractalFreeze = ({
               ])) > 0n;
       } else if (freezeVotingType === FreezeVotingType.ERC721) {
         const { totalVotingTokenAddresses } = await getUserERC721VotingTokens(
-          undefined,
           parentSafeAddress,
+          undefined,
         );
         userHasVotes = totalVotingTokenAddresses.length > 0;
       }

@@ -1,21 +1,31 @@
-import { Menu, MenuButton } from '@chakra-ui/react';
-import { Fragment } from 'react';
-import { MenuButtonDisplay } from './MenuButtonDisplay';
-import { MenuItems } from './MenuItems';
+import { Button, Menu, MenuButton, Portal } from '@chakra-ui/react';
+import { RefObject } from 'react';
+import { AccountMenuButton } from './AccountMenuButton';
+import { WalletMenu } from './WalletMenu';
 
-export function AccountDisplay() {
+interface AccountDisplayProps {
+  containerRef: RefObject<HTMLDivElement | null>;
+}
+
+export function AccountDisplay({ containerRef }: AccountDisplayProps) {
   return (
-    <Menu>
-      <Fragment>
-        <MenuButton
-          data-testid="header-accountMenu"
-          pr="1rem"
-          _hover={{ color: 'gold.200' }}
-        >
-          <MenuButtonDisplay />
-        </MenuButton>
-        <MenuItems />
-      </Fragment>
+    // Portal here needed in order to
+    <Menu
+      placement="bottom-end"
+      offset={[0, 16]}
+    >
+      <Button
+        as={MenuButton}
+        variant="tertiary"
+        data-testid="header-accountMenu"
+        pr="1rem"
+      >
+        <AccountMenuButton />
+      </Button>
+
+      <Portal containerRef={containerRef}>
+        <WalletMenu containerRef={containerRef} />
+      </Portal>
     </Menu>
   );
 }

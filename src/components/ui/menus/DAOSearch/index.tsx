@@ -7,8 +7,9 @@ import {
   PopoverTrigger,
   useDisclosure,
   useOutsideClick,
+  Icon,
 } from '@chakra-ui/react';
-import { Search } from '@decent-org/fractal-ui';
+import { MagnifyingGlass } from '@phosphor-icons/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
@@ -17,6 +18,7 @@ import { SearchDisplay } from './SearchDisplay';
 export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { t } = useTranslation(['dashboard']);
   const [localInput, setLocalInput] = useState<string>();
+  const [hasFocus, setHasFocus] = useState(false);
   const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
   const { onClose } = useDisclosure(); // popover close function
   const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -41,7 +43,8 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
       ref={ref}
       width="full"
       maxW={{ base: 'full', md: '31.125rem' }}
-      height="4rem"
+      height="full"
+      position="relative"
     >
       <Popover
         matchWidth
@@ -53,31 +56,38 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             flexDirection="column"
             justifyContent="center"
           >
-            <InputLeftElement mt="3">
-              <Search
+            <InputLeftElement>
+              <Icon
+                as={MagnifyingGlass}
                 boxSize="1.5rem"
-                color="grayscale.300"
+                color={!!errorMessage ? 'red-0' : localInput || hasFocus ? 'white-0' : 'neutral-5'}
               />
             </InputLeftElement>
             <Input
               size="baseAddonLeft"
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => setLocalInput(e.target.value.trim())}
+              onFocus={() => setHasFocus(true)}
+              onBlur={() => setHasFocus(false)}
               value={localInput}
+              spellCheck="false"
+              isInvalid={!!errorMessage}
               data-testid="search-input"
             />
           </InputGroup>
         </PopoverTrigger>
         <Box
-          marginTop="0.5rem"
+          marginTop="1.25rem"
           padding="1rem 1rem"
-          border="none"
-          rounded="lg"
-          shadow="menu-gold"
-          bg="grayscale.black"
+          rounded="0.5rem"
+          bg="neutral-3"
+          boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
+          border="1px solid"
+          borderColor={!!errorMessage ? 'red-1' : 'neutral-3'}
+          position="absolute"
           hidden={!errorMessage && !address}
-          position="relative"
           zIndex="modal"
+          w="full"
         >
           <SearchDisplay
             loading={isLoading}

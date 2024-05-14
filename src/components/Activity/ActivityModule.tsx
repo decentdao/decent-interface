@@ -1,12 +1,20 @@
+import { Link } from '@chakra-ui/react';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalProposal } from '../../types';
 import { Badge } from '../ui/badges/Badge';
-import EtherscanLinkTransaction from '../ui/links/EtherscanLinkTransaction';
 import { ActivityCard } from './ActivityCard';
 import { ActivityDescriptionModule } from './ActivityDescriptionModule';
 
-export function ActivityModule({ activity }: { activity: FractalProposal }) {
+export function ActivityModule({ activity, ...rest }: { activity: FractalProposal }) {
+  const { etherscanBaseURL } = useNetworkConfig();
+
   return (
-    <EtherscanLinkTransaction txHash={activity.transactionHash}>
+    <Link
+      _hover={{ textDecorationn: 'none' }}
+      target="_blank"
+      rel="noreferrer"
+      href={`${etherscanBaseURL}/tx/${activity.transactionHash}`}
+    >
       <ActivityCard
         Badge={
           activity.state && (
@@ -16,8 +24,13 @@ export function ActivityModule({ activity }: { activity: FractalProposal }) {
             />
           )
         }
-        description={<ActivityDescriptionModule activity={activity} />}
+        description={
+          <ActivityDescriptionModule
+            activity={activity}
+            {...rest}
+          />
+        }
       />
-    </EtherscanLinkTransaction>
+    </Link>
   );
 }

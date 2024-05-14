@@ -7,6 +7,7 @@ import DAOController from './pages/DAOController';
 import HomePage from './pages/HomePage';
 import DaoCreatePage from './pages/create';
 import DaoDashboardPage from './pages/daos/[daoAddress]/DaoDashboardPage';
+import { SettingsPage } from './pages/daos/[daoAddress]/SettingsPage';
 import ModifyGovernancePage from './pages/daos/[daoAddress]/edit/governance';
 import HierarchyPage from './pages/daos/[daoAddress]/hierarchy';
 import SubDaoCreate from './pages/daos/[daoAddress]/new';
@@ -15,7 +16,6 @@ import CreateProposalTemplatePage from './pages/daos/[daoAddress]/proposal-templ
 import ProposalsPage from './pages/daos/[daoAddress]/proposals';
 import ProposalDetailsPage from './pages/daos/[daoAddress]/proposals/[proposalId]';
 import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
-import SettingsPage from './pages/daos/[daoAddress]/settings';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 
 export const router = (addressPrefix: string) =>

@@ -1,28 +1,21 @@
-import {
-  Box,
-  Button,
-  ComponentWithAs,
-  Divider,
-  Flex,
-  IconButton,
-  IconProps,
-  Spacer,
-  Text,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, IconButton, Spacer, Text } from '@chakra-ui/react';
+import { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { ReactNode, useEffect, useState } from 'react';
+import { CONTENT_MAXW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import AddressCopier from '../../links/AddressCopier';
+import Divider from '../../utils/Divider';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
-interface IPageHeader {
+interface PageHeaderProps {
   title?: string;
   address?: string;
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
   buttonVariant?: 'text' | 'secondary';
-  ButtonIcon?: ComponentWithAs<'svg', IconProps>;
+  ButtonIcon?: PhosphorIcon;
   buttonText?: string;
   buttonClick?: () => void;
   buttonTestId?: string;
@@ -45,7 +38,7 @@ function PageHeader({
   buttonTestId,
   isButtonDisabled,
   children,
-}: IPageHeader) {
+}: PageHeaderProps) {
   const {
     node: { daoAddress, daoName },
   } = useFractal();
@@ -68,7 +61,8 @@ function PageHeader({
   return (
     <Box
       marginTop="3rem"
-      marginBottom="2rem"
+      marginBottom="1.5rem"
+      maxW={CONTENT_MAXW}
     >
       <Flex
         alignItems="center"
@@ -90,12 +84,21 @@ function PageHeader({
         {ButtonIcon && (
           <IconButton
             aria-label="navigate"
-            icon={<ButtonIcon boxSize="1.5rem" />}
+            icon={
+              <Icon
+                as={ButtonIcon}
+                boxSize="1.25rem"
+              />
+            }
             onClick={buttonClick}
             minWidth="0"
-            px="1rem"
+            padding={1}
+            border="1px solid"
+            borderColor="lilac-0"
+            color="lilac-0"
+            borderRadius={4}
             data-testid={buttonTestId}
-            size="base"
+            size="small"
             variant={buttonVariant}
             isDisabled={isButtonDisabled}
           >
@@ -105,14 +108,14 @@ function PageHeader({
         {children}
       </Flex>
       <Divider
-        marginTop="1rem"
-        borderColor="chocolate.400"
+        variant="darker"
+        mt="1rem"
       />
       {title && (
         <Text
           marginTop="2rem"
-          textStyle="text-2xl-mono-regular"
-          color="grayscale.100"
+          textStyle="display-2xl"
+          color="white-0"
         >
           {title}
         </Text>
@@ -121,6 +124,7 @@ function PageHeader({
         <AddressCopier
           marginTop="0.5rem"
           address={address}
+          display="inline-flex"
         />
       )}
     </Box>

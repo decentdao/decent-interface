@@ -1,5 +1,6 @@
-import { Box, Divider, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
+import { Box, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
+import { CaretDown } from '@phosphor-icons/react';
 import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -14,6 +15,7 @@ import useSendAssets from '../../pages/DAOTreasury/hooks/useSendAssets';
 import { BigIntInput } from '../forms/BigIntInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { EthAddressInput } from '../forms/EthAddressInput';
+import Divider from '../utils/Divider';
 
 // @todo add Yup and Formik to this modal
 export function SendAssetsModal({ close }: { close: () => void }) {
@@ -80,14 +82,13 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         >
           <Text marginBottom="0.5rem">{t('selectLabel')}</Text>
           <Select
-            variant="outline"
-            bg="input.background"
-            borderColor="black.200"
-            borderWidth="1px"
-            borderRadius="4px"
-            color="white"
+            bgColor="neutral-1"
+            borderColor="neutral-3"
+            rounded="sm"
+            cursor="pointer"
+            iconSize="1.5rem"
+            icon={<CaretDown />}
             onChange={e => handleCoinChange(e.target.value)}
-            sx={{ '> option, > optgroup': { bg: 'input.background' } }} //TODO: This should be added to baseStyle of the theme?
           >
             {fungibleAssetsWithBalance.map((asset, index) => (
               <option
@@ -112,33 +113,42 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             decimalPlaces={selectedAsset?.token?.decimals}
             placeholder="0"
             maxValue={BigInt(selectedAsset.balance)}
+            isInvalid={overDraft}
+            errorBorderColor="red-0"
           />
         </Box>
       </Flex>
       <HStack
         justify="space-between"
-        textStyle="text-sm-sans-regular"
-        color="grayscale.500"
+        textStyle="neutral-7"
+        color="white-0"
         marginTop="0.75rem"
       >
-        <Text color={overDraft ? 'alert-red.normal' : 'grayscale.500'}>
+        <Text
+          color={overDraft ? 'red-0' : 'neutral-7'}
+          textStyle="helper-text-base"
+          as="span"
+        >
           {t('selectSublabel', {
             balance: formatCoinFromAsset(selectedAsset, false),
           })}
         </Text>
-        {hasFiatBalance && <Text>{convertedTotal}</Text>}
+        {hasFiatBalance && (
+          <Text
+            textStyle="helper-text-base"
+            as="span"
+          >
+            {convertedTotal}
+          </Text>
+        )}
+        <Text
+          textStyle="helper-text-base"
+          as="span"
+        >
+          {formatUSD(selectedAsset.fiatBalance || 0)}
+        </Text>
       </HStack>
-      <Text
-        textStyle="text-sm-sans-regular"
-        color="grayscale.500"
-      >
-        {formatUSD(selectedAsset.fiatBalance)}
-      </Text>
-      <Divider
-        color="chocolate.700"
-        marginTop="0.75rem"
-        marginBottom="0.75rem"
-      />
+      <Divider my="1.5rem" />
       <LabelWrapper
         label={t('destinationLabel')}
         subLabel={t('destinationSublabel')}
@@ -151,11 +161,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           }}
         />
       </LabelWrapper>
-      <Divider
-        color="chocolate.700"
-        marginTop="0.75rem"
-        marginBottom="0.75rem"
-      />
+      <Divider my="1.5rem" />
       <CustomNonceInput
         nonce={nonceInput}
         onChange={nonce => setNonceInput(nonce ? nonce : undefined)}

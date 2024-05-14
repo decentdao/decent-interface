@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,8 @@ import { AzoriusGovernance, DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 import { couldBeENS } from '../../../utils/url';
 import { AddressInput } from '../forms/EthAddressInput';
-import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
+import EtherscanLink from '../links/EtherscanLink';
+import Divider from '../utils/Divider';
 
 export function DelegateModal({ close }: { close: Function }) {
   const { t } = useTranslation(['modals', 'common']);
@@ -92,7 +93,7 @@ export function DelegateModal({ close }: { close: Function }) {
     <Box>
       <SimpleGrid
         columns={2}
-        color="chocolate.200"
+        color="neutral-7"
       >
         <Text
           align="start"
@@ -102,7 +103,7 @@ export function DelegateModal({ close }: { close: Function }) {
         </Text>
         <Text
           align="end"
-          color="grayscale.100"
+          color="neutral-7"
         >
           {formatCoin(
             azoriusGovernance.votesToken.balance || 0n,
@@ -119,14 +120,17 @@ export function DelegateModal({ close }: { close: Function }) {
         </Text>
         <Text
           align="end"
-          color="grayscale.100"
+          color="neutral-7"
         >
           {azoriusGovernance.votesToken.delegatee === zeroAddress ? (
             '--'
           ) : (
-            <EtherscanLinkAddress address={azoriusGovernance.votesToken.delegatee}>
+            <EtherscanLink
+              type="address"
+              value={azoriusGovernance.votesToken.delegatee}
+            >
               {delegateeDisplayName.displayName}
-            </EtherscanLinkAddress>
+            </EtherscanLink>
           )}
         </Text>
       </SimpleGrid>
@@ -134,7 +138,7 @@ export function DelegateModal({ close }: { close: Function }) {
         decentGovernance.lockedVotesToken?.balance !== undefined && (
           <SimpleGrid
             columns={2}
-            color="chocolate.200"
+            color="neutral-6"
           >
             <Text
               align="start"
@@ -144,7 +148,7 @@ export function DelegateModal({ close }: { close: Function }) {
             </Text>
             <Text
               align="end"
-              color="grayscale.100"
+              color="neutral-7"
             >
               {formatCoin(
                 decentGovernance.lockedVotesToken.balance || 0n,
@@ -161,22 +165,22 @@ export function DelegateModal({ close }: { close: Function }) {
             </Text>
             <Text
               align="end"
-              color="grayscale.100"
+              color="neutral-7"
             >
               {decentGovernance.lockedVotesToken.delegatee === zeroAddress ? (
                 '--'
               ) : (
-                <EtherscanLinkAddress address={decentGovernance.lockedVotesToken.delegatee}>
+                <EtherscanLink
+                  type="address"
+                  value={decentGovernance.lockedVotesToken.delegatee}
+                >
                   {lockedDelegateeDisplayName.displayName}
-                </EtherscanLinkAddress>
+                </EtherscanLink>
               )}
             </Text>
           </SimpleGrid>
         )}
-      <Divider
-        color="chocolate.700"
-        marginBottom="1rem"
-      />
+      <Divider marginBottom="1rem" />
       <Formik
         initialValues={{
           address: '',
@@ -187,13 +191,12 @@ export function DelegateModal({ close }: { close: Function }) {
         {({ handleSubmit, setFieldValue, values, errors }) => (
           <form onSubmit={handleSubmit}>
             <Flex alignItems="center">
-              <Text color="grayscale.100">{t('labelDelegateInput')}</Text>
+              <Text color="neutral-7">{t('labelDelegateInput')}</Text>
               <Spacer />
               <Button
                 pr={0}
                 variant="text"
-                textStyle="text-sm-sans-regular"
-                color="gold.500-active"
+                color="lilac--3"
                 onClick={() => (user.address ? setFieldValue('address', user.address) : null)}
               >
                 {t('linkSelfDelegate')}

@@ -2,7 +2,6 @@ import { Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Assets } from '../../../../components/pages/DAOTreasury/components/Assets';
 import { Transactions } from '../../../../components/pages/DAOTreasury/components/Transactions';
-import { useTreasuryTotalBN } from '../../../../components/pages/DAOTreasury/hooks/useTreasuryTotalBN';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
@@ -13,11 +12,16 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 export default function Treasury() {
   const {
     node: { daoName, daoAddress },
+    treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation('treasury');
-  const treasuryTotal = useTreasuryTotalBN();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const showButton = canUserCreateProposal && treasuryTotal !== 0n;
+  const openSendAsset = useFractalModal(ModalType.SEND_ASSETS);
+
+  const hasAnyBalanceOfAnyFungibleTokens =
+    assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
+
+  const showSendButton = canUserCreateProposal && hasAnyBalanceOfAnyFungibleTokens;
 
   return (
     <div>
@@ -34,8 +38,8 @@ export default function Treasury() {
             path: '',
           },
         ]}
-        buttonText={showButton ? t('buttonSendAssets') : undefined}
-        buttonClick={useFractalModal(ModalType.SEND_ASSETS)}
+        buttonText={showSendButton ? t('buttonSendAssets') : undefined}
+        buttonClick={showSendButton ? openSendAsset : undefined}
         buttonTestId="link-send-assets"
       />
       <Flex
@@ -45,14 +49,15 @@ export default function Treasury() {
         flexWrap="wrap"
       >
         <TitledInfoBox
-          minWidth={{ sm: '100%', xl: '55%' }}
+          width={{ sm: '100%', xl: '55%' }}
           title={t('titleTransactions')}
           titleTestId="title-transactions"
+          bg="neutral-2"
         >
           <Transactions />
         </TitledInfoBox>
         <TitledInfoBox
-          minWidth={{ sm: '100%', xl: '35%' }}
+          width={{ sm: '100%', xl: '35%' }}
           title={t('titleAssets')}
           titleTestId="title-assets"
         >

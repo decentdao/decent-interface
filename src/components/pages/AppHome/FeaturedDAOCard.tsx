@@ -1,70 +1,77 @@
-import { Text, BoxProps, Image, HStack, Spacer, Flex, Box, Link } from '@chakra-ui/react';
+import { Text, VStack, Flex, Image } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
+import { Badge } from '../../ui/badges/Badge';
 import { StyledBox } from '../../ui/containers/StyledBox';
-interface DAOFeatureProps extends BoxProps {
+
+export interface FeaturedDAO {
   iconSrc: string;
-  title: string;
-  desc: string;
+  iconBg?: string;
+  iconRounded?: boolean;
+  titleKey: string;
   network: string;
+  networkName: string;
+  votingStrategy: string;
   address: string;
 }
 
+interface FeaturedDAOCardProps extends FeaturedDAO {}
+
 export default function FeaturedDAOCard({
   iconSrc,
-  title,
-  desc,
+  iconBg = 'lilac-0',
+  iconRounded = false,
+  titleKey,
   network,
   address,
-  ...rest
-}: DAOFeatureProps) {
+  networkName,
+  votingStrategy,
+}: FeaturedDAOCardProps) {
   const { t } = useTranslation('home');
   return (
-    <Box {...rest}>
-      <StyledBox
-        height="full"
-        display="flex"
-        flexDirection="column"
-        justifyContent="space-between"
+    <StyledBox
+      width={{ base: '100%', md: 'calc(50% - 0.75rem)', xl: 'calc(25% - 0.75rem)' }}
+      to={DAO_ROUTES.dao.relative(network, address)}
+    >
+      <VStack
+        justifyContent="center"
+        gap="0.5rem"
       >
-        <Box>
-          <HStack paddingBottom="1rem">
-            <Image
-              width="1.5rem"
-              height="1.5rem"
-              src={iconSrc}
-              alt={title}
-            />
-            <Text
-              color="grayscale.100"
-              textStyle="text-lg-mono-bold"
-              paddingStart="1.25rem"
-            >
-              {title}
-            </Text>
-          </HStack>
-          <Text
-            marginBottom="0.5rem"
-            color="grayscale.500"
-          >
-            {desc}
-          </Text>
-        </Box>
-        <Flex>
-          <Spacer />
-          <Link
-            as={RouterLink}
-            color="gold.500"
-            _hover={{ color: 'gold.500-hover' }}
-            alignSelf="end"
-            textStyle="text-lg-mono-bold"
-            to={DAO_ROUTES.dao.relative(network, address)}
-          >
-            {t('featureLink')}
-          </Link>
+        <Flex
+          width="80px"
+          height="80px"
+          bg={iconBg}
+          justifyContent="center"
+          alignItems="center"
+          borderRadius="50%"
+        >
+          <Image
+            src={iconSrc}
+            alt={t(titleKey)}
+            width="auto"
+            height="auto"
+            borderRadius={iconRounded ? '50%' : '0'}
+          />
         </Flex>
-      </StyledBox>
-    </Box>
+        <Text textStyle="display-xl">{t(titleKey)}</Text>
+        <Flex
+          gap="0.5rem"
+          mt="1rem"
+        >
+          <Badge
+            labelKey="ownerApproved"
+            size="sm"
+          >
+            {networkName}
+          </Badge>
+          <Badge
+            labelKey="ownerApproved"
+            size="sm"
+          >
+            {votingStrategy}
+          </Badge>
+        </Flex>
+      </VStack>
+    </StyledBox>
   );
 }

@@ -86,11 +86,11 @@ export default function ABISelector({ target, onChange }: IABISelector) {
       <Select
         placeholder={t('select')}
         variant="outline"
-        bg="input.background"
-        borderColor="black.200"
+        bg="neutral-1"
+        borderColor="neutral-3"
         borderWidth="1px"
         borderRadius="4px"
-        color="white"
+        color="white-0"
         onChange={e => {
           const selectedFunction = abiFunctions.find(
             (abiFunction: ABIElement) => abiFunction.name === e.target.value,
@@ -98,13 +98,18 @@ export default function ABISelector({ target, onChange }: IABISelector) {
           if (!selectedFunction) throw new Error('Issue finding selected function');
           onChange(selectedFunction);
         }}
-        sx={{ '> option, > optgroup': { bg: 'input.background' } }}
+        sx={{ '> option, > optgroup': { bg: 'neutral-1' } }}
       >
         {abiFunctions.map((abiFunction: ABIElement) => (
           <option key={abiFunction.name}>{abiFunction.name}</option>
         ))}
       </Select>
-      <Text color="grayscale.500">{t('abiSelectorDescription')}</Text>
+      <Text
+        color="neutral-7"
+        mt="0.5rem"
+      >
+        {t('abiSelectorDescription')}
+      </Text>
     </LabelComponent>
   );
 }

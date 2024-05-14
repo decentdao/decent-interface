@@ -173,7 +173,7 @@ export function WrapToken({ close }: { close: () => void }) {
               >
                 <Input
                   value={azoriusGovernance.votesToken?.underlyingTokenData?.name}
-                  disabled={true}
+                  readOnly
                 />
               </LabelWrapper>
 

@@ -1,15 +1,16 @@
-import { Text, Box, Button, Divider, Flex, Tooltip } from '@chakra-ui/react';
+import { Text, Box, Button, Flex, Tooltip } from '@chakra-ui/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
+import { TOOLTIP_MAXW } from '../../../constants/common';
 import { ExtendedSnapshotProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
 import ExternalLink from '../../ui/links/ExternalLink';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
 import InfoRow from '../../ui/proposal/InfoRow';
+import Divider from '../../ui/utils/Divider';
 import { QuorumProgressBar } from '../../ui/utils/ProgressBar';
 import useSnapshotUserVotingWeight from './hooks/useSnapshotUserVotingWeight';
 import useTotalVotes from './hooks/useTotalVotes';
@@ -54,9 +55,9 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
       height="auto"
       justifyContent="flex-end"
       alignItems="flex-start"
-      variant="link"
-      textStyle="text-base-sans-regular"
-      color="gold.500"
+      variant="text"
+      textStyle="body-base"
+      color="celery-0"
       onClick={toggleShowVotingPower}
     >
       {showVotingPower ? votingWeight : t('show')}
@@ -64,10 +65,18 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
   );
 
   return (
-    <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-      <Text textStyle="text-lg-mono-medium">{t('proposalSummaryTitle')}</Text>
+    <ContentBox
+      containerBoxProps={{
+        bg: 'neutral-2',
+        border: '1px solid',
+        borderColor: 'neutral-3',
+        borderRadius: '0.5rem',
+        my: 0,
+      }}
+    >
+      <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
-        <Divider color="chocolate.700" />
+        <Divider variant="darker" />
         <InfoRow
           property={t('votingSystem')}
           value={t(getVotingSystemTitle())}
@@ -77,8 +86,8 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           justifyContent="space-between"
         >
           <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
+            textStyle="body-base"
+            color="neutral-7"
           >
             {t('ipfs')}
           </Text>
@@ -102,20 +111,26 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           justifyContent="space-between"
         >
           <Text
-            textStyle="text-base-sans-regular"
-            color="chocolate.200"
+            textStyle="body-base"
+            color="neutral-7"
           >
             {t('votingPower')}
           </Text>
           {showVotingPower ? (
-            <Tooltip label={t('votingPowerTooltip')}>{ShowVotingPowerButton}</Tooltip>
+            <Tooltip
+              label={t('votingPowerTooltip')}
+              placement="left"
+              maxW={TOOLTIP_MAXW}
+            >
+              {ShowVotingPowerButton}
+            </Tooltip>
           ) : (
             ShowVotingPowerButton
           )}
         </Flex>
         <Divider
-          color="chocolate.700"
           marginTop={4}
+          variant="darker"
         />
         {!!proposal.quorum && (
           <Box marginTop={4}>

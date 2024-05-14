@@ -1,10 +1,11 @@
-import { Flex, FlexProps, Text } from '@chakra-ui/react';
-import { Copy } from '@decent-org/fractal-ui';
+import { Text, Icon, LinkProps } from '@chakra-ui/react';
+import { CopySimple } from '@phosphor-icons/react';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import EtherscanLinkAddress from './EtherscanLinkAddress';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import ExternalLink from './ExternalLink';
 
-interface Props extends FlexProps {
+interface AddressCopierProps extends LinkProps {
   address: string;
 }
 
@@ -12,31 +13,31 @@ interface Props extends FlexProps {
  * A component that displays a truncated address, along with the "copy to clipboard"
  * icon to the right of it.
  */
-export default function AddressCopier({ address, ...rest }: Props) {
+export default function AddressCopier({ address, ...rest }: AddressCopierProps) {
+  const { etherscanBaseURL } = useNetworkConfig();
   const { accountSubstring } = useDisplayName(address);
   const copyToClipboard = useCopyText();
 
   return (
-    <Flex
-      alignItems="center"
-      onClick={() => copyToClipboard(address)}
-      gap="0.5rem"
-      cursor="pointer"
-      w="fit-content"
-      color="grayscale.100"
+    <ExternalLink
+      href={`${etherscanBaseURL}/address/${address}`}
+      onClick={e => {
+        e.preventDefault();
+        copyToClipboard(address);
+      }}
+      width="fit-content"
       {...rest}
     >
-      <EtherscanLinkAddress
-        address={address}
-        color="grayscale.100"
+      <Text
+        alignItems="center"
+        display="flex"
       >
-        <Text textStyle="text-base-mono-regular">{accountSubstring}</Text>
-      </EtherscanLinkAddress>
-      <Copy
-        _hover={{ color: 'gold.500-hover' }}
-        boxSize="1.5rem"
-        fill="currentColor"
-      />
-    </Flex>
+        {accountSubstring}
+        <Icon
+          ml="0.5rem"
+          as={CopySimple}
+        />
+      </Text>
+    </ExternalLink>
   );
 }

@@ -1,5 +1,6 @@
-import { VEllipsis } from '@decent-org/fractal-ui';
+import { Button } from '@chakra-ui/react';
 import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
+import { GearFine } from '@phosphor-icons/react';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress } from 'viem';
@@ -30,15 +31,14 @@ import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
-  parentAddress?: Address | null;
-  fractalNode?: FractalNode;
-  freezeGuard?: FreezeGuard;
-  guardContracts?: FractalGuardContracts;
-  governanceType?: GovernanceType;
+  parentAddress: Address | null;
+  fractalNode: FractalNode;
+  freezeGuard: FreezeGuard;
+  guardContracts: FractalGuardContracts;
 }
 
 /**
- * The dropdown (vertical ellipses) for managing a DAO.
+ * The dropdown for managing a DAO.
  *
  * It is important to note that you cannot rely on the useFractal()
  * hook to supply information to this menu, as it is used within the
@@ -60,10 +60,10 @@ export function ManageDAOMenu({
   const baseContracts = useSafeContracts();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = fractalNode?.daoAddress;
+  const safeAddress = fractalNode.daoAddress;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, safeAddress, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, undefined, false);
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeInfo: fractalNode,
@@ -76,9 +76,9 @@ export function ManageDAOMenu({
         // are the same - we can simply grab governance type from global scope and avoid double-fetching
         setGovernanceType(type);
       } else {
-        if (fractalNode?.fractalModules && baseContracts) {
+        if (baseContracts) {
           let result = GovernanceType.MULTISIG;
-          const azoriusModule = getAzoriusModuleFromModules(fractalNode?.fractalModules);
+          const azoriusModule = getAzoriusModuleFromModules(fractalNode.fractalModules);
           const { fractalAzoriusMasterCopyContract } = baseContracts;
           if (!!azoriusModule) {
             const azoriusContract = {
@@ -140,7 +140,7 @@ export function ManageDAOMenu({
               freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting
             ).castFreezeVote();
           } else if (freezeVotingType === FreezeVotingType.ERC721) {
-            getUserERC721VotingTokens(undefined, parentAddress).then(tokensInfo => {
+            getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
               const freezeERC721VotingContract =
                 baseContracts!.freezeERC721VotingMasterCopyContract.asSigner.attach(
                   guardContracts!.freezeVotingContractAddress!,
@@ -183,7 +183,6 @@ export function ManageDAOMenu({
     };
 
     if (
-      freezeGuard &&
       freezeGuard.freezeProposalCreatedTime &&
       freezeGuard.freezeProposalPeriod &&
       freezeGuard.freezePeriod &&
@@ -205,7 +204,6 @@ export function ManageDAOMenu({
         return [createSubDAOOption, freezeOption, settingsOption];
       }
     } else if (
-      freezeGuard &&
       freezeGuard.freezeProposalCreatedTime &&
       freezeGuard.freezePeriod &&
       isWithinFreezePeriod(
@@ -244,15 +242,17 @@ export function ManageDAOMenu({
 
   return (
     <OptionMenu
-      trigger={
-        <VEllipsis
-          boxSize="1.5rem"
-          mt="0.25rem"
-        />
-      }
+      trigger={<GearFine size="1.25rem" />}
       titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
       options={options}
       namespace="menu"
+      buttonAs={Button}
+      buttonProps={{
+        variant: 'tertiary',
+        borderRadius: '0.25rem',
+        p: '0.5rem',
+        color: 'lilac-0',
+      }}
     />
   );
 }
