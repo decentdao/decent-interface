@@ -53,7 +53,7 @@ function HeaderLogo() {
                 aria-hidden
                 h="2.5rem"
                 w="2.125rem"
-                mx="1.75rem"
+                ml="1.5rem"
               />
             }
           />
@@ -140,6 +140,7 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       justifyContent="space-between"
       alignItems="center"
       pr="1.5rem"
+      maxW="100vw"
     >
       <HeaderLogo />
       <Show above="md">

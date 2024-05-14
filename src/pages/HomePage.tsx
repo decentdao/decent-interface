@@ -5,6 +5,7 @@ import { mainnet, sepolia } from 'wagmi/chains';
 import CTABox from '../components/pages/AppHome/CTABox';
 import FeaturedDAOCard, { FeaturedDAO } from '../components/pages/AppHome/FeaturedDAOCard';
 import { CreateDAOIllustration, DocsIllustration } from '../components/ui/proposal/Icons';
+import { CONTENT_MAXW } from '../constants/common';
 import { BASE_ROUTES } from '../constants/routes';
 import { URL_DOCS } from '../constants/url';
 import { useFractal } from '../providers/App/AppProvider';
@@ -79,6 +80,7 @@ export default function HomePage() {
   return (
     <Flex flexWrap="wrap">
       <VStack
+        maxW={CONTENT_MAXW}
         flex="1"
         alignItems="start"
         pt="3rem"

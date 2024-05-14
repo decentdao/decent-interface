@@ -1,4 +1,4 @@
-import { Button, Flex, HStack, Radio, RadioGroup, Show, Text } from '@chakra-ui/react';
+import { Button, Flex, HStack, Radio, RadioGroup, Show, Text, Hide } from '@chakra-ui/react';
 import { PlusCircle, MinusCircle } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -34,10 +34,18 @@ function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
           }}
         />
       )}
-      <DisplayAddress
-        address={signer}
-        truncate={false}
-      />
+      <Show above="md">
+        <DisplayAddress
+          address={signer}
+          truncate={false}
+        />
+      </Show>
+      <Hide above="md">
+        <DisplayAddress
+          address={signer}
+          truncate
+        />
+      </Hide>
     </HStack>
   );
 }

@@ -22,11 +22,11 @@ export function ERC721TokensContainer() {
       {erc721Tokens ? (
         <Flex flexWrap="wrap">
           <Grid
-            templateColumns="repeat(5, 1fr)"
+            templateColumns={{ base: 'repeat(1, 1fr)', lg: 'repeat(5, 1fr)' }}
             width="100%"
           >
             {/* HEADER TITLES */}
-            <GridItem colSpan={2}>
+            <GridItem colSpan={{ base: 1, lg: 2 }}>
               <Text
                 textStyle="label-small"
                 color="neutral-7"

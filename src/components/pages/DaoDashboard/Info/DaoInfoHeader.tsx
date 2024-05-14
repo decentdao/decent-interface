@@ -28,6 +28,7 @@ export function DaoInfoHeader() {
         flexWrap="wrap"
         justifyContent="space-between"
         mb="2rem"
+        gap={{ base: '1rem', lg: 0 }}
       >
         <Box
           width={{ base: '100%', md: '100%', lg: '33%', xl: '40%' }}

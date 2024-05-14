@@ -1,4 +1,5 @@
 import { GridItem } from '@chakra-ui/react';
+import { CONTENT_MAXW } from '../../../constants/common';
 import { AzoriusProposal } from '../../../types';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { useProposalCountdown } from '../../ui/proposal/useProposalCountdown';
@@ -14,11 +15,12 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
       <GridItem
         colSpan={2}
         gap="1.5rem"
+        maxW={CONTENT_MAXW}
       >
         <ProposalInfo proposal={proposal} />
         <ProposalVotes proposal={proposal} />
       </GridItem>
-      <GridItem>
+      <GridItem maxW={CONTENT_MAXW}>
         <ProposalSummary proposal={proposal} />
       </GridItem>
     </ProposalDetailsGrid>

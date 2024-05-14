@@ -38,6 +38,8 @@ export default function Layout() {
           backdropFilter="blur(12px)"
           position="fixed"
           w="full"
+          maxW="100vw"
+          zIndex="1"
         >
           <Header headerContainerRef={headerContainerRef} />
         </Box>
