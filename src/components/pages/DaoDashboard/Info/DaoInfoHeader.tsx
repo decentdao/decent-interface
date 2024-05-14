@@ -1,8 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOMetadata from '../../../../hooks/DAO/useDAOMetadata';
-import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DAOInfoCard } from '../../../ui/cards/DAOInfoCard';
 import { InfoBox } from '../../../ui/containers/InfoBox';
 import ExternalLink from '../../../ui/links/ExternalLink';
@@ -12,9 +9,6 @@ import { InfoTreasury } from './InfoTreasury';
 import { ParentLink } from './ParentLink';
 
 export function DaoInfoHeader() {
-  const { node, guardContracts, guard } = useFractal();
-  const { daoAddress } = node;
-  const { addressPrefix } = useNetworkConfig();
   const daoMetadata = useDAOMetadata();
 
   // using this gap method instead of 'gap' to make width percentages more precise, since they
@@ -32,6 +26,7 @@ export function DaoInfoHeader() {
         flexWrap="wrap"
         justifyContent="space-between"
         mb="2rem"
+        gap={{ base: '1rem', lg: 0 }}
       >
         <Box
           width={{ base: '100%', md: '100%', lg: '33%', xl: '40%' }}
@@ -39,14 +34,7 @@ export function DaoInfoHeader() {
           pb={{ sm: PAD, lg: NONE }}
         >
           <InfoBox>
-            {/* TODO: The call to `useFractal` can probably be now safely moved into `DAOInfoCard`, so this prop passing can be trimmed out */}
-            <DAOInfoCard
-              parentAddress={node.nodeHierarchy.parentAddress || undefined}
-              node={node}
-              childCount={node.nodeHierarchy.childNodes.length}
-              freezeGuard={guard}
-              guardContracts={guardContracts}
-            />
+            <DAOInfoCard />
           </InfoBox>
         </Box>
         {daoMetadata ? (
@@ -86,7 +74,6 @@ export function DaoInfoHeader() {
                   position="relative"
                   minWidth="auto"
                   width="50%"
-                  p="1.5rem"
                   key={index}
                 >
                   {section.background && (
@@ -139,7 +126,7 @@ export function DaoInfoHeader() {
               pb={{ sm: PAD, md: NONE }}
               pt={{ sm: PAD, lg: NONE }}
             >
-              <InfoBox to={DAO_ROUTES.proposals.relative(addressPrefix, daoAddress || '')}>
+              <InfoBox>
                 <InfoProposals />
               </InfoBox>
             </Box>
@@ -149,7 +136,7 @@ export function DaoInfoHeader() {
               ps={{ base: NONE, md: PAD }}
               pt={{ sm: PAD, lg: NONE }}
             >
-              <InfoBox to={DAO_ROUTES.treasury.relative(addressPrefix, daoAddress || '')}>
+              <InfoBox>
                 <InfoTreasury />
               </InfoBox>
             </Box>

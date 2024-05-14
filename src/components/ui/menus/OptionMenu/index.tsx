@@ -1,5 +1,5 @@
-import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip } from '@chakra-ui/react';
-import { MouseEvent, ReactNode } from 'react';
+import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip, Portal } from '@chakra-ui/react';
+import { MouseEvent, ReactNode, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { OptionsList } from './OptionsList';
@@ -13,6 +13,7 @@ interface OptionMenuProps extends Omit<MenuProps, 'children'>, IOptionsList {
   buttonProps?: Record<string, string | boolean | number | Record<string, any>>;
   children?: ReactNode;
   menuListMr?: string;
+  containerRef?: RefObject<HTMLDivElement | null>;
 }
 
 export function OptionMenu({
@@ -28,9 +29,32 @@ export function OptionMenu({
   children,
   closeOnSelect = true,
   menuListMr,
+  containerRef,
   ...rest
 }: OptionMenuProps) {
   const { t } = useTranslation(namespace);
+  const menuList = (
+    <MenuList
+      borderWidth="1px"
+      borderColor="neutral-3"
+      borderRadius="0.75rem"
+      bg={NEUTRAL_2_82_TRANSPARENT}
+      backdropFilter="auto"
+      backdropBlur="10px"
+      mr={menuListMr || ['auto', '1rem']}
+      zIndex={1000}
+    >
+      {children}
+      <OptionsList
+        options={options}
+        showOptionSelected={showOptionSelected}
+        closeOnSelect={closeOnSelect}
+        showOptionCount={showOptionCount}
+        namespace={namespace}
+        titleKey={titleKey}
+      />
+    </MenuList>
+  );
   return (
     <Menu
       isLazy
@@ -53,26 +77,11 @@ export function OptionMenu({
         </MenuButton>
       </Tooltip>
 
-      <MenuList
-        borderWidth="1px"
-        borderColor="neutral-3"
-        borderRadius="0.75rem"
-        bg={NEUTRAL_2_82_TRANSPARENT}
-        backdropFilter="auto"
-        backdropBlur="10px"
-        mr={menuListMr || ['auto', '1rem']}
-        zIndex={1000}
-      >
-        {children}
-        <OptionsList
-          options={options}
-          showOptionSelected={showOptionSelected}
-          closeOnSelect={closeOnSelect}
-          showOptionCount={showOptionCount}
-          namespace={namespace}
-          titleKey={titleKey}
-        />
-      </MenuList>
+      {containerRef !== undefined ? (
+        <Portal containerRef={containerRef}>{menuList}</Portal>
+      ) : (
+        menuList
+      )}
     </Menu>
   );
 }

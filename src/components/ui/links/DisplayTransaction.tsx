@@ -1,21 +1,22 @@
-import { Text, Icon } from '@chakra-ui/react';
+import { Flex, Text, Icon } from '@chakra-ui/react';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import EtherscanLinkTransaction from './EtherscanLinkTransaction';
+import EtherscanLink from './EtherscanLink';
 
 export default function DisplayTransaction({ txHash }: { txHash: string }) {
   const displayName = createAccountSubstring(txHash);
   return (
-    <EtherscanLinkTransaction
-      txHash={txHash}
-      alignItems="center"
-      display="flex"
+    <EtherscanLink
+      type="tx"
+      value={txHash}
     >
-      <Text as="span">{displayName}</Text>
-      <Icon
-        as={ArrowUpRight}
-        ml="0.5rem"
-      />
-    </EtherscanLinkTransaction>
+      <Flex alignItems="center">
+        <Text as="span">{displayName}</Text>
+        <Icon
+          as={ArrowUpRight}
+          ml="0.5rem"
+        />
+      </Flex>
+    </EtherscanLink>
   );
 }

@@ -15,6 +15,7 @@ export default function Breadcrumbs({ links }: BreadcrumbsProps) {
       alignItems="center"
       color="neutral-7"
       w={{ base: 'min-content', sm: 'initial' }}
+      listProps={{ flexWrap: 'wrap' }}
     >
       {links.map(({ terminus: title, path }, i) => {
         const isCurrentPage = i === links.length - 1;

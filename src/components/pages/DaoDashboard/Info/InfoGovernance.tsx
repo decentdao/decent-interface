@@ -99,9 +99,14 @@ export function InfoGovernance() {
         alignItems="center"
         justifyContent="space-between"
         mb="0.25rem"
+        gap="0.5rem"
       >
         <Text color="neutral-7">{t('titleType')}</Text>
-        <Text>{governance.type ? t(governance.type.toString(), { ns: 'daoCreate' }) : ''}</Text>
+        <Text textAlign="right">
+          {governance.type
+            ? t(governance.type.toString(), { ns: 'daoCreate' })
+            : t('loading', { ns: 'common' })}
+        </Text>
       </Flex>
 
       {governanceAzorius?.votingStrategy?.votingPeriod && (
@@ -109,9 +114,10 @@ export function InfoGovernance() {
           alignItems="center"
           justifyContent="space-between"
           mb="0.25rem"
+          gap="0.5rem"
         >
           <Text color="neutral-7">{t('titleVotingPeriod')}</Text>
-          <Text>{governanceAzorius.votingStrategy?.votingPeriod?.formatted}</Text>
+          <Text textAlign="right">{governanceAzorius.votingStrategy?.votingPeriod?.formatted}</Text>
         </Flex>
       )}
       {governanceAzorius?.votingStrategy?.quorumPercentage && (
@@ -119,9 +125,12 @@ export function InfoGovernance() {
           alignItems="center"
           justifyContent="space-between"
           mb="0.25rem"
+          gap="0.5rem"
         >
           <Text color="neutral-7">{t('titleQuorum')}</Text>
-          <Text>{governanceAzorius.votingStrategy.quorumPercentage.formatted}</Text>
+          <Text textAlign="right">
+            {governanceAzorius.votingStrategy.quorumPercentage.formatted}
+          </Text>
         </Flex>
       )}
       {governanceAzorius?.votingStrategy?.quorumThreshold && (
@@ -129,9 +138,12 @@ export function InfoGovernance() {
           alignItems="center"
           justifyContent="space-between"
           mb="0.25rem"
+          gap="0.5rem"
         >
           <Text color="neutral-7">{t('titleQuorum')}</Text>
-          <Text>{governanceAzorius.votingStrategy.quorumThreshold.formatted}</Text>
+          <Text textAlign="right">
+            {governanceAzorius.votingStrategy.quorumThreshold.formatted}
+          </Text>
         </Flex>
       )}
       {timelockPeriod && (
@@ -139,9 +151,10 @@ export function InfoGovernance() {
           alignItems="center"
           justifyContent="space-between"
           mb="0.25rem"
+          gap="0.5rem"
         >
           <Text color="neutral-7">{t('timelock', { ns: 'common' })}</Text>
-          <Text>{timelockPeriod}</Text>
+          <Text textAlign="right">{timelockPeriod}</Text>
         </Flex>
       )}
       {executionPeriod && (
@@ -149,9 +162,10 @@ export function InfoGovernance() {
           alignItems="center"
           justifyContent="space-between"
           mb="0.25rem"
+          gap="0.5rem"
         >
           <Text color="neutral-7">{t('execution', { ns: 'common' })}</Text>
-          <Text>{executionPeriod}</Text>
+          <Text textAlign="right">{executionPeriod}</Text>
         </Flex>
       )}
     </Box>

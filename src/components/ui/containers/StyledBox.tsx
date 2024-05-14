@@ -11,7 +11,7 @@ export function StyledBox({ children, to, ...rest }: StyledBoxProps) {
       as={to ? Link : undefined}
       to={to}
       bg="neutral-2"
-      p="1.5rem"
+      p={{ base: '0.75rem', md: '1.5rem' }}
       borderRadius="0.5rem"
       {...rest}
     >

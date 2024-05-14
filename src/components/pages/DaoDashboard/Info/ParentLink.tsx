@@ -29,6 +29,7 @@ export function ParentLink() {
       onClick={action.resetDAO}
       marginBottom="1rem"
       as={RouterLink}
+      width="fit-content"
     >
       <HStack>
         <Icon
