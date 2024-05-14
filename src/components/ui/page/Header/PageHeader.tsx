@@ -86,21 +86,16 @@ function PageHeader({
             aria-label="navigate"
             icon={
               <Icon
-                as={ButtonIcon}
                 boxSize="1.25rem"
+                as={ButtonIcon}
               />
             }
             onClick={buttonClick}
-            minWidth="0"
-            padding={1}
-            border="1px solid"
-            borderColor="lilac-0"
-            color="lilac-0"
-            borderRadius={4}
+            variant="tertiary"
+            size="icon-sm"
             data-testid={buttonTestId}
-            size="small"
-            variant={buttonVariant}
             isDisabled={isButtonDisabled}
+            as={Button}
           >
             {buttonText}
           </IconButton>
