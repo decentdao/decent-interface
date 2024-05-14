@@ -86,12 +86,14 @@ function InternalLinks({
         _hover={{ maxWidth: '100%' }}
         transitionDuration="0.2s"
         overflow={{ md: 'hidden' }}
-        bg={{ md: 'neutral-2' }}
         mt={{ md: 12 }}
         mb={{ md: 3 }}
+        bg={{ md: '#26212AD6' }}
         borderColor={{ md: 'neutral-3' }}
         borderRadius={{ md: 8 }}
         borderWidth={{ md: 1 }}
+        backdropFilter="blur(12px)"
+        boxShadow="0px 1px 0px 0px #161219"
       >
         <NavigationLink
           href={DAO_ROUTES.dao.relative(addressPrefix, address)}
