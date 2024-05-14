@@ -1,4 +1,4 @@
-import { Flex, Text, FlexProps, Link, Center, VStack } from '@chakra-ui/react';
+import { Flex, Text, FlexProps, Link, Center, VStack, Box } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -69,7 +69,10 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
         alignItems="left"
       >
         {/* DAO NAME */}
-        <Flex columnGap="0.5rem">
+        <Flex
+          columnGap="0.5rem"
+          alignItems="flex-start"
+        >
           {/* DAO NAME */}
           <Link
             textStyle="display-xl"
@@ -90,10 +93,12 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
           </Link>
 
           {/* FAVORITE ICON */}
-          <FavoriteIcon
-            safeAddress={displayedAddress}
-            data-testid="DAOInfo-favorite"
-          />
+          <Box mt="0.125rem">
+            <FavoriteIcon
+              safeAddress={displayedAddress}
+              data-testid="DAOInfo-favorite"
+            />
+          </Box>
 
           {/* SNAPSHOT ICON LINK */}
           {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
