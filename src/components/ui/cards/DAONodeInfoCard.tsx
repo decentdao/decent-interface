@@ -59,14 +59,15 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
   return (
     <Link
       as={RouterLink}
-      pointerEvents={isCurrentDAO ? 'none' : undefined}
       to={DAO_ROUTES.dao.relative(addressPrefix, displayedAddress)}
       _hover={{ textDecoration: 'none' }}
-      onClick={() => {
-        // if we're not on the current DAO, reset
-        // the DAO data, so the one you're clicking
-        // into will load properly
-        if (!isCurrentDAO) {
+      onClick={event => {
+        if (isCurrentDAO) {
+          event.preventDefault();
+        } else {
+          // if we're not on the current DAO, reset
+          // the DAO data, so the one you're clicking
+          // into will load properly
           action.resetDAO();
         }
       }}
@@ -74,7 +75,7 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
       <Flex
         minH={`${NODE_HEIGHT_REM}rem`}
         bg="neutral-2"
-        _hover={{ bg: 'neutral-4' }}
+        _hover={!isCurrentDAO ? { bg: 'neutral-4' } : {}}
         p="1.5rem"
         width="100%"
         borderRadius="0.5rem"
@@ -95,10 +96,11 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
             <Text textStyle="display-xl">{node.daoName || displayName}</Text>
 
             {/* FAVORITE ICON */}
-              <FavoriteIcon
-                safeAddress={displayedAddress}
-                data-testid="DAOInfo-favorite"
-              />
+            <FavoriteIcon
+              safeAddress={displayedAddress}
+              data-testid="DAOInfo-favorite"
+              zIndex={3}
+            />
 
             {/* SNAPSHOT ICON LINK */}
             {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
