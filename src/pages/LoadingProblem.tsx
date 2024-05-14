@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import {
   StetoscopeIllustrationMobile,
   StetoscopeIllustrationDesktop,
-} from '../components/ui/proposal/Icons';
+} from '../components/ui/icons/Icons';
 import { CONTENT_MAXW } from '../constants/common';
 import { useNetworkConfig } from '../providers/NetworkConfig/NetworkConfigProvider';
 
