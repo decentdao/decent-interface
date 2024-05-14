@@ -8,7 +8,6 @@ import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
   SafeMultisigDAO,
-  SubDAO,
 } from '../../types';
 import StepController from './StepController';
 import { initialState } from './constants';
@@ -38,7 +37,7 @@ function DaoCreator({
           const choosenGovernance = values.essentials.governance;
           const freezeGuard = isSubDAO ? values.freeze : undefined;
 
-          let daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO | undefined;
+          let daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | undefined;
 
           switch (choosenGovernance) {
             case GovernanceType.MULTISIG:

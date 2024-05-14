@@ -108,7 +108,7 @@ export interface AzoriusERC721DAO<T = bigint>
 export interface SafeMultisigDAO extends DAOEssentials, SafeConfiguration {}
 
 export type DAOTrigger = (
-  daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
+  daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
 ) => void;
 
 export type AddressValidationMap = Map<string, AddressValidation>;
