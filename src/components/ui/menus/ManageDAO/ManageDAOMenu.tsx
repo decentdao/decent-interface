@@ -1,4 +1,4 @@
-import { Button } from '@chakra-ui/react';
+import { Icon, IconButton } from '@chakra-ui/react';
 import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { GearFine } from '@phosphor-icons/react';
 import { useMemo, useCallback, useState, useEffect } from 'react';
@@ -244,16 +244,25 @@ export function ManageDAOMenu({
 
   return (
     <OptionMenu
-      trigger={<GearFine size="1.25rem" />}
+      trigger={
+        <Icon
+          as={GearFine}
+          boxSize="1.25rem"
+        />
+      }
       titleKey={canUserCreateProposal ? 'titleManageDAO' : 'titleViewDAODetails'}
       options={options}
       namespace="menu"
-      buttonAs={Button}
+      buttonAs={IconButton}
       buttonProps={{
         variant: 'tertiary',
-        borderRadius: '0.25rem',
-        p: '0.5rem',
-        color: 'lilac-0',
+        p: '0.25rem',
+        h: 'fit-content',
+        sx: {
+          span: {
+            h: '1.25rem',
+          },
+        },
       }}
     />
   );

@@ -1,4 +1,4 @@
-import { Box, BoxProps, Button, IconButton, Tooltip, Icon } from '@chakra-ui/react';
+import { Box, BoxProps, Button, Tooltip, Icon, IconButton } from '@chakra-ui/react';
 import { Star } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -19,14 +19,14 @@ export function FavoriteIcon({ safeAddress, ...rest }: Props) {
   return (
     <Box {...rest}>
       <Tooltip label={t('favoriteTooltip')}>
-        <IconButton
+        <Button
           variant="tertiary"
           size="icon-md"
-          as={Button}
+          as={IconButton}
           icon={
             <Icon
               as={Star}
-              boxSize="1.5rem"
+              boxSize="1.25rem"
               weight={isFavorite ? 'fill' : 'regular'}
             />
           }
