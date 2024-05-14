@@ -84,7 +84,12 @@ function PageHeader({
         {ButtonIcon && (
           <IconButton
             aria-label="navigate"
-            icon={<Icon boxSize="1.25rem" as={ButtonIcon} />}
+            icon={
+              <Icon
+                boxSize="1.25rem"
+                as={ButtonIcon}
+              />
+            }
             onClick={buttonClick}
             variant="tertiary"
             size="icon-sm"
