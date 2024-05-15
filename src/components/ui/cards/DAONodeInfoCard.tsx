@@ -60,7 +60,7 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
     <Link
       as={RouterLink}
       to={DAO_ROUTES.dao.relative(addressPrefix, displayedAddress)}
-      _hover={{ textDecoration: 'none' }}
+      _hover={{ textDecoration: 'none', cursor: isCurrentDAO ? 'default' : 'pointer' }}
       onClick={event => {
         if (isCurrentDAO) {
           event.preventDefault();
