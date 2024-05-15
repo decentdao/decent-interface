@@ -46,21 +46,21 @@ function CoinHeader() {
       </Show>
       <HStack px={{ base: '1rem', lg: '1.5rem' }}>
         <Text
-          w="35%"
+          w="25%"
           textStyle="label-small"
           color="neutral-7"
         >
           {t('columnCoins')}
         </Text>
         <Text
-          w="35%"
+          w="15%"
           textStyle="label-small"
           color="neutral-7"
         >
           {t('columnValue')}
         </Text>
         <Text
-          w="30%"
+          w="60%"
           textStyle="label-small"
           color="neutral-7"
         >
@@ -88,7 +88,7 @@ function CoinRow({
       minW="595px"
     >
       <Flex
-        w="35%"
+        w="25%"
         alignItems="flex-start"
       >
         <HStack>
@@ -123,7 +123,7 @@ function CoinRow({
         </HStack>
       </Flex>
       <Flex
-        w="35%"
+        w="15%"
         alignItems="flex-start"
         flexWrap="wrap"
       >
@@ -153,7 +153,7 @@ function CoinRow({
         </Text>
       </Flex>
       <Flex
-        w="30%"
+        w="60%"
         alignItems="flex-start"
       >
         <Text>{totalFiat > 0 && formatPercentage(asset.fiatValue, totalFiat)}</Text>
@@ -216,7 +216,7 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
           />
         </EtherscanLink>
       </Flex>
-      <Flex width="65%">
+      <Flex width="30%">
         <EtherscanLink
           type="address"
           value={asset.address}
