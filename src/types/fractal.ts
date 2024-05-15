@@ -3,7 +3,6 @@ import {
   LinearERC20Voting,
   Azorius,
   AzoriusFreezeGuard,
-  ERC20Claim,
   ERC20FreezeVoting,
   MultisigFreezeVoting,
   MultisigFreezeGuard,
@@ -284,18 +283,11 @@ export interface DecentGovernance extends AzoriusGovernance {
 }
 export interface SafeMultisigGovernance extends Governance {}
 
-// @todo update FractalContracts to just store addresses in the store
-// export interface Governance {
-//   type?: GovernanceType;
-//   proposals: FractalProposal[] | null;
-//   proposalTemplates?: ProposalTemplate[] | null;
-//   tokenClaimContractAddress?: string;
-// }
 export interface Governance {
   type?: GovernanceType;
   proposals: FractalProposal[] | null;
   proposalTemplates?: ProposalTemplate[] | null;
-  tokenClaimContract?: ERC20Claim;
+  tokenClaimContractAddress?: Address;
 }
 
 export interface VotingStrategyAzorius extends VotingStrategy {
@@ -335,7 +327,6 @@ export interface FractalContracts {
   freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
   freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   freezeERC721VotingMasterCopyContract: ContractConnection<ERC721FreezeVoting>;
-  claimingMasterCopyContract: ContractConnection<ERC20Claim>;
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;

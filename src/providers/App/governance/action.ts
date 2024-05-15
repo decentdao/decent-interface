@@ -1,4 +1,4 @@
-import { ERC20Claim } from '@fractal-framework/fractal-contracts';
+import { Address } from 'viem';
 import {
   FractalProposal,
   ProposalVotesSummary,
@@ -111,7 +111,10 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA;
       payload: VotesData;
     }
-  | { type: FractalGovernanceAction.SET_CLAIMING_CONTRACT; payload: ERC20Claim }
+  | {
+      type: FractalGovernanceAction.SET_CLAIMING_CONTRACT;
+      payload: Address;
+    }
   | {
       type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA;
     }

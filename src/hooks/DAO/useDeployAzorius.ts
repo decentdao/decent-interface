@@ -34,6 +34,7 @@ const useDeployAzorius = () => {
       safe: safeSingleton,
       zodiacModuleProxyFactory,
       multisend: multiSendCallOnly,
+      claimingMasterCopy: erc20ClaimMasterCopy,
     },
     addressPrefix,
   } = useNetworkConfig();
@@ -66,7 +67,6 @@ const useDeployAzorius = () => {
         freezeMultisigVotingMasterCopyContract,
         freezeERC20VotingMasterCopyContract,
         freezeERC721VotingMasterCopyContract,
-        claimingMasterCopyContract,
       } = baseContracts;
       let azoriusContracts: AzoriusContracts;
 
@@ -75,7 +75,6 @@ const useDeployAzorius = () => {
         linearVotingMasterCopyContract: linearVotingMasterCopyContract.asProvider,
         linearVotingERC721MasterCopyContract: linearVotingERC721MasterCopyContract.asProvider,
         azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asProvider,
-        claimingMasterCopyContract: claimingMasterCopyContract.asProvider,
       };
 
       const builderBaseContracts: BaseContracts = {
@@ -101,6 +100,7 @@ const useDeployAzorius = () => {
         safeSingleton,
         zodiacModuleProxyFactory,
         multiSendCallOnly,
+        erc20ClaimMasterCopy,
         undefined,
         undefined,
       );
@@ -168,6 +168,7 @@ const useDeployAzorius = () => {
       safeSingleton,
       zodiacModuleProxyFactory,
       multiSendCallOnly,
+      erc20ClaimMasterCopy,
     ],
   );
 

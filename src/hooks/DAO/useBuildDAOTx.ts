@@ -29,6 +29,7 @@ const useBuildDAOTx = () => {
       safe: safeSingleton,
       zodiacModuleProxyFactory,
       multisend: multiSendCallOnly,
+      claimingMasterCopy: erc20ClaimMasterCopy,
     },
   } = useNetworkConfig();
 
@@ -61,7 +62,6 @@ const useBuildDAOTx = () => {
         freezeMultisigVotingMasterCopyContract,
         freezeERC20VotingMasterCopyContract,
         freezeERC721VotingMasterCopyContract,
-        claimingMasterCopyContract,
       } = baseContracts;
 
       if (
@@ -77,8 +77,7 @@ const useBuildDAOTx = () => {
         if (
           !fractalAzoriusMasterCopyContract ||
           !linearVotingMasterCopyContract ||
-          !azoriusFreezeGuardMasterCopyContract ||
-          !claimingMasterCopyContract
+          !azoriusFreezeGuardMasterCopyContract
         ) {
           return;
         }
@@ -88,7 +87,6 @@ const useBuildDAOTx = () => {
           linearVotingMasterCopyContract: linearVotingMasterCopyContract.asSigner,
           linearVotingERC721MasterCopyContract: linearVotingERC721MasterCopyContract.asSigner,
           azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asSigner,
-          claimingMasterCopyContract: claimingMasterCopyContract.asSigner,
         };
       }
 
@@ -115,6 +113,7 @@ const useBuildDAOTx = () => {
         safeSingleton,
         zodiacModuleProxyFactory,
         multiSendCallOnly,
+        erc20ClaimMasterCopy,
         parentAddress,
         parentTokenAddress,
       );
@@ -170,6 +169,7 @@ const useBuildDAOTx = () => {
       safeSingleton,
       zodiacModuleProxyFactory,
       multiSendCallOnly,
+      erc20ClaimMasterCopy,
     ],
   );
 
