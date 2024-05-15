@@ -50,13 +50,10 @@ export function AppFooter({ ...rest }: BoxProps) {
           |
         </Text>
         <ExternalLink
-          href={
-            'https://github.com/decent-dao/fractal-interface/commit/' +
-            import.meta.env.VITE_APP_GIT_HASH
-          }
+          href={`https://github.com/decent-dao/fractal-interface/releases/tag/v${import.meta.env.PACKAGE_VERSION}`}
           textStyle="text-sm-mono-bold"
         >
-          {import.meta.env.VITE_APP_GIT_HASH.substring(0, 7)}
+          v{import.meta.env.PACKAGE_VERSION}
         </ExternalLink>
       </Flex>
     </Box>
