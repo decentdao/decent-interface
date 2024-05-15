@@ -1,7 +1,8 @@
-import { Text, Icon, Button, ButtonProps } from '@chakra-ui/react';
+import { ButtonProps } from '@chakra-ui/react';
 import { CopySimple } from '@phosphor-icons/react';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
+import CeleryButtonWithIcon from '../utils/CeleryButtonWithIcon';
 
 interface AddressCopierProps extends ButtonProps {
   address: string;
@@ -16,16 +17,7 @@ export default function AddressCopier({ address, ...rest }: AddressCopierProps) 
   const copyToClipboard = useCopyText();
 
   return (
-    <Button
-      variant="unstyled"
-      color="celery-0"
-      padding="0.25rem 0.75rem"
-      gap="0.25rem"
-      borderRadius="625rem"
-      borderColor="transparent"
-      borderWidth="1px"
-      _hover={{ bg: 'celery--6', borderColor: 'celery--6' }}
-      _active={{ bg: 'celery--6', borderWidth: '1px', borderColor: 'celery--5' }}
+    <CeleryButtonWithIcon
       onClick={e => {
         e.preventDefault();
         e.stopPropagation();
@@ -33,17 +25,9 @@ export default function AddressCopier({ address, ...rest }: AddressCopierProps) 
       }}
       width="fit-content"
       {...rest}
-    >
-      <Text
-        alignItems="center"
-        display="flex"
-      >
-        {accountSubstring}
-        <Icon
-          ml="0.5rem"
-          as={CopySimple}
-        />
-      </Text>
-    </Button>
+      text={accountSubstring || address}
+      icon={CopySimple}
+      iconPosition="end"
+    />
   );
 }
