@@ -60,7 +60,7 @@ export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
         const formatted: TokenDisplayData = {
           iconUri: asset.token === null ? nativeTokenIcon : asset.token.logoUri,
           address: asset.tokenAddress === null ? zeroAddress : asset.tokenAddress,
-          truncatedCoinTotal: formatCoin(asset.balance, true, asset?.token?.decimals, symbol),
+          truncatedCoinTotal: formatCoin(asset.balance, true, asset?.token?.decimals, symbol, false),
           fiatValue: tokenFiatBalance,
           symbol: symbol,
           fiatConversion: tokenPrice ? `1 ${symbol} = ${formatUSD(tokenPrice)}` : 'N/A',
