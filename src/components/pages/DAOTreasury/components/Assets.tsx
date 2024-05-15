@@ -337,7 +337,7 @@ export function Assets() {
         />
       </Hide>
       {(showStakeButton || showUnstakeButton || showClaimETHButton) && (
-        <>
+        <Show above="lg">
           <Divider my="1rem" />
           <Text
             textStyle="label-small"
@@ -376,7 +376,7 @@ export function Assets() {
               </Tooltip>
             )}
           </HStack>
-        </>
+        </Show>
       )}
       {hasAssets && (
         <>
