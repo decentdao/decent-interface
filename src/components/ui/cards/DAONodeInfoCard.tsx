@@ -107,7 +107,6 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
             <FavoriteIcon
               safeAddress={displayedAddress}
               data-testid="DAOInfo-favorite"
-              zIndex={3}
             />
 
             {/* SNAPSHOT ICON LINK */}
