@@ -107,7 +107,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
 
   const ShowVotingPowerButton = (
     <Button
-      pr={0}
+      px={0}
       py={0}
       height="auto"
       justifyContent="flex-end"
@@ -155,19 +155,20 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
         <ProposalCreatedBy proposer={proposer} />
         <Flex
           marginTop={4}
-          justifyContent="space-between"
+          flexWrap="wrap"
           alignItems="center"
         >
           <Text
             textStyle="body-base"
             color="neutral-7"
+            w="full"
           >
             {t('snapshotTaken')}
           </Text>
           <EtherscanLink
             type="block"
             value={startBlock.toString()}
-            textAlign="end"
+            pl={0}
           >
             <Flex
               alignItems="center"
@@ -180,12 +181,13 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
         <Flex
           marginTop={4}
           marginBottom={transactionHash ? 0 : 4}
-          justifyContent="space-between"
+          flexWrap="wrap"
           alignItems="center"
         >
           <Text
             textStyle="body-base"
             color="neutral-7"
+            w="full"
           >
             {t('votingPower')}
           </Text>
@@ -205,12 +207,13 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
           <Flex
             marginTop={4}
             marginBottom={4}
-            justifyContent="space-between"
             alignItems="center"
+            flexWrap="wrap"
           >
             <Text
               textStyle="body-base"
               color="neutral-7"
+              w="full"
             >
               {t('transactionHash')}
             </Text>
