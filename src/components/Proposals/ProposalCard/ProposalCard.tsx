@@ -72,7 +72,6 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
               proposal={proposal}
               showIcon={false}
               textColor="neutral-7"
-              textStyle="label-base"
             />
             {isSnapshotProposal && (
               <Box ml={1}>

@@ -50,7 +50,6 @@ export function ProposalInfo({
           proposal={proposal}
           showIcon={false}
           textColor="neutral-7"
-          textStyle="label-base"
         />
         {isSnapshotProposal && (
           <>
