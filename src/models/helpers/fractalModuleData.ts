@@ -3,7 +3,7 @@ import {
   FractalModule__factory,
   ModuleProxyFactory,
 } from '@fractal-framework/fractal-contracts';
-import { ethers } from 'ethers';
+import { encodeAbiParameters, parseAbiParameters, getAddress, isHex } from 'viem';
 import { GnosisSafeL2 } from '../../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
@@ -24,26 +24,27 @@ export const fractalModuleData = (
   fractalModuleMasterCopyContract: FractalModule,
   zodiacModuleProxyFactoryContract: ModuleProxyFactory,
   safeContract: GnosisSafeL2,
-  saltNum: string,
+  saltNum: bigint,
   parentAddress?: string,
 ): FractalModuleData => {
   const fractalModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData(
     'setUp',
     [
-      ethers.utils.defaultAbiCoder.encode(
-        ['address', 'address', 'address', 'address[]'],
-        [
-          parentAddress ?? safeContract.address, // Owner -- Parent DAO or safe contract
-          safeContract.address, // Avatar
-          safeContract.address, // Target
-          [], // Authorized Controllers
-        ],
-      ),
+      encodeAbiParameters(parseAbiParameters(['address, address, address, address[]']), [
+        getAddress(parentAddress ?? safeContract.address), // Owner -- Parent DAO or safe contract
+        getAddress(safeContract.address), // Avatar
+        getAddress(safeContract.address), // Target
+        [], // Authorized Controllers
+      ]),
     ],
   );
 
+  if (!isHex(fractalModuleCalldata)) {
+    throw new Error('Error encoding fractal module call data');
+  }
+
   const fractalByteCodeLinear = generateContractByteCodeLinear(
-    fractalModuleMasterCopyContract.address.slice(2),
+    getAddress(fractalModuleMasterCopyContract.address),
   );
 
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
@@ -53,7 +54,7 @@ export const fractalModuleData = (
     saltNum,
   ]);
   const predictedFractalModuleAddress = generatePredictedModuleAddress(
-    zodiacModuleProxyFactoryContract.address,
+    getAddress(zodiacModuleProxyFactoryContract.address),
     fractalSalt,
     fractalByteCodeLinear,
   );

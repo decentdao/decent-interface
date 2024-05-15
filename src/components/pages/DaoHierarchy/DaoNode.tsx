@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { getAddress } from 'viem';
+import { Address, getAddress } from 'viem';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -22,8 +22,8 @@ export function DaoNode({
   daoAddress,
   depth,
 }: {
-  parentAddress?: string;
-  daoAddress?: string;
+  parentAddress?: Address;
+  daoAddress?: Address;
   depth: number;
 }) {
   const [fractalNode, setNode] = useState<FractalNode>();

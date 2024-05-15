@@ -1,6 +1,6 @@
 import { IVotes__factory } from '@fractal-framework/fractal-contracts';
-
 import { useCallback } from 'react';
+import { getAddress } from 'viem';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import {
@@ -74,8 +74,8 @@ export function usePrepareFormData() {
     }: SafeMultisigDAO & FreezeGuardConfigParam) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
-          if (couldBeENS(inputValue)) {
-            const resolvedAddress = await signer!.resolveName(inputValue);
+          if (couldBeENS(inputValue) && signer) {
+            const resolvedAddress = await signer.resolveName(inputValue);
             return resolvedAddress;
           }
           return inputValue;
@@ -114,8 +114,8 @@ export function usePrepareFormData() {
         const resolvedTokenAllocations = await Promise.all(
           tokenAllocations.map(async allocation => {
             let address = allocation.address;
-            if (couldBeENS(address)) {
-              address = await signer!.resolveName(allocation.address);
+            if (couldBeENS(address) && signer) {
+              address = await signer.resolveName(allocation.address);
             }
             return { amount: allocation.amount.bigintValue!, address: address };
           }),
@@ -163,7 +163,7 @@ export function usePrepareFormData() {
     }: AzoriusERC721DAO<BigIntValuePair> & FreezeGuardConfigParam): Promise<
       AzoriusERC721DAO | undefined
     > => {
-      if (provider) {
+      if (provider && signer) {
         let freezeGuardData;
         if (freezeGuard) {
           freezeGuardData = await prepareFreezeGuardData(freezeGuard);
@@ -172,8 +172,8 @@ export function usePrepareFormData() {
         const resolvedNFTs = await Promise.all(
           nfts.map(async nft => {
             let address = nft.tokenAddress;
-            if (couldBeENS(address)) {
-              address = await signer!.resolveName(nft.tokenAddress);
+            if (couldBeENS(address) && nft.tokenAddress) {
+              address = getAddress(await signer.resolveName(nft.tokenAddress));
             }
             return {
               tokenAddress: address,

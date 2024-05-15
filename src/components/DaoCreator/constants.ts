@@ -38,7 +38,7 @@ export const initialState: CreatorFormState = {
   erc721Token: {
     nfts: [
       {
-        tokenAddress: '',
+        tokenAddress: undefined,
         tokenWeight: {
           value: '',
         },

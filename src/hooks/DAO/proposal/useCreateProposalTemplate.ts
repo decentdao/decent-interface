@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { isHex, getAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { ProposalExecuteData } from '../../../types';
@@ -53,16 +54,19 @@ export default function useCreateProposalTemplate() {
 
         const { Hash } = await client.add(JSON.stringify(updatedTemplatesList));
 
+        const encodedUpdateValues = keyValuePairsContract.asProvider.interface.encodeFunctionData(
+          'updateValues',
+          [['proposalTemplates'], [Hash]],
+        );
+        if (!isHex(encodedUpdateValues)) {
+          return;
+        }
+
         const proposal: ProposalExecuteData = {
           metaData: proposalMetadata,
-          targets: [keyValuePairsContract.asProvider.address],
+          targets: [getAddress(keyValuePairsContract.asProvider.address)],
           values: [0n],
-          calldatas: [
-            keyValuePairsContract.asProvider.interface.encodeFunctionData('updateValues', [
-              ['proposalTemplates'],
-              [Hash],
-            ]),
-          ],
+          calldatas: [encodedUpdateValues],
         };
 
         return proposal;

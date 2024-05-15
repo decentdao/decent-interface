@@ -31,7 +31,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   const [inputAmount, setInputAmount] = useState<BigIntValuePair>();
   const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
 
-  const [destination, setDestination] = useState<string>('');
+  const [destination, setDestination] = useState<string>();
 
   const hasFiatBalance = Number(selectedAsset.fiatBalance) > 0;
 
@@ -145,7 +145,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         errorMessage={destinationError}
       >
         <EthAddressInput
-          onAddressChange={function (address: string, isValid: boolean): void {
+          onAddressChange={function (address: string | undefined, isValid: boolean): void {
             setIsValidAddress(isValid);
             setDestination(address);
           }}

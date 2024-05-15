@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAddress, isHex } from 'viem';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -22,23 +23,25 @@ const useAddSigner = () => {
       daoAddress: string | null;
       close: () => void;
     }) => {
-      if (!baseContracts) {
+      if (!baseContracts || !daoAddress) {
         return;
       }
       const { safeSingletonContract } = baseContracts;
       const description = 'Add Signer';
 
-      const calldatas = [
-        safeSingletonContract.asSigner.interface.encodeFunctionData('addOwnerWithThreshold', [
-          newSigner,
-          BigInt(threshold),
-        ]),
-      ];
+      const encodedAddOwner = safeSingletonContract.asSigner.interface.encodeFunctionData(
+        'addOwnerWithThreshold',
+        [newSigner, BigInt(threshold)],
+      );
+      if (!isHex(encodedAddOwner)) {
+        return;
+      }
+      const calldatas = [encodedAddOwner];
 
       const proposalData: ProposalExecuteData = {
-        targets: [daoAddress!],
+        targets: [getAddress(daoAddress)],
         values: [0n],
-        calldatas: calldatas,
+        calldatas,
         metaData: {
           title: 'Add Signer',
           description: description,
