@@ -67,21 +67,25 @@ export default function Treasury() {
               bg="neutral-2"
             >
               <Transactions shownTransactions={shownTransactions} />
-              <Divider
-                variant="darker"
-                my="1rem"
-              />
-              <Box px={{ base: '1rem', lg: '1.5rem' }}>
-                <PaginationCount
-                  totalTransfers={totalTransfers}
-                  shownTransactions={shownTransactions}
-                  daoAddress={daoAddress}
-                />
-              </Box>
-              <Divider
-                variant="darker"
-                my="1rem"
-              />
+              {totalTransfers > 0 && (
+                <>
+                  <Divider
+                    variant="darker"
+                    my="1rem"
+                  />
+                  <Box px={{ base: '1rem', lg: '1.5rem' }}>
+                    <PaginationCount
+                      totalTransfers={totalTransfers}
+                      shownTransactions={shownTransactions}
+                      daoAddress={daoAddress}
+                    />
+                  </Box>
+                  <Divider
+                    variant="darker"
+                    my="1rem"
+                  />
+                </>
+              )}
             </TitledInfoBox>
             {showLoadMoreTransactions && (
               <PaginationButton onClick={() => setShownTransactions(prevState => prevState + 20)} />
