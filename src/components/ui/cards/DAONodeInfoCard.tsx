@@ -75,12 +75,20 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
       <Flex
         minH={`${NODE_HEIGHT_REM}rem`}
         bg="neutral-2"
-        _hover={!isCurrentDAO ? { bg: 'neutral-4' } : {}}
+        _hover={
+          !isCurrentDAO
+            ? {
+                bg: 'neutral-3',
+                border: '1px solid',
+                borderColor: 'neutral-4',
+              }
+            : {}
+        }
         p="1.5rem"
         width="100%"
         borderRadius="0.5rem"
-        border={isCurrentDAO ? '4px solid' : 'none'}
-        borderColor={isCurrentDAO ? 'neutral-4' : 'none'}
+        border={isCurrentDAO ? '4px solid' : '1px'}
+        borderColor={isCurrentDAO ? 'neutral-4' : 'transparent'}
       >
         <VStack
           gap="0.5rem"
