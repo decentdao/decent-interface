@@ -53,14 +53,14 @@ function CoinHeader() {
           {t('columnCoins')}
         </Text>
         <Text
-          w="15%"
+          w="30%"
           textStyle="label-small"
           color="neutral-7"
         >
           {t('columnValue')}
         </Text>
         <Text
-          w="60%"
+          w="45%"
           textStyle="label-small"
           color="neutral-7"
         >
@@ -123,7 +123,7 @@ function CoinRow({
         </HStack>
       </Flex>
       <Flex
-        w="15%"
+        w="30%"
         alignItems="flex-start"
         flexWrap="wrap"
       >
@@ -153,7 +153,7 @@ function CoinRow({
         </Text>
       </Flex>
       <Flex
-        w="60%"
+        w="45%"
         alignItems="flex-start"
       >
         <Text>{totalFiat > 0 && formatPercentage(asset.fiatValue, totalFiat)}</Text>
