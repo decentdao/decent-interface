@@ -26,8 +26,8 @@ import { useFractalModules } from '../loaders/useFractalModules';
  * @returns {string[]} `remainingTokenAddresses` - same as `totalVotingTokenAddresses` - repeats contract address of NFT for each token ID in `remainingTokenIds` array.
  */
 export default function useUserERC721VotingTokens(
+  safeAddress: string | null,
   proposalId?: string,
-  safeAddress?: string | null,
   loadOnMount: boolean = true,
 ) {
   const [totalVotingTokenIds, setTotalVotingTokenIds] = useState<string[]>([]);
@@ -50,7 +50,7 @@ export default function useUserERC721VotingTokens(
   const { erc721Tokens } = azoriusGovernance;
 
   const getUserERC721VotingTokens = useCallback(
-    async (_proposalId?: string, _safeAddress?: string | null) => {
+    async (_safeAddress: string | null, _proposalId?: string) => {
       const totalTokenAddresses: string[] = [];
       const totalTokenIds: string[] = [];
       const tokenAddresses: string[] = [];
@@ -100,7 +100,7 @@ export default function useUserERC721VotingTokens(
               } catch (e) {
                 logError('Error while getting ERC721 total supply');
               }
-              return { name, symbol, address: tokenAddress, votingWeight, totalSupply };
+              return { name, symbol, address: getAddress(tokenAddress), votingWeight, totalSupply };
             }),
           );
         }
@@ -203,7 +203,7 @@ export default function useUserERC721VotingTokens(
   );
 
   const loadUserERC721VotingTokens = useCallback(async () => {
-    const tokensInfo = await getUserERC721VotingTokens(proposalId, safeAddress);
+    const tokensInfo = await getUserERC721VotingTokens(safeAddress, proposalId);
     if (tokensInfo) {
       setTotalVotingTokenAddresses(tokensInfo.totalVotingTokenAddresses);
       setTotalVotingTokenIds(tokensInfo.totalVotingTokenIds);

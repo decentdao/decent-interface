@@ -12,10 +12,16 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 export default function Treasury() {
   const {
     node: { daoName, daoAddress },
+    treasury: { assetsFungible },
   } = useFractal();
   const { t } = useTranslation('treasury');
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const openSendAsset = useFractalModal(ModalType.SEND_ASSETS);
+
+  const hasAnyBalanceOfAnyFungibleTokens =
+    assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
+
+  const showSendButton = canUserCreateProposal && hasAnyBalanceOfAnyFungibleTokens;
 
   return (
     <div>
@@ -32,8 +38,8 @@ export default function Treasury() {
             path: '',
           },
         ]}
-        buttonText={canUserCreateProposal ? t('buttonSendAssets') : undefined}
-        buttonClick={canUserCreateProposal ? openSendAsset : undefined}
+        buttonText={showSendButton ? t('buttonSendAssets') : undefined}
+        buttonClick={showSendButton ? openSendAsset : undefined}
         buttonTestId="link-send-assets"
       />
       <Flex
@@ -43,7 +49,7 @@ export default function Treasury() {
         flexWrap="wrap"
       >
         <TitledInfoBox
-          minWidth={{ sm: '100%', xl: '55%' }}
+          width={{ sm: '100%', xl: '55%' }}
           title={t('titleTransactions')}
           titleTestId="title-transactions"
           bg="neutral-2"
@@ -51,7 +57,7 @@ export default function Treasury() {
           <Transactions />
         </TitledInfoBox>
         <TitledInfoBox
-          minWidth={{ sm: '100%', xl: '35%' }}
+          width={{ sm: '100%', xl: '35%' }}
           title={t('titleAssets')}
           titleTestId="title-assets"
         >

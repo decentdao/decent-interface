@@ -3,13 +3,13 @@ import { ReactNode } from 'react';
 import Divider from '../utils/Divider';
 
 export function TitledInfoBox({
-  minWidth,
+  width,
   title,
   titleTestId,
   children,
   bg,
 }: {
-  minWidth: { [key: string]: string };
+  width: { [key: string]: string };
   title: string;
   titleTestId: string;
   children: ReactNode;
@@ -18,7 +18,7 @@ export function TitledInfoBox({
   return (
     <Box
       flexGrow={1}
-      minWidth={minWidth}
+      width={width}
       p="1.5rem"
       borderRadius="0.5rem"
       bg={bg}

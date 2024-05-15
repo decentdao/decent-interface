@@ -5,9 +5,9 @@ import { ReactNode } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { WagmiProvider } from 'wagmi';
 import { theme } from '../assets/theme';
-import { ErrorFallback } from '../components/ui/utils/ErrorFallback';
+import { ErrorBoundary } from '../components/ui/utils/ErrorBoundary';
+import { TopErrorFallback } from '../components/ui/utils/TopErrorFallback';
 import graphQLClient from '../graphql';
-import { FractalErrorBoundary } from '../helpers/errorLogging';
 import { AppProvider } from './App/AppProvider';
 import EthersContextProvider from './Ethers';
 import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
@@ -19,7 +19,10 @@ export default function Providers({ children }: { children: ReactNode }) {
       theme={theme}
       resetCSS
     >
-      <FractalErrorBoundary fallback={<ErrorFallback />}>
+      <ErrorBoundary
+        fallback={<TopErrorFallback />}
+        showDialog
+      >
         <ApolloProvider client={graphQLClient}>
           <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>
@@ -39,7 +42,7 @@ export default function Providers({ children }: { children: ReactNode }) {
             </QueryClientProvider>
           </WagmiProvider>
         </ApolloProvider>
-      </FractalErrorBoundary>
+      </ErrorBoundary>
     </ChakraProvider>
   );
 }

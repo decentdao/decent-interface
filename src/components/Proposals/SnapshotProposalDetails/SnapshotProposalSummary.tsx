@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TOOLTIP_MAXW } from '../../../constants/common';
 import { ExtendedSnapshotProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';
@@ -116,7 +117,13 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
             {t('votingPower')}
           </Text>
           {showVotingPower ? (
-            <Tooltip label={t('votingPowerTooltip')}>{ShowVotingPowerButton}</Tooltip>
+            <Tooltip
+              label={t('votingPowerTooltip')}
+              placement="left"
+              maxW={TOOLTIP_MAXW}
+            >
+              {ShowVotingPowerButton}
+            </Tooltip>
           ) : (
             ShowVotingPowerButton
           )}

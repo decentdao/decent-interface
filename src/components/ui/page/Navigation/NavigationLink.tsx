@@ -18,23 +18,25 @@ function LinkContent({
   scope: 'internal' | 'external';
 }) {
   return (
-    <Flex
-      py={3}
-      pl="11px"
-      borderRadius={{ md: 8 }}
-      _hover={{ bgColor: 'neutral-3' }}
-      borderWidth={scope === 'internal' && isActive ? '1px' : '0px'}
-      borderColor="neutral-4"
-      bgColor={scope === 'internal' && isActive ? 'neutral-3' : 'auto'}
-    >
-      <Box w={6}>{<NavigationIcon size={24} />}</Box>
-      <Box
-        mx={3}
-        whiteSpace="nowrap"
+    <Box p="0.25rem">
+      <Flex
+        py="6px"
+        px="6px"
+        borderRadius={{ md: 4 }}
+        _hover={{ bgColor: 'neutral-3' }}
+        borderWidth="1px"
+        borderColor={scope === 'internal' && isActive ? 'neutral-4' : 'neutral-2'}
+        bgColor={scope === 'internal' && isActive ? 'neutral-3' : undefined}
       >
-        {t(labelKey)}
-      </Box>
-    </Flex>
+        <Box w={6}>{<NavigationIcon size={24} />}</Box>
+        <Box
+          mx={3}
+          whiteSpace="nowrap"
+        >
+          {t(labelKey)}
+        </Box>
+      </Flex>
+    </Box>
   );
 }
 

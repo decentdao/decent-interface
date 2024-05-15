@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { isAddress } from 'viem';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { DecodedTransaction, FractalProposal } from '../../../types';
-import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
+import EtherscanLink from '../links/EtherscanLink';
 
 function TransactionRow({ paramKey, value }: { paramKey: string; value: string }) {
   const { t } = useTranslation('proposal');
@@ -38,9 +38,15 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
         wordBreak="break-word"
         ml={{ base: 0, md: '0.5rem' }}
         maxW={{ base: '100%', md: '70%' }}
+        display={isAddress(value) ? 'inline-flex' : undefined}
       >
         {isAddress(value) ? (
-          <EtherscanLinkAddress address={value}>{value}</EtherscanLinkAddress>
+          <EtherscanLink
+            type="address"
+            value={value}
+          >
+            {value}
+          </EtherscanLink>
         ) : (
           value
         )}

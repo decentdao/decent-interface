@@ -1,25 +1,35 @@
-import { Box, Button, Center, Flex, Icon, Text } from '@chakra-ui/react';
-import { Warning } from "@phosphor-icons/react";
+import { Box, Button, Center, Flex, Text, Icon } from '@chakra-ui/react';
+import { Warning } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { CONTENT_HEIGHT } from '../../../constants/common';
-import { InfoBox } from '../containers/InfoBox';
 
-export function ErrorFallback() {
+export function TopErrorFallback() {
   const { t } = useTranslation();
   return (
     <Center h={CONTENT_HEIGHT}>
       <Box maxWidth="fit-content">
-        <InfoBox>
+        <Box
+          minWidth="100%"
+          h="100%"
+          minHeight="10.6rem"
+          bg="black.900-semi-transparent"
+          p="1rem"
+          borderRadius="0.5rem"
+        >
           <Flex
             alignItems="center"
             direction="column"
             padding="1rem"
             gap="1.5rem"
           >
-            <Icon as={Warning} color="red-0" boxSize="4rem" />
+            <Icon
+              as={Warning}
+              boxSize="2rem"
+            />
             <Text
-              textStyle="display-xl"
-              color="lilac-0"
+              textStyle="display-2xl"
+              marginTop="1.5rem"
+              marginBottom="1.5rem"
             >
               {t('errorSentryFallbackTitle')}
             </Text>
@@ -28,7 +38,7 @@ export function ErrorFallback() {
             </Text>
             <Button onClick={() => window.location.reload()}>{t('reload')}</Button>
           </Flex>
-        </InfoBox>
+        </Box>
       </Box>
     </Center>
   );

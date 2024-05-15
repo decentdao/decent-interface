@@ -1,4 +1,4 @@
-import { Link, HStack, Image, Text, Icon } from '@chakra-ui/react';
+import { Link, HStack, Text, Icon } from '@chakra-ui/react';
 import { ArrowBendLeftUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
@@ -29,6 +29,7 @@ export function ParentLink() {
       onClick={action.resetDAO}
       marginBottom="1rem"
       as={RouterLink}
+      width="fit-content"
     >
       <HStack>
         <Icon

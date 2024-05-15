@@ -38,7 +38,7 @@ interface InputProps extends Omit<BaseProps, 'children'> {
 }
 
 interface EthAddressProps extends Omit<BaseProps, 'children' | 'value'> {
-  onAddressChange: (address: string, isValid: boolean) => void;
+  onAddressChange: (address: string | undefined, isValid: boolean) => void;
 }
 
 interface TextareaProps extends Omit<BaseProps, 'children'> {

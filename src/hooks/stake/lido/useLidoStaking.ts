@@ -1,6 +1,7 @@
 import { getSTETHContract, getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isHex, getAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../types';
@@ -27,14 +28,20 @@ export default function useLidoStaking() {
 
       const stETHContract = getSTETHContract(lido.stETHContractAddress, signerOrProvider);
 
+      const encodedSubmit = stETHContract.interface.encodeFunctionData('submit', [
+        lido.rewardsAddress,
+      ]);
+      if (!isHex(encodedSubmit)) {
+        return;
+      }
       const proposalData: ProposalExecuteData = {
         metaData: {
           title: t('Stake ETH with Lido'),
           description: t('This proposal will stake ETH in Lido, returning stETH to your treasury.'),
           documentationUrl: 'https://docs.lido.fi/guides/steth-integration-guide#what-is-steth',
         },
-        targets: [lido.stETHContractAddress],
-        calldatas: [stETHContract.interface.encodeFunctionData('submit', [lido.rewardsAddress])],
+        targets: [getAddress(lido.stETHContractAddress)],
+        calldatas: [encodedSubmit],
         values: [value],
       };
       await submitProposal({
@@ -60,6 +67,22 @@ export default function useLidoStaking() {
         signerOrProvider,
       );
 
+      const encodedApprove = stETHContract.interface.encodeFunctionData('approve', [
+        lido.withdrawalQueueContractAddress,
+        value,
+      ]);
+
+      if (!isHex(encodedApprove)) {
+        return;
+      }
+
+      const encodedWithdraw = withdrawalQueueContract.interface.encodeFunctionData(
+        'requestWithdrawals',
+        [[value], daoAddress],
+      );
+      if (!isHex(encodedWithdraw)) {
+        return;
+      }
       const proposalData: ProposalExecuteData = {
         metaData: {
           title: t('Unstake stETH'),
@@ -69,17 +92,11 @@ export default function useLidoStaking() {
           documentationUrl:
             'https://docs.lido.fi/guides/steth-integration-guide#request-withdrawal-and-mint-nft',
         },
-        targets: [lido.stETHContractAddress, lido.withdrawalQueueContractAddress],
-        calldatas: [
-          stETHContract.interface.encodeFunctionData('approve', [
-            lido.withdrawalQueueContractAddress,
-            value,
-          ]),
-          withdrawalQueueContract.interface.encodeFunctionData('requestWithdrawals', [
-            [value],
-            daoAddress,
-          ]),
+        targets: [
+          getAddress(lido.stETHContractAddress),
+          getAddress(lido.withdrawalQueueContractAddress),
         ],
+        calldatas: [encodedApprove, encodedWithdraw],
         values: [0n, 0n],
       };
       await submitProposal({
@@ -105,6 +122,12 @@ export default function useLidoStaking() {
         signerOrProvider,
       );
 
+      const encodedClaim = withdrawalQueueContract.interface.encodeFunctionData('claimWithdrawal', [
+        nftId,
+      ]);
+      if (!isHex(encodedClaim)) {
+        return;
+      }
       const proposalData: ProposalExecuteData = {
         metaData: {
           title: t('Lido Withdrawal'),
@@ -113,10 +136,8 @@ export default function useLidoStaking() {
           ),
           documentationUrl: 'https://docs.lido.fi/guides/steth-integration-guide#claiming',
         },
-        targets: [lido.withdrawalQueueContractAddress],
-        calldatas: [
-          withdrawalQueueContract.interface.encodeFunctionData('claimWithdrawal', [nftId]),
-        ],
+        targets: [getAddress(lido.withdrawalQueueContractAddress)],
+        calldatas: [encodedClaim],
         values: [0n],
       };
       await submitProposal({

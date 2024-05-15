@@ -1,6 +1,7 @@
-import { Box, Button, Flex, IconButton, Spacer, Text } from '@chakra-ui/react';
-import { Icon } from '@phosphor-icons/react';
+import { Box, Button, Flex, Icon, IconButton, Spacer, Text } from '@chakra-ui/react';
+import { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { ReactNode, useEffect, useState } from 'react';
+import { CONTENT_MAXW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -14,7 +15,7 @@ interface PageHeaderProps {
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
   buttonVariant?: 'text' | 'secondary';
-  ButtonIcon?: Icon;
+  ButtonIcon?: PhosphorIcon;
   buttonText?: string;
   buttonClick?: () => void;
   buttonTestId?: string;
@@ -61,6 +62,7 @@ function PageHeader({
     <Box
       marginTop="3rem"
       marginBottom="1.5rem"
+      maxW={CONTENT_MAXW}
     >
       <Flex
         alignItems="center"
@@ -82,18 +84,18 @@ function PageHeader({
         {ButtonIcon && (
           <IconButton
             aria-label="navigate"
-            icon={<ButtonIcon />}
+            icon={
+              <Icon
+                boxSize="1.25rem"
+                as={ButtonIcon}
+              />
+            }
             onClick={buttonClick}
-            minWidth="0"
-            padding={1}
-            border="1px solid"
-            borderColor="lilac-0"
-            color="lilac-0"
-            borderRadius={4}
+            variant="tertiary"
+            size="icon-sm"
             data-testid={buttonTestId}
-            size="small"
-            variant={buttonVariant}
             isDisabled={isButtonDisabled}
+            as={Button}
           >
             {buttonText}
           </IconButton>

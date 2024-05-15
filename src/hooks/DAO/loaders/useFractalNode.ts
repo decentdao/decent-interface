@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAddress } from 'viem';
-import { DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
+import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { NodeAction } from '../../../providers/App/node/action';
@@ -40,15 +40,15 @@ export const useFractalNode = (
     const { daos } = result.data;
     const dao = daos[0];
     if (dao) {
-      const { parentAddress, name, hierarchy, snapshotENS, proposalTemplatesHash } = dao;
+      const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
 
       const currentNode: Node = {
         nodeHierarchy: {
-          parentAddress: parentAddress as string,
-          childNodes: mapChildNodes(hierarchy),
+          parentAddress,
+          childNodes: mapChildNodes(dao as DAO),
         },
         daoName: name as string,
-        daoAddress: getAddress(_daoAddress as string),
+        daoAddress: getAddress(_daoAddress),
         daoSnapshotENS: snapshotENS as string,
         proposalTemplatesHash: proposalTemplatesHash as string,
       };

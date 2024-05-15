@@ -35,7 +35,10 @@ export function ActivityDescriptionTreasury({ activity }: { activity: Activity }
     : undefined;
 
   return (
-    <Flex alignItems="center">
+    <Flex
+      alignItems="center"
+      flexWrap="wrap"
+    >
       <Text mr={2}>{textString}</Text>
       {treasuryActivity.transferAddresses.length > 2
         ? t('addresses', {

@@ -3,7 +3,7 @@
   "emptyFavorites": "No favorites",
   "loadingFavorite": "Loading favorite ...",
   "errorInvalidSearch": "This is not a valid Ethereum address",
-  "errorFailedSearch": "Sorry, this address is not a Decent DAO or Safe on {{chain}}",
+  "errorFailedSearch": "Sorry, this address is not a DAO or Safe on {{chain}}",
   "searchDAOPlaceholder": "Search for a Safe by address or ENS",
   "titleGovernance": "Governance",
   "titleType": "Type",
@@ -24,8 +24,6 @@
   "tipFreeze": "{{amount}} required freeze votes",
   "proposalOnChainRejection": "that rejects transaction {{proposalId}}",
   "proposalDescriptionCont": "that will",
-  "moduleDescription_one": "Module executed {{count}} transaction on",
-  "moduleDescription_other": "Module executed {{count}} transactions on",
   "alertTokenClaim": "You have {{amount}} tokens to claim!",
   "claim": "Claim"
 }

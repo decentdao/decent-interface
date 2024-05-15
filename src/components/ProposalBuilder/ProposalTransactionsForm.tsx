@@ -48,9 +48,8 @@ export default function ProposalTransactionsForm(props: ProposalTransactionsForm
         }}
         isDisabled={pendingTransaction}
         icon={Plus}
-      >
-        {t('labelAddTransaction', { ns: 'proposal' })}
-      </CeleryButtonWithIcon>
+        text={t('labelAddTransaction', { ns: 'proposal' })}
+      />
     </Box>
   );
 }

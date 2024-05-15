@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
+import { CONTENT_MAXW } from '../../../../constants/common';
 import { StyledBox } from '../../../ui/containers/StyledBox';
 import Divider from '../../../ui/utils/Divider';
 
@@ -26,13 +27,16 @@ export function SettingsSection({
   nestedSection,
 }: SettingsSectionProps) {
   return (
-    <Flex gap="1.5rem">
+    <Flex
+      gap="1.5rem"
+      flexWrap={{ base: 'wrap', md: 'nowrap' }}
+    >
       {/* SETTINGS SECTION CONTENT */}
       <StyledBox
-        bg="neutral-2"
-        maxHeight="fit-content"
-        minHeight="6.25rem"
-        minWidth="65%"
+        maxH="fit-content"
+        minH="6.25rem"
+        minW={{ base: '100%', md: '65%' }}
+        maxW={CONTENT_MAXW}
       >
         {/* TITLE AND OPTIONAL RIGHT COMPONENT */}
         <Flex justifyContent="space-between">

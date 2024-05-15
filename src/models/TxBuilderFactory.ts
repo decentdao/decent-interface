@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+import { getAddress } from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { GnosisSafeL2__factory } from '../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { getRandomBytes } from '../helpers';
@@ -20,7 +21,7 @@ import { MultisigTxBuilder } from './MultisigTxBuilder';
 import { safeData } from './helpers/safeData';
 
 export class TxBuilderFactory extends BaseTxBuilder {
-  private readonly saltNum: string;
+  private readonly saltNum: bigint;
 
   // Safe Data
   public predictedSafeAddress: string | undefined;
@@ -82,7 +83,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.azoriusContracts,
       this.daoData,
       this.saltNum,
-      this.predictedSafeAddress!,
       this.createSafeTx!,
       this.safeContract!,
       this,
@@ -105,13 +105,13 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.daoData as SubDAO,
       this.safeContract!,
       this.saltNum,
-      this.parentAddress!,
-      this.parentTokenAddress,
+      getAddress(this.parentAddress!),
+      this.parentTokenAddress ? getAddress(this.parentTokenAddress) : undefined,
       this.azoriusContracts,
-      azoriusAddress,
-      strategyAddress,
+      azoriusAddress ? getAddress(azoriusAddress) : undefined,
+      strategyAddress ? getAddress(strategyAddress) : undefined,
       parentStrategyType,
-      parentStrategyAddress,
+      parentStrategyAddress ? getAddress(parentStrategyAddress) : undefined,
     );
   }
 
@@ -130,8 +130,8 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.azoriusContracts!,
       this.daoData as AzoriusERC20DAO,
       this.safeContract!,
-      this.parentAddress,
-      this.parentTokenAddress,
+      this.parentAddress ? getAddress(this.parentAddress) : undefined,
+      this.parentTokenAddress ? getAddress(this.parentTokenAddress) : undefined,
     );
 
     await azoriusTxBuilder.init();

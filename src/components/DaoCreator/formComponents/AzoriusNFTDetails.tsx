@@ -27,7 +27,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
   const handleAddNFT = () => {
     setFieldValue('erc721Token.nfts', [
       ...values.erc721Token.nfts,
-      { tokenAddress: '', tokenWeight: { value: '' } },
+      { tokenAddress: undefined, tokenWeight: { value: '' } },
     ]);
   };
 
@@ -73,7 +73,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                   >
                 )?.[i];
                 const addressErrorMessage =
-                  nftError?.tokenAddress && nft.tokenAddress.length
+                  nftError?.tokenAddress && nft.tokenAddress?.length
                     ? nftError.tokenAddress
                     : undefined;
                 const weightErrorMessage =
@@ -172,9 +172,8 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
               <CeleryButtonWithIcon
                 onClick={handleAddNFT}
                 icon={Plus}
-              >
-                {t('addNFTButton')}
-              </CeleryButtonWithIcon>
+                text={t('addNFTButton')}
+              />
             </Flex>
           </GridItem>
           <GridItem
@@ -198,7 +197,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                   >
                 )?.[i];
                 const addressErrorMessage =
-                  nftError?.tokenAddress && nft.tokenAddress.length
+                  nftError?.tokenAddress && nft.tokenAddress?.length
                     ? nftError.tokenAddress
                     : undefined;
                 return (

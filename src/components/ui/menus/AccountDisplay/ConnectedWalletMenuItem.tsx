@@ -17,7 +17,7 @@ export function ConnectedWalletMenuItem() {
   } = useFractal();
   const account = user.address;
   const { displayName: accountDisplayName } = useDisplayName(account);
-  const avatarURL = useAvatar(account);
+  const avatarURL = useAvatar(accountDisplayName);
   const copyTextToClipboard = useCopyText();
   const { t } = useTranslation('menu');
 

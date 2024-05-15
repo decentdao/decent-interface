@@ -392,9 +392,8 @@ export default function ProposalTransaction({
                         scrollToBottom();
                       }}
                       icon={Plus}
-                    >
-                      {t('addParameter')}
-                    </CeleryButtonWithIcon>
+                      text={t('addParameter')}
+                    />
                   )}
                 </>
               )}

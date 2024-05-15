@@ -1,7 +1,11 @@
 import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
+import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { ErrorBoundary } from '../../utils/ErrorBoundary';
+import { TopErrorFallback } from '../../utils/TopErrorFallback';
+import { Footer } from '../Footer';
 import Header from '../Header';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
@@ -9,21 +13,56 @@ export default function Layout() {
   const {
     node: { daoAddress },
   } = useFractal();
+  const headerContainerRef = useRef<HTMLDivElement>(null);
 
   return (
     <Grid
       templateAreas={{
         base: `"header header"
-"main main"`,
+               "main main"
+               "footer footer"`,
         md: `"header header"
-"nav main"`,
+             "nav main"
+             "footer footer"`,
       }}
       gridTemplateColumns="4.25rem 1fr"
       gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
     >
       <GridItem
-        area={'main'}
+        area="header"
+        ref={headerContainerRef}
+      >
+        <Box
+          bg="neutral-2"
+          boxShadow="0px 1px 0px 0px #161219"
+          position="fixed"
+          w="full"
+          maxW="100vw"
+          zIndex="1"
+        >
+          <Header headerContainerRef={headerContainerRef} />
+        </Box>
+      </GridItem>
+      <GridItem
+        area="nav"
+        zIndex="modal"
+        display="flex"
+        flexDirection="column"
+        position="fixed"
+        ml={6}
+        top={`${HEADER_HEIGHT}`}
+        minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
+      >
+        <Show above="md">
+          <NavigationLinks
+            showDAOLinks={!!daoAddress}
+            address={daoAddress}
+          />
+        </Show>
+      </GridItem>
+      <GridItem
+        area="main"
         mx="1.5rem"
       >
         <Container
@@ -33,35 +72,16 @@ export default function Layout() {
           minH={CONTENT_HEIGHT}
           paddingBottom="2rem"
         >
-          <Outlet />
+          <ErrorBoundary
+            fallback={<TopErrorFallback />}
+            showDialog
+          >
+            <Outlet />
+          </ErrorBoundary>
         </Container>
       </GridItem>
-      <GridItem area={'header'}>
-        <Box
-          bg="#26212AD6"
-          backdropFilter="blur(12px)"
-          position="fixed"
-          zIndex={5}
-          w="full"
-        >
-          <Header />
-        </Box>
-      </GridItem>
-
-      <GridItem
-        area={'nav'}
-        display="flex"
-        flexDirection="column"
-        position="fixed"
-        ml={6}
-        minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
-      >
-        <Show above="md">
-          <NavigationLinks
-            showDAOLinks={!!daoAddress}
-            address={daoAddress}
-          />
-        </Show>
+      <GridItem area="footer">
+        <Footer />
       </GridItem>
     </Grid>
   );

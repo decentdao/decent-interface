@@ -17,7 +17,7 @@ import { SearchDisplay } from './SearchDisplay';
 
 export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { t } = useTranslation(['dashboard']);
-  const [localInput, setLocalInput] = useState('');
+  const [localInput, setLocalInput] = useState<string>();
   const [hasFocus, setHasFocus] = useState(false);
   const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
   const { onClose } = useDisclosure(); // popover close function
@@ -29,8 +29,8 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
 
   const resetSearch = () => {
     onClose();
-    setLocalInput('');
-    setSearchString('');
+    setLocalInput(undefined);
+    setSearchString(undefined);
   };
 
   useOutsideClick({
@@ -59,8 +59,8 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             <InputLeftElement>
               <Icon
                 as={MagnifyingGlass}
-                size="1.5rem"
-                color={localInput || hasFocus ? 'white-0' : 'neutral-5'}
+                boxSize="1.5rem"
+                color={!!errorMessage ? 'red-0' : localInput || hasFocus ? 'white-0' : 'neutral-5'}
               />
             </InputLeftElement>
             <Input
@@ -70,6 +70,8 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
               onFocus={() => setHasFocus(true)}
               onBlur={() => setHasFocus(false)}
               value={localInput}
+              spellCheck="false"
+              isInvalid={!!errorMessage}
               data-testid="search-input"
             />
           </InputGroup>

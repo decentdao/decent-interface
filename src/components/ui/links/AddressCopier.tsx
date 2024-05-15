@@ -2,9 +2,10 @@ import { Text, Icon, LinkProps } from '@chakra-ui/react';
 import { CopySimple } from '@phosphor-icons/react';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import EtherscanLinkAddress from './EtherscanLinkAddress';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import ExternalLink from './ExternalLink';
 
-interface Props extends LinkProps {
+interface AddressCopierProps extends LinkProps {
   address: string;
 }
 
@@ -12,13 +13,14 @@ interface Props extends LinkProps {
  * A component that displays a truncated address, along with the "copy to clipboard"
  * icon to the right of it.
  */
-export default function AddressCopier({ address, ...rest }: Props) {
+export default function AddressCopier({ address, ...rest }: AddressCopierProps) {
+  const { etherscanBaseURL } = useNetworkConfig();
   const { accountSubstring } = useDisplayName(address);
   const copyToClipboard = useCopyText();
 
   return (
-    <EtherscanLinkAddress
-      address={address}
+    <ExternalLink
+      href={`${etherscanBaseURL}/address/${address}`}
       onClick={e => {
         e.preventDefault();
         copyToClipboard(address);
@@ -36,6 +38,6 @@ export default function AddressCopier({ address, ...rest }: Props) {
           as={CopySimple}
         />
       </Text>
-    </EtherscanLinkAddress>
+    </ExternalLink>
   );
 }

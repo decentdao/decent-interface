@@ -2,6 +2,7 @@ import { Button, Tooltip, Box, Text, Image, Flex, Radio, RadioGroup, Icon } from
 import { Check, CheckCircle } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { TOOLTIP_MAXW } from '../../../constants/common';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
@@ -166,7 +167,8 @@ function Vote({
 
   return (
     <Tooltip
-      placement="top"
+      placement="left"
+      maxW={TOOLTIP_MAXW}
       title={
         proposalStartBlockNotFinalized
           ? t('proposalStartBlockNotFinalized', { ns: 'proposal' })

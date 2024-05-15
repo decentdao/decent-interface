@@ -1,6 +1,7 @@
 import { MenuList } from '@chakra-ui/react';
 import { Link, Plugs } from '@phosphor-icons/react';
 import { useWeb3Modal } from '@web3modal/wagmi/react';
+import { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDisconnect } from 'wagmi';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
@@ -10,7 +11,7 @@ import { ConnectedWalletMenuItem } from './ConnectedWalletMenuItem';
 import { MenuItemButton } from './MenuItemButton';
 import { NetworkSelector } from './NetworkSelector';
 
-export function WalletMenu() {
+export function WalletMenu({ containerRef }: { containerRef: RefObject<HTMLDivElement | null> }) {
   const {
     readOnly: { user },
   } = useFractal();
@@ -23,6 +24,8 @@ export function WalletMenu() {
       w="16.25rem"
       rounded="0.5rem"
       bg={NEUTRAL_2_82_TRANSPARENT}
+      backdropFilter="auto"
+      backdropBlur="10px"
       border="1px solid"
       borderColor="neutral-3"
     >
@@ -32,7 +35,7 @@ export function WalletMenu() {
           <Divider />
         </>
       )}
-      <NetworkSelector />
+      <NetworkSelector containerRef={containerRef} />
       <Divider />
       {!user.address && (
         <MenuItemButton

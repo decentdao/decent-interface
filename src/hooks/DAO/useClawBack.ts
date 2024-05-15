@@ -1,8 +1,7 @@
 import { ERC20__factory, FractalModule } from '@fractal-framework/fractal-contracts';
-import { ethers } from 'ethers';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
+import { Address, encodeAbiParameters, getAddress, isHex, parseAbiParameters } from 'viem';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { FractalModuleType, FractalNode } from '../../types';
@@ -10,8 +9,8 @@ import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
-  childSafeInfo?: FractalNode;
-  parentAddress?: string | null;
+  childSafeInfo: FractalNode;
+  parentAddress: Address | null;
 }
 
 export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBack) {
@@ -22,14 +21,13 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const { canUserCreateProposal } = useCanUserCreateProposal();
 
   const handleClawBack = useCallback(async () => {
-    if (childSafeInfo && childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
+    if (childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
       const childSafeBalance = await safeAPI.getBalances(getAddress(childSafeInfo.daoAddress));
 
       const santitizedParentAddress = getAddress(parentAddress);
       const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
 
-      if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
-        const abiCoder = new ethers.utils.AbiCoder();
+      if (canUserCreateProposal && parentAddress && parentSafeInfo) {
         const fractalModule = childSafeInfo.fractalModules!.find(
           module => module.moduleType === FractalModuleType.FRACTAL,
         );
@@ -38,16 +36,20 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
           const transactions = childSafeBalance.map(asset => {
             if (!asset.tokenAddress) {
               // Seems like we're operating with native coin i.e ETH
-              const txData = abiCoder.encode(
-                ['address', 'uint256', 'bytes', 'uint8'],
-                [parentAddress, asset.balance, '0x', 0],
+              const txData = encodeAbiParameters(
+                parseAbiParameters('address, uint256, bytes, uint8'),
+                [parentAddress, BigInt(asset.balance), '0x', 0],
               );
+
               const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
                 'execTx',
                 [txData],
               );
+              if (!isHex(fractalModuleCalldata)) {
+                throw new Error('Error encoding clawback call data');
+              }
               return {
-                target: fractalModuleContract.address,
+                target: getAddress(fractalModuleContract.address),
                 value: 0,
                 calldata: fractalModuleCalldata,
               };
@@ -57,17 +59,25 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                 parentAddress,
                 asset.balance,
               ]);
-              const txData = abiCoder.encode(
-                ['address', 'uint256', 'bytes', 'uint8'],
-                [asset.tokenAddress, 0, clawBackCalldata, 0],
+              if (!isHex(clawBackCalldata)) {
+                throw new Error('Error encoding clawback call data');
+              }
+              const txData = encodeAbiParameters(
+                parseAbiParameters('address, uint256, bytes, uint8'),
+                [getAddress(asset.tokenAddress), 0n, clawBackCalldata, 0],
               );
+
               const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
                 'execTx',
                 [txData],
               );
 
+              if (!isHex(fractalModuleCalldata)) {
+                throw new Error('Error encoding clawback call data');
+              }
+
               return {
-                target: fractalModuleContract.address,
+                target: getAddress(fractalModuleContract.address),
                 value: 0,
                 calldata: fractalModuleCalldata,
               };

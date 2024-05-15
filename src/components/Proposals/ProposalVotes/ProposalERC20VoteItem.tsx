@@ -1,10 +1,11 @@
-import { Grid, GridItem, Text } from '@chakra-ui/react';
+import { Grid, GridItem, Hide, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ProposalVote } from '../../../types';
 import { formatPercentage, formatCoin } from '../../../utils';
 import StatusBox from '../../ui/badges/StatusBox';
+import Divider from '../../ui/utils/Divider';
 
 export default function ProposalERC20VoteItem({
   vote,
@@ -24,7 +25,8 @@ export default function ProposalERC20VoteItem({
   } = useFractal();
   return (
     <Grid
-      templateColumns="repeat(4, 1fr)"
+      templateColumns={{ base: 'repeat(1, 1fr)', lg: 'repeat(4, 1fr)' }}
+      gap={{ base: '0.25rem', lg: 0 }}
       width="100%"
     >
       <GridItem colSpan={1}>
@@ -62,6 +64,12 @@ export default function ProposalERC20VoteItem({
           {formatCoin(vote.weight, true, govTokenDecimals, govTokenSymbol)}
         </Text>
       </GridItem>
+      <Hide above="lg">
+        <Divider
+          variant="darker"
+          my="0.5rem"
+        />
+      </Hide>
     </Grid>
   );
 }
