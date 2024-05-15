@@ -186,7 +186,10 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
   const id = asset.id.toString();
 
   return (
-    <HStack marginBottom={isLast ? '0rem' : '1.5rem'} px={{ base: '1rem', lg: '1.5rem' }}>
+    <HStack
+      marginBottom={isLast ? '0rem' : '1.5rem'}
+      px={{ base: '1rem', lg: '1.5rem' }}
+    >
       <Flex width="15%">
         <EtherscanLink
           type="token"
@@ -320,7 +323,12 @@ export function Assets() {
       >
         {t('subtitleCoinBalance')}
       </Text>
-      <Text data-testid="text-usd-total" px={{ base: '1rem', lg: '1.5rem' }}>{formatUSD(coinDisplay.totalFiatValue)}</Text>
+      <Text
+        data-testid="text-usd-total"
+        px={{ base: '1rem', lg: '1.5rem' }}
+      >
+        {formatUSD(coinDisplay.totalFiatValue)}
+      </Text>
       <Hide above="lg">
         <Divider
           variant="darker"

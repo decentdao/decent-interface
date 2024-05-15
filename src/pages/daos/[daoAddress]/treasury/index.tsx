@@ -59,32 +59,33 @@ export default function Treasury() {
         flexWrap="wrap"
       >
         <Show above="lg">
-          <Box             width={{ sm: '100%', xl: '55%' }}><TitledInfoBox
-            width={{ sm: '100%' }}
-            title={t('titleTransactions')}
-            titleTestId="title-transactions"
-            bg="neutral-2"
-          >
-            <Transactions shownTransactions={shownTransactions} />
-            <Divider
+          <Box width={{ sm: '100%', xl: '55%' }}>
+            <TitledInfoBox
+              width={{ sm: '100%' }}
+              title={t('titleTransactions')}
+              titleTestId="title-transactions"
+              bg="neutral-2"
+            >
+              <Transactions shownTransactions={shownTransactions} />
+              <Divider
                 variant="darker"
                 my="1rem"
               />
-            <Box px={{ base: '1rem', lg: '1.5rem' }}>
-              <PaginationCount
-                totalTransfers={totalTransfers}
-                shownTransactions={shownTransactions}
-                daoAddress={daoAddress}
-              />
-            </Box>
-            <Divider
+              <Box px={{ base: '1rem', lg: '1.5rem' }}>
+                <PaginationCount
+                  totalTransfers={totalTransfers}
+                  shownTransactions={shownTransactions}
+                  daoAddress={daoAddress}
+                />
+              </Box>
+              <Divider
                 variant="darker"
                 my="1rem"
               />
-          </TitledInfoBox>
-          {showLoadMoreTransactions && (
-            <PaginationButton onClick={() => setShownTransactions(prevState => prevState + 20)} />
-          )}
+            </TitledInfoBox>
+            {showLoadMoreTransactions && (
+              <PaginationButton onClick={() => setShownTransactions(prevState => prevState + 20)} />
+            )}
           </Box>
         </Show>
         <TitledInfoBox
