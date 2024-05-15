@@ -39,7 +39,7 @@ export function useERC20Claim() {
 
     const possibleTokenClaimContract = getContract({
       abi: ERC20ClaimAbi,
-      address: getAddress(approvals[0].args.spender),
+      address: approvals[0].args.spender,
       client: publicClient,
     });
 
@@ -55,7 +55,7 @@ export function useERC20Claim() {
     // action to governance
     action.dispatch({
       type: FractalGovernanceAction.SET_CLAIMING_CONTRACT,
-      payload: getAddress(approvals[0].args.spender),
+      payload: approvals[0].args.spender,
     });
   }, [action, publicClient, votesTokenContractAddress]);
 
