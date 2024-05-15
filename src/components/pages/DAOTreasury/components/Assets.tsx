@@ -86,41 +86,31 @@ function CoinRow({
       justifyContent="space-between"
       px={{ base: '1rem', lg: '1.5rem' }}
       minW="595px"
+      gap="1rem"
     >
       <Flex
         w="25%"
-        alignItems="flex-start"
+        alignItems="center"
+        gap="0.5rem"
       >
-        <HStack>
-          <Image
-            src={asset.iconUri}
-            fallbackSrc="/images/coin-icon-default.svg"
-            alt={asset.symbol}
-            w="1rem"
-            h="1rem"
-          />
-          <Text
-            height="auto"
-            display="inline-flex"
-            data-testid="link-token-symbol"
-            noOfLines={2}
-            width="100%"
-            maxWidth="4.7rem"
-            isTruncated
-          >
-            <EtherscanLink
-              color="white-0"
-              _hover={{ bg: 'transparent' }}
-              textStyle="body-base"
-              padding={0}
-              borderWidth={0}
-              value={asset.address === zeroAddress ? safe : asset.address}
-              type="token"
-            >
-              {asset.symbol}
-            </EtherscanLink>
-          </Text>
-        </HStack>
+        <Image
+          src={asset.iconUri}
+          fallbackSrc="/images/coin-icon-default.svg"
+          alt={asset.symbol}
+          w="1rem"
+          h="1rem"
+        />
+        <EtherscanLink
+          color="white-0"
+          _hover={{ bg: 'transparent' }}
+          textStyle="body-base"
+          padding={0}
+          borderWidth={0}
+          value={asset.address === zeroAddress ? safe : asset.address}
+          type="token"
+        >
+          {asset.symbol}
+        </EtherscanLink>
       </Flex>
       <Flex
         w="30%"
