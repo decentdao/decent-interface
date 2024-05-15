@@ -20,6 +20,7 @@ import {
   encodeFunctionData,
   PublicClient,
 } from 'viem';
+import ERC20ClaimAbi from '../assets/abi/ERC20Claim';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import VotesERC20Abi from '../assets/abi/VotesERC20';
@@ -61,6 +62,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private votesERC20MasterCopyAddress: string;
   private moduleProxyFactoryAddress: Address;
   private multiSendCallOnlyAddress: Address;
+  private erc20ClaimMasterCopyAddress: Address;
 
   private tokenNonce: bigint;
   private strategyNonce: bigint;
@@ -78,6 +80,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     votesERC20MasterCopyAddress: string,
     moduleProxyFactoryAddress: Address,
     multiSendCallOnlyAddress: Address,
+    erc20ClaimMasterCopyAddress: Address,
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
@@ -102,6 +105,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.votesERC20MasterCopyAddress = votesERC20MasterCopyAddress;
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
     this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
+    this.erc20ClaimMasterCopyAddress = erc20ClaimMasterCopyAddress;
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       daoData = daoData as AzoriusERC20DAO;
@@ -250,11 +254,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       ModuleProxyFactoryAbi,
       this.moduleProxyFactoryAddress,
       'deployModule',
-      [
-        this.azoriusContracts!.claimingMasterCopyContract.address,
-        this.encodedSetupTokenClaimData,
-        this.claimNonce,
-      ],
+      [this.erc20ClaimMasterCopyAddress, this.encodedSetupTokenClaimData, this.claimNonce],
       0,
       false,
     );
@@ -404,20 +404,17 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         azoriusGovernanceDaoData.parentAllocationAmount,
       ],
     );
-    const encodedSetupTokenClaimData =
-      this.azoriusContracts!.claimingMasterCopyContract.interface.encodeFunctionData('setUp', [
-        encodedInitTokenData,
-      ]);
-    if (!isHex(encodedSetupTokenClaimData)) {
-      throw new Error('Error ecnoding setup token claim data');
-    }
+    const encodedSetupTokenClaimData = encodeFunctionData({
+      abi: ERC20ClaimAbi,
+      functionName: 'setUp',
+      args: [encodedInitTokenData],
+    });
+
     this.encodedSetupTokenClaimData = encodedSetupTokenClaimData;
   }
 
   private setPredictedTokenClaimAddress() {
-    const tokenByteCodeLinear = generateContractByteCodeLinear(
-      getAddress(this.azoriusContracts!.claimingMasterCopyContract.address),
-    );
+    const tokenByteCodeLinear = generateContractByteCodeLinear(this.erc20ClaimMasterCopyAddress);
 
     const tokenSalt = generateSalt(this.encodedSetupTokenClaimData!, this.claimNonce);
 

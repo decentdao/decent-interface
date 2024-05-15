@@ -1,10 +1,10 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { getContract, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import ERC20ClaimAbi from '../../../../assets/abi/ERC20Claim';
 import VotesERC20Abi from '../../../../assets/abi/VotesERC20';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import useSafeContracts from '../../../safe/useSafeContracts';
 // get list of approvals; approval [0] should be token claim
 // query using attach = masterTokenClaim.attach(approval[0]).queryFilter()
 // check if module is tokenClaim;
@@ -16,14 +16,12 @@ export function useERC20Claim() {
     governanceContracts: { votesTokenContractAddress },
     action,
   } = useFractal();
-  const baseContracts = useSafeContracts();
   const publicClient = usePublicClient();
 
   const loadTokenClaimContract = useCallback(async () => {
-    if (!baseContracts || !votesTokenContractAddress || !publicClient) {
+    if (!votesTokenContractAddress || !publicClient) {
       return;
     }
-    const { claimingMasterCopyContract } = baseContracts;
 
     const votesTokenContract = getContract({
       abi: VotesERC20Abi,
@@ -39,23 +37,27 @@ export function useERC20Claim() {
       return;
     }
 
-    const possibleTokenClaimContract = claimingMasterCopyContract.asProvider.attach(
-      getAddress(approvals[0].args.spender),
-    );
-    const tokenClaimFilter = possibleTokenClaimContract.filters.ERC20ClaimCreated();
-    const tokenClaimArray = await possibleTokenClaimContract
-      .queryFilter(tokenClaimFilter)
+    const possibleTokenClaimContract = getContract({
+      abi: ERC20ClaimAbi,
+      address: getAddress(approvals[0].args.spender),
+      client: publicClient,
+    });
+
+    const tokenClaimArray = await possibleTokenClaimContract.getEvents
+      .ERC20ClaimCreated()
       .catch(() => []);
 
-    if (!tokenClaimArray.length || tokenClaimArray[0].args[1] === votesTokenContractAddress) {
+    const childToken = tokenClaimArray[0].args.childToken;
+
+    if (!tokenClaimArray.length || !childToken || childToken === votesTokenContractAddress) {
       return;
     }
     // action to governance
     action.dispatch({
       type: FractalGovernanceAction.SET_CLAIMING_CONTRACT,
-      payload: possibleTokenClaimContract,
+      payload: getAddress(approvals[0].args.spender),
     });
-  }, [action, baseContracts, publicClient, votesTokenContractAddress]);
+  }, [action, publicClient, votesTokenContractAddress]);
 
   const loadKey = useRef<string>();
 
