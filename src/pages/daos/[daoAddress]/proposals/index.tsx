@@ -46,7 +46,7 @@ export default function ProposalsPage() {
     azoriusGovernance.votesToken.balance !== 0n;
 
   return (
-    <div>
+    <main>
       <PageHeader
         breadcrumbs={[
           {
@@ -107,6 +107,6 @@ export default function ProposalsPage() {
         )}
       </PageHeader>
       <Proposals />
-    </div>
+    </main>
   );
 }

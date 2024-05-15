@@ -18,7 +18,7 @@ export default function ProposalTemplatesPage() {
   const { addressPrefix } = useNetworkConfig();
 
   return (
-    <div>
+    <main>
       <PageHeader
         title={t('proposalTemplates', { ns: 'breadcrumbs' })}
         breadcrumbs={[
@@ -38,6 +38,6 @@ export default function ProposalTemplatesPage() {
         )}
       </PageHeader>
       <ProposalTemplates />
-    </div>
+    </main>
   );
 }

@@ -1,5 +1,20 @@
-import { Box, Flex, Button, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Button,
+  HStack,
+  Image,
+  Text,
+  Tooltip,
+  Show,
+  Hide,
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
+} from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
+import { CaretDown, CaretRight } from '@phosphor-icons/react';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -21,11 +36,13 @@ function CoinHeader() {
   const { t } = useTranslation('treasury');
   return (
     <Box mb="1rem">
-      <Divider
-        my="1rem"
-        variant="darker"
-      />
-      <HStack>
+      <Show above="lg">
+        <Divider
+          my="1rem"
+          variant="darker"
+        />
+      </Show>
+      <HStack px={{ base: '1rem', lg: '1.5rem' }}>
         <Text
           w="35%"
           textStyle="label-small"
@@ -65,6 +82,7 @@ function CoinRow({
     <Flex
       my="0.5rem"
       justifyContent="space-between"
+      px={{ base: '1rem', lg: '1.5rem' }}
     >
       <Flex
         w="35%"
@@ -154,6 +172,7 @@ function NFTHeader() {
         w="25%"
         textStyle="label-small"
         color="neutral-7"
+        px={{ base: '1rem', lg: '1.5rem' }}
       >
         {t('columnNFTs')}
       </Text>
@@ -167,7 +186,7 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
   const id = asset.id.toString();
 
   return (
-    <HStack marginBottom={isLast ? '0rem' : '1.5rem'}>
+    <HStack marginBottom={isLast ? '0rem' : '1.5rem'} px={{ base: '1rem', lg: '1.5rem' }}>
       <Flex width="15%">
         <EtherscanLink
           type="token"
@@ -226,6 +245,7 @@ export function Assets() {
   const coinDisplay = useFormatCoins(assetsFungible);
   const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
   const { handleUnstake, handleClaimUnstakedETH } = useLidoStaking();
+  const [expandedIndecies, setExpandedIndecies] = useState<number[]>([]);
 
   // --- Lido Stake button setup ---
   const showStakeButton =
@@ -278,15 +298,35 @@ export function Assets() {
     handleClaimUnstakedETH(BigInt(lidoWithdrawelNFT!.id));
   };
 
+  const hasAssets = coinDisplay.displayData.length > 0 || assetsNonFungible.length > 0;
+  const toggleAccordionItem = (index: number) => {
+    setExpandedIndecies(indexArray => {
+      if (indexArray.includes(index)) {
+        const newArr = [...indexArray];
+        newArr.splice(newArr.indexOf(index), 1);
+        return newArr;
+      } else {
+        return [...indexArray, index];
+      }
+    });
+  };
+
   return (
-    <Box>
+    <Box mt={{ base: '1rem', lg: 0 }}>
       <Text
         textStyle="label-small"
         color="neutral-7"
+        px={{ base: '1rem', lg: '1.5rem' }}
       >
         {t('subtitleCoinBalance')}
       </Text>
-      <Text data-testid="text-usd-total">{formatUSD(coinDisplay.totalFiatValue)}</Text>
+      <Text data-testid="text-usd-total" px={{ base: '1rem', lg: '1.5rem' }}>{formatUSD(coinDisplay.totalFiatValue)}</Text>
+      <Hide above="lg">
+        <Divider
+          variant="darker"
+          my="1rem"
+        />
+      </Hide>
       {(showStakeButton || showUnstakeButton || showClaimETHButton) && (
         <>
           <Divider my="1rem" />
@@ -294,10 +334,11 @@ export function Assets() {
             textStyle="label-small"
             color="neutral-7"
             my="1rem"
+            px={{ base: '1rem', lg: '1.5rem' }}
           >
             {t('subtitleStaking')}
           </Text>
-          <HStack>
+          <HStack px={{ base: '1rem', lg: '1.5rem' }}>
             {showStakeButton && (
               <Button
                 size="sm"
@@ -328,25 +369,113 @@ export function Assets() {
           </HStack>
         </>
       )}
-      {coinDisplay.displayData.length > 0 && <CoinHeader />}
-      {coinDisplay.displayData.map((coin, index) => {
-        return (
-          <CoinRow
-            key={index}
-            safe={daoAddress!}
-            totalFiat={coinDisplay.totalFiatValue}
-            asset={coin}
-          />
-        );
-      })}
-      {assetsNonFungible.length > 0 && <NFTHeader />}
-      {assetsNonFungible.map((asset, index) => (
-        <NFTRow
-          key={index}
-          asset={asset}
-          isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
-        />
-      ))}
+      {hasAssets && (
+        <>
+          <Hide above="lg">
+            <Accordion
+              allowMultiple
+              index={expandedIndecies}
+            >
+              <AccordionItem
+                borderTop="none"
+                borderBottom="none"
+              >
+                {({ isExpanded }) => (
+                  <Box>
+                    <AccordionButton
+                      onClick={() => toggleAccordionItem(0)}
+                      p="0.25rem"
+                      textStyle="body-base"
+                      color="white-0"
+                      ml="0.75rem"
+                    >
+                      <Flex
+                        alignItems="center"
+                        gap={2}
+                      >
+                        {isExpanded ? <CaretDown /> : <CaretRight />}
+                        {t('columnCoins')}
+                      </Flex>
+                    </AccordionButton>
+                    <Divider
+                      variant="darker"
+                      my="1rem"
+                    />
+                    <AccordionPanel p={0}>
+                      <CoinHeader />
+                      {coinDisplay.displayData.map((coin, index) => {
+                        return (
+                          <CoinRow
+                            key={index}
+                            safe={daoAddress!}
+                            totalFiat={coinDisplay.totalFiatValue}
+                            asset={coin}
+                          />
+                        );
+                      })}
+                    </AccordionPanel>
+                  </Box>
+                )}
+              </AccordionItem>
+              <AccordionItem
+                borderTop="none"
+                borderBottom="none"
+              >
+                {({ isExpanded }) => (
+                  <Box>
+                    <AccordionButton
+                      onClick={() => toggleAccordionItem(1)}
+                      p="0.25rem"
+                      textStyle="body-base"
+                      color="white-0"
+                      ml="0.75rem"
+                    >
+                      <Flex
+                        alignItems="center"
+                        gap={2}
+                      >
+                        {isExpanded ? <CaretDown /> : <CaretRight />}
+                        {t('columnNFTs')}
+                      </Flex>
+                    </AccordionButton>
+                    <AccordionPanel p={0}>
+                      <NFTHeader />
+                      {assetsNonFungible.map((asset, index) => (
+                        <NFTRow
+                          key={index}
+                          asset={asset}
+                          isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
+                        />
+                      ))}
+                    </AccordionPanel>
+                  </Box>
+                )}
+              </AccordionItem>
+            </Accordion>
+          </Hide>
+          <Show above="lg">
+            {coinDisplay.displayData.length > 0 && <CoinHeader />}
+            {coinDisplay.displayData.map((coin, index) => {
+              return (
+                <CoinRow
+                  key={index}
+                  safe={daoAddress!}
+                  totalFiat={coinDisplay.totalFiatValue}
+                  asset={coin}
+                />
+              );
+            })}
+            {assetsNonFungible.length > 0 && <NFTHeader />}
+            {assetsNonFungible.map((asset, index) => (
+              <NFTRow
+                key={index}
+                asset={asset}
+                isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
+              />
+            ))}
+          </Show>
+        </>
+      )}
     </Box>
   );
 }
