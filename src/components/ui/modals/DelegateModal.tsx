@@ -5,9 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { zeroAddress, getAddress, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
+import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import VotesERC20Abi from '../../../assets/abi/VotesERC20';
-import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
-import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -38,7 +37,6 @@ export function DelegateModal({ close }: { close: Function }) {
   const decentGovernance = azoriusGovernance as DecentGovernance;
   const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken?.delegatee);
   const lockedDelegateeDisplayName = useDisplayName(decentGovernance?.lockedVotesToken?.delegatee);
-  const { delegateVote, contractCallPending } = useDelegateVote();
   const [, contractCallPendingViem, contractCallViem] = useTransaction();
   const { addressValidationTest } = useValidationAddress();
   const { data: walletClient } = useWalletClient();
@@ -67,15 +65,23 @@ export function DelegateModal({ close }: { close: Function }) {
     });
   };
   const submitLockedDelegation = async (values: { address: string }) => {
-    if (!lockReleaseContractAddress || !baseContracts || !signer) return;
+    if (!lockReleaseContractAddress || !baseContracts || !signer || !walletClient) return;
     let validAddress = values.address;
     if (couldBeENS(validAddress)) {
       validAddress = await signer.resolveName(values.address);
     }
-    const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, signer);
-    delegateVote({
-      delegatee: validAddress,
-      votingTokenContract: lockReleaseContract,
+
+    const lockReleaseContract = getContract({
+      abi: LockReleaseAbi,
+      address: getAddress(lockReleaseContractAddress),
+      client: walletClient,
+    });
+
+    contractCallViem({
+      contractFn: () => lockReleaseContract.write.delegate([getAddress(validAddress)]),
+      pendingMessage: t('pendingDelegateVote'),
+      failedMessage: t('failedDelegateVote'),
+      successMessage: t('successDelegateVote'),
       successCallback: async () => {
         await loadReadOnlyValues();
         close();
@@ -221,7 +227,6 @@ export function DelegateModal({ close }: { close: Function }) {
               width="100%"
               isDisabled={
                 !!errors.address ||
-                contractCallPending ||
                 contractCallPendingViem ||
                 !values.address ||
                 values.address === azoriusGovernance.votesToken?.delegatee
@@ -237,7 +242,6 @@ export function DelegateModal({ close }: { close: Function }) {
                   onClick={() => submitLockedDelegation({ address: values.address })}
                   isDisabled={
                     !!errors.address ||
-                    contractCallPending ||
                     contractCallPendingViem ||
                     !values.address ||
                     values.address === decentGovernance.lockedVotesToken.delegatee

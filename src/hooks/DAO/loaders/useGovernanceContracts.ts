@@ -1,9 +1,9 @@
 import { Azorius } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
-import { Address, getContract, getAddress } from 'viem';
+import { getContract, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
-import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
@@ -72,13 +72,13 @@ export const useGovernanceContracts = () => {
         });
         const possibleLockRelease = getContract({
           address: getAddress(govTokenAddress),
-          abi: LockRelease__factory.abi,
+          abi: LockReleaseAbi,
           client: { public: publicClient },
         });
 
         let lockedTokenAddress = undefined;
         try {
-          lockedTokenAddress = (await possibleLockRelease.read.token()) as Address;
+          lockedTokenAddress = await possibleLockRelease.read.token();
         } catch {
           // no-op
           // if the underlying token is not an ERC20Wrapper, this will throw an error,
