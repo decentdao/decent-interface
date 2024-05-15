@@ -34,8 +34,8 @@ export default function Layout() {
         ref={headerContainerRef}
       >
         <Box
-          bg="#26212AD6"
-          backdropFilter="blur(12px)"
+          bg="neutral-2"
+          boxShadow="0px 1px 0px 0px #161219"
           position="fixed"
           w="full"
           maxW="100vw"

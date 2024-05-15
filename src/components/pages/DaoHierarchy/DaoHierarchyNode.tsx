@@ -1,9 +1,10 @@
-import { Flex, HStack, Icon } from '@chakra-ui/react';
+import { Box, Flex, Icon } from '@chakra-ui/react';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
-import { Address, getAddress } from 'viem';
+import { Address, getAddress, zeroAddress } from 'viem';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalNode, WithError } from '../../../types';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../../ui/cards/DAONodeInfoCard';
 
@@ -25,6 +26,9 @@ export function DaoHierarchyNode({
   daoAddress: Address | null;
   depth: number;
 }) {
+  const {
+    node: { daoAddress: currentDAOAddress },
+  } = useFractal();
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
   const { daoData } = useLoadDAOData(parentAddress, fractalNode);
@@ -68,30 +72,49 @@ export function DaoHierarchyNode({
       gap="1.25rem"
       width="100%"
     >
-      <DAONodeInfoCard
-        node={fractalNode}
-        freezeGuard={daoData?.freezeGuard}
-        guardContracts={daoData?.freezeGuardContracts}
-      />
+      <Box
+        borderRadius="0.5rem"
+        border={
+          currentDAOAddress === getAddress(daoAddress || zeroAddress) && !!fractalNode
+            ? '4px solid'
+            : 'none'
+        }
+        borderColor={
+          currentDAOAddress === getAddress(daoAddress || zeroAddress) ? 'neutral-4' : 'none'
+        }
+      >
+        <DAONodeInfoCard
+          node={fractalNode}
+          freezeGuard={daoData?.freezeGuard}
+          guardContracts={daoData?.freezeGuardContracts}
+        />
+      </Box>
 
       {/* CHILD NODES */}
       {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
-        <HStack
+        <Flex
           minH={`${NODE_HEIGHT_REM}rem`}
           key={childNode.daoAddress}
           gap="1.25rem"
         >
           <Icon
             as={ArrowElbowDownRight}
+            my={`${NODE_HEIGHT_REM / 2.5}rem`}
+            ml="0.5rem"
             boxSize="32px"
-            color="neutral-6"
+            color={
+              currentDAOAddress === getAddress(childNode.daoAddress || zeroAddress)
+                ? 'celery-0'
+                : 'neutral-6'
+            }
           />
+
           <DaoHierarchyNode
             parentAddress={daoAddress}
             daoAddress={childNode.daoAddress}
             depth={depth + 1}
           />
-        </HStack>
+        </Flex>
       ))}
     </Flex>
   );
