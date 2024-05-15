@@ -1,9 +1,9 @@
-import { Text, Icon, LinkProps, Box } from '@chakra-ui/react';
+import { Text, Icon, Button, ButtonProps } from '@chakra-ui/react';
 import { CopySimple } from '@phosphor-icons/react';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 
-interface AddressCopierProps extends LinkProps {
+interface AddressCopierProps extends ButtonProps {
   address: string;
 }
 
@@ -16,7 +16,8 @@ export default function AddressCopier({ address, ...rest }: AddressCopierProps) 
   const copyToClipboard = useCopyText();
 
   return (
-    <Box
+    <Button
+      variant="unstyled"
       color="celery-0"
       padding="0.25rem 0.75rem"
       gap="0.25rem"
@@ -43,6 +44,6 @@ export default function AddressCopier({ address, ...rest }: AddressCopierProps) 
           as={CopySimple}
         />
       </Text>
-    </Box>
+    </Button>
   );
 }
