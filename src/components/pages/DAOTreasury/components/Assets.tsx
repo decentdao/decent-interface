@@ -34,7 +34,10 @@ import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 function CoinHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box mb="1rem" minW="595px">
+    <Box
+      mb="1rem"
+      minW="595px"
+    >
       <Show above="lg">
         <Divider
           my="1rem"
@@ -162,7 +165,10 @@ function CoinRow({
 function NFTHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box marginBottom="1rem" minW="595px">
+    <Box
+      marginBottom="1rem"
+      minW="595px"
+    >
       <Divider
         variant="darker"
         marginTop="0.75rem"
@@ -316,7 +322,10 @@ export function Assets() {
   };
 
   return (
-    <Box mt={{ base: '1rem', lg: 0 }} w="full">
+    <Box
+      mt={{ base: '1rem', lg: 0 }}
+      w="full"
+    >
       <Text
         textStyle="label-small"
         color="neutral-7"
