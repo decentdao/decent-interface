@@ -30,6 +30,7 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactory,
       multisend: multiSendCallOnly,
       claimingMasterCopy: erc20ClaimMasterCopy,
+      fractalModuleMasterCopy,
     },
   } = useNetworkConfig();
 
@@ -114,6 +115,7 @@ const useBuildDAOTx = () => {
         zodiacModuleProxyFactory,
         multiSendCallOnly,
         erc20ClaimMasterCopy,
+        fractalModuleMasterCopy,
         parentAddress,
         parentTokenAddress,
       );
@@ -170,6 +172,7 @@ const useBuildDAOTx = () => {
       zodiacModuleProxyFactory,
       multiSendCallOnly,
       erc20ClaimMasterCopy,
+      fractalModuleMasterCopy,
     ],
   );
 
