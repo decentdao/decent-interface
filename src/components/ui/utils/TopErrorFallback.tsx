@@ -1,10 +1,9 @@
 import { Button, Center, Flex, Text, Image } from '@chakra-ui/react';
-import * as Sentry from '@sentry/react';
+// import * as Sentry from '@sentry/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { BASE_ROUTES } from '../../../constants/routes';
-import CeleryButtonWithIcon from './CeleryButtonWithIcon';
 
 // Hook to get and react to the current window width. Using this because the default breakpoints
 // are not enough for the design of the error page.
@@ -55,12 +54,13 @@ export function TopErrorFallback() {
       >
         {t('goHome')}
       </Button>
+      {/* 
+        // todo: `Sentry.showReportDialog` doesn't seem to work, not sure what to do, so commenting out till figured out
       <CeleryButtonWithIcon
         mr={isWidthSmall ? 0 : '5.84rem'}
         text="Submit Crash Report"
         mt="1rem"
         onClick={() => {
-          // todo: doesn't seem to work, not sure what to do
           Sentry.showReportDialog({
             eventId: '1234',
             title: "It looks like we're having issues",
@@ -73,7 +73,7 @@ export function TopErrorFallback() {
             successMessage: 'Thank you for your feedback!',
           });
         }}
-      />
+      /> */}
     </Flex>
   );
 
