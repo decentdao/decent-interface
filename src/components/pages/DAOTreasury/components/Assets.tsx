@@ -21,7 +21,6 @@ import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
-import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
 import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -35,7 +34,7 @@ import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 function CoinHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box mb="1rem">
+    <Box mb="1rem" minW="595px">
       <Show above="lg">
         <Divider
           my="1rem"
@@ -83,6 +82,7 @@ function CoinRow({
       my="0.5rem"
       justifyContent="space-between"
       px={{ base: '1rem', lg: '1.5rem' }}
+      minW="595px"
     >
       <Flex
         w="35%"
@@ -162,7 +162,7 @@ function CoinRow({
 function NFTHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box marginBottom="1rem">
+    <Box marginBottom="1rem" minW="595px">
       <Divider
         variant="darker"
         marginTop="0.75rem"
@@ -189,6 +189,7 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
     <HStack
       marginBottom={isLast ? '0rem' : '1.5rem'}
       px={{ base: '1rem', lg: '1.5rem' }}
+      minW="595px"
     >
       <Flex width="15%">
         <EtherscanLink
@@ -230,7 +231,7 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
           _hover={{ bg: 'transparent' }}
           maxW="100%"
         >
-          <Text as="span">{`#${id.length > 12 ? createAccountSubstring(id) : id}`}</Text>
+          <Text as="span">{`#${id}`}</Text>
         </EtherscanLink>
       </Flex>
     </HStack>
@@ -315,7 +316,7 @@ export function Assets() {
   };
 
   return (
-    <Box mt={{ base: '1rem', lg: 0 }}>
+    <Box mt={{ base: '1rem', lg: 0 }} w="full">
       <Text
         textStyle="label-small"
         color="neutral-7"

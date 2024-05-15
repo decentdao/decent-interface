@@ -59,9 +59,9 @@ export default function Treasury() {
         flexWrap="wrap"
       >
         <Show above="lg">
-          <Box width={{ sm: '100%', xl: '55%' }}>
+          <Box width={{ base: '100%', xl: '55%' }}>
             <TitledInfoBox
-              width={{ sm: '100%' }}
+              width={{ base: '100%' }}
               title={t('titleTransactions')}
               titleTestId="title-transactions"
               bg="neutral-2"
@@ -89,7 +89,7 @@ export default function Treasury() {
           </Box>
         </Show>
         <TitledInfoBox
-          width={{ sm: '100%', xl: '35%' }}
+          width={{ base: '100%', xl: '35%' }}
           title={t('titleAssets')}
           titleTestId="title-assets"
           bg={{ base: 'neutral-2', lg: 'none' }}
