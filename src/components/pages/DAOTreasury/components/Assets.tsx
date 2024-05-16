@@ -384,81 +384,93 @@ export function Assets() {
               allowMultiple
               index={expandedIndecies}
             >
-              <AccordionItem
-                borderTop="none"
-                borderBottom="none"
-              >
-                {({ isExpanded }) => (
-                  <Box>
-                    <AccordionButton
-                      onClick={() => toggleAccordionItem(0)}
-                      p="0.25rem"
-                      textStyle="body-base"
-                      color="white-0"
-                      ml="0.75rem"
-                    >
-                      <Flex
-                        alignItems="center"
-                        gap={2}
+              {coinDisplay.displayData.length > 0 && (
+                <AccordionItem
+                  borderTop="none"
+                  borderBottom="none"
+                >
+                  {({ isExpanded }) => (
+                    <Box>
+                      <AccordionButton
+                        onClick={() => toggleAccordionItem(0)}
+                        p="0.25rem"
+                        textStyle="body-base"
+                        color="white-0"
+                        ml="0.75rem"
                       >
-                        {isExpanded ? <CaretDown /> : <CaretRight />}
-                        {t('columnCoins')}
-                      </Flex>
-                    </AccordionButton>
-                    <Divider
-                      variant="darker"
-                      my="1rem"
-                    />
-                    <AccordionPanel p={0}>
-                      <CoinHeader />
-                      {coinDisplay.displayData.map((coin, index) => {
-                        return (
-                          <CoinRow
+                        <Flex
+                          alignItems="center"
+                          gap={2}
+                        >
+                          {isExpanded ? <CaretDown /> : <CaretRight />}
+                          {t('columnCoins')}
+                        </Flex>
+                      </AccordionButton>
+                      <Divider
+                        variant="darker"
+                        my="1rem"
+                      />
+                      <AccordionPanel
+                        p={0}
+                        overflowX="scroll"
+                      >
+                        <CoinHeader />
+                        {coinDisplay.displayData.map((coin, index) => {
+                          return (
+                            <CoinRow
+                              key={index}
+                              safe={daoAddress!}
+                              totalFiat={coinDisplay.totalFiatValue}
+                              asset={coin}
+                            />
+                          );
+                        })}
+                      </AccordionPanel>
+                    </Box>
+                  )}
+                </AccordionItem>
+              )}
+              {assetsNonFungible.length > 0 && (
+                <AccordionItem
+                  borderTop="none"
+                  borderBottom="none"
+                >
+                  {({ isExpanded }) => (
+                    <Box>
+                      <AccordionButton
+                        onClick={() =>
+                          toggleAccordionItem(coinDisplay.displayData.length > 0 ? 1 : 0)
+                        }
+                        p="0.25rem"
+                        textStyle="body-base"
+                        color="white-0"
+                        ml="0.75rem"
+                      >
+                        <Flex
+                          alignItems="center"
+                          gap={2}
+                        >
+                          {isExpanded ? <CaretDown /> : <CaretRight />}
+                          {t('columnNFTs')}
+                        </Flex>
+                      </AccordionButton>
+                      <AccordionPanel
+                        p={0}
+                        overflowX="scroll"
+                      >
+                        <NFTHeader />
+                        {assetsNonFungible.map((asset, index) => (
+                          <NFTRow
                             key={index}
-                            safe={daoAddress!}
-                            totalFiat={coinDisplay.totalFiatValue}
-                            asset={coin}
+                            asset={asset}
+                            isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
                           />
-                        );
-                      })}
-                    </AccordionPanel>
-                  </Box>
-                )}
-              </AccordionItem>
-              <AccordionItem
-                borderTop="none"
-                borderBottom="none"
-              >
-                {({ isExpanded }) => (
-                  <Box>
-                    <AccordionButton
-                      onClick={() => toggleAccordionItem(1)}
-                      p="0.25rem"
-                      textStyle="body-base"
-                      color="white-0"
-                      ml="0.75rem"
-                    >
-                      <Flex
-                        alignItems="center"
-                        gap={2}
-                      >
-                        {isExpanded ? <CaretDown /> : <CaretRight />}
-                        {t('columnNFTs')}
-                      </Flex>
-                    </AccordionButton>
-                    <AccordionPanel p={0}>
-                      <NFTHeader />
-                      {assetsNonFungible.map((asset, index) => (
-                        <NFTRow
-                          key={index}
-                          asset={asset}
-                          isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
-                        />
-                      ))}
-                    </AccordionPanel>
-                  </Box>
-                )}
-              </AccordionItem>
+                        ))}
+                      </AccordionPanel>
+                    </Box>
+                  )}
+                </AccordionItem>
+              )}
             </Accordion>
           </Hide>
           <Show above="lg">
