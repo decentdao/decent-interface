@@ -1,4 +1,4 @@
-import { Box, Flex, Icon } from '@chakra-ui/react';
+import { Flex, Icon } from '@chakra-ui/react';
 import { ArrowElbowDownRight } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, getAddress, zeroAddress } from 'viem';
@@ -72,23 +72,11 @@ export function DaoHierarchyNode({
       gap="1.25rem"
       width="100%"
     >
-      <Box
-        borderRadius="0.5rem"
-        border={
-          currentDAOAddress === getAddress(daoAddress || zeroAddress) && !!fractalNode
-            ? '4px solid'
-            : 'none'
-        }
-        borderColor={
-          currentDAOAddress === getAddress(daoAddress || zeroAddress) ? 'neutral-4' : 'none'
-        }
-      >
-        <DAONodeInfoCard
-          node={fractalNode}
-          freezeGuard={daoData?.freezeGuard}
-          guardContracts={daoData?.freezeGuardContracts}
-        />
-      </Box>
+      <DAONodeInfoCard
+        node={fractalNode}
+        freezeGuard={daoData?.freezeGuard}
+        guardContracts={daoData?.freezeGuardContracts}
+      />
 
       {/* CHILD NODES */}
       {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
