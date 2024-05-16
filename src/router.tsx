@@ -17,6 +17,7 @@ import ProposalsPage from './pages/daos/[daoAddress]/proposals';
 import ProposalDetailsPage from './pages/daos/[daoAddress]/proposals/[proposalId]';
 import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
 import Treasury from './pages/daos/[daoAddress]/treasury';
+import { TopErrorFallback } from './components/ui/utils/TopErrorFallback';
 
 export const router = (addressPrefix: string) =>
   wrapCreateBrowserRouter(createBrowserRouter)([
@@ -38,6 +39,10 @@ export const router = (addressPrefix: string) =>
         {
           path: 'create',
           element: <DaoCreatePage />,
+        },
+        {
+          path: 'error',
+          element: <TopErrorFallback />,
         },
         {
           path: '/',
