@@ -137,7 +137,11 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
     >
       <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
-        <Divider variant="darker" />
+        <Divider
+          variant="darker"
+          width="calc(100% + 4rem)"
+          mx="-2rem"
+        />
         <InfoRow
           property={t('votingSystem')}
           value={t('singleSnapshotVotingSystem')}
@@ -223,6 +227,8 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
         <Divider
           my="0.5rem"
           variant="darker"
+          width="calc(100% + 4rem)"
+          mx="-2rem"
         />
       </Box>
       <Box marginTop={4}>
@@ -249,7 +255,12 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
       </Box>
       {address && (
         <>
-          <Divider my="1.5rem" />
+          <Divider
+            my="1.5rem"
+            variant="darker"
+            width="calc(100% + 4rem)"
+            mx="-2rem"
+          />
           <VoteContextProvider proposal={proposal}>
             <ProposalAction
               proposal={proposal}
