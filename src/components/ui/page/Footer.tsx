@@ -9,8 +9,8 @@ export function Footer() {
     <Flex
       w="100%"
       flexWrap="wrap"
-      alignSelf="flex-end"
       justifyContent="center"
+      alignItems="center"
       p="3rem"
       pt="1.5rem"
       gap={{ base: 4, md: 8 }}
@@ -30,8 +30,6 @@ export function Footer() {
       >
         <Image
           src="/images/footer-logo.svg"
-          width="279px"
-          height="38px"
           alt="Made with love by Decent DAO"
         />
       </Link>
