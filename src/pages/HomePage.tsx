@@ -10,6 +10,7 @@ export default function HomePage() {
   } = useFractal();
 
   useEffect(() => {
+    // TODO is this needed here?
     if (daoAddress) {
       action.resetDAO();
     }
