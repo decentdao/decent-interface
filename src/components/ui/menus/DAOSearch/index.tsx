@@ -64,6 +64,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => setLocalInput(e.target.value.trim())}
               value={localInput}
+              spellCheck="false"
               data-testid="search-input"
             />
           </InputGroup>
