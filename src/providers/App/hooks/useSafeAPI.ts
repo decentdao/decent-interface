@@ -7,8 +7,6 @@ import SafeServiceClient, {
   OwnerResponse,
   SafeBalanceResponse,
   SafeBalancesOptions,
-  SafeBalancesUsdOptions,
-  SafeBalanceUsdResponse,
   SafeCollectibleResponse,
   SafeCollectiblesOptions,
   SafeCreationInfoResponse,
@@ -164,19 +162,6 @@ class CachingSafeServiceClient extends SafeServiceClient {
     const value = await this.request('getBalances' + safeAddress + options?.toString(), 1, () => {
       return super.getBalances(safeAddress, options);
     });
-    return value;
-  }
-  override async getUsdBalances(
-    safeAddress: string,
-    options?: SafeBalancesUsdOptions | undefined,
-  ): Promise<SafeBalanceUsdResponse[]> {
-    const value = await this.request(
-      'getUsdBalances' + safeAddress + options?.toString(),
-      1,
-      () => {
-        return super.getUsdBalances(safeAddress, options);
-      },
-    );
     return value;
   }
   override async getCollectibles(

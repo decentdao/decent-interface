@@ -1,15 +1,11 @@
 import { Box, Divider, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
+import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../types';
-import {
-  formatCoinFromAsset,
-  formatCoinUnitsFromAsset,
-  formatUSD,
-} from '../../../utils/numberFormats';
+import { formatCoinFromAsset, formatCoinUnitsFromAsset } from '../../../utils/numberFormats';
 import useSendAssets from '../../pages/DAOTreasury/hooks/useSendAssets';
 import { BigIntInput } from '../forms/BigIntInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
@@ -25,19 +21,13 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
-  const [selectedAsset, setSelectedAsset] = useState<SafeBalanceUsdResponse>(
+  const [selectedAsset, setSelectedAsset] = useState<SafeBalanceResponse>(
     fungibleAssetsWithBalance[0],
   );
   const [inputAmount, setInputAmount] = useState<BigIntValuePair>();
   const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
 
   const [destination, setDestination] = useState<string>();
-
-  const hasFiatBalance = Number(selectedAsset.fiatBalance) > 0;
-
-  const convertedTotal = formatUSD(
-    Number(inputAmount?.value || '0') * Number(selectedAsset.fiatConversion),
-  );
 
   const sendAssets = useSendAssets({
     transferAmount: inputAmount?.bigintValue || 0n,
@@ -126,14 +116,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
             balance: formatCoinFromAsset(selectedAsset, false),
           })}
         </Text>
-        {hasFiatBalance && <Text>{convertedTotal}</Text>}
       </HStack>
-      <Text
-        textStyle="text-sm-sans-regular"
-        color="grayscale.500"
-      >
-        {formatUSD(selectedAsset.fiatBalance)}
-      </Text>
       <Divider
         color="chocolate.700"
         marginTop="0.75rem"
