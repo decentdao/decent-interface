@@ -253,6 +253,7 @@ export const useAzoriusProposals = () => {
           proposal.state === FractalProposalState.REJECTED;
 
         if (isProposalFossilized) {
+          // todo: Make sure we're saving+loading only proposals for the DAO we're currently viewing.
           setValue(
             `${CacheKeys.PROPOSAL_PREFIX}_${proposal.proposalId}`,
             proposal,
