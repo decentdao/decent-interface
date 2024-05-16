@@ -2,8 +2,9 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
+  readonly PACKAGE_VERSION: string;
+
   readonly VITE_APP_NAME: string;
-  readonly VITE_APP_GIT_HASH: string;
 
   readonly VITE_APP_ALCHEMY_MAINNET_API_KEY: string;
   readonly VITE_APP_ALCHEMY_POLYGON_API_KEY: string;

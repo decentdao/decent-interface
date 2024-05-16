@@ -11,6 +11,5 @@
   "shutterTitle": "Shutter DAO 0x36",
   "myosinTitle": "Myosin",
   "textMoreDAOs": "Load More",
-  "currentBuild": "Current Build: {{hash}}",
   "audit": "Audit"
 }

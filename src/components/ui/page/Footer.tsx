@@ -1,33 +1,27 @@
-import { Flex, Link, Tooltip, Image } from '@chakra-ui/react';
+import { Flex, Link, Image } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { URL_DECENT } from '../../../constants/url';
-import ExternalLink, { ExtrernalLinkWrappable } from '../links/ExternalLink';
+import ExternalLink from '../links/ExternalLink';
 
 export function Footer() {
   const { t } = useTranslation('home');
-  const commitHash = import.meta.env.VITE_APP_GIT_HASH;
   return (
     <Flex
       w="100%"
       flexWrap="wrap"
-      alignSelf="flex-end"
       justifyContent="center"
+      alignItems="center"
       p="3rem"
       pt="1.5rem"
       gap={{ base: 4, md: 8 }}
     >
       <Flex gap={4}>
         <ExternalLink href="/docs/fractal_audit.pdf">{t('audit')}</ExternalLink>
-        <Tooltip
-          placement="top"
-          label={t('currentBuild', { hash: commitHash })}
+        <ExternalLink
+          href={`https://github.com/decentdao/decent-interface/releases/tag/v${import.meta.env.PACKAGE_VERSION}`}
         >
-          <ExtrernalLinkWrappable
-            href={`https://github.com/decentdao/decent-interface/commit/${commitHash}`}
-          >
-            {commitHash.substring(0, 7)}
-          </ExtrernalLinkWrappable>
-        </Tooltip>
+          v{import.meta.env.PACKAGE_VERSION}
+        </ExternalLink>
       </Flex>
       <Link
         target="_blank"
@@ -36,8 +30,6 @@ export function Footer() {
       >
         <Image
           src="/images/footer-logo.svg"
-          width="279px"
-          height="38px"
           alt="Made with love by Decent DAO"
         />
       </Link>

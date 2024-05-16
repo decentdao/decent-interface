@@ -1,4 +1,4 @@
-import { Flex, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Text, Tooltip } from '@chakra-ui/react';
 import DisplayTransaction from '../../ui/links/DisplayTransaction';
 
 export default function InfoRow({
@@ -13,13 +13,11 @@ export default function InfoRow({
   tooltip?: string;
 }) {
   return (
-    <Flex
-      marginTop="1rem"
-      justifyContent="space-between"
-    >
+    <Box marginTop="1rem">
       <Text
         textStyle="body-base"
         color="neutral-7"
+        w="full"
       >
         {property}
       </Text>
@@ -34,6 +32,6 @@ export default function InfoRow({
           {txHash ? <DisplayTransaction txHash={txHash} /> : <Text color="white-0">{value}</Text>}
         </Tooltip>
       )}
-    </Flex>
+    </Box>
   );
 }

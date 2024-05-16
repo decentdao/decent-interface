@@ -30,7 +30,11 @@ export function FavoriteIcon({ safeAddress, ...rest }: Props) {
               weight={isFavorite ? 'fill' : 'regular'}
             />
           }
-          onClick={() => toggleFavorite(safeAddress)}
+          onClick={e => {
+            e.stopPropagation();
+            e.preventDefault();
+            toggleFavorite(safeAddress);
+          }}
           aria-label={t('favoriteTooltip')}
         />
       </Tooltip>
