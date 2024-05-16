@@ -1,4 +1,4 @@
-import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
+import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { useEffect, useState } from 'react';
 import { maxUint256, zeroAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
@@ -18,7 +18,7 @@ export interface TokenDisplayData {
   rawValue: string;
 }
 
-export function useFormatCoins(assets: SafeBalanceUsdResponse[]) {
+export function useFormatCoins(assets: SafeBalanceResponse[]) {
   const { chain, nativeTokenIcon } = useNetworkConfig();
   const [totalFiatValue, setTotalFiatValue] = useState(0);
   const [displayData, setDisplayData] = useState<TokenDisplayData[]>([]);

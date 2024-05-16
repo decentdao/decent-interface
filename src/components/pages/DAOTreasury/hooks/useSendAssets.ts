@@ -1,4 +1,4 @@
-import { SafeBalanceUsdResponse } from '@safe-global/safe-service-client';
+import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { encodeAbiParameters, parseAbiParameters, isAddress, getAddress, Hex } from 'viem';
@@ -13,7 +13,7 @@ const useSendAssets = ({
   nonce,
 }: {
   transferAmount: bigint;
-  asset: SafeBalanceUsdResponse;
+  asset: SafeBalanceResponse;
   destinationAddress: string | undefined;
   nonce: number | undefined;
 }) => {
