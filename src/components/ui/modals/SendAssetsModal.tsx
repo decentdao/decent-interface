@@ -5,10 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../types';
-import {
-  formatCoinFromAsset,
-  formatCoinUnitsFromAsset,
-} from '../../../utils/numberFormats';
+import { formatCoinFromAsset, formatCoinUnitsFromAsset } from '../../../utils/numberFormats';
 import useSendAssets from '../../pages/DAOTreasury/hooks/useSendAssets';
 import { BigIntInput } from '../forms/BigIntInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
