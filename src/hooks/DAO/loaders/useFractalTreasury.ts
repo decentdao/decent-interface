@@ -28,7 +28,7 @@ export const useFractalTreasury = () => {
       return;
     }
     const [assetsFungible, assetsNonFungible, transfers] = await Promise.all([
-      safeAPI.getUsdBalances(daoAddress).catch(e => {
+      safeAPI.getBalances(daoAddress).catch(e => {
         logError(e);
         return [];
       }),
