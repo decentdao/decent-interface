@@ -2,14 +2,11 @@ import {
   Box,
   Input,
   InputGroup,
-  InputLeftElement,
   Popover,
   PopoverTrigger,
   useDisclosure,
   useOutsideClick,
-  Icon,
 } from '@chakra-ui/react';
-import { MagnifyingGlass } from '@phosphor-icons/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
@@ -18,7 +15,6 @@ import { SearchDisplay } from './SearchDisplay';
 export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { t } = useTranslation(['dashboard']);
   const [localInput, setLocalInput] = useState<string>();
-  const [hasFocus, setHasFocus] = useState(false);
   const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
   const { onClose } = useDisclosure(); // popover close function
   const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -42,8 +38,6 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
     <Box
       ref={ref}
       width="full"
-      maxW={{ base: 'full', md: '31.125rem' }}
-      height="full"
       position="relative"
     >
       <Popover
@@ -56,19 +50,9 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             flexDirection="column"
             justifyContent="center"
           >
-            <InputLeftElement>
-              <Icon
-                as={MagnifyingGlass}
-                boxSize="1.5rem"
-                color={!!errorMessage ? 'red-0' : localInput || hasFocus ? 'white-0' : 'neutral-5'}
-              />
-            </InputLeftElement>
             <Input
-              size="baseAddonLeft"
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => setLocalInput(e.target.value.trim())}
-              onFocus={() => setHasFocus(true)}
-              onBlur={() => setHasFocus(false)}
               value={localInput}
               spellCheck="false"
               isInvalid={!!errorMessage}
