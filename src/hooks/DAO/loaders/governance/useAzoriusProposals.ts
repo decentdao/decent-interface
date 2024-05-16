@@ -11,17 +11,25 @@ import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
-import { CreateProposalMetadata, VotingStrategyType, DecodedTransaction } from '../../../../types';
+import {
+  CreateProposalMetadata,
+  VotingStrategyType,
+  DecodedTransaction,
+  FractalProposalState,
+} from '../../../../types';
 import { AzoriusProposal } from '../../../../types/daoProposal';
 import { Providers } from '../../../../types/network';
 import { mapProposalCreatedEventToProposal, decodeTransactions } from '../../../../utils';
 import useSafeContracts from '../../../safe/useSafeContracts';
+import { CacheExpiry, CacheKeys } from '../../../utils/cache/cacheDefaults';
+import { useLocalStorage } from '../../../utils/cache/useLocalStorage';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
 type OnProposalLoaded = (proposal: AzoriusProposal) => void;
 
 export const useAzoriusProposals = () => {
   const currentAzoriusAddress = useRef<string>();
+  const { setValue, getValue } = useLocalStorage();
 
   const {
     governanceContracts: {
@@ -133,7 +141,6 @@ export const useAzoriusProposals = () => {
         data?: string | undefined,
       ) => Promise<DecodedTransaction[]>,
       _proposalLoaded: OnProposalLoaded,
-      { skipProposals }: { skipProposals: Array<string> },
     ) => {
       if (!_strategyType || !_azoriusContract || !_provider) {
         return;
@@ -143,7 +150,7 @@ export const useAzoriusProposals = () => {
       const proposalCreatedEvents = (
         await _azoriusContract.queryFilter(proposalCreatedFilter)
       ).reverse();
-      
+
       action.dispatch({
         type: FractalGovernanceAction.SET_ALL_PROPOSALS_LOADED,
         payload: false,
@@ -154,12 +161,33 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
 
+      const completeProposalLoad = (proposal: AzoriusProposal) => {
+        if (currentAzoriusAddress.current !== azoriusContractAddress) {
+          // The DAO has changed, don't load the just-fetched proposal,
+          // into state, and get out of this function completely.
+          return;
+        }
+
+        _proposalLoaded(proposal);
+
+        action.dispatch({
+          type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+          payload: false,
+        });
+      };
+
       for (const proposalCreatedEvent of proposalCreatedEvents) {
+        const cachedProposal = getValue(
+          `${CacheKeys.PROPOSAL_PREFIX}_${proposalCreatedEvent.args.proposalId.toString()}`,
+        ) as AzoriusProposal;
+        if (cachedProposal) {
+          completeProposalLoad(cachedProposal);
+          continue;
+        }
+
         let proposalData;
-        if (
-          proposalCreatedEvent.args.metadata &&
-          !skipProposals.includes(proposalCreatedEvent.args.proposalId.toHexString())
-        ) {
+
+        if (proposalCreatedEvent.args.metadata) {
           try {
             const metadataEvent: CreateProposalMetadata = JSON.parse(
               proposalCreatedEvent.args.metadata,
@@ -199,8 +227,6 @@ export const useAzoriusProposals = () => {
               proposalCreatedEvent.args.transactions,
             );
           }
-        } else {
-          // unhandled, in which case `proposalData` remains undefined. But how likely?
         }
 
         const proposal = await mapProposalCreatedEventToProposal(
@@ -217,20 +243,25 @@ export const useAzoriusProposals = () => {
           proposalData,
         );
 
-        if (currentAzoriusAddress.current !== azoriusContractAddress) {
-          // The DAO has changed, don't load the just-fetched proposal,
-          // into state, and get out of this function completely.
-          return;
+        completeProposalLoad(proposal);
+
+        const isProposalFossilized =
+          proposal.state === FractalProposalState.CLOSED ||
+          proposal.state === FractalProposalState.EXECUTED ||
+          proposal.state === FractalProposalState.FAILED ||
+          proposal.state === FractalProposalState.EXPIRED ||
+          proposal.state === FractalProposalState.REJECTED;
+
+        if (isProposalFossilized) {
+          setValue(
+            `${CacheKeys.PROPOSAL_PREFIX}_${proposal.proposalId}`,
+            proposal,
+            CacheExpiry.NEVER,
+          );
         }
-
-        _proposalLoaded(proposal);
-
-        action.dispatch({
-          type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
-          payload: false,
-        });
       }
 
+      // Just in case there are no `proposalCreatedEvent`s, we still need to set the loading state to false.
       action.dispatch({
         type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
         payload: false,
@@ -241,11 +272,8 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
     },
-    [action, azoriusContractAddress],
+    [action, azoriusContractAddress, getValue, setValue],
   );
-
-  // load cached proposal ids from state
-  const skipProposals: string[] = [];
 
   return (proposalLoaded: OnProposalLoaded) =>
     loadAzoriusProposals(
@@ -259,6 +287,5 @@ export const useAzoriusProposals = () => {
       provider,
       decode,
       proposalLoaded,
-      { skipProposals },
     );
 };
