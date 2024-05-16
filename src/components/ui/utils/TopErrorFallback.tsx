@@ -17,12 +17,14 @@ export function TopErrorFallback() {
         bg="neutral-2"
         py="2rem"
         px={{ base: '1.25rem', md: '2rem' }}
+        overflow="hidden"
       >
         <Flex gap="4rem">
           <Flex
             flexDir="column"
             gap="1rem"
             justifyContent="center"
+            width={{ base: 'full', md: '50%' }}
           >
             <Text textStyle="display-4xl">{t('errorSentryFallbackTitle')}</Text>
             <Text textStyle="display-xl">{t('errorSentryFallbackMessage')}</Text>
@@ -34,7 +36,7 @@ export function TopErrorFallback() {
                 <Image
                   src="/images/tools.svg"
                   alt={t('errorSentryFallbackTitle')}
-                  w="60%"
+                  w="50%"
                   mx="auto"
                 />
               </Hide>
@@ -51,7 +53,8 @@ export function TopErrorFallback() {
             <Image
               src="/images/tools.svg"
               alt={t('errorSentryFallbackTitle')}
-              width="50%"
+              width="100%"
+              mb="-6rem"
             />
           </Show>
         </Flex>
