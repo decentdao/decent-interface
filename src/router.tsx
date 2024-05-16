@@ -2,6 +2,7 @@ import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
+import { TopErrorFallback } from './components/ui/utils/TopErrorFallback';
 import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
 import HomePage from './pages/HomePage';
@@ -17,7 +18,6 @@ import ProposalsPage from './pages/daos/[daoAddress]/proposals';
 import ProposalDetailsPage from './pages/daos/[daoAddress]/proposals/[proposalId]';
 import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
 import Treasury from './pages/daos/[daoAddress]/treasury';
-import { TopErrorFallback } from './components/ui/utils/TopErrorFallback';
 
 export const router = (addressPrefix: string) =>
   wrapCreateBrowserRouter(createBrowserRouter)([
