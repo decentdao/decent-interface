@@ -97,6 +97,7 @@ export default function Treasury() {
           title={t('titleAssets')}
           titleTestId="title-assets"
           bg={{ base: 'neutral-2', lg: 'none' }}
+          overflowX={{ base: 'hidden', lg: 'scroll' }}
         >
           <Assets />
         </TitledInfoBox>
