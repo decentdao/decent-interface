@@ -9,6 +9,7 @@ export default function DisplayTransaction({ txHash }: { txHash: string }) {
     <EtherscanLink
       type="tx"
       value={txHash}
+      pl={0}
     >
       <Flex alignItems="center">
         <Text as="span">{displayName}</Text>
