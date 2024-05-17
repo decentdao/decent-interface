@@ -1,8 +1,21 @@
-import { Box, Button, Flex, Spacer, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  Spacer,
+  Text,
+  Drawer,
+  DrawerOverlay,
+  DrawerHeader,
+  DrawerContent,
+  useDisclosure,
+  DrawerBody,
+} from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FavoriteProps } from '../../components/ui/menus/FavoritesMenu/Favorite';
 import Avatar from '../../components/ui/page/Header/Avatar';
+import { BACKGROUND_SEMI_TRANSPARENT_2 } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
 import useDAOName from '../../hooks/DAO/useDAOName';
@@ -10,56 +23,121 @@ import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName from '../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
+interface AllSafesDrawerProps {
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+}
+
+function FavoriteRow({ address, network }: FavoriteProps) {
+  const { daoRegistryName } = useDAOName({ address });
+  const navigate = useNavigate();
+
+  const { t } = useTranslation('home');
+
+  const { displayName: accountDisplayName } = useDisplayName(address);
+  const avatarURL = useAvatar(accountDisplayName);
+
+  const onClickNav = () => navigate(DAO_ROUTES.dao.relative(network, address));
+
+  return (
+    <Flex
+      maxW="100%"
+      p="0.75rem"
+      m="0.25rem"
+      mb="0.75rem"
+      gap="0.75rem"
+      borderRadius="0.25rem"
+      alignItems="center"
+      onClick={onClickNav}
+      border="1px"
+      borderColor="transparent"
+      cursor="pointer"
+      _hover={{ bgColor: 'neutral-3' }}
+      // what colours to use??
+      _active={{ borderColor: 'neutral-4' }}
+    >
+      <Avatar
+        size="lg"
+        address={address}
+        url={avatarURL}
+        data-testid="walletMenu-avatar"
+      />
+      <Text textStyle="button-base">
+        {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
+      </Text>
+      <Spacer />
+      {/* Network Icon?? */}
+      {/* <Avatar
+          size="icon"
+          address={address}
+          url={avatarURL}
+        /> */}
+    </Flex>
+  );
+}
+
+function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
+  const { addressPrefix } = useNetworkConfig();
+  const { favoritesList } = useAccountFavorites();
+
+  const { t } = useTranslation('home');
+
+  return (
+    <Drawer
+      isOpen={isOpen}
+      placement="bottom"
+      onClose={onClose}
+      size="md"
+    >
+      <DrawerOverlay
+        bg={BACKGROUND_SEMI_TRANSPARENT_2}
+        backdropFilter="auto"
+        backdropBlur="10px"
+      />
+      <DrawerContent
+        bg="neutral-2"
+        borderTopRadius="0.5rem"
+        maxH="calc(100vh - 4rem)"
+      >
+        <DrawerHeader>
+          <Box>
+            <Box
+              mx="calc(50% - 16px)"
+              mb="1rem"
+              width="32px"
+              h="5px"
+              bg="white-alpha-16"
+              borderRadius="625rem"
+            />
+            <Text
+              color="neutral-7"
+              textStyle="button-small"
+            >
+              {t('mySafes')}
+            </Text>
+          </Box>
+        </DrawerHeader>
+        <DrawerBody padding="0">
+          {favoritesList.map(favorite => (
+            <FavoriteRow
+              key={favorite}
+              network={addressPrefix}
+              address={favorite}
+            />
+          ))}
+        </DrawerBody>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
 export function MySafes() {
   const { t } = useTranslation('home');
   const { favoritesList } = useAccountFavorites();
   const { addressPrefix } = useNetworkConfig();
 
-  function FavoriteRow({ address, network }: FavoriteProps) {
-    const { daoRegistryName } = useDAOName({ address });
-    const navigate = useNavigate();
-
-    const { displayName: accountDisplayName } = useDisplayName(address);
-    const avatarURL = useAvatar(accountDisplayName);
-
-    const onClickNav = () => navigate(DAO_ROUTES.dao.relative(network, address));
-
-    return (
-      <Flex
-        maxW="100%"
-        p="0.75rem"
-        m="0.25rem"
-        mb="0.75rem"
-        gap="0.75rem"
-        borderRadius="0.25rem"
-        alignItems="center"
-        onClick={onClickNav}
-        border="1px"
-        borderColor="transparent"
-        cursor="pointer"
-        _hover={{ bgColor: 'neutral-3' }}
-        // what colours to use??
-        _active={{ borderColor: 'neutral-4' }}
-      >
-        <Avatar
-          size="lg"
-          address={address}
-          url={avatarURL}
-          data-testid="walletMenu-avatar"
-        />
-        <Text textStyle="button-base">
-          {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
-        </Text>
-        <Spacer />
-        {/* Network Icon?? */}
-        {/* <Avatar
-          size="icon"
-          address={address}
-          url={avatarURL}
-        /> */}
-      </Flex>
-    );
-  }
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Box>
@@ -124,11 +202,18 @@ export function MySafes() {
             size={'sm'}
             p={'0.25rem 0.75rem'}
             width={'fit-content'}
+            onClick={onOpen}
           >
             {t('viewAll')}
           </Button>
         </Flex>
       )}
+
+      <AllSafesDrawer
+        isOpen={isOpen}
+        onClose={onClose}
+        onOpen={onOpen}
+      />
     </Box>
   );
 }

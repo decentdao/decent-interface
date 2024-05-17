@@ -4,6 +4,7 @@ export const CONTENT_HEIGHT = `calc(100vh - ${HEADER_HEIGHT} - ${FOOTER_HEIGHT})
 
 // TODO get these into `decent-ui` repo
 export const BACKGROUND_SEMI_TRANSPARENT = '#10041480';
+export const BACKGROUND_SEMI_TRANSPARENT_2 = '#16121980';
 export const NEUTRAL_2_82_TRANSPARENT = '#221D25D6';
 
 /**
