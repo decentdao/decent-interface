@@ -11,6 +11,7 @@ import {
   useDisclosure,
   DrawerBody,
 } from '@chakra-ui/react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FavoriteProps } from '../../components/ui/menus/FavoritesMenu/Favorite';
@@ -83,12 +84,18 @@ function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
 
   const { t } = useTranslation('home');
 
+  const [drawerFullHeight, setDrawerFullHeight] = useState(false);
+
   return (
     <Drawer
       isOpen={isOpen}
       placement="bottom"
-      onClose={onClose}
+      onClose={() => {
+        setDrawerFullHeight(false);
+        onClose();
+      }}
       size="md"
+      isFullHeight={drawerFullHeight}
     >
       <DrawerOverlay
         bg={BACKGROUND_SEMI_TRANSPARENT_2}
@@ -98,7 +105,10 @@ function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
       <DrawerContent
         bg="neutral-2"
         borderTopRadius="0.5rem"
-        maxH="calc(100vh - 4rem)"
+        maxH={drawerFullHeight ? 'calc(100vh - 4rem)' : '50%'}
+        transitionDuration="300ms"
+        transitionProperty="all"
+        transitionTimingFunction="ease-out"
       >
         <DrawerHeader>
           <Box>
@@ -118,7 +128,10 @@ function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
             </Text>
           </Box>
         </DrawerHeader>
-        <DrawerBody padding="0">
+        <DrawerBody
+          onScroll={() => setDrawerFullHeight(true)}
+          padding="0"
+        >
           {favoritesList.map(favorite => (
             <FavoriteRow
               key={favorite}
