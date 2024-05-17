@@ -58,6 +58,8 @@ function PageHeader({
     }
   }, [hasDAOLink, daoName, daoAddress, breadcrumbs, addressPrefix]);
 
+  const showAction = !!buttonText || !!ButtonIcon || !!children;
+
   return (
     <Box
       marginTop="3rem"
@@ -69,38 +71,45 @@ function PageHeader({
         gap={{ base: 1, sm: 4 }}
         w="full"
       >
-        <Breadcrumbs links={links} />
-        <Spacer />
-        {buttonText && (
-          <Button
-            onClick={buttonClick}
-            data-testid={buttonTestId}
-            variant={buttonVariant}
-            isDisabled={isButtonDisabled}
-          >
-            {buttonText}
-          </Button>
+        <Breadcrumbs
+          links={links}
+          w={!showAction ? { base: 'full', sm: 'full' } : undefined}
+        />
+        {showAction && (
+          <>
+            <Spacer />
+            {buttonText && (
+              <Button
+                onClick={buttonClick}
+                data-testid={buttonTestId}
+                variant={buttonVariant}
+                isDisabled={isButtonDisabled}
+              >
+                {buttonText}
+              </Button>
+            )}
+            {ButtonIcon && (
+              <IconButton
+                aria-label="navigate"
+                icon={
+                  <Icon
+                    boxSize="1.25rem"
+                    as={ButtonIcon}
+                  />
+                }
+                onClick={buttonClick}
+                variant="tertiary"
+                size="icon-sm"
+                data-testid={buttonTestId}
+                isDisabled={isButtonDisabled}
+                as={Button}
+              >
+                {buttonText}
+              </IconButton>
+            )}
+            {children}
+          </>
         )}
-        {ButtonIcon && (
-          <IconButton
-            aria-label="navigate"
-            icon={
-              <Icon
-                boxSize="1.25rem"
-                as={ButtonIcon}
-              />
-            }
-            onClick={buttonClick}
-            variant="tertiary"
-            size="icon-sm"
-            data-testid={buttonTestId}
-            isDisabled={isButtonDisabled}
-            as={Button}
-          >
-            {buttonText}
-          </IconButton>
-        )}
-        {children}
       </Flex>
       <Divider
         variant="darker"
