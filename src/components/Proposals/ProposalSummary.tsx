@@ -94,15 +94,18 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
       : isERC721
         ? votingStrategy.quorumThreshold!.value
         : 1n;
+
   const reachedQuorum = isERC721
     ? totalVotesCasted - no
     : votesToken
       ? (totalVotesCasted - no) / votesTokenDecimalsDenominator
       : 0n;
+
   const totalQuorum = isERC721
-    ? strategyQuorum
+    ? Number(strategyQuorum)
     : votesToken
-      ? (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) * strategyQuorum
+      ? (Number(votesToken.totalSupply / votesTokenDecimalsDenominator) * Number(strategyQuorum)) /
+        100
       : undefined;
 
   const ShowVotingPowerButton = (

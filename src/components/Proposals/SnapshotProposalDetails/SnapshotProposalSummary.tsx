@@ -136,7 +136,7 @@ export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalS
           <Box marginTop={4}>
             <QuorumProgressBar
               reachedQuorum={BigInt(totalVotesCasted)}
-              totalQuorum={proposal.quorum ? BigInt(proposal.quorum) : undefined}
+              totalQuorum={proposal.quorum}
               unit=""
             />
           </Box>
