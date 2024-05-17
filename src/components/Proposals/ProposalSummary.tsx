@@ -245,7 +245,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
                   : undefined,
             },
           )}
-          reachedQuorum={reachedQuorum}
+          reachedQuorum={Number(reachedQuorum)}
           totalQuorum={totalQuorum}
           unit={isERC20 ? '%' : ''}
         />
