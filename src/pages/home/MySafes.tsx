@@ -28,10 +28,18 @@ export function MySafes() {
       <Flex
         maxW="100%"
         p="0.75rem"
+        m="0.25rem"
+        mb="0.75rem"
         gap="0.75rem"
+        borderRadius="0.25rem"
         alignItems="center"
-        mb="0.5rem"
         onClick={onClickNav}
+        border="1px"
+        borderColor="transparent"
+        cursor="pointer"
+        _hover={{ bgColor: 'neutral-3' }}
+        // what colours to use??
+        _active={{ borderColor: 'neutral-4' }}
       >
         <Avatar
           size="lg"
@@ -57,7 +65,7 @@ export function MySafes() {
     <Box>
       <Box
         w="full"
-        bgColor="neutral-3"
+        bgColor="neutral-2"
         border="1px"
         borderColor="neutral-4"
         borderRadius="8px"
