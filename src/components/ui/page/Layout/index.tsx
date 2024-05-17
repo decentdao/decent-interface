@@ -70,7 +70,7 @@ export default function Layout() {
           maxWidth="container.xl"
           px="0"
           minH={CONTENT_HEIGHT}
-          paddingY="2rem"
+          paddingBottom="2rem"
         >
           <ErrorBoundary
             fallback={<TopErrorFallback />}
