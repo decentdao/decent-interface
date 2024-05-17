@@ -8,6 +8,7 @@ import { DAOSearch } from '../components/ui/menus/DAOSearch';
 import { BASE_ROUTES } from '../constants/routes';
 import { URL_DOCS } from '../constants/url';
 import { useFractal } from '../providers/App/AppProvider';
+import { MySafes } from './home/MySafes';
 
 export default function HomePage() {
   const {
@@ -55,18 +56,8 @@ export default function HomePage() {
             {t('createCTA')}
           </Box>
         </Link>
-        <Box
-          w="full"
-          px="1rem"
-          pt="2rem"
-          pb="1rem"
-          bgColor="neutral-3"
-          border="1px"
-          borderColor="neutral-4"
-          borderRadius="8px"
-        >
-          {t('mySafes')}
-        </Box>
+
+        <MySafes />
       </Flex>
       <ExternalLink href={URL_DOCS}>{t('docsCTA')}</ExternalLink>
     </Flex>

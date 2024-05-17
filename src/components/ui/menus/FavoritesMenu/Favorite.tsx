@@ -6,11 +6,11 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
-interface IFavorite {
+export interface FavoriteProps {
   network: string;
   address: string;
 }
-export function Favorite({ network, address }: IFavorite) {
+export function Favorite({ network, address }: FavoriteProps) {
   const { daoRegistryName } = useDAOName({ address });
   const { action } = useFractal();
   const navigate = useNavigate();
