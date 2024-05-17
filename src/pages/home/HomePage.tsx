@@ -3,12 +3,12 @@ import { DecentSignature } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import ExternalLink from '../components/ui/links/ExternalLink';
-import { DAOSearch } from '../components/ui/menus/DAOSearch';
-import { BASE_ROUTES } from '../constants/routes';
-import { URL_DOCS } from '../constants/url';
-import { useFractal } from '../providers/App/AppProvider';
-import { MySafes } from './home/MySafes';
+import ExternalLink from '../../components/ui/links/ExternalLink';
+import { DAOSearch } from '../../components/ui/menus/DAOSearch';
+import { BASE_ROUTES } from '../../constants/routes';
+import { URL_DOCS } from '../../constants/url';
+import { useFractal } from '../../providers/App/AppProvider';
+import { MySafes } from './MySafes';
 
 export default function HomePage() {
   const {
