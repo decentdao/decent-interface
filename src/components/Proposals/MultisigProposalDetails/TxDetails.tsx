@@ -29,7 +29,11 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
         {t('proposalSummaryTitle')}
       </Text>
       <Box marginTop={4}>
-        <Divider />
+        <Divider
+          variant="darker"
+          width="calc(100% + 4rem)"
+          mx="-2rem"
+        />
         <InfoRow
           property={t('proposalId')}
           value={createAccountSubstring(proposal.proposalId)}
