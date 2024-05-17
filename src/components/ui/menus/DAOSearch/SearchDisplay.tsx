@@ -106,7 +106,10 @@ export function SearchDisplay({
             onClick={() => {
               onClickView();
               if (closeDrawer) closeDrawer();
+
+              // TODO is this needed here?
               action.resetDAO();
+
               navigate(DAO_ROUTES.dao.relative(addressPrefix, address));
             }}
           >

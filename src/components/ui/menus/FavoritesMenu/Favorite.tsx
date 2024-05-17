@@ -18,7 +18,9 @@ export function Favorite({ network, address }: IFavorite) {
   const { t } = useTranslation('dashboard');
 
   const onClickNav = () => {
+    // TODO is this needed here?
     action.resetDAO();
+
     navigate(DAO_ROUTES.dao.relative(network, address));
   };
 
