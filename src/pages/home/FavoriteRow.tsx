@@ -1,8 +1,4 @@
-import {
-  Flex,
-  Spacer,
-  Text,
-} from '@chakra-ui/react';
+import { Flex, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FavoriteProps } from '../../components/ui/menus/FavoritesMenu/Favorite';

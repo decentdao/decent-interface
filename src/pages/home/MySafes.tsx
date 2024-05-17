@@ -1,10 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
