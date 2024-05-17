@@ -34,7 +34,7 @@ export default function Treasury() {
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
 
   return (
-    <main>
+    <div>
       <PageHeader
         title={t('headerTitle', {
           ns: 'breadcrumbs',
@@ -129,6 +129,6 @@ export default function Treasury() {
           </Box>
         </Hide>
       </Flex>
-    </main>
+    </div>
   );
 }

@@ -55,7 +55,7 @@ export default function ProposalDetailsPage() {
   }
 
   return (
-    <main>
+    <div>
       <PageHeader
         title={t('proposalOverview')}
         breadcrumbs={[
@@ -86,6 +86,6 @@ export default function ProposalDetailsPage() {
       ) : (
         <MultisigProposalDetails proposal={proposal} />
       )}
-    </main>
+    </div>
   );
 }
