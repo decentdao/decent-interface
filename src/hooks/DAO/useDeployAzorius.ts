@@ -35,6 +35,7 @@ const useDeployAzorius = () => {
       zodiacModuleProxyFactory,
       multisend: multiSendCallOnly,
       claimingMasterCopy: erc20ClaimMasterCopy,
+      fractalModuleMasterCopy,
     },
     addressPrefix,
   } = useNetworkConfig();
@@ -101,6 +102,7 @@ const useDeployAzorius = () => {
         zodiacModuleProxyFactory,
         multiSendCallOnly,
         erc20ClaimMasterCopy,
+        fractalModuleMasterCopy,
         undefined,
         undefined,
       );
@@ -169,6 +171,7 @@ const useDeployAzorius = () => {
       zodiacModuleProxyFactory,
       multiSendCallOnly,
       erc20ClaimMasterCopy,
+      fractalModuleMasterCopy,
     ],
   );
 

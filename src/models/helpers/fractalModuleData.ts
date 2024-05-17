@@ -1,14 +1,13 @@
-import { FractalModule, FractalModule__factory } from '@fractal-framework/fractal-contracts';
 import {
   encodeAbiParameters,
   parseAbiParameters,
-  getAddress,
-  isHex,
   Address,
   getCreate2Address,
   keccak256,
   encodePacked,
+  encodeFunctionData,
 } from 'viem';
+import FractalModuleAbi from '../../assets/abi/FractalModule';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../../assets/abi/ModuleProxyFactory';
 import { buildContractCallViem } from '../../helpers/crypto';
@@ -22,15 +21,16 @@ export interface FractalModuleData {
 }
 
 export const fractalModuleData = (
-  fractalModuleMasterCopyContract: FractalModule,
+  fractalModuleMasterCopyAddress: Address,
   moduleProxyFactoryAddress: Address,
   safeAddress: Address,
   saltNum: bigint,
   parentAddress?: Address,
 ): FractalModuleData => {
-  const fractalModuleCalldata = FractalModule__factory.createInterface().encodeFunctionData(
-    'setUp',
-    [
+  const fractalModuleCalldata = encodeFunctionData({
+    abi: FractalModuleAbi,
+    functionName: 'setUp',
+    args: [
       encodeAbiParameters(parseAbiParameters(['address, address, address, address[]']), [
         parentAddress ?? safeAddress, // Owner -- Parent DAO or safe contract
         safeAddress, // Avatar
@@ -38,15 +38,9 @@ export const fractalModuleData = (
         [], // Authorized Controllers
       ]),
     ],
-  );
+  });
 
-  if (!isHex(fractalModuleCalldata)) {
-    throw new Error('Error encoding fractal module call data');
-  }
-
-  const fractalByteCodeLinear = generateContractByteCodeLinear(
-    getAddress(fractalModuleMasterCopyContract.address),
-  );
+  const fractalByteCodeLinear = generateContractByteCodeLinear(fractalModuleMasterCopyAddress);
 
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
 
@@ -54,7 +48,7 @@ export const fractalModuleData = (
     ModuleProxyFactoryAbi,
     moduleProxyFactoryAddress,
     'deployModule',
-    [fractalModuleMasterCopyContract.address, fractalModuleCalldata, saltNum],
+    [fractalModuleMasterCopyAddress, fractalModuleCalldata, saltNum],
     0,
     false,
   );
