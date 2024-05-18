@@ -28,7 +28,7 @@ export function DaoInfoHeader() {
         mb="2rem"
         gap={{ base: '1rem', md: '0.75rem' }}
       >
-        <Box width={{ base: '100%', lg: '28%' }}>
+        <Box width={{ base: '100%', lg: '30%', xl: '35%' }}>
           <InfoBox>
             <DAOInfoCard />
           </InfoBox>
@@ -100,7 +100,7 @@ export function DaoInfoHeader() {
           </>
         ) : (
           <>
-            <Box width={{ base: '100%', md: '32%', lg: '24%' }}>
+            <Box width={{ base: '100%', md: '32%', lg: '24%', xl: '20%' }}>
               <InfoBox>
                 <InfoGovernance />
               </InfoBox>
@@ -112,7 +112,7 @@ export function DaoInfoHeader() {
               </InfoBox>
             </Box>
 
-            <Box width={{ base: '100%', md: '32%', lg: '22%' }}>
+            <Box width={{ base: '100%', md: '32%', lg: '20%' }}>
               <InfoBox>
                 <InfoTreasury />
               </InfoBox>
