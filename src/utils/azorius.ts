@@ -70,7 +70,7 @@ export const getProposalVotesSummary = async (
     }
 
     if (erc20Strategy !== undefined) {
-      const [yesVotes, noVotes, abstainVotes] = await erc20Strategy.read.getProposalVotes([
+      const [noVotes, yesVotes, abstainVotes] = await erc20Strategy.read.getProposalVotes([
         Number(proposalId),
       ]);
 
