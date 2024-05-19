@@ -17,6 +17,7 @@ import {
   isHex,
   encodeFunctionData,
   PublicClient,
+  getContract,
 } from 'viem';
 import ERC20ClaimAbi from '../assets/abi/ERC20Claim';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
