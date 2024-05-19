@@ -39,6 +39,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private multiSendCallOnlyAddress: string;
   private erc20ClaimMasterCopyAddress: string;
   private fractalModuleMasterCopyAddress: string;
+  private linearERC20VotingMasterCopyAddress: string;
 
   constructor(
     signerOrProvider: ethers.Signer | any,
@@ -57,6 +58,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     multiSendCallOnlyAddress: string,
     erc20ClaimMasterCopyAddress: string,
     fractalModuleMasterCopyAddress: string,
+    linearERC20VotingMasterCopyAddress: string,
     parentAddress?: string,
     parentTokenAddress?: string,
   ) {
@@ -82,6 +84,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
     this.erc20ClaimMasterCopyAddress = erc20ClaimMasterCopyAddress;
     this.fractalModuleMasterCopyAddress = fractalModuleMasterCopyAddress;
+    this.linearERC20VotingMasterCopyAddress = linearERC20VotingMasterCopyAddress;
   }
 
   public setSafeContract(safeAddress: Address) {
@@ -186,6 +189,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       getAddress(this.moduleProxyFactoryAddress),
       getAddress(this.multiSendCallOnlyAddress),
       getAddress(this.erc20ClaimMasterCopyAddress),
+      getAddress(this.linearERC20VotingMasterCopyAddress),
       this.parentAddress ? getAddress(this.parentAddress) : undefined,
       this.parentTokenAddress ? getAddress(this.parentTokenAddress) : undefined,
     );

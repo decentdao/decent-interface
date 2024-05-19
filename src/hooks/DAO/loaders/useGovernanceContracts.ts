@@ -2,6 +2,7 @@ import { Azorius } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { getContract, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import LinearERC20VotingAbi from '../../../assets/abi/LinearERC20Voting';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
@@ -25,7 +26,7 @@ export const useGovernanceContracts = () => {
     if (!baseContracts || !publicClient) {
       return;
     }
-    const { fractalAzoriusMasterCopyContract, linearVotingMasterCopyContract } = baseContracts;
+    const { fractalAzoriusMasterCopyContract } = baseContracts;
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
     const azoriusModuleContract = azoriusModule?.moduleContract as Azorius;
 
@@ -33,9 +34,6 @@ export const useGovernanceContracts = () => {
       const azoriusContract = fractalAzoriusMasterCopyContract.asProvider.attach(
         azoriusModuleContract.address,
       );
-
-      let govTokenAddress: string | undefined;
-
       let ozLinearVotingContractAddress: string | undefined;
       let erc721LinearVotingContractAddress: string | undefined;
       let votesTokenContractAddress: string | undefined;
@@ -53,11 +51,13 @@ export const useGovernanceContracts = () => {
 
       if (isOzLinearVoting) {
         ozLinearVotingContractAddress = votingStrategyAddress;
-        // asProvider: linearVotingMasterCopyContract.asProvider.attach(votingStrategyAddress!),
-        const ozLinearVotingContract = linearVotingMasterCopyContract.asProvider.attach(
-          ozLinearVotingContractAddress,
-        );
-        govTokenAddress = await ozLinearVotingContract.governanceToken();
+
+        const ozLinearVotingContract = getContract({
+          abi: LinearERC20VotingAbi,
+          address: getAddress(ozLinearVotingContractAddress),
+          client: publicClient,
+        });
+        const govTokenAddress = await ozLinearVotingContract.read.governanceToken();
 
         const possibleERC20Wrapper = getContract({
           abi: VotesERC20WrapperAbi,

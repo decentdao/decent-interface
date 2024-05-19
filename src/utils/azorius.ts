@@ -1,12 +1,9 @@
-import {
-  Azorius,
-  LinearERC20Voting,
-  LinearERC721Voting,
-} from '@fractal-framework/fractal-contracts';
+import { Azorius, LinearERC721Voting } from '@fractal-framework/fractal-contracts';
 import { ProposalExecutedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
-import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
+import { GetContractEventsReturnType, GetContractReturnType, PublicClient } from 'viem';
+import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
 import { strategyFractalProposalStates } from '../constants/strategy';
 
 import { logError } from '../helpers/errorLogging';
@@ -40,7 +37,9 @@ export const getAzoriusProposalState = async (
 };
 
 const getQuorum = async (
-  erc20StrategyContract: LinearERC20Voting | undefined,
+  erc20StrategyContract:
+    | GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient>
+    | undefined,
   erc721StrategyContract: LinearERC721Voting | undefined,
   strategyType: VotingStrategyType,
   proposalId: bigint,
@@ -48,7 +47,7 @@ const getQuorum = async (
   let quorum;
 
   if (strategyType === VotingStrategyType.LINEAR_ERC20 && erc20StrategyContract) {
-    quorum = (await erc20StrategyContract.quorumVotes(proposalId)).toBigInt();
+    quorum = await erc20StrategyContract.read.quorumVotes([Number(proposalId)]);
   } else if (strategyType === VotingStrategyType.LINEAR_ERC721 && erc721StrategyContract) {
     quorum = (await erc721StrategyContract.quorumThreshold()).toBigInt();
   } else {
@@ -59,7 +58,7 @@ const getQuorum = async (
 };
 
 export const getProposalVotesSummary = async (
-  erc20Strategy: LinearERC20Voting | undefined,
+  erc20Strategy: GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient> | undefined,
   erc721Strategy: LinearERC721Voting | undefined,
   strategyType: VotingStrategyType,
   proposalId: bigint,
@@ -71,12 +70,14 @@ export const getProposalVotesSummary = async (
     }
 
     if (erc20Strategy !== undefined) {
-      const { yesVotes, noVotes, abstainVotes } = await erc20Strategy.getProposalVotes(proposalId);
+      const [yesVotes, noVotes, abstainVotes] = await erc20Strategy.read.getProposalVotes([
+        Number(proposalId),
+      ]);
 
       return {
-        yes: yesVotes.toBigInt(),
-        no: noVotes.toBigInt(),
-        abstain: abstainVotes.toBigInt(),
+        yes: yesVotes,
+        no: noVotes,
+        abstain: abstainVotes,
         quorum: await getQuorum(erc20Strategy, erc721Strategy, strategyType, proposalId),
       };
     } else if (erc721Strategy !== undefined) {
@@ -111,7 +112,7 @@ export const getProposalVotesSummary = async (
 };
 
 const getProposalVotes = (
-  erc20VotedEvents: ERC20VotedEvent[] | undefined,
+  erc20VotedEvents: GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined,
   erc721VotedEvents: ERC721VotedEvent[] | undefined,
   proposalId: bigint,
 ): (ProposalVote | ERC721ProposalVote)[] => {
@@ -121,16 +122,23 @@ const getProposalVotes = (
   }
 
   if (erc20VotedEvents !== undefined) {
-    const erc20ProposalVoteEvents = erc20VotedEvents.filter(
-      voteEvent => proposalId === BigInt(voteEvent.args.proposalId),
-    );
+    const erc20ProposalVoteEvents = erc20VotedEvents.filter(voteEvent => {
+      if (!voteEvent.args.proposalId) return false;
+      return proposalId === BigInt(voteEvent.args.proposalId);
+    });
 
-    return erc20ProposalVoteEvents.map(({ args: { voter, voteType, weight, ...rest } }) => ({
-      ...rest,
-      weight: weight.toBigInt(),
-      voter,
-      choice: VOTE_CHOICES[voteType],
-    }));
+    const events = [];
+    for (const event of erc20ProposalVoteEvents) {
+      if (!event.args.voteType || !event.args.weight || !event.args.voter) {
+        continue;
+      }
+      events.push({
+        weight: event.args.weight,
+        voter: event.args.voter,
+        choice: VOTE_CHOICES[event.args.voteType],
+      });
+    }
+    return events;
   } else if (erc721VotedEvents !== undefined) {
     const erc721ProposalVoteEvents = erc721VotedEvents.filter(
       voteEvent => proposalId === BigInt(voteEvent.args.proposalId),
@@ -149,14 +157,18 @@ const getProposalVotes = (
 };
 
 export const mapProposalCreatedEventToProposal = async (
-  erc20StrategyContract: LinearERC20Voting | undefined,
+  erc20StrategyContract:
+    | GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient>
+    | undefined,
   erc721StrategyContract: LinearERC721Voting | undefined,
   strategyType: VotingStrategyType,
   proposalId: bigint,
   proposer: string,
   azoriusContract: Azorius,
   provider: Providers,
-  erc20VotedEvents: Promise<ERC20VotedEvent[] | undefined>,
+  erc20VotedEvents: Promise<
+    GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined
+  >,
   erc721VotedEvents: Promise<ERC721VotedEvent[] | undefined>,
   executedEvents: Promise<ProposalExecutedEvent[] | undefined>,
   data?: ProposalData,
@@ -174,20 +186,26 @@ export const mapProposalCreatedEventToProposal = async (
     abstainVotes: 0n,
   };
 
-  let stratProposalVotes;
   if (erc20StrategyContract !== undefined) {
-    stratProposalVotes = await erc20StrategyContract.getProposalVotes(proposalId);
+    const stratProposalVotes = await erc20StrategyContract.read.getProposalVotes([
+      Number(proposalId),
+    ]);
+    proposalVotes.noVotes = stratProposalVotes[0];
+    proposalVotes.yesVotes = stratProposalVotes[1];
+    proposalVotes.abstainVotes = stratProposalVotes[2];
+    proposalVotes.startBlock = stratProposalVotes[3];
+    proposalVotes.endBlock = stratProposalVotes[4];
   } else if (erc721StrategyContract !== undefined) {
-    stratProposalVotes = await erc721StrategyContract.getProposalVotes(proposalId);
+    const stratProposalVotes = await erc721StrategyContract.getProposalVotes(proposalId);
+    proposalVotes.startBlock = stratProposalVotes.startBlock;
+    proposalVotes.endBlock = stratProposalVotes.endBlock;
+    proposalVotes.noVotes = stratProposalVotes.noVotes.toBigInt();
+    proposalVotes.yesVotes = stratProposalVotes.yesVotes.toBigInt();
+    proposalVotes.abstainVotes = stratProposalVotes.abstainVotes.toBigInt();
   } else {
     logError('we need a strat!');
     throw new Error('we need a strategy!');
   }
-  proposalVotes.startBlock = stratProposalVotes.startBlock;
-  proposalVotes.endBlock = stratProposalVotes.endBlock;
-  proposalVotes.noVotes = stratProposalVotes.noVotes.toBigInt();
-  proposalVotes.yesVotes = stratProposalVotes.yesVotes.toBigInt();
-  proposalVotes.abstainVotes = stratProposalVotes.abstainVotes.toBigInt();
 
   const quorum = await getQuorum(
     erc20StrategyContract,

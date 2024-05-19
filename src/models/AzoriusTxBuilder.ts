@@ -22,6 +22,7 @@ import {
 } from 'viem';
 import ERC20ClaimAbi from '../assets/abi/ERC20Claim';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
+import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
 import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import VotesERC20Abi from '../assets/abi/VotesERC20';
 import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
@@ -63,6 +64,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private moduleProxyFactoryAddress: Address;
   private multiSendCallOnlyAddress: Address;
   private erc20ClaimMasterCopyAddress: Address;
+  private linearERC20VotingMasterCopyAddress: Address;
 
   private tokenNonce: bigint;
   private strategyNonce: bigint;
@@ -81,6 +83,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     moduleProxyFactoryAddress: Address,
     multiSendCallOnlyAddress: Address,
     erc20ClaimMasterCopyAddress: Address,
+    linearERC20VotingMasterCopyAddress: Address,
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
@@ -106,6 +109,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
     this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
     this.erc20ClaimMasterCopyAddress = erc20ClaimMasterCopyAddress;
+    this.linearERC20VotingMasterCopyAddress = linearERC20VotingMasterCopyAddress;
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       daoData = daoData as AzoriusERC20DAO;
@@ -224,7 +228,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       'deployModule',
       [
         daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20
-          ? this.azoriusContracts!.linearVotingMasterCopyContract.address
+          ? this.linearERC20VotingMasterCopyAddress
           : this.azoriusContracts!.linearVotingERC721MasterCopyContract.address,
         this.encodedStrategySetupData,
         this.strategyNonce,
@@ -433,9 +437,14 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
           'Error predicting strategy address - predicted token address was not provided',
         );
       }
-      const quorumDenominator = (
-        await this.azoriusContracts!.linearVotingMasterCopyContract.QUORUM_DENOMINATOR()
-      ).toBigInt();
+
+      const linearERC20VotingMasterCopyContract = getContract({
+        abi: LinearERC20VotingAbi,
+        address: this.linearERC20VotingMasterCopyAddress,
+        client: this.publicClient,
+      });
+
+      const quorumDenominator = await linearERC20VotingMasterCopyContract.read.QUORUM_DENOMINATOR();
       const encodedStrategyInitParams = encodeAbiParameters(
         parseAbiParameters('address, address, address, uint32, uint256, uint256, uint256'),
         [
@@ -449,17 +458,14 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         ],
       );
 
-      const encodedStrategySetupData =
-        this.azoriusContracts!.linearVotingMasterCopyContract.interface.encodeFunctionData(
-          'setUp',
-          [encodedStrategyInitParams],
-        );
-      if (!isHex(encodedStrategySetupData)) {
-        throw new Error('Error encoding strategy setup data');
-      }
+      const encodedStrategySetupData = encodeFunctionData({
+        abi: LinearERC20VotingAbi,
+        functionName: 'setUp',
+        args: [encodedStrategyInitParams],
+      });
 
       const strategyByteCodeLinear = generateContractByteCodeLinear(
-        getAddress(this.azoriusContracts!.linearVotingMasterCopyContract.address),
+        this.linearERC20VotingMasterCopyAddress,
       );
 
       const strategySalt = keccak256(

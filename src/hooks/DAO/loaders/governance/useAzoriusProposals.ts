@@ -1,12 +1,20 @@
-import { LinearERC20Voting, LinearERC721Voting } from '@fractal-framework/fractal-contracts';
+import { LinearERC721Voting } from '@fractal-framework/fractal-contracts';
 import {
   Azorius,
   ProposalExecutedEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
-import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Hex, getAddress } from 'viem';
+import {
+  GetContractEventsReturnType,
+  GetContractReturnType,
+  Hex,
+  PublicClient,
+  getAddress,
+  getContract,
+} from 'viem';
+import { usePublicClient } from 'wagmi';
+import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
@@ -32,6 +40,8 @@ export const useAzoriusProposals = () => {
   const provider = useEthersProvider();
   const decode = useSafeDecoder();
 
+  const publicClient = usePublicClient();
+
   const azoriusContract = useMemo(() => {
     if (!baseContracts || !azoriusContractAddress) {
       return;
@@ -51,14 +61,16 @@ export const useAzoriusProposals = () => {
   }, [ozLinearVotingContractAddress, erc721LinearVotingContractAddress]);
 
   const erc20StrategyContract = useMemo(() => {
-    if (!baseContracts || !ozLinearVotingContractAddress) {
+    if (!ozLinearVotingContractAddress || !publicClient) {
       return undefined;
     }
 
-    return baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-      ozLinearVotingContractAddress,
-    );
-  }, [baseContracts, ozLinearVotingContractAddress]);
+    return getContract({
+      abi: LinearERC20VotingAbi,
+      address: getAddress(ozLinearVotingContractAddress),
+      client: publicClient,
+    });
+  }, [ozLinearVotingContractAddress, publicClient]);
 
   const erc721StrategyContract = useMemo(() => {
     if (!baseContracts || !erc721LinearVotingContractAddress) {
@@ -75,10 +87,7 @@ export const useAzoriusProposals = () => {
       return;
     }
 
-    const filter = erc20StrategyContract.filters.Voted();
-    const events = await erc20StrategyContract.queryFilter(filter);
-
-    return events;
+    return erc20StrategyContract.getEvents.Voted();
   }, [erc20StrategyContract]);
 
   const erc721VotedEvents = useMemo(async () => {
@@ -116,10 +125,14 @@ export const useAzoriusProposals = () => {
   const loadAzoriusProposals = useCallback(
     async (
       _azoriusContract: Azorius | undefined,
-      _erc20StrategyContract: LinearERC20Voting | undefined,
+      _erc20StrategyContract:
+        | GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient>
+        | undefined,
       _erc721StrategyContract: LinearERC721Voting | undefined,
       _strategyType: VotingStrategyType | undefined,
-      _erc20VotedEvents: Promise<ERC20VotedEvent[] | undefined>,
+      _erc20VotedEvents: Promise<
+        GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined
+      >,
       _erc721VotedEvents: Promise<ERC721VotedEvent[] | undefined>,
       _executedEvents: Promise<ProposalExecutedEvent[] | undefined>,
       _provider: Providers | undefined,
