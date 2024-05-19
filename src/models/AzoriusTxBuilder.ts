@@ -1,8 +1,6 @@
 import {
   Azorius,
   Azorius__factory,
-  LinearERC20Voting,
-  LinearERC20Voting__factory,
   LinearERC721Voting,
   LinearERC721Voting__factory,
 } from '@fractal-framework/fractal-contracts';
@@ -55,9 +53,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private predictedTokenClaimAddress: Address | undefined;
 
   public azoriusContract: Azorius | undefined;
-  public linearVotingContract: LinearERC20Voting | undefined;
+  public linearERC20VotingAddress: Address | undefined;
   public linearERC721VotingContract: LinearERC721Voting | undefined;
-  public votesTokenContractAddress: Address | undefined;
+  public votesTokenAddress: Address | undefined;
 
   private votesERC20WrapperMasterCopyAddress: string;
   private votesERC20MasterCopyAddress: string;
@@ -164,15 +162,27 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildVotingContractSetupTx(): SafeTransaction {
     const daoData = this.daoData as AzoriusGovernanceDAO;
-    return buildContractCall(
-      daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20
-        ? this.linearVotingContract!
-        : this.linearERC721VotingContract!,
-      'setAzorius', // contract function name
-      [this.azoriusContract!.address],
-      0,
-      false,
-    );
+
+    if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
+      return buildContractCallViem(
+        LinearERC20VotingAbi,
+        this.linearERC20VotingAddress!,
+        'setAzorius', // contract function name
+        [this.azoriusContract!.address],
+        0,
+        false,
+      );
+    } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
+      return buildContractCall(
+        this.linearERC721VotingContract!,
+        'setAzorius', // contract function name
+        [this.azoriusContract!.address],
+        0,
+        false,
+      );
+    } else {
+      throw new Error('voting strategy type unknown');
+    }
   }
 
   public buildEnableAzoriusModuleTx(): SafeTransaction {
@@ -265,14 +275,14 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildApproveClaimAllocation() {
-    if (!this.votesTokenContractAddress) {
+    if (!this.votesTokenAddress) {
       return;
     }
 
     const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
     return buildContractCallViem(
       VotesERC20Abi,
-      this.votesTokenContractAddress,
+      this.votesTokenAddress,
       'approve',
       [this.predictedTokenClaimAddress, azoriusGovernanceDaoData.parentAllocationAmount],
       0,
@@ -572,7 +582,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   private setContracts() {
-    if (!this.predictedTokenAddress) {
+    if (!this.predictedTokenAddress || !this.predictedStrategyAddress) {
       return;
     }
 
@@ -582,11 +592,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       this.signerOrProvider,
     );
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
-      this.linearVotingContract = LinearERC20Voting__factory.connect(
-        this.predictedStrategyAddress!,
-        this.signerOrProvider,
-      );
-      this.votesTokenContractAddress = this.predictedTokenAddress;
+      this.votesTokenAddress = this.predictedTokenAddress;
+      this.linearERC20VotingAddress = this.predictedStrategyAddress;
     } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
       this.linearERC721VotingContract = LinearERC721Voting__factory.connect(
         this.predictedStrategyAddress!,
