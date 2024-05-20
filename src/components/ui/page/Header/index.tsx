@@ -138,7 +138,7 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       w="full"
       justifyContent="space-between"
       alignItems="center"
-      pr="1.5rem"
+      pr={{base: "1rem", md: "1.5rem"}}
       maxW="100vw"
     >
       <HeaderLogo />
@@ -151,7 +151,7 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
         h={HEADER_HEIGHT}
         justifyContent="flex-end"
         alignItems="center"
-        gap="1rem"
+        gap={{base: "0.25rem", md: "1rem", }}
       >
         <Hide above="md">
           <IconButton
