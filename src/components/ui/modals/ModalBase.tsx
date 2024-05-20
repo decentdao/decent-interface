@@ -31,8 +31,8 @@ export function ModalBase(props: ModuleBaseProps) {
       />
       {props.isFullscreen ? (
         <ModalContent
+          mx="1rem"
           mt="9.5rem"
-          width="100%"
         >
           {props.children}
         </ModalContent>

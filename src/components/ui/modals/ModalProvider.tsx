@@ -160,7 +160,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         break;
       case ModalType.SEARCH_SAFE:
         isModalFullscreen = true;
-        modalContent = <DAOSearch />;
+        modalContent = <DAOSearch closeDrawer={closeModal} />;
         break;
       case ModalType.NONE:
       default:

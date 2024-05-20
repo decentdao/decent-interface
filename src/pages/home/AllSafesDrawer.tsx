@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { FavoriteRow } from './FavoriteRow';
+import { SafeDisplayRow } from './SafeDisplayRow';
 
 interface AllSafesDrawerProps {
   isOpen: boolean;
@@ -75,7 +75,7 @@ export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
           padding="0"
         >
           {favoritesList.map(favorite => (
-            <FavoriteRow
+            <SafeDisplayRow
               key={favorite}
               network={addressPrefix}
               address={favorite}

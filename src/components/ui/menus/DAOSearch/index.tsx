@@ -61,14 +61,10 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
           </InputGroup>
         </PopoverTrigger>
         <Box
-          marginTop="1.25rem"
-          padding="1rem 1rem"
+          marginTop="0.25rem"
           rounded="0.5rem"
-          bg="neutral-3"
-          boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
-          border="1px solid"
-          borderColor={!!errorMessage ? 'red-1' : 'neutral-3'}
-          position="absolute"
+          bg="neutral-2"
+          boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset" // T_T
           hidden={!errorMessage && !address}
           zIndex="modal"
           w="full"

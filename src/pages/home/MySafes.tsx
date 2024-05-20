@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { AllSafesDrawer } from './AllSafesDrawer';
-import { FavoriteRow } from './FavoriteRow';
+import { SafeDisplayRow } from './SafeDisplayRow';
 
 export function MySafes() {
   const { t } = useTranslation('home');
@@ -47,7 +47,7 @@ export function MySafes() {
         ) : (
           <Box>
             {favoritesList.slice(0, 5).map(favorite => (
-              <FavoriteRow
+              <SafeDisplayRow
                 key={favorite}
                 network={addressPrefix}
                 address={favorite}

@@ -3,5 +3,6 @@
   "mySafes": "My Safes",
   "docsCTA": "Read Docs",
   "audit": "Audit",
-  "viewAll": "View All"
+  "viewAll": "View All",
+  "searchDAOPlaceholder": "Enter Safe Address or ENS Name"
 }
