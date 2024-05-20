@@ -1,4 +1,4 @@
-import { Flex, Spacer, Text } from '@chakra-ui/react';
+import { Flex, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
@@ -7,6 +7,7 @@ import { DAO_ROUTES } from '../../constants/routes';
 import useDAOName from '../../hooks/DAO/useDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
   const { daoRegistryName } = useDAOName({ address });
@@ -23,6 +24,8 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
   };
 
   const nameColor = showAddress ? 'neutral-7' : 'white-0';
+
+  const networkConfig = useNetworkConfig();
 
   return (
     <Flex
@@ -61,12 +64,18 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
       </Flex>
 
       <Spacer />
-      {/* Network Icon?? */}
-      {/* <Avatar
+
+      {/* Network Icon */}
+      <Flex gap="0.5rem">
+        <Avatar
           size="icon"
           address={address}
-          url={avatarURL}
-        /> */}
+          url={networkConfig.nativeTokenIcon}
+        />
+        <Show above="md">
+          <Text>{networkConfig.chain.name}</Text>
+        </Show>
+      </Flex>
     </Flex>
   );
 }
