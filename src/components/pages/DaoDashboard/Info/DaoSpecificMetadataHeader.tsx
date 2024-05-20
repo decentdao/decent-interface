@@ -1,6 +1,7 @@
 import { Box, Flex, Image, Menu, MenuButton, MenuList, Text } from '@chakra-ui/react';
 import { ArrowAngleUp, Burger } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
+import { SIDEBAR_WIDTH } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { DAOMetadata } from '../../../../types';
 import ExternalLink from '../../../ui/links/ExternalLink';
@@ -19,8 +20,8 @@ export function DaoSpecificMetadataHeader(props: { metadata: DAOMetadata }) {
       justifyContent="center"
       alignItems="center"
       position="absolute"
-      left="4.25rem"
-      width="calc(100vw - 4.25rem)"
+      left={SIDEBAR_WIDTH}
+      width={`calc(100vw - ${SIDEBAR_WIDTH})`}
       paddingTop={2}
       paddingBottom={2}
       flexDirection="column"
