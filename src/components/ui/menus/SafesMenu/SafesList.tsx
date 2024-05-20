@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { Favorite } from './Favorite';
+import { SafeMenuItem } from './SafeMenuItem';
 
-export function FavoritesList() {
+export function SafesList() {
   const { favoritesList } = useAccountFavorites();
   const { addressPrefix } = useNetworkConfig();
 
@@ -44,7 +44,7 @@ export function FavoritesList() {
             }}
           >
             {favoritesList.map(favorite => (
-              <Favorite
+              <SafeMenuItem
                 key={favorite}
                 network={addressPrefix}
                 address={favorite}

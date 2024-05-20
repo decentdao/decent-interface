@@ -1,7 +1,7 @@
 import { Flex, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { SafeMenuItemProps } from '../../components/ui/menus/FavoritesMenu/FavoriteMenuItem';
+import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useDAOName from '../../hooks/DAO/useDAOName';
@@ -18,9 +18,9 @@ export function SafeDisplayRow({ address, network, onClick }: SafeMenuItemProps)
   const avatarURL = useAvatar(accountDisplayName);
 
   const onClickNav = () => {
-    if(onClick) onClick();
+    if (onClick) onClick();
     navigate(DAO_ROUTES.dao.relative(network, address));
-  }
+  };
 
   return (
     <Flex

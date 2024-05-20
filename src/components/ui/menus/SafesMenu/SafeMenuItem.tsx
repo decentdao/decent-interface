@@ -6,11 +6,13 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
-export interface FavoriteProps {
+export interface SafeMenuItemProps {
   network: string;
   address: string;
+  onClick?: () => void;
 }
-export function Favorite({ network, address }: FavoriteProps) {
+
+export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
   const { daoRegistryName } = useDAOName({ address });
   const { action } = useFractal();
   const navigate = useNavigate();

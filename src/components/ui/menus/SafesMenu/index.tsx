@@ -2,9 +2,9 @@ import { Button, Flex, Icon, Menu, MenuButton, Show, Text } from '@chakra-ui/rea
 import { CaretDown, Star } from '@phosphor-icons/react';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FavoritesList } from './FavoritesList';
+import { SafesList } from './SafesList';
 
-export function FavoritesMenu() {
+export function SafesMenu() {
   const { t } = useTranslation('dashboard');
   return (
     <Menu
@@ -37,7 +37,7 @@ export function FavoritesMenu() {
               </Show>
             </Flex>
           </MenuButton>
-          {isOpen && <FavoritesList />}
+          {isOpen && <SafesList />}
         </Fragment>
       )}
     </Menu>
