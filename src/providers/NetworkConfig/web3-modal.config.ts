@@ -17,7 +17,7 @@ const wagmiMetadata = {
   description:
     'Are you outgrowing your Multisig? Decent extends Safe treasuries into on-chain hierarchies of permissions, token flows, and governance.',
   url: import.meta.env.VITE_APP_SITE_URL,
-  icons: [`${import.meta.env.VITE_APP_SITE_URL}/favicon.ico`],
+  icons: [`${import.meta.env.VITE_APP_SITE_URL}/favicon-96x96.png`],
 };
 
 const transportsReducer = (accumulator: Record<string, HttpTransport>, network: NetworkConfig) => {
