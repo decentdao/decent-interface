@@ -9,7 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT_2 } from '../../constants/common';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { FavoriteRow } from './FavoriteRow';
@@ -40,7 +40,7 @@ export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
       isFullHeight={drawerFullHeight}
     >
       <DrawerOverlay
-        bg={BACKGROUND_SEMI_TRANSPARENT_2}
+        bg={BACKGROUND_SEMI_TRANSPARENT}
         backdropFilter="auto"
         backdropBlur="10px"
       />

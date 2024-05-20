@@ -5,6 +5,7 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import Divider from '../utils/Divider';
 
 interface ModuleBaseProps {
+  isFullscreen: boolean;
   title: string;
   warn?: boolean;
   isOpen: boolean;
@@ -23,36 +24,49 @@ export function ModalBase(props: ModuleBaseProps) {
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
-      <ModalOverlay backgroundColor={BACKGROUND_SEMI_TRANSPARENT} />
-      <ModalContent
-        bg="neutral-2"
-        borderWidth="1px"
-        borderRadius="0.5rem"
-        borderColor="neutral-4"
-        padding="1.5rem"
-      >
-        <Flex
-          color="lilac-0"
-          marginBottom="1rem"
+      <ModalOverlay
+        backgroundColor={BACKGROUND_SEMI_TRANSPARENT}
+        backdropFilter="auto"
+        backdropBlur={props.isFullscreen ? '10px' : '0px'}
+      />
+      {props.isFullscreen ? (
+        <ModalContent
+          mt="9.5rem"
+          width="100%"
         >
-          <HStack>
-            {props.warn && <Warning size="20" />}
-            <Text
-              color="white-0"
-              textStyle="display-lg"
-            >
-              {props.title}
-            </Text>
-          </HStack>
-          <Spacer />
-          <X
-            cursor="pointer"
-            onClick={props.onClose}
-          />
-        </Flex>
-        <Divider marginBottom="1rem" />
-        {props.children}
-      </ModalContent>
+          {props.children}
+        </ModalContent>
+      ) : (
+        <ModalContent
+          bg="neutral-2"
+          borderWidth="1px"
+          borderRadius="0.5rem"
+          borderColor="neutral-4"
+          padding="1.5rem"
+        >
+          <Flex
+            color="lilac-0"
+            marginBottom="1rem"
+          >
+            <HStack>
+              {props.warn && <Warning size="20" />}
+              <Text
+                color="white-0"
+                textStyle="display-lg"
+              >
+                {props.title}
+              </Text>
+            </HStack>
+            <Spacer />
+            <X
+              cursor="pointer"
+              onClick={props.onClose}
+            />
+          </Flex>
+          <Divider marginBottom="1rem" />
+          {props.children}
+        </ModalContent>
+      )}
     </Modal>
   );
 }
