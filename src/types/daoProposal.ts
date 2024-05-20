@@ -127,7 +127,7 @@ export type ERC721ProposalVote = {
   tokenIds: string[];
 } & ProposalVote;
 
-export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
+export const VOTE_CHOICES = ['yes', 'no', 'abstain'] as const;
 
 export enum AzoriusVoteChoice {
   No,
