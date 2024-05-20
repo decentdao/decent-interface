@@ -6,9 +6,9 @@ import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useDAOName from '../../hooks/DAO/useDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
-import useDisplayName from '../../hooks/utils/useDisplayName';
+import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 
-export function SafeDisplayRow({ address, network, onClick }: SafeMenuItemProps) {
+export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
   const { daoRegistryName } = useDAOName({ address });
   const navigate = useNavigate();
 
@@ -22,6 +22,8 @@ export function SafeDisplayRow({ address, network, onClick }: SafeMenuItemProps)
     navigate(DAO_ROUTES.dao.relative(network, address));
   };
 
+  const nameColor = showAddress ? 'neutral-7' : 'white-0';
+
   return (
     <Flex
       maxW="100%"
@@ -30,7 +32,7 @@ export function SafeDisplayRow({ address, network, onClick }: SafeMenuItemProps)
       mb="0.75rem"
       gap="0.75rem"
       borderRadius="0.25rem"
-      alignItems="center"
+      alignItems={showAddress ? 'center' : 'flex-start'}
       onClick={onClickNav}
       border="1px"
       borderColor="transparent"
@@ -45,9 +47,19 @@ export function SafeDisplayRow({ address, network, onClick }: SafeMenuItemProps)
         url={avatarURL}
         data-testid="walletMenu-avatar"
       />
-      <Text textStyle="button-base">
-        {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
-      </Text>
+      <Flex
+        flexDir="column"
+        alignSelf="center"
+      >
+        <Text
+          color={daoRegistryName ? nameColor : 'neutral-6'}
+          textStyle={showAddress ? 'label-base' : 'button-base'}
+        >
+          {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
+        </Text>
+        {showAddress && <Text textStyle="button-base">{createAccountSubstring(address)}</Text>}
+      </Flex>
+
       <Spacer />
       {/* Network Icon?? */}
       {/* <Avatar

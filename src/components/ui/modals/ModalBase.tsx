@@ -20,19 +20,21 @@ export function ModalBase(props: ModuleBaseProps) {
   return (
     <Modal
       isCentered
-      size="lg"
+      size={props.isFullscreen ? 'container.xl' : 'lg'}
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
       <ModalOverlay
         backgroundColor={BACKGROUND_SEMI_TRANSPARENT}
         backdropFilter="auto"
-        backdropBlur={props.isFullscreen ? '10px' : '0px'}
+        backdropBlur={props.isFullscreen ? '12px' : '0px'}
       />
       {props.isFullscreen ? (
         <ModalContent
-          mx="1rem"
-          mt="9.5rem"
+          mx={{ base: '1rem', md: '0' }}
+          mt={{ base: '9.5rem' }}
+          pl={{ base: '0', md: '4.25rem' }}
+          maxW="calc(80rem + 4.25rem)"
         >
           {props.children}
         </ModalContent>

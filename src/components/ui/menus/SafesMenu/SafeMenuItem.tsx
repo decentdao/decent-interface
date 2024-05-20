@@ -9,6 +9,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 export interface SafeMenuItemProps {
   network: string;
   address: string;
+  showAddress?: boolean;
   onClick?: () => void;
 }
 

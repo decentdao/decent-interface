@@ -135,9 +135,6 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       maxW="100vw"
     >
       <HeaderLogo />
-      <Show above="md">
-        <DAOSearch />
-      </Show>
       <Flex
         w="full"
         h={HEADER_HEIGHT}

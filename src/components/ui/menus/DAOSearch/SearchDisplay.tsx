@@ -87,6 +87,7 @@ export function SearchDisplay({
           address={address}
           network={addressPrefix}
           onClick={closeDrawer}
+          showAddress={true}
         />
       </Flex>
     );
