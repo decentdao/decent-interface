@@ -17,6 +17,7 @@ import { HEADER_HEIGHT, NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/c
 import { BASE_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { AccountDisplay } from '../../menus/AccountDisplay';
+import { DAOSearch } from '../../menus/DAOSearch';
 import { SafesMenu } from '../../menus/SafesMenu';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
@@ -135,6 +136,9 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       maxW="100vw"
     >
       <HeaderLogo />
+      <Show above="md">
+        <DAOSearch />
+      </Show>
       <Flex
         w="full"
         h={HEADER_HEIGHT}
