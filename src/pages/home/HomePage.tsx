@@ -40,7 +40,6 @@ export default function HomePage() {
         width="8rem"
       />
 
-      {/* Extract into search safe component */}
       <Box
         color="neutral-5"
         p="0.5rem 1rem"
@@ -48,9 +47,7 @@ export default function HomePage() {
         borderColor="neutral-3"
         borderWidth="1px"
         borderRadius="0.25rem"
-        _hover={{
-          borderColor: 'neutral-4',
-        }}
+        _hover={{ borderColor: 'neutral-4' }}
         onClick={searchSafe}
         cursor="pointer"
       >
