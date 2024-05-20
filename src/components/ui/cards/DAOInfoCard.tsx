@@ -51,6 +51,47 @@ export function DAOInfoCard() {
         direction="column"
         gap="1.5rem"
       >
+        <Flex
+          alignItems="center"
+          columnGap="0.5rem"
+          justifyContent="space-between"
+          mt="0.5rem"
+          flexGrow={1}
+        >
+          <Flex
+            alignItems="center"
+            columnGap="0.5rem"
+          >
+            {/* FAVORITE ICON */}
+            <FavoriteIcon safeAddress={displayedAddress} />
+
+            {/* PARENT TAG */}
+            {!!childCount && childCount > 0 && (
+              <Link
+                to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
+                as={RouterLink}
+                _hover={{ textDecoration: 'none', bg: 'neutral-4' }}
+                _active={{ bg: 'neutral-3', borderColor: 'neutral-4' }}
+                bg="neutral-3"
+                color="lilac-0"
+                borderRadius="625rem"
+                p="0.25rem 0.75rem"
+                textStyle="button-base"
+              >
+                Parent
+              </Link>
+            )}
+          </Flex>
+          {/* SETTINGS MENU BUTTON */}
+          {!!user.address && (
+            <ManageDAOMenu
+              parentAddress={parentAddress}
+              fractalNode={node}
+              freezeGuard={guard}
+              guardContracts={guardContracts}
+            />
+          )}
+        </Flex>
         {/* DAO NAME AND ACTIONS */}
 
         <Flex
@@ -64,48 +105,6 @@ export function DAOInfoCard() {
           >
             {node.daoName || displayName}
           </Text>
-
-          <Flex
-            alignItems="center"
-            columnGap="0.5rem"
-            justifyContent="space-between"
-            mt="0.5rem"
-            flexGrow={1}
-          >
-            <Flex
-              alignItems="center"
-              columnGap="0.5rem"
-            >
-              {/* FAVORITE ICON */}
-              <FavoriteIcon safeAddress={displayedAddress} />
-
-              {/* PARENT TAG */}
-              {!!childCount && childCount > 0 && (
-                <Link
-                  to={DAO_ROUTES.hierarchy.relative(addressPrefix, displayedAddress)}
-                  as={RouterLink}
-                  _hover={{ textDecoration: 'none', bg: 'neutral-4' }}
-                  _active={{ bg: 'neutral-3', borderColor: 'neutral-4' }}
-                  bg="neutral-3"
-                  color="lilac-0"
-                  borderRadius="625rem"
-                  p="0.25rem 0.75rem"
-                  textStyle="button-base"
-                >
-                  Parent
-                </Link>
-              )}
-            </Flex>
-            {/* SETTINGS MENU BUTTON */}
-            {!!user.address && (
-              <ManageDAOMenu
-                parentAddress={parentAddress}
-                fractalNode={node}
-                freezeGuard={guard}
-                guardContracts={guardContracts}
-              />
-            )}
-          </Flex>
         </Flex>
 
         {/* DAO ADDRESS */}

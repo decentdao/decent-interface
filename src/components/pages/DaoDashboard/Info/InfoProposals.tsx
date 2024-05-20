@@ -52,13 +52,14 @@ export function InfoProposals({}: IDAOGovernance) {
         mb="0.5rem"
       >
         <Scroll size="1.5rem" />
-        <Text>{t('titleProposals')}</Text>
+        <Text textStyle="display-lg">{t('titleProposals')}</Text>
       </Flex>
 
       <Flex
         alignItems="center"
         justifyContent="space-between"
         mb="0.25rem"
+        gap="0.5rem"
       >
         <Text color="neutral-7">{t('titlePending')}</Text>
         <Text>{active}</Text>

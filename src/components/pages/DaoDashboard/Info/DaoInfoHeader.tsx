@@ -26,13 +26,9 @@ export function DaoInfoHeader() {
         flexWrap="wrap"
         justifyContent="space-between"
         mb="2rem"
-        gap={{ base: '1rem', lg: 0 }}
+        gap={{ base: '1rem', md: '0.75rem' }}
       >
-        <Box
-          width={{ base: '100%', md: '100%', lg: '33%', xl: '40%' }}
-          pe={{ base: NONE, lg: PAD }}
-          pb={{ sm: PAD, lg: NONE }}
-        >
+        <Box width={{ base: '100%', lg: '30%', xl: '35%' }}>
           <InfoBox>
             <DAOInfoCard />
           </InfoBox>
@@ -40,7 +36,7 @@ export function DaoInfoHeader() {
         {daoMetadata ? (
           <>
             <Box
-              width={{ base: '100%', md: '100%', lg: '67%', xl: '60%' }}
+              width={{ base: '100%', lg: '67%', xl: '60%' }}
               ps={{ base: NONE, lg: PAD }}
               pe={{ base: NONE, md: PAD }}
               pb={{ sm: PAD, md: NONE }}
@@ -64,9 +60,6 @@ export function DaoInfoHeader() {
             <Flex
               gap={6}
               mt={8}
-              pe={{ base: NONE, md: PAD }}
-              pb={{ sm: PAD, md: NONE }}
-              pt={{ sm: PAD, lg: NONE }}
             >
               {daoMetadata.sections.map((section, index) => (
                 <InfoBox
@@ -107,35 +100,19 @@ export function DaoInfoHeader() {
           </>
         ) : (
           <>
-            <Box
-              width={{ base: '100%', md: '33.3%', lg: '25%', xl: '20%' }}
-              ps={{ base: NONE, lg: PAD }}
-              pe={{ base: NONE, md: PAD }}
-              pb={{ sm: PAD, md: NONE }}
-              pt={{ sm: PAD, lg: NONE }}
-            >
+            <Box width={{ base: '100%', md: '32%', lg: '24%', xl: '20%' }}>
               <InfoBox>
                 <InfoGovernance />
               </InfoBox>
             </Box>
 
-            <Box
-              width={{ base: '100%', md: '33.3%', lg: '19%', xl: '20%' }}
-              ps={{ base: NONE, md: PAD }}
-              pe={{ base: NONE, md: PAD }}
-              pb={{ sm: PAD, md: NONE }}
-              pt={{ sm: PAD, lg: NONE }}
-            >
+            <Box width={{ base: '100%', md: '32%', lg: '20%' }}>
               <InfoBox>
                 <InfoProposals />
               </InfoBox>
             </Box>
 
-            <Box
-              width={{ base: '100%', md: '33.3%', lg: '23%', xl: '20%' }}
-              ps={{ base: NONE, md: PAD }}
-              pt={{ sm: PAD, lg: NONE }}
-            >
+            <Box width={{ base: '100%', md: '32%', lg: '20%' }}>
               <InfoBox>
                 <InfoTreasury />
               </InfoBox>
