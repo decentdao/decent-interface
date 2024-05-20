@@ -36,6 +36,7 @@ export function SearchDisplay({
       <Flex
         justifyContent="center"
         alignItems="center"
+        py="1rem"
       >
         <Spinner
           thickness="4px"
@@ -53,6 +54,7 @@ export function SearchDisplay({
       <Flex
         alignItems="center"
         gap="2"
+        p="0.5rem 1rem"
       >
         <Icon
           as={WarningCircle}
