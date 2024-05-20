@@ -1,7 +1,7 @@
 import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { encodeAbiParameters, parseAbiParameters, isAddress, getAddress, Hex } from 'viem';
+import { isAddress, getAddress, Hex, encodeFunctionData, erc20Abi } from 'viem';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
@@ -35,10 +35,11 @@ const useSendAssets = ({
       isEth && destinationAddress ? getAddress(destinationAddress) : getAddress(asset.tokenAddress);
     if (!isEth && destinationAddress && isAddress(destinationAddress)) {
       calldatas = [
-        encodeAbiParameters(parseAbiParameters('address, uint256'), [
-          destinationAddress,
-          transferAmount,
-        ]),
+        encodeFunctionData({
+          abi: erc20Abi,
+          functionName: 'transfer',
+          args: [destinationAddress, transferAmount],
+        }),
       ];
     }
 
