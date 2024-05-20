@@ -48,14 +48,8 @@ export default function DAOController() {
 
   let display;
 
-  if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
-    display = (
-      <ChakraProvider theme={activeTheme}>
-        <Outlet />
-      </ChakraProvider>
-    );
-    // the order of the if blocks of these next three error states matters
-  } else if (invalidQuery) {
+  // the order of the if blocks of these next three error states matters
+  if (invalidQuery) {
     display = <LoadingProblem type="badQueryParam" />;
   } else if (wrongNetwork) {
     display = <LoadingProblem type="wrongNetwork" />;

@@ -3,16 +3,11 @@ import { createWeb3Modal } from '@web3modal/wagmi/react';
 import { defaultWagmiConfig } from '@web3modal/wagmi/react/config';
 import { HttpTransport } from 'viem';
 import { http } from 'wagmi';
-import { Chain, hardhat } from 'wagmi/chains';
+import { Chain } from 'wagmi/chains';
 import { NetworkConfig } from '../../types/network';
 import { supportedNetworks } from './NetworkConfigProvider';
 
 const supportedWagmiChains = supportedNetworks.map(network => network.chain);
-
-// allows connection to localhost only in development mode.
-if (import.meta.env.VITE_APP_TESTING_ENVIRONMENT) {
-  supportedWagmiChains.unshift(hardhat);
-}
 
 export const walletConnectProjectId = import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID;
 export const queryClient = new QueryClient();
