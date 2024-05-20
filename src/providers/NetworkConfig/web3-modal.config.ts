@@ -20,7 +20,7 @@ export const queryClient = new QueryClient();
 const wagmiMetadata = {
   name: import.meta.env.VITE_APP_NAME,
   description:
-    'Are you outgrowing your Multisig? Fractal extends Safe treasuries into on-chain hierarchies of permissions, token flows, and governance.',
+    'Are you outgrowing your Multisig? Decent extends Safe treasuries into on-chain hierarchies of permissions, token flows, and governance.',
   url: import.meta.env.VITE_APP_SITE_URL,
   icons: [`${import.meta.env.VITE_APP_SITE_URL}/favicon.ico`],
 };

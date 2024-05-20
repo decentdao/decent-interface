@@ -59,8 +59,8 @@ function ProposalAuthor({ activity }: { activity: Activity }) {
     <Flex
       gap={2}
       alignItems="center"
-      color="#B3B3B3"
-      textStyle="text-md-sans-regular"
+      color="neutral-7"
+      textStyle="label-base"
     >
       <Avatar
         size="sm"
@@ -97,17 +97,22 @@ export function ProposalTitle({
   const titleText = proposalIdText + ' ' + proposaltitleText;
   return (
     <Box
-      textStyle="text-lg-sans-medium"
-      fontSize="20px"
-      color="grayscale.100"
-      pr={2}
+      textStyle="display-lg"
+      color="white-0"
+      pr="1.5rem"
     >
       <Flex
         alignItems="center"
         gap={2}
         flexWrap="wrap"
       >
-        <Text as="span">{titleText}</Text>
+        <Text
+          as="span"
+          textStyle="display-xl"
+          maxW="100%"
+        >
+          {titleText}
+        </Text>
         {showAuthor && <ProposalAuthor activity={activity} />}
       </Flex>
       <Box mt={2}>

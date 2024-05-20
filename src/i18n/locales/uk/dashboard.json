@@ -1,7 +1,7 @@
 {
   "titleFavorites": "Вподобані",
   "emptyFavorites": "Нема вподобайок",
-  "errorFailedSearch": "Вибачте, ця адреса - ані Safe{Wallet} ані Fractal",
+  "errorFailedSearch": "Вибачте, ця адреса - ані Safe ані Decent",
   "titleGovernance": "Система Управління",
   "titleType": "Тип",
   "titleVotingPeriod": "Період голосування",
@@ -17,7 +17,5 @@
   "noVotesButton": "Користувач на має голосів",
   "tipFreeze": "{{amount}} необхідні голоси замороження",
   "proposalOnChainRejection": "що відхиляє транзакцію # {{proposalId}}",
-  "proposalDescriptionCont": "що буде",
-  "moduleDescription_one": "Виконано {{count}} транзакцію через модуль за адресою",
-  "moduleDescription_other": "Виконано {{count}} транзакцій через модуль за адресою(ми)"
+  "proposalDescriptionCont": "що буде"
 }

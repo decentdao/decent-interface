@@ -4,14 +4,13 @@ import {
   AccordionItem,
   AccordionPanel,
   Box,
-  Button,
   Grid,
   Text,
 } from '@chakra-ui/react';
-import { Gear, LabelWrapper } from '@decent-org/fractal-ui';
+import { LabelWrapper } from '@decent-org/fractal-ui';
+import { Plus, CaretDown, CaretRight } from '@phosphor-icons/react';
 import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
@@ -22,6 +21,7 @@ import {
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import CeleryButtonWithIcon from '../../ui/utils/CeleryButtonWithIcon';
 import { AzoriusTokenAllocation } from './AzoriusTokenAllocation';
 
 export function AzoriusTokenAllocations(props: ICreationStepProps) {
@@ -43,18 +43,8 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
               rowGap={2}
               data-testid="tokenVoting-tokenAllocations"
             >
-              <Text
-                textStyle="text-md-sans-regular"
-                color="grayscale.100"
-              >
-                {t('titleAddress')}
-              </Text>
-              <Text
-                textStyle="text-md-sans-regular"
-                color="grayscale.100"
-              >
-                {t('titleAmount')}
-              </Text>
+              <Text>{t('titleAddress')}</Text>
+              <Text>{t('titleAmount')}</Text>
               <Box>{/* EMPTY */}</Box>
 
               {values.erc20Token.tokenAllocations.map((tokenAllocation, index) => {
@@ -91,45 +81,35 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
               })}
             </Grid>
             <Text
-              color="grayscale.500"
-              textStyle="text-md-sans-regular"
+              color="neutral-7"
+              textStyle="helper-text-base"
             >
               {t('helperAllocations')}
             </Text>
-            <Button
-              size="base"
-              maxWidth="fit-content"
-              px={0}
-              mx={0}
-              variant="text"
+            <CeleryButtonWithIcon
               onClick={() => push({ address: '', amount: { value: '' } })}
               data-testid="tokenVoting-addAllocation"
-            >
-              {t('labelAddAllocation')}
-            </Button>
+              icon={Plus}
+              text={t('labelAddAllocation')}
+            />
             {canReceiveParentAllocations && (
               <Accordion allowToggle>
                 <AccordionItem
                   borderTop="none"
                   borderBottom="none"
-                  bg={BACKGROUND_SEMI_TRANSPARENT}
-                  my={8}
-                  py={4}
-                  rounded="lg"
+                  my="1.5rem"
                 >
                   {({ isExpanded }) => (
                     <>
                       <AccordionButton
-                        textStyle="text-button-md-semibold"
-                        color="grayscale.100"
+                        p={0}
+                        textStyle="display-lg"
+                        color="lilac-0"
                       >
-                        <Gear
-                          marginRight={3}
-                          transform={`rotate(-${isExpanded ? '0' : '90'}deg)`}
-                        />
+                        {isExpanded ? <CaretDown /> : <CaretRight />}
                         {t('advanced', { ns: 'common' })}
                       </AccordionButton>
-                      <AccordionPanel paddingBottom={4}>
+                      <AccordionPanel p={0}>
                         <LabelComponent
                           label={t('labelParentAllocation')}
                           helper={t('helperParentAllocation')}

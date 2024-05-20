@@ -1,5 +1,5 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
-import { Treasury } from '@decent-org/fractal-ui';
+import { Coins } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { formatUSD } from '../../../../utils';
@@ -37,21 +37,11 @@ export function InfoTreasury({}: IDAOGovernance) {
         gap="0.4rem"
         mb="0.5rem"
       >
-        <Treasury />
-        <Text
-          textStyle="text-sm-sans-regular"
-          color="grayscale.100"
-        >
-          {t('titleTreasury')}
-        </Text>
+        <Coins size="1.5rem" />
+        <Text textStyle="display-lg">{t('titleTreasury')}</Text>
       </Flex>
 
-      <Text
-        textStyle="text-lg-mono-semibold"
-        color="grayscale.100"
-      >
-        {formatUSD(totalFiatValue)}
-      </Text>
+      <Text>{formatUSD(totalFiatValue)}</Text>
     </Box>
   );
 }

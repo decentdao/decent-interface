@@ -5,13 +5,15 @@ export default function StatusBox({ children }: { children: ReactNode }) {
   return (
     <Box
       px="8px"
-      py="2px"
-      height="22px"
+      py="0"
+      height="24px"
       display="inline-flex"
       alignItems="center"
-      bg="sand.700"
       borderRadius="4px"
-      color="black"
+      color="neutral-7"
+      textStyle="label-base"
+      border="1px solid"
+      borderColor="neutral-7"
     >
       {children}
     </Box>

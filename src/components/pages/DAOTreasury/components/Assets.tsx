@@ -1,5 +1,20 @@
-import { Box, Button, Divider, HStack, Image, Text, Tooltip } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Button,
+  HStack,
+  Image,
+  Text,
+  Tooltip,
+  Show,
+  Hide,
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
+} from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
+import { CaretDown, CaretRight } from '@phosphor-icons/react';
 import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,42 +25,44 @@ import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
-import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
-import EtherscanLinkERC20 from '../../../ui/links/EtherscanLinkERC20';
-import EtherscanLinkERC721 from '../../../ui/links/EtherscanLinkERC721';
+import EtherscanLink from '../../../ui/links/EtherscanLink';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../ui/modals/useFractalModal';
+import Divider from '../../../ui/utils/Divider';
 import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 
 function CoinHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box>
-      <Divider
-        color="chocolate.700"
-        marginTop="1.5rem"
-        marginBottom="1.5rem"
-      />
-      <HStack marginBottom="0.5rem">
+    <Box
+      mb="1rem"
+      minW="595px"
+    >
+      <Show above="lg">
+        <Divider
+          my="1rem"
+          variant="darker"
+        />
+      </Show>
+      <HStack px={{ base: '1rem', lg: '1.5rem' }}>
         <Text
-          w="33%"
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
+          w="25%"
+          textStyle="label-small"
+          color="neutral-7"
         >
           {t('columnCoins')}
         </Text>
         <Text
-          w="33%"
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
+          w="30%"
+          textStyle="label-small"
+          color="neutral-7"
         >
           {t('columnValue')}
         </Text>
         <Text
-          w="33%"
-          align="end"
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
+          w="45%"
+          textStyle="label-small"
+          color="neutral-7"
         >
           {t('columnAllocation')}
         </Text>
@@ -64,51 +81,45 @@ function CoinRow({
   asset: TokenDisplayData;
 }) {
   return (
-    <HStack
-      align="top"
-      marginBottom="0.75rem"
+    <Flex
+      my="0.5rem"
+      justifyContent="space-between"
+      px={{ base: '1rem', lg: '1.5rem' }}
+      minW="595px"
+      gap="1rem"
     >
-      <Box w="35%">
-        <HStack marginEnd="1rem">
-          <Image
-            src={asset.iconUri}
-            fallbackSrc="/images/coin-icon-default.svg"
-            alt={asset.symbol}
-            w="1rem"
-            h="1rem"
-          />
-          <Text
-            height="auto"
-            textStyle="text-base-sans-regular"
-            data-testid="link-token-symbol"
-            noOfLines={2}
-            maxWidth="4.7rem"
-            isTruncated
-          >
-            {asset.address === zeroAddress ? (
-              <EtherscanLinkAddress
-                color="grayscale.100"
-                address={safe}
-              >
-                {asset.symbol}
-              </EtherscanLinkAddress>
-            ) : (
-              <EtherscanLinkERC20
-                color="grayscale.100"
-                address={asset.address}
-              >
-                {asset.symbol}
-              </EtherscanLinkERC20>
-            )}
-          </Text>
-        </HStack>
-      </Box>
-      <Box w="35%">
+      <Flex
+        w="25%"
+        alignItems="center"
+        gap="0.5rem"
+      >
+        <Image
+          src={asset.iconUri}
+          fallbackSrc="/images/coin-icon-default.svg"
+          alt={asset.symbol}
+          w="1rem"
+          h="1rem"
+        />
+        <EtherscanLink
+          color="white-0"
+          _hover={{ bg: 'transparent' }}
+          textStyle="body-base"
+          padding={0}
+          borderWidth={0}
+          value={asset.address === zeroAddress ? safe : asset.address}
+          type="token"
+        >
+          {asset.symbol}
+        </EtherscanLink>
+      </Flex>
+      <Flex
+        w="30%"
+        alignItems="flex-start"
+        flexWrap="wrap"
+      >
         <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-          marginBottom="0.25rem"
           maxWidth="23.8rem"
+          width="100%"
           isTruncated
         >
           <Tooltip
@@ -119,8 +130,9 @@ function CoinRow({
           </Tooltip>
         </Text>
         <Text
-          textStyle="text-sm-sans-regular"
-          color="chocolate.200"
+          textStyle="label-small"
+          color="neutral-7"
+          width="100%"
         >
           <Tooltip
             label={asset.fiatConversion}
@@ -129,34 +141,34 @@ function CoinRow({
             {formatUSD(asset.fiatValue)}
           </Tooltip>
         </Text>
-      </Box>
-      <Box w={'30%'}>
-        <Text
-          align="end"
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-        >
-          {totalFiat > 0 && formatPercentage(asset.fiatValue, totalFiat)}
-        </Text>
-      </Box>
-    </HStack>
+      </Flex>
+      <Flex
+        w="45%"
+        alignItems="flex-start"
+      >
+        <Text>{totalFiat > 0 && formatPercentage(asset.fiatValue, totalFiat)}</Text>
+      </Flex>
+    </Flex>
   );
 }
 
 function NFTHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box>
+    <Box
+      marginBottom="1rem"
+      minW="595px"
+    >
       <Divider
-        color="chocolate.700"
+        variant="darker"
         marginTop="0.75rem"
         marginBottom="1.5rem"
       />
       <Text
-        w="33%"
-        textStyle="text-sm-sans-regular"
-        color="chocolate.200"
-        marginBottom="1rem"
+        w="25%"
+        textStyle="label-small"
+        color="neutral-7"
+        px={{ base: '1rem', lg: '1.5rem' }}
       >
         {t('columnNFTs')}
       </Text>
@@ -168,44 +180,56 @@ function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boo
   const image = asset.imageUri ? asset.imageUri : asset.logoUri;
   const name = asset.name ? asset.name : asset.tokenName;
   const id = asset.id.toString();
+
   return (
-    <HStack marginBottom={isLast ? '0rem' : '1.5rem'}>
-      <EtherscanLinkERC721
-        address={asset.address}
-        tokenId={id}
-        data-testid="link-nft-image"
-      >
-        <Image
-          src={image}
-          fallbackSrc="/images/nft-image-default.svg"
-          alt={name}
-          w="3rem"
-          h="3rem"
-          marginRight="0.75rem"
-        />
-      </EtherscanLinkERC721>
-      <Text
-        textStyle="text-base-sans-regular"
-        color="grayscale.100"
-        data-testid="link-nft-name"
-        noOfLines={1}
-      >
-        <EtherscanLinkAddress address={asset.address}>{name}</EtherscanLinkAddress>
-      </Text>
-      <EtherscanLinkERC721
-        address={asset.address}
-        tokenId={id}
-      >
-        <Text
-          textStyle="text-base-sans-regular"
-          color="grayscale.100"
-          data-testid="link-nft-id"
-          maxWidth="5rem"
-          noOfLines={1}
+    <HStack
+      marginBottom={isLast ? '0rem' : '1.5rem'}
+      px={{ base: '1rem', lg: '1.5rem' }}
+      minW="595px"
+    >
+      <Flex width="15%">
+        <EtherscanLink
+          type="token"
+          value={asset.address}
+          secondaryValue={id}
+          data-testid="link-nft-image"
+          padding={0}
+          _hover={{ bg: 'transparent' }}
         >
-          #{id}
-        </Text>
-      </EtherscanLinkERC721>
+          <Image
+            src={image}
+            fallbackSrc="/images/nft-image-default.svg"
+            alt={name}
+            w="3rem"
+            h="3rem"
+            marginRight="0.75rem"
+          />
+        </EtherscanLink>
+      </Flex>
+      <Flex width="30%">
+        <EtherscanLink
+          type="address"
+          value={asset.address}
+          _hover={{ bg: 'transparent' }}
+          color="white-0"
+          textStyle="body-base"
+        >
+          {name}
+        </EtherscanLink>
+      </Flex>
+      <Flex width="25%">
+        <EtherscanLink
+          type="token"
+          value={asset.address}
+          secondaryValue={id}
+          color="white-0"
+          textStyle="body-base"
+          _hover={{ bg: 'transparent' }}
+          maxW="100%"
+        >
+          <Text as="span">{`#${id}`}</Text>
+        </EtherscanLink>
+      </Flex>
     </HStack>
   );
 }
@@ -221,6 +245,7 @@ export function Assets() {
   const coinDisplay = useFormatCoins(assetsFungible);
   const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
   const { handleUnstake, handleClaimUnstakedETH } = useLidoStaking();
+  const [expandedIndecies, setExpandedIndecies] = useState<number[]>([]);
 
   // --- Lido Stake button setup ---
   const showStakeButton =
@@ -273,39 +298,55 @@ export function Assets() {
     handleClaimUnstakedETH(BigInt(lidoWithdrawelNFT!.id));
   };
 
+  const hasAssets = coinDisplay.displayData.length > 0 || assetsNonFungible.length > 0;
+  const toggleAccordionItem = (index: number) => {
+    setExpandedIndecies(indexArray => {
+      if (indexArray.includes(index)) {
+        const newArr = [...indexArray];
+        newArr.splice(newArr.indexOf(index), 1);
+        return newArr;
+      } else {
+        return [...indexArray, index];
+      }
+    });
+  };
+
   return (
-    <Box>
+    <Box
+      mt={{ base: '1rem', lg: 0 }}
+      w="full"
+    >
       <Text
-        textStyle="text-sm-sans-regular"
-        color="chocolate.200"
-        marginTop="1.5rem"
-        marginBottom="0.5rem"
+        textStyle="label-small"
+        color="neutral-7"
+        px={{ base: '1rem', lg: '1.5rem' }}
       >
         {t('subtitleCoinBalance')}
       </Text>
       <Text
         data-testid="text-usd-total"
-        textStyle="text-lg-mono-regular"
-        color="grayscale.100"
+        px={{ base: '1rem', lg: '1.5rem' }}
       >
         {formatUSD(coinDisplay.totalFiatValue)}
       </Text>
+      <Hide above="lg">
+        <Divider
+          variant="darker"
+          my="1rem"
+        />
+      </Hide>
       {(showStakeButton || showUnstakeButton || showClaimETHButton) && (
-        <>
-          <Divider
-            color="chocolate.700"
-            marginTop="1.5rem"
-            marginBottom="1.5rem"
-          />
+        <Show above="lg">
+          <Divider my="1rem" />
           <Text
-            textStyle="text-sm-sans-regular"
-            color="chocolate.200"
-            marginTop="1.5rem"
-            marginBottom="1rem"
+            textStyle="label-small"
+            color="neutral-7"
+            my="1rem"
+            px={{ base: '1rem', lg: '1.5rem' }}
           >
             {t('subtitleStaking')}
           </Text>
-          <HStack>
+          <HStack px={{ base: '1rem', lg: '1.5rem' }}>
             {showStakeButton && (
               <Button
                 size="sm"
@@ -334,27 +375,127 @@ export function Assets() {
               </Tooltip>
             )}
           </HStack>
+        </Show>
+      )}
+      {hasAssets && (
+        <>
+          <Hide above="lg">
+            <Accordion
+              allowMultiple
+              index={expandedIndecies}
+            >
+              {coinDisplay.displayData.length > 0 && (
+                <AccordionItem
+                  borderTop="none"
+                  borderBottom="none"
+                >
+                  {({ isExpanded }) => (
+                    <Box>
+                      <AccordionButton
+                        onClick={() => toggleAccordionItem(0)}
+                        p="0.25rem"
+                        textStyle="body-base"
+                        color="white-0"
+                        ml="0.75rem"
+                      >
+                        <Flex
+                          alignItems="center"
+                          gap={2}
+                        >
+                          {isExpanded ? <CaretDown /> : <CaretRight />}
+                          {t('columnCoins')}
+                        </Flex>
+                      </AccordionButton>
+                      <Divider
+                        variant="darker"
+                        my="1rem"
+                      />
+                      <AccordionPanel
+                        p={0}
+                        overflowX="scroll"
+                      >
+                        <CoinHeader />
+                        {coinDisplay.displayData.map((coin, index) => {
+                          return (
+                            <CoinRow
+                              key={index}
+                              safe={daoAddress!}
+                              totalFiat={coinDisplay.totalFiatValue}
+                              asset={coin}
+                            />
+                          );
+                        })}
+                      </AccordionPanel>
+                    </Box>
+                  )}
+                </AccordionItem>
+              )}
+              {assetsNonFungible.length > 0 && (
+                <AccordionItem
+                  borderTop="none"
+                  borderBottom="none"
+                >
+                  {({ isExpanded }) => (
+                    <Box>
+                      <AccordionButton
+                        onClick={() =>
+                          toggleAccordionItem(coinDisplay.displayData.length > 0 ? 1 : 0)
+                        }
+                        p="0.25rem"
+                        textStyle="body-base"
+                        color="white-0"
+                        ml="0.75rem"
+                      >
+                        <Flex
+                          alignItems="center"
+                          gap={2}
+                        >
+                          {isExpanded ? <CaretDown /> : <CaretRight />}
+                          {t('columnNFTs')}
+                        </Flex>
+                      </AccordionButton>
+                      <AccordionPanel
+                        p={0}
+                        overflowX="scroll"
+                      >
+                        <NFTHeader />
+                        {assetsNonFungible.map((asset, index) => (
+                          <NFTRow
+                            key={index}
+                            asset={asset}
+                            isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
+                          />
+                        ))}
+                      </AccordionPanel>
+                    </Box>
+                  )}
+                </AccordionItem>
+              )}
+            </Accordion>
+          </Hide>
+          <Show above="lg">
+            {coinDisplay.displayData.length > 0 && <CoinHeader />}
+            {coinDisplay.displayData.map((coin, index) => {
+              return (
+                <CoinRow
+                  key={index}
+                  safe={daoAddress!}
+                  totalFiat={coinDisplay.totalFiatValue}
+                  asset={coin}
+                />
+              );
+            })}
+            {assetsNonFungible.length > 0 && <NFTHeader />}
+            {assetsNonFungible.map((asset, index) => (
+              <NFTRow
+                key={index}
+                asset={asset}
+                isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
+              />
+            ))}
+          </Show>
         </>
       )}
-      {coinDisplay.displayData.length > 0 && <CoinHeader />}
-      {coinDisplay.displayData.map((coin, index) => {
-        return (
-          <CoinRow
-            key={index}
-            safe={daoAddress!}
-            totalFiat={coinDisplay.totalFiatValue}
-            asset={coin}
-          />
-        );
-      })}
-      {assetsNonFungible.length > 0 && <NFTHeader />}
-      {assetsNonFungible.map((asset, index) => (
-        <NFTRow
-          key={index}
-          asset={asset}
-          isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
-        />
-      ))}
     </Box>
   );
 }

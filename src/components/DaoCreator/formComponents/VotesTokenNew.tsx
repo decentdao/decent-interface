@@ -1,13 +1,11 @@
-import { Flex, Input, Divider } from '@chakra-ui/react';
+import { Flex, Input } from '@chakra-ui/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
-import { ICreationStepProps, CreatorSteps } from '../../../types';
+import { ICreationStepProps } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
-import { StepButtons } from '../StepButtons';
-import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
 
 export function VotesTokenNew(props: ICreationStepProps) {
   const { values, handleChange, setFieldValue } = props;
@@ -30,6 +28,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
               {...field}
               data-testid="tokenVoting-tokenNameInput"
               minWidth="50%"
+              placeholder="Name"
             />
           )}
         </Field>
@@ -45,6 +44,7 @@ export function VotesTokenNew(props: ICreationStepProps) {
           onChange={handleChange}
           maxLength={6}
           data-testid="tokenVoting-tokenSymbolInput"
+          placeholder="TKN"
         />
       </LabelComponent>
       <LabelComponent
@@ -57,19 +57,9 @@ export function VotesTokenNew(props: ICreationStepProps) {
           onChange={valuePair => setFieldValue('erc20Token.tokenSupply', valuePair)}
           data-testid="tokenVoting-tokenSupplyInput"
           onKeyDown={restrictChars}
+          placeholder="100,000,000"
         />
       </LabelComponent>
-      <Divider color="chocolate.700" />
-      <AzoriusTokenAllocations {...props} />
-      <Divider
-        color="chocolate.700"
-        mb={4}
-      />
-      <StepButtons
-        {...props}
-        prevStep={CreatorSteps.ESSENTIALS}
-        nextStep={CreatorSteps.AZORIUS_DETAILS}
-      />
     </Flex>
   );
 }

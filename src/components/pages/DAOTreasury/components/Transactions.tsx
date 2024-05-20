@@ -1,12 +1,12 @@
-import { Box, Divider, HStack, Image, Spacer, Text, Tooltip } from '@chakra-ui/react';
-import { SquareSolidArrowDown, SquareSolidArrowUp } from '@decent-org/fractal-ui';
+import { Box, Button, HStack, Image, Text, Tooltip, Icon, Flex } from '@chakra-ui/react';
+import { ArrowUp, ArrowDown } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { TransferType, AssetTransfer } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
-import EtherscanLinkAddress from '../../../ui/links/EtherscanLinkAddress';
-import EtherscanLinkTransaction from '../../../ui/links/EtherscanLinkTransaction';
+import EtherscanLink from '../../../ui/links/EtherscanLink';
 import {
   TokenEventType,
   TransferDisplayData,
@@ -15,45 +15,38 @@ import {
 
 function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
   const { t } = useTranslation(['treasury', 'common']);
+  const { etherscanBaseURL } = useNetworkConfig();
+
   return (
-    <Box>
-      <HStack
-        align="center"
-        marginTop="1rem"
-        marginBottom={displayData.isLast ? '0rem' : '1rem'}
-      >
-        <HStack w="33%">
-          <EtherscanLinkTransaction txHash={displayData.transactionHash}>
-            {displayData.eventType == TokenEventType.WITHDRAW ? (
-              <SquareSolidArrowUp
-                w="1.5rem"
-                h="1.5rem"
-                color="grayscale.100"
-              />
-            ) : (
-              <SquareSolidArrowDown
-                w="1.5rem"
-                h="1.5rem"
-                color="#60B55E"
-              />
-            )}
-          </EtherscanLinkTransaction>
-          <Box paddingStart="0.5rem">
+    <Box
+      minW="595px"
+      p="0.25rem"
+      _hover={{ cursor: 'pointer', bg: 'white-alpha-04' }}
+      onClick={() => window.open(`${etherscanBaseURL}/tx/${displayData.transactionHash}`, '_blank')}
+    >
+      <HStack gap="1rem">
+        <Flex
+          minW="135px"
+          alignItems="center"
+          gap="0.5rem"
+        >
+          <Icon
+            as={displayData.eventType == TokenEventType.WITHDRAW ? ArrowUp : ArrowDown}
+            w="1.25rem"
+            h="1.25rem"
+            color="neutral-7"
+          />
+          <Box>
             <Text
-              textStyle="text-sm-sans-regular"
-              color="grayscale.100"
+              textStyle="label-small"
+              color="neutral-7"
             >
               {t(displayData.eventType == TokenEventType.WITHDRAW ? 'labelSent' : 'labelReceived')}
             </Text>
-            <Text
-              textStyle="text-base-sans-regular"
-              color="chocolate.200"
-            >
-              {useDateTimeDisplay(new Date(displayData.executionDate))}
-            </Text>
+            <Text>{useDateTimeDisplay(new Date(displayData.executionDate))}</Text>
           </Box>
-        </HStack>
-        <HStack w="33%">
+        </Flex>
+        <HStack w="30%">
           <Image
             src={displayData.image}
             fallbackSrc={
@@ -62,8 +55,8 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
                 : '/images/coin-icon-default.svg'
             }
             alt={displayData.assetDisplay}
-            w="1.5rem"
-            h="1.5rem"
+            w="1.25rem"
+            h="1.25rem"
           />
           <Tooltip
             label={
@@ -74,12 +67,8 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             placement="top-start"
           >
             <Text
-              textStyle="text-base-sans-regular"
               maxWidth="15rem"
               noOfLines={1}
-              color={
-                displayData.eventType === TokenEventType.WITHDRAW ? 'grayscale.100' : '#60B55E'
-              }
               data-testid={
                 displayData.transferType === TransferType.ERC721_TRANSFER
                   ? 'link-token-name'
@@ -91,15 +80,18 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             </Text>
           </Tooltip>
         </HStack>
-        <HStack w="33%">
-          <Spacer />
+        <HStack
+          w="40%"
+          justifyContent="flex-end"
+        >
           <DisplayAddress
             data-testid="link-transfer-address"
             address={displayData.transferAddress}
+            textAlign="end"
+            onClick={e => e.stopPropagation()}
           />
         </HStack>
       </HStack>
-      {!displayData.isLast && <Divider color="chocolate.700" />}
     </Box>
   );
 }
@@ -108,35 +100,19 @@ function EmptyTransactions() {
   const { t } = useTranslation('treasury');
   return (
     <Text
-      textStyle="text-base-sans-regular"
-      color="grayscale.100"
+      textStyle="body-base-strong"
+      color="neutral-7"
       data-testid="text-empty-transactions"
       marginTop="1rem"
       align="center"
+      px={{ base: '1rem', lg: '1.5rem' }}
     >
       {t('textEmptyTransactions')}
     </Text>
   );
 }
 
-function MoreTransactions({ address }: { address: string | null }) {
-  const { t } = useTranslation('treasury');
-  return (
-    <EtherscanLinkAddress address={address}>
-      <Text
-        textStyle="text-sm-sans-regular"
-        color="grayscale.100"
-        data-testid="link-more-transactions"
-        marginTop="1rem"
-        align="center"
-      >
-        {t('textMoreTransactions')}
-      </Text>
-    </EtherscanLinkAddress>
-  );
-}
-
-export function Transactions() {
+export function Transactions({ shownTransactions }: { shownTransactions: number }) {
   const {
     node: { daoAddress },
     treasury: { transfers },
@@ -150,16 +126,75 @@ export function Transactions() {
   if (!transfers || transfers.results.length === 0) return <EmptyTransactions />;
 
   return (
-    <Box>
-      {displayData.map((transfer, index) => {
-        return (
-          <TransferRow
-            key={index}
-            displayData={transfer}
-          />
-        );
-      })}
-      {transfers.next && <MoreTransactions address={daoAddress} />}
+    <Box px={{ base: '1rem', lg: '1.5rem' }}>
+      {displayData.slice(0, shownTransactions - 1).map((transfer, i) => (
+        <TransferRow
+          key={i}
+          displayData={transfer}
+        />
+      ))}
     </Box>
+  );
+}
+
+export function PaginationButton({ onClick }: { onClick: () => void }) {
+  const { t } = useTranslation('treasury');
+  return (
+    <Flex
+      w="full"
+      mt="1rem"
+      justifyContent="center"
+    >
+      {/* @todo - this should be <Button variant="button-pill" /> from theme, same as CeleryButtonWithIcon */}
+      <Button
+        h="1.75rem"
+        py="0.25rem"
+        px="0.75rem"
+        borderRadius="full"
+        bg="neutral-3"
+        color="lilac-0"
+        onClick={onClick}
+      >
+        {t('textMoreTransactions')}
+      </Button>
+    </Flex>
+  );
+}
+
+export function PaginationCount({
+  totalTransfers,
+  shownTransactions,
+  daoAddress,
+}: {
+  totalTransfers: number;
+  shownTransactions: number;
+  daoAddress: string | null;
+}) {
+  const { t } = useTranslation('treasury');
+  if (!totalTransfers || !daoAddress) {
+    return null;
+  }
+  return (
+    <Flex gap="0.25rem">
+      <Text
+        color="neutral-7"
+        textStyle="helper-text-base"
+      >
+        {t('transactionsShownCount', {
+          count: totalTransfers > shownTransactions ? shownTransactions : totalTransfers,
+        })}
+      </Text>
+      <EtherscanLink
+        type="address"
+        value={daoAddress}
+        p={0}
+        textStyle="helper-text-base"
+        outline="unset"
+        outlineOffset="unset"
+        borderWidth={0}
+      >
+        {t('transactionsTotalCount', { count: totalTransfers })}
+      </EtherscanLink>
+    </Flex>
   );
 }

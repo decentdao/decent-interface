@@ -1,5 +1,6 @@
-import { MenuItem, Text } from '@chakra-ui/react';
-import { StarGoldSolid } from '@decent-org/fractal-ui';
+import { Box, Button, MenuItem, Text } from '@chakra-ui/react';
+import { Star } from '@phosphor-icons/react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
@@ -14,39 +15,39 @@ export function Favorite({ network, address }: IFavorite) {
   const { action } = useFractal();
   const navigate = useNavigate();
 
+  const { t } = useTranslation('dashboard');
+
   const onClickNav = () => {
+    // TODO is this needed here?
     action.resetDAO();
+
     navigate(DAO_ROUTES.dao.relative(network, address));
   };
 
   return (
-    <MenuItem
-      display="flex"
-      alignItems="center"
-      gap="2"
-      my={1}
-      width="full"
-      px="0px"
-      onClick={onClickNav}
-      data-testid={'favorites-' + daoRegistryName}
-    >
-      <StarGoldSolid
-        color="gold.500"
-        _hover={{
-          color: 'gold.500-hover',
-        }}
-      />
-      <Text
-        maxWidth="9rem"
+    <Box>
+      <MenuItem
+        as={Button}
+        variant="tertiary"
+        w="full"
+        h="3rem"
+        onClick={onClickNav}
         noOfLines={1}
-        color="grayscale.100"
-        textStyle="text-base-sans-medium"
-        _hover={{
-          color: 'gold.500-hover',
-        }}
+        data-testid={'favorites-' + daoRegistryName}
+        display="flex"
+        alignItems="center"
+        justifyContent="flex-start"
+        gap={2}
       >
-        {daoRegistryName}
-      </Text>
-    </MenuItem>
+        <Star
+          size="1.5rem"
+          weight="fill"
+        />
+
+        <Text color={daoRegistryName ? 'white-0' : 'neutral-6'}>
+          {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
+        </Text>
+      </MenuItem>
+    </Box>
   );
 }

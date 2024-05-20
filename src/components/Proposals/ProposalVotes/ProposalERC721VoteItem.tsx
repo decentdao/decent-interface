@@ -1,9 +1,10 @@
-import { Grid, GridItem, Text } from '@chakra-ui/react';
+import { Grid, GridItem, Text, Hide } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance, ERC721ProposalVote } from '../../../types';
 import StatusBox from '../../ui/badges/StatusBox';
+import Divider from '../../ui/utils/Divider';
 
 export default function ProposalERC721VoteItem({
   vote: { voter, choice, tokenAddresses },
@@ -34,14 +35,14 @@ export default function ProposalERC721VoteItem({
       width="100%"
     >
       <GridItem colSpan={1}>
-        <Text textStyle="text-base-sans-regular">
+        <Text>
           {displayName}
           {user.address === voter && t('isMeSuffix')}
         </Text>
       </GridItem>
       <GridItem colSpan={1}>
         <StatusBox>
-          <Text textStyle="text-sm-mono-semibold">{t(choice)}</Text>
+          <Text>{t(choice)}</Text>
         </StatusBox>
       </GridItem>
       {votedTokens && (
@@ -54,6 +55,12 @@ export default function ProposalERC721VoteItem({
           </Text>
         </GridItem>
       )}
+      <Hide above="lg">
+        <Divider
+          variant="darker"
+          my="0.5rem"
+        />
+      </Hide>
     </Grid>
   );
 }

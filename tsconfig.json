@@ -17,6 +17,5 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "exclude": ["docker"],
   "include": ["src", "tests", "test", "app", "netlify/functions", "vite.config.mts"]
 }

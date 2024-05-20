@@ -1,15 +1,19 @@
-import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip } from '@chakra-ui/react';
-import { MouseEvent, ReactNode } from 'react';
+import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip, Portal } from '@chakra-ui/react';
+import { MouseEvent, ReactNode, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
-import OptionsList, { IOption, IOptionsList } from './components';
+import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
+import { OptionsList } from './OptionsList';
+import { IOption, IOptionsList } from './types';
 
-interface IOptionMenu extends Omit<MenuProps, 'children'>, IOptionsList {
+interface OptionMenuProps extends Omit<MenuProps, 'children'>, IOptionsList {
   trigger: ReactNode;
   tooltipKey?: string;
   options: IOption[];
   buttonAs?: As;
-  buttonProps?: Record<string, string | boolean | number>;
+  buttonProps?: Record<string, string | boolean | number | Record<string, any>>;
   children?: ReactNode;
+  menuListMr?: string;
+  containerRef?: RefObject<HTMLDivElement | null>;
 }
 
 export function OptionMenu({
@@ -24,9 +28,33 @@ export function OptionMenu({
   buttonProps,
   children,
   closeOnSelect = true,
+  menuListMr,
+  containerRef,
   ...rest
-}: IOptionMenu) {
+}: OptionMenuProps) {
   const { t } = useTranslation(namespace);
+  const menuList = (
+    <MenuList
+      borderWidth="1px"
+      borderColor="neutral-3"
+      borderRadius="0.75rem"
+      bg={NEUTRAL_2_82_TRANSPARENT}
+      backdropFilter="auto"
+      backdropBlur="10px"
+      mr={menuListMr || ['auto', '1rem']}
+      zIndex={1000}
+    >
+      {children}
+      <OptionsList
+        options={options}
+        showOptionSelected={showOptionSelected}
+        closeOnSelect={closeOnSelect}
+        showOptionCount={showOptionCount}
+        namespace={namespace}
+        titleKey={titleKey}
+      />
+    </MenuList>
+  );
   return (
     <Menu
       isLazy
@@ -40,35 +68,20 @@ export function OptionMenu({
       >
         <MenuButton
           as={buttonAs}
-          h="fit-content"
           onClick={(event: MouseEvent<HTMLButtonElement>) => {
             event.stopPropagation();
           }}
-          _hover={{ color: 'gold.500-hover' }}
           {...buttonProps}
         >
           {trigger}
         </MenuButton>
       </Tooltip>
-      <MenuList
-        rounded="lg"
-        shadow="menu-gold"
-        mr={['auto', '1rem']}
-        bg="grayscale.black"
-        border="none"
-        padding="1rem"
-        zIndex={1000}
-      >
-        {children}
-        <OptionsList
-          options={options}
-          showOptionSelected={showOptionSelected}
-          closeOnSelect={closeOnSelect}
-          showOptionCount={showOptionCount}
-          namespace={namespace}
-          titleKey={titleKey}
-        />
-      </MenuList>
+
+      {containerRef !== undefined ? (
+        <Portal containerRef={containerRef}>{menuList}</Portal>
+      ) : (
+        menuList
+      )}
     </Menu>
   );
 }

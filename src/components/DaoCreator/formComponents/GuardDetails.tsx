@@ -1,13 +1,5 @@
-import {
-  Text,
-  InputGroup,
-  InputRightElement,
-  Flex,
-  Alert,
-  AlertTitle,
-  Divider,
-} from '@chakra-ui/react';
-import { Info } from '@decent-org/fractal-ui';
+import { Text, InputGroup, InputRightElement, Flex, Alert } from '@chakra-ui/react';
+import { Info } from '@phosphor-icons/react';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatUnits } from 'viem';
@@ -24,6 +16,7 @@ import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { DAOCreateMode } from './EstablishEssentials';
@@ -126,166 +119,158 @@ function GuardDetails(props: ICreationStepProps) {
     : null;
 
   return (
-    <StepWrapper
-      mode={mode}
-      isSubDAO={isSubDAO}
-      isFormSubmitting={!!isSubmitting || transactionPending}
-      titleKey="titleGuardConfig"
-    >
-      <Flex
-        flexDirection="column"
-        gap={8}
+    <>
+      <StepWrapper
+        mode={mode}
+        isSubDAO={isSubDAO}
+        isFormSubmitting={!!isSubmitting || transactionPending}
+        titleKey="titleGuardConfig"
       >
-        {governanceFormType === GovernanceType.MULTISIG && (
-          <>
-            <ContentBoxTitle>{t('titleProposalSettings')}</ContentBoxTitle>
-            <LabelComponent
-              label={t('labelTimelockPeriod')}
-              helper={t('helperTimelockPeriod')}
-              isRequired
-            >
-              <InputGroup>
-                <BigIntInput
-                  value={values.freeze.timelockPeriod.bigintValue}
-                  onChange={valuePair => setFieldValue('freeze.timelockPeriod', valuePair)}
-                  decimalPlaces={0}
-                  min="1"
-                  data-testid="guardConfig-executionDetails"
-                />
-                <InputRightElement mr="4">{minutes}</InputRightElement>
-              </InputGroup>
-              <Text
-                textStyle="text-md-sans-regular"
-                color="grayscale.500"
-                mt={2}
+        <Flex
+          flexDirection="column"
+          gap={8}
+        >
+          {governanceFormType === GovernanceType.MULTISIG && (
+            <>
+              <ContentBoxTitle>{t('titleProposalSettings')}</ContentBoxTitle>
+              <LabelComponent
+                label={t('labelTimelockPeriod')}
+                helper={t('helperTimelockPeriod')}
+                isRequired
               >
-                {t('exampleTimelockPeriod')}
-              </Text>
-            </LabelComponent>
-            <LabelComponent
-              label={t('labelExecutionPeriod')}
-              helper={t('helperExecutionPeriod')}
-              isRequired
-            >
-              <InputGroup>
-                <BigIntInput
-                  value={values.freeze.executionPeriod.bigintValue}
-                  onChange={valuePair => setFieldValue('freeze.executionPeriod', valuePair)}
-                  decimalPlaces={0}
-                  min="1"
-                  data-testid="guardConfig-executionDetails"
-                />
-                <InputRightElement mr="4">{minutes}</InputRightElement>
-              </InputGroup>
-              <Text
-                textStyle="text-md-sans-regular"
-                color="grayscale.500"
-                mt={2}
+                <InputGroup>
+                  <BigIntInput
+                    value={values.freeze.timelockPeriod.bigintValue}
+                    onChange={valuePair => setFieldValue('freeze.timelockPeriod', valuePair)}
+                    decimalPlaces={0}
+                    min="1"
+                    data-testid="guardConfig-executionDetails"
+                  />
+                  <InputRightElement mr="4">{minutes}</InputRightElement>
+                </InputGroup>
+                <Text
+                  textStyle="helper-text-base"
+                  color="neutral-7"
+                  mt="0.5rem"
+                >
+                  {t('exampleTimelockPeriod')}
+                </Text>
+              </LabelComponent>
+              <LabelComponent
+                label={t('labelExecutionPeriod')}
+                helper={t('helperExecutionPeriod')}
+                isRequired
               >
-                {t('exampleExecutionPeriod')}
-              </Text>
-            </LabelComponent>
-          </>
-        )}
-        <ContentBoxTitle>{t('titleFreezeParams')}</ContentBoxTitle>
-        <LabelComponent
-          label={t('labelFreezeVotesThreshold')}
-          helper={freezeHelper || ''}
-          isRequired
-        >
-          <BigIntInput
-            value={values.freeze.freezeVotesThreshold.bigintValue}
-            onChange={valuePair => setFieldValue('freeze.freezeVotesThreshold', valuePair)}
-            decimalPlaces={0}
-            data-testid="guardConfig-freezeVotesThreshold"
-          />
-        </LabelComponent>
-        <LabelComponent
-          label={t('labelFreezeProposalPeriod')}
-          helper={t('helperFreezeProposalPeriod')}
-          isRequired
-        >
-          <InputGroup>
-            <BigIntInput
-              value={values.freeze.freezeProposalPeriod.bigintValue}
-              onChange={valuePair => setFieldValue('freeze.freezeProposalPeriod', valuePair)}
-              decimalPlaces={0}
-              min="1"
-              data-testid="guardConfig-freezeProposalDuration"
-            />
-            <InputRightElement mr="4">{minutes}</InputRightElement>
-          </InputGroup>
-          <Text
-            textStyle="text-md-sans-regular"
-            color="grayscale.500"
-            mt={2}
+                <InputGroup>
+                  <BigIntInput
+                    value={values.freeze.executionPeriod.bigintValue}
+                    onChange={valuePair => setFieldValue('freeze.executionPeriod', valuePair)}
+                    decimalPlaces={0}
+                    min="1"
+                    data-testid="guardConfig-executionDetails"
+                  />
+                  <InputRightElement mr="4">{minutes}</InputRightElement>
+                </InputGroup>
+                <Text
+                  textStyle="helper-text-base"
+                  color="neutral-7"
+                  mt="0.5rem"
+                >
+                  {t('exampleExecutionPeriod')}
+                </Text>
+              </LabelComponent>
+            </>
+          )}
+          <ContentBoxTitle>{t('titleFreezeParams')}</ContentBoxTitle>
+          <LabelComponent
+            label={t('labelFreezeVotesThreshold')}
+            helper={freezeHelper || ''}
+            isRequired
           >
-            {t('exampleFreezeProposalPeriod')}
-          </Text>
-        </LabelComponent>
-        <LabelComponent
-          label={t('labelFreezePeriod')}
-          helper={t('helperFreezePeriod')}
-          isRequired
-        >
-          <InputGroup>
             <BigIntInput
-              value={values.freeze.freezePeriod.bigintValue}
-              onChange={valuePair => setFieldValue('freeze.freezePeriod', valuePair)}
+              value={values.freeze.freezeVotesThreshold.bigintValue}
+              onChange={valuePair => setFieldValue('freeze.freezeVotesThreshold', valuePair)}
               decimalPlaces={0}
-              min="1"
-              data-testid="guardConfig-freezeDuration"
+              data-testid="guardConfig-freezeVotesThreshold"
             />
-
-            <InputRightElement mr="4">{minutes}</InputRightElement>
-          </InputGroup>
-          <Text
-            textStyle="text-md-sans-regular"
-            color="grayscale.500"
-            mt={2}
+          </LabelComponent>
+          <LabelComponent
+            label={t('labelFreezeProposalPeriod')}
+            helper={t('helperFreezeProposalPeriod')}
+            isRequired
           >
-            {t('exampleFreezePeriod')}
-          </Text>
-        </LabelComponent>
-        <Alert status="info">
-          <Info boxSize="24px" />
-          <AlertTitle>
+            <InputGroup>
+              <BigIntInput
+                value={values.freeze.freezeProposalPeriod.bigintValue}
+                onChange={valuePair => setFieldValue('freeze.freezeProposalPeriod', valuePair)}
+                decimalPlaces={0}
+                min="1"
+                data-testid="guardConfig-freezeProposalDuration"
+              />
+              <InputRightElement mr="4">{minutes}</InputRightElement>
+            </InputGroup>
             <Text
-              textStyle="text-lg-mono-medium"
+              textStyle="helper-text-base"
+              color="neutral-7"
+              mt="0.5rem"
+            >
+              {t('exampleFreezeProposalPeriod')}
+            </Text>
+          </LabelComponent>
+          <LabelComponent
+            label={t('labelFreezePeriod')}
+            helper={t('helperFreezePeriod')}
+            isRequired
+          >
+            <InputGroup>
+              <BigIntInput
+                value={values.freeze.freezePeriod.bigintValue}
+                onChange={valuePair => setFieldValue('freeze.freezePeriod', valuePair)}
+                decimalPlaces={0}
+                min="1"
+                data-testid="guardConfig-freezeDuration"
+              />
+
+              <InputRightElement mr="4">{minutes}</InputRightElement>
+            </InputGroup>
+            <Text
+              textStyle="helper-text-base"
+              color="neutral-7"
+              mt="0.5rem"
+            >
+              {t('exampleFreezePeriod')}
+            </Text>
+          </LabelComponent>
+          <Alert status="info">
+            <Info size="24" />
+            <Text
+              textStyle="body-base-strong"
               whiteSpace="pre-wrap"
             >
               {t('freezeGuardDescription')}
             </Text>
-          </AlertTitle>
-        </Alert>
-        <Divider
-          color="chocolate.700"
-          mb={4}
-        />
-        {showCustomNonce && (
-          <>
+          </Alert>
+          <Divider mb={4} />
+          {showCustomNonce && (
             <CustomNonceInput
               nonce={values.multisig.customNonce}
               onChange={handleNonceChange}
+              renderTrimmed={false}
             />
-            <Divider
-              color="chocolate.700"
-              my={4}
-            />
-          </>
-        )}
-        <StepButtons
-          {...props}
-          prevStep={
-            governanceFormType === GovernanceType.MULTISIG
-              ? CreatorSteps.MULTISIG_DETAILS
-              : CreatorSteps.AZORIUS_DETAILS
-          }
-          isEdit={mode === DAOCreateMode.EDIT}
-          isLastStep
-        />
-      </Flex>
-    </StepWrapper>
+          )}
+        </Flex>
+      </StepWrapper>
+      <StepButtons
+        {...props}
+        prevStep={
+          governanceFormType === GovernanceType.MULTISIG
+            ? CreatorSteps.MULTISIG_DETAILS
+            : CreatorSteps.AZORIUS_DETAILS
+        }
+        isEdit={mode === DAOCreateMode.EDIT}
+        isLastStep
+      />
+    </>
   );
 }
 

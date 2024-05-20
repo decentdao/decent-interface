@@ -1,9 +1,8 @@
 import { ens_normalize } from '@adraffy/ens-normalize';
-import { Box, Divider, Input, RadioGroup } from '@chakra-ui/react';
+import { Box, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -77,7 +76,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       ens_normalize(value);
       setSnapshotSpaceValid(true);
     } catch (error) {
-      console.log(error);
+      console.warn(error);
       setSnapshotSpaceValid(false);
     }
   };
@@ -85,121 +84,114 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { createOptions } = useNetworkConfig();
 
   return (
-    <StepWrapper
-      mode={mode}
-      isSubDAO={isSubDAO}
-      isFormSubmitting={!!isSubmitting || transactionPending}
-      titleKey="titleEssentials"
-    >
-      <InputComponent
-        label={t('labelFractalName')}
-        helper={t('helperFractalName')}
-        isRequired
-        value={values.essentials.daoName}
-        id="searchEssentials-daoName"
-        onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
-        onBlur={cEvent => setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)}
-        disabled={daoNameDisabled}
-        placeholder={t('daoNamePlaceholder')}
-        testId="essentials-daoName"
-      />
-      <Box my={8}>
-        <LabelComponent
-          label={t('labelChooseGovernance')}
-          helper={t('helperChooseGovernance')}
-          isRequired
-        >
-          <RadioGroup
-            bg={BACKGROUND_SEMI_TRANSPARENT}
-            px={8}
-            py={4}
-            rounded="lg"
-            display="flex"
-            flexDirection="column"
-            name="governance"
-            gap={4}
-            id="governance"
-            value={values.essentials.governance}
-            onChange={handleGovernanceChange}
-          >
-            {createOptions.includes(GovernanceType.MULTISIG) && (
-              <RadioWithText
-                label={t('labelMultisigGov')}
-                description={t('descMultisigGov')}
-                testId="choose-multisig"
-                value={GovernanceType.MULTISIG}
-                tooltip={
-                  <Trans
-                    i18nKey="tooltipMultisig"
-                    ns="daoCreate"
-                  >
-                    placeholder
-                    <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
-                  </Trans>
-                }
-              />
-            )}
-            {createOptions.includes(GovernanceType.AZORIUS_ERC20) && (
-              <RadioWithText
-                label={t('labelAzoriusErc20Gov')}
-                description={t('descAzoriusErc20Gov')}
-                testId="choose-azorius"
-                value={GovernanceType.AZORIUS_ERC20}
-                tooltip={
-                  <Trans
-                    i18nKey="tooltipTokenVoting"
-                    ns="daoCreate"
-                  >
-                    placeholder
-                    <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
-                  </Trans>
-                }
-              />
-            )}
-            {createOptions.includes(GovernanceType.AZORIUS_ERC721) && (
-              <RadioWithText
-                label={t('labelAzoriusErc721Gov')}
-                description={t('descAzoriusErc721Gov')}
-                testId="choose-azorius-erc721"
-                value={GovernanceType.AZORIUS_ERC721}
-                tooltip={
-                  <Trans
-                    i18nKey="tooltipNftVoting"
-                    ns="daoCreate"
-                  >
-                    placeholder
-                    <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
-                  </Trans>
-                }
-              />
-            )}
-          </RadioGroup>
-        </LabelComponent>
-      </Box>
-      <Divider
-        color="chocolate.700"
-        mb="2rem"
-      />
-      <LabelComponent
-        label={t('snapshot')}
-        helper={t('snapshotHelper')}
-        isRequired={false}
+    <>
+      <StepWrapper
+        mode={mode}
+        isSubDAO={isSubDAO}
+        isFormSubmitting={!!isSubmitting || transactionPending}
+        titleKey="titleEssentials"
       >
-        <LabelWrapper errorMessage={errors?.essentials?.snapshotENS}>
-          <Input
-            value={values.essentials.snapshotENS}
-            onChange={cEvent => handleSnapshotSpaceChange(cEvent.target.value)}
-            isDisabled={snapshotENSDisabled}
-            data-testid="essentials-snapshotENS"
-            placeholder="example.eth"
-          />
-        </LabelWrapper>
-      </LabelComponent>
-      <Divider
-        color="chocolate.700"
-        mt="2rem"
-        mb="2rem"
-      />
+        <InputComponent
+          label={t('labelDAOName')}
+          helper={t('helperDAOName')}
+          isRequired
+          value={values.essentials.daoName}
+          id="searchEssentials-daoName"
+          onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
+          onBlur={cEvent => setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)}
+          disabled={daoNameDisabled}
+          placeholder={t('daoNamePlaceholder')}
+          testId="essentials-daoName"
+        />
+        <Box
+          mt="2rem"
+          mb="1.5rem"
+        >
+          <LabelComponent
+            label={t('labelChooseGovernance')}
+            helper={t('helperChooseGovernance')}
+            isRequired
+          >
+            <RadioGroup
+              display="flex"
+              flexDirection="column"
+              name="governance"
+              gap={4}
+              mt="-0.5rem" // RadioGroup renders empty paragraph with margin, seems like this is only feasible way to align this group
+              id="governance"
+              value={values.essentials.governance}
+              onChange={handleGovernanceChange}
+            >
+              {createOptions.includes(GovernanceType.MULTISIG) && (
+                <RadioWithText
+                  label={t('labelMultisigGov')}
+                  description={t('descMultisigGov')}
+                  testId="choose-multisig"
+                  value={GovernanceType.MULTISIG}
+                  tooltip={
+                    <Trans
+                      i18nKey="tooltipMultisig"
+                      ns="daoCreate"
+                    >
+                      placeholder
+                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                    </Trans>
+                  }
+                />
+              )}
+              {createOptions.includes(GovernanceType.AZORIUS_ERC20) && (
+                <RadioWithText
+                  label={t('labelAzoriusErc20Gov')}
+                  description={t('descAzoriusErc20Gov')}
+                  testId="choose-azorius"
+                  value={GovernanceType.AZORIUS_ERC20}
+                  tooltip={
+                    <Trans
+                      i18nKey="tooltipTokenVoting"
+                      ns="daoCreate"
+                    >
+                      placeholder
+                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                    </Trans>
+                  }
+                />
+              )}
+              {createOptions.includes(GovernanceType.AZORIUS_ERC721) && (
+                <RadioWithText
+                  label={t('labelAzoriusErc721Gov')}
+                  description={t('descAzoriusErc721Gov')}
+                  testId="choose-azorius-erc721"
+                  value={GovernanceType.AZORIUS_ERC721}
+                  tooltip={
+                    <Trans
+                      i18nKey="tooltipNftVoting"
+                      ns="daoCreate"
+                    >
+                      placeholder
+                      <ExternalLink href={URL_DOCS_GOV_TYPES}>link</ExternalLink>
+                    </Trans>
+                  }
+                />
+              )}
+            </RadioGroup>
+          </LabelComponent>
+        </Box>
+        <LabelComponent
+          label={t('snapshot')}
+          helper={t('snapshotHelper')}
+          isRequired={false}
+        >
+          <LabelWrapper errorMessage={errors?.essentials?.snapshotENS}>
+            <Input
+              value={values.essentials.snapshotENS}
+              onChange={cEvent => handleSnapshotSpaceChange(cEvent.target.value)}
+              isDisabled={snapshotENSDisabled}
+              data-testid="essentials-snapshotENS"
+              placeholder="example.eth"
+            />
+          </LabelWrapper>
+        </LabelComponent>
+      </StepWrapper>
       <StepButtons
         {...props}
         isNextDisabled={
@@ -216,6 +208,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
               : CreatorSteps.ERC721_DETAILS
         }
       />
-    </StepWrapper>
+    </>
   );
 }

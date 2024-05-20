@@ -12,8 +12,8 @@ export const createAccountSubstring = (account: string) => {
  * Primary ENS Name (reverse record), otherwise returning a truncated address in the form
  * 0xbFC4...7551
  *
- * This is intended to be used for NON Fractal DAO display names.  If you would like to get the
- * display name for a Fractal DAO, use the useDAOName hook instead.
+ * This is intended to be used for NON DAO display names.  If you would like to get the
+ * display name for a DAO, use the useDAOName hook instead.
  */
 const useDisplayName = (account?: string | null, truncate?: boolean) => {
   if (truncate === undefined) truncate = true;

@@ -15,6 +15,8 @@ export function Execute({ proposal }: { proposal: FractalProposal }) {
       width="full"
       isDisabled={disabled}
       marginTop={5}
+      padding="1.5rem 6rem"
+      height="auto"
     >
       {t('execute', { ns: 'common' })}
     </Button>

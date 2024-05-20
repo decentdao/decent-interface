@@ -127,7 +127,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
               >
                 <Input
                   value={azoriusGovernance.votesToken?.name}
-                  disabled={true}
+                  readOnly
                 />
               </LabelWrapper>
 

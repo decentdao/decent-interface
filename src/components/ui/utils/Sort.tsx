@@ -1,8 +1,10 @@
-import { Flex, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
-import { ArrowDownSm } from '@decent-org/fractal-ui';
+import { Flex, Icon, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
+import { CaretDown } from '@phosphor-icons/react';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
+import { NEUTRAL_2_82_TRANSPARENT } from '../../../constants/common';
 import { SortBy } from '../../../types';
+import Divider from './Divider';
 
 function SortMenuItem({
   labelKey,
@@ -16,17 +18,15 @@ function SortMenuItem({
   const { t } = useTranslation();
   return (
     <MenuItem
-      py="0.5rem"
-      color="grayscale.100"
+      borderRadius="0.5rem"
+      p="0.75rem 0.5rem"
       sx={{
-        '&:hover': {
-          color: 'gold.500',
-        },
+        '&:hover': { bg: 'neutral-3' },
       }}
       data-testid={testId}
       onClick={onClick}
     >
-      <Text textStyle="text-sm-mono-semibold">{t(labelKey)}</Text>
+      <Text>{t(labelKey)}</Text>
     </MenuItem>
   );
 }
@@ -45,36 +45,51 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
     <Menu direction="ltr">
       <MenuButton
         data-testid="sort-openMenu"
-        color="gold.500"
+        color="lilac-0"
+        p="0.25rem 0.5rem"
         sx={{
           '&:hover': {
-            color: 'gold.500-hover',
+            color: 'lilac--1',
+            bg: 'white-alpha-04',
+            borderRadius: '0.25rem',
           },
         }}
         {...buttonProps}
       >
-        <Flex
-          alignItems="center"
-          color="gold.500"
-        >
-          <Text textStyle="text-sm-mono-medium">{t(sortBy)}</Text>
-          <ArrowDownSm boxSize="1.5rem" />
+        <Flex alignItems="center">
+          <Text>{t(sortBy)}</Text>
+          <Icon
+            ml="0.25rem"
+            p={1.25}
+            as={CaretDown}
+          />
         </Flex>
       </MenuButton>
+
       <MenuList
-        border="none"
-        rounded="lg"
-        shadow="menu-gold"
-        bg="grayscale.black"
-        p="0.5rem 1rem"
+        borderWidth="1px"
+        borderColor="neutral-3"
+        borderRadius="0.5rem"
+        bg={NEUTRAL_2_82_TRANSPARENT}
+        backdropFilter="auto"
+        backdropBlur="10px"
         minWidth="min-content"
         zIndex={5}
       >
+        <Text
+          px="0.5rem"
+          mt={2}
+          textStyle="helper-text-small"
+          color="neutral-7"
+        >
+          {t('sortTitle')}
+        </Text>
         <SortMenuItem
           labelKey={SortBy.Newest}
           testId="sort-newest"
           onClick={() => setSortBy(SortBy.Newest)}
         />
+        <Divider />
         <SortMenuItem
           labelKey={SortBy.Oldest}
           testId="sort-oldest"

@@ -4,18 +4,25 @@ export type Crumb = {
   terminus: string;
   path: string;
 };
-interface IBreadcrumbs {
+interface BreadcrumbsProps {
   links: Crumb[];
+  w?: {
+    base: string;
+    sm: string;
+  };
 }
 
-export default function Breadcrumbs({ links }: IBreadcrumbs) {
+export default function Breadcrumbs({
+  links,
+  w = { base: 'min-content', sm: 'initial' },
+}: BreadcrumbsProps) {
   return (
     <Breadcrumb
-      color="chocolate.200"
-      height="36px"
       display="flex"
       alignItems="center"
-      w={{ base: 'min-content', sm: 'initial' }}
+      color="neutral-7"
+      w={w}
+      listProps={{ flexWrap: 'wrap' }}
     >
       {links.map(({ terminus: title, path }, i) => {
         const isCurrentPage = i === links.length - 1;
@@ -25,15 +32,19 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
             overflow="hidden"
             whiteSpace="nowrap"
             textOverflow="ellipsis"
-            textStyle="text-base-mono-regular"
+            textStyle="helper-text-base"
+            color={isCurrentPage ? 'neutral-7' : 'neutral-6'}
           >
             {title}
           </Text>
         );
+
         return (
           <BreadcrumbItem
             key={path}
             isCurrentPage={isCurrentPage}
+            color="neutral-7"
+            textStyle="helper-text-base"
           >
             {isCurrentPage ? (
               crumbText
@@ -43,8 +54,7 @@ export default function Breadcrumbs({ links }: IBreadcrumbs) {
                 to={path}
                 display="flex"
                 alignItems="center"
-                color={isCurrentPage ? 'chocolate.200' : 'gold.500'}
-                _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
+                _hover={{ textDecoration: 'none', color: 'neutral-7' }} // Guessed. Probaby incorrect, couldn't find on figma
               >
                 {crumbText}
               </BreadcrumbLink>

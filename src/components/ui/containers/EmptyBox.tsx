@@ -19,8 +19,8 @@ export function EmptyBox({
         flexWrap="wrap"
       >
         <Text
-          textStyle="text-xl-mono-bold"
-          color="chocolate.100"
+          textStyle="display-xl"
+          color="neutral-7"
         >
           {emptyText}
         </Text>

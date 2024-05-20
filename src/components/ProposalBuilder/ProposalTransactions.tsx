@@ -1,13 +1,15 @@
 import {
   Box,
+  Flex,
   Accordion,
   AccordionButton,
   AccordionItem,
   AccordionPanel,
   HStack,
   IconButton,
+  Text,
 } from '@chakra-ui/react';
-import { ArrowDown, ArrowRight, Minus } from '@decent-org/fractal-ui';
+import { MinusCircle, CaretDown, CaretRight } from '@phosphor-icons/react';
 import { FormikErrors, FormikProps } from 'formik';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -39,7 +41,7 @@ export default function ProposalTransactions({
   const removeTransaction = (transactionIndex: number) => {
     setFieldValue(
       'transactions',
-      transactions.filter((tx, i) => i !== transactionIndex),
+      transactions.filter((_, i) => i !== transactionIndex),
     );
   };
   return (
@@ -61,13 +63,12 @@ export default function ProposalTransactions({
             borderBottom="none"
           >
             {({ isExpanded }) => (
-              <Box
-                rounded="lg"
-                p={3}
-                my="2"
-                bg="black.900"
-              >
-                <HStack justify="space-between">
+              <Box borderRadius={4}>
+                {/* TRANSACTION HEADER */}
+                <HStack
+                  px="1.5rem"
+                  justify="space-between"
+                >
                   <AccordionButton
                     onClick={() => {
                       setExpandedIndecies(indexArray => {
@@ -80,29 +81,37 @@ export default function ProposalTransactions({
                         }
                       });
                     }}
-                    p={0}
-                    textStyle="text-button-md-semibold"
-                    color="grayscale.100"
+                    p="0.25rem"
+                    textStyle="display-lg"
+                    color="lilac-0"
                   >
-                    {isExpanded ? <ArrowDown boxSize="1.5rem" /> : <ArrowRight fontSize="1.5rem" />}
-                    {t('transaction')} {index + 1}
+                    <Text textStyle="display-lg">
+                      <Flex
+                        alignItems="center"
+                        gap={2}
+                      >
+                        {isExpanded ? <CaretDown /> : <CaretRight />}
+                        {t('transaction')} {index + 1}
+                      </Flex>
+                    </Text>
                   </AccordionButton>
                   {index !== 0 || transactions.length !== 1 ? (
                     <IconButton
-                      icon={<Minus boxSize="1.5rem" />}
+                      icon={<MinusCircle />}
                       aria-label={t('removetransactionlabel')}
                       variant="unstyled"
                       onClick={() => removeTransaction(index)}
                       minWidth="auto"
-                      _hover={{ color: 'gold.500' }}
+                      color="lilac-0"
                       _disabled={{ opacity: 0.4, cursor: 'default' }}
                       sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
-                      disabled={pendingTransaction}
+                      isDisabled={pendingTransaction}
                     />
                   ) : (
                     <Box h="2.25rem" />
                   )}
                 </HStack>
+
                 <AccordionPanel p={0}>
                   <ProposalTransaction
                     transaction={transactions[index] as CreateProposalTransaction}

@@ -3,39 +3,35 @@ import { Check } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import {
-  AzoriusGovernance,
-  AzoriusProposal,
-  FractalProposal,
-  SnapshotProposal,
-} from '../../../types';
+import { AzoriusGovernance, AzoriusProposal } from '../../../types';
 
-const quorumNotReachedColor = '#838383';
-const quorumReachedColor = '#56A355';
-export default function QuorumBadge({ proposal }: { proposal: FractalProposal }) {
+export default function QuorumBadge({ proposal }: { proposal: AzoriusProposal }) {
   const { governance } = useFractal();
   const { t } = useTranslation('common');
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken, erc721Tokens, votingStrategy } = azoriusGovernance;
 
-  const { votesSummary } = proposal as AzoriusProposal;
-  const totalVotesCasted = useMemo(() => {
-    if (votesSummary) {
-      return votesSummary.yes + votesSummary.no + votesSummary.abstain;
-    }
-    return 0n;
-  }, [votesSummary]);
+  const { votesSummary } = proposal;
+
+  const totalVotesCasted = votesSummary.yes + votesSummary.no + votesSummary.abstain;
 
   const votesTokenDecimalsDenominator = useMemo(
     () => 10n ** BigInt(votesToken?.decimals || 0),
     [votesToken?.decimals],
   );
 
-  // @dev only azorius governance has quorum
-  if ((proposal as SnapshotProposal).snapshotProposalId || !votingStrategy) {
-    return null;
-  }
+  const reachedQuorum = useMemo(() => {
+    if (erc721Tokens !== undefined) {
+      return totalVotesCasted - votesSummary.no;
+    }
+
+    if (votesToken !== undefined) {
+      return (totalVotesCasted - votesSummary.no) / votesTokenDecimalsDenominator;
+    }
+
+    return 0n;
+  }, [erc721Tokens, totalVotesCasted, votesSummary, votesToken, votesTokenDecimalsDenominator]);
 
   if (votesToken !== undefined && erc721Tokens !== undefined) {
     return null;
@@ -53,12 +49,7 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
       : votesToken !== undefined
         ? votingStrategy.quorumPercentage!.value
         : 0n;
-  const reachedQuorum =
-    erc721Tokens !== undefined
-      ? totalVotesCasted - votesSummary.no
-      : votesToken !== undefined
-        ? (totalVotesCasted - votesSummary.no) / votesTokenDecimalsDenominator
-        : 0n;
+
   const totalQuorum = erc721Tokens !== undefined ? strategyQuorum : 0n;
 
   const meetsQuorum = votesToken
@@ -66,12 +57,11 @@ export default function QuorumBadge({ proposal }: { proposal: FractalProposal })
       reachedQuorum
     : reachedQuorum >= totalQuorum;
 
-  const displayColor =
-    totalVotesCasted !== 0n && meetsQuorum ? quorumReachedColor : quorumNotReachedColor;
+  const displayColor = totalVotesCasted !== 0n && meetsQuorum ? 'celery--3' : 'neutral-7';
   return (
     <Box
       rounded="md"
-      textStyle="text-md-sans-regular"
+      textStyle="label-base"
       borderColor={displayColor}
       textColor={displayColor}
       border="1px solid"
