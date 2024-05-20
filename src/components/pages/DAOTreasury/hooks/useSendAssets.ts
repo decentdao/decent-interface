@@ -1,13 +1,7 @@
 import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  isAddress,
-  getAddress,
-  Hex,
-  encodeFunctionData,
-  erc20Abi,
-} from 'viem';
+import { isAddress, getAddress, Hex, encodeFunctionData, erc20Abi } from 'viem';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
