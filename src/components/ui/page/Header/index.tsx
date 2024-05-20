@@ -10,6 +10,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { DecentLogo } from '@decent-org/fractal-ui';
+import { MagnifyingGlass } from '@phosphor-icons/react';
 import { useRef, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -19,6 +20,8 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { SafesMenu } from '../../menus/SafesMenu';
+import { ModalType } from '../../modals/ModalProvider';
+import { useFractalModal } from '../../modals/useFractalModal';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 function HeaderLogo() {
@@ -126,7 +129,10 @@ function HeaderLogo() {
     </Flex>
   );
 }
+
 function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivElement | null> }) {
+  const searchSafe = useFractalModal(ModalType.SEARCH_SAFE);
+
   return (
     <Flex
       w="full"
@@ -139,12 +145,26 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       <Show above="md">
         <DAOSearch />
       </Show>
+
       <Flex
         w="full"
         h={HEADER_HEIGHT}
         justifyContent="flex-end"
         alignItems="center"
+        gap="1rem"
       >
+        <Hide above="md">
+          <IconButton
+            variant="tertiary"
+            as={MagnifyingGlass}
+            aria-label="Search Safe"
+            onClick={searchSafe}
+            h="2.75rem"
+            w="2.75rem"
+            p="0.5rem"
+            cursor="pointer"
+          />
+        </Hide>
         <SafesMenu />
         <AccountDisplay containerRef={headerContainerRef} />
       </Flex>

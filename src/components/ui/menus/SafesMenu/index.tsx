@@ -17,7 +17,7 @@ export function SafesMenu() {
             as={Button}
             variant="tertiary"
             data-testid="header-favoritesMenuButton"
-            mx={{ base: 0, md: '1rem' }}
+            p="0.75rem"
           >
             <Flex
               alignItems="center"
