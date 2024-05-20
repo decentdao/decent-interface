@@ -63,20 +63,13 @@ export const useFractalNode = (
     variables: { daoAddress },
     onCompleted: async data => {
       if (!daoAddress) return;
-      const graphNodeInfo = formatDAOQuery({ data }, daoAddress);
+      const graphNodeInfo = formatDAOQuery({ data }, getAddress(daoAddress));
       const daoName = await getDaoName(getAddress(daoAddress), graphNodeInfo?.daoName);
 
-      if (!!graphNodeInfo) {
-        action.dispatch({
-          type: NodeAction.SET_DAO_INFO,
-          payload: Object.assign(graphNodeInfo, { daoName }),
-        });
-      } else {
-        action.dispatch({
-          type: NodeAction.UPDATE_DAO_NAME,
-          payload: daoName,
-        });
-      }
+      action.dispatch({
+        type: NodeAction.SET_DAO_INFO,
+        payload: Object.assign(graphNodeInfo || {}, { daoName }),
+      });
     },
     context: {
       subgraphSpace: subgraph.space,
