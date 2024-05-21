@@ -11,7 +11,6 @@ import {
 } from '@phosphor-icons/react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
-import { LanguageSwitcher } from '../../../../i18n/LanguageSwitcher';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import Divider from '../../utils/Divider';
 import { NavigationLink } from './NavigationLink';
@@ -55,8 +54,6 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         scope="external"
         closeDrawer={closeDrawer}
       />
-      <Divider />
-      <LanguageSwitcher data-testid="navigation-language" />
     </Box>
   );
 }
