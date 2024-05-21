@@ -149,4 +149,4 @@ export const getVoteChoice = (value: number) => {
   }
 
   return choice;
-}
+};

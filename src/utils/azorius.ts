@@ -26,7 +26,7 @@ import {
   VotingStrategyType,
   ERC721ProposalVote,
   MetaTransaction,
-  AzoriusVoteChoice,
+  getVoteChoice,
 } from '../types';
 import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
@@ -109,19 +109,6 @@ export const getProposalVotesSummary = async (
     };
   }
 };
-
-export function getVoteChoice(voteType: number): AzoriusVoteChoice {
-  switch (voteType) {
-    case 0:
-      return AzoriusVoteChoice.No;
-    case 1:
-      return AzoriusVoteChoice.Yes;
-    case 2:
-      return AzoriusVoteChoice.Abstain;
-    default:
-      throw new Error(`Unknown vote type: ${voteType}`);
-  }
-}
 
 const getProposalVotes = (
   erc20VotedEvents: ERC20VotedEvent[] | undefined,
