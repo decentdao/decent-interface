@@ -53,7 +53,6 @@ export function ConnectedWalletMenuItem() {
             size="lg"
             address={account}
             url={avatarURL}
-            data-testid="walletMenu-avatar"
           />
         }
       >

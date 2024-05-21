@@ -43,7 +43,6 @@ export function FavoriteRow({ address, network }: FavoriteProps) {
         size="lg"
         address={address}
         url={avatarURL}
-        data-testid="walletMenu-avatar"
       />
       <Text textStyle="button-base">
         {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
