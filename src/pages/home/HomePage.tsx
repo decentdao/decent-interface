@@ -51,7 +51,7 @@ export default function HomePage() {
         onClick={searchSafe}
         cursor="pointer"
       >
-        {t('searchDAOPlaceholder')}
+        {t('searchDAOPlaceholder', { ns: 'dashboard' })}
       </Box>
 
       <Flex
