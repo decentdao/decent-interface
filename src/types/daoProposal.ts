@@ -127,10 +127,26 @@ export type ERC721ProposalVote = {
   tokenIds: string[];
 } & ProposalVote;
 
-export const VOTE_CHOICES = ['no', 'yes', 'abstain'] as const;
+export const VOTE_CHOICES = [
+  {
+    label: 'yes',
+    value: 1,
+  },
+  {
+    label: 'no',
+    value: 0,
+  },
+  {
+    label: 'abstain',
+    value: 2,
+  },
+] as const;
 
-export enum AzoriusVoteChoice {
-  No,
-  Yes,
-  Abstain,
-}
+export const getVoteChoice = (value: number) => {
+  const choice = VOTE_CHOICES.find(c => c.value === value);
+  if (!choice) {
+    throw new Error(`Invalid vote choice: ${value}`);
+  }
+
+  return choice;
+};
