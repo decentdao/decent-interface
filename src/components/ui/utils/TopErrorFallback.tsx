@@ -1,52 +1,64 @@
-import { Box, Button, Center, Flex, Text, Link, Icon } from '@chakra-ui/react';
-import { Warning } from '@phosphor-icons/react';
-import { Trans, useTranslation } from 'react-i18next';
-import { CONTENT_HEIGHT } from '../../../constants/common';
-import { URL_DISCORD } from '../../../constants/url';
+import { Button, Box, Flex, Text, Image, Hide, Show } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { BASE_ROUTES } from '../../../constants/routes';
 
 export function TopErrorFallback() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
   return (
-    <Center h={CONTENT_HEIGHT}>
-      <Box maxWidth="fit-content">
-        <Box
-          minWidth="100%"
-          h="100%"
-          minHeight="10.6rem"
-          bg="black.900-semi-transparent"
-          p="1rem"
-          borderRadius="0.5rem"
-        >
+    <Flex
+      alignItems="center"
+      justifyContent="center"
+    >
+      <Box
+        borderRadius="0.5rem"
+        bg="neutral-2"
+        py="2rem"
+        px={{ base: '1.25rem', md: '2rem' }}
+        overflow="hidden"
+      >
+        <Flex gap="4rem">
           <Flex
-            alignItems="center"
-            direction="column"
-            padding="1rem"
+            flexDir="column"
+            gap="1rem"
+            justifyContent="center"
+            width={{ base: 'full', md: '50%' }}
           >
-            <Icon
-              as={Warning}
-              boxSize="2rem"
-            />
-            <Text
-              textStyle="display-2xl"
-              marginTop="1.5rem"
-              marginBottom="1.5rem"
+            <Text textStyle="display-4xl">{t('errorSentryFallbackTitle')}</Text>
+            <Text textStyle="display-xl">{t('errorSentryFallbackMessage')}</Text>
+            <Flex
+              flexDir="column"
+              gap="1rem"
             >
-              {t('errorSentryFallbackTitle')}
-            </Text>
-            <Text marginBottom="1.5rem">
-              <Trans i18nKey="errorSentryFallbackMessage">
-                placeholder
-                <Link
-                  color="celery-0"
-                  href={URL_DISCORD}
-                  target="_blank"
+              <Hide above="md">
+                <Image
+                  src="/images/tools.svg"
+                  alt={t('errorSentryFallbackTitle')}
+                  w="50%"
+                  mx="auto"
                 />
-              </Trans>
-            </Text>
-            <Button onClick={() => window.location.reload()}>{t('reload')}</Button>
+              </Hide>
+              <Button
+                w="fit-content"
+                mx={{ base: 'auto', md: 'unset' }}
+                onClick={() => navigate(BASE_ROUTES.landing)}
+              >
+                {t('goHome')}
+              </Button>
+            </Flex>
           </Flex>
-        </Box>
+          <Show above="md">
+            <Image
+              src="/images/tools.svg"
+              alt={t('errorSentryFallbackTitle')}
+              width="100%"
+              mb="-6rem"
+            />
+          </Show>
+        </Flex>
       </Box>
-    </Center>
+    </Flex>
   );
 }

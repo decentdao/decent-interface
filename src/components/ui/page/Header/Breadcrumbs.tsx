@@ -6,15 +6,22 @@ export type Crumb = {
 };
 interface BreadcrumbsProps {
   links: Crumb[];
+  w?: {
+    base: string;
+    sm: string;
+  };
 }
 
-export default function Breadcrumbs({ links }: BreadcrumbsProps) {
+export default function Breadcrumbs({
+  links,
+  w = { base: 'min-content', sm: 'initial' },
+}: BreadcrumbsProps) {
   return (
     <Breadcrumb
       display="flex"
       alignItems="center"
       color="neutral-7"
-      w={{ base: 'min-content', sm: 'initial' }}
+      w={w}
       listProps={{ flexWrap: 'wrap' }}
     >
       {links.map(({ terminus: title, path }, i) => {

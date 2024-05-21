@@ -94,15 +94,18 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
       : isERC721
         ? votingStrategy.quorumThreshold!.value
         : 1n;
+
   const reachedQuorum = isERC721
     ? totalVotesCasted - no
     : votesToken
       ? (totalVotesCasted - no) / votesTokenDecimalsDenominator
       : 0n;
+
   const totalQuorum = isERC721
-    ? strategyQuorum
+    ? Number(strategyQuorum)
     : votesToken
-      ? (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) * strategyQuorum
+      ? (Number(votesToken.totalSupply / votesTokenDecimalsDenominator) * Number(strategyQuorum)) /
+        100
       : undefined;
 
   const ShowVotingPowerButton = (
@@ -137,7 +140,11 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
     >
       <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
-        <Divider variant="darker" />
+        <Divider
+          variant="darker"
+          width="calc(100% + 4rem)"
+          mx="-2rem"
+        />
         <InfoRow
           property={t('votingSystem')}
           value={t('singleSnapshotVotingSystem')}
@@ -223,6 +230,8 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
         <Divider
           my="0.5rem"
           variant="darker"
+          width="calc(100% + 4rem)"
+          mx="-2rem"
         />
       </Box>
       <Box marginTop={4}>
@@ -242,14 +251,19 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
                   : undefined,
             },
           )}
-          reachedQuorum={reachedQuorum}
+          reachedQuorum={Number(reachedQuorum)}
           totalQuorum={totalQuorum}
           unit={isERC20 ? '%' : ''}
         />
       </Box>
       {address && (
         <>
-          <Divider my="1.5rem" />
+          <Divider
+            my="1.5rem"
+            variant="darker"
+            width="calc(100% + 4rem)"
+            mx="-2rem"
+          />
           <VoteContextProvider proposal={proposal}>
             <ProposalAction
               proposal={proposal}

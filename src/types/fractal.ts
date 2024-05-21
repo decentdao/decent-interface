@@ -20,7 +20,7 @@ import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
-  SafeBalanceUsdResponse,
+  SafeBalanceResponse,
   SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
 import { Dispatch } from 'react';
@@ -277,7 +277,7 @@ export interface FreezeGuard {
 }
 
 export interface FractalTreasury {
-  assetsFungible: SafeBalanceUsdResponse[];
+  assetsFungible: SafeBalanceResponse[];
   assetsNonFungible: SafeCollectibleResponse[];
   transfers?: AllTransfersListResponse;
 }

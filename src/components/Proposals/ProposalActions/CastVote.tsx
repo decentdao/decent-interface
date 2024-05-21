@@ -10,7 +10,6 @@ import {
   FractalProposal,
   AzoriusProposal,
   FractalProposalState,
-  AzoriusVoteChoice,
   ExtendedSnapshotProposal,
   VOTE_CHOICES,
 } from '../../../types';
@@ -27,7 +26,7 @@ function Vote({
   onCastSnapshotVote?: () => Promise<void>;
 }) {
   const [pending, setPending] = useState<boolean>(false);
-  const [voteChoice, setVoiceChoice] = useState<AzoriusVoteChoice>();
+  const [selectedVoteChoice, setVoiceChoice] = useState<number>();
   const { t } = useTranslation(['common', 'proposal', 'transaction']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
 
@@ -178,17 +177,17 @@ function Vote({
       }
     >
       <RadioGroup>
-        {VOTE_CHOICES.map((choice, index) => (
+        {VOTE_CHOICES.map(choice => (
           <Radio
-            key={choice}
+            key={choice.value}
             onChange={event => {
               event.preventDefault();
               if (!disabled) {
-                setVoiceChoice(index);
+                setVoiceChoice(choice.value);
               }
             }}
             width="100%"
-            isChecked={index === voteChoice}
+            isChecked={choice.value === selectedVoteChoice}
             isDisabled={disabled}
             bg="black-0"
             color="lilac--3"
@@ -201,7 +200,7 @@ function Vote({
               borderWidth: '6px',
             }}
           >
-            {t(choice, { ns: 'common' })}
+            {t(choice.label, { ns: 'common' })}
           </Radio>
         ))}
         <Button
@@ -210,7 +209,7 @@ function Vote({
           height="auto"
           width="full"
           isDisabled={disabled}
-          onClick={() => voteChoice && castVote(voteChoice)}
+          onClick={() => selectedVoteChoice && castVote(selectedVoteChoice)}
         >
           {t('vote')}
         </Button>

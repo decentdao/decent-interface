@@ -1,5 +1,5 @@
 import {
-  SafeBalanceUsdResponse,
+  SafeBalanceResponse,
   SafeCollectibleResponse,
   TransferResponse,
 } from '@safe-global/safe-service-client';
@@ -45,7 +45,7 @@ export type Transaction =
 
 export interface ITreasury {
   transactions: Transaction[];
-  assetsFungible: SafeBalanceUsdResponse[];
+  assetsFungible: SafeBalanceResponse[];
   assetsNonFungible: SafeCollectibleResponse[];
   transfers?: AllTransfersListResponse;
   treasuryIsLoading: boolean;

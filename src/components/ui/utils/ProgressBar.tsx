@@ -66,8 +66,8 @@ export default function ProgressBar({
 interface QuorumProgressBarProps {
   helperText?: string;
   unit?: string;
-  reachedQuorum: bigint;
-  totalQuorum?: bigint;
+  reachedQuorum: number;
+  totalQuorum?: number;
 }
 
 export function QuorumProgressBar({
@@ -83,8 +83,8 @@ export function QuorumProgressBar({
       marginTop={2}
     >
       <ProgressBar
-        value={Number(reachedQuorum)}
-        max={totalQuorum ? Number(totalQuorum) : undefined}
+        value={reachedQuorum}
+        max={totalQuorum}
         unit={unit}
         label={t('quorum', { ns: 'common' })}
         bg="neutral-4"
@@ -99,7 +99,7 @@ export function QuorumProgressBar({
                   as={Check}
                 />
               )}
-              {reachedQuorum.toString()} / {totalQuorum.toString()}
+              {reachedQuorum} / {totalQuorum}
             </Text>
           ) : undefined
         }
