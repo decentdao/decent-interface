@@ -33,7 +33,7 @@ export const baseSepoliaConfig: NetworkConfig = {
   etherscanBaseURL: 'https://sepolia.basescan.org/',
   etherscanAPIUrl: `https://api-sepolia.basescan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_BASE_SEPOLIA_API_KEY}`,
   addressPrefix: 'basesep',
-  nativeTokenIcon: '/images/coin-icon-eth.svg',
+  nativeTokenIcon: '/images/coin-icon-base-sep.svg',
   subgraph: {
     space: 71032,
     slug: 'fractal-base-sepolia',
