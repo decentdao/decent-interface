@@ -1,4 +1,4 @@
-import { Flex, Show, Spacer, Text } from '@chakra-ui/react';
+import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FavoriteProps } from '../../components/ui/menus/FavoritesMenu/Favorite';
@@ -52,11 +52,7 @@ export function FavoriteRow({ address, network }: FavoriteProps) {
 
       {/* Network Icon */}
       <Flex gap="0.5rem">
-        <Avatar
-          size="icon"
-          address={address}
-          url={networkConfig.nativeTokenIcon}
-        />
+        <Image src={networkConfig.nativeTokenIcon} />
         <Show above="md">
           <Text>{networkConfig.chain.name}</Text>
         </Show>
