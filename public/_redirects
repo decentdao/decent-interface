@@ -1,1 +1,3 @@
 /* /index.html 200
+/third-party/js/script.js https://plausible.io/js/script.js 200
+/third-party/api/event https://plausible.io/api/event 200
