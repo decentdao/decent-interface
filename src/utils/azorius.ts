@@ -14,7 +14,6 @@ import {
   FractalProposalState,
   ProposalVotesSummary,
   ProposalVote,
-  VOTE_CHOICES,
   ProposalData,
   AzoriusProposal,
   ActivityEventType,
@@ -27,6 +26,7 @@ import {
   VotingStrategyType,
   ERC721ProposalVote,
   MetaTransaction,
+  AzoriusVoteChoice,
 } from '../types';
 import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
@@ -110,6 +110,19 @@ export const getProposalVotesSummary = async (
   }
 };
 
+export function getVoteChoice(voteType: number): AzoriusVoteChoice {
+  switch (voteType) {
+    case 0:
+      return AzoriusVoteChoice.No;
+    case 1:
+      return AzoriusVoteChoice.Yes;
+    case 2:
+      return AzoriusVoteChoice.Abstain;
+    default:
+      throw new Error(`Unknown vote type: ${voteType}`);
+  }
+}
+
 const getProposalVotes = (
   erc20VotedEvents: ERC20VotedEvent[] | undefined,
   erc721VotedEvents: ERC721VotedEvent[] | undefined,
@@ -129,7 +142,7 @@ const getProposalVotes = (
       ...rest,
       weight: weight.toBigInt(),
       voter,
-      choice: VOTE_CHOICES[voteType],
+      choice: getVoteChoice(voteType),
     }));
   } else if (erc721VotedEvents !== undefined) {
     const erc721ProposalVoteEvents = erc721VotedEvents.filter(
@@ -139,7 +152,7 @@ const getProposalVotes = (
     return erc721ProposalVoteEvents.map(({ args: { voter, voteType, tokenIds, ...rest } }) => ({
       ...rest,
       voter,
-      choice: VOTE_CHOICES[voteType],
+      choice: getVoteChoice(voteType),
       weight: 1n,
       tokenIds: tokenIds.map(id => id.toString()),
     }));
@@ -183,6 +196,7 @@ export const mapProposalCreatedEventToProposal = async (
     logError('we need a strat!');
     throw new Error('we need a strategy!');
   }
+
   proposalVotes.startBlock = stratProposalVotes.startBlock;
   proposalVotes.endBlock = stratProposalVotes.endBlock;
   proposalVotes.noVotes = stratProposalVotes.noVotes.toBigInt();

@@ -27,7 +27,7 @@ function Vote({
   onCastSnapshotVote?: () => Promise<void>;
 }) {
   const [pending, setPending] = useState<boolean>(false);
-  const [voteChoice, setVoiceChoice] = useState<AzoriusVoteChoice>();
+  const [selectedVoteChoice, setVoiceChoice] = useState<AzoriusVoteChoice>();
   const { t } = useTranslation(['common', 'proposal', 'transaction']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
 
@@ -178,17 +178,17 @@ function Vote({
       }
     >
       <RadioGroup>
-        {VOTE_CHOICES.map((choice, index) => (
+        {VOTE_CHOICES.map(choice => (
           <Radio
             key={choice}
             onChange={event => {
               event.preventDefault();
               if (!disabled) {
-                setVoiceChoice(index);
+                setVoiceChoice(choice as AzoriusVoteChoice);
               }
             }}
             width="100%"
-            isChecked={index === voteChoice}
+            isChecked={choice === selectedVoteChoice}
             isDisabled={disabled}
             bg="black-0"
             color="lilac--3"
@@ -210,7 +210,7 @@ function Vote({
           height="auto"
           width="full"
           isDisabled={disabled}
-          onClick={() => voteChoice && castVote(voteChoice)}
+          onClick={() => selectedVoteChoice && castVote(selectedVoteChoice)}
         >
           {t('vote')}
         </Button>
