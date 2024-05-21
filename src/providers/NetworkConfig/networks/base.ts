@@ -37,7 +37,7 @@ export const baseConfig: NetworkConfig = {
   subgraph: {
     space: 71032,
     slug: 'fractal-base',
-    version: 'v0.0.2',
+    version: 'v0.1.1',
   },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
