@@ -1,4 +1,4 @@
-import { enUS, uk } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
@@ -19,21 +19,6 @@ import SETTINGS_EN from './locales/en/settings.json';
 import STAKE_EN from './locales/en/stake.json';
 import TRANSACTION_EN from './locales/en/transaction.json';
 import TREASURY_EN from './locales/en/treasury.json';
-import BREADCRUMBS_UK from './locales/uk/breadcrumbs.json';
-import COMMON_UK from './locales/uk/common.json';
-import DAOCREATE_UK from './locales/uk/daoCreate.json';
-import DAOEDIT_UK from './locales/uk/daoEdit.json';
-import DASHBOARD_UK from './locales/uk/dashboard.json';
-import HOME_UK from './locales/uk/home.json';
-import LANGUAGES_UK from './locales/uk/languages.json';
-import MENU_UK from './locales/uk/menu.json';
-import MODALS_UK from './locales/uk/modals.json';
-import NAVIGATION_UK from './locales/uk/navigation.json';
-import PROPOSAL_UK from './locales/uk/proposal.json';
-import PROPOSAL_METADATA_UK from './locales/uk/proposalMetadata.json';
-import SETTINGS_UK from './locales/uk/settings.json';
-import TRANSACTION_UK from './locales/uk/transaction.json';
-import TREASURY_UK from './locales/uk/treasury.json';
 /**
  * Contains initialization for the react-i18next library, which handles displaying strings based on the browser's current
  * language setting. This library is based on the popular i18next JavaScript library, tailored specificaly to React.
@@ -76,23 +61,6 @@ export const supportedLanguages = {
     stake: STAKE_EN,
     home: HOME_EN,
   },
-  uk: {
-    breadcrumbs: BREADCRUMBS_UK,
-    common: COMMON_UK,
-    daoCreate: DAOCREATE_UK,
-    daoEdit: DAOEDIT_UK,
-    menu: MENU_UK,
-    dashboard: DASHBOARD_UK,
-    proposal: PROPOSAL_UK,
-    proposalMetadata: PROPOSAL_METADATA_UK,
-    transaction: TRANSACTION_UK,
-    treasury: TREASURY_UK,
-    navigation: NAVIGATION_UK,
-    modals: MODALS_UK,
-    languages: LANGUAGES_UK,
-    settings: SETTINGS_UK,
-    home: HOME_UK,
-  },
 };
 
 i18n
@@ -115,9 +83,6 @@ export default i18n;
 export const useDateFNSLocale = () => {
   let locale = undefined;
   switch (i18n.language) {
-    case 'uk':
-      locale = uk;
-      break;
     default:
       locale = enUS;
   }
