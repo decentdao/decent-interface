@@ -42,7 +42,7 @@ export default function ProposalERC721VoteItem({
       </GridItem>
       <GridItem colSpan={1}>
         <StatusBox>
-          <Text>{t(choice)}</Text>
+          <Text>{t(choice.label)}</Text>
         </StatusBox>
       </GridItem>
       {votedTokens && (

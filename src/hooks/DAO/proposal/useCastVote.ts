@@ -11,7 +11,6 @@ import {
   AzoriusGovernance,
   GovernanceType,
   FractalProposal,
-  AzoriusVoteChoice,
   ExtendedSnapshotProposal,
 } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
@@ -85,26 +84,13 @@ const useCastVote = ({
   }, []);
 
   const castVote = useCallback(
-    async (vote: AzoriusVoteChoice) => {
-      let voteContractValue: number;
-      switch (vote) {
-        case AzoriusVoteChoice.No:
-          voteContractValue = 0;
-          break;
-        case AzoriusVoteChoice.Yes:
-          voteContractValue = 1;
-          break;
-        case AzoriusVoteChoice.Abstain:
-          voteContractValue = 2;
-          break;
-      }
-
+    async (vote: number) => {
       let contractFn;
       if (type === GovernanceType.AZORIUS_ERC20 && ozLinearVotingContractAddress && baseContracts) {
         const ozLinearVotingContract = baseContracts.linearVotingMasterCopyContract.asSigner.attach(
           ozLinearVotingContractAddress,
         );
-        contractFn = () => ozLinearVotingContract.vote(proposal.proposalId, voteContractValue);
+        contractFn = () => ozLinearVotingContract.vote(proposal.proposalId, vote);
       } else if (
         type === GovernanceType.AZORIUS_ERC721 &&
         erc721LinearVotingContractAddress &&
@@ -118,7 +104,7 @@ const useCastVote = ({
         contractFn = () =>
           erc721LinearVotingContract.vote(
             proposal.proposalId,
-            voteContractValue,
+            vote,
             remainingTokenAddresses,
             remainingTokenIds,
           );

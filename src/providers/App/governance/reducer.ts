@@ -5,8 +5,8 @@ import {
   ERC721ProposalVote,
   AzoriusGovernance,
   DecentGovernance,
+  getVoteChoice,
 } from '../../../types';
-import { getVoteChoice } from '../../../utils/azorius';
 import {
   FractalGovernanceAction,
   FractalGovernanceActions,
@@ -102,7 +102,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
               ? [...proposal.votes]
               : ([
                   ...proposal.votes,
-                  { voter, choice: getVoteChoice(support), tokenAddresses, tokenIds },
+                  { voter, choice: support, tokenAddresses, tokenIds },
                 ] as ERC721ProposalVote[]),
           };
           return newProposal;
