@@ -21,16 +21,6 @@ export function MySafes() {
         borderColor="neutral-4"
         borderRadius="8px"
       >
-        {/* SAFES HEADER (might be removed from design) */}
-        <Box p="1rem 0.75rem">
-          <Text
-            color="neutral-7"
-            textStyle="button-small"
-          >
-            {t('mySafes')}
-          </Text>
-        </Box>
-
         {/* SAFES CONTENT */}
         {favoritesList.length === 0 ? (
           <Flex
