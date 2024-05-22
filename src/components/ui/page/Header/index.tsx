@@ -55,7 +55,7 @@ function HeaderLogo() {
               <Icon
                 as={List}
                 color="lilac-0"
-                size="30px"
+                p="0.25rem"
                 aria-hidden
                 h="1.875rem"
                 w="1.875rem"
