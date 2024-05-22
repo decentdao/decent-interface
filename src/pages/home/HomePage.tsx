@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, Flex, Button, Text, Spacer } from '@chakra-ui/react';
 import { DecentSignature } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -31,7 +31,7 @@ export default function HomePage() {
   return (
     <Flex
       direction="column"
-      gap="1rem"
+      gap="1.5rem"
       alignItems="center"
     >
       <DecentSignature
@@ -57,25 +57,27 @@ export default function HomePage() {
       </Box>
 
       <Flex
+        w="100%"
+        alignItems="flex-end"
+      >
+        <Text textStyle="display-lg">{t('mySafes')}</Text>
+        <Spacer />
+        <Link to={BASE_ROUTES.create}>
+          <Button
+            variant="secondary"
+            size="sm"
+            cursor="pointer"
+          >
+            <Text textStyle="button-small">{t('createCTA')}</Text>
+          </Button>
+        </Link>
+      </Flex>
+
+      <Flex
         direction="column"
         w="full"
         gap="0.5rem"
       >
-        <Link to={BASE_ROUTES.create}>
-          <Box
-            w="full"
-            px="1rem"
-            pt="2rem"
-            pb="1rem"
-            bgColor="neutral-3"
-            border="1px"
-            borderColor="neutral-4"
-            borderRadius="8px"
-          >
-            {t('createCTA')}
-          </Box>
-        </Link>
-
         <MySafes />
       </Flex>
       <ExternalLink href={URL_DOCS}>{t('docsCTA')}</ExternalLink>
