@@ -57,7 +57,7 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
           color={daoRegistryName ? nameColor : 'neutral-6'}
           textStyle={showAddress ? 'label-base' : 'button-base'}
         >
-          {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
+          {daoRegistryName ?? t('loadingFavorite')}
         </Text>
         {showAddress && <Text textStyle="button-base">{createAccountSubstring(address)}</Text>}
       </Flex>

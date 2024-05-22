@@ -9,7 +9,7 @@ import {
 import Divider from '../utils/Divider';
 
 interface ModuleBaseProps {
-  isFullscreen: boolean;
+  isSearchInputModal: boolean;
   title: string;
   warn?: boolean;
   isOpen: boolean;
@@ -31,9 +31,9 @@ export function ModalBase(props: ModuleBaseProps) {
       <ModalOverlay
         backgroundColor={BACKGROUND_SEMI_TRANSPARENT}
         backdropFilter="auto"
-        backdropBlur={props.isFullscreen ? '12px' : '0px'}
+        backdropBlur={props.isSearchInputModal ? '12px' : '0px'}
       />
-      {props.isFullscreen ? (
+      {props.isSearchInputModal ? (
         <ModalContent
           mx={{ base: '1rem', md: '1.5rem' }}
           mt={{ base: '9.5rem' }}

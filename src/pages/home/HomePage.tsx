@@ -19,7 +19,7 @@ export default function HomePage() {
 
   const { t } = useTranslation('home');
 
-  const searchSafe = useFractalModal(ModalType.SEARCH_SAFE);
+  const openSearchSafeModal = useFractalModal(ModalType.SEARCH_SAFE);
 
   useEffect(() => {
     // TODO is this needed here?
@@ -41,6 +41,7 @@ export default function HomePage() {
       />
 
       <Box
+        as="button"
         color="neutral-5"
         p="0.5rem 1rem"
         w="full"
@@ -48,8 +49,9 @@ export default function HomePage() {
         borderWidth="1px"
         borderRadius="0.25rem"
         _hover={{ borderColor: 'neutral-4' }}
-        onClick={searchSafe}
-        cursor="pointer"
+        onClick={openSearchSafeModal}
+        textAlign="start"
+        cursor="text"
       >
         {t('searchDAOPlaceholder', { ns: 'dashboard' })}
       </Box>
