@@ -90,8 +90,8 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
       >
         <NavigationLink
           href={DAO_ROUTES.dao.relative(addressPrefix, daoAddress)}
-          labelKey="home"
-          testId="navigation-daoHomeLink"
+          labelKey="dashboard"
+          testId="navigation-dashboardLink"
           NavigationIcon={House}
           scope="internal"
           closeDrawer={closeDrawer}
@@ -99,7 +99,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         <NavigationLink
           href={DAO_ROUTES.hierarchy.relative(addressPrefix, daoAddress)}
           labelKey="nodes"
-          testId="navigation-hierarchy"
+          testId="navigation-hierarchyLink"
           NavigationIcon={GitFork}
           scope="internal"
           closeDrawer={closeDrawer}
