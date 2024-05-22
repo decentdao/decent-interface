@@ -85,8 +85,8 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         borderColor={{ md: 'neutral-3' }}
         borderRadius={{ md: 8 }}
         borderWidth={{ md: 1 }}
-        backdropFilter={{md: "blur(12px)"}}
-        boxShadow={{md: "0px 1px 0px 0px #161219"}}
+        backdropFilter={{ md: 'blur(12px)' }}
+        boxShadow={{ md: '0px 1px 0px 0px #161219' }}
       >
         <NavigationLink
           href={DAO_ROUTES.dao.relative(addressPrefix, daoAddress)}
@@ -129,9 +129,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           closeDrawer={closeDrawer}
         />
         <Hide above="md">
-          <Divider
-            variant="darker"
-          />
+          <Divider variant="darker" />
         </Hide>
       </Box>
     </Box>

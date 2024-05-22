@@ -13,7 +13,12 @@ import { DecentLogo } from '@decent-org/fractal-ui';
 import { useRef, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { HEADER_HEIGHT, NEUTRAL_2_82_TRANSPARENT, SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
+import {
+  HEADER_HEIGHT,
+  MOBILE_DRAWER_OVERLAY,
+  NEUTRAL_2_82_TRANSPARENT,
+  SEXY_BOX_SHADOW_T_T,
+} from '../../../../constants/common';
 import { BASE_ROUTES } from '../../../../constants/routes';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { SafesMenu } from '../../menus/SafesMenu';
@@ -56,7 +61,10 @@ function HeaderLogo() {
             onClose={onClose}
             isFullHeight
           >
-            <DrawerOverlay bg="#161219D6" backdropFilter="blur(6px)"/>
+            <DrawerOverlay
+              bg={MOBILE_DRAWER_OVERLAY}
+              backdropFilter="blur(6px)"
+            />
             <DrawerContent
               bg={NEUTRAL_2_82_TRANSPARENT}
               border="none"

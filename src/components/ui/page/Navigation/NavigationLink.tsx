@@ -17,7 +17,7 @@ function LinkContent({
   isActive: boolean;
   scope: 'internal' | 'external';
 }) {
-  const shouldApplyBorder = scope === 'internal' && isActive
+  const shouldApplyBorder = scope === 'internal' && isActive;
   return (
     <Box p="0.25rem">
       <Flex
@@ -25,7 +25,7 @@ function LinkContent({
         px="6px"
         borderRadius={{ md: 4 }}
         _hover={{ bgColor: 'neutral-3' }}
-        borderWidth={shouldApplyBorder ? "1px" : 0}
+        borderWidth={shouldApplyBorder ? '1px' : 0}
         borderColor={shouldApplyBorder ? 'neutral-4' : undefined}
         bgColor={shouldApplyBorder ? 'neutral-3' : undefined}
       >
