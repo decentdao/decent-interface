@@ -17,8 +17,7 @@ import { HEADER_HEIGHT, NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/c
 import { BASE_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { AccountDisplay } from '../../menus/AccountDisplay';
-import { DAOSearch } from '../../menus/DAOSearch';
-import { FavoritesMenu } from '../../menus/FavoritesMenu';
+import { SafesMenu } from '../../menus/SafesMenu';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 function HeaderLogo() {
@@ -95,13 +94,6 @@ function HeaderLogo() {
                   top="0px"
                 />
               </Flex>
-
-              <Box
-                mt={8}
-                px={6}
-              >
-                <DAOSearch closeDrawer={onClose} />
-              </Box>
               <Box
                 px={6}
                 pt={8}
@@ -143,16 +135,13 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       maxW="100vw"
     >
       <HeaderLogo />
-      <Show above="md">
-        <DAOSearch />
-      </Show>
       <Flex
         w="full"
         h={HEADER_HEIGHT}
         justifyContent="flex-end"
         alignItems="center"
       >
-        <FavoritesMenu />
+        <SafesMenu />
         <AccountDisplay containerRef={headerContainerRef} />
       </Flex>
     </Flex>

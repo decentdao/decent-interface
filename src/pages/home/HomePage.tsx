@@ -4,7 +4,8 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import ExternalLink from '../../components/ui/links/ExternalLink';
-import { DAOSearch } from '../../components/ui/menus/DAOSearch';
+import { ModalType } from '../../components/ui/modals/ModalProvider';
+import { useFractalModal } from '../../components/ui/modals/useFractalModal';
 import { BASE_ROUTES } from '../../constants/routes';
 import { URL_DOCS } from '../../constants/url';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -17,6 +18,8 @@ export default function HomePage() {
   } = useFractal();
 
   const { t } = useTranslation('home');
+
+  const openSearchSafeModal = useFractalModal(ModalType.SEARCH_SAFE);
 
   useEffect(() => {
     // TODO is this needed here?
@@ -36,7 +39,23 @@ export default function HomePage() {
         height="auto"
         width="8rem"
       />
-      <DAOSearch />
+
+      <Box
+        as="button"
+        color="neutral-5"
+        p="0.5rem 1rem"
+        w="full"
+        borderColor="neutral-3"
+        borderWidth="1px"
+        borderRadius="0.25rem"
+        _hover={{ borderColor: 'neutral-4' }}
+        onClick={openSearchSafeModal}
+        textAlign="start"
+        cursor="text"
+      >
+        {t('searchDAOPlaceholder', { ns: 'dashboard' })}
+      </Box>
+
       <Flex
         direction="column"
         w="full"

@@ -1,24 +1,29 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { FavoriteProps } from '../../components/ui/menus/FavoritesMenu/Favorite';
+import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useDAOName from '../../hooks/DAO/useDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
-import useDisplayName from '../../hooks/utils/useDisplayName';
+import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
-export function FavoriteRow({ address, network }: FavoriteProps) {
+export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
   const { daoRegistryName } = useDAOName({ address });
   const navigate = useNavigate();
 
-  const { t } = useTranslation('home');
+  const { t } = useTranslation('dashboard');
 
   const { displayName: accountDisplayName } = useDisplayName(address);
   const avatarURL = useAvatar(accountDisplayName);
 
-  const onClickNav = () => navigate(DAO_ROUTES.dao.relative(network, address));
+  const onClickNav = () => {
+    if (onClick) onClick();
+    navigate(DAO_ROUTES.dao.relative(network, address));
+  };
+
+  const nameColor = showAddress ? 'neutral-7' : 'white-0';
 
   const networkConfig = useNetworkConfig();
 
@@ -30,7 +35,7 @@ export function FavoriteRow({ address, network }: FavoriteProps) {
       mb="0.75rem"
       gap="0.75rem"
       borderRadius="0.25rem"
-      alignItems="center"
+      alignItems={showAddress ? 'center' : 'flex-start'}
       onClick={onClickNav}
       border="1px"
       borderColor="transparent"
@@ -44,9 +49,18 @@ export function FavoriteRow({ address, network }: FavoriteProps) {
         address={address}
         url={avatarURL}
       />
-      <Text textStyle="button-base">
-        {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
-      </Text>
+      <Flex
+        flexDir="column"
+        alignSelf="center"
+      >
+        <Text
+          color={daoRegistryName ? nameColor : 'neutral-6'}
+          textStyle={showAddress ? 'label-base' : 'button-base'}
+        >
+          {daoRegistryName ?? t('loadingFavorite')}
+        </Text>
+        {showAddress && <Text textStyle="button-base">{createAccountSubstring(address)}</Text>}
+      </Flex>
 
       <Spacer />
 

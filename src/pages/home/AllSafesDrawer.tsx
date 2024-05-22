@@ -9,10 +9,10 @@ import {
 } from '@chakra-ui/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT_2 } from '../../constants/common';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { FavoriteRow } from './FavoriteRow';
+import { SafeDisplayRow } from './SafeDisplayRow';
 
 interface AllSafesDrawerProps {
   isOpen: boolean;
@@ -97,7 +97,7 @@ export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
       size="md"
     >
       <DrawerOverlay
-        bg={BACKGROUND_SEMI_TRANSPARENT_2}
+        bg={BACKGROUND_SEMI_TRANSPARENT}
         backdropFilter="auto"
         backdropBlur="10px"
       />
@@ -135,7 +135,7 @@ export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
         </DrawerHeader>
         <DrawerBody padding="0">
           {favoritesList.map(favorite => (
-            <FavoriteRow
+            <SafeDisplayRow
               key={favorite}
               network={addressPrefix}
               address={favorite}

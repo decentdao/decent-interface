@@ -3,8 +3,7 @@ const FOOTER_HEIGHT = '7.625rem';
 export const CONTENT_HEIGHT = `calc(100vh - ${HEADER_HEIGHT} - ${FOOTER_HEIGHT})`;
 
 // TODO get these into `decent-ui` repo
-export const BACKGROUND_SEMI_TRANSPARENT = '#10041480';
-export const BACKGROUND_SEMI_TRANSPARENT_2 = '#16121980';
+export const BACKGROUND_SEMI_TRANSPARENT = '#16121980';
 export const NEUTRAL_2_82_TRANSPARENT = '#221D25D6';
 
 /**
@@ -14,3 +13,7 @@ export const NEUTRAL_2_82_TRANSPARENT = '#221D25D6';
 export const TOOLTIP_MAXW = '18rem';
 export const CONTENT_MAXW = 'calc(100vw - 3rem)';
 export const ADDRESS_MULTISIG_METADATA = '0xdA00000000000000000000000000000000000Da0';
+
+export const SIDEBAR_WIDTH = '4.25rem';
+
+export const MAX_CONTENT_WIDTH = '80rem';

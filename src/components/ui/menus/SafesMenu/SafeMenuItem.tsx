@@ -6,11 +6,14 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
-export interface FavoriteProps {
+export interface SafeMenuItemProps {
   network: string;
   address: string;
+  showAddress?: boolean;
+  onClick?: () => void;
 }
-export function Favorite({ network, address }: FavoriteProps) {
+
+export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
   const { daoRegistryName } = useDAOName({ address });
   const { action } = useFractal();
   const navigate = useNavigate();
@@ -45,7 +48,7 @@ export function Favorite({ network, address }: FavoriteProps) {
         />
 
         <Text color={daoRegistryName ? 'white-0' : 'neutral-6'}>
-          {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
+          {daoRegistryName ?? t('loadingFavorite')}
         </Text>
       </MenuItem>
     </Box>

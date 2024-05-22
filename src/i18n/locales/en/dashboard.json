@@ -1,7 +1,7 @@
 {
   "titleFavorites": "Favorites",
   "emptyFavorites": "No Safes",
-  "loadingFavorite": "Loading favorite ...",
+  "loadingFavorite": "Loading DAO Name ...",
   "errorInvalidSearch": "This is not a valid Ethereum address",
   "errorFailedSearch": "Sorry, this address is not a DAO or Safe on {{chain}}",
   "searchDAOPlaceholder": "Enter Safe Address or ENS Name",
