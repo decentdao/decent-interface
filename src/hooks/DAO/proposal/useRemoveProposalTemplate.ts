@@ -16,9 +16,8 @@ export default function useRemoveProposalTemplate() {
     async (templateIndex: number) => {
       if (proposalTemplates && keyValuePairsContract) {
         const proposalMetadata = {
-          title: 'Remove Proposal Template',
-          description:
-            'Execution of this proposal will remove proposal template, attached to this Safe.',
+          title: 'removeProposalTemplateTitle',
+          description: 'removeProposalTemplateDescription',
           documentationUrl: '',
         };
 

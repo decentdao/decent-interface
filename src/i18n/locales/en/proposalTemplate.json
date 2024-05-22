@@ -1,5 +1,5 @@
 {
-  "createProposalTemplate": "Add a new Proposal Template",
+  "createProposalTemplate": "New Proposal Template",
   "proposalTemplateTitle": "Proposal Template Title",
   "proposalTemplateTitleHelperText": "A short title for this proposal template",
   "proposalTemplateDescription": "Description",
@@ -23,7 +23,7 @@
   "userInput": "user input",
   "eth": "ETH",
   "ethParemeterHelper": "Leave empty for a blank input",
-  "emptyProposalTemplates": "No templates yet.",
+  "emptyProposalTemplates": "You have not created any templates yet.",
   "emptyProposalTemplatesCreateMessage": "Add your first template.",
   "removeTemplatePendingToastMessage": "Creating proposal to remove proposal template",
   "removeTemplateSuccessToastMessage": "Proposal to remove template created. Vote and execute to apply changes.",

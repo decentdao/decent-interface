@@ -1,9 +1,9 @@
 {
-  "titleFavorites": "Favorites",
-  "emptyFavorites": "No Safes",
-  "loadingFavorite": "Loading DAO Name ...",
-  "errorInvalidSearch": "This is not a valid Ethereum address",
-  "errorFailedSearch": "Sorry, this address is not a DAO or Safe on {{chain}}",
+  "titleFavorites": "My Safes",
+  "emptyFavorites": "You have not added any Safes yet.",
+  "loadingFavorite": "Loading Safe Name",
+  "errorInvalidSearch": "Oops! This Ethereum address is invalid.",
+  "errorFailedSearch": "Sorry, this address is not a Safe on {{chain}}.",
   "searchDAOPlaceholder": "Enter Safe Address or ENS Name",
   "titleGovernance": "Governance",
   "titleType": "Type",
@@ -24,6 +24,6 @@
   "tipFreeze": "{{amount}} required freeze votes",
   "proposalOnChainRejection": "that rejects transaction {{proposalId}}",
   "proposalDescriptionCont": "that will",
-  "alertTokenClaim": "You have {{amount}} tokens to claim!",
+  "alertTokenClaim": "You have {{amount}} tokens to claim.",
   "claim": "Claim"
 }

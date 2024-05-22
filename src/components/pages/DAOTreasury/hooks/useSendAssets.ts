@@ -48,7 +48,7 @@ const useSendAssets = ({
       values: [isEth ? transferAmount : 0n],
       calldatas,
       metaData: {
-        title: t(isEth ? 'Send Eth' : 'Send Token', { ns: 'proposalMetadata' }),
+        title: t(isEth ? 'sendEth' : 'sendToken', { ns: 'proposalMetadata' }),
         description: description,
         documentationUrl: '',
       },
