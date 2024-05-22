@@ -6,11 +6,12 @@ import {
   Flex,
   Hide,
   IconButton,
+  Icon,
   Show,
   useDisclosure,
 } from '@chakra-ui/react';
 import { DecentLogo } from '@decent-org/fractal-ui';
-import { MagnifyingGlass } from '@phosphor-icons/react';
+import { MagnifyingGlass, List } from '@phosphor-icons/react';
 import { useRef, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -45,18 +46,19 @@ function HeaderLogo() {
         <>
           <IconButton
             ref={btnRef}
+            aria-label="drawer-menu"
             onClick={onOpen}
-            boxSize="4rem"
-            w={0}
-            aria-label="navigation"
-            minW={0}
-            variant="unstyled"
+            boxSize="2rem"
+            variant="tertiary"
+            ml="1rem"
             icon={
-              <DecentLogo
+              <Icon
+                as={List}
+                color="lilac-0"
+                size="30px"
                 aria-hidden
-                h="2.5rem"
-                w="2.125rem"
-                ml="1.5rem"
+                h="1.875rem"
+                w="1.875rem"
               />
             }
           />
