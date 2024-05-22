@@ -82,7 +82,7 @@ export const useFractalNode = (
   const reset = useCallback(
     ({ error }: { error: boolean }) => {
       currentValidSafe.current = undefined;
-      action.resetDAO();
+      action.resetSafeState();
       setErrorLoading(error);
     },
     [action],

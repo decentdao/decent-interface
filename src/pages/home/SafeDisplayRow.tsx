@@ -22,7 +22,7 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
 
   const onClickNav = () => {
     if (onClick) onClick();
-    action.resetDAO();
+    action.resetSafeState();
     navigate(DAO_ROUTES.dao.relative(network, address));
   };
 

@@ -69,7 +69,7 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
           // the DAO data, so the one you're clicking
           // into will load properly
           // TODO is this needed here?
-          action.resetDAO();
+          action.resetSafeState();
         }
       }}
     >

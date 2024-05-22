@@ -27,7 +27,7 @@ export default function HomePage() {
   useEffect(() => {
     // TODO is this needed here?
     if (daoAddress) {
-      action.resetDAO();
+      action.resetSafeState();
     }
   }, [daoAddress, action]);
 
