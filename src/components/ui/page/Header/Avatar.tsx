@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 import { useImage } from 'react-image';
 import { getAddress } from 'viem';
 
-type AvatarSize = 'icon' | 'lg' | 'sm';
+export type AvatarSize = 'icon' | 'lg' | 'sm';
 const avatarSizes: { [size: string]: string } = {
   sm: '1rem',
   icon: '1.5rem',

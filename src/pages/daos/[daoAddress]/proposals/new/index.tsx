@@ -3,7 +3,7 @@ import { useRef, useEffect } from 'react';
 import { ProposalBuilder } from '../../../../../components/ProposalBuilder';
 import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
-import { HEADER_HEIGHT } from '../../../../../constants/common';
+import { useHeaderHeight } from '../../../../../constants/common';
 import { usePrepareProposal } from '../../../../../hooks/DAO/proposal/usePrepareProposal';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../../../providers/App/hooks/useSafeAPI';
@@ -18,6 +18,8 @@ export default function CreateProposalPage() {
   } = useFractal();
   const safeAPI = useSafeAPI();
   const { prepareProposal } = usePrepareProposal();
+
+  const HEADER_HEIGHT = useHeaderHeight();
 
   const isMounted = useRef(false);
   useEffect(() => {
