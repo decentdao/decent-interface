@@ -78,7 +78,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     };
 
     let modalTitle;
-    let isWarn = false;
+    let hasWarning = false;
     let isSearchInput = false;
     let modalContent;
 
@@ -105,7 +105,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         break;
       case ModalType.CONFIRM_URL:
         modalTitle = t('confirmUrlTitle');
-        isWarn = true;
+        hasWarning = true;
         modalContent = (
           <ConfirmUrlModal
             url={current.props.url}
@@ -154,7 +154,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         );
         break;
       case ModalType.CONFIRM_MODIFY_GOVERNANCE:
-        isWarn = true;
+        hasWarning = true;
         modalTitle = t('confirmModifyGovernanceTitle');
         modalContent = <ConfirmModifyGovernanceModal close={closeModal} />;
         break;
@@ -171,7 +171,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     return {
       isSearchInputModal: isSearchInput,
       title: modalTitle,
-      warn: isWarn,
+      warn: hasWarning,
       content: modalContent,
       onSetClosed: closeModal,
     };
