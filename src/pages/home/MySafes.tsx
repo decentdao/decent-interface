@@ -14,21 +14,24 @@ export function MySafes() {
 
   return (
     <Box>
-      <Box
-        w="full"
-        bgColor="neutral-2"
-        border="1px"
-        borderColor="neutral-4"
-        borderRadius="8px"
-      >
+      <Box w="full">
         {/* SAFES CONTENT */}
         {favoritesList.length === 0 ? (
           <Flex
             justifyContent="center"
             p="1.5rem 1rem"
+            maxW="100%"
+            mx="0.25rem"
+            my="0.5rem"
+            gap="0.75rem"
+            alignItems="center"
+            bg="neutral-2"
+            borderRadius="0.5rem"
+            border="1px solid"
+            borderColor="transparent"
           >
             <Text
-              textStyle="button-base"
+              textStyle="button-small"
               color="white-alpha-16"
             >
               {t('emptyFavorites', { ns: 'dashboard' })}
