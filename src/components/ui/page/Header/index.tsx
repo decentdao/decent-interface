@@ -14,7 +14,7 @@ import { MagnifyingGlass } from '@phosphor-icons/react';
 import { useRef, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { HEADER_HEIGHT, NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
+import { useHeaderHeight, NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { BASE_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { AccountDisplay } from '../../menus/AccountDisplay';
@@ -132,6 +132,7 @@ function HeaderLogo() {
 
 function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivElement | null> }) {
   const searchSafe = useFractalModal(ModalType.SEARCH_SAFE);
+  const HEADER_HEIGHT = useHeaderHeight();
 
   return (
     <Flex

@@ -1,11 +1,13 @@
 import { Box, Button, Center, Flex, Text, Link, Icon } from '@chakra-ui/react';
 import { Warning } from '@phosphor-icons/react';
 import { Trans, useTranslation } from 'react-i18next';
-import { CONTENT_HEIGHT } from '../../../constants/common';
+import { useContentHeight } from '../../../constants/common';
 import { URL_DISCORD } from '../../../constants/url';
 
 export function TopErrorFallback() {
   const { t } = useTranslation();
+  const CONTENT_HEIGHT = useContentHeight();
+
   return (
     <Center h={CONTENT_HEIGHT}>
       <Box maxWidth="fit-content">

@@ -1,7 +1,7 @@
 import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
-import { CONTENT_HEIGHT, HEADER_HEIGHT, SIDEBAR_WIDTH } from '../../../../constants/common';
+import { useContentHeight, useHeaderHeight, SIDEBAR_WIDTH } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
@@ -14,6 +14,9 @@ export default function Layout() {
     node: { daoAddress },
   } = useFractal();
   const headerContainerRef = useRef<HTMLDivElement>(null);
+
+  const HEADER_HEIGHT = useHeaderHeight();
+  const CONTENT_HEIGHT = useContentHeight();
 
   return (
     <Grid

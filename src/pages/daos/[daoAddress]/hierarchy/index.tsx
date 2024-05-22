@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { DaoHierarchyNode } from '../../../../components/pages/DaoHierarchy/DaoHierarchyNode';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
-import { HEADER_HEIGHT } from '../../../../constants/common';
+import { useHeaderHeight } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function HierarchyPage() {
@@ -16,6 +16,8 @@ export default function HierarchyPage() {
     },
   } = useFractal();
   const { t } = useTranslation('breadcrumbs');
+
+  const HEADER_HEIGHT = useHeaderHeight();
 
   if (!daoAddress || !isHierarchyLoaded) {
     return (

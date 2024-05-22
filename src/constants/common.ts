@@ -1,6 +1,20 @@
-export const HEADER_HEIGHT = '4.5rem';
+import { useBreakpointValue } from '@chakra-ui/react';
+
+const HEADER_HEIGHT = '4.5rem';
+const HEADER_HEIGHT_MOBILE = '3.75rem';
+
 const FOOTER_HEIGHT = '7.625rem';
-export const CONTENT_HEIGHT = `calc(100vh - ${HEADER_HEIGHT} - ${FOOTER_HEIGHT})`;
+
+export const useHeaderHeight = () => {
+  const headerHeight = useBreakpointValue({ base: HEADER_HEIGHT_MOBILE, md: HEADER_HEIGHT });
+  return headerHeight || HEADER_HEIGHT;
+};
+
+export const useContentHeight = () => {
+  const headerHeight = useHeaderHeight();
+  const contentHeight = `calc(100vh - ${headerHeight} - ${FOOTER_HEIGHT})`;
+  return contentHeight;
+};
 
 // TODO get these into `decent-ui` repo
 export const BACKGROUND_SEMI_TRANSPARENT = '#16121980';
