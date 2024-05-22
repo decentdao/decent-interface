@@ -15,3 +15,5 @@ export const CONTENT_MAXW = 'calc(100vw - 3rem)';
 export const ADDRESS_MULTISIG_METADATA = '0xdA00000000000000000000000000000000000Da0';
 
 export const SIDEBAR_WIDTH = '4.25rem';
+
+export const MAX_CONTENT_WIDTH = '80rem';

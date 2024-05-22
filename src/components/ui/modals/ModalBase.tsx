@@ -1,7 +1,11 @@
 import { Flex, HStack, Modal, ModalContent, ModalOverlay, Spacer, Text } from '@chakra-ui/react';
 import { X, Warning } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
-import { BACKGROUND_SEMI_TRANSPARENT, SIDEBAR_WIDTH } from '../../../constants/common';
+import {
+  BACKGROUND_SEMI_TRANSPARENT,
+  SIDEBAR_WIDTH,
+  MAX_CONTENT_WIDTH,
+} from '../../../constants/common';
 import Divider from '../utils/Divider';
 
 interface ModuleBaseProps {
@@ -20,7 +24,7 @@ export function ModalBase(props: ModuleBaseProps) {
   return (
     <Modal
       isCentered
-      size={props.isFullscreen ? 'container.xl' : 'lg'}
+      size="lg"
       isOpen={props.isOpen}
       onClose={props.onClose}
     >
@@ -34,7 +38,7 @@ export function ModalBase(props: ModuleBaseProps) {
           mx={{ base: '1rem', md: '1.5rem' }}
           mt={{ base: '9.5rem' }}
           pl={{ base: '0', md: SIDEBAR_WIDTH }}
-          maxW={`calc(80rem + ${SIDEBAR_WIDTH})`}
+          maxW={`calc(${MAX_CONTENT_WIDTH} + ${SIDEBAR_WIDTH})`}
         >
           {props.children}
         </ModalContent>
