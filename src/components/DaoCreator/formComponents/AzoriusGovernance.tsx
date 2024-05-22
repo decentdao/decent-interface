@@ -1,9 +1,12 @@
 import { Alert, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps, VotingStrategyType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
+import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
@@ -11,8 +14,28 @@ import { DAOCreateMode } from './EstablishEssentials';
 
 export function AzoriusGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
+  const {
+    node: { safe },
+  } = useFractal();
+
+  const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
   const { t } = useTranslation(['daoCreate', 'common']);
   const minutes = t('minutes', { ns: 'common' });
+
+  const handleNonceChange = useCallback(
+    (nonce?: number) => {
+      setFieldValue('multisig.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
+    },
+    [setFieldValue],
+  );
+
+  useEffect(() => {
+    if (showCustomNonce === undefined && safe && mode === DAOCreateMode.EDIT) {
+      setFieldValue('multisig.customNonce', safe.nonce);
+      setShowCustomNonce(true);
+    }
+  }, [setFieldValue, safe, showCustomNonce, mode]);
+
   return (
     <>
       <StepWrapper
@@ -126,6 +149,13 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               {t('exampleExecutionPeriod')}
             </Text>
           </LabelComponent>
+          {showCustomNonce && (
+            <CustomNonceInput
+              nonce={values.multisig.customNonce}
+              onChange={handleNonceChange}
+              align="end"
+            />
+          )}
           <Alert status="info">
             <WarningCircle size="24" />
             <Text
