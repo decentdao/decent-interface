@@ -1,15 +1,11 @@
 {
-  "home": "Safe Home",
+  "home": "Home",
   "proposals": "Proposals",
-  "nodes": "Hierarchy",
+  "nodes": "Organization",
   "treasury": "Treasury",
   "proposalTemplates": "Templates",
   "faq": "FAQ",
   "discord": "Discord",
   "documentation": "Documentation",
-  "ariaLabelFractalBrand": "Navigate Decent Home",
-  "ariaLabelHome": "Navigate Safe Home",
-  "ariaLabelProposals": "Navigate Safe Proposals",
-  "ariaLabelActivities": "Navigate Safe Activities",
-  "ariaLabelTreasury": "Navigate Safe Treasury"
+  "ariaLabelFractalBrand": "Navigate Decent Home"
 }

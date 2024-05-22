@@ -11,6 +11,7 @@ import {
 } from '@phosphor-icons/react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import Divider from '../../utils/Divider';
 import { NavigationLink } from './NavigationLink';
@@ -58,18 +59,13 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
   );
 }
 
-function InternalLinks({
-  address,
-  showDAOLinks,
-  closeDrawer,
-}: {
-  address: string | null;
-  showDAOLinks: boolean;
-  closeDrawer?: () => void;
-}) {
+function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
+  const {
+    node: { daoAddress },
+  } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
-  if (!showDAOLinks || !address) {
+  if (!daoAddress) {
     return null;
   }
 
@@ -89,11 +85,11 @@ function InternalLinks({
         borderColor={{ md: 'neutral-3' }}
         borderRadius={{ md: 8 }}
         borderWidth={{ md: 1 }}
-        backdropFilter="blur(12px)"
-        boxShadow="0px 1px 0px 0px #161219"
+        backdropFilter={{md: "blur(12px)"}}
+        boxShadow={{md: "0px 1px 0px 0px #161219"}}
       >
         <NavigationLink
-          href={DAO_ROUTES.dao.relative(addressPrefix, address)}
+          href={DAO_ROUTES.dao.relative(addressPrefix, daoAddress)}
           labelKey="home"
           testId="navigation-daoHomeLink"
           NavigationIcon={House}
@@ -101,7 +97,7 @@ function InternalLinks({
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.hierarchy.relative(addressPrefix, address)}
+          href={DAO_ROUTES.hierarchy.relative(addressPrefix, daoAddress)}
           labelKey="nodes"
           testId="navigation-hierarchy"
           NavigationIcon={GitFork}
@@ -109,7 +105,7 @@ function InternalLinks({
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.proposals.relative(addressPrefix, address)}
+          href={DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)}
           labelKey="proposals"
           testId="navigation-proposalsLink"
           NavigationIcon={Scroll}
@@ -117,7 +113,7 @@ function InternalLinks({
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.treasury.relative(addressPrefix, address)}
+          href={DAO_ROUTES.treasury.relative(addressPrefix, daoAddress)}
           labelKey="treasury"
           testId="navigation-treasuryLink"
           NavigationIcon={Coins}
@@ -125,7 +121,7 @@ function InternalLinks({
           closeDrawer={closeDrawer}
         />
         <NavigationLink
-          href={DAO_ROUTES.proposalTemplates.relative(addressPrefix, address)}
+          href={DAO_ROUTES.proposalTemplates.relative(addressPrefix, daoAddress)}
           labelKey="proposalTemplates"
           testId="navigation-proposalTemplatesLink"
           NavigationIcon={SquaresFour}
@@ -133,22 +129,16 @@ function InternalLinks({
           closeDrawer={closeDrawer}
         />
         <Hide above="md">
-          <Divider mx={-6} />
+          <Divider
+            variant="darker"
+          />
         </Hide>
       </Box>
     </Box>
   );
 }
 
-export function NavigationLinks({
-  address,
-  showDAOLinks,
-  closeDrawer,
-}: {
-  showDAOLinks: boolean;
-  address: string | null;
-  closeDrawer?: () => void;
-}) {
+export function NavigationLinks({ closeDrawer }: { closeDrawer?: () => void }) {
   return (
     <Flex
       alignItems="start"
@@ -156,11 +146,7 @@ export function NavigationLinks({
       justifyContent="flex-end"
       flexGrow={1}
     >
-      <InternalLinks
-        address={address}
-        showDAOLinks={showDAOLinks}
-        closeDrawer={closeDrawer}
-      />
+      <InternalLinks closeDrawer={closeDrawer} />
       <ExternalLinks closeDrawer={closeDrawer} />
     </Flex>
   );

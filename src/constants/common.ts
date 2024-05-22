@@ -5,6 +5,7 @@ export const CONTENT_HEIGHT = `calc(100vh - ${HEADER_HEIGHT} - ${FOOTER_HEIGHT})
 // TODO get these into `decent-ui` repo
 export const BACKGROUND_SEMI_TRANSPARENT = '#16121980';
 export const NEUTRAL_2_82_TRANSPARENT = '#221D25D6';
+export const SEXY_BOX_SHADOW_T_T = '0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset, 0px 0px 0px 1px #100414;'
 
 /**
  * Max width for most informational Tooltips. However we don't add max width

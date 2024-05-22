@@ -1,7 +1,7 @@
 import {
   Box,
   Drawer,
-  DrawerCloseButton,
+  DrawerOverlay,
   DrawerContent,
   Flex,
   Hide,
@@ -13,9 +13,8 @@ import { DecentLogo } from '@decent-org/fractal-ui';
 import { useRef, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { HEADER_HEIGHT, NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
+import { HEADER_HEIGHT, NEUTRAL_2_82_TRANSPARENT, SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
 import { BASE_ROUTES } from '../../../../constants/routes';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { SafesMenu } from '../../menus/SafesMenu';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
@@ -25,11 +24,6 @@ function HeaderLogo() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef<HTMLButtonElement | null>(null);
 
-  const {
-    node: { daoAddress },
-  } = useFractal();
-
-  const showDAOLinks = !!daoAddress;
   return (
     <Flex
       alignItems="center"
@@ -60,19 +54,17 @@ function HeaderLogo() {
             placement="left"
             isOpen={isOpen}
             onClose={onClose}
-            size="full"
             isFullHeight
           >
+            <DrawerOverlay bg="#161219D6" backdropFilter="blur(6px)"/>
             <DrawerContent
               bg={NEUTRAL_2_82_TRANSPARENT}
               border="none"
-              backdropFilter="auto"
-              backdropBlur="10px"
+              borderTopRightRadius="1rem"
+              borderBottomRightRadius="1rem"
+              boxShadow={SEXY_BOX_SHADOW_T_T}
             >
-              <Flex
-                mt={4}
-                justifyContent="space-between"
-              >
+              <Flex p="1rem">
                 <Link
                   data-testid="navigationLogo-homeLink"
                   to={BASE_ROUTES.landing}
@@ -81,28 +73,13 @@ function HeaderLogo() {
                 >
                   <DecentLogo
                     aria-hidden
-                    h="2.5rem"
-                    w="2.125rem"
-                    ml="1.75rem"
+                    h="1.8rem"
+                    w="1.5rem"
                   />
                 </Link>
-                <DrawerCloseButton
-                  size="lg"
-                  zIndex="banner"
-                  color="lilac-0"
-                  position="relative"
-                  top="0px"
-                />
               </Flex>
-              <Box
-                px={6}
-                pt={8}
-              >
-                <NavigationLinks
-                  showDAOLinks={showDAOLinks}
-                  address={daoAddress}
-                  closeDrawer={onClose}
-                />
+              <Box mt="1rem">
+                <NavigationLinks closeDrawer={onClose} />
               </Box>
             </DrawerContent>
           </Drawer>
