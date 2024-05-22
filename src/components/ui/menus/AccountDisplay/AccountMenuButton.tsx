@@ -39,7 +39,7 @@ function WalletMenuButton() {
   return (
     <Flex
       alignItems="center"
-      gap={{base: "0.25rem", md: "0.75rem"}}
+      gap={{ base: '0.25rem', md: '0.75rem' }}
     >
       <Box>
         <Avatar
@@ -48,7 +48,12 @@ function WalletMenuButton() {
           size={iconSize}
         />
       </Box>
-      <Text textStyle={{base: "label-small", md: "button-base"}} mb="1px" >{accountDisplayName}</Text>
+      <Text
+        textStyle={{ base: 'label-small', md: 'button-base' }}
+        mb="1px"
+      >
+        {accountDisplayName}
+      </Text>
       <Icon
         as={CaretDown}
         boxSize={{ base: '1rem', md: '1.5rem' }}

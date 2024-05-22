@@ -143,9 +143,11 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       maxW="100vw"
       borderBottom="1px"
       borderBottomColor="neutral-3"
-
       // Doesn't seem to work either way arghhh
-      box-shadow={{base: "0px -1px 0px 0px rgba(255, 255, 255, 0.04) inset, 0px 0px 0px 1px #100414;", md: "0px"}}
+      box-shadow={{
+        base: '0px -1px 0px 0px rgba(255, 255, 255, 0.04) inset, 0px 0px 0px 1px #100414;',
+        md: '0px',
+      }}
     >
       <HeaderLogo />
       <Show above="md">
