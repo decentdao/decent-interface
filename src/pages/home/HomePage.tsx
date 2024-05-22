@@ -17,7 +17,7 @@ export default function HomePage() {
     node: { daoAddress },
     action,
   } = useFractal();
-  
+
   const { isConnected } = useAccount();
 
   const { t } = useTranslation('home');
