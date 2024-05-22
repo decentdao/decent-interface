@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
@@ -30,8 +31,8 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   };
 
   useOutsideClick({
-    ref: ref,
-    handler: () => resetSearch(),
+    ref,
+    handler: resetSearch,
   });
 
   return (
@@ -64,7 +65,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
           marginTop="0.25rem"
           rounded="0.5rem"
           bg="neutral-2"
-          boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset" // T_T
+          boxShadow={SEXY_BOX_SHADOW_T_T}
           hidden={!errorMessage && !address}
           zIndex="modal"
           w="full"

@@ -7,7 +7,6 @@ import {
   SIDEBAR_WIDTH,
   MAX_CONTENT_WIDTH,
 } from '../../../../constants/common';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
 import { Footer } from '../Footer';
@@ -15,9 +14,6 @@ import Header from '../Header';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 export default function Layout() {
-  const {
-    node: { daoAddress },
-  } = useFractal();
   const headerContainerRef = useRef<HTMLDivElement>(null);
 
   const HEADER_HEIGHT = useHeaderHeight();
@@ -59,14 +55,11 @@ export default function Layout() {
         flexDirection="column"
         position="fixed"
         ml={6}
-        top={`${HEADER_HEIGHT}`}
+        top={HEADER_HEIGHT}
         minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
       >
         <Show above="md">
-          <NavigationLinks
-            showDAOLinks={!!daoAddress}
-            address={daoAddress}
-          />
+          <NavigationLinks />
         </Show>
       </GridItem>
       <GridItem
