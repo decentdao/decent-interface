@@ -1,4 +1,5 @@
-import { Box, Button, Flex, Text, useDisclosure } from '@chakra-ui/react';
+import { Box, Button, Flex, Show, Text, useBreakpointValue, useDisclosure } from '@chakra-ui/react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -9,9 +10,15 @@ export function MySafes() {
   const { t } = useTranslation('home');
   const { favoritesList } = useAccountFavorites();
   const { addressPrefix } = useNetworkConfig();
-
+  const [showAll, setShowAll] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const handleClick = useBreakpointValue({
+    base: onOpen,
+    md: () => setShowAll(true),
+  });
+
+  const favoritesToShow = showAll ? favoritesList : favoritesList.slice(0, 5);
   return (
     <Box>
       <Box w="full">
@@ -39,7 +46,7 @@ export function MySafes() {
           </Flex>
         ) : (
           <Box>
-            {favoritesList.slice(0, 5).map(favorite => (
+            {favoritesToShow.map(favorite => (
               <SafeDisplayRow
                 key={favorite}
                 network={addressPrefix}
@@ -51,7 +58,7 @@ export function MySafes() {
       </Box>
 
       {/* VIEW ALL BUTTON */}
-      {favoritesList.length > 5 && (
+      {favoritesList.length > 5 && !showAll && (
         <Flex
           justifyContent="center"
           p="1rem"
@@ -69,18 +76,19 @@ export function MySafes() {
             size={'sm'}
             p={'0.25rem 0.75rem'}
             width={'fit-content'}
-            onClick={onOpen}
+            onClick={handleClick}
           >
             {t('viewAll')}
           </Button>
         </Flex>
       )}
-
-      <AllSafesDrawer
-        isOpen={isOpen}
-        onClose={onClose}
-        onOpen={onOpen}
-      />
+      <Show below="md">
+        <AllSafesDrawer
+          isOpen={isOpen}
+          onClose={onClose}
+          onOpen={onOpen}
+        />
+      </Show>
     </Box>
   );
 }
