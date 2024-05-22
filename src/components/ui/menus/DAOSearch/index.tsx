@@ -52,6 +52,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             justifyContent="center"
           >
             <Input
+              w="full"
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => setLocalInput(e.target.value.trim())}
               value={localInput}

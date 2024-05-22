@@ -30,6 +30,15 @@ export function MySafes() {
           <Flex
             justifyContent="center"
             p="1.5rem 1rem"
+            maxW="100%"
+            mx="0.25rem"
+            my="0.5rem"
+            gap="0.75rem"
+            alignItems="center"
+            bg="neutral-2"
+            borderRadius="0.5rem"
+            border="1px solid"
+            borderColor="transparent"
           >
             <Text
               textStyle="button-small"
