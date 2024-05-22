@@ -14,13 +14,7 @@ export function MySafes() {
 
   return (
     <Box>
-      <Box
-        w="full"
-        bgColor="neutral-2"
-        border="1px"
-        borderColor="neutral-4"
-        borderRadius="8px"
-      >
+      <Box w="full">
         {/* SAFES HEADER (might be removed from design) */}
         <Box p="1rem 0.75rem">
           <Text
@@ -38,7 +32,7 @@ export function MySafes() {
             p="1.5rem 1rem"
           >
             <Text
-              textStyle="button-base"
+              textStyle="button-small"
               color="white-alpha-16"
             >
               {t('emptyFavorites', { ns: 'dashboard' })}

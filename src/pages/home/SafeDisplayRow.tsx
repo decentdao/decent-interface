@@ -30,17 +30,22 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
   return (
     <Flex
       maxW="100%"
-      p="0.75rem"
-      m="0.25rem"
-      mb="0.75rem"
+      p="1.5rem"
+      mx="0.25rem"
+      my="0.5rem"
       gap="0.75rem"
-      borderRadius="0.25rem"
       alignItems={showAddress ? 'center' : 'flex-start'}
       onClick={onClickNav}
-      border="1px"
-      borderColor="transparent"
+      bg="neutral-2"
       cursor="pointer"
-      _hover={{ bgColor: 'neutral-3' }}
+      _hover={{
+        bg: 'neutral-3',
+        border: '1px solid',
+        borderColor: 'neutral-4',
+      }}
+      borderRadius="0.5rem"
+      border="1px solid"
+      borderColor="transparent"
       // what colours to use??
       _active={{ borderColor: 'neutral-4' }}
     >
