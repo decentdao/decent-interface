@@ -153,7 +153,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             <CustomNonceInput
               nonce={values.multisig.customNonce}
               onChange={handleNonceChange}
-              align='end'
+              align="end"
             />
           )}
           <Alert status="info">
