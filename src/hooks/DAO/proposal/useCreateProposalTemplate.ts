@@ -21,9 +21,8 @@ export default function useCreateProposalTemplate() {
     async (values: CreateProposalForm) => {
       if (proposalTemplates && signerOrProvider && keyValuePairsContract) {
         const proposalMetadata = {
-          title: 'Create Proposal Template',
-          description:
-            'Execution of this proposal will create a new proposal template, attached to this Safe.',
+          title: 'createProposalTemplateTitle',
+          description: 'createProposalTemplateDescription',
           documentationUrl: '',
         };
 
