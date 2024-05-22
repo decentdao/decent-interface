@@ -48,7 +48,7 @@ export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
         />
 
         <Text color={daoRegistryName ? 'white-0' : 'neutral-6'}>
-          {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
+          {daoRegistryName ?? t('loadingFavorite')}
         </Text>
       </MenuItem>
     </Box>
