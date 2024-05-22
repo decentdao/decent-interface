@@ -69,6 +69,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
           hidden={!errorMessage && !address}
           zIndex="modal"
           w="full"
+          position="absolute"
         >
           <SearchDisplay
             loading={isLoading}

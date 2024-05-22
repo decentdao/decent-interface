@@ -18,7 +18,7 @@ export function AccountDisplay({ containerRef }: AccountDisplayProps) {
         as={MenuButton}
         variant="tertiary"
         data-testid="header-accountMenu"
-        pr="1rem"
+        px="0.5rem"
       >
         <AccountMenuButton />
       </Button>

@@ -2,8 +2,8 @@ import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import {
-  CONTENT_HEIGHT,
-  HEADER_HEIGHT,
+  useContentHeight,
+  useHeaderHeight,
   SIDEBAR_WIDTH,
   MAX_CONTENT_WIDTH,
 } from '../../../../constants/common';
@@ -15,6 +15,9 @@ import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 export default function Layout() {
   const headerContainerRef = useRef<HTMLDivElement>(null);
+
+  const HEADER_HEIGHT = useHeaderHeight();
+  const CONTENT_HEIGHT = useContentHeight();
 
   return (
     <Grid
