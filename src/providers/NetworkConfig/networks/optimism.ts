@@ -33,11 +33,11 @@ export const optimismConfig: NetworkConfig = {
   etherscanBaseURL: 'https://optimistic.etherscan.io/',
   etherscanAPIUrl: `https://api-optimistic.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_OPTIMISM_API_KEY}`,
   addressPrefix: 'oeth',
-  nativeTokenIcon: '/images/coin-icon-eth.svg',
+  nativeTokenIcon: '/images/coin-icon-op.svg',
   subgraph: {
     space: 71032,
     slug: 'fractal-optimism',
-    version: 'v0.0.2',
+    version: 'v0.1.1',
   },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,

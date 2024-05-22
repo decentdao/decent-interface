@@ -3,6 +3,7 @@ import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AddSignerModal from '../../pages/DaoSettings/components/Signers/modals/AddSignerModal';
 import RemoveSignerModal from '../../pages/DaoSettings/components/Signers/modals/RemoveSignerModal';
+import { DAOSearch } from '../menus/DAOSearch';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
@@ -27,6 +28,7 @@ export enum ModalType {
   CREATE_PROPOSAL_FROM_TEMPLATE,
   COPY_PROPOSAL_TEMPLATE,
   CONFIRM_MODIFY_GOVERNANCE,
+  SEARCH_SAFE,
 }
 
 export interface CurrentModal {
@@ -48,6 +50,7 @@ interface ModalUI {
   title: string;
   warn: boolean;
   content: ReactNode | null;
+  isSearchInputModal: boolean;
   onSetClosed: () => void;
 }
 /**
@@ -63,100 +66,115 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   const [current, setCurrent] = useState<CurrentModal>({ type: ModalType.NONE, props: [] });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { t } = useTranslation('modals');
+
   useEffect(() => {
     if (current.type != ModalType.NONE) onOpen();
   });
 
-  const { title, warn, content, onSetClosed } = useMemo<ModalUI>(() => {
-    const cl = () => {
+  const { title, warn, content, onSetClosed, isSearchInputModal } = useMemo<ModalUI>(() => {
+    const closeModal = () => {
       setCurrent({ type: ModalType.NONE, props: [] });
       onClose();
     };
-    let ti;
-    let wa = false;
-    let co;
+
+    let modalTitle;
+    let hasWarning = false;
+    let isSearchInput = false;
+    let modalContent;
+
     switch (current.type) {
       case ModalType.DELEGATE:
-        ti = t('delegateTitle');
-        co = <DelegateModal close={cl} />;
+        modalTitle = t('delegateTitle');
+        modalContent = <DelegateModal close={closeModal} />;
         break;
       case ModalType.SEND_ASSETS:
-        ti = t('sendAssetsTitle');
-        co = <SendAssetsModal close={cl} />;
+        modalTitle = t('sendAssetsTitle');
+        modalContent = <SendAssetsModal close={closeModal} />;
         break;
       case ModalType.STAKE:
-        ti = t('stakeTitle');
-        co = <StakeModal close={cl} />;
+        modalTitle = t('stakeTitle');
+        modalContent = <StakeModal close={closeModal} />;
         break;
       case ModalType.WRAP_TOKEN:
-        ti = t('wrapTokenTitle');
-        co = <WrapToken close={cl} />;
+        modalTitle = t('wrapTokenTitle');
+        modalContent = <WrapToken close={closeModal} />;
         break;
       case ModalType.UNWRAP_TOKEN:
-        ti = t('unwrapTokenTitle');
-        co = <UnwrapToken close={cl} />;
+        modalTitle = t('unwrapTokenTitle');
+        modalContent = <UnwrapToken close={closeModal} />;
         break;
       case ModalType.CONFIRM_URL:
-        ti = t('confirmUrlTitle');
-        wa = true;
-        co = (
+        modalTitle = t('confirmUrlTitle');
+        hasWarning = true;
+        modalContent = (
           <ConfirmUrlModal
             url={current.props.url}
-            close={cl}
+            close={closeModal}
           />
         );
         break;
       case ModalType.REMOVE_SIGNER:
-        ti = t('removeSignerTitle');
-        co = (
+        modalTitle = t('removeSignerTitle');
+        modalContent = (
           <RemoveSignerModal
             selectedSigner={current.props.selectedSigner}
             signers={current.props.signers}
             currentThreshold={current.props.currentThreshold}
-            close={cl}
+            close={closeModal}
           />
         );
         break;
       case ModalType.ADD_SIGNER:
-        ti = t('addSignerTitle');
-        co = (
+        modalTitle = t('addSignerTitle');
+        modalContent = (
           <AddSignerModal
             signers={current.props.signers}
             currentThreshold={current.props.currentThreshold}
-            close={cl}
+            close={closeModal}
           />
         );
         break;
       case ModalType.CREATE_PROPOSAL_FROM_TEMPLATE:
-        ti = current.props.proposalTemplate.title;
-        co = (
+        modalTitle = current.props.proposalTemplate.title;
+        modalContent = (
           <ProposalTemplateModal
             proposalTemplate={current.props.proposalTemplate}
-            onClose={cl}
+            onClose={closeModal}
           />
         );
         break;
       case ModalType.COPY_PROPOSAL_TEMPLATE:
-        ti = t('forkProposalTemplate');
-        co = (
+        modalTitle = t('forkProposalTemplate');
+        modalContent = (
           <ForkProposalTemplateModal
             proposalTemplate={current.props.proposalTemplate}
             templateIndex={current.props.templateIndex}
-            onClose={cl}
+            onClose={closeModal}
           />
         );
         break;
       case ModalType.CONFIRM_MODIFY_GOVERNANCE:
-        wa = true;
-        ti = t('confirmModifyGovernanceTitle');
-        co = <ConfirmModifyGovernanceModal close={cl} />;
+        hasWarning = true;
+        modalTitle = t('confirmModifyGovernanceTitle');
+        modalContent = <ConfirmModifyGovernanceModal close={closeModal} />;
+        break;
+      case ModalType.SEARCH_SAFE:
+        isSearchInput = true;
+        modalContent = <DAOSearch closeDrawer={closeModal} />;
         break;
       case ModalType.NONE:
       default:
-        ti = '';
-        co = null;
+        modalTitle = '';
+        modalContent = null;
     }
-    return { title: ti, warn: wa, content: co, onSetClosed: cl };
+
+    return {
+      isSearchInputModal: isSearchInput,
+      title: modalTitle,
+      warn: hasWarning,
+      content: modalContent,
+      onSetClosed: closeModal,
+    };
   }, [current, onClose, t]);
 
   const display = content ? (
@@ -165,6 +183,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       warn={warn}
       isOpen={isOpen}
       onClose={onSetClosed}
+      isSearchInputModal={isSearchInputModal}
     >
       {content}
     </ModalBase>

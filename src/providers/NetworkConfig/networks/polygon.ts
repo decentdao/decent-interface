@@ -33,11 +33,11 @@ export const polygonConfig: NetworkConfig = {
   etherscanBaseURL: 'https://polygonscan.com',
   etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
   addressPrefix: 'matic',
-  nativeTokenIcon: '/images/coin-icon-eth.svg',
+  nativeTokenIcon: '/images/coin-icon-pol.svg',
   subgraph: {
     space: 71032,
     slug: 'fractal-base-polygon',
-    version: 'v0.0.2',
+    version: 'v0.1.1',
   },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,

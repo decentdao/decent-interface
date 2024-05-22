@@ -4,9 +4,7 @@ import { RouterProvider } from 'react-router-dom';
 import { useNetworkConfig } from './providers/NetworkConfig/NetworkConfigProvider';
 import Providers from './providers/Providers';
 import { router } from './router';
-
-import '@fontsource/ibm-plex-mono';
-import '@fontsource/ibm-plex-sans';
+import '@fontsource/space-mono';
 import 'react-toastify/dist/ReactToastify.min.css';
 import './assets/css/Markdown.css';
 

@@ -33,11 +33,11 @@ export const baseConfig: NetworkConfig = {
   etherscanBaseURL: 'https://basescan.org/',
   etherscanAPIUrl: `https://api.basescan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_BASE_API_KEY}`,
   addressPrefix: 'base',
-  nativeTokenIcon: '/images/coin-icon-eth.svg',
+  nativeTokenIcon: '/images/coin-icon-base.svg',
   subgraph: {
     space: 71032,
     slug: 'fractal-base',
-    version: 'v0.0.2',
+    version: 'v0.1.1',
   },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,

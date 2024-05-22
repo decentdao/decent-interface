@@ -1,22 +1,27 @@
 import { Box, Image } from '@chakra-ui/react';
-import { Jazzicon } from '@ukstv/jazzicon-react';
+import { blo } from 'blo';
 import { Suspense } from 'react';
 import { useImage } from 'react-image';
+import { getAddress } from 'viem';
 
-type AvatarSize = 'icon' | 'lg' | 'sm';
+export type AvatarSize = 'icon' | 'lg' | 'sm';
 const avatarSizes: { [size: string]: string } = {
   sm: '1rem',
   icon: '1.5rem',
   lg: '2rem',
 };
 
-function JazziconAvatar({ address, size }: { size: AvatarSize; address: string }) {
+function BlockieAvatar({ address, size }: { size: AvatarSize; address: string }) {
   return (
     <Box
       h={avatarSizes[size]}
       w={avatarSizes[size]}
     >
-      <Jazzicon address={address} />
+      <Image
+        borderRadius="full"
+        src={blo(getAddress(address))}
+        alt={address}
+      />
     </Box>
   );
 }
@@ -48,7 +53,7 @@ function Avatar({
 }) {
   if (!url) {
     return (
-      <JazziconAvatar
+      <BlockieAvatar
         size={size}
         address={address}
       />
@@ -58,7 +63,7 @@ function Avatar({
   return (
     <Suspense
       fallback={
-        <JazziconAvatar
+        <BlockieAvatar
           size={size}
           address={address}
         />

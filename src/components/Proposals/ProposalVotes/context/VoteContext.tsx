@@ -109,7 +109,7 @@ export function VoteContextProvider({
             ).toBigInt() > 0n && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
-            await getUserERC721VotingTokens();
+            await getUserERC721VotingTokens(null);
           }
           newCanVote = user.votingWeight > 0 && remainingTokenIds.length > 0;
         } else if (type === GovernanceType.MULTISIG) {

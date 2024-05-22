@@ -1,31 +1,74 @@
-import { Box, Container, Grid, GridItem } from '@chakra-ui/react';
+import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
+import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
-import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
+import {
+  useContentHeight,
+  useHeaderHeight,
+  SIDEBAR_WIDTH,
+  MAX_CONTENT_WIDTH,
+} from '../../../../constants/common';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
+import { Footer } from '../Footer';
 import Header from '../Header';
-import Navigation from '../Navigation';
+import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 export default function Layout() {
+  const headerContainerRef = useRef<HTMLDivElement>(null);
+
+  const HEADER_HEIGHT = useHeaderHeight();
+  const CONTENT_HEIGHT = useContentHeight();
+
   return (
     <Grid
       templateAreas={{
-        base: `"nav header"
-"main main"`,
-        md: `"nav header"
-"nav main"`,
+        base: `"header header"
+               "main main"
+               "footer footer"`,
+        md: `"header header"
+             "nav main"
+             "footer footer"`,
       }}
-      gridTemplateColumns="4.25rem 1fr"
+      gridTemplateColumns={`${SIDEBAR_WIDTH} 1fr`}
       gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
     >
       <GridItem
-        area={'main'}
+        area="header"
+        ref={headerContainerRef}
+      >
+        <Box
+          bg="neutral-2"
+          boxShadow="0px 1px 0px 0px #161219"
+          position="fixed"
+          w="full"
+          maxW="100vw"
+          zIndex="1"
+        >
+          <Header headerContainerRef={headerContainerRef} />
+        </Box>
+      </GridItem>
+      <GridItem
+        area="nav"
+        zIndex="modal"
+        display="flex"
+        flexDirection="column"
+        position="fixed"
+        ml={6}
+        top={HEADER_HEIGHT}
+        minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
+      >
+        <Show above="md">
+          <NavigationLinks />
+        </Show>
+      </GridItem>
+      <GridItem
+        area="main"
         mx="1.5rem"
       >
         <Container
           display="grid"
-          maxWidth="container.xl"
+          maxWidth={MAX_CONTENT_WIDTH}
           px="0"
           minH={CONTENT_HEIGHT}
           paddingBottom="2rem"
@@ -38,30 +81,8 @@ export default function Layout() {
           </ErrorBoundary>
         </Container>
       </GridItem>
-      <GridItem area={'header'}>
-        <Box
-          as="header"
-          bg="chocolate.900"
-          h="4rem"
-          position="fixed"
-          zIndex={5}
-          w="calc(100% - 4.25rem)"
-        >
-          <Header />
-        </Box>
-      </GridItem>
-
-      <GridItem
-        area={'nav'}
-        display="flex"
-        flexDirection="column"
-        flexGrow="1"
-        bg="chocolate.900"
-        position="fixed"
-        w="4.25rem"
-        minHeight={{ base: undefined, md: '100vh' }}
-      >
-        <Navigation />
+      <GridItem area="footer">
+        <Footer />
       </GridItem>
     </Grid>
   );

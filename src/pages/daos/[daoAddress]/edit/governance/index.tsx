@@ -1,6 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { CloseX } from '@decent-org/fractal-ui';
-
+import { X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../../../../components/DaoCreator';
@@ -48,7 +47,7 @@ export default function ModifyGovernancePage() {
     <Box>
       <PageHeader
         hasDAOLink
-        ButtonIcon={CloseX}
+        ButtonIcon={X}
         buttonVariant="secondary"
         buttonClick={() => navigate(DAO_ROUTES.dao.relative(addressPrefix, daoAddress))}
         isButtonDisabled={false}

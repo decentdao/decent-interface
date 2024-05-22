@@ -81,10 +81,7 @@ export function ERCO20Claim() {
       >
         <AlertIcon boxSize="24px" />
         <AlertTitle>
-          <Text
-            textStyle="text-lg-mono-medium"
-            whiteSpace="pre-wrap"
-          >
+          <Text whiteSpace="pre-wrap">
             {t('alertTokenClaim', {
               amount: claimableString,
             })}

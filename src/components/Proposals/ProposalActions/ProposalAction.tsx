@@ -1,12 +1,9 @@
-import { Button, Flex, Text } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ExtendedSnapshotProposal, FractalProposal, FractalProposalState } from '../../../types';
-import ContentBox from '../../ui/containers/ContentBox';
-import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 import CastVote from './CastVote';
 import { Execute } from './Execute';
@@ -69,20 +66,6 @@ export function ProposalAction({
         proposal.state === FractalProposalState.TIMELOCKABLE ||
         proposal.state === FractalProposalState.TIMELOCKED));
 
-  const labelKey = useMemo(() => {
-    switch (proposal.state) {
-      case FractalProposalState.ACTIVE:
-        return 'vote';
-      case FractalProposalState.TIMELOCKABLE:
-        return 'timelockTitle';
-      case FractalProposalState.EXECUTABLE:
-      case FractalProposalState.TIMELOCKED:
-        return 'executeTitle';
-      default:
-        return '';
-    }
-  }, [proposal]);
-
   const label = useMemo(() => {
     if (isSnapshotProposal) {
       return t('details');
@@ -110,21 +93,11 @@ export function ProposalAction({
       return null;
 
     return (
-      <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-        <Flex justifyContent="space-between">
-          <Text textStyle="text-lg-mono-medium">
-            {t(labelKey, {
-              ns: isActiveProposal ? 'common' : 'proposal',
-            })}
-          </Text>
-          <ProposalCountdown proposal={proposal} />
-        </Flex>
-        <ProposalActions
-          proposal={proposal}
-          extendedSnapshotProposal={extendedSnapshotProposal}
-          onCastSnapshotVote={onCastSnapshotVote}
-        />
-      </ContentBox>
+      <ProposalActions
+        proposal={proposal}
+        extendedSnapshotProposal={extendedSnapshotProposal}
+        onCastSnapshotVote={onCastSnapshotVote}
+      />
     );
   }
 

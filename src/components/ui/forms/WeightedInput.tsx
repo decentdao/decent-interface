@@ -11,8 +11,8 @@ interface IWeightedInput {
 export default function WeightedInput({ label, value, totalValue, onChange }: IWeightedInput) {
   return (
     <Flex
-      color="gold.500"
-      bg="chocolate.500"
+      color="lilac-0"
+      bg="neutral-3"
       borderRadius="0.5rem"
       mt={4}
       mb={4}
@@ -37,9 +37,9 @@ export default function WeightedInput({ label, value, totalValue, onChange }: IW
           h="24px"
           variant="secondary"
           border="none"
-          bg="chocolate.700"
+          bg="neutral-2"
           onClick={() => onChange(Math.max(0, value - 1))}
-          disabled={!value}
+          isDisabled={!value}
         >
           <Minus />
         </IconButton>
@@ -51,7 +51,7 @@ export default function WeightedInput({ label, value, totalValue, onChange }: IW
           bg="transparent"
           padding={0}
           textAlign="center"
-          color="gold.500"
+          color="lilac-0"
           width="48px"
         />
         <IconButton
@@ -61,7 +61,7 @@ export default function WeightedInput({ label, value, totalValue, onChange }: IW
           h="24px"
           variant="secondary"
           border="none"
-          bg="chocolate.700"
+          bg="neutral-2"
           onClick={() => onChange(value + 1)}
           mr={3}
         >

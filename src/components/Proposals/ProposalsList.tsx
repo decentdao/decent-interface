@@ -1,6 +1,7 @@
 import { Button, Box, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { CONTENT_MAXW } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -22,6 +23,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
     <Flex
       flexDirection="column"
       gap="1rem"
+      maxW={CONTENT_MAXW}
     >
       {proposals === undefined ? (
         <Box mt={7}>

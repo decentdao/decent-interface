@@ -1,9 +1,8 @@
-import { Box, Flex, Text, Button } from '@chakra-ui/react';
+import { Flex, Text, Spinner, Icon } from '@chakra-ui/react';
+import { WarningCircle } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { DAO_ROUTES } from '../../../../constants/routes';
-import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { SafeDisplayRow } from '../../../../pages/home/SafeDisplayRow';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
@@ -16,75 +15,82 @@ interface ISearchDisplay {
   closeDrawer?: () => void;
 }
 
-function DAONameDisplay({ address }: { address: string }) {
-  const { displayName } = useDisplayName(address);
-  return <Text textStyle="text-base-sans-medium">{displayName}</Text>;
-}
-
 export function SearchDisplay({
   loading,
   errorMessage,
   validAddress,
   address,
-  onClickView,
   closeDrawer,
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
-  const { action, node } = useFractal();
+  const { node } = useFractal();
   const { addressPrefix } = useNetworkConfig();
-  const navigate = useNavigate();
-  const isCurrentSafe = useMemo(() => {
-    return !!node && !!node.daoAddress && node.daoAddress === address;
-  }, [node, address]);
+
+  const isCurrentSafe = useMemo(
+    () => !!node && !!node.daoAddress && node.daoAddress === address,
+    [node, address],
+  );
+
   if (loading && address) {
     return (
-      <Box>
-        <Text textStyle="text-base-mono-regular">{t('loading')}</Text>
-      </Box>
+      <Flex
+        justifyContent="center"
+        alignItems="center"
+        py="1rem"
+      >
+        <Spinner
+          thickness="4px"
+          speed="0.75s"
+          emptyColor="neutral-3"
+          color="neutral-7"
+          size="lg"
+        />
+      </Flex>
     );
   }
+
   if (errorMessage && !loading) {
     return (
-      <Box>
-        <Text textStyle="text-base-sans-medium">{errorMessage}</Text>
-      </Box>
+      <Flex
+        alignItems="center"
+        gap="2"
+        p="0.5rem 1rem"
+      >
+        <Icon
+          as={WarningCircle}
+          color="red-1"
+          boxSize="1.5rem"
+        />
+        <Text
+          textStyle="display-lg"
+          color="red-1"
+        >
+          {errorMessage}
+        </Text>
+      </Flex>
     );
   }
+
   if (validAddress && address && !loading) {
     return (
       <Flex
-        py={2}
         cursor={isCurrentSafe ? 'not-allowed' : 'default'}
-        justifyContent="space-between"
+        flexDir="column"
       >
-        <Flex
-          justifyContent="space-between"
-          alignItems="center"
+        <Text
+          textStyle="button-small"
+          color="neutral-7"
+          p="1rem"
         >
-          <Flex flexDirection="column">
-            <Text
-              textStyle="text-sm-sans-regular"
-              color="chocolate.100"
-            >
-              {t(isCurrentSafe ? 'labelCurrentDAO' : 'labelDAOFound')}
-            </Text>
-            <DAONameDisplay address={address} />
-          </Flex>
-        </Flex>
-        {!isCurrentSafe && (
-          <Button
-            alignSelf="center"
-            data-testid="search-viewDAO"
-            onClick={() => {
-              onClickView();
-              if (closeDrawer) closeDrawer();
-              action.resetDAO();
-              navigate(DAO_ROUTES.dao.relative(addressPrefix, address));
-            }}
-          >
-            {t('labelViewDAO')}
-          </Button>
-        )}
+          {t(isCurrentSafe ? 'labelCurrentDAO' : 'labelDAOFound')}
+        </Text>
+
+        <SafeDisplayRow
+          address={address}
+          network={addressPrefix}
+          onClick={closeDrawer}
+          showAddress={true}
+        />
       </Flex>
     );
   }
