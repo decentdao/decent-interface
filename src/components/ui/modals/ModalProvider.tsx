@@ -50,7 +50,7 @@ interface ModalUI {
   title: string;
   warn: boolean;
   content: ReactNode | null;
-  isFullscreen: boolean;
+  isSearchInputModal: boolean;
   onSetClosed: () => void;
 }
 /**
@@ -71,15 +71,15 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     if (current.type != ModalType.NONE) onOpen();
   });
 
-  const { title, warn, content, onSetClosed, isFullscreen } = useMemo<ModalUI>(() => {
+  const { title, warn, content, onSetClosed, isSearchInputModal } = useMemo<ModalUI>(() => {
     const closeModal = () => {
       setCurrent({ type: ModalType.NONE, props: [] });
       onClose();
     };
 
     let modalTitle;
-    let isWarn = false;
-    let isModalFullscreen = false;
+    let hasWarning = false;
+    let isSearchInput = false;
     let modalContent;
 
     switch (current.type) {
@@ -105,7 +105,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         break;
       case ModalType.CONFIRM_URL:
         modalTitle = t('confirmUrlTitle');
-        isWarn = true;
+        hasWarning = true;
         modalContent = (
           <ConfirmUrlModal
             url={current.props.url}
@@ -154,12 +154,12 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         );
         break;
       case ModalType.CONFIRM_MODIFY_GOVERNANCE:
-        isWarn = true;
+        hasWarning = true;
         modalTitle = t('confirmModifyGovernanceTitle');
         modalContent = <ConfirmModifyGovernanceModal close={closeModal} />;
         break;
       case ModalType.SEARCH_SAFE:
-        isModalFullscreen = true;
+        isSearchInput = true;
         modalContent = <DAOSearch closeDrawer={closeModal} />;
         break;
       case ModalType.NONE:
@@ -169,9 +169,9 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     }
 
     return {
-      isFullscreen: isModalFullscreen,
+      isSearchInputModal: isSearchInput,
       title: modalTitle,
-      warn: isWarn,
+      warn: hasWarning,
       content: modalContent,
       onSetClosed: closeModal,
     };
@@ -183,7 +183,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       warn={warn}
       isOpen={isOpen}
       onClose={onSetClosed}
-      isFullscreen={isFullscreen}
+      isSearchInputModal={isSearchInputModal}
     >
       {content}
     </ModalBase>

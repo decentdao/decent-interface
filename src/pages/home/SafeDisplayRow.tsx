@@ -1,4 +1,4 @@
-import { Flex, Show, Spacer, Text } from '@chakra-ui/react';
+import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
@@ -48,7 +48,6 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
         size="lg"
         address={address}
         url={avatarURL}
-        data-testid="walletMenu-avatar"
       />
       <Flex
         flexDir="column"
@@ -58,7 +57,7 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
           color={daoRegistryName ? nameColor : 'neutral-6'}
           textStyle={showAddress ? 'label-base' : 'button-base'}
         >
-          {daoRegistryName ? daoRegistryName : t('loadingFavorite')}
+          {daoRegistryName ?? t('loadingFavorite')}
         </Text>
         {showAddress && <Text textStyle="button-base">{createAccountSubstring(address)}</Text>}
       </Flex>
@@ -67,11 +66,7 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
 
       {/* Network Icon */}
       <Flex gap="0.5rem">
-        <Avatar
-          size="icon"
-          address={address}
-          url={networkConfig.nativeTokenIcon}
-        />
+        <Image src={networkConfig.nativeTokenIcon} />
         <Show above="md">
           <Text>{networkConfig.chain.name}</Text>
         </Show>

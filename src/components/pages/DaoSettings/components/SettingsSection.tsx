@@ -43,7 +43,11 @@ export function SettingsSection({
           <Text textStyle="display-lg">{title}</Text>
           {headerRight}
         </Flex>
-        <Divider my="1rem" />
+        <Divider
+          my="1rem"
+          w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+          mx={{ base: '-0.75rem', md: '-1.5rem' }}
+        />
         {children}
 
         {/* NESTED SETTINGS SECTION, for when a section has an extra header-content content */}
@@ -56,7 +60,11 @@ export function SettingsSection({
               <Text textStyle="display-lg">{nestedSection.title}</Text>
               {nestedSection.headerRight}
             </Flex>
-            <Divider my="1rem" />
+            <Divider
+              my="1rem"
+              w={{ base: 'calc(100% + 1.5rem)', md: 'calc(100% + 3rem)' }}
+              mx={{ base: '-0.75rem', md: '-1.5rem' }}
+            />
             {nestedSection.children}
           </Flex>
         )}

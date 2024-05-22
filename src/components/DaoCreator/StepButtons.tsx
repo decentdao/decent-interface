@@ -57,7 +57,7 @@ export function StepButtons({
         </Button>
       )}
       <Button
-        w={prevStep ? '50%' : 'full'}
+        w={{ base: 'full', md: prevStep ? '50%' : 'full' }}
         type={buttonType}
         isDisabled={transactionPending || isSubmitting || !!errors[step] || isNextDisabled}
         onClick={() => {

@@ -1,7 +1,12 @@
 import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
-import { useContentHeight, useHeaderHeight, SIDEBAR_WIDTH } from '../../../../constants/common';
+import {
+  useContentHeight,
+  useHeaderHeight,
+  SIDEBAR_WIDTH,
+  MAX_CONTENT_WIDTH,
+} from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
@@ -70,7 +75,7 @@ export default function Layout() {
       >
         <Container
           display="grid"
-          maxWidth="container.xl"
+          maxWidth={MAX_CONTENT_WIDTH}
           px="0"
           minH={CONTENT_HEIGHT}
           paddingBottom="2rem"

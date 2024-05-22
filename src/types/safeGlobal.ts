@@ -40,7 +40,8 @@ export type SafeInfoResponseWithGuard = SafeInfoResponse & {
  * to see more than the first page of assets.
  */
 export interface AllTransfersListResponse {
-  next: any;
+  next: string;
+  count: number;
   results: TransferResponse[];
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Address } from 'viem';
+import { getAddress } from 'viem';
 import { useEnsName } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
@@ -19,7 +19,7 @@ const useDisplayName = (account?: string | null, truncate?: boolean) => {
   if (truncate === undefined) truncate = true;
   const { chain } = useNetworkConfig();
   const { data: ensName } = useEnsName({
-    address: account as Address,
+    address: !!account ? getAddress(account) : undefined,
     chainId: chain.id,
   });
 
