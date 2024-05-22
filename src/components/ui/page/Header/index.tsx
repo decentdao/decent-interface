@@ -130,7 +130,7 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       borderBottomColor="neutral-3"
       // Doesn't seem to work either way arghhh
       box-shadow={{
-        base: '0px -1px 0px 0px rgba(255, 255, 255, 0.04) inset, 0px 0px 0px 1px #100414;',
+        base: SEXY_BOX_SHADOW_T_T,
         md: '0px',
       }}
     >
