@@ -48,11 +48,11 @@ function HeaderLogo() {
             ref={btnRef}
             aria-label="drawer-menu"
             onClick={onOpen}
-            size="icon-sm"
+            size="icon-lg"
             variant="tertiary"
-            ml="1rem"
             icon={
               <Icon
+                boxSize="2rem"
                 as={List}
                 color="lilac-0"
                 aria-hidden
@@ -121,7 +121,7 @@ function HeaderLogo() {
             aria-hidden
             h="2.5rem"
             w="2.125rem"
-            mx="1.75rem"
+            mr="1.75rem"
           />
         </Link>
       </Show>
@@ -139,7 +139,7 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
       bg={NEUTRAL_2_82_TRANSPARENT}
       justifyContent="space-between"
       alignItems="center"
-      pr={{ base: '1rem', md: '1.5rem' }}
+      px={{ base: '1rem', md: '1.5rem' }}
       maxW="100vw"
       borderBottom="1px"
       borderBottomColor="neutral-3"
@@ -159,7 +159,7 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
         h={HEADER_HEIGHT}
         justifyContent="flex-end"
         alignItems="center"
-        gap={{ base: '0.25rem', md: '1rem' }}
+        gap={{ base: '0rem', md: '1rem' }}
       >
         <Hide above="md">
           <IconButton
