@@ -30,14 +30,17 @@ export function SafesMenu() {
       <Hide above="md">
         <IconButton
           variant="tertiary"
-          as={Star}
           aria-label="Search Safe"
           onClick={onSafesDrawerOpen}
-          h="2.75rem"
-          w="2.75rem"
-          p="0.5rem"
-          cursor="pointer"
-          weight="fill"
+          size="icon-sm"
+          icon={
+            <Icon
+              as={Star}
+              color="lilac-0"
+              aria-hidden
+              weight="fill"
+            />
+          }
         />
       </Hide>
 

@@ -48,17 +48,14 @@ function HeaderLogo() {
             ref={btnRef}
             aria-label="drawer-menu"
             onClick={onOpen}
-            boxSize="2rem"
+            size="icon-sm"
             variant="tertiary"
             ml="1rem"
             icon={
               <Icon
                 as={List}
                 color="lilac-0"
-                p="0.25rem"
                 aria-hidden
-                h="1.875rem"
-                w="1.875rem"
               />
             }
           />
@@ -159,12 +156,16 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
         <Hide above="md">
           <IconButton
             variant="tertiary"
-            as={MagnifyingGlass}
             aria-label="Search Safe"
             onClick={searchSafe}
-            h="2.75rem"
-            w="2.75rem"
-            p="0.5rem"
+            size="icon-sm"
+            icon={
+              <Icon
+                as={MagnifyingGlass}
+                color="lilac-0"
+                aria-hidden
+              />
+            }
             cursor="pointer"
           />
         </Hide>
