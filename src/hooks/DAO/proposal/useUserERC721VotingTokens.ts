@@ -48,7 +48,7 @@ export default function useUserERC721VotingTokens(
   const { erc721Tokens } = azoriusGovernance;
 
   const getUserERC721VotingTokens = useCallback(
-    async (_safeAddress: string | null, _proposalId?: string) => {
+    async (_safeAddress: string | null, _proposalId?: number) => {
       const totalTokenAddresses: string[] = [];
       const totalTokenIds: string[] = [];
       const tokenAddresses: string[] = [];
@@ -187,7 +187,7 @@ export default function useUserERC721VotingTokens(
               totalTokenIds.push(tokenId);
               if (_proposalId) {
                 const tokenVoted = await votingContract.read.hasVoted([
-                  Number(_proposalId),
+                  _proposalId,
                   getAddress(tokenAddress),
                   BigInt(tokenId),
                 ]);
@@ -222,7 +222,7 @@ export default function useUserERC721VotingTokens(
   );
 
   const loadUserERC721VotingTokens = useCallback(async () => {
-    const tokensInfo = await getUserERC721VotingTokens(safeAddress, proposalId);
+    const tokensInfo = await getUserERC721VotingTokens(safeAddress, Number(proposalId));
     if (tokensInfo) {
       setTotalVotingTokenAddresses(tokensInfo.totalVotingTokenAddresses);
       setTotalVotingTokenIds(tokensInfo.totalVotingTokenIds);
