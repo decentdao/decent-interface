@@ -62,8 +62,8 @@ export function VoteContextProvider({
 
   const { loadVotingWeight } = useSnapshotProposal(proposal as SnapshotProposal);
   const { remainingTokenIds, getUserERC721VotingTokens } = useUserERC721VotingTokens(
+    null,
     proposal.proposalId,
-    undefined,
     true,
   );
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
