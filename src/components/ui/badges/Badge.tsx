@@ -2,8 +2,7 @@ import { Box, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
-import { FractalProposalState, DAOState, FractalProposal } from '../../../types';
-import { ProposalCountdown } from '../proposal/ProposalCountdown';
+import { FractalProposalState, DAOState } from '../../../types';
 
 type BadgeType = {
   tooltipKey?: string;
@@ -109,10 +108,9 @@ interface IBadge {
   size: Size;
   labelKey: keyof typeof BADGE_MAPPING;
   children?: ReactNode;
-  proposal?: FractalProposal;
 }
 
-export function Badge({ labelKey, children, size, proposal }: IBadge) {
+export function Badge({ labelKey, children, size }: IBadge) {
   const { tooltipKey, ...colors } = BADGE_MAPPING[labelKey];
   const sizes = BADGE_SIZES[size];
 
@@ -147,14 +145,6 @@ export function Badge({ labelKey, children, size, proposal }: IBadge) {
         >
           {children || t(labelKey)}
         </Text>
-        {proposal && (
-          <ProposalCountdown
-            proposal={proposal}
-            showIcon={false}
-            textColor={colors.textColor}
-            textStyle="label-base"
-          />
-        )}
       </Flex>
     </Tooltip>
   );

@@ -1,8 +1,12 @@
 import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
-import { CONTENT_HEIGHT, HEADER_HEIGHT } from '../../../../constants/common';
-import { useFractal } from '../../../../providers/App/AppProvider';
+import {
+  useContentHeight,
+  useHeaderHeight,
+  SIDEBAR_WIDTH,
+  MAX_CONTENT_WIDTH,
+} from '../../../../constants/common';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
 import { Footer } from '../Footer';
@@ -10,10 +14,10 @@ import Header from '../Header';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 export default function Layout() {
-  const {
-    node: { daoAddress },
-  } = useFractal();
   const headerContainerRef = useRef<HTMLDivElement>(null);
+
+  const HEADER_HEIGHT = useHeaderHeight();
+  const CONTENT_HEIGHT = useContentHeight();
 
   return (
     <Grid
@@ -25,7 +29,7 @@ export default function Layout() {
              "nav main"
              "footer footer"`,
       }}
-      gridTemplateColumns="4.25rem 1fr"
+      gridTemplateColumns={`${SIDEBAR_WIDTH} 1fr`}
       gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
       position="relative"
     >
@@ -51,14 +55,11 @@ export default function Layout() {
         flexDirection="column"
         position="fixed"
         ml={6}
-        top={`${HEADER_HEIGHT}`}
+        top={HEADER_HEIGHT}
         minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
       >
         <Show above="md">
-          <NavigationLinks
-            showDAOLinks={!!daoAddress}
-            address={daoAddress}
-          />
+          <NavigationLinks />
         </Show>
       </GridItem>
       <GridItem
@@ -67,7 +68,7 @@ export default function Layout() {
       >
         <Container
           display="grid"
-          maxWidth="container.xl"
+          maxWidth={MAX_CONTENT_WIDTH}
           px="0"
           minH={CONTENT_HEIGHT}
           paddingBottom="2rem"

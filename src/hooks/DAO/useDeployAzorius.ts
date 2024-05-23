@@ -56,6 +56,7 @@ const useDeployAzorius = () => {
       daoData: AzoriusERC20DAO | AzoriusERC721DAO,
       shouldSetName?: boolean,
       shouldSetSnapshot?: boolean,
+      customNonce?: number,
     ) => {
       if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts || !publicClient) {
         return;
@@ -141,7 +142,7 @@ const useDeployAzorius = () => {
 
       await submitProposal({
         proposalData,
-        nonce: safe.nonce,
+        nonce: customNonce || safe.nonce,
         pendingToastMessage: t('modifyGovernanceSetAzoriusProposalPendingMessage'),
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),

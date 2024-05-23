@@ -104,20 +104,23 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
       : isERC721
         ? votingStrategy.quorumThreshold!.value
         : 1n;
+
   const reachedQuorum = isERC721
     ? totalVotesCasted - no
     : votesToken
       ? (totalVotesCasted - no) / votesTokenDecimalsDenominator
       : 0n;
+
   const totalQuorum = isERC721
-    ? strategyQuorum
+    ? Number(strategyQuorum)
     : votesToken
-      ? (votesToken.totalSupply / votesTokenDecimalsDenominator / 100n) * strategyQuorum
+      ? (Number(votesToken.totalSupply / votesTokenDecimalsDenominator) * Number(strategyQuorum)) /
+        100
       : undefined;
 
   const ShowVotingPowerButton = (
     <Button
-      pr={0}
+      px={0}
       py={0}
       height="auto"
       justifyContent="flex-end"
@@ -147,7 +150,11 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
     >
       <Text textStyle="display-lg">{t('proposalSummaryTitle')}</Text>
       <Box marginTop={4}>
-        <Divider variant="darker" />
+        <Divider
+          variant="darker"
+          width="calc(100% + 4rem)"
+          mx="-2rem"
+        />
         <InfoRow
           property={t('votingSystem')}
           value={t('singleSnapshotVotingSystem')}
@@ -165,19 +172,20 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
         <ProposalCreatedBy proposer={proposer} />
         <Flex
           marginTop={4}
-          justifyContent="space-between"
+          flexWrap="wrap"
           alignItems="center"
         >
           <Text
             textStyle="body-base"
             color="neutral-7"
+            w="full"
           >
             {t('snapshotTaken')}
           </Text>
           <EtherscanLink
             type="block"
             value={startBlock.toString()}
-            textAlign="end"
+            pl={0}
           >
             <Flex
               alignItems="center"
@@ -190,12 +198,13 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
         <Flex
           marginTop={4}
           marginBottom={transactionHash ? 0 : 4}
-          justifyContent="space-between"
+          flexWrap="wrap"
           alignItems="center"
         >
           <Text
             textStyle="body-base"
             color="neutral-7"
+            w="full"
           >
             {t('votingPower')}
           </Text>
@@ -215,12 +224,13 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
           <Flex
             marginTop={4}
             marginBottom={4}
-            justifyContent="space-between"
             alignItems="center"
+            flexWrap="wrap"
           >
             <Text
               textStyle="body-base"
               color="neutral-7"
+              w="full"
             >
               {t('transactionHash')}
             </Text>
@@ -230,6 +240,8 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
         <Divider
           my="0.5rem"
           variant="darker"
+          width="calc(100% + 4rem)"
+          mx="-2rem"
         />
       </Box>
       <Box marginTop={4}>
@@ -249,14 +261,19 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
                   : undefined,
             },
           )}
-          reachedQuorum={reachedQuorum}
+          reachedQuorum={Number(reachedQuorum)}
           totalQuorum={totalQuorum}
           unit={isERC20 ? '%' : ''}
         />
       </Box>
       {address && (
         <>
-          <Divider my="1.5rem" />
+          <Divider
+            my="1.5rem"
+            variant="darker"
+            width="calc(100% + 4rem)"
+            mx="-2rem"
+          />
           <VoteContextProvider proposal={proposal}>
             <ProposalAction
               proposal={proposal}

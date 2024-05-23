@@ -1,7 +1,7 @@
 import { Flex, Button, Icon } from '@chakra-ui/react';
 import { CaretRight, CaretLeft } from '@phosphor-icons/react';
 import { FormikProps } from 'formik';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalState } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
@@ -15,6 +15,19 @@ interface StateButtonsProps extends FormikProps<CreateProposalForm> {
   mode: ProposalBuilderMode;
 }
 
+function StateButtonsContainer({ children }: { children: ReactNode }) {
+  return (
+    <Flex
+      mt="1.5rem"
+      gap="0.75rem"
+      alignItems="center"
+      justifyContent="flex-end"
+      width="100%"
+    >
+      {children}
+    </Flex>
+  );
+}
 export default function StateButtons(props: StateButtonsProps) {
   const {
     pendingTransaction,
@@ -31,24 +44,22 @@ export default function StateButtons(props: StateButtonsProps) {
   const { t } = useTranslation(['common', 'proposal']);
   if (formState === CreateProposalState.METADATA_FORM) {
     return (
-      <Button
-        w="100%"
-        onClick={() => setFormState(CreateProposalState.TRANSACTIONS_FORM)}
-        isDisabled={!!proposalMetadataError || !proposalMetadata.title}
-        mt="1.75rem"
-      >
-        {t('next', { ns: 'common' })}
-        <CaretRight />
-      </Button>
+      <StateButtonsContainer>
+        <Button
+          onClick={() => setFormState(CreateProposalState.TRANSACTIONS_FORM)}
+          isDisabled={!!proposalMetadataError || !proposalMetadata.title}
+          px="2rem"
+        >
+          {t('next', { ns: 'common' })}
+          <CaretRight />
+        </Button>
+      </StateButtonsContainer>
     );
   }
   return (
-    <Flex
-      mt="1.5rem"
-      gap="1rem"
-    >
+    <StateButtonsContainer>
       <Button
-        width="100%"
+        px="2rem"
         variant="text"
         color="lilac-0"
         onClick={() => setFormState(CreateProposalState.METADATA_FORM)}
@@ -62,7 +73,7 @@ export default function StateButtons(props: StateButtonsProps) {
         {t('back', { ns: 'common' })}
       </Button>
       <Button
-        width="100%"
+        px="2rem"
         type="submit"
         isDisabled={
           !canUserCreateProposal || !!transactionsError || !!nonceError || pendingTransaction
@@ -70,6 +81,6 @@ export default function StateButtons(props: StateButtonsProps) {
       >
         {t('createProposal', { ns: 'proposal' })}
       </Button>
-    </Flex>
+    </StateButtonsContainer>
   );
 }

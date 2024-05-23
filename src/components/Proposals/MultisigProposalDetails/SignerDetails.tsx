@@ -76,7 +76,10 @@ export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
     >
       <Text textStyle="display-lg">{t('signers')}</Text>
       <Box marginTop={4}>
-        <Divider />
+        <Divider
+          width="calc(100% + 4rem)"
+          mx="-2rem"
+        />
         <Box marginTop={4}>
           {safe.owners.map(owner => (
             <OwnerInfoRow

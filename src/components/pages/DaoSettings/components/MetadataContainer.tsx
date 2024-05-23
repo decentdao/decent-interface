@@ -73,7 +73,7 @@ export function MetadataContainer() {
 
     const proposalData: ProposalExecuteData = {
       metaData: {
-        title: t('Update Safe Name', { ns: 'proposalMetadata' }),
+        title: t('updatesSafeName', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },
@@ -101,7 +101,7 @@ export function MetadataContainer() {
 
     const proposalData: ProposalExecuteData = {
       metaData: {
-        title: t('Update Snapshot Space', { ns: 'proposalMetadata' }),
+        title: t('updateSnapshotSpace', { ns: 'proposalMetadata' }),
         description: '',
         documentationUrl: '',
       },

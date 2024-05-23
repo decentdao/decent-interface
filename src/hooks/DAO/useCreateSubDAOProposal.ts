@@ -68,7 +68,7 @@ export const useCreateSubDAOProposal = () => {
           values: [0n, 0n],
           calldatas: [encodedMultisend, encodedDeclareSubDAO],
           metaData: {
-            title: t('Create a sub-Safe', { ns: 'proposalMetadata' }),
+            title: t('createChildSafe', { ns: 'proposalMetadata' }),
             description: '',
             documentationUrl: '',
           },

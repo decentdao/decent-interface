@@ -40,8 +40,10 @@ export function StepButtons({
   return (
     <Flex
       alignItems="center"
+      justifyContent="flex-end"
       width="100%"
       mt="1.5rem"
+      gap="0.75rem"
     >
       {prevStep && (
         <Button
@@ -50,16 +52,16 @@ export function StepButtons({
           isDisabled={transactionPending || isSubmitting}
           onClick={() => updateStep(prevStep)}
           color="lilac-0"
-          width="50%"
+          px="2rem"
         >
           <Icon as={CaretLeft} />
           {t('back', { ns: 'common' })}
         </Button>
       )}
       <Button
-        w={prevStep ? '50%' : 'full'}
         type={buttonType}
         isDisabled={transactionPending || isSubmitting || !!errors[step] || isNextDisabled}
+        px="2rem"
         onClick={() => {
           if (!isLastStep && nextStep) {
             updateStep(nextStep);

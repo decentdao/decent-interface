@@ -25,12 +25,7 @@ export function MenuItemButton({
         onClick={onClick}
         h="3rem"
         justifyContent="space-between"
-        rightIcon={
-          <Icon
-            size="1.5rem"
-            data-testid="walletMenu-avatar"
-          />
-        }
+        rightIcon={<Icon size="1.5rem" />}
       >
         <Text textStyle="button-base">{label}</Text>
       </MenuItem>

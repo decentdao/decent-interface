@@ -2,7 +2,7 @@ sources:
   - name: decent
     handler:
       graphql:
-        endpoint: https://api.studio.thegraph.com/query/{context.subgraphSpace:71032}/{context.subgraphSlug:fractal-mainnet}/{context.subgraphVersion:v0.0.2}
+        endpoint: https://api.studio.thegraph.com/query/{context.subgraphSpace:71032}/{context.subgraphSlug:fractal-mainnet}/{context.subgraphVersion:v0.1.1}
 
 documents:
   - ./src/graphql/DAO.graphql

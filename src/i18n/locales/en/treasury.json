@@ -12,15 +12,17 @@
   "labelSent": "Sent",
   "labelReceived": "Received",
   "textEmptyTransactions": "No transfers yet",
-  "textMoreTransactions": "View more",
+  "textMoreTransactions": "Load More",
+  "transactionsShownCount": "Latest {{count}} from a total of",
+  "transactionsTotalCount": "{{count}} transactions",
   "addresses": "{{numOfAddresses}} addresses",
   "approveToken": "Approve Token",
-  "approvalPendingMessage": "Approving tokens...",
+  "approvalPendingMessage": "Approving Tokens...",
   "approvalFailedMessage": "Token approval failed!",
   "approvalSuccessMessage": "Tokens approved",
   "stake": "Stake",
   "unstake": "Unstake",
   "claimUnstakedETH": "Claim ETH",
   "nonClaimableYet": "Your ETH cannot yet be claimed from Lido",
-  "tokenPriceFetchingError": "There was an error obtaining token prices. Please, try visiting Treasury page later."
+  "tokenPriceFetchingError": "An error occurred while retrieving token prices. Please refresh and try again."
 }

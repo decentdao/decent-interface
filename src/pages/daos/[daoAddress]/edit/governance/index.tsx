@@ -31,11 +31,12 @@ export default function ModifyGovernancePage() {
   const isSigner = user.address && safe?.owners.includes(user.address);
   const deployAzorius = useDeployAzorius();
 
-  const handleDeployAzorius: DAOTrigger = daoData => {
+  const handleDeployAzorius: DAOTrigger = (daoData, customNonce) => {
     deployAzorius(
       daoData as AzoriusERC20DAO | AzoriusERC721DAO,
       !daoName || createAccountSubstring(daoAddress!) === daoName,
       !daoSnapshotENS && !!daoData.snapshotENS,
+      customNonce,
     );
   };
 

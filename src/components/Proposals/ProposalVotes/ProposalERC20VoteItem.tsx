@@ -44,7 +44,7 @@ export default function ProposalERC20VoteItem({
             textStyle="body-base"
             color="neutral-7"
           >
-            {t(vote.choice)}
+            {t(vote.choice.label)}
           </Text>
         </StatusBox>
       </GridItem>

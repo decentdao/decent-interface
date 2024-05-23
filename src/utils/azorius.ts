@@ -10,7 +10,6 @@ import {
   FractalProposalState,
   ProposalVotesSummary,
   ProposalVote,
-  VOTE_CHOICES,
   ProposalData,
   AzoriusProposal,
   ActivityEventType,
@@ -23,6 +22,7 @@ import {
   VotingStrategyType,
   ERC721ProposalVote,
   MetaTransaction,
+  getVoteChoice,
 } from '../types';
 import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
@@ -135,7 +135,7 @@ const getProposalVotes = (
       events.push({
         weight: event.args.weight,
         voter: event.args.voter,
-        choice: VOTE_CHOICES[event.args.voteType],
+        choice: getVoteChoice(event.args.voteType),
       });
     }
     return events;
@@ -152,7 +152,7 @@ const getProposalVotes = (
       }
       events.push({
         voter: event.args.voter,
-        choice: VOTE_CHOICES[event.args.voteType],
+        choice: getVoteChoice(event.args.voteType),
         weight: 1n,
         tokenIds: event.args.tokenIds.map(id => id.toString()),
       });

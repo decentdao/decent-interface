@@ -76,7 +76,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       ens_normalize(value);
       setSnapshotSpaceValid(true);
     } catch (error) {
-      console.log(error);
+      console.warn(error);
       setSnapshotSpaceValid(false);
     }
   };

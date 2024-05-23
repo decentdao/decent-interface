@@ -4,7 +4,6 @@ import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
 import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
-import HomePage from './pages/HomePage';
 import DaoCreatePage from './pages/create';
 import DaoDashboardPage from './pages/daos/[daoAddress]/DaoDashboardPage';
 import { SettingsPage } from './pages/daos/[daoAddress]/SettingsPage';
@@ -17,6 +16,7 @@ import ProposalsPage from './pages/daos/[daoAddress]/proposals';
 import ProposalDetailsPage from './pages/daos/[daoAddress]/proposals/[proposalId]';
 import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
 import Treasury from './pages/daos/[daoAddress]/treasury';
+import HomePage from './pages/home/HomePage';
 
 export const router = (addressPrefix: string) =>
   wrapCreateBrowserRouter(createBrowserRouter)([

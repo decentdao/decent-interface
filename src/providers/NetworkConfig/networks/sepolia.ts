@@ -36,11 +36,11 @@ export const sepoliaConfig: NetworkConfig = {
   etherscanBaseURL: 'https://sepolia.etherscan.io',
   etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
   addressPrefix: 'sep',
-  nativeTokenIcon: '/images/coin-icon-eth.svg',
+  nativeTokenIcon: '/images/coin-icon-sep.svg',
   subgraph: {
     space: 71032,
     slug: 'fractal-sepolia',
-    version: 'v0.0.2',
+    version: 'v0.1.1',
   },
   contracts: {
     fractalAzoriusMasterCopy: getAddress(Azorius.address),

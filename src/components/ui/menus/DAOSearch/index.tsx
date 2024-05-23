@@ -2,23 +2,20 @@ import {
   Box,
   Input,
   InputGroup,
-  InputLeftElement,
   Popover,
   PopoverTrigger,
   useDisclosure,
   useOutsideClick,
-  Icon,
 } from '@chakra-ui/react';
-import { MagnifyingGlass } from '@phosphor-icons/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
 export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { t } = useTranslation(['dashboard']);
   const [localInput, setLocalInput] = useState<string>();
-  const [hasFocus, setHasFocus] = useState(false);
   const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
   const { onClose } = useDisclosure(); // popover close function
   const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
@@ -29,21 +26,18 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
 
   const resetSearch = () => {
     onClose();
-    setLocalInput(undefined);
-    setSearchString(undefined);
+    setLocalInput('');
   };
 
   useOutsideClick({
-    ref: ref,
-    handler: () => resetSearch(),
+    ref,
+    handler: resetSearch,
   });
 
   return (
     <Box
       ref={ref}
       width="full"
-      maxW={{ base: 'full', md: '31.125rem' }}
-      height="full"
       position="relative"
     >
       <Popover
@@ -56,19 +50,10 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             flexDirection="column"
             justifyContent="center"
           >
-            <InputLeftElement>
-              <Icon
-                as={MagnifyingGlass}
-                boxSize="1.5rem"
-                color={!!errorMessage ? 'red-0' : localInput || hasFocus ? 'white-0' : 'neutral-5'}
-              />
-            </InputLeftElement>
             <Input
-              size="baseAddonLeft"
+              w="full"
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => setLocalInput(e.target.value.trim())}
-              onFocus={() => setHasFocus(true)}
-              onBlur={() => setHasFocus(false)}
               value={localInput}
               spellCheck="false"
               isInvalid={!!errorMessage}
@@ -77,17 +62,14 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
           </InputGroup>
         </PopoverTrigger>
         <Box
-          marginTop="1.25rem"
-          padding="1rem 1rem"
+          marginTop="0.25rem"
           rounded="0.5rem"
-          bg="neutral-3"
-          boxShadow="0px 1px 0px 0px var(--chakra-colors-neutral-1)"
-          border="1px solid"
-          borderColor={!!errorMessage ? 'red-1' : 'neutral-3'}
-          position="absolute"
+          bg="neutral-2"
+          boxShadow={SEXY_BOX_SHADOW_T_T}
           hidden={!errorMessage && !address}
           zIndex="modal"
           w="full"
+          position="absolute"
         >
           <SearchDisplay
             loading={isLoading}

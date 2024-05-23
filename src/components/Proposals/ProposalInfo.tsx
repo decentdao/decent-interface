@@ -11,6 +11,7 @@ import { Badge } from '../ui/badges/Badge';
 import { SnapshotButton } from '../ui/badges/Snapshot';
 import { ModalType } from '../ui/modals/ModalProvider';
 import { useFractalModal } from '../ui/modals/useFractalModal';
+import { ProposalCountdown } from '../ui/proposal/ProposalCountdown';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
 
@@ -36,16 +37,20 @@ export function ProposalInfo({
       padding="1.5rem"
     >
       <Flex
-        gap={4}
+        gap={2}
         alignItems="center"
       >
         {proposal.state && (
           <Badge
             size="base"
             labelKey={proposal.state}
-            proposal={proposal}
           />
         )}
+        <ProposalCountdown
+          proposal={proposal}
+          showIcon={false}
+          textColor="neutral-7"
+        />
         {isSnapshotProposal && (
           <>
             <SnapshotButton snapshotENS={`${daoSnapshotENS}/proposal/${proposal.proposalId}`} />
