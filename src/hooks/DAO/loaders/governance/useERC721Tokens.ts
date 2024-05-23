@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { erc721Abi, getAddress, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { ERC721TokenData } from '../../../../types';
@@ -17,19 +18,20 @@ export default function useERC721Tokens() {
     if (!erc721LinearVotingContractAddress || !baseContracts || !publicClient) {
       return;
     }
-    const erc721LinearVotingContract =
-      baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-        erc721LinearVotingContractAddress,
-      );
-    const addresses = await erc721LinearVotingContract.getAllTokenAddresses();
+    const erc721LinearVotingContract = getContract({
+      abi: LinearERC721VotingAbi,
+      address: getAddress(erc721LinearVotingContractAddress),
+      client: publicClient,
+    });
+    const addresses = await erc721LinearVotingContract.read.getAllTokenAddresses();
     const erc721Tokens: ERC721TokenData[] = await Promise.all(
       addresses.map(async address => {
         const tokenContract = getContract({
           abi: erc721Abi,
-          address: getAddress(address),
+          address: address,
           client: publicClient,
         });
-        const votingWeight = (await erc721LinearVotingContract.getTokenWeight(address)).toBigInt();
+        const votingWeight = await erc721LinearVotingContract.read.getTokenWeight([address]);
         const [name, symbol, tokenMintEvents, tokenBurnEvents] = await Promise.all([
           tokenContract.read.name(),
           tokenContract.read.symbol(),
@@ -37,7 +39,7 @@ export default function useERC721Tokens() {
           tokenContract.getEvents.Transfer({ to: zeroAddress }),
         ]);
         const totalSupply = BigInt(tokenMintEvents.length - tokenBurnEvents.length);
-        return { name, symbol, address: getAddress(address), votingWeight, totalSupply };
+        return { name, symbol, address: address, votingWeight, totalSupply };
       }),
     );
 
