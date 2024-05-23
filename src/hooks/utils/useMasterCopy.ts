@@ -11,14 +11,13 @@ export function useMasterCopy() {
   const { getValue, setValue } = useLocalStorage();
   const { baseContracts } = useFractal();
   const {
-    contracts: { zodiacModuleProxyFactory },
+    contracts: { zodiacModuleProxyFactory, linearVotingMasterCopy },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
 
   const isOzLinearVoting = useCallback(
-    (masterCopyAddress: Address) =>
-      masterCopyAddress === baseContracts?.linearVotingMasterCopyContract.asProvider.address,
-    [baseContracts],
+    (masterCopyAddress: Address) => masterCopyAddress === linearVotingMasterCopy,
+    [linearVotingMasterCopy],
   );
   const isOzLinearVotingERC721 = useCallback(
     (masterCopyAddress: Address) =>

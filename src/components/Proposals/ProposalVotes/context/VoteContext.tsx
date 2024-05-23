@@ -1,4 +1,7 @@
 import { useContext, useCallback, useEffect, useState, createContext, ReactNode } from 'react';
+import { getAddress, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
@@ -64,6 +67,7 @@ export function VoteContextProvider({
     true,
   );
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
+  const publicClient = usePublicClient();
 
   const getHasVoted = useCallback(() => {
     setHasVotedLoading(true);
@@ -90,7 +94,7 @@ export function VoteContextProvider({
     async (refetchUserTokens?: boolean) => {
       setCanVoteLoading(true);
       let newCanVote = false;
-      if (user.address) {
+      if (user.address && publicClient) {
         if (isSnapshotProposal) {
           const votingWeightData = await loadVotingWeight();
           newCanVote = votingWeightData.votingWeight >= 1;
@@ -99,14 +103,16 @@ export function VoteContextProvider({
           ozLinearVotingContractAddress &&
           baseContracts
         ) {
-          const ozLinearVotingContract =
-            baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-              ozLinearVotingContractAddress,
-            );
+          const ozLinearVotingContract = getContract({
+            abi: LinearERC20VotingAbi,
+            address: getAddress(ozLinearVotingContractAddress),
+            client: publicClient,
+          });
           newCanVote =
-            (
-              await ozLinearVotingContract.getVotingWeight(user.address, proposal.proposalId)
-            ).toBigInt() > 0n && !hasVoted;
+            (await ozLinearVotingContract.read.getVotingWeight([
+              getAddress(user.address),
+              Number(proposal.proposalId),
+            ])) > 0n && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
             await getUserERC721VotingTokens(null);
@@ -125,18 +131,20 @@ export function VoteContextProvider({
       setCanVoteLoading(false);
     },
     [
-      user,
-      type,
-      hasVoted,
-      safe,
+      baseContracts,
       canVote,
-      remainingTokenIds,
       getUserERC721VotingTokens,
+      hasVoted,
       isSnapshotProposal,
       loadVotingWeight,
-      proposal?.proposalId,
-      baseContracts,
       ozLinearVotingContractAddress,
+      proposal.proposalId,
+      publicClient,
+      remainingTokenIds.length,
+      safe?.owners,
+      type,
+      user.address,
+      user.votingWeight,
     ],
   );
   useEffect(() => {
