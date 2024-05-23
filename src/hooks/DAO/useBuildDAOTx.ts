@@ -56,7 +56,6 @@ const useBuildDAOTx = () => {
       }
       const {
         fractalAzoriusMasterCopyContract,
-        fractalModuleMasterCopyContract,
         multisigFreezeGuardMasterCopyContract,
         azoriusFreezeGuardMasterCopyContract,
         freezeMultisigVotingMasterCopyContract,
@@ -79,7 +78,6 @@ const useBuildDAOTx = () => {
       }
 
       const buildrerBaseContracts: BaseContracts = {
-        fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asSigner,
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asSigner,
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asSigner,
         freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asSigner,

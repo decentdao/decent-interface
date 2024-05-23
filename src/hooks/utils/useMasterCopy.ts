@@ -11,7 +11,12 @@ export function useMasterCopy() {
   const { getValue, setValue } = useLocalStorage();
   const { baseContracts } = useFractal();
   const {
-    contracts: { zodiacModuleProxyFactory, linearVotingMasterCopy, linearVotingERC721MasterCopy },
+    contracts: {
+      zodiacModuleProxyFactory,
+      linearVotingMasterCopy,
+      linearVotingERC721MasterCopy,
+      fractalModuleMasterCopy,
+    },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
 
@@ -45,9 +50,8 @@ export function useMasterCopy() {
     [baseContracts],
   );
   const isFractalModule = useCallback(
-    (masterCopyAddress: Address) =>
-      masterCopyAddress === baseContracts?.fractalModuleMasterCopyContract.asProvider.address,
-    [baseContracts],
+    (masterCopyAddress: Address) => masterCopyAddress === fractalModuleMasterCopy,
+    [fractalModuleMasterCopy],
   );
 
   const getMasterCopyAddress = useCallback(

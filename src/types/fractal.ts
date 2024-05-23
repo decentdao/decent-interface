@@ -1,5 +1,4 @@
 import {
-  FractalModule,
   Azorius,
   AzoriusFreezeGuard,
   ERC20FreezeVoting,
@@ -15,7 +14,8 @@ import {
   SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
 import { Dispatch } from 'react';
-import { Address } from 'viem';
+import { Address, GetContractReturnType, PublicClient } from 'viem';
+import FractalModuleAbi from '../assets/abi/FractalModule';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
 import { FractalGuardActions } from '../providers/App/guard/action';
@@ -235,7 +235,10 @@ export interface Node
   extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {}
 
 export interface FractalModuleData {
-  moduleContract: Azorius | FractalModule | undefined;
+  moduleContract:
+    | Azorius
+    | GetContractReturnType<typeof FractalModuleAbi, PublicClient>
+    | undefined;
   moduleAddress: string;
   moduleType: FractalModuleType;
 }
@@ -317,7 +320,6 @@ export interface NodeHierarchy {
 
 export interface FractalContracts {
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
-  fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
   azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
   freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;

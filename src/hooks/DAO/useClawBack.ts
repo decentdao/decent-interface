@@ -1,4 +1,3 @@
-import { FractalModule } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -7,9 +6,9 @@ import {
   encodeFunctionData,
   erc20Abi,
   getAddress,
-  isHex,
   parseAbiParameters,
 } from 'viem';
+import FractalModuleAbi from '../../assets/abi/FractalModule';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { FractalModuleType, FractalNode } from '../../types';
@@ -39,7 +38,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         const fractalModule = childSafeInfo.fractalModules!.find(
           module => module.moduleType === FractalModuleType.FRACTAL,
         );
-        const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
+
         if (fractalModule) {
           const transactions = childSafeBalance.map(asset => {
             if (!asset.tokenAddress) {
@@ -49,15 +48,14 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                 [parentAddress, BigInt(asset.balance), '0x', 0],
               );
 
-              const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
-                'execTx',
-                [txData],
-              );
-              if (!isHex(fractalModuleCalldata)) {
-                throw new Error('Error encoding clawback call data');
-              }
+              const fractalModuleCalldata = encodeFunctionData({
+                abi: FractalModuleAbi,
+                functionName: 'execTx',
+                args: [txData],
+              });
+
               return {
-                target: getAddress(fractalModuleContract.address),
+                target: getAddress(fractalModule.moduleAddress),
                 value: 0,
                 calldata: fractalModuleCalldata,
               };
@@ -72,17 +70,14 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                 [getAddress(asset.tokenAddress), 0n, clawBackCalldata, 0],
               );
 
-              const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
-                'execTx',
-                [txData],
-              );
-
-              if (!isHex(fractalModuleCalldata)) {
-                throw new Error('Error encoding clawback call data');
-              }
+              const fractalModuleCalldata = encodeFunctionData({
+                abi: FractalModuleAbi,
+                functionName: 'execTx',
+                args: [txData],
+              });
 
               return {
-                target: getAddress(fractalModuleContract.address),
+                target: getAddress(fractalModule.moduleAddress),
                 value: 0,
                 calldata: fractalModuleCalldata,
               };
