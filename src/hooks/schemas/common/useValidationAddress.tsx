@@ -1,3 +1,4 @@
+import { ens_normalize } from '@adraffy/ens-normalize';
 import { Signer } from 'ethers';
 import { useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,22 +12,15 @@ import { couldBeENS } from '../../../utils/url';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export function validateENSName({ ensName }: { ensName: string }) {
-  if (couldBeENS(ensName)) {
-    return {
-      validation: {
-        address: '',
-        isValidAddress: true,
-      },
-      isValid: false,
-    };
+  try {
+    if (couldBeENS(ensName)) {
+      ens_normalize(ensName);
+      return true;
+    }
+    return false;
+  } catch (error) {
+    return false;
   }
-  return {
-    validation: {
-      address: '',
-      isValidAddress: false,
-    },
-    isValid: false,
-  };
 }
 
 export async function validateAddress({
@@ -107,6 +101,18 @@ export const useValidationAddress = () => {
       },
     };
   }, [signerOrProvider, addressValidationMap, t]);
+
+  const ensNameValidationTest = useMemo(() => {
+    return {
+      name: 'ENS Validation',
+      message: t('errorInvalidENSName', { ns: 'common' }),
+      test: async function (ensName: string | undefined) {
+        if (ensName === undefined) return true;
+        const isValid = validateENSName({ ensName });
+        return isValid;
+      },
+    };
+  }, [t]);
 
   const addressValidationTestSimple = useMemo(() => {
     return {
@@ -208,6 +214,7 @@ export const useValidationAddress = () => {
   return {
     addressValidationTestSimple,
     addressValidationTest,
+    ensNameValidationTest,
     newSignerValidationTest,
     uniqueAddressValidationTest,
     uniqueNFTAddressValidationTest,

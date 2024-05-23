@@ -16,6 +16,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
     addressValidationTest,
     uniqueAddressValidationTest,
     uniqueNFTAddressValidationTest,
+    ensNameValidationTest,
   } = useValidationAddress();
   const {
     minValueValidation,
@@ -35,7 +36,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
         essentials: Yup.object().shape({
           daoName: Yup.string().required(),
           governance: Yup.string().required(),
-          snapshotENS: Yup.string(),
+          snapshotENS: Yup.string().test(ensNameValidationTest),
         }),
         multisig: Yup.object().when('essentials', {
           is: ({ governance }: DAOEssentials) => governance === GovernanceType.MULTISIG,
@@ -167,6 +168,7 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
       uniqueNFTAddressValidationTest,
       minValueValidation,
       isBigIntValidation,
+      ensNameValidationTest,
     ],
   );
   return { createDAOValidation };

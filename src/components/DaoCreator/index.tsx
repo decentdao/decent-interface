@@ -72,7 +72,7 @@ function DaoCreator({
             deployDAO(daoData, customNonce);
           }
         }}
-        isInitialValid={false}
+        validateOnMount
       >
         {({ handleSubmit, ...rest }) => (
           <form onSubmit={handleSubmit}>
