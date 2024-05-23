@@ -71,9 +71,9 @@ function ProposalVotes({
     );
   }
 
-  const yesVotesPercentage = getVotesPercentage(yes);
-  const noVotesPercentage = getVotesPercentage(no);
-  const abstainVotesPercentage = getVotesPercentage(abstain);
+  const yesVotesPercentage = getVotesPercentage(yes).toFixed(2);
+  const noVotesPercentage = getVotesPercentage(no).toFixed(2);
+  const abstainVotesPercentage = getVotesPercentage(abstain).toFixed(2);
 
   return (
     <Flex
@@ -89,16 +89,16 @@ function ProposalVotes({
           <GridItem rowGap={4}>
             <VotesPercentage
               label={t('yes')}
-              percentage={yesVotesPercentage}
+              percentage={Number(yesVotesPercentage)}
             />
             <VotesPercentage
               label={t('no')}
-              percentage={noVotesPercentage}
+              percentage={Number(noVotesPercentage)}
             />
 
             <VotesPercentage
               label={t('abstain')}
-              percentage={abstainVotesPercentage}
+              percentage={Number(abstainVotesPercentage)}
             />
           </GridItem>
         </Grid>
