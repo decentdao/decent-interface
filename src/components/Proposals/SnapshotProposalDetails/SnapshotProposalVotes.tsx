@@ -64,7 +64,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                 <VotesPercentage
                   key={choice}
                   label={choice}
-                  percentage={choicePercentageFromTotal.toFixed(1)}
+                  percentage={Number(choicePercentageFromTotal.toFixed(1))}
                 />
               );
             })}
@@ -92,10 +92,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                 >
                   {t('shutterVotesHidden')} |
                 </Text>
-                <ProposalCountdown
-                  proposal={proposal}
-                  showIcon={false}
-                />
+                <ProposalCountdown proposal={proposal} />
               </Flex>
             ) : (
               votes.map(vote => (
