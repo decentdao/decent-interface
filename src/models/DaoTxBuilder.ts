@@ -115,8 +115,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     if (this.parentAddress) {
       const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
         azoriusTxBuilder.azoriusContract!.address,
-        azoriusTxBuilder.linearERC20VotingAddress ??
-          azoriusTxBuilder.linearERC721VotingContract?.address,
+        azoriusTxBuilder.linearERC20VotingAddress ?? azoriusTxBuilder.linearERC721VotingAddress,
         this.parentStrategyType,
         this.parentStrategyAddress,
       );

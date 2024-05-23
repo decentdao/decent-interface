@@ -5,7 +5,6 @@ import {
   MultisigFreezeGuard__factory,
   MultisigFreezeVoting__factory,
   Azorius__factory,
-  LinearERC721Voting__factory,
   ERC721FreezeVoting__factory,
 } from '@fractal-framework/fractal-contracts';
 import { useMemo } from 'react';
@@ -26,7 +25,6 @@ export default function useSafeContracts() {
       multisigFreezeVotingMasterCopy,
       erc20FreezeVotingMasterCopy,
       erc721FreezeVotingMasterCopy,
-      linearVotingERC721MasterCopy,
     },
   } = useNetworkConfig();
 
@@ -38,11 +36,6 @@ export default function useSafeContracts() {
     const fractalAzoriusMasterCopyContract = {
       asSigner: Azorius__factory.connect(fractalAzoriusMasterCopy, signerOrProvider),
       asProvider: Azorius__factory.connect(fractalAzoriusMasterCopy, provider),
-    };
-
-    const linearVotingERC721MasterCopyContract = {
-      asSigner: LinearERC721Voting__factory.connect(linearVotingERC721MasterCopy, signerOrProvider),
-      asProvider: LinearERC721Voting__factory.connect(linearVotingERC721MasterCopy, provider),
     };
 
     const fractalModuleMasterCopyContract = {
@@ -89,7 +82,6 @@ export default function useSafeContracts() {
       freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
       freezeERC721VotingMasterCopyContract,
-      linearVotingERC721MasterCopyContract,
     };
   }, [
     fractalAzoriusMasterCopy,
@@ -98,7 +90,6 @@ export default function useSafeContracts() {
     azoriusFreezeGuardMasterCopy,
     multisigFreezeVotingMasterCopy,
     erc20FreezeVotingMasterCopy,
-    linearVotingERC721MasterCopy,
     erc721FreezeVotingMasterCopy,
     signerOrProvider,
     provider,

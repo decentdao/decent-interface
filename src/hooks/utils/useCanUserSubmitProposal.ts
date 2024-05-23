@@ -3,13 +3,13 @@ import { useState, useCallback, useEffect } from 'react';
 import { getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../assets/abi/LinearERC20Voting';
+import LinearERC721VotingAbi from '../../assets/abi/LinearERC721Voting';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { GovernanceType } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
 import { useFractalModules } from '../DAO/loaders/useFractalModules';
-import useSafeContracts from '../safe/useSafeContracts';
 
 export function useCanUserCreateProposal() {
   const {
@@ -19,7 +19,7 @@ export function useCanUserCreateProposal() {
     readOnly: { user },
   } = useFractal();
   const safeAPI = useSafeAPI();
-  const baseContracts = useSafeContracts();
+  // const baseContracts = useSafeContracts();
   const lookupModules = useFractalModules();
   const [canUserCreateProposal, setCanUserCreateProposal] = useState<boolean>();
   const publicClient = usePublicClient();
@@ -40,7 +40,7 @@ export function useCanUserCreateProposal() {
         return !!owners?.includes(user.address || '');
       };
 
-      if (safeAddress && baseContracts) {
+      if (safeAddress) {
         const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
         const safeModules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(safeModules);
@@ -66,7 +66,7 @@ export function useCanUserCreateProposal() {
           const { owners } = safe || {};
           return checkIsMultisigOwner(owners);
         } else if (type === GovernanceType.AZORIUS_ERC20) {
-          if (ozLinearVotingContractAddress && user.address && baseContracts) {
+          if (ozLinearVotingContractAddress) {
             const ozLinearVotingContract = getContract({
               abi: LinearERC20VotingAbi,
               address: getAddress(ozLinearVotingContractAddress),
@@ -74,16 +74,13 @@ export function useCanUserCreateProposal() {
             });
             return ozLinearVotingContract.read.isProposer([getAddress(user.address)]);
           }
-        } else if (
-          type === GovernanceType.AZORIUS_ERC721 &&
-          baseContracts &&
-          erc721LinearVotingContractAddress
-        ) {
-          const erc721LinearVotingContract =
-            baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-              erc721LinearVotingContractAddress,
-            );
-          return erc721LinearVotingContract.isProposer(user.address);
+        } else if (type === GovernanceType.AZORIUS_ERC721 && erc721LinearVotingContractAddress) {
+          const erc721LinearVotingContract = getContract({
+            abi: LinearERC721VotingAbi,
+            address: getAddress(erc721LinearVotingContractAddress),
+            client: publicClient,
+          });
+          return erc721LinearVotingContract.read.isProposer([getAddress(user.address)]);
         } else {
           return;
         }
@@ -91,7 +88,6 @@ export function useCanUserCreateProposal() {
       return;
     },
     [
-      baseContracts,
       erc721LinearVotingContractAddress,
       lookupModules,
       ozLinearVotingContractAddress,
