@@ -1,11 +1,8 @@
-import {
-  Azorius,
-  LinearERC721Voting__factory,
-  LinearERC721Voting,
-} from '@fractal-framework/fractal-contracts';
+import { Azorius } from '@fractal-framework/fractal-contracts';
 import { useState, useEffect, useCallback } from 'react';
-import { erc721Abi, getAddress, getContract } from 'viem';
+import { GetContractReturnType, PublicClient, erc721Abi, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
+import LinearERC721VotingAbi from '../../../assets/abi/LinearERC721Voting';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -59,7 +56,9 @@ export default function useUserERC721VotingTokens(
       const userERC721Tokens = new Map<string, Set<string>>();
 
       let govTokens = erc721Tokens;
-      let votingContract: LinearERC721Voting | undefined;
+      let votingContract:
+        | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
+        | undefined;
 
       if (!baseContracts || !signerOrProvider || !daoAddress || !publicClient || !safeAPI) {
         return {
@@ -81,13 +80,18 @@ export default function useUserERC721VotingTokens(
           const votingContractAddress = (
             await azoriusContract.getStrategies(SENTINEL_ADDRESS, 0)
           )[1];
-          votingContract = LinearERC721Voting__factory.connect(
-            votingContractAddress,
-            signerOrProvider,
-          );
-          const addresses = await votingContract.getAllTokenAddresses();
+          votingContract = getContract({
+            abi: LinearERC721VotingAbi,
+            address: getAddress(votingContractAddress),
+            client: publicClient,
+          });
+          const addresses = await votingContract.read.getAllTokenAddresses();
           govTokens = await Promise.all(
             addresses.map(async tokenAddress => {
+              if (!votingContract) {
+                throw new Error('voting contract is undefined');
+              }
+
               const tokenContract = getContract({
                 abi: erc721Abi,
                 address: getAddress(tokenAddress),
@@ -95,7 +99,7 @@ export default function useUserERC721VotingTokens(
               });
 
               const [votingWeight, name, symbol] = await Promise.all([
-                (await votingContract!.getTokenWeight(tokenAddress)).toBigInt(),
+                votingContract.read.getTokenWeight([tokenAddress]),
                 tokenContract.read.name(),
                 tokenContract.read.symbol(),
               ]);
@@ -107,9 +111,11 @@ export default function useUserERC721VotingTokens(
       }
 
       if (erc721LinearVotingContractAddress && !votingContract) {
-        votingContract = baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-          erc721LinearVotingContractAddress,
-        );
+        votingContract = getContract({
+          abi: LinearERC721VotingAbi,
+          address: getAddress(erc721LinearVotingContractAddress),
+          client: publicClient,
+        });
       }
 
       if (!govTokens || !votingContract || !user.address) {
@@ -173,14 +179,18 @@ export default function useUserERC721VotingTokens(
           // Maybe, if we will encounter need to wider support of ERC-1155 - we will bring it and improve this piece of crap as well :D
           await Promise.all(
             [...tokenIdsSet.values()].map(async tokenId => {
+              if (!votingContract) {
+                throw new Error('voting contract is undefined');
+              }
+
               totalTokenAddresses.push(tokenAddress);
               totalTokenIds.push(tokenId);
               if (_proposalId) {
-                const tokenVoted = await votingContract!.hasVoted(
-                  _proposalId,
-                  tokenAddress,
-                  tokenId,
-                );
+                const tokenVoted = await votingContract.read.hasVoted([
+                  Number(_proposalId),
+                  getAddress(tokenAddress),
+                  BigInt(tokenId),
+                ]);
                 if (!tokenVoted) {
                   tokenAddresses.push(tokenAddress);
                   tokenIds.push(tokenId);
