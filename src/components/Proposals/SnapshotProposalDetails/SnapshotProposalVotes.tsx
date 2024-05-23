@@ -64,7 +64,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                 <VotesPercentage
                   key={choice}
                   label={choice}
-                  percentage={Number(choicePercentageFromTotal.toFixed(1))}
+                  percentage={choicePercentageFromTotal.toFixed(1)}
                 />
               );
             })}

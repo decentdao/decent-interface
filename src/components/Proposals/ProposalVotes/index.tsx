@@ -15,14 +15,14 @@ import ProgressBar from '../../ui/utils/ProgressBar';
 import ProposalERC20VoteItem from './ProposalERC20VoteItem';
 import ProposalERC721VoteItem from './ProposalERC721VoteItem';
 
-export function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
+export function VotesPercentage({ label, percentage }: { label: string; percentage: string }) {
   return (
     <Flex
       flexWrap="wrap"
       marginTop={2}
     >
       <ProgressBar
-        value={percentage}
+        value={Number(percentage)}
         label={label}
       />
     </Flex>
@@ -54,11 +54,11 @@ function ProposalVotes({
   );
 
   const getVotesPercentage = useCallback(
-    (voteTotal: bigint): number => {
+    (voteTotal: bigint): string => {
       if (totalVotesCasted === 0n) {
-        return 0;
+        return '0';
       }
-      return Number((voteTotal * 100n) / totalVotesCasted);
+      return ((Number(voteTotal) * 100) / Number(totalVotesCasted)).toFixed(2);
     },
     [totalVotesCasted],
   );
