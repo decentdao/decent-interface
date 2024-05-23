@@ -92,7 +92,10 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                 >
                   {t('shutterVotesHidden')} |
                 </Text>
-                <ProposalCountdown proposal={proposal} />
+                <ProposalCountdown
+                  proposal={proposal}
+                  showIcon={false}
+                />
               </Flex>
             ) : (
               votes.map(vote => (
