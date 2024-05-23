@@ -26,8 +26,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
 
   const resetSearch = () => {
     onClose();
-    setLocalInput(undefined);
-    setSearchString(undefined);
+    setLocalInput('');
   };
 
   useOutsideClick({

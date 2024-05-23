@@ -7,9 +7,11 @@ import { DAO_ROUTES } from '../../constants/routes';
 import useDAOName from '../../hooks/DAO/useDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
+import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
+  const { action } = useFractal();
   const { daoRegistryName } = useDAOName({ address });
   const navigate = useNavigate();
 
@@ -20,6 +22,7 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
 
   const onClickNav = () => {
     if (onClick) onClick();
+    action.resetSafeState();
     navigate(DAO_ROUTES.dao.relative(network, address));
   };
 

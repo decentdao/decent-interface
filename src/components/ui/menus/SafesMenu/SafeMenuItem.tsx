@@ -21,9 +21,7 @@ export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
   const { t } = useTranslation('dashboard');
 
   const onClickNav = () => {
-    // TODO is this needed here?
-    action.resetDAO();
-
+    action.resetSafeState();
     navigate(DAO_ROUTES.dao.relative(network, address));
   };
 

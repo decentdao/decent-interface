@@ -25,9 +25,8 @@ export default function HomePage() {
   const openSearchSafeModal = useFractalModal(ModalType.SEARCH_SAFE);
 
   useEffect(() => {
-    // TODO is this needed here?
     if (daoAddress) {
-      action.resetDAO();
+      action.resetSafeState();
     }
   }, [daoAddress, action]);
 

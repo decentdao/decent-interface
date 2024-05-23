@@ -197,7 +197,7 @@ export interface FractalStore extends Fractal {
   action: {
     dispatch: Dispatch<FractalActions>;
     loadReadOnlyValues: () => Promise<void>;
-    resetDAO: () => Promise<void>;
+    resetSafeState: () => Promise<void>;
   };
 }
 export enum StoreAction {
