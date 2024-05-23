@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Address, getAddress, isAddress } from 'viem';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
-import { couldBeENS } from '../../utils/url';
+import { validateENSName } from '../../utils/url';
 
 const useAddress = (addressInput: string | undefined) => {
   const provider = useEthersProvider();
@@ -37,7 +37,7 @@ const useAddress = (addressInput: string | undefined) => {
     }
 
     // if it can't be an ENS address, validation is false
-    if (!couldBeENS(addressInput) && isAddress(addressInput)) {
+    if (!validateENSName(addressInput) && isAddress(addressInput)) {
       setAddress(getAddress(addressInput));
       setIsValidAddress(false);
       setIsAddressLoading(false);

@@ -5,7 +5,7 @@ import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
-import { couldBeENS } from '../../../utils/url';
+import { validateENSName } from '../../../utils/url';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { validateAddress } from '../common/useValidationAddress';
 
@@ -82,7 +82,7 @@ export function useDAOCreateTests() {
               return addressValidation.address;
             }
             // because mapping is not 'state', this catches values that may not be resolved yet
-            if (couldBeENS(address)) {
+            if (validateENSName(address)) {
               const { validation } = await validateAddress({ signerOrProvider, address });
               return validation.address;
             }
