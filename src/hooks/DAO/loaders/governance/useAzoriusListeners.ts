@@ -1,15 +1,14 @@
-import { LinearERC721Voting } from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { TimelockPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/MultisigFreezeGuard';
 import {
   Azorius,
   ProposalCreatedEvent,
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
-import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { Dispatch, useEffect, useMemo } from 'react';
 import { getAddress, getContract, GetContractReturnType, Hex, PublicClient } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
+import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
@@ -34,7 +33,9 @@ const proposalCreatedEventListener = (
   erc20StrategyContract:
     | GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient>
     | undefined,
-  erc721StrategyContract: LinearERC721Voting | undefined,
+  erc721StrategyContract:
+    | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
+    | undefined,
   provider: Providers,
   strategyType: VotingStrategyType,
   decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
@@ -91,33 +92,6 @@ const proposalCreatedEventListener = (
   };
 };
 
-const erc721VotedEventListener = (
-  erc721StrategyContract: LinearERC721Voting,
-  strategyType: VotingStrategyType,
-  dispatch: Dispatch<FractalActions>,
-): TypedListener<ERC721VotedEvent> => {
-  return async (voter, proposalId, voteType, tokenAddresses, tokenIds) => {
-    const votesSummary = await getProposalVotesSummary(
-      undefined,
-      erc721StrategyContract,
-      strategyType,
-      BigInt(proposalId),
-    );
-
-    dispatch({
-      type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC721_VOTE,
-      payload: {
-        proposalId: proposalId.toString(),
-        voter,
-        support: voteType,
-        tokenAddresses,
-        tokenIds: tokenIds.map(tokenId => tokenId.toString()),
-        votesSummary,
-      },
-    });
-  };
-};
-
 export const useAzoriusListeners = () => {
   const {
     action,
@@ -165,14 +139,16 @@ export const useAzoriusListeners = () => {
   }, [ozLinearVotingContractAddress, publicClient]);
 
   const erc721StrategyContract = useMemo(() => {
-    if (!baseContracts || !erc721LinearVotingContractAddress) {
+    if (!erc721LinearVotingContractAddress || !publicClient) {
       return undefined;
     }
 
-    return baseContracts.linearVotingERC721MasterCopyContract.asProvider.attach(
-      erc721LinearVotingContractAddress,
-    );
-  }, [baseContracts, erc721LinearVotingContractAddress]);
+    return getContract({
+      abi: LinearERC721VotingAbi,
+      address: getAddress(erc721LinearVotingContractAddress),
+      client: publicClient,
+    });
+  }, [erc721LinearVotingContractAddress, publicClient]);
 
   useEffect(() => {
     if (!azoriusContract || !provider || !strategyType) {
@@ -248,19 +224,45 @@ export const useAzoriusListeners = () => {
       return;
     }
 
-    const votedEvent = erc721StrategyContract.filters.Voted();
-    const listener = erc721VotedEventListener(
-      erc721StrategyContract,
-      strategyType,
-      action.dispatch,
-    );
+    const unwatch = erc721StrategyContract.watchEvent.Voted({
+      onLogs: async logs => {
+        for (const log of logs) {
+          if (
+            !log.args.proposalId ||
+            !log.args.voter ||
+            !log.args.voteType ||
+            !log.args.tokenAddresses ||
+            !log.args.tokenIds
+          ) {
+            continue;
+          }
 
-    erc721StrategyContract.on(votedEvent, listener);
+          const votesSummary = await getProposalVotesSummary(
+            undefined,
+            erc721StrategyContract,
+            strategyType,
+            BigInt(log.args.proposalId),
+          );
+
+          action.dispatch({
+            type: FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC721_VOTE,
+            payload: {
+              proposalId: log.args.proposalId.toString(),
+              voter: log.args.voter,
+              support: log.args.voteType,
+              tokenAddresses: log.args.tokenAddresses.map(tokenAddress => tokenAddress),
+              tokenIds: log.args.tokenIds.map(tokenId => tokenId.toString()),
+              votesSummary,
+            },
+          });
+        }
+      },
+    });
 
     return () => {
-      erc721StrategyContract.off(votedEvent, listener);
+      unwatch();
     };
-  }, [action.dispatch, erc721StrategyContract, strategyType]);
+  }, [action, erc721StrategyContract, strategyType]);
 
   useEffect(() => {
     if (!azoriusContract) {
