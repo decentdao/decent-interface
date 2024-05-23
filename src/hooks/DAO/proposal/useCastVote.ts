@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { getAddress, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../../assets/abi/LinearERC20Voting';
+import LinearERC721VotingAbi from '../../../assets/abi/LinearERC721Voting';
 import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -17,7 +18,6 @@ import {
   ExtendedSnapshotProposal,
 } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
-import useSafeContracts from '../../safe/useSafeContracts';
 import { useTransaction } from '../../utils/useTransaction';
 import useSnapshotSpaceName from '../loaders/snapshot/useSnapshotSpaceName';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';
@@ -42,7 +42,6 @@ const useCastVote = ({
       user: { address },
     },
   } = useFractal();
-  const baseContracts = useSafeContracts();
   const daoSnapshotSpaceName = useSnapshotSpaceName();
   const signer = useEthersSigner();
   const client = useMemo(() => {
@@ -55,7 +54,7 @@ const useCastVote = ({
   const azoriusGovernance = useMemo(() => governance as AzoriusGovernance, [governance]);
   const { type } = azoriusGovernance;
 
-  const [contractCallCastVote, contractCallPending, contractCallCastVoteViem] = useTransaction();
+  const [, contractCallPending, contractCallCastVoteViem] = useTransaction();
 
   const { remainingTokenIds, remainingTokenAddresses } = useUserERC721VotingTokens(
     proposal.proposalId,
@@ -110,20 +109,21 @@ const useCastVote = ({
       } else if (
         type === GovernanceType.AZORIUS_ERC721 &&
         erc721LinearVotingContractAddress &&
-        baseContracts
+        walletClient
       ) {
-        const erc721LinearVotingContract =
-          baseContracts.linearVotingERC721MasterCopyContract.asSigner.attach(
-            erc721LinearVotingContractAddress,
-          );
-        contractCallCastVote({
+        const erc721LinearVotingContract = getContract({
+          abi: LinearERC721VotingAbi,
+          address: getAddress(erc721LinearVotingContractAddress),
+          client: walletClient,
+        });
+        contractCallCastVoteViem({
           contractFn: () =>
-            erc721LinearVotingContract.vote(
-              proposal.proposalId,
+            erc721LinearVotingContract.write.vote([
+              Number(proposal.proposalId),
               vote,
-              remainingTokenAddresses,
-              remainingTokenIds,
-            ),
+              remainingTokenAddresses.map(a => getAddress(a)),
+              remainingTokenIds.map(i => BigInt(i)),
+            ]),
           pendingMessage: t('pendingCastVote'),
           failedMessage: t('failedCastVote'),
           successMessage: t('successCastVote'),
@@ -137,8 +137,6 @@ const useCastVote = ({
       }
     },
     [
-      baseContracts,
-      contractCallCastVote,
       contractCallCastVoteViem,
       erc721LinearVotingContractAddress,
       getCanVote,
