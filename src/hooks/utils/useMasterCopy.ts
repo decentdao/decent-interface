@@ -11,7 +11,7 @@ export function useMasterCopy() {
   const { getValue, setValue } = useLocalStorage();
   const { baseContracts } = useFractal();
   const {
-    contracts: { zodiacModuleProxyFactory, linearVotingMasterCopy },
+    contracts: { zodiacModuleProxyFactory, linearVotingMasterCopy, linearVotingERC721MasterCopy },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
 
@@ -20,9 +20,8 @@ export function useMasterCopy() {
     [linearVotingMasterCopy],
   );
   const isOzLinearVotingERC721 = useCallback(
-    (masterCopyAddress: Address) =>
-      masterCopyAddress === baseContracts?.linearVotingERC721MasterCopyContract.asProvider.address,
-    [baseContracts],
+    (masterCopyAddress: Address) => masterCopyAddress === linearVotingERC721MasterCopy,
+    [linearVotingERC721MasterCopy],
   );
   const isMultisigFreezeGuard = useCallback(
     (masterCopyAddress: Address) =>
