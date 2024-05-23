@@ -11,8 +11,6 @@ export function Footer() {
       flexWrap="wrap"
       justifyContent="center"
       alignItems="center"
-      p="3rem"
-      pt="1.5rem"
       gap={{ base: 4, md: 8 }}
     >
       <Flex gap={4}>
