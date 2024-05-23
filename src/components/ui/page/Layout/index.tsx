@@ -81,7 +81,11 @@ export default function Layout() {
           </ErrorBoundary>
         </Container>
       </GridItem>
-      <GridItem area="footer">
+      <GridItem
+        area="footer"
+        pt="3rem"
+        pb={{ base: '5rem', md: '3rem' }}
+      >
         <Footer />
       </GridItem>
     </Grid>
