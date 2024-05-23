@@ -1,5 +1,4 @@
 import {
-  FractalModule,
   MultisigFreezeGuard,
   MultisigFreezeVoting,
   ERC20FreezeVoting,
@@ -16,7 +15,6 @@ export type ContractConnection<T> = {
 };
 
 export interface BaseContracts {
-  fractalModuleMasterCopyContract: FractalModule;
   multisigFreezeGuardMasterCopyContract: MultisigFreezeGuard;
   freezeERC20VotingMasterCopyContract: ERC20FreezeVoting;
   freezeERC721VotingMasterCopyContract: ERC721FreezeVoting;

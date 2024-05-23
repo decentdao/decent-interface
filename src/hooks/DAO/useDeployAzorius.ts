@@ -62,7 +62,6 @@ const useDeployAzorius = () => {
       }
       const {
         fractalAzoriusMasterCopyContract,
-        fractalModuleMasterCopyContract,
         multisigFreezeGuardMasterCopyContract,
         azoriusFreezeGuardMasterCopyContract,
         freezeMultisigVotingMasterCopyContract,
@@ -77,7 +76,6 @@ const useDeployAzorius = () => {
       };
 
       const builderBaseContracts: BaseContracts = {
-        fractalModuleMasterCopyContract: fractalModuleMasterCopyContract.asProvider,
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asProvider,
         freezeERC20VotingMasterCopyContract: freezeERC20VotingMasterCopyContract.asProvider,
         freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asProvider,

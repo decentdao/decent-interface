@@ -1,4 +1,8 @@
-import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
+import {
+  Azorius,
+  AzoriusFreezeGuard,
+  MultisigFreezeGuard,
+} from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { getAddress, zeroAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -49,7 +53,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         module => module.moduleType === FractalModuleType.AZORIUS,
       );
       if (!!azoriusModule && azoriusModule.moduleContract) {
-        const azoriusGuardAddress = await azoriusModule.moduleContract.getGuard();
+        const azoriusGuardAddress = await (azoriusModule.moduleContract as Azorius).getGuard();
 
         if (azoriusGuardAddress === zeroAddress) {
           return {

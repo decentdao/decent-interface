@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
-import { getAddress } from 'viem';
+import { getAddress, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import FractalModuleAbi from '../../../assets/abi/FractalModule';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalModuleData, FractalModuleType } from '../../../types';
 import { useMasterCopy } from '../../utils/useMasterCopy';
@@ -7,6 +9,7 @@ import { useMasterCopy } from '../../utils/useMasterCopy';
 export const useFractalModules = () => {
   const { baseContracts } = useFractal();
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
+  const publicClient = usePublicClient();
   const lookupModules = useCallback(
     async (_moduleAddresses: string[]) => {
       const modules = await Promise.all(
@@ -24,10 +27,13 @@ export const useFractalModules = () => {
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.AZORIUS,
             };
-          } else if (masterCopyData.isFractalModule && baseContracts) {
+          } else if (masterCopyData.isFractalModule && publicClient) {
             safeModule = {
-              moduleContract:
-                baseContracts.fractalModuleMasterCopyContract.asSigner.attach(moduleAddress),
+              moduleContract: getContract({
+                abi: FractalModuleAbi,
+                address: getAddress(moduleAddress),
+                client: publicClient,
+              }),
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.FRACTAL,
             };
@@ -44,7 +50,7 @@ export const useFractalModules = () => {
       );
       return modules;
     },
-    [baseContracts, getZodiacModuleProxyMasterCopyData],
+    [baseContracts, getZodiacModuleProxyMasterCopyData, publicClient],
   );
   return lookupModules;
 };
