@@ -1,9 +1,4 @@
-import {
-  Azorius,
-  Azorius__factory,
-  LinearERC721Voting,
-  LinearERC721Voting__factory,
-} from '@fractal-framework/fractal-contracts';
+import { Azorius, Azorius__factory } from '@fractal-framework/fractal-contracts';
 import {
   getCreate2Address,
   Address,
@@ -22,11 +17,12 @@ import {
 import ERC20ClaimAbi from '../assets/abi/ERC20Claim';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
+import LinearERC721VotingAbi from '../assets/abi/LinearERC721Voting';
 import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import VotesERC20Abi from '../assets/abi/VotesERC20';
 import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
 import { SENTINEL_ADDRESS } from '../constants/common';
-import { buildContractCall, buildContractCallViem, getRandomBytes } from '../helpers';
+import { buildContractCallViem, getRandomBytes } from '../helpers';
 import {
   BaseContracts,
   SafeTransaction,
@@ -55,7 +51,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public azoriusContract: Azorius | undefined;
   public linearERC20VotingAddress: Address | undefined;
-  public linearERC721VotingContract: LinearERC721Voting | undefined;
+  public linearERC721VotingAddress: Address | undefined;
   public votesTokenAddress: Address | undefined;
 
   private votesERC20WrapperMasterCopyAddress: string;
@@ -64,6 +60,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private multiSendCallOnlyAddress: Address;
   private erc20ClaimMasterCopyAddress: Address;
   private linearERC20VotingMasterCopyAddress: Address;
+  private linearERC721VotingMasterCopyAddress: Address;
 
   private tokenNonce: bigint;
   private strategyNonce: bigint;
@@ -83,6 +80,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     multiSendCallOnlyAddress: Address,
     erc20ClaimMasterCopyAddress: Address,
     linearERC20VotingMasterCopyAddress: Address,
+    linearERC721VotingMasterCopyAddress: Address,
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
@@ -109,6 +107,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
     this.erc20ClaimMasterCopyAddress = erc20ClaimMasterCopyAddress;
     this.linearERC20VotingMasterCopyAddress = linearERC20VotingMasterCopyAddress;
+    this.linearERC721VotingMasterCopyAddress = linearERC721VotingMasterCopyAddress;
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       daoData = daoData as AzoriusERC20DAO;
@@ -174,8 +173,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         false,
       );
     } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
-      return buildContractCall(
-        this.linearERC721VotingContract!,
+      return buildContractCallViem(
+        LinearERC721VotingAbi,
+        this.linearERC721VotingAddress!,
         'setAzorius', // contract function name
         [this.azoriusContract!.address],
         0,
@@ -240,7 +240,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       [
         daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20
           ? this.linearERC20VotingMasterCopyAddress
-          : this.azoriusContracts!.linearVotingERC721MasterCopyContract.address,
+          : this.linearERC721VotingMasterCopyAddress,
         this.encodedStrategySetupData,
         this.strategyNonce,
       ],
@@ -512,18 +512,14 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         ],
       );
 
-      const encodedStrategySetupData =
-        this.azoriusContracts!.linearVotingERC721MasterCopyContract.interface.encodeFunctionData(
-          'setUp',
-          [encodedStrategyInitParams],
-        );
-
-      if (!isHex(encodedStrategySetupData)) {
-        throw new Error('Error encoding strategy setup data');
-      }
+      const encodedStrategySetupData = encodeFunctionData({
+        abi: LinearERC721VotingAbi,
+        functionName: 'setUp',
+        args: [encodedStrategyInitParams],
+      });
 
       const strategyByteCodeLinear = generateContractByteCodeLinear(
-        getAddress(this.azoriusContracts!.linearVotingERC721MasterCopyContract.address),
+        this.linearERC721VotingMasterCopyAddress,
       );
 
       const strategySalt = keccak256(
@@ -596,10 +592,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       this.votesTokenAddress = this.predictedTokenAddress;
       this.linearERC20VotingAddress = this.predictedStrategyAddress;
     } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
-      this.linearERC721VotingContract = LinearERC721Voting__factory.connect(
-        this.predictedStrategyAddress!,
-        this.signerOrProvider,
-      );
+      this.linearERC721VotingAddress = this.predictedStrategyAddress;
     }
   }
 }

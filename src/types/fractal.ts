@@ -6,7 +6,6 @@ import {
   MultisigFreezeVoting,
   MultisigFreezeGuard,
   ERC721FreezeVoting,
-  LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
 import {
   SafeMultisigTransactionWithTransfersResponse,
@@ -318,7 +317,6 @@ export interface NodeHierarchy {
 
 export interface FractalContracts {
   fractalAzoriusMasterCopyContract: ContractConnection<Azorius>;
-  linearVotingERC721MasterCopyContract: ContractConnection<LinearERC721Voting>;
   fractalModuleMasterCopyContract: ContractConnection<FractalModule>;
   multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
   azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;

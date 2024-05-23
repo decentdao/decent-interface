@@ -18,7 +18,6 @@ import useSignerOrProvider from '../utils/useSignerOrProvider';
 const useBuildDAOTx = () => {
   const signerOrProvider = useSignerOrProvider();
   const {
-    createOptions,
     contracts: {
       fallbackHandler,
       votesERC20WrapperMasterCopy,
@@ -32,6 +31,7 @@ const useBuildDAOTx = () => {
       claimingMasterCopy: erc20ClaimMasterCopy,
       fractalModuleMasterCopy,
       linearVotingMasterCopy: linearERC20VotingMasterCopy,
+      linearVotingERC721MasterCopy: linearERC721VotingMasterCopy,
     },
   } = useNetworkConfig();
 
@@ -55,7 +55,6 @@ const useBuildDAOTx = () => {
         return;
       }
       const {
-        linearVotingERC721MasterCopyContract,
         fractalAzoriusMasterCopyContract,
         fractalModuleMasterCopyContract,
         multisigFreezeGuardMasterCopyContract,
@@ -66,12 +65,6 @@ const useBuildDAOTx = () => {
       } = baseContracts;
 
       if (
-        createOptions.includes(GovernanceType.AZORIUS_ERC721) &&
-        (!freezeERC721VotingMasterCopyContract || !linearVotingERC721MasterCopyContract)
-      ) {
-        return;
-      }
-      if (
         daoData.governance === GovernanceType.AZORIUS_ERC20 ||
         daoData.governance === GovernanceType.AZORIUS_ERC721
       ) {
@@ -81,7 +74,6 @@ const useBuildDAOTx = () => {
 
         azoriusContracts = {
           fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asSigner,
-          linearVotingERC721MasterCopyContract: linearVotingERC721MasterCopyContract.asSigner,
           azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asSigner,
         };
       }
@@ -112,6 +104,7 @@ const useBuildDAOTx = () => {
         erc20ClaimMasterCopy,
         fractalModuleMasterCopy,
         linearERC20VotingMasterCopy,
+        linearERC721VotingMasterCopy,
         parentAddress,
         parentTokenAddress,
       );
@@ -157,7 +150,6 @@ const useBuildDAOTx = () => {
       erc721LinearVotingContractAddress,
       dao,
       governance,
-      createOptions,
       fallbackHandler,
       votesERC20WrapperMasterCopy,
       votesERC20MasterCopy,
@@ -170,6 +162,7 @@ const useBuildDAOTx = () => {
       erc20ClaimMasterCopy,
       fractalModuleMasterCopy,
       linearERC20VotingMasterCopy,
+      linearERC721VotingMasterCopy,
     ],
   );
 

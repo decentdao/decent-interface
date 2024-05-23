@@ -37,6 +37,7 @@ const useDeployAzorius = () => {
       claimingMasterCopy: erc20ClaimMasterCopy,
       fractalModuleMasterCopy,
       linearVotingMasterCopy: linearERC20VotingMasterCopy,
+      linearVotingERC721MasterCopy: linearERC721VotingMasterCopy,
     },
     addressPrefix,
   } = useNetworkConfig();
@@ -60,7 +61,6 @@ const useDeployAzorius = () => {
         return;
       }
       const {
-        linearVotingERC721MasterCopyContract,
         fractalAzoriusMasterCopyContract,
         fractalModuleMasterCopyContract,
         multisigFreezeGuardMasterCopyContract,
@@ -73,7 +73,6 @@ const useDeployAzorius = () => {
 
       azoriusContracts = {
         fractalAzoriusMasterCopyContract: fractalAzoriusMasterCopyContract.asProvider,
-        linearVotingERC721MasterCopyContract: linearVotingERC721MasterCopyContract.asProvider,
         azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asProvider,
       };
 
@@ -103,6 +102,7 @@ const useDeployAzorius = () => {
         erc20ClaimMasterCopy,
         fractalModuleMasterCopy,
         linearERC20VotingMasterCopy,
+        linearERC721VotingMasterCopy,
         undefined,
         undefined,
       );
@@ -173,6 +173,7 @@ const useDeployAzorius = () => {
       erc20ClaimMasterCopy,
       fractalModuleMasterCopy,
       linearERC20VotingMasterCopy,
+      linearERC721VotingMasterCopy,
     ],
   );
 
