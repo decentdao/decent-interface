@@ -75,11 +75,9 @@ export default function HomePage() {
       <Flex
         direction="column"
         w="full"
-        gap="0.5rem"
       >
         <MySafes />
       </Flex>
-      <ExternalLink href={URL_DOCS}>{t('docsCTA')}</ExternalLink>
     </Flex>
   );
 }
