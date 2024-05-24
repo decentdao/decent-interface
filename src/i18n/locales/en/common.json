@@ -84,7 +84,6 @@
   "abi": "ABI",
   "abiSelectorHelper": "Select from the contract's pre-defined functions",
   "abiSelectorDescription": "Autopopulate with verified functions",
-  "titleNodes": "Hierarchy",
   "404Title": "Page not found",
   "404Button": "Decent App Home",
   "signers": "Signers",

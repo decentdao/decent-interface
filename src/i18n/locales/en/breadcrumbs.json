@@ -2,7 +2,7 @@
   "headerTitle": "{{daoName}} {{subject}}",
   "proposals": "All Proposals",
   "proposalNew": "New Proposal",
-  "nodes": "Hierarchy",
+  "nodes": "Organization",
   "treasury": "Treasury",
   "proposal": "#{{proposalId}} {{proposalTitle}}",
   "proposalTemplates": "Proposal Templates",
