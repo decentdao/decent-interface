@@ -120,13 +120,16 @@ export const useFractalNode = (
   );
 
   useEffect(() => {
-    if (skip || addressPrefix === undefined || daoAddress === undefined) {
+    if (
+      skip ||
+      addressPrefix === undefined ||
+      daoAddress === undefined ||
+      addressPrefix + daoAddress !== currentValidSafe.current
+    ) {
       reset({ error: false });
-      return;
-    }
-
-    if (addressPrefix + daoAddress !== currentValidSafe.current) {
-      setDAO(addressPrefix, daoAddress);
+      if (addressPrefix && daoAddress) {
+        setDAO(addressPrefix, daoAddress);
+      }
     }
   }, [addressPrefix, daoAddress, setDAO, reset, skip]);
 
