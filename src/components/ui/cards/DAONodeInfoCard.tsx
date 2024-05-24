@@ -32,7 +32,6 @@ export interface InfoProps extends FlexProps {
 export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: InfoProps) {
   const {
     node: { daoAddress: currentDAOAddress }, // used ONLY to determine if we're on the current DAO
-    action,
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   // for non Fractal Safes
@@ -64,11 +63,6 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
       onClick={event => {
         if (isCurrentDAO) {
           event.preventDefault();
-        } else {
-          // if we're not on the current DAO, reset
-          // the DAO data, so the one you're clicking
-          // into will load properly
-          action.resetSafeState();
         }
       }}
     >

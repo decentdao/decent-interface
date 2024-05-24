@@ -1,18 +1,13 @@
 import { Box, MenuList } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
-import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { SafeMenuItem } from './SafeMenuItem';
 
 export function SafesList() {
   const { favoritesList } = useAccountFavorites();
   const { addressPrefix } = useNetworkConfig();
-  const {
-    node: { daoAddress: connectedSafe },
-  } = useFractal();
 
   const { t } = useTranslation('dashboard');
   return (
@@ -49,7 +44,6 @@ export function SafesList() {
             }}
           >
             {favoritesList
-              .filter(favorite => connectedSafe !== getAddress(favorite))
               .map(favorite => (
                 <SafeMenuItem
                   key={favorite}
