@@ -413,6 +413,7 @@ export function Assets() {
                       <AccordionPanel
                         p={0}
                         overflowX="scroll"
+                        className="scroll-dark"
                       >
                         <CoinHeader />
                         {coinDisplay.displayData.map((coin, index) => {
