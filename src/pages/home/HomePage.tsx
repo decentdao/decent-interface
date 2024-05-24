@@ -3,7 +3,6 @@ import { DecentSignature } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useAccount } from 'wagmi';
 import ExternalLink from '../../components/ui/links/ExternalLink';
 import { ModalType } from '../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../components/ui/modals/useFractalModal';
@@ -17,8 +16,6 @@ export default function HomePage() {
     node: { daoAddress },
     action,
   } = useFractal();
-
-  const { isConnected } = useAccount();
 
   const { t } = useTranslation('home');
 
@@ -69,7 +66,6 @@ export default function HomePage() {
             variant="secondary"
             size="sm"
             cursor="pointer"
-            isDisabled={!isConnected}
           >
             <Text textStyle="button-small">{t('createCTA')}</Text>
           </Button>
