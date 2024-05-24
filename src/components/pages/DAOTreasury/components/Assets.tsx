@@ -458,6 +458,7 @@ export function Assets() {
                       <AccordionPanel
                         p={0}
                         overflowX="scroll"
+                        className="scroll-dark"
                       >
                         <NFTHeader />
                         {assetsNonFungible.map((asset, index) => (
