@@ -120,6 +120,7 @@ export default function Treasury() {
               bg="neutral-3"
               maxW={CONTENT_MAXW}
               overflowX="scroll"
+              className="scroll-dark"
             >
               <Transactions shownTransactions={shownTransactions} />
             </Box>

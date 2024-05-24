@@ -26,22 +26,7 @@ export function SafesList() {
           <Box
             maxHeight="20rem"
             overflowY="scroll"
-            sx={{
-              '&::-webkit-scrollbar': {
-                width: '0.5rem',
-                height: '0.5rem',
-              },
-              '&::-webkit-scrollbar-thumb': {
-                border: 'none',
-                boxShadow: 'none',
-                background: 'neutral-4',
-                borderRadius: '0.5rem',
-                minHeight: '2.5rem',
-              },
-              '&::-webkit-scrollbar-thumb:hover': {
-                backgroundColor: 'neutral-4',
-              },
-            }}
+            className="scroll-dark"
           >
             {favoritesList.map(favorite => (
               <SafeMenuItem
