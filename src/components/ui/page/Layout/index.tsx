@@ -62,16 +62,10 @@ export default function Layout() {
           <NavigationLinks />
         </Show>
       </GridItem>
-      <GridItem
-        area="main"
-        mx="1.5rem"
-      >
+      <GridItem area="main">
         <Container
-          display="grid"
           maxWidth={MAX_CONTENT_WIDTH}
-          px="0"
           minH={CONTENT_HEIGHT}
-          paddingBottom="2rem"
         >
           <ErrorBoundary
             fallback={<TopErrorFallback />}
@@ -81,7 +75,11 @@ export default function Layout() {
           </ErrorBoundary>
         </Container>
       </GridItem>
-      <GridItem area="footer">
+      <GridItem
+        area="footer"
+        pt="3rem"
+        pb={{ base: '5rem', md: '3rem' }}
+      >
         <Footer />
       </GridItem>
     </Grid>
