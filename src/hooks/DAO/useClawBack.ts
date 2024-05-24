@@ -9,8 +9,8 @@ import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
-  childSafeInfo?: FractalNode;
-  parentAddress?: Address | null;
+  childSafeInfo: FractalNode;
+  parentAddress: Address | null;
 }
 
 export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBack) {
@@ -21,13 +21,13 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const { canUserCreateProposal } = useCanUserCreateProposal();
 
   const handleClawBack = useCallback(async () => {
-    if (childSafeInfo && childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
+    if (childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
       const childSafeBalance = await safeAPI.getBalances(getAddress(childSafeInfo.daoAddress));
 
       const santitizedParentAddress = getAddress(parentAddress);
       const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
 
-      if (canUserCreateProposal && parentAddress && childSafeInfo && parentSafeInfo) {
+      if (canUserCreateProposal && parentAddress && parentSafeInfo) {
         const fractalModule = childSafeInfo.fractalModules!.find(
           module => module.moduleType === FractalModuleType.FRACTAL,
         );
@@ -87,13 +87,10 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
           submitProposal({
             proposalData: {
               metaData: {
-                title: t('Clawback Proposal', { ns: 'proposalMetadata' }),
-                description: t(
-                  'Transfer all funds from the targeted sub-Safe to the parent-Safe treasury.',
-                  {
-                    ns: 'proposalMetadata',
-                  },
-                ),
+                title: t('clawbackProposal', { ns: 'proposalMetadata' }),
+                description: t('clawbackDescription', {
+                  ns: 'proposalMetadata',
+                }),
                 documentationUrl: '',
               },
               targets: transactions.map(tx => tx.target),

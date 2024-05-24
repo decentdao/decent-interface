@@ -1,37 +1,41 @@
-import { Box, Divider, Text } from '@chakra-ui/react';
+import { Box, Text, Show, BoxProps } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { StyledBox } from './StyledBox';
+import { CONTENT_MAXW } from '../../../constants/common';
+import Divider from '../utils/Divider';
 
 export function TitledInfoBox({
-  minWidth,
   title,
   titleTestId,
   children,
+  ...rest
 }: {
-  minWidth?: { [key: string]: string };
-  title?: string;
-  titleTestId?: string;
-  children?: ReactNode;
-}) {
+  title: string;
+  titleTestId: string;
+  children: ReactNode;
+} & BoxProps) {
   return (
-    <StyledBox
-      flexGrow={1}
-      minWidth={minWidth}
+    <Box
+      py={{ base: '1rem', lg: '1.5rem' }}
+      borderRadius={{ base: '0.75rem', lg: '0.5rem' }}
+      maxW={CONTENT_MAXW}
+      overflowX="scroll"
+      className="scroll-dark"
+      {...rest}
     >
-      {title && (
-        <Box>
-          <Text
-            data-testid={titleTestId}
-            textStyle="text-base-sans-regular"
-            color="grayscale.100"
-            marginBottom="0.75rem"
-          >
-            {title}
-          </Text>
-          <Divider color="chocolate.700" />
-        </Box>
-      )}
+      <Text
+        data-testid={titleTestId}
+        textStyle="display-lg"
+        px={{ base: '1rem', lg: '1.5rem' }}
+      >
+        {title}
+      </Text>
+      <Show above="md">
+        <Divider
+          my="1rem"
+          variant="darker"
+        />
+      </Show>
       {children}
-    </StyledBox>
+    </Box>
   );
 }

@@ -9,7 +9,7 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 import { createAccountSubstring } from '../utils/useDisplayName';
 
 /**
- * Gets the 'display name' for a Fractal DAO, in the following order of preference:
+ * Gets the 'display name' for a DAO, in the following order of preference:
  *
  * 1. Primary ENS Name (reverse record)
  * 2. Fractal name registry name
@@ -75,7 +75,7 @@ export default function useDAOName({
 }
 
 /**
- * Gets the 'display name' for a Fractal DAO, in the following order of preference:
+ * Gets the 'display name' for a DAO, in the following order of preference:
  *
  * 1. Primary ENS Name (reverse record)
  * 2. Fractal name registry name

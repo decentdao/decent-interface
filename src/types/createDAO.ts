@@ -1,4 +1,4 @@
-import { SafeBalanceUsdResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
+import { SafeBalanceResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { FormikProps } from 'formik';
 import { Address } from 'viem';
 import { DAOCreateMode } from '../components/DaoCreator/formComponents/EstablishEssentials';
@@ -108,7 +108,8 @@ export interface AzoriusERC721DAO<T = bigint>
 export interface SafeMultisigDAO extends DAOEssentials, SafeConfiguration {}
 
 export type DAOTrigger = (
-  daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
+  daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
+  customNonce?: number,
 ) => void;
 
 export type AddressValidationMap = Map<string, AddressValidation>;
@@ -119,7 +120,7 @@ export type AddressValidation = {
 };
 
 export type TokenToFund = {
-  asset: SafeBalanceUsdResponse;
+  asset: SafeBalanceResponse;
   amount: BigIntValuePair;
 };
 

@@ -8,9 +8,14 @@ import { ActivityDescriptionTreasury } from './ActivityDescriptionTreasury';
 interface IActivityDescription {
   activity: Activity;
   showFullDescription?: boolean;
+  showAuthor?: boolean;
 }
 
-export function ActivityDescription({ activity, showFullDescription }: IActivityDescription) {
+export function ActivityDescription({
+  activity,
+  showFullDescription,
+  showAuthor = true,
+}: IActivityDescription) {
   const metaData = useGetMetadata(activity as FractalProposal);
 
   const snapshotProposal = activity as SnapshotProposal;
@@ -24,12 +29,13 @@ export function ActivityDescription({ activity, showFullDescription }: IActivity
     >
       <ProposalTitle
         activity={activity}
-        showAuthor
+        showAuthor={showAuthor}
       />
       {description && (
         <Box
           mt={2}
-          textColor="#B3B3B3"
+          textColor={showFullDescription ? 'white-0' : 'neutral-7'}
+          textStyle="body-base"
         >
           <Markdown
             content={description}

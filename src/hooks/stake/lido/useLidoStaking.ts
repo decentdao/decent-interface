@@ -36,8 +36,8 @@ export default function useLidoStaking() {
       }
       const proposalData: ProposalExecuteData = {
         metaData: {
-          title: t('Stake ETH with Lido'),
-          description: t('This proposal will stake ETH in Lido, returning stETH to your treasury.'),
+          title: t('stakeWithLidoTitle'),
+          description: t('stakeWithLidoDescription'),
           documentationUrl: 'https://docs.lido.fi/guides/steth-integration-guide#what-is-steth',
         },
         targets: [getAddress(lido.stETHContractAddress)],
@@ -85,10 +85,8 @@ export default function useLidoStaking() {
       }
       const proposalData: ProposalExecuteData = {
         metaData: {
-          title: t('Unstake stETH'),
-          description: t(
-            'This proposal will unstake your stETH from Lido and mint a Lido Withdrawal NFT which can be used to claim your ETH.',
-          ),
+          title: t('unstakeStEthTitle'),
+          description: t('unstakeStEthDescription'),
           documentationUrl:
             'https://docs.lido.fi/guides/steth-integration-guide#request-withdrawal-and-mint-nft',
         },
@@ -130,10 +128,8 @@ export default function useLidoStaking() {
       }
       const proposalData: ProposalExecuteData = {
         metaData: {
-          title: t('Lido Withdrawal'),
-          description: t(
-            'This proposal will burn your Lido Withdrawal NFT and return the ETH to your Safe.',
-          ),
+          title: t('lidoWithdrawalTitle'),
+          description: t('lidoWithdrawalDescription'),
           documentationUrl: 'https://docs.lido.fi/guides/steth-integration-guide#claiming',
         },
         targets: [getAddress(lido.withdrawalQueueContractAddress)],

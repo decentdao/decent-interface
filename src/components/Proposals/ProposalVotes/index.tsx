@@ -1,16 +1,6 @@
-import {
-  Box,
-  CircularProgress,
-  CircularProgressLabel,
-  Divider,
-  Flex,
-  Grid,
-  GridItem,
-  Text,
-} from '@chakra-ui/react';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   AzoriusGovernance,
@@ -20,38 +10,21 @@ import {
 } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { InfoBoxLoader } from '../../ui/loaders/InfoBoxLoader';
+import Divider from '../../ui/utils/Divider';
 import ProgressBar from '../../ui/utils/ProgressBar';
 import ProposalERC20VoteItem from './ProposalERC20VoteItem';
 import ProposalERC721VoteItem from './ProposalERC721VoteItem';
 
-export function VotesPercentage({
-  label,
-  percentage,
-  children,
-}: {
-  label: string;
-  percentage: number;
-  children?: ReactNode;
-}) {
+export function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
   return (
     <Flex
       flexWrap="wrap"
       marginTop={2}
     >
-      <ProgressBar value={percentage}>
-        <Flex
-          justifyContent="space-between"
-          width="100%"
-        >
-          <Text
-            marginTop={2}
-            marginBottom={2}
-          >
-            {label}
-          </Text>
-          {children}
-        </Flex>
-      </ProgressBar>
+      <ProgressBar
+        value={percentage}
+        label={label}
+      />
     </Flex>
   );
 }
@@ -85,7 +58,7 @@ function ProposalVotes({
       if (totalVotesCasted === 0n) {
         return 0;
       }
-      return Number((voteTotal * 100n) / totalVotesCasted);
+      return Number((Number((voteTotal * 100000n) / totalVotesCasted) / 1000).toFixed(2));
     },
     [totalVotesCasted],
   );
@@ -103,45 +76,17 @@ function ProposalVotes({
   const abstainVotesPercentage = getVotesPercentage(abstain);
 
   return (
-    <>
-      <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-        <Text textStyle="text-lg-mono-medium">{t('breakdownTitle', { ns: 'proposal' })}</Text>
-        <Grid
-          templateColumns={{ base: 'repeat(2, 1ft)', md: 'repeat(5, 1fr)' }}
-          gap={7}
-        >
-          <GridItem
-            colSpan={{ base: 4, md: 1 }}
-            justifyContent="center"
-            mx="auto"
-          >
-            <CircularProgress
-              color="drab.900"
-              trackColor="drab.700"
-              value={Math.min(yesVotesPercentage, 100)}
-              size="156px"
-              marginTop={4}
-            >
-              <CircularProgressLabel>
-                <Text
-                  textStyle="text-lg-mono-regular"
-                  color="grayscale.100"
-                >
-                  {Math.min(yesVotesPercentage, 100)}%
-                </Text>
-                <Text
-                  textStyle="text-lg-mono-regular"
-                  color="grayscale.100"
-                >
-                  {t('yes')}
-                </Text>
-              </CircularProgressLabel>
-            </CircularProgress>
-          </GridItem>
-          <GridItem
-            colSpan={4}
-            rowGap={4}
-          >
+    <Flex
+      border="1px solid"
+      borderColor="neutral-3"
+      borderRadius="0.5rem"
+      flexWrap="wrap"
+      mt="1.5rem"
+    >
+      <ContentBox containerBoxProps={{ bg: 'transparent', width: '100%', my: 0 }}>
+        <Text textStyle="display-lg">{t('breakdownTitle', { ns: 'proposal' })}</Text>
+        <Grid>
+          <GridItem rowGap={4}>
             <VotesPercentage
               label={t('yes')}
               percentage={yesVotesPercentage}
@@ -159,12 +104,13 @@ function ProposalVotes({
         </Grid>
       </ContentBox>
       {votes.length !== 0 && (
-        <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-          <Text textStyle="text-lg-mono-medium">{t('votesTitle', { ns: 'proposal' })}</Text>
+        <ContentBox containerBoxProps={{ bg: 'transparent', width: '100%', my: 0, paddingTop: 0 }}>
+          <Text textStyle="display-lg">{t('votesTitle', { ns: 'proposal' })}</Text>
           <Divider
-            color="chocolate.700"
-            marginTop={4}
-            marginBottom={4}
+            my={4}
+            variant="darker"
+            width="calc(100% + 4rem)"
+            mx="-2rem"
           />
           <Flex
             flexWrap="wrap"
@@ -196,7 +142,7 @@ function ProposalVotes({
           </Flex>
         </ContentBox>
       )}
-    </>
+    </Flex>
   );
 }
 

@@ -1,5 +1,6 @@
-import { Box, Button, Divider, Text } from '@chakra-ui/react';
+import { Box, Button, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import Divider from '../utils/Divider';
 
 export function ConfirmUrlModal({ url, close }: { url: string; close: () => void }) {
   const { t } = useTranslation('modals');
@@ -7,14 +8,11 @@ export function ConfirmUrlModal({ url, close }: { url: string; close: () => void
     <Box>
       <Text
         marginBottom="1rem"
-        color="chocolate.200"
+        color="neutral-7"
       >
         {url}
       </Text>
-      <Divider
-        color="chocolate.700"
-        marginBottom="1rem"
-      />
+      <Divider marginBottom="1rem" />
       <Text marginBottom="1rem">{t('confirmAction')}</Text>
       <a
         href={url}

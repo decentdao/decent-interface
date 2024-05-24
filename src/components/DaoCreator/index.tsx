@@ -1,7 +1,14 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
-import { DAOTrigger, CreatorFormState, GovernanceType } from '../../types';
+import {
+  DAOTrigger,
+  CreatorFormState,
+  GovernanceType,
+  AzoriusERC20DAO,
+  AzoriusERC721DAO,
+  SafeMultisigDAO,
+} from '../../types';
 import StepController from './StepController';
 import { initialState } from './constants';
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
@@ -30,45 +37,42 @@ function DaoCreator({
           const choosenGovernance = values.essentials.governance;
           const freezeGuard = isSubDAO ? values.freeze : undefined;
 
+          let daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | undefined;
+          let customNonce = mode === DAOCreateMode.EDIT ? values.multisig.customNonce : undefined;
+
           switch (choosenGovernance) {
-            case GovernanceType.MULTISIG: {
-              const data = await prepareMultisigFormData({
+            case GovernanceType.MULTISIG:
+              daoData = await prepareMultisigFormData({
                 ...values.essentials,
                 ...values.multisig,
                 freezeGuard,
               });
-              if (data) {
-                deployDAO(data);
-              }
-              return;
-            }
-            case GovernanceType.AZORIUS_ERC20: {
-              const data = await prepareAzoriusERC20FormData({
+              break;
+
+            case GovernanceType.AZORIUS_ERC20:
+              daoData = await prepareAzoriusERC20FormData({
                 ...values.essentials,
                 ...values.azorius,
                 ...values.erc20Token,
                 freezeGuard,
               });
-              if (data) {
-                deployDAO(data);
-              }
-              return;
-            }
-            case GovernanceType.AZORIUS_ERC721: {
-              const data = await prepareAzoriusERC721FormData({
+              break;
+
+            case GovernanceType.AZORIUS_ERC721:
+              daoData = await prepareAzoriusERC721FormData({
                 ...values.essentials,
                 ...values.azorius,
                 ...values.erc721Token,
                 freezeGuard,
               });
-              if (data) {
-                deployDAO(data);
-              }
-              return;
-            }
+              break;
+          }
+
+          if (daoData) {
+            deployDAO(daoData, customNonce);
           }
         }}
-        isInitialValid={false}
+        validateOnMount
       >
         {({ handleSubmit, ...rest }) => (
           <form onSubmit={handleSubmit}>

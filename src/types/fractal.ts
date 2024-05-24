@@ -20,7 +20,7 @@ import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
-  SafeBalanceUsdResponse,
+  SafeBalanceResponse,
   SafeCollectibleResponse,
 } from '@safe-global/safe-service-client';
 import { Dispatch } from 'react';
@@ -197,7 +197,7 @@ export interface FractalStore extends Fractal {
   action: {
     dispatch: Dispatch<FractalActions>;
     loadReadOnlyValues: () => Promise<void>;
-    resetDAO: () => Promise<void>;
+    resetSafeState: () => Promise<void>;
   };
 }
 export enum StoreAction {
@@ -277,7 +277,7 @@ export interface FreezeGuard {
 }
 
 export interface FractalTreasury {
-  assetsFungible: SafeBalanceUsdResponse[];
+  assetsFungible: SafeBalanceResponse[];
   assetsNonFungible: SafeCollectibleResponse[];
   transfers?: AllTransfersListResponse;
 }

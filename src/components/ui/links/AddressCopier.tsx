@@ -1,10 +1,10 @@
-import { Flex, FlexProps, Text } from '@chakra-ui/react';
-import { Copy } from '@decent-org/fractal-ui';
+import { ButtonProps } from '@chakra-ui/react';
+import { CopySimple } from '@phosphor-icons/react';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import EtherscanLinkAddress from './EtherscanLinkAddress';
+import CeleryButtonWithIcon from '../utils/CeleryButtonWithIcon';
 
-interface Props extends FlexProps {
+interface AddressCopierProps extends ButtonProps {
   address: string;
 }
 
@@ -12,31 +12,22 @@ interface Props extends FlexProps {
  * A component that displays a truncated address, along with the "copy to clipboard"
  * icon to the right of it.
  */
-export default function AddressCopier({ address, ...rest }: Props) {
+export default function AddressCopier({ address, ...rest }: AddressCopierProps) {
   const { accountSubstring } = useDisplayName(address);
   const copyToClipboard = useCopyText();
 
   return (
-    <Flex
-      alignItems="center"
-      onClick={() => copyToClipboard(address)}
-      gap="0.5rem"
-      cursor="pointer"
-      w="fit-content"
-      color="grayscale.100"
+    <CeleryButtonWithIcon
+      onClick={e => {
+        e.preventDefault();
+        e.stopPropagation();
+        copyToClipboard(address);
+      }}
+      width="fit-content"
       {...rest}
-    >
-      <EtherscanLinkAddress
-        address={address}
-        color="grayscale.100"
-      >
-        <Text textStyle="text-base-mono-regular">{accountSubstring}</Text>
-      </EtherscanLinkAddress>
-      <Copy
-        _hover={{ color: 'gold.500-hover' }}
-        boxSize="1.5rem"
-        fill="currentColor"
-      />
-    </Flex>
+      text={accountSubstring || address}
+      icon={CopySimple}
+      iconPosition="end"
+    />
   );
 }

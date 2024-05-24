@@ -1,11 +1,11 @@
 import {
   FractalGovernance,
   AzoriusProposal,
-  VOTE_CHOICES,
   SnapshotProposal,
   ERC721ProposalVote,
   AzoriusGovernance,
   DecentGovernance,
+  getVoteChoice,
 } from '../../../types';
 import {
   FractalGovernanceAction,
@@ -88,7 +88,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
             votesSummary,
             votes: foundVote
               ? [...proposal.votes]
-              : [...proposal.votes, { voter, choice: VOTE_CHOICES[support], weight }],
+              : [...proposal.votes, { voter, choice: getVoteChoice(support), weight }],
           };
           return newProposal;
         }
@@ -108,7 +108,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
               ? [...proposal.votes]
               : ([
                   ...proposal.votes,
-                  { voter, choice: VOTE_CHOICES[support], tokenAddresses, tokenIds },
+                  { voter, choice: support, tokenAddresses, tokenIds },
                 ] as ERC721ProposalVote[]),
           };
           return newProposal;

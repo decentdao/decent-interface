@@ -1,8 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getAddress } from 'viem';
+import { useAccount } from 'wagmi';
 import DaoCreator from '../../components/DaoCreator';
 import { DAOCreateMode } from '../../components/DaoCreator/formComponents/EstablishEssentials';
 import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
@@ -19,6 +20,26 @@ export default function DaoCreatePage() {
   const [redirectPending, setRedirectPending] = useState(false);
   const { t } = useTranslation('transaction');
   const safeAPI = useSafeAPI();
+
+  const { isConnected } = useAccount();
+
+  useEffect(() => {
+    if (isConnected) {
+      return;
+    }
+
+    const theToast = toast(t('toastDisconnectedPersistent', { ns: 'daoCreate' }), {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      closeButton: false,
+      progress: 1,
+    });
+
+    return () => {
+      toast.dismiss(theToast);
+    };
+  }, [isConnected, t]);
 
   const successCallback = useCallback(
     async (addressPrefix: string, daoAddress: string) => {

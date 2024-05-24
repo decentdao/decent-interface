@@ -1,6 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { CloseX } from '@decent-org/fractal-ui';
-
+import { X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../../../../components/DaoCreator';
@@ -32,11 +31,12 @@ export default function ModifyGovernancePage() {
   const isSigner = user.address && safe?.owners.includes(user.address);
   const deployAzorius = useDeployAzorius();
 
-  const handleDeployAzorius: DAOTrigger = daoData => {
+  const handleDeployAzorius: DAOTrigger = (daoData, customNonce) => {
     deployAzorius(
       daoData as AzoriusERC20DAO | AzoriusERC721DAO,
       !daoName || createAccountSubstring(daoAddress!) === daoName,
       !daoSnapshotENS && !!daoData.snapshotENS,
+      customNonce,
     );
   };
 
@@ -48,7 +48,7 @@ export default function ModifyGovernancePage() {
     <Box>
       <PageHeader
         hasDAOLink
-        ButtonIcon={CloseX}
+        ButtonIcon={X}
         buttonVariant="secondary"
         buttonClick={() => navigate(DAO_ROUTES.dao.relative(addressPrefix, daoAddress))}
         isButtonDisabled={false}

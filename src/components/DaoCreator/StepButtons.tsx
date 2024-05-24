@@ -1,4 +1,5 @@
-import { Flex, Button } from '@chakra-ui/react';
+import { Flex, Button, Icon } from '@chakra-ui/react';
+import { CaretRight, CaretLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -39,23 +40,28 @@ export function StepButtons({
   return (
     <Flex
       alignItems="center"
+      justifyContent="flex-end"
       width="100%"
+      mt="1.5rem"
+      gap="0.75rem"
     >
       {prevStep && (
         <Button
           data-testid="create-prevButton"
           variant="text"
           isDisabled={transactionPending || isSubmitting}
-          disabled={true}
           onClick={() => updateStep(prevStep)}
+          color="lilac-0"
+          px="2rem"
         >
+          <Icon as={CaretLeft} />
           {t('back', { ns: 'common' })}
         </Button>
       )}
       <Button
-        w="full"
         type={buttonType}
         isDisabled={transactionPending || isSubmitting || !!errors[step] || isNextDisabled}
+        px="2rem"
         onClick={() => {
           if (!isLastStep && nextStep) {
             updateStep(nextStep);
@@ -68,6 +74,7 @@ export function StepButtons({
         data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}
       >
         {forwardButtonText}
+        {!isLastStep && <Icon as={CaretRight} />}
       </Button>
     </Flex>
   );

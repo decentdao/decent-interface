@@ -1,9 +1,9 @@
-import { Divider, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import { Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { ExtendedSnapshotProposal, FractalProposalState } from '../../../types';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
+import Divider from '../../ui/utils/Divider';
 import { VotesPercentage } from '../ProposalVotes';
 import SnapshotProposalVoteItem from './SnapshotProposalVoteItem';
 import useTotalVotes from './hooks/useTotalVotes';
@@ -20,19 +20,26 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
 
   return (
     <>
-      <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
+      <ContentBox
+        containerBoxProps={{
+          bg: 'transparent',
+          border: '1px solid',
+          borderColor: 'neutral-3',
+          borderRadius: '0.5rem',
+        }}
+      >
         <Flex justifyContent="space-between">
-          <Text textStyle="text-lg-mono-medium">{t('breakdownTitle')}</Text>
+          <Text textStyle="display-lg">{t('breakdownTitle')}</Text>
           <Flex>
             <Text
-              color="chocolate.200"
-              textStyle="text-md-mono-semibold"
+              color="white-0"
+              textStyle="display-lg"
             >
               {t('totalVotes')}
             </Text>
             <Text
               ml={1}
-              textStyle="text-md-mono-semibold"
+              textStyle="display-lg"
             >
               {totalVotesCasted} {strategySymbol}
             </Text>
@@ -58,29 +65,18 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                   key={choice}
                   label={choice}
                   percentage={Number(choicePercentageFromTotal.toFixed(1))}
-                >
-                  <Text>
-                    {proposal.privacy === 'shutter' &&
-                    proposal.state !== FractalProposalState.CLOSED
-                      ? `? ${strategySymbol}`
-                      : `${votesBreakdownChoiceTotal.toFixed(2)} ${strategySymbol}`}
-                  </Text>
-                </VotesPercentage>
+                />
               );
             })}
           </GridItem>
         </Grid>
       </ContentBox>
       {votes && votes.length !== 0 && (
-        <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
-          <Text textStyle="text-lg-mono-medium">
+        <ContentBox containerBoxProps={{ bg: 'transparent' }}>
+          <Text textStyle="display-lg">
             {t('votesTitle')} ({votes.length})
           </Text>
-          <Divider
-            color="chocolate.700"
-            marginTop={4}
-            marginBottom={4}
-          />
+          <Divider my={4} />
           <Flex
             flexWrap="wrap"
             gap={4}
@@ -91,8 +87,8 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                 width="100%"
               >
                 <Text
-                  color="chocolate.200"
-                  textStyle="text-base-mono-semibold"
+                  color="neutral-7"
+                  textStyle="body-base"
                 >
                   {t('shutterVotesHidden')} |
                 </Text>

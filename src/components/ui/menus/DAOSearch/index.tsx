@@ -2,15 +2,14 @@ import {
   Box,
   Input,
   InputGroup,
-  InputLeftElement,
   Popover,
   PopoverTrigger,
   useDisclosure,
   useOutsideClick,
 } from '@chakra-ui/react';
-import { Search } from '@decent-org/fractal-ui';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
 
@@ -27,21 +26,19 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
 
   const resetSearch = () => {
     onClose();
-    setLocalInput(undefined);
-    setSearchString(undefined);
+    setLocalInput('');
   };
 
   useOutsideClick({
-    ref: ref,
-    handler: () => resetSearch(),
+    ref,
+    handler: resetSearch,
   });
 
   return (
     <Box
       ref={ref}
       width="full"
-      maxW={{ base: 'full', md: '31.125rem' }}
-      height="4rem"
+      position="relative"
     >
       <Popover
         matchWidth
@@ -53,32 +50,26 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             flexDirection="column"
             justifyContent="center"
           >
-            <InputLeftElement mt="3">
-              <Search
-                boxSize="1.5rem"
-                color="grayscale.300"
-              />
-            </InputLeftElement>
             <Input
-              size="baseAddonLeft"
+              w="full"
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => setLocalInput(e.target.value.trim())}
               value={localInput}
               spellCheck="false"
+              isInvalid={!!errorMessage}
               data-testid="search-input"
             />
           </InputGroup>
         </PopoverTrigger>
         <Box
-          marginTop="0.5rem"
-          padding="1rem 1rem"
-          border="none"
-          rounded="lg"
-          shadow="menu-gold"
-          bg="grayscale.black"
+          marginTop="0.25rem"
+          rounded="0.5rem"
+          bg="neutral-2"
+          boxShadow={SEXY_BOX_SHADOW_T_T}
           hidden={!errorMessage && !address}
-          position="relative"
           zIndex="modal"
+          w="full"
+          position="absolute"
         >
           <SearchDisplay
             loading={isLoading}

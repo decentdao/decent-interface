@@ -1,4 +1,5 @@
-import { Link, HStack, Image, Text } from '@chakra-ui/react';
+import { Link, HStack, Text, Icon } from '@chakra-ui/react';
+import { ArrowBendLeftUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -11,7 +12,6 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 export function ParentLink() {
   const {
     node: { nodeHierarchy },
-    action,
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation('breadcrumbs');
@@ -22,27 +22,21 @@ export function ParentLink() {
 
   return (
     <Link
-      color="gold.500"
-      _hover={{ textDecoration: 'none', color: 'gold.500-hover' }}
+      color="celery-0"
+      _hover={{ textDecoration: 'none', color: 'celery--6' }}
       to={DAO_ROUTES.dao.relative(addressPrefix, nodeHierarchy.parentAddress)}
-      onClick={action.resetDAO}
       marginBottom="1rem"
       as={RouterLink}
+      width="fit-content"
     >
       <HStack>
-        <Image
-          alignSelf="center"
+        <Icon
+          color="lilac-0"
+          as={ArrowBendLeftUp}
           width="1.5rem"
           height="1.5rem"
-          src="/images/arrow-up-left.svg"
-          alt={t('parentLink')}
         />
-        <Text
-          textStyle="text-base-mono-bold"
-          flexWrap="wrap"
-        >
-          {t('parentLink')}
-        </Text>
+        <Text flexWrap="wrap">{t('parentLink')}</Text>
       </HStack>
     </Link>
   );

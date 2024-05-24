@@ -15,11 +15,11 @@
   "pendingDeploySafe": "Deploying your Safe",
   "failedDeploySafe": "Deployment failed",
   "successDeploySafe": "Deployment successful",
-  "failedIndexSafe": "Your Safe was deployed but is not yet available to view. It has been added to your favorites list. ",
+  "failedIndexSafe": "Your Safe was deployed but is not yet available to view. It has been added to your favorited list of 'My Safes'.",
   "errorUserDeniedTransaction": "User rejected the transaction",
   "pendingTokenClaim": "Claiming {{ symbol }}",
   "failedTokenClaim": "Failed to claim {{ symbol }}",
   "successTokenClaim": "You have successfully claimed {{ amount }} {{ symbol }}",
-  "snapshotRecastVoteHelper": "You can still change your vote until the vote end date",
+  "snapshotRecastVoteHelper": "You can still change your vote until the voting period ends.",
   "modifyGovernanceSetAzoriusProposalPendingMessage": "Submitting proposal to modify governance..."
 }

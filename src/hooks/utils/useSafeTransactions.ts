@@ -246,7 +246,7 @@ export const useSafeTransactions = () => {
 
           const eventSafeTxHash = multiSigTransaction.safeTxHash;
 
-          const eventType: any = isMultiSigTransaction
+          const eventType = isMultiSigTransaction
             ? ActivityEventType.Governance
             : isModuleTransaction
               ? ActivityEventType.Module

@@ -1,9 +1,10 @@
-import { Box, Button, Divider, Text } from '@chakra-ui/react';
+import { Box, Button, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import Divider from '../utils/Divider';
 
 export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
   const { t } = useTranslation('modals');
@@ -24,10 +25,7 @@ export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
       >
         {t('confirmModifyGovernanceDescription')}
       </Text>
-      <Divider
-        color="chocolate.700"
-        marginBottom="1rem"
-      />
+      <Divider marginBottom="1rem" />
       <Text
         marginBottom="1rem"
         textStyle="text-xl-mono-medium"

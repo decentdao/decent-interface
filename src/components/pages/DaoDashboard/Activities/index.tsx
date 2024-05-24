@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { ActivityEventType, SortBy, TreasuryActivity, FractalProposal } from '../../../../types';
-import { ActivityModule } from '../../../Activity/ActivityModule';
 import { ActivityTreasury } from '../../../Activity/ActivityTreasury';
 import ProposalCard from '../../../Proposals/ProposalCard/ProposalCard';
 import { EmptyBox } from '../../../ui/containers/EmptyBox';
@@ -26,8 +25,9 @@ export function Activities() {
   return (
     <Box>
       <Flex
-        justifyContent="flex-end"
+        justifyContent="flex-start"
         alignItems="center"
+        mx="0.5rem"
         my="1rem"
       >
         <Sort
@@ -55,14 +55,6 @@ export function Activities() {
                   <ProposalCard
                     key={i}
                     proposal={activity as FractalProposal}
-                  />
-                );
-              }
-              if (activity.eventType === ActivityEventType.Module) {
-                return (
-                  <ActivityModule
-                    key={i}
-                    activity={activity as FractalProposal}
                   />
                 );
               }

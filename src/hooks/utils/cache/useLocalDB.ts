@@ -26,7 +26,7 @@ export enum DBObjectKeys {
  */
 const withIndexedDB = (callback: (db: IDBDatabase) => Promise<any>) => {
   return new Promise((resolve, reject) => {
-    const openRequest = indexedDB.open('fractal', DB_VERSION);
+    const openRequest = indexedDB.open('decent', DB_VERSION);
 
     openRequest.onupgradeneeded = () => {
       const db = openRequest.result;

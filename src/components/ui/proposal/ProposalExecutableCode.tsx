@@ -15,15 +15,16 @@ import { useTranslation } from 'react-i18next';
 import { isAddress } from 'viem';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { DecodedTransaction, FractalProposal } from '../../../types';
-import EtherscanLinkAddress from '../links/EtherscanLinkAddress';
+import EtherscanLink from '../links/EtherscanLink';
 
 function TransactionRow({ paramKey, value }: { paramKey: string; value: string }) {
   const { t } = useTranslation('proposal');
   return (
     <Flex
       width="full"
-      textStyle="text-base-mono-regular"
-      color="grayscale.100"
+      textStyle="code-snippet-base"
+      color="white-0"
+      alignItems="center"
       justifyContent="space-between"
       maxH={{ base: '12.5rem', md: 'initial' }}
       h={{ base: 'fit-content', md: 'initial' }}
@@ -37,9 +38,15 @@ function TransactionRow({ paramKey, value }: { paramKey: string; value: string }
         wordBreak="break-word"
         ml={{ base: 0, md: '0.5rem' }}
         maxW={{ base: '100%', md: '70%' }}
+        display={isAddress(value) ? 'inline-flex' : undefined}
       >
         {isAddress(value) ? (
-          <EtherscanLinkAddress address={value}>{value}</EtherscanLinkAddress>
+          <EtherscanLink
+            type="address"
+            value={value}
+          >
+            {value}
+          </EtherscanLink>
         ) : (
           value
         )}
@@ -65,7 +72,6 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
           borderRadius="4px"
           bg="black.600"
           flexWrap="wrap"
-          padding={4}
           rowGap={2}
         >
           <Flex alignItems="center">
@@ -93,10 +99,10 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
     <Flex
       width="full"
       borderRadius="4px"
-      bg="black.600"
+      bg="neutral-3"
       flexWrap="wrap"
-      padding={4}
-      rowGap={2}
+      padding="1rem"
+      rowGap="0.5rem"
     >
       <TransactionRow
         paramKey="paramTarget"
@@ -138,13 +144,17 @@ export default function ProposalExecutableCode({ proposal }: { proposal: Fractal
   }
   return (
     <Box
-      bg="black.900"
-      borderRadius="4px"
       marginTop={4}
-      paddingTop={2}
-      paddingBottom={2}
+      padding="1.5rem"
+      borderRadius={4}
+      bg="neutral-2"
+      border="1px solid"
+      borderColor="neutral-3"
     >
-      <Accordion allowToggle>
+      <Accordion
+        allowToggle
+        gap="1.5rem"
+      >
         <AccordionItem
           borderTop="none"
           borderBottom="none"
@@ -152,8 +162,9 @@ export default function ProposalExecutableCode({ proposal }: { proposal: Fractal
           {({ isExpanded }) => (
             <>
               <AccordionButton
-                textStyle="text-button-md-semibold"
-                color="grayscale.100"
+                p={0}
+                textStyle="display-lg"
+                color="lilac-0"
               >
                 <AccordionIcon
                   marginRight={3}

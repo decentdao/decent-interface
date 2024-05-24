@@ -2,16 +2,16 @@ import {
   FormControlOptions,
   Input,
   InputGroup,
-  InputElementProps,
   InputRightElement,
   Button,
+  InputProps,
 } from '@chakra-ui/react';
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { parseUnits, formatUnits, maxUint256 } from 'viem';
 import { BigIntValuePair } from '../../../types';
 export interface BigIntInputProps
-  extends Omit<InputElementProps, 'value' | 'onChange'>,
+  extends Omit<InputProps, 'value' | 'onChange'>,
     FormControlOptions {
   value?: bigint;
   onChange: (value: BigIntValuePair) => void;
