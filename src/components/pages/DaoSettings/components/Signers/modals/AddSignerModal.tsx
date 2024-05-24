@@ -8,7 +8,7 @@ import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../../../../providers/Ethers/hooks/useEthersSigner';
-import { couldBeENS } from '../../../../../../utils/url';
+import { validateENSName } from '../../../../../../utils/url';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
 import { AddressInput } from '../../../../../ui/forms/EthAddressInput';
@@ -38,7 +38,7 @@ function AddSignerModal({
     async (values: { address: string; threshold: number; nonce: number }) => {
       const { address, nonce, threshold } = values;
       let validAddress = address;
-      if (couldBeENS(validAddress) && signer) {
+      if (validateENSName(validAddress) && signer) {
         validAddress = await signer.resolveName(address);
       }
 

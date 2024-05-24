@@ -1,4 +1,3 @@
-import { ens_normalize } from '@adraffy/ens-normalize';
 import { Button } from '@chakra-ui/react';
 import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +10,7 @@ import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../../types';
+import { validateENSName } from '../../../../utils/url';
 import { InputComponent } from '../../../ui/forms/InputComponent';
 import { SettingsSection } from './SettingsSection';
 
@@ -44,10 +44,9 @@ export function MetadataContainer() {
 
   const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
     setSnapshotENS(e.target.value);
-    try {
-      ens_normalize(e.target.value);
+    if (validateENSName(e.target.value)) {
       setSnapshotENSValid(true);
-    } catch (error) {
+    } else {
       setSnapshotENSValid(false);
     }
   };

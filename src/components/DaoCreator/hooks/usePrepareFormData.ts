@@ -12,7 +12,7 @@ import {
   AzoriusERC721DAO,
 } from '../../../types';
 import { getEstimatedNumberOfBlocks } from '../../../utils/contract';
-import { couldBeENS } from '../../../utils/url';
+import { validateENSName } from '../../../utils/url';
 
 type FreezeGuardConfigParam = { freezeGuard?: DAOFreezeGuardConfig<BigIntValuePair> };
 
@@ -74,7 +74,7 @@ export function usePrepareFormData() {
     }: SafeMultisigDAO & FreezeGuardConfigParam) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
-          if (couldBeENS(inputValue) && signer) {
+          if (validateENSName(inputValue) && signer) {
             const resolvedAddress = await signer.resolveName(inputValue);
             return resolvedAddress;
           }
@@ -114,7 +114,7 @@ export function usePrepareFormData() {
         const resolvedTokenAllocations = await Promise.all(
           tokenAllocations.map(async allocation => {
             let address = allocation.address;
-            if (couldBeENS(address) && signer) {
+            if (validateENSName(address) && signer) {
               address = await signer.resolveName(allocation.address);
             }
             return { amount: allocation.amount.bigintValue!, address: address };
@@ -172,7 +172,7 @@ export function usePrepareFormData() {
         const resolvedNFTs = await Promise.all(
           nfts.map(async nft => {
             let address = nft.tokenAddress;
-            if (couldBeENS(address) && nft.tokenAddress) {
+            if (validateENSName(address) && nft.tokenAddress) {
               address = getAddress(await signer.resolveName(nft.tokenAddress));
             }
             return {

@@ -3,7 +3,7 @@ import { Hex, getAddress } from 'viem';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { CreateProposalForm } from '../../../types/proposalBuilder';
 import { encodeFunction } from '../../../utils/crypto';
-import { couldBeENS, isValidUrl } from '../../../utils/url';
+import { validateENSName, isValidUrl } from '../../../utils/url';
 
 export function usePrepareProposal() {
   const signer = useEthersSigner();
@@ -34,7 +34,7 @@ export function usePrepareProposal() {
       });
       const targets = await Promise.all(
         transactionsWithEncoding.map(async tx => {
-          if (couldBeENS(tx.targetAddress) && signer) {
+          if (validateENSName(tx.targetAddress) && signer) {
             return getAddress(await signer.resolveName(tx.targetAddress));
           }
           return getAddress(tx.targetAddress);
