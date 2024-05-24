@@ -36,17 +36,17 @@ export const useAccountFavorites = () => {
   const toggleFavorite = useCallback(
     (address: string) => {
       const normalizedAddress = getAddress(address);
+      const favorites: string[] = getValue(CacheKeys.FAVORITES);
       let updatedFavorites: string[] = [];
-
-      if (favoritesList.includes(normalizedAddress)) {
-        updatedFavorites = favoritesList.filter(favorite => favorite !== normalizedAddress);
+      if (favorites.includes(normalizedAddress)) {
+        updatedFavorites = favorites.filter(favorite => favorite !== normalizedAddress);
       } else {
-        updatedFavorites = favoritesList.concat([normalizedAddress]);
+        updatedFavorites = favorites.concat([normalizedAddress]);
       }
-      setFavoritesList(updatedFavorites);
       setValue(CacheKeys.FAVORITES, updatedFavorites, CacheExpiry.NEVER);
+      setFavoritesList(updatedFavorites);
     },
-    [favoritesList, setValue],
+    [getValue, setValue],
   );
 
   return { favoritesList, isConnectedFavorited, toggleFavorite };
