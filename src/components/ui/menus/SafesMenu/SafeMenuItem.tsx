@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDAOName from '../../../../hooks/DAO/useDAOName';
-import { useFractal } from '../../../../providers/App/AppProvider';
 
 export interface SafeMenuItemProps {
   network: string;
@@ -15,13 +14,11 @@ export interface SafeMenuItemProps {
 
 export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
   const { daoRegistryName } = useDAOName(address);
-  const { action } = useFractal();
   const navigate = useNavigate();
 
   const { t } = useTranslation('dashboard');
 
   const onClickNav = () => {
-    action.resetSafeState();
     navigate(DAO_ROUTES.dao.relative(network, address));
   };
 

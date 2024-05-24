@@ -58,7 +58,7 @@ function ProposalVotes({
       if (totalVotesCasted === 0n) {
         return 0;
       }
-      return Number((voteTotal * 100n) / totalVotesCasted);
+      return Number((Number((voteTotal * 100000n) / totalVotesCasted) / 1000).toFixed(2));
     },
     [totalVotesCasted],
   );

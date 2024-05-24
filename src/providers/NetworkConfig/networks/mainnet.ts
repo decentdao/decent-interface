@@ -2,12 +2,12 @@ import Azorius from '@fractal-framework/fractal-contracts/deployments/mainnet/Az
 import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/mainnet/AzoriusFreezeGuard.json';
 import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/mainnet/ERC20Claim.json';
 import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/mainnet/ERC20FreezeVoting.json';
-
+import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/mainnet/ERC721FreezeVoting.json';
 import FractalModule from '@fractal-framework/fractal-contracts/deployments/mainnet/FractalModule.json';
 import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/mainnet/FractalRegistry.json';
 import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/mainnet/KeyValuePairs.json';
 import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/mainnet/LinearERC20Voting.json';
-
+import LinearVotingERC721 from '@fractal-framework/fractal-contracts/deployments/mainnet/LinearERC721Voting.json';
 import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/mainnet/ModuleProxyFactory.json';
 import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/mainnet/MultisigFreezeGuard.json';
 import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/mainnet/MultisigFreezeVoting.json';
@@ -47,12 +47,12 @@ export const mainnetConfig: NetworkConfig = {
     fractalModuleMasterCopy: getAddress(FractalModule.address),
     fractalRegistry: getAddress(FractalRegistry.address),
     votesERC20MasterCopy: getAddress(VotesERC20.address),
-    linearVotingERC721MasterCopy: zeroAddress, // TODO - Add actual address once contract is deployed on mainnet
+    linearVotingERC721MasterCopy: getAddress(LinearVotingERC721.address),
     claimingMasterCopy: getAddress(ERC20Claim.address),
     azoriusFreezeGuardMasterCopy: getAddress(AzoriusFreezeGuard.address),
     multisigFreezeVotingMasterCopy: getAddress(MultisigFreezeVoting.address),
     erc20FreezeVotingMasterCopy: getAddress(ERC20FreezeVoting.address),
-    erc721FreezeVotingMasterCopy: zeroAddress, // TODO - Add actual address once contract is deployed on mainnet
+    erc721FreezeVotingMasterCopy: getAddress(ERC721FreezeVoting.address),
     multisigFreezeGuardMasterCopy: getAddress(MultisigFreezeGuard.address),
     fallbackHandler: getAddress(
       getCompatibilityFallbackHandlerDeployment({

@@ -19,6 +19,7 @@ export function TitledInfoBox({
       borderRadius={{ base: '0.75rem', lg: '0.5rem' }}
       maxW={CONTENT_MAXW}
       overflowX="scroll"
+      className="scroll-dark"
       {...rest}
     >
       <Text

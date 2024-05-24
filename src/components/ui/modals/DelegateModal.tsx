@@ -15,7 +15,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AzoriusGovernance, DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
-import { couldBeENS } from '../../../utils/url';
+import { validateENSName } from '../../../utils/url';
 import { AddressInput } from '../forms/EthAddressInput';
 import EtherscanLink from '../links/EtherscanLink';
 import Divider from '../utils/Divider';
@@ -44,7 +44,7 @@ export function DelegateModal({ close }: { close: Function }) {
   const submitDelegation = async (values: { address: string }) => {
     if (!votesTokenContractAddress || !baseContracts || !walletClient) return;
     let validAddress = getAddress(values.address);
-    if (couldBeENS(validAddress) && signer) {
+    if (validateENSName(validAddress) && signer) {
       validAddress = getAddress(await signer.resolveName(values.address));
     }
 
@@ -67,7 +67,7 @@ export function DelegateModal({ close }: { close: Function }) {
   const submitLockedDelegation = async (values: { address: string }) => {
     if (!lockReleaseContractAddress || !baseContracts || !signer || !walletClient) return;
     let validAddress = values.address;
-    if (couldBeENS(validAddress)) {
+    if (validateENSName(validAddress)) {
       validAddress = await signer.resolveName(values.address);
     }
 

@@ -82,9 +82,5 @@ export const optimismConfig: NetworkConfig = {
     keyValuePairs: getAddress(KeyValuePairs.address),
   },
   staking: {},
-  createOptions: [
-    GovernanceType.MULTISIG,
-    GovernanceType.AZORIUS_ERC20,
-    GovernanceType.AZORIUS_ERC721,
-  ],
+  createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };

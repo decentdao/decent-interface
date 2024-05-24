@@ -1,7 +1,6 @@
-import { ens_normalize } from '@adraffy/ens-normalize';
 import { Box, Input, RadioGroup } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
@@ -28,8 +27,6 @@ export enum DAOCreateMode {
 export function EstablishEssentials(props: ICreationStepProps) {
   const { t } = useTranslation(['daoCreate', 'common']);
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors, mode } = props;
-
-  const [isSnapshotSpaceValid, setSnapshotSpaceValid] = useState(true);
 
   const {
     node: { daoName, daoSnapshotENS, daoAddress },
@@ -61,24 +58,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
     }
 
     setFieldValue('essentials.governance', value);
-  };
-
-  const handleSnapshotSpaceChange = (value: string) => {
-    setFieldValue('essentials.snapshotENS', value, true);
-
-    // If there's no input in the snapshot URL field, we don't need to check if it's valid
-    if (!value) {
-      setSnapshotSpaceValid(true);
-      return;
-    }
-
-    try {
-      ens_normalize(value);
-      setSnapshotSpaceValid(true);
-    } catch (error) {
-      console.warn(error);
-      setSnapshotSpaceValid(false);
-    }
   };
 
   const { createOptions } = useNetworkConfig();
@@ -184,7 +163,9 @@ export function EstablishEssentials(props: ICreationStepProps) {
           <LabelWrapper errorMessage={errors?.essentials?.snapshotENS}>
             <Input
               value={values.essentials.snapshotENS}
-              onChange={cEvent => handleSnapshotSpaceChange(cEvent.target.value)}
+              onChange={cEvent =>
+                setFieldValue('essentials.snapshotENS', cEvent.target.value, true)
+              }
               isDisabled={snapshotENSDisabled}
               data-testid="essentials-snapshotENS"
               placeholder="example.eth"
@@ -195,8 +176,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       <StepButtons
         {...props}
         isNextDisabled={
-          !isSnapshotSpaceValid ||
-          values.essentials.daoName.length === 0 || // TODO formik should do this, not sure why it's enabled on first pass
+          (!!errors.essentials && Object.keys(errors.essentials).length > 0) ||
           (isEdit && values.essentials.governance === GovernanceType.MULTISIG)
         }
         isEdit={isEdit}
