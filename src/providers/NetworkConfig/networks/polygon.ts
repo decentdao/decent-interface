@@ -71,9 +71,5 @@ export const polygonConfig: NetworkConfig = {
     keyValuePairs: KeyValuePairs.address,
   },
   staking: {},
-  createOptions: [
-    GovernanceType.MULTISIG,
-    GovernanceType.AZORIUS_ERC20,
-    GovernanceType.AZORIUS_ERC721,
-  ],
+  createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };

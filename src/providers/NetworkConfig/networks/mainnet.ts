@@ -77,9 +77,5 @@ export const mainnetConfig: NetworkConfig = {
       withdrawalQueueContractAddress: '0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1',
     },
   },
-  createOptions: [
-    GovernanceType.MULTISIG,
-    GovernanceType.AZORIUS_ERC20,
-    GovernanceType.AZORIUS_ERC721,
-  ],
+  createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
