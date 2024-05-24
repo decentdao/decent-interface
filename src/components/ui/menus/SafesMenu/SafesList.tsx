@@ -43,14 +43,13 @@ export function SafesList() {
               },
             }}
           >
-            {favoritesList
-              .map(favorite => (
-                <SafeMenuItem
-                  key={favorite}
-                  network={addressPrefix}
-                  address={favorite}
-                />
-              ))}
+            {favoritesList.map(favorite => (
+              <SafeMenuItem
+                key={favorite}
+                network={addressPrefix}
+                address={favorite}
+              />
+            ))}
           </Box>
         )}
       </Box>
