@@ -25,17 +25,25 @@ export function MySafes() {
         {/* SAFES CONTENT */}
         {favoritesList.length === 0 ? (
           <Flex
-            justifyContent="center"
-            p="1.5rem 1rem"
+            direction="column"
+            p="1rem"
             maxW="100%"
             my="0.5rem"
-            gap="0.75rem"
             bg="neutral-2"
             borderRadius="0.5rem"
-            border="1px solid"
-            borderColor="transparent"
           >
-            <Text color="white-alpha-16">{t('emptyFavorites', { ns: 'dashboard' })}</Text>
+            <Text
+              color="white-alpha-16"
+              align="center"
+            >
+              {t('emptyFavorites', { ns: 'dashboard' })}
+            </Text>
+            <Text
+              color="white-alpha-16"
+              align="center"
+            >
+              {t('emptyFavorites2', { ns: 'dashboard' })}
+            </Text>
           </Flex>
         ) : (
           <Box>
