@@ -136,7 +136,12 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
     >
       <HeaderLogo />
       <Show above="md">
-        <DAOSearch />
+        <Box
+          w="full"
+          mr="1rem"
+        >
+          <DAOSearch />
+        </Box>
       </Show>
 
       <Flex
