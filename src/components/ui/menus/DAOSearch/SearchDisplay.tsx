@@ -77,11 +77,13 @@ export function SearchDisplay({
       <Flex
         cursor={isCurrentSafe ? 'not-allowed' : 'default'}
         flexDir="column"
+        px="0.5rem"
       >
         <Text
           textStyle="button-small"
           color="neutral-7"
-          p="1rem"
+          py="1rem"
+          px="0.5rem"
         >
           {t(isCurrentSafe ? 'labelCurrentDAO' : 'labelDAOFound')}
         </Text>
