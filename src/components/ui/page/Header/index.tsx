@@ -10,7 +10,7 @@ import {
   Show,
   useDisclosure,
 } from '@chakra-ui/react';
-import { DecentLogo } from '@decent-org/fractal-ui';
+import { DecentLogo, DecentSignature } from '@decent-org/fractal-ui';
 import { MagnifyingGlass, List } from '@phosphor-icons/react';
 import { useRef, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -102,10 +102,10 @@ function HeaderLogo() {
           to={BASE_ROUTES.landing}
           aria-label={t('ariaLabelFractalBrand')}
         >
-          <DecentLogo
+          <DecentSignature
             aria-hidden
-            h="2.5rem"
-            w="2.125rem"
+            height="1.5rem"
+            width="auto"
             mr="1.75rem"
           />
         </Link>
