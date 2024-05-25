@@ -62,7 +62,10 @@ export default function Layout() {
           <NavigationLinks />
         </Show>
       </GridItem>
-      <GridItem area="main">
+      <GridItem
+        area="main"
+        mx={{ base: '0.5rem', md: '1.5rem' }}
+      >
         <Container
           maxWidth={MAX_CONTENT_WIDTH}
           minH={CONTENT_HEIGHT}

@@ -32,10 +32,9 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
     <Flex
       maxW="100%"
       p="1.5rem"
-      mx="0.25rem"
       my="0.5rem"
       gap="0.75rem"
-      alignItems={showAddress ? 'center' : 'flex-start'}
+      alignItems="center"
       onClick={onClickNav}
       bg="neutral-2"
       cursor="pointer"
@@ -47,7 +46,6 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
       borderRadius="0.5rem"
       border="1px solid"
       borderColor="transparent"
-      // what colours to use??
       _active={{ borderColor: 'neutral-4' }}
     >
       <Avatar
@@ -55,10 +53,7 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
         address={address}
         url={avatarURL}
       />
-      <Flex
-        flexDir="column"
-        alignSelf="center"
-      >
+      <Flex flexDir="column">
         <Text
           color={daoName ? nameColor : 'neutral-6'}
           textStyle={showAddress ? 'label-base' : 'button-base'}
