@@ -36,7 +36,7 @@ export default function HomePage() {
       <Flex
         w="100%"
         alignItems="flex-end"
-        mt="3rem"
+        mt="2.5rem"
       >
         <Text textStyle="display-lg">{t('mySafes')}</Text>
         <Spacer />
