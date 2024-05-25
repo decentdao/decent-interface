@@ -1,16 +1,17 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { getAddress } from 'viem';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
-import useDAOName from '../../hooks/DAO/useDAOName';
+import { useGetDAOName } from '../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
-  const { daoRegistryName } = useDAOName({ address });
+  const { daoName } = useGetDAOName({ address: getAddress(address) });
   const navigate = useNavigate();
 
   const { t } = useTranslation('dashboard');
@@ -59,10 +60,10 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
         alignSelf="center"
       >
         <Text
-          color={daoRegistryName ? nameColor : 'neutral-6'}
+          color={daoName ? nameColor : 'neutral-6'}
           textStyle={showAddress ? 'label-base' : 'button-base'}
         >
-          {daoRegistryName ?? t('loadingFavorite')}
+          {daoName ?? t('loadingFavorite')}
         </Text>
         {showAddress && <Text textStyle="button-base">{createAccountSubstring(address)}</Text>}
       </Flex>
