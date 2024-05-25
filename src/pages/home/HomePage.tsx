@@ -3,11 +3,9 @@ import { DecentSignature } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import ExternalLink from '../../components/ui/links/ExternalLink';
 import { ModalType } from '../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../components/ui/modals/useFractalModal';
 import { BASE_ROUTES } from '../../constants/routes';
-import { URL_DOCS } from '../../constants/url';
 import { useFractal } from '../../providers/App/AppProvider';
 import { MySafes } from './MySafes';
 
@@ -75,11 +73,9 @@ export default function HomePage() {
       <Flex
         direction="column"
         w="full"
-        gap="0.5rem"
       >
         <MySafes />
       </Flex>
-      <ExternalLink href={URL_DOCS}>{t('docsCTA')}</ExternalLink>
     </Flex>
   );
 }
