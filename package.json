@@ -59,7 +59,7 @@
     "lint:check": "eslint . --ext .ts,.tsx",
     "pretty": "prettier . --write",
     "pretty:check": "prettier . --check",
-    "dev": "vite --force --host",
+    "dev": "vite --force",
     "start": "vite start",
     "preview": "vite preview",
     "build": "NODE_OPTIONS=--max-old-space-size=8192 vite build",
