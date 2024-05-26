@@ -5,7 +5,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.10",
     "@chakra-ui/react": "^2.8.2",
-    "@decent-org/fractal-ui": "^0.3.5",
+    "@decent-org/fractal-ui": "^0.3.7",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@ethersproject/abstract-signer": "^5.7.0",
@@ -59,7 +59,7 @@
     "lint:check": "eslint . --ext .ts,.tsx",
     "pretty": "prettier . --write",
     "pretty:check": "prettier . --check",
-    "dev": "vite --force",
+    "dev": "vite --force --host",
     "start": "vite start",
     "preview": "vite preview",
     "build": "NODE_OPTIONS=--max-old-space-size=8192 vite build",
