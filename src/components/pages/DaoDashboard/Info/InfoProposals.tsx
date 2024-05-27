@@ -54,7 +54,8 @@ const totalProposalsCount = (
     case GovernanceType.AZORIUS_ERC721: {
       const nonSnapshot = nonSnapshotProposals(proposals);
       const highestNonSnapshotProposalId = nonSnapshot.reduce((p, c) => {
-        const propId = Number(c.proposalId);
+        // Proposal IDs are zero indexed!
+        const propId = Number(c.proposalId) + 1;
         if (propId > p) {
           return propId;
         }
