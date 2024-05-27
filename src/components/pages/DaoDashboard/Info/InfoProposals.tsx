@@ -28,21 +28,15 @@ export function InfoProposals({}: IDAOGovernance) {
   }
   const passed = !proposals
     ? 0
-    : proposals.reduce(
-        (prev, proposal) => (proposal.state === FractalProposalState.EXECUTED ? prev + 1 : prev),
-        0,
-      );
+    : proposals.filter(proposal => proposal.state === FractalProposalState.EXECUTED).length;
 
   const active = !proposals
     ? 0
-    : proposals.reduce(
-        (prev, proposal) =>
+    : proposals.filter(
+        proposal =>
           proposal.state === FractalProposalState.ACTIVE ||
-          proposal.state === FractalProposalState.EXECUTABLE
-            ? prev + 1
-            : prev,
-        0,
-      );
+          proposal.state === FractalProposalState.EXECUTABLE,
+      ).length;
 
   return (
     <Box data-testid="dashboard-daoProposals">
