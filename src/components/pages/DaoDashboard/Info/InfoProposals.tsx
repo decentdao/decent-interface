@@ -23,21 +23,6 @@ const nonSnapshotProposals = (proposals: FractalProposal[]) => {
   return proposals.filter(proposal => !isSnapshotProposal(proposal));
 };
 
-const isActiveProposal = (proposal: FractalProposal) => {
-  return (
-    proposal.state === FractalProposalState.ACTIVE ||
-    proposal.state === FractalProposalState.EXECUTABLE
-  );
-};
-
-const activeProposals = (proposals: FractalProposal[]) => {
-  return proposals.filter(proposal => isActiveProposal(proposal));
-};
-
-const nonActiveProposals = (proposals: FractalProposal[]) => {
-  return proposals.filter(proposal => !isActiveProposal(proposal));
-};
-
 const totalProposalsCount = (
   proposals: FractalProposal[] | null,
   type: GovernanceType | undefined,
@@ -68,6 +53,21 @@ const totalProposalsCount = (
       return 0;
     }
   }
+};
+
+const isActiveProposal = (proposal: FractalProposal) => {
+  return (
+    proposal.state === FractalProposalState.ACTIVE ||
+    proposal.state === FractalProposalState.EXECUTABLE
+  );
+};
+
+const activeProposals = (proposals: FractalProposal[]) => {
+  return proposals.filter(proposal => isActiveProposal(proposal));
+};
+
+const nonActiveProposals = (proposals: FractalProposal[]) => {
+  return proposals.filter(proposal => !isActiveProposal(proposal));
 };
 
 const allActiveProposalsCount = (
