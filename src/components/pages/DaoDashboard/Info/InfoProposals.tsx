@@ -15,11 +15,33 @@ const isSnapshotProposal = (proposal: FractalProposal) => {
   return !!snapshotProposal.snapshotProposalId;
 };
 
+const snapshotProposals = (proposals: FractalProposal[]) => {
+  return proposals.filter(proposal => isSnapshotProposal(proposal));
+};
+
 const nonSnapshotProposals = (proposals: FractalProposal[]) => {
   return proposals.filter(proposal => !isSnapshotProposal(proposal));
 };
 
-const totalProposals = (proposals: FractalProposal[] | null, type: GovernanceType | undefined) => {
+const isActiveProposal = (proposal: FractalProposal) => {
+  return (
+    proposal.state === FractalProposalState.ACTIVE ||
+    proposal.state === FractalProposalState.EXECUTABLE
+  );
+};
+
+const activeProposals = (proposals: FractalProposal[]) => {
+  return proposals.filter(proposal => isActiveProposal(proposal));
+};
+
+const nonActiveProposals = (proposals: FractalProposal[]) => {
+  return proposals.filter(proposal => !isActiveProposal(proposal));
+};
+
+const totalProposalsCount = (
+  proposals: FractalProposal[] | null,
+  type: GovernanceType | undefined,
+) => {
   if (!proposals) {
     return undefined;
   }
@@ -47,51 +69,39 @@ const totalProposals = (proposals: FractalProposal[] | null, type: GovernanceTyp
   }
 };
 
-const isActiveProposal = (proposal: FractalProposal) => {
-  return (
-    proposal.state === FractalProposalState.ACTIVE ||
-    proposal.state === FractalProposalState.EXECUTABLE
-  );
-};
-
-const filterForActiveProposals = (proposals: FractalProposal[]) => {
-  return proposals.filter(proposal => isActiveProposal(proposal));
-};
-
-const anyNonActiveProposals = (proposals: FractalProposal[]) => {
-  return proposals.filter(proposal => !isActiveProposal(proposal)).length > 0;
-};
-
-const activeProposals = (proposals: FractalProposal[] | null, type: GovernanceType | undefined) => {
+const allActiveProposalsCount = (
+  proposals: FractalProposal[] | null,
+  type: GovernanceType | undefined,
+) => {
   if (!proposals) {
     return undefined;
   }
 
   switch (type) {
     case GovernanceType.MULTISIG: {
-      return filterForActiveProposals(proposals).length;
+      return activeProposals(proposals).length;
     }
     case GovernanceType.AZORIUS_ERC20:
     case GovernanceType.AZORIUS_ERC721: {
       const nonSnapshot = nonSnapshotProposals(proposals);
-      const snapshotProposalCount = proposals.length - nonSnapshot.length;
-      const activeNonSnapshotProposals = filterForActiveProposals(nonSnapshot);
-      const anyNonActive = anyNonActiveProposals(nonSnapshot);
+      const activeNonSnapshotProposals = activeProposals(nonSnapshot);
+      const anyNonActiveNonSnapshotProposals = nonActiveProposals(nonSnapshot).length > 0;
+      const totalNonSnapshotProposalsCount = totalProposalsCount(nonSnapshot, type);
 
-      console.log({ nonSnapshot, snapshotProposalCount, activeNonSnapshotProposals, anyNonActive });
+      const allSnapshotProposals = snapshotProposals(proposals);
+      const activeSnapshotProposals = activeProposals(allSnapshotProposals);
 
-      const totalNonSnapshotProposalsCount = totalProposals(nonSnapshot, type);
-
-      if (anyNonActive) {
+      if (anyNonActiveNonSnapshotProposals) {
         // If we're here, we've loaded proposals to a point where at least one is not active,
         // which means the chances are pretty darn low that there are any more
         // active proposals after this one. So return a value!
-        return activeNonSnapshotProposals.length;
+        return activeNonSnapshotProposals.length + activeSnapshotProposals.length;
       } else {
-        // Getting here means that all of the loaded proposals so far are active.
+        // Getting here means that all of the loaded proposals so far are active
+        // or there are no non-Snapshot proposals.
         if (totalNonSnapshotProposalsCount === activeNonSnapshotProposals.length) {
-          // If we're here, then all of the proposals on this Safe are active!
-          return activeNonSnapshotProposals.length;
+          // If we're here, then all of the proposals on this Safe are active, or there are zero of them!
+          return activeNonSnapshotProposals.length + activeSnapshotProposals.length;
         } else {
           // In here, proposals are still loading and all of them so far are active.
           return undefined;
@@ -124,11 +134,11 @@ export function InfoProposals() {
     );
   }
 
-  const totalProposalsValue = totalProposals(proposals, type);
+  const totalProposalsValue = totalProposalsCount(proposals, type);
   const totalProposalsDisplay =
     totalProposalsValue === undefined ? '...' : totalProposalsValue.toString();
 
-  const activeProposalsValue = activeProposals(proposals, type);
+  const activeProposalsValue = allActiveProposalsCount(proposals, type);
   const activeProposalsDisplay =
     activeProposalsValue === undefined ? '...' : activeProposalsValue.toString();
 
@@ -158,7 +168,7 @@ export function InfoProposals() {
         mb="0.25rem"
         gap="0.5rem"
       >
-        <Text color="neutral-7">{t('titlePending')}</Text>
+        <Text color="neutral-7">{t('titleActive')}</Text>
         <Text>{activeProposalsDisplay}</Text>
       </Flex>
     </Box>
