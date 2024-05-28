@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Text, Progress } from '@chakra-ui/react';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -18,8 +18,8 @@ import ProposalERC721VoteItem from './ProposalERC721VoteItem';
 export function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
   return (
     <Flex
-      flexWrap="wrap"
       marginTop={2}
+      width="100%"
     >
       <ProgressBar
         value={percentage}
@@ -85,23 +85,18 @@ function ProposalVotes({
     >
       <ContentBox containerBoxProps={{ bg: 'transparent', width: '100%', my: 0 }}>
         <Text textStyle="display-lg">{t('breakdownTitle', { ns: 'proposal' })}</Text>
-        <Grid>
-          <GridItem rowGap={4}>
-            <VotesPercentage
-              label={t('yes')}
-              percentage={yesVotesPercentage}
-            />
-            <VotesPercentage
-              label={t('no')}
-              percentage={noVotesPercentage}
-            />
-
-            <VotesPercentage
-              label={t('abstain')}
-              percentage={abstainVotesPercentage}
-            />
-          </GridItem>
-        </Grid>
+        <VotesPercentage
+          label={t('yes')}
+          percentage={yesVotesPercentage}
+        />
+        <VotesPercentage
+          label={t('no')}
+          percentage={noVotesPercentage}
+        />
+        <VotesPercentage
+          label={t('abstain')}
+          percentage={abstainVotesPercentage}
+        />
       </ContentBox>
       {votes.length !== 0 && (
         <ContentBox containerBoxProps={{ bg: 'transparent', width: '100%', my: 0, paddingTop: 0 }}>

@@ -9,8 +9,6 @@ interface ProgressBarProps {
   max?: number;
   unit?: string;
   label: string;
-  labelWidth?: string;
-  bg?: string;
 }
 export default function ProgressBar({
   value,
@@ -18,24 +16,25 @@ export default function ProgressBar({
   max = 100,
   unit = '%',
   label,
-  labelWidth,
-  bg,
 }: ProgressBarProps) {
   return (
     <Box
       width="full"
       position="relative"
     >
+      <Progress
+        width="full"
+        value={max !== 100 ? value : Math.min(value, 100)}
+        max={max}
+      />
       <Flex
         justifyContent="space-between"
         alignItems="center"
         position="absolute"
-        zIndex={2}
         top={0}
-        width={labelWidth ? labelWidth : value > 16 ? `${Math.min(value, 100)}%` : '20%'}
+        width="100%"
         px="1rem"
-        py="2px"
-        height="24px"
+        height="100%"
       >
         <Text textStyle="label-small">{label}</Text>
         {customValueComponent ? (
@@ -53,12 +52,6 @@ export default function ProgressBar({
           </Text>
         )}
       </Flex>
-      <Progress
-        value={max !== 100 ? value : Math.min(value, 100)}
-        max={max}
-        maxWidth="100%"
-        bg={bg}
-      />
     </Box>
   );
 }
@@ -87,8 +80,6 @@ export function QuorumProgressBar({
         max={totalQuorum}
         unit={unit}
         label={t('quorum', { ns: 'common' })}
-        bg="neutral-4"
-        labelWidth="100%"
         customValueComponent={
           totalQuorum ? (
             <Text
