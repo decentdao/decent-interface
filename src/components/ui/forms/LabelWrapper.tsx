@@ -12,7 +12,6 @@ export interface ILabelWrapper {
   children: JSX.Element;
 }
 
-// @todo move to UI components
 function LabelWrapper({ label, subLabel, errorMessage, tooltipContent, children }: ILabelWrapper) {
   return (
     <Box position="relative">
