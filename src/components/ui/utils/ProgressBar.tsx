@@ -91,7 +91,11 @@ export function QuorumProgressBar({
         labelWidth="100%"
         customValueComponent={
           totalQuorum ? (
-            <Text textStyle="label-small">
+            <Text
+              textStyle="label-small"
+              whiteSpace="nowrap"
+              overflow="clip"
+            >
               {reachedQuorum >= totalQuorum && (
                 <Icon
                   color="lilac-0"
