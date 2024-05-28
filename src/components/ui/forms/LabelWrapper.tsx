@@ -1,18 +1,18 @@
 import { Box, Flex, FormLabel, Text, Tooltip } from '@chakra-ui/react';
 import { Info } from '@phosphor-icons/react';
-import { ReactNode } from 'react';
 
-export interface ILabelWrapper {
+// @todo there is some type cleanup needed here
+export interface LabelWrapperProps {
   label?: string;
-  subLabel?: ReactNode;
+  subLabel?: JSX.Element | string | null;
   isDisabled?: boolean;
-  errorMessage?: string;
+  errorMessage?: string | null;
   tooltipContent?: JSX.Element;
   htmlFor?: string;
-  children: JSX.Element;
+  children: JSX.Element | JSX.Element[];
 }
 
-function LabelWrapper({ label, subLabel, errorMessage, tooltipContent, children }: ILabelWrapper) {
+function LabelWrapper({ label, subLabel, errorMessage, tooltipContent, children }: LabelWrapperProps) {
   return (
     <Box position="relative">
       <FormLabel m="0px">
