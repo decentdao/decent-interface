@@ -27,6 +27,7 @@ import { DAOSearch } from '../../menus/DAOSearch';
 import { SafesMenu } from '../../menus/SafesMenu';
 import { ModalType } from '../../modals/ModalProvider';
 import { useFractalModal } from '../../modals/useFractalModal';
+import { Footer } from '../Footer';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 function HeaderLogo() {
@@ -89,9 +90,16 @@ function HeaderLogo() {
                   />
                 </Link>
               </Flex>
-              <Box mt="1rem">
+              <Flex
+                height="full"
+                direction="column"
+                my="1rem"
+              >
                 <NavigationLinks closeDrawer={onClose} />
-              </Box>
+                <Box mx="0.25rem">
+                  <Footer />
+                </Box>
+              </Flex>
             </DrawerContent>
           </Drawer>
         </>

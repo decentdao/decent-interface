@@ -141,7 +141,7 @@ export function NavigationLinks({ closeDrawer }: { closeDrawer?: () => void }) {
     <Flex
       alignItems="start"
       direction="column"
-      justifyContent="flex-end"
+      justifyContent={{ base: 'flex-start', md: 'flex-end' }}
       flexGrow={1}
     >
       <InternalLinks closeDrawer={closeDrawer} />
