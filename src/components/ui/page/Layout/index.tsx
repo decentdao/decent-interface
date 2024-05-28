@@ -69,7 +69,8 @@ export default function Layout() {
       >
         <Container
           maxWidth={MAX_CONTENT_WIDTH}
-          minH={CONTENT_HEIGHT}
+          minH={`calc(${CONTENT_HEIGHT} - 2rem)`}
+          mb="2rem"
         >
           <ErrorBoundary
             fallback={<TopErrorFallback />}
