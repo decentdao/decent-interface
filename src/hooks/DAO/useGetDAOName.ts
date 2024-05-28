@@ -39,11 +39,11 @@ const getDAOName = async ({
   const events = await rpc.queryFilter(rpc.filters.FractalNameUpdated(address));
   const latestEvent = events.pop();
 
-  if (!latestEvent) {
-    return createAccountSubstring(address);
+  if (latestEvent) {
+    return latestEvent.args.daoName;
   }
 
-  return latestEvent.args.daoName;
+  return createAccountSubstring(address);
 };
 
 const useGetDAOName = ({
