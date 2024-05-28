@@ -42,7 +42,7 @@ export function MySafes() {
               color="white-alpha-16"
               align="center"
             >
-              {t('emptyFavorites2', { ns: 'dashboard' })}
+              {t('emptyFavoritesSubtext', { ns: 'dashboard' })}
             </Text>
           </Flex>
         ) : (

@@ -1,7 +1,7 @@
 {
   "titleFavorites": "My Safes",
   "emptyFavorites": "You haven't added any Safes yet.",
-  "emptyFavorites2": "Create or find a Safe above.",
+  "emptyFavoritesSubtext": "Create or find a Safe above.",
   "loadingFavorite": "Loading Safe Name",
   "errorInvalidSearch": "Oops! This Ethereum address is invalid.",
   "errorFailedSearch": "Sorry, this address is not a Safe on {{chain}}.",
