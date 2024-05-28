@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Select, Text, Icon } from '@chakra-ui/react';
+import { Box, Button, Flex, HStack, Select, Text, Icon, Input } from '@chakra-ui/react';
 import { WarningDiamond, WarningCircle } from '@phosphor-icons/react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -64,20 +64,11 @@ function RemoveSignerModal({
   return (
     <Box>
       <Text textStyle="label-base">{t('removeSignerLabel', { ns: 'modals' })}</Text>
-
-      <Text
-        border="1px"
-        borderColor="red-0"
-        color="red-0"
-        bgColor="red--3"
-        px="1rem"
-        py="0.5rem"
+      <Input
+        value={ensName ? ensName : selectedSigner}
+        disabled={true}
         my="0.5rem"
-        rounded="sm"
-      >
-        {ensName ? ensName : selectedSigner}
-      </Text>
-
+      />
       <HStack>
         <Icon
           weight="fill"
