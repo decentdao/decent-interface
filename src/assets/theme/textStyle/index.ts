@@ -23,9 +23,9 @@ interface TypographyScheme {
   [groupName: string]: TypographyTokenGroup;
 }
 
-const extractTypographyFromJson = (tokens: TypographyScheme, prefix = '') => {
+const extractTypographyFromJson = (tokens: TypographyScheme) => {
   const typography: Record<string, TypographyValue> = {};
-  Object.entries(tokens).forEach(([key, value]) => {
+  Object.entries(tokens).forEach(([, value]) => {
     Object.entries(value).forEach(([innerKey, innerValue]) => {
       const formattedInnerKey = innerKey.replace(/\s+/g, '-').toLowerCase();
       if (innerValue && typeof innerValue === 'object' && innerValue.$value) {

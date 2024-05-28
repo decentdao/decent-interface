@@ -1,10 +1,14 @@
-import { ComponentWithAs, createIcon, IconProps } from "@chakra-ui/react"
+import { ComponentWithAs, createIcon, IconProps } from '@chakra-ui/react';
 
-export const DecentSignature: ComponentWithAs<"svg", IconProps> = createIcon({
-  displayName: "DecentSignature",
-  viewBox: "0 0 283 60",
+export const DecentSignature: ComponentWithAs<'svg', IconProps> = createIcon({
+  displayName: 'DecentSignature',
+  viewBox: '0 0 283 60',
   path: (
-    <svg width="283" height="60" fill="none">
+    <svg
+      width="283"
+      height="60"
+      fill="none"
+    >
       <path
         d="M271.035 22.0005V47.6807H283V53.2253H264.98V22.0005H256.809V16.4559H264.98V5.91825H271.035V16.4559H280.738V22.0005H271.035Z"
         fill="#DCC8F0"
@@ -35,4 +39,4 @@ export const DecentSignature: ComponentWithAs<"svg", IconProps> = createIcon({
       />
     </svg>
   ),
-})
+});

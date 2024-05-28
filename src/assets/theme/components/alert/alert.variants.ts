@@ -1,31 +1,25 @@
-import { alertAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { alertAnatomy } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 
-const { definePartsStyle } =
-  createMultiStyleConfigHelpers(alertAnatomy.keys)
+const { definePartsStyle } = createMultiStyleConfigHelpers(alertAnatomy.keys);
 
 const info = definePartsStyle({
-  title: {
-
-  },
+  title: {},
   container: {
-    bg: "neutral-3",
-    border: "1px solid",
-    borderColor: "neutral-4",
-    color: 'lilac-0'
+    bg: 'neutral-3',
+    border: '1px solid',
+    borderColor: 'neutral-4',
+    color: 'lilac-0',
   },
-  description: {
-
-  },
+  description: {},
   icon: {
-    color: 'lilac-0'
+    color: 'lilac-0',
   },
   spinner: {},
-})
-
+});
 
 const alertVariants = {
   info,
-}
+};
 
-export default alertVariants
+export default alertVariants;

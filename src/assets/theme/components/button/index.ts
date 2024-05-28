@@ -1,7 +1,7 @@
 import { defineStyleConfig } from '@chakra-ui/react';
-import baseStyle from './button.base'
-import sizes from './button.sizes'
-import variants from './button.variants'
+import baseStyle from './button.base';
+import sizes from './button.sizes';
+import variants from './button.variants';
 
 const Button = defineStyleConfig({
   baseStyle,
@@ -13,4 +13,4 @@ const Button = defineStyleConfig({
   },
 });
 
-export default Button
+export default Button;

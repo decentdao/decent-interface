@@ -1,20 +1,18 @@
-import { progressAnatomy } from "@chakra-ui/anatomy"
-import { createMultiStyleConfigHelpers } from "@chakra-ui/react"
+import { progressAnatomy } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 
-const { definePartsStyle } = createMultiStyleConfigHelpers(progressAnatomy.keys)
+const { definePartsStyle } = createMultiStyleConfigHelpers(progressAnatomy.keys);
 
 const baseStyles = definePartsStyle({
   track: {
-    bg: "neutral-2",
-    borderRadius: "4px",
+    bg: 'neutral-2',
+    borderRadius: '4px',
   },
   filledTrack: {
-    bg: "lilac--3",
-    borderRadius: "4px",
+    bg: 'lilac--3',
+    borderRadius: '4px',
   },
-  label: {
+  label: {},
+});
 
-  },
-})
-
-export default baseStyles
+export default baseStyles;

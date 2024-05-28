@@ -1,10 +1,9 @@
-import { progressAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
+import { progressAnatomy } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 import baseStyle from './progress.base';
-import sizes from './progress.size'
+import sizes from './progress.size';
 
-const { defineMultiStyleConfig } =
-  createMultiStyleConfigHelpers(progressAnatomy.keys)
+const { defineMultiStyleConfig } = createMultiStyleConfigHelpers(progressAnatomy.keys);
 
 const Progress = defineMultiStyleConfig({
   baseStyle,
@@ -12,6 +11,6 @@ const Progress = defineMultiStyleConfig({
   defaultProps: {
     size: 'base',
   },
-})
+});
 
-export default Progress
+export default Progress;

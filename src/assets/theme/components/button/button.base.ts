@@ -1,5 +1,5 @@
 // Global Base button
-import { defineStyle } from '@chakra-ui/react'
+import { defineStyle } from '@chakra-ui/react';
 
 const baseStyle = defineStyle({
   alignItems: 'center',
@@ -9,10 +9,10 @@ const baseStyle = defineStyle({
   justifyContent: 'center',
   gap: '4px',
   _disabled: {
-    cursor: 'default'
+    cursor: 'default',
   },
   _hover: {},
-  _focus: {}
-})
+  _focus: {},
+});
 
-export default baseStyle
+export default baseStyle;

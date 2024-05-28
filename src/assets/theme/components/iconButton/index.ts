@@ -1,8 +1,8 @@
 import { defineStyleConfig } from '@chakra-ui/react';
 
-import baseStyle from './iconButton.base'
-import sizes from './iconButton.sizes'
-import variants from './iconButton.variants'
+import baseStyle from './iconButton.base';
+import sizes from './iconButton.sizes';
+import variants from './iconButton.variants';
 
 const IconButton = defineStyleConfig({
   baseStyle,
@@ -14,4 +14,4 @@ const IconButton = defineStyleConfig({
   },
 });
 
-export default IconButton
+export default IconButton;

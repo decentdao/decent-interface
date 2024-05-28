@@ -1,10 +1,9 @@
-import { numberInputAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers } from '@chakra-ui/react'
-import baseStyle from './numberInput.base'
-import sizes from './numberInput.sizes'
+import { numberInputAnatomy } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
+import baseStyle from './numberInput.base';
+import sizes from './numberInput.sizes';
 
-const { defineMultiStyleConfig } =
-  createMultiStyleConfigHelpers(numberInputAnatomy.keys)
+const { defineMultiStyleConfig } = createMultiStyleConfigHelpers(numberInputAnatomy.keys);
 
 const NumberInput = defineMultiStyleConfig({
   baseStyle,
@@ -12,7 +11,6 @@ const NumberInput = defineMultiStyleConfig({
   defaultProps: {
     size: 'base',
   },
-})
+});
 
-
-export default NumberInput
+export default NumberInput;

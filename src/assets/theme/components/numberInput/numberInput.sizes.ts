@@ -1,61 +1,60 @@
-import { inputAnatomy } from '@chakra-ui/anatomy'
-import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/react'
+import { inputAnatomy } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/react';
 
-const { definePartsStyle } =
-  createMultiStyleConfigHelpers(inputAnatomy.keys)
+const { definePartsStyle } = createMultiStyleConfigHelpers(inputAnatomy.keys);
 
-const paddingBase = { px: '1rem'}
-const paddingAddonLeft = { pl: '2rem', pr: '1rem'}
-const paddingAddonRight = { pl: '1rem', pr: '4rem'}
+const paddingBase = { px: '1rem' };
+const paddingAddonLeft = { pl: '2rem', pr: '1rem' };
+const paddingAddonRight = { pl: '1rem', pr: '4rem' };
 
 const baseStyle = {
   apply: 'textStyles.input-text',
   height: '2.5rem',
-}
+};
 const base = defineStyle({
   ...baseStyle,
-  ...paddingBase
-})
+  ...paddingBase,
+});
 
 const baseAddonLeft = defineStyle({
   ...baseStyle,
-  ...paddingAddonLeft
-})
+  ...paddingAddonLeft,
+});
 const baseAddonRight = defineStyle({
   ...baseStyle,
   ...paddingAddonRight,
-})
+});
 
 const baseWithAddons = defineStyle({
   ...baseStyle,
   ...paddingAddonRight,
-  ...paddingAddonLeft
-})
+  ...paddingAddonLeft,
+});
 
 const xlStyle = {
   apply: 'input-text',
   h: '4.375rem',
-}
+};
 
 const xl = defineStyle({
   ...xlStyle,
-  ...paddingBase
-})
+  ...paddingBase,
+});
 
 const xlAddonLeft = defineStyle({
   ...xlStyle,
-  ...paddingAddonLeft
-})
+  ...paddingAddonLeft,
+});
 const xlAddonRight = defineStyle({
   ...xlStyle,
-  ...paddingAddonRight
-})
+  ...paddingAddonRight,
+});
 
 const xlWithAddons = defineStyle({
   ...xlStyle,
   ...paddingAddonRight,
-  ...paddingAddonLeft
-})
+  ...paddingAddonLeft,
+});
 
 const sizes = {
   base: definePartsStyle({ field: base, addon: base }),
@@ -66,6 +65,6 @@ const sizes = {
   xlAddonLeft: definePartsStyle({ field: xlAddonLeft, addon: xlAddonLeft }),
   xlAddonRight: definePartsStyle({ field: xlAddonRight, addon: xlAddonRight }),
   xlWithAddons: definePartsStyle({ field: xlWithAddons, addon: xlWithAddons }),
-}
+};
 
-export default sizes
+export default sizes;

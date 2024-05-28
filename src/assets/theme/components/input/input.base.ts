@@ -1,50 +1,50 @@
-import { inputAnatomy } from "@chakra-ui/anatomy"
-import { createMultiStyleConfigHelpers } from "@chakra-ui/react"
+import { inputAnatomy } from '@chakra-ui/anatomy';
+import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
 
-const { definePartsStyle } = createMultiStyleConfigHelpers(inputAnatomy.keys)
+const { definePartsStyle } = createMultiStyleConfigHelpers(inputAnatomy.keys);
 
 const disabled = {
-  cursor: "default",
-  borderColor: "white-alpha-08",
-  color: "neutral-6",
+  cursor: 'default',
+  borderColor: 'white-alpha-08',
+  color: 'neutral-6',
   _placeholder: {
-    color: "neutral-5",
+    color: 'neutral-5',
   },
-}
+};
 
-const loading = {}
+const loading = {};
 
 const baseStyle = definePartsStyle({
   field: {
-    borderRadius: "4px",
-    color: "white-0",
-    bg: "neutral-1",
-    border: "1px solid",
-    borderColor: "neutral-3",
-    transitionDuration: "normal",
-    transitionProperty: "common",
-    width: "100%",
+    borderRadius: '4px',
+    color: 'white-0',
+    bg: 'neutral-1',
+    border: '1px solid',
+    borderColor: 'neutral-3',
+    transitionDuration: 'normal',
+    transitionProperty: 'common',
+    width: '100%',
     _invalid: {
-      borderColor: "red-0",
-      bg: "red--3",
-      color: "red-1",
+      borderColor: 'red-0',
+      bg: 'red--3',
+      color: 'red-1',
       _placeholder: {
-        color: "red-0",
+        color: 'red-0',
       },
     },
     _placeholder: {
-      color: "neutral-5",
+      color: 'neutral-5',
     },
     _active: {
-      borderColor: "neutral-4",
-      boxShadow: "0px 0px 0px 3px #534D58",
+      borderColor: 'neutral-4',
+      boxShadow: '0px 0px 0px 3px #534D58',
       _disabled: {
         ...disabled,
         _loading: loading,
       },
     },
     _hover: {
-      borderColor: "neutral-4",
+      borderColor: 'neutral-4',
       _disabled: {
         ...disabled,
         _loading: loading,
@@ -55,15 +55,15 @@ const baseStyle = definePartsStyle({
       _loading: loading,
     },
     _focus: {
-      outline: "none",
-      borderColor: "neutral-4",
-      boxShadow: "0px 0px 0px 3px #534D58",
+      outline: 'none',
+      borderColor: 'neutral-4',
+      boxShadow: '0px 0px 0px 3px #534D58',
       _invalid: {
-        borderColor: "red-0",
-        bg: "red--3",
-        color: "red-1",
+        borderColor: 'red-0',
+        bg: 'red--3',
+        color: 'red-1',
         _placeholder: {
-          color: "red-0",
+          color: 'red-0',
         },
       },
       _disabled: {
@@ -72,6 +72,6 @@ const baseStyle = definePartsStyle({
       },
     },
   },
-})
+});
 
-export default baseStyle
+export default baseStyle;
