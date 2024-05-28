@@ -124,7 +124,7 @@ function RemoveSignerModal({
               key={thresholdOption}
               value={thresholdOption}
             >
-              <Box key={thresholdOption}>{thresholdOption}</Box>
+              {thresholdOption}
             </option>
           ))}
         </Select>
