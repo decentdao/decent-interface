@@ -95,7 +95,6 @@ function ProposalVotes({
               label={t('no')}
               percentage={noVotesPercentage}
             />
-
             <VotesPercentage
               label={t('abstain')}
               percentage={abstainVotesPercentage}
@@ -112,12 +111,15 @@ function ProposalVotes({
             width="calc(100% + 4rem)"
             mx="-2rem"
           />
-          <Flex
-            flexWrap="wrap"
-            gap={4}
-          >
-            {votes.map(vote => {
-              if (isERC20) {
+          {isERC20 ? (
+            <Grid
+              templateColumns="repeat(4, auto)"
+              rowGap={4}
+              columnGap={2}
+              overflowX="auto"
+              whiteSpace="nowrap"
+            >
+              {votes.map(vote => {
                 return (
                   <ProposalERC20VoteItem
                     key={vote.voter}
@@ -127,7 +129,17 @@ function ProposalVotes({
                     govTokenSymbol={azoriusGovernance.votesToken?.symbol || ''}
                   />
                 );
-              } else if (isERC721) {
+              })}
+            </Grid>
+          ) : isERC721 ? (
+            <Grid
+              templateColumns="repeat(3, auto)"
+              rowGap={4}
+              columnGap={2}
+              overflowX="auto"
+              whiteSpace="nowrap"
+            >
+              {votes.map(vote => {
                 return (
                   <ProposalERC721VoteItem
                     key={vote.voter}
@@ -135,11 +147,9 @@ function ProposalVotes({
                     proposalId={proposalId}
                   />
                 );
-              } else {
-                return null;
-              }
-            })}
-          </Flex>
+              })}
+            </Grid>
+          ) : null}
         </ContentBox>
       )}
     </Flex>
