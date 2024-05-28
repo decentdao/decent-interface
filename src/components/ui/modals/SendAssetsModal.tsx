@@ -1,5 +1,4 @@
 import { Box, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
 import { CaretDown } from '@phosphor-icons/react';
 import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { useState } from 'react';
@@ -11,6 +10,7 @@ import useSendAssets from '../../pages/DAOTreasury/hooks/useSendAssets';
 import { BigIntInput } from '../forms/BigIntInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { EthAddressInput } from '../forms/EthAddressInput';
+import LabelWrapper from '../forms/LabelWrapper';
 import Divider from '../utils/Divider';
 
 // @todo add Yup and Formik to this modal
