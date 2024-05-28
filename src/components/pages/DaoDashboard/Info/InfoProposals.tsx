@@ -33,21 +33,28 @@ const totalProposalsCount = (
 
   switch (type) {
     case GovernanceType.MULTISIG: {
+      // Multisig proposals (onchain) and Snapshot proposals (offchain)
+      // are all loaded "at once", so just return the length of this set.
       return proposals.length;
     }
     case GovernanceType.AZORIUS_ERC20:
     case GovernanceType.AZORIUS_ERC721: {
+      // First, we want to first filter out all of the Snapshot proposals...
       const nonSnapshot = nonSnapshotProposals(proposals);
+
+      // Then, find the highest ID from the Azorius proposals...
       const highestNonSnapshotProposalId = nonSnapshot.reduce((p, c) => {
-        // Proposal IDs are zero indexed!
+        // Remember, proposal IDs are one-indexed!
         const propId = Number(c.proposalId) + 1;
         if (propId > p) {
           return propId;
         }
         return p;
       }, 0);
-      const snapshotProposalCount = proposals.length - nonSnapshot.length;
-      return highestNonSnapshotProposalId + snapshotProposalCount;
+
+      // Then, return the highest Azorius proposal ID
+      // plus the number of Snapshot proposals.
+      return highestNonSnapshotProposalId + proposals.length - nonSnapshot.length;
     }
     default: {
       return 0;
