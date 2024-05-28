@@ -1,5 +1,6 @@
 import { IconButton, Flex, Input, Text } from '@chakra-ui/react';
-import { AddPlus, Minus } from '@decent-org/fractal-ui';
+import { AddPlus } from '../../../assets/theme/custom/icons/AddPlus';
+import { Minus } from '../../../assets/theme/custom/icons/Minus';
 
 interface IWeightedInput {
   onChange: (value: number) => void;
