@@ -72,7 +72,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
   return (
     <Box
       width="full"
-      marginY="auto"
+      marginY={{ md: 'auto' }}
     >
       <Box
         maxWidth={{ md: 12, '3xl': '100%' }}
@@ -139,6 +139,7 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
 export function NavigationLinks({ closeDrawer }: { closeDrawer?: () => void }) {
   return (
     <Flex
+      height="full"
       alignItems="start"
       direction="column"
       justifyContent={{ base: 'flex-start', md: 'flex-end' }}
