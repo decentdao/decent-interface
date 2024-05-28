@@ -8,7 +8,6 @@ import { toast } from 'react-toastify';
 export function useCopyText() {
   const { t } = useTranslation('common');
 
-
   const copyTextToClipboard = async (textToCopy?: string) => {
     if (!textToCopy) return;
 
