@@ -91,15 +91,11 @@ const allActiveProposalsCount = (
     }
     case GovernanceType.AZORIUS_ERC20:
     case GovernanceType.AZORIUS_ERC721: {
-      const nonSnapshot = nonSnapshotProposals(proposals);
-      const activeNonSnapshotProposals = activeProposals(nonSnapshot);
-      const anyNonActiveNonSnapshotProposals = nonActiveProposals(nonSnapshot).length > 0;
-      const totalNonSnapshotProposalsCount = totalProposalsCount(nonSnapshot, type);
+      const allNonSnapshotProposals = nonSnapshotProposals(proposals);
+      const activeNonSnapshotProposals = activeProposals(allNonSnapshotProposals);
+      const activeSnapshotProposals = activeProposals(snapshotProposals(proposals));
 
-      const allSnapshotProposals = snapshotProposals(proposals);
-      const activeSnapshotProposals = activeProposals(allSnapshotProposals);
-
-      if (anyNonActiveNonSnapshotProposals) {
+      if (nonActiveProposals(allNonSnapshotProposals).length > 0) {
         // If we're here, we've loaded proposals to a point where at least one is not active,
         // which means the chances are pretty darn low that there are any more
         // active proposals after this one. So return a value!
@@ -107,6 +103,7 @@ const allActiveProposalsCount = (
       } else {
         // Getting here means that all of the loaded proposals so far are active
         // or there are no non-Snapshot proposals.
+        const totalNonSnapshotProposalsCount = totalProposalsCount(allNonSnapshotProposals, type);
         if (totalNonSnapshotProposalsCount === activeNonSnapshotProposals.length) {
           // If we're here, then all of the proposals on this Safe are active, or there are zero of them!
           return activeNonSnapshotProposals.length + activeSnapshotProposals.length;
