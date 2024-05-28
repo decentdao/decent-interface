@@ -1,0 +1,242 @@
+{
+  "Header Styles": {
+    "display-6xl": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "48px",
+        "fontWeight": 450,
+        "letterSpacing": "-1%",
+        "lineHeight": "62px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "display-4xl": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": {
+          "base": "32px",
+          "md": "40px"
+        },
+        "fontWeight": 450,
+        "letterSpacing": "-1%",
+        "lineHeight": {
+          "base": "36px",
+          "md": "44px"
+        },
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "display-2xl": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "32px",
+        "fontWeight": 450,
+        "letterSpacing": "0px",
+        "lineHeight": "36px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "display-xl": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "24px",
+        "fontWeight": 450,
+        "letterSpacing": "0px",
+        "lineHeight": "32px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "display-lg": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "20px",
+        "fontWeight": 450,
+        "letterSpacing": "0px",
+        "lineHeight": "28px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    }
+  },
+  "Body Styles": {
+    "body-base": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "16px",
+        "fontWeight": 450,
+        "letterSpacing": "0px",
+        "lineHeight": "24px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "body-base-strong": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "16px",
+        "fontWeight": 500,
+        "letterSpacing": "0px",
+        "lineHeight": "24px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    }
+  },
+  "Utility Styles": {
+    "text-link": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "16px",
+        "fontWeight": 450,
+        "letterSpacing": "0px",
+        "lineHeight": "24px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "button-large": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "22px",
+        "fontWeight": 450,
+        "letterSpacing": "0px",
+        "lineHeight": "24px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "button-base": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "16px",
+        "fontWeight": 450,
+        "letterSpacing": "0px",
+        "lineHeight": "20px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "button-small": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "14px",
+        "fontWeight": 450,
+        "letterSpacing": "0px",
+        "lineHeight": "16px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "label-large": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "16px",
+        "fontWeight": 450,
+        "letterSpacing": "0%",
+        "lineHeight": "24px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "label-base": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "15px",
+        "fontWeight": 450,
+        "letterSpacing": "0.35%",
+        "lineHeight": "21px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "label-small": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "12px",
+        "fontWeight": 450,
+        "letterSpacing": "1%",
+        "lineHeight": "20px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "input-text": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "16px",
+        "fontWeight": 450,
+        "letterSpacing": "0px",
+        "lineHeight": "24px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "helper-text-base": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "14px",
+        "fontWeight": 450,
+        "letterSpacing": "0%",
+        "lineHeight": "20px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "helper-text-small": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "TT Firs Neue Variable",
+        "fontSize": "12px",
+        "fontWeight": 450,
+        "letterSpacing": "0%",
+        "lineHeight": "20px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "code-snippet-base": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Space Mono",
+        "fontSize": "16px",
+        "fontWeight": 400,
+        "letterSpacing": "0%",
+        "lineHeight": "24px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    },
+    "code-snippet-italic": {
+      "$type": "typography",
+      "$value": {
+        "fontFamily": "Space Mono",
+        "fontSize": "16px",
+        "fontWeight": 400,
+        "letterSpacing": "0%",
+        "lineHeight": "24px",
+        "textTransform": "none",
+        "textDecoration": "none"
+      }
+    }
+  }
+}
