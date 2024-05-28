@@ -31,7 +31,10 @@ export default function Layout() {
              "footer footer"`,
       }}
       gridTemplateColumns={`${SIDEBAR_WIDTH} 1fr`}
-      gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%) ${FOOTER_HEIGHT}`}
+      gridTemplateRows={{
+        base: `${HEADER_HEIGHT} 100%`,
+        md: `${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%) ${FOOTER_HEIGHT}`,
+      }}
       position="relative"
     >
       <GridItem
@@ -69,7 +72,6 @@ export default function Layout() {
       >
         <Container
           maxWidth={MAX_CONTENT_WIDTH}
-          minH={`calc(${CONTENT_HEIGHT} - 2rem)`}
           mb="2rem"
         >
           <ErrorBoundary

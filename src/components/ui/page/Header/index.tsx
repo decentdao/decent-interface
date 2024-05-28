@@ -63,7 +63,6 @@ function HeaderLogo() {
             placement="left"
             isOpen={isOpen}
             onClose={onClose}
-            isFullHeight
           >
             <DrawerOverlay
               bg={MOBILE_DRAWER_OVERLAY}
