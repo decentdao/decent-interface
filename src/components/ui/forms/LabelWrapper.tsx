@@ -12,7 +12,13 @@ export interface LabelWrapperProps {
   children: JSX.Element | JSX.Element[];
 }
 
-function LabelWrapper({ label, subLabel, errorMessage, tooltipContent, children }: LabelWrapperProps) {
+function LabelWrapper({
+  label,
+  subLabel,
+  errorMessage,
+  tooltipContent,
+  children,
+}: LabelWrapperProps) {
   return (
     <Box position="relative">
       <FormLabel m="0px">
