@@ -9,10 +9,8 @@ export function Footer() {
     <Flex
       w="100%"
       flexWrap="wrap"
-      justifyContent="center"
+      justifyContent={{ base: 'flex-start', md: 'center' }}
       alignItems="center"
-      p="3rem"
-      pt="1.5rem"
       gap={{ base: 4, md: 8 }}
     >
       <Flex gap={4}>
@@ -24,6 +22,7 @@ export function Footer() {
         </ExternalLink>
       </Flex>
       <Link
+        mx={{ base: '0.75rem', md: '0rem' }}
         target="_blank"
         rel="noreferrer"
         href={URL_DECENT}

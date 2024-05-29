@@ -1,16 +1,17 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { getAddress } from 'viem';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
-import useDAOName from '../../hooks/DAO/useDAOName';
+import { useGetDAOName } from '../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
-  const { daoRegistryName } = useDAOName({ address });
+  const { daoName } = useGetDAOName({ address: getAddress(address) });
   const navigate = useNavigate();
 
   const { t } = useTranslation('dashboard');
@@ -31,10 +32,9 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
     <Flex
       maxW="100%"
       p="1.5rem"
-      mx="0.25rem"
       my="0.5rem"
       gap="0.75rem"
-      alignItems={showAddress ? 'center' : 'flex-start'}
+      alignItems="center"
       onClick={onClickNav}
       bg="neutral-2"
       cursor="pointer"
@@ -46,7 +46,6 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
       borderRadius="0.5rem"
       border="1px solid"
       borderColor="transparent"
-      // what colours to use??
       _active={{ borderColor: 'neutral-4' }}
     >
       <Avatar
@@ -54,15 +53,12 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
         address={address}
         url={avatarURL}
       />
-      <Flex
-        flexDir="column"
-        alignSelf="center"
-      >
+      <Flex flexDir="column">
         <Text
-          color={daoRegistryName ? nameColor : 'neutral-6'}
+          color={daoName ? nameColor : 'neutral-6'}
           textStyle={showAddress ? 'label-base' : 'button-base'}
         >
-          {daoRegistryName ?? t('loadingFavorite')}
+          {daoName ?? t('loadingFavorite')}
         </Text>
         {showAddress && <Text textStyle="button-base">{createAccountSubstring(address)}</Text>}
       </Flex>

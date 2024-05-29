@@ -7,12 +7,12 @@ import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { useLazyDAOName } from '../useDAOName';
+import { useGetDAONameDeferred } from '../useGetDAOName';
 import { useFractalModules } from './useFractalModules';
 
 export const useLoadDAONode = () => {
   const safeAPI = useSafeAPI();
-  const { getDaoName } = useLazyDAOName();
+  const { getDAOName } = useGetDAONameDeferred();
   const lookupModules = useFractalModules();
   const { subgraph } = useNetworkConfig();
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
@@ -63,7 +63,10 @@ export const useLoadDAONode = () => {
           const safeInfoWithGuard = await safeAPI.getSafeData(sanitizedDaoAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
-            daoName: await getDaoName(sanitizedDaoAddress, graphNodeInfo.daoName),
+            daoName: await getDAOName({
+              address: sanitizedDaoAddress,
+              registryName: graphNodeInfo.daoName,
+            }),
             safe: safeInfoWithGuard,
             fractalModules: await lookupModules(safeInfoWithGuard.modules),
           });
@@ -81,7 +84,7 @@ export const useLoadDAONode = () => {
         return { error: 'errorFailedSearch' };
       }
     },
-    [safeAPI, lookupModules, formatDAOQuery, getDAOInfo, getDaoName],
+    [formatDAOQuery, getDAOInfo, lookupModules, safeAPI, getDAOName],
   );
 
   return { loadDao };

@@ -2,9 +2,9 @@ import { Box, Button, MenuItem, Text } from '@chakra-ui/react';
 import { Star } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { getAddress } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import useDAOName from '../../../../hooks/DAO/useDAOName';
-import { useFractal } from '../../../../providers/App/AppProvider';
+import { useGetDAOName } from '../../../../hooks/DAO/useGetDAOName';
 
 export interface SafeMenuItemProps {
   network: string;
@@ -14,16 +14,12 @@ export interface SafeMenuItemProps {
 }
 
 export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
-  const { daoRegistryName } = useDAOName({ address });
-  const { action } = useFractal();
+  const { daoName } = useGetDAOName({ address: getAddress(address) });
   const navigate = useNavigate();
 
   const { t } = useTranslation('dashboard');
 
   const onClickNav = () => {
-    // TODO is this needed here?
-    action.resetDAO();
-
     navigate(DAO_ROUTES.dao.relative(network, address));
   };
 
@@ -36,7 +32,6 @@ export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
         h="3rem"
         onClick={onClickNav}
         noOfLines={1}
-        data-testid={'favorites-' + daoRegistryName}
         display="flex"
         alignItems="center"
         justifyContent="flex-start"
@@ -47,9 +42,7 @@ export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
           weight="fill"
         />
 
-        <Text color={daoRegistryName ? 'white-0' : 'neutral-6'}>
-          {daoRegistryName ?? t('loadingFavorite')}
-        </Text>
+        <Text color={daoName ? 'white-0' : 'neutral-6'}>{daoName ?? t('loadingFavorite')}</Text>
       </MenuItem>
     </Box>
   );

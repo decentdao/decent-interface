@@ -1,14 +1,9 @@
-import { Box, Flex, Button, Text, Spacer } from '@chakra-ui/react';
+import { Flex, Button, Text, Spacer, Hide } from '@chakra-ui/react';
 import { DecentSignature } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useAccount } from 'wagmi';
-import ExternalLink from '../../components/ui/links/ExternalLink';
-import { ModalType } from '../../components/ui/modals/ModalProvider';
-import { useFractalModal } from '../../components/ui/modals/useFractalModal';
 import { BASE_ROUTES } from '../../constants/routes';
-import { URL_DOCS } from '../../constants/url';
 import { useFractal } from '../../providers/App/AppProvider';
 import { MySafes } from './MySafes';
 
@@ -18,50 +13,30 @@ export default function HomePage() {
     action,
   } = useFractal();
 
-  const { isConnected } = useAccount();
-
   const { t } = useTranslation('home');
 
-  const openSearchSafeModal = useFractalModal(ModalType.SEARCH_SAFE);
-
   useEffect(() => {
-    // TODO is this needed here?
     if (daoAddress) {
-      action.resetDAO();
+      action.resetSafeState();
     }
   }, [daoAddress, action]);
 
   return (
     <Flex
       direction="column"
-      gap="1.5rem"
       alignItems="center"
     >
-      <DecentSignature
-        marginTop="2rem"
-        height="auto"
-        width="8rem"
-      />
-
-      <Box
-        as="button"
-        color="neutral-5"
-        p="0.5rem 1rem"
-        w="full"
-        borderColor="neutral-3"
-        borderWidth="1px"
-        borderRadius="0.25rem"
-        _hover={{ borderColor: 'neutral-4' }}
-        onClick={openSearchSafeModal}
-        textAlign="start"
-        cursor="text"
-      >
-        {t('searchDAOPlaceholder', { ns: 'dashboard' })}
-      </Box>
-
+      <Hide above="md">
+        <DecentSignature
+          mt="3rem"
+          height="auto"
+          width="8rem"
+        />
+      </Hide>
       <Flex
         w="100%"
         alignItems="flex-end"
+        mt="2.5rem"
       >
         <Text textStyle="display-lg">{t('mySafes')}</Text>
         <Spacer />
@@ -70,7 +45,6 @@ export default function HomePage() {
             variant="secondary"
             size="sm"
             cursor="pointer"
-            isDisabled={!isConnected}
           >
             <Text textStyle="button-small">{t('createCTA')}</Text>
           </Button>
@@ -80,11 +54,10 @@ export default function HomePage() {
       <Flex
         direction="column"
         w="full"
-        gap="0.5rem"
+        mt="1.5rem"
       >
         <MySafes />
       </Flex>
-      <ExternalLink href={URL_DOCS}>{t('docsCTA')}</ExternalLink>
     </Flex>
   );
 }

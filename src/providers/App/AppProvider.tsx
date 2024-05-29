@@ -27,7 +27,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       action: {
         dispatch,
         loadReadOnlyValues,
-        resetDAO: async () => {
+        resetSafeState: async () => {
           await Promise.resolve(dispatch({ type: StoreAction.RESET }));
         },
       },

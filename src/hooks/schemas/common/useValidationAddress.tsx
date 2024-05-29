@@ -1,33 +1,15 @@
 import { Signer } from 'ethers';
-import { useMemo, useRef, useCallback } from 'react';
+import { useMemo, useRef, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isAddress } from 'viem';
+import { normalize } from 'viem/ens';
 import { AnyObject } from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AddressValidationMap, ERC721TokenConfig } from '../../../types';
 import { Providers } from '../../../types/network';
-import { couldBeENS } from '../../../utils/url';
+import { validateENSName } from '../../../utils/url';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
-
-export function validateENSName({ ensName }: { ensName: string }) {
-  if (couldBeENS(ensName)) {
-    return {
-      validation: {
-        address: '',
-        isValidAddress: true,
-      },
-      isValid: false,
-    };
-  }
-  return {
-    validation: {
-      address: '',
-      isValidAddress: false,
-    },
-    isValid: false,
-  };
-}
 
 export async function validateAddress({
   signerOrProvider,
@@ -38,7 +20,7 @@ export async function validateAddress({
   address: string;
   checkENS?: boolean;
 }) {
-  if (couldBeENS(address) && checkENS && signerOrProvider) {
+  if (normalize(address) && checkENS && signerOrProvider) {
     const resolvedAddress = await signerOrProvider.resolveName(address).catch();
     if (resolvedAddress) {
       return {
@@ -93,20 +75,36 @@ export const useValidationAddress = () => {
     node: { safe },
   } = useFractal();
 
+  const [isValidating, setIsValidating] = useState(false);
+
   const addressValidationTest = useMemo(() => {
     return {
       name: 'Address Validation',
       message: t('errorInvalidENSAddress', { ns: 'common' }),
       test: async function (address: string | undefined) {
         if (!address) return false;
+        setIsValidating(true);
         const { validation } = await validateAddress({ signerOrProvider, address });
         if (validation.isValidAddress) {
           addressValidationMap.current.set(address, validation);
         }
+        setIsValidating(false);
         return validation.isValidAddress;
       },
     };
   }, [signerOrProvider, addressValidationMap, t]);
+
+  const ensNameValidationTest = useMemo(() => {
+    return {
+      name: 'ENS Validation',
+      message: t('errorInvalidENSName', { ns: 'common' }),
+      test: async function (ensName: string | undefined) {
+        if (ensName === undefined) return true;
+        const isValid = validateENSName(ensName);
+        return isValid;
+      },
+    };
+  }, [t]);
 
   const addressValidationTestSimple = useMemo(() => {
     return {
@@ -114,6 +112,7 @@ export const useValidationAddress = () => {
       message: t('errorInvalidAddress', { ns: 'common' }),
       test: async function (address: string | undefined) {
         if (!address) return false;
+        setIsValidating(true);
         const { validation } = await validateAddress({
           signerOrProvider,
           address,
@@ -122,6 +121,7 @@ export const useValidationAddress = () => {
         if (validation.isValidAddress) {
           addressValidationMap.current.set(address, validation);
         }
+        setIsValidating(false);
         return validation.isValidAddress;
       },
     };
@@ -133,7 +133,7 @@ export const useValidationAddress = () => {
       message: t('alreadySigner', { ns: 'modals' }),
       test: async function (address: string | undefined) {
         if (!address || !safe || !signer) return false;
-        if (couldBeENS(address)) {
+        if (normalize(address)) {
           address = await signer.resolveName(address);
         }
         return !safe.owners.includes(address);
@@ -158,7 +158,7 @@ export const useValidationAddress = () => {
             return addressValidation.address;
           }
           // because mapping is not 'state', this catches values that may not be resolved yet
-          if (couldBeENS(address)) {
+          if (normalize(address)) {
             const { validation } = await validateAddress({ signerOrProvider, address });
             return validation.address;
           }
@@ -208,8 +208,10 @@ export const useValidationAddress = () => {
   return {
     addressValidationTestSimple,
     addressValidationTest,
+    ensNameValidationTest,
     newSignerValidationTest,
     uniqueAddressValidationTest,
     uniqueNFTAddressValidationTest,
+    isValidating,
   };
 };

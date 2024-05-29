@@ -8,7 +8,7 @@ import { NodeAction } from '../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { useLazyDAOName } from '../useDAOName';
+import { useGetDAONameDeferred } from '../useGetDAOName';
 import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
@@ -29,7 +29,7 @@ export const useFractalNode = (
 
   const { action } = useFractal();
   const safeAPI = useSafeAPI();
-  const { getDaoName } = useLazyDAOName();
+  const { getDAOName } = useGetDAONameDeferred();
 
   const lookupModules = useFractalModules();
 
@@ -64,7 +64,10 @@ export const useFractalNode = (
     onCompleted: async data => {
       if (!daoAddress) return;
       const graphNodeInfo = formatDAOQuery({ data }, getAddress(daoAddress));
-      const daoName = await getDaoName(getAddress(daoAddress), graphNodeInfo?.daoName);
+      const daoName = await getDAOName({
+        address: getAddress(daoAddress),
+        registryName: graphNodeInfo?.daoName,
+      });
 
       action.dispatch({
         type: NodeAction.SET_DAO_INFO,
@@ -82,7 +85,7 @@ export const useFractalNode = (
   const reset = useCallback(
     ({ error }: { error: boolean }) => {
       currentValidSafe.current = undefined;
-      action.resetDAO();
+      action.resetSafeState();
       setErrorLoading(error);
     },
     [action],
@@ -120,13 +123,16 @@ export const useFractalNode = (
   );
 
   useEffect(() => {
-    if (skip || addressPrefix === undefined || daoAddress === undefined) {
+    if (
+      skip ||
+      addressPrefix === undefined ||
+      daoAddress === undefined ||
+      addressPrefix + daoAddress !== currentValidSafe.current
+    ) {
       reset({ error: false });
-      return;
-    }
-
-    if (addressPrefix + daoAddress !== currentValidSafe.current) {
-      setDAO(addressPrefix, daoAddress);
+      if (addressPrefix && daoAddress) {
+        setDAO(addressPrefix, daoAddress);
+      }
     }
   }, [addressPrefix, daoAddress, setDAO, reset, skip]);
 

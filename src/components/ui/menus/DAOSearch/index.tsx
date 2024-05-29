@@ -2,11 +2,13 @@ import {
   Box,
   Input,
   InputGroup,
+  InputLeftElement,
   Popover,
   PopoverTrigger,
   useDisclosure,
   useOutsideClick,
 } from '@chakra-ui/react';
+import { Search } from '@decent-org/fractal-ui';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
@@ -26,8 +28,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
 
   const resetSearch = () => {
     onClose();
-    setLocalInput(undefined);
-    setSearchString(undefined);
+    setLocalInput('');
   };
 
   useOutsideClick({
@@ -51,7 +52,14 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             flexDirection="column"
             justifyContent="center"
           >
+            <InputLeftElement>
+              <Search
+                boxSize="1.5rem"
+                color="neutral-5"
+              />
+            </InputLeftElement>
             <Input
+              size="baseAddonLeft"
               w="full"
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => setLocalInput(e.target.value.trim())}

@@ -3,16 +3,23 @@ import { useBreakpointValue } from '@chakra-ui/react';
 const HEADER_HEIGHT = '4.5rem';
 const HEADER_HEIGHT_MOBILE = '3.75rem';
 
-const FOOTER_HEIGHT = '7.625rem';
+const FOOTER_HEIGHT = '5rem';
+const FOOTER_HEIGHT_MOBILE = '0rem';
 
 export const useHeaderHeight = () => {
   const headerHeight = useBreakpointValue({ base: HEADER_HEIGHT_MOBILE, md: HEADER_HEIGHT });
   return headerHeight || HEADER_HEIGHT;
 };
 
+export const useFooterHeight = () => {
+  const footerHeight = useBreakpointValue({ base: FOOTER_HEIGHT_MOBILE, md: FOOTER_HEIGHT });
+  return footerHeight || FOOTER_HEIGHT;
+};
+
 export const useContentHeight = () => {
   const headerHeight = useHeaderHeight();
-  const contentHeight = `calc(100vh - ${headerHeight} - ${FOOTER_HEIGHT})`;
+  const footerHeight = useFooterHeight();
+  const contentHeight = `calc(100vh - ${headerHeight} - ${footerHeight})`;
   return contentHeight;
 };
 

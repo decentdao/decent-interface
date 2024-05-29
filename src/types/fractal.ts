@@ -168,7 +168,6 @@ export type ActivityTransactionType =
 export enum ActivityEventType {
   Treasury,
   Governance,
-  Module,
 }
 
 export enum SafeTransferType {
@@ -197,7 +196,7 @@ export interface FractalStore extends Fractal {
   action: {
     dispatch: Dispatch<FractalActions>;
     loadReadOnlyValues: () => Promise<void>;
-    resetDAO: () => Promise<void>;
+    resetSafeState: () => Promise<void>;
   };
 }
 export enum StoreAction {

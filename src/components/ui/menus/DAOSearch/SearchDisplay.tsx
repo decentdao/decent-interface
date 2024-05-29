@@ -21,6 +21,7 @@ export function SearchDisplay({
   validAddress,
   address,
   closeDrawer,
+  onClickView,
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
   const { node } = useFractal();
@@ -76,11 +77,13 @@ export function SearchDisplay({
       <Flex
         cursor={isCurrentSafe ? 'not-allowed' : 'default'}
         flexDir="column"
+        px="0.5rem"
       >
         <Text
           textStyle="button-small"
           color="neutral-7"
-          p="1rem"
+          py="1rem"
+          px="0.5rem"
         >
           {t(isCurrentSafe ? 'labelCurrentDAO' : 'labelDAOFound')}
         </Text>
@@ -88,7 +91,10 @@ export function SearchDisplay({
         <SafeDisplayRow
           address={address}
           network={addressPrefix}
-          onClick={closeDrawer}
+          onClick={() => {
+            onClickView();
+            if (closeDrawer) closeDrawer();
+          }}
           showAddress={true}
         />
       </Flex>

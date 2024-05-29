@@ -12,7 +12,6 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 export function ParentLink() {
   const {
     node: { nodeHierarchy },
-    action,
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation('breadcrumbs');
@@ -26,7 +25,6 @@ export function ParentLink() {
       color="celery-0"
       _hover={{ textDecoration: 'none', color: 'celery--6' }}
       to={DAO_ROUTES.dao.relative(addressPrefix, nodeHierarchy.parentAddress)}
-      onClick={action.resetDAO}
       marginBottom="1rem"
       as={RouterLink}
       width="fit-content"
