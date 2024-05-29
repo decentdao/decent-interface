@@ -75,6 +75,7 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
         backdropBlur="10px"
         minWidth="min-content"
         zIndex={5}
+        p="0.25rem"
       >
         <Text
           px="0.5rem"
