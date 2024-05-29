@@ -24,7 +24,8 @@ const getDAOName = async ({
 
   const ensName = await publicClient.getEnsName({ address: address }).catch((error: Error) => {
     if (error.name === 'ChainDoesNotSupportContract') {
-      // sliently fail, this is fine
+      // Sliently fail, this is fine.
+      // https://github.com/wevm/viem/discussions/781
       return;
     }
     throw error;
