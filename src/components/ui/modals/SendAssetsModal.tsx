@@ -20,6 +20,7 @@ import Divider from '../utils/Divider';
 interface SendAssetsFormValues {
   destinationAddress: string;
   selectedAsset: SafeBalanceResponse;
+  inputAmount?: BigIntValuePair;
 }
 
 // @todo add Yup and Formik to this modal
@@ -40,14 +41,10 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const { submitProposal } = useSubmitProposal();
 
-  const onChangeAmount = (value: BigIntValuePair) => {
-    setInputAmount(value);
-  };
-
   const { addressValidationTest, isValidating } = useValidationAddress();
 
   const submitSendAssets = async (values: SendAssetsFormValues) => {
-    const { destinationAddress, selectedAsset } = values;
+    const { destinationAddress, selectedAsset, inputAmount } = values;
 
     await sendAssets({
       transferAmount: inputAmount?.bigintValue || 0n,
@@ -83,6 +80,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         initialValues={{
           destinationAddress: '',
           selectedAsset: fungibleAssetsWithBalance[0],
+          inputAmount: undefined,
         }}
         onSubmit={submitSendAssets}
         validationSchema={sendAssetsValidationSchema}
@@ -91,11 +89,12 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           console.log(values);
 
           const overDraft =
-            Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(values.selectedAsset);
+            Number(values.inputAmount?.value || '0') > formatCoinUnitsFromAsset(values.selectedAsset);
 
           // @dev next couple of lines are written like this, to keep typing equivalent during the conversion from BN to bigint
-          const inputBigint = inputAmount?.bigintValue;
+          const inputBigint = values.inputAmount?.bigintValue;
           const inputBigintIsZero = inputBigint ? inputBigint === 0n : undefined;
+          const isSubmitDisabled = !values.inputAmount || inputBigintIsZero || overDraft;
 
           const selectedAssetIndex = fungibleAssetsWithBalance.findIndex(
             asset => asset.tokenAddress === values.selectedAsset.tokenAddress,
@@ -121,7 +120,10 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                           iconSize="1.5rem"
                           icon={<CaretDown />}
                           onChange={e => {
-                            setInputAmount({ value: '0', bigintValue: 0n });
+                            setFieldValue(
+                              'inputAmount',
+                              { value: '0', bigintValue: 0n },
+                            );
                             setFieldValue(
                               'selectedAsset',
                               fungibleAssetsWithBalance[Number(e.target.value)],
@@ -150,7 +152,10 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                       <LabelWrapper label={t('amountLabel')}>
                         <BigIntInput
                           {...field}
-                          onChange={onChangeAmount}
+                          onChange={(value) => {
+                            setFieldValue('inputAmount', value);
+                          }}
+                          currentValue={values.inputAmount}
                           decimalPlaces={values.selectedAsset.token.decimals}
                           placeholder="0"
                           maxValue={BigInt(values.selectedAsset.balance)}

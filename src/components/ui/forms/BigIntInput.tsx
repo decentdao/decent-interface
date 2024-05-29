@@ -19,6 +19,7 @@ export interface BigIntInputProps
   min?: string;
   max?: string;
   maxValue?: bigint;
+  currentValue?: BigIntValuePair;
 }
 /**
  * This component will add a chakra Input component that accepts and sets a bigint
@@ -39,6 +40,7 @@ export function BigIntInput({
   min,
   max,
   maxValue,
+  currentValue,
   ...rest
 }: BigIntInputProps) {
   const { t } = useTranslation('common');
@@ -141,6 +143,13 @@ export function BigIntInput({
     },
     [decimalPlaces, min, onChange],
   );
+
+  // if the parent Formik value prop changes, need to update the value
+  useEffect(() => {
+    if (!inputValue || inputValue === currentValue?.value ) return;
+    if (currentValue?.bigintValue === 0n) 
+      setInputValue('');
+  }, [currentValue, inputValue]);
 
   // if the decimalPlaces change, need to update the value
   useEffect(() => {
