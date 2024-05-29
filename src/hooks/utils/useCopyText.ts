@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { logError } from '../../helpers/errorLogging';
 
 /**
  * Custom hook to copy text to the clipboard.
@@ -27,8 +28,8 @@ export function useCopyText() {
       }
       toast(t('toastClipboardCopy'), { autoClose: 1000 });
     } catch (error) {
-      console.error('Failed to copy text to clipboard: ', error);
-      toast(t('toastClipboardCopyError'), { autoClose: 1000 });
+      logError(`unable to copy text to clipboard: ${error}`);
+      toast(t('errorCopyToClipboard'), { autoClose: 1000 });
     }
   };
 
