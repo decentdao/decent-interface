@@ -1,16 +1,13 @@
-import { Azorius } from '@fractal-framework/fractal-contracts';
 import { useState, useEffect, useCallback } from 'react';
 import { GetContractReturnType, PublicClient, erc721Abi, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC721VotingAbi from '../../../assets/abi/LinearERC721Voting';
-import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
-import { getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
-import { useFractalModules } from '../loaders/useFractalModules';
+import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 
 /**
  * Retrieves list of ERC-721 voting tokens for the supplied `address`(aka `user.address`) param
@@ -40,9 +37,10 @@ export default function useUserERC721VotingTokens(
     readOnly: { user },
   } = useFractal();
   const baseContracts = useSafeContracts();
-  const lookupModules = useFractalModules();
   const safeAPI = useSafeAPI();
   const publicClient = usePublicClient();
+
+  const { getVotingStrategyAddress } = useVotingStrategyAddress();
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { erc721Tokens } = azoriusGovernance;
@@ -71,18 +69,11 @@ export default function useUserERC721VotingTokens(
 
       if (_safeAddress && daoAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
-        const safeInfo = await safeAPI.getSafeInfo(getAddress(_safeAddress));
-        const safeModules = await lookupModules(safeInfo.modules);
-        const azoriusModule = getAzoriusModuleFromModules(safeModules);
-        if (azoriusModule && azoriusModule.moduleContract) {
-          const azoriusContract = azoriusModule.moduleContract as Azorius;
-          // @dev assumes the first strategy is the voting contract
-          const votingContractAddress = (
-            await azoriusContract.getStrategies(SENTINEL_ADDRESS, 0)
-          )[1];
+        const votingStrategyAddress = await getVotingStrategyAddress(getAddress(_safeAddress));
+        if (votingStrategyAddress) {
           votingContract = getContract({
             abi: LinearERC721VotingAbi,
-            address: getAddress(votingContractAddress),
+            address: votingStrategyAddress,
             client: publicClient,
           });
           const addresses = await votingContract.read.getAllTokenAddresses();
@@ -213,7 +204,7 @@ export default function useUserERC721VotingTokens(
       daoAddress,
       erc721LinearVotingContractAddress,
       erc721Tokens,
-      lookupModules,
+      getVotingStrategyAddress,
       publicClient,
       safeAPI,
       signerOrProvider,

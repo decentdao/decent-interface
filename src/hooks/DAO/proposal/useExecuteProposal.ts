@@ -1,8 +1,10 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, Hex, getAddress, getContract } from 'viem';
+import { useWalletClient } from 'wagmi';
+import AzoriusAbi from '../../../assets/abi/Azorius';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { MetaTransaction, FractalProposal, AzoriusProposal } from '../../../types';
-import useSafeContracts from '../../safe/useSafeContracts';
 import { useTransaction } from '../../utils/useTransaction';
 import useUpdateProposalState from './useUpdateProposalState';
 
@@ -11,12 +13,12 @@ export default function useExecuteProposal() {
 
   const { governanceContracts, action } = useFractal();
   const { azoriusContractAddress } = governanceContracts;
-  const baseContracts = useSafeContracts();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
     governanceDispatch: action.dispatch,
   });
-  const [contractCallExecuteProposal, contractCallPending] = useTransaction();
+  const { data: walletClient } = useWalletClient();
+  const [, contractCallPending, contractCallViem] = useTransaction();
 
   const executeProposal = useCallback(
     (proposal: FractalProposal) => {
@@ -25,16 +27,20 @@ export default function useExecuteProposal() {
         !azoriusContractAddress ||
         !azoriusProposal.data ||
         !azoriusProposal.data.transactions ||
-        !baseContracts
+        !walletClient
       ) {
         return;
       }
-      const azoriusContract =
-        baseContracts.fractalAzoriusMasterCopyContract.asSigner.attach(azoriusContractAddress);
 
-      const targets: string[] = [];
+      const azoriusContract = getContract({
+        abi: AzoriusAbi,
+        address: getAddress(azoriusContractAddress),
+        client: walletClient,
+      });
+
+      const targets: Address[] = [];
       const values: MetaTransaction['value'][] = [];
-      const data: string[] = [];
+      const data: Hex[] = [];
       const operations: number[] = [];
 
       azoriusProposal.data.transactions.forEach(tx => {
@@ -44,19 +50,25 @@ export default function useExecuteProposal() {
         operations.push(tx.operation);
       });
 
-      contractCallExecuteProposal({
+      contractCallViem({
         contractFn: () =>
-          azoriusContract.executeProposal(proposal.proposalId, targets, values, data, operations),
+          azoriusContract.write.executeProposal([
+            Number(proposal.proposalId),
+            targets,
+            values,
+            data,
+            operations,
+          ]),
         pendingMessage: t('pendingExecute'),
         failedMessage: t('failedExecute'),
         successMessage: t('successExecute'),
         successCallback: async () => {
           // @todo may need to re-add a loader here
-          updateProposalState(BigInt(proposal.proposalId));
+          updateProposalState(Number(proposal.proposalId));
         },
       });
     },
-    [contractCallExecuteProposal, t, azoriusContractAddress, updateProposalState, baseContracts],
+    [azoriusContractAddress, contractCallViem, t, updateProposalState, walletClient],
   );
 
   return {

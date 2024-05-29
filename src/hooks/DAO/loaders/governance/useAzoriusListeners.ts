@@ -1,96 +1,20 @@
-import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
-import { TimelockPeriodUpdatedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/MultisigFreezeGuard';
-import {
-  Azorius,
-  ProposalCreatedEvent,
-} from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
-import { Dispatch, useEffect, useMemo } from 'react';
-import { getAddress, getContract, GetContractReturnType, Hex, PublicClient } from 'viem';
+import { useEffect, useMemo } from 'react';
+import { getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
+import AzoriusAbi from '../../../../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
-import {
-  CreateProposalMetadata,
-  VotingStrategyType,
-  DecodedTransaction,
-  FractalActions,
-} from '../../../../types';
-import { Providers } from '../../../../types/network';
+import { CreateProposalMetadata, VotingStrategyType } from '../../../../types';
 import {
   getProposalVotesSummary,
   mapProposalCreatedEventToProposal,
   decodeTransactions,
 } from '../../../../utils';
 import { getAverageBlockTime } from '../../../../utils/contract';
-import useSafeContracts from '../../../safe/useSafeContracts';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
-
-const proposalCreatedEventListener = (
-  azoriusContract: Azorius,
-  erc20StrategyContract:
-    | GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient>
-    | undefined,
-  erc721StrategyContract:
-    | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
-    | undefined,
-  provider: Providers,
-  strategyType: VotingStrategyType,
-  decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
-  dispatch: Dispatch<FractalActions>,
-): TypedListener<ProposalCreatedEvent> => {
-  return async (_strategyAddress, proposalId, proposer, transactions, metadata) => {
-    // Wait for a block before processing.
-    // We've seen that calling smart contract functions in `mapProposalCreatedEventToProposal`
-    // which include the `proposalId` error out because the RPC node (rather, the block it's on)
-    // doesn't see this proposal yet (despite the event being caught in the app...).
-    const averageBlockTime = await getAverageBlockTime(provider);
-    await new Promise(resolve => setTimeout(resolve, averageBlockTime * 1000));
-
-    if (!metadata) {
-      return;
-    }
-
-    const typedTransactions = transactions.map(t => ({
-      ...t,
-      to: getAddress(t.to),
-      data: t.data as Hex, // @todo - this type casting shouldn't be needed after migrating to getContract
-      value: t.value.toBigInt(),
-    }));
-
-    const metaDataEvent: CreateProposalMetadata = JSON.parse(metadata);
-    const proposalData = {
-      metaData: {
-        title: metaDataEvent.title,
-        description: metaDataEvent.description,
-        documentationUrl: metaDataEvent.documentationUrl,
-      },
-      transactions: typedTransactions,
-      decodedTransactions: await decodeTransactions(decode, typedTransactions),
-    };
-
-    const proposal = await mapProposalCreatedEventToProposal(
-      erc20StrategyContract,
-      erc721StrategyContract,
-      strategyType,
-      proposalId.toBigInt(),
-      proposer,
-      azoriusContract,
-      provider,
-      Promise.resolve(undefined),
-      Promise.resolve(undefined),
-      Promise.resolve(undefined),
-      proposalData,
-    );
-
-    dispatch({
-      type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW,
-      payload: proposal,
-    });
-  };
-};
 
 export const useAzoriusListeners = () => {
   const {
@@ -102,19 +26,22 @@ export const useAzoriusListeners = () => {
     },
   } = useFractal();
 
-  const baseContracts = useSafeContracts();
   const provider = useEthersProvider();
   const decode = useSafeDecoder();
 
   const publicClient = usePublicClient();
 
   const azoriusContract = useMemo(() => {
-    if (!baseContracts || !azoriusContractAddress) {
+    if (!publicClient || !azoriusContractAddress) {
       return;
     }
 
-    return baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
-  }, [azoriusContractAddress, baseContracts]);
+    return getContract({
+      abi: AzoriusAbi,
+      address: getAddress(azoriusContractAddress),
+      client: publicClient,
+    });
+  }, [azoriusContractAddress, publicClient]);
 
   const strategyType = useMemo(() => {
     if (ozLinearVotingContractAddress) {
@@ -155,24 +82,71 @@ export const useAzoriusListeners = () => {
       return;
     }
 
-    const proposalCreatedFilter = azoriusContract.filters.ProposalCreated();
-    const listener = proposalCreatedEventListener(
-      azoriusContract,
-      erc20StrategyContract,
-      erc721StrategyContract,
-      provider,
-      strategyType,
-      decode,
-      action.dispatch,
-    );
+    const unwatch = azoriusContract.watchEvent.ProposalCreated({
+      onLogs: async logs => {
+        for (const log of logs) {
+          if (
+            !log.args.strategy ||
+            !log.args.proposalId ||
+            !log.args.metadata ||
+            !log.args.transactions ||
+            !log.args.proposer
+          ) {
+            continue;
+          }
 
-    azoriusContract.on(proposalCreatedFilter, listener);
+          // Wait for a block before processing.
+          // We've seen that calling smart contract functions in `mapProposalCreatedEventToProposal`
+          // which include the `proposalId` error out because the RPC node (rather, the block it's on)
+          // doesn't see this proposal yet (despite the event being caught in the app...).
+          const averageBlockTime = await getAverageBlockTime(provider);
+          await new Promise(resolve => setTimeout(resolve, averageBlockTime * 1000));
+
+          const typedTransactions = log.args.transactions.map(t => ({
+            ...t,
+            to: t.to,
+            data: t.data,
+            value: t.value,
+          }));
+
+          const metaDataEvent: CreateProposalMetadata = JSON.parse(log.args.metadata);
+          const proposalData = {
+            metaData: {
+              title: metaDataEvent.title,
+              description: metaDataEvent.description,
+              documentationUrl: metaDataEvent.documentationUrl,
+            },
+            transactions: typedTransactions,
+            decodedTransactions: await decodeTransactions(decode, typedTransactions),
+          };
+
+          const proposal = await mapProposalCreatedEventToProposal(
+            erc20StrategyContract,
+            erc721StrategyContract,
+            strategyType,
+            Number(log.args.proposalId),
+            log.args.proposer,
+            azoriusContract,
+            provider,
+            undefined,
+            undefined,
+            undefined,
+            proposalData,
+          );
+
+          action.dispatch({
+            type: FractalGovernanceAction.UPDATE_PROPOSALS_NEW,
+            payload: proposal,
+          });
+        }
+      },
+    });
 
     return () => {
-      azoriusContract.off(proposalCreatedFilter, listener);
+      unwatch();
     };
   }, [
-    action.dispatch,
+    action,
     azoriusContract,
     decode,
     erc20StrategyContract,
@@ -197,7 +171,7 @@ export const useAzoriusListeners = () => {
             erc20StrategyContract,
             undefined,
             strategyType,
-            BigInt(log.args.proposalId),
+            log.args.proposalId,
           );
 
           action.dispatch({
@@ -241,7 +215,7 @@ export const useAzoriusListeners = () => {
             undefined,
             erc721StrategyContract,
             strategyType,
-            BigInt(log.args.proposalId),
+            log.args.proposalId,
           );
 
           action.dispatch({
@@ -269,18 +243,23 @@ export const useAzoriusListeners = () => {
       return;
     }
 
-    const timeLockPeriodFilter = azoriusContract.filters.TimelockPeriodUpdated();
-    const timelockPeriodListener: TypedListener<TimelockPeriodUpdatedEvent> = timelockPeriod => {
-      action.dispatch({
-        type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD,
-        payload: BigInt(timelockPeriod),
-      });
-    };
+    const unwatch = azoriusContract.watchEvent.TimelockPeriodUpdated({
+      onLogs: logs => {
+        for (const log of logs) {
+          if (!log.args.timelockPeriod) {
+            continue;
+          }
 
-    azoriusContract.on(timeLockPeriodFilter, timelockPeriodListener);
+          action.dispatch({
+            type: FractalGovernanceAction.UPDATE_TIMELOCK_PERIOD,
+            payload: BigInt(log.args.timelockPeriod),
+          });
+        }
+      },
+    });
 
     return () => {
-      azoriusContract.off(timeLockPeriodFilter, timelockPeriodListener);
+      unwatch();
     };
   }, [action, azoriusContract]);
 };

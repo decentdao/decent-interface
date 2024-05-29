@@ -16,6 +16,7 @@ export function useMasterCopy() {
       linearVotingMasterCopy,
       linearVotingERC721MasterCopy,
       fractalModuleMasterCopy,
+      fractalAzoriusMasterCopy,
     },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
@@ -45,9 +46,8 @@ export function useMasterCopy() {
     [baseContracts],
   );
   const isAzorius = useCallback(
-    (masterCopyAddress: Address) =>
-      masterCopyAddress === baseContracts?.fractalAzoriusMasterCopyContract.asProvider.address,
-    [baseContracts],
+    (masterCopyAddress: Address) => masterCopyAddress === fractalAzoriusMasterCopy,
+    [fractalAzoriusMasterCopy],
   );
   const isFractalModule = useCallback(
     (masterCopyAddress: Address) => masterCopyAddress === fractalModuleMasterCopy,

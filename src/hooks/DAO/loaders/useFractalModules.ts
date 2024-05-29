@@ -1,13 +1,10 @@
 import { useCallback } from 'react';
-import { getAddress, getContract } from 'viem';
+import { getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import FractalModuleAbi from '../../../assets/abi/FractalModule';
-import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalModuleData, FractalModuleType } from '../../../types';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 
 export const useFractalModules = () => {
-  const { baseContracts } = useFractal();
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const publicClient = usePublicClient();
   const lookupModules = useCallback(
@@ -20,26 +17,18 @@ export const useFractalModules = () => {
 
           let safeModule: FractalModuleData;
 
-          if (masterCopyData.isAzorius && baseContracts) {
+          if (masterCopyData.isAzorius && publicClient) {
             safeModule = {
-              moduleContract:
-                baseContracts.fractalAzoriusMasterCopyContract.asSigner.attach(moduleAddress),
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.AZORIUS,
             };
           } else if (masterCopyData.isFractalModule && publicClient) {
             safeModule = {
-              moduleContract: getContract({
-                abi: FractalModuleAbi,
-                address: getAddress(moduleAddress),
-                client: publicClient,
-              }),
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.FRACTAL,
             };
           } else {
             safeModule = {
-              moduleContract: undefined,
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.UNKNOWN,
             };
@@ -50,7 +39,7 @@ export const useFractalModules = () => {
       );
       return modules;
     },
-    [baseContracts, getZodiacModuleProxyMasterCopyData, publicClient],
+    [getZodiacModuleProxyMasterCopyData, publicClient],
   );
   return lookupModules;
 };

@@ -1,5 +1,4 @@
 import {
-  Azorius,
   AzoriusFreezeGuard__factory,
   ERC20FreezeVoting__factory,
   MultisigFreezeGuard__factory,
@@ -20,6 +19,7 @@ import {
   parseAbiParameters,
   isHex,
   PublicClient,
+  Abi,
 } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
@@ -151,8 +151,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     );
   }
 
-  public buildSetGuardTx(contract: Azorius): SafeTransaction {
-    return buildContractCall(contract, 'setGuard', [this.freezeGuardAddress], 0, false);
+  public buildSetGuardTx(abi: Abi, address: Address): SafeTransaction {
+    return buildContractCallViem(abi, address, 'setGuard', [this.freezeGuardAddress], 0, false);
   }
 
   public buildSetGuardTxSafe(safeAddress: Address): SafeTransaction {

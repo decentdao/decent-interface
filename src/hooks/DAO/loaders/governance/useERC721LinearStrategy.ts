@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
+import AzoriusAbi from '../../../../assets/abi/Azorius';
 import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -33,17 +34,26 @@ export const useERC721LinearStrategy = () => {
   }, [erc721LinearVotingContractAddress, publicClient]);
 
   const loadERC721Strategy = useCallback(async () => {
-    if (!azoriusContractAddress || !provider || !baseContracts || !erc721LinearVotingContract) {
+    if (
+      !azoriusContractAddress ||
+      !provider ||
+      !baseContracts ||
+      !erc721LinearVotingContract ||
+      !publicClient
+    ) {
       return {};
     }
 
-    const azoriusContract =
-      baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
+    const azoriusContract = getContract({
+      abi: AzoriusAbi,
+      address: getAddress(azoriusContractAddress),
+      client: publicClient,
+    });
 
     const [votingPeriodBlocks, quorumThreshold, timeLockPeriod] = await Promise.all([
       erc721LinearVotingContract.read.votingPeriod(),
       erc721LinearVotingContract.read.quorumThreshold(),
-      azoriusContract.timelockPeriod(),
+      azoriusContract.read.timelockPeriod(),
     ]);
 
     const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, provider);
@@ -71,6 +81,7 @@ export const useERC721LinearStrategy = () => {
     erc721LinearVotingContract,
     getTimeDuration,
     provider,
+    publicClient,
   ]);
 
   useEffect(() => {

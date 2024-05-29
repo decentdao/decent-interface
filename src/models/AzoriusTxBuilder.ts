@@ -1,4 +1,3 @@
-import { Azorius, Azorius__factory } from '@fractal-framework/fractal-contracts';
 import {
   getCreate2Address,
   Address,
@@ -9,11 +8,11 @@ import {
   parseAbiParameters,
   getAddress,
   isAddress,
-  isHex,
   encodeFunctionData,
   PublicClient,
   getContract,
 } from 'viem';
+import AzoriusAbi from '../assets/abi/Azorius';
 import ERC20ClaimAbi from '../assets/abi/ERC20Claim';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
@@ -49,7 +48,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private predictedAzoriusAddress: Address | undefined;
   private predictedTokenClaimAddress: Address | undefined;
 
-  public azoriusContract: Azorius | undefined;
+  public azoriusAddress: Address | undefined;
   public linearERC20VotingAddress: Address | undefined;
   public linearERC721VotingAddress: Address | undefined;
   public votesTokenAddress: Address | undefined;
@@ -61,6 +60,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private erc20ClaimMasterCopyAddress: Address;
   private linearERC20VotingMasterCopyAddress: Address;
   private linearERC721VotingMasterCopyAddress: Address;
+  private azoriusMasterCopyAddress: Address;
 
   private tokenNonce: bigint;
   private strategyNonce: bigint;
@@ -81,6 +81,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     erc20ClaimMasterCopyAddress: Address,
     linearERC20VotingMasterCopyAddress: Address,
     linearERC721VotingMasterCopyAddress: Address,
+    azoriusMasterCopyAddress: Address,
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
@@ -108,6 +109,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.erc20ClaimMasterCopyAddress = erc20ClaimMasterCopyAddress;
     this.linearERC20VotingMasterCopyAddress = linearERC20VotingMasterCopyAddress;
     this.linearERC721VotingMasterCopyAddress = linearERC721VotingMasterCopyAddress;
+    this.azoriusMasterCopyAddress = azoriusMasterCopyAddress;
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       daoData = daoData as AzoriusERC20DAO;
@@ -168,7 +170,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         LinearERC20VotingAbi,
         this.linearERC20VotingAddress!,
         'setAzorius', // contract function name
-        [this.azoriusContract!.address],
+        [this.azoriusAddress],
         0,
         false,
       );
@@ -177,7 +179,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         LinearERC721VotingAbi,
         this.linearERC721VotingAddress!,
         'setAzorius', // contract function name
-        [this.azoriusContract!.address],
+        [this.azoriusAddress],
         0,
         false,
       );
@@ -191,7 +193,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'enableModule',
-      [this.azoriusContract!.address],
+      [this.azoriusAddress],
       0,
       false,
     );
@@ -202,7 +204,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'addOwnerWithThreshold',
-      [this.azoriusContract!.address, 1],
+      [this.azoriusAddress, 1],
       0,
       false,
     );
@@ -213,7 +215,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'removeOwner',
-      [this.azoriusContract!.address, this.multiSendCallOnlyAddress, 1],
+      [this.azoriusAddress, this.multiSendCallOnlyAddress, 1],
       0,
       false,
     );
@@ -254,11 +256,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       ModuleProxyFactoryAbi,
       this.moduleProxyFactoryAddress,
       'deployModule',
-      [
-        this.azoriusContracts!.fractalAzoriusMasterCopyContract.address,
-        this.encodedSetupAzoriusData,
-        this.azoriusNonce,
-      ],
+      [this.azoriusMasterCopyAddress, this.encodedSetupAzoriusData, this.azoriusNonce],
       0,
       false,
     );
@@ -555,19 +553,13 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       ],
     );
 
-    const encodedSetupAzoriusData =
-      this.azoriusContracts!.fractalAzoriusMasterCopyContract.interface.encodeFunctionData(
-        'setUp',
-        [encodedInitAzoriusData],
-      );
+    const encodedSetupAzoriusData = encodeFunctionData({
+      abi: AzoriusAbi,
+      functionName: 'setUp',
+      args: [encodedInitAzoriusData],
+    });
 
-    if (!isHex(encodedSetupAzoriusData)) {
-      throw new Error('Error encoding setup azorius data');
-    }
-
-    const azoriusByteCodeLinear = generateContractByteCodeLinear(
-      getAddress(this.azoriusContracts!.fractalAzoriusMasterCopyContract.address),
-    );
+    const azoriusByteCodeLinear = generateContractByteCodeLinear(this.azoriusMasterCopyAddress);
     const azoriusSalt = generateSalt(encodedSetupAzoriusData, this.azoriusNonce);
 
     this.encodedSetupAzoriusData = encodedSetupAzoriusData;
@@ -584,10 +576,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     }
 
     const daoData = this.daoData as AzoriusGovernanceDAO;
-    this.azoriusContract = Azorius__factory.connect(
-      this.predictedAzoriusAddress!,
-      this.signerOrProvider,
-    );
+    this.azoriusAddress = this.predictedAzoriusAddress;
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       this.votesTokenAddress = this.predictedTokenAddress;
       this.linearERC20VotingAddress = this.predictedStrategyAddress;

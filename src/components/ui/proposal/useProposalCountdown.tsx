@@ -62,7 +62,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         (async () => {
           try {
             if (dao?.isAzorius) {
-              await updateProposalState(BigInt(proposal.proposalId));
+              await updateProposalState(Number(proposal.proposalId));
             } else {
               await loadDAOProposals();
             }
