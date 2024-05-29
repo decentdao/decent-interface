@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { Address, PublicClient, encodeFunctionData, getAddress, zeroAddress } from 'viem';
+import AzoriusAbi from '../assets/abi/Azorius';
 import FractalRegistryAbi from '../assets/abi/FractalRegistry';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
@@ -114,7 +115,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     if (this.parentAddress) {
       const freezeGuardTxBuilder = this.txBuilderFactory.createFreezeGuardTxBuilder(
-        azoriusTxBuilder.azoriusContract!.address,
+        azoriusTxBuilder.azoriusAddress,
         azoriusTxBuilder.linearERC20VotingAddress ?? azoriusTxBuilder.linearERC721VotingAddress,
         this.parentStrategyType,
         this.parentStrategyAddress,
@@ -126,7 +127,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
         freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
         freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
         freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
-        freezeGuardTxBuilder.buildSetGuardTx(azoriusTxBuilder.azoriusContract!),
+        freezeGuardTxBuilder.buildSetGuardTx(AzoriusAbi, azoriusTxBuilder.azoriusAddress!),
       ]);
     }
     const data = this.daoData as AzoriusERC20DAO;
