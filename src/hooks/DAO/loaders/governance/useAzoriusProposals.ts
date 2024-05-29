@@ -206,7 +206,7 @@ export const useAzoriusProposals = () => {
           _erc721StrategyContract,
           _strategyType,
           Number(proposalCreatedEvent.args.proposalId),
-          proposalCreatedEvent.args.proposer || '',
+          proposalCreatedEvent.args.proposer,
           _azoriusContract,
           _provider,
           _erc20VotedEvents,
