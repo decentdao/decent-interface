@@ -186,13 +186,17 @@ export const useAzoriusProposals = () => {
             };
           } catch {
             logError(
-              'Unable to parse proposal metadata or transactions.',
+              'Unable to parse proposal metadata or transactions',
               'metadata:',
               proposalCreatedEvent.args.metadata,
               'transactions:',
               proposalCreatedEvent.args.transactions,
             );
           }
+        }
+
+        if (!proposalCreatedEvent.args.proposalId || !proposalCreatedEvent.args.proposer) {
+          continue;
         }
 
         const proposal = await mapProposalCreatedEventToProposal(
