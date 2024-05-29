@@ -1,7 +1,7 @@
-import { Azorius } from '@fractal-framework/fractal-contracts';
 import { useState, useEffect, useCallback } from 'react';
 import { GetContractReturnType, PublicClient, erc721Abi, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
+import AzoriusAbi from '../../../assets/abi/Azorius';
 import LinearERC721VotingAbi from '../../../assets/abi/LinearERC721Voting';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -74,11 +74,17 @@ export default function useUserERC721VotingTokens(
         const safeInfo = await safeAPI.getSafeInfo(getAddress(_safeAddress));
         const safeModules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(safeModules);
-        if (azoriusModule && azoriusModule.moduleContract) {
-          const azoriusContract = azoriusModule.moduleContract as Azorius;
+
+        if (azoriusModule) {
+          const azoriusContract = getContract({
+            abi: AzoriusAbi,
+            address: getAddress(azoriusModule.moduleAddress),
+            client: publicClient,
+          });
+
           // @dev assumes the first strategy is the voting contract
           const votingContractAddress = (
-            await azoriusContract.getStrategies(SENTINEL_ADDRESS, 0)
+            await azoriusContract.read.getStrategies([SENTINEL_ADDRESS, 0n])
           )[1];
           votingContract = getContract({
             abi: LinearERC721VotingAbi,

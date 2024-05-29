@@ -1,7 +1,9 @@
 import { useQuery } from '@apollo/client';
 import { useCallback, useEffect, useState } from 'react';
-import { getAddress, zeroAddress } from 'viem';
+import { getAddress, getContract, zeroAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { DAOQueryDocument } from '../../../../.graphclient';
+import AzoriusAbi from '../../../assets/abi/Azorius';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
 import { useAsyncRetry } from '../../../hooks/utils/useAsyncRetry';
@@ -23,6 +25,7 @@ export function useFetchNodes(address?: string) {
   const { requestWithRetries } = useAsyncRetry();
 
   const { subgraph } = useNetworkConfig();
+  const publicClient = usePublicClient();
   const { data, error } = useQuery(DAOQueryDocument, {
     variables: { daoAddress: address },
     skip: address === safe?.address || !address, // If address === safe.address - we already have hierarchy obtained in the context
@@ -38,11 +41,8 @@ export function useFetchNodes(address?: string) {
   const getDAOOwner = useCallback(
     async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
       if (safeInfo && safeInfo.guard && baseContracts) {
-        const {
-          multisigFreezeGuardMasterCopyContract,
-          azoriusFreezeGuardMasterCopyContract,
-          fractalAzoriusMasterCopyContract,
-        } = baseContracts;
+        const { multisigFreezeGuardMasterCopyContract, azoriusFreezeGuardMasterCopyContract } =
+          baseContracts;
         if (safeInfo.guard !== zeroAddress) {
           const guard = multisigFreezeGuardMasterCopyContract.asProvider.attach(safeInfo.guard);
           const guardOwner = await guard.owner();
@@ -53,15 +53,13 @@ export function useFetchNodes(address?: string) {
           const modules = await lookupModules(safeInfo.modules || []);
           if (!modules) return;
           const azoriusModule = getAzoriusModuleFromModules(modules);
-          if (
-            azoriusModule &&
-            azoriusFreezeGuardMasterCopyContract &&
-            fractalAzoriusMasterCopyContract
-          ) {
-            const azoriusContract = fractalAzoriusMasterCopyContract?.asProvider.attach(
-              azoriusModule.moduleAddress,
-            );
-            const azoriusGuardAddress = await azoriusContract.getGuard();
+          if (azoriusModule && azoriusFreezeGuardMasterCopyContract && publicClient) {
+            const azoriusContract = getContract({
+              abi: AzoriusAbi,
+              address: getAddress(azoriusModule.moduleAddress),
+              client: publicClient,
+            });
+            const azoriusGuardAddress = await azoriusContract.read.getGuard();
             if (azoriusGuardAddress !== zeroAddress) {
               const guard =
                 azoriusFreezeGuardMasterCopyContract.asProvider.attach(azoriusGuardAddress);
@@ -75,7 +73,7 @@ export function useFetchNodes(address?: string) {
       }
       return undefined;
     },
-    [baseContracts, lookupModules],
+    [baseContracts, lookupModules, publicClient],
   );
 
   const fetchDAOInfo = useCallback(

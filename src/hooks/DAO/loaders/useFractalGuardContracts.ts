@@ -1,10 +1,8 @@
-import {
-  Azorius,
-  AzoriusFreezeGuard,
-  MultisigFreezeGuard,
-} from '@fractal-framework/fractal-contracts';
+import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
-import { getAddress, zeroAddress } from 'viem';
+import { getAddress, getContract, zeroAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
+import AzoriusAbi from '../../../assets/abi/Azorius';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -31,6 +29,8 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
+  const publicClient = usePublicClient();
+
   const loadFractalGuardContracts = useCallback(
     async (
       _daoAddress: string,
@@ -52,9 +52,13 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       const azoriusModule = _fractalModules?.find(
         module => module.moduleType === FractalModuleType.AZORIUS,
       );
-      if (!!azoriusModule && azoriusModule.moduleContract) {
-        const azoriusGuardAddress = await (azoriusModule.moduleContract as Azorius).getGuard();
-
+      if (azoriusModule && publicClient) {
+        const azoriusContract = getContract({
+          abi: AzoriusAbi,
+          address: getAddress(azoriusModule.moduleAddress),
+          client: publicClient,
+        });
+        const azoriusGuardAddress = await azoriusContract.read.getGuard();
         if (azoriusGuardAddress === zeroAddress) {
           return {
             freezeGuardContractAddress: '',
@@ -109,7 +113,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         };
       }
     },
-    [baseContracts, getZodiacModuleProxyMasterCopyData],
+    [baseContracts, getZodiacModuleProxyMasterCopyData, publicClient],
   );
 
   const setGuardContracts = useCallback(async () => {

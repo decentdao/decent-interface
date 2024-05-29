@@ -9,11 +9,11 @@ import {
   parseAbiParameters,
   getAddress,
   isAddress,
-  isHex,
   encodeFunctionData,
   PublicClient,
   getContract,
 } from 'viem';
+import AzoriusAbi from '../assets/abi/Azorius';
 import ERC20ClaimAbi from '../assets/abi/ERC20Claim';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
@@ -61,6 +61,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private erc20ClaimMasterCopyAddress: Address;
   private linearERC20VotingMasterCopyAddress: Address;
   private linearERC721VotingMasterCopyAddress: Address;
+  private azoriusMasterCopyAddress: Address;
 
   private tokenNonce: bigint;
   private strategyNonce: bigint;
@@ -81,6 +82,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     erc20ClaimMasterCopyAddress: Address,
     linearERC20VotingMasterCopyAddress: Address,
     linearERC721VotingMasterCopyAddress: Address,
+    azoriusMasterCopyAddress: Address,
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
@@ -108,6 +110,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     this.erc20ClaimMasterCopyAddress = erc20ClaimMasterCopyAddress;
     this.linearERC20VotingMasterCopyAddress = linearERC20VotingMasterCopyAddress;
     this.linearERC721VotingMasterCopyAddress = linearERC721VotingMasterCopyAddress;
+    this.azoriusMasterCopyAddress = azoriusMasterCopyAddress;
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       daoData = daoData as AzoriusERC20DAO;
@@ -254,11 +257,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       ModuleProxyFactoryAbi,
       this.moduleProxyFactoryAddress,
       'deployModule',
-      [
-        this.azoriusContracts!.fractalAzoriusMasterCopyContract.address,
-        this.encodedSetupAzoriusData,
-        this.azoriusNonce,
-      ],
+      [this.azoriusMasterCopyAddress, this.encodedSetupAzoriusData, this.azoriusNonce],
       0,
       false,
     );
@@ -555,19 +554,13 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       ],
     );
 
-    const encodedSetupAzoriusData =
-      this.azoriusContracts!.fractalAzoriusMasterCopyContract.interface.encodeFunctionData(
-        'setUp',
-        [encodedInitAzoriusData],
-      );
+    const encodedSetupAzoriusData = encodeFunctionData({
+      abi: AzoriusAbi,
+      functionName: 'setUp',
+      args: [encodedInitAzoriusData],
+    });
 
-    if (!isHex(encodedSetupAzoriusData)) {
-      throw new Error('Error encoding setup azorius data');
-    }
-
-    const azoriusByteCodeLinear = generateContractByteCodeLinear(
-      getAddress(this.azoriusContracts!.fractalAzoriusMasterCopyContract.address),
-    );
+    const azoriusByteCodeLinear = generateContractByteCodeLinear(this.azoriusMasterCopyAddress);
     const azoriusSalt = generateSalt(encodedSetupAzoriusData, this.azoriusNonce);
 
     this.encodedSetupAzoriusData = encodedSetupAzoriusData;
