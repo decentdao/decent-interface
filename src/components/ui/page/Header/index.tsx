@@ -10,7 +10,7 @@ import {
   Show,
   useDisclosure,
 } from '@chakra-ui/react';
-import { DecentLogo } from '@decent-org/fractal-ui';
+import { DecentLogo, DecentSignature } from '@decent-org/fractal-ui';
 import { MagnifyingGlass, List } from '@phosphor-icons/react';
 import { useRef, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +27,7 @@ import { DAOSearch } from '../../menus/DAOSearch';
 import { SafesMenu } from '../../menus/SafesMenu';
 import { ModalType } from '../../modals/ModalProvider';
 import { useFractalModal } from '../../modals/useFractalModal';
+import { Footer } from '../Footer';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 function HeaderLogo() {
@@ -62,7 +63,6 @@ function HeaderLogo() {
             placement="left"
             isOpen={isOpen}
             onClose={onClose}
-            isFullHeight
           >
             <DrawerOverlay
               bg={MOBILE_DRAWER_OVERLAY}
@@ -89,9 +89,16 @@ function HeaderLogo() {
                   />
                 </Link>
               </Flex>
-              <Box mt="1rem">
+              <Flex
+                height="full"
+                direction="column"
+                my="1rem"
+              >
                 <NavigationLinks closeDrawer={onClose} />
-              </Box>
+                <Box mx="0.25rem">
+                  <Footer />
+                </Box>
+              </Flex>
             </DrawerContent>
           </Drawer>
         </>
@@ -102,10 +109,10 @@ function HeaderLogo() {
           to={BASE_ROUTES.landing}
           aria-label={t('ariaLabelFractalBrand')}
         >
-          <DecentLogo
+          <DecentSignature
             aria-hidden
-            h="2.5rem"
-            w="2.125rem"
+            height="1.5rem"
+            width="auto"
             mr="1.75rem"
           />
         </Link>
@@ -136,7 +143,12 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
     >
       <HeaderLogo />
       <Show above="md">
-        <DAOSearch />
+        <Box
+          w="full"
+          mr="1rem"
+        >
+          <DAOSearch />
+        </Box>
       </Show>
 
       <Flex

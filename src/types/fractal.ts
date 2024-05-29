@@ -157,7 +157,6 @@ export type ActivityTransactionType =
 export enum ActivityEventType {
   Treasury,
   Governance,
-  Module,
 }
 
 export enum SafeTransferType {
