@@ -3,10 +3,7 @@ import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/frac
 import { GearFine } from '@phosphor-icons/react';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Address, getAddress, getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
-import AzoriusAbi from '../../../../assets/abi/Azorius';
-import { SENTINEL_ADDRESS } from '../../../../constants/common';
+import { Address, getAddress } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -18,23 +15,21 @@ import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useMasterCopy } from '../../../../hooks/utils/useMasterCopy';
+import useVotingStrategyAddress from '../../../../hooks/utils/useVotingStrategyAddress';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   FractalGuardContracts,
-  FractalNode,
   FreezeGuard,
   GovernanceType,
   FreezeVotingType,
 } from '../../../../types';
-import { getAzoriusModuleFromModules } from '../../../../utils';
 import { ModalType } from '../../modals/ModalProvider';
 import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
   parentAddress: Address | null;
-  fractalNode: FractalNode;
   freezeGuard: FreezeGuard;
   guardContracts: FractalGuardContracts;
 }
@@ -48,52 +43,35 @@ interface IManageDAOMenu {
  *
  * All info for this menu should be supplied in the constructor.
  */
-export function ManageDAOMenu({
-  parentAddress,
-  freezeGuard,
-  guardContracts,
-  fractalNode,
-}: IManageDAOMenu) {
+export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IManageDAOMenu) {
   const [governanceType, setGovernanceType] = useState(GovernanceType.MULTISIG);
   const {
-    node: { safe },
+    node,
     governance: { type },
   } = useFractal();
   const baseContracts = useSafeContracts();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = fractalNode.daoAddress;
+  const safeAddress = node.daoAddress;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, undefined, false);
   const { handleClawBack } = useClawBack({
     parentAddress,
-    childSafeInfo: fractalNode,
+    childSafeInfo: node,
   });
-  const publicClient = usePublicClient();
+  const votingContractAddress = useVotingStrategyAddress();
 
   useEffect(() => {
     const loadGovernanceType = async () => {
-      if (safe && safe.address && safe.address === safeAddress && type) {
+      if (node.safe && node.safe.address && node.safe.address === safeAddress && type) {
         // Since safe.address (global scope DAO address) and safeAddress(Node provided to this component via props)
         // are the same - we can simply grab governance type from global scope and avoid double-fetching
         setGovernanceType(type);
       } else {
-        if (fractalNode?.fractalModules) {
+        if (node?.fractalModules) {
           let result = GovernanceType.MULTISIG;
-          const azoriusModule = getAzoriusModuleFromModules(fractalNode.fractalModules);
-
-          if (!!azoriusModule && publicClient) {
-            // @dev assumes the first strategy is the voting contract
-            const azoriusContract = getContract({
-              abi: AzoriusAbi,
-              address: getAddress(azoriusModule.moduleAddress),
-              client: publicClient,
-            });
-
-            const votingContractAddress = (
-              await azoriusContract.read.getStrategies([SENTINEL_ADDRESS, 0n])
-            )[1];
+          if (votingContractAddress) {
             const masterCopyData = await getZodiacModuleProxyMasterCopyData(
               getAddress(votingContractAddress),
             );
@@ -112,12 +90,12 @@ export function ManageDAOMenu({
 
     loadGovernanceType();
   }, [
-    fractalNode?.fractalModules,
     getZodiacModuleProxyMasterCopyData,
-    publicClient,
-    safe,
+    node?.fractalModules,
+    node.safe,
     safeAddress,
     type,
+    votingContractAddress,
   ]);
   const { addressPrefix } = useNetworkConfig();
 

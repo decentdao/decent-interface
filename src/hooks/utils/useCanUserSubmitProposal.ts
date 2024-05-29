@@ -1,15 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import AzoriusAbi from '../../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../../assets/abi/LinearERC721Voting';
-import { SENTINEL_ADDRESS } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { GovernanceType } from '../../types';
-import { getAzoriusModuleFromModules } from '../../utils';
-import { useFractalModules } from '../DAO/loaders/useFractalModules';
+import useVotingStrategyAddress from './useVotingStrategyAddress';
 
 export function useCanUserCreateProposal() {
   const {
@@ -19,10 +16,10 @@ export function useCanUserCreateProposal() {
     readOnly: { user },
   } = useFractal();
   const safeAPI = useSafeAPI();
-  // const baseContracts = useSafeContracts();
-  const lookupModules = useFractalModules();
   const [canUserCreateProposal, setCanUserCreateProposal] = useState<boolean>();
   const publicClient = usePublicClient();
+
+  const votingContractAddress = useVotingStrategyAddress();
 
   /**
    * Performs a check whether user has access rights to create proposal for DAO
@@ -41,20 +38,7 @@ export function useCanUserCreateProposal() {
       };
 
       if (safeAddress) {
-        const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
-        const safeModules = await lookupModules(safeInfo.modules);
-        const azoriusModule = getAzoriusModuleFromModules(safeModules);
-
-        if (azoriusModule) {
-          const azoriusContract = getContract({
-            abi: AzoriusAbi,
-            address: getAddress(azoriusModule.moduleAddress),
-            client: publicClient,
-          });
-          // @dev assumes the first strategy is the voting contract
-          const votingContractAddress = (
-            await azoriusContract.read.getStrategies([SENTINEL_ADDRESS, 0n])
-          )[1];
+        if (votingContractAddress) {
           const votingContract = getContract({
             abi: LinearERC20VotingAbi,
             address: getAddress(votingContractAddress),
@@ -63,6 +47,7 @@ export function useCanUserCreateProposal() {
           const isProposer = await votingContract.read.isProposer([getAddress(user.address)]);
           return isProposer;
         } else {
+          const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
           return checkIsMultisigOwner(safeInfo.owners);
         }
       } else {
@@ -93,13 +78,13 @@ export function useCanUserCreateProposal() {
     },
     [
       erc721LinearVotingContractAddress,
-      lookupModules,
       ozLinearVotingContractAddress,
       publicClient,
       safe,
       safeAPI,
       type,
       user.address,
+      votingContractAddress,
     ],
   );
   useEffect(() => {

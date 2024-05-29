@@ -1,16 +1,15 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { getContract, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import AzoriusAbi from '../../../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../../../assets/abi/LinearERC20Voting';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
-import { SENTINEL_ADDRESS } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
 import { getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
 import { useMasterCopy } from '../../utils/useMasterCopy';
+import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 
 export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
@@ -20,6 +19,8 @@ export const useGovernanceContracts = () => {
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const publicClient = usePublicClient();
 
+  const votingStrategyAddress = useVotingStrategyAddress();
+
   const { fractalModules, isModulesLoaded, daoAddress } = node;
 
   const loadGovernanceContracts = useCallback(async () => {
@@ -28,7 +29,7 @@ export const useGovernanceContracts = () => {
     }
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
 
-    if (!azoriusModule) {
+    if (!azoriusModule || !votingStrategyAddress) {
       action.dispatch({
         type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT_ADDRESSES,
         payload: {},
@@ -36,22 +37,11 @@ export const useGovernanceContracts = () => {
       return;
     }
 
-    const azoriusContract = getContract({
-      abi: AzoriusAbi,
-      address: getAddress(azoriusModule.moduleAddress),
-      client: publicClient,
-    });
-
     let ozLinearVotingContractAddress: string | undefined;
     let erc721LinearVotingContractAddress: string | undefined;
     let votesTokenContractAddress: string | undefined;
     let underlyingTokenAddress: string | undefined;
     let lockReleaseContractAddress: string | undefined;
-
-    // @dev assumes the first strategy is the voting contract
-    const votingStrategyAddress = (
-      await azoriusContract.read.getStrategies([SENTINEL_ADDRESS, 0n])
-    )[1];
 
     const masterCopyData = await getZodiacModuleProxyMasterCopyData(
       getAddress(votingStrategyAddress),
@@ -121,8 +111,14 @@ export const useGovernanceContracts = () => {
         },
       });
     }
-    // else this has no governance token and can be assumed is a multi-sig
-  }, [action, getZodiacModuleProxyMasterCopyData, baseContracts, fractalModules, publicClient]);
+  }, [
+    action,
+    baseContracts,
+    fractalModules,
+    getZodiacModuleProxyMasterCopyData,
+    publicClient,
+    votingStrategyAddress,
+  ]);
 
   useEffect(() => {
     if (currentValidAddress.current !== daoAddress && isModulesLoaded) {

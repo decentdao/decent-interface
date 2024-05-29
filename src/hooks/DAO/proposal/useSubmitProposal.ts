@@ -14,7 +14,7 @@ import {
 import { usePublicClient, useWalletClient } from 'wagmi';
 import AzoriusAbi from '../../../assets/abi/Azorius';
 import MultiSendCallOnlyAbi from '../../../assets/abi/MultiSendCallOnly';
-import { ADDRESS_MULTISIG_METADATA, SENTINEL_ADDRESS } from '../../../constants/common';
+import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -24,6 +24,7 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
+import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
 
@@ -47,6 +48,8 @@ export default function useSubmitProposal() {
   const loadDAOProposals = useDAOProposals();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
+
+  const votingContractAddress = useVotingStrategyAddress();
 
   const {
     node: { safe, fractalModules },
@@ -288,16 +291,7 @@ export default function useSubmitProposal() {
             successCallback,
             safeAddress,
           });
-        } else if (walletClient) {
-          const azoriusModuleContract = getContract({
-            abi: AzoriusAbi,
-            address: getAddress(azoriusModule.moduleAddress),
-            client: walletClient,
-          });
-          // @dev assumes the first strategy is the voting contract
-          const votingStrategyAddress = (
-            await azoriusModuleContract.read.getStrategies([SENTINEL_ADDRESS, 0n])
-          )[1];
+        } else if (walletClient && votingContractAddress) {
           await submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
@@ -307,7 +301,7 @@ export default function useSubmitProposal() {
             successCallback,
             safeAddress,
             azoriusAddress: getAddress(azoriusModule.moduleAddress),
-            votingStrategyAddress,
+            votingStrategyAddress: votingContractAddress,
           });
         }
       } else {
@@ -351,6 +345,7 @@ export default function useSubmitProposal() {
       safeAPI,
       submitAzoriusProposal,
       submitMultisigProposal,
+      votingContractAddress,
       walletClient,
     ],
   );
