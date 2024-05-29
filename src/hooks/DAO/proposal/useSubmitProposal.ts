@@ -49,7 +49,7 @@ export default function useSubmitProposal() {
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
 
-  const votingContractAddress = useVotingStrategyAddress();
+  const { getVotingStrategyAddress } = useVotingStrategyAddress();
 
   const {
     node: { safe, fractalModules },
@@ -278,10 +278,11 @@ export default function useSubmitProposal() {
 
       if (safeAddress && isAddress(safeAddress)) {
         // Submitting proposal to any DAO out of global context
+        const votingStrategyAddress = await getVotingStrategyAddress(getAddress(safeAddress));
         const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
         const modules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(modules);
-        if (!azoriusModule) {
+        if (!azoriusModule || !votingStrategyAddress) {
           await submitMultisigProposal({
             proposalData,
             pendingToastMessage,
@@ -291,7 +292,7 @@ export default function useSubmitProposal() {
             successCallback,
             safeAddress,
           });
-        } else if (walletClient && votingContractAddress) {
+        } else {
           await submitAzoriusProposal({
             proposalData,
             pendingToastMessage,
@@ -301,7 +302,7 @@ export default function useSubmitProposal() {
             successCallback,
             safeAddress,
             azoriusAddress: getAddress(azoriusModule.moduleAddress),
-            votingStrategyAddress: votingContractAddress,
+            votingStrategyAddress,
           });
         }
       } else {
@@ -338,6 +339,7 @@ export default function useSubmitProposal() {
     [
       erc721LinearVotingContractAddress,
       freezeVotingContractAddress,
+      getVotingStrategyAddress,
       globalAzoriusContract,
       lookupModules,
       ozLinearVotingContractAddress,
@@ -345,8 +347,6 @@ export default function useSubmitProposal() {
       safeAPI,
       submitAzoriusProposal,
       submitMultisigProposal,
-      votingContractAddress,
-      walletClient,
     ],
   );
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { getContract, getAddress } from 'viem';
+import { getContract, Address } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../../assets/abi/LinearERC20Voting';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
@@ -19,7 +19,7 @@ export const useGovernanceContracts = () => {
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const publicClient = usePublicClient();
 
-  const votingStrategyAddress = useVotingStrategyAddress();
+  const { getVotingStrategyAddress } = useVotingStrategyAddress();
 
   const { fractalModules, isModulesLoaded, daoAddress } = node;
 
@@ -29,6 +29,8 @@ export const useGovernanceContracts = () => {
     }
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
 
+    const votingStrategyAddress = await getVotingStrategyAddress();
+
     if (!azoriusModule || !votingStrategyAddress) {
       action.dispatch({
         type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT_ADDRESSES,
@@ -37,31 +39,28 @@ export const useGovernanceContracts = () => {
       return;
     }
 
-    let ozLinearVotingContractAddress: string | undefined;
+    let ozLinearVotingContractAddress: Address | undefined;
     let erc721LinearVotingContractAddress: string | undefined;
     let votesTokenContractAddress: string | undefined;
     let underlyingTokenAddress: string | undefined;
     let lockReleaseContractAddress: string | undefined;
 
-    const masterCopyData = await getZodiacModuleProxyMasterCopyData(
-      getAddress(votingStrategyAddress),
-    );
-    const isOzLinearVoting = masterCopyData.isOzLinearVoting;
-    const isOzLinearVotingERC721 = masterCopyData.isOzLinearVotingERC721;
+    const { isOzLinearVoting, isOzLinearVotingERC721 } =
+      await getZodiacModuleProxyMasterCopyData(votingStrategyAddress);
 
     if (isOzLinearVoting) {
       ozLinearVotingContractAddress = votingStrategyAddress;
 
       const ozLinearVotingContract = getContract({
         abi: LinearERC20VotingAbi,
-        address: getAddress(ozLinearVotingContractAddress),
+        address: ozLinearVotingContractAddress,
         client: publicClient,
       });
       const govTokenAddress = await ozLinearVotingContract.read.governanceToken();
 
       const possibleERC20Wrapper = getContract({
         abi: VotesERC20WrapperAbi,
-        address: getAddress(govTokenAddress),
+        address: govTokenAddress,
         client: publicClient,
       });
 
@@ -71,7 +70,7 @@ export const useGovernanceContracts = () => {
         return undefined;
       });
       const possibleLockRelease = getContract({
-        address: getAddress(govTokenAddress),
+        address: govTokenAddress,
         abi: LockReleaseAbi,
         client: { public: publicClient },
       });
@@ -115,9 +114,9 @@ export const useGovernanceContracts = () => {
     action,
     baseContracts,
     fractalModules,
+    getVotingStrategyAddress,
     getZodiacModuleProxyMasterCopyData,
     publicClient,
-    votingStrategyAddress,
   ]);
 
   useEffect(() => {

@@ -40,7 +40,7 @@ export default function useUserERC721VotingTokens(
   const safeAPI = useSafeAPI();
   const publicClient = usePublicClient();
 
-  const votingContractAddress = useVotingStrategyAddress();
+  const { getVotingStrategyAddress } = useVotingStrategyAddress();
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { erc721Tokens } = azoriusGovernance;
@@ -69,11 +69,11 @@ export default function useUserERC721VotingTokens(
 
       if (_safeAddress && daoAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
-
-        if (votingContractAddress) {
+        const votingStrategyAddress = await getVotingStrategyAddress(getAddress(_safeAddress));
+        if (votingStrategyAddress) {
           votingContract = getContract({
             abi: LinearERC721VotingAbi,
-            address: getAddress(votingContractAddress),
+            address: votingStrategyAddress,
             client: publicClient,
           });
           const addresses = await votingContract.read.getAllTokenAddresses();
@@ -204,11 +204,11 @@ export default function useUserERC721VotingTokens(
       daoAddress,
       erc721LinearVotingContractAddress,
       erc721Tokens,
+      getVotingStrategyAddress,
       publicClient,
       safeAPI,
       signerOrProvider,
       user.address,
-      votingContractAddress,
     ],
   );
 

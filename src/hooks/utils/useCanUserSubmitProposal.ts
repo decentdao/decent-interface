@@ -19,7 +19,7 @@ export function useCanUserCreateProposal() {
   const [canUserCreateProposal, setCanUserCreateProposal] = useState<boolean>();
   const publicClient = usePublicClient();
 
-  const votingContractAddress = useVotingStrategyAddress();
+  const { getVotingStrategyAddress } = useVotingStrategyAddress();
 
   /**
    * Performs a check whether user has access rights to create proposal for DAO
@@ -38,10 +38,11 @@ export function useCanUserCreateProposal() {
       };
 
       if (safeAddress) {
-        if (votingContractAddress) {
+        const votingStrategyAddress = await getVotingStrategyAddress(getAddress(safeAddress));
+        if (votingStrategyAddress) {
           const votingContract = getContract({
             abi: LinearERC20VotingAbi,
-            address: getAddress(votingContractAddress),
+            address: votingStrategyAddress,
             client: publicClient,
           });
           const isProposer = await votingContract.read.isProposer([getAddress(user.address)]);
@@ -78,13 +79,13 @@ export function useCanUserCreateProposal() {
     },
     [
       erc721LinearVotingContractAddress,
+      getVotingStrategyAddress,
       ozLinearVotingContractAddress,
       publicClient,
       safe,
       safeAPI,
       type,
       user.address,
-      votingContractAddress,
     ],
   );
   useEffect(() => {

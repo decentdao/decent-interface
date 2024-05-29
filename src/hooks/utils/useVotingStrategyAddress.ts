@@ -1,22 +1,40 @@
-import { useEffect, useState } from 'react';
 import { Address, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import AzoriusAbi from '../../assets/abi/Azorius';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
+import { FractalModuleData } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
+import { useFractalModules } from '../DAO/loaders/useFractalModules';
 
 const useVotingStrategyAddress = () => {
-  const [votingStrategyAddress, setVotingStrategyAddress] = useState<Address>();
-
   const { node } = useFractal();
   const publicClient = usePublicClient();
+  const safeAPI = useSafeAPI();
+  const lookupModules = useFractalModules();
 
-  useEffect(() => {
-    const azoriusModule = getAzoriusModuleFromModules(node.fractalModules);
+  const getVotingStrategyAddress = async (safeAddress?: Address) => {
+    let azoriusModule: FractalModuleData | undefined;
 
-    if (!azoriusModule || !publicClient) {
-      return;
+    if (safeAddress) {
+      if (!safeAPI) {
+        throw new Error('Safe API not ready');
+      }
+      const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
+      const safeModules = await lookupModules(safeInfo.modules);
+      azoriusModule = getAzoriusModuleFromModules(safeModules);
+      if (!azoriusModule) return;
+    } else {
+      azoriusModule = getAzoriusModuleFromModules(node.fractalModules);
+    }
+
+    if (!azoriusModule) {
+      throw new Error('Azorius module not found');
+    }
+
+    if (!publicClient) {
+      throw new Error('Public client undefined');
     }
 
     const azoriusContract = getContract({
@@ -26,12 +44,11 @@ const useVotingStrategyAddress = () => {
     });
 
     // @dev assumes the first strategy is the voting contract
-    azoriusContract.read.getStrategies([SENTINEL_ADDRESS, 0n]).then(strategies => {
-      setVotingStrategyAddress(strategies[1]);
-    });
-  }, [node.fractalModules, publicClient]);
+    const strategies = await azoriusContract.read.getStrategies([SENTINEL_ADDRESS, 0n]);
+    return strategies[1];
+  };
 
-  return votingStrategyAddress;
+  return { getVotingStrategyAddress };
 };
 
 export default useVotingStrategyAddress;
