@@ -17,6 +17,11 @@ import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { AddressInput } from '../forms/EthAddressInput';
 import Divider from '../utils/Divider';
 
+interface SendAssetsFormValues {
+  destinationAddress: string;
+  selectedAsset: SafeBalanceResponse;
+}
+
 // @todo add Yup and Formik to this modal
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
@@ -35,26 +40,14 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const { submitProposal } = useSubmitProposal();
 
-  const handleCoinChange = (index: string) => {
-    setInputAmount({ value: '0', bigintValue: 0n });
-    setSelectedAsset(fungibleAssetsWithBalance[Number(index)]);
-  };
-
   const onChangeAmount = (value: BigIntValuePair) => {
     setInputAmount(value);
   };
 
-  const overDraft = Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(selectedAsset);
-
-  // @dev next couple of lines are written like this, to keep typing equivalent during the conversion from BN to bigint
-  const inputBigint = inputAmount?.bigintValue;
-  const inputBigintIsZero = inputBigint ? inputBigint === 0n : undefined;
-  const isSubmitDisabled = !inputAmount || inputBigintIsZero || overDraft;
-
   const { addressValidationTest, isValidating } = useValidationAddress();
 
-  const submitSendAssets = async (values: { destinationAddress: string }) => {
-    const { destinationAddress } = values;
+  const submitSendAssets = async (values: SendAssetsFormValues) => {
+    const { destinationAddress, selectedAsset } = values;
 
     await sendAssets({
       transferAmount: inputAmount?.bigintValue || 0n,
@@ -70,18 +63,44 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const sendAssetsValidationSchema = Yup.object().shape({
     destinationAddress: Yup.string().test(addressValidationTest),
+    selectedAsset: Yup.object()
+      .shape({
+        tokenAddress: Yup.string().required(),
+        token: Yup.object().shape({
+          name: Yup.string().required(),
+          symbol: Yup.string().required(),
+          decimals: Yup.number().required(),
+          logoUri: Yup.string().required(),
+        }),
+        balance: Yup.string().required(),
+      })
+      .required(),
   });
 
   return (
     <Box>
-      <Formik
+      <Formik<SendAssetsFormValues>
         initialValues={{
           destinationAddress: '',
+          selectedAsset: fungibleAssetsWithBalance[0],
         }}
         onSubmit={submitSendAssets}
         validationSchema={sendAssetsValidationSchema}
       >
-        {({ errors }) => {
+        {({ errors, values, setFieldValue }) => {
+          console.log(values);
+
+          const overDraft =
+            Number(inputAmount?.value || '0') > formatCoinUnitsFromAsset(values.selectedAsset);
+
+          // @dev next couple of lines are written like this, to keep typing equivalent during the conversion from BN to bigint
+          const inputBigint = inputAmount?.bigintValue;
+          const inputBigintIsZero = inputBigint ? inputBigint === 0n : undefined;
+
+          const selectedAssetIndex = fungibleAssetsWithBalance.findIndex(
+            asset => asset.tokenAddress === values.selectedAsset.tokenAddress,
+          );
+
           return (
             <Form>
               <Flex>
@@ -101,7 +120,14 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                           cursor="pointer"
                           iconSize="1.5rem"
                           icon={<CaretDown />}
-                          onChange={e => handleCoinChange(e.target.value)}
+                          onChange={e => {
+                            setInputAmount({ value: '0', bigintValue: 0n });
+                            setFieldValue(
+                              'selectedAsset',
+                              fungibleAssetsWithBalance[Number(e.target.value)],
+                            );
+                          }}
+                          value={selectedAssetIndex}
                         >
                           {fungibleAssetsWithBalance.map((asset, index) => (
                             <option
@@ -125,9 +151,9 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                         <BigIntInput
                           {...field}
                           onChange={onChangeAmount}
-                          decimalPlaces={selectedAsset?.token?.decimals}
+                          decimalPlaces={values.selectedAsset.token.decimals}
                           placeholder="0"
-                          maxValue={BigInt(selectedAsset.balance)}
+                          maxValue={BigInt(values.selectedAsset.balance)}
                           isInvalid={overDraft}
                           errorBorderColor="red-0"
                         />
@@ -137,6 +163,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                 </Field>
               </Flex>
 
+              {/* AVAILABLE BALANCE HINT */}
               <HStack
                 justify="space-between"
                 textStyle="neutral-7"
@@ -149,7 +176,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                   as="span"
                 >
                   {t('selectSublabel', {
-                    balance: formatCoinFromAsset(selectedAsset, false),
+                    balance: formatCoinFromAsset(values.selectedAsset, false),
                   })}
                 </Text>
               </HStack>
