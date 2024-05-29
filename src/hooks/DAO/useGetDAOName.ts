@@ -26,9 +26,9 @@ const getDAOName = async ({
     if (error.name === 'ChainDoesNotSupportContract') {
       // Sliently fail, this is fine.
       // https://github.com/wevm/viem/discussions/781
-      return;
+    } else {
+      throw error;
     }
-    throw error;
   });
   if (ensName) {
     return ensName;
