@@ -146,9 +146,8 @@ export function BigIntInput({
 
   // if the parent Formik value prop changes, need to update the value
   useEffect(() => {
-    if (!inputValue || inputValue === currentValue?.value ) return;
-    if (currentValue?.bigintValue === 0n) 
-      setInputValue('');
+    if (!inputValue || inputValue === currentValue?.value) return;
+    if (currentValue?.bigintValue === 0n) setInputValue('');
   }, [currentValue, inputValue]);
 
   // if the decimalPlaces change, need to update the value

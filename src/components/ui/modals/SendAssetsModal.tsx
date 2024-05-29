@@ -32,11 +32,6 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   const { t } = useTranslation(['modals', 'common']);
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
-
-  const [selectedAsset, setSelectedAsset] = useState<SafeBalanceResponse>(
-    fungibleAssetsWithBalance[0],
-  );
-  const [inputAmount, setInputAmount] = useState<BigIntValuePair>();
   const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
 
   const { submitProposal } = useSubmitProposal();
@@ -89,7 +84,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           console.log(values);
 
           const overDraft =
-            Number(values.inputAmount?.value || '0') > formatCoinUnitsFromAsset(values.selectedAsset);
+            Number(values.inputAmount?.value || '0') >
+            formatCoinUnitsFromAsset(values.selectedAsset);
 
           // @dev next couple of lines are written like this, to keep typing equivalent during the conversion from BN to bigint
           const inputBigint = values.inputAmount?.bigintValue;
@@ -120,10 +116,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                           iconSize="1.5rem"
                           icon={<CaretDown />}
                           onChange={e => {
-                            setFieldValue(
-                              'inputAmount',
-                              { value: '0', bigintValue: 0n },
-                            );
+                            setFieldValue('inputAmount', { value: '0', bigintValue: 0n });
                             setFieldValue(
                               'selectedAsset',
                               fungibleAssetsWithBalance[Number(e.target.value)],
@@ -152,7 +145,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                       <LabelWrapper label={t('amountLabel')}>
                         <BigIntInput
                           {...field}
-                          onChange={(value) => {
+                          onChange={value => {
                             setFieldValue('inputAmount', value);
                           }}
                           currentValue={values.inputAmount}
