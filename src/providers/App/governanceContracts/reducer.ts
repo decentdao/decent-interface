@@ -15,7 +15,7 @@ export const governanceContractsReducer = (
   action: GovernanceContractActions,
 ) => {
   switch (action.type) {
-    case GovernanceContractAction.SET_GOVERNANCE_CONTRACT:
+    case GovernanceContractAction.SET_GOVERNANCE_CONTRACT_ADDRESSES:
       return { ...action.payload, isLoaded: true };
     default:
       return state;

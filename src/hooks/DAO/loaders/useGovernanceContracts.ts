@@ -30,7 +30,7 @@ export const useGovernanceContracts = () => {
 
     if (!azoriusModule) {
       action.dispatch({
-        type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
+        type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT_ADDRESSES,
         payload: {},
       });
       return;
@@ -110,7 +110,7 @@ export const useGovernanceContracts = () => {
 
     if (votesTokenContractAddress || erc721LinearVotingContractAddress) {
       action.dispatch({
-        type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT,
+        type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT_ADDRESSES,
         payload: {
           ozLinearVotingContractAddress,
           erc721LinearVotingContractAddress,
