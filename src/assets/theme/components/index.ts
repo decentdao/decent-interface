@@ -15,5 +15,5 @@ export default {
   Textarea,
   NumberInput,
   Progress,
-  Tooltip
-}
+  Tooltip,
+};
