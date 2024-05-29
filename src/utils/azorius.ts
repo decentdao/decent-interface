@@ -174,15 +174,9 @@ export const mapProposalCreatedEventToProposal = async (
   proposer: string,
   azoriusContract: GetContractReturnType<typeof AzoriusAbi, PublicClient>,
   provider: Providers,
-  erc20VotedEvents: Promise<
-    GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined
-  >,
-  erc721VotedEvents: Promise<
-    GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'> | undefined
-  >,
-  executedEvents: Promise<
-    GetContractEventsReturnType<typeof AzoriusAbi, 'ProposalExecuted'> | undefined
-  >,
+  erc20VotedEvents: GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined,
+  erc721VotedEvents: GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'> | undefined,
+  executedEvents: GetContractEventsReturnType<typeof AzoriusAbi, 'ProposalExecuted'> | undefined,
   data?: ProposalData,
 ) => {
   if (erc20StrategyContract !== undefined && erc721StrategyContract !== undefined) {

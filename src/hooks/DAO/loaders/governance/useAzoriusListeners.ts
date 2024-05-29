@@ -128,9 +128,9 @@ export const useAzoriusListeners = () => {
             log.args.proposer,
             azoriusContract,
             provider,
-            Promise.resolve(undefined),
-            Promise.resolve(undefined),
-            Promise.resolve(undefined),
+            undefined,
+            undefined,
+            undefined,
             proposalData,
           );
 

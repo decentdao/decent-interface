@@ -91,7 +91,8 @@ export const useAzoriusProposals = () => {
       return;
     }
 
-    return erc20StrategyContract.getEvents.Voted();
+    const events = await erc20StrategyContract.getEvents.Voted();
+    return events;
   }, [erc20StrategyContract]);
 
   const erc721VotedEvents = useMemo(async () => {
@@ -99,7 +100,8 @@ export const useAzoriusProposals = () => {
       return;
     }
 
-    return erc721StrategyContract?.getEvents.Voted();
+    const events = await erc721StrategyContract.getEvents.Voted();
+    return events;
   }, [erc721StrategyContract]);
 
   const executedEvents = useMemo(async () => {
@@ -131,15 +133,15 @@ export const useAzoriusProposals = () => {
         | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
         | undefined,
       _strategyType: VotingStrategyType | undefined,
-      _erc20VotedEvents: Promise<
-        GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined
-      >,
-      _erc721VotedEvents: Promise<
-        GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'> | undefined
-      >,
-      _executedEvents: Promise<
-        GetContractEventsReturnType<typeof AzoriusAbi, 'ProposalExecuted'> | undefined
-      >,
+      _erc20VotedEvents:
+        | GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'>
+        | undefined,
+      _erc721VotedEvents:
+        | GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'>
+        | undefined,
+      _executedEvents:
+        | GetContractEventsReturnType<typeof AzoriusAbi, 'ProposalExecuted'>
+        | undefined,
       _provider: Providers | undefined,
       _decode: (
         value: string,
@@ -225,15 +227,15 @@ export const useAzoriusProposals = () => {
     [azoriusContractAddress],
   );
 
-  return (proposalLoaded: (proposal: AzoriusProposal) => void) => {
+  return async (proposalLoaded: (proposal: AzoriusProposal) => void) => {
     return loadAzoriusProposals(
       azoriusContract,
       erc20StrategyContract,
       erc721StrategyContract,
       strategyType,
-      erc20VotedEvents,
-      erc721VotedEvents,
-      executedEvents,
+      await erc20VotedEvents,
+      await erc721VotedEvents,
+      await executedEvents,
       provider,
       decode,
       proposalLoaded,
