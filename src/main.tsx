@@ -7,6 +7,7 @@ import { router } from './router';
 import '@fontsource/space-mono';
 import 'react-toastify/dist/ReactToastify.min.css';
 import './assets/css/Markdown.css';
+import './assets/css/sentry.css';
 
 function FractalRouterProvider() {
   const { addressPrefix } = useNetworkConfig();

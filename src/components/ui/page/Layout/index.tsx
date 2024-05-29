@@ -6,6 +6,7 @@ import {
   useHeaderHeight,
   SIDEBAR_WIDTH,
   MAX_CONTENT_WIDTH,
+  useFooterHeight,
 } from '../../../../constants/common';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
@@ -18,19 +19,22 @@ export default function Layout() {
 
   const HEADER_HEIGHT = useHeaderHeight();
   const CONTENT_HEIGHT = useContentHeight();
+  const FOOTER_HEIGHT = useFooterHeight();
 
   return (
     <Grid
       templateAreas={{
         base: `"header header"
-               "main main"
-               "footer footer"`,
+               "main main"`,
         md: `"header header"
              "nav main"
              "footer footer"`,
       }}
       gridTemplateColumns={`${SIDEBAR_WIDTH} 1fr`}
-      gridTemplateRows={`${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%)`}
+      gridTemplateRows={{
+        base: `${HEADER_HEIGHT} 100%`,
+        md: `${HEADER_HEIGHT} minmax(${CONTENT_HEIGHT}, 100%) ${FOOTER_HEIGHT}`,
+      }}
       position="relative"
     >
       <GridItem
@@ -48,27 +52,27 @@ export default function Layout() {
           <Header headerContainerRef={headerContainerRef} />
         </Box>
       </GridItem>
-      <GridItem
-        area="nav"
-        zIndex="modal"
-        display="flex"
-        flexDirection="column"
-        position="fixed"
-        ml={6}
-        top={HEADER_HEIGHT}
-        minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
-      >
-        <Show above="md">
+      <Show above="md">
+        <GridItem
+          area="nav"
+          zIndex="modal"
+          display="flex"
+          flexDirection="column"
+          position="fixed"
+          ml={6}
+          top={HEADER_HEIGHT}
+          minHeight={{ base: undefined, md: `calc(100vh - ${HEADER_HEIGHT})` }}
+        >
           <NavigationLinks />
-        </Show>
-      </GridItem>
+        </GridItem>
+      </Show>
       <GridItem
         area="main"
         mx={{ base: '0.5rem', md: '1.5rem' }}
       >
         <Container
           maxWidth={MAX_CONTENT_WIDTH}
-          minH={CONTENT_HEIGHT}
+          mb="2rem"
         >
           <ErrorBoundary
             fallback={<TopErrorFallback />}
@@ -78,13 +82,14 @@ export default function Layout() {
           </ErrorBoundary>
         </Container>
       </GridItem>
-      <GridItem
-        area="footer"
-        pt="3rem"
-        pb={{ base: '5rem', md: '3rem' }}
-      >
-        <Footer />
-      </GridItem>
+      <Show above="md">
+        <GridItem
+          area="footer"
+          pt="1rem"
+        >
+          <Footer />
+        </GridItem>
+      </Show>
     </Grid>
   );
 }

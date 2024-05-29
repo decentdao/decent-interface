@@ -12,7 +12,6 @@ import {
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { ReactNode } from 'react';
 import { BigIntInput, BigIntInputProps } from './BigIntInput';
-import { EthAddressInput } from './EthAddressInput';
 
 interface BaseProps {
   label?: string | ReactNode;
@@ -35,10 +34,6 @@ interface InputProps extends Omit<BaseProps, 'children'> {
   onBlur?: React.ChangeEventHandler<HTMLInputElement> | undefined;
   placeholder?: string;
   testId: string;
-}
-
-interface EthAddressProps extends Omit<BaseProps, 'children' | 'value'> {
-  onAddressChange: (address: string | undefined, isValid: boolean) => void;
 }
 
 interface TextareaProps extends Omit<BaseProps, 'children'> {
@@ -124,22 +119,6 @@ export function InputComponent(props: InputProps) {
         data-testid={testId}
         placeholder={placeholder}
         maxLength={maxLength}
-      />
-    </LabelComponent>
-  );
-}
-
-export function EthAddressComponent(props: EthAddressProps) {
-  const { id, disabled, onAddressChange } = props;
-  return (
-    <LabelComponent
-      {...props}
-      disabled={disabled}
-    >
-      <EthAddressInput
-        id={id}
-        isDisabled={disabled}
-        onAddressChange={onAddressChange}
       />
     </LabelComponent>
   );
