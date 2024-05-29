@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, GridItem, Text, Progress } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
