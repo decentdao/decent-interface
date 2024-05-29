@@ -1,11 +1,13 @@
 import { useCallback, Dispatch } from 'react';
+import { getAddress, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import AzoriusAbi from '../../../assets/abi/Azorius';
 import {
   FractalGovernanceAction,
   FractalGovernanceActions,
 } from '../../../providers/App/governance/action';
 import { FractalGovernanceContracts } from '../../../types';
 import { getAzoriusProposalState } from '../../../utils';
-import useSafeContracts from '../../safe/useSafeContracts';
 
 interface IUseUpdateProposalState {
   governanceContracts: FractalGovernanceContracts;
@@ -16,21 +18,25 @@ export default function useUpdateProposalState({
   governanceContracts: { azoriusContractAddress },
   governanceDispatch,
 }: IUseUpdateProposalState) {
-  const baseContracts = useSafeContracts();
+  const publicClient = usePublicClient();
   const updateProposalState = useCallback(
-    async (proposalId: bigint) => {
-      if (!azoriusContractAddress || !baseContracts) {
+    async (proposalId: number) => {
+      if (!azoriusContractAddress || !publicClient) {
         return;
       }
-      const azoriusContract =
-        baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
+      const azoriusContract = getContract({
+        abi: AzoriusAbi,
+        address: getAddress(azoriusContractAddress),
+        client: publicClient,
+      });
+
       const newState = await getAzoriusProposalState(azoriusContract, proposalId);
       governanceDispatch({
         type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
         payload: { proposalId: proposalId.toString(), state: newState },
       });
     },
-    [azoriusContractAddress, governanceDispatch, baseContracts],
+    [azoriusContractAddress, governanceDispatch, publicClient],
   );
 
   return updateProposalState;

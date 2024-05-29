@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
+import AzoriusAbi from '../../../../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -33,18 +34,27 @@ export const useERC20LinearStrategy = () => {
   }, [ozLinearVotingContractAddress, publicClient]);
 
   const loadERC20Strategy = useCallback(async () => {
-    if (!ozLinearVotingContract || !azoriusContractAddress || !provider || !baseContracts) {
+    if (
+      !ozLinearVotingContract ||
+      !azoriusContractAddress ||
+      !provider ||
+      !baseContracts ||
+      !publicClient
+    ) {
       return {};
     }
 
-    const azoriusContract =
-      baseContracts.fractalAzoriusMasterCopyContract.asProvider.attach(azoriusContractAddress);
+    const azoriusContract = getContract({
+      abi: AzoriusAbi,
+      address: getAddress(azoriusContractAddress),
+      client: publicClient,
+    });
     const [votingPeriodBlocks, quorumNumerator, quorumDenominator, timeLockPeriod] =
       await Promise.all([
         ozLinearVotingContract.read.votingPeriod(),
         ozLinearVotingContract.read.quorumNumerator(),
         ozLinearVotingContract.read.QUORUM_DENOMINATOR(),
-        azoriusContract.timelockPeriod(),
+        azoriusContract.read.timelockPeriod(),
       ]);
 
     const quorumPercentage = (quorumNumerator * 100n) / quorumDenominator;
@@ -73,6 +83,7 @@ export const useERC20LinearStrategy = () => {
     getTimeDuration,
     ozLinearVotingContract,
     provider,
+    publicClient,
   ]);
 
   useEffect(() => {

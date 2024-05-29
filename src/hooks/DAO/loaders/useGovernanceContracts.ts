@@ -26,7 +26,6 @@ export const useGovernanceContracts = () => {
     if (!baseContracts || !publicClient) {
       return;
     }
-    const { fractalAzoriusMasterCopyContract } = baseContracts;
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
 
     if (!azoriusModule) {
@@ -37,15 +36,12 @@ export const useGovernanceContracts = () => {
       return;
     }
 
-    const azoriusModuleContract = getContract({
+    const azoriusContract = getContract({
       abi: AzoriusAbi,
       address: getAddress(azoriusModule.moduleAddress),
       client: publicClient,
     });
 
-    const azoriusContract = fractalAzoriusMasterCopyContract.asProvider.attach(
-      azoriusModuleContract.address,
-    );
     let ozLinearVotingContractAddress: string | undefined;
     let erc721LinearVotingContractAddress: string | undefined;
     let votesTokenContractAddress: string | undefined;
@@ -53,7 +49,9 @@ export const useGovernanceContracts = () => {
     let lockReleaseContractAddress: string | undefined;
 
     // @dev assumes the first strategy is the voting contract
-    const votingStrategyAddress = (await azoriusContract.getStrategies(SENTINEL_ADDRESS, 0))[1];
+    const votingStrategyAddress = (
+      await azoriusContract.read.getStrategies([SENTINEL_ADDRESS, 0n])
+    )[1];
 
     const masterCopyData = await getZodiacModuleProxyMasterCopyData(
       getAddress(votingStrategyAddress),
@@ -116,7 +114,7 @@ export const useGovernanceContracts = () => {
         payload: {
           ozLinearVotingContractAddress,
           erc721LinearVotingContractAddress,
-          azoriusContractAddress: azoriusModuleContract.address,
+          azoriusContractAddress: azoriusModule.moduleAddress,
           votesTokenContractAddress,
           underlyingTokenAddress,
           lockReleaseContractAddress,
