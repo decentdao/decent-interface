@@ -28,6 +28,16 @@ import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
 
+export type SubmitProposalFunction = ({
+  proposalData,
+  nonce,
+  pendingToastMessage,
+  failedToastMessage,
+  successToastMessage,
+  successCallback,
+  safeAddress,
+}: ISubmitProposal) => Promise<void>;
+
 interface ISubmitProposal {
   proposalData: ProposalExecuteData | undefined;
   nonce: number | undefined;
@@ -262,7 +272,7 @@ export default function useSubmitProposal() {
     [addressPrefix, publicClient, walletClient],
   );
 
-  const submitProposal = useCallback(
+  const submitProposal: SubmitProposalFunction = useCallback(
     async ({
       proposalData,
       nonce,
