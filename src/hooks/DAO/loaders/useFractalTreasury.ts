@@ -36,7 +36,7 @@ export const useFractalTreasury = () => {
         .get(buildSafeApiUrl(safeBaseURL, `/safes/${daoAddress}/collectibles/`, {}, 'v2'))
         .catch(e => {
           logError(e);
-          return { data: [] };
+          return { data: { results: [] } };
         }),
       axios.get(buildSafeApiUrl(safeBaseURL, `/safes/${daoAddress}/transfers/`)).catch(e => {
         logError(e);
