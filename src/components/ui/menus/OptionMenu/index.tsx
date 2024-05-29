@@ -39,9 +39,9 @@ export function OptionMenu({
       borderColor="neutral-3"
       borderRadius="0.75rem"
       bg={NEUTRAL_2_82_TRANSPARENT}
-      backdropFilter="auto"
-      backdropBlur="10px"
+      backdropFilter="blur(12px)"
       mr={menuListMr || ['auto', '1rem']}
+      pb="0.25rem"
       zIndex={1000}
     >
       {children}

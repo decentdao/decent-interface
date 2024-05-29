@@ -34,7 +34,10 @@ export function OptionsList({
       {options.map(option => {
         const clickListener = createHandleItemClick(option);
         return (
-          <Box key={option.optionKey}>
+          <Box
+            px="0.25rem"
+            key={option.optionKey}
+          >
             <MenuItem
               as={showOptionSelected ? Box : Text}
               onClick={clickListener}
