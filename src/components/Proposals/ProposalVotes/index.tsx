@@ -115,7 +115,7 @@ function ProposalVotes({
             <Grid
               templateColumns="repeat(4, auto)"
               rowGap={4}
-              columnGap={2}
+              columnGap={5}
               overflowX="auto"
               whiteSpace="nowrap"
             >

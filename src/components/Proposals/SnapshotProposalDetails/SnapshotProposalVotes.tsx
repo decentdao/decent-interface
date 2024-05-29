@@ -103,7 +103,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                   proposal.type === 'weighted' ? 'repeat(4, auto)' : 'repeat(3, auto)'
                 }
                 rowGap={4}
-                columnGap={2}
+                columnGap={5}
                 overflowX="auto"
                 whiteSpace="nowrap"
               >

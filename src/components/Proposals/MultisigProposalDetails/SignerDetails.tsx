@@ -74,7 +74,7 @@ export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
         <Grid
           templateColumns="repeat(3, auto)"
           rowGap={4}
-          columnGap={2}
+          columnGap={5}
           overflowX="auto"
           whiteSpace="nowrap"
         >
