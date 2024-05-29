@@ -10,9 +10,9 @@ import {
   Flex,
   Text,
 } from '@chakra-ui/react';
-import { Info } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { isAddress } from 'viem';
+import { Info } from '../../../assets/theme/custom/icons/Info';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { DecodedTransaction, FractalProposal } from '../../../types';
 import EtherscanLink from '../links/EtherscanLink';

@@ -1,7 +1,7 @@
 import { Alert, AlertTitle, Button, Flex, Text } from '@chakra-ui/react';
-import { Alert as AlertIcon } from '@decent-org/fractal-ui';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Alert as AlertIcon } from '../../../assets/theme/custom/icons/Alert';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance } from '../../../types';
