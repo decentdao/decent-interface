@@ -22,7 +22,13 @@ const getDAOName = async ({
     throw new Error('Public client not available');
   }
 
-  const ensName = await publicClient.getEnsName({ address: address });
+  const ensName = await publicClient.getEnsName({ address: address }).catch((error: Error) => {
+    if (error.name === 'ChainDoesNotSupportContract') {
+      // sliently fail, this is fine
+      return;
+    }
+    throw error;
+  });
   if (ensName) {
     return ensName;
   }
