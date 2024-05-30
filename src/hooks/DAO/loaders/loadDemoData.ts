@@ -16,7 +16,7 @@ const coordinapeDAOAddress = '0xd2786bEc22F4F2500E0dd4E42cE7c9dceBB5Ff93';
 const coordinapeDAO = {
   id: coordinapeDAOAddress,
   address: coordinapeDAOAddress,
-  parentAddress: decentDAOAddress,
+  parentAddress: '',
   name: 'Coordinape DAO',
   snapshotENS: 'the-co-dao.eth',
   proposalTemplatesHash: '',
@@ -30,7 +30,7 @@ const decentDAO = {
   name: 'Decent DAO',
   snapshotENS: 'decent-dao.eth',
   proposalTemplatesHash: '',
-  hierarchy: [coordinapeDAO],
+  hierarchy: [],
 };
 
 export const demoData: DemoData = {
