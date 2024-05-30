@@ -61,7 +61,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         token: Yup.object().shape({
           name: Yup.string().required(),
           symbol: Yup.string().required(),
-          decimals: Yup.number().required()
+          decimals: Yup.number().required(),
         }),
         balance: Yup.string().required(),
       })
