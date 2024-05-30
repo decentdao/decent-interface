@@ -33,22 +33,27 @@ export default function QuorumBadge({ proposal }: { proposal: AzoriusProposal })
     return 0n;
   }, [erc721Tokens, totalVotesCasted, votesSummary, votesToken, votesTokenDecimalsDenominator]);
 
-  if (votesToken !== undefined && erc721Tokens !== undefined) {
-    return null;
-  }
-
-  const quorumDisplay = !!votingStrategy.quorumPercentage
+  const quorumDisplay = useMemo(() => { 
+    if (!votingStrategy) return null;
+    return !!votingStrategy.quorumPercentage
     ? votingStrategy.quorumPercentage.formatted
     : !!votingStrategy.quorumThreshold
       ? votingStrategy.quorumThreshold.formatted
-      : null;
+      : null
+  }, [votingStrategy]);
 
-  const strategyQuorum =
-    erc721Tokens !== undefined
+  const strategyQuorum = useMemo(() => { 
+    if (!votingStrategy) return 0n;
+    return erc721Tokens !== undefined
       ? votingStrategy.quorumThreshold!.value
       : votesToken !== undefined
         ? votingStrategy.quorumPercentage!.value
         : 0n;
+  }, [erc721Tokens, votesToken, votingStrategy]);
+
+  if (votesToken !== undefined && erc721Tokens !== undefined) {
+    return null;
+  }
 
   const totalQuorum = erc721Tokens !== undefined ? strategyQuorum : 0n;
 
