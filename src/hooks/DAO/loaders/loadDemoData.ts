@@ -3,7 +3,7 @@ import { mainnet } from 'viem/chains';
 import { DAO, DAOQueryQuery } from '../../../../.graphclient';
 
 type NetworkData = {
-  [address: string]: DAO;
+  [address: string]: DAO | undefined;
 };
 
 type DemoData = {
@@ -43,6 +43,7 @@ export const loadDemoData = (
 ): DAOQueryQuery | undefined => {
   let demo: DAO | undefined;
   let data: DAOQueryQuery = { daos: [] };
+
   switch (chain) {
     case mainnet: {
       demo = demoData[chain.id][daoAddress];
