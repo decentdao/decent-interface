@@ -80,8 +80,6 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         validationSchema={sendAssetsValidationSchema}
       >
         {({ errors, values, setFieldValue }) => {
-          console.log(values);
-
           const overDraft =
             Number(values.inputAmount?.value || '0') >
             formatCoinUnitsFromAsset(values.selectedAsset);
