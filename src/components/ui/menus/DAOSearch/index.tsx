@@ -98,6 +98,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
               }}
               value={localInput}
               spellCheck="false"
+              autoCapitalize="none"
               isInvalid={!!errorMessage && !typing}
               data-testid="search-input"
             />
