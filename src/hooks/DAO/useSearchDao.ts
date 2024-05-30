@@ -5,41 +5,34 @@ import { useIsSafe } from '../safe/useIsSafe';
 import useAddress from '../utils/useAddress';
 
 export const useSearchDao = () => {
-  const [searchString, setSearchString] = useState<string | undefined>();
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [searchString, setSearchString] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>();
 
-  const { address, isValidAddress, isAddressLoading } = useAddress(searchString);
+  const { address, isValid, isLoading: isAddressLoading } = useAddress(searchString);
   const { isSafe, isSafeLoading } = useIsSafe(address);
   const { t } = useTranslation('dashboard');
   const { chain } = useNetworkConfig();
 
-  useEffect(() => {
-    setIsLoading(isAddressLoading === true || isSafeLoading === true);
-  }, [isAddressLoading, isSafeLoading]);
+  const isLoading = isAddressLoading === true || isSafeLoading === true;
 
   useEffect(() => {
-    if (!searchString || isLoading) {
-      setErrorMessage('');
+    setErrorMessage(undefined);
+
+    if (searchString === '' || isLoading || isSafe || isValid === undefined) {
       return;
     }
 
-    if (isSafe) {
-      setErrorMessage('');
+    if (isValid === true) {
+      setErrorMessage(t('errorFailedSearch', { chain: chain.name }));
     } else {
-      if (isValidAddress) {
-        setErrorMessage(t('errorFailedSearch', { chain: chain.name }));
-      } else {
-        setErrorMessage(t('errorInvalidSearch'));
-      }
+      setErrorMessage(t('errorInvalidSearch'));
     }
-  }, [isLoading, isSafe, isValidAddress, chain, searchString, t]);
+  }, [chain.name, isLoading, isSafe, isValid, searchString, t]);
 
   return {
     errorMessage,
     isLoading,
     address,
-    isSafe,
     setSearchString,
     searchString,
   };
