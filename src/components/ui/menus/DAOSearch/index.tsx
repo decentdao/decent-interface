@@ -2,6 +2,7 @@ import {
   Box,
   Input,
   InputGroup,
+  InputLeftElement,
   Popover,
   PopoverTrigger,
   useDisclosure,
@@ -9,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Search } from '../../../../assets/theme/custom/icons/Search';
 import { SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';
@@ -50,7 +52,14 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             flexDirection="column"
             justifyContent="center"
           >
+            <InputLeftElement>
+              <Search
+                boxSize="1.5rem"
+                color="neutral-5"
+              />
+            </InputLeftElement>
             <Input
+              size="baseAddonLeft"
               w="full"
               placeholder={t('searchDAOPlaceholder')}
               onChange={e => setLocalInput(e.target.value.trim())}

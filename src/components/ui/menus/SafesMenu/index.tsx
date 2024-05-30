@@ -61,18 +61,11 @@ export function SafesMenu() {
                   alignItems="center"
                   gap={2}
                 >
+                  <Text>{t('titleFavorites')}</Text>
                   <Icon
-                    as={Star}
+                    as={CaretDown}
                     boxSize="1.5rem"
-                    weight="fill"
                   />
-                  <Show above="md">
-                    <Text>{t('titleFavorites')}</Text>
-                    <Icon
-                      as={CaretDown}
-                      boxSize="1.5rem"
-                    />
-                  </Show>
                 </Flex>
               </MenuButton>
               {isOpen && <SafesList />}

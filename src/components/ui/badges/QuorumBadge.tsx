@@ -1,7 +1,7 @@
 import { Box, Flex } from '@chakra-ui/react';
-import { Check } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Check } from '../../../assets/theme/custom/icons/Check';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance, AzoriusProposal } from '../../../types';
 

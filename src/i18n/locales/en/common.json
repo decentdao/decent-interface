@@ -50,6 +50,7 @@
   "errorSentryFallbackTitle": "Oops! Something went wrong",
   "errorSentryFallbackMessage": "We apologize for the inconvenience. Please try again later.",
   "errorGeneral": "An unexpected error occurred. Please try again later.",
+  "errorCopyToClipboard": "Unable to copy text to clipboard!",
   "labelNowishAgo": "just now",
   "labelMinutesAgo": "{{count}} minutes ago",
   "labelHoursAgo_one": "{{count}} hour ago",

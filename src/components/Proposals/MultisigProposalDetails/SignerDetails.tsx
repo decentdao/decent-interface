@@ -21,19 +21,14 @@ function OwnerInfoRow({
   const ownerConfirmed = proposal.confirmations.find(confirmInfo => confirmInfo.owner === owner);
 
   return (
-    <Grid
-      templateColumns="1fr auto 1fr"
-      my="0.75rem"
-      color="neutral-7"
-      alignItems="center"
-    >
-      <GridItem colSpan={1}>
+    <>
+      <GridItem my="auto">
         <ActivityAddress
           address={owner}
           isMe={isMe}
         />
       </GridItem>
-      <GridItem colSpan={1}>
+      <GridItem my="auto">
         {ownerConfirmed && (
           <Badge
             labelKey={'ownerApproved'}
@@ -41,18 +36,14 @@ function OwnerInfoRow({
           />
         )}
       </GridItem>
-      <GridItem
-        colSpan={1}
-        justifyContent="flex-end"
-        display="flex"
-      >
+      <GridItem my="auto">
         {ownerConfirmed && (
-          <Text as="span">
+          <Text color="neutral-7">
             {format(new Date(ownerConfirmed.submissionDate), DEFAULT_DATE_TIME_FORMAT)}
           </Text>
         )}
       </GridItem>
-    </Grid>
+    </>
   );
 }
 
@@ -80,7 +71,13 @@ export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
           width="calc(100% + 4rem)"
           mx="-2rem"
         />
-        <Box marginTop={4}>
+        <Grid
+          templateColumns="repeat(3, auto)"
+          rowGap={4}
+          columnGap={5}
+          overflowX="auto"
+          whiteSpace="nowrap"
+        >
           {safe.owners.map(owner => (
             <OwnerInfoRow
               key={owner}
@@ -89,7 +86,7 @@ export function SignerDetails({ proposal }: { proposal: MultisigProposal }) {
               isMe={user.address === owner}
             />
           ))}
-        </Box>
+        </Grid>
       </Box>
     </ContentBox>
   );

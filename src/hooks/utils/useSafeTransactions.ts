@@ -195,13 +195,16 @@ export const useSafeTransactions = () => {
         return [];
       }
 
+      const transactionsWithoutModuleTransactions = transactions.results.filter(
+        transaction => !isModuleTx(transaction),
+      );
+
       const activities = await Promise.all(
-        transactions.results.map(async (transaction, _, transactionArr) => {
+        transactionsWithoutModuleTransactions.map(async (transaction, _, transactionArr) => {
           const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
           const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
 
           const isMultiSigTransaction = isMultiSigTx(transaction);
-          const isModuleTransaction = isModuleTx(transaction);
 
           // @note for ethereum transactions event these are the execution date
           const eventDate = new Date(
@@ -248,9 +251,7 @@ export const useSafeTransactions = () => {
 
           const eventType = isMultiSigTransaction
             ? ActivityEventType.Governance
-            : isModuleTransaction
-              ? ActivityEventType.Module
-              : ActivityEventType.Treasury;
+            : ActivityEventType.Treasury;
 
           const eventNonce = multiSigTransaction.nonce;
 
@@ -275,12 +276,9 @@ export const useSafeTransactions = () => {
             : [];
 
           const data =
-            (isMultiSigTransaction || isModuleTransaction) && multiSigTransaction.dataDecoded
+            isMultiSigTransaction && multiSigTransaction.dataDecoded
               ? {
-                  decodedTransactions: parseDecodedData(
-                    multiSigTransaction,
-                    isMultiSigTransaction || isModuleTransaction,
-                  ),
+                  decodedTransactions: parseDecodedData(multiSigTransaction, isMultiSigTransaction),
                 }
               : {
                   decodedTransactions: await decode(
