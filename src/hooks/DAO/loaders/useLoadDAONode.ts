@@ -26,11 +26,11 @@ export const useLoadDAONode = () => {
 
   const formatDAOQuery = useCallback(
     (result: { data?: DAOQueryQuery }, _daoAddress: string) => {
-      const demoData = loadDemoData(chain, getAddress(_daoAddress), result.data);
-      if (!demoData) {
+      const demo = loadDemoData(chain, getAddress(_daoAddress), result);
+      if (!demo.data) {
         return;
       }
-      const { daos } = demoData;
+      const { daos } = demo.data;
       const dao = daos[0];
       if (dao) {
         const { parentAddress, name, snapshotENS } = dao;

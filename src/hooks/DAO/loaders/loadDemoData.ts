@@ -39,27 +39,18 @@ export const demoData: DemoData = {
 export const loadDemoData = (
   chain: Chain,
   daoAddress: Address,
-  queryData: DAOQueryQuery | undefined,
-): DAOQueryQuery | undefined => {
-  let demo: DAO | undefined;
-  let data: DAOQueryQuery = { daos: [] };
-
-  switch (chain) {
-    case mainnet: {
-      demo = demoData[chain.id][daoAddress];
-      if (queryData && queryData.daos[0]) {
-        demo = { ...demo, ...queryData.daos[0] };
-      }
-      break;
-    }
-    default: {
-      break;
-    }
+  result: { data?: DAOQueryQuery | undefined },
+): { data: DAOQueryQuery | undefined } => {
+  let demo = demoData[chain.id][daoAddress];
+  if (result.data && result.data.daos[0]) {
+    demo = { ...demo, ...result.data.daos[0] };
   }
+
+  const data: DAOQueryQuery = { daos: [] };
 
   if (demo) {
     data.daos = [demo];
   }
 
-  return data;
+  return { data };
 };
