@@ -22,4 +22,3 @@ export const theme = mergeThemeOverride({
   textStyles,
   components: Object.assign(filteredDefaultComponents, components),
 });
-console.log('🚀 ~ theme', theme);
