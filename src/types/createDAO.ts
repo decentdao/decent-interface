@@ -22,8 +22,6 @@ export enum TokenCreationType {
 export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 'handleSubmit'> {
   transactionPending?: boolean;
   isSubDAO?: boolean;
-  step: CreatorSteps;
-  updateStep: (newStep: CreatorSteps) => void;
   mode: DAOCreateMode;
 }
 

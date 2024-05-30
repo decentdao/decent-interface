@@ -100,5 +100,6 @@
   "tooltipTokenVoting": "Token Voting is a method to give a larger group of ERC-20 token holders governance power to propose and vote on transactions. <1>Learn more</1>",
   "toastDisconnected": "Connect an account to proceed!",
   "toastDisconnectedPersistent": "You'll need to connect an account to deploy this Safe.",
-  "tooltipNftVoting": "NFT Voting allows a group of ERC-721 (NFT) holders to propose and vote on transactions. Multiple NFT addresses can be used. <1>Learn more</1>"
+  "tooltipNftVoting": "NFT Voting allows a group of ERC-721 (NFT) holders to propose and vote on transactions. Multiple NFT addresses can be used. <1>Learn more</1>",
+  "errorUnsupportedCreateOption": "Previously selected Governance option is not supported on this network."
 }

@@ -1,6 +1,7 @@
 import { Flex, Button, Icon } from '@chakra-ui/react';
 import { CaretRight, CaretLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useFractal } from '../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps } from '../../types';
@@ -16,15 +17,16 @@ export function StepButtons({
   errors,
   transactionPending,
   isSubmitting,
-  step,
   isSubDAO,
-  updateStep,
   nextStep,
   prevStep,
   isLastStep,
   isNextDisabled,
   isEdit,
 }: IStepButtons) {
+  const { step } = useParams();
+  const creatorStep = step as CreatorSteps | undefined;
+  const navigate = useNavigate();
   const { t } = useTranslation(['daoCreate', 'common']);
   const {
     readOnly: { user },
@@ -50,7 +52,7 @@ export function StepButtons({
           data-testid="create-prevButton"
           variant="text"
           isDisabled={transactionPending || isSubmitting}
-          onClick={() => updateStep(prevStep)}
+          onClick={() => navigate(`/create/${prevStep}`)}
           color="lilac-0"
           px="2rem"
         >
@@ -60,11 +62,17 @@ export function StepButtons({
       )}
       <Button
         type={buttonType}
-        isDisabled={transactionPending || isSubmitting || !!errors[step] || isNextDisabled}
+        isDisabled={
+          transactionPending ||
+          isSubmitting ||
+          !creatorStep ||
+          !!errors[creatorStep] ||
+          isNextDisabled
+        }
         px="2rem"
         onClick={() => {
           if (!isLastStep && nextStep) {
-            updateStep(nextStep);
+            navigate(`/create/${nextStep}`);
           } else if (isLastStep && !user.address) {
             toast(t('toastDisconnected'), {
               closeOnClick: true,

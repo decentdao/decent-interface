@@ -36,7 +36,7 @@ export const router = (addressPrefix: string) =>
           element: <HomePage />,
         },
         {
-          path: 'create',
+          path: 'create/:step',
           element: <DaoCreatePage />,
         },
         {

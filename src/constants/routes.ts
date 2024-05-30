@@ -1,6 +1,6 @@
 export const BASE_ROUTES = {
   landing: '/',
-  create: '/create',
+  create: '/create/essentials',
 };
 
 type RouteInfo = {
