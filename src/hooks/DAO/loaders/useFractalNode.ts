@@ -1,6 +1,8 @@
 import { useQuery } from '@apollo/client';
+import { Maybe } from 'graphql/jsutils/Maybe';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAddress } from 'viem';
+import { mainnet } from 'viem/chains';
 import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -33,29 +35,50 @@ export const useFractalNode = (
 
   const lookupModules = useFractalModules();
 
-  const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
-    if (!result.data) {
-      return;
-    }
-    const { daos } = result.data;
-    const dao = daos[0];
-    if (dao) {
-      const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
+  const networkConfig = useNetworkConfig();
 
-      const currentNode: Node = {
-        nodeHierarchy: {
-          parentAddress,
-          childNodes: mapChildNodes(dao as DAO),
-        },
-        daoName: name as string,
-        daoAddress: getAddress(_daoAddress),
-        daoSnapshotENS: snapshotENS as string,
-        proposalTemplatesHash: proposalTemplatesHash as string,
-      };
-      return currentNode;
-    }
-    return;
-  }, []);
+  const formatDAOQuery = useCallback(
+    (result: { data?: DAOQueryQuery }, _daoAddress: string) => {
+      if (!result.data) {
+        return;
+      }
+      const { daos } = result.data;
+      const dao = daos[0];
+      if (dao) {
+        let snapshotENS: Maybe<string> | undefined;
+        const { parentAddress, name, proposalTemplatesHash } = dao;
+        snapshotENS = dao.snapshotENS;
+
+        // don't override if already set
+        if (!snapshotENS) {
+          if (networkConfig.chain === mainnet) {
+            switch (_daoAddress) {
+              case '0xB98d45F9021D71E6Fc30b43FD37FB3b1Bf12c064': {
+                snapshotENS = 'decent-dao.eth';
+                break;
+              }
+              default:
+                break;
+            }
+          }
+        }
+
+        const currentNode: Node = {
+          nodeHierarchy: {
+            parentAddress,
+            childNodes: mapChildNodes(dao as DAO),
+          },
+          daoName: name as string,
+          daoAddress: getAddress(_daoAddress),
+          daoSnapshotENS: snapshotENS as string,
+          proposalTemplatesHash: proposalTemplatesHash as string,
+        };
+        return currentNode;
+      }
+      return;
+    },
+    [networkConfig.chain],
+  );
 
   const { subgraph } = useNetworkConfig();
 
