@@ -1,5 +1,4 @@
 import { Box, Flex, Input, RadioGroup, Text } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Info } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,6 +9,7 @@ import { TokenCreationType, ICreationStepProps, CreatorSteps } from '../../../ty
 import SupportTooltip from '../../ui/badges/SupportTooltip';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
@@ -166,7 +166,6 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                         ? errors.erc20Token.tokenImportAddress
                         : undefined
                     }
-                    isRequired
                   >
                     <Input
                       name="erc20Token.tokenImportAddress"

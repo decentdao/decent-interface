@@ -1,10 +1,10 @@
 import { IconButton, Box } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
 import { MinusCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
+import LabelWrapper from '../../ui/forms/LabelWrapper';
 interface ITokenAllocations {
   index: number;
   remove: <T>(index: number) => T | undefined;

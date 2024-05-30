@@ -9,20 +9,19 @@ import {
   GridItemProps,
   ResponsiveValue,
 } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
-import { ReactNode } from 'react';
 import { BigIntInput, BigIntInputProps } from './BigIntInput';
+import LabelWrapper from './LabelWrapper';
 
 interface BaseProps {
-  label?: string | ReactNode;
+  label?: JSX.Element | string;
   id?: string;
   helper?: string;
   isRequired: boolean;
   value: string;
   disabled?: boolean;
-  subLabel?: ReactNode;
+  subLabel?: JSX.Element | string | null;
   errorMessage?: string;
-  children: ReactNode;
+  children: JSX.Element | JSX.Element[];
   gridContainerProps?: GridProps;
   inputContainerProps?: GridItemProps;
   maxLength?: number;
