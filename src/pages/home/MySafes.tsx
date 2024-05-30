@@ -25,7 +25,9 @@ export function MySafes() {
         {/* SAFES CONTENT */}
         {favoritesList.length === 0 ? (
           <Flex
-            direction="column"
+            direction={{ base: 'column', md: 'row' }}
+            columnGap="0.5rem"
+            justifyContent="center"
             p="1rem"
             maxW="100%"
             my="0.5rem"
