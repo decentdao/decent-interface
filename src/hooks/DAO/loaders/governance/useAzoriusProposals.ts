@@ -176,9 +176,11 @@ export const useAzoriusProposals = () => {
         });
       };
 
+      const propasalCacheKeyPrefix = `${CacheKeys.PROPOSAL_PREFIX}_${azoriusContractAddress}`;
+
       for (const proposalCreatedEvent of proposalCreatedEvents) {
         const cachedProposal = getValue(
-          `${CacheKeys.PROPOSAL_PREFIX}_${proposalCreatedEvent.args.proposalId.toString()}`,
+          `${propasalCacheKeyPrefix}_${proposalCreatedEvent.args.proposalId.toString()}`,
         ) as AzoriusProposal;
         if (cachedProposal) {
           completeProposalLoad(cachedProposal);
@@ -254,11 +256,7 @@ export const useAzoriusProposals = () => {
 
         if (isProposalFossilized) {
           // todo: Make sure we're saving+loading only proposals for the DAO we're currently viewing.
-          setValue(
-            `${CacheKeys.PROPOSAL_PREFIX}_${proposal.proposalId}`,
-            proposal,
-            CacheExpiry.NEVER,
-          );
+          setValue(`${propasalCacheKeyPrefix}_${proposal.proposalId}`, proposal, CacheExpiry.NEVER);
         }
       }
 
