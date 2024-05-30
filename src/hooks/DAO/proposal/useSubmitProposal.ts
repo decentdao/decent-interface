@@ -22,6 +22,16 @@ import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useDAOProposals } from '../loaders/useProposals';
 
+export type SubmitProposalFunction = ({
+  proposalData,
+  nonce,
+  pendingToastMessage,
+  failedToastMessage,
+  successToastMessage,
+  successCallback,
+  safeAddress,
+}: ISubmitProposal) => Promise<void>;
+
 interface ISubmitProposal {
   proposalData: ProposalExecuteData | undefined;
   nonce: number | undefined;
@@ -264,7 +274,7 @@ export default function useSubmitProposal() {
     [provider, addressPrefix],
   );
 
-  const submitProposal = useCallback(
+  const submitProposal: SubmitProposalFunction = useCallback(
     async ({
       proposalData,
       nonce,

@@ -1,7 +1,7 @@
 import { Box, Flex, Button, Link } from '@chakra-ui/react';
-import { Shield } from '@decent-org/fractal-ui';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { Shield } from '../../assets/theme/custom/icons/Shield';
 import useSnapshotProposal from '../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { useFractal } from '../../providers/App/AppProvider';

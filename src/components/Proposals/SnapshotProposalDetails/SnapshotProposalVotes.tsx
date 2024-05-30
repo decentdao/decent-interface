@@ -98,13 +98,23 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                 />
               </Flex>
             ) : (
-              votes.map(vote => (
-                <SnapshotProposalVoteItem
-                  key={vote.voter}
-                  vote={vote}
-                  proposal={proposal}
-                />
-              ))
+              <Grid
+                templateColumns={
+                  proposal.type === 'weighted' ? 'repeat(4, auto)' : 'repeat(3, auto)'
+                }
+                rowGap={4}
+                columnGap={5}
+                overflowX="auto"
+                whiteSpace="nowrap"
+              >
+                {votes.map(vote => (
+                  <SnapshotProposalVoteItem
+                    key={vote.voter}
+                    vote={vote}
+                    proposal={proposal}
+                  />
+                ))}
+              </Grid>
             )}
           </Flex>
         </ContentBox>

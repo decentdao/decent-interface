@@ -1,8 +1,9 @@
 import { Button, Flex, Show, Text } from '@chakra-ui/react';
-import { AddPlus, TokenPlaceholder } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { AddPlus } from '../../../../assets/theme/custom/icons/AddPlus';
+import { TokenPlaceholder } from '../../../../assets/theme/custom/icons/TokenPlaceholder';
 import Proposals from '../../../../components/Proposals';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';

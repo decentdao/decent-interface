@@ -1,7 +1,9 @@
 import { ComponentWithAs, Flex, IconProps, Text, Tooltip } from '@chakra-ui/react';
-import { Vote, Execute, Lock } from '@decent-org/fractal-ui';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Execute } from '../../../assets/theme/custom/icons/Execute';
+import { Lock } from '../../../assets/theme/custom/icons/Lock';
+import { Vote } from '../../../assets/theme/custom/icons/Vote';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { FractalProposal, FractalProposalState } from '../../../types';
 import { useProposalCountdown } from './useProposalCountdown';

@@ -1,5 +1,5 @@
 import { Signer } from 'ethers';
-import { useMemo, useRef, useCallback } from 'react';
+import { useMemo, useRef, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isAddress } from 'viem';
 import { normalize } from 'viem/ens';
@@ -75,16 +75,20 @@ export const useValidationAddress = () => {
     node: { safe },
   } = useFractal();
 
+  const [isValidating, setIsValidating] = useState(false);
+
   const addressValidationTest = useMemo(() => {
     return {
       name: 'Address Validation',
       message: t('errorInvalidENSAddress', { ns: 'common' }),
       test: async function (address: string | undefined) {
         if (!address) return false;
+        setIsValidating(true);
         const { validation } = await validateAddress({ signerOrProvider, address });
         if (validation.isValidAddress) {
           addressValidationMap.current.set(address, validation);
         }
+        setIsValidating(false);
         return validation.isValidAddress;
       },
     };
@@ -108,6 +112,7 @@ export const useValidationAddress = () => {
       message: t('errorInvalidAddress', { ns: 'common' }),
       test: async function (address: string | undefined) {
         if (!address) return false;
+        setIsValidating(true);
         const { validation } = await validateAddress({
           signerOrProvider,
           address,
@@ -116,6 +121,7 @@ export const useValidationAddress = () => {
         if (validation.isValidAddress) {
           addressValidationMap.current.set(address, validation);
         }
+        setIsValidating(false);
         return validation.isValidAddress;
       },
     };
@@ -206,5 +212,6 @@ export const useValidationAddress = () => {
     newSignerValidationTest,
     uniqueAddressValidationTest,
     uniqueNFTAddressValidationTest,
+    isValidating,
   };
 };

@@ -1,4 +1,4 @@
-import { Button, Flex, HStack, Radio, RadioGroup, Show, Text, Hide } from '@chakra-ui/react';
+import { Button, Flex, HStack, Show, Text, Hide, Icon } from '@chakra-ui/react';
 import { PlusCircle, MinusCircle } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,31 +9,28 @@ import { ModalType } from '../../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../ui/modals/useFractalModal';
 import { SettingsSection } from '../SettingsSection';
 
-function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
+function Signer({
+  signer,
+  signers,
+  threshold,
+  disabled,
+}: {
+  signer: string;
+  signers: string[];
+  threshold: number | undefined;
+  disabled: boolean;
+}) {
+  const removeSigner = useFractalModal(ModalType.REMOVE_SIGNER, {
+    selectedSigner: signer,
+    signers: signers,
+    currentThreshold: threshold,
+  });
   return (
     <HStack
       key={signer}
       my="1rem"
+      justifyContent="space-between"
     >
-      {!disabled && (
-        <Radio
-          value={signer}
-          color="lilac--3"
-          bgColor="black-0"
-          _hover={{
-            color: 'lilac--4',
-          }}
-          _checked={{
-            bg: 'black-0',
-            color: 'lilac--3',
-            borderWidth: '6px',
-
-            _hover: {
-              color: 'lilac--4',
-            },
-          }}
-        />
-      )}
       <Show above="md">
         <DisplayAddress
           address={signer}
@@ -46,6 +43,20 @@ function Signer({ signer, disabled }: { signer: string; disabled: boolean }) {
           truncate
         />
       </Hide>
+      {!disabled && (
+        <Button
+          variant="tertiary"
+          aria-label="Remove Signer"
+          padding="0.5rem"
+          h="fit-content"
+          onClick={removeSigner}
+        >
+          <Icon
+            as={MinusCircle}
+            boxSize="1.25rem"
+          />
+        </Button>
+      )}
     </HStack>
   );
 }
@@ -55,13 +66,8 @@ export function SignersContainer() {
     node: { safe },
   } = useFractal();
   const [signers, setSigners] = useState<string[]>();
-  const [selectedSigner, setSelectedSigner] = useState<string>();
   const [userIsSigner, setUserIsSigner] = useState<boolean>();
-  const removeSigner = useFractalModal(ModalType.REMOVE_SIGNER, {
-    selectedSigner: selectedSigner,
-    signers: signers,
-    currentThreshold: safe?.threshold,
-  });
+
   const addSigner = useFractalModal(ModalType.ADD_SIGNER, {
     signers: signers,
     currentThreshold: safe?.threshold,
@@ -69,7 +75,6 @@ export function SignersContainer() {
   const { t } = useTranslation(['common', 'breadcrumbs']);
   const { address: account } = useAccount();
   const enableRemove = userIsSigner && signers && signers?.length > 1;
-  const removeButtonDisabled = !enableRemove || !selectedSigner;
 
   useEffect(() => {
     setSigners(safe?.owners.map(owner => owner));
@@ -100,16 +105,6 @@ export function SignersContainer() {
                 <Text>{t('add')}</Text>
               </Show>
             </Button>
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={removeSigner}
-              isDisabled={removeButtonDisabled}
-              iconSpacing="0"
-              leftIcon={<MinusCircle size="16" />}
-            >
-              <Show above="sm">{t('remove')}</Show>
-            </Button>
           </Flex>
         )
       }
@@ -121,20 +116,16 @@ export function SignersContainer() {
       }
       descriptionContent={t('signersDescription')}
     >
-      <RadioGroup
-        onChange={e => setSelectedSigner(e)}
-        value={selectedSigner}
-        mt={6}
-      >
-        {signers &&
-          signers.map(signer => (
-            <Signer
-              key={signer}
-              signer={signer}
-              disabled={!enableRemove}
-            />
-          ))}
-      </RadioGroup>
+      {signers &&
+        signers.map(signer => (
+          <Signer
+            key={signer}
+            signer={signer}
+            signers={signers}
+            disabled={!enableRemove}
+            threshold={safe?.threshold}
+          />
+        ))}
     </SettingsSection>
   );
 }
