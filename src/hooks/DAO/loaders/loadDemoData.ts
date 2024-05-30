@@ -45,6 +45,10 @@ export const loadDemoData = (
   daoAddress: Address,
   result: { data?: DAOQueryQuery },
 ) => {
+  if (demoData[chain.id] === undefined) {
+    return result;
+  }
+
   const demo = demoData[chain.id][daoAddress];
 
   if (demo === undefined) {
