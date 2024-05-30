@@ -1,4 +1,4 @@
-import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
+import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
@@ -98,11 +98,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
         ? baseContracts.multisigFreezeGuardMasterCopyContract.asSigner.attach(
             freezeGuardContractAddress || '0x',
           )
-        : freezeGuardType === FreezeGuardType.AZORIUS
-          ? (baseContracts.azoriusFreezeGuardMasterCopyContract.asSigner.attach(
-              freezeGuardContractAddress || '0x',
-            ) as AzoriusFreezeGuard)
-          : undefined;
+        : undefined;
 
     const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
     const isAzoriusGuard = freezeGuardType === FreezeGuardType.AZORIUS;

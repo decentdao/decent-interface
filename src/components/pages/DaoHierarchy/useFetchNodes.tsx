@@ -4,6 +4,7 @@ import { getAddress, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import AzoriusAbi from '../../../assets/abi/Azorius';
+import AzoriusFreezeGuardAbi from '../../../assets/abi/AzoriusFreezeGuard';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
 import { useAsyncRetry } from '../../../hooks/utils/useAsyncRetry';
@@ -41,8 +42,7 @@ export function useFetchNodes(address?: string) {
   const getDAOOwner = useCallback(
     async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
       if (safeInfo && safeInfo.guard && baseContracts) {
-        const { multisigFreezeGuardMasterCopyContract, azoriusFreezeGuardMasterCopyContract } =
-          baseContracts;
+        const { multisigFreezeGuardMasterCopyContract } = baseContracts;
         if (safeInfo.guard !== zeroAddress) {
           const guard = multisigFreezeGuardMasterCopyContract.asProvider.attach(safeInfo.guard);
           const guardOwner = await guard.owner();
@@ -53,7 +53,7 @@ export function useFetchNodes(address?: string) {
           const modules = await lookupModules(safeInfo.modules || []);
           if (!modules) return;
           const azoriusModule = getAzoriusModuleFromModules(modules);
-          if (azoriusModule && azoriusFreezeGuardMasterCopyContract && publicClient) {
+          if (azoriusModule && publicClient) {
             const azoriusContract = getContract({
               abi: AzoriusAbi,
               address: getAddress(azoriusModule.moduleAddress),
@@ -61,9 +61,12 @@ export function useFetchNodes(address?: string) {
             });
             const azoriusGuardAddress = await azoriusContract.read.getGuard();
             if (azoriusGuardAddress !== zeroAddress) {
-              const guard =
-                azoriusFreezeGuardMasterCopyContract.asProvider.attach(azoriusGuardAddress);
-              const guardOwner = await guard.owner();
+              const guard = getContract({
+                abi: AzoriusFreezeGuardAbi,
+                address: azoriusGuardAddress,
+                client: publicClient,
+              });
+              const guardOwner = await guard.read.owner();
               if (guardOwner !== safeInfo.address) {
                 return guardOwner;
               }

@@ -9,7 +9,6 @@ import {
   SafeTransaction,
   SubDAO,
   AzoriusERC721DAO,
-  AzoriusContracts,
   AzoriusERC20DAO,
   VotingStrategyType,
 } from '../types';
@@ -36,6 +35,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private gnosisSafeProxyFactoryAddress: string;
   private gnosisSafeSingletonAddress: string;
   private moduleProxyFactoryAddress: string;
+  private azoriusFreezeGuardMasterCopyAddress: string;
   private multiSendCallOnlyAddress: string;
   private erc20ClaimMasterCopyAddress: string;
   private fractalModuleMasterCopyAddress: string;
@@ -47,7 +47,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     publicClient: PublicClient,
     baseContracts: BaseContracts,
-    azoriusContracts: AzoriusContracts | undefined,
+    azorius: boolean,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
     fallbackHandler: string,
     votesERC20WrapperMasterCopyAddress: string,
@@ -57,6 +57,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     gnosisSafeProxyFactoryAddress: string,
     gnosisSafeSingletonAddress: string,
     moduleProxyFactoryAddress: string,
+    azoriusFreezeGuardMasterCopyAddress: string,
     multiSendCallOnlyAddress: string,
     erc20ClaimMasterCopyAddress: string,
     fractalModuleMasterCopyAddress: string,
@@ -70,7 +71,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       signerOrProvider,
       publicClient,
       baseContracts,
-      azoriusContracts,
+      azorius,
       daoData,
       parentAddress,
       parentTokenAddress,
@@ -85,6 +86,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.gnosisSafeProxyFactoryAddress = gnosisSafeProxyFactoryAddress;
     this.gnosisSafeSingletonAddress = gnosisSafeSingletonAddress;
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
+    this.azoriusFreezeGuardMasterCopyAddress = azoriusFreezeGuardMasterCopyAddress;
     this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
     this.erc20ClaimMasterCopyAddress = erc20ClaimMasterCopyAddress;
     this.fractalModuleMasterCopyAddress = fractalModuleMasterCopyAddress;
@@ -115,7 +117,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.daoData as SafeMultisigDAO,
       this.saltNum,
       this.fallbackHandler,
-      !!this.azoriusContracts,
+      this.azorius,
     );
 
     this.predictedSafeAddress = predictedSafeAddress;
@@ -132,7 +134,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.signerOrProvider,
       this.publicClient,
       this.baseContracts,
-      this.azoriusContracts,
+      this.azorius,
       this.daoData,
       this.saltNum,
       this.createSafeTx!,
@@ -165,8 +167,9 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.saltNum,
       getAddress(this.parentAddress!),
       getAddress(this.moduleProxyFactoryAddress),
+      getAddress(this.azoriusFreezeGuardMasterCopyAddress),
+      this.azorius,
       this.parentTokenAddress ? getAddress(this.parentTokenAddress) : undefined,
-      this.azoriusContracts,
       azoriusAddress ? getAddress(azoriusAddress) : undefined,
       strategyAddress ? getAddress(strategyAddress) : undefined,
       parentStrategyType,
@@ -187,7 +190,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.signerOrProvider,
       this.publicClient,
       this.baseContracts,
-      this.azoriusContracts!,
       this.daoData as AzoriusERC20DAO,
       this.safeContractAddress!,
       this.votesERC20WrapperMasterCopyAddress,

@@ -9,13 +9,7 @@ import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  BaseContracts,
-  AzoriusContracts,
-  ProposalExecuteData,
-  AzoriusERC20DAO,
-  AzoriusERC721DAO,
-} from '../../types';
+import { BaseContracts, ProposalExecuteData, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
 import useSubmitProposal from './proposal/useSubmitProposal';
@@ -39,6 +33,7 @@ const useDeployAzorius = () => {
       linearVotingMasterCopy: linearERC20VotingMasterCopy,
       linearVotingERC721MasterCopy: linearERC721VotingMasterCopy,
       fractalAzoriusMasterCopy: azoriusMasterCopy,
+      azoriusFreezeGuardMasterCopy,
     },
     addressPrefix,
   } = useNetworkConfig();
@@ -64,16 +59,10 @@ const useDeployAzorius = () => {
       }
       const {
         multisigFreezeGuardMasterCopyContract,
-        azoriusFreezeGuardMasterCopyContract,
         freezeMultisigVotingMasterCopyContract,
         freezeERC20VotingMasterCopyContract,
         freezeERC721VotingMasterCopyContract,
       } = baseContracts;
-      let azoriusContracts: AzoriusContracts;
-
-      azoriusContracts = {
-        azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asProvider,
-      };
 
       const builderBaseContracts: BaseContracts = {
         multisigFreezeGuardMasterCopyContract: multisigFreezeGuardMasterCopyContract.asProvider,
@@ -86,7 +75,7 @@ const useDeployAzorius = () => {
         signerOrProvider,
         publicClient,
         builderBaseContracts,
-        azoriusContracts,
+        true,
         daoData,
         fallbackHandler,
         votesERC20WrapperMasterCopy,
@@ -96,6 +85,7 @@ const useDeployAzorius = () => {
         safeFactory,
         safeSingleton,
         zodiacModuleProxyFactory,
+        azoriusFreezeGuardMasterCopy,
         multiSendCallOnly,
         erc20ClaimMasterCopy,
         fractalModuleMasterCopy,
@@ -150,17 +140,13 @@ const useDeployAzorius = () => {
       });
     },
     [
-      signerOrProvider,
-      publicClient,
-      baseContracts,
-      t,
-      canUserCreateProposal,
       daoAddress,
-      submitProposal,
-      navigate,
+      canUserCreateProposal,
       safe,
+      baseContracts,
+      publicClient,
+      signerOrProvider,
       fallbackHandler,
-      addressPrefix,
       votesERC20WrapperMasterCopy,
       votesERC20MasterCopy,
       keyValuePairs,
@@ -168,12 +154,17 @@ const useDeployAzorius = () => {
       safeFactory,
       safeSingleton,
       zodiacModuleProxyFactory,
+      azoriusFreezeGuardMasterCopy,
       multiSendCallOnly,
       erc20ClaimMasterCopy,
       fractalModuleMasterCopy,
       linearERC20VotingMasterCopy,
       linearERC721VotingMasterCopy,
       azoriusMasterCopy,
+      submitProposal,
+      t,
+      navigate,
+      addressPrefix,
     ],
   );
 

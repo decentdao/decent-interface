@@ -6,7 +6,6 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 import {
   SafeMultisigDAO,
   GovernanceType,
-  AzoriusContracts,
   BaseContracts,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
@@ -33,6 +32,7 @@ const useBuildDAOTx = () => {
       linearVotingMasterCopy: linearERC20VotingMasterCopy,
       linearVotingERC721MasterCopy: linearERC721VotingMasterCopy,
       fractalAzoriusMasterCopy: azoriusMasterCopy,
+      azoriusFreezeGuardMasterCopy,
     },
   } = useNetworkConfig();
 
@@ -50,14 +50,13 @@ const useBuildDAOTx = () => {
       parentAddress?: string,
       parentTokenAddress?: string,
     ) => {
-      let azoriusContracts: AzoriusContracts | undefined;
+      let azorius = false;
 
       if (!user.address || !signerOrProvider || !baseContracts || !publicClient) {
         return;
       }
       const {
         multisigFreezeGuardMasterCopyContract,
-        azoriusFreezeGuardMasterCopyContract,
         freezeMultisigVotingMasterCopyContract,
         freezeERC20VotingMasterCopyContract,
         freezeERC721VotingMasterCopyContract,
@@ -67,13 +66,7 @@ const useBuildDAOTx = () => {
         daoData.governance === GovernanceType.AZORIUS_ERC20 ||
         daoData.governance === GovernanceType.AZORIUS_ERC721
       ) {
-        if (!azoriusFreezeGuardMasterCopyContract) {
-          return;
-        }
-
-        azoriusContracts = {
-          azoriusFreezeGuardMasterCopyContract: azoriusFreezeGuardMasterCopyContract.asSigner,
-        };
+        azorius = true;
       }
 
       const buildrerBaseContracts: BaseContracts = {
@@ -87,7 +80,7 @@ const useBuildDAOTx = () => {
         signerOrProvider,
         publicClient,
         buildrerBaseContracts,
-        azoriusContracts,
+        azorius,
         daoData,
         fallbackHandler,
         votesERC20WrapperMasterCopy,
@@ -97,6 +90,7 @@ const useBuildDAOTx = () => {
         safeFactory,
         safeSingleton,
         zodiacModuleProxyFactory,
+        azoriusFreezeGuardMasterCopy,
         multiSendCallOnly,
         erc20ClaimMasterCopy,
         fractalModuleMasterCopy,
@@ -143,11 +137,8 @@ const useBuildDAOTx = () => {
     [
       user.address,
       signerOrProvider,
-      publicClient,
       baseContracts,
-      erc721LinearVotingContractAddress,
-      dao,
-      governance,
+      publicClient,
       fallbackHandler,
       votesERC20WrapperMasterCopy,
       votesERC20MasterCopy,
@@ -156,12 +147,16 @@ const useBuildDAOTx = () => {
       safeFactory,
       safeSingleton,
       zodiacModuleProxyFactory,
+      azoriusFreezeGuardMasterCopy,
       multiSendCallOnly,
       erc20ClaimMasterCopy,
       fractalModuleMasterCopy,
       linearERC20VotingMasterCopy,
       linearERC721VotingMasterCopy,
       azoriusMasterCopy,
+      dao,
+      governance,
+      erc721LinearVotingContractAddress,
     ],
   );
 
