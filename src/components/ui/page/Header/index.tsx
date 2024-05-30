@@ -10,11 +10,12 @@ import {
   Show,
   useDisclosure,
 } from '@chakra-ui/react';
-import { DecentLogo, DecentSignature } from '@decent-org/fractal-ui';
 import { MagnifyingGlass, List } from '@phosphor-icons/react';
 import { useRef, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { DecentLogo } from '../../../../assets/theme/custom/icons/DecentLogo';
+import { DecentSignature } from '../../../../assets/theme/custom/icons/DecentSignature';
 import {
   useHeaderHeight,
   MOBILE_DRAWER_OVERLAY,
