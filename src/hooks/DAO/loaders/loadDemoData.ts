@@ -14,24 +14,24 @@ const decentDAOAddress = '0xB98d45F9021D71E6Fc30b43FD37FB3b1Bf12c064';
 const theCoDAOAddress = '0xd2786bEc22F4F2500E0dd4E42cE7c9dceBB5Ff93';
 const coordinapeDAOAddress = '0x15B513F658f7390D8720dCE321f50974B28672EF';
 
-const theCoDAO = {
-  id: theCoDAOAddress,
-  address: theCoDAOAddress,
-  parentAddress: coordinapeDAOAddress,
-  name: 'The CO DAO',
-  snapshotENS: 'the-co-dao.eth',
+const coordinapeDAO = {
+  id: coordinapeDAOAddress,
+  address: coordinapeDAOAddress,
+  parentAddress: theCoDAOAddress,
+  name: 'Coordinape DAO',
+  snapshotENS: 'coordinape.eth',
   proposalTemplatesHash: '',
   hierarchy: [],
 };
 
-const coordinapeDAO = {
-  id: coordinapeDAOAddress,
-  address: coordinapeDAOAddress,
+const theCoDAO = {
+  id: theCoDAOAddress,
+  address: theCoDAOAddress,
   parentAddress: '',
-  name: 'Coordinape DAO',
-  snapshotENS: 'coordinape.eth',
+  name: 'The CO DAO',
+  snapshotENS: 'the-co-dao.eth',
   proposalTemplatesHash: '',
-  hierarchy: [theCoDAO],
+  hierarchy: [coordinapeDAO],
 };
 
 const decentDAO = {
