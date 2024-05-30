@@ -1,5 +1,4 @@
 import { Box, Button, Flex, HStack, Select, Text, Icon } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
 import { WarningCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
@@ -12,6 +11,7 @@ import { validateENSName } from '../../../../../../utils/url';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
 import { AddressInput } from '../../../../../ui/forms/EthAddressInput';
+import LabelWrapper from '../../../../../ui/forms/LabelWrapper';
 import Divider from '../../../../../ui/utils/Divider';
 import useAddSigner from '../hooks/useAddSigner';
 

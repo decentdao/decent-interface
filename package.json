@@ -1,11 +1,12 @@
 {
   "name": "decent-interface",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.10",
+    "@chakra-ui/anatomy": "^2.2.2",
     "@chakra-ui/react": "^2.8.2",
-    "@decent-org/fractal-ui": "^0.3.8",
+    "@chakra-ui/theme-tools": "^2.1.2",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@ethersproject/abstract-signer": "^5.7.0",
@@ -25,7 +26,7 @@
     "@snapshot-labs/snapshot.js": "^0.7.3",
     "@tanstack/react-query": "^5.36.2",
     "@vitejs/plugin-react-swc": "^3.5.0",
-    "@web3modal/wagmi": "^4.2.1",
+    "@web3modal/wagmi": "^4.2.3",
     "axios": "^0.27.2",
     "blo": "^1.2.0",
     "classnames": "^2.3.1",
@@ -48,10 +49,10 @@
     "react-router-dom": "^6.22.0",
     "react-toastify": "^9.0.8",
     "remark-gfm": "^4.0.0",
-    "viem": "^2.10.9",
+    "viem": "^2.13.1",
     "vite": "^5.1.0",
     "vite-plugin-checker": "^0.6.4",
-    "wagmi": "^2.9.0",
+    "wagmi": "^2.9.7",
     "yup": "^1"
   },
   "scripts": {

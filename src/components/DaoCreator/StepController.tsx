@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { ICreationStepProps, CreatorSteps } from '../../types';
+import { scrollToTop } from '../../utils/ui';
 import { AzoriusGovernance } from './formComponents/AzoriusGovernance';
 import AzoriusNFTDetails from './formComponents/AzoriusNFTDetails';
 import { AzoriusTokenDetails } from './formComponents/AzoriusTokenDetails';
@@ -11,7 +12,7 @@ function StepController(props: Omit<ICreationStepProps, 'step' | 'updateStep'>) 
   const [step, setStepState] = useState<CreatorSteps>(CreatorSteps.ESSENTIALS);
   const updateStep = (newStep: CreatorSteps) => {
     setStepState(newStep);
-    window.scrollTo(0, 0);
+    scrollToTop();
   };
 
   switch (step) {

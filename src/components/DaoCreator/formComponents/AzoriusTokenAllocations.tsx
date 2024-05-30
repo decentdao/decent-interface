@@ -7,7 +7,6 @@ import {
   Grid,
   Text,
 } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Plus, CaretDown, CaretRight } from '@phosphor-icons/react';
 import { FieldArray, FormikErrors } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -21,6 +20,7 @@ import {
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import LabelWrapper from '../../ui/forms/LabelWrapper';
 import CeleryButtonWithIcon from '../../ui/utils/CeleryButtonWithIcon';
 import { AzoriusTokenAllocation } from './AzoriusTokenAllocation';
 

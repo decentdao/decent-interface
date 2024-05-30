@@ -1,5 +1,4 @@
 import { Button, Flex, Input } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Formik, FormikProps } from 'formik';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +14,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance, BigIntValuePair } from '../../../types';
 import { formatCoin } from '../../../utils';
 import { BigIntInput } from '../forms/BigIntInput';
+import LabelWrapper from '../forms/LabelWrapper';
 
 export function UnwrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();

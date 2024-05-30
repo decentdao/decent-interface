@@ -1,5 +1,4 @@
 import { Box, Input, RadioGroup } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
 import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
@@ -13,6 +12,7 @@ import {
   GovernanceType,
 } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
+import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import ExternalLink from '../../ui/links/ExternalLink';
 import { StepButtons } from '../StepButtons';

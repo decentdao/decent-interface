@@ -8,9 +8,9 @@ import {
   useDisclosure,
   useOutsideClick,
 } from '@chakra-ui/react';
-import { Search } from '@decent-org/fractal-ui';
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Search } from '../../../../assets/theme/custom/icons/Search';
 import { SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
 import { useSearchDao } from '../../../../hooks/DAO/useSearchDao';
 import { SearchDisplay } from './SearchDisplay';

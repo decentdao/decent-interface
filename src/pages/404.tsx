@@ -1,7 +1,7 @@
 import { AbsoluteCenter, Button, Icon, Text, VStack } from '@chakra-ui/react';
-import { DecentLogo } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { DecentLogo } from '../assets/theme/custom/icons/DecentLogo';
 import { BASE_ROUTES } from '../constants/routes';
 
 export default function FourOhFourPage() {

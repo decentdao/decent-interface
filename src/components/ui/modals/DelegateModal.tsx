@@ -1,5 +1,4 @@
 import { Box, Button, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress, getAddress, getContract } from 'viem';
@@ -17,6 +16,7 @@ import { AzoriusGovernance, DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 import { validateENSName } from '../../../utils/url';
 import { AddressInput } from '../forms/EthAddressInput';
+import LabelWrapper from '../forms/LabelWrapper';
 import EtherscanLink from '../links/EtherscanLink';
 import Divider from '../utils/Divider';
 
