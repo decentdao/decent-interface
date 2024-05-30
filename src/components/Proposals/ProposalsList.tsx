@@ -14,6 +14,7 @@ import ProposalCard from './ProposalCard/ProposalCard';
 export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const {
     node: { daoAddress },
+    governance: { loadingProposals, allProposalsLoaded },
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { addressPrefix } = useNetworkConfig();
@@ -25,17 +26,20 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
       gap="1rem"
       maxW={CONTENT_MAXW}
     >
-      {proposals === undefined ? (
+      {proposals === undefined || loadingProposals ? (
         <Box mt={7}>
           <InfoBoxLoader />
         </Box>
       ) : proposals.length > 0 ? (
-        proposals.map(proposal => (
-          <ProposalCard
-            key={proposal.proposalId}
-            proposal={proposal}
-          />
-        ))
+        [
+          ...proposals.map(proposal => (
+            <ProposalCard
+              key={proposal.proposalId}
+              proposal={proposal}
+            />
+          )),
+          !allProposalsLoaded && <InfoBoxLoader />,
+        ]
       ) : (
         <EmptyBox emptyText={t('emptyProposals')}>
           {canUserCreateProposal && daoAddress && (
