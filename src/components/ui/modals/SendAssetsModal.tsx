@@ -2,7 +2,7 @@ import { Box, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
 import { LabelWrapper } from '@decent-org/fractal-ui';
 import { CaretDown } from '@phosphor-icons/react';
 import { SafeBalanceResponse } from '@safe-global/safe-service-client';
-import { Field, FieldAttributes, Form, Formik } from 'formik';
+import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
@@ -98,7 +98,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
               <Flex>
                 {/* ASSET SELECT */}
                 <Field name="selectedAsset">
-                  {({ field }: FieldAttributes<any>) => (
+                  {({ field }: FieldAttributes<FieldProps<SafeBalanceResponse>>) => (
                     <Box
                       width="40%"
                       marginEnd="0.75rem"
@@ -137,12 +137,12 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
                 {/* SEND AMOUNT INPUT */}
                 <Field name="inputAmount">
-                  {({ field }: FieldAttributes<any>) => (
+                  {({ field }: FieldAttributes<FieldProps<BigIntValuePair | undefined>>) => (
                     <Box width="60%">
                       <LabelWrapper label={t('amountLabel')}>
                         <BigIntInput
                           {...field}
-                          value={(field.value as BigIntValuePair)?.bigintValue}
+                          value={field.value?.bigintValue}
                           onChange={value => {
                             setFieldValue('inputAmount', value);
                           }}
@@ -181,7 +181,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
               {/* DESTINATION ADDRESS INPUT */}
               <Field name={'destinationAddress'}>
-                {({ field }: FieldAttributes<any>) => (
+                {({ field }: FieldAttributes<FieldProps<string>>) => (
                   <LabelWrapper
                     label={t('destinationLabel')}
                     subLabel={t('destinationSublabel')}
