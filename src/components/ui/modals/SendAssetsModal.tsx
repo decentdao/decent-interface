@@ -142,6 +142,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                       <LabelWrapper label={t('amountLabel')}>
                         <BigIntInput
                           {...field}
+                          value={(field.value as BigIntValuePair)?.bigintValue}
                           onChange={value => {
                             setFieldValue('inputAmount', value);
                           }}
