@@ -1,8 +1,6 @@
 import { useQuery } from '@apollo/client';
-import { Maybe } from 'graphql/jsutils/Maybe';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getAddress } from 'viem';
-import { mainnet } from 'viem/chains';
 import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -11,6 +9,7 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useGetDAONameDeferred } from '../useGetDAOName';
+import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
@@ -39,30 +38,14 @@ export const useFractalNode = (
 
   const formatDAOQuery = useCallback(
     (result: { data?: DAOQueryQuery }, _daoAddress: string) => {
-      if (!result.data) {
+      const demoData = loadDemoData(networkConfig.chain, getAddress(_daoAddress), result.data);
+      if (!demoData) {
         return;
       }
-      const { daos } = result.data;
+      const { daos } = demoData;
       const dao = daos[0];
       if (dao) {
-        let snapshotENS: Maybe<string> | undefined;
-        const { parentAddress, name, proposalTemplatesHash } = dao;
-        snapshotENS = dao.snapshotENS;
-
-        // don't override if already set
-        if (!snapshotENS) {
-          if (networkConfig.chain === mainnet) {
-            switch (_daoAddress) {
-              case '0xB98d45F9021D71E6Fc30b43FD37FB3b1Bf12c064': {
-                snapshotENS = 'decent-dao.eth';
-                break;
-              }
-              default:
-                break;
-            }
-          }
-        }
-
+        const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
         const currentNode: Node = {
           nodeHierarchy: {
             parentAddress,
