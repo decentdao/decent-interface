@@ -1,8 +1,8 @@
 import { BigIntValuePair } from './common';
 
-export enum CreateProposalState {
-  METADATA_FORM,
-  TRANSACTIONS_FORM,
+export enum CreateProposalSteps {
+  METADATA = 'metadata',
+  TRANSACTIONS = 'transactions',
 }
 
 export interface CreateProposalTransaction<T = BigIntValuePair> {

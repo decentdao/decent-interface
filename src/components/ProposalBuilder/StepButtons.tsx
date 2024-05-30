@@ -1,16 +1,17 @@
 import { Flex, Button, Icon } from '@chakra-ui/react';
 import { CaretRight, CaretLeft } from '@phosphor-icons/react';
 import { FormikProps } from 'formik';
-import { Dispatch, ReactNode, SetStateAction } from 'react';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CreateProposalState } from '../../types';
+import { useNavigate, useParams } from 'react-router-dom';
+import { DAO_ROUTES } from '../../constants/routes';
+import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { CreateProposalSteps } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
-import { scrollToTop } from '../../utils/ui';
 
 interface StateButtonsProps extends FormikProps<CreateProposalForm> {
   pendingTransaction: boolean;
-  formState: CreateProposalState;
-  setFormState: Dispatch<SetStateAction<CreateProposalState>>;
   canUserCreateProposal?: boolean;
   safeNonce?: number;
   mode: ProposalBuilderMode;
@@ -30,10 +31,14 @@ function StateButtonsContainer({ children }: { children: ReactNode }) {
   );
 }
 export default function StateButtons(props: StateButtonsProps) {
+  const { addressPrefix } = useNetworkConfig();
+  const {
+    node: { daoAddress },
+  } = useFractal();
+  const { step } = useParams();
+  const navigate = useNavigate();
   const {
     pendingTransaction,
-    formState,
-    setFormState,
     errors: {
       transactions: transactionsError,
       nonce: nonceError,
@@ -43,15 +48,18 @@ export default function StateButtons(props: StateButtonsProps) {
     values: { proposalMetadata },
   } = props;
   const { t } = useTranslation(['common', 'proposal']);
-  const handleSetFormState = (step: CreateProposalState) => {
-    setFormState(step);
-    scrollToTop();
-  };
-  if (formState === CreateProposalState.METADATA_FORM) {
+
+  if (!daoAddress) {
+    return null;
+  }
+
+  if (step === CreateProposalSteps.METADATA) {
     return (
       <StateButtonsContainer>
         <Button
-          onClick={() => handleSetFormState(CreateProposalState.TRANSACTIONS_FORM)}
+          onClick={() =>
+            navigate(DAO_ROUTES.proposalNewTransactions.relative(addressPrefix, daoAddress))
+          }
           isDisabled={!!proposalMetadataError || !proposalMetadata.title}
           px="2rem"
         >
@@ -67,7 +75,7 @@ export default function StateButtons(props: StateButtonsProps) {
         px="2rem"
         variant="text"
         color="lilac-0"
-        onClick={() => handleSetFormState(CreateProposalState.METADATA_FORM)}
+        onClick={() => navigate(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress))}
       >
         <Icon
           bg="transparent"

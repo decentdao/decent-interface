@@ -84,7 +84,7 @@ export const router = (addressPrefix: string) =>
                   element: <ProposalDetailsPage />,
                 },
                 {
-                  path: 'new',
+                  path: 'new/:step',
                   element: <ProposalCreatePage />,
                 },
               ],
