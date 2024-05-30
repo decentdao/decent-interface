@@ -11,16 +11,27 @@ type DemoData = {
 };
 
 const decentDAOAddress = '0xB98d45F9021D71E6Fc30b43FD37FB3b1Bf12c064';
-const coordinapeDAOAddress = '0xd2786bEc22F4F2500E0dd4E42cE7c9dceBB5Ff93';
+const theCoDAOAddress = '0xd2786bEc22F4F2500E0dd4E42cE7c9dceBB5Ff93';
+const coordinapeDAOAddress = '0x15B513F658f7390D8720dCE321f50974B28672EF';
+
+const theCoDAO = {
+  id: theCoDAOAddress,
+  address: theCoDAOAddress,
+  parentAddress: coordinapeDAOAddress,
+  name: 'The CO DAO',
+  snapshotENS: 'the-co-dao.eth',
+  proposalTemplatesHash: '',
+  hierarchy: [],
+};
 
 const coordinapeDAO = {
   id: coordinapeDAOAddress,
   address: coordinapeDAOAddress,
   parentAddress: '',
   name: 'Coordinape DAO',
-  snapshotENS: 'the-co-dao.eth',
+  snapshotENS: 'coordinape.eth',
   proposalTemplatesHash: '',
-  hierarchy: [],
+  hierarchy: [theCoDAO],
 };
 
 const decentDAO = {
@@ -36,6 +47,7 @@ const decentDAO = {
 export const demoData: DemoData = {
   [mainnet.id]: {
     [decentDAOAddress]: decentDAO,
+    [theCoDAOAddress]: theCoDAO,
     [coordinapeDAOAddress]: coordinapeDAO,
   },
 };
