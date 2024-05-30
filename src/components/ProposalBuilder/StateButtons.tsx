@@ -5,6 +5,7 @@ import { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalState } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
+import { scrollToTop } from '../../utils/ui';
 
 interface StateButtonsProps extends FormikProps<CreateProposalForm> {
   pendingTransaction: boolean;
@@ -42,11 +43,15 @@ export default function StateButtons(props: StateButtonsProps) {
     values: { proposalMetadata },
   } = props;
   const { t } = useTranslation(['common', 'proposal']);
+  const handleSetFormState = (step: CreateProposalState) => {
+    setFormState(step);
+    scrollToTop();
+  };
   if (formState === CreateProposalState.METADATA_FORM) {
     return (
       <StateButtonsContainer>
         <Button
-          onClick={() => setFormState(CreateProposalState.TRANSACTIONS_FORM)}
+          onClick={() => handleSetFormState(CreateProposalState.TRANSACTIONS_FORM)}
           isDisabled={!!proposalMetadataError || !proposalMetadata.title}
           px="2rem"
         >
@@ -62,7 +67,7 @@ export default function StateButtons(props: StateButtonsProps) {
         px="2rem"
         variant="text"
         color="lilac-0"
-        onClick={() => setFormState(CreateProposalState.METADATA_FORM)}
+        onClick={() => handleSetFormState(CreateProposalState.METADATA_FORM)}
       >
         <Icon
           bg="transparent"
