@@ -19,6 +19,7 @@ import { LabelComponent } from '../../ui/forms/InputComponent';
 import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import useStepRedirect from '../hooks/useStepRedirect';
 import { DAOCreateMode } from './EstablishEssentials';
 
 function GuardDetails(props: ICreationStepProps) {
@@ -113,6 +114,8 @@ function GuardDetails(props: ICreationStepProps) {
     setFieldValue,
     azoriusGovernance,
   ]);
+
+  useStepRedirect(values);
 
   const freezeHelper = totalParentVotes
     ? t('helperFreezeVotesThreshold', { totalVotes: formatBigIntDisplay(totalParentVotes) })

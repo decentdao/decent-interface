@@ -14,6 +14,7 @@ import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { usePrepareFormData } from '../hooks/usePrepareFormData';
+import useStepRedirect from '../hooks/useStepRedirect';
 import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
 import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
@@ -48,6 +49,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   const { checkVotesToken } = usePrepareFormData();
   const [isImportedVotesToken, setIsImportedVotesToken] = useState(false);
 
+  useStepRedirect(values);
   const updateImportFields = useCallback(async () => {
     if (!publicClient) {
       return;

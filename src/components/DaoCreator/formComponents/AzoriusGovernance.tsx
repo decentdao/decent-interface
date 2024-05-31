@@ -10,6 +10,7 @@ import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import useStepRedirect from '../hooks/useStepRedirect';
 import { DAOCreateMode } from './EstablishEssentials';
 
 export function AzoriusGovernance(props: ICreationStepProps) {
@@ -35,6 +36,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
       setShowCustomNonce(true);
     }
   }, [setFieldValue, safe, showCustomNonce, mode]);
+
+  useStepRedirect(values);
 
   return (
     <>
