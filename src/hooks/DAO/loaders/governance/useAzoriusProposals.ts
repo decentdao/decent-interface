@@ -181,6 +181,7 @@ export const useAzoriusProposals = () => {
       for (const proposalCreatedEvent of proposalCreatedEvents) {
         const cachedProposal = getValue(
           `${propasalCacheKeyPrefix}_${proposalCreatedEvent.args.proposalId.toString()}`,
+          true,
         ) as AzoriusProposal;
         if (cachedProposal) {
           completeProposalLoad(cachedProposal);
@@ -256,7 +257,12 @@ export const useAzoriusProposals = () => {
 
         if (isProposalFossilized) {
           // todo: Make sure we're saving+loading only proposals for the DAO we're currently viewing.
-          setValue(`${propasalCacheKeyPrefix}_${proposal.proposalId}`, proposal, CacheExpiry.NEVER);
+          setValue(
+            `${propasalCacheKeyPrefix}_${proposal.proposalId}`,
+            proposal,
+            CacheExpiry.NEVER,
+            true,
+          );
         }
       }
 
