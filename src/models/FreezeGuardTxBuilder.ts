@@ -64,7 +64,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     parentAddress: Address,
     moduleProxyFactoryAddress: Address,
     azoriusFreezeGuardMasterCopyAddress: Address,
-    azorius: boolean,
+    isAzorius: boolean,
     parentTokenAddress?: Address,
     azoriusAddress?: Address,
     strategyAddress?: Address,
@@ -75,7 +75,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       signerOrProvider,
       publicClient,
       baseContracts,
-      azorius,
+      isAzorius,
       daoData,
       parentAddress,
       parentTokenAddress,
@@ -292,7 +292,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   }
 
   private getGuardMasterCopyAddress(): string {
-    return this.azorius
+    return this.isAzorius
       ? this.azoriusFreezeGuardMasterCopyAddress
       : this.baseContracts.multisigFreezeGuardMasterCopyContract.address;
   }

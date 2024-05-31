@@ -12,7 +12,7 @@ export class BaseTxBuilder {
   protected readonly signerOrProvider: ethers.Signer | any;
   protected readonly publicClient: PublicClient;
   protected readonly baseContracts: BaseContracts;
-  protected readonly azorius: boolean;
+  protected readonly isAzorius: boolean;
   protected readonly daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO;
   protected readonly parentAddress?: string;
   protected readonly parentTokenAddress?: string;
@@ -21,7 +21,7 @@ export class BaseTxBuilder {
     signerOrProvider: ethers.Signer | any,
     publicClient: PublicClient,
     baseContracts: BaseContracts,
-    azorius: boolean,
+    isAzorius: boolean,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
     parentAddress?: string,
     parentTokenAddress?: string,
@@ -30,7 +30,7 @@ export class BaseTxBuilder {
     this.publicClient = publicClient;
     this.baseContracts = baseContracts;
     this.daoData = daoData;
-    this.azorius = azorius;
+    this.isAzorius = isAzorius;
     this.parentAddress = parentAddress;
     this.parentTokenAddress = parentTokenAddress;
   }

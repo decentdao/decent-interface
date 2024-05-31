@@ -50,7 +50,7 @@ const useBuildDAOTx = () => {
       parentAddress?: string,
       parentTokenAddress?: string,
     ) => {
-      let azorius = false;
+      let isAzorius = false;
 
       if (!user.address || !signerOrProvider || !baseContracts || !publicClient) {
         return;
@@ -66,7 +66,7 @@ const useBuildDAOTx = () => {
         daoData.governance === GovernanceType.AZORIUS_ERC20 ||
         daoData.governance === GovernanceType.AZORIUS_ERC721
       ) {
-        azorius = true;
+        isAzorius = true;
       }
 
       const buildrerBaseContracts: BaseContracts = {
@@ -80,7 +80,7 @@ const useBuildDAOTx = () => {
         signerOrProvider,
         publicClient,
         buildrerBaseContracts,
-        azorius,
+        isAzorius,
         daoData,
         fallbackHandler,
         votesERC20WrapperMasterCopy,
