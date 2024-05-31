@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { CacheExpiry, CACHE_DEFAULTS, IStorageValue } from './cacheDefaults';
+import { CacheExpiry, CACHE_DEFAULTS, IStorageValue, keyInternal } from './cacheDefaults';
 
 /**
  * Current database version. Must be an integer.
@@ -19,10 +19,6 @@ export enum DBObjectKeys {
   DECODED_TRANSACTIONS = 'DECODED_TRANSACTIONS',
   MULTISIG_METADATA = 'MULTISIG_METADATA',
   SAFE_API = 'SAFE_API',
-}
-
-function dbKeyInternal(chainId: number, key: string): string {
-  return `fract_${chainId}_${key}`;
 }
 
 /**
@@ -83,7 +79,7 @@ export const setIndexedDBValue = async (
       logError(e);
       return;
     }
-    store.put({ key: dbKeyInternal(chainId, key), value: val });
+    store.put({ key: keyInternal(chainId, key), value: val });
   });
 };
 
@@ -98,7 +94,7 @@ export const getIndexedDBValue = async (
     try {
       transaction = db.transaction(storeKey, 'readonly');
       store = transaction.objectStore(storeKey);
-      request = store.get(dbKeyInternal(chainId, key));
+      request = store.get(keyInternal(chainId, key));
     } catch (e) {
       logError(e);
       return Promise.reject(e);

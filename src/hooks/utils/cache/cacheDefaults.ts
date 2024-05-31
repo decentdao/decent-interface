@@ -34,47 +34,6 @@ interface IndexedObject {
   [key: string]: any;
 }
 
-// Increment this strictly by 1s, as it is used for version comparison.
-const CURRENT_CACHE_VERSION = 1;
-const VERSION_PREFIX = `v${CURRENT_CACHE_VERSION}::`;
-
-/**
- * Checks if the key begins with "v", contains a number, and ends with "::",
- * the format for a version-prefixed cache key.
- * */
-function isVersionedKey(key: string): boolean {
-  // Does the key start with "v"?
-  if (!key.startsWith('v')) {
-    return false;
-  }
-
-  // Does the key contain the version prefix terminator, "::"?
-  const keyVersionPrefixIndex = key.indexOf('::');
-  if (keyVersionPrefixIndex === -1) {
-    return false;
-  }
-
-  // Is the set of characters between "v" and "::" a number?
-  const keyVersion = key.substring(1, keyVersionPrefixIndex);
-  if (isNaN(Number(keyVersion))) {
-    return false;
-  }
-
-  return true;
-}
-
-/**
- * Extracts the version number from a version-prefixed cache key.
- *
- * This function assumes that the key is a valid versioned key.
- * @dev if ever using this function in any other context, include error checking first.
- */
-function getVersionedKeyVersion(key: string): number {
-  // I'm fine with no error checking here, as this function is only called
-  // on keys filtered by `isVersionedKey`, in `clearOldVersionCache`.
-  return Number(key.substring(1, key.indexOf('::')));
-}
-
 /**
  * Cache default values.
  *
@@ -89,18 +48,6 @@ export const CACHE_DEFAULTS: IndexedObject = {
  * mechanism should internally combine the key set in CacheKeys
  * along with the chainId.
  */
-export function keyInternal(chainId: number, key: string, isVersioned: boolean): string {
-  return `${isVersioned ? VERSION_PREFIX : ''}fract_${chainId}_${key}`;
-}
-
-// @dev where's a good place to call this?
-export function clearOldVersionCache() {
-  if (typeof window !== 'undefined') {
-    const keys = Object.keys(localStorage);
-    keys.filter(isVersionedKey).forEach(versionedKey => {
-      if (getVersionedKeyVersion(versionedKey) < CURRENT_CACHE_VERSION) {
-        localStorage.removeItem(versionedKey);
-      }
-    });
-  }
+export function keyInternal(chainId: number, key: string): string {
+  return 'fract_' + chainId + '_' + key;
 }

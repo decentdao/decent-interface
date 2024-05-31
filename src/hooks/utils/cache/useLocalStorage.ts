@@ -26,7 +26,6 @@ export const setValue = (
   value: any,
   chainId: number,
   expirationMinutes: number = CacheExpiry.ONE_WEEK,
-  isVersioned: boolean = false,
 ): void => {
   if (typeof window !== 'undefined') {
     const val: IStorageValue = {
@@ -37,23 +36,20 @@ export const setValue = (
           : Date.now() + expirationMinutes * 60000,
     };
 
-    localStorage.setItem(
-      keyInternal(chainId, key, isVersioned),
-      JSON.stringify(val, bigintReplacer),
-    );
+    localStorage.setItem(keyInternal(chainId, key), JSON.stringify(val, bigintReplacer));
   }
 };
 
-export const getValue = (key: string, chainId: number, isVersioned: boolean): any => {
+export const getValue = (key: string, chainId: number): any => {
   if (typeof window !== 'undefined') {
-    const rawVal = localStorage.getItem(keyInternal(chainId, key, isVersioned));
+    const rawVal = localStorage.getItem(keyInternal(chainId, key));
     if (rawVal) {
       const parsed: IStorageValue = JSON.parse(rawVal, proposalObjectReviver);
       if (parsed.e === CacheExpiry.NEVER) {
         return parsed.v;
       } else {
         if (parsed.e < Date.now()) {
-          localStorage.removeItem(keyInternal(chainId, key, isVersioned));
+          localStorage.removeItem(keyInternal(chainId, key));
           return null;
         } else {
           return parsed.v;
@@ -83,20 +79,15 @@ export const useLocalStorage = () => {
   const { chain } = useNetworkConfig();
 
   const set = useCallback(
-    (
-      key: string,
-      value: any,
-      expirationMinutes: number = CacheExpiry.ONE_WEEK,
-      isVersioned: boolean = false,
-    ) => {
-      setValue(key, value, chain.id, expirationMinutes, isVersioned);
+    (key: string, value: any, expirationMinutes: number = CacheExpiry.ONE_WEEK) => {
+      setValue(key, value, chain.id, expirationMinutes);
     },
     [chain],
   );
 
   const get = useCallback(
-    (key: string, isVersioned: boolean = false) => {
-      return getValue(key, chain.id, isVersioned);
+    (key: string) => {
+      return getValue(key, chain.id);
     },
     [chain],
   );
