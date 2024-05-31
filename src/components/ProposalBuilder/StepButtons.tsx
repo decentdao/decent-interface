@@ -9,7 +9,6 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { CreateProposalSteps } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
-import { scrollToTop } from '../../utils/ui';
 
 interface StateButtonsProps extends FormikProps<CreateProposalForm> {
   pendingTransaction: boolean;
@@ -60,7 +59,6 @@ export default function StateButtons(props: StateButtonsProps) {
         <Button
           onClick={() => {
             navigate(DAO_ROUTES.proposalNewTransactions.relative(addressPrefix, daoAddress));
-            scrollToTop();
           }}
           isDisabled={!!proposalMetadataError || !proposalMetadata.title}
           px="2rem"
@@ -79,7 +77,6 @@ export default function StateButtons(props: StateButtonsProps) {
         color="lilac-0"
         onClick={() => {
           navigate(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress));
-          scrollToTop();
         }}
       >
         <Icon

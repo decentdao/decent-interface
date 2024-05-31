@@ -40,6 +40,10 @@ export const router = (addressPrefix: string) =>
           element: <DaoCreatePage />,
         },
         {
+          path: 'create',
+          loader: () => redirect(`/create/essentials`),
+        },
+        {
           path: '/',
           element: <DAOController />,
           children: [
