@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { ICreationStepProps, CreatorSteps, GovernanceType } from '../../types';
+import { scrollToTop } from '../../utils/ui';
 import { AzoriusGovernance } from './formComponents/AzoriusGovernance';
 import AzoriusNFTDetails from './formComponents/AzoriusNFTDetails';
 import { AzoriusTokenDetails } from './formComponents/AzoriusTokenDetails';
@@ -24,6 +25,7 @@ function StepController(props: ICreationStepProps) {
     const steps = Object.values(CreatorSteps);
     if (!step || !steps.includes(step as CreatorSteps)) {
       navigate(`/create/${CreatorSteps.ESSENTIALS}`, { replace: true });
+      scrollToTop();
     }
   }, [step, navigate]);
 
@@ -32,10 +34,11 @@ function StepController(props: ICreationStepProps) {
     if (!createOptions.includes(values.essentials.governance)) {
       setFieldValue('essentials.governance', GovernanceType.MULTISIG);
       navigate(`/create/${CreatorSteps.ESSENTIALS}`, { replace: true });
+      scrollToTop();
       toast(t('errorUnsupportedCreateOption'));
 
       // @dev - I've built this amazing eastern egg for testing/review only, couldn't resist :D
-      if (dumbassCount >= 1) {
+      if (dumbassCount >= 2) {
         // Who tf you think you are?
         // You thought you could outsmart our rocket-scientists-written-FE?
         // Now take this!

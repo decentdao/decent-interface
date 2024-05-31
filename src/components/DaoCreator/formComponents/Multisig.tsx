@@ -1,8 +1,11 @@
 import { Box, Flex, Grid, IconButton, NumberInput, NumberInputField } from '@chakra-ui/react';
 import { MinusCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
+import { scrollToTop } from '../../../utils/ui';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
@@ -12,6 +15,7 @@ import { DAOCreateMode } from './EstablishEssentials';
 
 export function Multisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
+  const navigate = useNavigate();
   const { t } = useTranslation('daoCreate');
 
   const truncateSignersList = (safeAddresses: string[], numOfSigners: number) => {
@@ -69,6 +73,13 @@ export function Multisig(props: ICreationStepProps) {
       trustedAddresses: safeAddresses,
     });
   };
+
+  useEffect(() => {
+    if (!values.essentials.daoName || !values.essentials.governance) {
+      navigate('/create/essentials', { replace: true });
+      scrollToTop();
+    }
+  }, [values.essentials.daoName, values.essentials.governance, navigate]);
 
   return (
     <>

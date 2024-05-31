@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useFractal } from '../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps } from '../../types';
+import { scrollToTop } from '../../utils/ui';
 interface IStepButtons extends ICreationStepProps {
   nextStep?: CreatorSteps;
   prevStep?: CreatorSteps;
@@ -52,7 +53,10 @@ export function StepButtons({
           data-testid="create-prevButton"
           variant="text"
           isDisabled={transactionPending || isSubmitting}
-          onClick={() => navigate(`/create/${prevStep}`)}
+          onClick={() => {
+            navigate(`/create/${prevStep}`);
+            scrollToTop();
+          }}
           color="lilac-0"
           px="2rem"
         >
@@ -73,6 +77,7 @@ export function StepButtons({
         onClick={() => {
           if (!isLastStep && nextStep) {
             navigate(`/create/${nextStep}`);
+            scrollToTop();
           } else if (isLastStep && !user.address) {
             toast(t('toastDisconnected'), {
               closeOnClick: true,
