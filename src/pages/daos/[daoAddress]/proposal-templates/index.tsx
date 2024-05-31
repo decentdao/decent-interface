@@ -1,7 +1,7 @@
 import { Button, Show } from '@chakra-ui/react';
-import { AddPlus } from '@decent-org/fractal-ui';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { AddPlus } from '../../../../assets/theme/custom/icons/AddPlus';
 import ProposalTemplates from '../../../../components/ProposalTemplates';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
