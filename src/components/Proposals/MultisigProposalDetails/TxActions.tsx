@@ -192,7 +192,6 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const hasSigned = proposal.confirmations.find(confirm => confirm.owner === user.address);
   const isOwner = safe?.owners?.includes(user.address || '');
   const isPending = asyncRequestPending || contractCallPending;
-
   if (
     (proposal.state === FractalProposalState.ACTIVE && (hasSigned || !isOwner)) ||
     proposal.state === FractalProposalState.REJECTED ||
@@ -237,7 +236,9 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       icon: undefined,
     },
   };
-  const isButtonDisabled = isPending || proposal.state === FractalProposalState.TIMELOCKED;
+  const isActiveNonce = !!safe && multisigTx.nonce === safe.nonce;
+  const isButtonDisabled =
+    isPending || proposal.state === FractalProposalState.TIMELOCKED || !isActiveNonce;
 
   return (
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
