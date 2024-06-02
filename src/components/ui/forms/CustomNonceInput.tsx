@@ -25,7 +25,7 @@ export function CustomNonceInput({
   } = useFractal();
   const { t } = useTranslation(['proposal', 'common']);
   const errorMessage =
-    nonce !== undefined && safe && nonce < safe.nonce ? t('customNonceError') : undefined;
+    nonce !== undefined && safe && nonce < safe.nonce ? t('customNonceError') : undefined; // ? @todo Is this correct? or should this also be minus 1?
 
   const tooltipContainer = useRef<HTMLDivElement>(null);
   if (dao?.isAzorius) return null;

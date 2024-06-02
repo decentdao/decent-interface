@@ -57,7 +57,7 @@ function AddSignerModal({
     address: Yup.string().test(addressValidationTest).test(newSignerValidationTest),
     nonce: Yup.number()
       .required()
-      .moreThan((!!safe && safe.nonce - 1) || 0),
+      .moreThan((!!safe && safe.nonce - 1) || 0), // ? @todo Is this correct? or should this be nextNonce?
     threshold: Yup.number().required(),
     thresholdOptions: Yup.array().of(Yup.number()).required(),
   });
@@ -67,7 +67,7 @@ function AddSignerModal({
       <Formik
         initialValues={{
           address: '',
-          nonce: safe?.nonce || 0,
+          nonce: safe?.nextNonce || 0,
           threshold: currentThreshold,
           thresholdOptions: Array.from({ length: signers.length + 1 }, (_, i) => i + 1),
         }}
