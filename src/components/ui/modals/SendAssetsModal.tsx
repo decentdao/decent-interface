@@ -31,7 +31,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     fungibleAssetsWithBalance[0],
   );
   const [inputAmount, setInputAmount] = useState<BigIntValuePair>();
-  const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
+  const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nextNonce);
 
   const { submitProposal } = useSubmitProposal();
 
