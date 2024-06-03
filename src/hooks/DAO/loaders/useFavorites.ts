@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import { getAddress } from 'viem';
 import { CacheKeys, CacheExpiry } from '../../utils/cache/cacheDefaults';
-import { useLocalStorage } from '../../utils/cache/useLocalStorage';
+import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
 export const useAccountFavorites = () => {
-  const { setValue, getValue } = useLocalStorage();
-  const [favoritesList, setFavoritesList] = useState<string[]>(getValue(CacheKeys.FAVORITES));
+  const [favoritesList, setFavoritesList] = useState<string[]>(
+    getValue({ cacheName: CacheKeys.FAVORITES }),
+  );
 
   const toggleFavorite = (address: string) => {
     const normalizedAddress = getAddress(address);
-    const favorites: string[] = getValue(CacheKeys.FAVORITES);
+    const favorites: string[] = getValue({ cacheName: CacheKeys.FAVORITES });
     let updatedFavorites: string[] = [];
 
     if (favorites.includes(normalizedAddress)) {
@@ -18,7 +19,7 @@ export const useAccountFavorites = () => {
       updatedFavorites = favorites.concat([normalizedAddress]);
     }
 
-    setValue(CacheKeys.FAVORITES, updatedFavorites, CacheExpiry.NEVER);
+    setValue({ cacheName: CacheKeys.FAVORITES }, updatedFavorites, CacheExpiry.NEVER);
     setFavoritesList(updatedFavorites);
   };
 
