@@ -29,7 +29,7 @@ export enum CacheKeys {
   FAVORITES = 'Favorites',
   MASTER_COPY = 'Master Copy',
   AVERAGE_BLOCK_TIME = 'Average Block Time',
-  PROPOSAL_ARCHIVE = 'proposal',
+  PROPOSAL_ARCHIVE = 'Proposal',
   // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
