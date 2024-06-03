@@ -43,6 +43,7 @@ export enum CacheKeysV0 {
   // these were not used for local storage
   // DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   // MULTISIG_METADATA_PREFIX = 'm_m_',
+  PROPOSAL_PREFIX = 'proposal',
 }
 
 export type CacheKey = {
