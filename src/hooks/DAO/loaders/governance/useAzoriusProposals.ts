@@ -6,7 +6,7 @@ import {
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Hex, getAddress } from 'viem';
+import { Address, Hex, getAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -22,14 +22,13 @@ import { Providers } from '../../../../types/network';
 import { mapProposalCreatedEventToProposal, decodeTransactions } from '../../../../utils';
 import useSafeContracts from '../../../safe/useSafeContracts';
 import { CacheExpiry, CacheKeys } from '../../../utils/cache/cacheDefaults';
-import { useLocalStorage } from '../../../utils/cache/useLocalStorage';
+import { getValue, setValue } from '../../../utils/cache/useLocalStorage';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
 type OnProposalLoaded = (proposal: AzoriusProposal) => void;
 
 export const useAzoriusProposals = () => {
   const currentAzoriusAddress = useRef<string>();
-  const { setValue, getValue } = useLocalStorage();
 
   const {
     governanceContracts: {
@@ -176,12 +175,12 @@ export const useAzoriusProposals = () => {
         });
       };
 
-      const propasalCacheKeyPrefix = `${CacheKeys.PROPOSAL_PREFIX}_${azoriusContractAddress}`;
-
       for (const proposalCreatedEvent of proposalCreatedEvents) {
-        const cachedProposal = getValue(
-          `${propasalCacheKeyPrefix}_${proposalCreatedEvent.args.proposalId.toString()}`,
-        ) as AzoriusProposal;
+        const cachedProposal = getValue({
+          cacheName: CacheKeys.PROPOSAL_ARCHIVE,
+          proposalId: proposalCreatedEvent.args.proposalId.toString(),
+          contractAddress: _azoriusContract.address as Address,
+        }) as AzoriusProposal;
         if (cachedProposal) {
           completeProposalLoad(cachedProposal);
           continue;
@@ -255,8 +254,15 @@ export const useAzoriusProposals = () => {
           proposal.state === FractalProposalState.REJECTED;
 
         if (isProposalFossilized) {
-          // todo: Make sure we're saving+loading only proposals for the DAO we're currently viewing.
-          setValue(`${propasalCacheKeyPrefix}_${proposal.proposalId}`, proposal, CacheExpiry.NEVER);
+          setValue(
+            {
+              cacheName: CacheKeys.PROPOSAL_ARCHIVE,
+              proposalId: proposalCreatedEvent.args.proposalId.toString(),
+              contractAddress: _azoriusContract.address as Address,
+            },
+            proposal,
+            CacheExpiry.NEVER,
+          );
         }
       }
 
@@ -271,7 +277,7 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
     },
-    [action, azoriusContractAddress, getValue, setValue],
+    [action, azoriusContractAddress],
   );
 
   return (proposalLoaded: OnProposalLoaded) =>
