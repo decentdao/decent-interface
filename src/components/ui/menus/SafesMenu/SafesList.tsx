@@ -29,7 +29,8 @@ export function SafesList() {
             {favoritesList.map(favorite => (
               <SafeMenuItem
                 key={favorite}
-                address={favorite}
+                network={favorite.split(':')[0]}
+                address={favorite.split(':')[1]}
               />
             ))}
           </Box>

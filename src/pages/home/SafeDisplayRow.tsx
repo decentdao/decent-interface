@@ -11,8 +11,7 @@ import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDis
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getNetworkIcon } from '../../utils/url';
 
-export function SafeDisplayRow({ address, onClick, showAddress }: SafeMenuItemProps) {
-  const [networkPrefix, daoAddress] = address.split(':');
+export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
   const { daoName } = useGetDAOName({ address: getAddress(address) });
   const navigate = useNavigate();
 
@@ -23,7 +22,7 @@ export function SafeDisplayRow({ address, onClick, showAddress }: SafeMenuItemPr
 
   const onClickNav = () => {
     if (onClick) onClick();
-    navigate(DAO_ROUTES.dao.relative(networkPrefix, daoAddress));
+    navigate(DAO_ROUTES.dao.relative(network, address));
   };
 
   const nameColor = showAddress ? 'neutral-7' : 'white-0';
@@ -52,7 +51,7 @@ export function SafeDisplayRow({ address, onClick, showAddress }: SafeMenuItemPr
     >
       <Avatar
         size="lg"
-        address={daoAddress}
+        address={address}
         url={avatarURL}
       />
       <Flex flexDir="column">
@@ -62,14 +61,14 @@ export function SafeDisplayRow({ address, onClick, showAddress }: SafeMenuItemPr
         >
           {daoName ?? t('loadingFavorite')}
         </Text>
-        {showAddress && <Text textStyle="button-base">{createAccountSubstring(daoAddress)}</Text>}
+        {showAddress && <Text textStyle="button-base">{createAccountSubstring(address)}</Text>}
       </Flex>
 
       <Spacer />
 
       {/* Network Icon */}
       <Flex gap="0.5rem">
-        <Image src={getNetworkIcon(networkPrefix)} />
+        <Image src={getNetworkIcon(network)} />
         <Show above="md">
           <Text>{networkConfig.chain.name}</Text>
         </Show>

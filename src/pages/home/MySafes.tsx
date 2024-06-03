@@ -50,7 +50,8 @@ export function MySafes() {
             {favoritesToShow.map(favorite => (
               <SafeDisplayRow
                 key={favorite}
-                address={favorite}
+                address={favorite.split(':')[1]}
+                network={favorite.split(':')[0]}
               />
             ))}
           </Box>

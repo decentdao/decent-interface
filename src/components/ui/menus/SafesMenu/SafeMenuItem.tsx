@@ -8,19 +8,19 @@ import { useGetDAOName } from '../../../../hooks/DAO/useGetDAOName';
 
 export interface SafeMenuItemProps {
   address: string;
+  network: string;
   showAddress?: boolean;
   onClick?: () => void;
 }
 
-export function SafeMenuItem({ address }: SafeMenuItemProps) {
-  const [networkPrefix, daoAddress] = address.split(':');
-  const { daoName } = useGetDAOName({ address: getAddress(daoAddress) });
+export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
+  const { daoName } = useGetDAOName({ address: getAddress(address) });
   const navigate = useNavigate();
 
   const { t } = useTranslation('dashboard');
 
   const onClickNav = () => {
-    navigate(DAO_ROUTES.dao.relative(networkPrefix, daoAddress));
+    navigate(DAO_ROUTES.dao.relative(network, address));
   };
 
   return (

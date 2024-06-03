@@ -5,6 +5,7 @@ import { CacheKeys, CacheExpiry } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
 export const useAccountFavorites = () => {
+  // @dev favorites are strings of the form networkPrefix:address
   const [favoritesList, setFavoritesList] = useState<string[]>(
     getValue({ cacheName: CacheKeys.FAVORITES }) || [],
   );
@@ -12,13 +13,14 @@ export const useAccountFavorites = () => {
 
   const toggleFavorite = (address: string) => {
     const normalizedAddress = getAddress(address);
+    const addressWithPrefix = addressPrefix + ":" + normalizedAddress;
+    
     const favorites: string[] = getValue({ cacheName: CacheKeys.FAVORITES }) || [];
     let updatedFavorites: string[] = [];
-
-    if (favorites.includes(normalizedAddress)) {
-      updatedFavorites = favorites.filter(favorite => favorite !== normalizedAddress);
+    if (favorites.includes(addressWithPrefix)) {
+      updatedFavorites = favorites.filter(favorite => favorite !== addressWithPrefix);
     } else {
-      updatedFavorites = favorites.concat([addressPrefix + normalizedAddress]);
+      updatedFavorites = favorites.concat([addressWithPrefix]);
     }
 
     setValue({ cacheName: CacheKeys.FAVORITES }, updatedFavorites, CacheExpiry.NEVER);
