@@ -38,7 +38,6 @@ export function OptionsList({
             key={option.optionKey}
           >
             <MenuItem
-              mx="0.25rem"
               as={showOptionSelected ? Box : Text}
               onClick={clickListener}
               cursor="pointer"
