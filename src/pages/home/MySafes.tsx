@@ -2,14 +2,12 @@ import { Box, Button, Flex, Show, Text, useBreakpointValue, useDisclosure } from
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { AllSafesDrawer } from './AllSafesDrawer';
 import { SafeDisplayRow } from './SafeDisplayRow';
 
 export function MySafes() {
   const { t } = useTranslation('home');
   const { favoritesList } = useAccountFavorites();
-  const { addressPrefix } = useNetworkConfig();
   const [showAll, setShowAll] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -52,7 +50,6 @@ export function MySafes() {
             {favoritesToShow.map(favorite => (
               <SafeDisplayRow
                 key={favorite}
-                network={addressPrefix}
                 address={favorite}
               />
             ))}

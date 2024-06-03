@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { getValue } from '../../hooks/utils/cache/useLocalStorage';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { SafeDisplayRow } from './SafeDisplayRow';
 
 interface AllSafesDrawerProps {
@@ -22,8 +21,6 @@ interface AllSafesDrawerProps {
 }
 
 export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
-  const { addressPrefix } = useNetworkConfig();
-
   const { t } = useTranslation('home');
   const [drawerHeight, setDrawerHeight] = useState('50%');
   const [isDragging, setIsDragging] = useState(false);
@@ -138,7 +135,6 @@ export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
           {getValue({ cacheName: CacheKeys.FAVORITES }).map((favorite: string) => (
             <SafeDisplayRow
               key={favorite}
-              network={addressPrefix}
               address={favorite}
             />
           ))}
