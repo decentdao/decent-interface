@@ -16,8 +16,6 @@ export default function CreateProposalPage() {
 
   const HEADER_HEIGHT = useHeaderHeight();
 
-
-
   if (!type || !daoAddress || !safe) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
