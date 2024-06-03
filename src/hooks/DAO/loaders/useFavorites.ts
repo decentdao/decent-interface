@@ -13,8 +13,8 @@ export const useAccountFavorites = () => {
 
   const toggleFavorite = (address: string) => {
     const normalizedAddress = getAddress(address);
-    const addressWithPrefix = addressPrefix + ":" + normalizedAddress;
-    
+    const addressWithPrefix = addressPrefix + ':' + normalizedAddress;
+
     const favorites: string[] = getValue({ cacheName: CacheKeys.FAVORITES }) || [];
     let updatedFavorites: string[] = [];
     if (favorites.includes(addressWithPrefix)) {
