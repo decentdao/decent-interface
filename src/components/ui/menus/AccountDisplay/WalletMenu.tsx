@@ -21,7 +21,7 @@ export function WalletMenu({ containerRef }: { containerRef: RefObject<HTMLDivEl
 
   return (
     <MenuList
-      w="16.25rem"
+      minW="15.25rem"
       rounded="0.5rem"
       bg={NEUTRAL_2_82_TRANSPARENT}
       backdropFilter="auto"
@@ -29,15 +29,16 @@ export function WalletMenu({ containerRef }: { containerRef: RefObject<HTMLDivEl
       border="1px solid"
       borderColor="neutral-3"
       zIndex={1}
+      py="0.25rem"
     >
       {user.address && (
         <>
           <ConnectedWalletMenuItem />
-          <Divider />
+          <Divider my="0.25rem" />
         </>
       )}
       <NetworkSelector containerRef={containerRef} />
-      <Divider />
+      <Divider my="0.25rem" />
       {!user.address && (
         <MenuItemButton
           testId="accountMenu-connect"

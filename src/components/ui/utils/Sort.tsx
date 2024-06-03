@@ -19,7 +19,7 @@ function SortMenuItem({
   return (
     <MenuItem
       borderRadius="0.5rem"
-      p="0.75rem 0.5rem"
+      p="0.5rem 0.5rem"
       sx={{
         '&:hover': { bg: 'neutral-3' },
       }}
@@ -79,7 +79,7 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
       >
         <Text
           px="0.5rem"
-          mt={2}
+          my="0.25rem"
           textStyle="helper-text-small"
           color="neutral-7"
         >
@@ -90,7 +90,7 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
           testId="sort-newest"
           onClick={() => setSortBy(SortBy.Newest)}
         />
-        <Divider />
+        <Divider my="0.25rem" />
         <SortMenuItem
           labelKey={SortBy.Oldest}
           testId="sort-oldest"

@@ -1,4 +1,4 @@
-import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip, Portal } from '@chakra-ui/react';
+import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip, Portal, Box } from '@chakra-ui/react';
 import { MouseEvent, ReactNode, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
@@ -33,28 +33,37 @@ export function OptionMenu({
   ...rest
 }: OptionMenuProps) {
   const { t } = useTranslation(namespace);
+
   const menuList = (
     <MenuList
       borderWidth="1px"
       borderColor="neutral-3"
-      borderRadius="0.75rem"
+      borderRadius="0.58rem"
       bg={NEUTRAL_2_82_TRANSPARENT}
       backdropFilter="blur(12px)"
       mr={menuListMr || ['auto', '1rem']}
       pb="0.25rem"
       zIndex={1000}
     >
-      {children}
-      <OptionsList
-        options={options}
-        showOptionSelected={showOptionSelected}
-        closeOnSelect={closeOnSelect}
-        showOptionCount={showOptionCount}
-        namespace={namespace}
-        titleKey={titleKey}
-      />
+      <Box
+        borderRadius="0.5rem"
+        bg={NEUTRAL_2_82_TRANSPARENT}
+        backdropFilter="auto"
+        backdropBlur="10px"
+      >
+        {children}
+        <OptionsList
+          options={options}
+          showOptionSelected={showOptionSelected}
+          closeOnSelect={closeOnSelect}
+          showOptionCount={showOptionCount}
+          namespace={namespace}
+          titleKey={titleKey}
+        />
+      </Box>
     </MenuList>
   );
+
   return (
     <Menu
       isLazy

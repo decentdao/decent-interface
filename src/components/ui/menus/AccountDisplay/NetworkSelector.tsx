@@ -41,33 +41,35 @@ export function NetworkSelector({
         >
           {t('network')}
         </Text>
-        <OptionMenu
-          namespace="menu"
-          matchWidth
-          menuListMr="0"
-          options={networksOptions}
-          containerRef={containerRef}
-          buttonProps={{
-            w: 'full',
-            borderRadius: '4px',
-            _hover: { color: 'lilac--1', bg: 'white-alpha-04' },
-          }}
-          trigger={
-            <Flex
-              w="full"
-              justifyContent="space-between"
-              alignItems="center"
-              py="0.75rem"
-              px="1rem"
-            >
-              {chain.name}
-              <Icon
-                as={CaretDown}
-                boxSize="1.5rem"
-              />
-            </Flex>
-          }
-        />
+        <Box px="0.25rem">
+          <OptionMenu
+            namespace="menu"
+            matchWidth
+            menuListMr="0"
+            options={networksOptions}
+            containerRef={containerRef}
+            buttonProps={{
+              w: 'full',
+              borderRadius: '4px',
+              _hover: { color: 'lilac--1', bg: 'white-alpha-04' },
+            }}
+            trigger={
+              <Flex
+                w="full"
+                justifyContent="space-between"
+                alignItems="center"
+                py="0.75rem"
+                px="1rem"
+              >
+                {chain.name}
+                <Icon
+                  as={CaretDown}
+                  boxSize="1.5rem"
+                />
+              </Flex>
+            }
+          />
+        </Box>
       </Flex>
     </Box>
   );
