@@ -29,6 +29,14 @@ export const useSafeMultisigProposals = () => {
         type: FractalGovernanceAction.SET_PROPOSALS,
         payload: multisendProposals as MultisigProposal[],
       });
+      action.dispatch({
+        type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+        payload: false,
+      });
+      action.dispatch({
+        type: FractalGovernanceAction.SET_ALL_PROPOSALS_LOADED,
+        payload: true,
+      });
     } catch (e) {
       logError(e);
     }

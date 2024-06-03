@@ -335,6 +335,8 @@ export const useSafeTransactions = () => {
       }
 
       const activitiesWithState = await getState(activities, freezeGuard, freezeGuardData);
+
+      // todo: Some of these activities may be completed and can be cached
       return activitiesWithState;
     },
     [guardContracts, getState, getTransferTotal, decode, chain, provider, baseContracts],
