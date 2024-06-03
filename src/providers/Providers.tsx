@@ -8,12 +8,14 @@ import { theme } from '../assets/theme';
 import { ErrorBoundary } from '../components/ui/utils/ErrorBoundary';
 import { TopErrorFallback } from '../components/ui/utils/TopErrorFallback';
 import graphQLClient from '../graphql';
+import { useMigrateLocalStorageV1 } from '../hooks/utils/cache/useMigrateLocalStorageV1';
 import { AppProvider } from './App/AppProvider';
 import EthersContextProvider from './Ethers';
 import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
 import { wagmiConfig, queryClient } from './NetworkConfig/web3-modal.config';
 
 export default function Providers({ children }: { children: ReactNode }) {
+  useMigrateLocalStorageV1();
   return (
     <ChakraProvider
       theme={theme}
