@@ -1,10 +1,5 @@
 import { parseISO } from 'date-fns';
-import {
-  CacheExpiry,
-  IStorageValue,
-  CacheKeyType,
-  CURRENT_CACHE_VERSION,
-} from './cacheDefaults';
+import { CacheExpiry, IStorageValue, CacheKeyType, CURRENT_CACHE_VERSION } from './cacheDefaults';
 
 function bigintReplacer(_: any, value: any) {
   return typeof value === 'bigint'
@@ -33,11 +28,14 @@ export const setValue = (
     const val: IStorageValue = {
       v: value,
       e:
-      expirationMinutes === CacheExpiry.NEVER
-      ? CacheExpiry.NEVER
-      : Date.now() + expirationMinutes * 60000,
+        expirationMinutes === CacheExpiry.NEVER
+          ? CacheExpiry.NEVER
+          : Date.now() + expirationMinutes * 60000,
     };
-    localStorage.setItem(JSON.stringify({ ...key, version: CURRENT_CACHE_VERSION }), JSON.stringify(val, bigintReplacer));
+    localStorage.setItem(
+      JSON.stringify({ ...key, version: CURRENT_CACHE_VERSION }),
+      JSON.stringify(val, bigintReplacer),
+    );
   }
 };
 

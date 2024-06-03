@@ -67,7 +67,11 @@ export interface ProposalCacheKey extends CacheKey {
   contractAddress: Address;
 }
 
-export type CacheKeyType = FavoritesCacheKey | MasterCacheKey | ProposalCacheKey | Omit<CacheKey, 'version'>;
+export type CacheKeyType =
+  | FavoritesCacheKey
+  | MasterCacheKey
+  | ProposalCacheKey
+  | Omit<CacheKey, 'version'>;
 
 interface IndexedObject {
   [key: string]: any;
