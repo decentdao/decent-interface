@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SafeDisplayRow } from '../../../../pages/home/SafeDisplayRow';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 interface ISearchDisplay {
   loading: boolean;
@@ -23,7 +22,6 @@ export function SearchDisplay({
 }: ISearchDisplay) {
   const { t } = useTranslation(['common', 'dashboard']);
   const { node } = useFractal();
-  const { addressPrefix } = useNetworkConfig();
 
   const isCurrentSafe = useMemo(
     () => !!node && !!node.daoAddress && node.daoAddress === address,
@@ -88,7 +86,6 @@ export function SearchDisplay({
 
         <SafeDisplayRow
           address={address}
-          network={addressPrefix}
           onClick={() => {
             onClickView();
             if (closeDrawer) closeDrawer();
