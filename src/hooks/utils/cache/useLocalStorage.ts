@@ -2,15 +2,11 @@ import { parseISO } from 'date-fns';
 import {
   CacheExpiry,
   IStorageValue,
-  FavoritesCacheKey,
-  MasterCacheKey,
-  CacheKey,
+  CacheKeyType,
   CURRENT_CACHE_VERSION,
 } from './cacheDefaults';
 
-type Key = FavoritesCacheKey | MasterCacheKey | Omit<CacheKey, 'version'>;
-
-function bigintReplacer(key: any, value: any) {
+function bigintReplacer(_: any, value: any) {
   return typeof value === 'bigint'
     ? `bigint:${value.toString()}`
     : value instanceof Date
@@ -18,7 +14,7 @@ function bigintReplacer(key: any, value: any) {
       : value;
 }
 
-function proposalObjectReviver(key: any, value: any) {
+function proposalObjectReviver(_: any, value: any) {
   if (typeof value === 'string') {
     if (value.startsWith('bigint:')) return BigInt(value.substring(7));
     const isoStringRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
@@ -29,7 +25,7 @@ function proposalObjectReviver(key: any, value: any) {
 }
 
 export const setValue = (
-  key: Key,
+  key: CacheKeyType,
   value: any,
   expirationMinutes: number = CacheExpiry.ONE_WEEK,
 ): void => {
@@ -45,7 +41,7 @@ export const setValue = (
   }
 };
 
-export const getValue = (key: Key, version = CURRENT_CACHE_VERSION): any => {
+export const getValue = (key: CacheKeyType, version = CURRENT_CACHE_VERSION): any => {
   if (typeof window !== 'undefined') {
     const rawVal = localStorage.getItem(JSON.stringify({ ...key, version }));
     if (rawVal) {

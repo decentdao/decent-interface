@@ -29,11 +29,11 @@ export enum CacheKeys {
   FAVORITES = 'Favorites',
   MASTER_COPY = 'Master Copy',
   AVERAGE_BLOCK_TIME = 'Average Block Time',
+  PROPOSAL_ARCHIVE = 'proposal',
   // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
 }
-
 
 export enum CacheKeysV0 {
   FAVORITES = 'favorites',
@@ -60,6 +60,14 @@ export interface MasterCacheKey extends CacheKey {
   chainId: number;
   proxyAddress: Address;
 }
+
+export interface ProposalCacheKey extends CacheKey {
+  cacheName: CacheKeys.PROPOSAL_ARCHIVE;
+  proposalId: string;
+  contractAddress: Address;
+}
+
+export type CacheKeyType = FavoritesCacheKey | MasterCacheKey | ProposalCacheKey | Omit<CacheKey, 'version'>;
 
 interface IndexedObject {
   [key: string]: any;
