@@ -1,3 +1,5 @@
+import { Address } from 'viem';
+
 export interface IStorageValue {
   // the value to store, 1 character to minimize cache size
   v: any;
@@ -23,15 +25,46 @@ export enum CacheExpiry {
  * cache key here.
  */
 export enum CacheKeys {
-  FAVORITES = 'favorites',
+  // local storage keys
+  FAVORITES = 'Favorites',
+  MASTER_COPY = 'Master Copy',
+  AVERAGE_BLOCK_TIME = 'Average Block Time',
+  // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
+}
+
+
+export enum CacheKeysV0 {
+  FAVORITES = 'favorites',
   MASTER_COPY_PREFIX = 'master_copy_of_',
+  // wasn't a originally part of the cache keys but was used
+  AVERAGE_BLOCK_TIME = 'averageBlockTime',
+  // these were not used for local storage
+  // DECODED_TRANSACTION_PREFIX = 'decode_trans_',
+  // MULTISIG_METADATA_PREFIX = 'm_m_',
+}
+
+export type CacheKey = {
+  cacheName: CacheKeys;
+  version: number;
+};
+
+export interface FavoritesCacheKey extends CacheKey {
+  cacheName: CacheKeys.FAVORITES;
+}
+
+export interface MasterCacheKey extends CacheKey {
+  cacheName: CacheKeys.MASTER_COPY;
+  chainId: number;
+  proxyAddress: Address;
 }
 
 interface IndexedObject {
   [key: string]: any;
 }
+
+export const CURRENT_CACHE_VERSION = 1;
 
 /**
  * Cache default values.
