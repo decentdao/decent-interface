@@ -9,21 +9,19 @@ import {
   GridItemProps,
   ResponsiveValue,
 } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
-import { ReactNode } from 'react';
 import { BigIntInput, BigIntInputProps } from './BigIntInput';
-import { EthAddressInput } from './EthAddressInput';
+import LabelWrapper from './LabelWrapper';
 
 interface BaseProps {
-  label?: string | ReactNode;
+  label?: JSX.Element | string;
   id?: string;
   helper?: string;
   isRequired: boolean;
   value: string;
   disabled?: boolean;
-  subLabel?: ReactNode;
+  subLabel?: JSX.Element | string | null;
   errorMessage?: string;
-  children: ReactNode;
+  children: JSX.Element | JSX.Element[];
   gridContainerProps?: GridProps;
   inputContainerProps?: GridItemProps;
   maxLength?: number;
@@ -35,10 +33,6 @@ interface InputProps extends Omit<BaseProps, 'children'> {
   onBlur?: React.ChangeEventHandler<HTMLInputElement> | undefined;
   placeholder?: string;
   testId: string;
-}
-
-interface EthAddressProps extends Omit<BaseProps, 'children' | 'value'> {
-  onAddressChange: (address: string | undefined, isValid: boolean) => void;
 }
 
 interface TextareaProps extends Omit<BaseProps, 'children'> {
@@ -124,22 +118,6 @@ export function InputComponent(props: InputProps) {
         data-testid={testId}
         placeholder={placeholder}
         maxLength={maxLength}
-      />
-    </LabelComponent>
-  );
-}
-
-export function EthAddressComponent(props: EthAddressProps) {
-  const { id, disabled, onAddressChange } = props;
-  return (
-    <LabelComponent
-      {...props}
-      disabled={disabled}
-    >
-      <EthAddressInput
-        id={id}
-        isDisabled={disabled}
-        onAddressChange={onAddressChange}
       />
     </LabelComponent>
   );

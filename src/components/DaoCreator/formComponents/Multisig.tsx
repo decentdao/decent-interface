@@ -1,11 +1,11 @@
 import { Box, Flex, Grid, IconButton, NumberInput, NumberInputField } from '@chakra-ui/react';
-import { LabelWrapper } from '@decent-org/fractal-ui';
 import { MinusCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps, CreatorSteps } from '../../../types';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
+import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { DAOCreateMode } from './EstablishEssentials';
@@ -115,46 +115,48 @@ export function Multisig(props: ICreationStepProps) {
               helper={t('subTitleSignerAddresses')}
               isRequired={false}
             >
-              {values.multisig.trustedAddresses.map((trustedAddress, i) => {
-                const errorMessage =
-                  errors?.multisig?.trustedAddresses?.[i] && trustedAddress.length
-                    ? errors?.multisig?.trustedAddresses?.[i]
-                    : null;
+              <>
+                {values.multisig.trustedAddresses.map((trustedAddress, i) => {
+                  const errorMessage =
+                    errors?.multisig?.trustedAddresses?.[i] && trustedAddress.length
+                      ? errors?.multisig?.trustedAddresses?.[i]
+                      : null;
 
-                return (
-                  <LabelWrapper
-                    key={i}
-                    errorMessage={errorMessage}
-                  >
-                    <Grid
-                      templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
-                      alignItems="center"
+                  return (
+                    <LabelWrapper
+                      key={i}
+                      errorMessage={errorMessage}
                     >
-                      <Field name={`multisig.trustedAddresses.${i}`}>
-                        {({ field }: FieldAttributes<any>) => (
-                          <AddressInput
-                            {...field}
-                            data-testid={'safeConfig-signer-' + i}
+                      <Grid
+                        templateColumns="minmax(auto, 100%) minmax(auto, 1fr)"
+                        alignItems="center"
+                      >
+                        <Field name={`multisig.trustedAddresses.${i}`}>
+                          {({ field }: FieldAttributes<any>) => (
+                            <AddressInput
+                              {...field}
+                              data-testid={'safeConfig-signer-' + i}
+                            />
+                          )}
+                        </Field>
+                        {values.multisig.trustedAddresses.length > 1 && (
+                          <IconButton
+                            aria-label="remove allocation"
+                            variant="unstyled"
+                            minW={16}
+                            icon={<MinusCircle size="24" />}
+                            type="button"
+                            onClick={async () => {
+                              deleteIndex(i);
+                            }}
+                            data-testid={'multisig.numOfSigners-' + i}
                           />
                         )}
-                      </Field>
-                      {values.multisig.trustedAddresses.length > 1 && (
-                        <IconButton
-                          aria-label="remove allocation"
-                          variant="unstyled"
-                          minW={16}
-                          icon={<MinusCircle size="24" />}
-                          type="button"
-                          onClick={async () => {
-                            deleteIndex(i);
-                          }}
-                          data-testid={'multisig.numOfSigners-' + i}
-                        />
-                      )}
-                    </Grid>
-                  </LabelWrapper>
-                );
-              })}
+                      </Grid>
+                    </LabelWrapper>
+                  );
+                })}
+              </>
             </LabelComponent>
           </Box>
         </Flex>

@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, Text } from '@chakra-ui/react';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -18,8 +18,8 @@ import ProposalERC721VoteItem from './ProposalERC721VoteItem';
 export function VotesPercentage({ label, percentage }: { label: string; percentage: number }) {
   return (
     <Flex
-      flexWrap="wrap"
       marginTop={2}
+      width="100%"
     >
       <ProgressBar
         value={percentage}
@@ -85,23 +85,18 @@ function ProposalVotes({
     >
       <ContentBox containerBoxProps={{ bg: 'transparent', width: '100%', my: 0 }}>
         <Text textStyle="display-lg">{t('breakdownTitle', { ns: 'proposal' })}</Text>
-        <Grid>
-          <GridItem rowGap={4}>
-            <VotesPercentage
-              label={t('yes')}
-              percentage={yesVotesPercentage}
-            />
-            <VotesPercentage
-              label={t('no')}
-              percentage={noVotesPercentage}
-            />
-
-            <VotesPercentage
-              label={t('abstain')}
-              percentage={abstainVotesPercentage}
-            />
-          </GridItem>
-        </Grid>
+        <VotesPercentage
+          label={t('yes')}
+          percentage={yesVotesPercentage}
+        />
+        <VotesPercentage
+          label={t('no')}
+          percentage={noVotesPercentage}
+        />
+        <VotesPercentage
+          label={t('abstain')}
+          percentage={abstainVotesPercentage}
+        />
       </ContentBox>
       {votes.length !== 0 && (
         <ContentBox containerBoxProps={{ bg: 'transparent', width: '100%', my: 0, paddingTop: 0 }}>
@@ -112,12 +107,15 @@ function ProposalVotes({
             width="calc(100% + 4rem)"
             mx="-2rem"
           />
-          <Flex
-            flexWrap="wrap"
-            gap={4}
-          >
-            {votes.map(vote => {
-              if (isERC20) {
+          {isERC20 ? (
+            <Grid
+              templateColumns="repeat(4, auto)"
+              rowGap={4}
+              columnGap={5}
+              overflowX="auto"
+              whiteSpace="nowrap"
+            >
+              {votes.map(vote => {
                 return (
                   <ProposalERC20VoteItem
                     key={vote.voter}
@@ -127,7 +125,17 @@ function ProposalVotes({
                     govTokenSymbol={azoriusGovernance.votesToken?.symbol || ''}
                   />
                 );
-              } else if (isERC721) {
+              })}
+            </Grid>
+          ) : isERC721 ? (
+            <Grid
+              templateColumns="repeat(3, auto)"
+              rowGap={4}
+              columnGap={2}
+              overflowX="auto"
+              whiteSpace="nowrap"
+            >
+              {votes.map(vote => {
                 return (
                   <ProposalERC721VoteItem
                     key={vote.voter}
@@ -135,11 +143,9 @@ function ProposalVotes({
                     proposalId={proposalId}
                   />
                 );
-              } else {
-                return null;
-              }
-            })}
-          </Flex>
+              })}
+            </Grid>
+          ) : null}
         </ContentBox>
       )}
     </Flex>

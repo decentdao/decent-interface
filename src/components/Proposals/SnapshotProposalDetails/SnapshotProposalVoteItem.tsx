@@ -1,4 +1,4 @@
-import { Grid, GridItem, Text, Flex } from '@chakra-ui/react';
+import { GridItem, Text, Flex } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -24,11 +24,8 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
   const isWeighted = proposal.type === 'weighted';
 
   return (
-    <Grid
-      templateColumns={isWeighted ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)'}
-      width="100%"
-    >
-      <GridItem colSpan={1}>
+    <>
+      <GridItem>
         <Text
           textStyle="body-base"
           color="neutral-7"
@@ -70,7 +67,7 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
           </StatusBox>
         )}
       </GridItem>
-      <GridItem colSpan={1}>
+      <GridItem>
         <Text
           textStyle="body-base"
           color="neutral-7"
@@ -78,6 +75,6 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
           {vote.votingWeight} {proposal.strategies[0].params.symbol}
         </Text>
       </GridItem>
-    </Grid>
+    </>
   );
 }

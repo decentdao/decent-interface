@@ -13,6 +13,7 @@ function LoadingProblem({ type }: { type: 'invalidSafe' | 'wrongNetwork' | 'badQ
 
   return (
     <Center
+      mt={6}
       px={{ base: 0, lg: '3.5rem' }}
       maxW={CONTENT_MAXW}
     >

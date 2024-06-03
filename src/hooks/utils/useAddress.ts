@@ -1,77 +1,60 @@
 import { useEffect, useState } from 'react';
 import { Address, getAddress, isAddress } from 'viem';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
-import { validateENSName } from '../../utils/url';
 
-const useAddress = (addressInput: string | undefined) => {
+const useAddress = (addressInput: string) => {
   const provider = useEthersProvider();
 
   const [address, setAddress] = useState<Address>();
-  const [isValidAddress, setIsValidAddress] = useState<boolean>();
-  const [isAddressLoading, setIsAddressLoading] = useState<boolean>(false);
+  const [isValid, setIsValid] = useState<boolean>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setIsAddressLoading(true);
+    setAddress(undefined);
+    setIsValid(undefined);
+    setIsLoading(false);
 
-    // handles the initial state of usages of useAddress,
-    // which could be undefined until the intended address
-    // is determined
-    if (addressInput === undefined) {
-      setAddress(undefined);
-      setIsValidAddress(undefined);
+    if (addressInput === '') {
       return;
     }
 
-    if (!addressInput || addressInput.trim() === '') {
-      setAddress(undefined);
-      setIsValidAddress(false);
-      setIsAddressLoading(false);
-      return;
-    }
+    setIsLoading(true);
 
     if (isAddress(addressInput)) {
       setAddress(getAddress(addressInput));
-      setIsValidAddress(true);
-      setIsAddressLoading(false);
-      return;
-    }
-
-    // if it can't be an ENS address, validation is false
-    if (!validateENSName(addressInput) && isAddress(addressInput)) {
-      setAddress(getAddress(addressInput));
-      setIsValidAddress(false);
-      setIsAddressLoading(false);
+      setIsValid(true);
+      setIsLoading(false);
       return;
     }
 
     if (!provider) {
-      setAddress(getAddress(addressInput));
-      setIsValidAddress(undefined);
-      setIsAddressLoading(false);
+      setAddress(undefined);
+      setIsValid(undefined);
+      setIsLoading(false);
       return;
     }
 
     provider
       .resolveName(addressInput)
       .then(resolvedAddress => {
-        if (!resolvedAddress) {
-          setAddress(getAddress(addressInput));
-          setIsValidAddress(false);
-        } else {
+        if (resolvedAddress) {
           setAddress(getAddress(resolvedAddress));
-          setIsValidAddress(true);
+          setIsValid(true);
+        } else {
+          setAddress(undefined);
+          setIsValid(false);
         }
       })
       .catch(() => {
         setAddress(undefined);
-        setIsValidAddress(false);
+        setIsValid(false);
       })
       .finally(() => {
-        setIsAddressLoading(false);
+        setIsLoading(false);
       });
   }, [addressInput, provider]);
 
-  return { address, isValidAddress, isAddressLoading };
+  return { address, isValid, isLoading };
 };
 
 export default useAddress;
