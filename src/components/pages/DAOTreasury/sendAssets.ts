@@ -45,7 +45,7 @@ export const sendAssets = async ({
     calldatas,
     metaData: {
       title: t(isEth ? 'sendEth' : 'sendToken', { ns: 'proposalMetadata' }),
-      description: description,
+      description,
       documentationUrl: '',
     },
   };

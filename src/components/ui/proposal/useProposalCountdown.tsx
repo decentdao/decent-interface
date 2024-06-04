@@ -2,7 +2,7 @@ import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/frac
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
-import { useDAOProposals } from '../../../hooks/DAO/loaders/useProposals';
+import { useLoadDAOProposals } from '../../../hooks/DAO/loaders/useLoadDAOProposals';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
 import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -33,7 +33,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
 
   const azoriusGovernance = governance as AzoriusGovernance;
 
-  const loadDAOProposals = useDAOProposals();
+  const loadDAOProposals = useLoadDAOProposals();
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
     governanceDispatch: action.dispatch,

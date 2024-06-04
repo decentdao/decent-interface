@@ -33,15 +33,17 @@ export function OptionMenu({
   ...rest
 }: OptionMenuProps) {
   const { t } = useTranslation(namespace);
+
   const menuList = (
     <MenuList
       borderWidth="1px"
       borderColor="neutral-3"
-      borderRadius="0.75rem"
+      borderRadius="0.58rem"
       mr={menuListMr || ['auto', '1rem']}
       zIndex={1000}
     >
       <Box
+        borderRadius="0.5rem"
         bg={NEUTRAL_2_82_TRANSPARENT}
         backdropFilter="auto"
         backdropBlur="10px"
@@ -58,6 +60,7 @@ export function OptionMenu({
       </Box>
     </MenuList>
   );
+
   return (
     <Menu
       isLazy
