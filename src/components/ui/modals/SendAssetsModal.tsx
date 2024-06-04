@@ -97,7 +97,8 @@ export function SendAssetsModal({ close }: { close: () => void }) {
               <Flex>
                 {/* ASSET SELECT */}
                 <Field name="selectedAsset">
-                  {({ field }: FieldAttributes<FieldProps<SafeBalanceResponse>>) => (
+                  {/* @todo - use proper type for Safe Balance here */}
+                  {({ field }: FieldAttributes<FieldProps<any>>) => (
                     <Box
                       width="40%"
                       marginEnd="0.75rem"

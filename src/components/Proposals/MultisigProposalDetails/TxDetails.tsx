@@ -38,10 +38,12 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
           property={t('proposalId')}
           value={createAccountSubstring(proposal.proposalId)}
         />
-        <InfoRow
-          property={t('txDetailsSignersCurrent')}
-          value={proposal.confirmations.length.toString()}
-        />
+        {proposal.confirmations && (
+          <InfoRow
+            property={t('txDetailsSignersCurrent')}
+            value={proposal.confirmations.length.toString()}
+          />
+        )}
         <InfoRow
           property={t('txDetailsSignersRequired')}
           value={proposal.signersThreshold?.toString()}
@@ -52,7 +54,9 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
           tooltip={formatInTimeZone(proposal.eventDate, 'GMT', DEFAULT_DATE_TIME_FORMAT)}
         />
         <Flex mt="1rem">
-          <ProposalCreatedBy proposer={proposal.confirmations[0].owner} />
+          {proposal.confirmations && (
+            <ProposalCreatedBy proposer={proposal.confirmations[0].owner} />
+          )}
         </Flex>
         <InfoRow
           property={t('transactionHash')}

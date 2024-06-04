@@ -80,7 +80,7 @@ export function VoteContextProvider({
     } else {
       const safeProposal = proposal as MultisigProposal;
       setHasVoted(
-        !!safeProposal.confirmations.find(confirmation => confirmation.owner === user.address),
+        !!safeProposal.confirmations?.find(confirmation => confirmation.owner === user.address),
       );
     }
     setHasVotedLoading(false);

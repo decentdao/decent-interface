@@ -1,5 +1,4 @@
 import { useEffect, useCallback, useRef } from 'react';
-import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
@@ -23,21 +22,14 @@ export const useFractalTreasury = () => {
     if (!daoAddress || !safeAPI) {
       return;
     }
-    const [assetsFungible] = await Promise.all([
-      safeAPI.getTokenList().catch(e => {
-        logError(e);
-        return [];
-      }),
-    ]);
 
-    console.log(assetsFungible);
-
+    // @todo - fetch assetsFungible, assetsNonFungible and transfers here
     const treasuryData = {
       assetsFungible: [],
       assetsNonFungible: [],
       transfers: [],
     };
-    action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
+    action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData as any });
   }, [daoAddress, safeAPI, action]);
 
   useEffect(() => {

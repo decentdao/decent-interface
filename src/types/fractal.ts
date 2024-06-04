@@ -277,7 +277,7 @@ export interface FreezeGuard {
 export interface FractalTreasury {
   assetsFungible: any[];
   assetsNonFungible: any[];
-  transfers?: AllTransactionsListResponse[];
+  transfers?: AllTransactionsListResponse;
 }
 
 export type FractalGovernance = AzoriusGovernance | DecentGovernance | SafeMultisigGovernance;

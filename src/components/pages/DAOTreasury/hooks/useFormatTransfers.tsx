@@ -1,5 +1,6 @@
+import { AllTransactionsListResponse, TokenInfoResponse } from '@safe-global/api-kit';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { TransferType, TokenInfo, AssetTransfer } from '../../../../types';
+import { TransferType } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
 
 export enum TokenEventType {
@@ -17,13 +18,14 @@ export interface TransferDisplayData {
   isLast: boolean;
   transactionHash: string;
   tokenId: string;
-  tokenInfo?: TokenInfo;
+  tokenInfo?: TokenInfoResponse;
 }
 
 export function useFormatTransfers(
-  transfers: AssetTransfer[],
+  transactions: AllTransactionsListResponse['results'],
   safeAddress: string,
 ): TransferDisplayData[] {
+  const transfers = transactions.map(transaction => transaction.transfers).flat();
   let displayData: TransferDisplayData[] = new Array(transfers.length);
   const { chain, nativeTokenIcon } = useNetworkConfig();
 
@@ -31,17 +33,17 @@ export function useFormatTransfers(
     const transfer = transfers[i];
     const info = transfer.tokenInfo;
 
-    let imageSrc;
+    let imageSrc = '/images/coin-icon-default.svg';
     switch (transfer.type) {
       case TransferType.ERC20_TRANSFER:
       case TransferType.ERC721_TRANSFER:
-        imageSrc = info ? info.logoUri : '';
+        if (info?.logoUri) {
+          imageSrc = info.logoUri;
+        }
         break;
       case TransferType.ETHER_TRANSFER:
         imageSrc = nativeTokenIcon;
         break;
-      default:
-        imageSrc = '/images/coin-icon-default.svg';
     }
     let symbol =
       transfer.type === TransferType.ETHER_TRANSFER

@@ -189,7 +189,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     }
   };
 
-  const hasSigned = proposal.confirmations.find(confirm => confirm.owner === user.address);
+  const hasSigned = proposal.confirmations?.find(confirm => confirm.owner === user.address);
   const isOwner = safe?.owners?.includes(user.address || '');
   const isPending = asyncRequestPending || contractCallPending;
 

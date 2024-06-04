@@ -1,4 +1,4 @@
-import { TransferResponse, TransferListResponse } from '@safe-global/api-kit';
+import { TransferListResponse } from '@safe-global/api-kit';
 import { ContractEvent } from './contract';
 import { ActivityBase } from './fractal';
 import { EthAddress } from './utils';
@@ -55,19 +55,6 @@ export enum TransferType {
 export enum TokenType {
   ERC20,
   ERC721,
-}
-
-export interface TokenInfo {
-  type: TokenType;
-  address: string;
-  name: string;
-  symbol: string;
-  logoUri: string;
-  decimals: number;
-}
-
-export interface AssetTransfer extends TransferResponse {
-  tokenInfo?: TokenInfo;
 }
 
 export type AssetTotals = {

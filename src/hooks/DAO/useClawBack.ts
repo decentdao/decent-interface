@@ -22,7 +22,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
 
   const handleClawBack = useCallback(async () => {
     if (childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
-      const childSafeBalance = await safeAPI.getBalances(getAddress(childSafeInfo.daoAddress));
+      const childSafeBalance: any[] = []; // @todo - Fetch Child Safe Balances list
 
       const santitizedParentAddress = getAddress(parentAddress);
       const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
