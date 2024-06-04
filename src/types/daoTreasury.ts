@@ -1,11 +1,6 @@
-import {
-  SafeBalanceResponse,
-  SafeCollectibleResponse,
-  TransferResponse,
-} from '@safe-global/safe-service-client';
+import { TransferResponse, TransferListResponse } from '@safe-global/api-kit';
 import { ContractEvent } from './contract';
 import { ActivityBase } from './fractal';
-import { AllTransfersListResponse } from './safeGlobal';
 import { EthAddress } from './utils';
 
 export enum TokenEventType {
@@ -45,9 +40,9 @@ export type Transaction =
 
 export interface ITreasury {
   transactions: Transaction[];
-  assetsFungible: SafeBalanceResponse[];
-  assetsNonFungible: SafeCollectibleResponse[];
-  transfers?: AllTransfersListResponse;
+  assetsFungible: any[];
+  assetsNonFungible: any[];
+  transfers?: TransferListResponse;
   treasuryIsLoading: boolean;
 }
 

@@ -1,7 +1,7 @@
+import { SafeOperationConfirmation } from '@safe-global/api-kit';
 import { Address, Hex } from 'viem';
 import { GovernanceActivity } from './fractal';
 import { CreateProposalMetadata } from './proposalBuilder';
-import { SafeMultisigConfirmationResponse } from './safeGlobal';
 import { MetaTransaction, DecodedTransaction } from './transaction';
 
 export interface ProposalExecuteData extends ExecuteData {
@@ -35,7 +35,7 @@ export interface AzoriusProposal extends GovernanceActivity {
 }
 
 export interface MultisigProposal extends GovernanceActivity {
-  confirmations: SafeMultisigConfirmationResponse[];
+  confirmations: SafeOperationConfirmation[];
   signersThreshold?: number;
   multisigRejectedProposalNumber?: string;
   nonce?: number;

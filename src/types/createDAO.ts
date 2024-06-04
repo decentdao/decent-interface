@@ -1,4 +1,3 @@
-import { SafeBalanceResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { FormikProps } from 'formik';
 import { Address } from 'viem';
 import { DAOCreateMode } from '../components/DaoCreator/formComponents/EstablishEssentials';
@@ -117,15 +116,6 @@ export type AddressValidationMap = Map<string, AddressValidation>;
 export type AddressValidation = {
   address: string;
   isValidAddress: boolean;
-};
-
-export type TokenToFund = {
-  asset: SafeBalanceResponse;
-  amount: BigIntValuePair;
-};
-
-export type NFTToFund = {
-  asset: SafeCollectibleResponse;
 };
 
 export type TokenAllocation<T = bigint> = {

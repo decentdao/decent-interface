@@ -1,5 +1,4 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +20,7 @@ export default function StakeModal({ close }: { close: () => void }) {
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
-  const [selectedAsset] = useState<SafeBalanceResponse>(fungibleAssetsWithBalance[0]);
+  const [selectedAsset] = useState<any>(fungibleAssetsWithBalance[0]);
   const [inputAmount, setInputAmount] = useState<BigIntValuePair>();
   const onChangeAmount = (value: BigIntValuePair) => {
     setInputAmount(value);

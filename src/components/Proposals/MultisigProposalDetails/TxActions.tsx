@@ -1,6 +1,6 @@
 import { Box, Button, Text, Flex } from '@chakra-ui/react';
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
+import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { Signer } from 'ethers';
 import { useTranslation } from 'react-i18next';
 import { Hex, getAddress, isHex } from 'viem';

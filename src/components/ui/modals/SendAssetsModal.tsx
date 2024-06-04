@@ -1,6 +1,5 @@
 import { Box, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
 import { CaretDown } from '@phosphor-icons/react';
-import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { Field, FieldAttributes, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,9 +26,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
-  const [selectedAsset, setSelectedAsset] = useState<SafeBalanceResponse>(
-    fungibleAssetsWithBalance[0],
-  );
+  const [selectedAsset, setSelectedAsset] = useState<any>(fungibleAssetsWithBalance[0]);
   const [inputAmount, setInputAmount] = useState<BigIntValuePair>();
   const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
 

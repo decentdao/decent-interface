@@ -1,4 +1,5 @@
 import { useQuery } from '@apollo/client';
+import { SafeInfoResponse } from '@safe-global/api-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { getAddress, zeroAddress } from 'viem';
 import { DAOQueryDocument } from '../../../../.graphclient';
@@ -8,11 +9,10 @@ import { useAsyncRetry } from '../../../hooks/utils/useAsyncRetry';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { SafeInfoResponseWithGuard } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
 
 export function useFetchNodes(address?: string) {
-  const [childNodes, setChildNodes] = useState<SafeInfoResponseWithGuard[]>();
+  const [childNodes, setChildNodes] = useState<SafeInfoResponse[]>();
 
   const {
     node: { safe, nodeHierarchy },
@@ -36,7 +36,7 @@ export function useFetchNodes(address?: string) {
   const lookupModules = useFractalModules();
 
   const getDAOOwner = useCallback(
-    async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
+    async (safeInfo?: Partial<SafeInfoResponse>) => {
       if (safeInfo && safeInfo.guard && baseContracts) {
         const {
           multisigFreezeGuardMasterCopyContract,
@@ -81,7 +81,8 @@ export function useFetchNodes(address?: string) {
   const fetchDAOInfo = useCallback(
     async (safeAddress: string) => {
       if (safeAPI) {
-        return (await safeAPI.getSafeInfo(getAddress(safeAddress))) as SafeInfoResponseWithGuard;
+        const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
+        return safeInfo;
       }
     },
     [safeAPI],
@@ -94,7 +95,7 @@ export function useFetchNodes(address?: string) {
       // Means we're getting childNodes for current's DAO parent, and not the DAO itself
       nodes = data.daos[0]?.hierarchy;
     }
-    const subDAOs: SafeInfoResponseWithGuard[] = [];
+    const subDAOs: SafeInfoResponse[] = [];
     for await (const subDAO of nodes) {
       try {
         const safeInfo = await requestWithRetries(() => fetchDAOInfo(subDAO.address), 5, 5000);

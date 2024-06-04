@@ -1,4 +1,3 @@
-import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { isAddress, getAddress, Hex, encodeFunctionData, erc20Abi } from 'viem';
 import { SubmitProposalFunction } from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../types';
@@ -13,7 +12,7 @@ export const sendAssets = async ({
   t,
 }: {
   transferAmount: bigint;
-  asset: SafeBalanceResponse;
+  asset: any;
   destinationAddress: string | undefined;
   nonce: number | undefined;
   submitProposal: SubmitProposalFunction;

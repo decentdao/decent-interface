@@ -1,4 +1,3 @@
-import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
@@ -10,7 +9,7 @@ export default function usePriceAPI() {
   const { t } = useTranslation('treasury');
 
   const getTokenPrices = useCallback(
-    async (tokens: SafeBalanceResponse[]) => {
+    async (tokens: any[]) => {
       if (chain.id !== 1) {
         // Support only mainnet for now. CoinGecko does not support Sepolia (obviously, I guess :D) and we don't want to burn API credits to "simulate" prices display
         return;

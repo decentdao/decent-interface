@@ -1,4 +1,4 @@
-import { TransferWithTokenInfoResponse } from '@safe-global/safe-service-client';
+import { TransferWithTokenInfoResponse } from '@safe-global/api-kit';
 import { zeroAddress } from 'viem';
 import { AssetTotals, SafeTransferType } from '../types';
 

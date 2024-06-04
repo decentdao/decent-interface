@@ -1,4 +1,3 @@
-import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import BigDecimal from 'js-big-decimal';
 import { formatEther, formatUnits } from 'viem';
 
@@ -40,7 +39,7 @@ const formatCoinUnits = (
     : parseFloat(formatEther(BigInt(rawBalance)));
 };
 
-export const formatCoinUnitsFromAsset = (asset: SafeBalanceResponse): number => {
+export const formatCoinUnitsFromAsset = (asset: any): number => {
   return formatCoinUnits(asset.balance, asset.token?.decimals, asset.token?.symbol);
 };
 
@@ -66,7 +65,7 @@ export const formatCoin = (
   return coinFormatter.format(amount);
 };
 
-export const formatCoinFromAsset = (asset: SafeBalanceResponse, truncate: boolean): string => {
+export const formatCoinFromAsset = (asset: any, truncate: boolean): string => {
   return formatCoin(asset.balance, truncate, asset?.token?.decimals, asset?.token?.symbol);
 };
 

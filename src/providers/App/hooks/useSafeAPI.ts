@@ -1,26 +1,12 @@
-import EthersAdapter from '@safe-global/safe-ethers-lib';
-import SafeServiceClient, {
+import SafeApiKit, {
   AllTransactionsListResponse,
   AllTransactionsOptions,
-  MasterCopyResponse,
-  ModulesResponse,
   OwnerResponse,
-  SafeBalanceResponse,
-  SafeBalancesOptions,
-  SafeCollectibleResponse,
-  SafeCollectiblesOptions,
   SafeCreationInfoResponse,
-  SafeDelegateListResponse,
   SafeInfoResponse,
-  SafeModuleTransactionListResponse,
-  SafeMultisigTransactionListResponse,
-  SafeServiceClientConfig,
-  SafeServiceInfoResponse,
+  SafeApiKitConfig,
   TokenInfoListResponse,
-  TokenInfoResponse,
-  TransferListResponse,
-} from '@safe-global/safe-service-client';
-import { ethers } from 'ethers';
+} from '@safe-global/api-kit';
 import { useMemo } from 'react';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
 import {
@@ -28,20 +14,18 @@ import {
   getIndexedDBValue,
   setIndexedDBValue,
 } from '../../../hooks/utils/cache/useLocalDB';
-import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
-import { SafeMultisigTransactionResponse } from '../../../types';
 import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
-class CachingSafeServiceClient extends SafeServiceClient {
+class CachingSafeApiKit extends SafeApiKit {
   readonly CHAINID: number;
 
   // holds requests that have yet to return, to avoid calling the same
   // endpoint more than once
   requestMap = new Map<string, Promise<any> | null>();
 
-  constructor(chainId: number, { txServiceUrl, ethAdapter }: SafeServiceClientConfig) {
-    super({ txServiceUrl, ethAdapter });
-    this.CHAINID = chainId;
+  constructor({ chainId }: SafeApiKitConfig) {
+    super({ chainId });
+    this.CHAINID = Number(chainId);
   }
 
   private async setCache(key: string, value: any, cacheMinutes: number): Promise<void> {
@@ -71,19 +55,6 @@ class CachingSafeServiceClient extends SafeServiceClient {
     }
     return value;
   }
-
-  override async getServiceInfo(): Promise<SafeServiceInfoResponse> {
-    const value = await this.request('getServiceInfo', 1, super.getServiceInfo);
-    return value;
-  }
-  override async getServiceMasterCopiesInfo(): Promise<MasterCopyResponse[]> {
-    const value = await this.request(
-      'getServiceMasterCopiesInfo',
-      CacheExpiry.ONE_DAY,
-      super.getServiceMasterCopiesInfo,
-    );
-    return value;
-  }
   override async decodeData(data: string): Promise<any> {
     const value = await this.request('decodeData' + data, 1, () => {
       return super.decodeData(data);
@@ -96,21 +67,9 @@ class CachingSafeServiceClient extends SafeServiceClient {
     });
     return value;
   }
-  override async getTransaction(safeTxHash: string): Promise<SafeMultisigTransactionResponse> {
-    const value = await this.request('getTransaction' + safeTxHash, 1, () => {
-      return super.getTransaction(safeTxHash);
-    });
-    return value;
-  }
   override async getSafeInfo(safeAddress: string): Promise<SafeInfoResponse> {
     const value = await this.request('getSafeInfo' + safeAddress, 5, () => {
       return super.getSafeInfo(safeAddress);
-    });
-    return value;
-  }
-  override async getSafeDelegates(safeAddress: string): Promise<SafeDelegateListResponse> {
-    const value = await this.request('getSafeDelegates' + safeAddress, 1, () => {
-      return super.getSafeDelegates(safeAddress);
     });
     return value;
   }
@@ -120,72 +79,9 @@ class CachingSafeServiceClient extends SafeServiceClient {
     });
     return value;
   }
-  override async getIncomingTransactions(safeAddress: string): Promise<TransferListResponse> {
-    const value = await this.request('getIncomingTransactions' + safeAddress, 1, () => {
-      return super.getIncomingTransactions(safeAddress);
-    });
-    return value;
-  }
-  override async getModuleTransactions(
-    safeAddress: string,
-  ): Promise<SafeModuleTransactionListResponse> {
-    const value = await this.request('getModuleTransactions' + safeAddress, 1, () => {
-      return super.getModuleTransactions(safeAddress);
-    });
-    return value;
-  }
-  override async getMultisigTransactions(
-    safeAddress: string,
-  ): Promise<SafeMultisigTransactionListResponse> {
-    const value = await this.request('getMultisigTransactions' + safeAddress, 1, () => {
-      return super.getMultisigTransactions(safeAddress);
-    });
-    return value;
-  }
-  override async getPendingTransactions(
-    safeAddress: string,
-    currentNonce?: number | undefined,
-  ): Promise<SafeMultisigTransactionListResponse> {
-    const value = await this.request(
-      'getPendingTransactions' + safeAddress + currentNonce?.toString(),
-      1,
-      () => {
-        return super.getPendingTransactions(safeAddress, currentNonce);
-      },
-    );
-    return value;
-  }
-  override async getBalances(
-    safeAddress: string,
-    options?: SafeBalancesOptions | undefined,
-  ): Promise<SafeBalanceResponse[]> {
-    const value = await this.request('getBalances' + safeAddress + options?.toString(), 1, () => {
-      return super.getBalances(safeAddress, options);
-    });
-    return value;
-  }
-  override async getCollectibles(
-    safeAddress: string,
-    options?: SafeCollectiblesOptions | undefined,
-  ): Promise<SafeCollectibleResponse[]> {
-    const value = await this.request(
-      'getCollectibles' + safeAddress + options?.toString(),
-      1,
-      () => {
-        return super.getCollectibles(safeAddress, options);
-      },
-    );
-    return value;
-  }
   override async getTokenList(): Promise<TokenInfoListResponse> {
     const value = await this.request('getTokenList', 1, () => {
       return super.getTokenList();
-    });
-    return value;
-  }
-  override async getToken(tokenAddress: string): Promise<TokenInfoResponse> {
-    const value = await this.request('getToken' + tokenAddress, 1, () => {
-      return super.getToken(tokenAddress);
     });
     return value;
   }
@@ -202,12 +98,6 @@ class CachingSafeServiceClient extends SafeServiceClient {
     );
     return value;
   }
-  override async getSafesByModule(moduleAddress: string): Promise<ModulesResponse> {
-    const value = await this.request('getSafesByModule' + moduleAddress, 1, () => {
-      return super.getSafesByModule(moduleAddress);
-    });
-    return value;
-  }
 
   async getSafeData(safeAddress: string): Promise<SafeInfoResponse> {
     const safeInfoResponse = await this.getSafeInfo(safeAddress);
@@ -218,22 +108,11 @@ class CachingSafeServiceClient extends SafeServiceClient {
 }
 
 export function useSafeAPI() {
-  const { safeBaseURL, chain } = useNetworkConfig();
-  const signerOrProvider = useSignerOrProvider();
+  const { chain } = useNetworkConfig();
 
   const safeAPI = useMemo(() => {
-    if (!signerOrProvider) {
-      return undefined;
-    }
-    const ethAdapter = new EthersAdapter({
-      ethers,
-      signerOrProvider,
-    });
-    return new CachingSafeServiceClient(chain.id, {
-      txServiceUrl: safeBaseURL,
-      ethAdapter,
-    });
-  }, [signerOrProvider, chain, safeBaseURL]);
+    return new CachingSafeApiKit({ chainId: BigInt(chain.id) });
+  }, [chain]);
 
   return safeAPI;
 }

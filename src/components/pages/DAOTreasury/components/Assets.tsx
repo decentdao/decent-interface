@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
-import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
@@ -176,7 +175,7 @@ function NFTHeader() {
   );
 }
 
-function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boolean }) {
+function NFTRow({ asset, isLast }: { asset: any; isLast: boolean }) {
   const image = asset.imageUri ? asset.imageUri : asset.logoUri;
   const name = asset.name ? asset.name : asset.tokenName;
   const id = asset.id.toString();
