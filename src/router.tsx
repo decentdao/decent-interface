@@ -2,6 +2,7 @@ import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
+import { BASE_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
 import DaoCreatePage from './pages/create';
@@ -41,7 +42,7 @@ export const router = (addressPrefix: string) =>
         },
         {
           path: 'create',
-          loader: () => redirect(`/create/essentials`),
+          loader: () => redirect(BASE_ROUTES.create),
         },
         {
           path: '/',
