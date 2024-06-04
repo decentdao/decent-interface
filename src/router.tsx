@@ -52,7 +52,7 @@ export const router = (addressPrefix: string) =>
               element: <DaoDashboardPage />,
             },
             {
-              path: 'edit/governance',
+              path: 'edit/governance/:step',
               element: <ModifyGovernancePage />,
             },
             {

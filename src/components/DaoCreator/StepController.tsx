@@ -10,6 +10,7 @@ import { AzoriusTokenDetails } from './formComponents/AzoriusTokenDetails';
 import { EstablishEssentials } from './formComponents/EstablishEssentials';
 import GuardDetails from './formComponents/GuardDetails';
 import { Multisig } from './formComponents/Multisig';
+import useStepRedirect from './hooks/useStepRedirect';
 
 function StepController(props: ICreationStepProps) {
   const { t } = useTranslation('daoCreate');
@@ -17,23 +18,32 @@ function StepController(props: ICreationStepProps) {
   const navigate = useNavigate();
   const { step } = useParams();
 
-  const { values, setFieldValue } = props;
+  const { values, setFieldValue, mode } = props;
+
+  const { redirectToInitialStep } = useStepRedirect({ values, mode, redirectOnMount: false });
 
   useEffect(() => {
     const steps = Object.values(CreatorSteps);
     if (!step || !steps.includes(step as CreatorSteps)) {
-      navigate(`/create/${CreatorSteps.ESSENTIALS}`, { replace: true });
+      redirectToInitialStep();
     }
-  }, [step, navigate]);
+  }, [step, redirectToInitialStep]);
 
   useEffect(() => {
     // @dev - The only possible way for this to become true if someone will choose governance option and then would switch network
     if (!createOptions.includes(values.essentials.governance)) {
       setFieldValue('essentials.governance', GovernanceType.MULTISIG);
-      navigate(`/create/${CreatorSteps.ESSENTIALS}`, { replace: true });
+      redirectToInitialStep();
       toast(t('errorUnsupportedCreateOption'));
     }
-  }, [createOptions, setFieldValue, values.essentials.governance, navigate, t]);
+  }, [
+    createOptions,
+    setFieldValue,
+    values.essentials.governance,
+    navigate,
+    t,
+    redirectToInitialStep,
+  ]);
 
   let CurrentStepComponent;
   switch (step) {

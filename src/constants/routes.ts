@@ -16,8 +16,8 @@ export const DAO_ROUTES = {
   },
   modifyGovernance: {
     relative: (addressPrefix: string, daoAddress: string) =>
-      `/edit/governance?dao=${addressPrefix}:${daoAddress}`,
-    path: 'edit/governance',
+      `/edit/governance/essentials?dao=${addressPrefix}:${daoAddress}`,
+    path: 'edit/governance/essentials',
   },
   hierarchy: {
     relative: (addressPrefix: string, daoAddress: string) =>

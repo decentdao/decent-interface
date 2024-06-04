@@ -49,7 +49,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   const { checkVotesToken } = usePrepareFormData();
   const [isImportedVotesToken, setIsImportedVotesToken] = useState(false);
 
-  useStepRedirect(values);
+  useStepRedirect({ values, mode });
   const updateImportFields = useCallback(async () => {
     if (!publicClient) {
       return;

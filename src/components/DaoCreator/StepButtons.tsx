@@ -1,7 +1,7 @@
 import { Flex, Button, Icon } from '@chakra-ui/react';
 import { CaretRight, CaretLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useFractal } from '../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps } from '../../types';
@@ -31,6 +31,9 @@ export function StepButtons({
   const {
     readOnly: { user },
   } = useFractal();
+  const location = useLocation();
+  const prevStepUrl = `${location.pathname.replace(`${step}`, `${prevStep}`)}${location.search}`;
+  const nextStepUrl = `${location.pathname.replace(`${step}`, `${nextStep}`)}${location.search}`;
 
   const forwardButtonText =
     isLastStep && isSubDAO
@@ -52,7 +55,7 @@ export function StepButtons({
           data-testid="create-prevButton"
           variant="text"
           isDisabled={transactionPending || isSubmitting}
-          onClick={() => navigate(`/create/${prevStep}`)}
+          onClick={() => navigate(prevStepUrl)}
           color="lilac-0"
           px="2rem"
         >
@@ -72,7 +75,7 @@ export function StepButtons({
         px="2rem"
         onClick={() => {
           if (!isLastStep && nextStep) {
-            navigate(`/create/${nextStep}`);
+            navigate(nextStepUrl);
           } else if (isLastStep && !user.address) {
             toast(t('toastDisconnected'), {
               closeOnClick: true,
