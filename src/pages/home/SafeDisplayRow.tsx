@@ -2,15 +2,20 @@ import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getAddress } from 'viem';
+import { useSwitchChain } from 'wagmi';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useGetDAOName } from '../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
-import { getChainName, getNetworkIcon } from '../../utils/url';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
+  const { addressPrefix } = useNetworkConfig();
+  const { switchChain } = useSwitchChain();
+
   const { daoName } = useGetDAOName({ address: getAddress(address) });
   const navigate = useNavigate();
 
@@ -21,11 +26,19 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
 
   const onClickNav = () => {
     if (onClick) onClick();
-    navigate(DAO_ROUTES.dao.relative(network, address));
+    if (addressPrefix !== network) {
+      switchChain(
+        { chainId: getChainIdFromPrefix(network) },
+        {
+          onSuccess: () => navigate(DAO_ROUTES.dao.relative(network, address)),
+        },
+      );
+    } else {
+      navigate(DAO_ROUTES.dao.relative(network, address));
+    }
   };
 
   const nameColor = showAddress ? 'neutral-7' : 'white-0';
-
 
   return (
     <Flex
