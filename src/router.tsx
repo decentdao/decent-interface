@@ -60,7 +60,7 @@ export const router = (addressPrefix: string) =>
               element: <HierarchyPage />,
             },
             {
-              path: 'new',
+              path: 'new/:step',
               element: <SubDaoCreate />,
             },
             {
