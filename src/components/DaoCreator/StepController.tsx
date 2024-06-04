@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -13,7 +13,6 @@ import { Multisig } from './formComponents/Multisig';
 
 function StepController(props: ICreationStepProps) {
   const { t } = useTranslation('daoCreate');
-  const [dumbassCount, setDumbassCount] = useState(0);
   const { createOptions } = useNetworkConfig();
   const navigate = useNavigate();
   const { step } = useParams();
@@ -33,20 +32,8 @@ function StepController(props: ICreationStepProps) {
       setFieldValue('essentials.governance', GovernanceType.MULTISIG);
       navigate(`/create/${CreatorSteps.ESSENTIALS}`, { replace: true });
       toast(t('errorUnsupportedCreateOption'));
-
-      // @dev - I've built this amazing eastern egg for testing/review only, couldn't resist :D
-      if (dumbassCount >= 2) {
-        // Who tf you think you are?
-        // You thought you could outsmart our rocket-scientists-written-FE?
-        // Now take this!
-        toast(
-          `We have noticed you've been fking around - now you found out, don't ya? Cheers! You've tried this shit ${dumbassCount} times and it didn't worked - just stop playing around, boy... Our code secure af!`,
-        );
-        setFieldValue('essentials.daoName', 'Dumbass DAO');
-      }
-      setDumbassCount(prevState => prevState + 1);
     }
-  }, [createOptions, setFieldValue, values.essentials.governance, navigate, dumbassCount, t]);
+  }, [createOptions, setFieldValue, values.essentials.governance, navigate, t]);
 
   let CurrentStepComponent;
   switch (step) {
