@@ -39,6 +39,7 @@ export default function StateButtons(props: StateButtonsProps) {
   const navigate = useNavigate();
   const {
     pendingTransaction,
+    mode,
     errors: {
       transactions: transactionsError,
       nonce: nonceError,
@@ -53,12 +54,18 @@ export default function StateButtons(props: StateButtonsProps) {
     return null;
   }
 
+  const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
+  const metadataRoute = isProposalMode ? DAO_ROUTES.proposalNew : DAO_ROUTES.proposalTemplateNew;
+  const transactionsRoute = isProposalMode
+    ? DAO_ROUTES.proposalNewTransactions
+    : DAO_ROUTES.proposalTemplateNewTransactions;
+
   if (step === CreateProposalSteps.METADATA) {
     return (
       <StateButtonsContainer>
         <Button
           onClick={() => {
-            navigate(DAO_ROUTES.proposalNewTransactions.relative(addressPrefix, daoAddress));
+            navigate(transactionsRoute.relative(addressPrefix, daoAddress));
           }}
           isDisabled={!!proposalMetadataError || !proposalMetadata.title}
           px="2rem"
@@ -76,7 +83,7 @@ export default function StateButtons(props: StateButtonsProps) {
         variant="text"
         color="lilac-0"
         onClick={() => {
-          navigate(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress));
+          navigate(metadataRoute.relative(addressPrefix, daoAddress));
         }}
       >
         <Icon

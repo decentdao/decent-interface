@@ -69,4 +69,9 @@ export const DAO_ROUTES = {
       `/proposal-templates/new/metadata?dao=${addressPrefix}:${daoAddress}`,
     path: 'proposal-templates/new/metadata',
   },
+  proposalTemplateNewTransactions: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/proposal-templates/new/transactions?dao=${addressPrefix}:${daoAddress}`,
+    path: 'proposal-templates/new/transactions',
+  },
 };
