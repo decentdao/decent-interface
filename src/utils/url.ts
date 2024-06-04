@@ -46,3 +46,13 @@ export const getNetworkIcon = (_networkPrefix: string): string => {
   }
   return network?.nativeTokenIcon;
 };
+
+export const getChainName = (_networkPrefix: string): string => {
+  const network = Object.values(networks).find(
+    _network => _network.addressPrefix === _networkPrefix,
+  );
+  if (!network) {
+    throw new Error(`No network found for chainId ${_networkPrefix}`);
+  }
+  return network.chain.name;
+};

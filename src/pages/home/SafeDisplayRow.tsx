@@ -8,8 +8,7 @@ import { DAO_ROUTES } from '../../constants/routes';
 import { useGetDAOName } from '../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { getNetworkIcon } from '../../utils/url';
+import { getChainName, getNetworkIcon } from '../../utils/url';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
   const { daoName } = useGetDAOName({ address: getAddress(address) });
@@ -27,7 +26,6 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
 
   const nameColor = showAddress ? 'neutral-7' : 'white-0';
 
-  const networkConfig = useNetworkConfig();
 
   return (
     <Flex
@@ -70,7 +68,7 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
       <Flex gap="0.5rem">
         <Image src={getNetworkIcon(network)} />
         <Show above="md">
-          <Text>{networkConfig.chain.name}</Text>
+          <Text>{getChainName(network)}</Text>
         </Show>
       </Flex>
     </Flex>
