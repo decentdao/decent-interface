@@ -23,7 +23,6 @@ export function SafesList() {
         ) : (
           <Box
             maxHeight="20rem"
-            overflowY="scroll"
             className="scroll-dark"
           >
             {favoritesList.map(favorite => (
