@@ -56,3 +56,13 @@ export const getChainName = (_networkPrefix: string): string => {
   }
   return network.chain.name;
 };
+
+export const getChainIdFromPrefix = (_networkPrefix: string): number => {
+  const network = Object.values(networks).find(
+    _network => _network.addressPrefix === _networkPrefix,
+  );
+  if (!network) {
+    throw new Error(`No network found for chainId ${_networkPrefix}`);
+  }
+  return network.chain.id;
+};

@@ -16,12 +16,20 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
   const { addressPrefix } = useNetworkConfig();
   const { switchChain } = useSwitchChain();
 
-  const { daoName } = useGetDAOName({ address: getAddress(address) });
+  const { daoName } = useGetDAOName({
+    address: getAddress(address),
+    chainId: getChainIdFromPrefix(network),
+  });
+
   const navigate = useNavigate();
 
   const { t } = useTranslation('dashboard');
 
-  const { displayName: accountDisplayName } = useDisplayName(address);
+  const { displayName: accountDisplayName } = useDisplayName(
+    address,
+    undefined,
+    getChainIdFromPrefix(network),
+  );
   const avatarURL = useAvatar(accountDisplayName);
 
   const onClickNav = () => {

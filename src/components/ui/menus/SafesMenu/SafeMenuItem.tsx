@@ -22,9 +22,17 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
   const { addressPrefix } = useNetworkConfig();
   const { switchChain } = useSwitchChain();
 
-  const { daoName } = useGetDAOName({ address: getAddress(address) });
+  const { daoName } = useGetDAOName({
+    address: getAddress(address),
+    chainId: getChainIdFromPrefix(network),
+  });
   const navigate = useNavigate();
-  const { displayName: accountDisplayName } = useDisplayName(address);
+
+  const { displayName: accountDisplayName } = useDisplayName(
+    address,
+    undefined,
+    getChainIdFromPrefix(network),
+  );
   const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('dashboard');

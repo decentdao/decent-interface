@@ -64,11 +64,15 @@ const getDAOName = async ({
 const useGetDAOName = ({
   address,
   registryName,
+  chainId,
 }: {
   address: Address;
   registryName?: string | null;
+  chainId?: number;
 }) => {
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({
+    chainId,
+  });
   const { baseContracts } = useFractal();
 
   const [daoName, setDaoName] = useState<string>();
