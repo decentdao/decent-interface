@@ -12,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { getValue } from '../../hooks/utils/cache/useLocalStorage';
+import { decodePrefixedAddress } from '../../utils/address';
 import { SafeDisplayRow } from './SafeDisplayRow';
 
 interface AllSafesDrawerProps {
@@ -135,8 +136,7 @@ export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
           {(getValue({ cacheName: CacheKeys.FAVORITES }) || []).map((favorite: string) => (
             <SafeDisplayRow
               key={favorite}
-              address={favorite.split(':')[1]}
-              network={favorite.split(':')[0]}
+              {...decodePrefixedAddress(favorite)}
             />
           ))}
         </DrawerBody>

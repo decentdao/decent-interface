@@ -2,6 +2,7 @@ import { Box, Button, Flex, Show, Text, useBreakpointValue, useDisclosure } from
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
+import { decodePrefixedAddress } from '../../utils/address';
 import { AllSafesDrawer } from './AllSafesDrawer';
 import { SafeDisplayRow } from './SafeDisplayRow';
 
@@ -50,8 +51,7 @@ export function MySafes() {
             {favoritesToShow.map(favorite => (
               <SafeDisplayRow
                 key={favorite}
-                address={favorite.split(':')[1]}
-                network={favorite.split(':')[0]}
+                {...decodePrefixedAddress(favorite)}
               />
             ))}
           </Box>

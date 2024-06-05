@@ -2,6 +2,7 @@ import { Box, MenuList } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
+import { decodePrefixedAddress } from '../../../../utils/address';
 import { SafeMenuItem } from './SafeMenuItem';
 
 export function SafesList() {
@@ -28,8 +29,7 @@ export function SafesList() {
             {favoritesList.map(favorite => (
               <SafeMenuItem
                 key={favorite}
-                network={favorite.split(':')[0]}
-                address={favorite.split(':')[1]}
+                {...decodePrefixedAddress(favorite)}
               />
             ))}
           </Box>
