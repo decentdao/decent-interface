@@ -57,7 +57,7 @@ function AddSignerModal({
     address: Yup.string().test(addressValidationTest).test(newSignerValidationTest),
     nonce: Yup.number()
       .required()
-      .moreThan((!!safe && safe.nonce - 1) || 0), // ? @todo Is this correct? or should this be nextNonce?
+      .moreThan((!!safe && safe.nonce - 1) || 0),
     threshold: Yup.number().required(),
     thresholdOptions: Yup.array().of(Yup.number()).required(),
   });
