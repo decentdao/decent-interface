@@ -32,7 +32,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   const { t } = useTranslation(['modals', 'common']);
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
-  const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nonce);
+  const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nextNonce);
 
   const { submitProposal } = useSubmitProposal();
 

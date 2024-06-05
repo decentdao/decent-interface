@@ -48,7 +48,7 @@ export default function CreateProposalPage() {
 
   return (
     <ProposalBuilder
-      initialValues={{ ...DEFAULT_PROPOSAL, nonce: safe.nonce }}
+      initialValues={{ ...DEFAULT_PROPOSAL, nonce: safe.nextNonce }}
       mode={ProposalBuilderMode.PROPOSAL}
       prepareProposalData={prepareProposal}
     />

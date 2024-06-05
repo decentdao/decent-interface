@@ -1,4 +1,4 @@
-import { Box, Button, Text, Flex } from '@chakra-ui/react';
+import { Box, Button, Text, Flex, Tooltip } from '@chakra-ui/react';
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
@@ -192,7 +192,6 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const hasSigned = proposal.confirmations.find(confirm => confirm.owner === user.address);
   const isOwner = safe?.owners?.includes(user.address || '');
   const isPending = asyncRequestPending || contractCallPending;
-
   if (
     (proposal.state === FractalProposalState.ACTIVE && (hasSigned || !isOwner)) ||
     proposal.state === FractalProposalState.REJECTED ||
@@ -237,7 +236,9 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       icon: undefined,
     },
   };
-  const isButtonDisabled = isPending || proposal.state === FractalProposalState.TIMELOCKED;
+  const isActiveNonce = !!safe && multisigTx.nonce === safe.nonce;
+  const isButtonDisabled =
+    isPending || proposal.state === FractalProposalState.TIMELOCKED || !isActiveNonce;
 
   return (
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
@@ -246,14 +247,20 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         <ProposalCountdown proposal={proposal} />
       </Flex>
       <Box marginTop={4}>
-        <Button
-          w="full"
-          rightIcon={buttonProps[proposal.state!].icon}
-          isDisabled={isButtonDisabled}
-          onClick={buttonProps[proposal.state!].action}
+        <Tooltip
+          placement="top-start"
+          label={t('notActiveNonceTooltip')}
+          isDisabled={isActiveNonce}
         >
-          {t(buttonProps[proposal.state!].text, { ns: 'common' })}
-        </Button>
+          <Button
+            w="full"
+            rightIcon={buttonProps[proposal.state!].icon}
+            isDisabled={isButtonDisabled}
+            onClick={buttonProps[proposal.state!].action}
+          >
+            {t(buttonProps[proposal.state!].text, { ns: 'common' })}
+          </Button>
+        </Tooltip>
       </Box>
     </ContentBox>
   );

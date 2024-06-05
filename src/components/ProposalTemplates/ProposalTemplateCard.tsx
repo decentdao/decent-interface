@@ -52,7 +52,7 @@ export default function ProposalTemplateCard({
     }
   }, [navigate, daoAddress, addressPrefix]);
 
-  const nonce = safe?.nonce;
+  const nonce = safe?.nextNonce;
   const handleRemoveTemplate = useCallback(async () => {
     const proposalData = await prepareRemoveProposalTemplateProposal(templateIndex);
     if (!!proposalData) {
