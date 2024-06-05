@@ -1,5 +1,11 @@
 import { parseISO } from 'date-fns';
-import { CacheExpiry, IStorageValue, CacheKeyType, CURRENT_CACHE_VERSION } from './cacheDefaults';
+import {
+  CacheExpiry,
+  CacheKeyType,
+  CURRENT_CACHE_VERSION,
+  CacheValue,
+  CacheValueType,
+} from './cacheDefaults';
 
 function bigintReplacer(_: any, value: any) {
   return typeof value === 'bigint'
@@ -25,7 +31,7 @@ export const setValue = (
   expirationMinutes: number = CacheExpiry.ONE_WEEK,
 ): void => {
   if (typeof window !== 'undefined') {
-    const val: IStorageValue = {
+    const val: CacheValue = {
       v: value,
       e:
         expirationMinutes === CacheExpiry.NEVER
@@ -39,23 +45,23 @@ export const setValue = (
   }
 };
 
-export const getValue = (key: CacheKeyType, version = CURRENT_CACHE_VERSION): any => {
+export const getValue = <T extends CacheKeyType>(
+  key: T,
+  version = CURRENT_CACHE_VERSION,
+): CacheValueType<T> | null => {
   if (typeof window !== 'undefined') {
     const rawVal = localStorage.getItem(JSON.stringify({ ...key, version }));
     if (rawVal) {
-      const parsed: IStorageValue = JSON.parse(rawVal, proposalObjectReviver);
-      if (parsed.e === CacheExpiry.NEVER) {
-        return parsed.v;
+      const parsed: CacheValue = JSON.parse(rawVal, proposalObjectReviver);
+      if (parsed.e === CacheExpiry.NEVER || parsed.e >= Date.now()) {
+        return parsed.v as CacheValueType<T>;
       } else {
-        if (parsed.e < Date.now()) {
-          localStorage.removeItem(JSON.stringify(key));
-          return null;
-        } else {
-          return parsed.v;
-        }
+        localStorage.removeItem(JSON.stringify({ ...key, version }));
+        return null;
       }
     } else {
       return null;
     }
   }
+  return null;
 };

@@ -4,7 +4,7 @@ import { setValue, getValue } from '../hooks/utils/cache/useLocalStorage';
 import { Providers } from '../types/network';
 
 export const getAverageBlockTime = async (provider: Providers) => {
-  let averageBlockTime: number = getValue({ cacheName: CacheKeys.AVERAGE_BLOCK_TIME });
+  let averageBlockTime = getValue({ cacheName: CacheKeys.AVERAGE_BLOCK_TIME });
   if (averageBlockTime) {
     return averageBlockTime;
   }

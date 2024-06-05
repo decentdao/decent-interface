@@ -15,7 +15,7 @@ export const useAccountFavorites = () => {
     const normalizedAddress = getAddress(address);
     const addressWithPrefix = addressPrefix + ':' + normalizedAddress;
 
-    const favorites: string[] = getValue({ cacheName: CacheKeys.FAVORITES }) || [];
+    const favorites = getValue({ cacheName: CacheKeys.FAVORITES }) || [];
     let updatedFavorites: string[] = [];
     if (favorites.includes(addressWithPrefix)) {
       updatedFavorites = favorites.filter(favorite => favorite !== addressWithPrefix);
