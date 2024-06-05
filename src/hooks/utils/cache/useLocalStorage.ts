@@ -1,7 +1,6 @@
 import { parseISO } from 'date-fns';
 import {
   CacheExpiry,
-  IStorageValue,
   CacheKeyType,
   CURRENT_CACHE_VERSION,
   CacheValue,
@@ -32,7 +31,7 @@ export const setValue = (
   expirationMinutes: number = CacheExpiry.ONE_WEEK,
 ): void => {
   if (typeof window !== 'undefined') {
-    const val: IStorageValue = {
+    const val: CacheValue = {
       v: value,
       e:
         expirationMinutes === CacheExpiry.NEVER
@@ -55,7 +54,7 @@ export const getValue = <T extends CacheKeyType>(
     if (rawVal) {
       const parsed: CacheValue = JSON.parse(rawVal, proposalObjectReviver);
       if (parsed.e === CacheExpiry.NEVER || parsed.e >= Date.now()) {
-        return parsed as CacheValueType<T>;
+        return parsed.v as CacheValueType<T>;
       } else {
         localStorage.removeItem(JSON.stringify({ ...key, version }));
         return null;
