@@ -6,7 +6,7 @@ import {
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { Address, Hex, getAddress } from 'viem';
+import { Hex, getAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
@@ -258,7 +258,7 @@ export const useAzoriusProposals = () => {
             {
               cacheName: CacheKeys.PROPOSAL_ARCHIVE,
               proposalId: proposalCreatedEvent.args.proposalId.toString(),
-              contractAddress: _azoriusContract.address as Address,
+              contractAddress: getAddress(_azoriusContract.address),
             },
             proposal,
             CacheExpiry.NEVER,
