@@ -132,14 +132,13 @@ export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
           </Box>
         </DrawerHeader>
         <DrawerBody padding="0">
-          {(getValue({ cacheName: CacheKeys.FAVORITES }) ||
-            []).map((favorite: string) => (
-              <SafeDisplayRow
-                key={favorite}
-                address={favorite.split(':')[1]}
-                network={favorite.split(':')[0]}
-              />
-            ))}
+          {(getValue({ cacheName: CacheKeys.FAVORITES }) || []).map((favorite: string) => (
+            <SafeDisplayRow
+              key={favorite}
+              address={favorite.split(':')[1]}
+              network={favorite.split(':')[0]}
+            />
+          ))}
         </DrawerBody>
       </DrawerContent>
     </Drawer>
