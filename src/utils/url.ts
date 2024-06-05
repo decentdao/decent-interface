@@ -34,7 +34,7 @@ export const addNetworkPrefix = (address: string, chainId: number): string => {
   if (!network) {
     throw new Error(`No network found for chainId ${chainId}`);
   }
-  return `${network?.addressPrefix}:${address}`;
+  return `${network.addressPrefix}:${address}`;
 };
 
 export const getNetworkIcon = (_networkPrefix: string): string => {
@@ -42,9 +42,9 @@ export const getNetworkIcon = (_networkPrefix: string): string => {
     _network => _network.addressPrefix === _networkPrefix,
   );
   if (!network) {
-    throw new Error(`No network found for networkPrefix ${_networkPrefix}`);
+    throw new Error(`No chain found for network prefix ${_networkPrefix}`);
   }
-  return network?.nativeTokenIcon;
+  return network.nativeTokenIcon;
 };
 
 export const getChainName = (_networkPrefix: string): string => {
@@ -52,7 +52,7 @@ export const getChainName = (_networkPrefix: string): string => {
     _network => _network.addressPrefix === _networkPrefix,
   );
   if (!network) {
-    throw new Error(`No network found for chainId ${_networkPrefix}`);
+    throw new Error(`No chain found for network prefix ${_networkPrefix}`);
   }
   return network.chain.name;
 };
@@ -62,7 +62,7 @@ export const getChainIdFromPrefix = (_networkPrefix: string): number => {
     _network => _network.addressPrefix === _networkPrefix,
   );
   if (!network) {
-    throw new Error(`No network found for chainId ${_networkPrefix}`);
+    throw new Error(`No chain found for network prefix ${_networkPrefix}`);
   }
   return network.chain.id;
 };
