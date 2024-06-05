@@ -4,8 +4,28 @@ import { Ref } from 'react';
 export default function ExternalLink({
   children,
   internalRef,
+  isTextLink,
   ...rest
-}: LinkProps & { internalRef?: Ref<any> }) {
+}: LinkProps & { isTextLink?: boolean; internalRef?: Ref<any> }) {
+  const textLinkStyles = {
+    hover: {
+      textDecoration: 'underline',
+    },
+    active: {},
+  };
+
+  const pillLinkStyles = {
+    hover: {
+      bg: 'celery--6',
+      borderColor: 'celery--6',
+    },
+    active: {
+      bg: 'celery--5',
+      borderColor: 'celery--5',
+      borderWidth: '1px',
+    },
+  };
+
   return (
     <Link
       color="celery-0"
@@ -14,8 +34,8 @@ export default function ExternalLink({
       borderRadius="625rem"
       borderColor="transparent"
       borderWidth="1px"
-      _hover={{ bg: 'celery--6', borderColor: 'celery--6' }}
-      _active={{ bg: 'celery--6', borderWidth: '1px', borderColor: 'celery--5' }}
+      _hover={isTextLink ? textLinkStyles.hover : pillLinkStyles.hover}
+      _active={isTextLink ? textLinkStyles.active : pillLinkStyles.active}
       target="_blank"
       rel="noreferrer"
       textDecoration="none"
