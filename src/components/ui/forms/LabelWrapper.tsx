@@ -43,11 +43,18 @@ function LabelWrapper({
         </Flex>
         {children}
         <Box
-          textStyle="helper-text"
+          textStyle="helper-text-base"
           color="neutral-7"
           mt="2"
         >
-          <Text color="red-0">{errorMessage}</Text>
+          {errorMessage && (
+            <Text
+              color="red-0"
+              mb="0.25rem"
+            >
+              {errorMessage}
+            </Text>
+          )}
           {!!subLabel && subLabel}
         </Box>
       </FormLabel>
