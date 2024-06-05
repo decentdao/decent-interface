@@ -5,12 +5,12 @@ import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
 export const useAccountFavorites = () => {
   const [favoritesList, setFavoritesList] = useState<string[]>(
-    getValue({ cacheName: CacheKeys.FAVORITES }),
+    getValue({ cacheName: CacheKeys.FAVORITES }) || [],
   );
 
   const toggleFavorite = (address: string) => {
     const normalizedAddress = getAddress(address);
-    const favorites: string[] = getValue({ cacheName: CacheKeys.FAVORITES });
+    const favorites: string[] = getValue({ cacheName: CacheKeys.FAVORITES }) || [];
     let updatedFavorites: string[] = [];
 
     if (favorites.includes(normalizedAddress)) {

@@ -1,4 +1,5 @@
 import { Address } from 'viem';
+import { AzoriusProposal } from '../../../types';
 
 export interface IStorageValue {
   // the value to store, 1 character to minimize cache size
@@ -72,6 +73,24 @@ export type CacheKeyType =
   | MasterCacheKey
   | ProposalCacheKey
   | Omit<CacheKey, 'version'>;
+
+export type CacheValue = {
+  v: any;
+  e: number;
+};
+
+type CacheKeyToValueMap = {
+  [CacheKeys.FAVORITES]: string[];
+  [CacheKeys.MASTER_COPY]: Address;
+  [CacheKeys.PROPOSAL_ARCHIVE]: AzoriusProposal;
+  [CacheKeys.AVERAGE_BLOCK_TIME]: number;
+};
+
+export type CacheValueType<T extends CacheKeyType> = T extends { cacheName: infer U }
+  ? U extends keyof CacheKeyToValueMap
+    ? CacheKeyToValueMap[U]
+    : CacheValue
+  : CacheValue;
 
 interface IndexedObject {
   [key: string]: any;
