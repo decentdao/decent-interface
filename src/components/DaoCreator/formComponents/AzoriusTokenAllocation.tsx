@@ -1,6 +1,7 @@
 import { IconButton, Box } from '@chakra-ui/react';
 import { MinusCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
@@ -25,6 +26,7 @@ export function AzoriusTokenAllocation({
   allocationLength,
 }: ITokenAllocations) {
   const { restrictChars } = useFormHelpers();
+  const { t } = useTranslation('daoCreate');
 
   return (
     <>
@@ -40,7 +42,7 @@ export function AzoriusTokenAllocation({
           )}
         </Field>
       </LabelWrapper>
-      <LabelWrapper errorMessage={amountErrorMessage}>
+      <LabelWrapper errorMessage={!amountInputValue ? t('errorNoAllocation') : amountErrorMessage}>
         <BigIntInput
           marginTop="-0.25rem" // Freaking LabelWrapper
           value={amountInputValue}
@@ -50,7 +52,7 @@ export function AzoriusTokenAllocation({
           data-testid={'tokenVoting-tokenAllocationAmountInput-' + index}
           onKeyDown={restrictChars}
           placeholder="100,000"
-          isInvalid={!!amountErrorMessage}
+          isInvalid={!!amountInputValue && !!amountErrorMessage}
         />
       </LabelWrapper>
       {allocationLength > 1 ? (
