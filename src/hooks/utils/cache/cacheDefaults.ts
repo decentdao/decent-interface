@@ -89,8 +89,8 @@ type CacheKeyToValueMap = {
 export type CacheValueType<T extends CacheKeyType> = T extends { cacheName: infer U }
   ? U extends keyof CacheKeyToValueMap
     ? CacheKeyToValueMap[U]
-    : CacheValue
-  : CacheValue;
+    : any
+  : any;
 
 interface IndexedObject {
   [key: string]: any;
