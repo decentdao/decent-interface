@@ -85,6 +85,7 @@ export function Multisig(props: ICreationStepProps) {
           <LabelComponent
             label={t('labelSigners')}
             helper={t('helperSigners')}
+            errorMessage={errors.multisig?.numOfSigners}
             isRequired
           >
             <NumberInput
