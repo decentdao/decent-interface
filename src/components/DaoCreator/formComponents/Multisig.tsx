@@ -135,6 +135,7 @@ export function Multisig(props: ICreationStepProps) {
                           {({ field }: FieldAttributes<any>) => (
                             <AddressInput
                               {...field}
+                              isInvalid={!!errorMessage}
                               data-testid={'safeConfig-signer-' + i}
                             />
                           )}

@@ -33,6 +33,7 @@ export function AzoriusTokenAllocation({
           {({ field }: FieldAttributes<any>) => (
             <AddressInput
               {...field}
+              isInvalid={!!addressErrorMessage}
               marginTop="-0.25rem" // Freaking LabelWrapper
               data-testid={'tokenVoting-tokenAllocationAddressInput-' + index}
             />
@@ -49,6 +50,7 @@ export function AzoriusTokenAllocation({
           data-testid={'tokenVoting-tokenAllocationAmountInput-' + index}
           onKeyDown={restrictChars}
           placeholder="100,000"
+          isInvalid={!!amountErrorMessage}
         />
       </LabelWrapper>
       {allocationLength > 1 ? (
