@@ -103,7 +103,8 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
 }
 
 export function InputComponent(props: InputProps) {
-  const { id, value, disabled, onChange, onBlur, placeholder, testId, maxLength, isInvalid } = props;
+  const { id, value, disabled, onChange, onBlur, placeholder, testId, maxLength, isInvalid } =
+    props;
   return (
     <LabelComponent
       {...props}
