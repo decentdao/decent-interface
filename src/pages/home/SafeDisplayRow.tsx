@@ -27,7 +27,7 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
 
   const { displayName: accountDisplayName } = useDisplayName(
     address,
-    undefined,
+    false,
     getChainIdFromPrefix(network),
   );
   const avatarURL = useAvatar(accountDisplayName);

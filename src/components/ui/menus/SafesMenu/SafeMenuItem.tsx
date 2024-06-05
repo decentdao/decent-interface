@@ -30,7 +30,7 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
 
   const { displayName: accountDisplayName } = useDisplayName(
     address,
-    undefined,
+    false,
     getChainIdFromPrefix(network),
   );
   const avatarURL = useAvatar(accountDisplayName);
