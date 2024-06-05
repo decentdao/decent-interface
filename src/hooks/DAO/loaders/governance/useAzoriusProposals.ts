@@ -179,7 +179,7 @@ export const useAzoriusProposals = () => {
         const cachedProposal = getValue({
           cacheName: CacheKeys.PROPOSAL_ARCHIVE,
           proposalId: proposalCreatedEvent.args.proposalId.toString(),
-          contractAddress: _azoriusContract.address as Address,
+          contractAddress: getAddress(_azoriusContract.address),
         }) as AzoriusProposal;
         if (cachedProposal) {
           completeProposalLoad(cachedProposal);
