@@ -1,5 +1,12 @@
 import { parseISO } from 'date-fns';
-import { CacheExpiry, IStorageValue, CacheKeyType, CURRENT_CACHE_VERSION, CacheValue, CacheValueType } from './cacheDefaults';
+import {
+  CacheExpiry,
+  IStorageValue,
+  CacheKeyType,
+  CURRENT_CACHE_VERSION,
+  CacheValue,
+  CacheValueType,
+} from './cacheDefaults';
 
 function bigintReplacer(_: any, value: any) {
   return typeof value === 'bigint'
@@ -39,7 +46,10 @@ export const setValue = (
   }
 };
 
-export const getValue = <T extends CacheKeyType>(key: T, version = CURRENT_CACHE_VERSION): CacheValueType<T> | null => {
+export const getValue = <T extends CacheKeyType>(
+  key: T,
+  version = CURRENT_CACHE_VERSION,
+): CacheValueType<T> | null => {
   if (typeof window !== 'undefined') {
     const rawVal = localStorage.getItem(JSON.stringify({ ...key, version }));
     if (rawVal) {
@@ -56,4 +66,3 @@ export const getValue = <T extends CacheKeyType>(key: T, version = CURRENT_CACHE
   }
   return null;
 };
-
