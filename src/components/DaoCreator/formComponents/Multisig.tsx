@@ -90,6 +90,7 @@ export function Multisig(props: ICreationStepProps) {
             <NumberInput
               value={values.multisig.numOfSigners}
               onChange={value => validateTotalSigners(value)}
+              isInvalid={!!errors.multisig?.numOfSigners}
             >
               <NumberInputField data-testid="safeConfig-numberOfSignerInput" />
             </NumberInput>
@@ -105,6 +106,7 @@ export function Multisig(props: ICreationStepProps) {
             <NumberInput
               value={values.multisig.signatureThreshold}
               onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
+              isInvalid={!!errors.multisig?.signatureThreshold}
             >
               <NumberInputField data-testid="safeConfig-thresholdInput" />
             </NumberInput>
