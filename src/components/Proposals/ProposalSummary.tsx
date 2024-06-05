@@ -125,6 +125,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
       variant="text"
       textStyle="body-base"
       color="celery-0"
+      _active={{ color: 'celery--2' }}
       onClick={toggleShowVotingPower}
     >
       {showVotingPower

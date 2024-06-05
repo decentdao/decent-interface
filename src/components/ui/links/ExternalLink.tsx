@@ -11,7 +11,9 @@ export default function ExternalLink({
     hover: {
       textDecoration: 'underline',
     },
-    active: {},
+    active: {
+      color: 'celery--2',
+    },
   };
 
   const pillLinkStyles = {
