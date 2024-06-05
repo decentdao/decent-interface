@@ -83,6 +83,7 @@ export default function ProposalTransaction({
           </HStack>
         }
         errorMessage={transaction.targetAddress && txAddressError ? txAddressError : undefined}
+        isInvalid={!!txAddressError}
         value={transaction.targetAddress}
         testId="transaction.targetAddress"
         onChange={e =>
@@ -125,6 +126,7 @@ export default function ProposalTransaction({
             </HStack>
           }
           errorMessage={transaction.functionName && txFunctionError ? txFunctionError : undefined}
+          isInvalid={!!txFunctionError}
           testId="transaction.functionName"
         />
       </Box>
