@@ -85,7 +85,10 @@ function AddSignerModal({
                     subLabel={t('addSignerSublabel', { ns: 'modals' })}
                     errorMessage={field.value && errors.address}
                   >
-                    <AddressInput {...field} />
+                    <AddressInput
+                      {...field}
+                      isInvalid={!!field.value && !!errors.address}
+                    />
                   </LabelWrapper>
                 )}
               </Field>
