@@ -4,14 +4,21 @@ import { setValue, getValue } from '../hooks/utils/cache/useLocalStorage';
 import { Providers } from '../types/network';
 
 export const getAverageBlockTime = async (provider: Providers) => {
-  let averageBlockTime = getValue({ cacheName: CacheKeys.AVERAGE_BLOCK_TIME });
+  let averageBlockTime = getValue({
+    cacheName: CacheKeys.AVERAGE_BLOCK_TIME,
+    chainId: provider.network.chainId,
+  });
   if (averageBlockTime) {
     return averageBlockTime;
   }
   const latestBlock = await provider.getBlock('latest');
   const pastBlock = await provider.getBlock(latestBlock.number - 1000);
   averageBlockTime = (latestBlock.timestamp - pastBlock.timestamp) / 1000;
-  setValue({ cacheName: CacheKeys.AVERAGE_BLOCK_TIME }, averageBlockTime, CacheExpiry.ONE_DAY);
+  setValue(
+    { cacheName: CacheKeys.AVERAGE_BLOCK_TIME, chainId: provider.network.chainId },
+    averageBlockTime,
+    CacheExpiry.ONE_DAY,
+  );
   return averageBlockTime;
 };
 

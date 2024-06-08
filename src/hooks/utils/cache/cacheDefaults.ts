@@ -68,10 +68,16 @@ export interface ProposalCacheKey extends CacheKey {
   contractAddress: Address;
 }
 
+export interface AverageBlockTimeCacheKey extends CacheKey {
+  cacheName: CacheKeys.AVERAGE_BLOCK_TIME;
+  chainId: number;
+}
+
 export type CacheKeyType =
   | FavoritesCacheKey
   | MasterCacheKey
   | ProposalCacheKey
+  | AverageBlockTimeCacheKey
   | Omit<CacheKey, 'version'>;
 
 export type CacheValue = {
@@ -96,12 +102,16 @@ interface IndexedObject {
   [key: string]: any;
 }
 
-export const CURRENT_CACHE_VERSION = 1;
+export const MASTER_CACHE_VERSION = 1;
+export const FAVORITES_CACHE_VERSION = 1;
+export const PROPOSAL_CACHE_VERSION = 1;
+export const AVERAGE_BLOCK_TIME_CACHE_VERSION = 1;
 
 /**
  * Cache default values.
- *
+ * 
  * Cache keys are not required to have a default value.
+ * @todo: The CACHE_DEFAULTs seem to be used for indexDB, But favorites is localstorage. We will need to revisit this.
  */
 export const CACHE_DEFAULTS: IndexedObject = {
   [CacheKeys.FAVORITES.toString()]: Array<string>(),
