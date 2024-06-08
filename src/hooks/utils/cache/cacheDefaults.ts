@@ -107,9 +107,24 @@ export const FAVORITES_CACHE_VERSION = 1;
 export const PROPOSAL_CACHE_VERSION = 1;
 export const AVERAGE_BLOCK_TIME_CACHE_VERSION = 1;
 
+export const getCacheVersion = (cacheName: CacheKeys): number => {
+  switch (cacheName) {
+    case CacheKeys.FAVORITES:
+      return FAVORITES_CACHE_VERSION;
+    case CacheKeys.MASTER_COPY:
+      return MASTER_CACHE_VERSION;
+    case CacheKeys.PROPOSAL_ARCHIVE:
+      return PROPOSAL_CACHE_VERSION;
+    case CacheKeys.AVERAGE_BLOCK_TIME:
+      return AVERAGE_BLOCK_TIME_CACHE_VERSION;
+    default:
+      throw new Error('Invalid cache name');
+  }
+};
+
 /**
  * Cache default values.
- * 
+ *
  * Cache keys are not required to have a default value.
  * @todo: The CACHE_DEFAULTs seem to be used for indexDB, But favorites is localstorage. We will need to revisit this.
  */
