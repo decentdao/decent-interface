@@ -1,8 +1,11 @@
-export function scrollToBottom(delay: number = 100) {
+export function scrollToBottom(
+  delay: number = 100,
+  behavior: 'smooth' | 'instant' | 'auto' = 'smooth',
+) {
   setTimeout(() => {
     window.scrollTo({
       top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
+      behavior,
     });
   }, delay);
 }

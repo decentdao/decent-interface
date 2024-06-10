@@ -44,7 +44,7 @@ export default function ProposalTransactionsForm(props: ProposalTransactionsForm
         onClick={() => {
           setFieldValue('transactions', [...transactions, DEFAULT_PROPOSAL_TRANSACTION]);
           setExpandedIndecies([transactions.length]);
-          scrollToBottom();
+          scrollToBottom(100, 'smooth');
         }}
         isDisabled={pendingTransaction}
         icon={Plus}

@@ -389,7 +389,7 @@ export default function ProposalTransaction({
                           DEFAULT_PROPOSAL_TRANSACTION,
                         ]);
                         setExpandedIndecies([transaction.parameters.length]);
-                        scrollToBottom();
+                        scrollToBottom(100, 'smooth');
                       }}
                       icon={Plus}
                       text={t('addParameter')}
