@@ -15,7 +15,7 @@ export function FavoriteIcon({ safeAddress, ...rest }: Props) {
   const { addressPrefix } = useNetworkConfig();
   const isFavorite = useMemo(
     () =>
-      !!safeAddress ? favoritesList.includes(addressPrefix + ':' + getAddress(safeAddress)) : false,
+      !!safeAddress ? favoritesList.includes(`${addressPrefix}:${getAddress(safeAddress)}`) : false,
     [favoritesList, safeAddress, addressPrefix],
   );
   const { t } = useTranslation();
