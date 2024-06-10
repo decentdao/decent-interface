@@ -119,7 +119,7 @@ export function Transactions({ shownTransactions }: { shownTransactions: number 
   } = useFractal();
 
   const displayData: TransferDisplayData[] = useFormatTransfers(
-    transfers ? transfers.results : [],
+    transfers && transfers.results ? transfers.results : [],
     daoAddress!,
   );
 

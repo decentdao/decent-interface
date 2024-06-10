@@ -14,6 +14,23 @@ export interface TokenEvent extends ContractEvent {
   eventType: TokenEventType;
 }
 
+export type TokenBalance = {
+  tokenAddress: string;
+  symbol: string;
+  name: string;
+  logo?: string;
+  thumbnail?: string;
+  decimals?: string;
+  balance: string;
+  possibleSpam?: string | boolean; // Empty string means false lol, but still that's a string
+  verifiedContract: boolean;
+  balanceFormatted: string; // Balance formatted to decimals
+  usdPrice: number;
+  usdValue: number;
+  nativeToken: boolean;
+  portfolioPercentage: number;
+};
+
 export interface TokenDepositEvent extends TokenEvent, EthAddress {
   amount: bigint;
 }
@@ -40,7 +57,7 @@ export type Transaction =
 
 export interface ITreasury {
   transactions: Transaction[];
-  assetsFungible: any[];
+  assetsFungible: TokenBalance[];
   assetsNonFungible: any[];
   transfers?: TransferListResponse;
   treasuryIsLoading: boolean;

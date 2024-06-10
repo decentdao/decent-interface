@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
+import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -13,6 +14,7 @@ export const useFractalTreasury = () => {
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
+  const getBalances = useBalancesAPI();
 
   const { chain } = useNetworkConfig();
 
@@ -23,14 +25,18 @@ export const useFractalTreasury = () => {
       return;
     }
 
-    // @todo - fetch assetsFungible, assetsNonFungible and transfers here
+    // @todo - fetch assetsNonFungible here
+    const [transfers, balances] = await Promise.all([
+      safeAPI.getAllTransactions(daoAddress),
+      getBalances(daoAddress),
+    ]);
     const treasuryData = {
-      assetsFungible: [],
+      assetsFungible: balances.tokens,
       assetsNonFungible: [],
-      transfers: [],
+      transfers,
     };
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData as any });
-  }, [daoAddress, safeAPI, action]);
+  }, [daoAddress, safeAPI, action, getBalances]);
 
   useEffect(() => {
     if (daoAddress && chain.id + daoAddress !== loadKey.current) {
