@@ -24,7 +24,7 @@ export const safeData = async (
   daoData: SafeMultisigDAO,
   saltNum: bigint,
   fallbackHandler: string,
-  hasAzorius?: boolean,
+  hasAzorius: boolean,
 ) => {
   const signers = hasAzorius
     ? [multiSendCallOnlyAddress]

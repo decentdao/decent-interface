@@ -1,5 +1,4 @@
 import {
-  AzoriusFreezeGuard__factory,
   ERC20FreezeVoting__factory,
   MultisigFreezeGuard__factory,
   MultisigFreezeVoting__factory,
@@ -17,7 +16,6 @@ export default function useSafeContracts() {
   const {
     contracts: {
       multisigFreezeGuardMasterCopy,
-      azoriusFreezeGuardMasterCopy,
       multisigFreezeVotingMasterCopy,
       erc20FreezeVotingMasterCopy,
       erc721FreezeVotingMasterCopy,
@@ -35,11 +33,6 @@ export default function useSafeContracts() {
         signerOrProvider,
       ),
       asProvider: MultisigFreezeGuard__factory.connect(multisigFreezeGuardMasterCopy, provider),
-    };
-
-    const azoriusFreezeGuardMasterCopyContract = {
-      asSigner: AzoriusFreezeGuard__factory.connect(azoriusFreezeGuardMasterCopy, signerOrProvider),
-      asProvider: AzoriusFreezeGuard__factory.connect(azoriusFreezeGuardMasterCopy, provider),
     };
 
     const freezeMultisigVotingMasterCopyContract = {
@@ -62,14 +55,12 @@ export default function useSafeContracts() {
 
     return {
       multisigFreezeGuardMasterCopyContract,
-      azoriusFreezeGuardMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
       freezeERC721VotingMasterCopyContract,
     };
   }, [
     multisigFreezeGuardMasterCopy,
-    azoriusFreezeGuardMasterCopy,
     multisigFreezeVotingMasterCopy,
     erc20FreezeVotingMasterCopy,
     erc721FreezeVotingMasterCopy,

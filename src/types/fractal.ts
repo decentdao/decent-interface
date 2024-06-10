@@ -1,5 +1,4 @@
 import {
-  AzoriusFreezeGuard,
   ERC20FreezeVoting,
   MultisigFreezeVoting,
   MultisigFreezeGuard,
@@ -313,7 +312,6 @@ export interface NodeHierarchy {
 
 export interface FractalContracts {
   multisigFreezeGuardMasterCopyContract: ContractConnection<MultisigFreezeGuard>;
-  azoriusFreezeGuardMasterCopyContract: ContractConnection<AzoriusFreezeGuard>;
   freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
   freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   freezeERC721VotingMasterCopyContract: ContractConnection<ERC721FreezeVoting>;
