@@ -15,7 +15,7 @@ export function Multisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
   const { t } = useTranslation('daoCreate');
 
-  useStepRedirect({ values, mode });
+  useStepRedirect({ values });
 
   const truncateSignersList = (safeAddresses: string[], numOfSigners: number) => {
     const difference = safeAddresses.length - numOfSigners;

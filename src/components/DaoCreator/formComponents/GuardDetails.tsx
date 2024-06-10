@@ -115,7 +115,7 @@ function GuardDetails(props: ICreationStepProps) {
     azoriusGovernance,
   ]);
 
-  useStepRedirect({ values, mode });
+  useStepRedirect({ values });
 
   const freezeHelper = totalParentVotes
     ? t('helperFreezeVotesThreshold', { totalVotes: formatBigIntDisplay(totalParentVotes) })

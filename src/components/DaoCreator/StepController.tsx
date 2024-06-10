@@ -19,9 +19,9 @@ function StepController(props: ICreationStepProps) {
   const location = useLocation();
   const step = location.pathname.split('/').pop();
 
-  const { values, setFieldValue, mode } = props;
+  const { values, setFieldValue } = props;
 
-  const { redirectToInitialStep } = useStepRedirect({ values, mode, redirectOnMount: false });
+  const { redirectToInitialStep } = useStepRedirect({ values, redirectOnMount: false });
 
   useEffect(() => {
     const steps = Object.values(CreatorSteps);

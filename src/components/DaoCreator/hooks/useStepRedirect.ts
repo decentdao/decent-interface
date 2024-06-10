@@ -1,14 +1,12 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { CreatorFormState, CreatorSteps } from '../../../types';
-import { DAOCreateMode } from '../formComponents/EstablishEssentials';
 
 export default function useStepRedirect({
   values,
   redirectOnMount = true,
 }: {
   values: CreatorFormState;
-  mode: DAOCreateMode;
   redirectOnMount?: boolean;
 }) {
   const navigate = useNavigate();
@@ -16,6 +14,7 @@ export default function useStepRedirect({
 
   const redirectToInitialStep = useCallback(() => {
     const step = location.pathname.split('/').pop();
+    // @dev In fact, step can't be `undefined` here cause it will be redirected by logic in routes definition
     const redirectPath = `${location.pathname.replace(`${step}`, CreatorSteps.ESSENTIALS)}${location.search}`;
     navigate(redirectPath, { replace: true });
   }, [navigate, location]);

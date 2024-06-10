@@ -37,7 +37,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
     }
   }, [setFieldValue, safe, showCustomNonce, mode]);
 
-  useStepRedirect({ values, mode });
+  useStepRedirect({ values });
 
   return (
     <>
