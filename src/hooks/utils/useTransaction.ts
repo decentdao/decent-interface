@@ -42,6 +42,7 @@ const useTransaction = () => {
         .then(([txReceipt, toastID]) => {
           toast.dismiss(toastID);
           if (txReceipt.status === 0) {
+            console.log("🚀 ~ txReceipt:", txReceipt)
             toast.error(params.failedMessage);
             if (params.failedCallback) params.failedCallback();
           } else if (txReceipt.status === 1) {
@@ -61,10 +62,14 @@ const useTransaction = () => {
           }, 2000);
         })
         .catch((error: ProviderRpcError) => {
+          console.log("🚀 ~ error:", error)
           logError(error);
           toast.dismiss(toastId);
           setPending(false);
-
+          if (error.code === 32000) {
+            toast.error(t('errorInsufficientFunds'));
+            return;
+          }
           if (error.code === 4001) {
             toast.error(t('errorUserDeniedTransaction'));
             return;
