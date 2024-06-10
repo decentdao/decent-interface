@@ -2,7 +2,7 @@ import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
-import { BASE_ROUTES } from './constants/routes';
+import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
 import DaoCreatePage from './pages/create';
@@ -57,12 +57,20 @@ export const router = (addressPrefix: string) =>
               element: <ModifyGovernancePage />,
             },
             {
+              path: 'edit/governance',
+              loader: () => redirect(DAO_ROUTES.modifyGovernance.path),
+            },
+            {
               path: 'hierarchy',
               element: <HierarchyPage />,
             },
             {
               path: 'new/:step',
               element: <SubDaoCreate />,
+            },
+            {
+              path: 'new',
+              loader: () => redirect(DAO_ROUTES.newSubDao.path),
             },
             {
               path: 'proposal-templates',
@@ -74,6 +82,10 @@ export const router = (addressPrefix: string) =>
                 {
                   path: 'new/:step',
                   element: <CreateProposalTemplatePage />,
+                },
+                {
+                  path: 'new',
+                  loader: () => redirect(DAO_ROUTES.proposalTemplateNew.path),
                 },
               ],
             },
@@ -91,6 +103,10 @@ export const router = (addressPrefix: string) =>
                 {
                   path: 'new/:step',
                   element: <ProposalCreatePage />,
+                },
+                {
+                  path: 'new',
+                  loader: () => redirect(DAO_ROUTES.proposalNew.path),
                 },
               ],
             },
