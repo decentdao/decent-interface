@@ -102,10 +102,10 @@ interface IndexedObject {
   [key: string]: any;
 }
 
-export const MASTER_COPY_CACHE_VERSION = 1;
-export const FAVORITES_CACHE_VERSION = 1;
-export const PROPOSAL_CACHE_VERSION = 1;
-export const AVERAGE_BLOCK_TIME_CACHE_VERSION = 1;
+const MASTER_COPY_CACHE_VERSION = 1;
+const FAVORITES_CACHE_VERSION = 1;
+const PROPOSAL_CACHE_VERSION = 1;
+const AVERAGE_BLOCK_TIME_CACHE_VERSION = 1;
 
 export const getCacheVersion = (cacheName: CacheKeys): number => {
   switch (cacheName) {
