@@ -62,7 +62,6 @@ const useTransaction = () => {
           }, 2000);
         })
         .catch((error: ProviderRpcError) => {
-          console.log("🚀 ~ error:", error)
           logError(error);
           toast.dismiss(toastId);
           setPending(false);
