@@ -99,43 +99,43 @@ export function AzoriusTokenAllocations(props: ICreationStepProps) {
                   borderBottom="none"
                   my="1.5rem"
                 >
-                  {({ isExpanded }) => (
-                    <>
-                      <AccordionButton
-                        p={0}
-                        textStyle="display-lg"
-                        color="lilac-0"
-                      >
-                        {isExpanded ? <CaretDown /> : <CaretRight />}
-                        {t('advanced', { ns: 'common' })}
-                      </AccordionButton>
-                      <AccordionPanel p={0}>
-                        <LabelComponent
-                          label={t('labelParentAllocation')}
-                          helper={t('helperParentAllocation')}
-                          isRequired={false}
+                  {({ isExpanded }) => {
+                    const allocationErrorMessage = (
+                      values.erc20Token.parentAllocationAmount?.bigintValue &&
+                      (errors.erc20Token?.parentAllocationAmount as any)
+                    )?.value;
+
+                    return (
+                      <>
+                        <AccordionButton
+                          p={0}
+                          textStyle="display-lg"
+                          color="lilac-0"
                         >
-                          <LabelWrapper
-                            errorMessage={
-                              (
-                                values.erc20Token.parentAllocationAmount?.bigintValue &&
-                                (errors.erc20Token?.parentAllocationAmount as any)
-                              )?.value
-                            }
+                          {isExpanded ? <CaretDown /> : <CaretRight />}
+                          {t('advanced', { ns: 'common' })}
+                        </AccordionButton>
+                        <AccordionPanel p={0}>
+                          <LabelComponent
+                            label={t('labelParentAllocation')}
+                            helper={t('helperParentAllocation')}
+                            isRequired={false}
                           >
-                            <BigIntInput
-                              data-testid="tokenVoting-parentTokenAllocationInput"
-                              value={values.erc20Token.parentAllocationAmount?.bigintValue}
-                              onChange={valuePair =>
-                                setFieldValue('erc20Token.parentAllocationAmount', valuePair)
-                              }
-                              isInvalid={false}
-                            />
-                          </LabelWrapper>
-                        </LabelComponent>
-                      </AccordionPanel>
-                    </>
-                  )}
+                            <LabelWrapper errorMessage={allocationErrorMessage}>
+                              <BigIntInput
+                                data-testid="tokenVoting-parentTokenAllocationInput"
+                                value={values.erc20Token.parentAllocationAmount?.bigintValue}
+                                onChange={valuePair =>
+                                  setFieldValue('erc20Token.parentAllocationAmount', valuePair)
+                                }
+                                isInvalid={!!allocationErrorMessage}
+                              />
+                            </LabelWrapper>
+                          </LabelComponent>
+                        </AccordionPanel>
+                      </>
+                    );
+                  }}
                 </AccordionItem>
               </Accordion>
             )}

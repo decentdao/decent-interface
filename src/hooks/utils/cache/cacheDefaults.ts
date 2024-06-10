@@ -23,6 +23,7 @@ export enum CacheExpiry {
  * cache key here.
  */
 export enum CacheKeys {
+  PROPOSAL_PREFIX = 'proposal',
   FAVORITES = 'favorites',
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',

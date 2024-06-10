@@ -6,7 +6,6 @@ import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FractalContracts } from '../../types';
 import { createAccountSubstring } from '../utils/useDisplayName';
-import { demoData } from './loaders/loadDemoData';
 
 const getDAOName = async ({
   address,
@@ -49,13 +48,6 @@ const getDAOName = async ({
 
   if (latestEvent) {
     return latestEvent.args.daoName;
-  }
-
-  if (publicClient.chain) {
-    const demo = demoData[publicClient.chain.id][address];
-    if (demo && demo.name) {
-      return demo.name;
-    }
   }
 
   return createAccountSubstring(address);

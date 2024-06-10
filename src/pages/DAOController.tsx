@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import useDAOController from '../hooks/DAO/useDAOController';
+import { useUpdateSafeData } from '../hooks/utils/useUpdateSafeData';
 import { useFractal } from '../providers/App/AppProvider';
 import LoadingProblem from './LoadingProblem';
 
 export default function DAOController() {
   const { errorLoading, wrongNetwork, invalidQuery } = useDAOController();
+  useUpdateSafeData();
   const {
     node: { daoName },
   } = useFractal();

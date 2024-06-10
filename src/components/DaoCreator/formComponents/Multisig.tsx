@@ -88,11 +88,13 @@ export function Multisig(props: ICreationStepProps) {
           <LabelComponent
             label={t('labelSigners')}
             helper={t('helperSigners')}
+            errorMessage={errors.multisig?.numOfSigners}
             isRequired
           >
             <NumberInput
               value={values.multisig.numOfSigners}
               onChange={value => validateTotalSigners(value)}
+              isInvalid={!!errors.multisig?.numOfSigners}
             >
               <NumberInputField data-testid="safeConfig-numberOfSignerInput" />
             </NumberInput>
@@ -108,6 +110,7 @@ export function Multisig(props: ICreationStepProps) {
             <NumberInput
               value={values.multisig.signatureThreshold}
               onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
+              isInvalid={!!errors.multisig?.signatureThreshold}
             >
               <NumberInputField data-testid="safeConfig-thresholdInput" />
             </NumberInput>
@@ -138,6 +141,7 @@ export function Multisig(props: ICreationStepProps) {
                           {({ field }: FieldAttributes<any>) => (
                             <AddressInput
                               {...field}
+                              isInvalid={!!errorMessage}
                               data-testid={'safeConfig-signer-' + i}
                             />
                           )}

@@ -46,7 +46,7 @@ function GuardDetails(props: ICreationStepProps) {
 
   useEffect(() => {
     if (showCustomNonce === undefined && !dao?.isAzorius && isSubDAO && safe) {
-      setFieldValue('multisig.customNonce', safe.nonce);
+      setFieldValue('multisig.customNonce', safe.nextNonce);
       setShowCustomNonce(true);
     }
   }, [isSubDAO, azoriusContractAddress, type, setFieldValue, safe, dao, showCustomNonce]);

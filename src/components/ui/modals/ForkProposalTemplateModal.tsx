@@ -108,6 +108,7 @@ export default function ForkProposalTemplateModal({
         label={t('targetDAOAddressLabel')}
         helper={t('targetDAOAddressHelper')}
         errorMessage={error}
+        isInvalid={!!error}
         helperSlot="end"
         gridContainerProps={{
           display: 'inline-flex',

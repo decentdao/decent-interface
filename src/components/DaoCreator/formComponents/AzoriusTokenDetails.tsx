@@ -107,6 +107,11 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     updateImportFields();
   }, [updateImportFields]);
 
+  const tokenImportAddressErrorMessage =
+    values.erc20Token.tokenImportAddress && errors?.erc20Token?.tokenImportAddress
+      ? errors.erc20Token.tokenImportAddress
+      : undefined;
+
   return (
     <>
       <StepWrapper
@@ -162,18 +167,13 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
               />
               {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
                 <>
-                  <LabelWrapper
-                    errorMessage={
-                      values.erc20Token.tokenImportAddress && errors?.erc20Token?.tokenImportAddress
-                        ? errors.erc20Token.tokenImportAddress
-                        : undefined
-                    }
-                  >
+                  <LabelWrapper errorMessage={tokenImportAddressErrorMessage}>
                     <Input
                       name="erc20Token.tokenImportAddress"
                       onChange={handleChange}
                       value={values.erc20Token.tokenImportAddress}
                       placeholder={createAccountSubstring(zeroAddress)}
+                      isInvalid={!!tokenImportAddressErrorMessage}
                       isRequired
                     />
                   </LabelWrapper>

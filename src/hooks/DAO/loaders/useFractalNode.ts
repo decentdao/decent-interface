@@ -9,7 +9,6 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useGetDAONameDeferred } from '../useGetDAOName';
-import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
 const ONE_MINUTE = 60 * 1000;
@@ -34,34 +33,29 @@ export const useFractalNode = (
 
   const lookupModules = useFractalModules();
 
-  const networkConfig = useNetworkConfig();
-
-  const formatDAOQuery = useCallback(
-    (result: { data?: DAOQueryQuery }, _daoAddress: string) => {
-      const demo = loadDemoData(networkConfig.chain, getAddress(_daoAddress), result);
-      if (!demo.data) {
-        return;
-      }
-      const { daos } = demo.data;
-      const dao = daos[0];
-      if (dao) {
-        const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
-        const currentNode: Node = {
-          nodeHierarchy: {
-            parentAddress,
-            childNodes: mapChildNodes(dao as DAO),
-          },
-          daoName: name as string,
-          daoAddress: getAddress(_daoAddress),
-          daoSnapshotENS: snapshotENS as string,
-          proposalTemplatesHash: proposalTemplatesHash as string,
-        };
-        return currentNode;
-      }
+  const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
+    if (!result.data) {
       return;
-    },
-    [networkConfig.chain],
-  );
+    }
+    const { daos } = result.data;
+    const dao = daos[0];
+    if (dao) {
+      const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
+
+      const currentNode: Node = {
+        nodeHierarchy: {
+          parentAddress,
+          childNodes: mapChildNodes(dao as DAO),
+        },
+        daoName: name as string,
+        daoAddress: getAddress(_daoAddress),
+        daoSnapshotENS: snapshotENS as string,
+        proposalTemplatesHash: proposalTemplatesHash as string,
+      };
+      return currentNode;
+    }
+    return;
+  }, []);
 
   const { subgraph } = useNetworkConfig();
 

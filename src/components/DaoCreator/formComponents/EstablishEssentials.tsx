@@ -169,6 +169,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
               isDisabled={snapshotENSDisabled}
               data-testid="essentials-snapshotENS"
               placeholder="example.eth"
+              isInvalid={!!errors?.essentials?.snapshotENS}
             />
           </LabelWrapper>
         </LabelComponent>

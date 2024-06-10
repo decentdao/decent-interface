@@ -46,6 +46,12 @@ export const encodeFunction = (
     } else if (param.endsWith(')')) {
       (parametersFixed!![tupleIndex!] as string[]).push(param.replace(')', ''));
       tupleIndex = undefined;
+    } else if (
+      (param.startsWith('"') && param.endsWith('"')) ||
+      (param.startsWith("'") && param.endsWith("'"))
+    ) {
+      // Only remove outer quotes if the entire string is quoted
+      return parametersFixed!!.push(param.substring(1, param.length - 1));
     } else {
       parametersFixed!!.push(param);
     }
