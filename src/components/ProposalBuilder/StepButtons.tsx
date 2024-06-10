@@ -3,10 +3,8 @@ import { CaretRight, CaretLeft } from '@phosphor-icons/react';
 import { FormikProps } from 'formik';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
-import { DAO_ROUTES } from '../../constants/routes';
+import { useNavigate, Routes, Route, useLocation } from 'react-router-dom';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { CreateProposalSteps } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 
@@ -31,15 +29,13 @@ function StateButtonsContainer({ children }: { children: ReactNode }) {
   );
 }
 export default function StateButtons(props: StateButtonsProps) {
-  const { addressPrefix } = useNetworkConfig();
   const {
     node: { daoAddress },
   } = useFractal();
-  const { step } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const {
     pendingTransaction,
-    mode,
     errors: {
       transactions: transactionsError,
       nonce: nonceError,
@@ -54,55 +50,59 @@ export default function StateButtons(props: StateButtonsProps) {
     return null;
   }
 
-  const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
-  const metadataRoute = isProposalMode ? DAO_ROUTES.proposalNew : DAO_ROUTES.proposalTemplateNew;
-  const transactionsRoute = isProposalMode
-    ? DAO_ROUTES.proposalNewTransactions
-    : DAO_ROUTES.proposalTemplateNewTransactions;
+  const prevStepUrl = `${location.pathname.replace(`${CreateProposalSteps.TRANSACTIONS}`, `${CreateProposalSteps.METADATA}`)}${location.search}`;
+  const nextStepUrl = `${location.pathname.replace(`${CreateProposalSteps.METADATA}`, `${CreateProposalSteps.TRANSACTIONS}`)}${location.search}`;
 
-  if (step === CreateProposalSteps.METADATA) {
-    return (
-      <StateButtonsContainer>
-        <Button
-          onClick={() => {
-            navigate(transactionsRoute.relative(addressPrefix, daoAddress));
-          }}
-          isDisabled={!!proposalMetadataError || !proposalMetadata.title}
-          px="2rem"
-        >
-          {t('next', { ns: 'common' })}
-          <CaretRight />
-        </Button>
-      </StateButtonsContainer>
-    );
-  }
   return (
     <StateButtonsContainer>
-      <Button
-        px="2rem"
-        variant="text"
-        color="lilac-0"
-        onClick={() => {
-          navigate(metadataRoute.relative(addressPrefix, daoAddress));
-        }}
-      >
-        <Icon
-          bg="transparent"
-          aria-label="Back"
-          as={CaretLeft}
-          color="lilac-0"
+      <Routes>
+        <Route
+          path={CreateProposalSteps.METADATA}
+          element={
+            <Button
+              onClick={() => navigate(nextStepUrl)}
+              isDisabled={!!proposalMetadataError || !proposalMetadata.title}
+              px="2rem"
+            >
+              {t('next', { ns: 'common' })}
+              <CaretRight />
+            </Button>
+          }
         />
-        {t('back', { ns: 'common' })}
-      </Button>
-      <Button
-        px="2rem"
-        type="submit"
-        isDisabled={
-          !canUserCreateProposal || !!transactionsError || !!nonceError || pendingTransaction
-        }
-      >
-        {t('createProposal', { ns: 'proposal' })}
-      </Button>
+        <Route
+          path={CreateProposalSteps.TRANSACTIONS}
+          element={
+            <>
+              <Button
+                px="2rem"
+                variant="text"
+                color="lilac-0"
+                onClick={() => navigate(prevStepUrl)}
+              >
+                <Icon
+                  bg="transparent"
+                  aria-label="Back"
+                  as={CaretLeft}
+                  color="lilac-0"
+                />
+                {t('back', { ns: 'common' })}
+              </Button>
+              <Button
+                px="2rem"
+                type="submit"
+                isDisabled={
+                  !canUserCreateProposal ||
+                  !!transactionsError ||
+                  !!nonceError ||
+                  pendingTransaction
+                }
+              >
+                {t('createProposal', { ns: 'proposal' })}
+              </Button>
+            </>
+          }
+        />
+      </Routes>
     </StateButtonsContainer>
   );
 }

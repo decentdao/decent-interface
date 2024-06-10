@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, Routes, Route, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { ICreationStepProps, CreatorSteps, GovernanceType } from '../../types';
@@ -16,7 +16,8 @@ function StepController(props: ICreationStepProps) {
   const { t } = useTranslation('daoCreate');
   const { createOptions } = useNetworkConfig();
   const navigate = useNavigate();
-  const { step } = useParams();
+  const location = useLocation();
+  const step = location.pathname.split('/').pop();
 
   const { values, setFieldValue, mode } = props;
 
@@ -45,31 +46,34 @@ function StepController(props: ICreationStepProps) {
     redirectToInitialStep,
   ]);
 
-  let CurrentStepComponent;
-  switch (step) {
-    case CreatorSteps.ESSENTIALS:
-      CurrentStepComponent = EstablishEssentials;
-      break;
-    case CreatorSteps.MULTISIG_DETAILS:
-      CurrentStepComponent = Multisig;
-      break;
-    case CreatorSteps.AZORIUS_DETAILS:
-      CurrentStepComponent = AzoriusGovernance;
-      break;
-    case CreatorSteps.ERC20_DETAILS:
-      CurrentStepComponent = AzoriusTokenDetails;
-      break;
-    case CreatorSteps.ERC721_DETAILS:
-      CurrentStepComponent = AzoriusNFTDetails;
-      break;
-    case CreatorSteps.FREEZE_DETAILS:
-      CurrentStepComponent = GuardDetails;
-      break;
-    default:
-      return null;
-  }
-
-  return <CurrentStepComponent {...props} />;
+  return (
+    <Routes>
+      <Route
+        path={CreatorSteps.ESSENTIALS}
+        element={<EstablishEssentials {...props} />}
+      />
+      <Route
+        path={CreatorSteps.MULTISIG_DETAILS}
+        element={<Multisig {...props} />}
+      />
+      <Route
+        path={CreatorSteps.AZORIUS_DETAILS}
+        element={<AzoriusGovernance {...props} />}
+      />
+      <Route
+        path={CreatorSteps.ERC20_DETAILS}
+        element={<AzoriusTokenDetails {...props} />}
+      />
+      <Route
+        path={CreatorSteps.ERC721_DETAILS}
+        element={<AzoriusNFTDetails {...props} />}
+      />
+      <Route
+        path={CreatorSteps.FREEZE_DETAILS}
+        element={<GuardDetails {...props} />}
+      />
+    </Routes>
+  );
 }
 
 export default StepController;

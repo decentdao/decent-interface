@@ -37,7 +37,7 @@ export const router = (addressPrefix: string) =>
           element: <HomePage />,
         },
         {
-          path: 'create/:step',
+          path: 'create/*',
           element: <DaoCreatePage />,
         },
         {
@@ -53,7 +53,7 @@ export const router = (addressPrefix: string) =>
               element: <DaoDashboardPage />,
             },
             {
-              path: 'edit/governance/:step',
+              path: 'edit/governance/*',
               element: <ModifyGovernancePage />,
             },
             {
@@ -65,7 +65,7 @@ export const router = (addressPrefix: string) =>
               element: <HierarchyPage />,
             },
             {
-              path: 'new/:step',
+              path: 'new/*',
               element: <SubDaoCreate />,
             },
             {
@@ -80,7 +80,7 @@ export const router = (addressPrefix: string) =>
                   element: <ProposalTemplatesPage />,
                 },
                 {
-                  path: 'new/:step',
+                  path: 'new/*',
                   element: <CreateProposalTemplatePage />,
                 },
                 {
@@ -101,7 +101,7 @@ export const router = (addressPrefix: string) =>
                   element: <ProposalDetailsPage />,
                 },
                 {
-                  path: 'new/:step',
+                  path: 'new/*',
                   element: <ProposalCreatePage />,
                 },
                 {

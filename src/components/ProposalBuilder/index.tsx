@@ -3,7 +3,7 @@ import { Trash } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { DAO_ROUTES, BASE_ROUTES } from '../../constants/routes';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
@@ -31,10 +31,11 @@ export function ProposalBuilder({
   initialValues,
   prepareProposalData,
 }: ProposalBuilderProps) {
-  const { step } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
 
+  const step = location.pathname.split('/').pop();
   const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
 
   const {
@@ -161,37 +162,50 @@ export function ProposalBuilder({
                       rounded="lg"
                       bg="neutral-2"
                     >
-                      {step === CreateProposalSteps.METADATA ? (
-                        <ProposalMetadata
-                          mode={mode}
-                          {...formikProps}
+                      <Routes>
+                        <Route
+                          path={CreateProposalSteps.METADATA}
+                          element={
+                            <ProposalMetadata
+                              mode={mode}
+                              {...formikProps}
+                            />
+                          }
                         />
-                      ) : (
-                        <ProposalTransactionsForm
-                          pendingTransaction={pendingCreateTx}
-                          safeNonce={safe?.nonce}
-                          mode={mode}
-                          {...formikProps}
+                        <Route
+                          path={CreateProposalSteps.TRANSACTIONS}
+                          element={
+                            <>
+                              <ProposalTransactionsForm
+                                pendingTransaction={pendingCreateTx}
+                                safeNonce={safe?.nonce}
+                                mode={mode}
+                                {...formikProps}
+                              />
+                              {!dao?.isAzorius && (
+                                <Flex
+                                  alignItems="center"
+                                  justifyContent="space-between"
+                                  marginBottom="2rem"
+                                  rounded="lg"
+                                  p="1.5rem"
+                                  bg="neutral-2"
+                                >
+                                  <CustomNonceInput
+                                    nonce={formikProps.values.nonce}
+                                    onChange={newNonce =>
+                                      formikProps.setFieldValue('nonce', newNonce)
+                                    }
+                                    align="end"
+                                    renderTrimmed={false}
+                                  />
+                                </Flex>
+                              )}
+                            </>
+                          }
                         />
-                      )}
+                      </Routes>
                     </Box>
-                    {step === CreateProposalSteps.TRANSACTIONS && !dao?.isAzorius && (
-                      <Flex
-                        alignItems="center"
-                        justifyContent="space-between"
-                        marginBottom="2rem"
-                        rounded="lg"
-                        p="1.5rem"
-                        bg="neutral-2"
-                      >
-                        <CustomNonceInput
-                          nonce={formikProps.values.nonce}
-                          onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-                          align="end"
-                          renderTrimmed={false}
-                        />
-                      </Flex>
-                    )}
                     <StepButtons
                       {...formikProps}
                       mode={mode}
