@@ -37,7 +37,7 @@ import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
-import { TreasuryActivity } from './daoTreasury';
+import { TokenBalance, TreasuryActivity } from './daoTreasury';
 import { ProposalTemplate } from './proposalBuilder';
 import { BIFormattedPair } from './votingFungibleToken';
 /**
@@ -275,8 +275,8 @@ export interface FreezeGuard {
 }
 
 export interface FractalTreasury {
-  assetsFungible: any[];
-  assetsNonFungible: any[];
+  assetsFungible: TokenBalance[];
+  assetsNonFungible: any[]; // @todo - type this
   transfers?: AllTransactionsListResponse;
 }
 

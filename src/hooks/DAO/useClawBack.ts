@@ -2,9 +2,10 @@ import { ERC20__factory, FractalModule } from '@fractal-framework/fractal-contra
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, encodeAbiParameters, getAddress, isHex, parseAbiParameters } from 'viem';
+import useBalanceAPI from '../../providers/App/hooks/useBalanceAPI';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
-import { FractalModuleType, FractalNode } from '../../types';
+import { FractalModuleType, FractalNode, TokenBalance } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
@@ -19,10 +20,13 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const safeAPI = useSafeAPI();
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
+  const getSafeBalances = useBalanceAPI();
 
   const handleClawBack = useCallback(async () => {
     if (childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
-      const childSafeBalance: any[] = []; // @todo - Fetch Child Safe Balances list
+      // @todo - filter out spam tokens somehow?
+      const childSafeBalance: TokenBalance[] = (await getSafeBalances(childSafeInfo.daoAddress))
+        .assetsFungible;
 
       const santitizedParentAddress = getAddress(parentAddress);
       const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
@@ -106,7 +110,16 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         }
       }
     }
-  }, [canUserCreateProposal, childSafeInfo, parentAddress, provider, submitProposal, t, safeAPI]);
+  }, [
+    canUserCreateProposal,
+    childSafeInfo,
+    parentAddress,
+    provider,
+    submitProposal,
+    t,
+    safeAPI,
+    getSafeBalances,
+  ]);
 
   return { handleClawBack };
 }

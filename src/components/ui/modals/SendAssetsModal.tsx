@@ -126,7 +126,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                               key={index}
                               value={index}
                             >
-                              {asset.token ? asset.token.symbol : 'ETH'}
+                              {asset.symbol}
                             </option>
                           ))}
                         </Select>

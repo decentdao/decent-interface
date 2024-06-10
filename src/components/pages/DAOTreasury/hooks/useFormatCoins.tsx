@@ -3,6 +3,7 @@ import { maxUint256, zeroAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
 import usePriceAPI from '../../../../providers/App/hooks/usePriceAPI';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { TokenBalance } from '../../../../types';
 import { formatCoin, formatUSD } from '../../../../utils/numberFormats';
 
 export interface TokenDisplayData {
@@ -17,7 +18,7 @@ export interface TokenDisplayData {
   rawValue: string;
 }
 
-export function useFormatCoins(assets: any[]) {
+export function useFormatCoins(assets: TokenBalance[]) {
   const { chain, nativeTokenIcon } = useNetworkConfig();
   const [totalFiatValue, setTotalFiatValue] = useState(0);
   const [displayData, setDisplayData] = useState<TokenDisplayData[]>([]);
@@ -44,7 +45,7 @@ export function useFormatCoins(assets: any[]) {
             const tokenFiatBalanceBi =
               (BigInt(asset.balance) *
                 BigInt(Math.round(parseFloat(tokenPrice.toFixed(5)) * multiplicator))) / // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off
-              10n ** BigInt(asset.token?.decimals || 18);
+              10n ** BigInt(asset?.decimals || 18);
             tokenFiatBalance =
               tokenFiatBalanceBi >= maxUint256
                 ? Number(tokenFiatBalanceBi / BigInt(multiplicator))
@@ -55,21 +56,17 @@ export function useFormatCoins(assets: any[]) {
           }
         }
 
-        let symbol = asset.token === null ? chain.nativeCurrency.symbol : asset.token.symbol;
+        let symbol = asset.symbol;
         const formatted: TokenDisplayData = {
-          iconUri: asset.token === null ? nativeTokenIcon : asset.token.logoUri,
+          iconUri:
+            (asset.tokenAddress === zeroAddress ? nativeTokenIcon : asset.logoUri) ||
+            '/images/coin-icon-default.svg',
           address: asset.tokenAddress === null ? zeroAddress : asset.tokenAddress,
-          truncatedCoinTotal: formatCoin(
-            asset.balance,
-            true,
-            asset?.token?.decimals,
-            symbol,
-            false,
-          ),
+          truncatedCoinTotal: formatCoin(asset.balance, true, asset.decimals, symbol, false),
           fiatValue: tokenFiatBalance,
           symbol,
           fiatConversion: tokenPrice ? `1 ${symbol} = ${formatUSD(tokenPrice)}` : 'N/A',
-          fullCoinTotal: formatCoin(asset.balance, false, asset?.token?.decimals, symbol),
+          fullCoinTotal: formatCoin(asset.balance, false, asset.decimals, symbol),
           fiatDisplayValue: formatUSD(tokenFiatBalance),
           rawValue: asset.balance,
         };

@@ -1,4 +1,5 @@
 import { TransferListResponse } from '@safe-global/api-kit';
+import { Address } from 'viem';
 import { ContractEvent } from './contract';
 import { ActivityBase } from './fractal';
 import { EthAddress } from './utils';
@@ -40,8 +41,8 @@ export type Transaction =
 
 export interface ITreasury {
   transactions: Transaction[];
-  assetsFungible: any[];
-  assetsNonFungible: any[];
+  assetsFungible: TokenBalance[];
+  assetsNonFungible: any[]; // @todo - type this
   transfers?: TransferListResponse;
   treasuryIsLoading: boolean;
 }
@@ -56,6 +57,15 @@ export enum TokenType {
   ERC20,
   ERC721,
 }
+
+export type TokenBalance = {
+  tokenAddress: Address;
+  balance: string;
+  symbol: string;
+  name: string;
+  decimals: number;
+  logoUri?: string;
+};
 
 export type AssetTotals = {
   bi: bigint;
