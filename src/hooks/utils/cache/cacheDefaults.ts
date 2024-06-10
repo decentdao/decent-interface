@@ -30,7 +30,7 @@ export enum CacheKeys {
   FAVORITES = 'Favorites',
   MASTER_COPY = 'Master Copy',
   AVERAGE_BLOCK_TIME = 'Average Block Time',
-  PROPOSAL_ARCHIVE = 'Proposal',
+  PROPOSAL_CACHE = 'Proposal',
   // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
@@ -63,7 +63,7 @@ export interface MasterCacheKey extends CacheKey {
 }
 
 export interface ProposalCacheKey extends CacheKey {
-  cacheName: CacheKeys.PROPOSAL_ARCHIVE;
+  cacheName: CacheKeys.PROPOSAL_CACHE;
   proposalId: string;
   contractAddress: Address;
 }
@@ -88,7 +88,7 @@ export type CacheValue = {
 type CacheKeyToValueMap = {
   [CacheKeys.FAVORITES]: string[];
   [CacheKeys.MASTER_COPY]: Address;
-  [CacheKeys.PROPOSAL_ARCHIVE]: AzoriusProposal;
+  [CacheKeys.PROPOSAL_CACHE]: AzoriusProposal;
   [CacheKeys.AVERAGE_BLOCK_TIME]: number;
 };
 
@@ -102,7 +102,7 @@ interface IndexedObject {
   [key: string]: any;
 }
 
-export const MASTER_CACHE_VERSION = 1;
+export const MASTER_COPY_CACHE_VERSION = 1;
 export const FAVORITES_CACHE_VERSION = 1;
 export const PROPOSAL_CACHE_VERSION = 1;
 export const AVERAGE_BLOCK_TIME_CACHE_VERSION = 1;
@@ -112,8 +112,8 @@ export const getCacheVersion = (cacheName: CacheKeys): number => {
     case CacheKeys.FAVORITES:
       return FAVORITES_CACHE_VERSION;
     case CacheKeys.MASTER_COPY:
-      return MASTER_CACHE_VERSION;
-    case CacheKeys.PROPOSAL_ARCHIVE:
+      return MASTER_COPY_CACHE_VERSION;
+    case CacheKeys.PROPOSAL_CACHE:
       return PROPOSAL_CACHE_VERSION;
     case CacheKeys.AVERAGE_BLOCK_TIME:
       return AVERAGE_BLOCK_TIME_CACHE_VERSION;
