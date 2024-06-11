@@ -35,12 +35,23 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
+  let wasTimelocked = useRef(
+    proposal.state === FractalProposalState.TIMELOCKABLE ||
+      proposal.state === FractalProposalState.TIMELOCKED,
+  );
+
+  useEffect(() => {
+    if (wasTimelocked.current && proposal.state === FractalProposalState.EXECUTABLE) {
+      setIsSubmitDisabled(false);
+    }
+  }, [proposal.state]);
+
   const { chain } = useNetworkConfig();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
-  const { loadSafeMultisigProposals, refreshSafeMultisigProposal } = useSafeMultisigProposals();
+  const { loadSafeMultisigProposals } = useSafeMultisigProposals();
   const baseContracts = useSafeContracts();
   if (user.votingWeight === 0n) return <></>;
 
