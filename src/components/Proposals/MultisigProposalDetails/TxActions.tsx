@@ -2,6 +2,7 @@ import { Box, Button, Text, Flex, Tooltip } from '@chakra-ui/react';
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { Signer } from 'ethers';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Hex, getAddress, isHex } from 'viem';
 import { Check } from '../../../assets/theme/custom/icons/Check';
@@ -31,6 +32,8 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   } = useFractal();
   const signerOrProvider = useSignerOrProvider();
   const safeAPI = useSafeAPI();
+
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
   const { chain } = useNetworkConfig();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
@@ -127,7 +130,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         failedMessage: t('failedExecute', { ns: 'transaction' }),
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
-        successCallback: loadSafeMultisigProposals,
+        successCallback: () => {
+          setIsSubmitDisabled(true);
+          loadSafeMultisigProposals();
+        },
       });
     } catch (e) {
       logError(e, 'Error occurred during transaction execution');
@@ -184,9 +190,8 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
         successCallback: async () => {
-          // @todo: Indicate to UI that the transaction is executed
-          // await loadSafeMultisigProposals();
-          await refreshSafeMultisigProposal(proposal);
+          setIsSubmitDisabled(true);
+          await loadSafeMultisigProposals();
         },
       });
     } catch (e) {
@@ -240,7 +245,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   };
   const isActiveNonce = !!safe && multisigTx.nonce === safe.nonce;
   const isButtonDisabled =
-    isPending || proposal.state === FractalProposalState.TIMELOCKED || !isActiveNonce;
+    isSubmitDisabled ||
+    isPending ||
+    proposal.state === FractalProposalState.TIMELOCKED ||
+    !isActiveNonce;
 
   return (
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
