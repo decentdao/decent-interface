@@ -3,10 +3,11 @@ import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { ICreationStepProps } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
+import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 
 export function VotesTokenImport(props: ICreationStepProps) {
-  const { values, handleChange } = props;
+  const { values, handleChange, setFieldValue } = props;
   const { t } = useTranslation('daoCreate');
   return (
     <Flex
@@ -48,10 +49,9 @@ export function VotesTokenImport(props: ICreationStepProps) {
         helper={t('helperTokenSupply')}
         isRequired
       >
-        {/* @todo: this allows alphanumeric input. intentional? */}
-        <Input
-          value={values.erc20Token.tokenSupply.bigintValue?.toString()}
-          onChange={handleChange}
+        <BigIntInput
+          value={values.erc20Token.tokenSupply.bigintValue}
+          onChange={valuePair => setFieldValue('erc20Token.tokenSupply', valuePair)}
           data-testid="tokenVoting-tokenSupplyInput"
           placeholder="100,000,000"
         />
