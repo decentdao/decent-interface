@@ -42,7 +42,6 @@ const useTransaction = () => {
         .then(([txReceipt, toastID]) => {
           toast.dismiss(toastID);
           if (txReceipt.status === 0) {
-            console.log('🚀 ~ txReceipt:', txReceipt);
             toast.error(params.failedMessage);
             if (params.failedCallback) params.failedCallback();
           } else if (txReceipt.status === 1) {
