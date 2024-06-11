@@ -22,6 +22,8 @@ import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
 export function TxActions({ proposal }: { proposal: MultisigProposal }) {
+  console.log('This proposal: ', proposal);
+
   const {
     node: { safe },
     guardContracts: { freezeGuardContractAddress },
@@ -35,7 +37,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
-  const loadSafeMultisigProposals = useSafeMultisigProposals();
+  const { loadSafeMultisigProposals, refreshSafeMultisigProposal } = useSafeMultisigProposals();
   const baseContracts = useSafeContracts();
   if (user.votingWeight === 0n) return <></>;
 
@@ -182,7 +184,9 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
         successCallback: async () => {
-          await loadSafeMultisigProposals();
+          // @todo: Indicate to UI that the transaction is executed
+          // await loadSafeMultisigProposals();
+          await refreshSafeMultisigProposal(proposal);
         },
       });
     } catch (e) {

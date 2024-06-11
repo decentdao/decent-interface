@@ -15,13 +15,13 @@ export const useLoadDAOProposals = () => {
 
   const { setMethodOnInterval, clearIntervals } = useUpdateTimer(daoAddress);
   const loadAzoriusProposals = useAzoriusProposals();
-  const loadSafeMultisigProposals = useSafeMultisigProposals();
+  const { loadSafeMultisigProposals } = useSafeMultisigProposals();
 
   const loadDAOProposals = useCallback(async () => {
     clearIntervals();
     if (type === GovernanceType.AZORIUS_ERC20 || type === GovernanceType.AZORIUS_ERC721) {
       // load Azorius proposals and strategies
-      loadAzoriusProposals(proposal => {
+      return loadAzoriusProposals(proposal => {
         action.dispatch({
           type: FractalGovernanceAction.SET_AZORIUS_PROPOSAL,
           payload: proposal,
@@ -29,6 +29,7 @@ export const useLoadDAOProposals = () => {
       });
     } else if (type === GovernanceType.MULTISIG) {
       // load mulisig proposals
+      // @dev what is the point of setMethodOnInterval here?
       setMethodOnInterval(loadSafeMultisigProposals);
     }
   }, [

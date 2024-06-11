@@ -35,12 +35,14 @@ function ProposalActions({
   }
 }
 
+// @todo: rename to AzoriusProposalAction
 export function ProposalAction({
   proposal,
   expandedView,
   extendedSnapshotProposal,
   onCastSnapshotVote,
 }: {
+  // @todo: this is actually either an AzoriusProposal or a SnapshotProposal, refactor
   proposal: FractalProposal;
   expandedView?: boolean;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;

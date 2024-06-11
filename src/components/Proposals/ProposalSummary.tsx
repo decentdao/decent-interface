@@ -21,6 +21,7 @@ import { QuorumProgressBar } from '../ui/utils/ProgressBar';
 import { ProposalAction } from './ProposalActions/ProposalAction';
 import { VoteContextProvider } from './ProposalVotes/context/VoteContext';
 
+// @todo: rename to AzoriusProposalSummary
 export default function ProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
   const {
     eventDate,
