@@ -5,8 +5,6 @@ import { FractalGovernanceAction } from '../../../../providers/App/governance/ac
 import { useSafeAPI } from '../../../../providers/App/hooks/useSafeAPI';
 import {
   ActivityEventType,
-  FractalProposal,
-  FractalProposalState,
   MultisigProposal,
 } from '../../../../types';
 import { useSafeTransactions } from '../../../utils/useSafeTransactions';
@@ -14,7 +12,6 @@ import { useSafeTransactions } from '../../../utils/useSafeTransactions';
 export const useSafeMultisigProposals = () => {
   const {
     node: { daoAddress },
-    governance: { proposals },
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
@@ -26,33 +23,15 @@ export const useSafeMultisigProposals = () => {
       return;
     }
     try {
-      const alreadyLoadedExecutedProposals = (proposals || []).filter(
-        proposal => proposal.state === FractalProposalState.EXECUTED,
-      );
-
-      console.log("alreadyLoadedExecutedProposals: ", alreadyLoadedExecutedProposals);
-      
-
       const transactions = await safeAPI.getAllTransactions(daoAddress);
       const activities = await parseTransactions(transactions, daoAddress);
       const multisendProposals = activities.filter(
         activity => activity.eventType !== ActivityEventType.Treasury,
       ) as MultisigProposal[];
 
-      // action.dispatch({
-      //   type: FractalGovernanceAction.SET_PROPOSALS,
-      //   payload: multisendProposals,
-      // });
-
       action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSALS,
-        payload: [
-          ...alreadyLoadedExecutedProposals,
-          ...multisendProposals.filter(
-            proposal =>
-              !alreadyLoadedExecutedProposals.find(p => p.proposalId === proposal.proposalId),
-          ),
-        ],
+        payload: multisendProposals,
       });
 
       action.dispatch({
@@ -66,31 +45,7 @@ export const useSafeMultisigProposals = () => {
     } catch (e) {
       logError(e);
     }
-  }, [daoAddress, safeAPI, proposals, parseTransactions, action]);
+  }, [daoAddress, safeAPI, parseTransactions, action]);
 
-  const refreshSafeMultisigProposal = useCallback(
-    async (proposal: FractalProposal) => {
-      console.log('\n\nrefreshSafeMultisigProposal');
-      console.log('proposals before: ', proposals);
-      console.log('\n\n');
-
-      if (!proposals) return;
-
-      action.dispatch({
-        type: FractalGovernanceAction.UPDATE_PROPOSAL_STATE,
-        payload: { proposalId: proposal.proposalId, state: FractalProposalState.EXECUTED },
-      });
-
-      // action.dispatch({
-      //   type: FractalGovernanceAction.SET_PROPOSALS,
-      //   payload: [
-      //     ...proposals.filter(p => p.proposalId !== proposal.proposalId),
-      //     { ...proposal, state: FractalProposalState.EXECUTED },
-      //   ],
-      // });
-    },
-    [action, proposals],
-  );
-
-  return { loadSafeMultisigProposals, refreshSafeMultisigProposal };
+  return { loadSafeMultisigProposals };
 };
