@@ -9,7 +9,7 @@ import CastVote from './CastVote';
 import { Execute } from './Execute';
 
 // TODO: Refactor extendedSnapshotProposal and onCastSnapshotVote to the context
-export function ProposalActions({
+function ProposalActions({
   proposal,
   extendedSnapshotProposal,
   onCastSnapshotVote,

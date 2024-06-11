@@ -125,9 +125,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         failedMessage: t('failedExecute', { ns: 'transaction' }),
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
-        successCallback: async () => {
-          await loadSafeMultisigProposals();
-        },
+        successCallback: loadSafeMultisigProposals,
       });
     } catch (e) {
       logError(e, 'Error occurred during transaction execution');
@@ -145,6 +143,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         return;
       }
       const safeContract = GnosisSafeL2__factory.connect(safe.address, signerOrProvider);
+
       const safeTx = buildSafeTransaction({
         ...multisigTx,
         to: getAddress(multisigTx.to),
@@ -152,6 +151,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         data: multisigTx.data as Hex | undefined,
         operation: multisigTx.operation as 0 | 1,
       });
+
       const signatures = buildSignatureBytes(
         multisigTx.confirmations.map(confirmation => {
           if (!isHex(confirmation.signature)) {
@@ -163,6 +163,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
           };
         }),
       );
+
       contractCall({
         contractFn: () =>
           safeContract.execTransaction(
@@ -206,7 +207,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       action: () => Promise<any>;
       text: string;
       pageTitle: string;
-      icon: undefined | JSX.Element;
+      icon?: JSX.Element;
     };
   };
 
@@ -215,7 +216,6 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       action: signTransaction,
       text: 'approve',
       pageTitle: 'signTitle',
-      icon: undefined,
     },
     [FractalProposalState.EXECUTABLE]: {
       action: executeTransaction,
@@ -227,13 +227,11 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       action: timelockTransaction,
       text: 'timelock',
       pageTitle: 'timelockTitle',
-      icon: undefined,
     },
     [FractalProposalState.TIMELOCKED]: {
       action: async () => {},
       text: 'execute',
       pageTitle: 'executeTitle',
-      icon: undefined,
     },
   };
   const isActiveNonce = !!safe && multisigTx.nonce === safe.nonce;
@@ -243,7 +241,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   return (
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Flex justifyContent="space-between">
-        <Text textStyle="text-lg-mono-medium">{t(buttonProps[proposal.state!].pageTitle)}</Text>
+        <Text>{t(buttonProps[proposal.state!].pageTitle)}</Text>
         <ProposalCountdown proposal={proposal} />
       </Flex>
       <Box marginTop={4}>
