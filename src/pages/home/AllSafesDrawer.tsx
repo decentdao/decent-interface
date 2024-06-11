@@ -9,6 +9,8 @@ import {
 } from '@chakra-ui/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ErrorBoundary } from '../../components/ui/utils/ErrorBoundary';
+import { MySafesErrorFallback } from '../../components/ui/utils/MySafesErrorFallback';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { getValue } from '../../hooks/utils/cache/useLocalStorage';
@@ -133,12 +135,14 @@ export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
           </Box>
         </DrawerHeader>
         <DrawerBody padding="0">
-          {(getValue({ cacheName: CacheKeys.FAVORITES }) || []).map((favorite: string) => (
-            <SafeDisplayRow
-              key={favorite}
-              {...decodePrefixedAddress(favorite)}
-            />
-          ))}
+          <ErrorBoundary fallback={MySafesErrorFallback}>
+            {(getValue({ cacheName: CacheKeys.FAVORITES }) || []).map((favorite: string) => (
+              <SafeDisplayRow
+                key={favorite}
+                {...decodePrefixedAddress(favorite)}
+              />
+            ))}
+          </ErrorBoundary>
         </DrawerBody>
       </DrawerContent>
     </Drawer>
