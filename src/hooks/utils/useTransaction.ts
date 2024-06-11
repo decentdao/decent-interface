@@ -6,7 +6,7 @@ import { logError } from '../../helpers/errorLogging';
 
 interface ProviderRpcError extends Error {
   message: string;
-  code: number;
+  code: string;
   data?: any;
 }
 
@@ -64,11 +64,11 @@ const useTransaction = () => {
           logError(error);
           toast.dismiss(toastId);
           setPending(false);
-          if (error.code === 32000) {
+          if (error.code === 'INSUFFICIENT_FUNDS') {
             toast.error(t('errorInsufficientFunds'));
             return;
           }
-          if (error.code === 4001) {
+          if (error.code === 'USER_REJECTED_REQUEST') {
             toast.error(t('errorUserDeniedTransaction'));
             return;
           }
