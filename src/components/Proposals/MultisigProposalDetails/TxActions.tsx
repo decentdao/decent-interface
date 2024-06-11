@@ -23,8 +23,6 @@ import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
 export function TxActions({ proposal }: { proposal: MultisigProposal }) {
-  console.log('This proposal: ', proposal);
-
   const {
     node: { safe },
     guardContracts: { freezeGuardContractAddress },
