@@ -177,7 +177,7 @@ export const useAzoriusProposals = () => {
 
       for (const proposalCreatedEvent of proposalCreatedEvents) {
         const cachedProposal = getValue({
-          cacheName: CacheKeys.PROPOSAL_ARCHIVE,
+          cacheName: CacheKeys.PROPOSAL_CACHE,
           proposalId: proposalCreatedEvent.args.proposalId.toString(),
           contractAddress: getAddress(_azoriusContract.address),
         });
@@ -256,7 +256,7 @@ export const useAzoriusProposals = () => {
         if (isProposalFossilized) {
           setValue(
             {
-              cacheName: CacheKeys.PROPOSAL_ARCHIVE,
+              cacheName: CacheKeys.PROPOSAL_CACHE,
               proposalId: proposalCreatedEvent.args.proposalId.toString(),
               contractAddress: getAddress(_azoriusContract.address),
             },

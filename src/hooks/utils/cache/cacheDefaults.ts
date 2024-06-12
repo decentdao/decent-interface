@@ -30,7 +30,7 @@ export enum CacheKeys {
   FAVORITES = 'Favorites',
   MASTER_COPY = 'Master Copy',
   AVERAGE_BLOCK_TIME = 'Average Block Time',
-  PROPOSAL_ARCHIVE = 'Proposal',
+  PROPOSAL_CACHE = 'Proposal',
   // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
@@ -63,15 +63,21 @@ export interface MasterCacheKey extends CacheKey {
 }
 
 export interface ProposalCacheKey extends CacheKey {
-  cacheName: CacheKeys.PROPOSAL_ARCHIVE;
+  cacheName: CacheKeys.PROPOSAL_CACHE;
   proposalId: string;
   contractAddress: Address;
+}
+
+export interface AverageBlockTimeCacheKey extends CacheKey {
+  cacheName: CacheKeys.AVERAGE_BLOCK_TIME;
+  chainId: number;
 }
 
 export type CacheKeyType =
   | FavoritesCacheKey
   | MasterCacheKey
   | ProposalCacheKey
+  | AverageBlockTimeCacheKey
   | Omit<CacheKey, 'version'>;
 
 export type CacheValue = {
@@ -82,7 +88,7 @@ export type CacheValue = {
 type CacheKeyToValueMap = {
   [CacheKeys.FAVORITES]: string[];
   [CacheKeys.MASTER_COPY]: Address;
-  [CacheKeys.PROPOSAL_ARCHIVE]: AzoriusProposal;
+  [CacheKeys.PROPOSAL_CACHE]: AzoriusProposal;
   [CacheKeys.AVERAGE_BLOCK_TIME]: number;
 };
 
@@ -96,12 +102,18 @@ interface IndexedObject {
   [key: string]: any;
 }
 
-export const CURRENT_CACHE_VERSION = 1;
+export const CACHE_VERSIONS: { [key: string]: number } = Object.freeze({
+  [CacheKeys.FAVORITES]: 1,
+  [CacheKeys.MASTER_COPY]: 1,
+  [CacheKeys.PROPOSAL_CACHE]: 1,
+  [CacheKeys.AVERAGE_BLOCK_TIME]: 1,
+});
 
 /**
  * Cache default values.
  *
  * Cache keys are not required to have a default value.
+ * @todo: The CACHE_DEFAULTs seem to be used for indexDB, But favorites is localstorage. We will need to revisit this.
  */
 export const CACHE_DEFAULTS: IndexedObject = {
   [CacheKeys.FAVORITES.toString()]: Array<string>(),
