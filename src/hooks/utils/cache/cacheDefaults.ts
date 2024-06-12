@@ -102,20 +102,12 @@ interface IndexedObject {
   [key: string]: any;
 }
 
-const CACHE_VERSIONS: { [key: string]: number } = {
+export const CACHE_VERSIONS: { [key: string]: number } = Object.freeze({
   [CacheKeys.FAVORITES]: 1,
   [CacheKeys.MASTER_COPY]: 1,
   [CacheKeys.PROPOSAL_CACHE]: 1,
   [CacheKeys.AVERAGE_BLOCK_TIME]: 1,
-};
-
-export const getCacheVersion = (cacheName: CacheKeys): number => {
-  const version = CACHE_VERSIONS[cacheName];
-  if (version === undefined) {
-    throw new Error('Invalid cache name');
-  }
-  return version;
-};
+});
 
 /**
  * Cache default values.

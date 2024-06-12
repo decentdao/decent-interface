@@ -4,7 +4,7 @@ import {
   CacheKeyType,
   CacheValue,
   CacheValueType,
-  getCacheVersion,
+  CACHE_VERSIONS,
 } from './cacheDefaults';
 
 function bigintReplacer(_: any, value: any) {
@@ -39,7 +39,7 @@ export const setValue = (
           : Date.now() + expirationMinutes * 60000,
     };
     localStorage.setItem(
-      JSON.stringify({ ...key, version: getCacheVersion(key.cacheName) }),
+      JSON.stringify({ ...key, version: CACHE_VERSIONS[key.cacheName] }),
       JSON.stringify(val, bigintReplacer),
     );
   }
@@ -47,7 +47,7 @@ export const setValue = (
 
 export const getValue = <T extends CacheKeyType>(key: T): CacheValueType<T> | null => {
   if (typeof window !== 'undefined') {
-    const version = getCacheVersion(key.cacheName);
+    const version = CACHE_VERSIONS[key.cacheName];
     const rawVal = localStorage.getItem(JSON.stringify({ ...key, version }));
     if (rawVal) {
       const parsed: CacheValue = JSON.parse(rawVal, proposalObjectReviver);
