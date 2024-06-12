@@ -25,7 +25,7 @@ export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
   };
 
   return (
-    <Box>
+    <Box px="0.25rem">
       <MenuItem
         as={Button}
         variant="tertiary"

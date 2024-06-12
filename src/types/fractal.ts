@@ -264,7 +264,9 @@ export interface FractalTreasury {
   assetsNonFungible: SafeCollectibleResponse[];
   transfers?: AllTransfersListResponse;
 }
+
 export type FractalGovernance = AzoriusGovernance | DecentGovernance | SafeMultisigGovernance;
+
 export interface AzoriusGovernance extends Governance {
   votingStrategy: VotingStrategyAzorius;
   votesToken: VotesTokenData | undefined;
@@ -278,6 +280,8 @@ export interface SafeMultisigGovernance extends Governance {}
 
 export interface Governance {
   type?: GovernanceType;
+  loadingProposals: boolean;
+  allProposalsLoaded: boolean;
   proposals: FractalProposal[] | null;
   proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContractAddress?: Address;

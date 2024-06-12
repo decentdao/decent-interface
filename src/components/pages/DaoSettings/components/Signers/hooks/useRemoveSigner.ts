@@ -43,7 +43,7 @@ const useRemoveSigner = ({
       calldatas,
       metaData: {
         title: 'Remove Signers',
-        description: description,
+        description,
         documentationUrl: '',
       },
     };

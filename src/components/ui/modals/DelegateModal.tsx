@@ -216,6 +216,7 @@ export function DelegateModal({ close }: { close: Function }) {
                 >
                   <AddressInput
                     data-testid="delegate-addressInput"
+                    isInvalid={!!errors.address}
                     {...field}
                   />
                 </LabelWrapper>

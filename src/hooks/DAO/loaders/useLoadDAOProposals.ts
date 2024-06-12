@@ -6,7 +6,7 @@ import { useUpdateTimer } from '../../utils/useUpdateTimer';
 import { useAzoriusProposals } from './governance/useAzoriusProposals';
 import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals';
 
-export const useDAOProposals = () => {
+export const useLoadDAOProposals = () => {
   const {
     node: { daoAddress },
     governance: { type },
@@ -15,7 +15,7 @@ export const useDAOProposals = () => {
 
   const { setMethodOnInterval, clearIntervals } = useUpdateTimer(daoAddress);
   const loadAzoriusProposals = useAzoriusProposals();
-  const loadSafeMultisigProposals = useSafeMultisigProposals();
+  const { loadSafeMultisigProposals } = useSafeMultisigProposals();
 
   const loadDAOProposals = useCallback(async () => {
     clearIntervals();
@@ -29,7 +29,8 @@ export const useDAOProposals = () => {
       });
     } else if (type === GovernanceType.MULTISIG) {
       // load mulisig proposals
-      setMethodOnInterval(loadSafeMultisigProposals);
+      // @dev what is the point of setMethodOnInterval here?
+      return setMethodOnInterval(loadSafeMultisigProposals);
     }
   }, [
     clearIntervals,

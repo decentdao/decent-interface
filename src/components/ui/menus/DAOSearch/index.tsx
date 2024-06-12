@@ -8,7 +8,8 @@ import {
   useDisclosure,
   useOutsideClick,
 } from '@chakra-ui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import debounce from 'lodash.debounce';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search } from '../../../../assets/theme/custom/icons/Search';
 import { SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
@@ -17,14 +18,37 @@ import { SearchDisplay } from './SearchDisplay';
 
 export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
   const { t } = useTranslation(['dashboard']);
-  const [localInput, setLocalInput] = useState<string>();
-  const { errorMessage, isLoading, address, isSafe, setSearchString } = useSearchDao();
+  const [localInput, setLocalInput] = useState<string>('');
+  const [typing, setTyping] = useState<boolean>(false);
+  const { errorMessage, isLoading, address, setSearchString } = useSearchDao();
+
   const { onClose } = useDisclosure(); // popover close function
   const ref = useRef() as React.MutableRefObject<HTMLInputElement>;
 
+  const debouncedInput = useMemo(
+    () =>
+      debounce((input: string) => {
+        setSearchString(input);
+
+        // This avoids a small "results" flicker of old state
+        // right before next search kicks off.
+        setTimeout(() => {
+          setTyping(false);
+        }, 50);
+      }, 500),
+    [setSearchString],
+  );
+
   useEffect(() => {
-    setSearchString(localInput);
-  }, [localInput, setSearchString]);
+    debouncedInput(localInput);
+    setTyping(true);
+  }, [debouncedInput, localInput]);
+
+  useEffect(() => {
+    return () => {
+      debouncedInput.cancel();
+    };
+  }, [debouncedInput]);
 
   const resetSearch = () => {
     onClose();
@@ -35,6 +59,13 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
     ref,
     handler: resetSearch,
   });
+
+  const showResults = useMemo(() => {
+    if (typing) return false;
+    if (isLoading) return true;
+    const hasMessage = errorMessage !== undefined || address !== undefined;
+    return hasMessage;
+  }, [address, errorMessage, typing, isLoading]);
 
   return (
     <Box
@@ -62,10 +93,13 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
               size="baseAddonLeft"
               w="full"
               placeholder={t('searchDAOPlaceholder')}
-              onChange={e => setLocalInput(e.target.value.trim())}
+              onChange={e => {
+                setLocalInput(e.target.value.trim());
+              }}
               value={localInput}
               spellCheck="false"
-              isInvalid={!!errorMessage}
+              autoCapitalize="none"
+              isInvalid={!!errorMessage && !typing}
               data-testid="search-input"
             />
           </InputGroup>
@@ -75,7 +109,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
           rounded="0.5rem"
           bg="neutral-2"
           boxShadow={SEXY_BOX_SHADOW_T_T}
-          hidden={!errorMessage && !address}
+          hidden={!showResults}
           zIndex="modal"
           w="full"
           position="absolute"
@@ -83,7 +117,6 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
           <SearchDisplay
             loading={isLoading}
             errorMessage={errorMessage}
-            validAddress={isSafe}
             address={address}
             onClickView={resetSearch}
             closeDrawer={closeDrawer}

@@ -43,7 +43,7 @@ const useAddSigner = () => {
         calldatas,
         metaData: {
           title: 'Add Signer',
-          description: description,
+          description,
           documentationUrl: '',
         },
       };

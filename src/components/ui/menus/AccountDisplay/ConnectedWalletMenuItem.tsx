@@ -29,6 +29,7 @@ export function ConnectedWalletMenuItem() {
       data-testid="accountMenu-wallet"
       cursor="default"
       pt="0.5rem"
+      px="0.25rem"
     >
       <Text
         px="0.5rem"

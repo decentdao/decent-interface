@@ -7,10 +7,9 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 interface ISearchDisplay {
-  loading?: boolean;
-  errorMessage?: string;
-  validAddress?: boolean;
-  address?: string;
+  loading: boolean;
+  errorMessage: string | undefined;
+  address: string | undefined;
   onClickView: Function;
   closeDrawer?: () => void;
 }
@@ -18,7 +17,6 @@ interface ISearchDisplay {
 export function SearchDisplay({
   loading,
   errorMessage,
-  validAddress,
   address,
   closeDrawer,
   onClickView,
@@ -32,7 +30,7 @@ export function SearchDisplay({
     [node, address],
   );
 
-  if (loading && address) {
+  if (loading) {
     return (
       <Flex
         justifyContent="center"
@@ -50,7 +48,7 @@ export function SearchDisplay({
     );
   }
 
-  if (errorMessage && !loading) {
+  if (errorMessage) {
     return (
       <Flex
         alignItems="center"
@@ -72,7 +70,7 @@ export function SearchDisplay({
     );
   }
 
-  if (validAddress && address && !loading) {
+  if (address) {
     return (
       <Flex
         cursor={isCurrentSafe ? 'not-allowed' : 'default'}
@@ -100,5 +98,6 @@ export function SearchDisplay({
       </Flex>
     );
   }
+
   return null;
 }

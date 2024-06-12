@@ -83,7 +83,7 @@ export function MetadataContainer() {
 
     submitProposal({
       proposalData,
-      nonce: safe?.nonce,
+      nonce: safe?.nextNonce,
       pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
       successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
       failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
@@ -111,7 +111,7 @@ export function MetadataContainer() {
 
     submitProposal({
       proposalData,
-      nonce: safe?.nonce,
+      nonce: safe?.nextNonce,
       pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
       successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
       failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),

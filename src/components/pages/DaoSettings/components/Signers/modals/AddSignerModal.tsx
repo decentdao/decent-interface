@@ -67,7 +67,7 @@ function AddSignerModal({
       <Formik
         initialValues={{
           address: '',
-          nonce: safe?.nonce || 0,
+          nonce: safe?.nextNonce || 0,
           threshold: currentThreshold,
           thresholdOptions: Array.from({ length: signers.length + 1 }, (_, i) => i + 1),
         }}
@@ -85,7 +85,10 @@ function AddSignerModal({
                     subLabel={t('addSignerSublabel', { ns: 'modals' })}
                     errorMessage={field.value && errors.address}
                   >
-                    <AddressInput {...field} />
+                    <AddressInput
+                      {...field}
+                      isInvalid={!!field.value && !!errors.address}
+                    />
                   </LabelWrapper>
                 )}
               </Field>

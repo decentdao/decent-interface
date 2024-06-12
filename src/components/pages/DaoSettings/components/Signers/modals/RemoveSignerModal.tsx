@@ -29,7 +29,7 @@ function RemoveSignerModal({
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
   const [prevSigner, setPrevSigner] = useState<string>('');
   const [threshold, setThreshold] = useState<number>(currentThreshold);
-  const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
+  const [nonce, setNonce] = useState<number | undefined>(safe!.nextNonce);
   const { chain } = useNetworkConfig();
   const { data: ensName } = useEnsName({
     address: selectedSigner as Address,

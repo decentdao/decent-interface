@@ -26,7 +26,7 @@ import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 import { useFractalModules } from '../loaders/useFractalModules';
-import { useDAOProposals } from '../loaders/useProposals';
+import { useLoadDAOProposals } from '../loaders/useLoadDAOProposals';
 
 export type SubmitProposalFunction = ({
   proposalData,
@@ -55,7 +55,7 @@ interface ISubmitAzoriusProposal extends ISubmitProposal {
 
 export default function useSubmitProposal() {
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
-  const loadDAOProposals = useDAOProposals();
+  const loadDAOProposals = useLoadDAOProposals();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
 
