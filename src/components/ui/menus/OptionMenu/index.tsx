@@ -2,6 +2,7 @@ import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip, Portal, Box } from 
 import { MouseEvent, ReactNode, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
+import { EaseOutComponent } from '../../utils/EaseOutComponent';
 import { OptionsList } from './OptionsList';
 import { IOption, IOptionsList } from './types';
 
@@ -48,15 +49,17 @@ export function OptionMenu({
         backdropFilter="auto"
         backdropBlur="10px"
       >
-        {children}
-        <OptionsList
-          options={options}
-          showOptionSelected={showOptionSelected}
-          closeOnSelect={closeOnSelect}
-          showOptionCount={showOptionCount}
-          namespace={namespace}
-          titleKey={titleKey}
-        />
+        <EaseOutComponent>
+          {children}
+          <OptionsList
+            options={options}
+            showOptionSelected={showOptionSelected}
+            closeOnSelect={closeOnSelect}
+            showOptionCount={showOptionCount}
+            namespace={namespace}
+            titleKey={titleKey}
+          />
+        </EaseOutComponent>
       </Box>
     </MenuList>
   );
@@ -82,7 +85,6 @@ export function OptionMenu({
           {trigger}
         </MenuButton>
       </Tooltip>
-
       {containerRef !== undefined ? (
         <Portal containerRef={containerRef}>{menuList}</Portal>
       ) : (

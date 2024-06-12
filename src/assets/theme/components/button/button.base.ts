@@ -8,6 +8,7 @@ const baseStyle = defineStyle({
   display: 'flex',
   justifyContent: 'center',
   gap: '4px',
+  transition: 'all ease-out 300ms',
   _disabled: {
     cursor: 'default',
   },
