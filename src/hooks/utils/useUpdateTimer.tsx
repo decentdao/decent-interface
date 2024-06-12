@@ -16,8 +16,8 @@ export const useUpdateTimer = (safeAddress?: string | null) => {
 
   // Set a method to be executed at a set interval, considering the user's idle state
   const setMethodOnInterval = useCallback(
-    async <T,>(getMethod: () => Promise<T | undefined>, milliseconds: number = twentySeconds) => {
-      let returnValue: T | undefined;
+    async <T,>(getMethod: () => Promise<T>, milliseconds: number = twentySeconds) => {
+      let returnValue: T;
       returnValue = await Promise.resolve(getMethod());
 
       // Clear the interval if the method is already in the timers list
