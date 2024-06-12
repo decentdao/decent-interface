@@ -21,7 +21,7 @@ import { QuorumProgressBar } from '../ui/utils/ProgressBar';
 import { AzoriusOrSnapshotProposalAction } from './ProposalActions/ProposalAction';
 import { VoteContextProvider } from './ProposalVotes/context/VoteContext';
 
-export default function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
+export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
   const {
     eventDate,
     startBlock,
