@@ -1,10 +1,11 @@
-import { Flex, Icon, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
+import { Button, Flex, Icon, Menu, MenuButton, MenuItem, MenuList, Text } from '@chakra-ui/react';
 import { CaretDown } from '@phosphor-icons/react';
 import { Dispatch, SetStateAction } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../constants/common';
 import { SortBy } from '../../../types';
 import Divider from './Divider';
+import { EaseOutComponent } from './EaseOutComponent';
 
 function SortMenuItem({
   labelKey,
@@ -42,18 +43,11 @@ interface ISort {
 export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
   const { t } = useTranslation();
   return (
-    <Menu direction="ltr">
+    <Menu isLazy>
       <MenuButton
-        data-testid="sort-openMenu"
-        color="lilac-0"
+        as={Button}
+        variant="tertiary"
         p="0.25rem 0.5rem"
-        sx={{
-          '&:hover': {
-            color: 'lilac--1',
-            bg: 'white-alpha-04',
-            borderRadius: '0.25rem',
-          },
-        }}
         {...buttonProps}
       >
         <Flex alignItems="center">
@@ -65,7 +59,6 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
           />
         </Flex>
       </MenuButton>
-
       <MenuList
         borderWidth="1px"
         borderColor="neutral-3"
@@ -77,25 +70,27 @@ export function Sort({ sortBy, setSortBy, buttonProps }: ISort) {
         zIndex={5}
         p="0.25rem"
       >
-        <Text
-          px="0.5rem"
-          my="0.25rem"
-          textStyle="helper-text-small"
-          color="neutral-7"
-        >
-          {t('sortTitle')}
-        </Text>
-        <SortMenuItem
-          labelKey={SortBy.Newest}
-          testId="sort-newest"
-          onClick={() => setSortBy(SortBy.Newest)}
-        />
-        <Divider my="0.25rem" />
-        <SortMenuItem
-          labelKey={SortBy.Oldest}
-          testId="sort-oldest"
-          onClick={() => setSortBy(SortBy.Oldest)}
-        />
+        <EaseOutComponent>
+          <Text
+            px="0.5rem"
+            my="0.25rem"
+            textStyle="helper-text-small"
+            color="neutral-7"
+          >
+            {t('sortTitle')}
+          </Text>
+          <SortMenuItem
+            labelKey={SortBy.Newest}
+            testId="sort-newest"
+            onClick={() => setSortBy(SortBy.Newest)}
+          />
+          <Divider my="0.25rem" />
+          <SortMenuItem
+            labelKey={SortBy.Oldest}
+            testId="sort-oldest"
+            onClick={() => setSortBy(SortBy.Oldest)}
+          />
+        </EaseOutComponent>
       </MenuList>
     </Menu>
   );
