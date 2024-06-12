@@ -4,7 +4,7 @@ import { AzoriusProposal } from '../../../types';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { useProposalCountdown } from '../../ui/proposal/useProposalCountdown';
 import { ProposalInfo } from '../ProposalInfo';
-import ProposalSummary from '../ProposalSummary';
+import AzoriusProposalSummary from '../ProposalSummary';
 import ProposalVotes from '../ProposalVotes';
 
 export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal }) {
@@ -21,7 +21,7 @@ export function AzoriusProposalDetails({ proposal }: { proposal: AzoriusProposal
         <ProposalVotes proposal={proposal} />
       </GridItem>
       <GridItem maxW={CONTENT_MAXW}>
-        <ProposalSummary proposal={proposal} />
+        <AzoriusProposalSummary proposal={proposal} />
       </GridItem>
     </ProposalDetailsGrid>
   );

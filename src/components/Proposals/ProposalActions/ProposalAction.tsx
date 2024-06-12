@@ -3,7 +3,13 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { ExtendedSnapshotProposal, FractalProposal, FractalProposalState } from '../../../types';
+import {
+  AzoriusProposal,
+  ExtendedSnapshotProposal,
+  FractalProposal,
+  FractalProposalState,
+  SnapshotProposal,
+} from '../../../types';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 import CastVote from './CastVote';
 import { Execute } from './Execute';
@@ -35,15 +41,13 @@ function ProposalActions({
   }
 }
 
-// @todo: rename to AzoriusProposalAction
-export function ProposalAction({
+export function AzoriusOrSnapshotProposalAction({
   proposal,
   expandedView,
   extendedSnapshotProposal,
   onCastSnapshotVote,
 }: {
-  // @todo: this is actually either an AzoriusProposal or a SnapshotProposal, refactor
-  proposal: FractalProposal;
+  proposal: AzoriusProposal | SnapshotProposal;
   expandedView?: boolean;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
   onCastSnapshotVote?: () => Promise<void>;
