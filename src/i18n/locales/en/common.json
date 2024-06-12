@@ -49,6 +49,7 @@
   "errorNotProposer": "You do not have the necessary permissions to create a proposal for this Safe.",
   "errorSentryFallbackTitle": "Oops! Something went wrong",
   "errorSentryFallbackMessage": "We apologize for the inconvenience. Please try again later.",
+  "errorMySafesNotLoaded": "Safe(s) could not be loaded. Please try again later.",
   "errorGeneral": "An unexpected error occurred. Please try again later.",
   "errorCopyToClipboard": "Unable to copy text to clipboard!",
   "labelNowishAgo": "just now",

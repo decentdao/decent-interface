@@ -9,10 +9,12 @@ import {
 } from '@chakra-ui/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ErrorBoundary } from '../../components/ui/utils/ErrorBoundary';
+import { MySafesErrorFallback } from '../../components/ui/utils/MySafesErrorFallback';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { getValue } from '../../hooks/utils/cache/useLocalStorage';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { decodePrefixedAddress } from '../../utils/address';
 import { SafeDisplayRow } from './SafeDisplayRow';
 
 interface AllSafesDrawerProps {
@@ -22,8 +24,6 @@ interface AllSafesDrawerProps {
 }
 
 export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
-  const { addressPrefix } = useNetworkConfig();
-
   const { t } = useTranslation('home');
   const [drawerHeight, setDrawerHeight] = useState('50%');
   const [isDragging, setIsDragging] = useState(false);
@@ -135,13 +135,14 @@ export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
           </Box>
         </DrawerHeader>
         <DrawerBody padding="0">
-          {(getValue({ cacheName: CacheKeys.FAVORITES }) || []).map((favorite: string) => (
-            <SafeDisplayRow
-              key={favorite}
-              network={addressPrefix}
-              address={favorite}
-            />
-          ))}
+          <ErrorBoundary fallback={MySafesErrorFallback}>
+            {(getValue({ cacheName: CacheKeys.FAVORITES }) || []).map((favorite: string) => (
+              <SafeDisplayRow
+                key={favorite}
+                {...decodePrefixedAddress(favorite)}
+              />
+            ))}
+          </ErrorBoundary>
         </DrawerBody>
       </DrawerContent>
     </Drawer>
