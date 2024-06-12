@@ -33,7 +33,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
 
-  let wasTimelocked = useRef(
+  const wasTimelocked = useRef(
     proposal.state === FractalProposalState.TIMELOCKABLE ||
       proposal.state === FractalProposalState.TIMELOCKED,
   );
@@ -139,9 +139,9 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         failedMessage: t('failedExecute', { ns: 'transaction' }),
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
-        successCallback: () => {
+        successCallback: async () => {
           setIsSubmitDisabled(true);
-          loadSafeMultisigProposals();
+          await loadSafeMultisigProposals();
         },
       });
     } catch (e) {

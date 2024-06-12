@@ -30,7 +30,7 @@ export const useLoadDAOProposals = () => {
     } else if (type === GovernanceType.MULTISIG) {
       // load mulisig proposals
       // @dev what is the point of setMethodOnInterval here?
-      setMethodOnInterval(loadSafeMultisigProposals);
+      return setMethodOnInterval(loadSafeMultisigProposals);
     }
   }, [
     clearIntervals,
