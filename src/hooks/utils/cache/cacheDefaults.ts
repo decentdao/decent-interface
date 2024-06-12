@@ -102,24 +102,19 @@ interface IndexedObject {
   [key: string]: any;
 }
 
-const MASTER_COPY_CACHE_VERSION = 1;
-const FAVORITES_CACHE_VERSION = 1;
-const PROPOSAL_CACHE_VERSION = 1;
-const AVERAGE_BLOCK_TIME_CACHE_VERSION = 1;
+const CACHE_VERSIONS: { [key: string]: number } = {
+  [CacheKeys.FAVORITES]: 1,
+  [CacheKeys.MASTER_COPY]: 1,
+  [CacheKeys.PROPOSAL_CACHE]: 1,
+  [CacheKeys.AVERAGE_BLOCK_TIME]: 1,
+};
 
 export const getCacheVersion = (cacheName: CacheKeys): number => {
-  switch (cacheName) {
-    case CacheKeys.FAVORITES:
-      return FAVORITES_CACHE_VERSION;
-    case CacheKeys.MASTER_COPY:
-      return MASTER_COPY_CACHE_VERSION;
-    case CacheKeys.PROPOSAL_CACHE:
-      return PROPOSAL_CACHE_VERSION;
-    case CacheKeys.AVERAGE_BLOCK_TIME:
-      return AVERAGE_BLOCK_TIME_CACHE_VERSION;
-    default:
-      throw new Error('Invalid cache name');
+  const version = CACHE_VERSIONS[cacheName];
+  if (version === undefined) {
+    throw new Error('Invalid cache name');
   }
+  return version;
 };
 
 /**
