@@ -3,7 +3,7 @@ import { addNetworkPrefix } from './../../../utils/url';
 // This should be a temporary hook to migrate the old local storage to the new one
 // and should be removed after a few months
 
-import { CacheKeys, CacheKeysV0 } from './cacheDefaults';
+import { CacheKeys } from './cacheDefaults';
 import { setValue } from './useLocalStorage';
 
 export const useMigrateLocalStorageV1 = () => {
@@ -24,7 +24,7 @@ export const useMigrateLocalStorageV1 = () => {
       return;
     }
     // Get All Network Favorites
-    const favoritesCache = fractKeys.filter(key => key.includes(CacheKeysV0.FAVORITES));
+    const favoritesCache = fractKeys.filter(key => key.includes('favorites'));
     const newFavorites: string[] = [];
 
     if (!favoritesCache.length) {

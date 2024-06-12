@@ -36,17 +36,6 @@ export enum CacheKeys {
   MULTISIG_METADATA_PREFIX = 'm_m_',
 }
 
-export enum CacheKeysV0 {
-  FAVORITES = 'favorites',
-  MASTER_COPY_PREFIX = 'master_copy_of_',
-  // wasn't a originally part of the cache keys but was used
-  AVERAGE_BLOCK_TIME = 'averageBlockTime',
-  // these were not used for local storage
-  // DECODED_TRANSACTION_PREFIX = 'decode_trans_',
-  // MULTISIG_METADATA_PREFIX = 'm_m_',
-  PROPOSAL_PREFIX = 'proposal',
-}
-
 export type CacheKey = {
   cacheName: CacheKeys;
   version: number;
