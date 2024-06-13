@@ -10,7 +10,7 @@ import { setValue } from './useLocalStorage';
 export function migrateCacheToV1(): boolean {
   // Migrate old cache keys to new format
   const keys = Object.keys(localStorage);
-  const fractKeys = keys.filter(key => key.includes('fract'));
+  const fractKeys = keys.filter(key => key.startsWith('fract_'));
   if (!fractKeys.length) {
     return true;
   }
