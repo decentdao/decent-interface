@@ -210,7 +210,6 @@ export default function useSubmitProposal() {
 
         const responseData = JSON.parse(response.config.data);
         const txHash = responseData.contractTransactionHash;
-        // await new Promise(resolve => setTimeout(resolve, 1000));
         await loadDAOProposals();
         if (successCallback) {
           cacheTemporaryProposal({
