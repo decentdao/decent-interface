@@ -2,7 +2,10 @@ import { useCallback } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import { GovernanceType } from '../../../types';
+import { CacheKeys } from '../../utils/cache/cacheDefaults';
+import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import { useUpdateTimer } from '../../utils/useUpdateTimer';
+import { TempProposalData } from '../proposal/useSubmitProposal';
 import { useAzoriusProposals } from './governance/useAzoriusProposals';
 import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals';
 
@@ -42,4 +45,14 @@ export const useLoadDAOProposals = () => {
   ]);
 
   return loadDAOProposals;
+};
+
+export const useLoadTempProposals = () => {
+  const { getValue } = useLocalStorage();
+
+  const loadTempDAOProposals = useCallback(async () => {
+    return (getValue(CacheKeys.TEMP_PROPOSALS) || []) as TempProposalData[];
+  }, [getValue]);
+
+  return loadTempDAOProposals;
 };

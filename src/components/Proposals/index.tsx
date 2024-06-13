@@ -52,7 +52,7 @@ export default function Proposals() {
   const [allOptions, setAllOptions] = useState<FractalProposalState[]>([]);
 
   const { t } = useTranslation(['proposal', 'common']);
-  const { proposals, getProposalsTotal } = useProposals({ sortBy, filters });
+  const { proposals, tempProposals, getProposalsTotal } = useProposals({ sortBy, filters });
 
   useEffect(() => {
     if (!type) return;
@@ -170,6 +170,9 @@ export default function Proposals() {
         />
       </Flex>
 
+      {!!tempProposals.length && (
+        <Box mb="1rem">Waiting for confirmation on {tempProposals.length} proposals</Box>
+      )}
       <ProposalsList proposals={proposals} />
     </>
   );

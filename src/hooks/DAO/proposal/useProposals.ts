@@ -1,6 +1,8 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { SortBy, FractalProposalState } from '../../../types';
+import { useLoadTempProposals } from '../loaders/useLoadDAOProposals';
+import { TempProposalData } from './useSubmitProposal';
 
 export default function useProposals({
   sortBy,
@@ -12,6 +14,9 @@ export default function useProposals({
   const {
     governance: { proposals },
   } = useFractal();
+
+  const loadTempDAOProposals = useLoadTempProposals();
+  const [tempProposals, setTempProposals] = useState<TempProposalData[]>([]);
 
   const getProposalsTotal = useCallback(
     (state: FractalProposalState) => {
@@ -35,8 +40,13 @@ export default function useProposals({
       });
   }, [sortBy, filters, proposals]);
 
+  useEffect(() => {
+    loadTempDAOProposals().then(data => setTempProposals(data));
+  }, [loadTempDAOProposals]);
+
   return {
     proposals: sortedAndFilteredProposals,
+    tempProposals,
     getProposalsTotal,
   };
 }

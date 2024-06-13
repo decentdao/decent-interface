@@ -18,9 +18,17 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
+import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
+import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useLoadDAOProposals } from '../loaders/useLoadDAOProposals';
+
+export type TempProposalData = {
+  safeAddress: string;
+  txHash: string;
+  proposalMetadata: CreateProposalMetadata;
+};
 
 export type SubmitProposalFunction = ({
   proposalData,
@@ -90,6 +98,17 @@ export default function useSubmitProposal() {
   const signerOrProvider = useSignerOrProvider();
   const { chain, safeBaseURL, addressPrefix } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
+
+  const { setValue, getValue } = useLocalStorage();
+
+  const cacheTemporaryProposal = useCallback(
+    (tempProposal: TempProposalData) => {
+      const temporaryProposals = (getValue(CacheKeys.TEMP_PROPOSALS) || []) as TempProposalData[];
+      const updatedProposals = [...temporaryProposals, tempProposal];
+      setValue(CacheKeys.TEMP_PROPOSALS, updatedProposals, CacheExpiry.ONE_DAY);
+    },
+    [getValue, setValue],
+  );
 
   const submitMultisigProposal = useCallback(
     async ({
@@ -173,7 +192,7 @@ export default function useSubmitProposal() {
         }
 
         const safeContract = GnosisSafeL2__factory.connect(safeAddress, signerOrProvider);
-        await axios.post(
+        const response = await axios.post(
           buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
           await buildSafeAPIPost(
             safeContract,
@@ -188,9 +207,18 @@ export default function useSubmitProposal() {
             },
           ),
         );
-        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const responseData = JSON.parse(response.config.data);
+        const txHash = responseData.contractTransactionHash;
+        // await new Promise(resolve => setTimeout(resolve, 1000));
         await loadDAOProposals();
         if (successCallback) {
+          cacheTemporaryProposal({
+            safeAddress,
+            txHash,
+            proposalMetadata: proposalData.metaData,
+          });
+
           successCallback(addressPrefix, safeAddress);
         }
         toast(successToastMessage);
@@ -204,12 +232,13 @@ export default function useSubmitProposal() {
       }
     },
     [
+      baseContracts,
       signerOrProvider,
       safeBaseURL,
-      chain,
+      chain.id,
       loadDAOProposals,
       ipfsClient,
-      baseContracts,
+      cacheTemporaryProposal,
       addressPrefix,
     ],
   );
@@ -246,7 +275,7 @@ export default function useSubmitProposal() {
         }));
 
         // @todo: Implement voting strategy proposal selection when/if we will support multiple strategies on single Azorius instance
-        await (
+        const receipt = await (
           await azoriusContract.submitProposal(
             votingStrategyAddress,
             '0x',
@@ -260,8 +289,15 @@ export default function useSubmitProposal() {
         ).wait();
         toast.dismiss(toastId);
         toast(successToastMessage);
-        if (successCallback) {
-          successCallback(addressPrefix, safeAddress!);
+
+        if (successCallback && !!safeAddress) {
+          cacheTemporaryProposal({
+            safeAddress,
+            txHash: receipt.transactionHash,
+            proposalMetadata: proposalData.metaData,
+          });
+
+          successCallback(addressPrefix, safeAddress);
         }
       } catch (e) {
         toast.dismiss(toastId);
@@ -271,7 +307,7 @@ export default function useSubmitProposal() {
         setPendingCreateTx(false);
       }
     },
-    [provider, addressPrefix],
+    [provider, cacheTemporaryProposal, addressPrefix],
   );
 
   const submitProposal: SubmitProposalFunction = useCallback(
