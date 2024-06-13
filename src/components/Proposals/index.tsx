@@ -169,7 +169,6 @@ export default function Proposals() {
           buttonProps={{ disabled: !proposals }}
         />
       </Flex>
-
       {!!tempProposals.length && (
         <Box mb="1rem">Waiting for confirmation on {tempProposals.length} proposals</Box>
       )}

@@ -18,8 +18,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { addressPrefix } = useNetworkConfig();
-
-  const { t } = useTranslation('proposal');
+  const { t } = useTranslation(['proposal', 'common']);
   return (
     <Flex
       flexDirection="column"
@@ -44,12 +43,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
         <EmptyBox emptyText={t('emptyProposals')}>
           {canUserCreateProposal && daoAddress && (
             <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)}>
-              <Button
-                variant="text"
-                textStyle="text-xl-mono-bold"
-              >
-                {t('createProposal')}
-              </Button>
+              <Button variant="text">{t('createProposal')}</Button>
             </Link>
           )}
         </EmptyBox>
