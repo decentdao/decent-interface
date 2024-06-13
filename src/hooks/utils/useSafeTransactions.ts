@@ -307,7 +307,9 @@ export const useSafeTransactions = () => {
                 : undefined,
             proposalId: eventSafeTxHash,
             targets,
-            transactionHash: multiSigTransaction.transactionHash,
+            transactionHash:
+              multiSigTransaction.transactionHash ||
+              (transaction as SafeMultisigTransactionWithTransfersResponse).safeTxHash,
             data: data,
             state: null,
             nonce: eventNonce,
