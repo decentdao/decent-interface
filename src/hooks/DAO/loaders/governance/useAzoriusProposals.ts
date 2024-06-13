@@ -245,6 +245,10 @@ export const useAzoriusProposals = () => {
           proposalData,
         );
 
+        if (!proposal.transactionHash) {
+          proposal.transactionHash = proposalCreatedEvent.transactionHash;
+        }
+
         completeProposalLoad(proposal);
 
         const isProposalFossilized =
