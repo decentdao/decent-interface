@@ -52,7 +52,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private parentStrategyAddress: Address | undefined;
   private moduleProxyFactoryAddress: Address;
   private azoriusFreezeGuardMasterCopyAddress: Address;
-  private multisigFreezeGuardMasterCopyContract: Address;
+  private multisigFreezeGuardMasterCopyAddress: Address;
 
   constructor(
     signerOrProvider: any,
@@ -64,7 +64,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     parentAddress: Address,
     moduleProxyFactoryAddress: Address,
     azoriusFreezeGuardMasterCopyAddress: Address,
-    multisigFreezeGuardMasterCopyContract: Address,
+    multisigFreezeGuardMasterCopyAddress: Address,
     isAzorius: boolean,
     parentTokenAddress?: Address,
     azoriusAddress?: Address,
@@ -90,7 +90,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.parentStrategyAddress = parentStrategyAddress;
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
     this.azoriusFreezeGuardMasterCopyAddress = azoriusFreezeGuardMasterCopyAddress;
-    this.multisigFreezeGuardMasterCopyContract = multisigFreezeGuardMasterCopyContract;
+    this.multisigFreezeGuardMasterCopyAddress = multisigFreezeGuardMasterCopyAddress;
 
     this.initFreezeVotesData();
   }
@@ -296,6 +296,6 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private getGuardMasterCopyAddress(): string {
     return this.isAzorius
       ? this.azoriusFreezeGuardMasterCopyAddress
-      : this.multisigFreezeGuardMasterCopyContract;
+      : this.multisigFreezeGuardMasterCopyAddress;
   }
 }

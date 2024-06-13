@@ -36,7 +36,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private gnosisSafeSingletonAddress: string;
   private moduleProxyFactoryAddress: string;
   private azoriusFreezeGuardMasterCopyAddress: string;
-  private multisigFreezeGuardMasterCopyContract: string;
+  private multisigFreezeGuardMasterCopyAddress: string;
   private multiSendCallOnlyAddress: string;
   private erc20ClaimMasterCopyAddress: string;
   private fractalModuleMasterCopyAddress: string;
@@ -59,7 +59,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     gnosisSafeSingletonAddress: string,
     moduleProxyFactoryAddress: string,
     azoriusFreezeGuardMasterCopyAddress: string,
-    multisigFreezeGuardMasterCopyContract: string,
+    multisigFreezeGuardMasterCopyAddress: string,
     multiSendCallOnlyAddress: string,
     erc20ClaimMasterCopyAddress: string,
     fractalModuleMasterCopyAddress: string,
@@ -89,7 +89,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.gnosisSafeSingletonAddress = gnosisSafeSingletonAddress;
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
     this.azoriusFreezeGuardMasterCopyAddress = azoriusFreezeGuardMasterCopyAddress;
-    this.multisigFreezeGuardMasterCopyContract = multisigFreezeGuardMasterCopyContract;
+    this.multisigFreezeGuardMasterCopyAddress = multisigFreezeGuardMasterCopyAddress;
     this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
     this.erc20ClaimMasterCopyAddress = erc20ClaimMasterCopyAddress;
     this.fractalModuleMasterCopyAddress = fractalModuleMasterCopyAddress;
@@ -171,7 +171,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       getAddress(this.parentAddress!),
       getAddress(this.moduleProxyFactoryAddress),
       getAddress(this.azoriusFreezeGuardMasterCopyAddress),
-      getAddress(this.multisigFreezeGuardMasterCopyContract),
+      getAddress(this.multisigFreezeGuardMasterCopyAddress),
       this.isAzorius,
       this.parentTokenAddress ? getAddress(this.parentTokenAddress) : undefined,
       azoriusAddress ? getAddress(azoriusAddress) : undefined,
