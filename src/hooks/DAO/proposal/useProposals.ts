@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Id, toast } from 'react-toastify';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { SortBy, FractalProposalState } from '../../../types';
 import { CacheKeys, CacheExpiry } from '../../utils/cache/cacheDefaults';
@@ -19,6 +20,22 @@ export default function useProposals({
 
   const loadTempDAOProposals = useLoadTempProposals();
   const [tempProposals, setTempProposals] = useState<TempProposalData[]>([]);
+  const [pendingProposalsToastId, setPendingProposalsToastId] = useState<Id>();
+
+  useEffect(() => {
+    if (tempProposals.length) {
+      const toastId = toast.info(`Waiting for confirmation on ${tempProposals.length} proposals`, {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        closeButton: false,
+      });
+      setPendingProposalsToastId(toastId);
+      return () => {
+        toast.dismiss(toastId);
+      };
+    }
+  }, [tempProposals.length]);
 
   const getProposalsTotal = useCallback(
     (state: FractalProposalState) => {
@@ -35,10 +52,17 @@ export default function useProposals({
     (txHash: string) => {
       const temporaryProposals = (getValue(CacheKeys.TEMP_PROPOSALS) as TempProposalData[]) || [];
       const updatedProposals = temporaryProposals.filter(proposal => proposal.txHash !== txHash);
+
       setValue(CacheKeys.TEMP_PROPOSALS, updatedProposals, CacheExpiry.ONE_DAY);
-      setTempProposals(updatedProposals);
+
+      if (tempProposals.length !== updatedProposals.length) {
+        setTempProposals(updatedProposals);
+        if (updatedProposals.length === 0) {
+          toast.dismiss(pendingProposalsToastId);
+        }
+      }
     },
-    [getValue, setValue],
+    [getValue, pendingProposalsToastId, setValue, tempProposals.length],
   );
 
   const sortedAndFilteredProposals = useMemo(() => {
