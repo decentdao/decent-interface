@@ -1,6 +1,5 @@
 import {
   ERC20FreezeVoting__factory,
-  MultisigFreezeGuard__factory,
   MultisigFreezeVoting__factory,
   ERC721FreezeVoting__factory,
   MultisigFreezeVoting,
@@ -16,7 +15,6 @@ import {
   Hex,
   encodeAbiParameters,
   parseAbiParameters,
-  isHex,
   PublicClient,
   Abi,
   encodeFunctionData,
@@ -24,6 +22,7 @@ import {
 import AzoriusFreezeGuardAbi from '../assets/abi/AzoriusFreezeGuard';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
+import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
 import { buildContractCall, buildContractCallViem } from '../helpers';
 import { BaseContracts, SafeTransaction, SubDAO, VotingStrategyType } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
@@ -53,6 +52,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private parentStrategyAddress: Address | undefined;
   private moduleProxyFactoryAddress: Address;
   private azoriusFreezeGuardMasterCopyAddress: Address;
+  private multisigFreezeGuardMasterCopyContract: Address;
 
   constructor(
     signerOrProvider: any,
@@ -64,6 +64,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     parentAddress: Address,
     moduleProxyFactoryAddress: Address,
     azoriusFreezeGuardMasterCopyAddress: Address,
+    multisigFreezeGuardMasterCopyContract: Address,
     isAzorius: boolean,
     parentTokenAddress?: Address,
     azoriusAddress?: Address,
@@ -89,6 +90,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.parentStrategyAddress = parentStrategyAddress;
     this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
     this.azoriusFreezeGuardMasterCopyAddress = azoriusFreezeGuardMasterCopyAddress;
+    this.multisigFreezeGuardMasterCopyContract = multisigFreezeGuardMasterCopyContract;
 
     this.initFreezeVotesData();
   }
@@ -247,21 +249,21 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
         'Error encoding freeze guard call data - parent address or freeze voting address not provided',
       );
     }
-    const freezeGuardCallData = MultisigFreezeGuard__factory.createInterface().encodeFunctionData(
-      'setUp',
-      [
+
+    const freezeGuardCallData = encodeFunctionData({
+      abi: MultisigFreezeGuardAbi,
+      functionName: 'setUp',
+      args: [
         encodeAbiParameters(parseAbiParameters('uint32, uint32, address, address, address'), [
           Number(subDaoData.timelockPeriod), // Timelock Period
           Number(subDaoData.executionPeriod), // Execution Period
           getAddress(this.parentAddress), // Owner -- Parent DAO
-          getAddress(this.freezeVotingAddress), // Freeze Voting
+          this.freezeVotingAddress, // Freeze Voting
           this.safeContractAddress, // Safe
         ]),
       ],
-    );
-    if (!isHex(freezeGuardCallData)) {
-      throw new Error('Error encoding freeze guard call data');
-    }
+    });
+
     this.freezeGuardCallData = freezeGuardCallData;
   }
 
@@ -294,6 +296,6 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private getGuardMasterCopyAddress(): string {
     return this.isAzorius
       ? this.azoriusFreezeGuardMasterCopyAddress
-      : this.baseContracts.multisigFreezeGuardMasterCopyContract.address;
+      : this.multisigFreezeGuardMasterCopyContract;
   }
 }

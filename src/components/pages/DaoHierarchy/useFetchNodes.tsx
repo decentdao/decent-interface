@@ -5,6 +5,7 @@ import { usePublicClient } from 'wagmi';
 import { DAOQueryDocument } from '../../../../.graphclient';
 import AzoriusAbi from '../../../assets/abi/Azorius';
 import AzoriusFreezeGuardAbi from '../../../assets/abi/AzoriusFreezeGuard';
+import MultisigFreezeGuardAbi from '../../../assets/abi/MultisigFreezeGuard';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractalModules } from '../../../hooks/DAO/loaders/useFractalModules';
 import { useAsyncRetry } from '../../../hooks/utils/useAsyncRetry';
@@ -41,11 +42,14 @@ export function useFetchNodes(address?: string) {
 
   const getDAOOwner = useCallback(
     async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
-      if (safeInfo && safeInfo.guard && baseContracts) {
-        const { multisigFreezeGuardMasterCopyContract } = baseContracts;
+      if (safeInfo && safeInfo.guard && baseContracts && publicClient) {
         if (safeInfo.guard !== zeroAddress) {
-          const guard = multisigFreezeGuardMasterCopyContract.asProvider.attach(safeInfo.guard);
-          const guardOwner = await guard.owner();
+          const guard = getContract({
+            abi: MultisigFreezeGuardAbi,
+            address: getAddress(safeInfo.guard),
+            client: publicClient,
+          });
+          const guardOwner = await guard.read.owner();
           if (guardOwner !== safeInfo.address) {
             return guardOwner;
           }

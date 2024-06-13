@@ -1,5 +1,4 @@
 import {
-  MultisigFreezeGuard,
   MultisigFreezeVoting,
   ERC20FreezeVoting,
   ERC721FreezeVoting,
@@ -15,7 +14,6 @@ export type ContractConnection<T> = {
 };
 
 export interface BaseContracts {
-  multisigFreezeGuardMasterCopyContract: MultisigFreezeGuard;
   freezeERC20VotingMasterCopyContract: ERC20FreezeVoting;
   freezeERC721VotingMasterCopyContract: ERC721FreezeVoting;
   freezeMultisigVotingMasterCopyContract: MultisigFreezeVoting;

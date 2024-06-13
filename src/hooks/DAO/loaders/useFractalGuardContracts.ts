@@ -3,6 +3,7 @@ import { getAddress, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import AzoriusAbi from '../../../assets/abi/Azorius';
 import AzoriusFreezeGuardAbi from '../../../assets/abi/AzoriusFreezeGuard';
+import MultisigFreezeGuardAbi from '../../../assets/abi/MultisigFreezeGuard';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -35,7 +36,6 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       if (!baseContracts || !publicClient) {
         return;
       }
-      const { multisigFreezeGuardMasterCopyContract } = baseContracts;
       const { guard } = _safe;
 
       const azoriusModule = _fractalModules?.find(
@@ -90,9 +90,13 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
           };
         }
 
-        const votingAddress = await multisigFreezeGuardMasterCopyContract.asProvider
-          .attach(guard)
-          .freezeVoting();
+        const multisigFreezeGuardContract = getContract({
+          abi: MultisigFreezeGuardAbi,
+          address: getAddress(guard),
+          client: publicClient,
+        });
+
+        const votingAddress = await multisigFreezeGuardContract.read.freezeVoting();
         const freezeVotingMasterCopyData = await getZodiacModuleProxyMasterCopyData(
           getAddress(votingAddress),
         );
