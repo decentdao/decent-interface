@@ -3,7 +3,10 @@ import {
   LinearERC20Voting,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
-import { ProposalExecutedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
+import {
+  ProposalCreatedEvent,
+  ProposalExecutedEvent,
+} from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
@@ -149,6 +152,7 @@ const getProposalVotes = (
 };
 
 export const mapProposalCreatedEventToProposal = async (
+  createdEvent: ProposalCreatedEvent,
   erc20StrategyContract: LinearERC20Voting | undefined,
   erc721StrategyContract: LinearERC721Voting | undefined,
   strategyType: VotingStrategyType,
@@ -218,6 +222,8 @@ export const mapProposalCreatedEventToProposal = async (
       event => BigInt(event.args[0]) === proposalId,
     );
     transactionHash = executedEvent?.transactionHash;
+  } else {
+    transactionHash = createdEvent.transactionHash;
   }
 
   const proposal: AzoriusProposal = {

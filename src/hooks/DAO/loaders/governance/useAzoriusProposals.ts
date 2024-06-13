@@ -232,6 +232,7 @@ export const useAzoriusProposals = () => {
         }
 
         const proposal = await mapProposalCreatedEventToProposal(
+          proposalCreatedEvent,
           _erc20StrategyContract,
           _erc721StrategyContract,
           _strategyType,
@@ -244,10 +245,6 @@ export const useAzoriusProposals = () => {
           _executedEvents,
           proposalData,
         );
-
-        if (!proposal.transactionHash) {
-          proposal.transactionHash = proposalCreatedEvent.transactionHash;
-        }
 
         completeProposalLoad(proposal);
 
