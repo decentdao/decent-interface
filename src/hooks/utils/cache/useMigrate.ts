@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { addNetworkPrefix } from './../../../utils/url';
+import { addNetworkPrefix } from '../../../utils/url';
 // This should be a temporary hook to migrate the old local storage to the new one
 // and should be removed after a few months
 
@@ -49,7 +49,7 @@ export function migrateCacheToV1(): boolean {
   return true;
 }
 
-export const useMigrateLocalStorageV1 = () => {
+export const useMigrate = () => {
   const isMounted = useRef(false);
   const [isMigrated, setIsMigrated] = useState(false);
 

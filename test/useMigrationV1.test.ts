@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CacheKeys } from '../src/hooks/utils/cache/cacheDefaults';
 import { setValue } from '../src/hooks/utils/cache/useLocalStorage';
-import { migrateCacheToV1 } from '../src/hooks/utils/cache/useMigrateLocalStorageV1';
+import { migrateCacheToV1 } from '../src/hooks/utils/cache/useMigrate';
 
 // Mock the setValue function
 vi.mock('../src/hooks/utils/cache/useLocalStorage', () => ({
