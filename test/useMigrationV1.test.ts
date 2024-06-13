@@ -49,7 +49,7 @@ describe('migrateCacheToV1', () => {
 
     const expectedNewValue = [
       'sep:0xd418E98a11B9189fCc05cddfbB10F4Cee996C749',
-      'eth:0xabcdE98a11B9189fCc05cddfbB10F4Cee996C999'
+      'eth:0xabcdE98a11B9189fCc05cddfbB10F4Cee996C999',
     ];
 
     migrateCacheToV1();
