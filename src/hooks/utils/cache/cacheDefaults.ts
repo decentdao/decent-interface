@@ -31,6 +31,7 @@ export enum CacheKeys {
   MASTER_COPY = 'Master Copy',
   AVERAGE_BLOCK_TIME = 'Average Block Time',
   PROPOSAL_CACHE = 'Proposal',
+  MIGRATION = 'Migration',
   // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
@@ -96,6 +97,7 @@ export const CACHE_VERSIONS: { [key: string]: number } = Object.freeze({
   [CacheKeys.MASTER_COPY]: 1,
   [CacheKeys.PROPOSAL_CACHE]: 1,
   [CacheKeys.AVERAGE_BLOCK_TIME]: 1,
+  [CacheKeys.MIGRATION]: 1,
 });
 
 /**

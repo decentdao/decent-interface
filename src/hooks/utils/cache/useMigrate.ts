@@ -3,11 +3,15 @@ import { addNetworkPrefix } from '../../../utils/url';
 // This should be a temporary hook to migrate the old local storage to the new one
 // and should be removed after a few months
 
-import { CacheKeys } from './cacheDefaults';
+import { CACHE_VERSIONS, CacheKeys } from './cacheDefaults';
 import { setValue } from './useLocalStorage';
 
 //@dev for testing seperated the function from the hook and export
 export function migrateCacheToV1(): boolean {
+  const cacheVersion = localStorage.getItem(CacheKeys.MIGRATION);
+  if (cacheVersion && Number(cacheVersion) === CACHE_VERSIONS[CacheKeys.MIGRATION]) {
+    return true;
+  }
   // Migrate old cache keys to new format
   const keys = Object.keys(localStorage);
   const fractKeys = keys.filter(key => key.startsWith('fract_'));
@@ -46,6 +50,8 @@ export function migrateCacheToV1(): boolean {
   fractKeys.forEach(key => {
     localStorage.removeItem(key);
   });
+  // set migration version
+  setValue({ cacheName: CacheKeys.MIGRATION }, CACHE_VERSIONS[CacheKeys.MIGRATION]);
   return true;
 }
 
