@@ -26,7 +26,7 @@ describe('migrateCacheToV1', () => {
       throw new Error('Favorites cache not found');
     }
     expect(favoriteCache).toStrictEqual(expectedNewValue);
-    
+
     const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
     if (!migrationCache) {
       throw new Error('Migration cache not found');
