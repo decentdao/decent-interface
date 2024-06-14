@@ -8,10 +8,6 @@ import { getValue, setValue } from './useLocalStorage';
 
 //@dev for testing seperated the function from the hook and export
 export function migrateCacheToV1(): boolean {
-  const cacheVersion = getValue({ cacheName: CacheKeys.MIGRATION });
-  if (cacheVersion && cacheVersion === CACHE_VERSIONS[CacheKeys.MIGRATION]) {
-    return true;
-  }
   // Migrate old cache keys to new format
   const keys = Object.keys(localStorage);
   const fractKeys = keys.filter(key => key.startsWith('fract_'));
@@ -63,7 +59,14 @@ export const useMigrate = () => {
     // prevent multiple calls
     if (isMounted.current) return;
     if (isMigrated) return;
-    setIsMigrated(migrateCacheToV1());
+    const cacheVersion = getValue({ cacheName: CacheKeys.MIGRATION });
+    if (
+      cacheVersion &&
+      cacheVersion !== CACHE_VERSIONS[CacheKeys.MIGRATION] &&
+      cacheVersion === 1
+    ) {
+      setIsMigrated(migrateCacheToV1());
+    }
     isMounted.current = true;
   }, [isMigrated]);
 
