@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CacheKeys } from '../src/hooks/utils/cache/cacheDefaults';
+import migrateCacheToV1 from '../src/hooks/utils/cache/migrations/1';
 import { getValue } from '../src/hooks/utils/cache/useLocalStorage';
-import { migrateCacheToV1 } from '../src/hooks/utils/cache/useMigrate';
 
 // Clear localStorage before each test
 beforeEach(() => {

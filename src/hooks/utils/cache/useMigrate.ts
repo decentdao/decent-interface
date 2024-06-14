@@ -1,74 +1,37 @@
-import { useEffect, useRef, useState } from 'react';
-import { addNetworkPrefix } from '../../../utils/url';
-// This should be a temporary hook to migrate the old local storage to the new one
-// and should be removed after a few months
-
+import { useEffect, useRef } from 'react';
 import { CACHE_VERSIONS, CacheKeys } from './cacheDefaults';
 import { getValue, setValue } from './useLocalStorage';
 
-//@dev for testing seperated the function from the hook and export
-export function migrateCacheToV1(): boolean {
-  // Migrate old cache keys to new format
-  const keys = Object.keys(localStorage);
-  const fractKeys = keys.filter(key => key.startsWith('fract_'));
-  if (!fractKeys.length) {
-    // update migration version if no old cache keys are found
+const runMigrations = () => {
+  const cacheVersion = getValue({ cacheName: CacheKeys.MIGRATION });
+
+  if (
+    cacheVersion === null ||
+    (cacheVersion && cacheVersion < CACHE_VERSIONS[CacheKeys.MIGRATION])
+  ) {
+    const actualCacheVersion = cacheVersion || 0;
+    const migrationsToRun = CACHE_VERSIONS[CacheKeys.MIGRATION] - actualCacheVersion;
+    // loop through each pending migration and run in turn
+    for (let i = actualCacheVersion + 1; i <= migrationsToRun; i++) {
+      const migration = require(`./migrations/${i}`);
+      try {
+        migration();
+      } catch (e) {
+        setValue({ cacheName: CacheKeys.MIGRATION }, i - 1);
+        return;
+      }
+    }
     setValue({ cacheName: CacheKeys.MIGRATION }, CACHE_VERSIONS[CacheKeys.MIGRATION]);
-    return true;
   }
-  // Get All Network Favorites
-  const favoritesCache = fractKeys.filter(key => key.endsWith('favorites'));
-  const newFavorites: string[] = [];
-
-  // loop through all favorites
-  for (const favorite of favoritesCache) {
-    // Get ChainId from favorite key
-    const [, chainId] = favorite.split('_');
-    if (Number.isNaN(Number(chainId))) {
-      continue;
-    }
-    const favoritesValue = localStorage.getItem(favorite);
-    if (favoritesValue) {
-      // Parse favorites value and add network prefix
-      const parsedValue: { v: string[] } = JSON.parse(favoritesValue);
-      parsedValue.v.forEach((value: string) => {
-        newFavorites.push(addNetworkPrefix(value, Number(chainId)));
-      });
-    }
-  }
-  if (newFavorites.length) {
-    // Set new Favorites cache
-    setValue({ cacheName: CacheKeys.FAVORITES }, newFavorites);
-  }
-
-  // delete old cache
-  fractKeys.forEach(key => {
-    localStorage.removeItem(key);
-  });
-  // set migration version
-
-  setValue({ cacheName: CacheKeys.MIGRATION }, CACHE_VERSIONS[CacheKeys.MIGRATION]);
-  return true;
-}
+};
 
 export const useMigrate = () => {
   const isMounted = useRef(false);
-  const [isMigrated, setIsMigrated] = useState(false);
 
   useEffect(() => {
     // prevent multiple calls
     if (isMounted.current) return;
-    if (isMigrated) return;
-    const cacheVersion = getValue({ cacheName: CacheKeys.MIGRATION });
-    if (
-      cacheVersion &&
-      cacheVersion !== CACHE_VERSIONS[CacheKeys.MIGRATION] &&
-      cacheVersion === 1
-    ) {
-      setIsMigrated(migrateCacheToV1());
-    }
+    runMigrations();
     isMounted.current = true;
-  }, [isMigrated]);
-
-  return isMigrated;
+  }, []);
 };
