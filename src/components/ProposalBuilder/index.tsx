@@ -3,7 +3,7 @@ import { Trash } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { DAO_ROUTES, BASE_ROUTES } from '../../constants/routes';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
@@ -35,7 +35,10 @@ export function ProposalBuilder({
   const location = useLocation();
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
 
-  const step = location.pathname.split('/').pop();
+  const paths = location.pathname.split('/');
+  const step = (paths[paths.length - 1] || paths[paths.length - 2]) as
+    | CreateProposalSteps
+    | undefined;
   const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
 
   const {
@@ -55,10 +58,7 @@ export function ProposalBuilder({
   };
 
   useEffect(() => {
-    if (
-      daoAddress &&
-      (!step || !Object.values(CreateProposalSteps).includes(step as CreateProposalSteps))
-    ) {
+    if (daoAddress && (!step || !Object.values(CreateProposalSteps).includes(step))) {
       navigate(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress), { replace: true });
     }
   }, [daoAddress, step, navigate, addressPrefix]);
@@ -202,6 +202,15 @@ export function ProposalBuilder({
                                 </Flex>
                               )}
                             </>
+                          }
+                        />
+                        <Route
+                          path="*"
+                          element={
+                            <Navigate
+                              to={CreateProposalSteps.METADATA}
+                              replace
+                            />
                           }
                         />
                       </Routes>

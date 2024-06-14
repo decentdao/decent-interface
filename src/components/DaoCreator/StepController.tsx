@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { ICreationStepProps, CreatorSteps, GovernanceType } from '../../types';
@@ -15,20 +15,10 @@ import useStepRedirect from './hooks/useStepRedirect';
 function StepController(props: ICreationStepProps) {
   const { t } = useTranslation('daoCreate');
   const { createOptions } = useNetworkConfig();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const step = location.pathname.split('/').pop() as CreatorSteps | undefined;
 
   const { values, setFieldValue } = props;
 
   const { redirectToInitialStep } = useStepRedirect({ values, redirectOnMount: false });
-
-  useEffect(() => {
-    const steps = Object.values(CreatorSteps);
-    if (!step || !steps.includes(step)) {
-      redirectToInitialStep();
-    }
-  }, [step, redirectToInitialStep]);
 
   useEffect(() => {
     // @dev - The only possible way for this to become true if someone will choose governance option and then would switch network
@@ -37,14 +27,7 @@ function StepController(props: ICreationStepProps) {
       redirectToInitialStep();
       toast(t('errorUnsupportedCreateOption'));
     }
-  }, [
-    createOptions,
-    setFieldValue,
-    values.essentials.governance,
-    navigate,
-    t,
-    redirectToInitialStep,
-  ]);
+  }, [createOptions, setFieldValue, values.essentials.governance, t, redirectToInitialStep]);
 
   return (
     <Routes>
@@ -71,6 +54,15 @@ function StepController(props: ICreationStepProps) {
       <Route
         path={CreatorSteps.FREEZE_DETAILS}
         element={<GuardDetails {...props} />}
+      />
+      <Route
+        path="*"
+        element={
+          <Navigate
+            to={CreatorSteps.ESSENTIALS}
+            replace
+          />
+        }
       />
     </Routes>
   );

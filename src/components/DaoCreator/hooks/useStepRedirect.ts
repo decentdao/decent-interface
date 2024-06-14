@@ -13,7 +13,8 @@ export default function useStepRedirect({
   const location = useLocation();
 
   const redirectToInitialStep = useCallback(() => {
-    const step = location.pathname.split('/').pop();
+    const paths = location.pathname.split('/');
+    const step = paths[paths.length - 1] || paths[paths.length - 2];
     // @dev In fact, step can't be `undefined` here cause it will be redirected by logic in routes definition
     const redirectPath = `${location.pathname.replace(`${step}`, CreatorSteps.ESSENTIALS)}${location.search}`;
     navigate(redirectPath, { replace: true });

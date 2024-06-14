@@ -30,8 +30,8 @@ export function StepButtons({
     readOnly: { user },
   } = useFractal();
   const location = useLocation();
-  const step = location.pathname.split('/').pop();
-  const creatorStep = step as CreatorSteps | undefined;
+  const paths = location.pathname.split('/');
+  const step = (paths[paths.length - 1] || paths[paths.length - 2]) as CreatorSteps | undefined;
   const prevStepUrl = `${location.pathname.replace(`${step}`, `${prevStep}`)}${location.search}`;
   const nextStepUrl = `${location.pathname.replace(`${step}`, `${nextStep}`)}${location.search}`;
 
@@ -65,13 +65,7 @@ export function StepButtons({
       )}
       <Button
         type={buttonType}
-        isDisabled={
-          transactionPending ||
-          isSubmitting ||
-          !creatorStep ||
-          !!errors[creatorStep] ||
-          isNextDisabled
-        }
+        isDisabled={transactionPending || isSubmitting || !step || !!errors[step] || isNextDisabled}
         px="2rem"
         onClick={() => {
           if (!isLastStep && nextStep) {
