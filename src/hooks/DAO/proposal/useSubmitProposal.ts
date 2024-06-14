@@ -19,7 +19,7 @@ import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '..
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
-import { getValue, setValue } from '../../utils/cache/useLocalStorage';
+import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useLoadDAOProposals } from '../loaders/useLoadDAOProposals';
@@ -99,14 +99,15 @@ export default function useSubmitProposal() {
   const { chain, safeBaseURL, addressPrefix } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
 
+  const { setValue, getValue } = useLocalStorage();
+
   const cacheTemporaryProposal = useCallback(
     (tempProposal: TempProposalData) => {
-      const temporaryProposals = (getValue(CacheKeys.TEMP_PROPOSALS, chain.id) ||
-        []) as TempProposalData[];
+      const temporaryProposals = (getValue(CacheKeys.TEMP_PROPOSALS) || []) as TempProposalData[];
       const updatedProposals = [...temporaryProposals, tempProposal];
       setValue(CacheKeys.TEMP_PROPOSALS, updatedProposals, CacheExpiry.ONE_DAY);
     },
-    [chain.id],
+    [getValue, setValue],
   );
 
   const submitMultisigProposal = useCallback(
@@ -210,13 +211,13 @@ export default function useSubmitProposal() {
         const responseData = JSON.parse(response.config.data);
         const txHash = responseData.contractTransactionHash;
         await loadDAOProposals();
-        cacheTemporaryProposal({
-          safeAddress,
-          txHash,
-          proposalMetadata: proposalData.metaData,
-        });
-
         if (successCallback) {
+          cacheTemporaryProposal({
+            safeAddress,
+            txHash,
+            proposalMetadata: proposalData.metaData,
+          });
+
           successCallback(addressPrefix, safeAddress);
         }
         toast(successToastMessage);
@@ -287,16 +288,15 @@ export default function useSubmitProposal() {
         ).wait();
         toast.dismiss(toastId);
         toast(successToastMessage);
-        if (!!safeAddress) {
+
+        if (successCallback && !!safeAddress) {
           cacheTemporaryProposal({
             safeAddress,
             txHash: receipt.transactionHash,
             proposalMetadata: proposalData.metaData,
           });
 
-          if (successCallback) {
-            successCallback(addressPrefix, safeAddress);
-          }
+          successCallback(addressPrefix, safeAddress);
         }
       } catch (e) {
         toast.dismiss(toastId);
