@@ -1,9 +1,10 @@
 import { useCallback } from 'react';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../providers/App/governance/action';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { GovernanceType } from '../../../types';
 import { CacheKeys } from '../../utils/cache/cacheDefaults';
-import { useLocalStorage } from '../../utils/cache/useLocalStorage';
+import { getValue } from '../../utils/cache/useLocalStorage';
 import { useUpdateTimer } from '../../utils/useUpdateTimer';
 import { TempProposalData } from '../proposal/useSubmitProposal';
 import { useAzoriusProposals } from './governance/useAzoriusProposals';
@@ -48,11 +49,10 @@ export const useLoadDAOProposals = () => {
 };
 
 export const useLoadTempProposals = () => {
-  const { getValue } = useLocalStorage();
-
+  const { chain } = useNetworkConfig();
   const loadTempDAOProposals = useCallback(async () => {
-    return (getValue(CacheKeys.TEMP_PROPOSALS) || []) as TempProposalData[];
-  }, [getValue]);
+    return (getValue(CacheKeys.TEMP_PROPOSALS, chain.id) || []) as TempProposalData[];
+  }, [chain.id]);
 
   return loadTempDAOProposals;
 };
