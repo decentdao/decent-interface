@@ -58,7 +58,9 @@ export const router = (addressPrefix: string) =>
             },
             {
               path: 'edit/governance',
-              loader: () => redirect(DAO_ROUTES.modifyGovernance.path),
+              // @ts-ignore:next-line
+              loader: ({ params: { daoAddress } }) =>
+                redirect(DAO_ROUTES.modifyGovernance.relative(addressPrefix, daoAddress)),
             },
             {
               path: 'hierarchy',
@@ -70,7 +72,9 @@ export const router = (addressPrefix: string) =>
             },
             {
               path: 'new',
-              loader: () => redirect(DAO_ROUTES.newSubDao.path),
+              // @ts-ignore:next-line
+              loader: ({ params: { daoAddress } }) =>
+                redirect(DAO_ROUTES.newSubDao.relative(addressPrefix, daoAddress)),
             },
             {
               path: 'proposal-templates',
@@ -85,7 +89,9 @@ export const router = (addressPrefix: string) =>
                 },
                 {
                   path: 'new',
-                  loader: () => redirect(DAO_ROUTES.proposalTemplateNew.path),
+                  // @ts-ignore:next-line
+                  loader: ({ params: { daoAddress } }) =>
+                    redirect(DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)),
                 },
               ],
             },
@@ -106,7 +112,9 @@ export const router = (addressPrefix: string) =>
                 },
                 {
                   path: 'new',
-                  loader: () => redirect(DAO_ROUTES.proposalNew.path),
+                  // @ts-ignore:next-line
+                  loader: ({ params: { daoAddress } }) =>
+                    redirect(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)),
                 },
               ],
             },
@@ -126,7 +134,7 @@ export const router = (addressPrefix: string) =>
           path: 'daos/:daoAddress/*',
           // @ts-ignore:next-line
           loader: ({ params: { daoAddress } }) =>
-            redirect(`/home?dao=${addressPrefix}:${daoAddress}`),
+            redirect(DAO_ROUTES.dao.relative(addressPrefix, daoAddress)),
         },
         {
           path: '*', // 404
