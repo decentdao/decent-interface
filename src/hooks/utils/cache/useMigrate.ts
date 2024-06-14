@@ -3,7 +3,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { CACHE_VERSIONS, CacheKeys } from './cacheDefaults';
 import { getValue, setValue } from './useLocalStorage';
 
-const runMigrations = () => {
+export const runMigrations = async () => {
   const cacheVersion = getValue({ cacheName: CacheKeys.MIGRATION });
 
   if (
@@ -14,9 +14,9 @@ const runMigrations = () => {
     const migrationsToRun = CACHE_VERSIONS[CacheKeys.MIGRATION] - actualCacheVersion;
     // loop through each pending migration and run in turn
     for (let i = actualCacheVersion + 1; i <= migrationsToRun; i++) {
-      const migration = require(`./migrations/${i}`);
+      const migration = await import(`./migrations/${i}`);
       try {
-        migration();
+        migration.default();
       } catch (e) {
         logError(e)
         setValue({ cacheName: CacheKeys.MIGRATION }, i - 1);
