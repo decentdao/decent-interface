@@ -1,12 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { CacheKeys } from '../src/hooks/utils/cache/cacheDefaults';
-import { setValue } from '../src/hooks/utils/cache/useLocalStorage';
+import { getValue } from '../src/hooks/utils/cache/useLocalStorage';
 import { migrateCacheToV1 } from '../src/hooks/utils/cache/useMigrate';
-
-// Mock the setValue function
-vi.mock('../src/hooks/utils/cache/useLocalStorage', () => ({
-  setValue: vi.fn(),
-}));
 
 // Clear localStorage before each test
 beforeEach(() => {
@@ -26,8 +21,18 @@ describe('migrateCacheToV1', () => {
     const expectedNewValue = ['sep:0xd418E98a11B9189fCc05cddfbB10F4Cee996C749'];
 
     migrateCacheToV1();
+    const favoriteCache = getValue({ cacheName: CacheKeys.FAVORITES });
+    if (!favoriteCache) {
+      throw new Error('Favorites cache not found');
+    }
+    expect(favoriteCache).toStrictEqual(expectedNewValue);
+    
+    const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
+    if (!migrationCache) {
+      throw new Error('Migration cache not found');
+    }
+    expect(migrationCache).toBe(1);
 
-    expect(setValue).toHaveBeenCalledWith({ cacheName: CacheKeys.FAVORITES }, expectedNewValue);
     expect(localStorage.getItem(oldKey)).toBeNull();
   });
 
@@ -53,23 +58,41 @@ describe('migrateCacheToV1', () => {
     ];
 
     migrateCacheToV1();
-
-    expect(setValue).toHaveBeenCalledWith({ cacheName: CacheKeys.FAVORITES }, expectedNewValue);
+    const favoriteCache = getValue({ cacheName: CacheKeys.FAVORITES });
+    if (!favoriteCache) {
+      throw new Error('Favorites cache not found');
+    }
+    expect(favoriteCache).toStrictEqual(expectedNewValue);
     expect(localStorage.getItem(oldKey1)).toBeNull();
     expect(localStorage.getItem(oldKey2)).toBeNull();
+
+    const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
+    if (!migrationCache) {
+      throw new Error('Migration cache not found');
+    }
+    expect(migrationCache).toBe(1);
   });
 
   it('should handle an empty localStorage without errors', () => {
     migrateCacheToV1();
 
-    expect(setValue).not.toHaveBeenCalled();
+    const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
+    if (!migrationCache) {
+      throw new Error('Migration cache not found');
+    }
+    expect(migrationCache).toBe(1);
   });
 
   it('should handle localStorage without relevant keys', () => {
     localStorage.setItem('unrelatedKey', 'someValue');
     migrateCacheToV1();
 
-    expect(setValue).not.toHaveBeenCalled();
+    const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
+    if (!migrationCache) {
+      throw new Error('Migration cache not found');
+    }
+    expect(migrationCache).toBe(1);
+
     expect(localStorage.getItem('unrelatedKey')).toBe('someValue');
   });
 
@@ -83,7 +106,11 @@ describe('migrateCacheToV1', () => {
 
     migrateCacheToV1();
 
-    expect(setValue).not.toHaveBeenCalled();
     expect(localStorage.getItem(oldKey)).toBeNull();
+    const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
+    if (!migrationCache) {
+      throw new Error('Migration cache not found');
+    }
+    expect(migrationCache).toBe(1);
   });
 });
