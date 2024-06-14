@@ -18,7 +18,7 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { addressPrefix } = useNetworkConfig();
-  const { t } = useTranslation(['proposal', 'common']);
+  const { t } = useTranslation(['proposal']);
   return (
     <Flex
       flexDirection="column"
