@@ -17,7 +17,7 @@ function StepController(props: ICreationStepProps) {
   const { createOptions } = useNetworkConfig();
   const navigate = useNavigate();
   const location = useLocation();
-  const step = location.pathname.split('/').pop();
+  const step = location.pathname.split('/').pop() as CreatorSteps | undefined;
 
   const { values, setFieldValue } = props;
 
@@ -25,7 +25,7 @@ function StepController(props: ICreationStepProps) {
 
   useEffect(() => {
     const steps = Object.values(CreatorSteps);
-    if (!step || !steps.includes(step as CreatorSteps)) {
+    if (!step || !steps.includes(step)) {
       redirectToInitialStep();
     }
   }, [step, redirectToInitialStep]);

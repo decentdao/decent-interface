@@ -8,14 +8,14 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { CreateProposalSteps } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 
-interface StateButtonsProps extends FormikProps<CreateProposalForm> {
+interface StepButtonsProps extends FormikProps<CreateProposalForm> {
   pendingTransaction: boolean;
   canUserCreateProposal?: boolean;
   safeNonce?: number;
   mode: ProposalBuilderMode;
 }
 
-function StateButtonsContainer({ children }: { children: ReactNode }) {
+function StepButtonsContainer({ children }: { children: ReactNode }) {
   return (
     <Flex
       mt="1.5rem"
@@ -28,7 +28,7 @@ function StateButtonsContainer({ children }: { children: ReactNode }) {
     </Flex>
   );
 }
-export default function StateButtons(props: StateButtonsProps) {
+export default function StepButtons(props: StepButtonsProps) {
   const {
     node: { daoAddress },
   } = useFractal();
@@ -54,7 +54,7 @@ export default function StateButtons(props: StateButtonsProps) {
   const nextStepUrl = `${location.pathname.replace(`${CreateProposalSteps.METADATA}`, `${CreateProposalSteps.TRANSACTIONS}`)}${location.search}`;
 
   return (
-    <StateButtonsContainer>
+    <StepButtonsContainer>
       <Routes>
         <Route
           path={CreateProposalSteps.METADATA}
@@ -103,6 +103,6 @@ export default function StateButtons(props: StateButtonsProps) {
           }
         />
       </Routes>
-    </StateButtonsContainer>
+    </StepButtonsContainer>
   );
 }
