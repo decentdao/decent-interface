@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { logError } from '../../../helpers/errorLogging';
 import { CACHE_VERSIONS, CacheKeys } from './cacheDefaults';
 import { getValue, setValue } from './useLocalStorage';
 
@@ -17,6 +18,7 @@ const runMigrations = () => {
       try {
         migration();
       } catch (e) {
+        logError(e)
         setValue({ cacheName: CacheKeys.MIGRATION }, i - 1);
         return;
       }
