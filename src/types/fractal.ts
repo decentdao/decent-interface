@@ -155,7 +155,7 @@ export interface ActivityBase {
   eventDate: Date;
   eventType: ActivityEventType;
   transaction?: ActivityTransactionType;
-  transactionHash?: string | null;
+  transactionHash: string;
 }
 
 export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal | SnapshotProposal;

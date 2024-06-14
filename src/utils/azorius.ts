@@ -221,7 +221,12 @@ export const mapProposalCreatedEventToProposal = async (
     const executedEvent = (await executedEvents)?.find(
       event => BigInt(event.args[0]) === proposalId,
     );
-    transactionHash = executedEvent?.transactionHash;
+    
+    if (!executedEvent) {
+      throw new Error('Proposal state is EXECUTED, but no event found');
+    }
+
+    transactionHash = executedEvent.transactionHash;
   } else {
     transactionHash = createdEvent.transactionHash;
   }
