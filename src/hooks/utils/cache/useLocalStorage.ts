@@ -30,36 +30,31 @@ export const setValue = (
   value: any,
   expirationMinutes: number = CacheExpiry.ONE_WEEK,
 ): void => {
-  if (typeof window !== 'undefined') {
-    const val: CacheValue = {
-      v: value,
-      e:
-        expirationMinutes === CacheExpiry.NEVER
-          ? CacheExpiry.NEVER
-          : Date.now() + expirationMinutes * 60000,
-    };
-    localStorage.setItem(
-      JSON.stringify({ ...key, version: CACHE_VERSIONS[key.cacheName] }),
-      JSON.stringify(val, bigintReplacer),
-    );
-  }
+  const val: CacheValue = {
+    v: value,
+    e:
+      expirationMinutes === CacheExpiry.NEVER
+        ? CacheExpiry.NEVER
+        : Date.now() + expirationMinutes * 60000,
+  };
+  localStorage.setItem(
+    JSON.stringify({ ...key, version: CACHE_VERSIONS[key.cacheName] }),
+    JSON.stringify(val, bigintReplacer),
+  );
 };
 
 export const getValue = <T extends CacheKeyType>(key: T): CacheValueType<T> | null => {
-  if (typeof window !== 'undefined') {
-    const version = CACHE_VERSIONS[key.cacheName];
-    const rawVal = localStorage.getItem(JSON.stringify({ ...key, version }));
-    if (rawVal) {
-      const parsed: CacheValue = JSON.parse(rawVal, proposalObjectReviver);
-      if (parsed.e === CacheExpiry.NEVER || parsed.e >= Date.now()) {
-        return parsed.v as CacheValueType<T>;
-      } else {
-        localStorage.removeItem(JSON.stringify({ ...key, version }));
-        return null;
-      }
+  const version = CACHE_VERSIONS[key.cacheName];
+  const rawVal = localStorage.getItem(JSON.stringify({ ...key, version }));
+  if (rawVal) {
+    const parsed: CacheValue = JSON.parse(rawVal, proposalObjectReviver);
+    if (parsed.e === CacheExpiry.NEVER || parsed.e >= Date.now()) {
+      return parsed.v as CacheValueType<T>;
     } else {
+      localStorage.removeItem(JSON.stringify({ ...key, version }));
       return null;
     }
+  } else {
+    return null;
   }
-  return null;
 };
