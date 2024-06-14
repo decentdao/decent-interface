@@ -4,27 +4,26 @@ import { addNetworkPrefix } from '../../../utils/url';
 // and should be removed after a few months
 
 import { CACHE_VERSIONS, CacheKeys } from './cacheDefaults';
-import { setValue } from './useLocalStorage';
+import { getValue, setValue } from './useLocalStorage';
 
 //@dev for testing seperated the function from the hook and export
 export function migrateCacheToV1(): boolean {
-  const cacheVersion = localStorage.getItem(CacheKeys.MIGRATION);
-  if (cacheVersion && Number(cacheVersion) === CACHE_VERSIONS[CacheKeys.MIGRATION]) {
+  const cacheVersion = getValue({ cacheName: CacheKeys.MIGRATION });
+  if (cacheVersion && cacheVersion === CACHE_VERSIONS[CacheKeys.MIGRATION]) {
     return true;
   }
   // Migrate old cache keys to new format
   const keys = Object.keys(localStorage);
   const fractKeys = keys.filter(key => key.startsWith('fract_'));
   if (!fractKeys.length) {
+    // update migration version if no old cache keys are found
+    setValue({ cacheName: CacheKeys.MIGRATION }, CACHE_VERSIONS[CacheKeys.MIGRATION]);
     return true;
   }
   // Get All Network Favorites
   const favoritesCache = fractKeys.filter(key => key.endsWith('favorites'));
   const newFavorites: string[] = [];
 
-  if (!favoritesCache.length) {
-    return true;
-  }
   // loop through all favorites
   for (const favorite of favoritesCache) {
     // Get ChainId from favorite key
@@ -51,6 +50,7 @@ export function migrateCacheToV1(): boolean {
     localStorage.removeItem(key);
   });
   // set migration version
+
   setValue({ cacheName: CacheKeys.MIGRATION }, CACHE_VERSIONS[CacheKeys.MIGRATION]);
   return true;
 }

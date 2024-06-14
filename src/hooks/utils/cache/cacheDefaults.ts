@@ -80,6 +80,7 @@ type CacheKeyToValueMap = {
   [CacheKeys.MASTER_COPY]: Address;
   [CacheKeys.PROPOSAL_CACHE]: AzoriusProposal;
   [CacheKeys.AVERAGE_BLOCK_TIME]: number;
+  [CacheKeys.MIGRATION]: number;
 };
 
 export type CacheValueType<T extends CacheKeyType> = T extends { cacheName: infer U }
