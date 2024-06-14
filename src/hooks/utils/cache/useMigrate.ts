@@ -18,7 +18,7 @@ export const runMigrations = async () => {
       try {
         migration.default();
       } catch (e) {
-        logError(e)
+        logError(e);
         setValue({ cacheName: CacheKeys.MIGRATION }, i - 1);
         return;
       }
