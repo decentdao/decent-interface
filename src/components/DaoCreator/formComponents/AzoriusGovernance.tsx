@@ -3,7 +3,7 @@ import { WarningCircle } from '@phosphor-icons/react';
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { ICreationStepProps, CreatorSteps, VotingStrategyType } from '../../../types';
+import { ICreationStepProps, VotingStrategyType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
@@ -173,13 +173,6 @@ export function AzoriusGovernance(props: ICreationStepProps) {
       </StepWrapper>
       <StepButtons
         {...props}
-        prevStep={
-          values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20
-            ? CreatorSteps.ERC20_DETAILS
-            : CreatorSteps.ERC721_DETAILS
-        }
-        nextStep={CreatorSteps.FREEZE_DETAILS}
-        isLastStep={!isSubDAO}
         isEdit={mode === DAOCreateMode.EDIT}
       />
     </>

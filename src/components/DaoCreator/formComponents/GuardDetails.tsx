@@ -8,7 +8,6 @@ import {
   ICreationStepProps,
   BigIntValuePair,
   GovernanceType,
-  CreatorSteps,
   AzoriusGovernance,
 } from '../../../types';
 import { formatBigIntDisplay } from '../../../utils/numberFormats';
@@ -20,7 +19,6 @@ import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
-import { DAOCreateMode } from './EstablishEssentials';
 
 function GuardDetails(props: ICreationStepProps) {
   const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode } = props;
@@ -263,16 +261,7 @@ function GuardDetails(props: ICreationStepProps) {
           )}
         </Flex>
       </StepWrapper>
-      <StepButtons
-        {...props}
-        prevStep={
-          governanceFormType === GovernanceType.MULTISIG
-            ? CreatorSteps.MULTISIG_DETAILS
-            : CreatorSteps.AZORIUS_DETAILS
-        }
-        isEdit={mode === DAOCreateMode.EDIT}
-        isLastStep
-      />
+      <StepButtons {...props} />
     </>
   );
 }

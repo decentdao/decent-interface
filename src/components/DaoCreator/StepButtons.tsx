@@ -6,9 +6,6 @@ import { toast } from 'react-toastify';
 import { useFractal } from '../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps } from '../../types';
 interface IStepButtons extends ICreationStepProps {
-  nextStep?: CreatorSteps;
-  prevStep?: CreatorSteps;
-  isLastStep?: boolean;
   isNextDisabled?: boolean;
   isEdit?: boolean;
 }
@@ -18,11 +15,9 @@ export function StepButtons({
   transactionPending,
   isSubmitting,
   isSubDAO,
-  nextStep,
-  prevStep,
-  isLastStep,
   isNextDisabled,
   isEdit,
+  steps,
 }: IStepButtons) {
   const navigate = useNavigate();
   const { t } = useTranslation(['daoCreate', 'common']);
@@ -32,8 +27,13 @@ export function StepButtons({
   const location = useLocation();
   const paths = location.pathname.split('/');
   const step = (paths[paths.length - 1] || paths[paths.length - 2]) as CreatorSteps | undefined;
+  const nextStep = steps[steps.findIndex(_step => _step === step) + 1];
+  const prevStep = steps[steps.findIndex(_step => _step === step) - 1];
+
   const prevStepUrl = `${location.pathname.replace(`${step}`, `${prevStep}`)}${location.search}`;
   const nextStepUrl = `${location.pathname.replace(`${step}`, `${nextStep}`)}${location.search}`;
+
+  const isLastStep = steps[steps.length - 1] === step;
 
   const forwardButtonText =
     isLastStep && isSubDAO

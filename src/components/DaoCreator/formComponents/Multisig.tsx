@@ -2,7 +2,7 @@ import { Box, Flex, Grid, IconButton, NumberInput, NumberInputField } from '@cha
 import { MinusCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ICreationStepProps, CreatorSteps } from '../../../types';
+import { ICreationStepProps } from '../../../types';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
@@ -170,9 +170,6 @@ export function Multisig(props: ICreationStepProps) {
       </StepWrapper>
       <StepButtons
         {...props}
-        nextStep={CreatorSteps.FREEZE_DETAILS}
-        prevStep={CreatorSteps.ESSENTIALS}
-        isLastStep={!isSubDAO}
         isEdit={mode === DAOCreateMode.EDIT}
       />
     </>
