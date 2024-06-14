@@ -11,7 +11,7 @@ import { useERC20LinearToken } from './governance/useERC20LinearToken';
 import { useERC721LinearStrategy } from './governance/useERC721LinearStrategy';
 import useERC721Tokens from './governance/useERC721Tokens';
 import { useLockRelease } from './governance/useLockRelease';
-import { useDAOProposals } from './useProposals';
+import { useLoadDAOProposals } from './useLoadDAOProposals';
 
 export const useFractalGovernance = () => {
   // load key for component; helps prevent unnecessary calls
@@ -25,7 +25,7 @@ export const useFractalGovernance = () => {
     guardContracts: { isGuardLoaded },
   } = useFractal();
 
-  const loadDAOProposals = useDAOProposals();
+  const loadDAOProposals = useLoadDAOProposals();
   const loadERC20Strategy = useERC20LinearStrategy();
   const loadERC721Strategy = useERC721LinearStrategy();
   const { loadERC20Token, loadUnderlyingERC20Token } = useERC20LinearToken({});

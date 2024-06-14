@@ -9,6 +9,7 @@ export interface EtherscanLinkProps extends LinkProps {
   type: 'address' | 'block' | 'token' | 'tx';
   value: string | null;
   secondaryValue?: string;
+  isTextLink?: boolean;
 }
 
 export default function EtherscanLink({

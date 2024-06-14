@@ -24,14 +24,25 @@ export const useSafeMultisigProposals = () => {
       const activities = await parseTransactions(transactions, daoAddress);
       const multisendProposals = activities.filter(
         activity => activity.eventType !== ActivityEventType.Treasury,
-      );
+      ) as MultisigProposal[];
+
       action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSALS,
-        payload: multisendProposals as MultisigProposal[],
+        payload: multisendProposals,
+      });
+
+      action.dispatch({
+        type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+        payload: false,
+      });
+      action.dispatch({
+        type: FractalGovernanceAction.SET_ALL_PROPOSALS_LOADED,
+        payload: true,
       });
     } catch (e) {
       logError(e);
     }
   }, [daoAddress, safeAPI, parseTransactions, action]);
-  return loadSafeMultisigProposals;
+
+  return { loadSafeMultisigProposals };
 };

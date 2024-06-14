@@ -160,7 +160,7 @@ export function ProposalBuilder({
                       ) : (
                         <ProposalTransactionsForm
                           pendingTransaction={pendingCreateTx}
-                          safeNonce={safe?.nonce}
+                          safeNonce={safe?.nextNonce}
                           mode={mode}
                           {...formikProps}
                         />

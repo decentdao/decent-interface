@@ -15,6 +15,7 @@ import { CaretDown, Star } from '@phosphor-icons/react';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AllSafesDrawer } from '../../../../pages/home/AllSafesDrawer';
+import { EaseOutComponent } from '../../utils/EaseOutComponent';
 import { SafesList } from './SafesList';
 
 export function SafesMenu() {
@@ -68,7 +69,11 @@ export function SafesMenu() {
                   />
                 </Flex>
               </MenuButton>
-              {isOpen && <SafesList />}
+              {isOpen && (
+                <EaseOutComponent>
+                  <SafesList />
+                </EaseOutComponent>
+              )}
             </Fragment>
           )}
         </Menu>

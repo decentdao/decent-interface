@@ -19,29 +19,31 @@ export function OptionsList({
       option.onClick();
     };
   return (
-    <>
+    <Box py="0.25rem">
       {titleKey && (
         <Text
-          mt="0.5rem"
+          pt="0.5rem"
           px="0.5rem"
-          marginBottom="0.5rem"
           textStyle="helper-text-small"
           color="neutral-7"
         >
           {t(titleKey)}
         </Text>
       )}
-      {options.map(option => {
+      {options.map((option, i) => {
         const clickListener = createHandleItemClick(option);
         return (
-          <Box key={option.optionKey}>
+          <Box
+            px="0.25rem"
+            key={option.optionKey}
+          >
             <MenuItem
               as={showOptionSelected ? Box : Text}
               onClick={clickListener}
               cursor="pointer"
               _hover={{ bg: 'neutral-3', textDecoration: 'none' }}
-              p="0.75rem 0.5rem"
-              borderRadius="0.75rem"
+              p="0.5rem"
+              borderRadius="0.25rem"
               gap={2}
               closeOnSelect={closeOnSelect}
               data-testid={'optionMenu-' + option.optionKey}
@@ -60,10 +62,10 @@ export function OptionsList({
               )}
               {showOptionCount && <Text as="span">{option.count}</Text>}
             </MenuItem>
-            {options[options.length - 1] !== option && <Divider />}
+            {i !== options.length - 1 && <Divider my="0.25rem" />}
           </Box>
         );
       })}
-    </>
+    </Box>
   );
 }

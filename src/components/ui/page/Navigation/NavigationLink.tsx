@@ -24,6 +24,7 @@ function LinkContent({
         py="6px"
         px="6px"
         borderRadius={{ md: 4 }}
+        transition="all ease-out 300ms"
         _hover={{ bgColor: 'neutral-3' }}
         borderWidth={shouldApplyBorder ? '1px' : 0}
         borderColor={shouldApplyBorder ? 'neutral-4' : undefined}

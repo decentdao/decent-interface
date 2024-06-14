@@ -33,6 +33,7 @@ interface InputProps extends Omit<BaseProps, 'children'> {
   onBlur?: React.ChangeEventHandler<HTMLInputElement> | undefined;
   placeholder?: string;
   testId: string;
+  isInvalid?: boolean;
 }
 
 interface TextareaProps extends Omit<BaseProps, 'children'> {
@@ -87,7 +88,6 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
       <GridItem {...inputContainerProps}>
         <LabelWrapper
           subLabel={subLabel}
-          // TODO: LabelWrapper error message design is out of date
           errorMessage={errorMessage}
         >
           {children}
@@ -103,7 +103,8 @@ export function LabelComponent(props: Omit<BaseProps, 'value'>) {
 }
 
 export function InputComponent(props: InputProps) {
-  const { id, value, disabled, onChange, onBlur, placeholder, testId, maxLength } = props;
+  const { id, value, disabled, onChange, onBlur, placeholder, testId, maxLength, isInvalid } =
+    props;
   return (
     <LabelComponent
       {...props}
@@ -118,6 +119,7 @@ export function InputComponent(props: InputProps) {
         data-testid={testId}
         placeholder={placeholder}
         maxLength={maxLength}
+        isInvalid={isInvalid}
       />
     </LabelComponent>
   );

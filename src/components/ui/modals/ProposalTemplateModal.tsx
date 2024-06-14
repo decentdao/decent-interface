@@ -31,7 +31,7 @@ export default function ProposalTemplateModal({
   const { addressPrefix } = useNetworkConfig();
 
   const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
-  const [nonce, setNonce] = useState<number | undefined>(safe!.nonce);
+  const [nonce, setNonce] = useState<number | undefined>(safe!.nextNonce);
   const [showAll, setShowAll] = useState(false);
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const navigate = useNavigate();
