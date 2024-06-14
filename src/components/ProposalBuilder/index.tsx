@@ -208,7 +208,7 @@ export function ProposalBuilder({
                           path="*"
                           element={
                             <Navigate
-                              to={CreateProposalSteps.METADATA}
+                              to={`${CreateProposalSteps.METADATA}${location.search}`}
                               replace
                             />
                           }

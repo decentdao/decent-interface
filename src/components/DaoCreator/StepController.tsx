@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { ICreationStepProps, CreatorSteps, GovernanceType } from '../../types';
@@ -15,6 +15,7 @@ import useStepRedirect from './hooks/useStepRedirect';
 function StepController(props: ICreationStepProps) {
   const { t } = useTranslation('daoCreate');
   const { createOptions } = useNetworkConfig();
+  const location = useLocation();
 
   const { values, setFieldValue } = props;
 
@@ -59,7 +60,7 @@ function StepController(props: ICreationStepProps) {
         path="*"
         element={
           <Navigate
-            to={CreatorSteps.ESSENTIALS}
+            to={`${CreatorSteps.ESSENTIALS}${location.search}`}
             replace
           />
         }
