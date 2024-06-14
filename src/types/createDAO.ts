@@ -22,6 +22,8 @@ export const ChildMultisigSteps = [
   CreatorSteps.FREEZE_DETAILS,
 ] as const;
 
+export type MultisigSteps = typeof RootMultisigSteps | typeof ChildMultisigSteps;
+
 export const RootERC20Steps = [
   CreatorSteps.ESSENTIALS,
   CreatorSteps.ERC20_DETAILS,
@@ -33,6 +35,8 @@ export const ChildERC20Steps = [
   CreatorSteps.AZORIUS_DETAILS,
   CreatorSteps.FREEZE_DETAILS,
 ] as const;
+
+export type Erc20Steps = typeof RootERC20Steps | typeof ChildERC20Steps;
 
 export const RootERC721Steps = [
   CreatorSteps.ESSENTIALS,
@@ -46,6 +50,13 @@ export const ChildERC721Steps = [
   CreatorSteps.FREEZE_DETAILS,
 ] as const;
 
+export type Erc721Steps = typeof RootERC721Steps | typeof ChildERC721Steps;
+
+export type ChildSteps =
+  | typeof ChildMultisigSteps
+  | typeof ChildERC20Steps
+  | typeof ChildERC721Steps;
+
 export enum TokenCreationType {
   IMPORTED = 'imported',
   NEW = 'new',
@@ -54,13 +65,7 @@ export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 
   transactionPending?: boolean;
   isSubDAO?: boolean;
   mode: DAOCreateMode;
-  steps:
-    | typeof RootMultisigSteps
-    | typeof ChildMultisigSteps
-    | typeof RootERC20Steps
-    | typeof ChildERC20Steps
-    | typeof RootERC721Steps
-    | typeof ChildERC721Steps;
+  steps: MultisigSteps | Erc20Steps | Erc721Steps;
 }
 
 export interface CreatorFormState<T = BigIntValuePair> {

@@ -26,9 +26,11 @@ export function StepButtons({
   } = useFractal();
   const location = useLocation();
   const paths = location.pathname.split('/');
+  // @dev paths[paths.length - 1] will be empty string if we have trailing slash, so then we're falling back to the item before that
   const step = (paths[paths.length - 1] || paths[paths.length - 2]) as CreatorSteps | undefined;
-  const nextStep = steps[steps.findIndex(_step => _step === step) + 1];
-  const prevStep = steps[steps.findIndex(_step => _step === step) - 1];
+  const currentStepIndex = steps.findIndex(_step => _step === step);
+  const nextStep = steps[currentStepIndex + 1];
+  const prevStep = steps[currentStepIndex - 1];
 
   const prevStepUrl = `${location.pathname.replace(`${step}`, `${prevStep}`)}${location.search}`;
   const nextStepUrl = `${location.pathname.replace(`${step}`, `${nextStep}`)}${location.search}`;
