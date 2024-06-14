@@ -18,11 +18,10 @@ import InfoRow from '../ui/proposal/InfoRow';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import Divider from '../ui/utils/Divider';
 import { QuorumProgressBar } from '../ui/utils/ProgressBar';
-import { ProposalAction } from './ProposalActions/ProposalAction';
+import { AzoriusOrSnapshotProposalAction } from './ProposalActions/ProposalAction';
 import { VoteContextProvider } from './ProposalVotes/context/VoteContext';
 
-// @todo: rename to AzoriusProposalSummary
-export default function ProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
+export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
   const {
     eventDate,
     startBlock,
@@ -275,7 +274,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
             mx="-2rem"
           />
           <VoteContextProvider proposal={proposal}>
-            <ProposalAction
+            <AzoriusOrSnapshotProposalAction
               proposal={proposal}
               expandedView
             />
