@@ -2,6 +2,7 @@ import { Menu, MenuButton, MenuList, As, MenuProps, Tooltip, Portal, Box } from 
 import { MouseEvent, ReactNode, RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
+import { EaseOutComponent } from '../../utils/EaseOutComponent';
 import { OptionsList } from './OptionsList';
 import { IOption, IOptionsList } from './types';
 
@@ -33,31 +34,36 @@ export function OptionMenu({
   ...rest
 }: OptionMenuProps) {
   const { t } = useTranslation(namespace);
+
   const menuList = (
     <MenuList
       borderWidth="1px"
       borderColor="neutral-3"
-      borderRadius="0.75rem"
+      borderRadius="0.58rem"
       mr={menuListMr || ['auto', '1rem']}
       zIndex={1000}
     >
       <Box
+        borderRadius="0.5rem"
         bg={NEUTRAL_2_82_TRANSPARENT}
         backdropFilter="auto"
         backdropBlur="10px"
       >
-        {children}
-        <OptionsList
-          options={options}
-          showOptionSelected={showOptionSelected}
-          closeOnSelect={closeOnSelect}
-          showOptionCount={showOptionCount}
-          namespace={namespace}
-          titleKey={titleKey}
-        />
+        <EaseOutComponent>
+          {children}
+          <OptionsList
+            options={options}
+            showOptionSelected={showOptionSelected}
+            closeOnSelect={closeOnSelect}
+            showOptionCount={showOptionCount}
+            namespace={namespace}
+            titleKey={titleKey}
+          />
+        </EaseOutComponent>
       </Box>
     </MenuList>
   );
+
   return (
     <Menu
       isLazy
@@ -79,7 +85,6 @@ export function OptionMenu({
           {trigger}
         </MenuButton>
       </Tooltip>
-
       {containerRef !== undefined ? (
         <Portal containerRef={containerRef}>{menuList}</Portal>
       ) : (

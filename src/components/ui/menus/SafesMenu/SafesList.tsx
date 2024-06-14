@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
 import { decodePrefixedAddress } from '../../../../utils/address';
+import Divider from '../../utils/Divider';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { MySafesErrorFallback } from '../../utils/MySafesErrorFallback';
 import { SafeMenuItem } from './SafeMenuItem';
@@ -21,7 +22,7 @@ export function SafesList() {
       borderColor="neutral-3"
     >
       <ErrorBoundary fallback={MySafesErrorFallback}>
-        <Box>
+        <Box py="0.25rem">
           {favoritesList.length === 0 ? (
             <Box p="1rem 1rem">{t('emptyFavorites')}</Box>
           ) : (
@@ -29,11 +30,11 @@ export function SafesList() {
               maxHeight="20rem"
               className="scroll-dark"
             >
-              {favoritesList.map(favorite => (
-                <SafeMenuItem
-                  key={favorite}
-                  {...decodePrefixedAddress(favorite)}
-                />
+              {favoritesList.map((favorite, i) => (
+                <Box key={favorite}>
+                  <SafeMenuItem {...decodePrefixedAddress(favorite)} />
+                  {favoritesList.length - 1 !== i && <Divider my="0.25rem" />}
+                </Box>
               ))}
             </Box>
           )}

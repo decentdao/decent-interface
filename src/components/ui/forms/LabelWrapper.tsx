@@ -1,4 +1,4 @@
-import { Box, Flex, FormLabel, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Flex, FormLabel, Text, Tooltip, Image } from '@chakra-ui/react';
 import { Info } from '@phosphor-icons/react';
 
 // @todo there is some type cleanup needed here
@@ -43,11 +43,22 @@ function LabelWrapper({
         </Flex>
         {children}
         <Box
-          textStyle="helper-text"
+          textStyle="helper-text-base"
           color="neutral-7"
           mt="2"
         >
-          <Text color="red-0">{errorMessage}</Text>
+          {errorMessage && (
+            <Flex gap="0.25rem">
+              <Image src="/images/input-error.svg" />
+              <Text
+                color="red-0"
+                mt="0.2rem"
+                mb="0.25rem"
+              >
+                {errorMessage}
+              </Text>
+            </Flex>
+          )}
           {!!subLabel && subLabel}
         </Box>
       </FormLabel>

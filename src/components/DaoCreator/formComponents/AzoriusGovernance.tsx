@@ -31,7 +31,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
 
   useEffect(() => {
     if (showCustomNonce === undefined && safe && mode === DAOCreateMode.EDIT) {
-      setFieldValue('multisig.customNonce', safe.nonce);
+      setFieldValue('multisig.customNonce', safe.nextNonce);
       setShowCustomNonce(true);
     }
   }, [setFieldValue, safe, showCustomNonce, mode]);

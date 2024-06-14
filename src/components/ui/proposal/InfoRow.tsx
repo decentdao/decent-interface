@@ -23,13 +23,23 @@ export default function InfoRow({
       </Text>
       {tooltip === undefined ? (
         txHash ? (
-          <DisplayTransaction txHash={txHash} />
+          <DisplayTransaction
+            isTextLink
+            txHash={txHash}
+          />
         ) : (
           <Text>{value}</Text>
         )
       ) : (
         <Tooltip label={tooltip}>
-          {txHash ? <DisplayTransaction txHash={txHash} /> : <Text color="white-0">{value}</Text>}
+          {txHash ? (
+            <DisplayTransaction
+              isTextLink
+              txHash={txHash}
+            />
+          ) : (
+            <Text color="white-0">{value}</Text>
+          )}
         </Tooltip>
       )}
     </Box>

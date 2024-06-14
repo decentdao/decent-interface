@@ -48,6 +48,7 @@ export function VotesTokenImport(props: ICreationStepProps) {
         helper={t('helperTokenSupply')}
         isRequired
       >
+        {/* @todo: this allows alphanumeric input. intentional? */}
         <Input
           value={values.erc20Token.tokenSupply.bigintValue?.toString()}
           onChange={handleChange}

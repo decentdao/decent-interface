@@ -31,7 +31,6 @@ export default function CeleryButtonWithIcon({
     >
       {iconPosition === 'start' && icon && <Icon as={icon} />}
       <Text
-        maxWidth="calc(100% - 1.25rem)"
         textOverflow="ellipsis"
         overflow="hidden"
       >

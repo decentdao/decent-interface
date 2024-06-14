@@ -4,7 +4,7 @@ import { Fragment, PropsWithChildren, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import Markdown from '../ui/proposal/Markdown';
-import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
+import { CeleryTextLink } from '../ui/utils/CeleryTextLink';
 import Divider from '../ui/utils/Divider';
 import '../../assets/css/Markdown.css';
 
@@ -69,7 +69,7 @@ export default function ProposalTemplateDetails({
         <HStack justifyContent="space-between">
           <Text color="neutral-7">{t('proposalTemplateDescription')}</Text>
           {proposalMetadata.description && (
-            <CeleryButtonWithIcon
+            <CeleryTextLink
               onClick={() => setDescriptionCollapsed(prevState => !prevState)}
               text={t(descriptionCollapsed ? 'show' : 'hide', { ns: 'common' })}
             />

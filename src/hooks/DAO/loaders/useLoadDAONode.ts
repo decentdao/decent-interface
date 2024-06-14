@@ -8,14 +8,13 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useGetDAONameDeferred } from '../useGetDAOName';
-import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
 export const useLoadDAONode = () => {
   const safeAPI = useSafeAPI();
   const { getDAOName } = useGetDAONameDeferred();
   const lookupModules = useFractalModules();
-  const { chain, subgraph } = useNetworkConfig();
+  const { subgraph } = useNetworkConfig();
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
     context: {
       subgraphSpace: subgraph.space,
@@ -24,32 +23,28 @@ export const useLoadDAONode = () => {
     },
   });
 
-  const formatDAOQuery = useCallback(
-    (result: { data?: DAOQueryQuery }, _daoAddress: string) => {
-      const demo = loadDemoData(chain, getAddress(_daoAddress), result);
-      if (!demo.data) {
-        return;
-      }
-      const { daos } = demo.data;
-      const dao = daos[0];
-      if (dao) {
-        const { parentAddress, name, snapshotENS } = dao;
-
-        const currentNode: Node = {
-          nodeHierarchy: {
-            parentAddress,
-            childNodes: mapChildNodes(dao as DAO),
-          },
-          daoName: name as string,
-          daoAddress: getAddress(_daoAddress),
-          daoSnapshotENS: snapshotENS as string,
-        };
-        return currentNode;
-      }
+  const formatDAOQuery = useCallback((result: { data?: DAOQueryQuery }, _daoAddress: string) => {
+    if (!result.data) {
       return;
-    },
-    [chain],
-  );
+    }
+    const { daos } = result.data;
+    const dao = daos[0];
+    if (dao) {
+      const { parentAddress, name, snapshotENS } = dao;
+
+      const currentNode: Node = {
+        nodeHierarchy: {
+          parentAddress,
+          childNodes: mapChildNodes(dao as DAO),
+        },
+        daoName: name as string,
+        daoAddress: getAddress(_daoAddress),
+        daoSnapshotENS: snapshotENS as string,
+      };
+      return currentNode;
+    }
+    return;
+  }, []);
 
   const loadDao = useCallback(
     async (_daoAddress: string): Promise<FractalNode | WithError> => {
