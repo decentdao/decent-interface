@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Id, toast } from 'react-toastify';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { SortBy, FractalProposalState } from '../../../types';
@@ -18,24 +19,41 @@ export default function useProposals({
     governance: { proposals },
   } = useFractal();
 
+  const { t } = useTranslation(['proposal']);
+
   const loadTempDAOProposals = useLoadTempProposals();
   const [tempProposals, setTempProposals] = useState<TempProposalData[]>([]);
-  const [pendingProposalsToastId, setPendingProposalsToastId] = useState<Id>();
+  const pendingProposalsToastIdRef = useRef<Id>();
+
+  const dismissPendingProposalsToast = useCallback(() => {
+    if (pendingProposalsToastIdRef.current) {
+      toast.dismiss(pendingProposalsToastIdRef.current);
+      pendingProposalsToastIdRef.current = undefined;
+    }
+  }, [pendingProposalsToastIdRef]);
 
   useEffect(() => {
+    if (pendingProposalsToastIdRef.current) return;
+
     if (tempProposals.length) {
-      const toastId = toast.info(`Waiting for confirmation on ${tempProposals.length} proposals`, {
-        autoClose: false,
-        closeOnClick: false,
-        draggable: false,
-        closeButton: false,
-      });
-      setPendingProposalsToastId(toastId);
-      return () => {
-        toast.dismiss(toastId);
-      };
+      setTimeout(() => {
+        if (pendingProposalsToastIdRef.current) return;
+        const toastId = toast.info(
+          t('pendingProposalNotice', {
+            tempProposalsLength: tempProposals.length,
+          }),
+          {
+            autoClose: false,
+            closeOnClick: false,
+            draggable: false,
+            closeButton: false,
+          },
+        );
+        pendingProposalsToastIdRef.current = toastId;
+      }, 1000);
+      return () => dismissPendingProposalsToast();
     }
-  }, [tempProposals.length]);
+  }, [dismissPendingProposalsToast, t, tempProposals.length]);
 
   const getProposalsTotal = useCallback(
     (state: FractalProposalState) => {
@@ -58,11 +76,11 @@ export default function useProposals({
       if (tempProposals.length !== updatedProposals.length) {
         setTempProposals(updatedProposals);
         if (updatedProposals.length === 0) {
-          toast.dismiss(pendingProposalsToastId);
+          dismissPendingProposalsToast();
         }
       }
     },
-    [getValue, pendingProposalsToastId, setValue, tempProposals.length],
+    [dismissPendingProposalsToast, getValue, setValue, tempProposals.length],
   );
 
   const sortedAndFilteredProposals = useMemo(() => {
