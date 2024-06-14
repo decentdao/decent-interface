@@ -221,7 +221,7 @@ export const mapProposalCreatedEventToProposal = async (
     const executedEvent = (await executedEvents)?.find(
       event => BigInt(event.args[0]) === proposalId,
     );
-    
+
     if (!executedEvent) {
       throw new Error('Proposal state is EXECUTED, but no event found');
     }
