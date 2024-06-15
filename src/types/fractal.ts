@@ -1,4 +1,3 @@
-import { MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
@@ -15,7 +14,6 @@ import { GuardContractActions } from '../providers/App/guardContracts/action';
 import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { ERC721TokenData, VotesTokenData } from './account';
-import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
 import { TreasuryActivity } from './daoTreasury';
@@ -309,9 +307,7 @@ export interface NodeHierarchy {
   childNodes: Node[];
 }
 
-export interface FractalContracts {
-  freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
-}
+export interface FractalContracts {}
 
 export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;
 
