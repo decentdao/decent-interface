@@ -237,7 +237,7 @@ export const useFractalFreeze = ({
       return;
     }
 
-    let freezeVotingContract = getContract({
+    const freezeVotingContract = getContract({
       abi: ERC20FreezeVotingAbi,
       address: getAddress(freezeVotingContractAddress),
       client: publicClient,
