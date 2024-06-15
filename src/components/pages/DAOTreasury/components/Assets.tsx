@@ -177,7 +177,6 @@ function NFTHeader() {
 }
 
 function NFTRow({ asset, isLast }: { asset: NFTBalance; isLast: boolean }) {
-  console.log(asset);
   const image = asset.media?.mediaCollection
     ? asset.media?.mediaCollection.medium.url
     : asset.media?.originalMediaUrl;
