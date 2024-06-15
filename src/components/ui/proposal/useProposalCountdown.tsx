@@ -1,5 +1,7 @@
-import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { getAddress, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import MultisigFreezeGuardAbi from '../../../assets/abi/MultisigFreezeGuard';
 import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useLoadDAOProposals } from '../../../hooks/DAO/loaders/useLoadDAOProposals';
@@ -27,6 +29,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
   } = useFractal();
   const baseContracts = useSafeContracts();
   const provider = useEthersProvider();
+  const publicClient = usePublicClient();
 
   const [secondsLeft, setSecondsLeft] = useState<number>();
   const { snapshotProposal, isSnapshotProposal } = useSnapshotProposal(proposal);
@@ -92,12 +95,14 @@ export function useProposalCountdown(proposal: FractalProposal) {
   }, []);
 
   const getCountdown = useCallback(async () => {
-    if (!baseContracts) return;
+    if (!baseContracts || !publicClient || !freezeGuardContractAddress) return;
     const freezeGuard =
       freezeGuardType === FreezeGuardType.MULTISIG
-        ? baseContracts.multisigFreezeGuardMasterCopyContract.asSigner.attach(
-            freezeGuardContractAddress || '0x',
-          )
+        ? getContract({
+            abi: MultisigFreezeGuardAbi,
+            address: getAddress(freezeGuardContractAddress),
+            client: publicClient,
+          })
         : undefined;
 
     const isSafeGuard = freezeGuardType === FreezeGuardType.MULTISIG;
@@ -125,22 +130,29 @@ export function useProposalCountdown(proposal: FractalProposal) {
       isSafeGuard &&
       provider
     ) {
-      const safeGuard = freezeGuard as MultisigFreezeGuard;
-      const timelockedTimestamp = await getTxTimelockedTimestamp(proposal, safeGuard, provider);
-      const guardTimeLockPeriod = await blocksToSeconds(await safeGuard.timelockPeriod(), provider);
+      const safeGuard = freezeGuard;
+
+      const [timelockedTimestamp, timelockPeriod] = await Promise.all([
+        getTxTimelockedTimestamp(proposal, safeGuard.address, provider, publicClient),
+        safeGuard.read.timelockPeriod(),
+      ]);
+
+      const guardTimeLockPeriod = await blocksToSeconds(timelockPeriod, provider);
       startCountdown(timelockedTimestamp * 1000 + guardTimeLockPeriod * 1000);
+
       // If the proposal is executable start the countdown (for safe multisig proposals with guards)
       return;
     } else if (proposal.state === FractalProposalState.EXECUTABLE && freezeGuard) {
       let guardTimelockPeriod: number = 0;
       if (isSafeGuard && provider) {
-        const safeGuard = freezeGuard as MultisigFreezeGuard;
+        const safeGuard = freezeGuard;
         const timelockedTimestamp =
-          (await getTxTimelockedTimestamp(proposal, safeGuard, provider)) * 1000;
+          (await getTxTimelockedTimestamp(proposal, safeGuard.address, provider, publicClient)) *
+          1000;
         const safeGuardTimelockPeriod =
-          (await blocksToSeconds(await safeGuard.timelockPeriod(), provider)) * 1000;
+          (await blocksToSeconds(await safeGuard.read.timelockPeriod(), provider)) * 1000;
         const guardExecutionPeriod =
-          (await blocksToSeconds(await safeGuard.executionPeriod(), provider)) * 1000;
+          (await blocksToSeconds(await safeGuard.read.executionPeriod(), provider)) * 1000;
         guardTimelockPeriod = timelockedTimestamp + safeGuardTimelockPeriod + guardExecutionPeriod;
 
         // If the proposal is executing start the countdown (for Azorius proposals with guards)
@@ -158,15 +170,17 @@ export function useProposalCountdown(proposal: FractalProposal) {
       return;
     }
   }, [
-    freezeGuardType,
+    azoriusGovernance.votingStrategy?.timeLockPeriod,
     baseContracts,
-    azoriusGovernance.votingStrategy,
-    provider,
-    proposal,
-    startCountdown,
-    isSnapshotProposal,
-    snapshotProposal,
     freezeGuardContractAddress,
+    freezeGuardType,
+    isSnapshotProposal,
+    proposal,
+    provider,
+    publicClient,
+    snapshotProposal.endTime,
+    snapshotProposal.startTime,
+    startCountdown,
   ]);
 
   useEffect(() => {

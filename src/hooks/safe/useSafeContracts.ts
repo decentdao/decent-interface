@@ -1,6 +1,5 @@
 import {
   ERC20FreezeVoting__factory,
-  MultisigFreezeGuard__factory,
   MultisigFreezeVoting__factory,
   ERC721FreezeVoting__factory,
 } from '@fractal-framework/fractal-contracts';
@@ -15,7 +14,6 @@ export default function useSafeContracts() {
 
   const {
     contracts: {
-      multisigFreezeGuardMasterCopy,
       multisigFreezeVotingMasterCopy,
       erc20FreezeVotingMasterCopy,
       erc721FreezeVotingMasterCopy,
@@ -26,14 +24,6 @@ export default function useSafeContracts() {
     if (!signerOrProvider || !provider) {
       return;
     }
-
-    const multisigFreezeGuardMasterCopyContract = {
-      asSigner: MultisigFreezeGuard__factory.connect(
-        multisigFreezeGuardMasterCopy,
-        signerOrProvider,
-      ),
-      asProvider: MultisigFreezeGuard__factory.connect(multisigFreezeGuardMasterCopy, provider),
-    };
 
     const freezeMultisigVotingMasterCopyContract = {
       asSigner: MultisigFreezeVoting__factory.connect(
@@ -54,13 +44,11 @@ export default function useSafeContracts() {
     };
 
     return {
-      multisigFreezeGuardMasterCopyContract,
       freezeMultisigVotingMasterCopyContract,
       freezeERC20VotingMasterCopyContract,
       freezeERC721VotingMasterCopyContract,
     };
   }, [
-    multisigFreezeGuardMasterCopy,
     multisigFreezeVotingMasterCopy,
     erc20FreezeVotingMasterCopy,
     erc721FreezeVotingMasterCopy,

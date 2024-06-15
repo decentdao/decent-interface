@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Hex, getAddress, getContract, isHex } from 'viem';
 import { useWalletClient } from 'wagmi';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
+import MultisigFreezeGuardAbi from '../../../assets/abi/MultisigFreezeGuard';
 import { Check } from '../../../assets/theme/custom/icons/Check';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
@@ -49,7 +50,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
-  const [contractCall, contractCallPending, contractCallViem] = useTransaction();
+  const [, contractCallPending, contractCallViem] = useTransaction();
   const { loadSafeMultisigProposals } = useSafeMultisigProposals();
   const baseContracts = useSafeContracts();
   const { data: walletClient } = useWalletClient();
@@ -99,7 +100,8 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         !multisigTx.confirmations ||
         !baseContracts ||
         !freezeGuardContractAddress ||
-        (multisigTx.data && !isHex(multisigTx.data))
+        (multisigTx.data && !isHex(multisigTx.data)) ||
+        !walletClient
       ) {
         return;
       }
@@ -121,24 +123,26 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
           };
         }),
       );
-      const freezeGuard = baseContracts.multisigFreezeGuardMasterCopyContract.asSigner.attach(
-        freezeGuardContractAddress,
-      );
-      contractCall({
+      const freezeGuard = getContract({
+        abi: MultisigFreezeGuardAbi,
+        address: getAddress(freezeGuardContractAddress),
+        client: walletClient,
+      });
+      contractCallViem({
         contractFn: () =>
-          freezeGuard.timelockTransaction(
+          freezeGuard.write.timelockTransaction([
             safeTx.to,
             safeTx.value,
             safeTx.data,
             safeTx.operation,
-            safeTx.safeTxGas,
-            safeTx.baseGas,
-            safeTx.gasPrice,
-            safeTx.gasToken,
-            safeTx.refundReceiver,
+            BigInt(safeTx.safeTxGas),
+            BigInt(safeTx.baseGas),
+            BigInt(safeTx.gasPrice),
+            getAddress(safeTx.gasToken),
+            getAddress(safeTx.refundReceiver),
             signatures,
-            safeTx.nonce,
-          ),
+            BigInt(safeTx.nonce),
+          ]),
         failedMessage: t('failedExecute', { ns: 'transaction' }),
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),

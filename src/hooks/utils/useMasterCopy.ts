@@ -17,6 +17,7 @@ export function useMasterCopy() {
       linearVotingERC721MasterCopy,
       fractalModuleMasterCopy,
       fractalAzoriusMasterCopy,
+      multisigFreezeGuardMasterCopy,
     },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
@@ -30,9 +31,8 @@ export function useMasterCopy() {
     [linearVotingERC721MasterCopy],
   );
   const isMultisigFreezeGuard = useCallback(
-    (masterCopyAddress: Address) =>
-      masterCopyAddress === baseContracts?.multisigFreezeGuardMasterCopyContract.asProvider.address,
-    [baseContracts],
+    (masterCopyAddress: Address) => masterCopyAddress === multisigFreezeGuardMasterCopy,
+    [multisigFreezeGuardMasterCopy],
   );
   const isMultisigFreezeVoting = useCallback(
     (masterCopyAddress: Address) =>
