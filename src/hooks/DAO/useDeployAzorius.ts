@@ -36,6 +36,7 @@ const useDeployAzorius = () => {
       azoriusFreezeGuardMasterCopy,
       multisigFreezeGuardMasterCopy,
       erc20FreezeVotingMasterCopy,
+      erc721FreezeVotingMasterCopy,
     },
     addressPrefix,
   } = useNetworkConfig();
@@ -59,11 +60,9 @@ const useDeployAzorius = () => {
       if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts || !publicClient) {
         return;
       }
-      const { freezeMultisigVotingMasterCopyContract, freezeERC721VotingMasterCopyContract } =
-        baseContracts;
+      const { freezeMultisigVotingMasterCopyContract } = baseContracts;
 
       const builderBaseContracts: BaseContracts = {
-        freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asProvider,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asProvider,
       };
 
@@ -84,6 +83,7 @@ const useDeployAzorius = () => {
         azoriusFreezeGuardMasterCopy,
         multisigFreezeGuardMasterCopy,
         erc20FreezeVotingMasterCopy,
+        erc721FreezeVotingMasterCopy,
         multiSendCallOnly,
         erc20ClaimMasterCopy,
         fractalModuleMasterCopy,
@@ -155,6 +155,7 @@ const useDeployAzorius = () => {
       azoriusFreezeGuardMasterCopy,
       multisigFreezeGuardMasterCopy,
       erc20FreezeVotingMasterCopy,
+      erc721FreezeVotingMasterCopy,
       multiSendCallOnly,
       erc20ClaimMasterCopy,
       fractalModuleMasterCopy,

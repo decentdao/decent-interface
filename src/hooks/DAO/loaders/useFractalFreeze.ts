@@ -1,10 +1,11 @@
-import { ERC721FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
+import { MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { FreezeVoteCastEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/BaseFreezeVoting';
 import { useCallback, useEffect, useRef } from 'react';
 import { getAddress, getContract, zeroAddress } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import ERC20FreezeVotingAbi from '../../../assets/abi/ERC20FreezeVoting';
+import ERC721FreezeVotingAbi from '../../../assets/abi/ERC721FreezeVoting';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import VotesERC20Abi from '../../../assets/abi/VotesERC20';
 import {
@@ -184,11 +185,10 @@ export const useFractalFreeze = ({
   useEffect(() => {
     const { freezeVotingContractAddress, freezeVotingType: freezeVotingType } = guardContracts;
     if (!loadOnMount || !provider || !baseContracts || !freezeVotingContractAddress) return;
-    const { freezeERC721VotingMasterCopyContract, freezeMultisigVotingMasterCopyContract } =
-      baseContracts;
+    const { freezeMultisigVotingMasterCopyContract } = baseContracts;
 
     // @dev using freeze 'multisig' contract but these functions are the same for all freeze types
-    let votingRPC: MultisigFreezeVoting | ERC721FreezeVoting =
+    const votingRPC: MultisigFreezeVoting =
       freezeMultisigVotingMasterCopyContract.asProvider.attach(freezeVotingContractAddress);
 
     const listenerCallback: TypedListener<FreezeVoteCastEvent> = async (
@@ -212,12 +212,6 @@ export const useFractalFreeze = ({
       if (freezeVotingType === FreezeVotingType.MULTISIG) {
         const filter = votingRPC.filters.FreezeVoteCast();
         votingRPC.on(filter, listenerCallback);
-      } else if (freezeVotingType === FreezeVotingType.ERC721) {
-        votingRPC = freezeERC721VotingMasterCopyContract.asProvider.attach(
-          freezeVotingContractAddress,
-        );
-        const filter = votingRPC.filters.FreezeVoteCast();
-        votingRPC.on(filter, listenerCallback);
       }
     }
   }, [guardContracts, account, action, loadOnMount, provider, baseContracts]);
@@ -231,7 +225,57 @@ export const useFractalFreeze = ({
       !freezeVotingContractAddress ||
       !publicClient ||
       !isFreezeSet.current ||
-      freezeVotingType === null ||
+      freezeVotingType !== FreezeVotingType.ERC721
+    ) {
+      return;
+    }
+
+    const freezeVotingContract = getContract({
+      abi: ERC721FreezeVotingAbi,
+      address: getAddress(freezeVotingContractAddress),
+      client: publicClient,
+    });
+
+    const unwatch = freezeVotingContract.watchEvent.FreezeVoteCast(
+      { voter: null },
+      {
+        onLogs: async logs => {
+          for (const log of logs) {
+            if (!log.args.voter || !log.args.votesCast) {
+              continue;
+            }
+
+            const freezeProposalCreatedBlock =
+              await freezeVotingContract.read.freezeProposalCreatedBlock();
+            action.dispatch({
+              type: FractalGuardAction.UPDATE_FREEZE_VOTE,
+              payload: {
+                isVoter: log.args.voter === account,
+                freezeProposalCreatedTime: BigInt(
+                  await getTimeStamp(freezeProposalCreatedBlock, provider),
+                ),
+                votesCast: log.args.votesCast,
+              },
+            });
+          }
+        },
+      },
+    );
+
+    return () => {
+      unwatch();
+    };
+  }, [account, action, guardContracts, loadOnMount, provider, publicClient]);
+
+  useEffect(() => {
+    const { freezeVotingContractAddress, freezeVotingType: freezeVotingType } = guardContracts;
+
+    if (
+      !loadOnMount ||
+      !provider ||
+      !freezeVotingContractAddress ||
+      !publicClient ||
+      !isFreezeSet.current ||
       freezeVotingType !== FreezeVotingType.ERC20
     ) {
       return;

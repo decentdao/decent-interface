@@ -1,7 +1,4 @@
-import {
-  MultisigFreezeVoting__factory,
-  ERC721FreezeVoting__factory,
-} from '@fractal-framework/fractal-contracts';
+import { MultisigFreezeVoting__factory } from '@fractal-framework/fractal-contracts';
 import {
   getAddress,
   getCreate2Address,
@@ -18,6 +15,7 @@ import {
 } from 'viem';
 import AzoriusFreezeGuardAbi from '../assets/abi/AzoriusFreezeGuard';
 import ERC20FreezeVotingAbi from '../assets/abi/ERC20FreezeVoting';
+import ERC721FreezeVotingAbi from '../assets/abi/ERC721FreezeVoting';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
@@ -34,11 +32,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private readonly safeContractAddress: Address;
 
   // Freeze Voting Data
-  private freezeVotingType:
-    | typeof MultisigFreezeVoting__factory
-    | typeof ERC721FreezeVoting__factory
-    | 'erc20'
-    | undefined;
+  private freezeVotingType: typeof MultisigFreezeVoting__factory | 'erc721' | 'erc20' | undefined;
   private freezeVotingCallData: Hex | undefined;
   private freezeVotingAddress: Address | undefined;
 
@@ -56,6 +50,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private azoriusFreezeGuardMasterCopyAddress: Address;
   private multisigFreezeGuardMasterCopyAddress: Address;
   private erc20FreezeVotingMasterCopyAddress: Address;
+  private erc721FreezeVotingMasterCopyAddress: Address;
 
   constructor(
     signerOrProvider: any,
@@ -69,6 +64,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     azoriusFreezeGuardMasterCopyAddress: Address,
     multisigFreezeGuardMasterCopyAddress: Address,
     erc20FreezeVotingMasterCopyAddress: Address,
+    erc721FreezeVotingMasterCopyAddress: Address,
     isAzorius: boolean,
     parentTokenAddress?: Address,
     azoriusAddress?: Address,
@@ -96,6 +92,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.azoriusFreezeGuardMasterCopyAddress = azoriusFreezeGuardMasterCopyAddress;
     this.multisigFreezeGuardMasterCopyAddress = multisigFreezeGuardMasterCopyAddress;
     this.erc20FreezeVotingMasterCopyAddress = erc20FreezeVotingMasterCopyAddress;
+    this.erc721FreezeVotingMasterCopyAddress = erc721FreezeVotingMasterCopyAddress;
 
     this.initFreezeVotesData();
   }
@@ -115,8 +112,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       [
         this.freezeVotingType === 'erc20'
           ? this.erc20FreezeVotingMasterCopyAddress
-          : this.freezeVotingType === ERC721FreezeVoting__factory
-            ? this.baseContracts.freezeERC721VotingMasterCopyContract.address
+          : this.freezeVotingType === 'erc721'
+            ? this.erc721FreezeVotingMasterCopyAddress
             : this.baseContracts.freezeMultisigVotingMasterCopyContract.address,
         this.freezeVotingCallData,
         this.saltNum,
@@ -156,9 +153,10 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
     if (this.freezeVotingType === 'erc20') {
       return buildContractCallViem(ERC20FreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
-    } else if (this.freezeVotingType === ERC721FreezeVoting__factory) {
-      return buildContractCall(
-        ERC721FreezeVoting__factory.connect(this.freezeVotingAddress, this.signerOrProvider),
+    } else if (this.freezeVotingType === 'erc721') {
+      return buildContractCallViem(
+        ERC721FreezeVotingAbi,
+        this.freezeVotingAddress,
         ...functionArgs,
       );
     } else if (this.freezeVotingType === MultisigFreezeVoting__factory) {
@@ -211,13 +209,11 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
           functionName: 'owner',
         });
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
-        this.freezeVotingType = ERC721FreezeVoting__factory;
-        const encodedFunctionData =
-          ERC721FreezeVoting__factory.createInterface().encodeFunctionData('owner');
-        if (!isHex(encodedFunctionData)) {
-          throw new Error("encoded function data isn't a hex string");
-        }
-        this.freezeVotingCallData = encodedFunctionData;
+        this.freezeVotingType = 'erc721';
+        this.freezeVotingCallData = encodeFunctionData({
+          abi: ERC721FreezeVotingAbi,
+          functionName: 'owner',
+        });
       }
     } else {
       this.freezeVotingType = MultisigFreezeVoting__factory;
@@ -239,7 +235,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
         );
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
         freezeVotingByteCodeLinear = generateContractByteCodeLinear(
-          getAddress(this.baseContracts.freezeERC721VotingMasterCopyContract.address),
+          this.erc721FreezeVotingMasterCopyAddress,
         );
       } else {
         throw new Error('unknown voting parentStrategyType');
