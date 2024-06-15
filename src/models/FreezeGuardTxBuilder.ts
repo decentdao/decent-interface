@@ -1,4 +1,3 @@
-import { MultisigFreezeVoting__factory } from '@fractal-framework/fractal-contracts';
 import {
   getAddress,
   getCreate2Address,
@@ -11,7 +10,6 @@ import {
   PublicClient,
   Abi,
   encodeFunctionData,
-  isHex,
 } from 'viem';
 import AzoriusFreezeGuardAbi from '../assets/abi/AzoriusFreezeGuard';
 import ERC20FreezeVotingAbi from '../assets/abi/ERC20FreezeVoting';
@@ -19,7 +17,8 @@ import ERC721FreezeVotingAbi from '../assets/abi/ERC721FreezeVoting';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
-import { buildContractCall, buildContractCallViem } from '../helpers';
+import MultisigFreezeVotingAbi from '../assets/abi/MultisigFreezeVoting';
+import { buildContractCallViem } from '../helpers';
 import { BaseContracts, SafeTransaction, SubDAO, VotingStrategyType } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
@@ -32,7 +31,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private readonly safeContractAddress: Address;
 
   // Freeze Voting Data
-  private freezeVotingType: typeof MultisigFreezeVoting__factory | 'erc721' | 'erc20' | undefined;
+  private freezeVotingType: 'multisig' | 'erc721' | 'erc20' | undefined;
   private freezeVotingCallData: Hex | undefined;
   private freezeVotingAddress: Address | undefined;
 
@@ -51,6 +50,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private multisigFreezeGuardMasterCopyAddress: Address;
   private erc20FreezeVotingMasterCopyAddress: Address;
   private erc721FreezeVotingMasterCopyAddress: Address;
+  private multisigFreezeVotingMasterCopyAddress: Address;
 
   constructor(
     signerOrProvider: any,
@@ -65,6 +65,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     multisigFreezeGuardMasterCopyAddress: Address,
     erc20FreezeVotingMasterCopyAddress: Address,
     erc721FreezeVotingMasterCopyAddress: Address,
+    multisigFreezeVotingMasterCopyAddress: Address,
     isAzorius: boolean,
     parentTokenAddress?: Address,
     azoriusAddress?: Address,
@@ -93,6 +94,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.multisigFreezeGuardMasterCopyAddress = multisigFreezeGuardMasterCopyAddress;
     this.erc20FreezeVotingMasterCopyAddress = erc20FreezeVotingMasterCopyAddress;
     this.erc721FreezeVotingMasterCopyAddress = erc721FreezeVotingMasterCopyAddress;
+    this.multisigFreezeVotingMasterCopyAddress = multisigFreezeVotingMasterCopyAddress;
 
     this.initFreezeVotesData();
   }
@@ -114,7 +116,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
           ? this.erc20FreezeVotingMasterCopyAddress
           : this.freezeVotingType === 'erc721'
             ? this.erc721FreezeVotingMasterCopyAddress
-            : this.baseContracts.freezeMultisigVotingMasterCopyContract.address,
+            : this.multisigFreezeVotingMasterCopyAddress,
         this.freezeVotingCallData,
         this.saltNum,
       ],
@@ -159,9 +161,10 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
         this.freezeVotingAddress,
         ...functionArgs,
       );
-    } else if (this.freezeVotingType === MultisigFreezeVoting__factory) {
-      return buildContractCall(
-        MultisigFreezeVoting__factory.connect(this.freezeVotingAddress, this.signerOrProvider),
+    } else if (this.freezeVotingType === 'multisig') {
+      return buildContractCallViem(
+        MultisigFreezeVotingAbi,
+        this.freezeVotingAddress,
         ...functionArgs,
       );
     } else {
@@ -216,13 +219,11 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
         });
       }
     } else {
-      this.freezeVotingType = MultisigFreezeVoting__factory;
-      const encodedFunctionData =
-        MultisigFreezeVoting__factory.createInterface().encodeFunctionData('owner');
-      if (!isHex(encodedFunctionData)) {
-        throw new Error("encoded function data isn't a hex string");
-      }
-      this.freezeVotingCallData = encodedFunctionData;
+      this.freezeVotingType = 'multisig';
+      this.freezeVotingCallData = encodeFunctionData({
+        abi: MultisigFreezeVotingAbi,
+        functionName: 'owner',
+      });
     }
   }
 
@@ -242,7 +243,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       }
     } else {
       freezeVotingByteCodeLinear = generateContractByteCodeLinear(
-        getAddress(this.baseContracts.freezeMultisigVotingMasterCopyContract.address),
+        this.multisigFreezeVotingMasterCopyAddress,
       );
     }
 

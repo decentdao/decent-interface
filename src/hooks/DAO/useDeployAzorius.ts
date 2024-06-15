@@ -37,6 +37,7 @@ const useDeployAzorius = () => {
       multisigFreezeGuardMasterCopy,
       erc20FreezeVotingMasterCopy,
       erc721FreezeVotingMasterCopy,
+      multisigFreezeVotingMasterCopy,
     },
     addressPrefix,
   } = useNetworkConfig();
@@ -60,11 +61,9 @@ const useDeployAzorius = () => {
       if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts || !publicClient) {
         return;
       }
-      const { freezeMultisigVotingMasterCopyContract } = baseContracts;
+      const {} = baseContracts;
 
-      const builderBaseContracts: BaseContracts = {
-        freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asProvider,
-      };
+      const builderBaseContracts: BaseContracts = {};
 
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
@@ -84,6 +83,7 @@ const useDeployAzorius = () => {
         multisigFreezeGuardMasterCopy,
         erc20FreezeVotingMasterCopy,
         erc721FreezeVotingMasterCopy,
+        multisigFreezeVotingMasterCopy,
         multiSendCallOnly,
         erc20ClaimMasterCopy,
         fractalModuleMasterCopy,
@@ -156,6 +156,7 @@ const useDeployAzorius = () => {
       multisigFreezeGuardMasterCopy,
       erc20FreezeVotingMasterCopy,
       erc721FreezeVotingMasterCopy,
+      multisigFreezeVotingMasterCopy,
       multiSendCallOnly,
       erc20ClaimMasterCopy,
       fractalModuleMasterCopy,

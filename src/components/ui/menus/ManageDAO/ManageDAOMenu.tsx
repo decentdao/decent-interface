@@ -6,6 +6,7 @@ import { Address, getAddress, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import ERC20FreezeVotingAbi from '../../../../assets/abi/ERC20FreezeVoting';
 import ERC721FreezeVotingAbi from '../../../../assets/abi/ERC721FreezeVoting';
+import MultisigFreezeVotingAbi from '../../../../assets/abi/MultisigFreezeVoting';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -13,7 +14,6 @@ import {
 } from '../../../../helpers/freezePeriodHelpers';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import useClawBack from '../../../../hooks/DAO/useClawBack';
-import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../../../hooks/utils/useBlockTimestamp';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useMasterCopy } from '../../../../hooks/utils/useMasterCopy';
@@ -51,7 +51,6 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
     node,
     governance: { type },
   } = useFractal();
-  const baseContracts = useSafeContracts();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
   const safeAddress = node.daoAddress;
@@ -114,50 +113,57 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
     () => ({
       optionKey: 'optionInitiateFreeze',
       onClick: () => {
-        const freezeVotingContract =
-          baseContracts!.freezeMultisigVotingMasterCopyContract.asSigner.attach(
-            guardContracts!.freezeVotingContractAddress!,
-          );
         const freezeVotingType = guardContracts!.freezeVotingType;
-        if (freezeVotingContract) {
-          if (freezeVotingType === FreezeVotingType.MULTISIG) {
-            return freezeVotingContract.castFreezeVote();
-          } else if (freezeVotingType === FreezeVotingType.ERC20) {
+
+        if (freezeVotingType === FreezeVotingType.MULTISIG) {
+          if (!guardContracts.freezeVotingContractAddress) {
+            throw new Error('freeze voting contract address not set');
+          }
+          if (!walletClient) {
+            throw new Error('wallet client not set');
+          }
+
+          const freezeVotingContract = getContract({
+            abi: MultisigFreezeVotingAbi,
+            address: getAddress(guardContracts.freezeVotingContractAddress),
+            client: walletClient,
+          });
+          return freezeVotingContract.write.castFreezeVote();
+        } else if (freezeVotingType === FreezeVotingType.ERC20) {
+          if (!guardContracts.freezeVotingContractAddress) {
+            throw new Error('freeze voting contract address not set');
+          }
+          if (!walletClient) {
+            throw new Error('wallet client not set');
+          }
+          const contract = getContract({
+            abi: ERC20FreezeVotingAbi,
+            address: getAddress(guardContracts.freezeVotingContractAddress),
+            client: walletClient,
+          });
+          return contract.write.castFreezeVote();
+        } else if (freezeVotingType === FreezeVotingType.ERC721) {
+          getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
             if (!guardContracts.freezeVotingContractAddress) {
               throw new Error('freeze voting contract address not set');
             }
             if (!walletClient) {
               throw new Error('wallet client not set');
             }
-            const contract = getContract({
-              abi: ERC20FreezeVotingAbi,
+            const freezeERC721VotingContract = getContract({
+              abi: ERC721FreezeVotingAbi,
               address: getAddress(guardContracts.freezeVotingContractAddress),
               client: walletClient,
             });
-            return contract.write.castFreezeVote();
-          } else if (freezeVotingType === FreezeVotingType.ERC721) {
-            getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
-              if (!guardContracts.freezeVotingContractAddress) {
-                throw new Error('freeze voting contract address not set');
-              }
-              if (!walletClient) {
-                throw new Error('wallet client not set');
-              }
-              const freezeERC721VotingContract = getContract({
-                abi: ERC721FreezeVotingAbi,
-                address: getAddress(guardContracts.freezeVotingContractAddress),
-                client: walletClient,
-              });
-              return freezeERC721VotingContract.write.castFreezeVote([
-                tokensInfo.totalVotingTokenAddresses.map(a => getAddress(a)),
-                tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
-              ]);
-            });
-          }
+            return freezeERC721VotingContract.write.castFreezeVote([
+              tokensInfo.totalVotingTokenAddresses.map(a => getAddress(a)),
+              tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
+            ]);
+          });
         }
       },
     }),
-    [baseContracts, guardContracts, walletClient, getUserERC721VotingTokens, parentAddress],
+    [getUserERC721VotingTokens, guardContracts, parentAddress, walletClient],
   );
 
   const options = useMemo(() => {
