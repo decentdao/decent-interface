@@ -1,9 +1,10 @@
 import { Icon, IconButton } from '@chakra-ui/react';
-import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { GearFine } from '@phosphor-icons/react';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Address } from 'viem';
+import { Address, getAddress, getContract } from 'viem';
+import { useWalletClient } from 'wagmi';
+import ERC20FreezeVotingAbi from '../../../../assets/abi/ERC20FreezeVoting';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -106,6 +107,8 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
 
   const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
+  const { data: walletClient } = useWalletClient();
+
   const freezeOption = useMemo(
     () => ({
       optionKey: 'optionInitiateFreeze',
@@ -116,13 +119,21 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
           );
         const freezeVotingType = guardContracts!.freezeVotingType;
         if (freezeVotingContract) {
-          if (
-            freezeVotingType === FreezeVotingType.MULTISIG ||
-            freezeVotingType === FreezeVotingType.ERC20
-          ) {
-            return (
-              freezeVotingContract as ERC20FreezeVoting | MultisigFreezeVoting
-            ).castFreezeVote();
+          if (freezeVotingType === FreezeVotingType.MULTISIG) {
+            return freezeVotingContract.castFreezeVote();
+          } else if (freezeVotingType === FreezeVotingType.ERC20) {
+            if (!guardContracts.freezeVotingContractAddress) {
+              throw new Error('freeze voting contract address not set');
+            }
+            if (!walletClient) {
+              throw new Error('wallet client not set');
+            }
+            const contract = getContract({
+              abi: ERC20FreezeVotingAbi,
+              address: getAddress(guardContracts.freezeVotingContractAddress),
+              client: walletClient,
+            });
+            return contract.write.castFreezeVote();
           } else if (freezeVotingType === FreezeVotingType.ERC721) {
             getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
               const freezeERC721VotingContract =
@@ -138,7 +149,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
         }
       },
     }),
-    [baseContracts, guardContracts, getUserERC721VotingTokens, parentAddress],
+    [baseContracts, guardContracts, walletClient, getUserERC721VotingTokens, parentAddress],
   );
 
   const options = useMemo(() => {

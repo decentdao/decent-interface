@@ -1,8 +1,4 @@
-import {
-  ERC20FreezeVoting,
-  MultisigFreezeVoting,
-  ERC721FreezeVoting,
-} from '@fractal-framework/fractal-contracts';
+import { MultisigFreezeVoting, ERC721FreezeVoting } from '@fractal-framework/fractal-contracts';
 import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
@@ -315,7 +311,6 @@ export interface NodeHierarchy {
 
 export interface FractalContracts {
   freezeMultisigVotingMasterCopyContract: ContractConnection<MultisigFreezeVoting>;
-  freezeERC20VotingMasterCopyContract: ContractConnection<ERC20FreezeVoting>;
   freezeERC721VotingMasterCopyContract: ContractConnection<ERC721FreezeVoting>;
 }
 
