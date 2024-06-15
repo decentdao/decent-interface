@@ -23,7 +23,6 @@ import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
 import { SENTINEL_ADDRESS } from '../constants/common';
 import { buildContractCallViem, getRandomBytes } from '../helpers';
 import {
-  BaseContracts,
   SafeTransaction,
   AzoriusGovernanceDAO,
   AzoriusERC20DAO,
@@ -69,7 +68,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   constructor(
     signerOrProvider: any,
     publicClient: PublicClient,
-    baseContracts: BaseContracts,
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
     safeContractAddress: Address,
     votesERC20WrapperMasterCopyAddress: string,
@@ -83,15 +81,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
-    super(
-      signerOrProvider,
-      publicClient,
-      baseContracts,
-      true,
-      daoData,
-      parentAddress,
-      parentTokenAddress,
-    );
+    super(signerOrProvider, publicClient, true, daoData, parentAddress, parentTokenAddress);
 
     this.safeContractAddress = safeContractAddress;
 

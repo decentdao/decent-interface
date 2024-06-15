@@ -7,7 +7,6 @@ import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
 import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
 import { buildContractCallViem, encodeMultiSend } from '../helpers';
 import {
-  BaseContracts,
   SafeMultisigDAO,
   SafeTransaction,
   AzoriusERC20DAO,
@@ -44,7 +43,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
   constructor(
     signerOrProvider: ethers.Signer | any,
     publicClient: PublicClient,
-    baseContracts: BaseContracts,
     isAzorius: boolean,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
     saltNum: bigint,
@@ -61,15 +59,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     parentStrategyType?: VotingStrategyType,
     parentStrategyAddress?: string,
   ) {
-    super(
-      signerOrProvider,
-      publicClient,
-      baseContracts,
-      isAzorius,
-      daoData,
-      parentAddress,
-      parentTokenAddress,
-    );
+    super(signerOrProvider, publicClient, isAzorius, daoData, parentAddress, parentTokenAddress);
 
     this.createSafeTx = createSafeTx;
     this.safeContractAddress = safeContractAddress;

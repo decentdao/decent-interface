@@ -6,7 +6,6 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 import {
   SafeMultisigDAO,
   GovernanceType,
-  BaseContracts,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
   AzoriusGovernance,
@@ -66,12 +65,9 @@ const useBuildDAOTx = () => {
         isAzorius = true;
       }
 
-      const buildrerBaseContracts: BaseContracts = {};
-
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
         publicClient,
-        buildrerBaseContracts,
         isAzorius,
         daoData,
         fallbackHandler,

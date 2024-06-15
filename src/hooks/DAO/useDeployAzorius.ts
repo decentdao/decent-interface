@@ -9,7 +9,7 @@ import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { BaseContracts, ProposalExecuteData, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
+import { ProposalExecuteData, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
 import useSubmitProposal from './proposal/useSubmitProposal';
@@ -61,12 +61,9 @@ const useDeployAzorius = () => {
         return;
       }
 
-      const builderBaseContracts: BaseContracts = {};
-
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
         publicClient,
-        builderBaseContracts,
         true,
         daoData,
         fallbackHandler,
