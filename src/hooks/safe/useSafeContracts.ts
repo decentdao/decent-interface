@@ -1,5 +1,4 @@
 import {
-  ERC20FreezeVoting__factory,
   MultisigFreezeVoting__factory,
   ERC721FreezeVoting__factory,
 } from '@fractal-framework/fractal-contracts';
@@ -13,11 +12,7 @@ export default function useSafeContracts() {
   const provider = useEthersProvider();
 
   const {
-    contracts: {
-      multisigFreezeVotingMasterCopy,
-      erc20FreezeVotingMasterCopy,
-      erc721FreezeVotingMasterCopy,
-    },
+    contracts: { multisigFreezeVotingMasterCopy, erc721FreezeVotingMasterCopy },
   } = useNetworkConfig();
 
   const daoContracts = useMemo(() => {
@@ -33,11 +28,6 @@ export default function useSafeContracts() {
       asProvider: MultisigFreezeVoting__factory.connect(multisigFreezeVotingMasterCopy, provider),
     };
 
-    const freezeERC20VotingMasterCopyContract = {
-      asSigner: ERC20FreezeVoting__factory.connect(erc20FreezeVotingMasterCopy, signerOrProvider),
-      asProvider: ERC20FreezeVoting__factory.connect(erc20FreezeVotingMasterCopy, provider),
-    };
-
     const freezeERC721VotingMasterCopyContract = {
       asSigner: ERC721FreezeVoting__factory.connect(erc721FreezeVotingMasterCopy, signerOrProvider),
       asProvider: ERC721FreezeVoting__factory.connect(erc721FreezeVotingMasterCopy, provider),
@@ -45,16 +35,9 @@ export default function useSafeContracts() {
 
     return {
       freezeMultisigVotingMasterCopyContract,
-      freezeERC20VotingMasterCopyContract,
       freezeERC721VotingMasterCopyContract,
     };
-  }, [
-    multisigFreezeVotingMasterCopy,
-    erc20FreezeVotingMasterCopy,
-    erc721FreezeVotingMasterCopy,
-    signerOrProvider,
-    provider,
-  ]);
+  }, [multisigFreezeVotingMasterCopy, erc721FreezeVotingMasterCopy, signerOrProvider, provider]);
 
   return daoContracts;
 }
