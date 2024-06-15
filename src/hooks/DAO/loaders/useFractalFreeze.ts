@@ -188,9 +188,8 @@ export const useFractalFreeze = ({
     const { freezeMultisigVotingMasterCopyContract } = baseContracts;
 
     // @dev using freeze 'multisig' contract but these functions are the same for all freeze types
-    let votingRPC: MultisigFreezeVoting = freezeMultisigVotingMasterCopyContract.asProvider.attach(
-      freezeVotingContractAddress,
-    );
+    const votingRPC: MultisigFreezeVoting =
+      freezeMultisigVotingMasterCopyContract.asProvider.attach(freezeVotingContractAddress);
 
     const listenerCallback: TypedListener<FreezeVoteCastEvent> = async (
       voter: string,
@@ -231,7 +230,7 @@ export const useFractalFreeze = ({
       return;
     }
 
-    let freezeVotingContract = getContract({
+    const freezeVotingContract = getContract({
       abi: ERC721FreezeVotingAbi,
       address: getAddress(freezeVotingContractAddress),
       client: publicClient,
