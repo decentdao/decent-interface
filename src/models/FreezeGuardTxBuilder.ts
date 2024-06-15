@@ -51,6 +51,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private multisigFreezeGuardMasterCopyAddress: Address;
   private erc20FreezeVotingMasterCopyAddress: Address;
   private erc721FreezeVotingMasterCopyAddress: Address;
+  private multisigFreezeVotingMasterCopyAddress: Address;
 
   constructor(
     signerOrProvider: any,
@@ -65,6 +66,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     multisigFreezeGuardMasterCopyAddress: Address,
     erc20FreezeVotingMasterCopyAddress: Address,
     erc721FreezeVotingMasterCopyAddress: Address,
+    multisigFreezeVotingMasterCopyAddress: Address,
     isAzorius: boolean,
     parentTokenAddress?: Address,
     azoriusAddress?: Address,
@@ -93,6 +95,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.multisigFreezeGuardMasterCopyAddress = multisigFreezeGuardMasterCopyAddress;
     this.erc20FreezeVotingMasterCopyAddress = erc20FreezeVotingMasterCopyAddress;
     this.erc721FreezeVotingMasterCopyAddress = erc721FreezeVotingMasterCopyAddress;
+    this.multisigFreezeVotingMasterCopyAddress = multisigFreezeVotingMasterCopyAddress;
 
     this.initFreezeVotesData();
   }
@@ -114,7 +117,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
           ? this.erc20FreezeVotingMasterCopyAddress
           : this.freezeVotingType === 'erc721'
             ? this.erc721FreezeVotingMasterCopyAddress
-            : this.baseContracts.freezeMultisigVotingMasterCopyContract.address,
+            : this.multisigFreezeVotingMasterCopyAddress,
         this.freezeVotingCallData,
         this.saltNum,
       ],
@@ -242,7 +245,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       }
     } else {
       freezeVotingByteCodeLinear = generateContractByteCodeLinear(
-        getAddress(this.baseContracts.freezeMultisigVotingMasterCopyContract.address),
+        this.multisigFreezeVotingMasterCopyAddress,
       );
     }
 

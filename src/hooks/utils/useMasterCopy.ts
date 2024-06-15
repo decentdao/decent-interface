@@ -2,14 +2,12 @@ import { useCallback } from 'react';
 import { Address, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import ModuleProxyFactoryAbi from '../../assets/abi/ModuleProxyFactory';
-import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
 import { useLocalStorage } from './cache/useLocalStorage';
 
 export function useMasterCopy() {
   const { getValue, setValue } = useLocalStorage();
-  const { baseContracts } = useFractal();
   const {
     contracts: {
       zodiacModuleProxyFactory,
@@ -19,6 +17,7 @@ export function useMasterCopy() {
       fractalAzoriusMasterCopy,
       multisigFreezeGuardMasterCopy,
       erc721FreezeVotingMasterCopy,
+      multisigFreezeVotingMasterCopy,
     },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
@@ -36,10 +35,8 @@ export function useMasterCopy() {
     [multisigFreezeGuardMasterCopy],
   );
   const isMultisigFreezeVoting = useCallback(
-    (masterCopyAddress: Address) =>
-      masterCopyAddress ===
-      baseContracts?.freezeMultisigVotingMasterCopyContract.asProvider.address,
-    [baseContracts],
+    (masterCopyAddress: Address) => masterCopyAddress === multisigFreezeVotingMasterCopy,
+    [multisigFreezeVotingMasterCopy],
   );
   const isERC721FreezeVoting = useCallback(
     (masterCopyAddress: Address) => masterCopyAddress === erc721FreezeVotingMasterCopy,
