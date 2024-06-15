@@ -43,7 +43,6 @@ const useDeployAzorius = () => {
   } = useNetworkConfig();
   const {
     node: { daoAddress, safe },
-    baseContracts,
   } = useFractal();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
@@ -58,10 +57,9 @@ const useDeployAzorius = () => {
       shouldSetSnapshot?: boolean,
       customNonce?: number,
     ) => {
-      if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts || !publicClient) {
+      if (!daoAddress || !canUserCreateProposal || !safe || !publicClient) {
         return;
       }
-      const {} = baseContracts;
 
       const builderBaseContracts: BaseContracts = {};
 
@@ -141,7 +139,6 @@ const useDeployAzorius = () => {
       daoAddress,
       canUserCreateProposal,
       safe,
-      baseContracts,
       publicClient,
       signerOrProvider,
       fallbackHandler,

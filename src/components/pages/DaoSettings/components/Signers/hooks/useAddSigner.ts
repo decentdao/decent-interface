@@ -3,13 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { encodeFunctionData, getAddress } from 'viem';
 import GnosisSafeL2Abi from '../../../../../../assets/abi/GnosisSafeL2';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
-import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
 
 const useAddSigner = () => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
-  const { baseContracts } = useFractal();
   const addSigner = useCallback(
     async ({
       newSigner,
@@ -24,7 +22,7 @@ const useAddSigner = () => {
       daoAddress: string | null;
       close: () => void;
     }) => {
-      if (!baseContracts || !daoAddress) {
+      if (!daoAddress) {
         return;
       }
       const description = 'Add Signer';
@@ -57,7 +55,7 @@ const useAddSigner = () => {
         failedToastMessage: t('addSignerFailureToastMessage'),
       });
     },
-    [baseContracts, submitProposal, t],
+    [submitProposal, t],
   );
 
   return addSigner;

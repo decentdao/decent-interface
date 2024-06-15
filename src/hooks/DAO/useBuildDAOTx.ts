@@ -41,7 +41,6 @@ const useBuildDAOTx = () => {
   } = useNetworkConfig();
 
   const {
-    baseContracts,
     readOnly: { user, dao },
     governance,
     governanceContracts: { erc721LinearVotingContractAddress },
@@ -56,10 +55,9 @@ const useBuildDAOTx = () => {
     ) => {
       let isAzorius = false;
 
-      if (!user.address || !signerOrProvider || !baseContracts || !publicClient) {
+      if (!user.address || !signerOrProvider || !publicClient) {
         return;
       }
-      const {} = baseContracts;
 
       if (
         daoData.governance === GovernanceType.AZORIUS_ERC20 ||
@@ -135,7 +133,6 @@ const useBuildDAOTx = () => {
     [
       user.address,
       signerOrProvider,
-      baseContracts,
       publicClient,
       fallbackHandler,
       votesERC20WrapperMasterCopy,

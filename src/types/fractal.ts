@@ -170,7 +170,6 @@ export interface ITokenAccount {
  * @param dispatch - This object contains the dispatch functions for the Fractal DAO.
  */
 export interface FractalStore extends Fractal {
-  baseContracts?: FractalContracts;
   action: {
     dispatch: Dispatch<FractalActions>;
     loadReadOnlyValues: () => Promise<void>;
@@ -306,8 +305,6 @@ export interface NodeHierarchy {
   parentAddress: Address | null;
   childNodes: Node[];
 }
-
-export interface FractalContracts {}
 
 export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;
 

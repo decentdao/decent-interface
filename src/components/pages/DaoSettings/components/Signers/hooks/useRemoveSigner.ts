@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { getAddress, encodeFunctionData } from 'viem';
 import GnosisSafeL2Abi from '../../../../../../assets/abi/GnosisSafeL2';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
-import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
 
 const useRemoveSigner = ({
@@ -21,10 +20,9 @@ const useRemoveSigner = ({
 }) => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
-  const { baseContracts } = useFractal();
 
   const removeSigner = useCallback(async () => {
-    if (!baseContracts || !daoAddress) {
+    if (!daoAddress) {
       return;
     }
     const description = 'Remove Signers';
@@ -55,7 +53,7 @@ const useRemoveSigner = ({
       successToastMessage: t('removeSignerSuccessToastMessage'),
       failedToastMessage: t('removeSignerFailureToastMessage'),
     });
-  }, [baseContracts, prevSigner, signerToRemove, threshold, daoAddress, submitProposal, nonce, t]);
+  }, [prevSigner, signerToRemove, threshold, daoAddress, submitProposal, nonce, t]);
 
   return removeSigner;
 };
