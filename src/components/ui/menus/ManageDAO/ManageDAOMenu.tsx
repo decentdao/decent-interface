@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { Address, getAddress, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import ERC20FreezeVotingAbi from '../../../../assets/abi/ERC20FreezeVoting';
+import ERC721FreezeVotingAbi from '../../../../assets/abi/ERC721FreezeVoting';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -136,14 +137,21 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
             return contract.write.castFreezeVote();
           } else if (freezeVotingType === FreezeVotingType.ERC721) {
             getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
-              const freezeERC721VotingContract =
-                baseContracts!.freezeERC721VotingMasterCopyContract.asSigner.attach(
-                  guardContracts!.freezeVotingContractAddress!,
-                );
-              return freezeERC721VotingContract!['castFreezeVote(address[],uint256[])'](
-                tokensInfo.totalVotingTokenAddresses,
-                tokensInfo.totalVotingTokenIds,
-              );
+              if (!guardContracts.freezeVotingContractAddress) {
+                throw new Error('freeze voting contract address not set');
+              }
+              if (!walletClient) {
+                throw new Error('wallet client not set');
+              }
+              const freezeERC721VotingContract = getContract({
+                abi: ERC721FreezeVotingAbi,
+                address: getAddress(guardContracts.freezeVotingContractAddress),
+                client: walletClient,
+              });
+              return freezeERC721VotingContract.write.castFreezeVote([
+                tokensInfo.totalVotingTokenAddresses.map(a => getAddress(a)),
+                tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
+              ]);
             });
           }
         }

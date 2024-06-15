@@ -1,5 +1,8 @@
 import { useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getContract, getAddress } from 'viem';
+import { useWalletClient } from 'wagmi';
+import ERC721FreezeVotingAbi from '../../assets/abi/ERC721FreezeVoting';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FreezeVotingType } from '../../types';
 import useSafeContracts from '../safe/useSafeContracts';
@@ -11,7 +14,8 @@ const useCastFreezeVote = ({
 }: {
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [contractCallCastFreeze, contractCallPending] = useTransaction();
+  const [contractCallCastFreeze, contractCallPending, contractCallCastFreezeViem] =
+    useTransaction();
   const {
     guardContracts: { freezeVotingContractAddress, freezeVotingType },
     node: {
@@ -26,42 +30,60 @@ const useCastFreezeVote = ({
   }, [setPending, contractCallPending]);
 
   const { t } = useTranslation('transaction');
+  const { data: walletClient } = useWalletClient();
 
   const castFreezeVote = useCallback(() => {
-    if (!freezeVotingContractAddress || !baseContracts) return;
-    contractCallCastFreeze({
-      contractFn: () => {
-        if (freezeVotingType === FreezeVotingType.ERC721) {
-          const freezeERC721VotingContract =
-            baseContracts.freezeERC721VotingMasterCopyContract.asSigner.attach(
-              freezeVotingContractAddress,
-            );
-          return getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo =>
-            freezeERC721VotingContract['castFreezeVote(address[],uint256[])'](
-              tokensInfo.totalVotingTokenAddresses,
-              tokensInfo.totalVotingTokenIds,
-            ),
-          );
-        } else {
+    if (!freezeVotingContractAddress) return;
+
+    if (freezeVotingType === FreezeVotingType.ERC721) {
+      if (!walletClient) return;
+
+      contractCallCastFreezeViem({
+        contractFn: () => {
+          const freezeERC721VotingContract = getContract({
+            abi: ERC721FreezeVotingAbi,
+            address: getAddress(freezeVotingContractAddress),
+            client: walletClient,
+          });
+          return getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
+            return freezeERC721VotingContract.write.castFreezeVote([
+              tokensInfo.totalVotingTokenAddresses.map(a => getAddress(a)),
+              tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
+            ]);
+          });
+        },
+        pendingMessage: t('pendingCastFreezeVote'),
+        failedMessage: t('failedCastFreezeVote'),
+        successMessage: t('successCastFreezeVote'),
+      });
+    } else {
+      if (!baseContracts) return;
+
+      contractCallCastFreeze({
+        contractFn: () => {
+          // TODO: split this out between multisig and erc20
           const freezeVotingContract =
             baseContracts.freezeMultisigVotingMasterCopyContract.asSigner.attach(
               freezeVotingContractAddress,
             );
           return freezeVotingContract.castFreezeVote();
-        }
-      },
-      pendingMessage: t('pendingCastFreezeVote'),
-      failedMessage: t('failedCastFreezeVote'),
-      successMessage: t('successCastFreezeVote'),
-    });
+        },
+
+        pendingMessage: t('pendingCastFreezeVote'),
+        failedMessage: t('failedCastFreezeVote'),
+        successMessage: t('successCastFreezeVote'),
+      });
+    }
   }, [
+    baseContracts,
     contractCallCastFreeze,
-    t,
+    contractCallCastFreezeViem,
     freezeVotingContractAddress,
     freezeVotingType,
     getUserERC721VotingTokens,
     parentAddress,
-    baseContracts,
+    t,
+    walletClient,
   ]);
   return castFreezeVote;
 };
