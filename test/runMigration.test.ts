@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { CACHE_VERSIONS, CacheKeys } from '../src/hooks/utils/cache/cacheDefaults';
+import { CacheKeys } from '../src/hooks/utils/cache/cacheDefaults';
 import { getValue, setValue } from '../src/hooks/utils/cache/useLocalStorage';
 import { runMigrations } from '../src/hooks/utils/cache/useMigrate';
 
@@ -31,21 +31,21 @@ describe('run migrations', () => {
     if (!migrationCache) {
       throw new Error('Migration cache not found');
     }
-    expect(migrationCache).toBe(CACHE_VERSIONS[CacheKeys.MIGRATION]);
+    expect(migrationCache).toBe(1);
   });
 
   it('should early exit', async () => {
     setValue({ cacheName: CacheKeys.FAVORITES }, [
       'sep:0xd418E98a11B9189fCc05cddfbB10F4Cee996C749',
     ]);
-    setValue({ cacheName: CacheKeys.MIGRATION }, CACHE_VERSIONS[CacheKeys.MIGRATION]);
+    setValue({ cacheName: CacheKeys.MIGRATION }, 1);
 
     await runMigrations();
-
+    
     const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
     if (!migrationCache) {
       throw new Error('Migration cache not found');
     }
-    expect(migrationCache).toBe(CACHE_VERSIONS[CacheKeys.MIGRATION]);
+    expect(migrationCache).toBe(1);
   });
 });
