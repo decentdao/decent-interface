@@ -3,7 +3,7 @@ import camelCase from 'lodash.camelcase';
 import Moralis from 'moralis';
 import { isAddress } from 'viem';
 import { sepolia, mainnet, base, baseSepolia, optimism, polygon } from 'viem/chains';
-import type { TokenBalance } from '../../src/types';
+import type { NFTBalance, TokenBalance } from '../../src/types';
 
 const SUPPORTED_NETWORKS = [
   mainnet.id,
@@ -15,18 +15,19 @@ const SUPPORTED_NETWORKS = [
 ] as const;
 type SupportedNetworks = (typeof SUPPORTED_NETWORKS)[number];
 
-const camelCaseKeys = (obj: any) =>
+const camelCaseKeys = <T extends {}>(obj: T): T =>
   Object.keys(obj).reduce(
     (ccObj, field) => ({
       ...ccObj,
-      [camelCase(field)]: obj[field],
+      [camelCase(field)]: obj[field as keyof typeof obj],
     }),
-    {},
+    {} as T,
   );
 
 type AddressBalancesWithMetadata = {
   data: {
     tokens: TokenBalance[];
+    nfts: NFTBalance[];
   };
   metadata: {
     fetched: number;
@@ -85,15 +86,22 @@ export default async function getTokenBalancesWithPrices(request: Request) {
         apiKey: process.env.MORALIS_API_KEY,
       });
 
-      const response = await Moralis.EvmApi.wallets.getWalletTokenBalancesPrice({
-        chain: chainId.toString(),
-        address: addressParam,
-      });
+      const [tokensResponse, nftsResponse] = await Promise.all([
+        Moralis.EvmApi.wallets.getWalletTokenBalancesPrice({
+          chain: chainId.toString(),
+          address: addressParam,
+        }),
+        Moralis.EvmApi.nft.getWalletNFTs({ chain: chainId.toString(), address: addressParam }),
+      ]);
 
-      const mappedTokensData = response.result.map(tokenBalance =>
-        camelCaseKeys(tokenBalance.toJSON()),
+      const mappedTokensData = tokensResponse.result.map(tokenBalance =>
+        camelCaseKeys<ReturnType<typeof tokenBalance.toJSON>>(tokenBalance.toJSON()),
       );
-      const responseBody = { tokens: mappedTokensData };
+      const mappedNftsData = nftsResponse.result.map(nftBalance =>
+        camelCaseKeys<ReturnType<typeof nftBalance.toJSON>>(nftBalance.toJSON()),
+      );
+      const responseBody = { tokens: mappedTokensData, nfts: mappedNftsData };
+
       await store.setJSON(storeKey, responseBody, { metadata: { fetched: config.nowSeconds } });
 
       return Response.json({ data: responseBody });

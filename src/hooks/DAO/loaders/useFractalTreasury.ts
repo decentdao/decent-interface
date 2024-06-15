@@ -1,4 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
+import { toast } from 'react-toastify';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -25,17 +26,20 @@ export const useFractalTreasury = () => {
       return;
     }
 
-    // @todo - fetch assetsNonFungible here
-    const [transfers, balances] = await Promise.all([
+    const [transfers, { data: balancesData, error }] = await Promise.all([
       safeAPI.getAllTransactions(daoAddress),
       getBalances(daoAddress),
     ]);
+
+    if (error) {
+      toast(error, { autoClose: 2000 })
+    }
     const treasuryData = {
-      assetsFungible: balances.tokens,
-      assetsNonFungible: [],
+      assetsFungible: balancesData?.tokens || [],
+      assetsNonFungible: balancesData?.nfts || [],
       transfers,
     };
-    action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData as any });
+    action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
   }, [daoAddress, safeAPI, action, getBalances]);
 
   useEffect(() => {

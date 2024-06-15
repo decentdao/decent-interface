@@ -31,6 +31,34 @@ export type TokenBalance = {
   portfolioPercentage: number;
 };
 
+type NftMediaItem = {
+  height: number;
+  width: number;
+  url: string;
+};
+
+export type NFTBalance = {
+  tokenAddress: string;
+  media:
+    | {
+        originalMediaUrl?: string | undefined;
+        mediaCollection?:
+          | {
+              low: NftMediaItem;
+              medium: NftMediaItem;
+              high: NftMediaItem;
+            }
+          | undefined;
+      }
+    | undefined;
+  tokenId: string | number;
+  tokenUri?: string | undefined;
+  name?: string | undefined;
+  symbol?: string | undefined;
+  amount?: number | undefined;
+  possibleSpam: boolean;
+};
+
 export interface TokenDepositEvent extends TokenEvent, EthAddress {
   amount: bigint;
 }
