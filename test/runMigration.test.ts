@@ -41,7 +41,7 @@ describe('run migrations', () => {
     setValue({ cacheName: CacheKeys.MIGRATION }, 1);
 
     await runMigrations();
-    
+
     const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
     if (!migrationCache) {
       throw new Error('Migration cache not found');
