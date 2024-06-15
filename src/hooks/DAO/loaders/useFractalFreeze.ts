@@ -86,18 +86,31 @@ export const useFractalFreeze = ({
       }
 
       let userHasVotes: boolean = false;
-      const freezeCreatedBlock = await freezeVotingContract.read.freezeProposalCreatedBlock();
 
-      const freezeVotesThreshold = await freezeVotingContract.read.freezeVotesThreshold();
-      const freezeProposalCreatedBlock =
-        await freezeVotingContract.read.freezeProposalCreatedBlock();
+      const [
+        freezeCreatedBlock,
+        freezeVotesThreshold,
+        freezeProposalCreatedBlock,
+        freezeProposalVoteCount,
+        freezeProposalBlock,
+        freezePeriodBlock,
+        isFrozen,
+      ] = await Promise.all([
+        freezeVotingContract.read.freezeProposalCreatedBlock(),
+        freezeVotingContract.read.freezeVotesThreshold(),
+        freezeVotingContract.read.freezeProposalCreatedBlock(),
+        freezeVotingContract.read.freezeProposalVoteCount(),
+        freezeVotingContract.read.freezeProposalPeriod(),
+        freezeVotingContract.read.freezePeriod(),
+        freezeVotingContract.read.isFrozen(),
+      ]);
+
+      // timestamp when proposal was created
       const freezeProposalCreatedTime = await getTimeStamp(freezeProposalCreatedBlock, provider);
-      const freezeProposalVoteCount = await freezeVotingContract.read.freezeProposalVoteCount();
 
-      const freezeProposalBlock = await freezeVotingContract.read.freezeProposalPeriod();
       // length of time to vote on freeze
       const freezeProposalPeriod = await blocksToSeconds(freezeProposalBlock, provider);
-      const freezePeriodBlock = await freezeVotingContract.read.freezePeriod();
+
       // length of time frozen for in seconds
       const freezePeriod = await blocksToSeconds(freezePeriodBlock, provider);
 
@@ -105,7 +118,7 @@ export const useFractalFreeze = ({
         account || zeroAddress,
         BigInt(freezeCreatedBlock),
       ]);
-      const isFrozen = await freezeVotingContract.read.isFrozen();
+      // const isFrozen = await freezeVotingContract.read.isFrozen();
 
       const freezeGuard = {
         freezeVotesThreshold,
