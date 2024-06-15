@@ -28,6 +28,7 @@ function DaoCreator({
   const { createDAOValidation } = useDAOCreateSchema({ isSubDAO });
   const { prepareMultisigFormData, prepareAzoriusERC20FormData, prepareAzoriusERC721FormData } =
     usePrepareFormData();
+
   return (
     <Box>
       <Formik<CreatorFormState>

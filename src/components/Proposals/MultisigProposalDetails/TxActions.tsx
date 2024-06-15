@@ -1,7 +1,8 @@
-import { Box, Button, Text, Flex } from '@chakra-ui/react';
+import { Box, Button, Text, Flex, Tooltip } from '@chakra-ui/react';
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { Signer } from 'ethers';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Hex, getAddress, isHex } from 'viem';
 import { Check } from '../../../assets/theme/custom/icons/Check';
@@ -30,12 +31,25 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const signerOrProvider = useSignerOrProvider();
   const safeAPI = useSafeAPI();
 
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
+
+  const wasTimelocked = useRef(
+    proposal.state === FractalProposalState.TIMELOCKABLE ||
+      proposal.state === FractalProposalState.TIMELOCKED,
+  );
+
+  useEffect(() => {
+    if (wasTimelocked.current && proposal.state === FractalProposalState.EXECUTABLE) {
+      setIsSubmitDisabled(false);
+    }
+  }, [proposal.state]);
+
   const { chain } = useNetworkConfig();
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [contractCall, contractCallPending] = useTransaction();
-  const loadSafeMultisigProposals = useSafeMultisigProposals();
+  const { loadSafeMultisigProposals } = useSafeMultisigProposals();
   const baseContracts = useSafeContracts();
   if (user.votingWeight === 0n) return <></>;
 
@@ -126,6 +140,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
         successCallback: async () => {
+          setIsSubmitDisabled(true);
           await loadSafeMultisigProposals();
         },
       });
@@ -145,6 +160,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         return;
       }
       const safeContract = GnosisSafeL2__factory.connect(safe.address, signerOrProvider);
+
       const safeTx = buildSafeTransaction({
         ...multisigTx,
         to: getAddress(multisigTx.to),
@@ -152,6 +168,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         data: multisigTx.data as Hex | undefined,
         operation: multisigTx.operation as 0 | 1,
       });
+
       const signatures = buildSignatureBytes(
         multisigTx.confirmations.map(confirmation => {
           if (!isHex(confirmation.signature)) {
@@ -163,6 +180,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
           };
         }),
       );
+
       contractCall({
         contractFn: () =>
           safeContract.execTransaction(
@@ -181,6 +199,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         pendingMessage: t('pendingExecute', { ns: 'transaction' }),
         successMessage: t('successExecute', { ns: 'transaction' }),
         successCallback: async () => {
+          setIsSubmitDisabled(true);
           await loadSafeMultisigProposals();
         },
       });
@@ -192,7 +211,6 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const hasSigned = proposal.confirmations?.find(confirm => confirm.owner === user.address);
   const isOwner = safe?.owners?.includes(user.address || '');
   const isPending = asyncRequestPending || contractCallPending;
-
   if (
     (proposal.state === FractalProposalState.ACTIVE && (hasSigned || !isOwner)) ||
     proposal.state === FractalProposalState.REJECTED ||
@@ -207,7 +225,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       action: () => Promise<any>;
       text: string;
       pageTitle: string;
-      icon: undefined | JSX.Element;
+      icon?: JSX.Element;
     };
   };
 
@@ -216,7 +234,6 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       action: signTransaction,
       text: 'approve',
       pageTitle: 'signTitle',
-      icon: undefined,
     },
     [FractalProposalState.EXECUTABLE]: {
       action: executeTransaction,
@@ -228,32 +245,41 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       action: timelockTransaction,
       text: 'timelock',
       pageTitle: 'timelockTitle',
-      icon: undefined,
     },
     [FractalProposalState.TIMELOCKED]: {
       action: async () => {},
       text: 'execute',
       pageTitle: 'executeTitle',
-      icon: undefined,
     },
   };
-  const isButtonDisabled = isPending || proposal.state === FractalProposalState.TIMELOCKED;
+  const isActiveNonce = !!safe && multisigTx.nonce === safe.nonce;
+  const isButtonDisabled =
+    isSubmitDisabled ||
+    isPending ||
+    proposal.state === FractalProposalState.TIMELOCKED ||
+    !isActiveNonce;
 
   return (
     <ContentBox containerBoxProps={{ bg: BACKGROUND_SEMI_TRANSPARENT }}>
       <Flex justifyContent="space-between">
-        <Text textStyle="text-lg-mono-medium">{t(buttonProps[proposal.state!].pageTitle)}</Text>
+        <Text>{t(buttonProps[proposal.state!].pageTitle)}</Text>
         <ProposalCountdown proposal={proposal} />
       </Flex>
       <Box marginTop={4}>
-        <Button
-          w="full"
-          rightIcon={buttonProps[proposal.state!].icon}
-          isDisabled={isButtonDisabled}
-          onClick={buttonProps[proposal.state!].action}
+        <Tooltip
+          placement="top-start"
+          label={t('notActiveNonceTooltip')}
+          isDisabled={isActiveNonce}
         >
-          {t(buttonProps[proposal.state!].text, { ns: 'common' })}
-        </Button>
+          <Button
+            w="full"
+            rightIcon={buttonProps[proposal.state!].icon}
+            isDisabled={isButtonDisabled}
+            onClick={buttonProps[proposal.state!].action}
+          >
+            {t(buttonProps[proposal.state!].text, { ns: 'common' })}
+          </Button>
+        </Tooltip>
       </Box>
     </ContentBox>
   );

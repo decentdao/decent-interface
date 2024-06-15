@@ -118,6 +118,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                             data-testid={`erc721Token.nfts.${i}.tokenAddressInput`}
                             minWidth="100%"
                             placeholder={createAccountSubstring(zeroAddress)}
+                            isInvalid={!!addressErrorMessage}
                           />
                         )}
                       </Field>
@@ -148,6 +149,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                           isRequired
                           min="1"
                           placeholder="1"
+                          isInvalid={!!weightErrorMessage}
                         />
                         {values.erc721Token.nfts.length > 1 && (
                           <IconButton

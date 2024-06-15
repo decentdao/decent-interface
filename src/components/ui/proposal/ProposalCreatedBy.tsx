@@ -18,6 +18,7 @@ function ProposalCreatedBy({ proposer }: { proposer: string }) {
       <DisplayAddress
         address={proposer}
         pl={0}
+        isTextLink
       />
     </Box>
   );

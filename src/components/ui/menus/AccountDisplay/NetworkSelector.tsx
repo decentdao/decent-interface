@@ -52,6 +52,7 @@ export function NetworkSelector({
               w: 'full',
               borderRadius: '4px',
               _hover: { color: 'lilac--1', bg: 'white-alpha-04' },
+              transition: 'all ease-out 300ms',
             }}
             trigger={
               <Flex

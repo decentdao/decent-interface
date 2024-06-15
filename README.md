@@ -34,13 +34,9 @@ $ npm run dev
 
 ## Deployment Notes
 
-The "dev", "staging", and "prod" environments of this app are currently deployed via Netlify.
+The "dev" and "prod" environments of this app are currently deployed via Netlify.
 
-The "dev" environment tracks the `develop` branch, "staging" tracks `staging`, and the "prod" environment tracks the `main` branch. The "dev", "staging", and "prod" Github environments are where custom environment variables are configured.
+The "dev" environment tracks the `develop` branch, and the "prod" environment tracks the `main` branch.
 
-So at any given time, there are effectively three builds out there, and they are publicly accessible and privately configurable within Github:
-
-1. dev site
-   - url: https://app.dev.decentdao.org
-2. prod site
-   - url: https://app.decentdao.org
+- dev: https://app.dev.decentdao.org
+- prod: https://app.decentdao.org

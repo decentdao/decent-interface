@@ -47,9 +47,7 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
         bg="neutral-2"
         _hover={{ bg: 'neutral-3' }}
         _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
-        transitionDuration="200ms"
-        transitionProperty="all"
-        transitionTimingFunction="ease-out"
+        transition="all ease-out 300ms"
         p="1.5rem"
         borderRadius="0.5rem"
       >
