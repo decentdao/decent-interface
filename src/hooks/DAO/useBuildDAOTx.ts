@@ -35,6 +35,7 @@ const useBuildDAOTx = () => {
       azoriusFreezeGuardMasterCopy,
       multisigFreezeGuardMasterCopy,
       erc20FreezeVotingMasterCopy,
+      erc721FreezeVotingMasterCopy,
     },
   } = useNetworkConfig();
 
@@ -57,8 +58,7 @@ const useBuildDAOTx = () => {
       if (!user.address || !signerOrProvider || !baseContracts || !publicClient) {
         return;
       }
-      const { freezeMultisigVotingMasterCopyContract, freezeERC721VotingMasterCopyContract } =
-        baseContracts;
+      const { freezeMultisigVotingMasterCopyContract } = baseContracts;
 
       if (
         daoData.governance === GovernanceType.AZORIUS_ERC20 ||
@@ -68,7 +68,6 @@ const useBuildDAOTx = () => {
       }
 
       const buildrerBaseContracts: BaseContracts = {
-        freezeERC721VotingMasterCopyContract: freezeERC721VotingMasterCopyContract.asSigner,
         freezeMultisigVotingMasterCopyContract: freezeMultisigVotingMasterCopyContract.asSigner,
       };
 
@@ -89,6 +88,7 @@ const useBuildDAOTx = () => {
         azoriusFreezeGuardMasterCopy,
         multisigFreezeGuardMasterCopy,
         erc20FreezeVotingMasterCopy,
+        erc721FreezeVotingMasterCopy,
         multiSendCallOnly,
         erc20ClaimMasterCopy,
         fractalModuleMasterCopy,
@@ -148,6 +148,7 @@ const useBuildDAOTx = () => {
       azoriusFreezeGuardMasterCopy,
       multisigFreezeGuardMasterCopy,
       erc20FreezeVotingMasterCopy,
+      erc721FreezeVotingMasterCopy,
       multiSendCallOnly,
       erc20ClaimMasterCopy,
       fractalModuleMasterCopy,

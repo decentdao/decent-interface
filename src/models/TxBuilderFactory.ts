@@ -38,6 +38,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private azoriusFreezeGuardMasterCopyAddress: string;
   private multisigFreezeGuardMasterCopyAddress: string;
   private erc20FreezeVotingMasterCopyAddress: string;
+  private erc721FreezeVotingMasterCopyAddress: string;
   private multiSendCallOnlyAddress: string;
   private erc20ClaimMasterCopyAddress: string;
   private fractalModuleMasterCopyAddress: string;
@@ -62,6 +63,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     azoriusFreezeGuardMasterCopyAddress: string,
     multisigFreezeGuardMasterCopyAddress: string,
     erc20FreezeVotingMasterCopyAddress: string,
+    erc721FreezeVotingMasterCopyAddress: string,
     multiSendCallOnlyAddress: string,
     erc20ClaimMasterCopyAddress: string,
     fractalModuleMasterCopyAddress: string,
@@ -93,6 +95,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.azoriusFreezeGuardMasterCopyAddress = azoriusFreezeGuardMasterCopyAddress;
     this.multisigFreezeGuardMasterCopyAddress = multisigFreezeGuardMasterCopyAddress;
     this.erc20FreezeVotingMasterCopyAddress = erc20FreezeVotingMasterCopyAddress;
+    this.erc721FreezeVotingMasterCopyAddress = erc721FreezeVotingMasterCopyAddress;
     this.multiSendCallOnlyAddress = multiSendCallOnlyAddress;
     this.erc20ClaimMasterCopyAddress = erc20ClaimMasterCopyAddress;
     this.fractalModuleMasterCopyAddress = fractalModuleMasterCopyAddress;
@@ -176,6 +179,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       getAddress(this.azoriusFreezeGuardMasterCopyAddress),
       getAddress(this.multisigFreezeGuardMasterCopyAddress),
       getAddress(this.erc20FreezeVotingMasterCopyAddress),
+      getAddress(this.erc721FreezeVotingMasterCopyAddress),
       this.isAzorius,
       this.parentTokenAddress ? getAddress(this.parentTokenAddress) : undefined,
       azoriusAddress ? getAddress(azoriusAddress) : undefined,
