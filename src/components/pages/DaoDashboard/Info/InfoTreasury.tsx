@@ -11,11 +11,10 @@ interface IDAOGovernance {}
 export function InfoTreasury({}: IDAOGovernance) {
   const {
     node: { daoAddress },
-    treasury: { assetsFungible },
   } = useFractal();
 
   const { t } = useTranslation('dashboard');
-  const { totalFiatValue } = useFormatCoins(assetsFungible);
+  const { totalFiatValue } = useFormatCoins();
 
   if (!daoAddress) {
     return (

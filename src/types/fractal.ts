@@ -37,7 +37,7 @@ import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
-import { TokenBalance, TreasuryActivity } from './daoTreasury';
+import { NFTBalance, TokenBalance, TreasuryActivity } from './daoTreasury';
 import { ProposalTemplate } from './proposalBuilder';
 import { BIFormattedPair } from './votingFungibleToken';
 /**
@@ -229,10 +229,12 @@ export interface FractalGovernanceContracts {
   isLoaded: boolean;
 }
 
+export type SafeWithNextNonce = SafeInfoResponse & { nextNonce: number };
+
 export interface FractalNode {
   daoName: string | null;
   daoAddress: Address | null;
-  safe: SafeInfoResponse | null;
+  safe: SafeWithNextNonce | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
   isModulesLoaded?: boolean;
@@ -276,7 +278,7 @@ export interface FreezeGuard {
 
 export interface FractalTreasury {
   assetsFungible: TokenBalance[];
-  assetsNonFungible: any[];
+  assetsNonFungible: NFTBalance[];
   transfers?: AllTransactionsListResponse;
 }
 

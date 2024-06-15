@@ -1,5 +1,4 @@
-import { SafeInfoResponse } from '@safe-global/api-kit';
-import { FractalModuleData, Node } from '../../../types';
+import { FractalModuleData, Node, SafeWithNextNonce } from '../../../types';
 
 export enum NodeAction {
   SET_SAFE_INFO = 'SET_SAFE_INFO',
@@ -9,7 +8,7 @@ export enum NodeAction {
 }
 
 export type NodeActions =
-  | { type: NodeAction.SET_SAFE_INFO; payload: SafeInfoResponse }
+  | { type: NodeAction.SET_SAFE_INFO; payload: SafeWithNextNonce }
   | { type: NodeAction.SET_DAO_INFO; payload: Node | { daoName: string } }
   | { type: NodeAction.SET_FRACTAL_MODULES; payload: FractalModuleData[] }
   | { type: NodeAction.UPDATE_DAO_NAME; payload: string };

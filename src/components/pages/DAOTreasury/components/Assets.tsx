@@ -23,6 +23,7 @@ import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubm
 import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { NFTBalance } from '../../../../types';
 import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
 import { ModalType } from '../../../ui/modals/ModalProvider';
@@ -175,10 +176,13 @@ function NFTHeader() {
   );
 }
 
-function NFTRow({ asset, isLast }: { asset: any; isLast: boolean }) {
-  const image = asset.imageUri ? asset.imageUri : asset.logoUri;
-  const name = asset.name ? asset.name : asset.tokenName;
-  const id = asset.id.toString();
+function NFTRow({ asset, isLast }: { asset: NFTBalance; isLast: boolean }) {
+  console.log(asset);
+  const image = asset.media?.mediaCollection
+    ? asset.media?.mediaCollection.medium.url
+    : asset.media?.originalMediaUrl;
+  const name = asset.name;
+  const id = asset.tokenId.toString();
 
   return (
     <HStack
@@ -189,7 +193,7 @@ function NFTRow({ asset, isLast }: { asset: any; isLast: boolean }) {
       <Flex width="15%">
         <EtherscanLink
           type="token"
-          value={asset.address}
+          value={asset.tokenAddress}
           secondaryValue={id}
           data-testid="link-nft-image"
           padding={0}
@@ -208,7 +212,7 @@ function NFTRow({ asset, isLast }: { asset: any; isLast: boolean }) {
       <Flex width="30%">
         <EtherscanLink
           type="address"
-          value={asset.address}
+          value={asset.tokenAddress}
           _hover={{ bg: 'transparent' }}
           color="white-0"
           textStyle="body-base"
@@ -219,7 +223,7 @@ function NFTRow({ asset, isLast }: { asset: any; isLast: boolean }) {
       <Flex width="25%">
         <EtherscanLink
           type="token"
-          value={asset.address}
+          value={asset.tokenAddress}
           secondaryValue={id}
           color="white-0"
           textStyle="body-base"
@@ -241,7 +245,7 @@ export function Assets() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { staking } = useNetworkConfig();
   const { t } = useTranslation('treasury');
-  const coinDisplay = useFormatCoins(assetsFungible);
+  const coinDisplay = useFormatCoins();
   const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
   const { handleUnstake, handleClaimUnstakedETH } = useLidoStaking();
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([]);
@@ -267,7 +271,7 @@ export function Assets() {
   const signerOrProvider = useSignerOrProvider();
   const [isLidoClaimable, setIsLidoClaimable] = useState(false);
   const lidoWithdrawelNFT = assetsNonFungible.find(
-    asset => asset.address === staking.lido?.withdrawalQueueContractAddress,
+    asset => asset.tokenAddress === staking.lido?.withdrawalQueueContractAddress,
   );
   const showClaimETHButton = canUserCreateProposal && staking.lido && lidoWithdrawelNFT;
   useEffect(() => {
@@ -284,7 +288,7 @@ export function Assets() {
         signerOrProvider,
       );
       const claimableStatus = (
-        await withdrawalQueueContract.getWithdrawalStatus([lidoWithdrawelNFT!.id])
+        await withdrawalQueueContract.getWithdrawalStatus([lidoWithdrawelNFT!.tokenId])
       )[0]; // Since we're checking for the single NFT - we can grab first array element
       if (claimableStatus.isFinalized !== isLidoClaimable) {
         setIsLidoClaimable(claimableStatus.isFinalized);
@@ -294,7 +298,7 @@ export function Assets() {
     getLidoClaimableStatus();
   }, [staking, isLidoClaimable, signerOrProvider, lidoWithdrawelNFT]);
   const handleClickClaimButton = () => {
-    handleClaimUnstakedETH(BigInt(lidoWithdrawelNFT!.id));
+    handleClaimUnstakedETH(BigInt(lidoWithdrawelNFT!.tokenId));
   };
 
   const hasAssets = coinDisplay.displayData.length > 0 || assetsNonFungible.length > 0;

@@ -1,11 +1,12 @@
 import { ERC20__factory, FractalModule } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { Address, encodeAbiParameters, getAddress, isHex, parseAbiParameters } from 'viem';
 import useBalancesAPI from '../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
-import { FractalModuleType, FractalNode, TokenBalance } from '../../types';
+import { FractalModuleType, FractalNode } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
@@ -24,9 +25,12 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
 
   const handleClawBack = useCallback(async () => {
     if (childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
-      const childSafeBalance: { tokens: TokenBalance[] } = await getTokenBalances(
-        childSafeInfo.daoAddress,
-      );
+      const childSafeBalance = await getTokenBalances(childSafeInfo.daoAddress);
+
+      if (childSafeBalance.error || !childSafeBalance.data) {
+        toast(t('clawBackBalancesError', { autoClose: 5000 }));
+        return;
+      }
 
       const santitizedParentAddress = getAddress(parentAddress);
       const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
@@ -37,7 +41,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         );
         const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
         if (fractalModule) {
-          const transactions = childSafeBalance.tokens
+          const transactions = childSafeBalance.data.tokens
             .filter(tokenBalance => !tokenBalance.possibleSpam)
             .map(asset => {
               if (!asset.tokenAddress) {

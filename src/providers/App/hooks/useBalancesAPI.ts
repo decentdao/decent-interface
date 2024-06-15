@@ -6,7 +6,7 @@ import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
 export default function useBalancesAPI() {
   const { chain } = useNetworkConfig();
-  const { t } = useTranslation('treasury')
+  const { t } = useTranslation('treasury');
 
   const getBalances = useCallback(
     async (
@@ -20,7 +20,7 @@ export default function useBalancesAPI() {
         return balancesResponseBody;
       } catch (e) {
         console.error('Error while fetching treasury balances', e);
-        return { error: t('errorFetchingBalances')}
+        return { error: t('errorFetchingBalances') };
       }
     },
     [chain, t],

@@ -66,7 +66,7 @@ export default async function getTokenBalancesWithPrices(request: Request) {
     return Response.json({ error: 'Requested network is not supported' }, { status: 400 });
   }
 
-  const store = getStore('token-balances');
+  const store = getStore('balances');
   const nowSeconds = Math.floor(Date.now() / 1000);
   const cacheTimeSeconds = parseInt(process.env.BALANCES_CACHE_INTERVAL_MINUTES) * 60;
   const config = { store, nowSeconds, cacheTimeSeconds };
@@ -86,20 +86,28 @@ export default async function getTokenBalancesWithPrices(request: Request) {
         apiKey: process.env.MORALIS_API_KEY,
       });
 
-      const [tokensResponse, nftsResponse] = await Promise.all([
-        Moralis.EvmApi.wallets.getWalletTokenBalancesPrice({
-          chain: chainId.toString(),
-          address: addressParam,
-        }),
-        Moralis.EvmApi.nft.getWalletNFTs({ chain: chainId.toString(), address: addressParam }),
-      ]);
+      const tokensResponse = await Moralis.EvmApi.wallets.getWalletTokenBalancesPrice({
+        chain: chainId.toString(),
+        address: addressParam,
+      });
 
       const mappedTokensData = tokensResponse.result.map(tokenBalance =>
         camelCaseKeys<ReturnType<typeof tokenBalance.toJSON>>(tokenBalance.toJSON()),
       );
-      const mappedNftsData = nftsResponse.result.map(nftBalance =>
-        camelCaseKeys<ReturnType<typeof nftBalance.toJSON>>(nftBalance.toJSON()),
-      );
+      let mappedNftsData: NFTBalance[] = [];
+
+      try {
+        const nftsResponse = await Moralis.EvmApi.nft.getWalletNFTs({
+          chain: chainId.toString(),
+          address: addressParam,
+        });
+        mappedNftsData = nftsResponse.result.map(nftBalance =>
+          camelCaseKeys<ReturnType<typeof nftBalance.toJSON>>(nftBalance.toJSON()),
+        );
+      } catch (e) {
+        console.error('Error while fetching address NFTs', e);
+      }
+
       const responseBody = { tokens: mappedTokensData, nfts: mappedNftsData };
 
       await store.setJSON(storeKey, responseBody, { metadata: { fetched: config.nowSeconds } });

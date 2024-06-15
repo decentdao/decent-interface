@@ -32,7 +32,7 @@ export const useFractalTreasury = () => {
     ]);
 
     if (error) {
-      toast(error, { autoClose: 2000 })
+      toast(error, { autoClose: 2000 });
     }
     const treasuryData = {
       assetsFungible: balancesData?.tokens || [],

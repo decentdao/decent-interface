@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { maxUint256, zeroAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { TokenBalance } from '../../../../types';
 import { formatCoin, formatUSD } from '../../../../utils/numberFormats';
 
 export interface TokenDisplayData {
@@ -17,7 +17,10 @@ export interface TokenDisplayData {
   rawValue: string;
 }
 
-export function useFormatCoins(assets: TokenBalance[]) {
+export function useFormatCoins() {
+  const {
+    treasury: { assetsFungible },
+  } = useFractal();
   const { chain, nativeTokenIcon } = useNetworkConfig();
   const [totalFiatValue, setTotalFiatValue] = useState(0);
   const [displayData, setDisplayData] = useState<TokenDisplayData[]>([]);
@@ -26,8 +29,8 @@ export function useFormatCoins(assets: TokenBalance[]) {
     async function loadDisplayData() {
       let newTotalFiatValue = 0;
       let newDisplayData = [];
-      for (let i = 0; i < assets.length; i++) {
-        let asset = assets[i];
+      for (let i = 0; i < assetsFungible.length; i++) {
+        let asset = assetsFungible[i];
         if (asset.balance === '0') continue;
         let tokenFiatBalance = 0;
         if (asset.usdPrice && asset.balance) {
@@ -73,13 +76,14 @@ export function useFormatCoins(assets: TokenBalance[]) {
         };
         newDisplayData.push(formatted);
       }
+      // @todo - once we'll be fetching prices for the NFTs - also include them in the calculation
       newDisplayData.sort((a, b) => b.fiatValue - a.fiatValue); // sort by USD value
       setTotalFiatValue(newTotalFiatValue);
       setDisplayData(newDisplayData);
     }
 
     loadDisplayData();
-  }, [assets, nativeTokenIcon, chain]);
+  }, [assetsFungible, nativeTokenIcon, chain]);
 
   return {
     totalFiatValue,
