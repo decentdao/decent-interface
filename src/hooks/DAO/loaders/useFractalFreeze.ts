@@ -15,7 +15,6 @@ import { FractalGuardAction } from '../../../providers/App/guard/action';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { FractalGuardContracts, FreezeVotingType } from '../../../types';
 import { blocksToSeconds, getTimeStamp } from '../../../utils/contract';
-import useSafeContracts from '../../safe/useSafeContracts';
 import useUserERC721VotingTokens from '../proposal/useUserERC721VotingTokens';
 import { FreezeGuard } from './../../../types/fractal';
 
@@ -31,7 +30,6 @@ export const useFractalFreeze = ({
   const isFreezeSet = useRef(false);
 
   const { guardContracts, action } = useFractal();
-  const baseContracts = useSafeContracts();
   const { address: account } = useAccount();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(
     parentSafeAddress,
@@ -52,7 +50,6 @@ export const useFractalFreeze = ({
         !freezeVotingContractAddress ||
         !account ||
         !provider ||
-        !baseContracts ||
         !publicClient
       ) {
         return;
@@ -191,7 +188,7 @@ export const useFractalFreeze = ({
       isFreezeSet.current = true;
       return freeze;
     },
-    [account, provider, baseContracts, publicClient, getUserERC721VotingTokens, parentSafeAddress],
+    [account, provider, publicClient, getUserERC721VotingTokens, parentSafeAddress],
   );
 
   const setFractalFreezeGuard = useCallback(

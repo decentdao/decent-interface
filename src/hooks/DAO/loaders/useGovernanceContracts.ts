@@ -7,7 +7,6 @@ import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
 import { getAzoriusModuleFromModules } from '../../../utils';
-import useSafeContracts from '../../safe/useSafeContracts';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 
@@ -15,7 +14,6 @@ export const useGovernanceContracts = () => {
   // tracks the current valid DAO address; helps prevent unnecessary calls
   const currentValidAddress = useRef<string | null>();
   const { node, action } = useFractal();
-  const baseContracts = useSafeContracts();
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const publicClient = usePublicClient();
 
@@ -24,9 +22,6 @@ export const useGovernanceContracts = () => {
   const { fractalModules, isModulesLoaded, daoAddress } = node;
 
   const loadGovernanceContracts = useCallback(async () => {
-    if (!baseContracts || !publicClient) {
-      return;
-    }
     const azoriusModule = getAzoriusModuleFromModules(fractalModules);
 
     const votingStrategyAddress = await getVotingStrategyAddress();
@@ -49,6 +44,10 @@ export const useGovernanceContracts = () => {
       await getZodiacModuleProxyMasterCopyData(votingStrategyAddress);
 
     if (isOzLinearVoting) {
+      if (!publicClient) {
+        throw new Error('public client not set');
+      }
+
       ozLinearVotingContractAddress = votingStrategyAddress;
 
       const ozLinearVotingContract = getContract({
@@ -112,7 +111,6 @@ export const useGovernanceContracts = () => {
     }
   }, [
     action,
-    baseContracts,
     fractalModules,
     getVotingStrategyAddress,
     getZodiacModuleProxyMasterCopyData,

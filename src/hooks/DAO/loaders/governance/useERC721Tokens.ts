@@ -5,17 +5,14 @@ import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { ERC721TokenData } from '../../../../types';
-import useSafeContracts from '../../../safe/useSafeContracts';
-
 export default function useERC721Tokens() {
   const {
     governanceContracts: { erc721LinearVotingContractAddress },
     action,
   } = useFractal();
-  const baseContracts = useSafeContracts();
   const publicClient = usePublicClient();
   const loadERC721Tokens = useCallback(async () => {
-    if (!erc721LinearVotingContractAddress || !baseContracts || !publicClient) {
+    if (!erc721LinearVotingContractAddress || !publicClient) {
       return;
     }
     const erc721LinearVotingContract = getContract({
@@ -47,7 +44,7 @@ export default function useERC721Tokens() {
       type: FractalGovernanceAction.SET_ERC721_TOKENS_DATA,
       payload: erc721Tokens,
     });
-  }, [action, baseContracts, erc721LinearVotingContractAddress, publicClient]);
+  }, [action, erc721LinearVotingContractAddress, publicClient]);
 
   return loadERC721Tokens;
 }

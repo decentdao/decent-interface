@@ -8,7 +8,6 @@ import { FractalGovernanceAction } from '../../../../providers/App/governance/ac
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
-import useSafeContracts from '../../../safe/useSafeContracts';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC20LinearStrategy = () => {
@@ -16,7 +15,6 @@ export const useERC20LinearStrategy = () => {
     governanceContracts: { ozLinearVotingContractAddress, azoriusContractAddress },
     action,
   } = useFractal();
-  const baseContracts = useSafeContracts();
   const provider = useEthersProvider();
   const { getTimeDuration } = useTimeHelpers();
   const publicClient = usePublicClient();
@@ -34,13 +32,7 @@ export const useERC20LinearStrategy = () => {
   }, [ozLinearVotingContractAddress, publicClient]);
 
   const loadERC20Strategy = useCallback(async () => {
-    if (
-      !ozLinearVotingContract ||
-      !azoriusContractAddress ||
-      !provider ||
-      !baseContracts ||
-      !publicClient
-    ) {
+    if (!ozLinearVotingContract || !azoriusContractAddress || !provider || !publicClient) {
       return {};
     }
 
@@ -79,7 +71,6 @@ export const useERC20LinearStrategy = () => {
   }, [
     action,
     azoriusContractAddress,
-    baseContracts,
     getTimeDuration,
     ozLinearVotingContract,
     provider,

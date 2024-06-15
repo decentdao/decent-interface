@@ -6,7 +6,6 @@ import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useLoadDAOProposals } from '../../../hooks/DAO/loaders/useLoadDAOProposals';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
-import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import {
@@ -27,7 +26,6 @@ export function useProposalCountdown(proposal: FractalProposal) {
     action,
     readOnly: { dao },
   } = useFractal();
-  const baseContracts = useSafeContracts();
   const provider = useEthersProvider();
   const publicClient = usePublicClient();
 
@@ -95,7 +93,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
   }, []);
 
   const getCountdown = useCallback(async () => {
-    if (!baseContracts || !publicClient || !freezeGuardContractAddress) return;
+    if (!publicClient || !freezeGuardContractAddress) return;
     const freezeGuard =
       freezeGuardType === FreezeGuardType.MULTISIG
         ? getContract({
@@ -171,7 +169,6 @@ export function useProposalCountdown(proposal: FractalProposal) {
     }
   }, [
     azoriusGovernance.votingStrategy?.timeLockPeriod,
-    baseContracts,
     freezeGuardContractAddress,
     freezeGuardType,
     isSnapshotProposal,
@@ -184,8 +181,6 @@ export function useProposalCountdown(proposal: FractalProposal) {
   ]);
 
   useEffect(() => {
-    if (!baseContracts) return;
-
     // continually calculates the initial time (in ms) - the current time (in ms)
     // then converts it to seconds, all on a 1 second interval
     getCountdown();
@@ -193,7 +188,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
     return () => {
       clearInterval(countdownInterval.current);
     };
-  }, [baseContracts, getCountdown]);
+  }, [getCountdown]);
 
   return secondsLeft;
 }
