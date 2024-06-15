@@ -41,8 +41,16 @@ export function InfoGovernance() {
             address: getAddress(freezeGuardContractAddress),
             client: publicClient,
           });
-          setTimelockPeriod(await formatBlocks(await freezeGuardContract.read.timelockPeriod()));
-          setExecutionPeriod(await formatBlocks(await freezeGuardContract.read.executionPeriod()));
+          const [contractTimelockPeriod, contractExecutionPeriod] = await Promise.all([
+            freezeGuardContract.read.timelockPeriod(),
+            freezeGuardContract.read.executionPeriod(),
+          ]);
+          const [timelockSeconds, executionPeriodSeconds] = await Promise.all([
+            formatBlocks(contractTimelockPeriod),
+            formatBlocks(contractExecutionPeriod),
+          ]);
+          setTimelockPeriod(timelockSeconds);
+          setExecutionPeriod(executionPeriodSeconds);
         }
       } else if (dao?.isAzorius) {
         const azoriusGovernance = governance as AzoriusGovernance;

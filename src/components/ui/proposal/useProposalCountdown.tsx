@@ -131,17 +131,15 @@ export function useProposalCountdown(proposal: FractalProposal) {
       provider
     ) {
       const safeGuard = freezeGuard;
-      const timelockedTimestamp = await getTxTimelockedTimestamp(
-        proposal,
-        safeGuard.address,
-        provider,
-        publicClient,
-      );
-      const guardTimeLockPeriod = await blocksToSeconds(
-        await safeGuard.read.timelockPeriod(),
-        provider,
-      );
+
+      const [timelockedTimestamp, timelockPeriod] = await Promise.all([
+        getTxTimelockedTimestamp(proposal, safeGuard.address, provider, publicClient),
+        safeGuard.read.timelockPeriod(),
+      ]);
+
+      const guardTimeLockPeriod = await blocksToSeconds(timelockPeriod, provider);
       startCountdown(timelockedTimestamp * 1000 + guardTimeLockPeriod * 1000);
+
       // If the proposal is executable start the countdown (for safe multisig proposals with guards)
       return;
     } else if (proposal.state === FractalProposalState.EXECUTABLE && freezeGuard) {

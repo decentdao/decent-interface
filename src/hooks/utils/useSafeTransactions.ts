@@ -331,12 +331,16 @@ export const useSafeTransactions = () => {
           client: publicClient,
         });
 
-        const timelockPeriod = BigInt(await freezeGuard.read.timelockPeriod());
-        const executionPeriod = BigInt(await freezeGuard.read.executionPeriod());
+        const [timelockPeriod, executionPeriod, block] = await Promise.all([
+          freezeGuard.read.timelockPeriod(),
+          freezeGuard.read.executionPeriod(),
+          provider.getBlock(blockNumber),
+        ]);
+
         freezeGuardData = {
-          guardTimelockPeriodMs: timelockPeriod * averageBlockTime * 1000n,
-          guardExecutionPeriodMs: executionPeriod * averageBlockTime * 1000n,
-          lastBlockTimestamp: (await provider.getBlock(blockNumber)).timestamp,
+          guardTimelockPeriodMs: BigInt(timelockPeriod) * BigInt(averageBlockTime) * 1000n,
+          guardExecutionPeriodMs: BigInt(executionPeriod) * BigInt(averageBlockTime) * 1000n,
+          lastBlockTimestamp: block.timestamp,
         };
       }
 
