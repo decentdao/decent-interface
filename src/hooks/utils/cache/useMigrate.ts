@@ -14,8 +14,8 @@ export const runMigrations = async () => {
   const migrationCount = migrationFiles.length;
   // loop through each pending migration and run in turn
   for (let i = actualCacheVersion + 1; i <= migrationCount; i++) {
-    const migration = await import(`./migrations/${i}`);
     try {
+      const migration = await import(`./migrations/${i}`);
       migration.default();
     } catch (e) {
       logError(e);
