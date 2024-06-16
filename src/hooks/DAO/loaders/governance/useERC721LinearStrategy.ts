@@ -33,8 +33,7 @@ export const useERC721LinearStrategy = () => {
 
   const loadERC721Strategy = useCallback(async () => {
     if (!azoriusContractAddress || !provider || !erc721LinearVotingContract || !publicClient) {
-      // TODO i don't like this
-      return {};
+      return;
     }
 
     const azoriusContract = getContract({
