@@ -11,10 +11,8 @@ import {
   AzoriusGovernance,
   VotingStrategyType,
 } from '../../types';
-import useSignerOrProvider from '../utils/useSignerOrProvider';
 
 const useBuildDAOTx = () => {
-  const signerOrProvider = useSignerOrProvider();
   const {
     contracts: {
       fallbackHandler,
@@ -54,7 +52,7 @@ const useBuildDAOTx = () => {
     ) => {
       let isAzorius = false;
 
-      if (!user.address || !signerOrProvider || !publicClient) {
+      if (!user.address || !publicClient) {
         return;
       }
 
@@ -66,7 +64,6 @@ const useBuildDAOTx = () => {
       }
 
       const txBuilderFactory = new TxBuilderFactory(
-        signerOrProvider,
         publicClient,
         isAzorius,
         daoData,
@@ -128,7 +125,6 @@ const useBuildDAOTx = () => {
     },
     [
       user.address,
-      signerOrProvider,
       publicClient,
       fallbackHandler,
       votesERC20WrapperMasterCopy,

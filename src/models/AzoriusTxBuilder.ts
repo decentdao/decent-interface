@@ -66,7 +66,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private claimNonce: bigint;
 
   constructor(
-    signerOrProvider: any,
     publicClient: PublicClient,
     daoData: AzoriusERC20DAO | AzoriusERC721DAO,
     safeContractAddress: Address,
@@ -81,7 +80,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     parentAddress?: Address,
     parentTokenAddress?: Address,
   ) {
-    super(signerOrProvider, publicClient, true, daoData, parentAddress, parentTokenAddress);
+    super(publicClient, true, daoData, parentAddress, parentTokenAddress);
 
     this.safeContractAddress = safeContractAddress;
 

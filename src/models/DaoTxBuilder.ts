@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { Address, PublicClient, encodeFunctionData, getAddress, zeroAddress } from 'viem';
 import AzoriusAbi from '../assets/abi/Azorius';
 import FractalRegistryAbi from '../assets/abi/FractalRegistry';
@@ -41,7 +40,6 @@ export class DaoTxBuilder extends BaseTxBuilder {
   private readonly fractalModuleMasterCopyAddress: string;
 
   constructor(
-    signerOrProvider: ethers.Signer | any,
     publicClient: PublicClient,
     isAzorius: boolean,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
@@ -59,7 +57,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     parentStrategyType?: VotingStrategyType,
     parentStrategyAddress?: string,
   ) {
-    super(signerOrProvider, publicClient, isAzorius, daoData, parentAddress, parentTokenAddress);
+    super(publicClient, isAzorius, daoData, parentAddress, parentTokenAddress);
 
     this.createSafeTx = createSafeTx;
     this.safeContractAddress = safeContractAddress;

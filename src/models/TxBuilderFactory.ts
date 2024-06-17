@@ -1,4 +1,3 @@
-import { ethers } from 'ethers';
 import { Address, PublicClient, getAddress, getContract } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../assets/abi/GnosisSafeProxyFactory';
@@ -25,7 +24,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   public predictedSafeAddress: string | undefined;
   public createSafeTx: SafeTransaction | undefined;
   private safeContractAddress: Address | undefined;
-  public fallbackHandler: string;
+  private fallbackHandler: string;
 
   private votesERC20WrapperMasterCopyAddress: string;
   private votesERC20MasterCopyAddress: string;
@@ -47,7 +46,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private azoriusMasterCopyAddress: string;
 
   constructor(
-    signerOrProvider: ethers.Signer | any,
     publicClient: PublicClient,
     isAzorius: boolean,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
@@ -73,7 +71,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     parentAddress?: string,
     parentTokenAddress?: string,
   ) {
-    super(signerOrProvider, publicClient, isAzorius, daoData, parentAddress, parentTokenAddress);
+    super(publicClient, isAzorius, daoData, parentAddress, parentTokenAddress);
 
     this.fallbackHandler = fallbackHandler;
     this.saltNum = getRandomBytes();
@@ -133,7 +131,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
     parentStrategyAddress?: string,
   ): DaoTxBuilder {
     return new DaoTxBuilder(
-      this.signerOrProvider,
       this.publicClient,
       this.isAzorius,
       this.daoData,
@@ -160,7 +157,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
     parentStrategyAddress?: string, // User only with ERC-721 parent
   ): FreezeGuardTxBuilder {
     return new FreezeGuardTxBuilder(
-      this.signerOrProvider,
       this.publicClient,
       this.daoData as SubDAO,
       this.safeContractAddress!,
@@ -191,7 +187,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
 
   public async createAzoriusTxBuilder(): Promise<AzoriusTxBuilder> {
     const azoriusTxBuilder = new AzoriusTxBuilder(
-      this.signerOrProvider,
       this.publicClient,
       this.daoData as AzoriusERC20DAO,
       this.safeContractAddress!,
