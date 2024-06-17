@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { logError } from '../../../helpers/errorLogging';
-import { CacheKeys } from './cacheDefaults';
+import { CacheExpiry, CacheKeys } from './cacheDefaults';
 import { getValue, setValue } from './useLocalStorage';
 
 const migrations = import.meta.glob('./migrations/*');
@@ -24,7 +24,7 @@ export const runMigrations = async (
       newVersion = i - 1;
     }
   }
-  setValue({ cacheName: CacheKeys.MIGRATION }, newVersion);
+  setValue({ cacheName: CacheKeys.MIGRATION }, newVersion, CacheExpiry.NEVER);
 };
 
 export const useMigrate = () => {
