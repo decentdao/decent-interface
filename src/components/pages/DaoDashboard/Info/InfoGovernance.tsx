@@ -7,7 +7,6 @@ import { usePublicClient } from 'wagmi';
 import MultisigFreezeGuardAbi from '../../../../assets/abi/MultisigFreezeGuard';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { AzoriusGovernance, FreezeGuardType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
@@ -20,7 +19,6 @@ export function InfoGovernance() {
     guardContracts: { freezeGuardType, freezeGuardContractAddress },
     readOnly: { dao },
   } = useFractal();
-  const provider = useEthersProvider();
   const publicClient = usePublicClient();
   const { getTimeDuration } = useTimeHelpers();
   const [timelockPeriod, setTimelockPeriod] = useState<string>();
@@ -28,8 +26,8 @@ export function InfoGovernance() {
   useEffect(() => {
     const setTimelockInfo = async () => {
       const formatBlocks = async (blocks: number): Promise<string | undefined> => {
-        if (provider) {
-          return getTimeDuration(await blocksToSeconds(blocks, provider));
+        if (publicClient) {
+          return getTimeDuration(await blocksToSeconds(blocks, publicClient));
         }
       };
       if (freezeGuardType == FreezeGuardType.MULTISIG) {
@@ -74,7 +72,6 @@ export function InfoGovernance() {
     governance,
     freezeGuardContractAddress,
     freezeGuardType,
-    provider,
     timelockPeriod,
     dao,
     publicClient,

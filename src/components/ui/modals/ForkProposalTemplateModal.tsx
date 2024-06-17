@@ -2,11 +2,11 @@ import { Box, Button } from '@chakra-ui/react';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { usePublicClient } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
 import { validateAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useCanUserCreateProposal } from '../../../hooks/utils/useCanUserSubmitProposal';
-import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalTemplate } from '../../../types/proposalBuilder';
@@ -30,7 +30,7 @@ export default function ForkProposalTemplateModal({
 
   const { t } = useTranslation('proposalTemplate');
   const navigate = useNavigate();
-  const signerOrProvider = useSignerOrProvider();
+  const publicClient = usePublicClient();
   const { chain, addressPrefix } = useNetworkConfig();
   const {
     node: { proposalTemplatesHash },
@@ -45,14 +45,14 @@ export default function ForkProposalTemplateModal({
   };
 
   const validateDAOAddress = useCallback(async () => {
-    if (!inputValue || isSafeLoading) {
+    if (!inputValue || isSafeLoading || !publicClient) {
       setError('');
       return false;
     }
 
     const {
       validation: { address, isValidAddress },
-    } = await validateAddress({ address: inputValue, signerOrProvider });
+    } = await validateAddress({ address: inputValue, publicClient });
 
     if (!isValidAddress) {
       setError(t('errorInvalidAddress', { ns: 'common' }));
@@ -72,7 +72,7 @@ export default function ForkProposalTemplateModal({
     }
 
     return isValidAddress;
-  }, [getCanUserCreateProposal, inputValue, isSafe, isSafeLoading, chain, signerOrProvider, t]);
+  }, [getCanUserCreateProposal, inputValue, isSafe, isSafeLoading, chain, publicClient, t]);
 
   const handleSubmit = () => {
     navigate(

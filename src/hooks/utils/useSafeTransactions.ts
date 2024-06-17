@@ -10,7 +10,7 @@ import { usePublicClient } from 'wagmi';
 import MultisigFreezeGuardAbi from '../../assets/abi/MultisigFreezeGuard';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
+// import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   AssetTotals,
@@ -32,7 +32,7 @@ type FreezeGuardData = {
 
 export const useSafeTransactions = () => {
   const { chain } = useNetworkConfig();
-  const provider = useEthersProvider();
+  // const provider = useEthersProvider();
   const { guardContracts } = useFractal();
   const decode = useSafeDecoder();
   const publicClient = usePublicClient();
@@ -43,7 +43,7 @@ export const useSafeTransactions = () => {
       freezeGuardAddress?: string,
       freezeGuardData?: FreezeGuardData,
     ) => {
-      if (freezeGuardAddress && freezeGuardData && provider && publicClient) {
+      if (freezeGuardAddress && freezeGuardData && publicClient) {
         return Promise.all(
           activities.map(async (activity, _, activityArr) => {
             if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
@@ -74,7 +74,6 @@ export const useSafeTransactions = () => {
                 (await getTxTimelockedTimestamp(
                   activity,
                   getAddress(freezeGuardAddress),
-                  provider,
                   publicClient,
                 )) * 1000;
               if (timelockedTimestampMs === 0) {
@@ -141,7 +140,7 @@ export const useSafeTransactions = () => {
         });
       }
     },
-    [provider, publicClient],
+    [publicClient],
   );
 
   const getTransferTotal = useCallback(
@@ -196,7 +195,7 @@ export const useSafeTransactions = () => {
 
   const parseTransactions = useCallback(
     async (transactions: AllTransactionsListResponse, daoAddress: string) => {
-      if (!transactions.results.length || !provider) {
+      if (!transactions.results.length) {
         return [];
       }
 
@@ -323,8 +322,8 @@ export const useSafeTransactions = () => {
       let freezeGuardData: FreezeGuardData | undefined;
 
       if (guardContracts.freezeGuardContractAddress && publicClient) {
-        const blockNumber = await provider.getBlockNumber();
-        const averageBlockTime = BigInt(Math.round(await getAverageBlockTime(provider)));
+        const blockNumber = await publicClient.getBlockNumber();
+        const averageBlockTime = BigInt(Math.round(await getAverageBlockTime(publicClient)));
         const freezeGuard = getContract({
           address: getAddress(guardContracts.freezeGuardContractAddress),
           abi: MultisigFreezeGuardAbi,
@@ -334,13 +333,13 @@ export const useSafeTransactions = () => {
         const [timelockPeriod, executionPeriod, block] = await Promise.all([
           freezeGuard.read.timelockPeriod(),
           freezeGuard.read.executionPeriod(),
-          provider.getBlock(blockNumber),
+          publicClient.getBlock({ blockNumber: blockNumber }),
         ]);
 
         freezeGuardData = {
           guardTimelockPeriodMs: BigInt(timelockPeriod) * BigInt(averageBlockTime) * 1000n,
           guardExecutionPeriodMs: BigInt(executionPeriod) * BigInt(averageBlockTime) * 1000n,
-          lastBlockTimestamp: block.timestamp,
+          lastBlockTimestamp: Number(block.timestamp),
         };
       }
 
@@ -359,7 +358,6 @@ export const useSafeTransactions = () => {
       getState,
       getTransferTotal,
       guardContracts.freezeGuardContractAddress,
-      provider,
       publicClient,
     ],
   );

@@ -1,5 +1,7 @@
 import { useCallback } from 'react';
 import { encodeFunctionData } from 'viem';
+import { normalize } from 'viem/ens';
+import { usePublicClient } from 'wagmi';
 import KeyValuePairsAbi from '../../../assets/abi/KeyValuePairs';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
@@ -7,11 +9,9 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { ProposalExecuteData } from '../../../types';
 import { CreateProposalForm } from '../../../types/proposalBuilder';
 import { validateENSName } from '../../../utils/url';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export default function useCreateProposalTemplate() {
-  const signerOrProvider = useSignerOrProvider();
-
+  const publicClient = usePublicClient();
   const client = useIPFSClient();
   const {
     governance: { proposalTemplates },
@@ -23,7 +23,7 @@ export default function useCreateProposalTemplate() {
 
   const prepareProposalTemplateProposal = useCallback(
     async (values: CreateProposalForm) => {
-      if (proposalTemplates && signerOrProvider) {
+      if (proposalTemplates && publicClient) {
         const proposalMetadata = {
           title: 'createProposalTemplateTitle',
           description: 'createProposalTemplateDescription',
@@ -37,7 +37,7 @@ export default function useCreateProposalTemplate() {
             values.transactions.map(async tx => ({
               ...tx,
               targetAddress: validateENSName(tx.targetAddress)
-                ? await signerOrProvider.resolveName(tx.targetAddress)
+                ? await publicClient.getEnsAddress({ name: normalize(tx.targetAddress) })
                 : tx.targetAddress,
               parameters: tx.parameters
                 .map(param => {
@@ -73,7 +73,7 @@ export default function useCreateProposalTemplate() {
         return proposal;
       }
     },
-    [client, keyValuePairs, proposalTemplates, signerOrProvider],
+    [client, keyValuePairs, proposalTemplates, publicClient],
   );
 
   return { prepareProposalTemplateProposal };

@@ -13,7 +13,6 @@ import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import {
   CreateProposalMetadata,
   VotingStrategyType,
@@ -22,7 +21,6 @@ import {
   FractalProposalState,
 } from '../../../../types';
 import { AzoriusProposal } from '../../../../types/daoProposal';
-import { Providers } from '../../../../types/network';
 import { mapProposalCreatedEventToProposal, decodeTransactions } from '../../../../utils';
 import { CacheExpiry, CacheKeys } from '../../../utils/cache/cacheDefaults';
 import { useLocalStorage } from '../../../utils/cache/useLocalStorage';
@@ -42,10 +40,7 @@ export const useAzoriusProposals = () => {
     },
     action,
   } = useFractal();
-
-  const provider = useEthersProvider();
   const decode = useSafeDecoder();
-
   const publicClient = usePublicClient();
 
   const azoriusContract = useMemo(() => {
@@ -150,7 +145,7 @@ export const useAzoriusProposals = () => {
       _executedEvents:
         | GetContractEventsReturnType<typeof AzoriusAbi, 'ProposalExecuted'>
         | undefined,
-      _provider: Providers | undefined,
+      _publicClient: PublicClient | undefined,
       _decode: (
         value: string,
         to: string,
@@ -158,7 +153,7 @@ export const useAzoriusProposals = () => {
       ) => Promise<DecodedTransaction[]>,
       _proposalLoaded: OnProposalLoaded,
     ) => {
-      if (!_strategyType || !_azoriusContract || !_provider) {
+      if (!_strategyType || !_azoriusContract || !_publicClient) {
         return;
       }
       const proposalCreatedEvents = (await _azoriusContract.getEvents.ProposalCreated()).reverse();
@@ -256,7 +251,7 @@ export const useAzoriusProposals = () => {
           Number(proposalCreatedEvent.args.proposalId),
           proposalCreatedEvent.args.proposer,
           _azoriusContract,
-          _provider,
+          _publicClient,
           _erc20VotedEvents,
           _erc721VotedEvents,
           _executedEvents,
@@ -301,7 +296,7 @@ export const useAzoriusProposals = () => {
       await erc20VotedEvents,
       await erc721VotedEvents,
       await executedEvents,
-      provider,
+      publicClient,
       decode,
       proposalLoaded,
     );

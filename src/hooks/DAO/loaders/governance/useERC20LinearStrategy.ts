@@ -5,7 +5,6 @@ import AzoriusAbi from '../../../../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
@@ -15,7 +14,6 @@ export const useERC20LinearStrategy = () => {
     governanceContracts: { ozLinearVotingContractAddress, azoriusContractAddress },
     action,
   } = useFractal();
-  const provider = useEthersProvider();
   const { getTimeDuration } = useTimeHelpers();
   const publicClient = usePublicClient();
 
@@ -32,7 +30,7 @@ export const useERC20LinearStrategy = () => {
   }, [ozLinearVotingContractAddress, publicClient]);
 
   const loadERC20Strategy = useCallback(async () => {
-    if (!ozLinearVotingContract || !azoriusContractAddress || !provider || !publicClient) {
+    if (!ozLinearVotingContract || !azoriusContractAddress || !publicClient) {
       return {};
     }
 
@@ -50,8 +48,8 @@ export const useERC20LinearStrategy = () => {
       ]);
 
     const quorumPercentage = (quorumNumerator * 100n) / quorumDenominator;
-    const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, provider);
-    const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, provider);
+    const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, publicClient);
+    const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, publicClient);
     const votingData = {
       votingPeriod: {
         value: BigInt(votingPeriodValue),
@@ -68,14 +66,7 @@ export const useERC20LinearStrategy = () => {
       strategyType: VotingStrategyType.LINEAR_ERC20,
     };
     action.dispatch({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
-  }, [
-    action,
-    azoriusContractAddress,
-    getTimeDuration,
-    ozLinearVotingContract,
-    provider,
-    publicClient,
-  ]);
+  }, [action, azoriusContractAddress, getTimeDuration, ozLinearVotingContract, publicClient]);
 
   useEffect(() => {
     if (!ozLinearVotingContract || !publicClient) {

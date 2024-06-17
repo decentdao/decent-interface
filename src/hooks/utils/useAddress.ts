@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Address, getAddress, isAddress } from 'viem';
-import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
+import { normalize } from 'viem/ens';
+import { usePublicClient } from 'wagmi';
 
 const useAddress = (addressInput: string) => {
-  const provider = useEthersProvider();
-
+  const publicClient = usePublicClient();
   const [address, setAddress] = useState<Address>();
   const [isValid, setIsValid] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -27,15 +27,15 @@ const useAddress = (addressInput: string) => {
       return;
     }
 
-    if (!provider) {
+    if (!publicClient) {
       setAddress(undefined);
       setIsValid(undefined);
       setIsLoading(false);
       return;
     }
 
-    provider
-      .resolveName(addressInput)
+    publicClient
+      .getEnsAddress({ name: normalize(addressInput) })
       .then(resolvedAddress => {
         if (resolvedAddress) {
           setAddress(getAddress(resolvedAddress));
@@ -52,7 +52,7 @@ const useAddress = (addressInput: string) => {
       .finally(() => {
         setIsLoading(false);
       });
-  }, [addressInput, provider]);
+  }, [addressInput, publicClient]);
 
   return { address, isValid, isLoading };
 };

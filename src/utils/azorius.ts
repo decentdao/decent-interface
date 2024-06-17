@@ -23,7 +23,6 @@ import {
   MetaTransaction,
   getVoteChoice,
 } from '../types';
-import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
 
 export const getAzoriusProposalState = async (
@@ -173,7 +172,7 @@ export const mapProposalCreatedEventToProposal = async (
   proposalId: number,
   proposer: string,
   azoriusContract: GetContractReturnType<typeof AzoriusAbi, PublicClient>,
-  provider: Providers,
+  publicClient: PublicClient,
   erc20VotedEvents: GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined,
   erc721VotedEvents: GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'> | undefined,
   executedEvents: GetContractEventsReturnType<typeof AzoriusAbi, 'ProposalExecuted'> | undefined,
@@ -216,8 +215,8 @@ export const mapProposalCreatedEventToProposal = async (
     proposalId,
   );
 
-  const deadlineSeconds = await getTimeStamp(proposalVotes.endBlock, provider);
-  const block = await provider.getBlock(proposalVotes.startBlock);
+  const deadlineSeconds = await getTimeStamp(proposalVotes.endBlock, publicClient);
+  const block = await publicClient.getBlock({ blockNumber: BigInt(proposalVotes.startBlock) });
 
   const state = await getAzoriusProposalState(azoriusContract, proposalId);
   const votes = getProposalVotes(await erc20VotedEvents, await erc721VotedEvents, proposalId);
@@ -241,7 +240,7 @@ export const mapProposalCreatedEventToProposal = async (
 
   const proposal: AzoriusProposal = {
     eventType: ActivityEventType.Governance,
-    eventDate: new Date(block.timestamp * 1000),
+    eventDate: new Date(Number(block.timestamp) * 1000),
     proposalId: proposalId.toString(),
     targets,
     proposer,

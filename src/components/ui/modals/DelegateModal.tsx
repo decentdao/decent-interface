@@ -2,7 +2,7 @@ import { Box, Button, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress, getAddress, getContract } from 'viem';
-import { useWalletClient } from 'wagmi';
+import { usePublicClient, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import VotesERC20Abi from '../../../assets/abi/VotesERC20';
@@ -10,7 +10,6 @@ import { useValidationAddress } from '../../../hooks/schemas/common/useValidatio
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AzoriusGovernance, DecentGovernance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 import { validateENSName } from '../../../utils/url';
@@ -29,7 +28,6 @@ export function DelegateModal({ close }: { close: Function }) {
     action: { loadReadOnlyValues },
   } = useFractal();
 
-  const signer = useEthersSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
   const decentGovernance = azoriusGovernance as DecentGovernance;
   const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken?.delegatee);
@@ -37,12 +35,16 @@ export function DelegateModal({ close }: { close: Function }) {
   const [contractCall, pending] = useTransaction();
   const { addressValidationTest } = useValidationAddress();
   const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
 
   const submitDelegation = async (values: { address: string }) => {
     if (!votesTokenContractAddress || !walletClient) return;
     let validAddress = getAddress(values.address);
-    if (validateENSName(validAddress) && signer) {
-      validAddress = getAddress(await signer.resolveName(values.address));
+    if (validateENSName(validAddress) && publicClient) {
+      const maybeEnsAddress = await publicClient.getEnsAddress({ name: values.address });
+      if (maybeEnsAddress) {
+        validAddress = maybeEnsAddress;
+      }
     }
 
     const votingTokenContract = getContract({
@@ -62,10 +64,13 @@ export function DelegateModal({ close }: { close: Function }) {
     });
   };
   const submitLockedDelegation = async (values: { address: string }) => {
-    if (!lockReleaseContractAddress || !signer || !walletClient) return;
+    if (!lockReleaseContractAddress || !publicClient || !walletClient) return;
     let validAddress = values.address;
     if (validateENSName(validAddress)) {
-      validAddress = await signer.resolveName(values.address);
+      const maybeEnsAddress = await publicClient.getEnsAddress({ name: values.address });
+      if (maybeEnsAddress) {
+        validAddress = maybeEnsAddress;
+      }
     }
 
     const lockReleaseContract = getContract({

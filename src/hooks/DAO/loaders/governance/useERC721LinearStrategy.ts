@@ -5,7 +5,6 @@ import AzoriusAbi from '../../../../assets/abi/Azorius';
 import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
@@ -15,7 +14,6 @@ export const useERC721LinearStrategy = () => {
     governanceContracts: { erc721LinearVotingContractAddress, azoriusContractAddress },
     action,
   } = useFractal();
-  const provider = useEthersProvider();
   const { getTimeDuration } = useTimeHelpers();
   const publicClient = usePublicClient();
 
@@ -32,7 +30,7 @@ export const useERC721LinearStrategy = () => {
   }, [erc721LinearVotingContractAddress, publicClient]);
 
   const loadERC721Strategy = useCallback(async () => {
-    if (!azoriusContractAddress || !provider || !erc721LinearVotingContract || !publicClient) {
+    if (!azoriusContractAddress || !erc721LinearVotingContract || !publicClient) {
       return;
     }
 
@@ -48,8 +46,8 @@ export const useERC721LinearStrategy = () => {
       azoriusContract.read.timelockPeriod(),
     ]);
 
-    const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, provider);
-    const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, provider);
+    const votingPeriodValue = await blocksToSeconds(votingPeriodBlocks, publicClient);
+    const timeLockPeriodValue = await blocksToSeconds(timeLockPeriod, publicClient);
     const votingData = {
       votingPeriod: {
         value: BigInt(votingPeriodValue),
@@ -66,14 +64,7 @@ export const useERC721LinearStrategy = () => {
       strategyType: VotingStrategyType.LINEAR_ERC721,
     };
     action.dispatch({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
-  }, [
-    action,
-    azoriusContractAddress,
-    erc721LinearVotingContract,
-    getTimeDuration,
-    provider,
-    publicClient,
-  ]);
+  }, [action, azoriusContractAddress, erc721LinearVotingContract, getTimeDuration, publicClient]);
 
   useEffect(() => {
     if (!erc721LinearVotingContract) {
