@@ -87,14 +87,13 @@ describe('func migrateCacheToV1', () => {
 
 describe('func runMigrations (gap imports)', () => {
   beforeEach(() => {
-    // Reset all mocks, ensuring fresh mock functions per test
     vi.resetAllMocks();
+    vi.resetModules();
     localStorage.clear();
-    // Re-attach the spy before each test
     vi.spyOn(logging, 'logError').mockImplementation(() => {});
-    vi.mock('./migrations/1', () => ({ default: vi.fn() }));
-    vi.mock('./migrations/2', () => ({ default: vi.fn() }));
-    vi.mock('./migrations/4', () => ({ default: vi.fn() }));
+    vi.doMock('./migrations/1', () => ({ default: vi.fn() }));
+    vi.doMock('./migrations/2', () => ({ default: vi.fn() }));
+    vi.doMock('./migrations/4', () => ({ default: vi.fn() }));
   });
 
   it('should stop migration at first gap and log an error', async () => {
@@ -115,11 +114,12 @@ describe('func runMigrations (gap imports)', () => {
 describe('func runMigrations (invalid filename)', () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    vi.resetModules();
     localStorage.clear();
     vi.spyOn(logging, 'logError').mockImplementation(() => {});
-    vi.mock('../migrations/1', () => ({ default: vi.fn() }));
-    vi.mock('./migrations/2', () => ({ default: vi.fn() }));
-    vi.mock('./migrations/foo', () => ({ default: vi.fn() }));
+    vi.doMock('./migrations/1', () => ({ default: vi.fn() }));
+    vi.doMock('./migrations/2', () => ({ default: vi.fn() }));
+    vi.doMock('./migrations/foo', () => ({ default: vi.fn() }));
   });
 
   it('should stop migration at malformed file name and log an error', async () => {
@@ -130,6 +130,29 @@ describe('func runMigrations (invalid filename)', () => {
       throw new Error('Migration cache not found');
     }
     expect(migrationCache).toBe(2);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+});
+
+describe('func runMigrations (successfully migrate to lastest)', () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    localStorage.clear();
+    vi.doMock('./migrations/1', () => ({ default: () => {} }));
+    vi.doMock('./migrations/2', () => ({ default: () => {} }));
+    vi.doMock('./migrations/3', () => ({ default: () => {} }));
+  });
+
+  it('should successfully migrate to the latest version', async () => {
+    await runMigrations(3);
+    const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
+    if (!migrationCache) {
+      throw new Error('Migration cache not found');
+    }
+    expect(migrationCache).toBe(3);
   });
 
   afterEach(() => {
