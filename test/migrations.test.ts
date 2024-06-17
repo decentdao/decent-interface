@@ -80,18 +80,23 @@ describe('func migrateCacheToV1', () => {
 });
 
 describe('func runMigrations (gap imports)', () => {
+  const migrations = {
+    './migrations/1.ts': () => Promise.resolve({ default: vi.fn() }),
+    './migrations/2.ts': () => Promise.resolve({ default: vi.fn() }),
+    './migrations/4.ts': () => Promise.resolve({ default: vi.fn() }),
+  };
   beforeEach(() => {
     vi.resetAllMocks();
     vi.resetModules();
     localStorage.clear();
     vi.spyOn(logging, 'logError').mockImplementation(() => {});
-    vi.doMock('./migrations/1', () => ({ default: vi.fn() }));
-    vi.doMock('./migrations/2', () => ({ default: vi.fn() }));
-    vi.doMock('./migrations/4', () => ({ default: vi.fn() }));
+    Object.entries(migrations).forEach(([p, m]) => {
+      vi.doMock(p, m);
+    });
   });
 
   it('should stop migration at first gap and log an error', async () => {
-    await runMigrations(3);
+    await runMigrations(migrations);
     expect(logging.logError).toHaveBeenCalledOnce();
     const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
     expect(migrationCache).toBe(2);
@@ -103,18 +108,23 @@ describe('func runMigrations (gap imports)', () => {
 });
 
 describe('func runMigrations (invalid filename)', () => {
+  const migrations = {
+    './migrations/1.ts': () => Promise.resolve({ default: vi.fn() }),
+    './migrations/2.ts': () => Promise.resolve({ default: vi.fn() }),
+    './migrations/foo.ts': () => Promise.resolve({ default: vi.fn() }),
+  };
   beforeEach(() => {
     vi.resetAllMocks();
     vi.resetModules();
     localStorage.clear();
     vi.spyOn(logging, 'logError').mockImplementation(() => {});
-    vi.doMock('./migrations/1', () => ({ default: vi.fn() }));
-    vi.doMock('./migrations/2', () => ({ default: vi.fn() }));
-    vi.doMock('./migrations/foo', () => ({ default: vi.fn() }));
+    Object.entries(migrations).forEach(([p, m]) => {
+      vi.doMock(p, m);
+    });
   });
 
   it('should stop migration at malformed file name and log an error', async () => {
-    await runMigrations(3);
+    await runMigrations(migrations);
     expect(logging.logError).toHaveBeenCalledOnce();
     const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
     expect(migrationCache).toBe(2);
@@ -126,19 +136,24 @@ describe('func runMigrations (invalid filename)', () => {
 });
 
 describe('func runMigrations (successfully migrate to lastest)', () => {
+  const migrations = {
+    './migrations/1.ts': () => Promise.resolve({ default: vi.fn() }),
+    './migrations/2.ts': () => Promise.resolve({ default: vi.fn() }),
+    './migrations/3.ts': () => Promise.resolve({ default: vi.fn() }),
+  };
   beforeEach(() => {
     vi.resetAllMocks();
     localStorage.clear();
-    vi.doMock('./migrations/1', () => ({ default: () => {} }));
-    vi.doMock('./migrations/2', () => ({ default: () => {} }));
-    vi.doMock('./migrations/3', () => ({ default: () => {} }));
+    Object.entries(migrations).forEach(([p, m]) => {
+      vi.doMock(p, m);
+    });
   });
 
   it('should successfully migrate to the latest version', async () => {
     const migrationCacheBefore = getValue({ cacheName: CacheKeys.MIGRATION });
     expect(migrationCacheBefore).toBe(null);
 
-    await runMigrations(3);
+    await runMigrations(migrations);
 
     const migrationCacheAfter = getValue({ cacheName: CacheKeys.MIGRATION });
     expect(migrationCacheAfter).toBe(3);
