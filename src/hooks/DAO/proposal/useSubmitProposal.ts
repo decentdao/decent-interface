@@ -10,6 +10,7 @@ import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
@@ -18,17 +19,9 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useSafeContracts from '../../safe/useSafeContracts';
-import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
-import { useLocalStorage } from '../../utils/cache/useLocalStorage';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useLoadDAOProposals } from '../loaders/useLoadDAOProposals';
-
-export type TempProposalData = {
-  safeAddress: string;
-  txHash: string;
-  proposalMetadata: CreateProposalMetadata;
-};
 
 export type SubmitProposalFunction = ({
   proposalData,
@@ -78,6 +71,7 @@ export default function useSubmitProposal() {
     node: { safe, fractalModules },
     guardContracts: { freezeVotingContractAddress },
     governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
+    action,
   } = useFractal();
   const baseContracts = useSafeContracts();
   const safeAPI = useSafeAPI();
@@ -99,15 +93,14 @@ export default function useSubmitProposal() {
   const { chain, safeBaseURL, addressPrefix } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
 
-  const { setValue, getValue } = useLocalStorage();
-
-  const cacheTemporaryProposal = useCallback(
-    (tempProposal: TempProposalData) => {
-      const temporaryProposals = (getValue(CacheKeys.TEMP_PROPOSALS) || []) as TempProposalData[];
-      const updatedProposals = [...temporaryProposals, tempProposal];
-      setValue(CacheKeys.TEMP_PROPOSALS, updatedProposals, CacheExpiry.ONE_DAY);
+  const pendingProposalAdd = useCallback(
+    (txHash: string) => {
+      action.dispatch({
+        type: FractalGovernanceAction.PENDING_PROPOSAL_ADD,
+        payload: txHash,
+      });
     },
-    [getValue, setValue],
+    [action],
   );
 
   const submitMultisigProposal = useCallback(
@@ -210,12 +203,9 @@ export default function useSubmitProposal() {
 
         const responseData = JSON.parse(response.config.data);
         const txHash = responseData.contractTransactionHash;
+        pendingProposalAdd(txHash);
+
         await loadDAOProposals();
-        cacheTemporaryProposal({
-          safeAddress,
-          txHash,
-          proposalMetadata: proposalData.metaData,
-        });
 
         if (successCallback) {
           successCallback(addressPrefix, safeAddress);
@@ -236,8 +226,8 @@ export default function useSubmitProposal() {
       safeBaseURL,
       chain.id,
       loadDAOProposals,
+      pendingProposalAdd,
       ipfsClient,
-      cacheTemporaryProposal,
       addressPrefix,
     ],
   );
@@ -289,16 +279,10 @@ export default function useSubmitProposal() {
         toast.dismiss(toastId);
         toast(successToastMessage);
 
-        if (!!safeAddress) {
-          cacheTemporaryProposal({
-            safeAddress,
-            txHash: receipt.transactionHash,
-            proposalMetadata: proposalData.metaData,
-          });
+        pendingProposalAdd(receipt.transactionHash);
 
-          if (successCallback) {
-            successCallback(addressPrefix, safeAddress);
-          }
+        if (successCallback) {
+          successCallback(addressPrefix, safeAddress!);
         }
       } catch (e) {
         toast.dismiss(toastId);
@@ -308,7 +292,7 @@ export default function useSubmitProposal() {
         setPendingCreateTx(false);
       }
     },
-    [provider, cacheTemporaryProposal, addressPrefix],
+    [provider, pendingProposalAdd, addressPrefix],
   );
 
   const submitProposal: SubmitProposalFunction = useCallback(

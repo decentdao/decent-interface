@@ -28,7 +28,6 @@ export enum CacheKeys {
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
   MASTER_COPY_PREFIX = 'master_copy_of_',
-  TEMP_PROPOSALS = 'temp_proposals',
 }
 
 interface IndexedObject {

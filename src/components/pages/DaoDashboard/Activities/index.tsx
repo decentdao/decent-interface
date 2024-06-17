@@ -18,7 +18,6 @@ export function Activities() {
     governance: { type, loadingProposals, allProposalsLoaded },
   } = useFractal();
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
-
   const { sortedActivities } = useActivities(sortBy);
 
   const { t } = useTranslation('dashboard');

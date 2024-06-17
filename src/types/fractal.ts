@@ -306,6 +306,7 @@ export interface Governance {
   loadingProposals: boolean;
   allProposalsLoaded: boolean;
   proposals: FractalProposal[] | null;
+  pendingProposals: string[] | null;
   proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContract?: ERC20Claim;
 }

@@ -169,6 +169,7 @@ export default function Proposals() {
           buttonProps={{ disabled: !proposals }}
         />
       </Flex>
+
       <ProposalsList proposals={proposals} />
     </>
   );
