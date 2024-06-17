@@ -135,9 +135,13 @@ describe('func runMigrations (successfully migrate to lastest)', () => {
   });
 
   it('should successfully migrate to the latest version', async () => {
+    const migrationCacheBefore = getValue({ cacheName: CacheKeys.MIGRATION });
+    expect(migrationCacheBefore).toBe(null);
+
     await runMigrations(3);
-    const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
-    expect(migrationCache).toBe(3);
+
+    const migrationCacheAfter = getValue({ cacheName: CacheKeys.MIGRATION });
+    expect(migrationCacheAfter).toBe(3);
   });
 
   afterEach(() => {
