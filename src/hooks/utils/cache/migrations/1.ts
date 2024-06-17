@@ -10,9 +10,7 @@ export default function v1MigrateFavorites() {
   // Migrate old cache keys to new format
   const keys = Object.keys(localStorage);
   const fractKeys = keys.filter(key => key.startsWith('fract_'));
-  if (!fractKeys.length) {
-    return;
-  }
+
   // Get All Network Favorites
   const favoritesCache = fractKeys.filter(key => key.endsWith('favorites'));
   const newFavorites: string[] = [];
