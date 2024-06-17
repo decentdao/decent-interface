@@ -31,20 +31,10 @@ export enum CacheKeys {
   MASTER_COPY = 'Master Copy',
   AVERAGE_BLOCK_TIME = 'Average Block Time',
   PROPOSAL_CACHE = 'Proposal',
+  MIGRATION = 'Migration',
   // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
-}
-
-export enum CacheKeysV0 {
-  FAVORITES = 'favorites',
-  MASTER_COPY_PREFIX = 'master_copy_of_',
-  // wasn't a originally part of the cache keys but was used
-  AVERAGE_BLOCK_TIME = 'averageBlockTime',
-  // these were not used for local storage
-  // DECODED_TRANSACTION_PREFIX = 'decode_trans_',
-  // MULTISIG_METADATA_PREFIX = 'm_m_',
-  PROPOSAL_PREFIX = 'proposal',
 }
 
 export type CacheKey = {
@@ -90,6 +80,7 @@ type CacheKeyToValueMap = {
   [CacheKeys.MASTER_COPY]: Address;
   [CacheKeys.PROPOSAL_CACHE]: AzoriusProposal;
   [CacheKeys.AVERAGE_BLOCK_TIME]: number;
+  [CacheKeys.MIGRATION]: number;
 };
 
 export type CacheValueType<T extends CacheKeyType> = T extends { cacheName: infer U }
