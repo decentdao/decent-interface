@@ -14,13 +14,14 @@ export const createAccountSubstring = (account: string) => {
  *
  * This is intended to be used for NON DAO display names.  If you would like to get the
  * display name for a DAO, use the useDAOName hook instead.
+ * @todo Should switch to object for props
  */
-const useDisplayName = (account?: string | null, truncate?: boolean) => {
+const useDisplayName = (account?: string | null, truncate?: boolean, chainId?: number) => {
   if (truncate === undefined) truncate = true;
   const { chain } = useNetworkConfig();
   const { data: ensName } = useEnsName({
     address: !!account ? getAddress(account) : undefined,
-    chainId: chain.id,
+    chainId: chainId || chain.id,
   });
 
   const [accountSubstring, setAccountSubstring] = useState<string>();
