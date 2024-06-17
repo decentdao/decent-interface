@@ -9,7 +9,7 @@ import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
 
 const useDeployDAO = () => {
-  const [, contractCallPending, contractCallDeployViem] = useTransaction();
+  const [contractCallPending, contractCallDeployViem] = useTransaction();
   const [build] = useBuildDAOTx();
 
   const { t } = useTranslation('transaction');

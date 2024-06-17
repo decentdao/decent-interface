@@ -9,7 +9,7 @@ const useApproval = (tokenAddress?: string, spenderAddress?: string, userBalance
   const { address: account } = useAccount();
   const [allowance, setAllowance] = useState(0n);
   const [approved, setApproved] = useState(false);
-  const [, pending, contractCallViem] = useTransaction();
+  const [pending, contractCallViem] = useTransaction();
   const { t } = useTranslation('treasury');
   const { data: walletClient } = useWalletClient();
 

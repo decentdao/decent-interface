@@ -15,7 +15,7 @@ const useCastFreezeVote = ({
 }: {
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [, contractCallPending, contractCallCastFreezeViem] = useTransaction();
+  const [contractCallPending, contractCallCastFreezeViem] = useTransaction();
   const {
     guardContracts: { freezeVotingContractAddress, freezeVotingType },
     node: {

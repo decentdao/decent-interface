@@ -54,7 +54,7 @@ const useCastVote = ({
   const azoriusGovernance = useMemo(() => governance as AzoriusGovernance, [governance]);
   const { type } = azoriusGovernance;
 
-  const [, contractCallPending, contractCallCastVoteViem] = useTransaction();
+  const [contractCallPending, contractCallCastVoteViem] = useTransaction();
 
   const { remainingTokenIds, remainingTokenAddresses } = useUserERC721VotingTokens(
     null,

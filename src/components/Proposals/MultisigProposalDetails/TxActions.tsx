@@ -49,7 +49,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
-  const [, contractCallPending, contractCallViem] = useTransaction();
+  const [contractCallPending, contractCallViem] = useTransaction();
   const { loadSafeMultisigProposals } = useSafeMultisigProposals();
   const { data: walletClient } = useWalletClient();
 

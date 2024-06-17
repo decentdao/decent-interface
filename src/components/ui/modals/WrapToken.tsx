@@ -31,7 +31,7 @@ export function WrapToken({ close }: { close: () => void }) {
   });
 
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
-  const [, pending, contractCallViem] = useTransaction();
+  const [pending, contractCallViem] = useTransaction();
   const {
     approved,
     approveTransaction,

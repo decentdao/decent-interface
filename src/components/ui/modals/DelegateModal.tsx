@@ -34,7 +34,7 @@ export function DelegateModal({ close }: { close: Function }) {
   const decentGovernance = azoriusGovernance as DecentGovernance;
   const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken?.delegatee);
   const lockedDelegateeDisplayName = useDisplayName(decentGovernance?.lockedVotesToken?.delegatee);
-  const [, contractCallPendingViem, contractCallViem] = useTransaction();
+  const [contractCallPendingViem, contractCallViem] = useTransaction();
   const { addressValidationTest } = useValidationAddress();
   const { data: walletClient } = useWalletClient();
 

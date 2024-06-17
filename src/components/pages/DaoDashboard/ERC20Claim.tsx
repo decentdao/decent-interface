@@ -19,7 +19,7 @@ export function ERCO20Claim() {
   const account = user.address;
   const { tokenClaimContractAddress, type } = governance;
   const { t } = useTranslation(['dashboard', 'transaction']);
-  const [, pending, contractCallViem] = useTransaction();
+  const [pending, contractCallViem] = useTransaction();
   const azoriusGovernance = governance as AzoriusGovernance;
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();

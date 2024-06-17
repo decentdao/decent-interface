@@ -18,7 +18,7 @@ export default function useExecuteProposal() {
     governanceDispatch: action.dispatch,
   });
   const { data: walletClient } = useWalletClient();
-  const [, contractCallPending, contractCallViem] = useTransaction();
+  const [contractCallPending, contractCallViem] = useTransaction();
 
   const executeProposal = useCallback(
     (proposal: FractalProposal) => {
