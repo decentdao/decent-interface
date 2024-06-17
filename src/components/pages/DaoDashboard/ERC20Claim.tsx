@@ -19,7 +19,7 @@ export function ERCO20Claim() {
   const account = user.address;
   const { tokenClaimContractAddress, type } = governance;
   const { t } = useTranslation(['dashboard', 'transaction']);
-  const [pending, contractCallViem] = useTransaction();
+  const [contractCall, pending] = useTransaction();
   const azoriusGovernance = governance as AzoriusGovernance;
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
@@ -56,7 +56,7 @@ export function ERCO20Claim() {
       address: tokenClaimContractAddress,
       client: walletClient,
     });
-    contractCallViem({
+    contractCall({
       contractFn: () => tokenClaimContract.write.claimTokens([getAddress(account)]),
       pendingMessage: t('pendingTokenClaim', {
         symbol: azoriusGovernance.votesToken.symbol,

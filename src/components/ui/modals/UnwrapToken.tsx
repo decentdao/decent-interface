@@ -22,7 +22,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
   const { address: account } = useAccount();
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
 
-  const [pending, contractCallViem] = useTransaction();
+  const [contractCall, pending] = useTransaction();
   const {
     approved,
     approveTransaction,
@@ -48,7 +48,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
         client: walletClient,
       });
 
-      contractCallViem({
+      contractCall({
         contractFn: () => wrapperTokenContract.write.withdrawTo([account, amount.bigintValue!]),
         pendingMessage: t('unwrapTokenPendingMessage'),
         failedMessage: t('unwrapTokenFailedMessage'),
@@ -61,15 +61,7 @@ export function UnwrapToken({ close }: { close: () => void }) {
         },
       });
     },
-    [
-      account,
-      contractCallViem,
-      governanceContracts,
-      walletClient,
-      close,
-      t,
-      loadERC20TokenAccountData,
-    ],
+    [account, contractCall, governanceContracts, walletClient, close, t, loadERC20TokenAccountData],
   );
 
   if (

@@ -11,7 +11,7 @@ interface ProviderRpcError extends Error {
   data?: any;
 }
 
-interface ContractCallParamsViem {
+interface ContractCallParams {
   contractFn: () => Promise<Hash>;
   pendingMessage: string;
   failedMessage: string;
@@ -26,8 +26,8 @@ const useTransaction = () => {
   const { t } = useTranslation(['transaction', 'common']);
   const publicClient = usePublicClient();
 
-  const contractCallViem = useCallback(
-    (params: ContractCallParamsViem) => {
+  const contractCall = useCallback(
+    (params: ContractCallParams) => {
       if (!publicClient) return;
 
       let toastId: React.ReactText;
@@ -84,7 +84,7 @@ const useTransaction = () => {
     [t, publicClient],
   );
 
-  return [pending, contractCallViem] as const;
+  return [contractCall, pending] as const;
 };
 
 export { useTransaction };

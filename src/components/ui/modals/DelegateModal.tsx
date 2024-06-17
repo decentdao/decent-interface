@@ -34,7 +34,7 @@ export function DelegateModal({ close }: { close: Function }) {
   const decentGovernance = azoriusGovernance as DecentGovernance;
   const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken?.delegatee);
   const lockedDelegateeDisplayName = useDisplayName(decentGovernance?.lockedVotesToken?.delegatee);
-  const [contractCallPendingViem, contractCallViem] = useTransaction();
+  const [contractCall, pending] = useTransaction();
   const { addressValidationTest } = useValidationAddress();
   const { data: walletClient } = useWalletClient();
 
@@ -51,7 +51,7 @@ export function DelegateModal({ close }: { close: Function }) {
       client: walletClient,
     });
 
-    contractCallViem({
+    contractCall({
       contractFn: () => votingTokenContract.write.delegate([validAddress]),
       pendingMessage: t('pendingDelegateVote'),
       failedMessage: t('failedDelegateVote'),
@@ -74,7 +74,7 @@ export function DelegateModal({ close }: { close: Function }) {
       client: walletClient,
     });
 
-    contractCallViem({
+    contractCall({
       contractFn: () => lockReleaseContract.write.delegate([getAddress(validAddress)]),
       pendingMessage: t('pendingDelegateVote'),
       failedMessage: t('failedDelegateVote'),
@@ -225,7 +225,7 @@ export function DelegateModal({ close }: { close: Function }) {
               width="100%"
               isDisabled={
                 !!errors.address ||
-                contractCallPendingViem ||
+                pending ||
                 !values.address ||
                 values.address === azoriusGovernance.votesToken?.delegatee
               }
@@ -240,7 +240,7 @@ export function DelegateModal({ close }: { close: Function }) {
                   onClick={() => submitLockedDelegation({ address: values.address })}
                   isDisabled={
                     !!errors.address ||
-                    contractCallPendingViem ||
+                    pending ||
                     !values.address ||
                     values.address === decentGovernance.lockedVotesToken.delegatee
                   }
