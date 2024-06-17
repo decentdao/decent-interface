@@ -12,18 +12,19 @@ export const runMigrations = async (
   const cacheVersion = getValue({ cacheName: CacheKeys.MIGRATION });
 
   const actualCacheVersion = cacheVersion || 0;
+  let newVersion = actualCacheVersion;
   // loop through each pending migration and run in turn
   for (let i = actualCacheVersion + 1; i <= migrationCount; i++) {
     try {
-      const migration = await import(`./migrations/${i}`);
+      const migration: { default: () => void } = await import(`./migrations/${i}`);
       migration.default();
-      setValue({ cacheName: CacheKeys.MIGRATION }, migrationCount);
+      newVersion = i;
     } catch (e) {
       logError(e);
-      setValue({ cacheName: CacheKeys.MIGRATION }, i - 1);
-      return;
+      newVersion = i - 1;
     }
   }
+  setValue({ cacheName: CacheKeys.MIGRATION }, newVersion);
 };
 
 export const useMigrate = () => {
