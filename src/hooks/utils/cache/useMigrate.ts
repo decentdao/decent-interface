@@ -11,7 +11,7 @@ export const runMigrations = async (
 ) => {
   const cacheVersion = getValue({ cacheName: CacheKeys.MIGRATION });
   const actualCacheVersion = cacheVersion || 0;
-  if(cacheVersion === migrationCount) return;
+  if (cacheVersion === migrationCount) return;
   let newVersion = actualCacheVersion;
   // loop through each pending migration and run in turn
   for (let i = actualCacheVersion + 1; i <= migrationCount; i++) {
