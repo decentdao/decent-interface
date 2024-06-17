@@ -1,7 +1,6 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import useProposals from '../../../../hooks/DAO/proposal/useProposals';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { ActivityEventType, SortBy, TreasuryActivity, FractalProposal } from '../../../../types';
 import { ActivityTreasury } from '../../../Activity/ActivityTreasury';
@@ -21,7 +20,6 @@ export function Activities() {
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
 
   const { sortedActivities } = useActivities(sortBy);
-  useProposals({ sortBy, filters: [] });
 
   const { t } = useTranslation('dashboard');
 
