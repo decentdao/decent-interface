@@ -23,6 +23,7 @@ import { getAddress } from 'viem';
 import { base } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
+import { getSafeContractDeployment } from './utils';
 
 const SAFE_VERSION = '1.3.0';
 
@@ -43,42 +44,48 @@ export const baseConfig: NetworkConfig = {
     version: 'v0.1.1',
   },
   contracts: {
-    fractalAzoriusMasterCopy: getAddress(Azorius.address),
-    fractalModuleMasterCopy: getAddress(FractalModule.address),
-    fractalRegistry: getAddress(FractalRegistry.address),
-    votesERC20MasterCopy: getAddress(VotesERC20.address),
-    linearVotingERC721MasterCopy: getAddress(LinearVotingERC721.address),
-    claimingMasterCopy: getAddress(ERC20Claim.address),
-    azoriusFreezeGuardMasterCopy: getAddress(AzoriusFreezeGuard.address),
-    multisigFreezeVotingMasterCopy: getAddress(MultisigFreezeVoting.address),
-    erc20FreezeVotingMasterCopy: getAddress(ERC20FreezeVoting.address),
-    erc721FreezeVotingMasterCopy: getAddress(ERC721FreezeVoting.address),
-    multisigFreezeGuardMasterCopy: getAddress(MultisigFreezeGuard.address),
-    fallbackHandler: getAddress(
-      getCompatibilityFallbackHandlerDeployment({
-        version: SAFE_VERSION,
-        network: chain.id.toString(),
-      })?.networkAddresses[chain.id.toString()]!,
+    gnosisSafeL2Singleton: getSafeContractDeployment(
+      getSafeL2SingletonDeployment,
+      SAFE_VERSION,
+      chain.id.toString(),
     ),
-    safe: getAddress(
-      getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: chain.id.toString() })
-        ?.networkAddresses[chain.id.toString()]!,
+    gnosisSafeProxyFactory: getSafeContractDeployment(
+      getProxyFactoryDeployment,
+      SAFE_VERSION,
+      chain.id.toString(),
     ),
-    safeFactory: getAddress(
-      getProxyFactoryDeployment({
-        version: SAFE_VERSION,
-        network: chain.id.toString(),
-      })?.networkAddresses[chain.id.toString()]!,
+    compatibilityFallbackHandler: getSafeContractDeployment(
+      getCompatibilityFallbackHandlerDeployment,
+      SAFE_VERSION,
+      chain.id.toString(),
     ),
+    multiSendCallOnly: getSafeContractDeployment(
+      getMultiSendCallOnlyDeployment,
+      SAFE_VERSION,
+      chain.id.toString(),
+    ),
+
     zodiacModuleProxyFactory: getAddress(ModuleProxyFactory.address),
-    linearVotingMasterCopy: getAddress(LinearERC20Voting.address),
-    multisend: getAddress(
-      getMultiSendCallOnlyDeployment({
-        version: SAFE_VERSION,
-        network: chain.id.toString(),
-      })?.networkAddresses[chain.id.toString()]!,
-    ),
-    votesERC20WrapperMasterCopy: getAddress(VotesERC20Wrapper.address),
+
+    linearVotingErc20MasterCopy: getAddress(LinearERC20Voting.address),
+    linearVotingErc721MasterCopy: getAddress(LinearVotingERC721.address),
+
+    moduleAzoriusMasterCopy: getAddress(Azorius.address),
+    moduleFractalMasterCopy: getAddress(FractalModule.address),
+
+    freezeGuardAzoriusMasterCopy: getAddress(AzoriusFreezeGuard.address),
+    freezeGuardMultisigMasterCopy: getAddress(MultisigFreezeGuard.address),
+
+    freezeVotingErc20MasterCopy: getAddress(ERC20FreezeVoting.address),
+    freezeVotingErc721MasterCopy: getAddress(ERC721FreezeVoting.address),
+    freezeVotingMultisigMasterCopy: getAddress(MultisigFreezeVoting.address),
+
+    votesErc20MasterCopy: getAddress(VotesERC20.address),
+    votesErc20WrapperMasterCopy: getAddress(VotesERC20Wrapper.address),
+
+    claimErc20MasterCopy: getAddress(ERC20Claim.address),
+
+    fractalRegistry: getAddress(FractalRegistry.address),
     keyValuePairs: getAddress(KeyValuePairs.address),
   },
   staking: {},

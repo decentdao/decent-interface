@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { Address, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -15,25 +16,25 @@ import {
 const useBuildDAOTx = () => {
   const {
     contracts: {
-      fallbackHandler,
-      votesERC20WrapperMasterCopy,
-      votesERC20MasterCopy,
+      compatibilityFallbackHandler,
+      votesErc20WrapperMasterCopy,
+      votesErc20MasterCopy,
       keyValuePairs,
       fractalRegistry,
-      safeFactory,
-      safe: safeSingleton,
+      gnosisSafeProxyFactory,
+      gnosisSafeL2Singleton,
       zodiacModuleProxyFactory,
-      multisend: multiSendCallOnly,
-      claimingMasterCopy: erc20ClaimMasterCopy,
-      fractalModuleMasterCopy,
-      linearVotingMasterCopy: linearERC20VotingMasterCopy,
-      linearVotingERC721MasterCopy: linearERC721VotingMasterCopy,
-      fractalAzoriusMasterCopy: azoriusMasterCopy,
-      azoriusFreezeGuardMasterCopy,
-      multisigFreezeGuardMasterCopy,
-      erc20FreezeVotingMasterCopy,
-      erc721FreezeVotingMasterCopy,
-      multisigFreezeVotingMasterCopy,
+      multiSendCallOnly,
+      claimErc20MasterCopy,
+      moduleFractalMasterCopy,
+      linearVotingErc20MasterCopy,
+      linearVotingErc721MasterCopy,
+      moduleAzoriusMasterCopy,
+      freezeGuardAzoriusMasterCopy,
+      freezeGuardMultisigMasterCopy,
+      freezeVotingErc20MasterCopy,
+      freezeVotingErc721MasterCopy,
+      freezeVotingMultisigMasterCopy,
     },
   } = useNetworkConfig();
 
@@ -67,32 +68,32 @@ const useBuildDAOTx = () => {
         publicClient,
         isAzorius,
         daoData,
-        fallbackHandler,
-        votesERC20WrapperMasterCopy,
-        votesERC20MasterCopy,
+        compatibilityFallbackHandler,
+        votesErc20WrapperMasterCopy,
+        votesErc20MasterCopy,
         keyValuePairs,
         fractalRegistry,
-        safeFactory,
-        safeSingleton,
+        gnosisSafeProxyFactory,
+        gnosisSafeL2Singleton,
         zodiacModuleProxyFactory,
-        azoriusFreezeGuardMasterCopy,
-        multisigFreezeGuardMasterCopy,
-        erc20FreezeVotingMasterCopy,
-        erc721FreezeVotingMasterCopy,
-        multisigFreezeVotingMasterCopy,
+        freezeGuardAzoriusMasterCopy,
+        freezeGuardMultisigMasterCopy,
+        freezeVotingErc20MasterCopy,
+        freezeVotingErc721MasterCopy,
+        freezeVotingMultisigMasterCopy,
         multiSendCallOnly,
-        erc20ClaimMasterCopy,
-        fractalModuleMasterCopy,
-        linearERC20VotingMasterCopy,
-        linearERC721VotingMasterCopy,
-        azoriusMasterCopy,
-        parentAddress,
-        parentTokenAddress,
+        claimErc20MasterCopy,
+        moduleFractalMasterCopy,
+        linearVotingErc20MasterCopy,
+        linearVotingErc721MasterCopy,
+        moduleAzoriusMasterCopy,
+        parentAddress ? getAddress(parentAddress) : undefined,
+        parentTokenAddress ? getAddress(parentTokenAddress) : undefined,
       );
 
       await txBuilderFactory.setupSafeData();
-      let parentVotingStrategyType = undefined;
-      let parentVotingStrategyAddress = undefined;
+      let parentVotingStrategyType: VotingStrategyType | undefined;
+      let parentVotingStrategyAddress: Address | undefined;
 
       if (dao && dao.isAzorius) {
         const azoriusGovernance = governance as AzoriusGovernance;
@@ -101,7 +102,7 @@ const useBuildDAOTx = () => {
           parentVotingStrategyType === VotingStrategyType.LINEAR_ERC721 &&
           erc721LinearVotingContractAddress
         ) {
-          parentVotingStrategyAddress = erc721LinearVotingContractAddress;
+          parentVotingStrategyAddress = getAddress(erc721LinearVotingContractAddress);
         }
       }
 
@@ -126,25 +127,25 @@ const useBuildDAOTx = () => {
     [
       user.address,
       publicClient,
-      fallbackHandler,
-      votesERC20WrapperMasterCopy,
-      votesERC20MasterCopy,
+      compatibilityFallbackHandler,
+      votesErc20WrapperMasterCopy,
+      votesErc20MasterCopy,
       keyValuePairs,
       fractalRegistry,
-      safeFactory,
-      safeSingleton,
+      gnosisSafeProxyFactory,
+      gnosisSafeL2Singleton,
       zodiacModuleProxyFactory,
-      azoriusFreezeGuardMasterCopy,
-      multisigFreezeGuardMasterCopy,
-      erc20FreezeVotingMasterCopy,
-      erc721FreezeVotingMasterCopy,
-      multisigFreezeVotingMasterCopy,
+      freezeGuardAzoriusMasterCopy,
+      freezeGuardMultisigMasterCopy,
+      freezeVotingErc20MasterCopy,
+      freezeVotingErc721MasterCopy,
+      freezeVotingMultisigMasterCopy,
       multiSendCallOnly,
-      erc20ClaimMasterCopy,
-      fractalModuleMasterCopy,
-      linearERC20VotingMasterCopy,
-      linearERC721VotingMasterCopy,
-      azoriusMasterCopy,
+      claimErc20MasterCopy,
+      moduleFractalMasterCopy,
+      linearVotingErc20MasterCopy,
+      linearVotingErc721MasterCopy,
+      moduleAzoriusMasterCopy,
       dao,
       governance,
       erc721LinearVotingContractAddress,

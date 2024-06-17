@@ -23,7 +23,7 @@ export const safeData = async (
   safeSingletonContract: GetContractReturnType<typeof GnosisSafeL2Abi, PublicClient>,
   daoData: SafeMultisigDAO,
   saltNum: bigint,
-  fallbackHandler: string,
+  fallbackHandler: Address,
   hasAzorius: boolean,
 ) => {
   const signers = hasAzorius
@@ -37,7 +37,7 @@ export const safeData = async (
       1n, // Threshold
       zeroAddress,
       zeroHash,
-      getAddress(fallbackHandler),
+      fallbackHandler,
       zeroAddress,
       0n,
       zeroAddress,

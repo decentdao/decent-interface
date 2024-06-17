@@ -17,12 +17,12 @@ export const useFractalModules = () => {
 
           let safeModule: FractalModuleData;
 
-          if (masterCopyData.isAzorius && publicClient) {
+          if (masterCopyData.isModuleAzorius && publicClient) {
             safeModule = {
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.AZORIUS,
             };
-          } else if (masterCopyData.isFractalModule && publicClient) {
+          } else if (masterCopyData.isModuleFractal && publicClient) {
             safeModule = {
               moduleAddress: moduleAddress,
               moduleType: FractalModuleType.FRACTAL,

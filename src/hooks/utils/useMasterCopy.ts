@@ -11,44 +11,44 @@ export function useMasterCopy() {
   const {
     contracts: {
       zodiacModuleProxyFactory,
-      linearVotingMasterCopy,
-      linearVotingERC721MasterCopy,
-      fractalModuleMasterCopy,
-      fractalAzoriusMasterCopy,
-      multisigFreezeGuardMasterCopy,
-      erc721FreezeVotingMasterCopy,
-      multisigFreezeVotingMasterCopy,
+      linearVotingErc20MasterCopy,
+      linearVotingErc721MasterCopy,
+      moduleFractalMasterCopy,
+      moduleAzoriusMasterCopy,
+      freezeGuardMultisigMasterCopy,
+      freezeVotingErc721MasterCopy,
+      freezeVotingMultisigMasterCopy,
     },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
 
-  const isOzLinearVoting = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === linearVotingMasterCopy,
-    [linearVotingMasterCopy],
+  const isLinearVotingErc20 = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === linearVotingErc20MasterCopy,
+    [linearVotingErc20MasterCopy],
   );
-  const isOzLinearVotingERC721 = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === linearVotingERC721MasterCopy,
-    [linearVotingERC721MasterCopy],
+  const isLinearVotingErc721 = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === linearVotingErc721MasterCopy,
+    [linearVotingErc721MasterCopy],
   );
-  const isMultisigFreezeGuard = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === multisigFreezeGuardMasterCopy,
-    [multisigFreezeGuardMasterCopy],
+  const isFreezeGuardMultisig = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === freezeGuardMultisigMasterCopy,
+    [freezeGuardMultisigMasterCopy],
   );
-  const isMultisigFreezeVoting = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === multisigFreezeVotingMasterCopy,
-    [multisigFreezeVotingMasterCopy],
+  const isFreezeVotingMultisig = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === freezeVotingMultisigMasterCopy,
+    [freezeVotingMultisigMasterCopy],
   );
-  const isERC721FreezeVoting = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === erc721FreezeVotingMasterCopy,
-    [erc721FreezeVotingMasterCopy],
+  const isFreezeVotingErc721 = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === freezeVotingErc721MasterCopy,
+    [freezeVotingErc721MasterCopy],
   );
-  const isAzorius = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === fractalAzoriusMasterCopy,
-    [fractalAzoriusMasterCopy],
+  const isModuleAzorius = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === moduleAzoriusMasterCopy,
+    [moduleAzoriusMasterCopy],
   );
-  const isFractalModule = useCallback(
-    (masterCopyAddress: Address) => masterCopyAddress === fractalModuleMasterCopy,
-    [fractalModuleMasterCopy],
+  const isModuleFractal = useCallback(
+    (masterCopyAddress: Address) => masterCopyAddress === moduleFractalMasterCopy,
+    [moduleFractalMasterCopy],
   );
 
   const getMasterCopyAddress = useCallback(
@@ -108,24 +108,24 @@ export function useMasterCopy() {
 
       return {
         address: masterCopyAddress,
-        isOzLinearVoting: isOzLinearVoting(masterCopyAddress),
-        isOzLinearVotingERC721: isOzLinearVotingERC721(masterCopyAddress),
-        isMultisigFreezeGuard: isMultisigFreezeGuard(masterCopyAddress),
-        isMultisigFreezeVoting: isMultisigFreezeVoting(masterCopyAddress),
-        isERC721FreezeVoting: isERC721FreezeVoting(masterCopyAddress),
-        isAzorius: isAzorius(masterCopyAddress),
-        isFractalModule: isFractalModule(masterCopyAddress),
+        isLinearVotingErc20: isLinearVotingErc20(masterCopyAddress),
+        isLinearVotingErc721: isLinearVotingErc721(masterCopyAddress),
+        isFreezeGuardMultisig: isFreezeGuardMultisig(masterCopyAddress),
+        isFreezeVotingMultisig: isFreezeVotingMultisig(masterCopyAddress),
+        isFreezeVotingErc721: isFreezeVotingErc721(masterCopyAddress),
+        isModuleAzorius: isModuleAzorius(masterCopyAddress),
+        isModuleFractal: isModuleFractal(masterCopyAddress),
       };
     },
     [
       getMasterCopyAddress,
-      isAzorius,
-      isERC721FreezeVoting,
-      isFractalModule,
-      isMultisigFreezeGuard,
-      isMultisigFreezeVoting,
-      isOzLinearVoting,
-      isOzLinearVotingERC721,
+      isModuleAzorius,
+      isFreezeVotingErc721,
+      isModuleFractal,
+      isFreezeGuardMultisig,
+      isFreezeVotingMultisig,
+      isLinearVotingErc20,
+      isLinearVotingErc721,
     ],
   );
 

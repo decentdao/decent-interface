@@ -22,7 +22,7 @@ export const useCreateSubDAOProposal = () => {
     governance,
   } = useFractal();
   const {
-    contracts: { fractalRegistry, multisend: multiSendCallOnly },
+    contracts: { fractalRegistry, multiSendCallOnly },
   } = useNetworkConfig();
   const azoriusGovernance = governance as AzoriusGovernance;
   const proposeDao = useCallback(
