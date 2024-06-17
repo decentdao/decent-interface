@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import * as logging from '../src/helpers/errorLogging';
 import { CacheKeys } from '../src/hooks/utils/cache/cacheDefaults';
-import migrateCacheToV1 from '../src/hooks/utils/cache/migrations/1';
+import migration1 from '../src/hooks/utils/cache/migrations/1';
 import { getValue } from '../src/hooks/utils/cache/useLocalStorage';
 import { runMigrations } from '../src/hooks/utils/cache/useMigrate';
 
@@ -20,7 +20,7 @@ describe('func migrateCacheToV1', () => {
 
     const expectedNewValue = ['sep:0xd418E98a11B9189fCc05cddfbB10F4Cee996C749'];
 
-    migrateCacheToV1();
+    migration1();
     const favoriteCache = getValue({ cacheName: CacheKeys.FAVORITES });
     expect(favoriteCache).toStrictEqual(expectedNewValue);
     expect(localStorage.getItem(oldKey)).toBeNull();
@@ -47,7 +47,7 @@ describe('func migrateCacheToV1', () => {
       'eth:0xabcdE98a11B9189fCc05cddfbB10F4Cee996C999',
     ];
 
-    migrateCacheToV1();
+    migration1();
     const favoriteCache = getValue({ cacheName: CacheKeys.FAVORITES });
     expect(favoriteCache).toStrictEqual(expectedNewValue);
     expect(localStorage.getItem(oldKey1)).toBeNull();
@@ -55,12 +55,12 @@ describe('func migrateCacheToV1', () => {
   });
 
   it('should handle an empty localStorage without errors', () => {
-    migrateCacheToV1();
+    migration1();
   });
 
   it('should handle localStorage without relevant keys', () => {
     localStorage.setItem('unrelatedKey', 'someValue');
-    migrateCacheToV1();
+    migration1();
 
     expect(localStorage.getItem('unrelatedKey')).toBe('someValue');
   });
@@ -73,7 +73,7 @@ describe('func migrateCacheToV1', () => {
     });
     localStorage.setItem(oldKey, oldValue);
 
-    migrateCacheToV1();
+    migration1();
 
     expect(localStorage.getItem(oldKey)).toBeNull();
   });
