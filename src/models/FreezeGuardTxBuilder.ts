@@ -53,7 +53,6 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private multisigFreezeVotingMasterCopyAddress: Address;
 
   constructor(
-    signerOrProvider: any,
     publicClient: PublicClient,
     daoData: SubDAO,
     safeContractAddress: Address,
@@ -72,7 +71,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     parentStrategyType?: VotingStrategyType,
     parentStrategyAddress?: Address,
   ) {
-    super(signerOrProvider, publicClient, isAzorius, daoData, parentAddress, parentTokenAddress);
+    super(publicClient, isAzorius, daoData, parentAddress, parentTokenAddress);
 
     this.safeContractAddress = safeContractAddress;
     this.saltNum = saltNum;

@@ -11,11 +11,9 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
-import useSignerOrProvider from '../utils/useSignerOrProvider';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
 const useDeployAzorius = () => {
-  const signerOrProvider = useSignerOrProvider();
   const navigate = useNavigate();
   const {
     contracts: {
@@ -62,7 +60,6 @@ const useDeployAzorius = () => {
       }
 
       const txBuilderFactory = new TxBuilderFactory(
-        signerOrProvider,
         publicClient,
         true,
         daoData,
@@ -137,7 +134,6 @@ const useDeployAzorius = () => {
       canUserCreateProposal,
       safe,
       publicClient,
-      signerOrProvider,
       fallbackHandler,
       votesERC20WrapperMasterCopy,
       votesERC20MasterCopy,
