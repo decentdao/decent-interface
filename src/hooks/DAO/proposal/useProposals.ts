@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Id, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { SortBy, FractalProposalState } from '../../../types';
 import { CacheKeys, CacheExpiry } from '../../utils/cache/cacheDefaults';
@@ -23,37 +23,28 @@ export default function useProposals({
 
   const loadTempDAOProposals = useLoadTempProposals();
   const [tempProposals, setTempProposals] = useState<TempProposalData[]>([]);
-  const pendingProposalsToastIdRef = useRef<Id>();
-
-  const dismissPendingProposalsToast = useCallback(() => {
-    if (pendingProposalsToastIdRef.current) {
-      toast.dismiss(pendingProposalsToastIdRef.current);
-      pendingProposalsToastIdRef.current = undefined;
-    }
-  }, [pendingProposalsToastIdRef]);
 
   useEffect(() => {
-    if (pendingProposalsToastIdRef.current) return;
-
-    if (tempProposals.length) {
-      setTimeout(() => {
-        if (pendingProposalsToastIdRef.current) return;
-        const toastId = toast.info(
-          t('pendingProposalNotice', {
-            tempProposalsLength: tempProposals.length,
-          }),
-          {
-            autoClose: false,
-            closeOnClick: false,
-            draggable: false,
-            closeButton: false,
-          },
-        );
-        pendingProposalsToastIdRef.current = toastId;
-      }, 1000);
-      return () => dismissPendingProposalsToast();
+    if (tempProposals.length === 0) {
+      return;
     }
-  }, [dismissPendingProposalsToast, t, tempProposals.length]);
+
+    const toastId = toast.info(
+      t('pendingProposalNotice', {
+        tempProposalsLength: tempProposals.length,
+      }),
+      {
+        autoClose: false,
+        closeOnClick: false,
+        draggable: false,
+        closeButton: false,
+      },
+    );
+
+    return () => {
+      toast.dismiss(toastId);
+    };
+  }, [t, tempProposals.length]);
 
   const getProposalsTotal = useCallback(
     (state: FractalProposalState) => {
@@ -75,12 +66,9 @@ export default function useProposals({
 
       if (tempProposals.length !== updatedProposals.length) {
         setTempProposals(updatedProposals);
-        if (updatedProposals.length === 0) {
-          dismissPendingProposalsToast();
-        }
       }
     },
-    [dismissPendingProposalsToast, getValue, setValue, tempProposals.length],
+    [getValue, setValue, tempProposals.length],
   );
 
   const sortedAndFilteredProposals = useMemo(() => {
