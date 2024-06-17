@@ -1,4 +1,3 @@
-import { Contract } from 'ethers';
 import {
   hashTypedData,
   Hash,
@@ -6,11 +5,9 @@ import {
   toHex,
   toBytes,
   encodePacked,
-  getAddress,
   Address,
   bytesToBigInt,
   Hex,
-  isHex,
   encodeFunctionData,
   Abi,
   WalletClient,
@@ -189,27 +186,6 @@ const finishBuildingConractCall = (
 };
 
 export const buildContractCall = (
-  contract: Contract,
-  method: string,
-  params: any[],
-  nonce: number,
-  delegateCall?: boolean,
-  overrides?: Partial<SafeTransaction>,
-): SafeTransaction => {
-  const data = contract.interface.encodeFunctionData(method, params);
-  if (!isHex(data)) {
-    throw new Error('encoded function data not hexadecimal');
-  }
-  return finishBuildingConractCall(
-    data,
-    nonce,
-    getAddress(contract.address),
-    delegateCall,
-    overrides,
-  );
-};
-
-export const buildContractCallViem = (
   contractAbi: Abi,
   contractAddress: Address,
   method: string,

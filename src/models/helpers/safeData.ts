@@ -14,7 +14,7 @@ import {
 } from 'viem';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../../assets/abi/GnosisSafeProxyFactory';
-import { buildContractCallViem } from '../../helpers/crypto';
+import { buildContractCall } from '../../helpers/crypto';
 import { SafeMultisigDAO } from '../../types';
 
 export const safeData = async (
@@ -66,7 +66,7 @@ export const safeData = async (
     ),
   });
 
-  const createSafeTx = buildContractCallViem(
+  const createSafeTx = buildContractCall(
     GnosisSafeProxyFactoryAbi,
     safeFactoryContract.address,
     'createProxyWithNonce',

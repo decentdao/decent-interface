@@ -115,7 +115,6 @@ export const useFractalFreeze = ({
         account || zeroAddress,
         BigInt(freezeCreatedBlock),
       ]);
-      // const isFrozen = await freezeVotingContract.read.isFrozen();
 
       const freezeGuard = {
         freezeVotesThreshold,
