@@ -16,7 +16,7 @@ export const runMigrations = async (
   // loop through each pending migration and run in turn
   for (let i = actualCacheVersion + 1; i <= migrationCount; i++) {
     try {
-      const migration: { default: () => void } = await import(`./migrations/${i}`);
+      const migration: { default: () => void } = await import(`./migrations/${i}.ts`);
       migration.default();
       newVersion = i;
     } catch (e) {
