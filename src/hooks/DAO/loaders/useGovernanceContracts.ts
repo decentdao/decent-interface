@@ -40,10 +40,10 @@ export const useGovernanceContracts = () => {
     let underlyingTokenAddress: string | undefined;
     let lockReleaseContractAddress: string | undefined;
 
-    const { isOzLinearVoting, isOzLinearVotingERC721 } =
+    const { isLinearVotingErc20, isLinearVotingErc721 } =
       await getZodiacModuleProxyMasterCopyData(votingStrategyAddress);
 
-    if (isOzLinearVoting) {
+    if (isLinearVotingErc20) {
       if (!publicClient) {
         throw new Error('public client not set');
       }
@@ -91,7 +91,7 @@ export const useGovernanceContracts = () => {
         // @dev if the no underlying token, we use the governance token as the token contract
         votesTokenContractAddress = govTokenAddress;
       }
-    } else if (isOzLinearVotingERC721) {
+    } else if (isLinearVotingErc721) {
       // @dev for use with the ERC721 voting contract
       erc721LinearVotingContractAddress = votingStrategyAddress;
     }

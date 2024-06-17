@@ -65,9 +65,9 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
         const votingAddress = await freezeGuardContract.read.freezeVoting();
         const masterCopyData = await getZodiacModuleProxyMasterCopyData(getAddress(votingAddress));
-        const freezeVotingType = masterCopyData.isMultisigFreezeVoting
+        const freezeVotingType = masterCopyData.isFreezeVotingMultisig
           ? FreezeVotingType.MULTISIG
-          : masterCopyData.isERC721FreezeVoting
+          : masterCopyData.isFreezeVotingErc721
             ? FreezeVotingType.ERC721
             : FreezeVotingType.ERC20;
 
@@ -79,7 +79,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         };
       } else if (guard) {
         const masterCopyData = await getZodiacModuleProxyMasterCopyData(getAddress(guard));
-        if (!masterCopyData.isMultisigFreezeGuard || _safe.guard === zeroAddress) {
+        if (!masterCopyData.isFreezeGuardMultisig || _safe.guard === zeroAddress) {
           return {
             freezeGuardContractAddress: '',
             freezeVotingContractAddress: '',
@@ -98,9 +98,9 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         const freezeVotingMasterCopyData = await getZodiacModuleProxyMasterCopyData(
           getAddress(votingAddress),
         );
-        const freezeVotingType = freezeVotingMasterCopyData.isMultisigFreezeVoting
+        const freezeVotingType = freezeVotingMasterCopyData.isFreezeVotingMultisig
           ? FreezeVotingType.MULTISIG
-          : freezeVotingMasterCopyData.isERC721FreezeVoting
+          : freezeVotingMasterCopyData.isFreezeVotingErc721
             ? FreezeVotingType.ERC721
             : FreezeVotingType.ERC20;
 

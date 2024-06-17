@@ -22,24 +22,33 @@ export type NetworkConfig = {
     version: string;
   };
   contracts: {
-    safe: Address;
-    safeFactory: Address;
-    fallbackHandler: Address;
+    gnosisSafeL2Singleton: Address;
+    gnosisSafeProxyFactory: Address;
+    compatibilityFallbackHandler: Address;
+
+    multiSendCallOnly: Address;
+
     zodiacModuleProxyFactory: Address;
-    linearVotingMasterCopy: Address;
-    multisend: Address;
-    fractalAzoriusMasterCopy: Address;
-    fractalModuleMasterCopy: Address;
+
+    linearVotingErc20MasterCopy: Address;
+    linearVotingErc721MasterCopy: Address;
+
+    moduleAzoriusMasterCopy: Address;
+    moduleFractalMasterCopy: Address;
+
+    freezeGuardAzoriusMasterCopy: Address;
+    freezeGuardMultisigMasterCopy: Address;
+
+    freezeVotingErc20MasterCopy: Address;
+    freezeVotingErc721MasterCopy: Address;
+    freezeVotingMultisigMasterCopy: Address;
+
+    votesErc20MasterCopy: Address;
+    votesErc20WrapperMasterCopy: Address;
+
+    claimErc20MasterCopy: Address;
+
     fractalRegistry: Address;
-    votesERC20MasterCopy: Address;
-    linearVotingERC721MasterCopy: Address;
-    claimingMasterCopy: Address;
-    multisigFreezeGuardMasterCopy: Address;
-    azoriusFreezeGuardMasterCopy: Address;
-    multisigFreezeVotingMasterCopy: Address;
-    erc20FreezeVotingMasterCopy: Address;
-    erc721FreezeVotingMasterCopy: Address;
-    votesERC20WrapperMasterCopy: Address;
     keyValuePairs: Address;
   };
   staking: {

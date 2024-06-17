@@ -87,7 +87,7 @@ export default function useSubmitProposal() {
     chain,
     safeBaseURL,
     addressPrefix,
-    contracts: { multisend: multiSendCallOnly },
+    contracts: { multiSendCallOnly },
   } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
 

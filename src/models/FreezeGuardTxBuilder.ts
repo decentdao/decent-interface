@@ -1,5 +1,4 @@
 import {
-  getAddress,
   getCreate2Address,
   keccak256,
   encodePacked,
@@ -45,12 +44,13 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   private parentStrategyType: VotingStrategyType | undefined;
   private parentStrategyAddress: Address | undefined;
-  private moduleProxyFactoryAddress: Address;
-  private azoriusFreezeGuardMasterCopyAddress: Address;
-  private multisigFreezeGuardMasterCopyAddress: Address;
-  private erc20FreezeVotingMasterCopyAddress: Address;
-  private erc721FreezeVotingMasterCopyAddress: Address;
-  private multisigFreezeVotingMasterCopyAddress: Address;
+
+  private zodiacModuleProxyFactory: Address;
+  private freezeGuardAzoriusMasterCopy: Address;
+  private freezeGuardMultisigMasterCopy: Address;
+  private freezeVotingErc20MasterCopy: Address;
+  private freezeVotingErc721MasterCopy: Address;
+  private freezeVotingMultisigMasterCopy: Address;
 
   constructor(
     publicClient: PublicClient,
@@ -58,12 +58,14 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     safeContractAddress: Address,
     saltNum: bigint,
     parentAddress: Address,
-    moduleProxyFactoryAddress: Address,
-    azoriusFreezeGuardMasterCopyAddress: Address,
-    multisigFreezeGuardMasterCopyAddress: Address,
-    erc20FreezeVotingMasterCopyAddress: Address,
-    erc721FreezeVotingMasterCopyAddress: Address,
-    multisigFreezeVotingMasterCopyAddress: Address,
+
+    zodiacModuleProxyFactory: Address,
+    freezeGuardAzoriusMasterCopy: Address,
+    freezeGuardMultisigMasterCopy: Address,
+    freezeVotingErc20MasterCopy: Address,
+    freezeVotingErc721MasterCopy: Address,
+    freezeVotingMultisigMasterCopy: Address,
+
     isAzorius: boolean,
     parentTokenAddress?: Address,
     azoriusAddress?: Address,
@@ -79,12 +81,12 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.strategyAddress = strategyAddress;
     this.parentStrategyType = parentStrategyType;
     this.parentStrategyAddress = parentStrategyAddress;
-    this.moduleProxyFactoryAddress = moduleProxyFactoryAddress;
-    this.azoriusFreezeGuardMasterCopyAddress = azoriusFreezeGuardMasterCopyAddress;
-    this.multisigFreezeGuardMasterCopyAddress = multisigFreezeGuardMasterCopyAddress;
-    this.erc20FreezeVotingMasterCopyAddress = erc20FreezeVotingMasterCopyAddress;
-    this.erc721FreezeVotingMasterCopyAddress = erc721FreezeVotingMasterCopyAddress;
-    this.multisigFreezeVotingMasterCopyAddress = multisigFreezeVotingMasterCopyAddress;
+    this.zodiacModuleProxyFactory = zodiacModuleProxyFactory;
+    this.freezeGuardAzoriusMasterCopy = freezeGuardAzoriusMasterCopy;
+    this.freezeGuardMultisigMasterCopy = freezeGuardMultisigMasterCopy;
+    this.freezeVotingErc20MasterCopy = freezeVotingErc20MasterCopy;
+    this.freezeVotingErc721MasterCopy = freezeVotingErc721MasterCopy;
+    this.freezeVotingMultisigMasterCopy = freezeVotingMultisigMasterCopy;
 
     this.initFreezeVotesData();
   }
@@ -99,14 +101,14 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   public buildDeployZodiacModuleTx(): SafeTransaction {
     return buildContractCall(
       ModuleProxyFactoryAbi,
-      this.moduleProxyFactoryAddress,
+      this.zodiacModuleProxyFactory,
       'deployModule',
       [
         this.freezeVotingType === 'erc20'
-          ? this.erc20FreezeVotingMasterCopyAddress
+          ? this.freezeVotingErc20MasterCopy
           : this.freezeVotingType === 'erc721'
-            ? this.erc721FreezeVotingMasterCopyAddress
-            : this.multisigFreezeVotingMasterCopyAddress,
+            ? this.freezeVotingErc721MasterCopy
+            : this.freezeVotingMultisigMasterCopy,
         this.freezeVotingCallData,
         this.saltNum,
       ],
@@ -132,11 +134,11 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       'setUp',
       [
         encodeAbiParameters(parseAbiParameters('address, uint256, uint32, uint32, address'), [
-          getAddress(this.parentAddress), // Owner -- Parent DAO
+          this.parentAddress, // Owner -- Parent DAO
           subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
           Number(subDaoData.freezeProposalPeriod), // FreezeProposalPeriod
           Number(subDaoData.freezePeriod), // FreezePeriod
-          getAddress(parentStrategyAddress), // Parent Votes Token or Parent Safe Address
+          parentStrategyAddress, // Parent Votes Token or Parent Safe Address
         ]),
       ],
       0,
@@ -172,7 +174,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   public buildDeployFreezeGuardTx() {
     return buildContractCall(
       ModuleProxyFactoryAbi,
-      this.moduleProxyFactoryAddress,
+      this.zodiacModuleProxyFactory,
       'deployModule',
       [this.getGuardMasterCopyAddress(), this.freezeGuardCallData!, this.saltNum],
       0,
@@ -214,23 +216,23 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     if (this.parentStrategyType) {
       if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
         freezeVotingByteCodeLinear = generateContractByteCodeLinear(
-          this.erc20FreezeVotingMasterCopyAddress,
+          this.freezeVotingErc20MasterCopy,
         );
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
         freezeVotingByteCodeLinear = generateContractByteCodeLinear(
-          this.erc721FreezeVotingMasterCopyAddress,
+          this.freezeVotingErc721MasterCopy,
         );
       } else {
         throw new Error('unknown voting parentStrategyType');
       }
     } else {
       freezeVotingByteCodeLinear = generateContractByteCodeLinear(
-        this.multisigFreezeVotingMasterCopyAddress,
+        this.freezeVotingMultisigMasterCopy,
       );
     }
 
     this.freezeVotingAddress = getCreate2Address({
-      from: this.moduleProxyFactoryAddress,
+      from: this.zodiacModuleProxyFactory,
       salt: generateSalt(this.freezeVotingCallData!, this.saltNum),
       bytecodeHash: keccak256(encodePacked(['bytes'], [freezeVotingByteCodeLinear])),
     });
@@ -238,12 +240,12 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   private setFreezeGuardAddress() {
     const freezeGuardByteCodeLinear = generateContractByteCodeLinear(
-      getAddress(this.getGuardMasterCopyAddress()),
+      this.getGuardMasterCopyAddress(),
     );
     const freezeGuardSalt = generateSalt(this.freezeGuardCallData!, this.saltNum);
 
     this.freezeGuardAddress = getCreate2Address({
-      from: this.moduleProxyFactoryAddress,
+      from: this.zodiacModuleProxyFactory,
       salt: freezeGuardSalt,
       bytecodeHash: keccak256(encodePacked(['bytes'], [freezeGuardByteCodeLinear])),
     });
@@ -273,7 +275,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
         encodeAbiParameters(parseAbiParameters('uint32, uint32, address, address, address'), [
           Number(subDaoData.timelockPeriod), // Timelock Period
           Number(subDaoData.executionPeriod), // Execution Period
-          getAddress(this.parentAddress), // Owner -- Parent DAO
+          this.parentAddress, // Owner -- Parent DAO
           this.freezeVotingAddress, // Freeze Voting
           this.safeContractAddress, // Safe
         ]),
@@ -300,8 +302,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       functionName: 'setUp',
       args: [
         encodeAbiParameters(parseAbiParameters('address, address'), [
-          getAddress(this.parentAddress), // Owner -- Parent DAO
-          getAddress(this.freezeVotingAddress), // Freeze Voting
+          this.parentAddress, // Owner -- Parent DAO
+          this.freezeVotingAddress, // Freeze Voting
         ]),
       ],
     });
@@ -309,9 +311,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     this.freezeGuardCallData = freezeGuardCallData;
   }
 
-  private getGuardMasterCopyAddress(): string {
-    return this.isAzorius
-      ? this.azoriusFreezeGuardMasterCopyAddress
-      : this.multisigFreezeGuardMasterCopyAddress;
+  private getGuardMasterCopyAddress() {
+    return this.isAzorius ? this.freezeGuardAzoriusMasterCopy : this.freezeGuardMultisigMasterCopy;
   }
 }

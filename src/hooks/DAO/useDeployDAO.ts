@@ -16,7 +16,7 @@ const useDeployDAO = () => {
 
   const {
     addressPrefix,
-    contracts: { multisend: multiSendCallOnly },
+    contracts: { multiSendCallOnly },
   } = useNetworkConfig();
 
   const { data: walletClient } = useWalletClient();

@@ -76,9 +76,9 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
           if (votingContractAddress) {
             const masterCopyData = await getZodiacModuleProxyMasterCopyData(votingContractAddress);
 
-            if (masterCopyData.isOzLinearVoting) {
+            if (masterCopyData.isLinearVotingErc20) {
               result = GovernanceType.AZORIUS_ERC20;
-            } else if (masterCopyData.isOzLinearVotingERC721) {
+            } else if (masterCopyData.isLinearVotingErc721) {
               result = GovernanceType.AZORIUS_ERC721;
             }
           }
