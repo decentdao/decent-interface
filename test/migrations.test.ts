@@ -22,9 +22,6 @@ describe('func migrateCacheToV1', () => {
 
     migrateCacheToV1();
     const favoriteCache = getValue({ cacheName: CacheKeys.FAVORITES });
-    if (!favoriteCache) {
-      throw new Error('Favorites cache not found');
-    }
     expect(favoriteCache).toStrictEqual(expectedNewValue);
     expect(localStorage.getItem(oldKey)).toBeNull();
   });
@@ -52,9 +49,6 @@ describe('func migrateCacheToV1', () => {
 
     migrateCacheToV1();
     const favoriteCache = getValue({ cacheName: CacheKeys.FAVORITES });
-    if (!favoriteCache) {
-      throw new Error('Favorites cache not found');
-    }
     expect(favoriteCache).toStrictEqual(expectedNewValue);
     expect(localStorage.getItem(oldKey1)).toBeNull();
     expect(localStorage.getItem(oldKey2)).toBeNull();
@@ -100,9 +94,6 @@ describe('func runMigrations (gap imports)', () => {
     await runMigrations(3);
     expect(logging.logError).toHaveBeenCalledOnce();
     const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
-    if (!migrationCache) {
-      throw new Error('Migration cache not found');
-    }
     expect(migrationCache).toBe(2);
   });
 
@@ -126,9 +117,6 @@ describe('func runMigrations (invalid filename)', () => {
     await runMigrations(3);
     expect(logging.logError).toHaveBeenCalledOnce();
     const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
-    if (!migrationCache) {
-      throw new Error('Migration cache not found');
-    }
     expect(migrationCache).toBe(2);
   });
 
@@ -149,9 +137,6 @@ describe('func runMigrations (successfully migrate to lastest)', () => {
   it('should successfully migrate to the latest version', async () => {
     await runMigrations(3);
     const migrationCache = getValue({ cacheName: CacheKeys.MIGRATION });
-    if (!migrationCache) {
-      throw new Error('Migration cache not found');
-    }
     expect(migrationCache).toBe(3);
   });
 
