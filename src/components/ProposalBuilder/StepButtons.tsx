@@ -1,7 +1,6 @@
 import { Flex, Button, Icon } from '@chakra-ui/react';
 import { CaretRight, CaretLeft } from '@phosphor-icons/react';
 import { FormikProps } from 'formik';
-import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Routes, Route, useLocation } from 'react-router-dom';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -15,19 +14,6 @@ interface StepButtonsProps extends FormikProps<CreateProposalForm> {
   mode: ProposalBuilderMode;
 }
 
-function StepButtonsContainer({ children }: { children: ReactNode }) {
-  return (
-    <Flex
-      mt="1.5rem"
-      gap="0.75rem"
-      alignItems="center"
-      justifyContent="flex-end"
-      width="100%"
-    >
-      {children}
-    </Flex>
-  );
-}
 export default function StepButtons(props: StepButtonsProps) {
   const {
     node: { daoAddress },
@@ -54,7 +40,13 @@ export default function StepButtons(props: StepButtonsProps) {
   const nextStepUrl = `${location.pathname.replace(`${CreateProposalSteps.METADATA}`, `${CreateProposalSteps.TRANSACTIONS}`)}${location.search}`;
 
   return (
-    <StepButtonsContainer>
+    <Flex
+      mt="1.5rem"
+      gap="0.75rem"
+      alignItems="center"
+      justifyContent="flex-end"
+      width="100%"
+    >
       <Routes>
         <Route
           path={CreateProposalSteps.METADATA}
@@ -103,6 +95,6 @@ export default function StepButtons(props: StepButtonsProps) {
           }
         />
       </Routes>
-    </StepButtonsContainer>
+    </Flex>
   );
 }
