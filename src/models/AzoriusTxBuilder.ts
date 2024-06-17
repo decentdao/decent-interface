@@ -21,7 +21,7 @@ import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import VotesERC20Abi from '../assets/abi/VotesERC20';
 import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
 import { SENTINEL_ADDRESS } from '../constants/common';
-import { buildContractCallViem, getRandomBytes } from '../helpers';
+import { buildContractCall, getRandomBytes } from '../helpers';
 import {
   SafeTransaction,
   AzoriusGovernanceDAO,
@@ -138,7 +138,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildRemoveOwners(owners: string[]): SafeTransaction[] {
     const removeOwnerTxs = owners.map(owner =>
-      buildContractCallViem(
+      buildContractCall(
         GnosisSafeL2Abi,
         this.safeContractAddress,
         'removeOwner',
@@ -154,7 +154,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const daoData = this.daoData as AzoriusGovernanceDAO;
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
-      return buildContractCallViem(
+      return buildContractCall(
         LinearERC20VotingAbi,
         this.linearERC20VotingAddress!,
         'setAzorius', // contract function name
@@ -163,7 +163,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         false,
       );
     } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
-      return buildContractCallViem(
+      return buildContractCall(
         LinearERC721VotingAbi,
         this.linearERC721VotingAddress!,
         'setAzorius', // contract function name
@@ -177,7 +177,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildEnableAzoriusModuleTx(): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'enableModule',
@@ -188,7 +188,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildAddAzoriusContractAsOwnerTx(): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'addOwnerWithThreshold',
@@ -199,7 +199,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildRemoveMultiSendOwnerTx(): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'removeOwner',
@@ -210,7 +210,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildCreateTokenTx(): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       ModuleProxyFactoryAbi,
       this.moduleProxyFactoryAddress,
       'deployModule',
@@ -223,7 +223,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   public buildDeployStrategyTx(): SafeTransaction {
     const daoData = this.daoData as AzoriusGovernanceDAO;
 
-    return buildContractCallViem(
+    return buildContractCall(
       ModuleProxyFactoryAbi,
       this.moduleProxyFactoryAddress,
       'deployModule',
@@ -240,7 +240,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildDeployAzoriusTx(): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       ModuleProxyFactoryAbi,
       this.moduleProxyFactoryAddress,
       'deployModule',
@@ -251,7 +251,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildDeployTokenClaim() {
-    return buildContractCallViem(
+    return buildContractCall(
       ModuleProxyFactoryAbi,
       this.moduleProxyFactoryAddress,
       'deployModule',
@@ -267,7 +267,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     }
 
     const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
-    return buildContractCallViem(
+    return buildContractCall(
       VotesERC20Abi,
       this.votesTokenAddress,
       'approve',
@@ -278,7 +278,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   public buildCreateTokenWrapperTx(): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       ModuleProxyFactoryAbi,
       this.moduleProxyFactoryAddress,
       'deployModule',

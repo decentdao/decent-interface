@@ -18,7 +18,7 @@ import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
 import MultisigFreezeVotingAbi from '../assets/abi/MultisigFreezeVoting';
-import { buildContractCallViem } from '../helpers';
+import { buildContractCall } from '../helpers';
 import { SafeTransaction, SubDAO, VotingStrategyType } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
@@ -98,7 +98,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   }
 
   public buildDeployZodiacModuleTx(): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       ModuleProxyFactoryAbi,
       this.moduleProxyFactoryAddress,
       'deployModule',
@@ -145,30 +145,22 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     ];
 
     if (this.freezeVotingType === 'erc20') {
-      return buildContractCallViem(ERC20FreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
+      return buildContractCall(ERC20FreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
     } else if (this.freezeVotingType === 'erc721') {
-      return buildContractCallViem(
-        ERC721FreezeVotingAbi,
-        this.freezeVotingAddress,
-        ...functionArgs,
-      );
+      return buildContractCall(ERC721FreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
     } else if (this.freezeVotingType === 'multisig') {
-      return buildContractCallViem(
-        MultisigFreezeVotingAbi,
-        this.freezeVotingAddress,
-        ...functionArgs,
-      );
+      return buildContractCall(MultisigFreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
     } else {
       throw new Error('unsupported freeze voting type');
     }
   }
 
   public buildSetGuardTx(abi: Abi, address: Address): SafeTransaction {
-    return buildContractCallViem(abi, address, 'setGuard', [this.freezeGuardAddress], 0, false);
+    return buildContractCall(abi, address, 'setGuard', [this.freezeGuardAddress], 0, false);
   }
 
   public buildSetGuardTxSafe(safeAddress: Address): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       GnosisSafeL2Abi,
       safeAddress,
       'setGuard',
@@ -179,7 +171,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   }
 
   public buildDeployFreezeGuardTx() {
-    return buildContractCallViem(
+    return buildContractCall(
       ModuleProxyFactoryAbi,
       this.moduleProxyFactoryAddress,
       'deployModule',

@@ -5,7 +5,7 @@ import FractalRegistryAbi from '../assets/abi/FractalRegistry';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
 import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
-import { buildContractCallViem, encodeMultiSend } from '../helpers';
+import { buildContractCall, encodeMultiSend } from '../helpers';
 import {
   SafeMultisigDAO,
   SafeTransaction,
@@ -230,7 +230,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   //
 
   private buildUpdateDAONameTx(): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       FractalRegistryAbi,
       getAddress(this.fractalRegistryAddress),
       'updateDAOName',
@@ -241,7 +241,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
   }
 
   private buildUpdateDAOSnapshotENSTx(): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       KeyValuePairsAbi,
       getAddress(this.keyValuePairsAddress),
       'updateValues',
@@ -253,7 +253,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   private buildExecInternalSafeTx(signatures: string): SafeTransaction {
     const safeInternalTx = encodeMultiSend(this.internalTxs);
-    return buildContractCallViem(
+    return buildContractCall(
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'execTransaction',

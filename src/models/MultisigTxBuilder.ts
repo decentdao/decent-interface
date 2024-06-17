@@ -1,6 +1,6 @@
 import { Address } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import { buildContractCallViem } from '../helpers';
+import { buildContractCall } from '../helpers';
 import { SafeMultisigDAO, SafeTransaction } from '../types';
 
 export class MultisigTxBuilder {
@@ -28,7 +28,7 @@ export class MultisigTxBuilder {
   };
 
   public buildRemoveMultiSendOwnerTx(): SafeTransaction {
-    return buildContractCallViem(
+    return buildContractCall(
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'removeOwner',

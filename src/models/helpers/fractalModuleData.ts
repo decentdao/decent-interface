@@ -10,7 +10,7 @@ import {
 import FractalModuleAbi from '../../assets/abi/FractalModule';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import ModuleProxyFactoryAbi from '../../assets/abi/ModuleProxyFactory';
-import { buildContractCallViem } from '../../helpers/crypto';
+import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
 import { generateContractByteCodeLinear, generateSalt } from './utils';
 
@@ -44,7 +44,7 @@ export const fractalModuleData = (
 
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
 
-  const deployFractalModuleTx = buildContractCallViem(
+  const deployFractalModuleTx = buildContractCall(
     ModuleProxyFactoryAbi,
     moduleProxyFactoryAddress,
     'deployModule',
@@ -59,7 +59,7 @@ export const fractalModuleData = (
     bytecodeHash: keccak256(encodePacked(['bytes'], [fractalByteCodeLinear])),
   });
 
-  const enableFractalModuleTx = buildContractCallViem(
+  const enableFractalModuleTx = buildContractCall(
     GnosisSafeL2Abi,
     safeAddress,
     'enableModule',
