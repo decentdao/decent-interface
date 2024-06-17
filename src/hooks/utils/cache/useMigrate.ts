@@ -7,7 +7,6 @@ export const runMigrations = async (
   // @dev import.meta.glob can not be mocked in tests, so we pass the count as an argument
   migrations = import.meta.glob('./migrations/*'),
 ) => {
-  console.log('🚀 ~ migrations:', migrations);
   const migrationCount = Object.keys(migrations).length;
   const cacheVersion = getValue({ cacheName: CacheKeys.MIGRATION });
   const actualCacheVersion = cacheVersion || 0;
