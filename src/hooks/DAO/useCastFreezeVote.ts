@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract, getAddress } from 'viem';
 import { useWalletClient } from 'wagmi';
@@ -15,7 +15,7 @@ const useCastFreezeVote = ({
 }: {
   setPending: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [, contractCallPending, contractCallCastFreezeViem] = useTransaction();
+  const [contractCall, pending] = useTransaction();
   const {
     guardContracts: { freezeVotingContractAddress, freezeVotingType },
     node: {
@@ -24,9 +24,7 @@ const useCastFreezeVote = ({
   } = useFractal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(null, undefined, false);
 
-  useEffect(() => {
-    setPending(contractCallPending);
-  }, [setPending, contractCallPending]);
+  setPending(pending);
 
   const { t } = useTranslation('transaction');
   const { data: walletClient } = useWalletClient();
@@ -37,7 +35,7 @@ const useCastFreezeVote = ({
     if (freezeVotingType === FreezeVotingType.ERC721) {
       if (!walletClient) return;
 
-      contractCallCastFreezeViem({
+      contractCall({
         contractFn: () => {
           const freezeERC721VotingContract = getContract({
             abi: ERC721FreezeVotingAbi,
@@ -58,7 +56,7 @@ const useCastFreezeVote = ({
     } else if (freezeVotingType === FreezeVotingType.ERC20) {
       if (!walletClient) return;
 
-      contractCallCastFreezeViem({
+      contractCall({
         contractFn: () => {
           const freezeERC20VotingContract = getContract({
             abi: ERC20FreezeVotingAbi,
@@ -74,7 +72,7 @@ const useCastFreezeVote = ({
     } else if (freezeVotingType === FreezeVotingType.MULTISIG) {
       if (!walletClient) return;
 
-      contractCallCastFreezeViem({
+      contractCall({
         contractFn: () => {
           const freezeMultisigVotingContract = getContract({
             abi: MultisigFreezeVotingAbi,
@@ -91,7 +89,7 @@ const useCastFreezeVote = ({
       throw new Error('unknown freezeVotingType');
     }
   }, [
-    contractCallCastFreezeViem,
+    contractCall,
     freezeVotingContractAddress,
     freezeVotingType,
     getUserERC721VotingTokens,

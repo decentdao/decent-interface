@@ -49,7 +49,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const { t } = useTranslation(['proposal', 'common', 'transaction']);
 
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
-  const [, contractCallPending, contractCallViem] = useTransaction();
+  const [contractCall, contractCallPending] = useTransaction();
   const { loadSafeMultisigProposals } = useSafeMultisigProposals();
   const { data: walletClient } = useWalletClient();
 
@@ -125,7 +125,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         address: getAddress(freezeGuardContractAddress),
         client: walletClient,
       });
-      contractCallViem({
+      contractCall({
         contractFn: () =>
           freezeGuard.write.timelockTransaction([
             safeTx.to,
@@ -191,7 +191,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         }),
       );
 
-      contractCallViem({
+      contractCall({
         contractFn: () =>
           safeContract.write.execTransaction([
             safeTx.to,

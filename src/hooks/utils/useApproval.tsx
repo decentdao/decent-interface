@@ -9,7 +9,7 @@ const useApproval = (tokenAddress?: string, spenderAddress?: string, userBalance
   const { address: account } = useAccount();
   const [allowance, setAllowance] = useState(0n);
   const [approved, setApproved] = useState(false);
-  const [, pending, contractCallViem] = useTransaction();
+  const [contractCall, pending] = useTransaction();
   const { t } = useTranslation('treasury');
   const { data: walletClient } = useWalletClient();
 
@@ -35,7 +35,7 @@ const useApproval = (tokenAddress?: string, spenderAddress?: string, userBalance
   const approveTransaction = useCallback(async () => {
     if (!tokenContract || !account || !spenderAddress) return;
 
-    contractCallViem({
+    contractCall({
       contractFn: () => tokenContract.write.approve([getAddress(spenderAddress), maxUint256]),
       pendingMessage: t('approvalPendingMessage'),
       failedMessage: t('approvalFailedMessage'),
@@ -44,7 +44,7 @@ const useApproval = (tokenAddress?: string, spenderAddress?: string, userBalance
         setApproved(true);
       },
     });
-  }, [account, contractCallViem, tokenContract, spenderAddress, t]);
+  }, [account, contractCall, tokenContract, spenderAddress, t]);
 
   useEffect(() => {
     fetchAllowance();

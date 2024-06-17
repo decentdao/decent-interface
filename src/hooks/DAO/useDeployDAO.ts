@@ -9,7 +9,7 @@ import { useTransaction } from '../utils/useTransaction';
 import useBuildDAOTx from './useBuildDAOTx';
 
 const useDeployDAO = () => {
-  const [, contractCallPending, contractCallDeployViem] = useTransaction();
+  const [contractCall, pending] = useTransaction();
   const [build] = useBuildDAOTx();
 
   const { t } = useTranslation('transaction');
@@ -48,7 +48,7 @@ const useDeployDAO = () => {
           client: walletClient,
         });
 
-        contractCallDeployViem({
+        contractCall({
           contractFn: () => multiSendCallOnlyContract.write.multiSend([safeTx]),
           pendingMessage: t('pendingDeploySafe'),
           failedMessage: t('failedDeploySafe'),
@@ -59,10 +59,10 @@ const useDeployDAO = () => {
 
       deploy();
     },
-    [addressPrefix, build, contractCallDeployViem, multiSendCallOnly, t, walletClient],
+    [addressPrefix, build, contractCall, multiSendCallOnly, t, walletClient],
   );
 
-  return [deployDao, contractCallPending] as const;
+  return [deployDao, pending] as const;
 };
 
 export default useDeployDAO;

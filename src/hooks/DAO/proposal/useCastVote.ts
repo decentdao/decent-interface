@@ -54,7 +54,7 @@ const useCastVote = ({
   const azoriusGovernance = useMemo(() => governance as AzoriusGovernance, [governance]);
   const { type } = azoriusGovernance;
 
-  const [, contractCallPending, contractCallCastVoteViem] = useTransaction();
+  const [contractCall, pending] = useTransaction();
 
   const { remainingTokenIds, remainingTokenAddresses } = useUserERC721VotingTokens(
     null,
@@ -63,11 +63,9 @@ const useCastVote = ({
   const { getCanVote, getHasVoted } = useVoteContext();
   const { data: walletClient } = useWalletClient();
 
-  useEffect(() => {
-    if (setPending) {
-      setPending(contractCallPending);
-    }
-  }, [setPending, contractCallPending]);
+  if (setPending) {
+    setPending(pending);
+  }
 
   useEffect(() => {
     if (extendedSnapshotProposal) {
@@ -95,7 +93,7 @@ const useCastVote = ({
           address: getAddress(ozLinearVotingContractAddress),
           client: walletClient,
         });
-        contractCallCastVoteViem({
+        contractCall({
           contractFn: () => ozLinearVotingContract.write.vote([Number(proposal.proposalId), vote]),
           pendingMessage: t('pendingCastVote'),
           failedMessage: t('failedCastVote'),
@@ -117,7 +115,7 @@ const useCastVote = ({
           address: getAddress(erc721LinearVotingContractAddress),
           client: walletClient,
         });
-        contractCallCastVoteViem({
+        contractCall({
           contractFn: () =>
             erc721LinearVotingContract.write.vote([
               Number(proposal.proposalId),
@@ -138,7 +136,7 @@ const useCastVote = ({
       }
     },
     [
-      contractCallCastVoteViem,
+      contractCall,
       erc721LinearVotingContractAddress,
       getCanVote,
       getHasVoted,

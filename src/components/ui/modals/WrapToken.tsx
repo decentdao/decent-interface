@@ -31,7 +31,7 @@ export function WrapToken({ close }: { close: () => void }) {
   });
 
   const { loadERC20TokenAccountData } = useERC20LinearToken({ onMount: false });
-  const [, pending, contractCallViem] = useTransaction();
+  const [contractCall, pending] = useTransaction();
   const {
     approved,
     approveTransaction,
@@ -93,7 +93,7 @@ export function WrapToken({ close }: { close: () => void }) {
         client: walletClient,
       });
 
-      contractCallViem({
+      contractCall({
         contractFn: () => wrapperTokenContract.write.depositFor([account, amount.bigintValue!]),
         pendingMessage: t('wrapTokenPendingMessage'),
         failedMessage: t('wrapTokenFailedMessage'),
@@ -108,7 +108,7 @@ export function WrapToken({ close }: { close: () => void }) {
     },
     [
       account,
-      contractCallViem,
+      contractCall,
       governanceContracts,
       signer,
       close,

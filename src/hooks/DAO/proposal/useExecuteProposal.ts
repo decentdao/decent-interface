@@ -18,7 +18,7 @@ export default function useExecuteProposal() {
     governanceDispatch: action.dispatch,
   });
   const { data: walletClient } = useWalletClient();
-  const [, contractCallPending, contractCallViem] = useTransaction();
+  const [contractCall, pending] = useTransaction();
 
   const executeProposal = useCallback(
     (proposal: FractalProposal) => {
@@ -50,7 +50,7 @@ export default function useExecuteProposal() {
         operations.push(tx.operation);
       });
 
-      contractCallViem({
+      contractCall({
         contractFn: () =>
           azoriusContract.write.executeProposal([
             Number(proposal.proposalId),
@@ -68,11 +68,11 @@ export default function useExecuteProposal() {
         },
       });
     },
-    [azoriusContractAddress, contractCallViem, t, updateProposalState, walletClient],
+    [azoriusContractAddress, contractCall, t, updateProposalState, walletClient],
   );
 
   return {
-    pending: contractCallPending,
+    pending,
     executeProposal,
   };
 }
