@@ -13,10 +13,6 @@ import {
   ChildERC20Steps,
   RootERC721Steps,
   ChildERC721Steps,
-  MultisigSteps,
-  Erc20Steps,
-  Erc721Steps,
-  ChildSteps,
 } from '../../types';
 import { AzoriusGovernance } from './formComponents/AzoriusGovernance';
 import AzoriusNFTDetails from './formComponents/AzoriusNFTDetails';
@@ -59,32 +55,6 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
     }
   }, [mode, values.essentials.governance]);
 
-  const isMultisigSteps = (_steps: typeof steps): _steps is MultisigSteps => {
-    const multisigSteps = _steps as MultisigSteps;
-    return multisigSteps.includes(CreatorSteps.MULTISIG_DETAILS);
-  };
-
-  const isErc20Steps = (_steps: typeof steps): _steps is Erc20Steps => {
-    const erc20Steps = steps as Erc20Steps;
-    return (
-      erc20Steps.includes(CreatorSteps.AZORIUS_DETAILS) &&
-      erc20Steps.includes(CreatorSteps.ERC20_DETAILS)
-    );
-  };
-
-  const isErc721Steps = (_steps: typeof steps): _steps is Erc721Steps => {
-    const erc721Steps = steps as Erc721Steps;
-    return (
-      erc721Steps.includes(CreatorSteps.AZORIUS_DETAILS) &&
-      erc721Steps.includes(CreatorSteps.ERC721_DETAILS)
-    );
-  };
-
-  const isChildSteps = (_steps: typeof steps): _steps is ChildSteps => {
-    const childSteps = steps as ChildSteps;
-    return childSteps.includes(CreatorSteps.FREEZE_DETAILS);
-  };
-
   useEffect(() => {
     // @dev - The only possible way for this to become true if someone will choose governance option and then would switch network
     if (!createOptions.includes(values.essentials.governance)) {
@@ -105,7 +75,7 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
           />
         }
       />
-      {isMultisigSteps(steps) && (
+      {steps.includes(CreatorSteps.MULTISIG_DETAILS) && (
         <Route
           path={CreatorSteps.MULTISIG_DETAILS}
           element={
@@ -116,7 +86,7 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
           }
         />
       )}
-      {(isErc20Steps(steps) || isErc721Steps(steps)) && (
+      {steps.includes(CreatorSteps.AZORIUS_DETAILS) && (
         <Route
           path={CreatorSteps.AZORIUS_DETAILS}
           element={
@@ -127,7 +97,7 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
           }
         />
       )}
-      {isErc20Steps(steps) && (
+      {steps.includes(CreatorSteps.ERC20_DETAILS) && (
         <Route
           path={CreatorSteps.ERC20_DETAILS}
           element={
@@ -138,7 +108,7 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
           }
         />
       )}
-      {isErc721Steps(steps) && (
+      {steps.includes(CreatorSteps.ERC721_DETAILS) && (
         <Route
           path={CreatorSteps.ERC721_DETAILS}
           element={
@@ -149,7 +119,7 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
           }
         />
       )}
-      {isChildSteps(steps) && (
+      {steps.includes(CreatorSteps.FREEZE_DETAILS) && (
         <Route
           path={CreatorSteps.FREEZE_DETAILS}
           element={
