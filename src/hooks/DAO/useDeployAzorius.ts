@@ -9,7 +9,7 @@ import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { BaseContracts, ProposalExecuteData, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
+import { ProposalExecuteData, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../utils/useSignerOrProvider';
 import useSubmitProposal from './proposal/useSubmitProposal';
@@ -43,7 +43,6 @@ const useDeployAzorius = () => {
   } = useNetworkConfig();
   const {
     node: { daoAddress, safe },
-    baseContracts,
   } = useFractal();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
@@ -58,17 +57,13 @@ const useDeployAzorius = () => {
       shouldSetSnapshot?: boolean,
       customNonce?: number,
     ) => {
-      if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts || !publicClient) {
+      if (!daoAddress || !canUserCreateProposal || !safe || !publicClient) {
         return;
       }
-      const {} = baseContracts;
-
-      const builderBaseContracts: BaseContracts = {};
 
       const txBuilderFactory = new TxBuilderFactory(
         signerOrProvider,
         publicClient,
-        builderBaseContracts,
         true,
         daoData,
         fallbackHandler,
@@ -141,7 +136,6 @@ const useDeployAzorius = () => {
       daoAddress,
       canUserCreateProposal,
       safe,
-      baseContracts,
       publicClient,
       signerOrProvider,
       fallbackHandler,

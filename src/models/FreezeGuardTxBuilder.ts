@@ -19,7 +19,7 @@ import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
 import MultisigFreezeVotingAbi from '../assets/abi/MultisigFreezeVoting';
 import { buildContractCallViem } from '../helpers';
-import { BaseContracts, SafeTransaction, SubDAO, VotingStrategyType } from '../types';
+import { SafeTransaction, SubDAO, VotingStrategyType } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
 
@@ -55,7 +55,6 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   constructor(
     signerOrProvider: any,
     publicClient: PublicClient,
-    baseContracts: BaseContracts,
     daoData: SubDAO,
     safeContractAddress: Address,
     saltNum: bigint,
@@ -73,15 +72,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     parentStrategyType?: VotingStrategyType,
     parentStrategyAddress?: Address,
   ) {
-    super(
-      signerOrProvider,
-      publicClient,
-      baseContracts,
-      isAzorius,
-      daoData,
-      parentAddress,
-      parentTokenAddress,
-    );
+    super(signerOrProvider, publicClient, isAzorius, daoData, parentAddress, parentTokenAddress);
 
     this.safeContractAddress = safeContractAddress;
     this.saltNum = saltNum;

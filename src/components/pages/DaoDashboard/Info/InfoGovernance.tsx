@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import MultisigFreezeGuardAbi from '../../../../assets/abi/MultisigFreezeGuard';
-import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
@@ -24,7 +23,6 @@ export function InfoGovernance() {
   const provider = useEthersProvider();
   const publicClient = usePublicClient();
   const { getTimeDuration } = useTimeHelpers();
-  const baseContracts = useSafeContracts();
   const [timelockPeriod, setTimelockPeriod] = useState<string>();
   const [executionPeriod, setExecutionPeriod] = useState<string>();
   useEffect(() => {
@@ -35,7 +33,7 @@ export function InfoGovernance() {
         }
       };
       if (freezeGuardType == FreezeGuardType.MULTISIG) {
-        if (freezeGuardContractAddress && baseContracts && publicClient) {
+        if (freezeGuardContractAddress && publicClient) {
           const freezeGuardContract = getContract({
             abi: MultisigFreezeGuardAbi,
             address: getAddress(freezeGuardContractAddress),
@@ -71,7 +69,6 @@ export function InfoGovernance() {
 
     setTimelockInfo();
   }, [
-    baseContracts,
     executionPeriod,
     getTimeDuration,
     governance,

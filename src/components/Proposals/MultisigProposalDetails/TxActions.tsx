@@ -13,7 +13,6 @@ import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeMultisigProposals } from '../../../hooks/DAO/loaders/governance/useSafeMultisigProposals';
-import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
 import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
@@ -52,7 +51,6 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const [asyncRequest, asyncRequestPending] = useAsyncRequest();
   const [, contractCallPending, contractCallViem] = useTransaction();
   const { loadSafeMultisigProposals } = useSafeMultisigProposals();
-  const baseContracts = useSafeContracts();
   const { data: walletClient } = useWalletClient();
 
   if (user.votingWeight === 0n) return <></>;
@@ -98,7 +96,6 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     try {
       if (
         !multisigTx.confirmations ||
-        !baseContracts ||
         !freezeGuardContractAddress ||
         (multisigTx.data && !isHex(multisigTx.data)) ||
         !walletClient

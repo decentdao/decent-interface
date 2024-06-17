@@ -4,7 +4,6 @@ import { usePublicClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
-import useSafeContracts from '../../../../hooks/safe/useSafeContracts';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import {
   FractalProposal,
@@ -58,7 +57,6 @@ export function VoteContextProvider({
     governance: { type },
     governanceContracts: { ozLinearVotingContractAddress },
   } = useFractal();
-  const baseContracts = useSafeContracts();
 
   const { loadVotingWeight } = useSnapshotProposal(proposal as SnapshotProposal);
   const { remainingTokenIds, getUserERC721VotingTokens } = useUserERC721VotingTokens(
@@ -98,11 +96,7 @@ export function VoteContextProvider({
         if (isSnapshotProposal) {
           const votingWeightData = await loadVotingWeight();
           newCanVote = votingWeightData.votingWeight >= 1;
-        } else if (
-          type === GovernanceType.AZORIUS_ERC20 &&
-          ozLinearVotingContractAddress &&
-          baseContracts
-        ) {
+        } else if (type === GovernanceType.AZORIUS_ERC20 && ozLinearVotingContractAddress) {
           const ozLinearVotingContract = getContract({
             abi: LinearERC20VotingAbi,
             address: getAddress(ozLinearVotingContractAddress),
@@ -131,7 +125,6 @@ export function VoteContextProvider({
       setCanVoteLoading(false);
     },
     [
-      baseContracts,
       canVote,
       getUserERC721VotingTokens,
       hasVoted,

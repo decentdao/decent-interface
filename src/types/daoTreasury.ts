@@ -3,7 +3,6 @@ import {
   SafeCollectibleResponse,
   TransferResponse,
 } from '@safe-global/safe-service-client';
-import { ContractEvent } from './contract';
 import { ActivityBase } from './fractal';
 import { AllTransfersListResponse } from './safeGlobal';
 import { EthAddress } from './utils';
@@ -13,10 +12,11 @@ export enum TokenEventType {
   WITHDRAW = 'WITHDRAW',
 }
 
-export interface TokenEvent extends ContractEvent {
+export interface TokenEvent {
   transactionHash: string;
   blockNumber: number;
   eventType: TokenEventType;
+  blockTimestamp: number;
 }
 
 export interface TokenDepositEvent extends TokenEvent, EthAddress {

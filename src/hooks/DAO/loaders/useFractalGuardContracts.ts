@@ -8,7 +8,6 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { SafeInfoResponseWithGuard, FreezeGuardType, FreezeVotingType } from '../../../types';
-import useSafeContracts from '../../safe/useSafeContracts';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 
@@ -19,8 +18,6 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     node: { daoAddress, safe, fractalModules, isHierarchyLoaded },
     action,
   } = useFractal();
-  const baseContracts = useSafeContracts();
-
   const { chain } = useNetworkConfig();
 
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
@@ -33,9 +30,10 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       _safe: SafeInfoResponseWithGuard,
       _fractalModules: FractalModuleData[],
     ) => {
-      if (!baseContracts || !publicClient) {
+      if (!publicClient) {
         return;
       }
+
       const { guard } = _safe;
 
       const azoriusModule = _fractalModules?.find(
@@ -121,7 +119,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         };
       }
     },
-    [baseContracts, getZodiacModuleProxyMasterCopyData, publicClient],
+    [getZodiacModuleProxyMasterCopyData, publicClient],
   );
 
   const setGuardContracts = useCallback(async () => {

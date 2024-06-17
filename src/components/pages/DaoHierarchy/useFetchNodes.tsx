@@ -20,7 +20,6 @@ export function useFetchNodes(address?: string) {
 
   const {
     node: { safe, nodeHierarchy },
-    baseContracts,
   } = useFractal();
 
   const safeAPI = useSafeAPI();
@@ -42,7 +41,7 @@ export function useFetchNodes(address?: string) {
 
   const getDAOOwner = useCallback(
     async (safeInfo?: Partial<SafeInfoResponseWithGuard>) => {
-      if (safeInfo && safeInfo.guard && baseContracts && publicClient) {
+      if (safeInfo && safeInfo.guard && publicClient) {
         if (safeInfo.guard !== zeroAddress) {
           const guard = getContract({
             abi: MultisigFreezeGuardAbi,
@@ -80,7 +79,7 @@ export function useFetchNodes(address?: string) {
       }
       return undefined;
     },
-    [baseContracts, lookupModules, publicClient],
+    [lookupModules, publicClient],
   );
 
   const fetchDAOInfo = useCallback(

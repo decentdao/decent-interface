@@ -4,7 +4,6 @@ import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../assets/abi/GnosisSafeProxyFactory';
 import { getRandomBytes } from '../helpers';
 import {
-  BaseContracts,
   SafeMultisigDAO,
   SafeTransaction,
   SubDAO,
@@ -50,7 +49,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
   constructor(
     signerOrProvider: ethers.Signer | any,
     publicClient: PublicClient,
-    baseContracts: BaseContracts,
     isAzorius: boolean,
     daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
     fallbackHandler: string,
@@ -75,15 +73,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     parentAddress?: string,
     parentTokenAddress?: string,
   ) {
-    super(
-      signerOrProvider,
-      publicClient,
-      baseContracts,
-      isAzorius,
-      daoData,
-      parentAddress,
-      parentTokenAddress,
-    );
+    super(signerOrProvider, publicClient, isAzorius, daoData, parentAddress, parentTokenAddress);
 
     this.fallbackHandler = fallbackHandler;
     this.saltNum = getRandomBytes();
@@ -145,7 +135,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
     return new DaoTxBuilder(
       this.signerOrProvider,
       this.publicClient,
-      this.baseContracts,
       this.isAzorius,
       this.daoData,
       this.saltNum,
@@ -173,7 +162,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
     return new FreezeGuardTxBuilder(
       this.signerOrProvider,
       this.publicClient,
-      this.baseContracts,
       this.daoData as SubDAO,
       this.safeContractAddress!,
       this.saltNum,
@@ -205,7 +193,6 @@ export class TxBuilderFactory extends BaseTxBuilder {
     const azoriusTxBuilder = new AzoriusTxBuilder(
       this.signerOrProvider,
       this.publicClient,
-      this.baseContracts,
       this.daoData as AzoriusERC20DAO,
       this.safeContractAddress!,
       this.votesERC20WrapperMasterCopyAddress,

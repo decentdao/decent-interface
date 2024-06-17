@@ -6,7 +6,6 @@ import { useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import VotesERC20Abi from '../../../assets/abi/VotesERC20';
-import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
@@ -30,8 +29,6 @@ export function DelegateModal({ close }: { close: Function }) {
     action: { loadReadOnlyValues },
   } = useFractal();
 
-  const baseContracts = useSafeContracts();
-
   const signer = useEthersSigner();
   const azoriusGovernance = governance as AzoriusGovernance;
   const decentGovernance = azoriusGovernance as DecentGovernance;
@@ -42,7 +39,7 @@ export function DelegateModal({ close }: { close: Function }) {
   const { data: walletClient } = useWalletClient();
 
   const submitDelegation = async (values: { address: string }) => {
-    if (!votesTokenContractAddress || !baseContracts || !walletClient) return;
+    if (!votesTokenContractAddress || !walletClient) return;
     let validAddress = getAddress(values.address);
     if (validateENSName(validAddress) && signer) {
       validAddress = getAddress(await signer.resolveName(values.address));
@@ -65,7 +62,7 @@ export function DelegateModal({ close }: { close: Function }) {
     });
   };
   const submitLockedDelegation = async (values: { address: string }) => {
-    if (!lockReleaseContractAddress || !baseContracts || !signer || !walletClient) return;
+    if (!lockReleaseContractAddress || !signer || !walletClient) return;
     let validAddress = values.address;
     if (validateENSName(validAddress)) {
       validAddress = await signer.resolveName(values.address);

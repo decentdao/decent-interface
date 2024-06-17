@@ -8,7 +8,6 @@ import { FractalGovernanceAction } from '../../../../providers/App/governance/ac
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { VotingStrategyType } from '../../../../types';
 import { blocksToSeconds } from '../../../../utils/contract';
-import useSafeContracts from '../../../safe/useSafeContracts';
 import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC721LinearStrategy = () => {
@@ -18,7 +17,6 @@ export const useERC721LinearStrategy = () => {
   } = useFractal();
   const provider = useEthersProvider();
   const { getTimeDuration } = useTimeHelpers();
-  const baseContracts = useSafeContracts();
   const publicClient = usePublicClient();
 
   const erc721LinearVotingContract = useMemo(() => {
@@ -34,14 +32,8 @@ export const useERC721LinearStrategy = () => {
   }, [erc721LinearVotingContractAddress, publicClient]);
 
   const loadERC721Strategy = useCallback(async () => {
-    if (
-      !azoriusContractAddress ||
-      !provider ||
-      !baseContracts ||
-      !erc721LinearVotingContract ||
-      !publicClient
-    ) {
-      return {};
+    if (!azoriusContractAddress || !provider || !erc721LinearVotingContract || !publicClient) {
+      return;
     }
 
     const azoriusContract = getContract({
@@ -77,7 +69,6 @@ export const useERC721LinearStrategy = () => {
   }, [
     action,
     azoriusContractAddress,
-    baseContracts,
     erc721LinearVotingContract,
     getTimeDuration,
     provider,
