@@ -1,5 +1,5 @@
 import { useContext, useCallback, useEffect, useState, createContext, ReactNode } from 'react';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
