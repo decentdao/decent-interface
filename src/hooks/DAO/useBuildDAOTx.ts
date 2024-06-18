@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Address, getAddress } from 'viem';
+import { Address } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -48,8 +48,8 @@ const useBuildDAOTx = () => {
   const buildDao = useCallback(
     async (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
-      parentAddress?: string,
-      parentTokenAddress?: string,
+      parentAddress?: Address,
+      parentTokenAddress?: Address,
     ) => {
       let isAzorius = false;
 
@@ -87,8 +87,8 @@ const useBuildDAOTx = () => {
         linearVotingErc20MasterCopy,
         linearVotingErc721MasterCopy,
         moduleAzoriusMasterCopy,
-        parentAddress ? getAddress(parentAddress) : undefined,
-        parentTokenAddress ? getAddress(parentTokenAddress) : undefined,
+        parentAddress,
+        parentTokenAddress,
       );
 
       await txBuilderFactory.setupSafeData();

@@ -10,10 +10,10 @@ export const useFractalModules = () => {
   const lookupModules = useCallback(
     async (_moduleAddresses: string[]) => {
       const modules = await Promise.all(
-        _moduleAddresses.map(async moduleAddress => {
-          const masterCopyData = await getZodiacModuleProxyMasterCopyData(
-            getAddress(moduleAddress),
-          );
+        _moduleAddresses.map(async moduleAddressString => {
+          const moduleAddress = getAddress(moduleAddressString);
+
+          const masterCopyData = await getZodiacModuleProxyMasterCopyData(moduleAddress);
 
           let safeModule: FractalModuleData;
 

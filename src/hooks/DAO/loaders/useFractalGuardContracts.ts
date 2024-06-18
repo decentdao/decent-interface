@@ -43,7 +43,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
       if (azoriusModule) {
         const azoriusContract = getContract({
           abi: AzoriusAbi,
-          address: getAddress(azoriusModule.moduleAddress),
+          address: azoriusModule.moduleAddress,
           client: publicClient,
         });
 

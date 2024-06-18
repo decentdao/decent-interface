@@ -1,5 +1,6 @@
 import { Box, MenuList } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { NEUTRAL_2_82_TRANSPARENT } from '../../../../constants/common';
 import { useAccountFavorites } from '../../../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -33,7 +34,7 @@ export function SafesList() {
               <Box key={favorite}>
                 <SafeMenuItem
                   network={addressPrefix}
-                  address={favorite}
+                  address={getAddress(favorite)}
                 />
                 {favoritesList.length - 1 !== i && <Divider my="0.25rem" />}
               </Box>

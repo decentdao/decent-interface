@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../constants/common';
 import { CacheKeys } from '../../hooks/utils/cache/cacheDefaults';
 import { useLocalStorage } from '../../hooks/utils/cache/useLocalStorage';
@@ -140,7 +141,7 @@ export function AllSafesDrawer({ isOpen, onClose }: AllSafesDrawerProps) {
             <SafeDisplayRow
               key={favorite}
               network={addressPrefix}
-              address={favorite}
+              address={getAddress(favorite)}
             />
           ))}
         </DrawerBody>

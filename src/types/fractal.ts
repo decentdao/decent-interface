@@ -223,7 +223,7 @@ export interface Node
   extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {}
 
 export interface FractalModuleData {
-  moduleAddress: string;
+  moduleAddress: Address;
   moduleType: FractalModuleType;
 }
 
