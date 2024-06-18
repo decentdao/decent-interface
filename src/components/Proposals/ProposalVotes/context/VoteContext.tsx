@@ -104,7 +104,7 @@ export function VoteContextProvider({
           });
           newCanVote =
             (await ozLinearVotingContract.read.getVotingWeight([
-              getAddress(user.address),
+              user.address,
               Number(proposal.proposalId),
             ])) > 0n && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {

@@ -322,7 +322,7 @@ export interface ReadOnlyState {
 
 export interface ReadOnlyUser {
   /** The user's wallet address, if connected.  */
-  address?: string;
+  address?: Address;
   /** The number of delegated tokens for the connected Azorius DAO, 1 for a Multisig DAO signer */
   votingWeight: bigint;
 }

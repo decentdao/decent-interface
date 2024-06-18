@@ -114,7 +114,7 @@ export default function useUserERC721VotingTokens(
         };
       }
 
-      const userAddress = getAddress(user.address);
+      const userAddress = user.address;
       await Promise.all(
         // Using `map` instead of `forEach` to simplify usage of `Promise.all`
         // and guarantee syncronous contractFn assignment

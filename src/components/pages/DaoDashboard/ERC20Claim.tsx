@@ -1,7 +1,7 @@
 import { Alert, AlertTitle, Button, Flex, Text } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import ERC20ClaimAbi from '../../../assets/abi/ERC20Claim';
 import { Alert as AlertIcon } from '../../../assets/theme/custom/icons/Alert';
@@ -33,7 +33,7 @@ export function ERCO20Claim() {
       address: tokenClaimContractAddress,
       client: publicClient,
     });
-    const claimableAmount = await tokenClaimContract.read.getClaimAmount([getAddress(account)]);
+    const claimableAmount = await tokenClaimContract.read.getClaimAmount([account]);
     setUserClaimable(claimableAmount);
   }, [account, publicClient, tokenClaimContractAddress, type]);
 
@@ -57,7 +57,7 @@ export function ERCO20Claim() {
       client: walletClient,
     });
     contractCall({
-      contractFn: () => tokenClaimContract.write.claimTokens([getAddress(account)]),
+      contractFn: () => tokenClaimContract.write.claimTokens([account]),
       pendingMessage: t('pendingTokenClaim', {
         symbol: azoriusGovernance.votesToken.symbol,
         ns: 'transaction',

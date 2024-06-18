@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import VotesERC20Abi from '../../../../assets/abi/VotesERC20';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -90,9 +90,9 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     }
 
     const [tokenBalance, tokenDelegatee, tokenVotingWeight] = await Promise.all([
-      tokenContract.read.balanceOf([getAddress(account)]),
-      tokenContract.read.delegates([getAddress(account)]),
-      tokenContract.read.getVotes([getAddress(account)]),
+      tokenContract.read.balanceOf([account]),
+      tokenContract.read.delegates([account]),
+      tokenContract.read.getVotes([account]),
     ]);
 
     const tokenAccountData = {
@@ -125,7 +125,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     }
 
     const unwatch = tokenContract.watchEvent.DelegateVotesChanged(
-      { delegate: getAddress(account) },
+      { delegate: account },
       { onLogs: loadERC20TokenAccountData },
     );
 
@@ -140,15 +140,15 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     }
 
     const unwatchDelegator = tokenContract.watchEvent.DelegateChanged(
-      { delegator: getAddress(account) },
+      { delegator: account },
       { onLogs: loadERC20TokenAccountData },
     );
     const unwatchFromDelegate = tokenContract.watchEvent.DelegateChanged(
-      { fromDelegate: getAddress(account) },
+      { fromDelegate: account },
       { onLogs: loadERC20TokenAccountData },
     );
     const unwatchToDelegate = tokenContract.watchEvent.DelegateChanged(
-      { toDelegate: getAddress(account) },
+      { toDelegate: account },
       { onLogs: loadERC20TokenAccountData },
     );
 
@@ -165,11 +165,11 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     }
 
     const unwatchTo = tokenContract.watchEvent.Transfer(
-      { from: getAddress(account) },
+      { from: account },
       { onLogs: loadERC20TokenAccountData },
     );
     const unwatchFrom = tokenContract.watchEvent.Transfer(
-      { to: getAddress(account) },
+      { to: account },
       { onLogs: loadERC20TokenAccountData },
     );
 
