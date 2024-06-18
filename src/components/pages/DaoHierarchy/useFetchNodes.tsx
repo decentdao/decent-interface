@@ -59,7 +59,7 @@ export function useFetchNodes(address?: string) {
           if (azoriusModule && publicClient) {
             const azoriusContract = getContract({
               abi: AzoriusAbi,
-              address: getAddress(azoriusModule.moduleAddress),
+              address: azoriusModule.moduleAddress,
               client: publicClient,
             });
             const azoriusGuardAddress = await azoriusContract.read.getGuard();
@@ -85,7 +85,7 @@ export function useFetchNodes(address?: string) {
   const fetchDAOInfo = useCallback(
     async (safeAddress: string) => {
       if (safeAPI) {
-        return (await safeAPI.getSafeInfo(getAddress(safeAddress))) as SafeInfoResponseWithGuard;
+        return (await safeAPI.getSafeInfo(safeAddress)) as SafeInfoResponseWithGuard;
       }
     },
     [safeAPI],

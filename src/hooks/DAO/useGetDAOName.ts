@@ -43,7 +43,7 @@ const getDAOName = async ({
   });
 
   const events = await fractalRegistryContract.getEvents.FractalNameUpdated({
-    daoAddress: getAddress(address),
+    daoAddress: address,
   });
 
   const latestEvent = events.pop();

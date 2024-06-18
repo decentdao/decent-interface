@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, getAddress, getContract, isHex } from 'viem';
+import { Address, getContract, isHex } from 'viem';
 import { useWalletClient } from 'wagmi';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -53,7 +53,7 @@ const useDeployDAO = () => {
           pendingMessage: t('pendingDeploySafe'),
           failedMessage: t('failedDeploySafe'),
           successMessage: t('successDeploySafe'),
-          successCallback: () => successCallback(addressPrefix, getAddress(predictedSafeAddress)),
+          successCallback: () => successCallback(addressPrefix, predictedSafeAddress),
         });
       };
 

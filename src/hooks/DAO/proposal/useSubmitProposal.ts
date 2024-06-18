@@ -75,7 +75,7 @@ export default function useSubmitProposal() {
 
     return getContract({
       abi: AzoriusAbi,
-      address: getAddress(azoriusModule.moduleAddress),
+      address: azoriusModule.moduleAddress,
       client: walletClient,
     });
   }, [fractalModules, walletClient]);
@@ -285,8 +285,8 @@ export default function useSubmitProposal() {
 
       if (safeAddress && isAddress(safeAddress)) {
         // Submitting proposal to any DAO out of global context
-        const votingStrategyAddress = await getVotingStrategyAddress(getAddress(safeAddress));
-        const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
+        const votingStrategyAddress = await getVotingStrategyAddress(safeAddress);
+        const safeInfo = await safeAPI.getSafeInfo(safeAddress);
         const modules = await lookupModules(safeInfo.modules);
         const azoriusModule = getAzoriusModuleFromModules(modules);
         if (!azoriusModule || !votingStrategyAddress) {
@@ -308,7 +308,7 @@ export default function useSubmitProposal() {
             nonce,
             successCallback,
             safeAddress,
-            azoriusAddress: getAddress(azoriusModule.moduleAddress),
+            azoriusAddress: azoriusModule.moduleAddress,
             votingStrategyAddress,
           });
         }

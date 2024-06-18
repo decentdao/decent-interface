@@ -27,9 +27,9 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
 
   const handleClawBack = useCallback(async () => {
     if (childSafeInfo.daoAddress && parentAddress && safeAPI) {
-      const childSafeBalance = await safeAPI.getBalances(getAddress(childSafeInfo.daoAddress));
+      const childSafeBalance = await safeAPI.getBalances(childSafeInfo.daoAddress);
 
-      const santitizedParentAddress = getAddress(parentAddress);
+      const santitizedParentAddress = parentAddress;
       const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
 
       if (canUserCreateProposal && parentAddress && parentSafeInfo) {
@@ -53,7 +53,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               });
 
               return {
-                target: getAddress(fractalModule.moduleAddress),
+                target: fractalModule.moduleAddress,
                 value: 0,
                 calldata: fractalModuleCalldata,
               };
@@ -75,7 +75,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               });
 
               return {
-                target: getAddress(fractalModule.moduleAddress),
+                target: fractalModule.moduleAddress,
                 value: 0,
                 calldata: fractalModuleCalldata,
               };

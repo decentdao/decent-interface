@@ -23,7 +23,7 @@ const useVotingStrategyAddress = () => {
         if (!safeAPI) {
           throw new Error('Safe API not ready');
         }
-        const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
+        const safeInfo = await safeAPI.getSafeInfo(safeAddress);
         const safeModules = await lookupModules(safeInfo.modules);
         azoriusModule = getAzoriusModuleFromModules(safeModules);
         if (!azoriusModule) return;
@@ -41,7 +41,7 @@ const useVotingStrategyAddress = () => {
 
       const azoriusContract = getContract({
         abi: AzoriusAbi,
-        address: getAddress(azoriusModule.moduleAddress),
+        address: azoriusModule.moduleAddress,
         client: publicClient,
       });
 
