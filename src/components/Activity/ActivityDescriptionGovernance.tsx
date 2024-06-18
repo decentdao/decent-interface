@@ -1,5 +1,6 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName from '../../hooks/utils/useDisplayName';
@@ -64,7 +65,7 @@ function ProposalAuthor({ activity }: { activity: Activity }) {
     >
       <Avatar
         size="sm"
-        address={proposer}
+        address={getAddress(proposer)}
         url={avatarURL}
       />
       <Box>{author}</Box>
