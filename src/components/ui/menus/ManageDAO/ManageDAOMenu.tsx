@@ -125,7 +125,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
 
           const freezeVotingContract = getContract({
             abi: MultisigFreezeVotingAbi,
-            address: getAddress(guardContracts.freezeVotingContractAddress),
+            address: guardContracts.freezeVotingContractAddress,
             client: walletClient,
           });
           return freezeVotingContract.write.castFreezeVote();
@@ -138,7 +138,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
           }
           const contract = getContract({
             abi: ERC20FreezeVotingAbi,
-            address: getAddress(guardContracts.freezeVotingContractAddress),
+            address: guardContracts.freezeVotingContractAddress,
             client: walletClient,
           });
           return contract.write.castFreezeVote();
@@ -152,7 +152,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
             }
             const freezeERC721VotingContract = getContract({
               abi: ERC721FreezeVotingAbi,
-              address: getAddress(guardContracts.freezeVotingContractAddress),
+              address: guardContracts.freezeVotingContractAddress,
               client: walletClient,
             });
             return freezeERC721VotingContract.write.castFreezeVote([

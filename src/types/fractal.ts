@@ -126,7 +126,7 @@ export enum FractalProposalState {
 export interface GovernanceActivity extends ActivityBase {
   state: FractalProposalState | null;
   proposalId: string;
-  targets: string[];
+  targets: Address[];
   data?: ProposalData;
 }
 
@@ -233,8 +233,8 @@ export enum FractalModuleType {
   UNKNOWN,
 }
 export interface FractalGuardContracts {
-  freezeGuardContractAddress?: string;
-  freezeVotingContractAddress?: string;
+  freezeGuardContractAddress?: Address;
+  freezeVotingContractAddress?: Address;
   freezeGuardType: FreezeGuardType | null;
   freezeVotingType: FreezeVotingType | null;
   isGuardLoaded?: boolean;

@@ -10,7 +10,6 @@ import { usePublicClient } from 'wagmi';
 import MultisigFreezeGuardAbi from '../../assets/abi/MultisigFreezeGuard';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
-// import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   AssetTotals,
@@ -32,7 +31,6 @@ type FreezeGuardData = {
 
 export const useSafeTransactions = () => {
   const { chain } = useNetworkConfig();
-  // const provider = useEthersProvider();
   const { guardContracts } = useFractal();
   const decode = useSafeDecoder();
   const publicClient = usePublicClient();
@@ -294,7 +292,7 @@ export const useSafeTransactions = () => {
 
           const targets = data
             ? [...data.decodedTransactions.map(tx => tx.target)]
-            : [transaction.to];
+            : [getAddress(transaction.to)];
 
           const activity: Activity = {
             transaction,
@@ -325,7 +323,7 @@ export const useSafeTransactions = () => {
         const blockNumber = await publicClient.getBlockNumber();
         const averageBlockTime = BigInt(Math.round(await getAverageBlockTime(publicClient)));
         const freezeGuard = getContract({
-          address: getAddress(guardContracts.freezeGuardContractAddress),
+          address: guardContracts.freezeGuardContractAddress,
           abi: MultisigFreezeGuardAbi,
           client: publicClient,
         });

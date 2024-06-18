@@ -1,5 +1,5 @@
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
-import { GetContractEventsReturnType, GetContractReturnType, PublicClient } from 'viem';
+import { GetContractEventsReturnType, GetContractReturnType, PublicClient, getAddress } from 'viem';
 import AzoriusAbi from '../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../assets/abi/LinearERC721Voting';
@@ -301,7 +301,7 @@ export const parseDecodedData = (
   const dataDecoded = multiSigTransaction.dataDecoded as any as DataDecoded;
   if (dataDecoded && isMultiSigTransaction) {
     const decodedTransaction: DecodedTransaction = {
-      target: multiSigTransaction.to,
+      target: getAddress(multiSigTransaction.to),
       value: multiSigTransaction.value,
       function: dataDecoded.method,
       parameterTypes: dataDecoded.parameters ? dataDecoded.parameters.map(p => p.type) : [],
