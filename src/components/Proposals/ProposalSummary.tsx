@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import VotesERC20Abi from '../../assets/abi/VotesERC20';
 import { TOOLTIP_MAXW } from '../../constants/common';
@@ -73,10 +73,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
           client: publicClient,
         });
 
-        const pastVotingWeight = await tokenContract.read.getPastVotes([
-          getAddress(address),
-          startBlock,
-        ]);
+        const pastVotingWeight = await tokenContract.read.getPastVotes([address, startBlock]);
         setProposalsERC20VotingWeight(
           (pastVotingWeight / votesTokenDecimalsDenominator).toString(),
         );

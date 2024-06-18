@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react';
 import { useEffect, useState, useCallback } from 'react';
-import { erc721Abi, getAddress, getContract } from 'viem';
+import { Address, erc721Abi, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import {
   ReadOnlyState,
@@ -23,7 +23,7 @@ const INITIAL_READ_ONLY_VALUES: ReadOnlyState = {
  * These are useful dao or user specific values calculated from other stateful
  * values.
  */
-export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: string) => {
+export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: Address) => {
   const [readOnlyValues, setReadOnlyValues] = useState<ReadOnlyState>(INITIAL_READ_ONLY_VALUES);
   const publicClient = usePublicClient();
 
@@ -50,7 +50,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
                   address: address,
                   client: publicClient,
                 });
-                const userBalance = await tokenContract.read.balanceOf([getAddress(_account)]);
+                const userBalance = await tokenContract.read.balanceOf([_account]);
                 return userBalance * votingWeight;
               }),
             )
@@ -61,7 +61,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
       }
     };
 
-    const address = _account ? getAddress(_account) : undefined;
+    const address = _account;
     Sentry.setUser(address ? { id: address } : null);
 
     setReadOnlyValues({

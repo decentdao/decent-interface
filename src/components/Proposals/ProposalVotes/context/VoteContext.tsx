@@ -1,5 +1,5 @@
 import { useContext, useCallback, useEffect, useState, createContext, ReactNode } from 'react';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
@@ -104,7 +104,7 @@ export function VoteContextProvider({
           });
           newCanVote =
             (await ozLinearVotingContract.read.getVotingWeight([
-              getAddress(user.address),
+              user.address,
               Number(proposal.proposalId),
             ])) > 0n && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {

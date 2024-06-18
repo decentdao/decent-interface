@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { getContract, getAddress } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LockReleaseAbi from '../../../../assets/abi/LockRelease';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -37,7 +37,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
       action.dispatch({ type: DecentGovernanceAction.RESET_LOCKED_TOKEN_ACCOUNT_DATA });
       return;
     }
-    const account = getAddress(user.address);
+    const account = user.address;
 
     const [tokenAmountTotal, tokenAmountReleased, tokenDelegatee, tokenVotingWeight] =
       await Promise.all([
@@ -69,7 +69,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
       tokenAccount.current !== user.address + lockReleaseAddress &&
       onMount
     ) {
-      tokenAccount.current = getAddress(user.address) + lockReleaseAddress;
+      tokenAccount.current = user.address + lockReleaseAddress;
       loadLockedVotesToken();
     }
   }, [loadLockedVotesToken, lockReleaseAddress, onMount, user.address]);
@@ -80,7 +80,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
     }
 
     const unwatch = lockReleaseContract.watchEvent.DelegateVotesChanged(
-      { delegate: getAddress(user.address) },
+      { delegate: user.address },
       { onLogs: loadLockedVotesToken },
     );
 
@@ -94,7 +94,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
       return;
     }
 
-    const account = getAddress(user.address);
+    const account = user.address;
     const unwatchDelegator = lockReleaseContract.watchEvent.DelegateChanged(
       { delegator: account },
       { onLogs: loadLockedVotesToken },

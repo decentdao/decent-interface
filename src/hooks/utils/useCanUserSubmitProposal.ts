@@ -45,7 +45,7 @@ export function useCanUserCreateProposal() {
             address: votingStrategyAddress,
             client: publicClient,
           });
-          const isProposer = await votingContract.read.isProposer([getAddress(user.address)]);
+          const isProposer = await votingContract.read.isProposer([user.address]);
           return isProposer;
         } else {
           const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
@@ -62,7 +62,7 @@ export function useCanUserCreateProposal() {
               address: linearVotingErc20Address,
               client: publicClient,
             });
-            return ozLinearVotingContract.read.isProposer([getAddress(user.address)]);
+            return ozLinearVotingContract.read.isProposer([user.address]);
           }
         } else if (type === GovernanceType.AZORIUS_ERC721 && linearVotingErc721Address) {
           const erc721LinearVotingContract = getContract({
@@ -70,7 +70,7 @@ export function useCanUserCreateProposal() {
             address: linearVotingErc721Address,
             client: publicClient,
           });
-          return erc721LinearVotingContract.read.isProposer([getAddress(user.address)]);
+          return erc721LinearVotingContract.read.isProposer([user.address]);
         } else {
           return;
         }
