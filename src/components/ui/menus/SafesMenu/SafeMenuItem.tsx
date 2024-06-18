@@ -2,19 +2,19 @@ import { Box, Button, MenuItem, Text } from '@chakra-ui/react';
 import { Star } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress } from 'viem';
+import { Address } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useGetDAOName } from '../../../../hooks/DAO/useGetDAOName';
 
 export interface SafeMenuItemProps {
   network: string;
-  address: string;
+  address: Address;
   showAddress?: boolean;
   onClick?: () => void;
 }
 
 export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
-  const { daoName } = useGetDAOName({ address: getAddress(address) });
+  const { daoName } = useGetDAOName({ address });
 
   const navigate = useNavigate();
 

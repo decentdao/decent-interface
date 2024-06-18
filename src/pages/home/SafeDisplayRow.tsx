@@ -1,7 +1,6 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress } from 'viem';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -11,7 +10,7 @@ import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDis
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
-  const { daoName } = useGetDAOName({ address: getAddress(address) });
+  const { daoName } = useGetDAOName({ address: address });
   const navigate = useNavigate();
 
   const { t } = useTranslation('dashboard');
