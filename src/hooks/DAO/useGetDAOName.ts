@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Address, PublicClient, getAddress, getContract } from 'viem';
+import { Address, PublicClient, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import FractalRegistryAbi from '../../assets/abi/FractalRegistry';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';

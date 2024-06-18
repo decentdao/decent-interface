@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Address, getAddress, getContract } from 'viem';
+import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import AzoriusAbi from '../../assets/abi/Azorius';
 import { SENTINEL_ADDRESS } from '../../constants/common';
