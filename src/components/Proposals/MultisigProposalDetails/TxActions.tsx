@@ -131,7 +131,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       );
       const freezeGuard = getContract({
         abi: MultisigFreezeGuardAbi,
-        address: getAddress(freezeGuardContractAddress),
+        address: freezeGuardContractAddress,
         client: walletClient,
       });
       contractCall({

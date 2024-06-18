@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import MultisigFreezeGuardAbi from '../../../assets/abi/MultisigFreezeGuard';
 import { logError } from '../../../helpers/errorLogging';
@@ -96,7 +96,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
       freezeGuardType === FreezeGuardType.MULTISIG
         ? getContract({
             abi: MultisigFreezeGuardAbi,
-            address: getAddress(freezeGuardContractAddress),
+            address: freezeGuardContractAddress,
             client: publicClient,
           })
         : undefined;

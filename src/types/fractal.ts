@@ -233,8 +233,8 @@ export enum FractalModuleType {
   UNKNOWN,
 }
 export interface FractalGuardContracts {
-  freezeGuardContractAddress?: string;
-  freezeVotingContractAddress?: string;
+  freezeGuardContractAddress?: Address;
+  freezeVotingContractAddress?: Address;
   freezeGuardType: FreezeGuardType | null;
   freezeVotingType: FreezeVotingType | null;
   isGuardLoaded?: boolean;

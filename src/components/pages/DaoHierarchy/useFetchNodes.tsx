@@ -45,7 +45,7 @@ export function useFetchNodes(address?: string) {
         if (safeInfo.guard !== zeroAddress) {
           const guard = getContract({
             abi: MultisigFreezeGuardAbi,
-            address: getAddress(safeInfo.guard),
+            address: safeInfo.guard,
             client: publicClient,
           });
           const guardOwner = await guard.read.owner();

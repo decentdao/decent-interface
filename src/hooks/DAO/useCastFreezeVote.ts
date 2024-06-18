@@ -39,7 +39,7 @@ const useCastFreezeVote = ({
         contractFn: () => {
           const freezeERC721VotingContract = getContract({
             abi: ERC721FreezeVotingAbi,
-            address: getAddress(freezeVotingContractAddress),
+            address: freezeVotingContractAddress,
             client: walletClient,
           });
           return getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
@@ -60,7 +60,7 @@ const useCastFreezeVote = ({
         contractFn: () => {
           const freezeERC20VotingContract = getContract({
             abi: ERC20FreezeVotingAbi,
-            address: getAddress(freezeVotingContractAddress),
+            address: freezeVotingContractAddress,
             client: walletClient,
           });
           return freezeERC20VotingContract.write.castFreezeVote();
@@ -76,7 +76,7 @@ const useCastFreezeVote = ({
         contractFn: () => {
           const freezeMultisigVotingContract = getContract({
             abi: MultisigFreezeVotingAbi,
-            address: getAddress(freezeVotingContractAddress),
+            address: freezeVotingContractAddress,
             client: walletClient,
           });
           return freezeMultisigVotingContract.write.castFreezeVote();

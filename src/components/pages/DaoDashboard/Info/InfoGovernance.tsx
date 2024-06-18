@@ -2,7 +2,7 @@ import { Box, Flex, Text } from '@chakra-ui/react';
 import { Bank } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import MultisigFreezeGuardAbi from '../../../../assets/abi/MultisigFreezeGuard';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
@@ -34,7 +34,7 @@ export function InfoGovernance() {
         if (freezeGuardContractAddress && publicClient) {
           const freezeGuardContract = getContract({
             abi: MultisigFreezeGuardAbi,
-            address: getAddress(freezeGuardContractAddress),
+            address: freezeGuardContractAddress,
             client: publicClient,
           });
           const [contractTimelockPeriod, contractExecutionPeriod] = await Promise.all([
