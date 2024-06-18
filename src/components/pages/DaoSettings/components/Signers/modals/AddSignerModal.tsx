@@ -3,6 +3,7 @@ import { WarningCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
@@ -21,7 +22,7 @@ function AddSignerModal({
   currentThreshold,
 }: {
   close: () => void;
-  signers: string[];
+  signers: Address[];
   currentThreshold: number;
 }) {
   const {
@@ -46,7 +47,7 @@ function AddSignerModal({
       }
 
       await addSigner({
-        newSigner: validAddress,
+        newSigner: getAddress(validAddress),
         threshold: threshold,
         nonce: nonce,
         daoAddress: daoAddress,
@@ -83,7 +84,6 @@ function AddSignerModal({
               <Text>{t('addSignerLabel', { ns: 'modals' })}</Text>
               <Field name={'address'}>
                 {({ field }: FieldAttributes<any>) => (
-                  // LabelWrapper title styling needs to updated on @decent-org/fractal-ui, it seems
                   <LabelWrapper
                     subLabel={t('addSignerSublabel', { ns: 'modals' })}
                     errorMessage={field.value && errors.address}
