@@ -44,7 +44,7 @@ export type DAOEssentials = {
 
 export type DAOGovernorERC20Token<T = bigint> = {
   tokenCreationType: TokenCreationType;
-  tokenImportAddress?: string;
+  tokenImportAddress?: Address;
   tokenName: string;
   tokenSymbol: string;
   tokenSupply: T;

@@ -30,7 +30,7 @@ export const initialState: CreatorFormState = {
         },
       },
     ],
-    tokenImportAddress: '',
+    tokenImportAddress: undefined,
     parentAllocationAmount: {
       value: '',
     },

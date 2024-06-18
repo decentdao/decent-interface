@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { getAddress, getContract } from 'viem';
+import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import IVotesAbi from '../../../assets/abi/IVotes';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
@@ -52,12 +52,12 @@ export function usePrepareFormData() {
   );
 
   const checkVotesToken = useCallback(
-    async (address: string) => {
+    async (address: Address) => {
       if (publicClient) {
         try {
           const votesContract = getContract({
             abi: IVotesAbi,
-            address: getAddress(address),
+            address,
             client: publicClient,
           });
           await Promise.all([
