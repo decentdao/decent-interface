@@ -18,17 +18,12 @@ const useTemporaryProposals = () => {
       return;
     }
 
-    const toastId = toast.info(
-      t('pendingProposalNotice', {
-        tempProposalsLength: pendingProposals.length,
-      }),
-      {
-        autoClose: false,
-        closeOnClick: false,
-        draggable: false,
-        closeButton: false,
-      },
-    );
+    const toastId = toast.info(t('pendingProposalNotice'), {
+      autoClose: false,
+      closeOnClick: false,
+      draggable: false,
+      closeButton: false,
+    });
 
     return () => {
       toast.dismiss(toastId);

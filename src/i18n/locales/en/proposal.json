@@ -137,5 +137,5 @@
   "shutterPrivacy": "Shielded",
   "shutterVotesHidden": "Results hidden during voting",
   "totalVotes": "Total votes",
-  "pendingProposalNotice": "Waiting for confirmation on {{tempProposalsLength}} proposals"
+  "pendingProposalNotice": "Pending proposal still processing"
 }
