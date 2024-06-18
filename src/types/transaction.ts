@@ -1,7 +1,7 @@
 import { Address, Hex } from 'viem';
 
 export interface DecodedTransaction {
-  target: string;
+  target: Address;
   value: string;
   function: string;
   parameterTypes: string[];

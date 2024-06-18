@@ -292,7 +292,7 @@ export const useSafeTransactions = () => {
 
           const targets = data
             ? [...data.decodedTransactions.map(tx => tx.target)]
-            : [transaction.to];
+            : [getAddress(transaction.to)];
 
           const activity: Activity = {
             transaction,

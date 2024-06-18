@@ -126,7 +126,7 @@ export enum FractalProposalState {
 export interface GovernanceActivity extends ActivityBase {
   state: FractalProposalState | null;
   proposalId: string;
-  targets: string[];
+  targets: Address[];
   data?: ProposalData;
 }
 

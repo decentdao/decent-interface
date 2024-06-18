@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useCallback } from 'react';
-import { encodePacked, keccak256 } from 'viem';
+import { encodePacked, getAddress, keccak256 } from 'viem';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecodedTransaction, DecodedTxParam } from '../../types';
 import { buildSafeApiUrl, parseMultiSendTransactions } from '../../utils';
@@ -18,7 +18,7 @@ export const useSafeDecoder = () => {
         // a transaction without data is an Eth transfer
         return [
           {
-            target: to,
+            target: getAddress(to),
             value: value,
             function: 'n/a',
             parameterTypes: ['n/a'],
@@ -48,7 +48,7 @@ export const useSafeDecoder = () => {
         } else {
           decoded = [
             {
-              target: to,
+              target: getAddress(to),
               value: value,
               function: decodedData.method,
               parameterTypes: decodedData.parameters.map((param: DecodedTxParam) => param.type),
@@ -60,7 +60,7 @@ export const useSafeDecoder = () => {
       } catch (e) {
         return [
           {
-            target: to,
+            target: getAddress(to),
             value: value,
             function: 'unknown',
             parameterTypes: [],
