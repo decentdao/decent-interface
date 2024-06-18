@@ -39,7 +39,7 @@ export function DelegateModal({ close }: { close: Function }) {
 
   const submitDelegation = async (values: { address: string }) => {
     if (!votesTokenAddress || !walletClient) return;
-    let validAddress = getAddress(values.address);
+    let validAddress = values.address;
     if (validateENSName(validAddress) && publicClient) {
       const maybeEnsAddress = await publicClient.getEnsAddress({ name: values.address });
       if (maybeEnsAddress) {
@@ -54,7 +54,7 @@ export function DelegateModal({ close }: { close: Function }) {
     });
 
     contractCall({
-      contractFn: () => votingTokenContract.write.delegate([validAddress]),
+      contractFn: () => votingTokenContract.write.delegate([getAddress(validAddress)]),
       pendingMessage: t('pendingDelegateVote'),
       failedMessage: t('failedDelegateVote'),
       successMessage: t('successDelegateVote'),
