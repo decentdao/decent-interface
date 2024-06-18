@@ -232,7 +232,9 @@ export const useSafeTransactions = () => {
 
           // maps address for each transfer
           const transferAddresses = transaction.transfers.map(transfer =>
-            transfer.to.toLowerCase() === daoAddress.toLowerCase() ? transfer.from : transfer.to,
+            transfer.to.toLowerCase() === daoAddress.toLowerCase()
+              ? getAddress(transfer.from)
+              : getAddress(transfer.to),
           );
 
           // @note this indentifies transaction a simple ETH transfer
@@ -246,7 +248,7 @@ export const useSafeTransactions = () => {
             transferAmountTotals.push(
               `${formatWeiToValue(multiSigTransaction.value, 18)} ${chain.nativeCurrency.symbol}`,
             );
-            transferAddresses.push(multiSigTransaction.to);
+            transferAddresses.push(getAddress(multiSigTransaction.to));
           }
 
           const eventSafeTxHash = multiSigTransaction.safeTxHash;

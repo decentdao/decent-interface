@@ -3,6 +3,7 @@ import {
   SafeCollectibleResponse,
   TransferResponse,
 } from '@safe-global/safe-service-client';
+import { Address } from 'viem';
 import { ActivityBase } from './fractal';
 import { AllTransfersListResponse } from './safeGlobal';
 import { EthAddress } from './utils';
@@ -64,7 +65,7 @@ export enum TokenType {
 
 export interface TokenInfo {
   type: TokenType;
-  address: string;
+  address: Address;
   name: string;
   symbol: string;
   logoUri: string;
@@ -87,7 +88,7 @@ export enum TreasuryActivityTypes {
 }
 
 export interface TreasuryActivity extends ActivityBase {
-  transferAddresses: string[];
+  transferAddresses: Address[];
   transferAmountTotals: string[];
   isDeposit: boolean;
 }

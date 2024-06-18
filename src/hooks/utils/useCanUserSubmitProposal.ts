@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { getAddress, getContract } from 'viem';
+import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../../assets/abi/LinearERC721Voting';
@@ -21,14 +21,8 @@ export function useCanUserCreateProposal() {
 
   const { getVotingStrategyAddress } = useVotingStrategyAddress();
 
-  /**
-   * Performs a check whether user has access rights to create proposal for DAO
-   * @param {string} safeAddress - parameter to verify that user can create proposal for this specific DAO.
-   * Otherwise - it is checked for DAO from the global context.
-   * @returns {Promise<boolean>} - whether or not user has rights to create proposal either in global scope either for provided `safeAddress`.
-   */
   const getCanUserCreateProposal = useCallback(
-    async (safeAddress?: string): Promise<boolean | undefined> => {
+    async (safeAddress?: Address): Promise<boolean | undefined> => {
       if (!user.address || !safeAPI || !publicClient) {
         return;
       }
@@ -38,7 +32,7 @@ export function useCanUserCreateProposal() {
       };
 
       if (safeAddress) {
-        const votingStrategyAddress = await getVotingStrategyAddress(getAddress(safeAddress));
+        const votingStrategyAddress = await getVotingStrategyAddress(safeAddress);
         if (votingStrategyAddress) {
           const votingContract = getContract({
             abi: LinearERC20VotingAbi,
@@ -48,7 +42,7 @@ export function useCanUserCreateProposal() {
           const isProposer = await votingContract.read.isProposer([user.address]);
           return isProposer;
         } else {
-          const safeInfo = await safeAPI.getSafeInfo(getAddress(safeAddress));
+          const safeInfo = await safeAPI.getSafeInfo(safeAddress);
           return checkIsMultisigOwner(safeInfo.owners);
         }
       } else {
