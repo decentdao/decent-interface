@@ -13,22 +13,22 @@ export function SafesList() {
 
   const { t } = useTranslation('dashboard');
   return (
-    <MenuList
-      rounded="0.5rem"
-      bg={NEUTRAL_2_82_TRANSPARENT}
-      backdropFilter="auto"
-      backdropBlur="10px"
-      border="1px solid"
-      borderColor="neutral-3"
-    >
+    <MenuList>
       <ErrorBoundary fallback={MySafesErrorFallback}>
         <Box py="0.25rem">
           {favoritesList.length === 0 ? (
             <Box p="1rem 1rem">{t('emptyFavorites')}</Box>
           ) : (
             <Box
-              maxHeight="20rem"
+              backdropFilter="auto"
+              backdropBlur="10px"
+              bg={NEUTRAL_2_82_TRANSPARENT}
+              border="1px solid"
+              borderColor="neutral-3"
               className="scroll-dark"
+              maxHeight="20rem"
+              overflowY="auto"
+              rounded="0.5rem"
             >
               {favoritesList.map((favorite, i) => (
                 <Box key={favorite}>
