@@ -5,7 +5,7 @@ import {
   TransferWithTokenInfoResponse,
 } from '@safe-global/safe-service-client';
 import { useCallback } from 'react';
-import { getAddress, getContract, zeroAddress } from 'viem';
+import { Address, getAddress, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import MultisigFreezeGuardAbi from '../../assets/abi/MultisigFreezeGuard';
 import { isApproved, isRejected } from '../../helpers/activity';
@@ -38,7 +38,7 @@ export const useSafeTransactions = () => {
   const getState = useCallback(
     async (
       activities: Activity[],
-      freezeGuardAddress?: string,
+      freezeGuardAddress?: Address,
       freezeGuardData?: FreezeGuardData,
     ) => {
       if (freezeGuardAddress && freezeGuardData && publicClient) {
@@ -69,11 +69,7 @@ export const useSafeTransactions = () => {
             } else {
               // it's not executed or rejected, so we need to check the timelock status
               const timelockedTimestampMs =
-                (await getTxTimelockedTimestamp(
-                  activity,
-                  getAddress(freezeGuardAddress),
-                  publicClient,
-                )) * 1000;
+                (await getTxTimelockedTimestamp(activity, freezeGuardAddress, publicClient)) * 1000;
               if (timelockedTimestampMs === 0) {
                 // not yet timelocked
                 if (isApproved(multiSigTransaction)) {
@@ -287,7 +283,7 @@ export const useSafeTransactions = () => {
               : {
                   decodedTransactions: await decode(
                     multiSigTransaction.value,
-                    multiSigTransaction.to,
+                    getAddress(multiSigTransaction.to),
                     multiSigTransaction.data,
                   ),
                 };

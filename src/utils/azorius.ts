@@ -328,7 +328,7 @@ export function getAzoriusModuleFromModules(modules: FractalModuleData[]) {
 }
 
 export const decodeTransactions = async (
-  _decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
+  _decode: (value: string, to: Address, data?: string | undefined) => Promise<DecodedTransaction[]>,
   _transactions: MetaTransaction[],
 ) => {
   const decodedTransactions = await Promise.all(

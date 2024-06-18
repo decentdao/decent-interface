@@ -4,7 +4,6 @@ import {
   zeroHash,
   keccak256,
   encodePacked,
-  getAddress,
   encodeFunctionData,
   isHex,
   hexToBigInt,
@@ -33,7 +32,7 @@ export const safeData = async (
   const createSafeCalldata = encodeFunctionData({
     functionName: 'setup',
     args: [
-      signers.map(signer => getAddress(signer)),
+      signers,
       1n, // Threshold
       zeroAddress,
       zeroHash,

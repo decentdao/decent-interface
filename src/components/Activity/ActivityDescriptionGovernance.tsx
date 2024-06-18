@@ -65,7 +65,7 @@ function ProposalAuthor({ activity }: { activity: Activity }) {
     >
       <Avatar
         size="sm"
-        address={getAddress(proposer)}
+        address={proposer}
         url={avatarURL}
       />
       <Box>{author}</Box>

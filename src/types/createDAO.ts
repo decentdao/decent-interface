@@ -79,7 +79,7 @@ export type DAOFreezeGuardConfig<T = bigint> = {
 };
 
 export interface SafeConfiguration {
-  trustedAddresses: string[];
+  trustedAddresses: Address[];
   signatureThreshold: number;
   numOfSigners?: number;
   customNonce: number;

@@ -6,7 +6,6 @@ import {
   keccak256,
   encodeAbiParameters,
   parseAbiParameters,
-  getAddress,
   isAddress,
   encodeFunctionData,
   PublicClient,
@@ -333,8 +332,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private calculateTokenAllocations(
     azoriusGovernanceDaoData: AzoriusERC20DAO,
   ): [Address[], bigint[]] {
-    const tokenAllocationsOwners = azoriusGovernanceDaoData.tokenAllocations.map(tokenAllocation =>
-      getAddress(tokenAllocation.address),
+    const tokenAllocationsOwners = azoriusGovernanceDaoData.tokenAllocations.map(
+      tokenAllocation => tokenAllocation.address,
     );
     const tokenAllocationsValues = azoriusGovernanceDaoData.tokenAllocations.map(
       tokenAllocation => tokenAllocation.amount || 0n,

@@ -1,3 +1,4 @@
+import { zeroAddress } from 'viem';
 import {
   CreatorFormState,
   GovernanceType,
@@ -24,7 +25,7 @@ export const initialState: CreatorFormState = {
     tokenSymbol: '',
     tokenAllocations: [
       {
-        address: '',
+        address: zeroAddress,
         amount: {
           value: '',
         },
@@ -98,7 +99,7 @@ export const initialState: CreatorFormState = {
     },
   },
   multisig: {
-    trustedAddresses: [''],
+    trustedAddresses: [],
     signatureThreshold: 1,
     numOfSigners: 1,
     customNonce: 0,

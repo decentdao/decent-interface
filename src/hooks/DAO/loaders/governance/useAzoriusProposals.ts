@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
+  Address,
   GetContractEventsReturnType,
   GetContractReturnType,
   PublicClient,
@@ -147,7 +148,7 @@ export const useAzoriusProposals = () => {
       _publicClient: PublicClient | undefined,
       _decode: (
         value: string,
-        to: string,
+        to: Address,
         data?: string | undefined,
       ) => Promise<DecodedTransaction[]>,
       _proposalLoaded: OnProposalLoaded,
