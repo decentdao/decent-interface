@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { GetContractReturnType, PublicClient, erc721Abi, getAddress, getContract } from 'viem';
+import { Address, GetContractReturnType, PublicClient, erc721Abi, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC721VotingAbi from '../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -10,7 +10,7 @@ import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 /**
  * Retrieves list of ERC-721 voting tokens for the supplied `address`(aka `user.address`) param
  * @param {string} [proposalId] - Proposal ID. When it's provided - calculates `remainingTokenIds` and `remainingTokenAddresses` that user can use for voting on speicific proposal.
- * @param {string|null} [safeAddress] - address of Safe{Wallet}, for which voting tokens should be retrieved. If not provided - these are used from global context.
+ * @param {Address|null} [safeAddress] - address of Safe{Wallet}, for which voting tokens should be retrieved. If not provided - these are used from global context.
  * @param {boolean} [loadOnMount] - whether to fetch voting tokens on component mount or not. Leaves the space to fetch those tokens via getUserERC721VotingTokens
  * @returns {string[]} `totalVotingTokenIds` - list of all ERC-721 tokens that are held by `address`.
  * @returns {string[]} `totalVotingTokenAddresses` - list of contract addresses that corresponds to token `totalVotingTokenIds` array. Aka if user holds 3 tokens of from 1 NFT contract - the address of contract will be repeated 3 times.
@@ -18,7 +18,7 @@ import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
  * @returns {string[]} `remainingTokenAddresses` - same as `totalVotingTokenAddresses` - repeats contract address of NFT for each token ID in `remainingTokenIds` array.
  */
 export default function useUserERC721VotingTokens(
-  safeAddress: string | null,
+  safeAddress: Address | null,
   proposalId?: string,
   loadOnMount: boolean = true,
 ) {
@@ -42,12 +42,12 @@ export default function useUserERC721VotingTokens(
   const { erc721Tokens } = azoriusGovernance;
 
   const getUserERC721VotingTokens = useCallback(
-    async (_safeAddress: string | null, _proposalId?: number) => {
-      const totalTokenAddresses: string[] = [];
+    async (_safeAddress: Address | null, _proposalId?: number) => {
+      const totalTokenAddresses: Address[] = [];
       const totalTokenIds: string[] = [];
-      const tokenAddresses: string[] = [];
+      const tokenAddresses: Address[] = [];
       const tokenIds: string[] = [];
-      const userERC721Tokens = new Map<string, Set<string>>();
+      const userERC721Tokens = new Map<Address, Set<string>>();
 
       let govTokens = erc721Tokens;
       let votingContract:
@@ -65,7 +65,7 @@ export default function useUserERC721VotingTokens(
 
       if (_safeAddress && daoAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
-        const votingStrategyAddress = await getVotingStrategyAddress(getAddress(_safeAddress));
+        const votingStrategyAddress = await getVotingStrategyAddress(_safeAddress);
         if (votingStrategyAddress) {
           votingContract = getContract({
             abi: LinearERC721VotingAbi,
@@ -175,7 +175,7 @@ export default function useUserERC721VotingTokens(
               if (_proposalId) {
                 const tokenVoted = await votingContract.read.hasVoted([
                   _proposalId,
-                  getAddress(tokenAddress),
+                  tokenAddress,
                   BigInt(tokenId),
                 ]);
                 if (!tokenVoted) {

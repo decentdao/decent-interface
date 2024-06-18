@@ -2,17 +2,17 @@ import { Box, BoxProps, Button, Tooltip, Icon, IconButton } from '@chakra-ui/rea
 import { Star } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
+import { Address } from 'viem';
 import { useAccountFavorites } from '../../../hooks/DAO/loaders/useFavorites';
 
 interface Props extends BoxProps {
-  safeAddress: string;
+  safeAddress: Address;
 }
 
 export function FavoriteIcon({ safeAddress, ...rest }: Props) {
   const { favoritesList, toggleFavorite } = useAccountFavorites();
   const isFavorite = useMemo(
-    () => (!!safeAddress ? favoritesList.includes(getAddress(safeAddress)) : false),
+    () => (!!safeAddress ? favoritesList.includes(safeAddress) : false),
     [favoritesList, safeAddress],
   );
   const { t } = useTranslation();

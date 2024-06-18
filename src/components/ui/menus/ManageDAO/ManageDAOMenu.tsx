@@ -2,7 +2,7 @@ import { Icon, IconButton } from '@chakra-ui/react';
 import { GearFine } from '@phosphor-icons/react';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Address, getAddress, getContract } from 'viem';
+import { Address, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import ERC20FreezeVotingAbi from '../../../../assets/abi/ERC20FreezeVoting';
 import ERC721FreezeVotingAbi from '../../../../assets/abi/ERC721FreezeVoting';
@@ -156,7 +156,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
               client: walletClient,
             });
             return freezeERC721VotingContract.write.castFreezeVote([
-              tokensInfo.totalVotingTokenAddresses.map(a => getAddress(a)),
+              tokensInfo.totalVotingTokenAddresses,
               tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
             ]);
           });

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { GetContractReturnType, PublicClient, getContract, zeroAddress } from 'viem';
+import { Address, GetContractReturnType, PublicClient, getContract, zeroAddress } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import ERC20FreezeVotingAbi from '../../../assets/abi/ERC20FreezeVoting';
 import ERC721FreezeVotingAbi from '../../../assets/abi/ERC721FreezeVoting';
@@ -22,7 +22,7 @@ export const useFractalFreeze = ({
   parentSafeAddress,
 }: {
   loadOnMount?: boolean;
-  parentSafeAddress: string | null;
+  parentSafeAddress: Address | null;
 }) => {
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();
