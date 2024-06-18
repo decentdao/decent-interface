@@ -1,6 +1,6 @@
 import { useMemo, useRef, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PublicClient, isAddress, zeroAddress } from 'viem';
+import { PublicClient, isAddress } from 'viem';
 import { normalize } from 'viem/ens';
 import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
@@ -30,7 +30,7 @@ export async function validateAddress({
     } else {
       return {
         validation: {
-          address: zeroAddress,
+          address: '',
           isValidAddress: false,
         },
         isValid: false,
@@ -49,7 +49,7 @@ export async function validateAddress({
   } else {
     return {
       validation: {
-        address: zeroAddress,
+        address: '',
         isValidAddress,
       },
       isValid: false,

@@ -25,7 +25,7 @@ export const initialState: CreatorFormState = {
     tokenSymbol: '',
     tokenAllocations: [
       {
-        address: zeroAddress,
+        address: '',
         amount: {
           value: '',
         },

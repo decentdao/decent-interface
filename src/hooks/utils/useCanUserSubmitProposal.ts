@@ -21,6 +21,12 @@ export function useCanUserCreateProposal() {
 
   const { getVotingStrategyAddress } = useVotingStrategyAddress();
 
+  /**
+   * Performs a check whether user has access rights to create proposal for DAO
+   * @param {string} safeAddress - parameter to verify that user can create proposal for this specific DAO.
+   * Otherwise - it is checked for DAO from the global context.
+   * @returns {Promise<boolean>} - whether or not user has rights to create proposal either in global scope either for provided `safeAddress`.
+   */
   const getCanUserCreateProposal = useCallback(
     async (safeAddress?: Address): Promise<boolean | undefined> => {
       if (!user.address || !safeAPI || !publicClient) {

@@ -48,7 +48,7 @@ export type DAOGovernorERC20Token<T = bigint> = {
   tokenName: string;
   tokenSymbol: string;
   tokenSupply: T;
-  tokenAllocations: TokenAllocation<T>[];
+  tokenAllocations: { amount: T; address: string }[];
   parentAllocationAmount: T;
 };
 

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Hex } from 'viem';
+import { Hex, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { CreateProposalForm } from '../../../types/proposalBuilder';
 import { encodeFunction } from '../../../utils/crypto';
@@ -41,7 +41,7 @@ export function usePrepareProposal() {
               return address;
             }
           }
-          return tx.targetAddress;
+          return getAddress(tx.targetAddress);
         }),
       );
 
