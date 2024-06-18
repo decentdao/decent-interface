@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, Hex, getAddress, getContract } from 'viem';
+import { Address, Hex, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import AzoriusAbi from '../../../assets/abi/Azorius';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -12,7 +12,7 @@ export default function useExecuteProposal() {
   const { t } = useTranslation('transaction');
 
   const { governanceContracts, action } = useFractal();
-  const { azoriusContractAddress } = governanceContracts;
+  const { moduleAzoriusAddress } = governanceContracts;
   const updateProposalState = useUpdateProposalState({
     governanceContracts,
     governanceDispatch: action.dispatch,
@@ -24,7 +24,7 @@ export default function useExecuteProposal() {
     (proposal: FractalProposal) => {
       const azoriusProposal = proposal as AzoriusProposal;
       if (
-        !azoriusContractAddress ||
+        !moduleAzoriusAddress ||
         !azoriusProposal.data ||
         !azoriusProposal.data.transactions ||
         !walletClient
@@ -34,7 +34,7 @@ export default function useExecuteProposal() {
 
       const azoriusContract = getContract({
         abi: AzoriusAbi,
-        address: getAddress(azoriusContractAddress),
+        address: moduleAzoriusAddress,
         client: walletClient,
       });
 
@@ -68,7 +68,7 @@ export default function useExecuteProposal() {
         },
       });
     },
-    [azoriusContractAddress, contractCall, t, updateProposalState, walletClient],
+    [moduleAzoriusAddress, contractCall, t, updateProposalState, walletClient],
   );
 
   return {

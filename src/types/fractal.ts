@@ -198,12 +198,12 @@ export interface Fractal {
 }
 
 export interface FractalGovernanceContracts {
-  ozLinearVotingContractAddress?: string;
-  erc721LinearVotingContractAddress?: string;
-  azoriusContractAddress?: string;
-  votesTokenContractAddress?: string;
-  lockReleaseContractAddress?: string;
-  underlyingTokenAddress?: string;
+  linearVotingErc20Address?: Address;
+  linearVotingErc721Address?: Address;
+  moduleAzoriusAddress?: Address;
+  votesTokenAddress?: Address;
+  lockReleaseAddress?: Address;
+  underlyingTokenAddress?: Address;
   isLoaded: boolean;
 }
 

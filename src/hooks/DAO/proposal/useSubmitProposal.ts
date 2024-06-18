@@ -63,7 +63,7 @@ export default function useSubmitProposal() {
   const {
     node: { safe, fractalModules },
     guardContracts: { freezeVotingContractAddress },
-    governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
+    governanceContracts: { linearVotingErc20Address, linearVotingErc721Address },
   } = useFractal();
   const safeAPI = useSafeAPI();
 
@@ -314,9 +314,7 @@ export default function useSubmitProposal() {
         }
       } else {
         const votingStrategyAddress =
-          ozLinearVotingContractAddress ||
-          erc721LinearVotingContractAddress ||
-          freezeVotingContractAddress;
+          linearVotingErc20Address || linearVotingErc721Address || freezeVotingContractAddress;
 
         if (!globalAzoriusContract || !votingStrategyAddress) {
           await submitMultisigProposal({
@@ -344,12 +342,12 @@ export default function useSubmitProposal() {
       }
     },
     [
-      erc721LinearVotingContractAddress,
+      linearVotingErc721Address,
       freezeVotingContractAddress,
       getVotingStrategyAddress,
       globalAzoriusContract,
       lookupModules,
-      ozLinearVotingContractAddress,
+      linearVotingErc20Address,
       safe?.address,
       safeAPI,
       submitAzoriusProposal,

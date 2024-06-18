@@ -29,7 +29,7 @@ export default function useUserERC721VotingTokens(
 
   const {
     node: { daoAddress },
-    governanceContracts: { erc721LinearVotingContractAddress },
+    governanceContracts: { linearVotingErc721Address },
     governance,
     readOnly: { user },
   } = useFractal();
@@ -97,10 +97,10 @@ export default function useUserERC721VotingTokens(
         }
       }
 
-      if (erc721LinearVotingContractAddress && !votingContract) {
+      if (linearVotingErc721Address && !votingContract) {
         votingContract = getContract({
           abi: LinearERC721VotingAbi,
-          address: getAddress(erc721LinearVotingContractAddress),
+          address: linearVotingErc721Address,
           client: publicClient,
         });
       }
@@ -197,7 +197,7 @@ export default function useUserERC721VotingTokens(
     },
     [
       daoAddress,
-      erc721LinearVotingContractAddress,
+      linearVotingErc721Address,
       erc721Tokens,
       getVotingStrategyAddress,
       publicClient,
@@ -217,10 +217,10 @@ export default function useUserERC721VotingTokens(
   }, [getUserERC721VotingTokens, proposalId, safeAddress]);
 
   useEffect(() => {
-    if (loadOnMount && erc721LinearVotingContractAddress) {
+    if (loadOnMount && linearVotingErc721Address) {
       loadUserERC721VotingTokens();
     }
-  }, [loadUserERC721VotingTokens, loadOnMount, erc721LinearVotingContractAddress]);
+  }, [loadUserERC721VotingTokens, loadOnMount, linearVotingErc721Address]);
 
   return {
     totalVotingTokenIds,

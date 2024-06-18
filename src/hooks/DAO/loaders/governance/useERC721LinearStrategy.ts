@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import AzoriusAbi from '../../../../assets/abi/Azorius';
 import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
@@ -11,32 +11,32 @@ import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC721LinearStrategy = () => {
   const {
-    governanceContracts: { erc721LinearVotingContractAddress, azoriusContractAddress },
+    governanceContracts: { linearVotingErc721Address, moduleAzoriusAddress },
     action,
   } = useFractal();
   const { getTimeDuration } = useTimeHelpers();
   const publicClient = usePublicClient();
 
   const erc721LinearVotingContract = useMemo(() => {
-    if (!erc721LinearVotingContractAddress || !publicClient) {
+    if (!linearVotingErc721Address || !publicClient) {
       return;
     }
 
     return getContract({
       abi: LinearERC721VotingAbi,
-      address: getAddress(erc721LinearVotingContractAddress),
+      address: linearVotingErc721Address,
       client: publicClient,
     });
-  }, [erc721LinearVotingContractAddress, publicClient]);
+  }, [linearVotingErc721Address, publicClient]);
 
   const loadERC721Strategy = useCallback(async () => {
-    if (!azoriusContractAddress || !erc721LinearVotingContract || !publicClient) {
+    if (!moduleAzoriusAddress || !erc721LinearVotingContract || !publicClient) {
       return;
     }
 
     const azoriusContract = getContract({
       abi: AzoriusAbi,
-      address: getAddress(azoriusContractAddress),
+      address: moduleAzoriusAddress,
       client: publicClient,
     });
 
@@ -64,7 +64,7 @@ export const useERC721LinearStrategy = () => {
       strategyType: VotingStrategyType.LINEAR_ERC721,
     };
     action.dispatch({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
-  }, [action, azoriusContractAddress, erc721LinearVotingContract, getTimeDuration, publicClient]);
+  }, [action, moduleAzoriusAddress, erc721LinearVotingContract, getTimeDuration, publicClient]);
 
   useEffect(() => {
     if (!erc721LinearVotingContract) {

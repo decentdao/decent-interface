@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { erc721Abi, getAddress, getContract, zeroAddress } from 'viem';
+import { erc721Abi, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -7,17 +7,17 @@ import { FractalGovernanceAction } from '../../../../providers/App/governance/ac
 import { ERC721TokenData } from '../../../../types';
 export default function useERC721Tokens() {
   const {
-    governanceContracts: { erc721LinearVotingContractAddress },
+    governanceContracts: { linearVotingErc721Address },
     action,
   } = useFractal();
   const publicClient = usePublicClient();
   const loadERC721Tokens = useCallback(async () => {
-    if (!erc721LinearVotingContractAddress || !publicClient) {
+    if (!linearVotingErc721Address || !publicClient) {
       return;
     }
     const erc721LinearVotingContract = getContract({
       abi: LinearERC721VotingAbi,
-      address: getAddress(erc721LinearVotingContractAddress),
+      address: linearVotingErc721Address,
       client: publicClient,
     });
     const addresses = await erc721LinearVotingContract.read.getAllTokenAddresses();
@@ -44,7 +44,7 @@ export default function useERC721Tokens() {
       type: FractalGovernanceAction.SET_ERC721_TOKENS_DATA,
       payload: erc721Tokens,
     });
-  }, [action, erc721LinearVotingContractAddress, publicClient]);
+  }, [action, linearVotingErc721Address, publicClient]);
 
   return loadERC721Tokens;
 }
