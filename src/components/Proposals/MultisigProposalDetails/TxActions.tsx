@@ -175,7 +175,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
       const safeContract = getContract({
         abi: GnosisSafeL2Abi,
-        address: getAddress(safe.address),
+        address: safe.address,
         client: walletClient,
       });
 

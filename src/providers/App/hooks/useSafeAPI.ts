@@ -22,6 +22,7 @@ import SafeServiceClient, {
 } from '@safe-global/safe-service-client';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
+import { getAddress } from 'viem';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
 import {
   DBObjectKeys,
@@ -212,7 +213,11 @@ class CachingSafeServiceClient extends SafeServiceClient {
   async getSafeData(safeAddress: string): Promise<SafeInfoResponseWithGuard> {
     const safeInfoResponse = await this.getSafeInfo(safeAddress);
     const nextNonce = await this.getNextNonce(safeAddress);
-    const safeInfo = { ...safeInfoResponse, nextNonce };
+    const safeInfo = {
+      ...safeInfoResponse,
+      nextNonce,
+      address: getAddress(safeInfoResponse.address),
+    };
     return safeInfo;
   }
 }

@@ -31,6 +31,7 @@ export declare type DataDecoded = {
 export type SafeInfoResponseWithGuard = SafeInfoResponse & {
   nextNonce: number;
   guard?: Address;
+  address: Address;
 };
 
 /**

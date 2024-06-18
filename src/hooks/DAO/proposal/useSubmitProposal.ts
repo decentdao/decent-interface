@@ -44,12 +44,12 @@ interface ISubmitProposal {
   failedToastMessage: string;
   successToastMessage: string;
   successCallback?: (addressPrefix: string, daoAddress: string) => void;
-  safeAddress?: string;
+  safeAddress?: Address;
 }
 
 interface ISubmitAzoriusProposal extends ISubmitProposal {
   azoriusAddress: Address;
-  votingStrategyAddress: string;
+  votingStrategyAddress: Address;
 }
 
 export default function useSubmitProposal() {
