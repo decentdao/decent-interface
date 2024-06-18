@@ -21,7 +21,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private readonly saltNum: bigint;
 
   // Safe Data
-  public predictedSafeAddress: string | undefined;
+  public predictedSafeAddress: Address | undefined;
   public createSafeTx: SafeTransaction | undefined;
   private safeContractAddress: Address | undefined;
   private compatibilityFallbackHandler: Address;
