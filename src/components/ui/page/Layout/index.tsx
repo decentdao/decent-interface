@@ -8,6 +8,7 @@ import {
   MAX_CONTENT_WIDTH,
   useFooterHeight,
 } from '../../../../constants/common';
+import useNavigationScrollReset from '../../../../hooks/utils/useNavigationScrollReset';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
 import { Footer } from '../Footer';
@@ -20,6 +21,8 @@ export default function Layout() {
   const HEADER_HEIGHT = useHeaderHeight();
   const CONTENT_HEIGHT = useContentHeight();
   const FOOTER_HEIGHT = useFooterHeight();
+
+  useNavigationScrollReset();
 
   return (
     <Grid

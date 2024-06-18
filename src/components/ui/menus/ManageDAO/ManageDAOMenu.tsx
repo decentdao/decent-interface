@@ -118,7 +118,7 @@ export function ManageDAOMenu({
 
   const handleNavigateToSettings = useCallback(() => {
     if (safeAddress) {
-      navigate(DAO_ROUTES.settings.relative(addressPrefix, safeAddress), { replace: true });
+      navigate(DAO_ROUTES.settings.relative(addressPrefix, safeAddress));
     }
   }, [navigate, addressPrefix, safeAddress]);
 
@@ -165,7 +165,7 @@ export function ManageDAOMenu({
 
       onClick: () => {
         if (safeAddress) {
-          navigate(DAO_ROUTES.newSubDao.relative(addressPrefix, safeAddress), { replace: true });
+          navigate(DAO_ROUTES.newSubDao.relative(addressPrefix, safeAddress));
         }
       },
     };

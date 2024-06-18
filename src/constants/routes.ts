@@ -1,29 +1,9 @@
 export const BASE_ROUTES = {
   landing: '/',
-  create: '/create',
+  create: '/create/essentials',
 };
 
-type RouteInfo = {
-  relative: (addressPrefix: string, daoAddress: string, ...args: string[]) => string;
-  path: string;
-};
-type RouteIndex = { [key: string]: RouteInfo };
-export interface DAORoutes extends RouteIndex {
-  dao: RouteInfo;
-  newSubDao: RouteInfo;
-  modifyGovernance: RouteInfo;
-  hierarchy: RouteInfo;
-  treasury: RouteInfo;
-  proposals: RouteInfo;
-  proposal: RouteInfo;
-  proposalNew: RouteInfo;
-  settings: RouteInfo;
-  proposalTemplates: RouteInfo;
-  proposalTemplate: RouteInfo;
-  proposalTemplateNew: RouteInfo;
-}
-
-export const DAO_ROUTES: DAORoutes = {
+export const DAO_ROUTES = {
   dao: {
     relative: (addressPrefix: string, daoAddress: string) =>
       `/home?dao=${addressPrefix}:${daoAddress}`,
@@ -31,13 +11,13 @@ export const DAO_ROUTES: DAORoutes = {
   },
   newSubDao: {
     relative: (addressPrefix: string, daoAddress: string) =>
-      `/new?dao=${addressPrefix}:${daoAddress}`,
-    path: 'new',
+      `/new/essentials?dao=${addressPrefix}:${daoAddress}`,
+    path: 'new/essentials',
   },
   modifyGovernance: {
     relative: (addressPrefix: string, daoAddress: string) =>
-      `/edit/governance?dao=${addressPrefix}:${daoAddress}`,
-    path: 'edit/governance',
+      `/edit/governance/essentials?dao=${addressPrefix}:${daoAddress}`,
+    path: 'edit/governance/essentials',
   },
   hierarchy: {
     relative: (addressPrefix: string, daoAddress: string) =>
@@ -61,8 +41,8 @@ export const DAO_ROUTES: DAORoutes = {
   },
   proposalNew: {
     relative: (addressPrefix: string, daoAddress: string) =>
-      `/proposals/new?dao=${addressPrefix}:${daoAddress}`,
-    path: 'proposals/new',
+      `/proposals/new/metadata?dao=${addressPrefix}:${daoAddress}`,
+    path: 'proposals/new/metadata',
   },
   settings: {
     relative: (addressPrefix: string, daoAddress: string) =>
@@ -81,7 +61,7 @@ export const DAO_ROUTES: DAORoutes = {
   },
   proposalTemplateNew: {
     relative: (addressPrefix: string, daoAddress: string) =>
-      `/proposal-templates/new?dao=${addressPrefix}:${daoAddress}`,
-    path: 'proposal-templates/new',
+      `/proposal-templates/new/metadata?dao=${addressPrefix}:${daoAddress}`,
+    path: 'proposal-templates/new/metadata',
   },
 };
