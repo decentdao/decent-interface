@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getContract, isHex } from 'viem';
+import { Address, getAddress, getContract, isHex } from 'viem';
 import { useWalletClient } from 'wagmi';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -24,7 +24,7 @@ const useDeployDAO = () => {
   const deployDao = useCallback(
     (
       daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
-      successCallback: (addressPrefix: string, daoAddress: string) => void,
+      successCallback: (addressPrefix: string, daoAddress: Address) => void,
     ) => {
       const deploy = async () => {
         if (!walletClient) {
@@ -53,7 +53,7 @@ const useDeployDAO = () => {
           pendingMessage: t('pendingDeploySafe'),
           failedMessage: t('failedDeploySafe'),
           successMessage: t('successDeploySafe'),
-          successCallback: () => successCallback(addressPrefix, predictedSafeAddress),
+          successCallback: () => successCallback(addressPrefix, getAddress(predictedSafeAddress)),
         });
       };
 
