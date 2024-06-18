@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, encodeFunctionData } from 'viem';
+import { Address, encodeFunctionData } from 'viem';
 import GnosisSafeL2Abi from '../../../../../../assets/abi/GnosisSafeL2';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -12,17 +12,17 @@ const useRemoveSigner = ({
   nonce,
   daoAddress,
 }: {
-  prevSigner: string;
-  signerToRemove: string;
+  prevSigner: Address | undefined;
+  signerToRemove: Address;
   threshold: number;
   nonce: number | undefined;
-  daoAddress: string | null;
+  daoAddress: Address | null;
 }) => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
 
   const removeSigner = useCallback(async () => {
-    if (!daoAddress) {
+    if (!daoAddress || !prevSigner) {
       return;
     }
     const description = 'Remove Signers';
@@ -30,13 +30,13 @@ const useRemoveSigner = ({
     const encodedRemoveOwner = encodeFunctionData({
       abi: GnosisSafeL2Abi,
       functionName: 'removeOwner',
-      args: [getAddress(prevSigner), getAddress(signerToRemove), BigInt(threshold)],
+      args: [prevSigner, signerToRemove, BigInt(threshold)],
     });
 
     const calldatas = [encodedRemoveOwner];
 
     const proposalData: ProposalExecuteData = {
-      targets: [getAddress(daoAddress)],
+      targets: [daoAddress],
       values: [0n],
       calldatas,
       metaData: {

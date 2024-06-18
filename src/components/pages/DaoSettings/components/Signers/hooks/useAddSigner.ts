@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { encodeFunctionData, getAddress } from 'viem';
+import { Address, encodeFunctionData } from 'viem';
 import GnosisSafeL2Abi from '../../../../../../assets/abi/GnosisSafeL2';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -16,10 +16,10 @@ const useAddSigner = () => {
       daoAddress,
       close,
     }: {
-      newSigner: string;
+      newSigner: Address;
       threshold: number;
       nonce: number;
-      daoAddress: string | null;
+      daoAddress: Address | null;
       close: () => void;
     }) => {
       if (!daoAddress) {
@@ -30,13 +30,13 @@ const useAddSigner = () => {
       const encodedAddOwner = encodeFunctionData({
         abi: GnosisSafeL2Abi,
         functionName: 'addOwnerWithThreshold',
-        args: [getAddress(newSigner), BigInt(threshold)],
+        args: [newSigner, BigInt(threshold)],
       });
 
       const calldatas = [encodedAddOwner];
 
       const proposalData: ProposalExecuteData = {
-        targets: [getAddress(daoAddress)],
+        targets: [daoAddress],
         values: [0n],
         calldatas,
         metaData: {
