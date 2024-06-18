@@ -81,7 +81,7 @@ export default function useUserERC721VotingTokens(
 
               const tokenContract = getContract({
                 abi: erc721Abi,
-                address: getAddress(tokenAddress),
+                address: tokenAddress,
                 client: publicClient,
               });
 
@@ -91,7 +91,7 @@ export default function useUserERC721VotingTokens(
                 tokenContract.read.symbol(),
               ]);
 
-              return { name, symbol, address: getAddress(tokenAddress), votingWeight };
+              return { name, symbol, address: tokenAddress, votingWeight };
             }),
           );
         }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { getContract, Address, getAddress } from 'viem';
+import { getContract, Address } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../../assets/abi/LinearERC20Voting';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
@@ -105,7 +105,7 @@ export const useGovernanceContracts = () => {
           votesTokenAddress,
           underlyingTokenAddress,
           lockReleaseAddress,
-          moduleAzoriusAddress: getAddress(azoriusModule.moduleAddress),
+          moduleAzoriusAddress: azoriusModule.moduleAddress,
         },
       });
     }

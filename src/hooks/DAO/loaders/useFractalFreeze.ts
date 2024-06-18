@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { GetContractReturnType, PublicClient, getAddress, getContract, zeroAddress } from 'viem';
+import { GetContractReturnType, PublicClient, getContract, zeroAddress } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import ERC20FreezeVotingAbi from '../../../assets/abi/ERC20FreezeVoting';
 import ERC721FreezeVotingAbi from '../../../assets/abi/ERC721FreezeVoting';
@@ -55,19 +55,19 @@ export const useFractalFreeze = ({
       if (freezeVotingType === FreezeVotingType.ERC20) {
         freezeVotingContract = getContract({
           abi: ERC20FreezeVotingAbi,
-          address: getAddress(freezeVotingContractAddress),
+          address: freezeVotingContractAddress,
           client: publicClient,
         });
       } else if (freezeVotingType === FreezeVotingType.ERC721) {
         freezeVotingContract = getContract({
           abi: ERC721FreezeVotingAbi,
-          address: getAddress(freezeVotingContractAddress),
+          address: freezeVotingContractAddress,
           client: publicClient,
         });
       } else if (freezeVotingType === FreezeVotingType.MULTISIG) {
         freezeVotingContract = getContract({
           abi: MultisigFreezeVotingAbi,
-          address: getAddress(freezeVotingContractAddress),
+          address: freezeVotingContractAddress,
           client: publicClient,
         });
       } else {
@@ -124,13 +124,13 @@ export const useFractalFreeze = ({
       if (freezeVotingType === FreezeVotingType.MULTISIG) {
         const safeFreezeVotingContract = getContract({
           abi: MultisigFreezeVotingAbi,
-          address: getAddress(freezeVotingContractAddress),
+          address: freezeVotingContractAddress,
           client: publicClient,
         });
 
         const safeContract = getContract({
           abi: GnosisSafeL2Abi,
-          address: getAddress(await safeFreezeVotingContract.read.parentGnosisSafe()),
+          address: await safeFreezeVotingContract.read.parentGnosisSafe(),
           client: publicClient,
         });
         const owners = await safeContract.read.getOwners();
@@ -138,7 +138,7 @@ export const useFractalFreeze = ({
       } else if (freezeVotingType === FreezeVotingType.ERC20) {
         const freezeERC20VotingContract = getContract({
           abi: ERC20FreezeVotingAbi,
-          address: getAddress(freezeVotingContractAddress),
+          address: freezeVotingContractAddress,
           client: publicClient,
         });
         const votesTokenContract = getContract({
@@ -225,7 +225,7 @@ export const useFractalFreeze = ({
 
     const freezeVotingContract = getContract({
       abi: MultisigFreezeVotingAbi,
-      address: getAddress(freezeVotingContractAddress),
+      address: freezeVotingContractAddress,
       client: publicClient,
     });
 
@@ -275,7 +275,7 @@ export const useFractalFreeze = ({
 
     const freezeVotingContract = getContract({
       abi: ERC721FreezeVotingAbi,
-      address: getAddress(freezeVotingContractAddress),
+      address: freezeVotingContractAddress,
       client: publicClient,
     });
 
@@ -325,7 +325,7 @@ export const useFractalFreeze = ({
 
     const freezeVotingContract = getContract({
       abi: ERC20FreezeVotingAbi,
-      address: getAddress(freezeVotingContractAddress),
+      address: freezeVotingContractAddress,
       client: publicClient,
     });
 
