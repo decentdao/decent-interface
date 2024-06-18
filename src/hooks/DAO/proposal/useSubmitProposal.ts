@@ -10,6 +10,7 @@ import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
@@ -70,6 +71,7 @@ export default function useSubmitProposal() {
     node: { safe, fractalModules },
     guardContracts: { freezeVotingContractAddress },
     governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
+    action,
   } = useFractal();
   const baseContracts = useSafeContracts();
   const safeAPI = useSafeAPI();
@@ -90,6 +92,16 @@ export default function useSubmitProposal() {
   const signerOrProvider = useSignerOrProvider();
   const { chain, safeBaseURL, addressPrefix } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
+
+  const pendingProposalAdd = useCallback(
+    (txHash: string) => {
+      action.dispatch({
+        type: FractalGovernanceAction.PENDING_PROPOSAL_ADD,
+        payload: txHash,
+      });
+    },
+    [action],
+  );
 
   const submitMultisigProposal = useCallback(
     async ({
@@ -173,7 +185,7 @@ export default function useSubmitProposal() {
         }
 
         const safeContract = GnosisSafeL2__factory.connect(safeAddress, signerOrProvider);
-        await axios.post(
+        const response = await axios.post(
           buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
           await buildSafeAPIPost(
             safeContract,
@@ -188,8 +200,13 @@ export default function useSubmitProposal() {
             },
           ),
         );
-        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const responseData = JSON.parse(response.config.data);
+        const txHash = responseData.contractTransactionHash;
+        pendingProposalAdd(txHash);
+
         await loadDAOProposals();
+
         if (successCallback) {
           successCallback(addressPrefix, safeAddress);
         }
@@ -204,12 +221,13 @@ export default function useSubmitProposal() {
       }
     },
     [
+      baseContracts,
       signerOrProvider,
       safeBaseURL,
-      chain,
+      chain.id,
       loadDAOProposals,
+      pendingProposalAdd,
       ipfsClient,
-      baseContracts,
       addressPrefix,
     ],
   );
@@ -246,7 +264,7 @@ export default function useSubmitProposal() {
         }));
 
         // @todo: Implement voting strategy proposal selection when/if we will support multiple strategies on single Azorius instance
-        await (
+        const receipt = await (
           await azoriusContract.submitProposal(
             votingStrategyAddress,
             '0x',
@@ -260,6 +278,9 @@ export default function useSubmitProposal() {
         ).wait();
         toast.dismiss(toastId);
         toast(successToastMessage);
+
+        pendingProposalAdd(receipt.transactionHash);
+
         if (successCallback) {
           successCallback(addressPrefix, safeAddress!);
         }
@@ -271,7 +292,7 @@ export default function useSubmitProposal() {
         setPendingCreateTx(false);
       }
     },
-    [provider, addressPrefix],
+    [provider, pendingProposalAdd, addressPrefix],
   );
 
   const submitProposal: SubmitProposalFunction = useCallback(

@@ -160,6 +160,8 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
 
+      // TODO: `SET_LOADING_PROPOSALS` seems like the kind of action to be called once all proposals are finished loading.
+      // So, it's strange that this function takes a single proposals as an argument.
       const completeProposalLoad = (proposal: AzoriusProposal) => {
         if (currentAzoriusAddress.current !== azoriusContractAddress) {
           // The DAO has changed, don't load the just-fetched proposal,
@@ -231,6 +233,7 @@ export const useAzoriusProposals = () => {
         }
 
         const proposal = await mapProposalCreatedEventToProposal(
+          proposalCreatedEvent,
           _erc20StrategyContract,
           _erc721StrategyContract,
           _strategyType,
