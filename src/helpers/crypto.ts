@@ -71,8 +71,8 @@ export const buildSafeTransaction = (template: {
   safeTxGas?: number | string;
   baseGas?: number | string;
   gasPrice?: number | string;
-  gasToken?: string;
-  refundReceiver?: string;
+  gasToken?: Address;
+  refundReceiver?: Address;
   nonce: number;
 }): SafeTransaction => {
   return {
@@ -135,8 +135,8 @@ export const buildSafeAPIPost = async (
     safeTxGas?: number | string;
     baseGas?: number | string;
     gasPrice?: number | string;
-    gasToken?: string;
-    refundReceiver?: string;
+    gasToken?: Address;
+    refundReceiver?: Address;
     nonce: number;
   },
 ): Promise<SafePostTransaction> => {

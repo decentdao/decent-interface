@@ -62,6 +62,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     try {
       const safeTx = buildSafeTransaction({
         ...multisigTx,
+        gasToken: getAddress(multisigTx.gasToken),
+        refundReceiver: multisigTx.refundReceiver
+          ? getAddress(multisigTx.refundReceiver)
+          : undefined,
         to: getAddress(multisigTx.to),
         value: BigInt(multisigTx.value),
         data: multisigTx.data as Hex | undefined,
@@ -72,7 +76,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         asyncFunc: () =>
           walletClient.signTypedData({
             account: walletClient.account.address,
-            domain: { verifyingContract: getAddress(safe.address), chainId: chain.id },
+            domain: { verifyingContract: safe.address, chainId: chain.id },
             types: EIP712_SAFE_TX_TYPE,
             primaryType: 'SafeTx',
             message: {
@@ -113,6 +117,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       }
       const safeTx = buildSafeTransaction({
         ...multisigTx,
+        gasToken: getAddress(multisigTx.gasToken),
+        refundReceiver: multisigTx.refundReceiver
+          ? getAddress(multisigTx.refundReceiver)
+          : undefined,
         to: getAddress(multisigTx.to),
         value: BigInt(multisigTx.value),
         data: multisigTx.data as Hex | undefined,
@@ -144,8 +152,8 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
             BigInt(safeTx.safeTxGas),
             BigInt(safeTx.baseGas),
             BigInt(safeTx.gasPrice),
-            getAddress(safeTx.gasToken),
-            getAddress(safeTx.refundReceiver),
+            safeTx.gasToken,
+            safeTx.refundReceiver,
             signatures,
             BigInt(safeTx.nonce),
           ]),
@@ -181,6 +189,10 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
       const safeTx = buildSafeTransaction({
         ...multisigTx,
+        gasToken: getAddress(multisigTx.gasToken),
+        refundReceiver: multisigTx.refundReceiver
+          ? getAddress(multisigTx.refundReceiver)
+          : undefined,
         to: getAddress(multisigTx.to),
         value: BigInt(multisigTx.value),
         data: multisigTx.data as Hex | undefined,
@@ -209,8 +221,8 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
             BigInt(safeTx.safeTxGas),
             BigInt(safeTx.baseGas),
             BigInt(safeTx.gasPrice),
-            getAddress(safeTx.gasToken),
-            getAddress(safeTx.refundReceiver),
+            safeTx.gasToken,
+            safeTx.refundReceiver,
             signatures,
           ]),
         failedMessage: t('failedExecute', { ns: 'transaction' }),
