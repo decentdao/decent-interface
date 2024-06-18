@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../../../assets/abi/LinearERC721Voting';
@@ -120,7 +120,7 @@ const useCastVote = ({
             erc721LinearVotingContract.write.vote([
               Number(proposal.proposalId),
               vote,
-              remainingTokenAddresses.map(a => getAddress(a)),
+              remainingTokenAddresses,
               remainingTokenIds.map(i => BigInt(i)),
             ]),
           pendingMessage: t('pendingCastVote'),

@@ -1,3 +1,4 @@
+import { Address } from 'viem';
 import { BigIntValuePair } from './common';
 
 export enum CreateProposalState {
@@ -6,7 +7,7 @@ export enum CreateProposalState {
 }
 
 export interface CreateProposalTransaction<T = BigIntValuePair> {
-  targetAddress: string;
+  targetAddress: Address;
   ethValue: T;
   functionName: string;
   parameters: {

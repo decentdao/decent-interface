@@ -7,25 +7,15 @@ import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
 import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 
-/**
- * Retrieves list of ERC-721 voting tokens for the supplied `address`(aka `user.address`) param
- * @param {string} [proposalId] - Proposal ID. When it's provided - calculates `remainingTokenIds` and `remainingTokenAddresses` that user can use for voting on speicific proposal.
- * @param {Address|null} [safeAddress] - address of Safe{Wallet}, for which voting tokens should be retrieved. If not provided - these are used from global context.
- * @param {boolean} [loadOnMount] - whether to fetch voting tokens on component mount or not. Leaves the space to fetch those tokens via getUserERC721VotingTokens
- * @returns {string[]} `totalVotingTokenIds` - list of all ERC-721 tokens that are held by `address`.
- * @returns {string[]} `totalVotingTokenAddresses` - list of contract addresses that corresponds to token `totalVotingTokenIds` array. Aka if user holds 3 tokens of from 1 NFT contract - the address of contract will be repeated 3 times.
- * @returns {string[]} `remainingTokenIds - list of tokens that `address` can use for proposal under `proposalId` param. This covers the case when user already voted for proposal but received more tokens, that weren't used in this proposal.
- * @returns {string[]} `remainingTokenAddresses` - same as `totalVotingTokenAddresses` - repeats contract address of NFT for each token ID in `remainingTokenIds` array.
- */
 export default function useUserERC721VotingTokens(
   safeAddress: Address | null,
   proposalId?: string,
   loadOnMount: boolean = true,
 ) {
   const [totalVotingTokenIds, setTotalVotingTokenIds] = useState<string[]>([]);
-  const [totalVotingTokenAddresses, setTotalVotingTokenAddresses] = useState<string[]>([]);
+  const [totalVotingTokenAddresses, setTotalVotingTokenAddresses] = useState<Address[]>([]);
   const [remainingTokenIds, setRemainingTokenIds] = useState<string[]>([]);
-  const [remainingTokenAddresses, setRemainingTokenAddresses] = useState<string[]>([]);
+  const [remainingTokenAddresses, setRemainingTokenAddresses] = useState<Address[]>([]);
 
   const {
     node: { daoAddress },

@@ -1,7 +1,8 @@
+import { zeroAddress } from 'viem';
 import { CreateProposalTransaction } from '../../types/proposalBuilder';
 
 export const DEFAULT_PROPOSAL_TRANSACTION: CreateProposalTransaction = {
-  targetAddress: '',
+  targetAddress: zeroAddress,
   ethValue: { value: '', bigintValue: undefined },
   functionName: '',
   parameters: [

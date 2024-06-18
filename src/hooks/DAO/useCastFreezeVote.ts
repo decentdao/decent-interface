@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getContract, getAddress } from 'viem';
+import { getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import ERC20FreezeVotingAbi from '../../assets/abi/ERC20FreezeVoting';
 import ERC721FreezeVotingAbi from '../../assets/abi/ERC721FreezeVoting';
@@ -44,7 +44,7 @@ const useCastFreezeVote = ({
           });
           return getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
             return freezeERC721VotingContract.write.castFreezeVote([
-              tokensInfo.totalVotingTokenAddresses.map(a => getAddress(a)),
+              tokensInfo.totalVotingTokenAddresses,
               tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),
             ]);
           });
