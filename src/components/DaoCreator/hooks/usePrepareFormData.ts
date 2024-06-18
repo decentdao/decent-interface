@@ -3,8 +3,6 @@ import { getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import IVotesAbi from '../../../assets/abi/IVotes';
 import { SENTINEL_ADDRESS } from '../../../constants/common';
-import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import {
   SafeMultisigDAO,
   DAOFreezeGuardConfig,
@@ -19,8 +17,7 @@ import { validateENSName } from '../../../utils/url';
 type FreezeGuardConfigParam = { freezeGuard?: DAOFreezeGuardConfig<BigIntValuePair> };
 
 export function usePrepareFormData() {
-  const signer = useEthersSigner();
-  const provider = useEthersProvider();
+  // const signer = useEthersSigner();
 
   const publicClient = usePublicClient();
 
@@ -29,29 +26,29 @@ export function usePrepareFormData() {
     async (
       freezeGuard: DAOFreezeGuardConfig<BigIntValuePair>,
     ): Promise<DAOFreezeGuardConfig | undefined> => {
-      if (provider) {
+      if (publicClient) {
         return {
           executionPeriod: await getEstimatedNumberOfBlocks(
             freezeGuard.executionPeriod.bigintValue!,
-            provider,
+            publicClient,
           ),
           timelockPeriod: await getEstimatedNumberOfBlocks(
             freezeGuard.timelockPeriod.bigintValue!,
-            provider,
+            publicClient,
           ),
           freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigintValue!,
           freezeProposalPeriod: await getEstimatedNumberOfBlocks(
             freezeGuard.freezeProposalPeriod.bigintValue!,
-            provider,
+            publicClient,
           ),
           freezePeriod: await getEstimatedNumberOfBlocks(
             freezeGuard.freezePeriod.bigintValue!,
-            provider,
+            publicClient,
           ),
         };
       }
     },
-    [provider],
+    [publicClient],
   );
 
   const checkVotesToken = useCallback(
@@ -84,9 +81,13 @@ export function usePrepareFormData() {
     }: SafeMultisigDAO & FreezeGuardConfigParam) => {
       const resolvedAddresses = await Promise.all(
         trustedAddresses.map(async inputValue => {
-          if (validateENSName(inputValue) && signer) {
-            const resolvedAddress = await signer.resolveName(inputValue);
-            return resolvedAddress;
+          if (validateENSName(inputValue) && publicClient) {
+            const maybeEnsAddress = await publicClient.getEnsAddress({
+              name: inputValue,
+            });
+            if (maybeEnsAddress) {
+              return maybeEnsAddress;
+            }
           }
           return inputValue;
         }),
@@ -101,7 +102,7 @@ export function usePrepareFormData() {
         ...rest,
       };
     },
-    [signer, prepareFreezeGuardData],
+    [publicClient, prepareFreezeGuardData],
   );
 
   const prepareAzoriusERC20FormData = useCallback(
@@ -120,12 +121,17 @@ export function usePrepareFormData() {
     }: AzoriusERC20DAO<BigIntValuePair> & FreezeGuardConfigParam): Promise<
       AzoriusERC20DAO | undefined
     > => {
-      if (provider) {
+      if (publicClient) {
         const resolvedTokenAllocations = await Promise.all(
           tokenAllocations.map(async allocation => {
             let address = allocation.address;
-            if (validateENSName(address) && signer) {
-              address = await signer.resolveName(allocation.address);
+            if (validateENSName(address) && publicClient) {
+              const maybeEnsAddress = await publicClient.getEnsAddress({
+                name: allocation.address,
+              });
+              if (maybeEnsAddress) {
+                address = maybeEnsAddress;
+              }
             }
             return { amount: allocation.amount.bigintValue!, address: address };
           }),
@@ -144,9 +150,12 @@ export function usePrepareFormData() {
           tokenSupply: tokenSupply.bigintValue!,
           parentAllocationAmount: parentAllocationAmount?.bigintValue!,
           quorumPercentage: quorumPercentage.bigintValue!,
-          timelock: await getEstimatedNumberOfBlocks(timelock.bigintValue!, provider),
-          executionPeriod: await getEstimatedNumberOfBlocks(executionPeriod.bigintValue!, provider),
-          votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigintValue!, provider),
+          timelock: await getEstimatedNumberOfBlocks(timelock.bigintValue!, publicClient),
+          executionPeriod: await getEstimatedNumberOfBlocks(
+            executionPeriod.bigintValue!,
+            publicClient,
+          ),
+          votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigintValue!, publicClient),
           tokenAllocations: resolvedTokenAllocations,
           tokenImportAddress,
           tokenCreationType,
@@ -157,7 +166,7 @@ export function usePrepareFormData() {
         };
       }
     },
-    [signer, checkVotesToken, provider, prepareFreezeGuardData],
+    [checkVotesToken, publicClient, prepareFreezeGuardData],
   );
 
   const prepareAzoriusERC721FormData = useCallback(
@@ -173,7 +182,7 @@ export function usePrepareFormData() {
     }: AzoriusERC721DAO<BigIntValuePair> & FreezeGuardConfigParam): Promise<
       AzoriusERC721DAO | undefined
     > => {
-      if (provider && signer) {
+      if (publicClient) {
         let freezeGuardData;
         if (freezeGuard) {
           freezeGuardData = await prepareFreezeGuardData(freezeGuard);
@@ -183,7 +192,12 @@ export function usePrepareFormData() {
           nfts.map(async nft => {
             let address = nft.tokenAddress;
             if (validateENSName(address) && nft.tokenAddress) {
-              address = getAddress(await signer.resolveName(nft.tokenAddress));
+              const maybeEnsAddress = await publicClient.getEnsAddress({
+                name: nft.tokenAddress,
+              });
+              if (maybeEnsAddress) {
+                address = maybeEnsAddress;
+              }
             }
             return {
               tokenAddress: address,
@@ -194,9 +208,12 @@ export function usePrepareFormData() {
 
         return {
           quorumPercentage: quorumPercentage.bigintValue!,
-          timelock: await getEstimatedNumberOfBlocks(timelock.bigintValue!, provider),
-          executionPeriod: await getEstimatedNumberOfBlocks(executionPeriod.bigintValue!, provider),
-          votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigintValue!, provider),
+          timelock: await getEstimatedNumberOfBlocks(timelock.bigintValue!, publicClient),
+          executionPeriod: await getEstimatedNumberOfBlocks(
+            executionPeriod.bigintValue!,
+            publicClient,
+          ),
+          votingPeriod: await getEstimatedNumberOfBlocks(votingPeriod.bigintValue!, publicClient),
           nfts: resolvedNFTs,
           quorumThreshold: quorumThreshold.bigintValue!,
           ...freezeGuardData,
@@ -204,7 +221,7 @@ export function usePrepareFormData() {
         };
       }
     },
-    [prepareFreezeGuardData, provider, signer],
+    [prepareFreezeGuardData, publicClient],
   );
   return {
     prepareMultisigFormData,

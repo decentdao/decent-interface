@@ -1,7 +1,5 @@
 import { Box, Button, Text, Flex, Tooltip } from '@chakra-ui/react';
-import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
-import { Signer } from 'ethers';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Hex, getAddress, getContract, isHex } from 'viem';
@@ -14,7 +12,6 @@ import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeMultisigProposals } from '../../../hooks/DAO/loaders/governance/useSafeMultisigProposals';
 import { useAsyncRequest } from '../../../hooks/utils/useAsyncRequest';
-import useSignerOrProvider from '../../../hooks/utils/useSignerOrProvider';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -29,7 +26,6 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     guardContracts: { freezeGuardContractAddress },
     readOnly: { user },
   } = useFractal();
-  const signerOrProvider = useSignerOrProvider();
   const safeAPI = useSafeAPI();
 
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(false);
@@ -60,7 +56,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   if (!multisigTx) return null;
 
   const signTransaction = async () => {
-    if (!signerOrProvider || !safe?.address || (multisigTx.data && !isHex(multisigTx.data))) {
+    if (!walletClient || !safe?.address || (multisigTx.data && !isHex(multisigTx.data))) {
       return;
     }
     try {
@@ -74,11 +70,24 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
 
       asyncRequest({
         asyncFunc: () =>
-          (signerOrProvider as Signer & TypedDataSigner)._signTypedData(
-            { verifyingContract: safe.address, chainId: chain.id },
-            EIP712_SAFE_TX_TYPE,
-            safeTx,
-          ),
+          walletClient.signTypedData({
+            account: walletClient.account.address,
+            domain: { verifyingContract: getAddress(safe.address), chainId: chain.id },
+            types: EIP712_SAFE_TX_TYPE,
+            primaryType: 'SafeTx',
+            message: {
+              to: safeTx.to,
+              value: safeTx.value,
+              data: safeTx.data,
+              operation: safeTx.operation,
+              safeTxGas: safeTx.safeTxGas,
+              baseGas: safeTx.baseGas,
+              gasPrice: safeTx.gasPrice,
+              gasToken: safeTx.gasToken,
+              refundReceiver: safeTx.refundReceiver,
+              nonce: safeTx.nonce,
+            },
+          }),
         failedMessage: t('failedSign'),
         pendingMessage: t('pendingSign'),
         successMessage: t('successSign'),
@@ -156,7 +165,6 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const executeTransaction = async () => {
     try {
       if (
-        !signerOrProvider ||
         !safe?.address ||
         !multisigTx.confirmations ||
         (multisigTx.data && !isHex(multisigTx.data)) ||

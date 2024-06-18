@@ -12,7 +12,6 @@ import {
 } from '../../../helpers/freezePeriodHelpers';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { FractalGuardAction } from '../../../providers/App/guard/action';
-import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { FractalGuardContracts, FreezeVotingType } from '../../../types';
 import { blocksToSeconds, getTimeStamp } from '../../../utils/contract';
 import useUserERC721VotingTokens from '../proposal/useUserERC721VotingTokens';
@@ -37,7 +36,6 @@ export const useFractalFreeze = ({
     loadOnMount,
   );
 
-  const provider = useEthersProvider();
   const publicClient = usePublicClient();
 
   const loadFractalFreezeGuard = useCallback(
@@ -45,13 +43,7 @@ export const useFractalFreeze = ({
       freezeVotingContractAddress,
       freezeVotingType: freezeVotingType,
     }: FractalGuardContracts) => {
-      if (
-        freezeVotingType == null ||
-        !freezeVotingContractAddress ||
-        !account ||
-        !provider ||
-        !publicClient
-      ) {
+      if (freezeVotingType == null || !freezeVotingContractAddress || !account || !publicClient) {
         return;
       }
 
@@ -103,13 +95,16 @@ export const useFractalFreeze = ({
       ]);
 
       // timestamp when proposal was created
-      const freezeProposalCreatedTime = await getTimeStamp(freezeProposalCreatedBlock, provider);
+      const freezeProposalCreatedTime = await getTimeStamp(
+        freezeProposalCreatedBlock,
+        publicClient,
+      );
 
       // length of time to vote on freeze
-      const freezeProposalPeriod = await blocksToSeconds(freezeProposalBlock, provider);
+      const freezeProposalPeriod = await blocksToSeconds(freezeProposalBlock, publicClient);
 
       // length of time frozen for in seconds
-      const freezePeriod = await blocksToSeconds(freezePeriodBlock, provider);
+      const freezePeriod = await blocksToSeconds(freezePeriodBlock, publicClient);
 
       const userHasFreezeVoted = await freezeVotingContract.read.userHasFreezeVoted([
         account || zeroAddress,
@@ -151,7 +146,7 @@ export const useFractalFreeze = ({
           address: await freezeERC20VotingContract.read.votesERC20(),
           client: publicClient,
         });
-        const currentTimestamp = await getTimeStamp('latest', provider);
+        const currentTimestamp = await getTimeStamp('latest', publicClient);
         const isFreezeActive =
           isWithinFreezeProposalPeriod(
             freezeGuard.freezeProposalCreatedTime,
@@ -187,7 +182,7 @@ export const useFractalFreeze = ({
       isFreezeSet.current = true;
       return freeze;
     },
-    [account, provider, publicClient, getUserERC721VotingTokens, parentSafeAddress],
+    [account, publicClient, getUserERC721VotingTokens, parentSafeAddress],
   );
 
   const setFractalFreezeGuard = useCallback(
@@ -220,7 +215,6 @@ export const useFractalFreeze = ({
 
     if (
       !loadOnMount ||
-      !provider ||
       !freezeVotingContractAddress ||
       !publicClient ||
       !isFreezeSet.current ||
@@ -251,7 +245,7 @@ export const useFractalFreeze = ({
               payload: {
                 isVoter: log.args.voter === account,
                 freezeProposalCreatedTime: BigInt(
-                  await getTimeStamp(freezeProposalCreatedBlock, provider),
+                  await getTimeStamp(freezeProposalCreatedBlock, publicClient),
                 ),
                 votesCast: log.args.votesCast,
               },
@@ -264,14 +258,13 @@ export const useFractalFreeze = ({
     return () => {
       unwatch();
     };
-  }, [account, action, guardContracts, loadOnMount, provider, publicClient]);
+  }, [account, action, guardContracts, loadOnMount, publicClient]);
 
   useEffect(() => {
     const { freezeVotingContractAddress, freezeVotingType: freezeVotingType } = guardContracts;
 
     if (
       !loadOnMount ||
-      !provider ||
       !freezeVotingContractAddress ||
       !publicClient ||
       !isFreezeSet.current ||
@@ -302,7 +295,7 @@ export const useFractalFreeze = ({
               payload: {
                 isVoter: log.args.voter === account,
                 freezeProposalCreatedTime: BigInt(
-                  await getTimeStamp(freezeProposalCreatedBlock, provider),
+                  await getTimeStamp(freezeProposalCreatedBlock, publicClient),
                 ),
                 votesCast: log.args.votesCast,
               },
@@ -315,14 +308,13 @@ export const useFractalFreeze = ({
     return () => {
       unwatch();
     };
-  }, [account, action, guardContracts, loadOnMount, provider, publicClient]);
+  }, [account, action, guardContracts, loadOnMount, publicClient]);
 
   useEffect(() => {
     const { freezeVotingContractAddress, freezeVotingType: freezeVotingType } = guardContracts;
 
     if (
       !loadOnMount ||
-      !provider ||
       !freezeVotingContractAddress ||
       !publicClient ||
       !isFreezeSet.current ||
@@ -353,7 +345,7 @@ export const useFractalFreeze = ({
               payload: {
                 isVoter: log.args.voter === account,
                 freezeProposalCreatedTime: BigInt(
-                  await getTimeStamp(freezeProposalCreatedBlock, provider),
+                  await getTimeStamp(freezeProposalCreatedBlock, publicClient),
                 ),
                 votesCast: log.args.votesCast,
               },
@@ -366,7 +358,7 @@ export const useFractalFreeze = ({
     return () => {
       unwatch();
     };
-  }, [account, action, guardContracts, loadOnMount, provider, publicClient]);
+  }, [account, action, guardContracts, loadOnMount, publicClient]);
 
   return loadFractalFreezeGuard;
 };

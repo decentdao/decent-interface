@@ -12,7 +12,6 @@ import useApproval from '../../../hooks/utils/useApproval';
 import { useFormHelpers } from '../../../hooks/utils/useFormHelpers';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AzoriusGovernance, BigIntValuePair } from '../../../types';
 import { formatCoin } from '../../../utils';
 import { BigIntInput } from '../forms/BigIntInput';
@@ -21,7 +20,6 @@ import LabelWrapper from '../forms/LabelWrapper';
 export function WrapToken({ close }: { close: () => void }) {
   const { governance, governanceContracts } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
-  const signer = useEthersSigner();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const { address: account } = useAccount();
@@ -85,7 +83,7 @@ export function WrapToken({ close }: { close: () => void }) {
   const handleFormSubmit = useCallback(
     (amount: BigIntValuePair) => {
       const { votesTokenContractAddress } = governanceContracts;
-      if (!votesTokenContractAddress || !signer || !account || !walletClient) return;
+      if (!votesTokenContractAddress || !account || !walletClient) return;
 
       const wrapperTokenContract = getContract({
         abi: VotesERC20WrapperAbi,
@@ -106,16 +104,7 @@ export function WrapToken({ close }: { close: () => void }) {
         },
       });
     },
-    [
-      account,
-      contractCall,
-      governanceContracts,
-      signer,
-      close,
-      t,
-      loadERC20TokenAccountData,
-      walletClient,
-    ],
+    [account, contractCall, governanceContracts, close, t, loadERC20TokenAccountData, walletClient],
   );
 
   // @dev next couple of lines are written like this, to keep typing equivalent during the conversion from BN to bigint

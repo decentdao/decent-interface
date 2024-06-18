@@ -3,10 +3,10 @@ import { WarningCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../../../../providers/Ethers/hooks/useEthersSigner';
 import { validateENSName } from '../../../../../../utils/url';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
@@ -28,7 +28,7 @@ function AddSignerModal({
     node: { daoAddress, safe },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
-  const signer = useEthersSigner();
+  const publicClient = usePublicClient();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
   const tooltipContainer = useRef<HTMLDivElement>(null);
 
@@ -38,8 +38,11 @@ function AddSignerModal({
     async (values: { address: string; threshold: number; nonce: number }) => {
       const { address, nonce, threshold } = values;
       let validAddress = address;
-      if (validateENSName(validAddress) && signer) {
-        validAddress = await signer.resolveName(address);
+      if (validateENSName(validAddress) && publicClient) {
+        const maybeEnsAddress = await publicClient.getEnsAddress({ name: address });
+        if (maybeEnsAddress) {
+          validAddress = maybeEnsAddress;
+        }
       }
 
       await addSigner({
@@ -50,7 +53,7 @@ function AddSignerModal({
         close: close,
       });
     },
-    [addSigner, close, daoAddress, signer],
+    [addSigner, close, daoAddress, publicClient],
   );
 
   const addSignerValidationSchema = Yup.object().shape({

@@ -7,7 +7,6 @@ import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshot
 import { useLoadDAOProposals } from '../../../hooks/DAO/loaders/useLoadDAOProposals';
 import useUpdateProposalState from '../../../hooks/DAO/proposal/useUpdateProposalState';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import {
   AzoriusGovernance,
   FractalProposal,
@@ -26,7 +25,6 @@ export function useProposalCountdown(proposal: FractalProposal) {
     action,
     readOnly: { dao },
   } = useFractal();
-  const provider = useEthersProvider();
   const publicClient = usePublicClient();
 
   const [secondsLeft, setSecondsLeft] = useState<number>();
@@ -122,35 +120,29 @@ export function useProposalCountdown(proposal: FractalProposal) {
       startCountdown(votingDeadlineMs + Number(timeLockPeriod.value) * 1000);
       // If the proposal is timelocked start the countdown (for safe multisig proposals with guards)
       return;
-    } else if (
-      proposal.state === FractalProposalState.TIMELOCKED &&
-      freezeGuard &&
-      isSafeGuard &&
-      provider
-    ) {
+    } else if (proposal.state === FractalProposalState.TIMELOCKED && freezeGuard && isSafeGuard) {
       const safeGuard = freezeGuard;
 
       const [timelockedTimestamp, timelockPeriod] = await Promise.all([
-        getTxTimelockedTimestamp(proposal, safeGuard.address, provider, publicClient),
+        getTxTimelockedTimestamp(proposal, safeGuard.address, publicClient),
         safeGuard.read.timelockPeriod(),
       ]);
 
-      const guardTimeLockPeriod = await blocksToSeconds(timelockPeriod, provider);
+      const guardTimeLockPeriod = await blocksToSeconds(timelockPeriod, publicClient);
       startCountdown(timelockedTimestamp * 1000 + guardTimeLockPeriod * 1000);
 
       // If the proposal is executable start the countdown (for safe multisig proposals with guards)
       return;
     } else if (proposal.state === FractalProposalState.EXECUTABLE && freezeGuard) {
       let guardTimelockPeriod: number = 0;
-      if (isSafeGuard && provider) {
+      if (isSafeGuard) {
         const safeGuard = freezeGuard;
         const timelockedTimestamp =
-          (await getTxTimelockedTimestamp(proposal, safeGuard.address, provider, publicClient)) *
-          1000;
+          (await getTxTimelockedTimestamp(proposal, safeGuard.address, publicClient)) * 1000;
         const safeGuardTimelockPeriod =
-          (await blocksToSeconds(await safeGuard.read.timelockPeriod(), provider)) * 1000;
+          (await blocksToSeconds(await safeGuard.read.timelockPeriod(), publicClient)) * 1000;
         const guardExecutionPeriod =
-          (await blocksToSeconds(await safeGuard.read.executionPeriod(), provider)) * 1000;
+          (await blocksToSeconds(await safeGuard.read.executionPeriod(), publicClient)) * 1000;
         guardTimelockPeriod = timelockedTimestamp + safeGuardTimelockPeriod + guardExecutionPeriod;
 
         // If the proposal is executing start the countdown (for Azorius proposals with guards)
@@ -173,7 +165,6 @@ export function useProposalCountdown(proposal: FractalProposal) {
     freezeGuardType,
     isSnapshotProposal,
     proposal,
-    provider,
     publicClient,
     snapshotProposal.endTime,
     snapshotProposal.startTime,

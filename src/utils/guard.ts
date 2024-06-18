@@ -3,13 +3,11 @@ import { keccak256, encodePacked, isHex, Address, getContract, PublicClient } fr
 import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
 import { buildSignatureBytes } from '../helpers/crypto';
 import { Activity } from '../types';
-import { Providers } from '../types/network';
 import { getTimeStamp } from './contract';
 
 export async function getTxTimelockedTimestamp(
   activity: Activity,
   freezeGuardAddress: Address,
-  provider: Providers,
   publicClient: PublicClient,
 ) {
   const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;
@@ -40,7 +38,7 @@ export async function getTxTimelockedTimestamp(
 
   const timelockedTimestamp = await getTimeStamp(
     await freezeGuard.read.getTransactionTimelockedBlock([signaturesHash]),
-    provider,
+    publicClient,
   );
   return timelockedTimestamp;
 }

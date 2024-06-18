@@ -23,7 +23,6 @@ import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 import { useFractalModules } from '../loaders/useFractalModules';
 import { useLoadDAOProposals } from '../loaders/useLoadDAOProposals';
@@ -82,7 +81,6 @@ export default function useSubmitProposal() {
   }, [fractalModules, walletClient]);
 
   const lookupModules = useFractalModules();
-  const signerOrProvider = useSignerOrProvider();
   const {
     chain,
     safeBaseURL,
@@ -113,7 +111,7 @@ export default function useSubmitProposal() {
         progress: 1,
       });
 
-      if (!safeAddress || !signerOrProvider || nonce === undefined) {
+      if (!safeAddress || nonce === undefined) {
         toast.dismiss(toastId);
         return;
       }
@@ -200,7 +198,6 @@ export default function useSubmitProposal() {
       loadDAOProposals,
       multiSendCallOnly,
       safeBaseURL,
-      signerOrProvider,
       walletClient,
     ],
   );

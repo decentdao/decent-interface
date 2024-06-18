@@ -6,7 +6,6 @@ import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
 import { CreateProposalMetadata, VotingStrategyType } from '../../../../types';
 import {
   getProposalVotesSummary,
@@ -25,10 +24,7 @@ export const useAzoriusListeners = () => {
       erc721LinearVotingContractAddress,
     },
   } = useFractal();
-
-  const provider = useEthersProvider();
   const decode = useSafeDecoder();
-
   const publicClient = usePublicClient();
 
   const azoriusContract = useMemo(() => {
@@ -78,7 +74,7 @@ export const useAzoriusListeners = () => {
   }, [erc721LinearVotingContractAddress, publicClient]);
 
   useEffect(() => {
-    if (!azoriusContract || !provider || !strategyType) {
+    if (!azoriusContract || !strategyType) {
       return;
     }
 
@@ -90,7 +86,8 @@ export const useAzoriusListeners = () => {
             !log.args.proposalId ||
             !log.args.metadata ||
             !log.args.transactions ||
-            !log.args.proposer
+            !log.args.proposer ||
+            !publicClient
           ) {
             continue;
           }
@@ -99,7 +96,7 @@ export const useAzoriusListeners = () => {
           // We've seen that calling smart contract functions in `mapProposalCreatedEventToProposal`
           // which include the `proposalId` error out because the RPC node (rather, the block it's on)
           // doesn't see this proposal yet (despite the event being caught in the app...).
-          const averageBlockTime = await getAverageBlockTime(provider);
+          const averageBlockTime = await getAverageBlockTime(publicClient);
           await new Promise(resolve => setTimeout(resolve, averageBlockTime * 1000));
 
           const typedTransactions = log.args.transactions.map(t => ({
@@ -127,7 +124,7 @@ export const useAzoriusListeners = () => {
             Number(log.args.proposalId),
             log.args.proposer,
             azoriusContract,
-            provider,
+            publicClient,
             undefined,
             undefined,
             undefined,
@@ -151,7 +148,7 @@ export const useAzoriusListeners = () => {
     decode,
     erc20StrategyContract,
     erc721StrategyContract,
-    provider,
+    publicClient,
     strategyType,
   ]);
 

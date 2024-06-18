@@ -5,7 +5,6 @@ import LinearERC721VotingAbi from '../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 
 /**
@@ -28,7 +27,6 @@ export default function useUserERC721VotingTokens(
   const [remainingTokenIds, setRemainingTokenIds] = useState<string[]>([]);
   const [remainingTokenAddresses, setRemainingTokenAddresses] = useState<string[]>([]);
 
-  const signerOrProvider = useSignerOrProvider();
   const {
     node: { daoAddress },
     governanceContracts: { erc721LinearVotingContractAddress },
@@ -56,7 +54,7 @@ export default function useUserERC721VotingTokens(
         | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
         | undefined;
 
-      if (!signerOrProvider || !daoAddress || !publicClient || !safeAPI) {
+      if (!daoAddress || !publicClient || !safeAPI) {
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
@@ -204,7 +202,6 @@ export default function useUserERC721VotingTokens(
       getVotingStrategyAddress,
       publicClient,
       safeAPI,
-      signerOrProvider,
       user.address,
     ],
   );
