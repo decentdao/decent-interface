@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { getContract, Address } from 'viem';
+import { getContract, Address, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import LinearERC20VotingAbi from '../../../assets/abi/LinearERC20Voting';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
@@ -34,11 +34,11 @@ export const useGovernanceContracts = () => {
       return;
     }
 
-    let ozLinearVotingContractAddress: Address | undefined;
-    let erc721LinearVotingContractAddress: string | undefined;
-    let votesTokenContractAddress: string | undefined;
-    let underlyingTokenAddress: string | undefined;
-    let lockReleaseContractAddress: string | undefined;
+    let linearVotingErc20Address: Address | undefined;
+    let linearVotingErc721Address: Address | undefined;
+    let votesTokenAddress: Address | undefined;
+    let underlyingTokenAddress: Address | undefined;
+    let lockReleaseAddress: Address | undefined;
 
     const { isLinearVotingErc20, isLinearVotingErc721 } =
       await getZodiacModuleProxyMasterCopyData(votingStrategyAddress);
@@ -48,11 +48,11 @@ export const useGovernanceContracts = () => {
         throw new Error('public client not set');
       }
 
-      ozLinearVotingContractAddress = votingStrategyAddress;
+      linearVotingErc20Address = votingStrategyAddress;
 
       const ozLinearVotingContract = getContract({
         abi: LinearERC20VotingAbi,
-        address: ozLinearVotingContractAddress,
+        address: linearVotingErc20Address,
         client: publicClient,
       });
       const govTokenAddress = await ozLinearVotingContract.read.governanceToken();
@@ -84,28 +84,28 @@ export const useGovernanceContracts = () => {
       }
 
       if (lockedTokenAddress) {
-        lockReleaseContractAddress = govTokenAddress;
+        lockReleaseAddress = govTokenAddress;
         // @dev if the underlying token is an ERC20Wrapper, we use the underlying token as the token contract
-        votesTokenContractAddress = lockedTokenAddress;
+        votesTokenAddress = lockedTokenAddress;
       } else {
         // @dev if the no underlying token, we use the governance token as the token contract
-        votesTokenContractAddress = govTokenAddress;
+        votesTokenAddress = govTokenAddress;
       }
     } else if (isLinearVotingErc721) {
       // @dev for use with the ERC721 voting contract
-      erc721LinearVotingContractAddress = votingStrategyAddress;
+      linearVotingErc721Address = votingStrategyAddress;
     }
 
-    if (votesTokenContractAddress || erc721LinearVotingContractAddress) {
+    if (votesTokenAddress || linearVotingErc721Address) {
       action.dispatch({
         type: GovernanceContractAction.SET_GOVERNANCE_CONTRACT_ADDRESSES,
         payload: {
-          ozLinearVotingContractAddress,
-          erc721LinearVotingContractAddress,
-          azoriusContractAddress: azoriusModule.moduleAddress,
-          votesTokenContractAddress,
+          linearVotingErc20Address,
+          linearVotingErc721Address,
+          votesTokenAddress,
           underlyingTokenAddress,
-          lockReleaseContractAddress,
+          lockReleaseAddress,
+          moduleAzoriusAddress: getAddress(azoriusModule.moduleAddress),
         },
       });
     }

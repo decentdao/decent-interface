@@ -55,7 +55,7 @@ export function VoteContextProvider({
     readOnly: { user, dao },
     node: { safe },
     governance: { type },
-    governanceContracts: { ozLinearVotingContractAddress },
+    governanceContracts: { linearVotingErc20Address },
   } = useFractal();
 
   const { loadVotingWeight } = useSnapshotProposal(proposal as SnapshotProposal);
@@ -96,10 +96,10 @@ export function VoteContextProvider({
         if (isSnapshotProposal) {
           const votingWeightData = await loadVotingWeight();
           newCanVote = votingWeightData.votingWeight >= 1;
-        } else if (type === GovernanceType.AZORIUS_ERC20 && ozLinearVotingContractAddress) {
+        } else if (type === GovernanceType.AZORIUS_ERC20 && linearVotingErc20Address) {
           const ozLinearVotingContract = getContract({
             abi: LinearERC20VotingAbi,
-            address: getAddress(ozLinearVotingContractAddress),
+            address: linearVotingErc20Address,
             client: publicClient,
           });
           newCanVote =
@@ -130,7 +130,7 @@ export function VoteContextProvider({
       hasVoted,
       isSnapshotProposal,
       loadVotingWeight,
-      ozLinearVotingContractAddress,
+      linearVotingErc20Address,
       proposal.proposalId,
       publicClient,
       remainingTokenIds.length,

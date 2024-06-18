@@ -41,7 +41,7 @@ const useBuildDAOTx = () => {
   const {
     readOnly: { user, dao },
     governance,
-    governanceContracts: { erc721LinearVotingContractAddress },
+    governanceContracts: { linearVotingErc721Address },
   } = useFractal();
   const publicClient = usePublicClient();
 
@@ -100,9 +100,9 @@ const useBuildDAOTx = () => {
         parentVotingStrategyType = azoriusGovernance.votingStrategy.strategyType;
         if (
           parentVotingStrategyType === VotingStrategyType.LINEAR_ERC721 &&
-          erc721LinearVotingContractAddress
+          linearVotingErc721Address
         ) {
-          parentVotingStrategyAddress = getAddress(erc721LinearVotingContractAddress);
+          parentVotingStrategyAddress = linearVotingErc721Address;
         }
       }
 
@@ -148,7 +148,7 @@ const useBuildDAOTx = () => {
       moduleAzoriusMasterCopy,
       dao,
       governance,
-      erc721LinearVotingContractAddress,
+      linearVotingErc721Address,
     ],
   );
 

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import AzoriusAbi from '../../../../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
@@ -11,32 +11,32 @@ import { useTimeHelpers } from '../../../utils/useTimeHelpers';
 
 export const useERC20LinearStrategy = () => {
   const {
-    governanceContracts: { ozLinearVotingContractAddress, azoriusContractAddress },
+    governanceContracts: { linearVotingErc20Address, moduleAzoriusAddress },
     action,
   } = useFractal();
   const { getTimeDuration } = useTimeHelpers();
   const publicClient = usePublicClient();
 
   const ozLinearVotingContract = useMemo(() => {
-    if (!ozLinearVotingContractAddress || !publicClient) {
+    if (!linearVotingErc20Address || !publicClient) {
       return;
     }
 
     return getContract({
       abi: LinearERC20VotingAbi,
-      address: getAddress(ozLinearVotingContractAddress),
+      address: linearVotingErc20Address,
       client: publicClient,
     });
-  }, [ozLinearVotingContractAddress, publicClient]);
+  }, [linearVotingErc20Address, publicClient]);
 
   const loadERC20Strategy = useCallback(async () => {
-    if (!ozLinearVotingContract || !azoriusContractAddress || !publicClient) {
+    if (!ozLinearVotingContract || !moduleAzoriusAddress || !publicClient) {
       return {};
     }
 
     const azoriusContract = getContract({
       abi: AzoriusAbi,
-      address: getAddress(azoriusContractAddress),
+      address: moduleAzoriusAddress,
       client: publicClient,
     });
     const [votingPeriodBlocks, quorumNumerator, quorumDenominator, timeLockPeriod] =
@@ -66,7 +66,7 @@ export const useERC20LinearStrategy = () => {
       strategyType: VotingStrategyType.LINEAR_ERC20,
     };
     action.dispatch({ type: FractalGovernanceAction.SET_STRATEGY, payload: votingData });
-  }, [action, azoriusContractAddress, getTimeDuration, ozLinearVotingContract, publicClient]);
+  }, [action, moduleAzoriusAddress, getTimeDuration, ozLinearVotingContract, publicClient]);
 
   useEffect(() => {
     if (!ozLinearVotingContract || !publicClient) {

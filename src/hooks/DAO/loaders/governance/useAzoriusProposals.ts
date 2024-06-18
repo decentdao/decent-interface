@@ -3,7 +3,6 @@ import {
   GetContractEventsReturnType,
   GetContractReturnType,
   PublicClient,
-  getAddress,
   getContract,
 } from 'viem';
 import { usePublicClient } from 'wagmi';
@@ -34,9 +33,9 @@ export const useAzoriusProposals = () => {
 
   const {
     governanceContracts: {
-      azoriusContractAddress,
-      ozLinearVotingContractAddress,
-      erc721LinearVotingContractAddress,
+      moduleAzoriusAddress,
+      linearVotingErc20Address,
+      linearVotingErc721Address,
     },
     action,
   } = useFractal();
@@ -44,50 +43,50 @@ export const useAzoriusProposals = () => {
   const publicClient = usePublicClient();
 
   const azoriusContract = useMemo(() => {
-    if (!azoriusContractAddress || !publicClient) {
+    if (!moduleAzoriusAddress || !publicClient) {
       return;
     }
 
     return getContract({
       abi: AzoriusAbi,
-      address: getAddress(azoriusContractAddress),
+      address: moduleAzoriusAddress,
       client: publicClient,
     });
-  }, [azoriusContractAddress, publicClient]);
+  }, [moduleAzoriusAddress, publicClient]);
 
   const strategyType = useMemo(() => {
-    if (ozLinearVotingContractAddress) {
+    if (linearVotingErc20Address) {
       return VotingStrategyType.LINEAR_ERC20;
-    } else if (erc721LinearVotingContractAddress) {
+    } else if (linearVotingErc721Address) {
       return VotingStrategyType.LINEAR_ERC721;
     } else {
       return undefined;
     }
-  }, [ozLinearVotingContractAddress, erc721LinearVotingContractAddress]);
+  }, [linearVotingErc20Address, linearVotingErc721Address]);
 
   const erc20StrategyContract = useMemo(() => {
-    if (!ozLinearVotingContractAddress || !publicClient) {
+    if (!linearVotingErc20Address || !publicClient) {
       return undefined;
     }
 
     return getContract({
       abi: LinearERC20VotingAbi,
-      address: getAddress(ozLinearVotingContractAddress),
+      address: linearVotingErc20Address,
       client: publicClient,
     });
-  }, [ozLinearVotingContractAddress, publicClient]);
+  }, [linearVotingErc20Address, publicClient]);
 
   const erc721StrategyContract = useMemo(() => {
-    if (!erc721LinearVotingContractAddress || !publicClient) {
+    if (!linearVotingErc721Address || !publicClient) {
       return undefined;
     }
 
     return getContract({
       abi: LinearERC721VotingAbi,
-      address: getAddress(erc721LinearVotingContractAddress),
+      address: linearVotingErc721Address,
       client: publicClient,
     });
-  }, [erc721LinearVotingContractAddress, publicClient]);
+  }, [linearVotingErc721Address, publicClient]);
 
   const erc20VotedEvents = useMemo(async () => {
     if (!erc20StrategyContract) {
@@ -117,14 +116,14 @@ export const useAzoriusProposals = () => {
   }, [azoriusContract]);
 
   useEffect(() => {
-    if (!azoriusContractAddress) {
+    if (!moduleAzoriusAddress) {
       currentAzoriusAddress.current = undefined;
     }
 
-    if (azoriusContractAddress && currentAzoriusAddress.current !== azoriusContractAddress) {
-      currentAzoriusAddress.current = azoriusContractAddress;
+    if (moduleAzoriusAddress && currentAzoriusAddress.current !== moduleAzoriusAddress) {
+      currentAzoriusAddress.current = moduleAzoriusAddress;
     }
-  }, [azoriusContractAddress]);
+  }, [moduleAzoriusAddress]);
 
   const loadAzoriusProposals = useCallback(
     async (
@@ -169,7 +168,7 @@ export const useAzoriusProposals = () => {
       });
 
       const completeProposalLoad = (proposal: AzoriusProposal) => {
-        if (currentAzoriusAddress.current !== azoriusContractAddress) {
+        if (currentAzoriusAddress.current !== moduleAzoriusAddress) {
           // The DAO has changed, don't load the just-fetched proposal,
           // into state, and get out of this function completely.
           return;
@@ -183,7 +182,7 @@ export const useAzoriusProposals = () => {
         });
       };
 
-      const propasalCacheKeyPrefix = `${CacheKeys.PROPOSAL_PREFIX}_${azoriusContractAddress}`;
+      const propasalCacheKeyPrefix = `${CacheKeys.PROPOSAL_PREFIX}_${moduleAzoriusAddress}`;
 
       for (const proposalCreatedEvent of proposalCreatedEvents) {
         if (!proposalCreatedEvent.args.proposalId) {
@@ -284,7 +283,7 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
     },
-    [action, azoriusContractAddress, getValue, setValue],
+    [action, moduleAzoriusAddress, getValue, setValue],
   );
 
   return async (proposalLoaded: OnProposalLoaded) =>

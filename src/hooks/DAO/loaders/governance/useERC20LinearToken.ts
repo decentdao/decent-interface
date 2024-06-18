@@ -10,7 +10,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
   const tokenAccount = useRef<string>();
 
   const {
-    governanceContracts: { votesTokenContractAddress, underlyingTokenAddress },
+    governanceContracts: { votesTokenAddress, underlyingTokenAddress },
     action,
     readOnly: { user },
   } = useFractal();
@@ -18,16 +18,16 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
   const publicClient = usePublicClient();
 
   const tokenContract = useMemo(() => {
-    if (!votesTokenContractAddress || !publicClient) {
+    if (!votesTokenAddress || !publicClient) {
       return;
     }
 
     return getContract({
       abi: VotesERC20Abi,
-      address: getAddress(votesTokenContractAddress),
+      address: votesTokenAddress,
       client: publicClient,
     });
-  }, [publicClient, votesTokenContractAddress]);
+  }, [publicClient, votesTokenAddress]);
 
   const underlyingTokenContract = useMemo(() => {
     if (!underlyingTokenAddress || !publicClient) {
@@ -36,7 +36,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
 
     return getContract({
       abi: VotesERC20Abi,
-      address: getAddress(underlyingTokenAddress),
+      address: underlyingTokenAddress,
       client: publicClient,
     });
   }, [publicClient, underlyingTokenAddress]);
@@ -109,15 +109,15 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
 
   useEffect(() => {
     if (
-      votesTokenContractAddress &&
+      votesTokenAddress &&
       isTokenLoaded.current &&
-      tokenAccount.current !== account + votesTokenContractAddress &&
+      tokenAccount.current !== account + votesTokenAddress &&
       onMount
     ) {
-      tokenAccount.current = account + votesTokenContractAddress;
+      tokenAccount.current = account + votesTokenAddress;
       loadERC20TokenAccountData();
     }
-  }, [account, votesTokenContractAddress, onMount, loadERC20TokenAccountData]);
+  }, [account, votesTokenAddress, onMount, loadERC20TokenAccountData]);
 
   useEffect(() => {
     if (!onMount || !tokenContract || !account) {

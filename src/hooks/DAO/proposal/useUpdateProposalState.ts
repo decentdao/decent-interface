@@ -1,5 +1,5 @@
 import { useCallback, Dispatch } from 'react';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import AzoriusAbi from '../../../assets/abi/Azorius';
 import {
@@ -15,18 +15,18 @@ interface IUseUpdateProposalState {
 }
 
 export default function useUpdateProposalState({
-  governanceContracts: { azoriusContractAddress },
+  governanceContracts: { moduleAzoriusAddress },
   governanceDispatch,
 }: IUseUpdateProposalState) {
   const publicClient = usePublicClient();
   const updateProposalState = useCallback(
     async (proposalId: number) => {
-      if (!azoriusContractAddress || !publicClient) {
+      if (!moduleAzoriusAddress || !publicClient) {
         return;
       }
       const azoriusContract = getContract({
         abi: AzoriusAbi,
-        address: getAddress(azoriusContractAddress),
+        address: moduleAzoriusAddress,
         client: publicClient,
       });
 
@@ -36,7 +36,7 @@ export default function useUpdateProposalState({
         payload: { proposalId: proposalId.toString(), state: newState },
       });
     },
-    [azoriusContractAddress, governanceDispatch, publicClient],
+    [moduleAzoriusAddress, governanceDispatch, publicClient],
   );
 
   return updateProposalState;

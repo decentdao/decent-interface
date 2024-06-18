@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import AzoriusAbi from '../../../../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
@@ -19,59 +19,59 @@ export const useAzoriusListeners = () => {
   const {
     action,
     governanceContracts: {
-      azoriusContractAddress,
-      ozLinearVotingContractAddress,
-      erc721LinearVotingContractAddress,
+      moduleAzoriusAddress,
+      linearVotingErc20Address,
+      linearVotingErc721Address,
     },
   } = useFractal();
   const decode = useSafeDecoder();
   const publicClient = usePublicClient();
 
   const azoriusContract = useMemo(() => {
-    if (!publicClient || !azoriusContractAddress) {
+    if (!publicClient || !moduleAzoriusAddress) {
       return;
     }
 
     return getContract({
       abi: AzoriusAbi,
-      address: getAddress(azoriusContractAddress),
+      address: moduleAzoriusAddress,
       client: publicClient,
     });
-  }, [azoriusContractAddress, publicClient]);
+  }, [moduleAzoriusAddress, publicClient]);
 
   const strategyType = useMemo(() => {
-    if (ozLinearVotingContractAddress) {
+    if (linearVotingErc20Address) {
       return VotingStrategyType.LINEAR_ERC20;
-    } else if (erc721LinearVotingContractAddress) {
+    } else if (linearVotingErc721Address) {
       return VotingStrategyType.LINEAR_ERC721;
     } else {
       return undefined;
     }
-  }, [ozLinearVotingContractAddress, erc721LinearVotingContractAddress]);
+  }, [linearVotingErc20Address, linearVotingErc721Address]);
 
   const erc20StrategyContract = useMemo(() => {
-    if (!ozLinearVotingContractAddress || !publicClient) {
+    if (!linearVotingErc20Address || !publicClient) {
       return undefined;
     }
 
     return getContract({
       abi: LinearERC20VotingAbi,
-      address: getAddress(ozLinearVotingContractAddress),
+      address: linearVotingErc20Address,
       client: publicClient,
     });
-  }, [ozLinearVotingContractAddress, publicClient]);
+  }, [linearVotingErc20Address, publicClient]);
 
   const erc721StrategyContract = useMemo(() => {
-    if (!erc721LinearVotingContractAddress || !publicClient) {
+    if (!linearVotingErc721Address || !publicClient) {
       return undefined;
     }
 
     return getContract({
       abi: LinearERC721VotingAbi,
-      address: getAddress(erc721LinearVotingContractAddress),
+      address: linearVotingErc721Address,
       client: publicClient,
     });
-  }, [erc721LinearVotingContractAddress, publicClient]);
+  }, [linearVotingErc721Address, publicClient]);
 
   useEffect(() => {
     if (!azoriusContract || !strategyType) {

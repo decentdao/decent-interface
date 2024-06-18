@@ -2,7 +2,7 @@ import { Button, Flex, Input } from '@chakra-ui/react';
 import { Formik, FormikProps } from 'formik';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, getContract } from 'viem';
+import { getContract } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
 import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
@@ -39,12 +39,12 @@ export function UnwrapToken({ close }: { close: () => void }) {
 
   const handleFormSubmit = useCallback(
     (amount: BigIntValuePair) => {
-      const { votesTokenContractAddress } = governanceContracts;
-      if (!votesTokenContractAddress || !account || !walletClient) return;
+      const { votesTokenAddress } = governanceContracts;
+      if (!votesTokenAddress || !account || !walletClient) return;
 
       const wrapperTokenContract = getContract({
         abi: VotesERC20WrapperAbi,
-        address: getAddress(votesTokenContractAddress),
+        address: votesTokenAddress,
         client: walletClient,
       });
 

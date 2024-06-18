@@ -23,7 +23,7 @@ export function DelegateModal({ close }: { close: Function }) {
 
   const {
     governance,
-    governanceContracts: { votesTokenContractAddress, lockReleaseContractAddress },
+    governanceContracts: { votesTokenAddress, lockReleaseAddress },
     readOnly: { user },
     action: { loadReadOnlyValues },
   } = useFractal();
@@ -38,7 +38,7 @@ export function DelegateModal({ close }: { close: Function }) {
   const publicClient = usePublicClient();
 
   const submitDelegation = async (values: { address: string }) => {
-    if (!votesTokenContractAddress || !walletClient) return;
+    if (!votesTokenAddress || !walletClient) return;
     let validAddress = getAddress(values.address);
     if (validateENSName(validAddress) && publicClient) {
       const maybeEnsAddress = await publicClient.getEnsAddress({ name: values.address });
@@ -49,7 +49,7 @@ export function DelegateModal({ close }: { close: Function }) {
 
     const votingTokenContract = getContract({
       abi: VotesERC20Abi,
-      address: getAddress(votesTokenContractAddress),
+      address: votesTokenAddress,
       client: walletClient,
     });
 
@@ -64,7 +64,7 @@ export function DelegateModal({ close }: { close: Function }) {
     });
   };
   const submitLockedDelegation = async (values: { address: string }) => {
-    if (!lockReleaseContractAddress || !publicClient || !walletClient) return;
+    if (!lockReleaseAddress || !publicClient || !walletClient) return;
     let validAddress = values.address;
     if (validateENSName(validAddress)) {
       const maybeEnsAddress = await publicClient.getEnsAddress({ name: values.address });
@@ -75,7 +75,7 @@ export function DelegateModal({ close }: { close: Function }) {
 
     const lockReleaseContract = getContract({
       abi: LockReleaseAbi,
-      address: getAddress(lockReleaseContractAddress),
+      address: lockReleaseAddress,
       client: walletClient,
     });
 

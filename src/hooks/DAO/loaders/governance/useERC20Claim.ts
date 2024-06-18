@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
-import { getContract, getAddress } from 'viem';
+import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import ERC20ClaimAbi from '../../../../assets/abi/ERC20Claim';
 import VotesERC20Abi from '../../../../assets/abi/VotesERC20';
@@ -13,19 +13,19 @@ import { FractalGovernanceAction } from '../../../../providers/App/governance/ac
 export function useERC20Claim() {
   const {
     node: { daoAddress },
-    governanceContracts: { votesTokenContractAddress },
+    governanceContracts: { votesTokenAddress },
     action,
   } = useFractal();
   const publicClient = usePublicClient();
 
   const loadTokenClaimContract = useCallback(async () => {
-    if (!votesTokenContractAddress || !publicClient) {
+    if (!votesTokenAddress || !publicClient) {
       return;
     }
 
     const votesTokenContract = getContract({
       abi: VotesERC20Abi,
-      address: getAddress(votesTokenContractAddress),
+      address: votesTokenAddress,
       client: publicClient,
     });
 
@@ -49,7 +49,7 @@ export function useERC20Claim() {
 
     const childToken = tokenClaimArray[0].args.childToken;
 
-    if (!tokenClaimArray.length || !childToken || childToken === votesTokenContractAddress) {
+    if (!tokenClaimArray.length || !childToken || childToken === votesTokenAddress) {
       return;
     }
     // action to governance
@@ -57,22 +57,18 @@ export function useERC20Claim() {
       type: FractalGovernanceAction.SET_CLAIMING_CONTRACT,
       payload: approvals[0].args.spender,
     });
-  }, [action, publicClient, votesTokenContractAddress]);
+  }, [action, publicClient, votesTokenAddress]);
 
   const loadKey = useRef<string>();
 
   useEffect(() => {
-    if (
-      daoAddress &&
-      votesTokenContractAddress &&
-      daoAddress + votesTokenContractAddress !== loadKey.current
-    ) {
-      loadKey.current = daoAddress + votesTokenContractAddress;
+    if (daoAddress && votesTokenAddress && daoAddress + votesTokenAddress !== loadKey.current) {
+      loadKey.current = daoAddress + votesTokenAddress;
       loadTokenClaimContract();
     }
-    if (!daoAddress || !votesTokenContractAddress) {
+    if (!daoAddress || !votesTokenAddress) {
       loadKey.current = undefined;
     }
-  }, [loadTokenClaimContract, daoAddress, votesTokenContractAddress]);
+  }, [loadTokenClaimContract, daoAddress, votesTokenAddress]);
   return;
 }

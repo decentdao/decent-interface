@@ -14,23 +14,23 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
   const tokenAccount = useRef<string>();
 
   const {
-    governanceContracts: { lockReleaseContractAddress },
+    governanceContracts: { lockReleaseAddress },
     action,
     readOnly: { user },
   } = useFractal();
   const publicClient = usePublicClient();
 
   const lockReleaseContract = useMemo(() => {
-    if (!lockReleaseContractAddress || !publicClient) {
+    if (!lockReleaseAddress || !publicClient) {
       return;
     }
 
     return getContract({
       abi: LockReleaseAbi,
-      address: getAddress(lockReleaseContractAddress),
+      address: lockReleaseAddress,
       client: publicClient,
     });
-  }, [lockReleaseContractAddress, publicClient]);
+  }, [lockReleaseAddress, publicClient]);
 
   const loadLockedVotesToken = useCallback(async () => {
     if (!lockReleaseContract || !user.address || !publicClient) {
@@ -64,15 +64,15 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
     }
 
     if (
-      lockReleaseContractAddress &&
+      lockReleaseAddress &&
       isTokenLoaded.current &&
-      tokenAccount.current !== user.address + lockReleaseContractAddress &&
+      tokenAccount.current !== user.address + lockReleaseAddress &&
       onMount
     ) {
-      tokenAccount.current = getAddress(user.address) + lockReleaseContractAddress;
+      tokenAccount.current = getAddress(user.address) + lockReleaseAddress;
       loadLockedVotesToken();
     }
-  }, [loadLockedVotesToken, lockReleaseContractAddress, onMount, user.address]);
+  }, [loadLockedVotesToken, lockReleaseAddress, onMount, user.address]);
 
   useEffect(() => {
     if (!lockReleaseContract || !onMount || !publicClient || !user.address) {

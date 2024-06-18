@@ -12,7 +12,7 @@ export function useCanUserCreateProposal() {
   const {
     node: { safe },
     governance: { type },
-    governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
+    governanceContracts: { linearVotingErc20Address, linearVotingErc721Address },
     readOnly: { user },
   } = useFractal();
   const safeAPI = useSafeAPI();
@@ -56,18 +56,18 @@ export function useCanUserCreateProposal() {
           const { owners } = safe || {};
           return checkIsMultisigOwner(owners);
         } else if (type === GovernanceType.AZORIUS_ERC20) {
-          if (ozLinearVotingContractAddress) {
+          if (linearVotingErc20Address) {
             const ozLinearVotingContract = getContract({
               abi: LinearERC20VotingAbi,
-              address: getAddress(ozLinearVotingContractAddress),
+              address: linearVotingErc20Address,
               client: publicClient,
             });
             return ozLinearVotingContract.read.isProposer([getAddress(user.address)]);
           }
-        } else if (type === GovernanceType.AZORIUS_ERC721 && erc721LinearVotingContractAddress) {
+        } else if (type === GovernanceType.AZORIUS_ERC721 && linearVotingErc721Address) {
           const erc721LinearVotingContract = getContract({
             abi: LinearERC721VotingAbi,
-            address: getAddress(erc721LinearVotingContractAddress),
+            address: linearVotingErc721Address,
             client: publicClient,
           });
           return erc721LinearVotingContract.read.isProposer([getAddress(user.address)]);
@@ -78,9 +78,9 @@ export function useCanUserCreateProposal() {
       return;
     },
     [
-      erc721LinearVotingContractAddress,
+      linearVotingErc721Address,
       getVotingStrategyAddress,
-      ozLinearVotingContractAddress,
+      linearVotingErc20Address,
       publicClient,
       safe,
       safeAPI,

@@ -35,7 +35,7 @@ const useCastVote = ({
   const [snapshotWeightedChoice, setSnapshotWeightedChoice] = useState<number[]>([]);
 
   const {
-    governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
+    governanceContracts: { linearVotingErc20Address, linearVotingErc721Address },
     governance,
     node: { daoSnapshotENS },
     readOnly: {
@@ -87,10 +87,10 @@ const useCastVote = ({
 
   const castVote = useCallback(
     async (vote: number) => {
-      if (type === GovernanceType.AZORIUS_ERC20 && ozLinearVotingContractAddress && walletClient) {
+      if (type === GovernanceType.AZORIUS_ERC20 && linearVotingErc20Address && walletClient) {
         const ozLinearVotingContract = getContract({
           abi: LinearERC20VotingAbi,
-          address: getAddress(ozLinearVotingContractAddress),
+          address: linearVotingErc20Address,
           client: walletClient,
         });
         contractCall({
@@ -107,12 +107,12 @@ const useCastVote = ({
         });
       } else if (
         type === GovernanceType.AZORIUS_ERC721 &&
-        erc721LinearVotingContractAddress &&
+        linearVotingErc721Address &&
         walletClient
       ) {
         const erc721LinearVotingContract = getContract({
           abi: LinearERC721VotingAbi,
-          address: getAddress(erc721LinearVotingContractAddress),
+          address: linearVotingErc721Address,
           client: walletClient,
         });
         contractCall({
@@ -137,10 +137,10 @@ const useCastVote = ({
     },
     [
       contractCall,
-      erc721LinearVotingContractAddress,
+      linearVotingErc721Address,
       getCanVote,
       getHasVoted,
-      ozLinearVotingContractAddress,
+      linearVotingErc20Address,
       proposal.proposalId,
       remainingTokenAddresses,
       remainingTokenIds,
