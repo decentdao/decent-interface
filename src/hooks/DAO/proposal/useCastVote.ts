@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import snapshot from '@snapshot-labs/snapshot.js';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -5,8 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
-import LinearERC20VotingAbi from '../../../assets/abi/LinearERC20Voting';
-import LinearERC721VotingAbi from '../../../assets/abi/LinearERC721Voting';
 import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -89,7 +88,7 @@ const useCastVote = ({
     async (vote: number) => {
       if (type === GovernanceType.AZORIUS_ERC20 && linearVotingErc20Address && walletClient) {
         const ozLinearVotingContract = getContract({
-          abi: LinearERC20VotingAbi,
+          abi: abis.LinearERC20Voting,
           address: linearVotingErc20Address,
           client: walletClient,
         });
@@ -111,7 +110,7 @@ const useCastVote = ({
         walletClient
       ) {
         const erc721LinearVotingContract = getContract({
-          abi: LinearERC721VotingAbi,
+          abi: abis.LinearERC721Voting,
           address: linearVotingErc721Address,
           client: walletClient,
         });

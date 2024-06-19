@@ -1,8 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useEffect, useCallback, useRef } from 'react';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import ERC20ClaimAbi from '../../../../assets/abi/ERC20Claim';
-import VotesERC20Abi from '../../../../assets/abi/VotesERC20';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 // get list of approvals; approval [0] should be token claim
@@ -24,7 +23,7 @@ export function useERC20Claim() {
     }
 
     const votesTokenContract = getContract({
-      abi: VotesERC20Abi,
+      abi: abis.VotesERC20,
       address: votesTokenAddress,
       client: publicClient,
     });
@@ -38,7 +37,7 @@ export function useERC20Claim() {
     }
 
     const possibleTokenClaimContract = getContract({
-      abi: ERC20ClaimAbi,
+      abi: abis.ERC20Claim,
       address: approvals[0].args.spender,
       client: publicClient,
     });

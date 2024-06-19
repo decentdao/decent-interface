@@ -1,8 +1,8 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { encodeFunctionData } from 'viem';
 import { normalize } from 'viem/ens';
 import { usePublicClient } from 'wagmi';
-import KeyValuePairsAbi from '../../../assets/abi/KeyValuePairs';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -58,7 +58,7 @@ export default function useCreateProposalTemplate() {
         const { Hash } = await client.add(JSON.stringify(updatedTemplatesList));
 
         const encodedUpdateValues = encodeFunctionData({
-          abi: KeyValuePairsAbi,
+          abi: abis.KeyValuePairs,
           functionName: 'updateValues',
           args: [['proposalTemplates'], [Hash]],
         });

@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import {
   Address,
@@ -6,9 +7,6 @@ import {
   PublicClient,
   getAddress,
 } from 'viem';
-import AzoriusAbi from '../assets/abi/Azorius';
-import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
-import LinearERC721VotingAbi from '../assets/abi/LinearERC721Voting';
 import { strategyFractalProposalStates } from '../constants/strategy';
 
 import {
@@ -32,7 +30,7 @@ import {
 import { getTimeStamp } from './contract';
 
 export const getAzoriusProposalState = async (
-  azoriusContract: GetContractReturnType<typeof AzoriusAbi, PublicClient>,
+  azoriusContract: GetContractReturnType<typeof abis.Azorius, PublicClient>,
   proposalId: number,
 ): Promise<FractalProposalState> => {
   const state = await azoriusContract.read.proposalState([proposalId]);
@@ -41,10 +39,10 @@ export const getAzoriusProposalState = async (
 
 const getQuorum = async (
   erc20StrategyContract:
-    | GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient>
+    | GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
     | undefined,
   erc721StrategyContract:
-    | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
+    | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
     | undefined,
   strategyType: VotingStrategyType,
   proposalId: number,
@@ -63,8 +61,8 @@ const getQuorum = async (
 };
 
 export const getProposalVotesSummary = async (
-  erc20Strategy: GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient> | undefined,
-  erc721Strategy: GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient> | undefined,
+  erc20Strategy: GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient> | undefined,
+  erc721Strategy: GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient> | undefined,
   strategyType: VotingStrategyType,
   proposalId: number,
 ): Promise<ProposalVotesSummary> => {
@@ -117,8 +115,10 @@ export const getProposalVotesSummary = async (
 };
 
 const getProposalVotes = (
-  erc20VotedEvents: GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined,
-  erc721VotedEvents: GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'> | undefined,
+  erc20VotedEvents: GetContractEventsReturnType<typeof abis.LinearERC20Voting, 'Voted'> | undefined,
+  erc721VotedEvents:
+    | GetContractEventsReturnType<typeof abis.LinearERC721Voting, 'Voted'>
+    | undefined,
   proposalId: number,
 ): (ProposalVote | ERC721ProposalVote)[] => {
   if (erc20VotedEvents !== undefined && erc721VotedEvents !== undefined) {
@@ -169,19 +169,21 @@ const getProposalVotes = (
 
 export const mapProposalCreatedEventToProposal = async (
   erc20StrategyContract:
-    | GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient>
+    | GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
     | undefined,
   erc721StrategyContract:
-    | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
+    | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
     | undefined,
   strategyType: VotingStrategyType,
   proposalId: number,
   proposer: Address,
-  azoriusContract: GetContractReturnType<typeof AzoriusAbi, PublicClient>,
+  azoriusContract: GetContractReturnType<typeof abis.Azorius, PublicClient>,
   publicClient: PublicClient,
-  erc20VotedEvents: GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined,
-  erc721VotedEvents: GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'> | undefined,
-  executedEvents: GetContractEventsReturnType<typeof AzoriusAbi, 'ProposalExecuted'> | undefined,
+  erc20VotedEvents: GetContractEventsReturnType<typeof abis.LinearERC20Voting, 'Voted'> | undefined,
+  erc721VotedEvents:
+    | GetContractEventsReturnType<typeof abis.LinearERC721Voting, 'Voted'>
+    | undefined,
+  executedEvents: GetContractEventsReturnType<typeof abis.Azorius, 'ProposalExecuted'> | undefined,
   data?: ProposalData,
 ) => {
   if (erc20StrategyContract !== undefined && erc721StrategyContract !== undefined) {

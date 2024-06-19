@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import {
   getCreate2Address,
   keccak256,
@@ -10,13 +11,7 @@ import {
   Abi,
   encodeFunctionData,
 } from 'viem';
-import AzoriusFreezeGuardAbi from '../assets/abi/AzoriusFreezeGuard';
-import ERC20FreezeVotingAbi from '../assets/abi/ERC20FreezeVoting';
-import ERC721FreezeVotingAbi from '../assets/abi/ERC721FreezeVoting';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
-import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
-import MultisigFreezeVotingAbi from '../assets/abi/MultisigFreezeVoting';
 import { buildContractCall } from '../helpers';
 import { SafeTransaction, SubDAO, VotingStrategyType } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
@@ -100,7 +95,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   public buildDeployZodiacModuleTx(): SafeTransaction {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
+      abis.ModuleProxyFactory,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [
@@ -146,11 +141,15 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     ];
 
     if (this.freezeVotingType === 'erc20') {
-      return buildContractCall(ERC20FreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
+      return buildContractCall(abis.ERC20FreezeVoting, this.freezeVotingAddress, ...functionArgs);
     } else if (this.freezeVotingType === 'erc721') {
-      return buildContractCall(ERC721FreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
+      return buildContractCall(abis.ERC721FreezeVoting, this.freezeVotingAddress, ...functionArgs);
     } else if (this.freezeVotingType === 'multisig') {
-      return buildContractCall(MultisigFreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
+      return buildContractCall(
+        abis.MultisigFreezeVoting,
+        this.freezeVotingAddress,
+        ...functionArgs,
+      );
     } else {
       throw new Error('unsupported freeze voting type');
     }
@@ -173,7 +172,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   public buildDeployFreezeGuardTx() {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
+      abis.ModuleProxyFactory,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [this.getGuardMasterCopyAddress(), this.freezeGuardCallData!, this.saltNum],
@@ -192,20 +191,20 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
         this.freezeVotingType = 'erc20';
         this.freezeVotingCallData = encodeFunctionData({
-          abi: ERC20FreezeVotingAbi,
+          abi: abis.ERC20FreezeVoting,
           functionName: 'owner',
         });
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
         this.freezeVotingType = 'erc721';
         this.freezeVotingCallData = encodeFunctionData({
-          abi: ERC721FreezeVotingAbi,
+          abi: abis.ERC721FreezeVoting,
           functionName: 'owner',
         });
       }
     } else {
       this.freezeVotingType = 'multisig';
       this.freezeVotingCallData = encodeFunctionData({
-        abi: MultisigFreezeVotingAbi,
+        abi: abis.MultisigFreezeVoting,
         functionName: 'owner',
       });
     }
@@ -269,7 +268,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     }
 
     const freezeGuardCallData = encodeFunctionData({
-      abi: MultisigFreezeGuardAbi,
+      abi: abis.MultisigFreezeGuard,
       functionName: 'setUp',
       args: [
         encodeAbiParameters(parseAbiParameters('uint32, uint32, address, address, address'), [
@@ -298,7 +297,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     }
 
     const freezeGuardCallData = encodeFunctionData({
-      abi: AzoriusFreezeGuardAbi,
+      abi: abis.AzoriusFreezeGuard,
       functionName: 'setUp',
       args: [
         encodeAbiParameters(parseAbiParameters('address, address'), [

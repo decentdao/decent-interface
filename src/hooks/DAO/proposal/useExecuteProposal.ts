@@ -1,8 +1,8 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
-import AzoriusAbi from '../../../assets/abi/Azorius';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { MetaTransaction, FractalProposal, AzoriusProposal } from '../../../types';
 import { useTransaction } from '../../utils/useTransaction';
@@ -33,7 +33,7 @@ export default function useExecuteProposal() {
       }
 
       const azoriusContract = getContract({
-        abi: AzoriusAbi,
+        abi: abis.Azorius,
         address: moduleAzoriusAddress,
         client: walletClient,
       });

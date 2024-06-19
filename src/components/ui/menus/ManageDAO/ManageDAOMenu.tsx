@@ -1,12 +1,10 @@
 import { Icon, IconButton } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { GearFine } from '@phosphor-icons/react';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Address, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
-import ERC20FreezeVotingAbi from '../../../../assets/abi/ERC20FreezeVoting';
-import ERC721FreezeVotingAbi from '../../../../assets/abi/ERC721FreezeVoting';
-import MultisigFreezeVotingAbi from '../../../../assets/abi/MultisigFreezeVoting';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -124,7 +122,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
           }
 
           const freezeVotingContract = getContract({
-            abi: MultisigFreezeVotingAbi,
+            abi: abis.MultisigFreezeVoting,
             address: guardContracts.freezeVotingContractAddress,
             client: walletClient,
           });
@@ -137,7 +135,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
             throw new Error('wallet client not set');
           }
           const contract = getContract({
-            abi: ERC20FreezeVotingAbi,
+            abi: abis.ERC20FreezeVoting,
             address: guardContracts.freezeVotingContractAddress,
             client: walletClient,
           });
@@ -151,7 +149,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
               throw new Error('wallet client not set');
             }
             const freezeERC721VotingContract = getContract({
-              abi: ERC721FreezeVotingAbi,
+              abi: abis.ERC721FreezeVoting,
               address: guardContracts.freezeVotingContractAddress,
               client: walletClient,
             });

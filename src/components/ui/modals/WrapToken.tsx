@@ -1,11 +1,11 @@
 import { Button, Flex, Input } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { Formik, FormikProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
-import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
 import { logError } from '../../../helpers/errorLogging';
 import { useERC20LinearToken } from '../../../hooks/DAO/loaders/governance/useERC20LinearToken';
 import useApproval from '../../../hooks/utils/useApproval';
@@ -86,7 +86,7 @@ export function WrapToken({ close }: { close: () => void }) {
       if (!votesTokenAddress || !account || !walletClient) return;
 
       const wrapperTokenContract = getContract({
-        abi: VotesERC20WrapperAbi,
+        abi: abis.VotesERC20Wrapper,
         address: votesTokenAddress,
         client: walletClient,
       });

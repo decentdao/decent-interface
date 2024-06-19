@@ -1,18 +1,4 @@
-import Azorius from '@fractal-framework/fractal-contracts/deployments/polygon/Azorius.json';
-import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/polygon/AzoriusFreezeGuard.json';
-import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/polygon/ERC20Claim.json';
-import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/ERC20FreezeVoting.json';
-import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/ERC721FreezeVoting.json';
-import FractalModule from '@fractal-framework/fractal-contracts/deployments/polygon/FractalModule.json';
-import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/polygon/FractalRegistry.json';
-import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/polygon/KeyValuePairs.json';
-import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/polygon/LinearERC20Voting.json';
-import LinearVotingERC721 from '@fractal-framework/fractal-contracts/deployments/polygon/LinearERC721Voting.json';
-import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/polygon/ModuleProxyFactory.json';
-import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/polygon/MultisigFreezeGuard.json';
-import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/MultisigFreezeVoting.json';
-import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/polygon/VotesERC20.json';
-import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/polygon/VotesERC20Wrapper.json';
+import { addresses } from '@fractal-framework/fractal-contracts';
 import {
   getProxyFactoryDeployment,
   getMultiSendCallOnlyDeployment,
@@ -23,11 +9,12 @@ import { getAddress } from 'viem';
 import { polygon } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
-import { getSafeContractDeployment } from './utils';
+import { getSafeContractDeploymentAddress } from './utils';
 
 const SAFE_VERSION = '1.3.0';
 
 const chain = polygon;
+const a = addresses[chain.id];
 
 export const polygonConfig: NetworkConfig = {
   order: 20,
@@ -44,49 +31,49 @@ export const polygonConfig: NetworkConfig = {
     version: 'v0.1.1',
   },
   contracts: {
-    gnosisSafeL2Singleton: getSafeContractDeployment(
+    gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
       getSafeL2SingletonDeployment,
       SAFE_VERSION,
       chain.id.toString(),
     ),
-    gnosisSafeProxyFactory: getSafeContractDeployment(
+    gnosisSafeProxyFactory: getSafeContractDeploymentAddress(
       getProxyFactoryDeployment,
       SAFE_VERSION,
       chain.id.toString(),
     ),
-    compatibilityFallbackHandler: getSafeContractDeployment(
+    compatibilityFallbackHandler: getSafeContractDeploymentAddress(
       getCompatibilityFallbackHandlerDeployment,
       SAFE_VERSION,
       chain.id.toString(),
     ),
-    multiSendCallOnly: getSafeContractDeployment(
+    multiSendCallOnly: getSafeContractDeploymentAddress(
       getMultiSendCallOnlyDeployment,
       SAFE_VERSION,
       chain.id.toString(),
     ),
 
-    zodiacModuleProxyFactory: getAddress(ModuleProxyFactory.address),
+    zodiacModuleProxyFactory: getAddress(a.ModuleProxyFactory),
 
-    linearVotingErc20MasterCopy: getAddress(LinearERC20Voting.address),
-    linearVotingErc721MasterCopy: getAddress(LinearVotingERC721.address),
+    linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
+    linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
 
-    moduleAzoriusMasterCopy: getAddress(Azorius.address),
-    moduleFractalMasterCopy: getAddress(FractalModule.address),
+    moduleAzoriusMasterCopy: getAddress(a.Azorius),
+    moduleFractalMasterCopy: getAddress(a.FractalModule),
 
-    freezeGuardAzoriusMasterCopy: getAddress(AzoriusFreezeGuard.address),
-    freezeGuardMultisigMasterCopy: getAddress(MultisigFreezeGuard.address),
+    freezeGuardAzoriusMasterCopy: getAddress(a.AzoriusFreezeGuard),
+    freezeGuardMultisigMasterCopy: getAddress(a.MultisigFreezeGuard),
 
-    freezeVotingErc20MasterCopy: getAddress(ERC20FreezeVoting.address),
-    freezeVotingErc721MasterCopy: getAddress(ERC721FreezeVoting.address),
-    freezeVotingMultisigMasterCopy: getAddress(MultisigFreezeVoting.address),
+    freezeVotingErc20MasterCopy: getAddress(a.ERC20FreezeVoting),
+    freezeVotingErc721MasterCopy: getAddress(a.ERC721FreezeVoting),
+    freezeVotingMultisigMasterCopy: getAddress(a.MultisigFreezeVoting),
 
-    votesErc20MasterCopy: getAddress(VotesERC20.address),
-    votesErc20WrapperMasterCopy: getAddress(VotesERC20Wrapper.address),
+    votesErc20MasterCopy: getAddress(a.VotesERC20),
+    votesErc20WrapperMasterCopy: getAddress(a.VotesERC20Wrapper),
 
-    claimErc20MasterCopy: getAddress(ERC20Claim.address),
+    claimErc20MasterCopy: getAddress(a.ERC20Claim),
 
-    fractalRegistry: getAddress(FractalRegistry.address),
-    keyValuePairs: getAddress(KeyValuePairs.address),
+    fractalRegistry: getAddress(a.FractalRegistry),
+    keyValuePairs: getAddress(a.KeyValuePairs),
   },
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],

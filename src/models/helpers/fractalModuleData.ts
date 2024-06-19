@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import {
   encodeAbiParameters,
   parseAbiParameters,
@@ -7,9 +8,7 @@ import {
   encodePacked,
   encodeFunctionData,
 } from 'viem';
-import FractalModuleAbi from '../../assets/abi/FractalModule';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
-import ModuleProxyFactoryAbi from '../../assets/abi/ModuleProxyFactory';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
 import { generateContractByteCodeLinear, generateSalt } from './utils';
@@ -28,7 +27,7 @@ export const fractalModuleData = (
   parentAddress?: Address,
 ): FractalModuleData => {
   const fractalModuleCalldata = encodeFunctionData({
-    abi: FractalModuleAbi,
+    abi: abis.FractalModule,
     functionName: 'setUp',
     args: [
       encodeAbiParameters(parseAbiParameters(['address, address, address, address[]']), [
@@ -45,7 +44,7 @@ export const fractalModuleData = (
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
 
   const deployFractalModuleTx = buildContractCall(
-    ModuleProxyFactoryAbi,
+    abis.ModuleProxyFactory,
     moduleProxyFactoryAddress,
     'deployModule',
     [fractalModuleMasterCopyAddress, fractalModuleCalldata, saltNum],

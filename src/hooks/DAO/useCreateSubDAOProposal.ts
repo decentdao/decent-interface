@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isHex, encodeFunctionData } from 'viem';
-import FractalRegistryAbi from '../../assets/abi/FractalRegistry';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -58,7 +58,7 @@ export const useCreateSubDAOProposal = () => {
         }
 
         const encodedDeclareSubDAO = encodeFunctionData({
-          abi: FractalRegistryAbi,
+          abi: abis.FractalRegistry,
           functionName: 'declareSubDAO',
           args: [predictedSafeAddress],
         });

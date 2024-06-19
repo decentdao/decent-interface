@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import {
   getCreate2Address,
   Address,
@@ -12,14 +13,7 @@ import {
   getContract,
   getAddress,
 } from 'viem';
-import AzoriusAbi from '../assets/abi/Azorius';
-import ERC20ClaimAbi from '../assets/abi/ERC20Claim';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
-import LinearERC721VotingAbi from '../assets/abi/LinearERC721Voting';
-import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
-import VotesERC20Abi from '../assets/abi/VotesERC20';
-import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
 import { SENTINEL_ADDRESS } from '../constants/common';
 import { buildContractCall, getRandomBytes } from '../helpers';
 import {
@@ -156,7 +150,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       return buildContractCall(
-        LinearERC20VotingAbi,
+        abis.LinearERC20Voting,
         this.linearERC20VotingAddress!,
         'setAzorius', // contract function name
         [this.azoriusAddress],
@@ -165,7 +159,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       );
     } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
       return buildContractCall(
-        LinearERC721VotingAbi,
+        abis.LinearERC721Voting,
         this.linearERC721VotingAddress!,
         'setAzorius', // contract function name
         [this.azoriusAddress],
@@ -212,7 +206,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildCreateTokenTx(): SafeTransaction {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
+      abis.ModuleProxyFactory,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [this.votesErc20MasterCopy, this.encodedSetupTokenData, this.tokenNonce],
@@ -225,7 +219,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const daoData = this.daoData as AzoriusGovernanceDAO;
 
     return buildContractCall(
-      ModuleProxyFactoryAbi,
+      abis.ModuleProxyFactory,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [
@@ -242,7 +236,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildDeployAzoriusTx(): SafeTransaction {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
+      abis.ModuleProxyFactory,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [this.moduleAzoriusMasterCopy, this.encodedSetupAzoriusData, this.azoriusNonce],
@@ -253,7 +247,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildDeployTokenClaim() {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
+      abis.ModuleProxyFactory,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [this.claimErc20MasterCopy, this.encodedSetupTokenClaimData, this.claimNonce],
@@ -269,7 +263,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
     const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
     return buildContractCall(
-      VotesERC20Abi,
+      abis.VotesERC20,
       this.votesTokenAddress,
       'approve',
       [this.predictedTokenClaimAddress, azoriusGovernanceDaoData.parentAllocationAmount],
@@ -280,7 +274,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildCreateTokenWrapperTx(): SafeTransaction {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
+      abis.ModuleProxyFactory,
       this.zodiacModuleProxyFactory,
       'deployModule',
       [this.votesErc20WrapperMasterCopy, this.encodedSetupERC20WrapperData, this.tokenNonce],
@@ -303,7 +297,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     ]);
 
     this.encodedSetupERC20WrapperData = encodeFunctionData({
-      abi: VotesERC20WrapperAbi,
+      abi: abis.VotesERC20Wrapper,
       functionName: 'setUp',
       args: [encodedInitTokenData],
     });
@@ -370,7 +364,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     );
 
     this.encodedSetupTokenData = encodeFunctionData({
-      abi: VotesERC20Abi,
+      abi: abis.VotesERC20,
       functionName: 'setUp',
       args: [encodedInitTokenData],
     });
@@ -404,7 +398,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       ],
     );
     const encodedSetupTokenClaimData = encodeFunctionData({
-      abi: ERC20ClaimAbi,
+      abi: abis.ERC20Claim,
       functionName: 'setUp',
       args: [encodedInitTokenData],
     });
@@ -434,7 +428,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       }
 
       const linearERC20VotingMasterCopyContract = getContract({
-        abi: LinearERC20VotingAbi,
+        abi: abis.LinearERC20Voting,
         address: this.linearVotingErc20MasterCopy,
         client: this.publicClient,
       });
@@ -454,7 +448,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       );
 
       const encodedStrategySetupData = encodeFunctionData({
-        abi: LinearERC20VotingAbi,
+        abi: abis.LinearERC20Voting,
         functionName: 'setUp',
         args: [encodedStrategyInitParams],
       });
@@ -497,7 +491,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       );
 
       const encodedStrategySetupData = encodeFunctionData({
-        abi: LinearERC721VotingAbi,
+        abi: abis.LinearERC721Voting,
         functionName: 'setUp',
         args: [encodedStrategyInitParams],
       });
@@ -540,7 +534,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     );
 
     const encodedSetupAzoriusData = encodeFunctionData({
-      abi: AzoriusAbi,
+      abi: abis.Azorius,
       functionName: 'setUp',
       args: [encodedInitAzoriusData],
     });

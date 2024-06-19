@@ -1,8 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useMemo } from 'react';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import AzoriusAbi from '../../../../assets/abi/Azorius';
-import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { VotingStrategyType } from '../../../../types';
@@ -23,7 +22,7 @@ export const useERC721LinearStrategy = () => {
     }
 
     return getContract({
-      abi: LinearERC721VotingAbi,
+      abi: abis.LinearERC721Voting,
       address: linearVotingErc721Address,
       client: publicClient,
     });
@@ -35,7 +34,7 @@ export const useERC721LinearStrategy = () => {
     }
 
     const azoriusContract = getContract({
-      abi: AzoriusAbi,
+      abi: abis.Azorius,
       address: moduleAzoriusAddress,
       client: publicClient,
     });

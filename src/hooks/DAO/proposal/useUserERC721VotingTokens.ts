@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useState, useEffect, useCallback } from 'react';
 import { Address, GetContractReturnType, PublicClient, erc721Abi, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import LinearERC721VotingAbi from '../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
@@ -51,7 +51,7 @@ export default function useUserERC721VotingTokens(
 
       let govTokens = erc721Tokens;
       let votingContract:
-        | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
+        | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
         | undefined;
 
       if (!daoAddress || !publicClient || !safeAPI) {
@@ -68,7 +68,7 @@ export default function useUserERC721VotingTokens(
         const votingStrategyAddress = await getVotingStrategyAddress(_safeAddress);
         if (votingStrategyAddress) {
           votingContract = getContract({
-            abi: LinearERC721VotingAbi,
+            abi: abis.LinearERC721Voting,
             address: votingStrategyAddress,
             client: publicClient,
           });
@@ -99,7 +99,7 @@ export default function useUserERC721VotingTokens(
 
       if (linearVotingErc721Address && !votingContract) {
         votingContract = getContract({
-          abi: LinearERC721VotingAbi,
+          abi: abis.LinearERC721Voting,
           address: linearVotingErc721Address,
           client: publicClient,
         });

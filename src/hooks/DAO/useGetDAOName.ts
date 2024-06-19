@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { Address, PublicClient, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import FractalRegistryAbi from '../../assets/abi/FractalRegistry';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { createAccountSubstring } from '../utils/useDisplayName';
 
@@ -37,7 +37,7 @@ const getDAOName = async ({
   }
 
   const fractalRegistryContract = getContract({
-    abi: FractalRegistryAbi,
+    abi: abis.FractalRegistry,
     address: fractalRegistry,
     client: publicClient,
   });

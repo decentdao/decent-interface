@@ -1,10 +1,11 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { erc721Abi, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { ERC721TokenData } from '../../../../types';
+
 export default function useERC721Tokens() {
   const {
     governanceContracts: { linearVotingErc721Address },
@@ -16,7 +17,7 @@ export default function useERC721Tokens() {
       return;
     }
     const erc721LinearVotingContract = getContract({
-      abi: LinearERC721VotingAbi,
+      abi: abis.LinearERC721Voting,
       address: linearVotingErc721Address,
       client: publicClient,
     });

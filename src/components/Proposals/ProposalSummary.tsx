@@ -1,4 +1,5 @@
 import { Text, Box, Button, Flex, Tooltip, Icon } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
@@ -6,7 +7,6 @@ import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import VotesERC20Abi from '../../assets/abi/VotesERC20';
 import { TOOLTIP_MAXW } from '../../constants/common';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -68,7 +68,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
     async function loadProposalVotingWeight() {
       if (address && votesToken && publicClient) {
         const tokenContract = getContract({
-          abi: VotesERC20Abi,
+          abi: abis.VotesERC20,
           address: votesToken.address,
           client: publicClient,
         });

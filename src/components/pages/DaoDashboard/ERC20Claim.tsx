@@ -1,9 +1,9 @@
 import { Alert, AlertTitle, Button, Flex, Text } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
-import ERC20ClaimAbi from '../../../assets/abi/ERC20Claim';
 import { Alert as AlertIcon } from '../../../assets/theme/custom/icons/Alert';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -29,7 +29,7 @@ export function ERCO20Claim() {
       return;
     }
     const tokenClaimContract = getContract({
-      abi: ERC20ClaimAbi,
+      abi: abis.ERC20Claim,
       address: tokenClaimContractAddress,
       client: publicClient,
     });
@@ -52,7 +52,7 @@ export function ERCO20Claim() {
       azoriusGovernance.votesToken.symbol,
     );
     const tokenClaimContract = getContract({
-      abi: ERC20ClaimAbi,
+      abi: abis.ERC20Claim,
       address: tokenClaimContractAddress,
       client: walletClient,
     });

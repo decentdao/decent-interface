@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -11,7 +12,6 @@ import {
   Address,
 } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
-import AzoriusAbi from '../../../assets/abi/Azorius';
 import MultiSendCallOnlyAbi from '../../../assets/abi/MultiSendCallOnly';
 import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
@@ -73,7 +73,7 @@ export default function useSubmitProposal() {
     }
 
     return getContract({
-      abi: AzoriusAbi,
+      abi: abis.Azorius,
       address: azoriusModule.moduleAddress,
       client: walletClient,
     });
@@ -233,7 +233,7 @@ export default function useSubmitProposal() {
         }));
 
         const azoriusContract = getContract({
-          abi: AzoriusAbi,
+          abi: abis.Azorius,
           address: azoriusAddress,
           client: walletClient,
         });

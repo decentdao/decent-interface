@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import MultisigFreezeGuardAbi from '../../../assets/abi/MultisigFreezeGuard';
 import { logError } from '../../../helpers/errorLogging';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useLoadDAOProposals } from '../../../hooks/DAO/loaders/useLoadDAOProposals';
@@ -95,7 +95,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
     const freezeGuard =
       freezeGuardType === FreezeGuardType.MULTISIG
         ? getContract({
-            abi: MultisigFreezeGuardAbi,
+            abi: abis.MultisigFreezeGuard,
             address: freezeGuardContractAddress,
             client: publicClient,
           })

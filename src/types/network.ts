@@ -1,11 +1,5 @@
-import { ethers } from 'ethers';
 import { Address, Chain } from 'viem';
 import { GovernanceType } from './fractal';
-
-export type Providers =
-  | ethers.providers.Web3Provider
-  | ethers.providers.JsonRpcProvider
-  | ethers.providers.BaseProvider;
 
 export type NetworkConfig = {
   order: number; // any arbitrary integer, used to "order" the networks in the dropdown

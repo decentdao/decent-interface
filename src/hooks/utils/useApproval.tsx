@@ -1,8 +1,8 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getContract, maxUint256 } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
-import VotesERC20Abi from '../../assets/abi/VotesERC20';
 import { useTransaction } from './useTransaction';
 
 const useApproval = (tokenAddress?: Address, spenderAddress?: Address, userBalance?: bigint) => {
@@ -19,7 +19,7 @@ const useApproval = (tokenAddress?: Address, spenderAddress?: Address, userBalan
     }
 
     return getContract({
-      abi: VotesERC20Abi,
+      abi: abis.VotesERC20,
       address: tokenAddress,
       client: walletClient,
     });
