@@ -1,6 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
-import FractalRegistryAbi from '../assets/abi/FractalRegistry';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
 import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
@@ -234,7 +233,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   private buildUpdateDAONameTx(): SafeTransaction {
     return buildContractCall(
-      FractalRegistryAbi,
+      abis.FractalRegistry,
       this.fractalRegistry,
       'updateDAOName',
       [this.daoData.daoName],
