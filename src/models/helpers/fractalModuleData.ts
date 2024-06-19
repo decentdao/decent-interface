@@ -8,7 +8,6 @@ import {
   encodePacked,
   encodeFunctionData,
 } from 'viem';
-import FractalModuleAbi from '../../assets/abi/FractalModule';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
@@ -28,7 +27,7 @@ export const fractalModuleData = (
   parentAddress?: Address,
 ): FractalModuleData => {
   const fractalModuleCalldata = encodeFunctionData({
-    abi: FractalModuleAbi,
+    abi: abis.FractalModule,
     functionName: 'setUp',
     args: [
       encodeAbiParameters(parseAbiParameters(['address, address, address, address[]']), [

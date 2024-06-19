@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -8,7 +9,6 @@ import {
   getAddress,
   parseAbiParameters,
 } from 'viem';
-import FractalModuleAbi from '../../assets/abi/FractalModule';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { FractalModuleType, FractalNode } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
@@ -47,7 +47,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               );
 
               const fractalModuleCalldata = encodeFunctionData({
-                abi: FractalModuleAbi,
+                abi: abis.FractalModule,
                 functionName: 'execTx',
                 args: [txData],
               });
@@ -69,7 +69,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               );
 
               const fractalModuleCalldata = encodeFunctionData({
-                abi: FractalModuleAbi,
+                abi: abis.FractalModule,
                 functionName: 'execTx',
                 args: [txData],
               });
