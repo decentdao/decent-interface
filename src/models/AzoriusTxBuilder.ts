@@ -14,7 +14,6 @@ import {
   getAddress,
 } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
 import { SENTINEL_ADDRESS } from '../constants/common';
 import { buildContractCall, getRandomBytes } from '../helpers';
 import {
@@ -298,7 +297,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     ]);
 
     this.encodedSetupERC20WrapperData = encodeFunctionData({
-      abi: VotesERC20WrapperAbi,
+      abi: abis.VotesERC20Wrapper,
       functionName: 'setUp',
       args: [encodedInitTokenData],
     });
