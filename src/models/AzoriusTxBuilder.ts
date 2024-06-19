@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import {
   getCreate2Address,
   Address,
@@ -17,7 +18,6 @@ import ERC20ClaimAbi from '../assets/abi/ERC20Claim';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../assets/abi/LinearERC721Voting';
-import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import VotesERC20Abi from '../assets/abi/VotesERC20';
 import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
 import { SENTINEL_ADDRESS } from '../constants/common';
@@ -29,6 +29,7 @@ import {
   AzoriusERC721DAO,
   VotingStrategyType,
 } from '../types';
+import { FractalContractsObject } from '../types/network';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
 
@@ -53,7 +54,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   private votesErc20WrapperMasterCopy: Address;
   private votesErc20MasterCopy: Address;
-  private zodiacModuleProxyFactory: Address;
+  private zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>;
   private multiSendCallOnly: Address;
   private claimErc20MasterCopy: Address;
   private linearVotingErc20MasterCopy: Address;
@@ -72,7 +73,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
     votesErc20WrapperMasterCopy: Address,
     votesErc20MasterCopy: Address,
-    zodiacModuleProxyFactory: Address,
+    zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>,
     multiSendCallOnly: Address,
     claimErc20MasterCopy: Address,
     linearVotingErc20MasterCopy: Address,
@@ -212,8 +213,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildCreateTokenTx(): SafeTransaction {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
-      this.zodiacModuleProxyFactory,
+      this.zodiacModuleProxyFactory.abi,
+      this.zodiacModuleProxyFactory.address,
       'deployModule',
       [this.votesErc20MasterCopy, this.encodedSetupTokenData, this.tokenNonce],
       0,
@@ -225,8 +226,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const daoData = this.daoData as AzoriusGovernanceDAO;
 
     return buildContractCall(
-      ModuleProxyFactoryAbi,
-      this.zodiacModuleProxyFactory,
+      this.zodiacModuleProxyFactory.abi,
+      this.zodiacModuleProxyFactory.address,
       'deployModule',
       [
         daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20
@@ -242,8 +243,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildDeployAzoriusTx(): SafeTransaction {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
-      this.zodiacModuleProxyFactory,
+      this.zodiacModuleProxyFactory.abi,
+      this.zodiacModuleProxyFactory.address,
       'deployModule',
       [this.moduleAzoriusMasterCopy, this.encodedSetupAzoriusData, this.azoriusNonce],
       0,
@@ -253,8 +254,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildDeployTokenClaim() {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
-      this.zodiacModuleProxyFactory,
+      this.zodiacModuleProxyFactory.abi,
+      this.zodiacModuleProxyFactory.address,
       'deployModule',
       [this.claimErc20MasterCopy, this.encodedSetupTokenClaimData, this.claimNonce],
       0,
@@ -280,8 +281,8 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
   public buildCreateTokenWrapperTx(): SafeTransaction {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
-      this.zodiacModuleProxyFactory,
+      this.zodiacModuleProxyFactory.abi,
+      this.zodiacModuleProxyFactory.address,
       'deployModule',
       [this.votesErc20WrapperMasterCopy, this.encodedSetupERC20WrapperData, this.tokenNonce],
       0,
@@ -315,7 +316,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const tokenSalt = generateSalt(this.encodedSetupERC20WrapperData!, this.tokenNonce);
 
     this.predictedTokenAddress = getCreate2Address({
-      from: this.zodiacModuleProxyFactory,
+      from: this.zodiacModuleProxyFactory.address,
       salt: tokenSalt,
       bytecodeHash: keccak256(encodePacked(['bytes'], [tokenByteCodeLinear])),
     });
@@ -382,7 +383,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const tokenSalt = generateSalt(this.encodedSetupTokenData!, this.tokenNonce);
 
     this.predictedTokenAddress = getCreate2Address({
-      from: this.zodiacModuleProxyFactory,
+      from: this.zodiacModuleProxyFactory.address,
       salt: tokenSalt,
       bytecodeHash: keccak256(encodePacked(['bytes'], [tokenByteCodeLinear])),
     });
@@ -418,7 +419,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const tokenSalt = generateSalt(this.encodedSetupTokenClaimData!, this.claimNonce);
 
     this.predictedTokenClaimAddress = getCreate2Address({
-      from: this.zodiacModuleProxyFactory,
+      from: this.zodiacModuleProxyFactory.address,
       salt: tokenSalt,
       bytecodeHash: keccak256(encodePacked(['bytes'], [tokenByteCodeLinear])),
     });
@@ -473,7 +474,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       this.encodedStrategySetupData = encodedStrategySetupData;
 
       this.predictedStrategyAddress = getCreate2Address({
-        from: this.zodiacModuleProxyFactory,
+        from: this.zodiacModuleProxyFactory.address,
         salt: strategySalt,
         bytecodeHash: keccak256(encodePacked(['bytes'], [strategyByteCodeLinear])),
       });
@@ -516,7 +517,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       this.encodedStrategySetupData = encodedStrategySetupData;
 
       this.predictedStrategyAddress = getCreate2Address({
-        from: this.zodiacModuleProxyFactory,
+        from: this.zodiacModuleProxyFactory.address,
         salt: strategySalt,
         bytecodeHash: keccak256(encodePacked(['bytes'], [strategyByteCodeLinear])),
       });
@@ -550,7 +551,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
     this.encodedSetupAzoriusData = encodedSetupAzoriusData;
     this.predictedAzoriusAddress = getCreate2Address({
-      from: this.zodiacModuleProxyFactory,
+      from: this.zodiacModuleProxyFactory.address,
       salt: azoriusSalt,
       bytecodeHash: keccak256(encodePacked(['bytes'], [azoriusByteCodeLinear])),
     });

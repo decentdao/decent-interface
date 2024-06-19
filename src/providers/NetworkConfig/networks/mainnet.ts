@@ -1,4 +1,4 @@
-import deployments from '@fractal-framework/fractal-contracts/deployments';
+import { abis, addresses } from '@fractal-framework/fractal-contracts';
 import {
   getProxyFactoryDeployment,
   getMultiSendCallOnlyDeployment,
@@ -7,14 +7,17 @@ import {
 } from '@safe-global/safe-deployments';
 import { getAddress } from 'viem';
 import { mainnet } from 'wagmi/chains';
+// import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
+// import GnosisSafeProxyFactoryAbi from '../../../assets/abi/GnosisSafeProxyFactory';
+// import MultiSendCallOnlyAbi from '../../../assets/abi/MultiSendCallOnly';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
-import { getSafeContractDeployment } from './utils';
+import { getSafeContractDeploymentAddress } from './utils';
 
 const SAFE_VERSION = '1.3.0';
 
 const chain = mainnet;
-const contracts = deployments[chain.id][0].contracts;
+const a = addresses[chain.id];
 
 export const mainnetConfig: NetworkConfig = {
   order: 0,
@@ -31,49 +34,52 @@ export const mainnetConfig: NetworkConfig = {
     version: 'v0.1.1',
   },
   contracts: {
-    gnosisSafeL2Singleton: getSafeContractDeployment(
+    gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
       getSafeL2SingletonDeployment,
       SAFE_VERSION,
       chain.id.toString(),
     ),
-    gnosisSafeProxyFactory: getSafeContractDeployment(
+    gnosisSafeProxyFactory: getSafeContractDeploymentAddress(
       getProxyFactoryDeployment,
       SAFE_VERSION,
       chain.id.toString(),
     ),
-    compatibilityFallbackHandler: getSafeContractDeployment(
+    compatibilityFallbackHandler: getSafeContractDeploymentAddress(
       getCompatibilityFallbackHandlerDeployment,
       SAFE_VERSION,
       chain.id.toString(),
     ),
-    multiSendCallOnly: getSafeContractDeployment(
+    multiSendCallOnly: getSafeContractDeploymentAddress(
       getMultiSendCallOnlyDeployment,
       SAFE_VERSION,
       chain.id.toString(),
     ),
 
-    zodiacModuleProxyFactory: getAddress(contracts.ModuleProxyFactory.address),
+    zodiacModuleProxyFactory: {
+      address: getAddress(a.ModuleProxyFactory),
+      abi: abis.ModuleProxyFactory,
+    },
 
-    linearVotingErc20MasterCopy: getAddress(contracts.LinearERC20Voting.address),
-    linearVotingErc721MasterCopy: getAddress(contracts.LinearERC721Voting.address),
+    linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
+    linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
 
-    moduleAzoriusMasterCopy: getAddress(contracts.Azorius.address),
-    moduleFractalMasterCopy: getAddress(contracts.FractalModule.address),
+    moduleAzoriusMasterCopy: getAddress(a.Azorius),
+    moduleFractalMasterCopy: getAddress(a.FractalModule),
 
-    freezeGuardAzoriusMasterCopy: getAddress(contracts.AzoriusFreezeGuard.address),
-    freezeGuardMultisigMasterCopy: getAddress(contracts.MultisigFreezeGuard.address),
+    freezeGuardAzoriusMasterCopy: getAddress(a.AzoriusFreezeGuard),
+    freezeGuardMultisigMasterCopy: getAddress(a.MultisigFreezeGuard),
 
-    freezeVotingErc20MasterCopy: getAddress(contracts.ERC20FreezeVoting.address),
-    freezeVotingErc721MasterCopy: getAddress(contracts.ERC721FreezeVoting.address),
-    freezeVotingMultisigMasterCopy: getAddress(contracts.MultisigFreezeVoting.address),
+    freezeVotingErc20MasterCopy: getAddress(a.ERC20FreezeVoting),
+    freezeVotingErc721MasterCopy: getAddress(a.ERC721FreezeVoting),
+    freezeVotingMultisigMasterCopy: getAddress(a.MultisigFreezeVoting),
 
-    votesErc20MasterCopy: getAddress(contracts.VotesERC20.address),
-    votesErc20WrapperMasterCopy: getAddress(contracts.VotesERC20Wrapper.address),
+    votesErc20MasterCopy: getAddress(a.VotesERC20),
+    votesErc20WrapperMasterCopy: getAddress(a.VotesERC20Wrapper),
 
-    claimErc20MasterCopy: getAddress(contracts.ERC20Claim.address),
+    claimErc20MasterCopy: getAddress(a.ERC20Claim),
 
-    fractalRegistry: getAddress(contracts.FractalRegistry.address),
-    keyValuePairs: getAddress(contracts.KeyValuePairs.address),
+    fractalRegistry: getAddress(a.FractalRegistry),
+    keyValuePairs: getAddress(a.KeyValuePairs),
   },
   staking: {
     lido: {

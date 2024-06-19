@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { Address, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import ModuleProxyFactoryAbi from '../../assets/abi/ModuleProxyFactory';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
 import { useLocalStorage } from './cache/useLocalStorage';
@@ -63,8 +62,8 @@ export function useMasterCopy() {
       }
 
       const moduleProxyFactoryContract = getContract({
-        abi: ModuleProxyFactoryAbi,
-        address: zodiacModuleProxyFactory,
+        abi: zodiacModuleProxyFactory.abi,
+        address: zodiacModuleProxyFactory.address,
         client: publicClient,
       });
 

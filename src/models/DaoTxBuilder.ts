@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
 import AzoriusAbi from '../assets/abi/Azorius';
 import FractalRegistryAbi from '../assets/abi/FractalRegistry';
@@ -12,6 +13,7 @@ import {
   AzoriusERC721DAO,
   VotingStrategyType,
 } from '../types';
+import { FractalContractsObject } from '../types/network';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
 import { fractalModuleData, FractalModuleData } from './helpers/fractalModuleData';
@@ -35,7 +37,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   private readonly keyValuePairs: Address;
   private readonly fractalRegistry: Address;
-  private readonly zodiacModuleProxyFactory: Address;
+  private readonly zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>;
   private readonly multiSendCallOnly: Address;
   private readonly moduleFractalMasterCopy: Address;
 
@@ -51,7 +53,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     keyValuePairs: Address,
     fractalRegistry: Address,
-    zodiacModuleProxyFactory: Address,
+    zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>,
     multiSendCallOnly: Address,
     moduleFractalMasterCopy: Address,
 

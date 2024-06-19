@@ -1,7 +1,7 @@
 import { SingletonDeployment } from '@safe-global/safe-deployments';
 import { getAddress } from 'viem';
 
-export const getSafeContractDeployment = (
+export const getSafeContractDeploymentAddress = (
   fn: ({ version }: { version: string }) => SingletonDeployment | undefined,
   version: string,
   network: string,

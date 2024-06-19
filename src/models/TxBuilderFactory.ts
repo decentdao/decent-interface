@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { Address, PublicClient, getContract } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../assets/abi/GnosisSafeProxyFactory';
@@ -10,6 +11,7 @@ import {
   AzoriusERC20DAO,
   VotingStrategyType,
 } from '../types';
+import { FractalContractsObject } from '../types/network';
 import { AzoriusTxBuilder } from './AzoriusTxBuilder';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { DaoTxBuilder } from './DaoTxBuilder';
@@ -31,7 +33,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   private fractalRegistry: Address;
   private gnosisSafeProxyFactory: Address;
   private gnosisSafeProxy: Address;
-  private zodiacModuleProxyFactory: Address;
+  private zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>;
   private freezeGuardAzoriusMasterCopy: Address;
   private freezeGuardMultisigMasterCopy: Address;
   private freezeVotingErc20MasterCopy: Address;
@@ -55,7 +57,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     fractalRegistry: Address,
     gnosisSafeProxyFactory: Address,
     gnosisSafeProxy: Address,
-    zodiacModuleProxyFactory: Address,
+    zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>,
     freezeGuardAzoriusMasterCopy: Address,
     freezeGuardMultisigMasterCopy: Address,
     freezeVotingErc20MasterCopy: Address,

@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import {
   getCreate2Address,
   keccak256,
@@ -14,11 +15,11 @@ import AzoriusFreezeGuardAbi from '../assets/abi/AzoriusFreezeGuard';
 import ERC20FreezeVotingAbi from '../assets/abi/ERC20FreezeVoting';
 import ERC721FreezeVotingAbi from '../assets/abi/ERC721FreezeVoting';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import ModuleProxyFactoryAbi from '../assets/abi/ModuleProxyFactory';
 import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
 import MultisigFreezeVotingAbi from '../assets/abi/MultisigFreezeVoting';
 import { buildContractCall } from '../helpers';
 import { SafeTransaction, SubDAO, VotingStrategyType } from '../types';
+import { FractalContractsObject } from '../types/network';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
 
@@ -45,7 +46,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private parentStrategyType: VotingStrategyType | undefined;
   private parentStrategyAddress: Address | undefined;
 
-  private zodiacModuleProxyFactory: Address;
+  private zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>;
   private freezeGuardAzoriusMasterCopy: Address;
   private freezeGuardMultisigMasterCopy: Address;
   private freezeVotingErc20MasterCopy: Address;
@@ -59,7 +60,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     saltNum: bigint,
     parentAddress: Address,
 
-    zodiacModuleProxyFactory: Address,
+    zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>,
     freezeGuardAzoriusMasterCopy: Address,
     freezeGuardMultisigMasterCopy: Address,
     freezeVotingErc20MasterCopy: Address,
@@ -100,8 +101,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   public buildDeployZodiacModuleTx(): SafeTransaction {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
-      this.zodiacModuleProxyFactory,
+      this.zodiacModuleProxyFactory.abi,
+      this.zodiacModuleProxyFactory.address,
       'deployModule',
       [
         this.freezeVotingType === 'erc20'
@@ -173,8 +174,8 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   public buildDeployFreezeGuardTx() {
     return buildContractCall(
-      ModuleProxyFactoryAbi,
-      this.zodiacModuleProxyFactory,
+      this.zodiacModuleProxyFactory.abi,
+      this.zodiacModuleProxyFactory.address,
       'deployModule',
       [this.getGuardMasterCopyAddress(), this.freezeGuardCallData!, this.saltNum],
       0,
@@ -232,7 +233,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     }
 
     this.freezeVotingAddress = getCreate2Address({
-      from: this.zodiacModuleProxyFactory,
+      from: this.zodiacModuleProxyFactory.address,
       salt: generateSalt(this.freezeVotingCallData!, this.saltNum),
       bytecodeHash: keccak256(encodePacked(['bytes'], [freezeVotingByteCodeLinear])),
     });
@@ -245,7 +246,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     const freezeGuardSalt = generateSalt(this.freezeGuardCallData!, this.saltNum);
 
     this.freezeGuardAddress = getCreate2Address({
-      from: this.zodiacModuleProxyFactory,
+      from: this.zodiacModuleProxyFactory.address,
       salt: freezeGuardSalt,
       bytecodeHash: keccak256(encodePacked(['bytes'], [freezeGuardByteCodeLinear])),
     });
