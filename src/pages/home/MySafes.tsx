@@ -1,7 +1,6 @@
 import { Box, Button, Flex, Show, Text, useBreakpointValue, useDisclosure } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { AllSafesDrawer } from './AllSafesDrawer';
@@ -54,7 +53,7 @@ export function MySafes() {
               <SafeDisplayRow
                 key={favorite}
                 network={addressPrefix}
-                address={getAddress(favorite)}
+                address={favorite}
               />
             ))}
           </Box>

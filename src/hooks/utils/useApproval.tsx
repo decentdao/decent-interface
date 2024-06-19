@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, getContract, maxUint256 } from 'viem';
+import { Address, getContract, maxUint256 } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
 import VotesERC20Abi from '../../assets/abi/VotesERC20';
 import { useTransaction } from './useTransaction';
 
-const useApproval = (tokenAddress?: string, spenderAddress?: string, userBalance?: bigint) => {
+const useApproval = (tokenAddress?: Address, spenderAddress?: Address, userBalance?: bigint) => {
   const { address: account } = useAccount();
   const [allowance, setAllowance] = useState(0n);
   const [approved, setApproved] = useState(false);
@@ -20,7 +20,7 @@ const useApproval = (tokenAddress?: string, spenderAddress?: string, userBalance
 
     return getContract({
       abi: VotesERC20Abi,
-      address: getAddress(tokenAddress),
+      address: tokenAddress,
       client: walletClient,
     });
   }, [tokenAddress, walletClient]);
@@ -28,7 +28,7 @@ const useApproval = (tokenAddress?: string, spenderAddress?: string, userBalance
   const fetchAllowance = useCallback(async () => {
     if (!account || !spenderAddress || !tokenContract) return;
 
-    const userAllowance = await tokenContract.read.allowance([account, getAddress(spenderAddress)]);
+    const userAllowance = await tokenContract.read.allowance([account, spenderAddress]);
     setAllowance(userAllowance);
   }, [account, tokenContract, spenderAddress]);
 
@@ -36,7 +36,7 @@ const useApproval = (tokenAddress?: string, spenderAddress?: string, userBalance
     if (!tokenContract || !account || !spenderAddress) return;
 
     contractCall({
-      contractFn: () => tokenContract.write.approve([getAddress(spenderAddress), maxUint256]),
+      contractFn: () => tokenContract.write.approve([spenderAddress, maxUint256]),
       pendingMessage: t('approvalPendingMessage'),
       failedMessage: t('approvalFailedMessage'),
       successMessage: t('approvalSuccessMessage'),

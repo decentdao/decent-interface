@@ -1,5 +1,11 @@
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
-import { GetContractEventsReturnType, GetContractReturnType, PublicClient, getAddress } from 'viem';
+import {
+  Address,
+  GetContractEventsReturnType,
+  GetContractReturnType,
+  PublicClient,
+  getAddress,
+} from 'viem';
 import AzoriusAbi from '../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../assets/abi/LinearERC721Voting';
@@ -170,7 +176,7 @@ export const mapProposalCreatedEventToProposal = async (
     | undefined,
   strategyType: VotingStrategyType,
   proposalId: number,
-  proposer: string,
+  proposer: Address,
   azoriusContract: GetContractReturnType<typeof AzoriusAbi, PublicClient>,
   publicClient: PublicClient,
   erc20VotedEvents: GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined,
@@ -322,7 +328,7 @@ export function getAzoriusModuleFromModules(modules: FractalModuleData[]) {
 }
 
 export const decodeTransactions = async (
-  _decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
+  _decode: (value: string, to: Address, data?: string | undefined) => Promise<DecodedTransaction[]>,
   _transactions: MetaTransaction[],
 ) => {
   const decodedTransactions = await Promise.all(

@@ -35,7 +35,7 @@ export function usePrepareProposal() {
       });
       const targets = await Promise.all(
         transactionsWithEncoding.map(async tx => {
-          if (validateENSName(tx.targetAddress) && publicClient) {
+          if (tx.targetAddress && validateENSName(tx.targetAddress) && publicClient) {
             const address = await publicClient.getEnsAddress({ name: tx.targetAddress });
             if (address) {
               return address;

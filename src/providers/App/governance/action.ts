@@ -44,14 +44,14 @@ export enum DecentGovernanceAction {
 
 type AzoriusVotePayload = {
   proposalId: string;
-  voter: string;
+  voter: Address;
   support: number;
   votesSummary: ProposalVotesSummary;
 };
 
 export type ERC20VotePayload = { weight: bigint } & AzoriusVotePayload;
 export type ERC721VotePayload = {
-  tokenAddresses: string[];
+  tokenAddresses: Address[];
   tokenIds: string[];
 } & AzoriusVotePayload;
 

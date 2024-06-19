@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getAddress } from 'viem';
+import { Address } from 'viem';
 import { useEnsName } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
@@ -15,11 +15,11 @@ export const createAccountSubstring = (account: string) => {
  * This is intended to be used for NON DAO display names.  If you would like to get the
  * display name for a DAO, use the useDAOName hook instead.
  */
-const useDisplayName = (account?: string | null, truncate?: boolean) => {
+const useDisplayName = (account?: Address | null, truncate?: boolean) => {
   if (truncate === undefined) truncate = true;
   const { chain } = useNetworkConfig();
   const { data: ensName } = useEnsName({
-    address: !!account ? getAddress(account) : undefined,
+    address: !!account ? account : undefined,
     chainId: chain.id,
   });
 

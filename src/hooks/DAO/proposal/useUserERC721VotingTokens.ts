@@ -23,9 +23,9 @@ export default function useUserERC721VotingTokens(
   loadOnMount: boolean = true,
 ) {
   const [totalVotingTokenIds, setTotalVotingTokenIds] = useState<string[]>([]);
-  const [totalVotingTokenAddresses, setTotalVotingTokenAddresses] = useState<string[]>([]);
+  const [totalVotingTokenAddresses, setTotalVotingTokenAddresses] = useState<Address[]>([]);
   const [remainingTokenIds, setRemainingTokenIds] = useState<string[]>([]);
-  const [remainingTokenAddresses, setRemainingTokenAddresses] = useState<string[]>([]);
+  const [remainingTokenAddresses, setRemainingTokenAddresses] = useState<Address[]>([]);
 
   const {
     node: { daoAddress },

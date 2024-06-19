@@ -6,11 +6,11 @@ import {
   keccak256,
   encodeAbiParameters,
   parseAbiParameters,
-  getAddress,
   isAddress,
   encodeFunctionData,
   PublicClient,
   getContract,
+  getAddress,
 } from 'viem';
 import AzoriusAbi from '../assets/abi/Azorius';
 import ERC20ClaimAbi from '../assets/abi/ERC20Claim';
@@ -336,8 +336,9 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     const tokenAllocationsOwners = azoriusGovernanceDaoData.tokenAllocations.map(tokenAllocation =>
       getAddress(tokenAllocation.address),
     );
+
     const tokenAllocationsValues = azoriusGovernanceDaoData.tokenAllocations.map(
-      tokenAllocation => tokenAllocation.amount || 0n,
+      tokenAllocation => tokenAllocation.amount,
     );
     const tokenAllocationSum = tokenAllocationsValues.reduce((accumulator, tokenAllocation) => {
       return tokenAllocation + accumulator;

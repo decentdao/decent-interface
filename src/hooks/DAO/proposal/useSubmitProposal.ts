@@ -3,7 +3,6 @@ import { useCallback, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import {
   isAddress,
-  getAddress,
   encodeAbiParameters,
   parseAbiParameters,
   isHex,
@@ -168,7 +167,7 @@ export default function useSubmitProposal() {
 
         await axios.post(
           buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
-          await buildSafeAPIPost(getAddress(safeAddress), walletClient, chain.id, {
+          await buildSafeAPIPost(safeAddress, walletClient, chain.id, {
             to,
             value,
             data,
@@ -241,7 +240,7 @@ export default function useSubmitProposal() {
 
         // @todo: Implement voting strategy proposal selection when/if we will support multiple strategies on single Azorius instance
         const txHash = await azoriusContract.write.submitProposal([
-          getAddress(votingStrategyAddress),
+          votingStrategyAddress,
           '0x',
           transactions,
           JSON.stringify({

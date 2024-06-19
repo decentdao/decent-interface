@@ -3,7 +3,7 @@ import { Address } from 'viem';
 export interface VotesTokenData extends VotesData, ERC20TokenData {}
 export interface VotesData {
   balance: bigint | null;
-  delegatee: string | null;
+  delegatee: Address | null;
   votingWeight: bigint | null;
 }
 export type UnderlyingTokenData = Omit<

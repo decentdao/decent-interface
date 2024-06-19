@@ -2,6 +2,7 @@ import { Box, Button } from '@chakra-ui/react';
 import { ChangeEventHandler, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useIsSafe } from '../../../hooks/safe/useIsSafe';
@@ -59,7 +60,7 @@ export default function ForkProposalTemplateModal({
     } else {
       setTargetDAOAddress(address);
       if (isSafe) {
-        if (await getCanUserCreateProposal(address)) {
+        if (await getCanUserCreateProposal(getAddress(address))) {
           setError('');
         } else {
           setError(t('errorNotProposer'));
