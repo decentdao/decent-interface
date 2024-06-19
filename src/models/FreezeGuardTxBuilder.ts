@@ -11,7 +11,6 @@ import {
   Abi,
   encodeFunctionData,
 } from 'viem';
-import AzoriusFreezeGuardAbi from '../assets/abi/AzoriusFreezeGuard';
 import ERC20FreezeVotingAbi from '../assets/abi/ERC20FreezeVoting';
 import ERC721FreezeVotingAbi from '../assets/abi/ERC721FreezeVoting';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
@@ -298,7 +297,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     }
 
     const freezeGuardCallData = encodeFunctionData({
-      abi: AzoriusFreezeGuardAbi,
+      abi: abis.AzoriusFreezeGuard,
       functionName: 'setUp',
       args: [
         encodeAbiParameters(parseAbiParameters('address, address'), [

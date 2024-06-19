@@ -2,7 +2,6 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import AzoriusFreezeGuardAbi from '../../../assets/abi/AzoriusFreezeGuard';
 import MultisigFreezeGuardAbi from '../../../assets/abi/MultisigFreezeGuard';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
@@ -58,7 +57,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         }
 
         const freezeGuardContract = getContract({
-          abi: AzoriusFreezeGuardAbi,
+          abi: abis.AzoriusFreezeGuard,
           address: azoriusGuardAddress,
           client: publicClient,
         });
