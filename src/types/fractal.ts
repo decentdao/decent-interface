@@ -17,6 +17,7 @@ import {
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
 import {
+  SafeInfoResponse,
   SafeModuleTransactionWithTransfersResponse,
   SafeMultisigTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
@@ -38,7 +39,6 @@ import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
 import { NFTBalance, TokenBalance, TreasuryActivity } from './daoTreasury';
 import { ProposalTemplate } from './proposalBuilder';
-import { SafeWithNextNonce } from './safeGlobal';
 import { BIFormattedPair } from './votingFungibleToken';
 /**
  * The possible states of a DAO proposal, for both Token Voting (Azorius) and Multisignature
