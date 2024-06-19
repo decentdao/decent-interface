@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract, isAddress, zeroAddress } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import { TokenCreationType, ICreationStepProps, CreatorSteps } from '../../../types';
+import { TokenCreationType, ICreationStepProps } from '../../../types';
 import SupportTooltip from '../../ui/badges/SupportTooltip';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -14,6 +14,7 @@ import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { usePrepareFormData } from '../hooks/usePrepareFormData';
+import useStepRedirect from '../hooks/useStepRedirect';
 import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
 import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
@@ -48,6 +49,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   const { checkVotesToken } = usePrepareFormData();
   const [isImportedVotesToken, setIsImportedVotesToken] = useState(false);
 
+  useStepRedirect({ values });
   const updateImportFields = useCallback(async () => {
     if (!publicClient) {
       return;
@@ -105,6 +107,11 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
     updateImportFields();
   }, [updateImportFields]);
 
+  const tokenImportAddressErrorMessage =
+    values.erc20Token.tokenImportAddress && errors?.erc20Token?.tokenImportAddress
+      ? errors.erc20Token.tokenImportAddress
+      : undefined;
+
   return (
     <>
       <StepWrapper
@@ -160,18 +167,13 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
               />
               {values.erc20Token.tokenCreationType === TokenCreationType.IMPORTED && (
                 <>
-                  <LabelWrapper
-                    errorMessage={
-                      values.erc20Token.tokenImportAddress && errors?.erc20Token?.tokenImportAddress
-                        ? errors.erc20Token.tokenImportAddress
-                        : undefined
-                    }
-                  >
+                  <LabelWrapper errorMessage={tokenImportAddressErrorMessage}>
                     <Input
                       name="erc20Token.tokenImportAddress"
                       onChange={handleChange}
                       value={values.erc20Token.tokenImportAddress}
                       placeholder={createAccountSubstring(zeroAddress)}
+                      isInvalid={!!tokenImportAddressErrorMessage}
                       isRequired
                     />
                   </LabelWrapper>
@@ -218,11 +220,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
           <AzoriusTokenAllocations {...props} />
         </Box>
       )}
-      <StepButtons
-        {...props}
-        prevStep={CreatorSteps.ESSENTIALS}
-        nextStep={CreatorSteps.AZORIUS_DETAILS}
-      />
+      <StepButtons {...props} />
     </>
   );
 }

@@ -111,6 +111,7 @@
   "customNonce": "Custom Nonce (advanced)",
   "customNonceTrimmed": "Custom Nonce",
   "customNonceTooltip": "Optionally set a custom proposal nonce to avoid collisions.",
+  "notActiveNonceTooltip": "There is a proposal with a lower nonce that must be executed first.",
   "nonce": "Nonce",
   "votingTooltip": "Time remaining to cast your vote.",
   "timeLockedTooltip": "This proposal can be executed once its timelock period has passed.",
@@ -135,5 +136,6 @@
   "shielded": "Shielded",
   "shutterPrivacy": "Shielded",
   "shutterVotesHidden": "Results hidden during voting",
-  "totalVotes": "Total votes"
+  "totalVotes": "Total votes",
+  "pendingProposalNotice": "Pending proposal still processing"
 }

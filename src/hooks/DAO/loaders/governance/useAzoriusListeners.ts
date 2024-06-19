@@ -37,17 +37,17 @@ const proposalCreatedEventListener = (
   decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
   dispatch: Dispatch<FractalActions>,
 ): TypedListener<ProposalCreatedEvent> => {
-  return async (_strategyAddress, proposalId, proposer, transactions, metadata) => {
+  return async (_strategyAddress, proposalId, proposer, transactions, metadata, createdEvent) => {
+    if (!metadata) {
+      return;
+    }
+
     // Wait for a block before processing.
     // We've seen that calling smart contract functions in `mapProposalCreatedEventToProposal`
     // which include the `proposalId` error out because the RPC node (rather, the block it's on)
     // doesn't see this proposal yet (despite the event being caught in the app...).
     const averageBlockTime = await getAverageBlockTime(provider);
     await new Promise(resolve => setTimeout(resolve, averageBlockTime * 1000));
-
-    if (!metadata) {
-      return;
-    }
 
     const typedTransactions = transactions.map(t => ({
       ...t,
@@ -68,6 +68,7 @@ const proposalCreatedEventListener = (
     };
 
     const proposal = await mapProposalCreatedEventToProposal(
+      createdEvent,
       erc20StrategyContract,
       erc721StrategyContract,
       strategyType,

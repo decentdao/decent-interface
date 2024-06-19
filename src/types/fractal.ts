@@ -154,7 +154,7 @@ export interface ActivityBase {
   eventDate: Date;
   eventType: ActivityEventType;
   transaction?: ActivityTransactionType;
-  transactionHash?: string | null;
+  transactionHash: string;
 }
 
 export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal | SnapshotProposal;
@@ -305,6 +305,7 @@ export interface Governance {
   loadingProposals: boolean;
   allProposalsLoaded: boolean;
   proposals: FractalProposal[] | null;
+  pendingProposals: string[] | null;
   proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContract?: ERC20Claim;
 }

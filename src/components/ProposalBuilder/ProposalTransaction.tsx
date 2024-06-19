@@ -83,6 +83,7 @@ export default function ProposalTransaction({
           </HStack>
         }
         errorMessage={transaction.targetAddress && txAddressError ? txAddressError : undefined}
+        isInvalid={!!transaction.targetAddress && !!txAddressError}
         value={transaction.targetAddress}
         testId="transaction.targetAddress"
         onChange={e =>
@@ -125,6 +126,7 @@ export default function ProposalTransaction({
             </HStack>
           }
           errorMessage={transaction.functionName && txFunctionError ? txFunctionError : undefined}
+          isInvalid={!!transaction.functionName && !!txFunctionError}
           testId="transaction.functionName"
         />
       </Box>
@@ -389,7 +391,7 @@ export default function ProposalTransaction({
                           DEFAULT_PROPOSAL_TRANSACTION,
                         ]);
                         setExpandedIndecies([transaction.parameters.length]);
-                        scrollToBottom();
+                        scrollToBottom(100, 'smooth');
                       }}
                       icon={Plus}
                       text={t('addParameter')}

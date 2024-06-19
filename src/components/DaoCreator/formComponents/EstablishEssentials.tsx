@@ -5,12 +5,7 @@ import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  ICreationStepProps,
-  CreatorSteps,
-  VotingStrategyType,
-  GovernanceType,
-} from '../../../types';
+import { ICreationStepProps, VotingStrategyType, GovernanceType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
@@ -169,6 +164,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
               isDisabled={snapshotENSDisabled}
               data-testid="essentials-snapshotENS"
               placeholder="example.eth"
+              isInvalid={!!errors?.essentials?.snapshotENS}
             />
           </LabelWrapper>
         </LabelComponent>
@@ -180,13 +176,6 @@ export function EstablishEssentials(props: ICreationStepProps) {
           (isEdit && values.essentials.governance === GovernanceType.MULTISIG)
         }
         isEdit={isEdit}
-        nextStep={
-          values.essentials.governance === GovernanceType.MULTISIG
-            ? CreatorSteps.MULTISIG_DETAILS
-            : values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20
-              ? CreatorSteps.ERC20_DETAILS
-              : CreatorSteps.ERC721_DETAILS
-        }
       />
     </>
   );

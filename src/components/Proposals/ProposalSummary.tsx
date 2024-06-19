@@ -18,10 +18,10 @@ import InfoRow from '../ui/proposal/InfoRow';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import Divider from '../ui/utils/Divider';
 import { QuorumProgressBar } from '../ui/utils/ProgressBar';
-import { ProposalAction } from './ProposalActions/ProposalAction';
+import { AzoriusOrSnapshotProposalAction } from './ProposalActions/ProposalAction';
 import { VoteContextProvider } from './ProposalVotes/context/VoteContext';
 
-export default function ProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
+export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
   const {
     eventDate,
     startBlock,
@@ -77,8 +77,15 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;
+
+  // @todo @dev (see below):
+  // Caching has introduced a new "problem" edge case -- a proposal can be loaded before `votingStrategy` is loaded.
+  // I previously fixed this issue in `QuoromBadge` (see lines 36 and 45), but over here it's slightly more nuanced and
+  // will require a bit more thought. A quick patch instead is to add the `votingStrategy?` check in the `if` statement below,
+  // BUT this (and the implications of the previous fix) contradicts the non-null (but suddenly no longer true) typing of `votingStrategy`.
+  // We need to figure out a more type-safe way to handle all of this.
   if (
-    (isERC20 && (!votesToken || !votesToken.totalSupply)) ||
+    (isERC20 && (!votesToken || !votesToken.totalSupply || !votingStrategy?.quorumPercentage)) ||
     (isERC721 && (!erc721Tokens || !votingStrategy.quorumThreshold))
   ) {
     return (
@@ -118,6 +125,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
       variant="text"
       textStyle="body-base"
       color="celery-0"
+      _active={{ color: 'celery--2' }}
       onClick={toggleShowVotingPower}
     >
       {showVotingPower
@@ -176,6 +184,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
             type="block"
             value={startBlock.toString()}
             pl={0}
+            isTextLink
           >
             <Flex
               alignItems="center"
@@ -265,7 +274,7 @@ export default function ProposalSummary({ proposal }: { proposal: AzoriusProposa
             mx="-2rem"
           />
           <VoteContextProvider proposal={proposal}>
-            <ProposalAction
+            <AzoriusOrSnapshotProposalAction
               proposal={proposal}
               expandedView
             />

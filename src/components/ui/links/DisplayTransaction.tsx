@@ -3,20 +3,29 @@ import { ArrowUpRight } from '@phosphor-icons/react';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import EtherscanLink from './EtherscanLink';
 
-export default function DisplayTransaction({ txHash }: { txHash: string }) {
+export default function DisplayTransaction({
+  txHash,
+  isTextLink,
+}: {
+  txHash: string;
+  isTextLink?: boolean;
+}) {
   const displayName = createAccountSubstring(txHash);
   return (
     <EtherscanLink
       type="tx"
       value={txHash}
       pl={0}
+      isTextLink={isTextLink}
     >
       <Flex alignItems="center">
         <Text as="span">{displayName}</Text>
-        <Icon
-          as={ArrowUpRight}
-          ml="0.5rem"
-        />
+        {!isTextLink && (
+          <Icon
+            as={ArrowUpRight}
+            ml="0.5rem"
+          />
+        )}
       </Flex>
     </EtherscanLink>
   );

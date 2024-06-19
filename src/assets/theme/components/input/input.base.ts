@@ -12,6 +12,15 @@ const disabled = {
   },
 };
 
+const invalid = {
+  borderColor: 'red-0',
+  bg: 'red--3',
+  color: 'red-1',
+  _placeholder: {
+    color: 'red-0',
+  },
+};
+
 const loading = {};
 
 const baseStyle = definePartsStyle({
@@ -24,14 +33,7 @@ const baseStyle = definePartsStyle({
     transitionDuration: 'normal',
     transitionProperty: 'common',
     width: '100%',
-    _invalid: {
-      borderColor: 'red-0',
-      bg: 'red--3',
-      color: 'red-1',
-      _placeholder: {
-        color: 'red-0',
-      },
-    },
+    _invalid: invalid,
     _placeholder: {
       color: 'neutral-5',
     },
@@ -49,6 +51,10 @@ const baseStyle = definePartsStyle({
         ...disabled,
         _loading: loading,
       },
+      _invalid: {
+        ...invalid,
+        borderColor: 'red-1',
+      },
     },
     _disabled: {
       ...disabled,
@@ -58,14 +64,7 @@ const baseStyle = definePartsStyle({
       outline: 'none',
       borderColor: 'neutral-4',
       boxShadow: '0px 0px 0px 3px #534D58',
-      _invalid: {
-        borderColor: 'red-0',
-        bg: 'red--3',
-        color: 'red-1',
-        _placeholder: {
-          color: 'red-0',
-        },
-      },
+      _invalid: invalid,
       _disabled: {
         ...disabled,
         _loading: loading,

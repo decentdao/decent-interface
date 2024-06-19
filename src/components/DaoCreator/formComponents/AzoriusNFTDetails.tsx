@@ -5,12 +5,7 @@ import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import {
-  ICreationStepProps,
-  CreatorSteps,
-  ERC721TokenConfig,
-  BigIntValuePair,
-} from '../../../types';
+import { ICreationStepProps, ERC721TokenConfig, BigIntValuePair } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -118,6 +113,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                             data-testid={`erc721Token.nfts.${i}.tokenAddressInput`}
                             minWidth="100%"
                             placeholder={createAccountSubstring(zeroAddress)}
+                            isInvalid={!!addressErrorMessage}
                           />
                         )}
                       </Field>
@@ -148,6 +144,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
                           isRequired
                           min="1"
                           placeholder="1"
+                          isInvalid={!!weightErrorMessage}
                         />
                         {values.erc721Token.nfts.length > 1 && (
                           <IconButton
@@ -214,11 +211,7 @@ export default function AzoriusNFTDetails(props: ICreationStepProps) {
           </GridItem>
         </Grid>
       </StepWrapper>
-      <StepButtons
-        {...props}
-        prevStep={CreatorSteps.ESSENTIALS}
-        nextStep={CreatorSteps.AZORIUS_DETAILS}
-      />
+      <StepButtons {...props} />
     </>
   );
 }

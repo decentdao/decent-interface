@@ -2,17 +2,20 @@ import { Box, Flex, Grid, IconButton, NumberInput, NumberInputField } from '@cha
 import { MinusCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { ICreationStepProps, CreatorSteps } from '../../../types';
+import { ICreationStepProps } from '../../../types';
 import { AddressInput } from '../../ui/forms/EthAddressInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import useStepRedirect from '../hooks/useStepRedirect';
 import { DAOCreateMode } from './EstablishEssentials';
 
 export function Multisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
   const { t } = useTranslation('daoCreate');
+
+  useStepRedirect({ values });
 
   const truncateSignersList = (safeAddresses: string[], numOfSigners: number) => {
     const difference = safeAddresses.length - numOfSigners;
@@ -85,11 +88,13 @@ export function Multisig(props: ICreationStepProps) {
           <LabelComponent
             label={t('labelSigners')}
             helper={t('helperSigners')}
+            errorMessage={errors.multisig?.numOfSigners}
             isRequired
           >
             <NumberInput
               value={values.multisig.numOfSigners}
               onChange={value => validateTotalSigners(value)}
+              isInvalid={!!errors.multisig?.numOfSigners}
             >
               <NumberInputField data-testid="safeConfig-numberOfSignerInput" />
             </NumberInput>
@@ -105,6 +110,7 @@ export function Multisig(props: ICreationStepProps) {
             <NumberInput
               value={values.multisig.signatureThreshold}
               onChange={value => validateNumber(value, 'multisig.signatureThreshold')}
+              isInvalid={!!errors.multisig?.signatureThreshold}
             >
               <NumberInputField data-testid="safeConfig-thresholdInput" />
             </NumberInput>
@@ -135,6 +141,7 @@ export function Multisig(props: ICreationStepProps) {
                           {({ field }: FieldAttributes<any>) => (
                             <AddressInput
                               {...field}
+                              isInvalid={!!errorMessage}
                               data-testid={'safeConfig-signer-' + i}
                             />
                           )}
@@ -163,9 +170,6 @@ export function Multisig(props: ICreationStepProps) {
       </StepWrapper>
       <StepButtons
         {...props}
-        nextStep={CreatorSteps.FREEZE_DETAILS}
-        prevStep={CreatorSteps.ESSENTIALS}
-        isLastStep={!isSubDAO}
         isEdit={mode === DAOCreateMode.EDIT}
       />
     </>

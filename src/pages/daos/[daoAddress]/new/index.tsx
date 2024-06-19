@@ -23,7 +23,7 @@ export default function SubDaoCreate() {
 
   const proposeSubDAO = (daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO) => {
     const subDAOData = daoData as SubDAO;
-    proposeDao(subDAOData, subDAOData.customNonce || safe?.nonce, successCallback);
+    proposeDao(subDAOData, subDAOData.customNonce || safe?.nextNonce, successCallback);
   };
 
   return (

@@ -3,13 +3,14 @@ import { WarningCircle } from '@phosphor-icons/react';
 import { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { ICreationStepProps, CreatorSteps, VotingStrategyType } from '../../../types';
+import { ICreationStepProps, VotingStrategyType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import useStepRedirect from '../hooks/useStepRedirect';
 import { DAOCreateMode } from './EstablishEssentials';
 
 export function AzoriusGovernance(props: ICreationStepProps) {
@@ -31,10 +32,12 @@ export function AzoriusGovernance(props: ICreationStepProps) {
 
   useEffect(() => {
     if (showCustomNonce === undefined && safe && mode === DAOCreateMode.EDIT) {
-      setFieldValue('multisig.customNonce', safe.nonce);
+      setFieldValue('multisig.customNonce', safe.nextNonce);
       setShowCustomNonce(true);
     }
   }, [setFieldValue, safe, showCustomNonce, mode]);
+
+  useStepRedirect({ values });
 
   return (
     <>
@@ -170,13 +173,6 @@ export function AzoriusGovernance(props: ICreationStepProps) {
       </StepWrapper>
       <StepButtons
         {...props}
-        prevStep={
-          values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20
-            ? CreatorSteps.ERC20_DETAILS
-            : CreatorSteps.ERC721_DETAILS
-        }
-        nextStep={CreatorSteps.FREEZE_DETAILS}
-        isLastStep={!isSubDAO}
         isEdit={mode === DAOCreateMode.EDIT}
       />
     </>

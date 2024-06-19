@@ -2,6 +2,7 @@
   "buttonCreate": "Create a Decent Safe",
   "addNFTButton": "Import another token",
   "labelCreateSubDAOProposal": "Create a child Safe",
+  "errorMinSigners": "Number of signers must be greater than 0",
   "errorLowSignerThreshold": "Threshold must be greater than 0",
   "errorHighSignerThreshold": "Threshold is too high",
   "labelSigners": "Total signers",
@@ -55,6 +56,7 @@
   "exampleFreezePeriod": "10,080 minutes = 1 week",
   "freezeGuardDescription": "These configuration values may be changed later on by passing a proposal to do so on this child Safe",
   "errorDuplicateAddress": "Duplicate Address",
+  "errorNoAllocation": "Enter a token allocation",
   "errorAllocation": "Invalid token allocation",
   "labelParentAllocation": "Parent token holder claiming",
   "helperParentAllocation": "The total number of tokens claimable by all parent token holders",
@@ -100,5 +102,6 @@
   "tooltipTokenVoting": "Token Voting is a method to give a larger group of ERC-20 token holders governance power to propose and vote on transactions. <1>Learn more</1>",
   "toastDisconnected": "Connect an account to proceed!",
   "toastDisconnectedPersistent": "You'll need to connect an account to deploy this Safe.",
-  "tooltipNftVoting": "NFT Voting allows a group of ERC-721 (NFT) holders to propose and vote on transactions. Multiple NFT addresses can be used. <1>Learn more</1>"
+  "tooltipNftVoting": "NFT Voting allows a group of ERC-721 (NFT) holders to propose and vote on transactions. Multiple NFT addresses can be used. <1>Learn more</1>",
+  "errorUnsupportedCreateOption": "Previously selected Governance option is not supported on this network."
 }

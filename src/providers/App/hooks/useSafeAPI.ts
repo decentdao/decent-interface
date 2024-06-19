@@ -99,10 +99,10 @@ class CachingSafeApiKit extends SafeApiKit {
     return value;
   }
 
-  async getSafeData(safeAddress: string): Promise<SafeInfoResponse> {
+  async getSafeData(safeAddress: string): Promise<SafeInfoResponseWithGuard> {
     const safeInfoResponse = await this.getSafeInfo(safeAddress);
     const nextNonce = await this.getNextNonce(safeAddress);
-    const safeInfo = { ...safeInfoResponse, nonce: nextNonce };
+    const safeInfo = { ...safeInfoResponse, nextNonce };
     return safeInfo;
   }
 }

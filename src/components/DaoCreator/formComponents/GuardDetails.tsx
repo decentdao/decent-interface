@@ -8,7 +8,6 @@ import {
   ICreationStepProps,
   BigIntValuePair,
   GovernanceType,
-  CreatorSteps,
   AzoriusGovernance,
 } from '../../../types';
 import { formatBigIntDisplay } from '../../../utils/numberFormats';
@@ -19,7 +18,7 @@ import { LabelComponent } from '../../ui/forms/InputComponent';
 import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
-import { DAOCreateMode } from './EstablishEssentials';
+import useStepRedirect from '../hooks/useStepRedirect';
 
 function GuardDetails(props: ICreationStepProps) {
   const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode } = props;
@@ -45,7 +44,7 @@ function GuardDetails(props: ICreationStepProps) {
 
   useEffect(() => {
     if (showCustomNonce === undefined && !dao?.isAzorius && isSubDAO && safe) {
-      setFieldValue('multisig.customNonce', safe.nonce);
+      setFieldValue('multisig.customNonce', safe.nextNonce);
       setShowCustomNonce(true);
     }
   }, [isSubDAO, azoriusContractAddress, type, setFieldValue, safe, dao, showCustomNonce]);
@@ -113,6 +112,8 @@ function GuardDetails(props: ICreationStepProps) {
     setFieldValue,
     azoriusGovernance,
   ]);
+
+  useStepRedirect({ values });
 
   const freezeHelper = totalParentVotes
     ? t('helperFreezeVotesThreshold', { totalVotes: formatBigIntDisplay(totalParentVotes) })
@@ -260,16 +261,7 @@ function GuardDetails(props: ICreationStepProps) {
           )}
         </Flex>
       </StepWrapper>
-      <StepButtons
-        {...props}
-        prevStep={
-          governanceFormType === GovernanceType.MULTISIG
-            ? CreatorSteps.MULTISIG_DETAILS
-            : CreatorSteps.AZORIUS_DETAILS
-        }
-        isEdit={mode === DAOCreateMode.EDIT}
-        isLastStep
-      />
+      <StepButtons {...props} />
     </>
   );
 }
