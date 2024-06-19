@@ -1,4 +1,3 @@
-import { zeroAddress } from 'viem';
 import {
   CreatorFormState,
   GovernanceType,
