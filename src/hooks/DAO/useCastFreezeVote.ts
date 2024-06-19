@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
-import MultisigFreezeVotingAbi from '../../assets/abi/MultisigFreezeVoting';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FreezeVotingType } from '../../types';
 import { useTransaction } from '../utils/useTransaction';
@@ -74,7 +73,7 @@ const useCastFreezeVote = ({
       contractCall({
         contractFn: () => {
           const freezeMultisigVotingContract = getContract({
-            abi: MultisigFreezeVotingAbi,
+            abi: abis.MultisigFreezeVoting,
             address: freezeVotingContractAddress,
             client: walletClient,
           });

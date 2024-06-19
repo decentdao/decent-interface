@@ -5,7 +5,6 @@ import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Address, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
-import MultisigFreezeVotingAbi from '../../../../assets/abi/MultisigFreezeVoting';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
   isWithinFreezePeriod,
@@ -123,7 +122,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
           }
 
           const freezeVotingContract = getContract({
-            abi: MultisigFreezeVotingAbi,
+            abi: abis.MultisigFreezeVoting,
             address: guardContracts.freezeVotingContractAddress,
             client: walletClient,
           });

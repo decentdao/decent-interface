@@ -12,7 +12,6 @@ import {
   encodeFunctionData,
 } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import MultisigFreezeVotingAbi from '../assets/abi/MultisigFreezeVoting';
 import { buildContractCall } from '../helpers';
 import { SafeTransaction, SubDAO, VotingStrategyType } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
@@ -146,7 +145,11 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     } else if (this.freezeVotingType === 'erc721') {
       return buildContractCall(abis.ERC721FreezeVoting, this.freezeVotingAddress, ...functionArgs);
     } else if (this.freezeVotingType === 'multisig') {
-      return buildContractCall(MultisigFreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
+      return buildContractCall(
+        abis.MultisigFreezeVoting,
+        this.freezeVotingAddress,
+        ...functionArgs,
+      );
     } else {
       throw new Error('unsupported freeze voting type');
     }
@@ -201,7 +204,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     } else {
       this.freezeVotingType = 'multisig';
       this.freezeVotingCallData = encodeFunctionData({
-        abi: MultisigFreezeVotingAbi,
+        abi: abis.MultisigFreezeVoting,
         functionName: 'owner',
       });
     }

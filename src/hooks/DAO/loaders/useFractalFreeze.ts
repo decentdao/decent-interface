@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef } from 'react';
 import { Address, GetContractReturnType, PublicClient, getContract, zeroAddress } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
-import MultisigFreezeVotingAbi from '../../../assets/abi/MultisigFreezeVoting';
 import VotesERC20Abi from '../../../assets/abi/VotesERC20';
 import {
   isWithinFreezeProposalPeriod,
@@ -47,7 +46,7 @@ export const useFractalFreeze = ({
       }
 
       let freezeVotingContract:
-        | GetContractReturnType<typeof MultisigFreezeVotingAbi, PublicClient>
+        | GetContractReturnType<typeof abis.MultisigFreezeVoting, PublicClient>
         | GetContractReturnType<typeof abis.ERC20FreezeVoting, PublicClient>
         | GetContractReturnType<typeof abis.ERC721FreezeVoting, PublicClient>;
 
@@ -65,7 +64,7 @@ export const useFractalFreeze = ({
         });
       } else if (freezeVotingType === FreezeVotingType.MULTISIG) {
         freezeVotingContract = getContract({
-          abi: MultisigFreezeVotingAbi,
+          abi: abis.MultisigFreezeVoting,
           address: freezeVotingContractAddress,
           client: publicClient,
         });
@@ -122,7 +121,7 @@ export const useFractalFreeze = ({
 
       if (freezeVotingType === FreezeVotingType.MULTISIG) {
         const safeFreezeVotingContract = getContract({
-          abi: MultisigFreezeVotingAbi,
+          abi: abis.MultisigFreezeVoting,
           address: freezeVotingContractAddress,
           client: publicClient,
         });
@@ -223,7 +222,7 @@ export const useFractalFreeze = ({
     }
 
     const freezeVotingContract = getContract({
-      abi: MultisigFreezeVotingAbi,
+      abi: abis.MultisigFreezeVoting,
       address: freezeVotingContractAddress,
       client: publicClient,
     });
