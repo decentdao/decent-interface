@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useState, useCallback, useEffect } from 'react';
 import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import LinearERC20VotingAbi from '../../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
@@ -41,7 +41,7 @@ export function useCanUserCreateProposal() {
         const votingStrategyAddress = await getVotingStrategyAddress(safeAddress);
         if (votingStrategyAddress) {
           const votingContract = getContract({
-            abi: LinearERC20VotingAbi,
+            abi: abis.LinearERC20Voting,
             address: votingStrategyAddress,
             client: publicClient,
           });
@@ -58,7 +58,7 @@ export function useCanUserCreateProposal() {
         } else if (type === GovernanceType.AZORIUS_ERC20) {
           if (linearVotingErc20Address) {
             const ozLinearVotingContract = getContract({
-              abi: LinearERC20VotingAbi,
+              abi: abis.LinearERC20Voting,
               address: linearVotingErc20Address,
               client: publicClient,
             });

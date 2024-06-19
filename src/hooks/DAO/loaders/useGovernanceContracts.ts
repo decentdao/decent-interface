@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { getContract, Address } from 'viem';
 import { usePublicClient } from 'wagmi';
-import LinearERC20VotingAbi from '../../../assets/abi/LinearERC20Voting';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import VotesERC20WrapperAbi from '../../../assets/abi/VotesERC20Wrapper';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -51,7 +51,7 @@ export const useGovernanceContracts = () => {
       linearVotingErc20Address = votingStrategyAddress;
 
       const ozLinearVotingContract = getContract({
-        abi: LinearERC20VotingAbi,
+        abi: abis.LinearERC20Voting,
         address: linearVotingErc20Address,
         client: publicClient,
       });

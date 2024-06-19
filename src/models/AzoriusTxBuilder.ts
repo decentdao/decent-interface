@@ -14,7 +14,6 @@ import {
   getAddress,
 } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../assets/abi/LinearERC721Voting';
 import VotesERC20Abi from '../assets/abi/VotesERC20';
 import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
@@ -154,7 +153,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       return buildContractCall(
-        LinearERC20VotingAbi,
+        abis.LinearERC20Voting,
         this.linearERC20VotingAddress!,
         'setAzorius', // contract function name
         [this.azoriusAddress],
@@ -432,7 +431,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       }
 
       const linearERC20VotingMasterCopyContract = getContract({
-        abi: LinearERC20VotingAbi,
+        abi: abis.LinearERC20Voting,
         address: this.linearVotingErc20MasterCopy,
         client: this.publicClient,
       });
@@ -452,7 +451,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       );
 
       const encodedStrategySetupData = encodeFunctionData({
-        abi: LinearERC20VotingAbi,
+        abi: abis.LinearERC20Voting,
         functionName: 'setUp',
         args: [encodedStrategyInitParams],
       });

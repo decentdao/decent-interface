@@ -8,7 +8,6 @@ import {
   getContract,
 } from 'viem';
 import { usePublicClient } from 'wagmi';
-import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -71,7 +70,7 @@ export const useAzoriusProposals = () => {
     }
 
     return getContract({
-      abi: LinearERC20VotingAbi,
+      abi: abis.LinearERC20Voting,
       address: linearVotingErc20Address,
       client: publicClient,
     });
@@ -130,14 +129,14 @@ export const useAzoriusProposals = () => {
     async (
       _azoriusContract: GetContractReturnType<typeof abis.Azorius, PublicClient> | undefined,
       _erc20StrategyContract:
-        | GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient>
+        | GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
         | undefined,
       _erc721StrategyContract:
         | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
         | undefined,
       _strategyType: VotingStrategyType | undefined,
       _erc20VotedEvents:
-        | GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'>
+        | GetContractEventsReturnType<typeof abis.LinearERC20Voting, 'Voted'>
         | undefined,
       _erc721VotedEvents:
         | GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'>

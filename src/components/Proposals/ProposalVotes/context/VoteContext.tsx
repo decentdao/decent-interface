@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useContext, useCallback, useEffect, useState, createContext, ReactNode } from 'react';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import useSnapshotProposal from '../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useUserERC721VotingTokens from '../../../../hooks/DAO/proposal/useUserERC721VotingTokens';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -98,7 +98,7 @@ export function VoteContextProvider({
           newCanVote = votingWeightData.votingWeight >= 1;
         } else if (type === GovernanceType.AZORIUS_ERC20 && linearVotingErc20Address) {
           const ozLinearVotingContract = getContract({
-            abi: LinearERC20VotingAbi,
+            abi: abis.LinearERC20Voting,
             address: linearVotingErc20Address,
             client: publicClient,
           });
