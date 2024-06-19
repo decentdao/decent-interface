@@ -1,8 +1,8 @@
-import { SafeInfoResponse } from '@safe-global/api-kit';
 import { FractalModuleData, FractalGuardContracts, FreezeGuard } from './fractal';
+import { SafeWithNextNonce } from './safeGlobal';
 
 export type DAOData = {
-  safe: SafeInfoResponse;
+  safe: SafeWithNextNonce;
   fractalModules?: FractalModuleData[];
   freezeGuardContracts: FractalGuardContracts;
   freezeGuard: FreezeGuard;

@@ -14,6 +14,7 @@ import {
   getIndexedDBValue,
   setIndexedDBValue,
 } from '../../../hooks/utils/cache/useLocalDB';
+import { SafeWithNextNonce } from '../../../types';
 import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
 class CachingSafeApiKit extends SafeApiKit {
@@ -99,7 +100,7 @@ class CachingSafeApiKit extends SafeApiKit {
     return value;
   }
 
-  async getSafeData(safeAddress: string): Promise<SafeInfoResponseWithGuard> {
+  async getSafeData(safeAddress: string): Promise<SafeWithNextNonce> {
     const safeInfoResponse = await this.getSafeInfo(safeAddress);
     const nextNonce = await this.getNextNonce(safeAddress);
     const safeInfo = { ...safeInfoResponse, nextNonce };

@@ -1,3 +1,5 @@
+import { SafeInfoResponse } from '@safe-global/api-kit';
+
 export declare enum Operation {
   CALL = 0,
   DELEGATE = 1,
@@ -24,3 +26,7 @@ export declare type DataDecoded = {
   method: string;
   parameters?: Parameter[];
 };
+
+export type SafeWithNextNonce = {
+  nextNonce: number
+} & SafeInfoResponse
