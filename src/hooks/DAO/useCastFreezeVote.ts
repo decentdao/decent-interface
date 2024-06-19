@@ -3,7 +3,6 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
-import ERC721FreezeVotingAbi from '../../assets/abi/ERC721FreezeVoting';
 import MultisigFreezeVotingAbi from '../../assets/abi/MultisigFreezeVoting';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FreezeVotingType } from '../../types';
@@ -38,7 +37,7 @@ const useCastFreezeVote = ({
       contractCall({
         contractFn: () => {
           const freezeERC721VotingContract = getContract({
-            abi: ERC721FreezeVotingAbi,
+            abi: abis.ERC721FreezeVoting,
             address: freezeVotingContractAddress,
             client: walletClient,
           });

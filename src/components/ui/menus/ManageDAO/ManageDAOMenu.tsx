@@ -5,7 +5,6 @@ import { useMemo, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Address, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
-import ERC721FreezeVotingAbi from '../../../../assets/abi/ERC721FreezeVoting';
 import MultisigFreezeVotingAbi from '../../../../assets/abi/MultisigFreezeVoting';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import {
@@ -151,7 +150,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
               throw new Error('wallet client not set');
             }
             const freezeERC721VotingContract = getContract({
-              abi: ERC721FreezeVotingAbi,
+              abi: abis.ERC721FreezeVoting,
               address: guardContracts.freezeVotingContractAddress,
               client: walletClient,
             });

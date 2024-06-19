@@ -2,7 +2,6 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { Address, GetContractReturnType, PublicClient, getContract, zeroAddress } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import ERC721FreezeVotingAbi from '../../../assets/abi/ERC721FreezeVoting';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import MultisigFreezeVotingAbi from '../../../assets/abi/MultisigFreezeVoting';
 import VotesERC20Abi from '../../../assets/abi/VotesERC20';
@@ -50,7 +49,7 @@ export const useFractalFreeze = ({
       let freezeVotingContract:
         | GetContractReturnType<typeof MultisigFreezeVotingAbi, PublicClient>
         | GetContractReturnType<typeof abis.ERC20FreezeVoting, PublicClient>
-        | GetContractReturnType<typeof ERC721FreezeVotingAbi, PublicClient>;
+        | GetContractReturnType<typeof abis.ERC721FreezeVoting, PublicClient>;
 
       if (freezeVotingType === FreezeVotingType.ERC20) {
         freezeVotingContract = getContract({
@@ -60,7 +59,7 @@ export const useFractalFreeze = ({
         });
       } else if (freezeVotingType === FreezeVotingType.ERC721) {
         freezeVotingContract = getContract({
-          abi: ERC721FreezeVotingAbi,
+          abi: abis.ERC721FreezeVoting,
           address: freezeVotingContractAddress,
           client: publicClient,
         });
@@ -274,7 +273,7 @@ export const useFractalFreeze = ({
     }
 
     const freezeVotingContract = getContract({
-      abi: ERC721FreezeVotingAbi,
+      abi: abis.ERC721FreezeVoting,
       address: freezeVotingContractAddress,
       client: publicClient,
     });
