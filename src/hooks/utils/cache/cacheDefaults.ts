@@ -1,3 +1,6 @@
+import { Address } from 'viem';
+import { AzoriusProposal } from '../../../types';
+
 export interface IStorageValue {
   // the value to store, 1 character to minimize cache size
   v: any;
@@ -23,21 +26,85 @@ export enum CacheExpiry {
  * cache key here.
  */
 export enum CacheKeys {
-  PROPOSAL_PREFIX = 'proposal',
-  FAVORITES = 'favorites',
+  // local storage keys
+  FAVORITES = 'Favorites',
+  MASTER_COPY = 'Master Copy',
+  AVERAGE_BLOCK_TIME = 'Average Block Time',
+  PROPOSAL_CACHE = 'Proposal',
+  MIGRATION = 'Migration',
+  // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
-  MASTER_COPY_PREFIX = 'master_copy_of_',
 }
+
+export type CacheKey = {
+  cacheName: CacheKeys;
+  version: number;
+};
+
+export interface FavoritesCacheKey extends CacheKey {
+  cacheName: CacheKeys.FAVORITES;
+}
+
+export interface MasterCacheKey extends CacheKey {
+  cacheName: CacheKeys.MASTER_COPY;
+  chainId: number;
+  proxyAddress: Address;
+}
+
+export interface ProposalCacheKey extends CacheKey {
+  cacheName: CacheKeys.PROPOSAL_CACHE;
+  proposalId: string;
+  contractAddress: Address;
+}
+
+export interface AverageBlockTimeCacheKey extends CacheKey {
+  cacheName: CacheKeys.AVERAGE_BLOCK_TIME;
+  chainId: number;
+}
+
+export type CacheKeyType =
+  | FavoritesCacheKey
+  | MasterCacheKey
+  | ProposalCacheKey
+  | AverageBlockTimeCacheKey
+  | Omit<CacheKey, 'version'>;
+
+export type CacheValue = {
+  v: any;
+  e: number;
+};
+
+type CacheKeyToValueMap = {
+  [CacheKeys.FAVORITES]: string[];
+  [CacheKeys.MASTER_COPY]: Address;
+  [CacheKeys.PROPOSAL_CACHE]: AzoriusProposal;
+  [CacheKeys.AVERAGE_BLOCK_TIME]: number;
+  [CacheKeys.MIGRATION]: number;
+};
+
+export type CacheValueType<T extends CacheKeyType> = T extends { cacheName: infer U }
+  ? U extends keyof CacheKeyToValueMap
+    ? CacheKeyToValueMap[U]
+    : unknown
+  : unknown;
 
 interface IndexedObject {
   [key: string]: any;
 }
 
+export const CACHE_VERSIONS: { [key: string]: number } = Object.freeze({
+  [CacheKeys.FAVORITES]: 1,
+  [CacheKeys.MASTER_COPY]: 1,
+  [CacheKeys.PROPOSAL_CACHE]: 1,
+  [CacheKeys.AVERAGE_BLOCK_TIME]: 1,
+});
+
 /**
  * Cache default values.
  *
  * Cache keys are not required to have a default value.
+ * @todo: The CACHE_DEFAULTs seem to be used for indexDB, But favorites is localstorage. We will need to revisit this.
  */
 export const CACHE_DEFAULTS: IndexedObject = {
   [CacheKeys.FAVORITES.toString()]: Array<string>(),

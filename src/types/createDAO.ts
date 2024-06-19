@@ -14,6 +14,37 @@ export enum CreatorSteps {
   FREEZE_DETAILS = 'freeze',
 }
 
+export const RootMultisigSteps = [CreatorSteps.ESSENTIALS, CreatorSteps.MULTISIG_DETAILS];
+export const ChildMultisigSteps = [
+  CreatorSteps.ESSENTIALS,
+  CreatorSteps.MULTISIG_DETAILS,
+  CreatorSteps.FREEZE_DETAILS,
+];
+
+export const RootERC20Steps = [
+  CreatorSteps.ESSENTIALS,
+  CreatorSteps.ERC20_DETAILS,
+  CreatorSteps.AZORIUS_DETAILS,
+];
+export const ChildERC20Steps = [
+  CreatorSteps.ESSENTIALS,
+  CreatorSteps.ERC20_DETAILS,
+  CreatorSteps.AZORIUS_DETAILS,
+  CreatorSteps.FREEZE_DETAILS,
+];
+
+export const RootERC721Steps = [
+  CreatorSteps.ESSENTIALS,
+  CreatorSteps.ERC721_DETAILS,
+  CreatorSteps.AZORIUS_DETAILS,
+];
+export const ChildERC721Steps = [
+  CreatorSteps.ESSENTIALS,
+  CreatorSteps.ERC721_DETAILS,
+  CreatorSteps.AZORIUS_DETAILS,
+  CreatorSteps.FREEZE_DETAILS,
+];
+
 export enum TokenCreationType {
   IMPORTED = 'imported',
   NEW = 'new',
@@ -21,9 +52,8 @@ export enum TokenCreationType {
 export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 'handleSubmit'> {
   transactionPending?: boolean;
   isSubDAO?: boolean;
-  step: CreatorSteps;
-  updateStep: (newStep: CreatorSteps) => void;
   mode: DAOCreateMode;
+  steps: CreatorSteps[];
 }
 
 export interface CreatorFormState<T = BigIntValuePair> {

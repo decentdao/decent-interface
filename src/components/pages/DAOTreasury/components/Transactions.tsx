@@ -114,14 +114,10 @@ function EmptyTransactions() {
 
 export function Transactions({ shownTransactions }: { shownTransactions: number }) {
   const {
-    node: { daoAddress },
     treasury: { transfers },
   } = useFractal();
 
-  const displayData: TransferDisplayData[] = useFormatTransfers(
-    transfers && transfers.results ? transfers.results : [],
-    daoAddress!,
-  );
+  const displayData = useFormatTransfers();
 
   if (!transfers || transfers.results.length === 0) return <EmptyTransactions />;
 
