@@ -1,4 +1,4 @@
-import { abis, addresses } from '@fractal-framework/fractal-contracts';
+import { addresses } from '@fractal-framework/fractal-contracts';
 import {
   getProxyFactoryDeployment,
   getMultiSendCallOnlyDeployment,
@@ -7,9 +7,6 @@ import {
 } from '@safe-global/safe-deployments';
 import { getAddress } from 'viem';
 import { baseSepolia } from 'wagmi/chains';
-// import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
-// import GnosisSafeProxyFactoryAbi from '../../../assets/abi/GnosisSafeProxyFactory';
-// import MultiSendCallOnlyAbi from '../../../assets/abi/MultiSendCallOnly';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
 import { getSafeContractDeploymentAddress } from './utils';
@@ -55,10 +52,7 @@ export const baseSepoliaConfig: NetworkConfig = {
       chain.id.toString(),
     ),
 
-    zodiacModuleProxyFactory: {
-      address: getAddress(a.ModuleProxyFactory),
-      abi: abis.ModuleProxyFactory,
-    },
+    zodiacModuleProxyFactory: getAddress(a.ModuleProxyFactory),
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
     linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),

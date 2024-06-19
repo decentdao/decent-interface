@@ -1,11 +1,5 @@
-import { abis } from '@fractal-framework/fractal-contracts';
 import { Address, Chain } from 'viem';
 import { GovernanceType } from './fractal';
-
-export type FractalContractsObject<T> = {
-  readonly address: Address;
-  readonly abi: T;
-};
 
 export type NetworkConfig = {
   order: number; // any arbitrary integer, used to "order" the networks in the dropdown
@@ -28,7 +22,7 @@ export type NetworkConfig = {
 
     multiSendCallOnly: Address;
 
-    zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>;
+    zodiacModuleProxyFactory: Address;
 
     linearVotingErc20MasterCopy: Address;
     linearVotingErc721MasterCopy: Address;

@@ -12,7 +12,6 @@ import {
   AzoriusERC721DAO,
   VotingStrategyType,
 } from '../types';
-import { FractalContractsObject } from '../types/network';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { TxBuilderFactory } from './TxBuilderFactory';
 import { fractalModuleData, FractalModuleData } from './helpers/fractalModuleData';
@@ -36,7 +35,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   private readonly keyValuePairs: Address;
   private readonly fractalRegistry: Address;
-  private readonly zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>;
+  private readonly zodiacModuleProxyFactory: Address;
   private readonly multiSendCallOnly: Address;
   private readonly moduleFractalMasterCopy: Address;
 
@@ -52,7 +51,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     keyValuePairs: Address,
     fractalRegistry: Address,
-    zodiacModuleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>,
+    zodiacModuleProxyFactory: Address,
     multiSendCallOnly: Address,
     moduleFractalMasterCopy: Address,
 

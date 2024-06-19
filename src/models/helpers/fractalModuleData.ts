@@ -12,7 +12,6 @@ import FractalModuleAbi from '../../assets/abi/FractalModule';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import { buildContractCall } from '../../helpers/crypto';
 import { SafeTransaction } from '../../types';
-import { FractalContractsObject } from '../../types/network';
 import { generateContractByteCodeLinear, generateSalt } from './utils';
 
 export interface FractalModuleData {
@@ -23,7 +22,7 @@ export interface FractalModuleData {
 
 export const fractalModuleData = (
   fractalModuleMasterCopyAddress: Address,
-  moduleProxyFactory: FractalContractsObject<typeof abis.ModuleProxyFactory>,
+  moduleProxyFactoryAddress: Address,
   safeAddress: Address,
   saltNum: bigint,
   parentAddress?: Address,
@@ -46,8 +45,8 @@ export const fractalModuleData = (
   const fractalSalt = generateSalt(fractalModuleCalldata, saltNum);
 
   const deployFractalModuleTx = buildContractCall(
-    moduleProxyFactory.abi,
-    moduleProxyFactory.address,
+    abis.ModuleProxyFactory,
+    moduleProxyFactoryAddress,
     'deployModule',
     [fractalModuleMasterCopyAddress, fractalModuleCalldata, saltNum],
     0,
@@ -55,7 +54,7 @@ export const fractalModuleData = (
   );
 
   const predictedFractalModuleAddress = getCreate2Address({
-    from: moduleProxyFactory.address,
+    from: moduleProxyFactoryAddress,
     salt: fractalSalt,
     bytecodeHash: keccak256(encodePacked(['bytes'], [fractalByteCodeLinear])),
   });
