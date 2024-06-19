@@ -1,6 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
-import AzoriusAbi from '../assets/abi/Azorius';
 import FractalRegistryAbi from '../assets/abi/FractalRegistry';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
@@ -121,7 +120,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
         freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
         freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
         freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
-        freezeGuardTxBuilder.buildSetGuardTx(AzoriusAbi, azoriusTxBuilder.azoriusAddress!),
+        freezeGuardTxBuilder.buildSetGuardTx(abis.Azorius, azoriusTxBuilder.azoriusAddress!),
       ]);
     }
     const data = this.daoData as AzoriusERC20DAO;

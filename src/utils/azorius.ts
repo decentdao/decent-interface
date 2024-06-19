@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import {
   Address,
@@ -6,7 +7,6 @@ import {
   PublicClient,
   getAddress,
 } from 'viem';
-import AzoriusAbi from '../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../assets/abi/LinearERC721Voting';
 import { strategyFractalProposalStates } from '../constants/strategy';
@@ -32,7 +32,7 @@ import {
 import { getTimeStamp } from './contract';
 
 export const getAzoriusProposalState = async (
-  azoriusContract: GetContractReturnType<typeof AzoriusAbi, PublicClient>,
+  azoriusContract: GetContractReturnType<typeof abis.Azorius, PublicClient>,
   proposalId: number,
 ): Promise<FractalProposalState> => {
   const state = await azoriusContract.read.proposalState([proposalId]);
@@ -177,11 +177,11 @@ export const mapProposalCreatedEventToProposal = async (
   strategyType: VotingStrategyType,
   proposalId: number,
   proposer: Address,
-  azoriusContract: GetContractReturnType<typeof AzoriusAbi, PublicClient>,
+  azoriusContract: GetContractReturnType<typeof abis.Azorius, PublicClient>,
   publicClient: PublicClient,
   erc20VotedEvents: GetContractEventsReturnType<typeof LinearERC20VotingAbi, 'Voted'> | undefined,
   erc721VotedEvents: GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'> | undefined,
-  executedEvents: GetContractEventsReturnType<typeof AzoriusAbi, 'ProposalExecuted'> | undefined,
+  executedEvents: GetContractEventsReturnType<typeof abis.Azorius, 'ProposalExecuted'> | undefined,
   data?: ProposalData,
 ) => {
   if (erc20StrategyContract !== undefined && erc721StrategyContract !== undefined) {

@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, Dispatch } from 'react';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import AzoriusAbi from '../../../assets/abi/Azorius';
 import {
   FractalGovernanceAction,
   FractalGovernanceActions,
@@ -25,7 +25,7 @@ export default function useUpdateProposalState({
         return;
       }
       const azoriusContract = getContract({
-        abi: AzoriusAbi,
+        abi: abis.Azorius,
         address: moduleAzoriusAddress,
         client: publicClient,
       });

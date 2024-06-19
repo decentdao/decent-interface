@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import AzoriusAbi from '../../assets/abi/Azorius';
 import { SENTINEL_ADDRESS } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
@@ -40,7 +40,7 @@ const useVotingStrategyAddress = () => {
       }
 
       const azoriusContract = getContract({
-        abi: AzoriusAbi,
+        abi: abis.Azorius,
         address: azoriusModule.moduleAddress,
         client: publicClient,
       });

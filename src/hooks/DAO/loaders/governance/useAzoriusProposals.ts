@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   Address,
@@ -7,7 +8,6 @@ import {
   getContract,
 } from 'viem';
 import { usePublicClient } from 'wagmi';
-import AzoriusAbi from '../../../../assets/abi/Azorius';
 import LinearERC20VotingAbi from '../../../../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../../../../assets/abi/LinearERC721Voting';
 import { logError } from '../../../../helpers/errorLogging';
@@ -49,7 +49,7 @@ export const useAzoriusProposals = () => {
     }
 
     return getContract({
-      abi: AzoriusAbi,
+      abi: abis.Azorius,
       address: moduleAzoriusAddress,
       client: publicClient,
     });
@@ -128,7 +128,7 @@ export const useAzoriusProposals = () => {
 
   const loadAzoriusProposals = useCallback(
     async (
-      _azoriusContract: GetContractReturnType<typeof AzoriusAbi, PublicClient> | undefined,
+      _azoriusContract: GetContractReturnType<typeof abis.Azorius, PublicClient> | undefined,
       _erc20StrategyContract:
         | GetContractReturnType<typeof LinearERC20VotingAbi, PublicClient>
         | undefined,
@@ -143,7 +143,7 @@ export const useAzoriusProposals = () => {
         | GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'>
         | undefined,
       _executedEvents:
-        | GetContractEventsReturnType<typeof AzoriusAbi, 'ProposalExecuted'>
+        | GetContractEventsReturnType<typeof abis.Azorius, 'ProposalExecuted'>
         | undefined,
       _publicClient: PublicClient | undefined,
       _decode: (
