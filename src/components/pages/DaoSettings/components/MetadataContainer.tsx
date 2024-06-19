@@ -4,7 +4,6 @@ import { useState, useEffect, ChangeEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { encodeFunctionData } from 'viem';
-import KeyValuePairsAbi from '../../../../assets/abi/KeyValuePairs';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
@@ -93,7 +92,7 @@ export function MetadataContainer() {
 
   const handleEditDAOSnapshotENS = () => {
     const encodedUpdateValues = encodeFunctionData({
-      abi: KeyValuePairsAbi,
+      abi: abis.KeyValuePairs,
       functionName: 'updateValues',
       args: [['snapshotENS'], [snapshotENS]],
     });

@@ -1,7 +1,6 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import KeyValuePairsAbi from '../assets/abi/KeyValuePairs';
 import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
 import { buildContractCall, encodeMultiSend } from '../helpers';
 import {
@@ -244,7 +243,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
   private buildUpdateDAOSnapshotENSTx(): SafeTransaction {
     return buildContractCall(
-      KeyValuePairsAbi,
+      abis.KeyValuePairs,
       this.keyValuePairs,
       'updateValues',
       [['snapshotENS'], [this.daoData.snapshotENS]],
