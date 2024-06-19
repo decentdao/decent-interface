@@ -2,7 +2,6 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useState, useCallback, useEffect } from 'react';
 import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import LinearERC721VotingAbi from '../../assets/abi/LinearERC721Voting';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { GovernanceType } from '../../types';
@@ -66,7 +65,7 @@ export function useCanUserCreateProposal() {
           }
         } else if (type === GovernanceType.AZORIUS_ERC721 && linearVotingErc721Address) {
           const erc721LinearVotingContract = getContract({
-            abi: LinearERC721VotingAbi,
+            abi: abis.LinearERC721Voting,
             address: linearVotingErc721Address,
             client: publicClient,
           });

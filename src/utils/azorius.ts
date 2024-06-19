@@ -7,7 +7,6 @@ import {
   PublicClient,
   getAddress,
 } from 'viem';
-import LinearERC721VotingAbi from '../assets/abi/LinearERC721Voting';
 import { strategyFractalProposalStates } from '../constants/strategy';
 
 import {
@@ -43,7 +42,7 @@ const getQuorum = async (
     | GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
     | undefined,
   erc721StrategyContract:
-    | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
+    | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
     | undefined,
   strategyType: VotingStrategyType,
   proposalId: number,
@@ -63,7 +62,7 @@ const getQuorum = async (
 
 export const getProposalVotesSummary = async (
   erc20Strategy: GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient> | undefined,
-  erc721Strategy: GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient> | undefined,
+  erc721Strategy: GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient> | undefined,
   strategyType: VotingStrategyType,
   proposalId: number,
 ): Promise<ProposalVotesSummary> => {
@@ -117,7 +116,9 @@ export const getProposalVotesSummary = async (
 
 const getProposalVotes = (
   erc20VotedEvents: GetContractEventsReturnType<typeof abis.LinearERC20Voting, 'Voted'> | undefined,
-  erc721VotedEvents: GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'> | undefined,
+  erc721VotedEvents:
+    | GetContractEventsReturnType<typeof abis.LinearERC721Voting, 'Voted'>
+    | undefined,
   proposalId: number,
 ): (ProposalVote | ERC721ProposalVote)[] => {
   if (erc20VotedEvents !== undefined && erc721VotedEvents !== undefined) {
@@ -171,7 +172,7 @@ export const mapProposalCreatedEventToProposal = async (
     | GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
     | undefined,
   erc721StrategyContract:
-    | GetContractReturnType<typeof LinearERC721VotingAbi, PublicClient>
+    | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
     | undefined,
   strategyType: VotingStrategyType,
   proposalId: number,
@@ -179,7 +180,9 @@ export const mapProposalCreatedEventToProposal = async (
   azoriusContract: GetContractReturnType<typeof abis.Azorius, PublicClient>,
   publicClient: PublicClient,
   erc20VotedEvents: GetContractEventsReturnType<typeof abis.LinearERC20Voting, 'Voted'> | undefined,
-  erc721VotedEvents: GetContractEventsReturnType<typeof LinearERC721VotingAbi, 'Voted'> | undefined,
+  erc721VotedEvents:
+    | GetContractEventsReturnType<typeof abis.LinearERC721Voting, 'Voted'>
+    | undefined,
   executedEvents: GetContractEventsReturnType<typeof abis.Azorius, 'ProposalExecuted'> | undefined,
   data?: ProposalData,
 ) => {
