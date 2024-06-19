@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import {
   AllTransactionsListResponse,
   EthereumTxWithTransfersResponse,
@@ -7,7 +8,6 @@ import {
 import { useCallback } from 'react';
 import { Address, getAddress, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import MultisigFreezeGuardAbi from '../../assets/abi/MultisigFreezeGuard';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -322,7 +322,7 @@ export const useSafeTransactions = () => {
         const averageBlockTime = BigInt(Math.round(await getAverageBlockTime(publicClient)));
         const freezeGuard = getContract({
           address: guardContracts.freezeGuardContractAddress,
-          abi: MultisigFreezeGuardAbi,
+          abi: abis.MultisigFreezeGuard,
           client: publicClient,
         });
 

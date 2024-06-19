@@ -12,7 +12,6 @@ import {
   encodeFunctionData,
 } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
 import MultisigFreezeVotingAbi from '../assets/abi/MultisigFreezeVoting';
 import { buildContractCall } from '../helpers';
 import { SafeTransaction, SubDAO, VotingStrategyType } from '../types';
@@ -266,7 +265,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     }
 
     const freezeGuardCallData = encodeFunctionData({
-      abi: MultisigFreezeGuardAbi,
+      abi: abis.MultisigFreezeGuard,
       functionName: 'setUp',
       args: [
         encodeAbiParameters(parseAbiParameters('uint32, uint32, address, address, address'), [

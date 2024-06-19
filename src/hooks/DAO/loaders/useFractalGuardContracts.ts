@@ -2,7 +2,6 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
 import { getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import MultisigFreezeGuardAbi from '../../../assets/abi/MultisigFreezeGuard';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -88,7 +87,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
         }
 
         const multisigFreezeGuardContract = getContract({
-          abi: MultisigFreezeGuardAbi,
+          abi: abis.MultisigFreezeGuard,
           address: guard,
           client: publicClient,
         });

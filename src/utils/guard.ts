@@ -1,6 +1,6 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { keccak256, encodePacked, isHex, Address, getContract, PublicClient } from 'viem';
-import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
 import { buildSignatureBytes } from '../helpers/crypto';
 import { Activity } from '../types';
 import { getTimeStamp } from './contract';
@@ -32,7 +32,7 @@ export async function getTxTimelockedTimestamp(
 
   const freezeGuard = getContract({
     address: freezeGuardAddress,
-    abi: MultisigFreezeGuardAbi,
+    abi: abis.MultisigFreezeGuard,
     client: publicClient,
   });
 

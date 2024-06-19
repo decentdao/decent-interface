@@ -1,10 +1,10 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { Bank } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import MultisigFreezeGuardAbi from '../../../../assets/abi/MultisigFreezeGuard';
 import { useTimeHelpers } from '../../../../hooks/utils/useTimeHelpers';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { AzoriusGovernance, FreezeGuardType } from '../../../../types';
@@ -33,7 +33,7 @@ export function InfoGovernance() {
       if (freezeGuardType == FreezeGuardType.MULTISIG) {
         if (freezeGuardContractAddress && publicClient) {
           const freezeGuardContract = getContract({
-            abi: MultisigFreezeGuardAbi,
+            abi: abis.MultisigFreezeGuard,
             address: freezeGuardContractAddress,
             client: publicClient,
           });

@@ -1,11 +1,11 @@
 import { Box, Button, Text, Flex, Tooltip } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Hex, getAddress, getContract, isHex } from 'viem';
 import { useWalletClient } from 'wagmi';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
-import MultisigFreezeGuardAbi from '../../../assets/abi/MultisigFreezeGuard';
 import { Check } from '../../../assets/theme/custom/icons/Check';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { buildSafeTransaction, buildSignatureBytes, EIP712_SAFE_TX_TYPE } from '../../../helpers';
@@ -138,7 +138,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         }),
       );
       const freezeGuard = getContract({
-        abi: MultisigFreezeGuardAbi,
+        abi: abis.MultisigFreezeGuard,
         address: freezeGuardContractAddress,
         client: walletClient,
       });
