@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef } from 'react';
 import { Address, GetContractReturnType, PublicClient, getContract, zeroAddress } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
-import VotesERC20Abi from '../../../assets/abi/VotesERC20';
 import {
   isWithinFreezeProposalPeriod,
   isWithinFreezePeriod,
@@ -140,7 +139,7 @@ export const useFractalFreeze = ({
           client: publicClient,
         });
         const votesTokenContract = getContract({
-          abi: VotesERC20Abi,
+          abi: abis.VotesERC20,
           address: await freezeERC20VotingContract.read.votesERC20(),
           client: publicClient,
         });

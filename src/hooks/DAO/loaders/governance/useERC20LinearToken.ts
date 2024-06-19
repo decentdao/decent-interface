@@ -1,7 +1,7 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import VotesERC20Abi from '../../../../assets/abi/VotesERC20';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 
@@ -23,7 +23,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     }
 
     return getContract({
-      abi: VotesERC20Abi,
+      abi: abis.VotesERC20,
       address: votesTokenAddress,
       client: publicClient,
     });
@@ -35,7 +35,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     }
 
     return getContract({
-      abi: VotesERC20Abi,
+      abi: abis.VotesERC20,
       address: underlyingTokenAddress,
       client: publicClient,
     });

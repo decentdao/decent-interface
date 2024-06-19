@@ -14,7 +14,6 @@ import {
   getAddress,
 } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import VotesERC20Abi from '../assets/abi/VotesERC20';
 import VotesERC20WrapperAbi from '../assets/abi/VotesERC20Wrapper';
 import { SENTINEL_ADDRESS } from '../constants/common';
 import { buildContractCall, getRandomBytes } from '../helpers';
@@ -265,7 +264,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
 
     const azoriusGovernanceDaoData = this.daoData as AzoriusERC20DAO;
     return buildContractCall(
-      VotesERC20Abi,
+      abis.VotesERC20,
       this.votesTokenAddress,
       'approve',
       [this.predictedTokenClaimAddress, azoriusGovernanceDaoData.parentAllocationAmount],
@@ -366,7 +365,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     );
 
     this.encodedSetupTokenData = encodeFunctionData({
-      abi: VotesERC20Abi,
+      abi: abis.VotesERC20,
       functionName: 'setUp',
       args: [encodedInitTokenData],
     });

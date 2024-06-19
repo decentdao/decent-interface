@@ -1,11 +1,11 @@
 import { Box, Button, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress, getAddress, getContract } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
-import VotesERC20Abi from '../../../assets/abi/VotesERC20';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
@@ -48,7 +48,7 @@ export function DelegateModal({ close }: { close: Function }) {
     }
 
     const votingTokenContract = getContract({
-      abi: VotesERC20Abi,
+      abi: abis.VotesERC20,
       address: votesTokenAddress,
       client: walletClient,
     });
