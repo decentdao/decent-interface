@@ -13,7 +13,6 @@ import {
   getContract,
   getAddress,
 } from 'viem';
-import ERC20ClaimAbi from '../assets/abi/ERC20Claim';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import LinearERC20VotingAbi from '../assets/abi/LinearERC20Voting';
 import LinearERC721VotingAbi from '../assets/abi/LinearERC721Voting';
@@ -403,7 +402,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       ],
     );
     const encodedSetupTokenClaimData = encodeFunctionData({
-      abi: ERC20ClaimAbi,
+      abi: abis.ERC20Claim,
       functionName: 'setUp',
       args: [encodedInitTokenData],
     });
