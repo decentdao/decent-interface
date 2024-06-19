@@ -11,7 +11,6 @@ import {
   Abi,
   encodeFunctionData,
 } from 'viem';
-import ERC20FreezeVotingAbi from '../assets/abi/ERC20FreezeVoting';
 import ERC721FreezeVotingAbi from '../assets/abi/ERC721FreezeVoting';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import MultisigFreezeGuardAbi from '../assets/abi/MultisigFreezeGuard';
@@ -145,7 +144,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     ];
 
     if (this.freezeVotingType === 'erc20') {
-      return buildContractCall(ERC20FreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
+      return buildContractCall(abis.ERC20FreezeVoting, this.freezeVotingAddress, ...functionArgs);
     } else if (this.freezeVotingType === 'erc721') {
       return buildContractCall(ERC721FreezeVotingAbi, this.freezeVotingAddress, ...functionArgs);
     } else if (this.freezeVotingType === 'multisig') {
@@ -191,7 +190,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
         this.freezeVotingType = 'erc20';
         this.freezeVotingCallData = encodeFunctionData({
-          abi: ERC20FreezeVotingAbi,
+          abi: abis.ERC20FreezeVoting,
           functionName: 'owner',
         });
       } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {

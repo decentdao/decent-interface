@@ -1,8 +1,8 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
-import ERC20FreezeVotingAbi from '../../assets/abi/ERC20FreezeVoting';
 import ERC721FreezeVotingAbi from '../../assets/abi/ERC721FreezeVoting';
 import MultisigFreezeVotingAbi from '../../assets/abi/MultisigFreezeVoting';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -59,7 +59,7 @@ const useCastFreezeVote = ({
       contractCall({
         contractFn: () => {
           const freezeERC20VotingContract = getContract({
-            abi: ERC20FreezeVotingAbi,
+            abi: abis.ERC20FreezeVoting,
             address: freezeVotingContractAddress,
             client: walletClient,
           });
