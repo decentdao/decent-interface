@@ -1,4 +1,5 @@
-import { AllTransactionsListResponse, TokenInfoResponse } from '@safe-global/api-kit';
+import { TokenInfoResponse } from '@safe-global/api-kit';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { TransferType } from '../../../../types';
 import { formatCoin } from '../../../../utils/numberFormats';
@@ -21,16 +22,19 @@ export interface TransferDisplayData {
   tokenInfo?: TokenInfoResponse;
 }
 
-export function useFormatTransfers(
-  transactions: AllTransactionsListResponse['results'],
-  safeAddress: string,
-): TransferDisplayData[] {
-  const transfers = transactions.map(transaction => transaction.transfers).flat();
-  let displayData: TransferDisplayData[] = new Array(transfers.length);
+export function useFormatTransfers(): TransferDisplayData[] {
+  const {
+    node: { daoAddress },
+    treasury: { transfers },
+  } = useFractal();
+  const transfersFromTransactions = (transfers?.results || [])
+    .map(transaction => transaction.transfers)
+    .flat();
+  let displayData: TransferDisplayData[] = new Array(transfersFromTransactions.length);
   const { chain, nativeTokenIcon } = useNetworkConfig();
 
-  for (let i = 0; i < transfers.length; i++) {
-    const transfer = transfers[i];
+  for (let i = 0; i < transfersFromTransactions.length; i++) {
+    const transfer = transfersFromTransactions[i];
     const info = transfer.tokenInfo;
 
     let imageSrc = '/images/coin-icon-default.svg';
@@ -50,7 +54,7 @@ export function useFormatTransfers(
         ? chain.nativeCurrency.symbol
         : transfer?.tokenInfo?.symbol;
     const formatted: TransferDisplayData = {
-      eventType: safeAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
+      eventType: daoAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
       transferType: transfer.type as TransferType,
       executionDate: transfer.executionDate,
       image: imageSrc,
@@ -62,8 +66,8 @@ export function useFormatTransfers(
         transfer.type === TransferType.ERC721_TRANSFER
           ? undefined
           : formatCoin(transfer.value, false, transfer?.tokenInfo?.decimals, symbol),
-      transferAddress: safeAddress === transfer.from ? transfer.to : transfer.from,
-      isLast: transfers[transfers.length - 1] === transfer,
+      transferAddress: daoAddress === transfer.from ? transfer.to : transfer.from,
+      isLast: transfersFromTransactions[transfersFromTransactions.length - 1] === transfer,
       transactionHash: transfer.transactionHash,
       tokenId: transfer?.tokenId,
       tokenInfo: transfer.tokenInfo,

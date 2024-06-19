@@ -28,5 +28,5 @@ export declare type DataDecoded = {
 };
 
 export type SafeWithNextNonce = {
-  nextNonce: number
-} & SafeInfoResponse
+  nextNonce: number;
+} & SafeInfoResponse;

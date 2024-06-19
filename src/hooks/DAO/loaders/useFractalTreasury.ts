@@ -23,13 +23,14 @@ export const useFractalTreasury = () => {
       return;
     }
 
+    const [transfers] = await Promise.all([safeAPI.getAllTransactions(daoAddress)]);
     // @todo - fetch assetsFungible, assetsNonFungible and transfers here
     const treasuryData = {
       assetsFungible: [],
       assetsNonFungible: [],
-      transfers: [],
+      transfers,
     };
-    action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData as any });
+    action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
   }, [daoAddress, safeAPI, action]);
 
   useEffect(() => {
