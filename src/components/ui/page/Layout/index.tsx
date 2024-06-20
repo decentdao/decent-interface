@@ -1,6 +1,7 @@
 import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
+import Roles from '../../../../Roles';
 import {
   useContentHeight,
   useHeaderHeight,
@@ -81,6 +82,7 @@ export default function Layout() {
             fallback={<TopErrorFallback />}
             showDialog
           >
+            <Roles />
             <Outlet />
           </ErrorBoundary>
         </Container>

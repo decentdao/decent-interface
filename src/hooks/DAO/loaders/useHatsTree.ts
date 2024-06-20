@@ -22,39 +22,38 @@ const useHatsTree = () => {
   let { hatsTreeId } = useKeyValuePairs();
 
   useEffect(() => {
-    (async () => {
-      if (hatsTreeId === undefined) {
-        return;
-      }
+    if (hatsTreeId === undefined) {
+      return;
+    }
 
-      try {
-        console.log(`fetching tree with id ${hatsTreeId}`);
-        const tree = await hatsSubgraphClient.getTree({
-          chainId: chain.id,
-          treeId: hatsTreeId,
-          props: {
-            hats: {
-              props: {
-                prettyId: true,
-                status: true,
-                createdAt: true,
-                details: true,
-                maxSupply: true,
-                eligibility: true,
-                toggle: true,
-                mutable: true,
-                levelAtLocalTree: true,
-                currentSupply: true,
-              },
+    hatsSubgraphClient
+      .getTree({
+        chainId: chain.id,
+        treeId: hatsTreeId,
+        props: {
+          hats: {
+            props: {
+              prettyId: true,
+              status: true,
+              createdAt: true,
+              details: true,
+              maxSupply: true,
+              eligibility: true,
+              toggle: true,
+              mutable: true,
+              levelAtLocalTree: true,
+              currentSupply: true,
             },
           },
-        });
-
+        },
+      })
+      .then(tree => {
         action.dispatch({
           type: RolesAction.SET_HATS_TREE,
           payload: tree,
         });
-      } catch (e) {
+      })
+      .catch(() => {
         logError({
           message: 'hatsTreeId is not valid',
           args: {
@@ -62,8 +61,7 @@ const useHatsTree = () => {
             hatsTreeId: hatsTreeId,
           },
         });
-      }
-    })();
+      });
   }, [node.daoAddress, publicClient, chain.id, action, keyValuePairs, hatsTreeId]);
 };
 

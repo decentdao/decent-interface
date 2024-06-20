@@ -62,24 +62,24 @@ const useKeyValuePairs = () => {
   const [events, setEvents] = useState<GetContractEventsReturnType<typeof KeyValuePairsAbi>>();
 
   useEffect(() => {
-    (async () => {
-      if (!publicClient) {
-        return;
-      }
+    if (!publicClient) {
+      return;
+    }
 
-      const keyValuePairsContract = getContract({
-        abi: KeyValuePairsAbi,
-        address: getAddress(keyValuePairs),
-        client: publicClient,
+    const keyValuePairsContract = getContract({
+      abi: KeyValuePairsAbi,
+      address: getAddress(keyValuePairs),
+      client: publicClient,
+    });
+
+    keyValuePairsContract.getEvents
+      .ValueUpdated({ theAddress: node.daoAddress }, { fromBlock: 0n })
+      .then(safeEvents => {
+        setEvents(safeEvents);
+      })
+      .catch(error => {
+        logError(error);
       });
-
-      const safeEvents = await keyValuePairsContract.getEvents.ValueUpdated(
-        { theAddress: node.daoAddress },
-        { fromBlock: 0n },
-      );
-
-      setEvents(safeEvents);
-    })();
   }, [keyValuePairs, node.daoAddress, publicClient]);
 
   return {
