@@ -32,6 +32,7 @@ import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
 import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
+import { KeyValuePairsActions } from '../providers/App/keyValuePairs/action';
 import { RolesActions } from '../providers/App/roles/action';
 import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
@@ -212,6 +213,7 @@ export type FractalActions =
   | TreasuryActions
   | GovernanceContractActions
   | GuardContractActions
+  | KeyValuePairsActions
   | RolesActions;
 export interface Fractal {
   node: FractalNode;
@@ -221,7 +223,12 @@ export interface Fractal {
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
   readOnly: ReadOnlyState;
+  keyValuePairs: KeyValuePairsData;
   roles: Roles;
+}
+
+export interface KeyValuePairsData {
+  hatsTreeId?: number;
 }
 
 export interface Roles {

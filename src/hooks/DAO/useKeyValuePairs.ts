@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { GetContractEventsReturnType, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import KeyValuePairsAbi from '../../assets/abi/KeyValuePairs';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/App/AppProvider';
+import { KeyValuePairsAction } from '../../providers/App/keyValuePairs/action';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 const getHatsTreeId = (
@@ -53,7 +54,7 @@ const getHatsTreeId = (
 
 const useKeyValuePairs = () => {
   const publicClient = usePublicClient();
-  const { node } = useFractal();
+  const { action, node } = useFractal();
   const {
     chain,
     contracts: { keyValuePairs },
@@ -82,9 +83,11 @@ const useKeyValuePairs = () => {
       });
   }, [keyValuePairs, node.daoAddress, publicClient]);
 
-  return {
-    hatsTreeId: getHatsTreeId(events, chain.id),
-  };
+  const hatsTreeId = useMemo(() => getHatsTreeId(events, chain.id), [chain.id, events]);
+  action.dispatch({
+    type: KeyValuePairsAction.SET_HATS_TREE_ID,
+    payload: hatsTreeId,
+  });
 };
 
 export { useKeyValuePairs };

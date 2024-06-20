@@ -5,7 +5,6 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { RolesAction } from '../../../providers/App/roles/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useKeyValuePairs } from '../useKeyValuePairs';
 
 const hatsSubgraphClient = new HatsSubgraphClient({
   // TODO config for prod
@@ -13,13 +12,15 @@ const hatsSubgraphClient = new HatsSubgraphClient({
 
 const useHatsTree = () => {
   const publicClient = usePublicClient();
-  const { action, node } = useFractal();
+  const {
+    action,
+    node,
+    keyValuePairs: { hatsTreeId },
+  } = useFractal();
   const {
     chain,
     contracts: { keyValuePairs },
   } = useNetworkConfig();
-
-  let { hatsTreeId } = useKeyValuePairs();
 
   useEffect(() => {
     if (hatsTreeId === undefined) {
