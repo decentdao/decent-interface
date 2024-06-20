@@ -16,6 +16,7 @@ import {
   ERC721FreezeVoting,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
+import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import {
   SafeMultisigTransactionWithTransfersResponse,
   SafeModuleTransactionWithTransfersResponse,
@@ -31,6 +32,7 @@ import { FractalGovernanceActions } from '../providers/App/governance/action';
 import { GovernanceContractActions } from '../providers/App/governanceContracts/action';
 import { FractalGuardActions } from '../providers/App/guard/action';
 import { GuardContractActions } from '../providers/App/guardContracts/action';
+import { RolesActions } from '../providers/App/roles/action';
 import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { ERC721TokenData, VotesTokenData } from './account';
@@ -209,7 +211,8 @@ export type FractalActions =
   | FractalGovernanceActions
   | TreasuryActions
   | GovernanceContractActions
-  | GuardContractActions;
+  | GuardContractActions
+  | RolesActions;
 export interface Fractal {
   node: FractalNode;
   guard: FreezeGuard;
@@ -218,6 +221,11 @@ export interface Fractal {
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
   readOnly: ReadOnlyState;
+  roles: Roles;
+}
+
+export interface Roles {
+  hatsTree?: Tree;
 }
 
 export interface FractalGovernanceContracts {
