@@ -8,7 +8,7 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { useKeyValuePairs } from '../useKeyValuePairs';
 
 const hatsSubgraphClient = new HatsSubgraphClient({
-  // config for prod
+  // TODO config for prod
 });
 
 const useHatsTree = () => {
