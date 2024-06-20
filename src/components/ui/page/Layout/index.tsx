@@ -1,7 +1,6 @@
 import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
-import Roles from '../../../../Roles';
 import {
   useContentHeight,
   useHeaderHeight,
@@ -10,6 +9,7 @@ import {
   useFooterHeight,
 } from '../../../../constants/common';
 import useNavigationScrollReset from '../../../../hooks/utils/useNavigationScrollReset';
+import Roles from '../../../../pages/daos/[daoAddress]/roles';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
 import { Footer } from '../Footer';

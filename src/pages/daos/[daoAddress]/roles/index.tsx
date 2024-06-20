@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { useFractal } from './providers/App/AppProvider';
+import { useFractal } from '../../../../providers/App/AppProvider';
 
 function Roles() {
   const { roles } = useFractal();
@@ -21,4 +21,3 @@ function Roles() {
 }
 
 export default Roles;
-//
