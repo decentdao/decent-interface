@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { GetContractEventsReturnType, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
-import KeyValuePairsAbi from './assets/abi/KeyValuePairs';
-import { logError } from './helpers/errorLogging';
-import { useFractal } from './providers/App/AppProvider';
-import { useNetworkConfig } from './providers/NetworkConfig/NetworkConfigProvider';
+import KeyValuePairsAbi from '../../assets/abi/KeyValuePairs';
+import { logError } from '../../helpers/errorLogging';
+import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 const getHatsTreeId = (
   events: GetContractEventsReturnType<typeof KeyValuePairsAbi> | undefined,

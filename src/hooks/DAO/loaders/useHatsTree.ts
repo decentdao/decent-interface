@@ -5,7 +5,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { RolesAction } from '../../../providers/App/roles/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useKeyValuePairs } from '../../../useKeyValuePairs';
+import { useKeyValuePairs } from '../useKeyValuePairs';
 
 const hatsSubgraphClient = new HatsSubgraphClient({
   // config for prod
