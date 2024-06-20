@@ -1,4 +1,4 @@
-import { Flex, Show, Hide, Text, Box } from '@chakra-ui/react';
+import { Box, Divider, Flex, Grid, GridItem, Show } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Assets } from '../../../../components/pages/DAOTreasury/components/Assets';
@@ -11,8 +11,6 @@ import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBo
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
-import Divider from '../../../../components/ui/utils/Divider';
-import { CONTENT_MAXW } from '../../../../constants/common';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
@@ -34,7 +32,7 @@ export default function Treasury() {
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
 
   return (
-    <div>
+    <Box>
       <PageHeader
         title={t('headerTitle', {
           ns: 'breadcrumbs',
@@ -52,84 +50,63 @@ export default function Treasury() {
         buttonClick={showSendButton ? openSendAsset : undefined}
         buttonTestId="link-send-assets"
       />
-      <Flex
-        mt="1rem"
-        align="start"
-        gap="1rem"
-        flexWrap="wrap"
+      <Grid
+        templateAreas={{
+          base: `"assets"
+          "transactions"`,
+          lg: `"transactions assets"`,
+        }}
+        gap={{ base: '1rem', lg: '2rem' }}
+        gridTemplateColumns={{ base: `minmax(718px, 736px) fit-content`, lg: `1fr` }}
       >
-        <Show above="lg">
-          <Box width={{ base: '100%', xl: '55%' }}>
-            <TitledInfoBox
-              width={{ base: '100%' }}
-              title={t('titleTransactions')}
-              titleTestId="title-transactions"
-              bg="neutral-2"
-            >
-              <Transactions shownTransactions={shownTransactions} />
-              {totalTransfers > 0 && (
-                <>
-                  <Divider
-                    variant="darker"
-                    my="1rem"
+        <GridItem area="transactions">
+          <TitledInfoBox
+            title={t('titleTransactions')}
+            titleTestId="title-transactions"
+            bg="neutral-2"
+            subTitle={
+              <Show below="lg">
+                <Box px="1rem">
+                  <PaginationCount
+                    totalTransfers={totalTransfers}
+                    shownTransactions={shownTransactions}
+                    daoAddress={daoAddress}
                   />
-                  <Box px={{ base: '1rem', lg: '1.5rem' }}>
-                    <PaginationCount
-                      totalTransfers={totalTransfers}
-                      shownTransactions={shownTransactions}
-                      daoAddress={daoAddress}
-                    />
-                  </Box>
-                  <Divider
-                    variant="darker"
-                    my="1rem"
-                  />
-                </>
-              )}
-            </TitledInfoBox>
-            {showLoadMoreTransactions && (
-              <PaginationButton onClick={() => setShownTransactions(prevState => prevState + 20)} />
-            )}
-          </Box>
-        </Show>
-        <TitledInfoBox
-          width={{ base: '100%', xl: '35%' }}
-          title={t('titleAssets')}
-          titleTestId="title-assets"
-          bg={{ base: 'neutral-2', lg: 'none' }}
-          overflowX={{ base: 'hidden', lg: 'scroll' }}
-        >
-          <Assets />
-        </TitledInfoBox>
-        <Hide above="lg">
-          <Box
-            mt="2rem"
-            w="full"
+                </Box>
+              </Show>
+            }
           >
-            <Text textStyle="display-lg">{t('titleTransactions')}</Text>
-            <PaginationCount
-              totalTransfers={totalTransfers}
-              shownTransactions={shownTransactions}
-              daoAddress={daoAddress}
-            />
-            <Box
-              width="full"
-              py="1rem"
-              mt="1.25rem"
-              borderRadius="0.75rem"
-              bg="neutral-3"
-              maxW={CONTENT_MAXW}
-              overflowX="scroll"
-              className="scroll-dark"
-            >
+            <Flex flexDir={{ base: 'column-reverse', lg: 'column' }}>
               <Transactions shownTransactions={shownTransactions} />
-            </Box>
-            {showLoadMoreTransactions && (
-              <PaginationButton onClick={() => setShownTransactions(prevState => prevState + 20)} />
-            )}
-          </Box>
-        </Hide>
-      </Flex>
-    </div>
+              <Show above="lg">
+                <Divider
+                  variant="darker"
+                  my="1rem"
+                />
+                <Box px={{ base: '1rem', lg: '1.5rem' }}>
+                  <PaginationCount
+                    totalTransfers={totalTransfers}
+                    shownTransactions={shownTransactions}
+                    daoAddress={daoAddress}
+                  />
+                </Box>
+              </Show>
+            </Flex>
+          </TitledInfoBox>
+          {showLoadMoreTransactions && (
+            <PaginationButton onClick={() => setShownTransactions(prevState => prevState + 20)} />
+          )}
+        </GridItem>
+        <GridItem area="assets">
+          <TitledInfoBox
+            title={t('titleAssets')}
+            titleTestId="title-assets"
+            bg={{ base: 'neutral-2', lg: 'none' }}
+          >
+            <Assets />
+          </TitledInfoBox>
+        </GridItem>
+      </Grid>
+    </Box>
   );
 }
