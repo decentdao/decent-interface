@@ -6,5 +6,5 @@ export enum RolesAction {
 }
 
 export type RolesActions =
-  | { type: RolesAction.SET_HATS_TREE_ID; payload: number | undefined }
-  | { type: RolesAction.SET_HATS_TREE; payload: Tree };
+  | { type: RolesAction.SET_HATS_TREE_ID; payload: number | null | undefined }
+  | { type: RolesAction.SET_HATS_TREE; payload: Tree | null | undefined };

@@ -225,8 +225,8 @@ export interface Fractal {
 }
 
 export interface Roles {
-  hatsTreeId?: number;
-  hatsTree?: Tree;
+  hatsTreeId?: number | null;
+  hatsTree?: Tree | null;
 }
 
 export interface FractalGovernanceContracts {

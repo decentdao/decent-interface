@@ -12,7 +12,7 @@ const getHatsTreeId = (
   chainId: number,
 ) => {
   if (!events) {
-    return undefined;
+    return null;
   }
 
   // get most recent event where `hatsTreeId` was set
@@ -21,7 +21,7 @@ const getHatsTreeId = (
     .pop();
 
   if (!hatsTreeIdEvent) {
-    return undefined;
+    return null;
   }
 
   if (!hatsTreeIdEvent.args.value) {
@@ -61,7 +61,7 @@ const useKeyValuePairs = () => {
   } = useNetworkConfig();
 
   useEffect(() => {
-    if (!publicClient) {
+    if (!publicClient || !node.daoAddress) {
       return;
     }
 
