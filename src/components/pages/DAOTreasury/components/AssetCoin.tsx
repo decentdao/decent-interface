@@ -8,7 +8,7 @@ import { TokenDisplayData } from '../hooks/useFormatCoins';
 export function CoinHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box mb="1rem">
+    <Box mb="1rem" minW="400px">
       <Divider
         my="1rem"
         variant="darker"
@@ -55,6 +55,7 @@ export function CoinRow({
       justifyContent="space-between"
       px={{ base: '1rem', lg: '1.5rem' }}
       gap="1rem"
+      minW="400px"
     >
       <Flex
         w="40%"

@@ -208,7 +208,11 @@ export function Assets() {
                         variant="darker"
                         my="1rem"
                       />
-                      <AccordionPanel p={0}>
+                      <AccordionPanel
+                        p={0}
+                        overflowX={{ base: 'auto', md: undefined }}
+                        className="scroll-dark"
+                      >
                         <CoinHeader />
                         {coinDisplay.displayData.map((coin, index) => {
                           return (
@@ -221,6 +225,12 @@ export function Assets() {
                           );
                         })}
                       </AccordionPanel>
+                      {isExpanded && (
+                        <Divider
+                          variant="darker"
+                          my="1rem"
+                        />
+                      )}
                     </Box>
                   )}
                 </AccordionItem>
@@ -249,7 +259,11 @@ export function Assets() {
                           {t('columnNFTs')}
                         </Flex>
                       </AccordionButton>
-                      <AccordionPanel p={0}>
+                      <AccordionPanel
+                        p={0}
+                        overflowX={{ base: 'auto', md: undefined }}
+                        className="scroll-dark"
+                      >
                         <NFTHeader />
                         {assetsNonFungible.map((asset, index) => (
                           <NFTRow

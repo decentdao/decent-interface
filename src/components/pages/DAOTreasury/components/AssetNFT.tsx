@@ -7,7 +7,10 @@ import EtherscanLink from '../../../ui/links/EtherscanLink';
 export function NFTHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box marginBottom="1rem">
+    <Box
+      marginBottom="1rem"
+      minW="400px"
+    >
       <Divider
         variant="white"
         marginTop="0.75rem"
@@ -34,6 +37,7 @@ export function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLa
       marginBottom={isLast ? '0rem' : '1.5rem'}
       px={{ base: '1rem', lg: '1.5rem' }}
       justifyContent="space-between"
+      minW="400px"
     >
       <Flex width="15%">
         <EtherscanLink
