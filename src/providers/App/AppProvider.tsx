@@ -24,6 +24,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       governanceContracts: state.governanceContracts,
       guardContracts: state.guardContracts,
       readOnly: readOnlyValues,
+      roles: state.roles,
       action: {
         dispatch,
         loadReadOnlyValues,
