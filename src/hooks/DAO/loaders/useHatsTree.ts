@@ -15,7 +15,7 @@ const useHatsTree = () => {
   const {
     action,
     node,
-    keyValuePairs: { hatsTreeId },
+    roles: { hatsTreeId },
   } = useFractal();
   const {
     chain,

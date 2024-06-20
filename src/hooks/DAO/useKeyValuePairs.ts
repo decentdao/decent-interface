@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { GetContractEventsReturnType, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import KeyValuePairsAbi from '../../assets/abi/KeyValuePairs';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/App/AppProvider';
-import { KeyValuePairsAction } from '../../providers/App/keyValuePairs/action';
+import { RolesAction } from '../../providers/App/roles/action';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 const getHatsTreeId = (
@@ -60,8 +60,6 @@ const useKeyValuePairs = () => {
     contracts: { keyValuePairs },
   } = useNetworkConfig();
 
-  const [events, setEvents] = useState<GetContractEventsReturnType<typeof KeyValuePairsAbi>>();
-
   useEffect(() => {
     if (!publicClient) {
       return;
@@ -76,18 +74,15 @@ const useKeyValuePairs = () => {
     keyValuePairsContract.getEvents
       .ValueUpdated({ theAddress: node.daoAddress }, { fromBlock: 0n })
       .then(safeEvents => {
-        setEvents(safeEvents);
+        action.dispatch({
+          type: RolesAction.SET_HATS_TREE_ID,
+          payload: getHatsTreeId(safeEvents, chain.id),
+        });
       })
       .catch(error => {
         logError(error);
       });
-  }, [keyValuePairs, node.daoAddress, publicClient]);
-
-  const hatsTreeId = useMemo(() => getHatsTreeId(events, chain.id), [chain.id, events]);
-  action.dispatch({
-    type: KeyValuePairsAction.SET_HATS_TREE_ID,
-    payload: hatsTreeId,
-  });
+  }, [action, chain.id, keyValuePairs, node.daoAddress, publicClient]);
 };
 
 export { useKeyValuePairs };
