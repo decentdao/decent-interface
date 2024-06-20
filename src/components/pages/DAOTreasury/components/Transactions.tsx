@@ -19,7 +19,6 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
 
   return (
     <Box
-      minW="595px"
       p="0.25rem"
       _hover={{ cursor: 'pointer', bg: 'white-alpha-04' }}
       onClick={() => window.open(`${etherscanBaseURL}/tx/${displayData.transactionHash}`, '_blank')}
