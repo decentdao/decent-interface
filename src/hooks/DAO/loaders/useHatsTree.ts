@@ -1,13 +1,9 @@
-import { HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { RolesAction } from '../../../providers/App/roles/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-
-const hatsSubgraphClient = new HatsSubgraphClient({
-  // TODO config for prod
-});
+import { useHatsSubgraphClient } from './useHatsSubgraphClient';
 
 const useHatsTree = () => {
   const publicClient = usePublicClient();
@@ -20,6 +16,7 @@ const useHatsTree = () => {
     chain,
     contracts: { keyValuePairs },
   } = useNetworkConfig();
+  const hatsSubgraphClient = useHatsSubgraphClient();
 
   useEffect(() => {
     if (hatsTreeId === undefined) {
@@ -78,7 +75,15 @@ const useHatsTree = () => {
           },
         });
       });
-  }, [node.daoAddress, publicClient, chain.id, action, keyValuePairs, hatsTreeId]);
+  }, [
+    node.daoAddress,
+    publicClient,
+    chain.id,
+    action,
+    keyValuePairs,
+    hatsTreeId,
+    hatsSubgraphClient,
+  ]);
 };
 
 export { useHatsTree };
