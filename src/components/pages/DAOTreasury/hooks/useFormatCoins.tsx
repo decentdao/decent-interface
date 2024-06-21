@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { maxUint256, zeroAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
+import { useFractal } from '../../../../providers/App/AppProvider';
 import usePriceAPI from '../../../../providers/App/hooks/usePriceAPI';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatCoin, formatUSD } from '../../../../utils/numberFormats';
@@ -17,7 +18,10 @@ export interface TokenDisplayData {
   rawValue: string;
 }
 
-export function useFormatCoins(assets: any[]) {
+export function useFormatCoins() {
+  const {
+    treasury: { assetsFungible },
+  } = useFractal();
   const { chain, nativeTokenIcon } = useNetworkConfig();
   const [totalFiatValue, setTotalFiatValue] = useState(0);
   const [displayData, setDisplayData] = useState<TokenDisplayData[]>([]);
@@ -27,9 +31,9 @@ export function useFormatCoins(assets: any[]) {
     async function loadDisplayData() {
       let newTotalFiatValue = 0;
       let newDisplayData = [];
-      const tokenPrices = await getTokenPrices(assets);
-      for (let i = 0; i < assets.length; i++) {
-        let asset = assets[i];
+      const tokenPrices = await getTokenPrices(assetsFungible);
+      for (let i = 0; i < assetsFungible.length; i++) {
+        let asset = assetsFungible[i];
         if (asset.balance === '0') continue;
         const tokenPrice = tokenPrices
           ? asset.tokenAddress
@@ -81,7 +85,7 @@ export function useFormatCoins(assets: any[]) {
     }
 
     loadDisplayData();
-  }, [assets, nativeTokenIcon, chain, getTokenPrices]);
+  }, [assetsFungible, nativeTokenIcon, chain, getTokenPrices]);
 
   return {
     totalFiatValue,

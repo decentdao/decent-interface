@@ -41,7 +41,7 @@ export function useFormatTransfers(): TransferDisplayData[] {
     switch (transfer.type) {
       case TransferType.ERC20_TRANSFER:
       case TransferType.ERC721_TRANSFER:
-        if (info?.logoUri) {
+        if (info.logoUri) {
           imageSrc = info.logoUri;
         }
         break;
@@ -52,7 +52,7 @@ export function useFormatTransfers(): TransferDisplayData[] {
     let symbol =
       transfer.type === TransferType.ETHER_TRANSFER
         ? chain.nativeCurrency.symbol
-        : transfer?.tokenInfo?.symbol;
+        : transfer.tokenInfo.symbol;
     const formatted: TransferDisplayData = {
       eventType: daoAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
       transferType: transfer.type as TransferType,
@@ -60,16 +60,16 @@ export function useFormatTransfers(): TransferDisplayData[] {
       image: imageSrc,
       assetDisplay:
         transfer.type === TransferType.ERC721_TRANSFER
-          ? info?.name + ' #' + transfer.tokenId
-          : formatCoin(transfer.value, true, transfer?.tokenInfo?.decimals, symbol),
+          ? info.name + ' #' + transfer.tokenId
+          : formatCoin(transfer.value, true, transfer.tokenInfo.decimals, symbol),
       fullCoinTotal:
         transfer.type === TransferType.ERC721_TRANSFER
           ? undefined
-          : formatCoin(transfer.value, false, transfer?.tokenInfo?.decimals, symbol),
+          : formatCoin(transfer.value, false, transfer.tokenInfo.decimals, symbol),
       transferAddress: daoAddress === transfer.from ? transfer.to : transfer.from,
       isLast: transfersFromTransactions[transfersFromTransactions.length - 1] === transfer,
       transactionHash: transfer.transactionHash,
-      tokenId: transfer?.tokenId,
+      tokenId: transfer.tokenId,
       tokenInfo: transfer.tokenInfo,
     };
     displayData[i] = formatted;

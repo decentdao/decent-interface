@@ -241,7 +241,7 @@ export function Assets() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { staking } = useNetworkConfig();
   const { t } = useTranslation('treasury');
-  const coinDisplay = useFormatCoins(assetsFungible);
+  const coinDisplay = useFormatCoins();
   const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
   const { handleUnstake, handleClaimUnstakedETH } = useLidoStaking();
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([]);
