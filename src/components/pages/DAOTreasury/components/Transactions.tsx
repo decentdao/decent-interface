@@ -129,7 +129,7 @@ export function Transactions({ shownTransactions }: { shownTransactions: number 
 
   return (
     <Box
-      overflowX='auto'
+      overflowX="auto"
       className="scroll-dark"
     >
       {displayData.slice(0, shownTransactions - 1).map((transfer, i) => (
