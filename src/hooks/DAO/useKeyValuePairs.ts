@@ -54,7 +54,10 @@ const getHatsTreeId = (
 
 const useKeyValuePairs = () => {
   const publicClient = usePublicClient();
-  const { action, node, roles } = useFractal();
+  const {
+    action: { dispatch },
+    node,
+  } = useFractal();
   const {
     chain,
     contracts: { keyValuePairs },
@@ -70,23 +73,19 @@ const useKeyValuePairs = () => {
       address: getAddress(keyValuePairs),
       client: publicClient,
     });
-
     keyValuePairsContract.getEvents
       .ValueUpdated({ theAddress: node.daoAddress }, { fromBlock: 0n })
       .then(safeEvents => {
         const newHatsTreeId = getHatsTreeId(safeEvents, chain.id);
-        // dev: don't love this
-        if (roles.hatsTreeId !== newHatsTreeId) {
-          action.dispatch({
-            type: RolesAction.SET_HATS_TREE_ID,
-            payload: getHatsTreeId(safeEvents, chain.id),
-          });
-        }
+        dispatch({
+          type: RolesAction.SET_HATS_TREE_ID,
+          payload: newHatsTreeId,
+        });
       })
       .catch(error => {
         logError(error);
       });
-  }, [action, chain.id, keyValuePairs, node.daoAddress, publicClient, roles.hatsTreeId]);
+  }, [dispatch, chain.id, keyValuePairs, node.daoAddress, publicClient]);
 };
 
 export { useKeyValuePairs };
