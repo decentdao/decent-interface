@@ -19,19 +19,7 @@ const useHatsTree = () => {
   const hatsSubgraphClient = useHatsSubgraphClient();
 
   useEffect(() => {
-    if (hatsTreeId === undefined) {
-      action.dispatch({
-        type: RolesAction.SET_HATS_TREE,
-        payload: undefined,
-      });
-      return;
-    }
-
-    if (hatsTreeId === null) {
-      action.dispatch({
-        type: RolesAction.SET_HATS_TREE,
-        payload: null,
-      });
+    if (hatsTreeId === undefined || hatsTreeId === null) {
       return;
     }
 

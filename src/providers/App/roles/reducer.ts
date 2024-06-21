@@ -12,6 +12,7 @@ export function rolesReducer(state: Roles, action: RolesActions) {
       return {
         ...state,
         hatsTreeId: action.payload,
+        hatsTree: typeof action.payload === 'number' ? state.hatsTree : action.payload,
       };
     }
     case RolesAction.SET_HATS_TREE: {
