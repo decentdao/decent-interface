@@ -8,7 +8,10 @@ import { TokenDisplayData } from '../hooks/useFormatCoins';
 export function CoinHeader() {
   const { t } = useTranslation('treasury');
   return (
-    <Box mb="1rem" minW="400px">
+    <Box
+      mb="1rem"
+      minW="360px"
+    >
       <Divider
         my="1rem"
         variant="darker"
@@ -55,7 +58,7 @@ export function CoinRow({
       justifyContent="space-between"
       px={{ base: '1rem', lg: '1.5rem' }}
       gap="1rem"
-      minW="400px"
+      minW="360px"
     >
       <Flex
         w="40%"
@@ -77,7 +80,7 @@ export function CoinRow({
           borderWidth={0}
           value={asset.address === zeroAddress ? safe : asset.address}
           type="token"
-          wordBreak="break-all"
+          wordBreak="break-word"
         >
           {asset.symbol}
         </EtherscanLink>

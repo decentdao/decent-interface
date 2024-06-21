@@ -56,8 +56,8 @@ export default function Treasury() {
           "transactions"`,
           lg: `"transactions assets"`,
         }}
-        gap={{ base: '1rem', lg: '2rem' }}
-        gridTemplateColumns={{ base: `1fr`, lg: `minmax(718px, 736px) fit-content` }}
+        gap='1rem'
+        gridTemplateColumns={{ base: `1fr`, lg: `minmax(1fr, 736px) 1fr` }}
       >
         <GridItem area="transactions">
           <TitledInfoBox

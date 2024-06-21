@@ -107,10 +107,7 @@ export function Assets() {
   };
 
   return (
-    <Box
-      mt={{ base: '1rem', lg: 0 }}
-      w="full"
-    >
+    <Box mt={{ base: '1rem', lg: 0 }}>
       <Text
         textStyle="label-small"
         color="neutral-7"
@@ -177,7 +174,7 @@ export function Assets() {
       )}
       {hasAssets && (
         <>
-          <Hide above="lg">
+          <Show below="lg">
             <Accordion
               allowMultiple
               index={expandedIndecies}
@@ -210,7 +207,7 @@ export function Assets() {
                       />
                       <AccordionPanel
                         p={0}
-                        overflowX={{ base: 'auto', md: undefined }}
+                        overflowX="auto"
                         className="scroll-dark"
                       >
                         <CoinHeader />
@@ -261,7 +258,7 @@ export function Assets() {
                       </AccordionButton>
                       <AccordionPanel
                         p={0}
-                        overflowX={{ base: 'auto', md: undefined }}
+                        overflowX="auto"
                         className="scroll-dark"
                       >
                         <NFTHeader />
@@ -278,7 +275,7 @@ export function Assets() {
                 </AccordionItem>
               )}
             </Accordion>
-          </Hide>
+          </Show>
           <Show above="lg">
             {coinDisplay.displayData.length > 0 && <CoinHeader />}
             {coinDisplay.displayData.map((coin, index) => {
@@ -291,14 +288,19 @@ export function Assets() {
                 />
               );
             })}
-            {assetsNonFungible.length > 0 && <NFTHeader />}
-            {assetsNonFungible.map((asset, index) => (
-              <NFTRow
-                key={index}
-                asset={asset}
-                isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
-              />
-            ))}
+            <Box
+              overflowX="auto"
+              className="scroll-dark"
+            >
+              {/* {assetsNonFungible.length > 0 && <NFTHeader />} */}
+              {/* {assetsNonFungible.map((asset, index) => (
+                <NFTRow
+                  key={index}
+                  asset={asset}
+                  isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
+                />
+              ))} */}
+            </Box>
           </Show>
         </>
       )}
