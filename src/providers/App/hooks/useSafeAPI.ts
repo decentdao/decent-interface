@@ -1,11 +1,9 @@
 import SafeApiKit, {
   AllTransactionsListResponse,
   AllTransactionsOptions,
-  OwnerResponse,
   SafeCreationInfoResponse,
   SafeInfoResponse,
   SafeApiKitConfig,
-  TokenInfoListResponse,
 } from '@safe-global/api-kit';
 import { useMemo } from 'react';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
@@ -17,7 +15,7 @@ import {
 import { SafeWithNextNonce } from '../../../types';
 import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
-class CachingSafeApiKit extends SafeApiKit {
+class EnhancedSafeApiKit extends SafeApiKit {
   readonly CHAINID: number;
 
   // holds requests that have yet to return, to avoid calling the same
@@ -56,18 +54,6 @@ class CachingSafeApiKit extends SafeApiKit {
     }
     return value;
   }
-  override async decodeData(data: string): Promise<any> {
-    const value = await this.request('decodeData' + data, 1, () => {
-      return super.decodeData(data);
-    });
-    return value;
-  }
-  override async getSafesByOwner(ownerAddress: string): Promise<OwnerResponse> {
-    const value = await this.request('getSafesByOwner' + ownerAddress, 1, () => {
-      return super.getSafesByOwner(ownerAddress);
-    });
-    return value;
-  }
   override async getSafeInfo(safeAddress: string): Promise<SafeInfoResponse> {
     const value = await this.request('getSafeInfo' + safeAddress, 5, () => {
       return super.getSafeInfo(safeAddress);
@@ -77,12 +63,6 @@ class CachingSafeApiKit extends SafeApiKit {
   override async getSafeCreationInfo(safeAddress: string): Promise<SafeCreationInfoResponse> {
     const value = await this.request('getSafeCreationInfo' + safeAddress, CacheExpiry.NEVER, () => {
       return super.getSafeCreationInfo(safeAddress);
-    });
-    return value;
-  }
-  override async getTokenList(): Promise<TokenInfoListResponse> {
-    const value = await this.request('getTokenList', 1, () => {
-      return super.getTokenList();
     });
     return value;
   }
@@ -112,7 +92,7 @@ export function useSafeAPI() {
   const { chain } = useNetworkConfig();
 
   const safeAPI = useMemo(() => {
-    return new CachingSafeApiKit({ chainId: BigInt(chain.id) });
+    return new EnhancedSafeApiKit({ chainId: BigInt(chain.id) });
   }, [chain]);
 
   return safeAPI;
