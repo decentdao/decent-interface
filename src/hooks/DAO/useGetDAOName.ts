@@ -59,7 +59,7 @@ const getDAOName = async ({
 
   const latestEvent = events.pop();
 
-  if (latestEvent) {
+  if (latestEvent?.args.daoName) {
     return latestEvent.args.daoName;
   }
 
