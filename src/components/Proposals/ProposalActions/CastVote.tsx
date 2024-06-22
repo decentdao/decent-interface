@@ -209,7 +209,7 @@ function Vote({
           height="auto"
           width="full"
           isDisabled={disabled}
-          onClick={() => selectedVoteChoice && castVote(selectedVoteChoice)}
+          onClick={() => selectedVoteChoice !== undefined && castVote(selectedVoteChoice)}
         >
           {t('vote')}
         </Button>
