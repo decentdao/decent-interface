@@ -1,19 +1,18 @@
 import { Box } from '@chakra-ui/react';
-import { useFractal } from '../../../../providers/App/AppProvider';
+import { useRolesState } from '../../../../state/useRolesState';
 
 function Roles() {
-  const { roles } = useFractal();
+  const { hatsTree } = useRolesState();
 
   return (
-    <Box
-      borderColor={'red'}
-      borderWidth={1}
-    >
-      {!roles.hatsTree && <Box>no hat tree :(</Box>}
-      {roles.hatsTree && (
+    <Box my="1rem">
+      <Box fontSize={'larger'}>Hat Tree</Box>
+      {hatsTree === undefined && <Box>Searching for Hats Tree...</Box>}
+      {hatsTree === null && <Box>No Hats Tree exists for this Safe yet :(</Box>}
+      {hatsTree && (
         <Box>
-          <Box>we have hat tree! {roles.hatsTree.id}</Box>
-          <Box>it has {roles.hatsTree.hats ? roles.hatsTree.hats.length : 0} hats</Box>
+          <Box>We have a Hats Tree! {hatsTree.id}</Box>
+          <Box>It has {hatsTree.hats ? hatsTree.hats.length : 0} Hats</Box>
         </Box>
       )}
     </Box>

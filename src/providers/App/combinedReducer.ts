@@ -12,8 +12,6 @@ import { GuardContractActions } from './guardContracts/action';
 import { guardContractReducer, initialGuardContractsState } from './guardContracts/reducer';
 import { NodeActions } from './node/action';
 import { initialNodeState, nodeReducer } from './node/reducer';
-import { RolesActions } from './roles/action';
-import { initiaRolesState, rolesReducer } from './roles/reducer';
 import { TreasuryActions } from './treasury/action';
 import { initialTreasuryState, treasuryReducer } from './treasury/reducer';
 
@@ -24,7 +22,6 @@ export const initialState = {
   governanceContracts: initialGovernanceContractsState,
   guardContracts: initialGuardContractsState,
   guard: initialGuardState,
-  roles: initiaRolesState,
   readOnly: {
     dao: null,
     user: {
@@ -49,7 +46,6 @@ export const combinedReducer = (state: Fractal, action: FractalActions) => {
     ),
     guardContracts: guardContractReducer(state.guardContracts, action as GuardContractActions),
     guard: guardReducer(state.guard, action as FractalGuardActions),
-    roles: rolesReducer(state.roles, action as RolesActions),
     readOnly: state.readOnly,
   };
 };

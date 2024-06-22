@@ -55,7 +55,8 @@
     "vite": "^5.1.0",
     "vite-plugin-checker": "^0.6.4",
     "wagmi": "^2.9.7",
-    "yup": "^1"
+    "yup": "^1",
+    "zustand": "^4.5.2"
   },
   "scripts": {
     "lint": "eslint . --ext .ts,.tsx --fix",

@@ -1,22 +1,13 @@
 import { useEffect } from 'react';
-import { usePublicClient } from 'wagmi';
-import { useFractal } from '../../../providers/App/AppProvider';
-import { RolesAction } from '../../../providers/App/roles/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useRolesState } from '../../../state/useRolesState';
 import { useHatsSubgraphClient } from './useHatsSubgraphClient';
 
 const useHatsTree = () => {
-  const publicClient = usePublicClient();
-  const {
-    action,
-    node,
-    roles: { hatsTreeId },
-  } = useFractal();
-  const {
-    chain,
-    contracts: { keyValuePairs },
-  } = useNetworkConfig();
+  const { hatsTreeId } = useRolesState();
+  const { chain } = useNetworkConfig();
   const hatsSubgraphClient = useHatsSubgraphClient();
+  const { setHatsTree } = useRolesState();
 
   useEffect(() => {
     if (hatsTreeId === undefined || hatsTreeId === null) {
@@ -45,16 +36,10 @@ const useHatsTree = () => {
         },
       })
       .then(tree => {
-        action.dispatch({
-          type: RolesAction.SET_HATS_TREE,
-          payload: tree,
-        });
+        setHatsTree(tree);
       })
       .catch(() => {
-        action.dispatch({
-          type: RolesAction.SET_HATS_TREE,
-          payload: undefined,
-        });
+        setHatsTree(undefined);
         console.error({
           message: 'hatsTreeId is not valid',
           args: {
@@ -63,15 +48,7 @@ const useHatsTree = () => {
           },
         });
       });
-  }, [
-    node.daoAddress,
-    publicClient,
-    chain.id,
-    action,
-    keyValuePairs,
-    hatsTreeId,
-    hatsSubgraphClient,
-  ]);
+  }, [chain.id, hatsSubgraphClient, hatsTreeId, setHatsTree]);
 };
 
 export { useHatsTree };
