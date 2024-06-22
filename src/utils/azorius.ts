@@ -4,6 +4,7 @@ import {
   Address,
   GetContractEventsReturnType,
   GetContractReturnType,
+  Hex,
   PublicClient,
   getAddress,
 } from 'viem';
@@ -168,6 +169,7 @@ const getProposalVotes = (
 };
 
 export const mapProposalCreatedEventToProposal = async (
+  createdEventTransactionHash: Hex,
   erc20StrategyContract:
     | GetContractReturnType<typeof abis.LinearERC20Voting, PublicClient>
     | undefined,
@@ -240,10 +242,15 @@ export const mapProposalCreatedEventToProposal = async (
 
   let transactionHash: string | undefined;
   if (state === FractalProposalState.EXECUTED) {
-    const executedEvent = (await executedEvents)?.find(
-      event => event.args.proposalId === proposalId,
-    );
-    transactionHash = executedEvent?.transactionHash;
+    const executedEvent = executedEvents?.find(event => event.args.proposalId === proposalId);
+
+    if (!executedEvent) {
+      throw new Error('Proposal state is EXECUTED, but no event found');
+    }
+
+    transactionHash = executedEvent.transactionHash;
+  } else {
+    transactionHash = createdEventTransactionHash;
   }
 
   const proposal: AzoriusProposal = {

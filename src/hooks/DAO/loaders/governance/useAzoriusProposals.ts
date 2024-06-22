@@ -21,14 +21,13 @@ import {
 import { AzoriusProposal } from '../../../../types/daoProposal';
 import { mapProposalCreatedEventToProposal, decodeTransactions } from '../../../../utils';
 import { CacheExpiry, CacheKeys } from '../../../utils/cache/cacheDefaults';
-import { useLocalStorage } from '../../../utils/cache/useLocalStorage';
+import { getValue, setValue } from '../../../utils/cache/useLocalStorage';
 import { useSafeDecoder } from '../../../utils/useSafeDecoder';
 
 type OnProposalLoaded = (proposal: AzoriusProposal) => void;
 
 export const useAzoriusProposals = () => {
   const currentAzoriusAddress = useRef<string>();
-  const { setValue, getValue } = useLocalStorage();
 
   const {
     governanceContracts: {
@@ -166,6 +165,8 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
 
+      // TODO: `SET_LOADING_PROPOSALS` seems like the kind of action to be called once all proposals are finished loading.
+      // So, it's strange that this function takes a single proposals as an argument.
       const completeProposalLoad = (proposal: AzoriusProposal) => {
         if (currentAzoriusAddress.current !== moduleAzoriusAddress) {
           // The DAO has changed, don't load the just-fetched proposal,
@@ -181,16 +182,17 @@ export const useAzoriusProposals = () => {
         });
       };
 
-      const propasalCacheKeyPrefix = `${CacheKeys.PROPOSAL_PREFIX}_${moduleAzoriusAddress}`;
-
       for (const proposalCreatedEvent of proposalCreatedEvents) {
         if (!proposalCreatedEvent.args.proposalId) {
           continue;
         }
 
-        const cachedProposal = getValue(
-          `${propasalCacheKeyPrefix}_${proposalCreatedEvent.args.proposalId.toString()}`,
-        ) as AzoriusProposal;
+        const cachedProposal = getValue({
+          cacheName: CacheKeys.PROPOSAL_CACHE,
+          proposalId: proposalCreatedEvent.args.proposalId.toString(),
+          contractAddress: _azoriusContract.address,
+        });
+
         if (cachedProposal) {
           completeProposalLoad(cachedProposal);
           continue;
@@ -243,6 +245,7 @@ export const useAzoriusProposals = () => {
         }
 
         const proposal = await mapProposalCreatedEventToProposal(
+          proposalCreatedEvent.transactionHash,
           _erc20StrategyContract,
           _erc721StrategyContract,
           _strategyType,
@@ -266,8 +269,15 @@ export const useAzoriusProposals = () => {
           proposal.state === FractalProposalState.REJECTED;
 
         if (isProposalFossilized) {
-          // todo: Make sure we're saving+loading only proposals for the DAO we're currently viewing.
-          setValue(`${propasalCacheKeyPrefix}_${proposal.proposalId}`, proposal, CacheExpiry.NEVER);
+          setValue(
+            {
+              cacheName: CacheKeys.PROPOSAL_CACHE,
+              proposalId: proposalCreatedEvent.args.proposalId.toString(),
+              contractAddress: _azoriusContract.address,
+            },
+            proposal,
+            CacheExpiry.NEVER,
+          );
         }
       }
 
@@ -282,7 +292,7 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
     },
-    [action, moduleAzoriusAddress, getValue, setValue],
+    [action, moduleAzoriusAddress],
   );
 
   return async (proposalLoaded: OnProposalLoaded) =>

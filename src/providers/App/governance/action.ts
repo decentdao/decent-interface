@@ -35,6 +35,7 @@ export enum FractalGovernanceAction {
   SET_CLAIMING_CONTRACT = 'SET_CLAIMING_CONTRACT',
   RESET_TOKEN_ACCOUNT_DATA = 'RESET_TOKEN_ACCOUNT_DATA',
   SET_UNDERLYING_TOKEN_DATA = 'SET_UNDERLYING_TOKEN_DATA',
+  PENDING_PROPOSAL_ADD = 'PENDING_PROPOSAL_ADD',
 }
 
 export enum DecentGovernanceAction {
@@ -121,6 +122,10 @@ export type FractalGovernanceActions =
     }
   | {
       type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA;
+    }
+  | {
+      type: FractalGovernanceAction.PENDING_PROPOSAL_ADD;
+      payload: string;
     }
   | DecentGovernanceActions;
 

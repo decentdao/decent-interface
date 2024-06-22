@@ -4,6 +4,7 @@ import { Address, PublicClient, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { createAccountSubstring } from '../utils/useDisplayName';
+import { demoData } from './loaders/loadDemoData';
 
 const getDAOName = async ({
   address,
@@ -51,17 +52,28 @@ const getDAOName = async ({
     return latestEvent.args.daoName;
   }
 
+  if (publicClient.chain) {
+    const demo = demoData[publicClient.chain.id][address];
+    if (demo && demo.name) {
+      return demo.name;
+    }
+  }
+
   return createAccountSubstring(address);
 };
 
 const useGetDAOName = ({
   address,
   registryName,
+  chainId,
 }: {
   address: Address;
   registryName?: string | null;
+  chainId?: number;
 }) => {
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({
+    chainId,
+  });
   const {
     contracts: { fractalRegistry },
   } = useNetworkConfig();

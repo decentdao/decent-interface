@@ -116,6 +116,7 @@ export const useAzoriusListeners = () => {
           };
 
           const proposal = await mapProposalCreatedEventToProposal(
+            log.transactionHash,
             erc20StrategyContract,
             erc721StrategyContract,
             strategyType,

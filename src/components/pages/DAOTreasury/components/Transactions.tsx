@@ -19,8 +19,8 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
 
   return (
     <Box
-      minW="595px"
-      p="0.25rem"
+      py="0.25rem"
+      px="0.75rem"
       _hover={{ cursor: 'pointer', bg: 'white-alpha-04' }}
       onClick={() => window.open(`${etherscanBaseURL}/tx/${displayData.transactionHash}`, '_blank')}
     >
@@ -46,7 +46,10 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             <Text>{useDateTimeDisplay(new Date(displayData.executionDate))}</Text>
           </Box>
         </Flex>
-        <HStack w="30%">
+        <HStack
+          w="30%"
+          minW="15rem"
+        >
           <Image
             src={displayData.image}
             fallbackSrc={
@@ -67,7 +70,6 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
             placement="top-start"
           >
             <Text
-              maxWidth="15rem"
               noOfLines={1}
               data-testid={
                 displayData.transferType === TransferType.ERC721_TRANSFER
@@ -126,7 +128,10 @@ export function Transactions({ shownTransactions }: { shownTransactions: number 
   if (!transfers || transfers.results.length === 0) return <EmptyTransactions />;
 
   return (
-    <Box px={{ base: '1rem', lg: '1.5rem' }}>
+    <Box
+      overflowX="auto"
+      className="scroll-dark"
+    >
       {displayData.slice(0, shownTransactions - 1).map((transfer, i) => (
         <TransferRow
           key={i}

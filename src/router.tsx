@@ -2,6 +2,7 @@ import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
+import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
 import DaoCreatePage from './pages/create';
@@ -36,8 +37,12 @@ export const router = (addressPrefix: string) =>
           element: <HomePage />,
         },
         {
-          path: 'create',
+          path: 'create/*',
           element: <DaoCreatePage />,
+        },
+        {
+          path: 'create',
+          loader: () => redirect(BASE_ROUTES.create),
         },
         {
           path: '/',
@@ -48,16 +53,28 @@ export const router = (addressPrefix: string) =>
               element: <DaoDashboardPage />,
             },
             {
-              path: 'edit/governance',
+              path: 'edit/governance/*',
               element: <ModifyGovernancePage />,
+            },
+            {
+              path: 'edit/governance',
+              // @ts-ignore:next-line
+              loader: ({ params: { daoAddress } }) =>
+                redirect(DAO_ROUTES.modifyGovernance.relative(addressPrefix, daoAddress)),
             },
             {
               path: 'hierarchy',
               element: <HierarchyPage />,
             },
             {
-              path: 'new',
+              path: 'new/*',
               element: <SubDaoCreate />,
+            },
+            {
+              path: 'new',
+              // @ts-ignore:next-line
+              loader: ({ params: { daoAddress } }) =>
+                redirect(DAO_ROUTES.newSubDao.relative(addressPrefix, daoAddress)),
             },
             {
               path: 'proposal-templates',
@@ -67,8 +84,14 @@ export const router = (addressPrefix: string) =>
                   element: <ProposalTemplatesPage />,
                 },
                 {
-                  path: 'new',
+                  path: 'new/*',
                   element: <CreateProposalTemplatePage />,
+                },
+                {
+                  path: 'new',
+                  // @ts-ignore:next-line
+                  loader: ({ params: { daoAddress } }) =>
+                    redirect(DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)),
                 },
               ],
             },
@@ -84,8 +107,14 @@ export const router = (addressPrefix: string) =>
                   element: <ProposalDetailsPage />,
                 },
                 {
-                  path: 'new',
+                  path: 'new/*',
                   element: <ProposalCreatePage />,
+                },
+                {
+                  path: 'new',
+                  // @ts-ignore:next-line
+                  loader: ({ params: { daoAddress } }) =>
+                    redirect(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)),
                 },
               ],
             },
@@ -105,7 +134,7 @@ export const router = (addressPrefix: string) =>
           path: 'daos/:daoAddress/*',
           // @ts-ignore:next-line
           loader: ({ params: { daoAddress } }) =>
-            redirect(`/home?dao=${addressPrefix}:${daoAddress}`),
+            redirect(DAO_ROUTES.dao.relative(addressPrefix, daoAddress)),
         },
         {
           path: '*', // 404

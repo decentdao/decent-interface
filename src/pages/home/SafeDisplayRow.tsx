@@ -1,6 +1,8 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { getAddress } from 'viem';
+import { useSwitchChain } from 'wagmi';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -8,24 +10,43 @@ import { useGetDAOName } from '../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
-  const { daoName } = useGetDAOName({ address: address });
+  const { addressPrefix } = useNetworkConfig();
+  const { switchChain } = useSwitchChain();
+
+  const { daoName } = useGetDAOName({
+    address: getAddress(address),
+    chainId: getChainIdFromPrefix(network),
+  });
+
   const navigate = useNavigate();
 
   const { t } = useTranslation('dashboard');
 
-  const { displayName: accountDisplayName } = useDisplayName(address);
+  const { displayName: accountDisplayName } = useDisplayName(
+    address,
+    false,
+    getChainIdFromPrefix(network),
+  );
   const avatarURL = useAvatar(accountDisplayName);
 
   const onClickNav = () => {
     if (onClick) onClick();
-    navigate(DAO_ROUTES.dao.relative(network, address));
+    if (addressPrefix !== network) {
+      switchChain(
+        { chainId: getChainIdFromPrefix(network) },
+        {
+          onSuccess: () => navigate(DAO_ROUTES.dao.relative(network, address)),
+        },
+      );
+    } else {
+      navigate(DAO_ROUTES.dao.relative(network, address));
+    }
   };
 
   const nameColor = showAddress ? 'neutral-7' : 'white-0';
-
-  const networkConfig = useNetworkConfig();
 
   return (
     <Flex
@@ -66,9 +87,9 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
 
       {/* Network Icon */}
       <Flex gap="0.5rem">
-        <Image src={networkConfig.nativeTokenIcon} />
+        <Image src={getNetworkIcon(network)} />
         <Show above="md">
-          <Text>{networkConfig.chain.name}</Text>
+          <Text>{getChainName(network)}</Text>
         </Show>
       </Flex>
     </Flex>

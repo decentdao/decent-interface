@@ -6,6 +6,8 @@ import { Address } from 'viem';
 import { SafeDisplayRow } from '../../../../pages/home/SafeDisplayRow';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { ErrorBoundary } from '../../utils/ErrorBoundary';
+import { MySafesErrorFallback } from '../../utils/MySafesErrorFallback';
 
 interface ISearchDisplay {
   loading: boolean;
@@ -78,24 +80,25 @@ export function SearchDisplay({
         flexDir="column"
         px="0.5rem"
       >
-        <Text
-          textStyle="button-small"
-          color="neutral-7"
-          py="1rem"
-          px="0.5rem"
-        >
-          {t(isCurrentSafe ? 'labelCurrentDAO' : 'labelDAOFound')}
-        </Text>
-
-        <SafeDisplayRow
-          address={address}
-          network={addressPrefix}
-          onClick={() => {
-            onClickView();
-            if (closeDrawer) closeDrawer();
-          }}
-          showAddress={true}
-        />
+        <ErrorBoundary fallback={MySafesErrorFallback}>
+          <Text
+            textStyle="button-small"
+            color="neutral-7"
+            py="1rem"
+            px="0.5rem"
+          >
+            {t(isCurrentSafe ? 'labelCurrentDAO' : 'labelDAOFound')}
+          </Text>
+          <SafeDisplayRow
+            address={address}
+            network={addressPrefix}
+            onClick={() => {
+              onClickView();
+              if (closeDrawer) closeDrawer();
+            }}
+            showAddress={true}
+          />
+        </ErrorBoundary>
       </Flex>
     );
   }

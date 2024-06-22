@@ -1,10 +1,15 @@
-import { Box, Button, MenuItem, Text } from '@chakra-ui/react';
-import { Star } from '@phosphor-icons/react';
+import { Box, Button, Flex, Image, MenuItem, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
+import { useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useGetDAOName } from '../../../../hooks/DAO/useGetDAOName';
+import useAvatar from '../../../../hooks/utils/useAvatar';
+import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
+import Avatar from '../../page/Header/Avatar';
 
 export interface SafeMenuItemProps {
   network: string;
@@ -13,15 +18,37 @@ export interface SafeMenuItemProps {
   onClick?: () => void;
 }
 
-export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
-  const { daoName } = useGetDAOName({ address });
+export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
+  const { addressPrefix } = useNetworkConfig();
+  const { switchChain } = useSwitchChain();
+
+  const { daoName } = useGetDAOName({
+    address: address,
+    chainId: getChainIdFromPrefix(network),
+  });
 
   const navigate = useNavigate();
+
+  const { displayName: accountDisplayName } = useDisplayName(
+    address,
+    false,
+    getChainIdFromPrefix(network),
+  );
+  const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('dashboard');
 
   const onClickNav = () => {
-    navigate(DAO_ROUTES.dao.relative(network, address));
+    if (addressPrefix !== network) {
+      switchChain(
+        { chainId: getChainIdFromPrefix(network) },
+        {
+          onSuccess: () => navigate(DAO_ROUTES.dao.relative(network, address)),
+        },
+      );
+    } else {
+      navigate(DAO_ROUTES.dao.relative(network, address));
+    }
   };
 
   return (
@@ -38,12 +65,23 @@ export function SafeMenuItem({ network, address }: SafeMenuItemProps) {
         justifyContent="flex-start"
         gap={2}
       >
-        <Star
-          size="1.5rem"
-          weight="fill"
+        <Avatar
+          address={address}
+          url={avatarURL}
         />
+        <Flex flexDir="column">
+          <Text
+            color="white-0"
+            textStyle="button-base"
+          >
+            {daoName ?? t('loadingFavorite')}
+          </Text>
+        </Flex>
 
-        <Text color={daoName ? 'white-0' : 'neutral-6'}>{daoName ?? t('loadingFavorite')}</Text>
+        <Spacer />
+
+        {/* Network Icon */}
+        <Image src={getNetworkIcon(network)} />
       </MenuItem>
     </Box>
   );

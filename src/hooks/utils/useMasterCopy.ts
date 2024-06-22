@@ -4,11 +4,11 @@ import { Address, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
-import { useLocalStorage } from './cache/useLocalStorage';
+import { getValue, setValue } from './cache/useLocalStorage';
 
 export function useMasterCopy() {
-  const { getValue, setValue } = useLocalStorage();
   const {
+    chain,
     contracts: {
       zodiacModuleProxyFactory,
       linearVotingErc20MasterCopy,
@@ -57,10 +57,12 @@ export function useMasterCopy() {
         return [zeroAddress, null] as const;
       }
 
-      const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
-      if (cachedValue) {
-        return [cachedValue, null] as const;
-      }
+      const cachedValue = getValue({
+        cacheName: CacheKeys.MASTER_COPY,
+        chainId: chain.id,
+        proxyAddress,
+      });
+      if (cachedValue) return [cachedValue, null] as const;
 
       const moduleProxyFactoryContract = getContract({
         abi: abis.ModuleProxyFactory,
@@ -74,7 +76,11 @@ export function useMasterCopy() {
           // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
           if (proxiesCreated.length === 0) {
             setValue(
-              CacheKeys.MASTER_COPY_PREFIX + proxyAddress,
+              {
+                cacheName: CacheKeys.MASTER_COPY,
+                chainId: chain.id,
+                proxyAddress,
+              },
               zeroAddress,
               CacheExpiry.ONE_WEEK,
             );
@@ -86,14 +92,21 @@ export function useMasterCopy() {
             return [zeroAddress, 'No master copy address'] as const;
           }
 
-          setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, masterCopyAddress);
+          setValue(
+            {
+              cacheName: CacheKeys.MASTER_COPY,
+              chainId: chain.id,
+              proxyAddress,
+            },
+            masterCopyAddress,
+          );
           return [masterCopyAddress, null] as const;
         })
         .catch(() => {
           return [zeroAddress, 'error'] as const;
         });
     },
-    [getValue, publicClient, setValue, zodiacModuleProxyFactory],
+    [chain.id, publicClient, zodiacModuleProxyFactory],
   );
 
   const getZodiacModuleProxyMasterCopyData = useCallback(

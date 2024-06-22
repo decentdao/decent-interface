@@ -1,6 +1,6 @@
 import { PublicClient } from 'viem';
 import { logError } from '../helpers/errorLogging';
-import { CacheExpiry } from '../hooks/utils/cache/cacheDefaults';
+import { CacheExpiry, CacheKeys } from '../hooks/utils/cache/cacheDefaults';
 import { setValue, getValue } from '../hooks/utils/cache/useLocalStorage';
 
 export const getAverageBlockTime = async (publicClient: PublicClient) => {
@@ -8,7 +8,11 @@ export const getAverageBlockTime = async (publicClient: PublicClient) => {
     return 0;
   }
 
-  let averageBlockTime: number = getValue('averageBlockTime', publicClient.chain.id);
+  let averageBlockTime = getValue({
+    cacheName: CacheKeys.AVERAGE_BLOCK_TIME,
+    chainId: publicClient.chain.id,
+  });
+
   if (averageBlockTime) {
     return averageBlockTime;
   }
@@ -16,7 +20,13 @@ export const getAverageBlockTime = async (publicClient: PublicClient) => {
   const latestBlock = await publicClient.getBlock();
   const pastBlock = await publicClient.getBlock({ blockNumber: latestBlock.number - 1000n });
   averageBlockTime = Number((latestBlock.timestamp - pastBlock.timestamp) / 1000n);
-  setValue('averageBlockTime', averageBlockTime, publicClient.chain.id, CacheExpiry.ONE_DAY);
+
+  setValue(
+    { cacheName: CacheKeys.AVERAGE_BLOCK_TIME, chainId: publicClient.chain.id },
+    averageBlockTime,
+    CacheExpiry.ONE_DAY,
+  );
+
   return averageBlockTime;
 };
 

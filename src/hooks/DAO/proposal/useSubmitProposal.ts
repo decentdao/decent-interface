@@ -17,6 +17,7 @@ import { ADDRESS_MULTISIG_METADATA } from '../../../constants/common';
 import { buildSafeAPIPost, encodeMultiSend } from '../../../helpers';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { FractalGovernanceAction } from '../../../providers/App/governance/action';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -63,6 +64,7 @@ export default function useSubmitProposal() {
     node: { safe, fractalModules },
     guardContracts: { freezeVotingContractAddress },
     governanceContracts: { linearVotingErc20Address, linearVotingErc721Address },
+    action,
   } = useFractal();
   const safeAPI = useSafeAPI();
 
@@ -87,6 +89,16 @@ export default function useSubmitProposal() {
     contracts: { multiSendCallOnly },
   } = useNetworkConfig();
   const ipfsClient = useIPFSClient();
+
+  const pendingProposalAdd = useCallback(
+    (txHash: string) => {
+      action.dispatch({
+        type: FractalGovernanceAction.PENDING_PROPOSAL_ADD,
+        payload: txHash,
+      });
+    },
+    [action],
+  );
 
   const submitMultisigProposal = useCallback(
     async ({
@@ -165,7 +177,7 @@ export default function useSubmitProposal() {
           operation = 1;
         }
 
-        await axios.post(
+        const response = await axios.post(
           buildSafeApiUrl(safeBaseURL, `/safes/${safeAddress}/multisig-transactions/`),
           await buildSafeAPIPost(safeAddress, walletClient, chain.id, {
             to,
@@ -175,8 +187,13 @@ export default function useSubmitProposal() {
             nonce,
           }),
         );
-        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        const responseData = JSON.parse(response.config.data);
+        const txHash = responseData.contractTransactionHash;
+        pendingProposalAdd(txHash);
+
         await loadDAOProposals();
+
         if (successCallback) {
           successCallback(addressPrefix, safeAddress);
         }
@@ -196,6 +213,7 @@ export default function useSubmitProposal() {
       ipfsClient,
       loadDAOProposals,
       multiSendCallOnly,
+      pendingProposalAdd,
       safeBaseURL,
       walletClient,
     ],
@@ -254,6 +272,9 @@ export default function useSubmitProposal() {
 
         toast.dismiss(toastId);
         toast(successToastMessage);
+
+        pendingProposalAdd(txHash);
+
         if (successCallback) {
           successCallback(addressPrefix, safeAddress!);
         }
@@ -265,7 +286,7 @@ export default function useSubmitProposal() {
         setPendingCreateTx(false);
       }
     },
-    [addressPrefix, publicClient, walletClient],
+    [addressPrefix, pendingProposalAdd, publicClient, walletClient],
   );
 
   const submitProposal: SubmitProposalFunction = useCallback(
