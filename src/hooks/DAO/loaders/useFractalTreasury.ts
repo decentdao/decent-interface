@@ -15,7 +15,7 @@ export const useFractalTreasury = () => {
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
-  const getBalances = useBalancesAPI();
+  const { getTokenBalances, getNFTBalances } = useBalancesAPI();
 
   const { chain } = useNetworkConfig();
 
@@ -26,21 +26,29 @@ export const useFractalTreasury = () => {
       return;
     }
 
-    const [transfers, { data: balancesData, error }] = await Promise.all([
+    const [
+      transfers,
+      { data: tokenBalances, error: tokenBalancesError },
+      { data: nftBalances, error: nftBalancesError },
+    ] = await Promise.all([
       safeAPI.getAllTransactions(daoAddress),
-      getBalances(daoAddress),
+      getTokenBalances(daoAddress),
+      getNFTBalances(daoAddress),
     ]);
 
-    if (error) {
-      toast(error, { autoClose: 2000 });
+    if (tokenBalancesError) {
+      toast(tokenBalancesError, { autoClose: 2000 });
+    }
+    if (nftBalancesError) {
+      toast(nftBalancesError, { autoClose: 2000 });
     }
     const treasuryData = {
-      assetsFungible: balancesData?.tokens || [],
-      assetsNonFungible: balancesData?.nfts || [],
+      assetsFungible: tokenBalances || [],
+      assetsNonFungible: nftBalances || [],
       transfers,
     };
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
-  }, [daoAddress, safeAPI, action, getBalances]);
+  }, [daoAddress, safeAPI, action, getTokenBalances, getNFTBalances]);
 
   useEffect(() => {
     if (daoAddress && chain.id + daoAddress !== loadKey.current) {

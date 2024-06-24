@@ -146,7 +146,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                             setFieldValue('inputAmount', value);
                           }}
                           currentValue={values.inputAmount}
-                          decimalPlaces={Number(values.selectedAsset.decimals || 18)}
+                          decimalPlaces={values.selectedAsset.decimals}
                           placeholder="0"
                           maxValue={BigInt(values.selectedAsset.balance)}
                           isInvalid={overDraft}

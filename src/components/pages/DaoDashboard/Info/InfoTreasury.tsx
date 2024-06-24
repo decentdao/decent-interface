@@ -1,20 +1,24 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { Coins } from '@phosphor-icons/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { formatUSD } from '../../../../utils';
 import { BarLoader } from '../../../ui/loaders/BarLoader';
-import { useFormatCoins } from '../../DAOTreasury/hooks/useFormatCoins';
 
 interface IDAOGovernance {}
 
 export function InfoTreasury({}: IDAOGovernance) {
   const {
     node: { daoAddress },
+    treasury: { assetsFungible },
   } = useFractal();
 
   const { t } = useTranslation('dashboard');
-  const { totalFiatValue } = useFormatCoins();
+  const totalFiatValue = useMemo(
+    () => assetsFungible.reduce((prev, curr) => prev + curr.usdValue, 0),
+    [assetsFungible],
+  );
 
   if (!daoAddress) {
     return (

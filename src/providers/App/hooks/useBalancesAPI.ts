@@ -8,10 +8,8 @@ export default function useBalancesAPI() {
   const { chain } = useNetworkConfig();
   const { t } = useTranslation('treasury');
 
-  const getBalances = useCallback(
-    async (
-      address: Address,
-    ): Promise<{ data?: { tokens: TokenBalance[]; nfts: NFTBalance[] }; error?: string }> => {
+  const getTokenBalances = useCallback(
+    async (address: Address): Promise<{ data?: TokenBalance[]; error?: string }> => {
       try {
         const balancesResponse = await fetch(
           `/.netlify/functions/tokenBalances?address=${address}&network=${chain.id}`,
@@ -26,5 +24,21 @@ export default function useBalancesAPI() {
     [chain, t],
   );
 
-  return getBalances;
+  const getNFTBalances = useCallback(
+    async (address: Address): Promise<{ data?: NFTBalance[]; error?: string }> => {
+      try {
+        const balancesResponse = await fetch(
+          `/.netlify/functions/nftBalances?address=${address}&network=${chain.id}`,
+        );
+        const balancesResponseBody = await balancesResponse.json();
+        return balancesResponseBody;
+      } catch (e) {
+        console.error('Error while fetching treasury balances', e);
+        return { error: t('errorFetchingBalances') };
+      }
+    },
+    [chain, t],
+  );
+
+  return { getTokenBalances, getNFTBalances };
 }

@@ -15,21 +15,21 @@ import {
 } from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress } from 'viem';
+import { zeroAddress, maxUint256 } from 'viem';
+import { logError } from '../../../../helpers/errorLogging';
 import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { NFTBalance } from '../../../../types';
-import { formatPercentage, formatUSD } from '../../../../utils/numberFormats';
+import { NFTBalance, TokenBalance } from '../../../../types';
+import { formatPercentage, formatUSD, formatCoin } from '../../../../utils/numberFormats';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../ui/modals/useFractalModal';
 import Divider from '../../../ui/utils/Divider';
-import { TokenDisplayData, useFormatCoins } from '../hooks/useFormatCoins';
 
 function CoinHeader() {
   const { t } = useTranslation('treasury');
@@ -78,8 +78,24 @@ function CoinRow({
 }: {
   safe: string;
   totalFiat: number;
-  asset: TokenDisplayData;
+  asset: TokenBalance;
 }) {
+  let tokenFiatBalance = 0;
+  if (asset.usdPrice && asset.balance) {
+    try {
+      const multiplicator = 10000;
+      const tokenFiatBalanceBi =
+        (BigInt(asset.balance) *
+          BigInt(Math.round(parseFloat(asset.usdPrice.toFixed(5)) * multiplicator))) / // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off
+        10n ** BigInt(asset?.decimals || 18);
+      tokenFiatBalance =
+        tokenFiatBalanceBi >= maxUint256
+          ? Number(tokenFiatBalanceBi / BigInt(multiplicator))
+          : Number(tokenFiatBalanceBi) / multiplicator;
+    } catch (e) {
+      logError('Error while calculating token fiat balance', e);
+    }
+  }
   return (
     <Flex
       my="0.5rem"
@@ -94,7 +110,7 @@ function CoinRow({
         gap="0.5rem"
       >
         <Image
-          src={asset.iconUri}
+          src={asset.logo || asset.thumbnail}
           fallbackSrc="/images/coin-icon-default.svg"
           alt={asset.symbol}
           w="1rem"
@@ -106,7 +122,7 @@ function CoinRow({
           textStyle="body-base"
           padding={0}
           borderWidth={0}
-          value={asset.address === zeroAddress ? safe : asset.address}
+          value={asset.tokenAddress === zeroAddress ? safe : asset.tokenAddress}
           type="token"
         >
           {asset.symbol}
@@ -123,10 +139,10 @@ function CoinRow({
           isTruncated
         >
           <Tooltip
-            label={asset.fullCoinTotal}
+            label={formatCoin(asset.balance, false, asset.decimals, asset.symbol)}
             placement="top-start"
           >
-            {asset.truncatedCoinTotal}
+            {formatCoin(asset.balance, true, asset.decimals, asset.symbol, false)}
           </Tooltip>
         </Text>
         <Text
@@ -135,10 +151,10 @@ function CoinRow({
           width="100%"
         >
           <Tooltip
-            label={asset.fiatConversion}
+            label={asset.usdPrice ? `1 ${asset.symbol} = ${formatUSD(asset.usdPrice)}` : 'N/A'}
             placement="top-start"
           >
-            {formatUSD(asset.fiatValue)}
+            {formatUSD(tokenFiatBalance)}
           </Tooltip>
         </Text>
       </Flex>
@@ -146,7 +162,7 @@ function CoinRow({
         w="45%"
         alignItems="flex-start"
       >
-        <Text>{totalFiat > 0 && formatPercentage(asset.fiatValue, totalFiat)}</Text>
+        <Text>{totalFiat > 0 && formatPercentage(tokenFiatBalance, totalFiat)}</Text>
       </Flex>
     </Flex>
   );
@@ -244,7 +260,6 @@ export function Assets() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { staking } = useNetworkConfig();
   const { t } = useTranslation('treasury');
-  const coinDisplay = useFormatCoins();
   const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
   const { handleUnstake, handleClaimUnstakedETH } = useLidoStaking();
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([]);
@@ -258,12 +273,14 @@ export function Assets() {
   const openStakingModal = useFractalModal(ModalType.STAKE);
 
   // --- Lido Unstake button setup ---
-  const stETHAsset = coinDisplay.displayData.find(
-    asset => asset.address === staking?.lido?.stETHContractAddress,
+  const stETHAsset = assetsFungible.find(
+    asset => asset.tokenAddress === staking?.lido?.stETHContractAddress,
   );
   const showUnstakeButton = canUserCreateProposal && staking.lido && stETHAsset;
   const handleUnstakeButtonClick = () => {
-    handleUnstake(stETHAsset!.rawValue);
+    if (stETHAsset) {
+      handleUnstake(stETHAsset.balance);
+    }
   };
 
   // --- Lido Claim ETH button setup ---
@@ -300,7 +317,7 @@ export function Assets() {
     handleClaimUnstakedETH(BigInt(lidoWithdrawelNFT!.tokenId));
   };
 
-  const hasAssets = coinDisplay.displayData.length > 0 || assetsNonFungible.length > 0;
+  const hasAssets = assetsFungible.length > 0 || assetsNonFungible.length > 0;
   const toggleAccordionItem = (index: number) => {
     setExpandedIndecies(indexArray => {
       if (indexArray.includes(index)) {
@@ -312,6 +329,11 @@ export function Assets() {
       }
     });
   };
+
+  const totalFiatValue = useMemo(
+    () => assetsFungible.reduce((prev, curr) => prev + curr.usdValue, 0),
+    [assetsFungible],
+  );
 
   return (
     <Box
@@ -329,7 +351,7 @@ export function Assets() {
         data-testid="text-usd-total"
         px={{ base: '1rem', lg: '1.5rem' }}
       >
-        {formatUSD(coinDisplay.totalFiatValue)}
+        {formatUSD(totalFiatValue)}
       </Text>
       <Hide above="lg">
         <Divider
@@ -379,14 +401,14 @@ export function Assets() {
           </HStack>
         </Show>
       )}
-      {hasAssets && (
+      {hasAssets && daoAddress && (
         <>
           <Hide above="lg">
             <Accordion
               allowMultiple
               index={expandedIndecies}
             >
-              {coinDisplay.displayData.length > 0 && (
+              {assetsFungible.length > 0 && (
                 <AccordionItem
                   borderTop="none"
                   borderBottom="none"
@@ -418,12 +440,12 @@ export function Assets() {
                         className="scroll-dark"
                       >
                         <CoinHeader />
-                        {coinDisplay.displayData.map((coin, index) => {
+                        {assetsFungible.map((coin, index) => {
                           return (
                             <CoinRow
                               key={index}
                               safe={daoAddress!}
-                              totalFiat={coinDisplay.totalFiatValue}
+                              totalFiat={totalFiatValue}
                               asset={coin}
                             />
                           );
@@ -441,9 +463,7 @@ export function Assets() {
                   {({ isExpanded }) => (
                     <Box>
                       <AccordionButton
-                        onClick={() =>
-                          toggleAccordionItem(coinDisplay.displayData.length > 0 ? 1 : 0)
-                        }
+                        onClick={() => toggleAccordionItem(assetsFungible.length > 0 ? 1 : 0)}
                         p="0.25rem"
                         textStyle="body-base"
                         color="white-0"
@@ -478,13 +498,13 @@ export function Assets() {
             </Accordion>
           </Hide>
           <Show above="lg">
-            {coinDisplay.displayData.length > 0 && <CoinHeader />}
-            {coinDisplay.displayData.map((coin, index) => {
+            {assetsFungible.length > 0 && <CoinHeader />}
+            {assetsFungible.map((coin, index) => {
               return (
                 <CoinRow
                   key={index}
-                  safe={daoAddress!}
-                  totalFiat={coinDisplay.totalFiatValue}
+                  safe={daoAddress}
+                  totalFiat={totalFiatValue}
                   asset={coin}
                 />
               );
@@ -494,7 +514,7 @@ export function Assets() {
               <NFTRow
                 key={index}
                 asset={asset}
-                isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
+                isLast={index === assetsNonFungible.length - 1}
               />
             ))}
           </Show>

@@ -1,4 +1,3 @@
-import { TransferListResponse } from '@safe-global/api-kit';
 import { ContractEvent } from './contract';
 import { ActivityBase } from './fractal';
 import { EthAddress } from './utils';
@@ -20,7 +19,7 @@ export type TokenBalance = {
   name: string;
   logo?: string;
   thumbnail?: string;
-  decimals?: string;
+  decimals: number;
   balance: string;
   possibleSpam?: string | boolean; // Empty string means false lol, but still that's a string
   verifiedContract: boolean;
@@ -82,14 +81,6 @@ export type Transaction =
   | TokenWithdrawEvent
   | ERC20TokenEvent
   | ERC721TokenEvent;
-
-export interface ITreasury {
-  transactions: Transaction[];
-  assetsFungible: TokenBalance[];
-  assetsNonFungible: any[];
-  transfers?: TransferListResponse;
-  treasuryIsLoading: boolean;
-}
 
 export enum TransferType {
   ETHER_TRANSFER = 'ETHER_TRANSFER',

@@ -21,14 +21,14 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const safeAPI = useSafeAPI();
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const getTokenBalances = useBalancesAPI();
+  const { getTokenBalances } = useBalancesAPI();
 
   const handleClawBack = useCallback(async () => {
     if (childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
       const childSafeBalance = await getTokenBalances(childSafeInfo.daoAddress);
 
       if (childSafeBalance.error || !childSafeBalance.data) {
-        toast(t('clawBackBalancesError', { autoClose: 5000 }));
+        toast(t('clawBackBalancesError', { autoClose: false }));
         return;
       }
 
@@ -41,7 +41,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         );
         const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
         if (fractalModule) {
-          const transactions = childSafeBalance.data.tokens
+          const transactions = childSafeBalance.data
             .filter(tokenBalance => !tokenBalance.possibleSpam)
             .map(asset => {
               if (!asset.tokenAddress) {

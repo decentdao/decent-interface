@@ -28,6 +28,7 @@ const SAFE_VERSION = '1.3.0';
 export const sepoliaConfig: NetworkConfig = {
   order: 30,
   chain: sepolia,
+  moralisSupported: true,
   rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.etherscan.io',

@@ -24,5 +24,5 @@
   "unstake": "Unstake",
   "claimUnstakedETH": "Claim ETH",
   "nonClaimableYet": "Your ETH cannot yet be claimed from Lido",
-  "errorFetchingBalances": "An error occured while retrieving treasury balances. Please refresh and try again."
+  "errorFetchingBalances": "An error occurred while retrieving treasury balances. Please refresh and try again."
 }
