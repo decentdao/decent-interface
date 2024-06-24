@@ -11,6 +11,8 @@ import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
 import { useFractalNode } from './loaders/useFractalNode';
 import { useFractalTreasury } from './loaders/useFractalTreasury';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
+import { useHatsTree } from './loaders/useHatsTree';
+import { useKeyValuePairs } from './useKeyValuePairs';
 
 export default function useDAOController() {
   const [searchParams] = useSearchParams();
@@ -50,6 +52,9 @@ export default function useDAOController() {
   useERC20Claim();
   useSnapshotProposals();
   useAzoriusListeners();
+
+  useKeyValuePairs();
+  useHatsTree();
 
   return { invalidQuery, wrongNetwork, errorLoading };
 }
