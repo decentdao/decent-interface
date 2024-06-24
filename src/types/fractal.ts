@@ -213,7 +213,7 @@ export interface Fractal {
   node: FractalNode;
   guard: FreezeGuard;
   governance: FractalGovernance;
-  treasury: FractalTreasury;
+  treasury: DecentTreasury;
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
   readOnly: ReadOnlyState;
@@ -276,7 +276,8 @@ export interface FreezeGuard {
   userHasVotes: boolean;
 }
 
-export interface FractalTreasury {
+export interface DecentTreasury {
+  totalUsdValue: number;
   assetsFungible: TokenBalance[];
   assetsNonFungible: NFTBalance[];
   transfers?: AllTransactionsListResponse;
@@ -295,13 +296,6 @@ export interface DecentGovernance extends AzoriusGovernance {
 }
 export interface SafeMultisigGovernance extends Governance {}
 
-// @todo update FractalContracts to just store addresses in the store
-// export interface Governance {
-//   type?: GovernanceType;
-//   proposals: FractalProposal[] | null;
-//   proposalTemplates?: ProposalTemplate[] | null;
-//   tokenClaimContractAddress?: string;
-// }
 export interface Governance {
   type?: GovernanceType;
   loadingProposals: boolean;

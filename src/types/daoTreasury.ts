@@ -24,8 +24,8 @@ export type TokenBalance = {
   possibleSpam?: string | boolean; // Empty string means false lol, but still that's a string
   verifiedContract: boolean;
   balanceFormatted: string; // Balance formatted to decimals
-  usdPrice: number;
-  usdValue: number;
+  usdPrice?: number;
+  usdValue?: number;
   nativeToken: boolean;
   portfolioPercentage: number;
 };

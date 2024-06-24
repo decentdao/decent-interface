@@ -5,9 +5,9 @@ import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useUpdateTimer } from './../../utils/useUpdateTimer';
+import { useUpdateTimer } from '../../utils/useUpdateTimer';
 
-export const useFractalTreasury = () => {
+export const useDecentTreasury = () => {
   // tracks the current valid DAO address / chain; helps prevent unnecessary calls
   const loadKey = useRef<string | null>();
   const {
@@ -42,10 +42,15 @@ export const useFractalTreasury = () => {
     if (nftBalancesError) {
       toast(nftBalancesError, { autoClose: 2000 });
     }
+    const assetsFungible = tokenBalances || [];
+    const assetsNonFungible = nftBalances || [];
+
+    const totalUsdValue = assetsFungible.reduce((prev, curr) => prev + (curr.usdValue || 0), 0);
     const treasuryData = {
-      assetsFungible: tokenBalances || [],
-      assetsNonFungible: nftBalances || [],
+      assetsFungible,
+      assetsNonFungible,
       transfers,
+      totalUsdValue,
     };
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
   }, [daoAddress, safeAPI, action, getTokenBalances, getNFTBalances]);

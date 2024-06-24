@@ -15,10 +15,9 @@ import {
 } from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress, maxUint256 } from 'viem';
-import { logError } from '../../../../helpers/errorLogging';
+import { zeroAddress } from 'viem';
 import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
@@ -71,31 +70,11 @@ function CoinHeader() {
   );
 }
 
-function CoinRow({
-  safe,
-  totalFiat,
-  asset,
-}: {
-  safe: string;
-  totalFiat: number;
-  asset: TokenBalance;
-}) {
-  let tokenFiatBalance = 0;
-  if (asset.usdPrice && asset.balance) {
-    try {
-      const multiplicator = 10000;
-      const tokenFiatBalanceBi =
-        (BigInt(asset.balance) *
-          BigInt(Math.round(parseFloat(asset.usdPrice.toFixed(5)) * multiplicator))) / // We'll be losing precision with super small prices like for meme coins. But that shouldn't be awfully off
-        10n ** BigInt(asset.decimals);
-      tokenFiatBalance =
-        tokenFiatBalanceBi >= maxUint256
-          ? Number(tokenFiatBalanceBi / BigInt(multiplicator))
-          : Number(tokenFiatBalanceBi) / multiplicator;
-    } catch (e) {
-      logError('Error while calculating token fiat balance', e);
-    }
-  }
+function CoinRow({ asset }: { asset: TokenBalance }) {
+  const {
+    node: { daoAddress },
+    treasury: { totalUsdValue },
+  } = useFractal();
   return (
     <Flex
       my="0.5rem"
@@ -122,7 +101,7 @@ function CoinRow({
           textStyle="body-base"
           padding={0}
           borderWidth={0}
-          value={asset.tokenAddress === zeroAddress ? safe : asset.tokenAddress}
+          value={asset.tokenAddress === zeroAddress ? daoAddress : asset.tokenAddress}
           type="token"
         >
           {asset.symbol}
@@ -145,25 +124,29 @@ function CoinRow({
             {formatCoin(asset.balance, true, asset.decimals, asset.symbol, false)}
           </Tooltip>
         </Text>
-        <Text
-          textStyle="label-small"
-          color="neutral-7"
-          width="100%"
-        >
-          <Tooltip
-            label={asset.usdPrice ? `1 ${asset.symbol} = ${formatUSD(asset.usdPrice)}` : 'N/A'}
-            placement="top-start"
+        {asset.usdPrice && asset.usdValue && (
+          <Text
+            textStyle="label-small"
+            color="neutral-7"
+            width="100%"
           >
-            {formatUSD(tokenFiatBalance)}
-          </Tooltip>
-        </Text>
+            <Tooltip
+              label={`1 ${asset.symbol} = ${formatUSD(asset.usdPrice)}`}
+              placement="top-start"
+            >
+              {formatUSD(asset.usdValue)}
+            </Tooltip>
+          </Text>
+        )}
       </Flex>
-      <Flex
-        w="45%"
-        alignItems="flex-start"
-      >
-        <Text>{totalFiat > 0 && formatPercentage(tokenFiatBalance, totalFiat)}</Text>
-      </Flex>
+      {asset.usdValue && (
+        <Flex
+          w="45%"
+          alignItems="flex-start"
+        >
+          <Text>{totalUsdValue > 0 && formatPercentage(asset.usdValue, totalUsdValue)}</Text>
+        </Flex>
+      )}
     </Flex>
   );
 }
@@ -255,7 +238,7 @@ function NFTRow({ asset, isLast }: { asset: NFTBalance; isLast: boolean }) {
 export function Assets() {
   const {
     node: { daoAddress },
-    treasury: { assetsFungible, assetsNonFungible },
+    treasury: { assetsFungible, assetsNonFungible, totalUsdValue },
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { staking } = useNetworkConfig();
@@ -330,11 +313,6 @@ export function Assets() {
     });
   };
 
-  const totalFiatValue = useMemo(
-    () => assetsFungible.reduce((prev, curr) => prev + curr.usdValue, 0),
-    [assetsFungible],
-  );
-
   return (
     <Box
       mt={{ base: '1rem', lg: 0 }}
@@ -351,7 +329,7 @@ export function Assets() {
         data-testid="text-usd-total"
         px={{ base: '1rem', lg: '1.5rem' }}
       >
-        {formatUSD(totalFiatValue)}
+        {formatUSD(totalUsdValue)}
       </Text>
       <Hide above="lg">
         <Divider
@@ -444,8 +422,6 @@ export function Assets() {
                           return (
                             <CoinRow
                               key={index}
-                              safe={daoAddress!}
-                              totalFiat={totalFiatValue}
                               asset={coin}
                             />
                           );
@@ -503,8 +479,6 @@ export function Assets() {
               return (
                 <CoinRow
                   key={index}
-                  safe={daoAddress}
-                  totalFiat={totalFiatValue}
                   asset={coin}
                 />
               );
