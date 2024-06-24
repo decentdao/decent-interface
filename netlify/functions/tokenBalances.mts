@@ -81,8 +81,10 @@ export default async function getTokenBalancesWithPrices(request: Request) {
               decimals: Number(tokenBalance.decimals),
             }) as unknown as TokenBalance,
         );
+        tokensFetched = true;
       } catch (e) {
         console.error('Unexpected error while fetching address token balances', e);
+        tokensFetched = false;
       }
 
       if (tokensFetched) {

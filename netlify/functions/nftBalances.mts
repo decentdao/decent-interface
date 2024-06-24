@@ -79,6 +79,7 @@ export default async function getNftBalances(request: Request) {
         nftsFetched = true;
       } catch (e) {
         console.error('Error while fetching address NFTs', e);
+        nftsFetched = false;
       }
 
       if (nftsFetched) {
