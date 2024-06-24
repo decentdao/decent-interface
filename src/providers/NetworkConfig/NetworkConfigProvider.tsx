@@ -11,7 +11,7 @@ export const useNetworkConfig = (): NetworkConfig =>
 
 export const supportedNetworks = Object.values(networks).sort((a, b) => a.order - b.order);
 
-const getNetworkConfig = (chainId: number) => {
+export const getNetworkConfig = (chainId: number) => {
   const foundChain = supportedNetworks.find(network => network.chain.id === chainId);
   if (foundChain) {
     return foundChain;

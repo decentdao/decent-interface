@@ -17,7 +17,7 @@ const getDAOName = async ({
   publicClient: PublicClient | undefined;
   fractalRegistry: Address;
 }) => {
-  if (!publicClient) {
+  if (!publicClient || !publicClient.chain) {
     throw new Error('Public client not available');
   }
 
@@ -29,6 +29,7 @@ const getDAOName = async ({
       throw error;
     }
   });
+
   if (ensName) {
     return ensName;
   }
@@ -43,16 +44,18 @@ const getDAOName = async ({
     client: publicClient,
   });
 
-  const events = await fractalRegistryContract.getEvents.FractalNameUpdated({
-    daoAddress: address,
-  });
+  const events = await fractalRegistryContract.getEvents.FractalNameUpdated(
+    { daoAddress: address },
+    { fromBlock: 0n },
+  );
 
   const latestEvent = events.pop();
-  if (latestEvent && latestEvent.args.daoName) {
+
+  if (latestEvent?.args.daoName) {
     return latestEvent.args.daoName;
   }
 
-  if (publicClient.chain) {
+  if (publicClient.chain && demoData[publicClient.chain.id] !== undefined) {
     const demo = demoData[publicClient.chain.id][address];
     if (demo && demo.name) {
       return demo.name;
@@ -71,9 +74,8 @@ const useGetDAOName = ({
   registryName?: string | null;
   chainId?: number;
 }) => {
-  const publicClient = usePublicClient({
-    chainId,
-  });
+  const publicClient = usePublicClient({ chainId });
+
   const {
     contracts: { fractalRegistry },
   } = useNetworkConfig();
