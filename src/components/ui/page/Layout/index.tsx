@@ -9,7 +9,6 @@ import {
   useFooterHeight,
 } from '../../../../constants/common';
 import useNavigationScrollReset from '../../../../hooks/utils/useNavigationScrollReset';
-import Roles from '../../../../pages/daos/[daoAddress]/roles';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
 import { Footer } from '../Footer';
@@ -82,7 +81,6 @@ export default function Layout() {
             fallback={<TopErrorFallback />}
             showDialog
           >
-            <Roles />
             <Outlet />
           </ErrorBoundary>
         </Container>
