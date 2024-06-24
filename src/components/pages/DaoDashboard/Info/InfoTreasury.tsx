@@ -11,7 +11,6 @@ interface IDAOGovernance {}
 export function InfoTreasury({}: IDAOGovernance) {
   const {
     node: { daoAddress },
-    treasury: { assetsFungible },
   } = useFractal();
 
   const { t } = useTranslation('dashboard');
