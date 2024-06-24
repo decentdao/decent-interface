@@ -87,7 +87,7 @@ function CoinRow({
       const tokenFiatBalanceBi =
         (BigInt(asset.balance) *
           BigInt(Math.round(parseFloat(asset.usdPrice.toFixed(5)) * multiplicator))) / // We'll be loosing precision with super small prices like for meme coins. But that shouldn't be awfully off
-        10n ** BigInt(asset?.decimals || 18);
+        10n ** BigInt(asset.decimals );
       tokenFiatBalance =
         tokenFiatBalanceBi >= maxUint256
           ? Number(tokenFiatBalanceBi / BigInt(multiplicator))
