@@ -1,6 +1,6 @@
 import { isAddress, getAddress, Hex, encodeFunctionData, erc20Abi } from 'viem';
 import { SubmitProposalFunction } from '../../../hooks/DAO/proposal/useSubmitProposal';
-import { ProposalExecuteData } from '../../../types';
+import { ProposalExecuteData, TokenBalance } from '../../../types';
 import { formatCoin } from '../../../utils/numberFormats';
 
 export const sendAssets = async ({
@@ -12,19 +12,14 @@ export const sendAssets = async ({
   t,
 }: {
   transferAmount: bigint;
-  asset: any;
+  asset: TokenBalance;
   destinationAddress: string | undefined;
   nonce: number | undefined;
   submitProposal: SubmitProposalFunction;
   t: any;
 }) => {
   const isEth = !asset.tokenAddress;
-  const description = formatCoin(
-    transferAmount,
-    false,
-    asset?.token?.decimals,
-    asset?.token?.symbol,
-  );
+  const description = formatCoin(transferAmount, false, asset.decimals, asset.symbol);
 
   let calldatas = ['0x' as Hex];
   let target =
