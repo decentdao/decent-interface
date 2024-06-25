@@ -14,7 +14,7 @@ export const moralisSupportedChainIds = supportedNetworks
   .filter(network => network.moralisSupported)
   .map(network => network.chain.id);
 
-const getNetworkConfig = (chainId: number) => {
+export const getNetworkConfig = (chainId: number) => {
   const foundChain = supportedNetworks.find(network => network.chain.id === chainId);
   if (foundChain) {
     return foundChain;

@@ -1,4 +1,4 @@
-import { Box, Text, Show, BoxProps } from '@chakra-ui/react';
+import { Box, Text, BoxProps } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { CONTENT_MAXW } from '../../../constants/common';
 import Divider from '../utils/Divider';
@@ -7,10 +7,12 @@ export function TitledInfoBox({
   title,
   titleTestId,
   children,
+  subTitle,
   ...rest
 }: {
   title: string;
   titleTestId: string;
+  subTitle?: ReactNode;
   children: ReactNode;
 } & BoxProps) {
   return (
@@ -18,8 +20,6 @@ export function TitledInfoBox({
       py={{ base: '1rem', lg: '1.5rem' }}
       borderRadius={{ base: '0.75rem', lg: '0.5rem' }}
       maxW={CONTENT_MAXW}
-      overflowX="scroll"
-      className="scroll-dark"
       {...rest}
     >
       <Text
@@ -29,12 +29,11 @@ export function TitledInfoBox({
       >
         {title}
       </Text>
-      <Show above="md">
-        <Divider
-          my="1rem"
-          variant="darker"
-        />
-      </Show>
+      {subTitle && subTitle}
+      <Divider
+        my="1rem"
+        variant="darker"
+      />
       {children}
     </Box>
   );

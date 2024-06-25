@@ -3,7 +3,6 @@ import {
   Flex,
   Button,
   HStack,
-  Image,
   Text,
   Tooltip,
   Show,
@@ -17,223 +16,17 @@ import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress } from 'viem';
 import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { NFTBalance, TokenBalance } from '../../../../types';
-import { formatPercentage, formatUSD, formatCoin } from '../../../../utils/numberFormats';
-import EtherscanLink from '../../../ui/links/EtherscanLink';
+import { formatUSD } from '../../../../utils/numberFormats';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../ui/modals/useFractalModal';
 import Divider from '../../../ui/utils/Divider';
-
-function CoinHeader() {
-  const { t } = useTranslation('treasury');
-  return (
-    <Box
-      mb="1rem"
-      minW="595px"
-    >
-      <Show above="lg">
-        <Divider
-          my="1rem"
-          variant="darker"
-        />
-      </Show>
-      <HStack px={{ base: '1rem', lg: '1.5rem' }}>
-        <Text
-          w="25%"
-          textStyle="label-small"
-          color="neutral-7"
-        >
-          {t('columnCoins')}
-        </Text>
-        <Text
-          w="30%"
-          textStyle="label-small"
-          color="neutral-7"
-        >
-          {t('columnValue')}
-        </Text>
-        <Text
-          w="45%"
-          textStyle="label-small"
-          color="neutral-7"
-        >
-          {t('columnAllocation')}
-        </Text>
-      </HStack>
-    </Box>
-  );
-}
-
-function CoinRow({ asset }: { asset: TokenBalance }) {
-  const {
-    node: { daoAddress },
-    treasury: { totalUsdValue },
-  } = useFractal();
-  return (
-    <Flex
-      my="0.5rem"
-      justifyContent="space-between"
-      px={{ base: '1rem', lg: '1.5rem' }}
-      minW="595px"
-      gap="1rem"
-    >
-      <Flex
-        w="25%"
-        alignItems="center"
-        gap="0.5rem"
-      >
-        <Image
-          src={asset.logo || asset.thumbnail}
-          fallbackSrc="/images/coin-icon-default.svg"
-          alt={asset.symbol}
-          w="1rem"
-          h="1rem"
-        />
-        <EtherscanLink
-          color="white-0"
-          _hover={{ bg: 'transparent' }}
-          textStyle="body-base"
-          padding={0}
-          borderWidth={0}
-          value={asset.tokenAddress === zeroAddress ? daoAddress : asset.tokenAddress}
-          type="token"
-        >
-          {asset.symbol}
-        </EtherscanLink>
-      </Flex>
-      <Flex
-        w="30%"
-        alignItems="flex-start"
-        flexWrap="wrap"
-      >
-        <Text
-          maxWidth="23.8rem"
-          width="100%"
-          isTruncated
-        >
-          <Tooltip
-            label={formatCoin(asset.balance, false, asset.decimals, asset.symbol)}
-            placement="top-start"
-          >
-            {formatCoin(asset.balance, true, asset.decimals, asset.symbol, false)}
-          </Tooltip>
-        </Text>
-        {asset.usdPrice && asset.usdValue && (
-          <Text
-            textStyle="label-small"
-            color="neutral-7"
-            width="100%"
-          >
-            <Tooltip
-              label={`1 ${asset.symbol} = ${formatUSD(asset.usdPrice)}`}
-              placement="top-start"
-            >
-              {formatUSD(asset.usdValue)}
-            </Tooltip>
-          </Text>
-        )}
-      </Flex>
-      {asset.usdValue && (
-        <Flex
-          w="45%"
-          alignItems="flex-start"
-        >
-          <Text>{totalUsdValue > 0 && formatPercentage(asset.usdValue, totalUsdValue)}</Text>
-        </Flex>
-      )}
-    </Flex>
-  );
-}
-
-function NFTHeader() {
-  const { t } = useTranslation('treasury');
-  return (
-    <Box
-      marginBottom="1rem"
-      minW="595px"
-    >
-      <Divider
-        variant="darker"
-        marginTop="0.75rem"
-        marginBottom="1.5rem"
-      />
-      <Text
-        w="25%"
-        textStyle="label-small"
-        color="neutral-7"
-        px={{ base: '1rem', lg: '1.5rem' }}
-      >
-        {t('columnNFTs')}
-      </Text>
-    </Box>
-  );
-}
-
-function NFTRow({ asset, isLast }: { asset: NFTBalance; isLast: boolean }) {
-  const image = asset.media?.mediaCollection
-    ? asset.media?.mediaCollection.medium.url
-    : asset.media?.originalMediaUrl;
-  const name = asset.name;
-  const id = asset.tokenId.toString();
-
-  return (
-    <HStack
-      marginBottom={isLast ? '0rem' : '1.5rem'}
-      px={{ base: '1rem', lg: '1.5rem' }}
-      minW="595px"
-    >
-      <Flex width="15%">
-        <EtherscanLink
-          type="token"
-          value={asset.tokenAddress}
-          secondaryValue={id}
-          data-testid="link-nft-image"
-          padding={0}
-          _hover={{ bg: 'transparent' }}
-        >
-          <Image
-            src={image}
-            fallbackSrc="/images/nft-image-default.svg"
-            alt={name}
-            w="3rem"
-            h="3rem"
-            marginRight="0.75rem"
-          />
-        </EtherscanLink>
-      </Flex>
-      <Flex width="30%">
-        <EtherscanLink
-          type="address"
-          value={asset.tokenAddress}
-          _hover={{ bg: 'transparent' }}
-          color="white-0"
-          textStyle="body-base"
-        >
-          {name}
-        </EtherscanLink>
-      </Flex>
-      <Flex width="25%">
-        <EtherscanLink
-          type="token"
-          value={asset.tokenAddress}
-          secondaryValue={id}
-          color="white-0"
-          textStyle="body-base"
-          _hover={{ bg: 'transparent' }}
-          maxW="100%"
-        >
-          <Text as="span">{`#${id}`}</Text>
-        </EtherscanLink>
-      </Flex>
-    </HStack>
-  );
-}
+import { CoinHeader, CoinRow } from './AssetCoin';
+import { NFTHeader, NFTRow } from './AssetNFT';
 
 export function Assets() {
   const {
@@ -314,10 +107,7 @@ export function Assets() {
   };
 
   return (
-    <Box
-      mt={{ base: '1rem', lg: 0 }}
-      w="full"
-    >
+    <Box mt={{ base: '1rem', lg: 0 }}>
       <Text
         textStyle="label-small"
         color="neutral-7"
@@ -339,7 +129,10 @@ export function Assets() {
       </Hide>
       {(showStakeButton || showUnstakeButton || showClaimETHButton) && (
         <Show above="lg">
-          <Divider my="1rem" />
+          <Divider
+            variant="darker"
+            my="1rem"
+          />
           <Text
             textStyle="label-small"
             color="neutral-7"
@@ -381,7 +174,7 @@ export function Assets() {
       )}
       {hasAssets && daoAddress && (
         <>
-          <Hide above="lg">
+          <Show below="lg">
             <Accordion
               allowMultiple
               index={expandedIndecies}
@@ -414,7 +207,7 @@ export function Assets() {
                       />
                       <AccordionPanel
                         p={0}
-                        overflowX="scroll"
+                        overflowX="auto"
                         className="scroll-dark"
                       >
                         <CoinHeader />
@@ -427,6 +220,12 @@ export function Assets() {
                           );
                         })}
                       </AccordionPanel>
+                      {isExpanded && (
+                        <Divider
+                          variant="darker"
+                          my="1rem"
+                        />
+                      )}
                     </Box>
                   )}
                 </AccordionItem>
@@ -455,7 +254,7 @@ export function Assets() {
                       </AccordionButton>
                       <AccordionPanel
                         p={0}
-                        overflowX="scroll"
+                        overflowX="auto"
                         className="scroll-dark"
                       >
                         <NFTHeader />
@@ -472,7 +271,7 @@ export function Assets() {
                 </AccordionItem>
               )}
             </Accordion>
-          </Hide>
+          </Show>
           <Show above="lg">
             {assetsFungible.length > 0 && <CoinHeader />}
             {assetsFungible.map((coin, index) => {
