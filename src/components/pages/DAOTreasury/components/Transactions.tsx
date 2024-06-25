@@ -117,7 +117,7 @@ export function Transactions({ shownTransactions }: { shownTransactions: number 
     treasury: { transfers },
   } = useFractal();
 
-  const displayData: TransferDisplayData[] = useFormatTransfers();
+  const displayData = useFormatTransfers();
 
   if (!transfers || transfers.results.length === 0) return <EmptyTransactions />;
 

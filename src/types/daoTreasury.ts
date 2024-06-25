@@ -1,4 +1,3 @@
-import { TransferListResponse } from '@safe-global/api-kit';
 import { ContractEvent } from './contract';
 import { ActivityBase } from './fractal';
 import { EthAddress } from './utils';
@@ -13,6 +12,51 @@ export interface TokenEvent extends ContractEvent {
   blockNumber: number;
   eventType: TokenEventType;
 }
+
+export type TokenBalance = {
+  tokenAddress: string;
+  symbol: string;
+  name: string;
+  logo?: string;
+  thumbnail?: string;
+  decimals: number;
+  balance: string;
+  possibleSpam?: string | boolean; // Empty string means false lol, but still that's a string
+  verifiedContract: boolean;
+  balanceFormatted: string; // Balance formatted to decimals
+  usdPrice?: number;
+  usdValue?: number;
+  nativeToken: boolean;
+  portfolioPercentage: number;
+};
+
+type NftMediaItem = {
+  height: number;
+  width: number;
+  url: string;
+};
+
+export type NFTBalance = {
+  tokenAddress: string;
+  media:
+    | {
+        originalMediaUrl?: string | undefined;
+        mediaCollection?:
+          | {
+              low: NftMediaItem;
+              medium: NftMediaItem;
+              high: NftMediaItem;
+            }
+          | undefined;
+      }
+    | undefined;
+  tokenId: string | number;
+  tokenUri?: string | undefined;
+  name?: string | undefined;
+  symbol?: string | undefined;
+  amount?: number | undefined;
+  possibleSpam: boolean;
+};
 
 export interface TokenDepositEvent extends TokenEvent, EthAddress {
   amount: bigint;
@@ -37,14 +81,6 @@ export type Transaction =
   | TokenWithdrawEvent
   | ERC20TokenEvent
   | ERC721TokenEvent;
-
-export interface ITreasury {
-  transactions: Transaction[];
-  assetsFungible: any[];
-  assetsNonFungible: any[];
-  transfers?: TransferListResponse;
-  treasuryIsLoading: boolean;
-}
 
 export enum TransferType {
   ETHER_TRANSFER = 'ETHER_TRANSFER',

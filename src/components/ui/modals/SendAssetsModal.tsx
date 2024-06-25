@@ -7,7 +7,7 @@ import * as Yup from 'yup';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { BigIntValuePair } from '../../../types';
+import { BigIntValuePair, TokenBalance } from '../../../types';
 import { formatCoinFromAsset, formatCoinUnitsFromAsset } from '../../../utils/numberFormats';
 import { sendAssets } from '../../pages/DAOTreasury/sendAssets';
 import { BigIntInput } from '../forms/BigIntInput';
@@ -18,7 +18,7 @@ import Divider from '../utils/Divider';
 
 interface SendAssetsFormValues {
   destinationAddress: string;
-  selectedAsset: any;
+  selectedAsset: TokenBalance;
   inputAmount?: BigIntValuePair;
 }
 
@@ -97,8 +97,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
               <Flex>
                 {/* ASSET SELECT */}
                 <Field name="selectedAsset">
-                  {/* @todo - use proper type for Safe Balance here */}
-                  {({ field }: FieldAttributes<FieldProps<any>>) => (
+                  {({ field }: FieldAttributes<FieldProps<TokenBalance>>) => (
                     <Box
                       width="40%"
                       marginEnd="0.75rem"
@@ -126,7 +125,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                               key={index}
                               value={index}
                             >
-                              {asset.token ? asset.token.symbol : 'ETH'}
+                              {asset.symbol}
                             </option>
                           ))}
                         </Select>
@@ -147,7 +146,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                             setFieldValue('inputAmount', value);
                           }}
                           currentValue={values.inputAmount}
-                          decimalPlaces={values.selectedAsset.token.decimals}
+                          decimalPlaces={values.selectedAsset.decimals}
                           placeholder="0"
                           maxValue={BigInt(values.selectedAsset.balance)}
                           isInvalid={overDraft}

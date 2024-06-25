@@ -1,5 +1,9 @@
-import { FractalModuleData, FractalGuardContracts, FreezeGuard } from './fractal';
-import { SafeWithNextNonce } from './safeGlobal';
+import {
+  FractalModuleData,
+  FractalGuardContracts,
+  FreezeGuard,
+  SafeWithNextNonce,
+} from './fractal';
 
 export type DAOData = {
   safe: SafeWithNextNonce;

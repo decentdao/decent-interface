@@ -17,6 +17,7 @@ import {
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
 import {
+  SafeInfoResponse,
   SafeModuleTransactionWithTransfersResponse,
   SafeMultisigTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
@@ -36,9 +37,8 @@ import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
-import { TreasuryActivity } from './daoTreasury';
+import { NFTBalance, TokenBalance, TreasuryActivity } from './daoTreasury';
 import { ProposalTemplate } from './proposalBuilder';
-import { SafeWithNextNonce } from './safeGlobal';
 import { BIFormattedPair } from './votingFungibleToken';
 /**
  * The possible states of a DAO proposal, for both Token Voting (Azorius) and Multisignature
@@ -213,7 +213,7 @@ export interface Fractal {
   node: FractalNode;
   guard: FreezeGuard;
   governance: FractalGovernance;
-  treasury: FractalTreasury;
+  treasury: DecentTreasury;
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
   readOnly: ReadOnlyState;
@@ -228,6 +228,8 @@ export interface FractalGovernanceContracts {
   underlyingTokenAddress?: string;
   isLoaded: boolean;
 }
+
+export type SafeWithNextNonce = SafeInfoResponse & { nextNonce: number };
 
 export interface FractalNode {
   daoName: string | null;
@@ -274,9 +276,10 @@ export interface FreezeGuard {
   userHasVotes: boolean;
 }
 
-export interface FractalTreasury {
-  assetsFungible: any[];
-  assetsNonFungible: any[];
+export interface DecentTreasury {
+  totalUsdValue: number;
+  assetsFungible: TokenBalance[];
+  assetsNonFungible: NFTBalance[];
   transfers?: AllTransactionsListResponse;
 }
 
@@ -293,13 +296,6 @@ export interface DecentGovernance extends AzoriusGovernance {
 }
 export interface SafeMultisigGovernance extends Governance {}
 
-// @todo update FractalContracts to just store addresses in the store
-// export interface Governance {
-//   type?: GovernanceType;
-//   proposals: FractalProposal[] | null;
-//   proposalTemplates?: ProposalTemplate[] | null;
-//   tokenClaimContractAddress?: string;
-// }
 export interface Governance {
   type?: GovernanceType;
   loadingProposals: boolean;
