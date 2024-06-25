@@ -10,6 +10,8 @@ export function Card({ children, ...rest }: BoxProps) {
       transition="all ease-out 300ms"
       p="1.5rem"
       borderRadius="0.5rem"
+      border="1px solid"
+      borderColor="neutral-3"
       {...rest}
     >
       {children}

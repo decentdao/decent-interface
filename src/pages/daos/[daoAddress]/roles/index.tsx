@@ -1,5 +1,6 @@
 import { Box, Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
 import { Card } from '../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
@@ -42,6 +43,17 @@ function Roles() {
           </Text>
         </Card>
       )}
+      {/* {hatsTree && ( */}
+      <Show above="md">{/* Table */}</Show>
+      <Show below="md">
+        {/* Role admin not set */}
+        <RoleCard />
+        {/* Role admin set */}
+        <RoleCard />
+        {/* Role admin set with steams */}
+        <RoleCard />
+      </Show>
+      {/* )} */}
     </Box>
   );
 }
