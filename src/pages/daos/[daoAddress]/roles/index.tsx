@@ -1,19 +1,46 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Show, Text } from '@chakra-ui/react';
+import { useTranslation } from 'react-i18next';
+import { Card } from '../../../../components/ui/cards/Card';
+import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
+import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { useRolesState } from '../../../../state/useRolesState';
 
 function Roles() {
   const { hatsTree } = useRolesState();
+  const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
 
   return (
-    <Box my="1rem">
-      <Box fontSize={'larger'}>Hat Tree</Box>
-      {hatsTree === undefined && <Box>Searching for Hats Tree...</Box>}
-      {hatsTree === null && <Box>No Hats Tree exists for this Safe yet :(</Box>}
-      {hatsTree && (
-        <Box>
-          <Box>We have a Hats Tree! {hatsTree.id}</Box>
-          <Box>It has {hatsTree.hats ? hatsTree.hats.length : 0} Hats</Box>
-        </Box>
+    <Box>
+      <PageHeader
+        title={t('roles')}
+        breadcrumbs={[
+          {
+            terminus: t('roles', {
+              ns: 'roles',
+            }),
+            path: '',
+          },
+        ]}
+      />
+      {hatsTree === undefined && (
+        <Card
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <BarLoader />
+        </Card>
+      )}
+      {hatsTree === null && (
+        <Card>
+          <Text
+            textStyle="body-base"
+            textAlign="center"
+            color="white-alpha-16"
+          >
+            {t('noRoles')}
+          </Text>
+        </Card>
       )}
     </Box>
   );
