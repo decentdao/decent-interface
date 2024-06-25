@@ -58,7 +58,12 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   if (!multisigTx) return null;
 
   const signTransaction = async () => {
-    if (!signerOrProvider || !safe?.address || (multisigTx.data && !isHex(multisigTx.data))) {
+    if (
+      !signerOrProvider ||
+      !safe?.address ||
+      (multisigTx.data && !isHex(multisigTx.data)) ||
+      !safeAPI
+    ) {
       return;
     }
     try {
@@ -81,7 +86,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         pendingMessage: t('pendingSign'),
         successMessage: t('successSign'),
         successCallback: async (signature: string) => {
-          await safeAPI!.confirmTransaction(proposal.proposalId, signature);
+          await safeAPI.confirmTransaction(proposal.proposalId, signature);
           await loadSafeMultisigProposals();
         },
       });
