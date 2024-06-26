@@ -1,4 +1,5 @@
 import { Box, Show, Text } from '@chakra-ui/react';
+import { Pencil } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
@@ -6,7 +7,6 @@ import { Card } from '../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { useRolesState } from '../../../../state/useRolesState';
-
 function Roles() {
   const { hatsTree } = useRolesState();
   const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
@@ -23,6 +23,13 @@ function Roles() {
             path: '',
           },
         ]}
+        buttonVariant="secondary"
+        buttonText="Edit Roles"
+        buttonProps={{
+          leftIcon: <Pencil />,
+        }}
+        // @todo navigate to edit roles page
+        buttonClick={() => {}}
       />
       {hatsTree === undefined && (
         <Card
