@@ -37,7 +37,23 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const { addressValidationTest, isValidating } = useValidationAddress();
 
-  const submitSendAssets = async (values: SendAssetsFormValues) => {
+  const sendAssetsValidationSchema = Yup.object().shape({
+    destinationAddress: Yup.string().test(addressValidationTest),
+    selectedAsset: Yup.object()
+      .shape({
+        tokenAddress: Yup.string().required(),
+        name: Yup.string().required(),
+        symbol: Yup.string().required(),
+        decimals: Yup.number().required(),
+        balance: Yup.string().required(),
+      })
+      .required(),
+    inputAmount: Yup.object().shape({
+      value: Yup.string().required(),
+    }),
+  });
+
+  const handleSendAssetsSubmit = async (values: SendAssetsFormValues) => {
     const { destinationAddress, selectedAsset, inputAmount } = values;
 
     await sendAssets({
@@ -52,21 +68,6 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     if (close) close();
   };
 
-  const sendAssetsValidationSchema = Yup.object().shape({
-    destinationAddress: Yup.string().test(addressValidationTest),
-    selectedAsset: Yup.object()
-      .shape({
-        tokenAddress: Yup.string().required(),
-        token: Yup.object().shape({
-          name: Yup.string().required(),
-          symbol: Yup.string().required(),
-          decimals: Yup.number().required(),
-        }),
-        balance: Yup.string().required(),
-      })
-      .required(),
-  });
-
   return (
     <Box>
       <Formik<SendAssetsFormValues>
@@ -75,10 +76,10 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           selectedAsset: fungibleAssetsWithBalance[0],
           inputAmount: undefined,
         }}
-        onSubmit={submitSendAssets}
+        onSubmit={handleSendAssetsSubmit}
         validationSchema={sendAssetsValidationSchema}
       >
-        {({ errors, values, setFieldValue }) => {
+        {({ errors, values, setFieldValue, handleSubmit }) => {
           const overDraft =
             Number(values.inputAmount?.value || '0') >
             formatCoinUnitsFromAsset(values.selectedAsset);
@@ -93,7 +94,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           );
 
           return (
-            <Form>
+            <Form onSubmit={handleSubmit}>
               <Flex>
                 {/* ASSET SELECT */}
                 <Field name="selectedAsset">
@@ -202,7 +203,13 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                 marginTop="2rem"
                 width="100%"
                 type="submit"
-                isDisabled={isValidating || !!errors.destinationAddress || isSubmitDisabled}
+                isDisabled={
+                  isValidating ||
+                  !!errors.destinationAddress ||
+                  !!errors.selectedAsset ||
+                  !!errors.inputAmount ||
+                  isSubmitDisabled
+                }
               >
                 {t('sendAssetsSubmit')}
               </Button>
