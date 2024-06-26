@@ -7,6 +7,7 @@ import {
   PaginationCount,
   Transactions,
 } from '../../../../components/pages/DAOTreasury/components/Transactions';
+import { useFormatTransfers } from '../../../../components/pages/DAOTreasury/hooks/useFormatTransfers';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
@@ -17,18 +18,19 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 export default function Treasury() {
   const {
     node: { daoName, daoAddress },
-    treasury: { assetsFungible, transfers },
+    treasury: { assetsFungible },
   } = useFractal();
   const [shownTransactions, setShownTransactions] = useState(20);
   const { t } = useTranslation('treasury');
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const openSendAsset = useFractalModal(ModalType.SEND_ASSETS);
+  const formattedTransfers = useFormatTransfers();
 
   const hasAnyBalanceOfAnyFungibleTokens =
     assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
 
   const showSendButton = canUserCreateProposal && hasAnyBalanceOfAnyFungibleTokens;
-  const totalTransfers = transfers?.count || 0;
+  const totalTransfers = formattedTransfers.length;
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
 
   return (

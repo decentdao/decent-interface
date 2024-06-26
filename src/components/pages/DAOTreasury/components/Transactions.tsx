@@ -121,7 +121,7 @@ export function Transactions({ shownTransactions }: { shownTransactions: number 
 
   const displayData = useFormatTransfers();
 
-  if (!transfers || transfers.results.length === 0) return <EmptyTransactions />;
+  if (!transfers || displayData.length === 0) return <EmptyTransactions />;
 
   return (
     <Box

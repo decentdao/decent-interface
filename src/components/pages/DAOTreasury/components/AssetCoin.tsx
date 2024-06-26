@@ -1,8 +1,8 @@
 import { Divider, HStack, Flex, Tooltip, Text, Image, Box } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { TokenBalance } from '../../../../types';
+import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
 import { formatPercentage, formatUSD, formatCoin } from '../../../../utils/numberFormats';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
 
@@ -49,6 +49,10 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
     node: { daoAddress },
     treasury: { totalUsdValue },
   } = useFractal();
+
+  const isNativeCoin =
+    asset.tokenAddress.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase() ||
+    asset.nativeToken;
   return (
     <Flex
       my="0.5rem"
@@ -75,8 +79,8 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
           textStyle="body-base"
           padding={0}
           borderWidth={0}
-          value={asset.tokenAddress === zeroAddress ? daoAddress : asset.tokenAddress}
-          type="token"
+          value={isNativeCoin ? daoAddress : asset.tokenAddress}
+          type={isNativeCoin ? 'address' : 'token'}
           wordBreak="break-word"
         >
           {asset.symbol}
@@ -114,14 +118,15 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
           </Text>
         )}
       </Flex>
-      {asset.usdValue && (
-        <Flex
-          w="45%"
-          alignItems="flex-start"
-        >
+
+      <Flex
+        w="45%"
+        alignItems="flex-start"
+      >
+        {asset.usdValue && (
           <Text>{totalUsdValue > 0 && formatPercentage(asset.usdValue, totalUsdValue)}</Text>
-        </Flex>
-      )}
+        )}
+      </Flex>
     </Flex>
   );
 }
