@@ -48,9 +48,11 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         balance: Yup.string().required(),
       })
       .required(),
-    inputAmount: Yup.object().shape({
-      value: Yup.string().required(),
-    }).required(),
+    inputAmount: Yup.object()
+      .shape({
+        value: Yup.string().required(),
+      })
+      .required(),
   });
 
   const handleSendAssetsSubmit = async (values: SendAssetsFormValues) => {
