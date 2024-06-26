@@ -52,9 +52,13 @@ const getDAOName = async ({
   }
 
   if (publicClient.chain) {
-    const demo = demoData[publicClient.chain.id][address];
-    if (demo && demo.name) {
-      return demo.name;
+    try {
+      const demo = demoData[publicClient.chain.id][address];
+      if (demo && demo.name) {
+        return demo.name;
+      }
+    } catch (e) {
+      // Ignore
     }
   }
 
