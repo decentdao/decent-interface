@@ -1,4 +1,6 @@
 {
   "roles": "Roles",
-  "noRoles": "You haven’t added any Roles yet. Create one above."
+  "noRoles": "You haven’t added any Roles yet. Create one above.",
+  "unassigned": "Unassigned",
+  "after": "after"
 }

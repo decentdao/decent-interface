@@ -1,5 +1,6 @@
 import { Box, Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { zeroAddress } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
 import { Card } from '../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
@@ -33,7 +34,7 @@ function Roles() {
         </Card>
       )}
       {hatsTree === null && (
-        <Card>
+        <Card my="0.5rem">
           <Text
             textStyle="body-base"
             textAlign="center"
@@ -47,11 +48,41 @@ function Roles() {
       <Show above="md">{/* Table */}</Show>
       <Show below="md">
         {/* Role admin not set */}
-        <RoleCard />
-        {/* Role admin set */}
-        <RoleCard />
+        <RoleCard
+          roleName="Admin"
+          wearerAddress={undefined}
+        />
         {/* Role admin set with steams */}
-        <RoleCard />
+        <RoleCard
+          roleName="CEO"
+          wearerAddress={zeroAddress}
+          payrollData={{
+            payrollAmount: '1000',
+            // ? How is this formatted when received
+            payrollSchedule: 'mo',
+            // ? What asset data is available from Sablier
+            asset: {
+              symbol: 'USDC',
+              name: 'USDC Stablecoin',
+              iconUri:
+                'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
+              address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+            },
+          }}
+          vestingData={{
+            vestingAmount: '1000',
+            // ? How is this formatted when received
+            vestingSchedule: '1yr',
+            // ? What asset data is available from Sablier
+            asset: {
+              symbol: 'USDC',
+              name: 'USDC Stablecoin',
+              iconUri:
+                'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
+              address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+            },
+          }}
+        />
       </Show>
       {/* )} */}
     </Box>
