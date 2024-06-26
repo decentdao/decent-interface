@@ -74,13 +74,15 @@ export default async function getTokenBalancesWithPrices(request: Request) {
           address: addressParam,
         });
 
-        mappedTokensData = tokensResponse.result.map(
-          tokenBalance =>
-            ({
-              ...camelCaseKeys(tokenBalance.toJSON()),
-              decimals: Number(tokenBalance.decimals),
-            }) as unknown as TokenBalance,
-        );
+        mappedTokensData = tokensResponse.result
+          .filter(tokenBalance => tokenBalance.balance.value.toBigInt() > 0n)
+          .map(
+            tokenBalance =>
+              ({
+                ...camelCaseKeys(tokenBalance.toJSON()),
+                decimals: Number(tokenBalance.decimals),
+              }) as unknown as TokenBalance,
+          );
         tokensFetched = true;
       } catch (e) {
         console.error('Unexpected error while fetching address token balances', e);

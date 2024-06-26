@@ -1,18 +1,18 @@
-import Azorius from '@fractal-framework/fractal-contracts/deployments/polygon/Azorius.json';
-import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/polygon/AzoriusFreezeGuard.json';
-import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/polygon/ERC20Claim.json';
-import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/ERC20FreezeVoting.json';
-import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/ERC721FreezeVoting.json';
-import FractalModule from '@fractal-framework/fractal-contracts/deployments/polygon/FractalModule.json';
-import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/polygon/FractalRegistry.json';
-import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/polygon/KeyValuePairs.json';
-import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/polygon/LinearERC20Voting.json';
-import LinearVotingERC721 from '@fractal-framework/fractal-contracts/deployments/polygon/LinearERC721Voting.json';
-import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/polygon/ModuleProxyFactory.json';
-import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/polygon/MultisigFreezeGuard.json';
-import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/MultisigFreezeVoting.json';
-import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/polygon/VotesERC20.json';
-import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/polygon/VotesERC20Wrapper.json';
+import Azorius from '@fractal-framework/fractal-contracts/deployments/polygon/Azorius.json' assert { type: 'json' };
+import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/polygon/AzoriusFreezeGuard.json' assert { type: 'json' };
+import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/polygon/ERC20Claim.json' assert { type: 'json' };
+import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/ERC20FreezeVoting.json' assert { type: 'json' };
+import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/ERC721FreezeVoting.json' assert { type: 'json' };
+import FractalModule from '@fractal-framework/fractal-contracts/deployments/polygon/FractalModule.json' assert { type: 'json' };
+import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/polygon/FractalRegistry.json' assert { type: 'json' };
+import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/polygon/KeyValuePairs.json' assert { type: 'json' };
+import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/polygon/LinearERC20Voting.json' assert { type: 'json' };
+import LinearVotingERC721 from '@fractal-framework/fractal-contracts/deployments/polygon/LinearERC721Voting.json' assert { type: 'json' };
+import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/polygon/ModuleProxyFactory.json' assert { type: 'json' };
+import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/polygon/MultisigFreezeGuard.json' assert { type: 'json' };
+import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/MultisigFreezeVoting.json' assert { type: 'json' };
+import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/polygon/VotesERC20.json' assert { type: 'json' };
+import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/polygon/VotesERC20Wrapper.json' assert { type: 'json' };
 import {
   getProxyFactoryDeployment,
   getMultiSendCallOnlyDeployment,
@@ -29,10 +29,10 @@ export const polygonConfig: NetworkConfig = {
   order: 20,
   chain: polygon,
   moralisSupported: true,
-  rpcEndpoint: `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_POLYGON_API_KEY}`,
+  rpcEndpoint: `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_POLYGON_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',
-  etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
+  etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
   addressPrefix: 'matic',
   nativeTokenIcon: '/images/coin-icon-pol.svg',
   subgraph: {

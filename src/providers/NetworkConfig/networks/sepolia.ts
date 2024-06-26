@@ -1,18 +1,18 @@
-import Azorius from '@fractal-framework/fractal-contracts/deployments/sepolia/Azorius.json';
-import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/sepolia/AzoriusFreezeGuard.json';
-import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC20Claim.json';
-import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC20FreezeVoting.json';
-import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC721FreezeVoting.json';
-import FractalModule from '@fractal-framework/fractal-contracts/deployments/sepolia/FractalModule.json';
-import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/sepolia/FractalRegistry.json';
-import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/sepolia/KeyValuePairs.json';
-import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/sepolia/LinearERC20Voting.json';
-import LinearVotingERC721 from '@fractal-framework/fractal-contracts/deployments/sepolia/LinearERC721Voting.json';
-import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/sepolia/ModuleProxyFactory.json';
-import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/sepolia/MultisigFreezeGuard.json';
-import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/MultisigFreezeVoting.json';
-import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/sepolia/VotesERC20.json';
-import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/sepolia/VotesERC20Wrapper.json';
+import Azorius from '@fractal-framework/fractal-contracts/deployments/sepolia/Azorius.json' assert { type: 'json' };
+import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/sepolia/AzoriusFreezeGuard.json' assert { type: 'json' };
+import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC20Claim.json' assert { type: 'json' };
+import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC20FreezeVoting.json' assert { type: 'json' };
+import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC721FreezeVoting.json' assert { type: 'json' };
+import FractalModule from '@fractal-framework/fractal-contracts/deployments/sepolia/FractalModule.json' assert { type: 'json' };
+import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/sepolia/FractalRegistry.json' assert { type: 'json' };
+import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/sepolia/KeyValuePairs.json' assert { type: 'json' };
+import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/sepolia/LinearERC20Voting.json' assert { type: 'json' };
+import LinearVotingERC721 from '@fractal-framework/fractal-contracts/deployments/sepolia/LinearERC721Voting.json' assert { type: 'json' };
+import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/sepolia/ModuleProxyFactory.json' assert { type: 'json' };
+import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/sepolia/MultisigFreezeGuard.json' assert { type: 'json' };
+import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/MultisigFreezeVoting.json' assert { type: 'json' };
+import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/sepolia/VotesERC20.json' assert { type: 'json' };
+import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/sepolia/VotesERC20Wrapper.json' assert { type: 'json' };
 import {
   getMultiSendCallOnlyDeployment,
   getProxyFactoryDeployment,
@@ -29,10 +29,10 @@ export const sepoliaConfig: NetworkConfig = {
   order: 30,
   chain: sepolia,
   moralisSupported: true,
-  rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
+  rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.etherscan.io',
-  etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
+  etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
   addressPrefix: 'sep',
   nativeTokenIcon: '/images/coin-icon-sep.svg',
   subgraph: {
