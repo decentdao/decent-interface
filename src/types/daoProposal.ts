@@ -1,4 +1,4 @@
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
+import { SafeMultisigConfirmationResponse } from '@safe-global/safe-core-sdk-types';
 import { Address, Hex } from 'viem';
 import { GovernanceActivity } from './fractal';
 import { CreateProposalMetadata } from './proposalBuilder';
@@ -35,7 +35,8 @@ export interface AzoriusProposal extends GovernanceActivity {
 }
 
 export interface MultisigProposal extends GovernanceActivity {
-  confirmations: SafeMultisigTransactionWithTransfersResponse['confirmations'];
+  // @todo Is (Should) `confirmations` (be) truly optional? Need to confirm explicitly.
+  confirmations?: SafeMultisigConfirmationResponse[];
   signersThreshold?: number;
   multisigRejectedProposalNumber?: string;
   nonce?: number;
