@@ -38,10 +38,10 @@ export function TxDetails({ proposal }: { proposal: MultisigProposal }) {
           property={t('proposalId')}
           value={createAccountSubstring(proposal.proposalId)}
         />
-          <InfoRow
-            property={t('txDetailsSignersCurrent')}
-            value={proposal.confirmations?.length.toString() || '0'}
-          />
+        <InfoRow
+          property={t('txDetailsSignersCurrent')}
+          value={proposal.confirmations?.length.toString() || '0'}
+        />
         <InfoRow
           property={t('txDetailsSignersRequired')}
           value={proposal.signersThreshold?.toString()}
