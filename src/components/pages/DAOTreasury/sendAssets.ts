@@ -1,6 +1,7 @@
 import { isAddress, getAddress, Hex, encodeFunctionData, erc20Abi } from 'viem';
 import { SubmitProposalFunction } from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData, TokenBalance } from '../../../types';
+import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import { formatCoin } from '../../../utils/numberFormats';
 
 export const sendAssets = async ({
@@ -18,7 +19,10 @@ export const sendAssets = async ({
   submitProposal: SubmitProposalFunction;
   t: any;
 }) => {
-  const isEth = !asset.tokenAddress;
+  const isEth =
+    !asset.tokenAddress ||
+    asset.nativeToken ||
+    asset.tokenAddress.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase();
   const description = formatCoin(transferAmount, false, asset.decimals, asset.symbol);
 
   let calldatas = ['0x' as Hex];
