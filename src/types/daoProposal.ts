@@ -35,6 +35,7 @@ export interface AzoriusProposal extends GovernanceActivity {
 }
 
 export interface MultisigProposal extends GovernanceActivity {
+  // @todo Is (Should) `confirmations` (be) truly optional? Need to confirm explicitly.
   confirmations?: SafeMultisigConfirmationResponse[];
   signersThreshold?: number;
   multisigRejectedProposalNumber?: string;
