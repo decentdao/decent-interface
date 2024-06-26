@@ -50,7 +50,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
       .required(),
     inputAmount: Yup.object().shape({
       value: Yup.string().required(),
-    }),
+    }).required(),
   });
 
   const handleSendAssetsSubmit = async (values: SendAssetsFormValues) => {
