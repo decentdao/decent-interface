@@ -1,41 +1,14 @@
 import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { Pencil } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Address, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
-
-// @todo I imagine this interface can eventually be shared between the RoleCard and this component, for now keeping seperated
-export type RoleViewMode = 'edit' | 'view';
-export interface RoleRowProps {
-  mode?: RoleViewMode;
-  roleName: string;
-  wearerAddress: Address | undefined;
-  vestingData?: {
-    vestingSchedule: string;
-    vestingAmount: string;
-    asset: {
-      address: string;
-      symbol: string;
-      name: string;
-      iconUri: string;
-    };
-  };
-  payrollData?: {
-    payrollSchedule: string;
-    payrollAmount: string;
-    asset: {
-      address: string;
-      symbol: string;
-      name: string;
-      iconUri: string;
-    };
-  };
-}
+import { RoleProps, RoleViewMode } from './types';
 
 export function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -68,7 +41,7 @@ export function RolesRow({
   payrollData,
   vestingData,
   mode = 'view',
-}: RoleRowProps) {
+}: RoleProps) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
     address: wearerAddress || zeroAddress,

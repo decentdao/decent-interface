@@ -1,6 +1,6 @@
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import { Address, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -8,34 +8,10 @@ import { getChainIdFromPrefix } from '../../../utils/url';
 import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
-
-export interface RoleCardProps {
-  roleName: string;
-  wearerAddress: Address | undefined;
-  vestingData?: {
-    vestingSchedule: string;
-    vestingAmount: string;
-    asset: {
-      address: string;
-      symbol: string;
-      name: string;
-      iconUri: string;
-    };
-  };
-  payrollData?: {
-    payrollSchedule: string;
-    payrollAmount: string;
-    asset: {
-      address: string;
-      symbol: string;
-      name: string;
-      iconUri: string;
-    };
-  };
-}
+import { RoleProps } from './types';
 
 // @todo update this component with Edit Page Badges
-export function RoleCard({ roleName, wearerAddress, payrollData, vestingData }: RoleCardProps) {
+export function RoleCard({ roleName, wearerAddress, payrollData, vestingData }: RoleProps) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
     address: wearerAddress || zeroAddress,
