@@ -7,5 +7,6 @@
   "after": "after",
   "payroll": "Payroll",
   "vesting": "Vesting",
-  "editRoles": "Edit Roles"
+  "editRoles": "Edit Roles",
+  "addRole": "Add Role"
 }
