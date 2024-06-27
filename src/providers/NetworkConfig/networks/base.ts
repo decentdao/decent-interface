@@ -1,18 +1,18 @@
-import Azorius from '@fractal-framework/fractal-contracts/deployments/base/Azorius.json';
-import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/base/AzoriusFreezeGuard.json';
-import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/base/ERC20Claim.json';
-import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/base/ERC20FreezeVoting.json';
-import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/base/ERC721FreezeVoting.json';
-import FractalModule from '@fractal-framework/fractal-contracts/deployments/base/FractalModule.json';
-import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/base/FractalRegistry.json';
-import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/base/KeyValuePairs.json';
-import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/base/LinearERC20Voting.json';
-import LinearVotingERC721 from '@fractal-framework/fractal-contracts/deployments/base/LinearERC721Voting.json';
-import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/base/ModuleProxyFactory.json';
-import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/base/MultisigFreezeGuard.json';
-import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/base/MultisigFreezeVoting.json';
-import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/base/VotesERC20.json';
-import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/base/VotesERC20Wrapper.json';
+import Azorius from '@fractal-framework/fractal-contracts/deployments/base/Azorius.json' assert { type: 'json' };
+import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/base/AzoriusFreezeGuard.json' assert { type: 'json' };
+import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/base/ERC20Claim.json' assert { type: 'json' };
+import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/base/ERC20FreezeVoting.json' assert { type: 'json' };
+import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/base/ERC721FreezeVoting.json' assert { type: 'json' };
+import FractalModule from '@fractal-framework/fractal-contracts/deployments/base/FractalModule.json' assert { type: 'json' };
+import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/base/FractalRegistry.json' assert { type: 'json' };
+import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/base/KeyValuePairs.json' assert { type: 'json' };
+import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/base/LinearERC20Voting.json' assert { type: 'json' };
+import LinearVotingERC721 from '@fractal-framework/fractal-contracts/deployments/base/LinearERC721Voting.json' assert { type: 'json' };
+import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/base/ModuleProxyFactory.json' assert { type: 'json' };
+import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/base/MultisigFreezeGuard.json' assert { type: 'json' };
+import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/base/MultisigFreezeVoting.json' assert { type: 'json' };
+import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/base/VotesERC20.json' assert { type: 'json' };
+import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/base/VotesERC20Wrapper.json' assert { type: 'json' };
 import {
   getProxyFactoryDeployment,
   getMultiSendCallOnlyDeployment,
@@ -28,10 +28,11 @@ const SAFE_VERSION = '1.3.0';
 export const baseConfig: NetworkConfig = {
   order: 10,
   chain: base,
-  rpcEndpoint: `https://base-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_BASE_API_KEY}`,
+  moralisSupported: true,
+  rpcEndpoint: `https://base-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_BASE_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-base.safe.global',
   etherscanBaseURL: 'https://basescan.org/',
-  etherscanAPIUrl: `https://api.basescan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_BASE_API_KEY}`,
+  etherscanAPIUrl: `https://api.basescan.com/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_BASE_API_KEY}`,
   addressPrefix: 'base',
   nativeTokenIcon: '/images/coin-icon-base.svg',
   subgraph: {

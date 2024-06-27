@@ -14,3 +14,5 @@ export const decodePrefixedAddress = (address: string) => {
 export const encodePrefixedAddress = (address: Address, network: string) => {
   return `${network}:${address}`;
 };
+
+export const MOCK_MORALIS_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';

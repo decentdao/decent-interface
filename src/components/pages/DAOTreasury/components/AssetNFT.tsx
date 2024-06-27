@@ -1,7 +1,7 @@
 import { Divider, HStack, Flex, Text, Image, Box } from '@chakra-ui/react';
-import { SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { useTranslation } from 'react-i18next';
 import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
+import { NFTBalance } from '../../../../types';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
 
 export function NFTHeader() {
@@ -27,10 +27,12 @@ export function NFTHeader() {
   );
 }
 
-export function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLast: boolean }) {
-  const image = asset.imageUri ? asset.imageUri : asset.logoUri;
-  const name = asset.name ? asset.name : asset.tokenName;
-  const id = asset.id.toString();
+export function NFTRow({ asset, isLast }: { asset: NFTBalance; isLast: boolean }) {
+  const image = asset.media?.mediaCollection
+    ? asset.media?.mediaCollection.medium.url
+    : asset.media?.originalMediaUrl;
+  const name = asset.name;
+  const id = asset.tokenId.toString();
 
   return (
     <HStack
@@ -42,7 +44,7 @@ export function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLa
       <Flex width="15%">
         <EtherscanLink
           type="token"
-          value={asset.address}
+          value={asset.tokenAddress}
           secondaryValue={id}
           data-testid="link-nft-image"
           padding={0}
@@ -60,7 +62,7 @@ export function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLa
       <Flex width="45%">
         <EtherscanLink
           type="address"
-          value={asset.address}
+          value={asset.tokenAddress}
           _hover={{ bg: 'transparent' }}
           color="white-0"
           textStyle="body-base"
@@ -72,7 +74,7 @@ export function NFTRow({ asset, isLast }: { asset: SafeCollectibleResponse; isLa
       <Flex width="40%">
         <EtherscanLink
           type="token"
-          value={asset.address}
+          value={asset.tokenAddress}
           secondaryValue={id}
           color="white-0"
           textStyle="body-base"

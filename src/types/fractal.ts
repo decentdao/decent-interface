@@ -17,12 +17,12 @@ import {
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
 import {
-  SafeMultisigTransactionWithTransfersResponse,
+  SafeInfoResponse,
   SafeModuleTransactionWithTransfersResponse,
+  SafeMultisigTransactionWithTransfersResponse,
   EthereumTxWithTransfersResponse,
-  SafeBalanceResponse,
-  SafeCollectibleResponse,
-} from '@safe-global/safe-service-client';
+  AllTransactionsListResponse,
+} from '@safe-global/api-kit';
 import { Dispatch } from 'react';
 import { Address } from 'viem';
 import { MultiSend } from '../assets/typechain-types/usul';
@@ -37,9 +37,8 @@ import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
-import { TreasuryActivity } from './daoTreasury';
+import { NFTBalance, TokenBalance, TreasuryActivity } from './daoTreasury';
 import { ProposalTemplate } from './proposalBuilder';
-import { AllTransfersListResponse, SafeInfoResponseWithGuard } from './safeGlobal';
 import { BIFormattedPair } from './votingFungibleToken';
 /**
  * The possible states of a DAO proposal, for both Token Voting (Azorius) and Multisignature
@@ -214,7 +213,7 @@ export interface Fractal {
   node: FractalNode;
   guard: FreezeGuard;
   governance: FractalGovernance;
-  treasury: FractalTreasury;
+  treasury: DecentTreasury;
   governanceContracts: FractalGovernanceContracts;
   guardContracts: FractalGuardContracts;
   readOnly: ReadOnlyState;
@@ -230,10 +229,12 @@ export interface FractalGovernanceContracts {
   isLoaded: boolean;
 }
 
+export type SafeWithNextNonce = SafeInfoResponse & { nextNonce: number };
+
 export interface FractalNode {
   daoName: string | null;
   daoAddress: Address | null;
-  safe: SafeInfoResponseWithGuard | null;
+  safe: SafeWithNextNonce | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
   isModulesLoaded?: boolean;
@@ -275,10 +276,11 @@ export interface FreezeGuard {
   userHasVotes: boolean;
 }
 
-export interface FractalTreasury {
-  assetsFungible: SafeBalanceResponse[];
-  assetsNonFungible: SafeCollectibleResponse[];
-  transfers?: AllTransfersListResponse;
+export interface DecentTreasury {
+  totalUsdValue: number;
+  assetsFungible: TokenBalance[];
+  assetsNonFungible: NFTBalance[];
+  transfers?: AllTransactionsListResponse;
 }
 
 export type FractalGovernance = AzoriusGovernance | DecentGovernance | SafeMultisigGovernance;
@@ -294,13 +296,6 @@ export interface DecentGovernance extends AzoriusGovernance {
 }
 export interface SafeMultisigGovernance extends Governance {}
 
-// @todo update FractalContracts to just store addresses in the store
-// export interface Governance {
-//   type?: GovernanceType;
-//   proposals: FractalProposal[] | null;
-//   proposalTemplates?: ProposalTemplate[] | null;
-//   tokenClaimContractAddress?: string;
-// }
 export interface Governance {
   type?: GovernanceType;
   loadingProposals: boolean;
