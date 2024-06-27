@@ -120,7 +120,7 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
       </Flex>
 
       <Flex
-        w="45%"
+        w="25%"
         alignItems="flex-start"
       >
         {asset.usdValue && (
