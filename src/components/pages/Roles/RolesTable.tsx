@@ -1,4 +1,5 @@
-import { Box, Flex, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { Pencil } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Address, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
@@ -9,7 +10,9 @@ import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 
 // @todo I imagine this interface can eventually be shared between the RoleCard and this component, for now keeping seperated
+export type RoleViewMode = 'edit' | 'view';
 export interface RoleRowProps {
+  mode?: RoleViewMode;
   roleName: string;
   wearerAddress: Address | undefined;
   vestingData?: {
@@ -59,7 +62,13 @@ export function RolesHeader() {
   );
 }
 
-export function RolesRow({ roleName, wearerAddress, payrollData, vestingData }: RoleRowProps) {
+export function RolesRow({
+  roleName,
+  wearerAddress,
+  payrollData,
+  vestingData,
+  mode = 'view',
+}: RoleRowProps) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
     address: wearerAddress || zeroAddress,
@@ -72,18 +81,36 @@ export function RolesRow({ roleName, wearerAddress, payrollData, vestingData }: 
       minHeight="10rem"
       sx={{
         td: { padding: '0.75rem', height: '4rem' },
+        '&:hover': {
+          '.edit-role-icon': { opacity: 1 },
+        },
       }}
       _hover={{ bg: 'neutral-3' }}
       _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
     >
       <Td>
-        <Text
-          textStyle="body-base"
-          color="lilac-0"
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
         >
-          {roleName}
-        </Text>
+          <Text
+            textStyle="body-base"
+            color="lilac-0"
+          >
+            {roleName}
+          </Text>
+          {mode === 'edit' && (
+            <Icon
+              className="edit-role-icon"
+              as={Pencil}
+              color="white-0"
+              boxSize="1rem"
+              opacity={0}
+              transition="opacity 0.3s ease-out"
+            />
+          )}
+        </Flex>
       </Td>
       <Td>
         <Flex alignItems="center">
@@ -208,7 +235,7 @@ export function RolesRow({ roleName, wearerAddress, payrollData, vestingData }: 
   );
 }
 
-export function RolesTable() {
+export function RolesTable({ mode = 'view' }: { mode?: RoleViewMode }) {
   return (
     <Box
       overflow="hidden"
@@ -232,10 +259,12 @@ export function RolesTable() {
           }}
         >
           <RolesRow
+            mode={mode}
             roleName="Admin"
             wearerAddress={zeroAddress}
           />
           <RolesRow
+            mode={mode}
             roleName="CEO"
             wearerAddress={zeroAddress}
             payrollData={{
