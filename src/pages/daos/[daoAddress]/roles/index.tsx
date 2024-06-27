@@ -3,6 +3,7 @@ import { Pencil } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
+import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
 import { Card } from '../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
@@ -52,7 +53,9 @@ function Roles() {
         </Card>
       )}
       {/* {hatsTree && ( */}
-      <Show above="md">{/* Table */}</Show>
+      <Show above="md">
+        <RolesTable />
+      </Show>
       <Show below="md">
         {/* Role admin not set */}
         <RoleCard
