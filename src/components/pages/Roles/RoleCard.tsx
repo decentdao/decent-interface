@@ -92,6 +92,7 @@ export function RoleCard({ roleName, wearerAddress, payrollData, vestingData }: 
               textStyle="body-base"
               color="white-0"
               gap="0.25rem"
+              alignItems="center"
               my="0.5rem"
             >
               <Image
@@ -135,6 +136,7 @@ export function RoleCard({ roleName, wearerAddress, payrollData, vestingData }: 
               textStyle="body-base"
               color="white-0"
               gap="0.25rem"
+              alignItems="center"
               my="0.5rem"
             >
               <Image
