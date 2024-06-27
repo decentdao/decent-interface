@@ -57,7 +57,7 @@ export function RoleCard({ roleName, wearerAddress, payrollData, vestingData }: 
             boxSize="3rem"
             borderRadius="100%"
             bg="white-alpha-04"
-          ></Box>
+          />
         )}
         <Flex
           direction="column"

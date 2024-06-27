@@ -66,7 +66,7 @@ export function RolesRow({ roleName, wearerAddress, payrollData, vestingData }: 
     chainId: getChainIdFromPrefix(addressPrefix),
   });
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
-  const { t } = useTranslation(['roles']);
+  const { t } = useTranslation(['roles', 'daoCreate']);
   return (
     <Tr
       minHeight="10rem"
@@ -97,8 +97,8 @@ export function RolesRow({ roleName, wearerAddress, payrollData, vestingData }: 
             <Box
               boxSize="3rem"
               borderRadius="100%"
-              bg="rgba(255, 255, 255, 0.04)"
-            ></Box>
+              bg="white-alpha-04"
+            />
           )}
           <Flex
             direction="column"
@@ -118,9 +118,7 @@ export function RolesRow({ roleName, wearerAddress, payrollData, vestingData }: 
           {payrollData ? (
             <Box>
               <Flex
-                textStyle="body-base"
                 alignItems="center"
-                color="white-0"
                 gap="0.25rem"
                 my="0.5rem"
               >
@@ -144,7 +142,10 @@ export function RolesRow({ roleName, wearerAddress, payrollData, vestingData }: 
                 >
                   {payrollData.asset.symbol}
                 </EtherscanLink>
-                <Text>
+                <Text
+                  color="white-0"
+                  textStyle="body-base"
+                >
                   {'/'} {payrollData.payrollSchedule}
                 </Text>
               </Flex>
@@ -154,13 +155,12 @@ export function RolesRow({ roleName, wearerAddress, payrollData, vestingData }: 
               textStyle="body-base"
               color="neutral-6"
             >
-              n/a
+              {t('n/a')}
             </Text>
           )}
         </Flex>
       </Td>
       <Td>
-        {' '}
         {vestingData ? (
           <Box>
             <Flex
@@ -200,7 +200,7 @@ export function RolesRow({ roleName, wearerAddress, payrollData, vestingData }: 
             textStyle="body-base"
             color="neutral-6"
           >
-            n/a
+            {t('n/a')}
           </Text>
         )}
       </Td>
