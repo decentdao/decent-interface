@@ -34,6 +34,7 @@ export interface RoleCardProps {
   };
 }
 
+// @todo update this component with Edit Page Badges
 export function RoleCard({ roleName, wearerAddress, payrollData, vestingData }: RoleCardProps) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
@@ -55,7 +56,7 @@ export function RoleCard({ roleName, wearerAddress, payrollData, vestingData }: 
           <Box
             boxSize="3rem"
             borderRadius="100%"
-            bg="rgba(255, 255, 255, 0.04)"
+            bg="white-alpha-04"
           ></Box>
         )}
         <Flex
@@ -86,7 +87,7 @@ export function RoleCard({ roleName, wearerAddress, payrollData, vestingData }: 
               textStyle="button-small"
               color="neutral-7"
             >
-              Payroll
+              {t('payroll')}
             </Text>
             <Flex
               textStyle="body-base"
@@ -130,7 +131,7 @@ export function RoleCard({ roleName, wearerAddress, payrollData, vestingData }: 
               textStyle="button-small"
               color="neutral-7"
             >
-              Vesting
+              {t('vesting')}
             </Text>
             <Flex
               textStyle="body-base"

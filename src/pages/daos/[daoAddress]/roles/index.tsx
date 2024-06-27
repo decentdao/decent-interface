@@ -57,20 +57,18 @@ function Roles() {
         <RolesTable />
       </Show>
       <Show below="md">
-        {/* Role admin not set */}
+        {/* (Mocked) Role admin not set */}
         <RoleCard
           roleName="Admin"
           wearerAddress={undefined}
         />
-        {/* Role admin set with steams */}
+        {/* (Mocked) Role set with streams */}
         <RoleCard
           roleName="CEO"
           wearerAddress={zeroAddress}
           payrollData={{
             payrollAmount: '1000',
-            // ? How is this formatted when received
             payrollSchedule: 'mo',
-            // ? What asset data is available from Sablier
             asset: {
               symbol: 'USDC',
               name: 'USDC Stablecoin',
@@ -81,9 +79,22 @@ function Roles() {
           }}
           vestingData={{
             vestingAmount: '1000',
-            // ? How is this formatted when received
             vestingSchedule: '1yr',
-            // ? What asset data is available from Sablier
+            asset: {
+              symbol: 'USDC',
+              name: 'USDC Stablecoin',
+              iconUri:
+                'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
+              address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
+            },
+          }}
+        />
+        <RoleCard
+          roleName="Code Reviewer"
+          wearerAddress={zeroAddress}
+          payrollData={{
+            payrollAmount: '1',
+            payrollSchedule: 'mo',
             asset: {
               symbol: 'USDC',
               name: 'USDC Stablecoin',

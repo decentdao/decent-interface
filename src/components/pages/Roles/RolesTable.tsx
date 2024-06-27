@@ -35,6 +35,7 @@ export interface RoleRowProps {
 }
 
 export function RolesHeader() {
+  const { t } = useTranslation(['roles']);
   return (
     <Thead
       sx={{
@@ -48,11 +49,11 @@ export function RolesHeader() {
         textStyle="label-base"
         color="neutral-7"
       >
-        <Th>Role</Th>
-        <Th>Member</Th>
-        {/* @todo These values are viewed only by admin */}
-        <Th>Payroll</Th>
-        <Th>Vesting</Th>
+        <Th>{t('role')}</Th>
+        <Th>{t('member')}</Th>
+        {/* @todo These values are viewed only by admin? */}
+        <Th>{t('payroll')}</Th>
+        <Th>{t('vesting')}</Th>
       </Tr>
     </Thead>
   );
@@ -239,9 +240,7 @@ export function RolesTable() {
             wearerAddress={zeroAddress}
             payrollData={{
               payrollAmount: '1000',
-              // ? How is this formatted when received
               payrollSchedule: 'mo',
-              // ? What asset data is available from Sablier
               asset: {
                 symbol: 'USDC',
                 name: 'USDC Stablecoin',
@@ -252,9 +251,7 @@ export function RolesTable() {
             }}
             vestingData={{
               vestingAmount: '1000',
-              // ? How is this formatted when received
               vestingSchedule: '1yr',
-              // ? What asset data is available from Sablier
               asset: {
                 symbol: 'USDC',
                 name: 'USDC Stablecoin',
