@@ -25,7 +25,7 @@ function Roles() {
           },
         ]}
         buttonVariant="secondary"
-        buttonText="Edit Roles"
+        buttonText={t('editRoles')}
         buttonProps={{
           leftIcon: <Pencil />,
         }}
