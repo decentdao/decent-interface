@@ -51,7 +51,7 @@ const getDAOName = async ({
     return latestEvent.args.daoName;
   }
 
-  if (publicClient.chain) {
+  if (publicClient.chain && demoData[publicClient.chain.id]) {
     const demo = demoData[publicClient.chain.id][address];
     if (demo && demo.name) {
       return demo.name;
