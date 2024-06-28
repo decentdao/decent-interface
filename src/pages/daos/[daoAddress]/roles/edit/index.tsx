@@ -55,7 +55,6 @@ function RolesEdit() {
           </Text>
         </Card>
       )}
-      {/* {hatsTree && ( */}
       <Show above="md">
         <RolesTable mode="edit" />
       </Show>
@@ -84,7 +83,6 @@ function RolesEdit() {
           mode="edit"
         />
       </Show>
-      {/* )} */}
     </Box>
   );
 }

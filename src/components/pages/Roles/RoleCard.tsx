@@ -28,7 +28,7 @@ export function RoleCard({
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles']);
   return (
-    <Card mb="0.5rem">
+    <Card mb="1rem">
       <Flex justifyContent="space-between">
         <Flex alignItems="center">
           {wearerAddress ? (
