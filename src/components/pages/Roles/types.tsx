@@ -4,6 +4,7 @@ export type RoleViewMode = 'edit' | 'view';
 export interface RoleProps {
   mode?: RoleViewMode;
   editStatus?: EditBadgeStatus;
+  handleRoleClick: (roleIndex: number) => void;
   roleName: string;
   wearerAddress: Address | undefined;
   vestingData?: {

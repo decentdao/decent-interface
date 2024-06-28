@@ -22,6 +22,11 @@ function Roles() {
   const navigate = useNavigate();
 
   if (!daoAddress) return null;
+  const handleRoleClick = (roleIndex: number) => {
+    // @todo open role details drawer
+    // For Mobile, This is a new screen
+    return roleIndex; // @todo remove this line
+  };
   return (
     <Box>
       <PageHeader
@@ -62,16 +67,18 @@ function Roles() {
         </Card>
       )}
       <Show above="md">
-        <RolesTable />
+        <RolesTable handleRoleClick={handleRoleClick}/>
       </Show>
       <Show below="md">
         <RoleCard
           roleName="Admin"
           wearerAddress={undefined}
+          handleRoleClick={handleRoleClick}
         />
         <RoleCard
           roleName="CEO"
           wearerAddress={zeroAddress}
+          handleRoleClick={handleRoleClick}
           payrollData={{
             payrollAmount: '1000',
             payrollSchedule: 'mo',
@@ -98,6 +105,7 @@ function Roles() {
         <RoleCard
           roleName="Code Reviewer"
           wearerAddress={zeroAddress}
+          handleRoleClick={handleRoleClick}
           payrollData={{
             payrollAmount: '1',
             payrollSchedule: 'mo',

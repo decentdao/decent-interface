@@ -27,7 +27,6 @@ export function RolesHeader() {
       >
         <Th>{t('role')}</Th>
         <Th>{t('member')}</Th>
-        {/* @todo These values are viewed only by admin? */}
         <Th>{t('payroll')}</Th>
         <Th>{t('vesting')}</Th>
       </Tr>
@@ -49,9 +48,9 @@ export function RolesRow({
   });
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles', 'daoCreate']);
+
   return (
     <Tr
-      minHeight="10rem"
       sx={{
         td: { padding: '0.75rem', height: '4rem' },
         '&:hover': {
@@ -208,7 +207,13 @@ export function RolesRow({
   );
 }
 
-export function RolesTable({ mode = 'view' }: { mode?: RoleViewMode }) {
+export function RolesTable({
+  mode = 'view',
+  handleRoleClick,
+}: {
+  mode?: RoleViewMode;
+  handleRoleClick: (roleIndex: number) => void;
+}) {
   return (
     <Box
       overflow="hidden"
@@ -235,17 +240,20 @@ export function RolesTable({ mode = 'view' }: { mode?: RoleViewMode }) {
             mode={mode}
             roleName="Admin"
             wearerAddress={zeroAddress}
+            handleRoleClick={handleRoleClick}
           />
           <RolesRow
             mode={mode}
             roleName="Legal Counsel"
             editStatus={EditBadgeStatus.Removed}
             wearerAddress={zeroAddress}
+            handleRoleClick={handleRoleClick}
           />
           <RolesRow
             mode={mode}
             roleName="CEO"
             wearerAddress={zeroAddress}
+            handleRoleClick={handleRoleClick}
             payrollData={{
               payrollAmount: '1000',
               payrollSchedule: 'mo',

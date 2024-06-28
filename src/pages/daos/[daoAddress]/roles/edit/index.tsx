@@ -14,6 +14,12 @@ function RolesEdit() {
   const { hatsTree } = useRolesState();
   const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
 
+  const handleRoleClick = () => {
+    // @todo open role edit details drawer
+    // For Mobile, This is a new screen
+    return;
+  };
+
   // @todo remove PageHeader for mobile?
   return (
     <Box>
@@ -56,31 +62,38 @@ function RolesEdit() {
         </Card>
       )}
       <Show above="md">
-        <RolesTable mode="edit" />
+        <RolesTable
+          mode="edit"
+          handleRoleClick={handleRoleClick}
+        />
       </Show>
       <Show below="md">
         <RoleCard
           roleName="Admin"
           wearerAddress={undefined}
           mode="edit"
+          handleRoleClick={handleRoleClick}
         />
         <RoleCard
           roleName="Legal Counsel"
           editStatus={EditBadgeStatus.Removed}
           mode="edit"
           wearerAddress={zeroAddress}
-          />
+          handleRoleClick={handleRoleClick}
+        />
         <RoleCard
           roleName="CEO"
           editStatus={EditBadgeStatus.Updated}
           wearerAddress={zeroAddress}
           mode="edit"
-          />
+          handleRoleClick={handleRoleClick}
+        />
         <RoleCard
           roleName="Code Reviewer"
           editStatus={EditBadgeStatus.New}
           wearerAddress={zeroAddress}
           mode="edit"
+          handleRoleClick={handleRoleClick}
         />
       </Show>
     </Box>
