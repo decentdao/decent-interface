@@ -39,7 +39,6 @@ function Roles() {
         buttonProps={{
           leftIcon: <Pencil />,
         }}
-        // @todo navigate to edit roles page
         buttonClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
       />
       {hatsTree === undefined && (
@@ -62,17 +61,14 @@ function Roles() {
           </Text>
         </Card>
       )}
-      {/* {hatsTree && ( */}
       <Show above="md">
         <RolesTable />
       </Show>
       <Show below="md">
-        {/* (Mocked) Role admin not set */}
         <RoleCard
           roleName="Admin"
           wearerAddress={undefined}
         />
-        {/* (Mocked) Role set with streams */}
         <RoleCard
           roleName="CEO"
           wearerAddress={zeroAddress}
@@ -115,7 +111,6 @@ function Roles() {
           }}
         />
       </Show>
-      {/* )} */}
     </Box>
   );
 }
