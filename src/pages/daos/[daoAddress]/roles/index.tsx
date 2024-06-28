@@ -67,7 +67,7 @@ function Roles() {
         </Card>
       )}
       <Show above="md">
-        <RolesTable handleRoleClick={handleRoleClick}/>
+        <RolesTable handleRoleClick={handleRoleClick} />
       </Show>
       <Show below="md">
         <RoleCard
