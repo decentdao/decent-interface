@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { RoleCard } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesTable } from '../../../../../components/pages/Roles/RolesTable';
+import { EditBadgeStatus } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
@@ -56,55 +57,31 @@ function RolesEdit() {
       )}
       {/* {hatsTree && ( */}
       <Show above="md">
-        <RolesTable mode='edit' />
+        <RolesTable mode="edit" />
       </Show>
       <Show below="md">
-        {/* (Mocked) Role admin not set */}
         <RoleCard
           roleName="Admin"
           wearerAddress={undefined}
+          mode="edit"
         />
-        {/* (Mocked) Role set with streams */}
+        <RoleCard
+          roleName="Legal Counsel"
+          editStatus={EditBadgeStatus.Removed}
+          mode="edit"
+          wearerAddress={zeroAddress}
+          />
         <RoleCard
           roleName="CEO"
+          editStatus={EditBadgeStatus.Updated}
           wearerAddress={zeroAddress}
-          payrollData={{
-            payrollAmount: '1000',
-            payrollSchedule: 'mo',
-            asset: {
-              symbol: 'USDC',
-              name: 'USDC Stablecoin',
-              iconUri:
-                'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
-              address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-            },
-          }}
-          vestingData={{
-            vestingAmount: '1000',
-            vestingSchedule: '1yr',
-            asset: {
-              symbol: 'USDC',
-              name: 'USDC Stablecoin',
-              iconUri:
-                'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
-              address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-            },
-          }}
-        />
+          mode="edit"
+          />
         <RoleCard
           roleName="Code Reviewer"
+          editStatus={EditBadgeStatus.New}
           wearerAddress={zeroAddress}
-          payrollData={{
-            payrollAmount: '1',
-            payrollSchedule: 'mo',
-            asset: {
-              symbol: 'USDC',
-              name: 'USDC Stablecoin',
-              iconUri:
-                'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
-              address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-            },
-          }}
+          mode="edit"
         />
       </Show>
       {/* )} */}
