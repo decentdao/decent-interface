@@ -8,5 +8,8 @@
   "payroll": "Payroll",
   "vesting": "Vesting",
   "editRoles": "Edit Roles",
-  "addRole": "Add Role"
+  "addRole": "Add Role",
+  "updated": "Updated",
+  "new": "New",
+  "removed": "Removed"
 }
