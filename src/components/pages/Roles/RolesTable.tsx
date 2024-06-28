@@ -8,7 +8,7 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { getChainIdFromPrefix } from '../../../utils/url';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
-import { RoleProps, RoleViewMode } from './types';
+import { EditBadgeStatus, RoleProps, RoleViewMode } from './types';
 
 export function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -234,6 +234,12 @@ export function RolesTable({ mode = 'view' }: { mode?: RoleViewMode }) {
           <RolesRow
             mode={mode}
             roleName="Admin"
+            wearerAddress={zeroAddress}
+          />
+          <RolesRow
+            mode={mode}
+            roleName="Legal Counsel"
+            editStatus={EditBadgeStatus.Removed}
             wearerAddress={zeroAddress}
           />
           <RolesRow
