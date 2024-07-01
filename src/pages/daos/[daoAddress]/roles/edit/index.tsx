@@ -1,102 +1,203 @@
-import { Box, Show, Text } from '@chakra-ui/react';
-import { Plus } from '@phosphor-icons/react';
+import { Box, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
+import { ArrowLeft, Plus } from '@phosphor-icons/react';
+import { FieldArray, Formik } from 'formik';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { RoleCard } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesTable } from '../../../../../components/pages/Roles/RolesTable';
-import { EditBadgeStatus } from '../../../../../components/pages/Roles/types';
+import RoleForm from '../../../../../components/pages/Roles/forms/RoleFormTabs';
+import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
+import { useHeaderHeight } from '../../../../../constants/common';
+import { DAO_ROUTES } from '../../../../../constants/routes';
+import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
+import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../../state/useRolesState';
 
 function RolesEdit() {
-  const { hatsTree } = useRolesState();
   const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
+  const {
+    node: { daoAddress },
+  } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
 
-  const handleRoleClick = () => {
-    // @todo open role edit details drawer
-    // For Mobile, This is a new screen
-    return;
+  const [hatIndex, setHatIndex] = useState<number>();
+  const { rolesSchema } = useRolesSchema();
+  const { hatsTree } = useRolesState();
+
+  const hats = useMemo(() => {
+    // @todo get hats from hatsTree from state
+    // @todo will need to combine with Sablier information, down the road.
+    return [
+      {
+        id: 1,
+        member: zeroAddress,
+        roleName: 'Legal Reviewer',
+        roleDescription: 'The Legal Reviewer role has...',
+      },
+      {
+        id: 2,
+        member: zeroAddress,
+        roleName: 'Marketer',
+        roleDescription: 'The Marketer role has...',
+      },
+      {
+        id: 3,
+        member: zeroAddress,
+        roleName: 'Developer',
+        roleDescription: 'The Developer role has...',
+      },
+    ];
+  }, []);
+
+  const handleRoleClick = (_hatIndex: number) => {
+    setHatIndex(_hatIndex);
   };
+  const headerHeight = useHeaderHeight();
+  if (daoAddress === null) return null;
 
-  // @todo remove PageHeader for mobile?
   return (
-    <Box>
-      <PageHeader
-        title={t('roles')}
-        breadcrumbs={[
-          {
-            terminus: t('roles', {
-              ns: 'roles',
-            }),
-            path: '',
-          },
-        ]}
-        buttonVariant="secondary"
-        buttonText={t('addRole')}
-        buttonProps={{
-          leftIcon: <Plus />,
-        }}
-        // @todo open add role drawer form
-        buttonClick={() => {}}
-      />
-      {hatsTree === undefined && (
-        <Card
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
+    <Formik<RoleFormValues>
+      initialValues={{
+        proposalMetadata: {
+          title: '',
+          description: '',
+        },
+        hats,
+      }}
+      validationSchema={rolesSchema}
+      validateOnMount
+      onSubmit={() => {
+        // @todo prepare transactions for adding/removing roles
+        // @todo submit transactions
+      }}
+    >
+      {({ handleSubmit, values }) => (
+        <form
+          onSubmit={e => {
+            e.preventDefault();
+            handleSubmit(e);
+          }}
         >
-          <BarLoader />
-        </Card>
+          <FieldArray name="hats">
+            {({ push, remove }) => (
+              <Box>
+                <PageHeader
+                  title={t('roles')}
+                  breadcrumbs={[
+                    {
+                      terminus: t('roles', {
+                        ns: 'roles',
+                      }),
+                      path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
+                    },
+                    {
+                      terminus: t('editRoles', {
+                        ns: 'roles',
+                      }),
+                      path: '',
+                    },
+                  ]}
+                  buttonVariant="secondary"
+                  buttonText={t('addRole')}
+                  buttonProps={{
+                    size: 'sm',
+                    leftIcon: <Plus />,
+                  }}
+                  buttonClick={() => {
+                    push(DEFAULT_ROLE_HAT);
+                    setHatIndex(values.hats.length);
+                  }}
+                />
+                {hatsTree === undefined && (
+                  <Card
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <BarLoader />
+                  </Card>
+                )}
+                {hatsTree === null && (
+                  <Card my="0.5rem">
+                    <Text
+                      textStyle="body-base"
+                      textAlign="center"
+                      color="white-alpha-16"
+                    >
+                      {t('noRoles')}
+                    </Text>
+                  </Card>
+                )}
+
+                <Show above="md">
+                  <RolesTable
+                    mode="edit"
+                    handleRoleClick={handleRoleClick}
+                  />
+                </Show>
+                <Show below="md">
+                  {!!hatIndex ? (
+                    <Portal>
+                      <Box
+                        position="fixed"
+                        top={headerHeight}
+                        h={`100vh`}
+                        w="full"
+                        bg="neutral-1"
+                        px="1rem"
+                      >
+                        <Flex
+                          justifyContent="space-between"
+                          alignItems="center"
+                          my="1.75rem"
+                        >
+                          <Flex
+                            gap="0.5rem"
+                            alignItems="center"
+                            aria-label={t('editRoles')}
+                            onClick={() => {
+                              remove(hatIndex);
+                              setHatIndex(undefined);
+                            }}
+                          >
+                            <Icon
+                              as={ArrowLeft}
+                              boxSize="1.5rem"
+                            />
+                            <Text textStyle="display-lg">{t('editRoles')}</Text>
+                          </Flex>
+                        </Flex>
+
+                        <RoleForm
+                          hatIndex={hatIndex}
+                          existingRoleHat={hats.find(hat => hat.id === values.hats[hatIndex].id)}
+                        />
+                      </Box>
+                    </Portal>
+                  ) : (
+                    values.hats.map((hat, index) => (
+                      <RoleCard
+                        key={index}
+                        hatId={hat.id}
+                        roleName={hat.roleName}
+                        wearerAddress={hat.member}
+                        mode="edit"
+                        handleRoleClick={() => handleRoleClick(index)}
+                      />
+                    ))
+                  )}
+                </Show>
+              </Box>
+            )}
+          </FieldArray>
+        </form>
       )}
-      {hatsTree === null && (
-        <Card my="0.5rem">
-          <Text
-            textStyle="body-base"
-            textAlign="center"
-            color="white-alpha-16"
-          >
-            {t('noRoles')}
-          </Text>
-        </Card>
-      )}
-      <Show above="md">
-        <RolesTable
-          mode="edit"
-          handleRoleClick={handleRoleClick}
-        />
-      </Show>
-      <Show below="md">
-        <RoleCard
-          roleName="Admin"
-          wearerAddress={undefined}
-          mode="edit"
-          handleRoleClick={handleRoleClick}
-        />
-        <RoleCard
-          roleName="Legal Counsel"
-          editStatus={EditBadgeStatus.Removed}
-          mode="edit"
-          wearerAddress={zeroAddress}
-          handleRoleClick={handleRoleClick}
-        />
-        <RoleCard
-          roleName="CEO"
-          editStatus={EditBadgeStatus.Updated}
-          wearerAddress={zeroAddress}
-          mode="edit"
-          handleRoleClick={handleRoleClick}
-        />
-        <RoleCard
-          roleName="Code Reviewer"
-          editStatus={EditBadgeStatus.New}
-          wearerAddress={zeroAddress}
-          mode="edit"
-          handleRoleClick={handleRoleClick}
-        />
-      </Show>
-    </Box>
+    </Formik>
   );
 }
 
