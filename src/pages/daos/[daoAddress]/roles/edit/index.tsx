@@ -1,8 +1,9 @@
-import { Box, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
 import { ArrowLeft, Plus } from '@phosphor-icons/react';
 import { FieldArray, Formik } from 'formik';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { zeroAddress } from 'viem';
 import { RoleCard } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesTable } from '../../../../../components/pages/Roles/RolesTable';
@@ -20,7 +21,7 @@ import { useNetworkConfig } from '../../../../../providers/NetworkConfig/Network
 import { useRolesState } from '../../../../../state/useRolesState';
 
 function RolesEdit() {
-  const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
+  const { t } = useTranslation(['roles', 'navigation', 'modals', 'breadcrumbs', 'common']);
   const {
     node: { daoAddress },
   } = useFractal();
@@ -30,6 +31,7 @@ function RolesEdit() {
   const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const { rolesSchema } = useRolesSchema();
   const { hatsTree } = useRolesState();
+  const navigate = useNavigate();
 
   const hats = useMemo(() => {
     // @todo get hats from hatsTree from state
@@ -201,7 +203,7 @@ function RolesEdit() {
                             <Flex
                               gap="0.5rem"
                               alignItems="center"
-                              aria-label={t('editRoles')}
+                              aria-label={t('proposalNew')}
                               onClick={() => {
                                 // remove(hatIndex);
                                 // setHatIndex(undefined);
@@ -233,6 +235,20 @@ function RolesEdit() {
               </Box>
             )}
           </FieldArray>
+          <Flex
+            gap="1rem"
+            justifyContent="flex-end"
+          >
+            <Button
+              variant="tertiary"
+              onClick={() => navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress))}
+            >
+              {t('cancel', { ns: 'common' })}
+            </Button>
+            <Button onClick={() => setIsSummaryOpen(true)}>
+              {t('createProposal', { ns: 'modals' })}
+            </Button>
+          </Flex>
         </form>
       )}
     </Formik>
