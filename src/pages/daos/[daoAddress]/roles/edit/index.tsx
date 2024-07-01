@@ -205,15 +205,16 @@ function RolesEdit() {
                               alignItems="center"
                               aria-label={t('proposalNew')}
                               onClick={() => {
-                                // remove(hatIndex);
-                                // setHatIndex(undefined);
+                                setIsSummaryOpen(false);
                               }}
                             >
                               <Icon
                                 as={ArrowLeft}
                                 boxSize="1.5rem"
                               />
-                              <Text textStyle="display-lg">{t('editRoles')}</Text>
+                              <Text textStyle="display-lg">
+                                {t('proposalNew', { ns: 'breadcrumbs' })}
+                              </Text>
                             </Flex>
                           </Flex>
                           <RoleFormCreateProposal />
