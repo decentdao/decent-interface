@@ -217,7 +217,7 @@ function RolesEdit() {
                               </Text>
                             </Flex>
                           </Flex>
-                          <RoleFormCreateProposal />
+                          <RoleFormCreateProposal close={() => setIsSummaryOpen(false)} />
                         </Box>
                       </Portal>
                     </Box>
@@ -246,7 +246,10 @@ function RolesEdit() {
             >
               {t('cancel', { ns: 'common' })}
             </Button>
-            <Button onClick={() => setIsSummaryOpen(true)}>
+            <Button
+              onClick={() => setIsSummaryOpen(true)}
+              isDisabled={!values.hats.some(hat => hat.editedRole)}
+            >
               {t('createProposal', { ns: 'modals' })}
             </Button>
           </Flex>
