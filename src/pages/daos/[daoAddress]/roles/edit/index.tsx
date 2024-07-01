@@ -27,7 +27,7 @@ function RolesEdit() {
   const { addressPrefix } = useNetworkConfig();
 
   const [hatIndex, setHatIndex] = useState<number>();
-  const [isSummaryOpen, setIsSummaryOpen] = useState(true);
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const { rolesSchema } = useRolesSchema();
   const { hatsTree } = useRolesState();
 
