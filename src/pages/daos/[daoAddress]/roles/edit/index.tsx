@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { RoleCard } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesTable } from '../../../../../components/pages/Roles/RolesTable';
+import RoleFormCreateProposal from '../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
 import RoleForm from '../../../../../components/pages/Roles/forms/RoleFormTabs';
 import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
@@ -26,6 +27,7 @@ function RolesEdit() {
   const { addressPrefix } = useNetworkConfig();
 
   const [hatIndex, setHatIndex] = useState<number>();
+  const [isSummaryOpen, setIsSummaryOpen] = useState(true);
   const { rolesSchema } = useRolesSchema();
   const { hatsTree } = useRolesState();
 
@@ -141,7 +143,7 @@ function RolesEdit() {
                   />
                 </Show>
                 <Show below="md">
-                  {!!hatIndex ? (
+                  {!!hatIndex && (
                     <Portal>
                       <Box
                         position="fixed"
@@ -179,18 +181,54 @@ function RolesEdit() {
                         />
                       </Box>
                     </Portal>
-                  ) : (
-                    values.hats.map((hat, index) => (
-                      <RoleCard
-                        key={index}
-                        hatId={hat.id}
-                        roleName={hat.roleName}
-                        wearerAddress={hat.member}
-                        mode="edit"
-                        handleRoleClick={() => handleRoleClick(index)}
-                      />
-                    ))
                   )}
+                  {isSummaryOpen && (
+                    <Box>
+                      <Portal>
+                        <Box
+                          position="fixed"
+                          top={headerHeight}
+                          h={`100vh`}
+                          w="full"
+                          bg="neutral-1"
+                          px="1rem"
+                        >
+                          <Flex
+                            justifyContent="space-between"
+                            alignItems="center"
+                            my="1.75rem"
+                          >
+                            <Flex
+                              gap="0.5rem"
+                              alignItems="center"
+                              aria-label={t('editRoles')}
+                              onClick={() => {
+                                // remove(hatIndex);
+                                // setHatIndex(undefined);
+                              }}
+                            >
+                              <Icon
+                                as={ArrowLeft}
+                                boxSize="1.5rem"
+                              />
+                              <Text textStyle="display-lg">{t('editRoles')}</Text>
+                            </Flex>
+                          </Flex>
+                          <RoleFormCreateProposal />
+                        </Box>
+                      </Portal>
+                    </Box>
+                  )}
+                  {values.hats.map((hat, index) => (
+                    <RoleCard
+                      key={index}
+                      hatId={hat.id}
+                      roleName={hat.roleName}
+                      wearerAddress={hat.member}
+                      mode="edit"
+                      handleRoleClick={() => handleRoleClick(index)}
+                    />
+                  ))}
                 </Show>
               </Box>
             )}
