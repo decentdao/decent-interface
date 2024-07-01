@@ -8,7 +8,7 @@ import { zeroAddress } from 'viem';
 import { RoleCard } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesTable } from '../../../../../components/pages/Roles/RolesTable';
 import RoleFormCreateProposal from '../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
-import RoleForm from '../../../../../components/pages/Roles/forms/RoleFormTabs';
+import RoleFormTabs from '../../../../../components/pages/Roles/forms/RoleFormTabs';
 import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
@@ -177,9 +177,10 @@ function RolesEdit() {
                           </Flex>
                         </Flex>
 
-                        <RoleForm
+                        <RoleFormTabs
                           hatIndex={hatIndex}
                           existingRoleHat={hats.find(hat => hat.id === values.hats[hatIndex].id)}
+                          close={() => setHatIndex(undefined)}
                         />
                       </Box>
                     </Portal>
