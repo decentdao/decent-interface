@@ -30,7 +30,10 @@ export function RoleCard({
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles']);
   return (
-    <Card mb="1rem" onClick={() => handleRoleClick(hatId)}>
+    <Card
+      mb="1rem"
+      onClick={() => handleRoleClick(hatId)}
+    >
       <Flex justifyContent="space-between">
         <Flex alignItems="center">
           {wearerAddress ? (

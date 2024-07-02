@@ -10,7 +10,7 @@ import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import { EditBadgeStatus, RoleProps, RoleViewMode } from './types';
 
-export function RolesHeader() {
+function RolesHeader() {
   const { t } = useTranslation(['roles']);
   return (
     <Thead
@@ -34,7 +34,7 @@ export function RolesHeader() {
   );
 }
 
-export function RolesRow({
+function RolesRow({
   roleName,
   wearerAddress,
   payrollData,
