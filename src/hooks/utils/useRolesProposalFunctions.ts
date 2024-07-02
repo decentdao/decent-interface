@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { zeroAddress, Address, encodeFunctionData, getAddress } from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
+import { HatsAbi } from '../../assets/abi/HatsAbi';
 import {
   EditBadgeStatus,
   HatStruct,
@@ -180,7 +181,7 @@ export const useRolesProposalFunctions = () => {
       }
 
       const addHatsTx = encodeFunctionData({
-        abi: 'HatsAbi' as any,
+        abi: HatsAbi,
         functionName: 'batchCreateHats',
         args: prepareAddHatsArgs(addedHats),
       });
