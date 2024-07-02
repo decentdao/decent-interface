@@ -1,15 +1,11 @@
 import { AzoriusFreezeGuard, MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
+import { SafeInfoResponse } from '@safe-global/api-kit';
 import { useCallback, useEffect, useRef } from 'react';
 import { getAddress, zeroAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  ContractConnection,
-  SafeInfoResponseWithGuard,
-  FreezeGuardType,
-  FreezeVotingType,
-} from '../../../types';
+import { ContractConnection, FreezeGuardType, FreezeVotingType } from '../../../types';
 import useSafeContracts from '../../safe/useSafeContracts';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
@@ -28,11 +24,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
   const loadFractalGuardContracts = useCallback(
-    async (
-      _daoAddress: string,
-      _safe: SafeInfoResponseWithGuard,
-      _fractalModules: FractalModuleData[],
-    ) => {
+    async (_daoAddress: string, _safe: SafeInfoResponse, _fractalModules: FractalModuleData[]) => {
       if (!baseContracts) {
         return;
       }

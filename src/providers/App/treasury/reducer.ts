@@ -1,16 +1,14 @@
-import { FractalTreasury } from '../../../types';
+import { DecentTreasury } from '../../../types';
 import { TreasuryActions, TreasuryAction } from './action';
 
-export const initialTreasuryState: FractalTreasury = {
+export const initialTreasuryState: DecentTreasury = {
   assetsFungible: [],
   assetsNonFungible: [],
   transfers: undefined,
+  totalUsdValue: 0,
 };
 
-export const treasuryReducer = (
-  state: FractalTreasury,
-  action: TreasuryActions,
-): FractalTreasury => {
+export const treasuryReducer = (state: DecentTreasury, action: TreasuryActions): DecentTreasury => {
   switch (action.type) {
     case TreasuryAction.UPDATE_TREASURY:
       return { ...state, ...action.payload };

@@ -4,7 +4,7 @@ import {
   EthereumTxWithTransfersResponse,
   SafeMultisigTransactionWithTransfersResponse,
   TransferWithTokenInfoResponse,
-} from '@safe-global/safe-service-client';
+} from '@safe-global/api-kit';
 import { useCallback } from 'react';
 import { zeroAddress } from 'viem';
 import { isApproved, isRejected } from '../../helpers/activity';

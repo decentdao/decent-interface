@@ -50,10 +50,14 @@ function ProposalAuthor({ activity }: { activity: Activity }) {
     ? azoriusProposal.proposer
     : isSnapshotProposal
       ? snapshotProposal.author
-      : multisigProposal.confirmations[0].owner;
+      : multisigProposal?.confirmations?.[0]?.owner;
 
   const { displayName: author } = useDisplayName(proposer);
   const avatarURL = useAvatar(author);
+
+  if (!proposer) {
+    return null;
+  }
 
   return (
     <Flex

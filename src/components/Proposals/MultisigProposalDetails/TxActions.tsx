@@ -1,6 +1,6 @@
 import { Box, Button, Text, Flex, Tooltip } from '@chakra-ui/react';
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
+import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { Signer } from 'ethers';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -58,7 +58,12 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   if (!multisigTx) return null;
 
   const signTransaction = async () => {
-    if (!signerOrProvider || !safe?.address || (multisigTx.data && !isHex(multisigTx.data))) {
+    if (
+      !signerOrProvider ||
+      !safe?.address ||
+      (multisigTx.data && !isHex(multisigTx.data)) ||
+      !safeAPI
+    ) {
       return;
     }
     try {
@@ -81,7 +86,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         pendingMessage: t('pendingSign'),
         successMessage: t('successSign'),
         successCallback: async (signature: string) => {
-          await safeAPI!.confirmTransaction(proposal.proposalId, signature);
+          await safeAPI.confirmTransaction(proposal.proposalId, signature);
           await loadSafeMultisigProposals();
         },
       });
@@ -208,7 +213,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     }
   };
 
-  const hasSigned = proposal.confirmations.find(confirm => confirm.owner === user.address);
+  const hasSigned = !!proposal.confirmations?.find(confirm => confirm.owner === user.address);
   const isOwner = safe?.owners?.includes(user.address || '');
   const isPending = asyncRequestPending || contractCallPending;
   if (
