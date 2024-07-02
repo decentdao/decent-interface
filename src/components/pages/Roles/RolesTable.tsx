@@ -1,5 +1,6 @@
 import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { Pencil } from '@phosphor-icons/react';
+import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
@@ -8,7 +9,14 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { getChainIdFromPrefix } from '../../../utils/url';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
-import { EditBadgeStatus, RoleProps, RoleViewMode } from './types';
+import {
+  Role,
+  RoleEditProps,
+  RoleFormValues,
+  RoleProps,
+  SablierPayroll,
+  SablierVesting,
+} from './types';
 
 function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -34,23 +42,201 @@ function RolesHeader() {
   );
 }
 
-function RolesRow({
-  roleName,
-  wearerAddress,
-  payrollData,
-  vestingData,
-  mode = 'view',
-  handleRoleClick,
-  hatId,
-}: RoleProps) {
+function RoleNameColumn({ roleName }: { roleName: string }) {
+  return (
+    <Td>
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Text
+          textStyle="body-base"
+          color="lilac-0"
+        >
+          {roleName}
+        </Text>
+      </Flex>
+    </Td>
+  );
+}
+
+function RoleNameEditColumn({ roleName }: { roleName: string }) {
+  return (
+    <Td>
+      <Flex
+        alignItems="center"
+        justifyContent="space-between"
+      >
+        <Text
+          textStyle="body-base"
+          color="lilac-0"
+        >
+          {roleName}
+        </Text>
+        <Icon
+          className="edit-role-icon"
+          as={Pencil}
+          color="white-0"
+          boxSize="1rem"
+          opacity={0}
+          transition="opacity 0.3s ease-out"
+        />
+      </Flex>
+    </Td>
+  );
+}
+
+function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
     address: getAddress(wearerAddress || zeroAddress),
     chainId: getChainIdFromPrefix(addressPrefix),
   });
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
-  const { t } = useTranslation(['roles', 'daoCreate']);
+  const { t } = useTranslation(['roles']);
+  return (
+    <Td>
+      <Flex alignItems="center">
+        {wearerAddress ? (
+          <Avatar
+            size="icon"
+            address={wearerAddress}
+            url={avatarURL}
+          />
+        ) : (
+          <Box
+            boxSize="3rem"
+            borderRadius="100%"
+            bg="white-alpha-04"
+          />
+        )}
+        <Flex
+          direction="column"
+          ml="0.5rem"
+        >
+          <Text
+            textStyle="body-base"
+            color="white-0"
+          >
+            {wearerAddress ? accountDisplayName : t('unassigned')}
+          </Text>
+        </Flex>
+      </Flex>
+    </Td>
+  );
+}
 
+function PayrollColumn({ payrollData }: { payrollData: SablierPayroll | undefined }) {
+  const { t } = useTranslation(['daoCreate']);
+  return (
+    <Td>
+      <Flex flexDir="column">
+        {payrollData ? (
+          <Box>
+            <Flex
+              alignItems="center"
+              gap="0.25rem"
+              my="0.5rem"
+            >
+              <Image
+                src={payrollData.asset.iconUri}
+                fallbackSrc="/images/coin-icon-default.svg"
+                alt={payrollData.asset.symbol}
+                w="1.25rem"
+                h="1.25rem"
+              />
+              {payrollData.payrollAmount}
+              <EtherscanLink
+                color="white-0"
+                _hover={{ bg: 'transparent' }}
+                textStyle="body-base"
+                padding={0}
+                borderWidth={0}
+                value={payrollData.asset.address}
+                type="token"
+                wordBreak="break-word"
+              >
+                {payrollData.asset.symbol}
+              </EtherscanLink>
+              <Text
+                color="white-0"
+                textStyle="body-base"
+              >
+                {'/'} {payrollData.payrollSchedule}
+              </Text>
+            </Flex>
+          </Box>
+        ) : (
+          <Text
+            textStyle="body-base"
+            color="neutral-6"
+          >
+            {t('n/a')}
+          </Text>
+        )}
+      </Flex>
+    </Td>
+  );
+}
+
+function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefined }) {
+  const { t } = useTranslation(['daoCreate']);
+  return (
+    <Td>
+      {vestingData ? (
+        <Box>
+          <Flex
+            textStyle="body-base"
+            color="white-0"
+            gap="0.25rem"
+            alignItems="center"
+            my="0.5rem"
+          >
+            <Image
+              src={vestingData.asset.iconUri}
+              fallbackSrc="/images/coin-icon-default.svg"
+              alt={vestingData.asset.symbol}
+              w="1.25rem"
+              h="1.25rem"
+            />
+            {vestingData.vestingAmount}
+            <EtherscanLink
+              color="white-0"
+              _hover={{ bg: 'transparent' }}
+              textStyle="body-base"
+              padding={0}
+              borderWidth={0}
+              value={vestingData.asset.address}
+              type="token"
+              wordBreak="break-word"
+            >
+              {vestingData.asset.symbol}
+            </EtherscanLink>
+            <Text>
+              {t('after')} {vestingData.vestingSchedule}
+            </Text>
+          </Flex>
+        </Box>
+      ) : (
+        <Text
+          textStyle="body-base"
+          color="neutral-6"
+        >
+          {t('n/a')}
+        </Text>
+      )}
+    </Td>
+  );
+}
+
+export function RolesRow({
+  roleName,
+  wearerAddress,
+  payrollData,
+  vestingData,
+  handleRoleClick,
+  hatId,
+}: RoleProps) {
   return (
     <Tr
       sx={{
@@ -64,158 +250,48 @@ function RolesRow({
       transition="all ease-out 300ms"
       onClick={() => handleRoleClick(hatId)}
     >
-      <Td>
-        <Flex
-          alignItems="center"
-          justifyContent="space-between"
-        >
-          <Text
-            textStyle="body-base"
-            color="lilac-0"
-          >
-            {roleName}
-          </Text>
-          {mode === 'edit' && (
-            <Icon
-              className="edit-role-icon"
-              as={Pencil}
-              color="white-0"
-              boxSize="1rem"
-              opacity={0}
-              transition="opacity 0.3s ease-out"
-            />
-          )}
-        </Flex>
-      </Td>
-      <Td>
-        <Flex alignItems="center">
-          {wearerAddress ? (
-            <Avatar
-              size="icon"
-              address={wearerAddress}
-              url={avatarURL}
-            />
-          ) : (
-            <Box
-              boxSize="3rem"
-              borderRadius="100%"
-              bg="white-alpha-04"
-            />
-          )}
-          <Flex
-            direction="column"
-            ml="0.5rem"
-          >
-            <Text
-              textStyle="body-base"
-              color="white-0"
-            >
-              {wearerAddress ? accountDisplayName : t('unassigned')}
-            </Text>
-          </Flex>
-        </Flex>
-      </Td>
-      <Td>
-        <Flex flexDir="column">
-          {payrollData ? (
-            <Box>
-              <Flex
-                alignItems="center"
-                gap="0.25rem"
-                my="0.5rem"
-              >
-                <Image
-                  src={payrollData.asset.iconUri}
-                  fallbackSrc="/images/coin-icon-default.svg"
-                  alt={payrollData.asset.symbol}
-                  w="1.25rem"
-                  h="1.25rem"
-                />
-                {payrollData.payrollAmount}
-                <EtherscanLink
-                  color="white-0"
-                  _hover={{ bg: 'transparent' }}
-                  textStyle="body-base"
-                  padding={0}
-                  borderWidth={0}
-                  value={payrollData.asset.address}
-                  type="token"
-                  wordBreak="break-word"
-                >
-                  {payrollData.asset.symbol}
-                </EtherscanLink>
-                <Text
-                  color="white-0"
-                  textStyle="body-base"
-                >
-                  {'/'} {payrollData.payrollSchedule}
-                </Text>
-              </Flex>
-            </Box>
-          ) : (
-            <Text
-              textStyle="body-base"
-              color="neutral-6"
-            >
-              {t('n/a')}
-            </Text>
-          )}
-        </Flex>
-      </Td>
-      <Td>
-        {vestingData ? (
-          <Box>
-            <Flex
-              textStyle="body-base"
-              color="white-0"
-              gap="0.25rem"
-              alignItems="center"
-              my="0.5rem"
-            >
-              <Image
-                src={vestingData.asset.iconUri}
-                fallbackSrc="/images/coin-icon-default.svg"
-                alt={vestingData.asset.symbol}
-                w="1.25rem"
-                h="1.25rem"
-              />
-              {vestingData.vestingAmount}
-              <EtherscanLink
-                color="white-0"
-                _hover={{ bg: 'transparent' }}
-                textStyle="body-base"
-                padding={0}
-                borderWidth={0}
-                value={vestingData.asset.address}
-                type="token"
-                wordBreak="break-word"
-              >
-                {vestingData.asset.symbol}
-              </EtherscanLink>
-              <Text>
-                {t('after')} {vestingData.vestingSchedule}
-              </Text>
-            </Flex>
-          </Box>
-        ) : (
-          <Text
-            textStyle="body-base"
-            color="neutral-6"
-          >
-            {t('n/a')}
-          </Text>
-        )}
-      </Td>
+      <RoleNameColumn roleName={roleName} />
+      <MemberColumn wearerAddress={wearerAddress} />
+      <PayrollColumn payrollData={payrollData} />
+      <VestingColumn vestingData={vestingData} />
+    </Tr>
+  );
+}
+
+export function RolesRowEdit({
+  roleName,
+  wearerAddress,
+  payrollData,
+  vestingData,
+  handleRoleClick,
+}: RoleEditProps) {
+  return (
+    <Tr
+      sx={{
+        td: { padding: '0.75rem', height: '4rem' },
+        '&:hover': {
+          '.edit-role-icon': { opacity: 1 },
+        },
+      }}
+      _hover={{ bg: 'neutral-3' }}
+      _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
+      transition="all ease-out 300ms"
+      onClick={handleRoleClick}
+    >
+      <RoleNameEditColumn roleName={roleName} />
+      <MemberColumn wearerAddress={wearerAddress} />
+      <PayrollColumn payrollData={payrollData} />
+      <VestingColumn vestingData={vestingData} />
     </Tr>
   );
 }
 
 export function RolesTable({
-  mode = 'view',
   handleRoleClick,
+  roleHats,
 }: {
-  mode?: RoleViewMode;
   handleRoleClick: (hatId: number) => void;
+  roleHats: Role[];
 }) {
   return (
     <Box
@@ -239,50 +315,56 @@ export function RolesTable({
             },
           }}
         >
-          <RolesRow
-            hatId={0}
-            mode={mode}
-            roleName="Admin"
-            wearerAddress={zeroAddress}
-            handleRoleClick={handleRoleClick}
-          />
-          <RolesRow
-            hatId={1}
-            mode={mode}
-            roleName="Legal Counsel"
-            editStatus={EditBadgeStatus.Removed}
-            wearerAddress={zeroAddress}
-            handleRoleClick={handleRoleClick}
-          />
-          <RolesRow
-            hatId={2}
-            mode={mode}
-            roleName="CEO"
-            wearerAddress={zeroAddress}
-            handleRoleClick={handleRoleClick}
-            payrollData={{
-              payrollAmount: '1000',
-              payrollSchedule: 'mo',
-              asset: {
-                symbol: 'USDC',
-                name: 'USDC Stablecoin',
-                iconUri:
-                  'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
-                address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-              },
-            }}
-            vestingData={{
-              vestingAmount: '1000',
-              vestingSchedule: '1yr',
-              asset: {
-                symbol: 'USDC',
-                name: 'USDC Stablecoin',
-                iconUri:
-                  'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
-                address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-              },
-            }}
-          />
+          {roleHats.map(role => (
+            <RolesRow
+              key={role.id}
+              hatId={role.id}
+              wearerAddress={role.member}
+              handleRoleClick={handleRoleClick}
+              {...role}
+            />
+          ))}
+        </Tbody>
+      </Table>
+    </Box>
+  );
+}
+export function RolesEditTable({
+  handleRoleClick,
+}: {
+  handleRoleClick: (hatIndex: number) => void;
+}) {
+  const { values } = useFormikContext<RoleFormValues>();
+  return (
+    <Box
+      overflow="hidden"
+      borderRadius="0.75rem"
+      border="1px solid"
+      borderColor="white-alpha-08"
+    >
+      <Table variant="unstyled">
+        <RolesHeader />
+        {/* Map Rows */}
+        <Tbody
+          sx={{
+            tr: {
+              transition: 'all ease-out 300ms',
+              borderBottom: '1px solid',
+              borderColor: 'white-alpha-08',
+            },
+            'tr:last-child': {
+              borderBottom: 'none',
+            },
+          }}
+        >
+          {values.hats.map((role, index) => (
+            <RolesRowEdit
+              key={role.id}
+              wearerAddress={role.member}
+              handleRoleClick={() => handleRoleClick(index)}
+              {...role}
+            />
+          ))}
         </Tbody>
       </Table>
     </Box>

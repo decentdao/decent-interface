@@ -14,9 +14,11 @@ enum EditRoleTabs {
 export default function RoleFormTabs({
   hatIndex,
   existingRoleHat,
+  close,
 }: {
   hatIndex: number;
   existingRoleHat?: Role;
+  close: () => void;
 }) {
   const [tab, setTab] = useState<EditRoleTabs>(EditRoleTabs.RoleInfo);
 
@@ -140,6 +142,7 @@ export default function RoleFormTabs({
           isDisabled={!!errors.hats?.[hatIndex]}
           onClick={() => {
             setFieldValue(`hats.${hatIndex}`, { ...values.hats[hatIndex], editedRole });
+            close();
           }}
         >
           {t('save')}

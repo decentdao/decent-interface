@@ -1,14 +1,15 @@
-import { Box, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
 import { ArrowLeft, Plus } from '@phosphor-icons/react';
-import { FieldArray, Form, Formik } from 'formik';
+import { FieldArray, Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { zeroAddress } from 'viem';
-import { RoleCard } from '../../../../../components/pages/Roles/RoleCard';
-import { RolesTable } from '../../../../../components/pages/Roles/RolesTable';
+import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
+import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
 import RoleFormCreateProposal from '../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
-import RoleForm from '../../../../../components/pages/Roles/forms/RoleFormTabs';
+import RoleFormTabs from '../../../../../components/pages/Roles/forms/RoleFormTabs';
 import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
@@ -24,15 +25,16 @@ import { useRolesState } from '../../../../../state/useRolesState';
 import { ProposalExecuteData } from '../../../../../types';
 
 function RolesEdit() {
-  const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
+  const { t } = useTranslation(['roles', 'navigation', 'modals', 'breadcrumbs', 'common']);
   const {
     node: { daoAddress, safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
   const [hatIndex, setHatIndex] = useState<number>();
-  const [isSummaryOpen, setIsSummaryOpen] = useState(true);
+  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const { rolesSchema } = useRolesSchema();
+  const navigate = useNavigate();
   const { hatsTree, hatsTreeId } = useRolesState();
 
   const { submitProposal } = useSubmitProposal();
@@ -139,7 +141,7 @@ function RolesEdit() {
       onSubmit={createRolesEditProposal}
     >
       {({ handleSubmit, values }) => (
-        <Form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
           <FieldArray name="hats">
             {({ push, remove }) => (
               <Box>
@@ -193,10 +195,7 @@ function RolesEdit() {
                 )}
 
                 <Show above="md">
-                  <RolesTable
-                    mode="edit"
-                    handleRoleClick={handleRoleClick}
-                  />
+                  <RolesEditTable handleRoleClick={handleRoleClick} />
                 </Show>
                 <Show below="md">
                   {!!hatIndex && (
@@ -231,9 +230,10 @@ function RolesEdit() {
                           </Flex>
                         </Flex>
 
-                        <RoleForm
+                        <RoleFormTabs
                           hatIndex={hatIndex}
                           existingRoleHat={hats.find(hat => hat.id === values.hats[hatIndex].id)}
+                          close={() => setHatIndex(undefined)}
                         />
                       </Box>
                     </Portal>
@@ -257,31 +257,30 @@ function RolesEdit() {
                             <Flex
                               gap="0.5rem"
                               alignItems="center"
-                              aria-label={t('editRoles')}
+                              aria-label={t('proposalNew')}
                               onClick={() => {
-                                // remove(hatIndex);
-                                // setHatIndex(undefined);
+                                setIsSummaryOpen(false);
                               }}
                             >
                               <Icon
                                 as={ArrowLeft}
                                 boxSize="1.5rem"
                               />
-                              <Text textStyle="display-lg">{t('editRoles')}</Text>
+                              <Text textStyle="display-lg">
+                                {t('proposalNew', { ns: 'breadcrumbs' })}
+                              </Text>
                             </Flex>
                           </Flex>
-                          <RoleFormCreateProposal />
+                          <RoleFormCreateProposal close={() => setIsSummaryOpen(false)} />
                         </Box>
                       </Portal>
                     </Box>
                   )}
                   {values.hats.map((hat, index) => (
-                    <RoleCard
+                    <RoleCardEdit
                       key={index}
-                      hatId={hat.id}
                       roleName={hat.roleName}
                       wearerAddress={hat.member}
-                      mode="edit"
                       handleRoleClick={() => handleRoleClick(index)}
                     />
                   ))}
@@ -289,7 +288,24 @@ function RolesEdit() {
               </Box>
             )}
           </FieldArray>
-        </Form>
+          <Flex
+            gap="1rem"
+            justifyContent="flex-end"
+          >
+            <Button
+              variant="tertiary"
+              onClick={() => navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress))}
+            >
+              {t('cancel', { ns: 'common' })}
+            </Button>
+            <Button
+              onClick={() => setIsSummaryOpen(true)}
+              isDisabled={!values.hats.some(hat => hat.editedRole)}
+            >
+              {t('createProposal', { ns: 'modals' })}
+            </Button>
+          </Flex>
+        </form>
       )}
     </Formik>
   );
