@@ -1,5 +1,4 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +6,7 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import useLidoStaking from '../../../hooks/stake/lido/useLidoStaking';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { BigIntValuePair } from '../../../types';
+import { BigIntValuePair, TokenBalance } from '../../../types';
 import { BigIntInput } from '../forms/BigIntInput';
 
 export default function StakeModal({ close }: { close: () => void }) {
@@ -21,7 +20,7 @@ export default function StakeModal({ close }: { close: () => void }) {
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
-  const [selectedAsset] = useState<SafeBalanceResponse>(fungibleAssetsWithBalance[0]);
+  const [selectedAsset] = useState<TokenBalance>(fungibleAssetsWithBalance[0]);
   const [inputAmount, setInputAmount] = useState<BigIntValuePair>();
   const onChangeAmount = (value: BigIntValuePair) => {
     setInputAmount(value);
@@ -50,7 +49,7 @@ export default function StakeModal({ close }: { close: () => void }) {
         <BigIntInput
           value={inputAmount?.bigintValue}
           onChange={onChangeAmount}
-          decimalPlaces={selectedAsset?.token?.decimals}
+          decimalPlaces={selectedAsset.decimals}
           placeholder="0"
           maxValue={BigInt(selectedAsset.balance)}
         />

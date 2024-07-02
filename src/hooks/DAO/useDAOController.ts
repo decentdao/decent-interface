@@ -5,11 +5,11 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 import { useAzoriusListeners } from './loaders/governance/useAzoriusListeners';
 import { useERC20Claim } from './loaders/governance/useERC20Claim';
 import { useSnapshotProposals } from './loaders/snapshot/useSnapshotProposals';
+import { useDecentTreasury } from './loaders/useDecentTreasury';
 import { useFractalFreeze } from './loaders/useFractalFreeze';
 import { useFractalGovernance } from './loaders/useFractalGovernance';
 import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
 import { useFractalNode } from './loaders/useFractalNode';
-import { useFractalTreasury } from './loaders/useFractalTreasury';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
 import { useHatsTree } from './loaders/useHatsTree';
 import { useKeyValuePairs } from './useKeyValuePairs';
@@ -48,7 +48,7 @@ export default function useDAOController() {
   useFractalGuardContracts({});
   useFractalFreeze({ parentSafeAddress: parentAddress });
   useFractalGovernance();
-  useFractalTreasury();
+  useDecentTreasury();
   useERC20Claim();
   useSnapshotProposals();
   useAzoriusListeners();

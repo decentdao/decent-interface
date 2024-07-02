@@ -9,9 +9,8 @@ import {
 } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/Azorius';
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
+import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { strategyFractalProposalStates } from '../constants/strategy';
-
 import { logError } from '../helpers/errorLogging';
 import {
   FractalProposalState,
@@ -21,7 +20,6 @@ import {
   AzoriusProposal,
   ActivityEventType,
   Parameter,
-  SafeMultisigTransactionResponse,
   DataDecoded,
   FractalModuleData,
   FractalModuleType,
@@ -285,9 +283,7 @@ export const parseMultiSendTransactions = (
 };
 
 export const parseDecodedData = (
-  multiSigTransaction:
-    | SafeMultisigTransactionWithTransfersResponse
-    | SafeMultisigTransactionResponse,
+  multiSigTransaction: SafeMultisigTransactionWithTransfersResponse,
   isMultiSigTransaction: boolean,
 ): DecodedTransaction[] => {
   const eventTransactionMap = new Map<number, any>();

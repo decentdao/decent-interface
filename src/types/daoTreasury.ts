@@ -1,11 +1,5 @@
-import {
-  SafeBalanceResponse,
-  SafeCollectibleResponse,
-  TransferResponse,
-} from '@safe-global/safe-service-client';
 import { ContractEvent } from './contract';
 import { ActivityBase } from './fractal';
-import { AllTransfersListResponse } from './safeGlobal';
 import { EthAddress } from './utils';
 
 export enum TokenEventType {
@@ -18,6 +12,51 @@ export interface TokenEvent extends ContractEvent {
   blockNumber: number;
   eventType: TokenEventType;
 }
+
+export type TokenBalance = {
+  tokenAddress: string;
+  symbol: string;
+  name: string;
+  logo?: string;
+  thumbnail?: string;
+  decimals: number;
+  balance: string;
+  possibleSpam?: string | boolean; // Empty string means false lol, but still that's a string
+  verifiedContract: boolean;
+  balanceFormatted: string; // Balance formatted to decimals
+  usdPrice?: number;
+  usdValue?: number;
+  nativeToken: boolean;
+  portfolioPercentage: number;
+};
+
+type NftMediaItem = {
+  height: number;
+  width: number;
+  url: string;
+};
+
+export type NFTBalance = {
+  tokenAddress: string;
+  media:
+    | {
+        originalMediaUrl?: string | undefined;
+        mediaCollection?:
+          | {
+              low: NftMediaItem;
+              medium: NftMediaItem;
+              high: NftMediaItem;
+            }
+          | undefined;
+      }
+    | undefined;
+  tokenId: string | number;
+  tokenUri?: string | undefined;
+  name?: string | undefined;
+  symbol?: string | undefined;
+  amount?: number | undefined;
+  possibleSpam: boolean;
+};
 
 export interface TokenDepositEvent extends TokenEvent, EthAddress {
   amount: bigint;
@@ -43,14 +82,6 @@ export type Transaction =
   | ERC20TokenEvent
   | ERC721TokenEvent;
 
-export interface ITreasury {
-  transactions: Transaction[];
-  assetsFungible: SafeBalanceResponse[];
-  assetsNonFungible: SafeCollectibleResponse[];
-  transfers?: AllTransfersListResponse;
-  treasuryIsLoading: boolean;
-}
-
 export enum TransferType {
   ETHER_TRANSFER = 'ETHER_TRANSFER',
   ERC20_TRANSFER = 'ERC20_TRANSFER',
@@ -60,19 +91,6 @@ export enum TransferType {
 export enum TokenType {
   ERC20,
   ERC721,
-}
-
-export interface TokenInfo {
-  type: TokenType;
-  address: string;
-  name: string;
-  symbol: string;
-  logoUri: string;
-  decimals: number;
-}
-
-export interface AssetTransfer extends TransferResponse {
-  tokenInfo?: TokenInfo;
 }
 
 export type AssetTotals = {

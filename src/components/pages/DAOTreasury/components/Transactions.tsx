@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { TransferType, AssetTransfer } from '../../../../types';
+import { TransferType } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
 import {
@@ -116,16 +116,12 @@ function EmptyTransactions() {
 
 export function Transactions({ shownTransactions }: { shownTransactions: number }) {
   const {
-    node: { daoAddress },
     treasury: { transfers },
   } = useFractal();
 
-  const displayData: TransferDisplayData[] = useFormatTransfers(
-    transfers ? (transfers.results as AssetTransfer[]) : [],
-    daoAddress!,
-  );
+  const displayData = useFormatTransfers();
 
-  if (!transfers || transfers.results.length === 0) return <EmptyTransactions />;
+  if (!transfers || displayData.length === 0) return <EmptyTransactions />;
 
   return (
     <Box

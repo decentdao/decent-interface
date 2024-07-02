@@ -25,19 +25,17 @@ import { formatUSD } from '../../../../utils/numberFormats';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useFractalModal } from '../../../ui/modals/useFractalModal';
 import Divider from '../../../ui/utils/Divider';
-import { useFormatCoins } from '../hooks/useFormatCoins';
 import { CoinHeader, CoinRow } from './AssetCoin';
 import { NFTHeader, NFTRow } from './AssetNFT';
 
 export function Assets() {
   const {
     node: { daoAddress },
-    treasury: { assetsFungible, assetsNonFungible },
+    treasury: { assetsFungible, assetsNonFungible, totalUsdValue },
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { staking } = useNetworkConfig();
   const { t } = useTranslation('treasury');
-  const coinDisplay = useFormatCoins(assetsFungible);
   const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
   const { handleUnstake, handleClaimUnstakedETH } = useLidoStaking();
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([]);
@@ -51,19 +49,21 @@ export function Assets() {
   const openStakingModal = useFractalModal(ModalType.STAKE);
 
   // --- Lido Unstake button setup ---
-  const stETHAsset = coinDisplay.displayData.find(
-    asset => asset.address === staking?.lido?.stETHContractAddress,
+  const stETHAsset = assetsFungible.find(
+    asset => asset.tokenAddress === staking?.lido?.stETHContractAddress,
   );
   const showUnstakeButton = canUserCreateProposal && staking.lido && stETHAsset;
   const handleUnstakeButtonClick = () => {
-    handleUnstake(stETHAsset!.rawValue);
+    if (stETHAsset) {
+      handleUnstake(stETHAsset.balance);
+    }
   };
 
   // --- Lido Claim ETH button setup ---
   const signerOrProvider = useSignerOrProvider();
   const [isLidoClaimable, setIsLidoClaimable] = useState(false);
   const lidoWithdrawelNFT = assetsNonFungible.find(
-    asset => asset.address === staking.lido?.withdrawalQueueContractAddress,
+    asset => asset.tokenAddress === staking.lido?.withdrawalQueueContractAddress,
   );
   const showClaimETHButton = canUserCreateProposal && staking.lido && lidoWithdrawelNFT;
   useEffect(() => {
@@ -80,7 +80,7 @@ export function Assets() {
         signerOrProvider,
       );
       const claimableStatus = (
-        await withdrawalQueueContract.getWithdrawalStatus([lidoWithdrawelNFT!.id])
+        await withdrawalQueueContract.getWithdrawalStatus([lidoWithdrawelNFT!.tokenId])
       )[0]; // Since we're checking for the single NFT - we can grab first array element
       if (claimableStatus.isFinalized !== isLidoClaimable) {
         setIsLidoClaimable(claimableStatus.isFinalized);
@@ -90,10 +90,10 @@ export function Assets() {
     getLidoClaimableStatus();
   }, [staking, isLidoClaimable, signerOrProvider, lidoWithdrawelNFT]);
   const handleClickClaimButton = () => {
-    handleClaimUnstakedETH(BigInt(lidoWithdrawelNFT!.id));
+    handleClaimUnstakedETH(BigInt(lidoWithdrawelNFT!.tokenId));
   };
 
-  const hasAssets = coinDisplay.displayData.length > 0 || assetsNonFungible.length > 0;
+  const hasAssets = assetsFungible.length > 0 || assetsNonFungible.length > 0;
   const toggleAccordionItem = (index: number) => {
     setExpandedIndecies(indexArray => {
       if (indexArray.includes(index)) {
@@ -119,7 +119,7 @@ export function Assets() {
         data-testid="text-usd-total"
         px={{ base: '1rem', lg: '1.5rem' }}
       >
-        {formatUSD(coinDisplay.totalFiatValue)}
+        {formatUSD(totalUsdValue)}
       </Text>
       <Hide above="lg">
         <Divider
@@ -172,14 +172,14 @@ export function Assets() {
           </HStack>
         </Show>
       )}
-      {hasAssets && (
+      {hasAssets && daoAddress && (
         <>
           <Show below="lg">
             <Accordion
               allowMultiple
               index={expandedIndecies}
             >
-              {coinDisplay.displayData.length > 0 && (
+              {assetsFungible.length > 0 && (
                 <AccordionItem
                   borderTop="none"
                   borderBottom="none"
@@ -211,12 +211,10 @@ export function Assets() {
                         className="scroll-dark"
                       >
                         <CoinHeader />
-                        {coinDisplay.displayData.map((coin, index) => {
+                        {assetsFungible.map((coin, index) => {
                           return (
                             <CoinRow
                               key={index}
-                              safe={daoAddress!}
-                              totalFiat={coinDisplay.totalFiatValue}
                               asset={coin}
                             />
                           );
@@ -240,9 +238,7 @@ export function Assets() {
                   {({ isExpanded }) => (
                     <Box>
                       <AccordionButton
-                        onClick={() =>
-                          toggleAccordionItem(coinDisplay.displayData.length > 0 ? 1 : 0)
-                        }
+                        onClick={() => toggleAccordionItem(assetsFungible.length > 0 ? 1 : 0)}
                         p="0.25rem"
                         textStyle="body-base"
                         color="white-0"
@@ -277,30 +273,23 @@ export function Assets() {
             </Accordion>
           </Show>
           <Show above="lg">
-            {coinDisplay.displayData.length > 0 && <CoinHeader />}
-            {coinDisplay.displayData.map((coin, index) => {
+            {assetsFungible.length > 0 && <CoinHeader />}
+            {assetsFungible.map((coin, index) => {
               return (
                 <CoinRow
                   key={index}
-                  safe={daoAddress!}
-                  totalFiat={coinDisplay.totalFiatValue}
                   asset={coin}
                 />
               );
             })}
-            <Box
-              overflowX="auto"
-              className="scroll-dark"
-            >
-              {/* {assetsNonFungible.length > 0 && <NFTHeader />} */}
-              {/* {assetsNonFungible.map((asset, index) => (
-                <NFTRow
-                  key={index}
-                  asset={asset}
-                  isLast={assetsNonFungible[assetsNonFungible.length - 1] === asset}
-                />
-              ))} */}
-            </Box>
+            {assetsNonFungible.length > 0 && <NFTHeader />}
+            {assetsNonFungible.map((asset, index) => (
+              <NFTRow
+                key={index}
+                asset={asset}
+                isLast={index === assetsNonFungible.length - 1}
+              />
+            ))}
           </Show>
         </>
       )}
