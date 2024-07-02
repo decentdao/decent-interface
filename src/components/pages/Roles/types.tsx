@@ -68,9 +68,9 @@ export interface HatStructWithId extends HatStruct {
   id: bigint;
 }
 
-export interface Role {
+export interface Role<T = Address> {
   id: bigint;
-  member: Address;
+  member: T;
   roleName: string;
   roleDescription: string;
   // @todo add vesting and payroll types
@@ -82,7 +82,7 @@ export interface EditedRole {
   status: EditBadgeStatus;
 }
 
-export interface RoleValue extends Role {
+export interface RoleValue extends Role<string> {
   editedRole?: EditedRole;
 }
 
@@ -93,7 +93,7 @@ export interface RoleFormValues {
 
 export const DEFAULT_ROLE_HAT: RoleValue = {
   id: -1n,
-  member: zeroAddress, // @todo: confirm this is fine when used on the add role form
+  member: '',
   roleName: '',
   roleDescription: '',
 };

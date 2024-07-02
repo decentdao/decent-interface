@@ -49,6 +49,8 @@ export const useRolesProposalFunctions = () => {
 
     editedHats.forEach(hat => {
       const { roleName, member, roleDescription, editedRole, id } = hat;
+      const memberAddress = getAddress(member);
+
       if (editedRole) {
         switch (editedRole.status) {
           case EditBadgeStatus.New:
@@ -62,7 +64,7 @@ export const useRolesProposalFunctions = () => {
               }),
               imageURI: '',
               isMutable: true,
-              wearer: member,
+              wearer: memberAddress,
             });
             break;
 
@@ -97,7 +99,7 @@ export const useRolesProposalFunctions = () => {
               }),
               imageURI: '',
               isMutable: true,
-              wearer: member,
+              wearer: memberAddress,
             });
             break;
         }
