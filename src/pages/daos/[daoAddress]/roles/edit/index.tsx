@@ -79,9 +79,10 @@ function RolesEdit() {
         // filter to hats that have been modified (ie includes `editedRole` prop)
         const modifiedHats = values.hats.filter(hat => !!hat.editedRole);
 
-        let proposalData: ProposalExecuteData | undefined;
+        let proposalData: ProposalExecuteData;
 
-        const { addedHats, removedHatIds, updatedHats } = parsedEditedHats(modifiedHats);
+        const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } =
+          parsedEditedHats(modifiedHats);
 
         if (hatsTreeId === null || hatsTreeId === undefined) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
@@ -92,21 +93,20 @@ function RolesEdit() {
           proposalData = await prepareEditHatsProposal(values.proposalMetadata, {
             addedHats,
             removedHatIds,
-            updatedHats,
+            memberChangedHats,
+            roleDetailsChangedHats,
           });
         }
 
         // All done, submit the proposal!
-        if (proposalData) {
-          submitProposal({
-            proposalData,
-            nonce: safe?.nextNonce,
-            pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
-            successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
-            failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-            // successCallback,
-          });
-        }
+        submitProposal({
+          proposalData,
+          nonce: safe?.nextNonce,
+          pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+          successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+          failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+          // successCallback,
+        });
 
         console.log('proposalData', proposalData);
       } catch (e) {

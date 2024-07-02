@@ -15,6 +15,26 @@ import { CreateProposalMetadata } from '../../types';
 const decentHatsAddress = getAddress('0x88e72194d93bf417310b197275d972cf78406163'); // @todo: sepolia only. Move to, and read from, network config
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
 
+interface HatStructWithoutPredictedId {
+  eligibility: Address; // The address that can report on the Hat wearer's status
+  toggle: Address; // The address that can deactivate the Hat
+  maxSupply: number; // No more than this number of wearers. Hardcode to 1
+  details: string; // JSON string, { name, description } OR IPFS url/hash to said JSON data
+  imageURI: string;
+  isMutable: boolean; // true
+  wearer: Address;
+}
+
+const predictHatIds = (args: {
+  hats: HatStructWithoutPredictedId[];
+  topHatId: number;
+  currentHatsCount: number;
+}): HatStruct[] => {
+  const { hats, topHatId, currentHatsCount } = args;
+
+  return [];
+};
+
 export const useRolesProposalFunctions = () => {
   const {
     node: { safe },
@@ -39,79 +59,77 @@ export const useRolesProposalFunctions = () => {
       imageURIs.push(hat.imageURI);
     });
 
-    return [admins, details, maxSupplies, eligibilityModules, toggleModules, mutables, imageURIs] as const;
+    return [
+      admins,
+      details,
+      maxSupplies,
+      eligibilityModules,
+      toggleModules,
+      mutables,
+      imageURIs,
+    ] as const;
   }, []);
 
   const parsedEditedHats = (editedHats: RoleValue[]) => {
-    const addedHats: HatStruct[] = [];
-    const removedHatIds: bigint[] = [];
-    const updatedHats: HatStructWithId[] = [];
+    const addedHats: HatStructWithId[] = editedHats
+      .filter(hat => hat.editedRole?.status === EditBadgeStatus.New)
+      .map(hat => ({
+        eligibility: zeroAddress,
+        toggle: zeroAddress,
+        maxSupply: 1,
+        details: JSON.stringify({
+          name: hat.roleName,
+          description: hat.roleDescription,
+        }),
+        imageURI: '',
+        isMutable: true,
+        wearer: getAddress(hat.member),
+        id: 0n, // @todo: implement hat id prediction
+      }));
 
-    editedHats.forEach(hat => {
-      const { roleName, member, roleDescription, editedRole, id } = hat;
-      const memberAddress = getAddress(member);
+    const removedHatIds = editedHats
+      .filter(hat => hat.editedRole?.status === EditBadgeStatus.Removed)
+      .map(hat => hat.id);
 
-      if (editedRole) {
-        switch (editedRole.status) {
-          case EditBadgeStatus.New:
-            addedHats.push({
-              eligibility: zeroAddress,
-              toggle: zeroAddress,
-              maxSupply: 1,
-              details: JSON.stringify({
-                name: roleName,
-                description: roleDescription,
-              }),
-              imageURI: '',
-              isMutable: true,
-              wearer: memberAddress,
-            });
-            break;
+    const memberChangedHats = editedHats
+      .filter(
+        hat =>
+          hat.editedRole?.status === EditBadgeStatus.Updated &&
+          hat.editedRole.fieldNames.includes('member'),
+      )
+      .map(hat => ({
+        id: hat.id,
+        wearer: getAddress(hat.member),
+      }));
 
-          case EditBadgeStatus.Removed:
-            removedHatIds.push(id);
-            break;
+    const roleDetailsChangedHats = editedHats
+      .filter(
+        hat =>
+          hat.editedRole?.status === EditBadgeStatus.Updated &&
+          (hat.editedRole.fieldNames.includes('roleName') ||
+            hat.editedRole.fieldNames.includes('roleDescription')),
+      )
+      .map(hat => ({
+        id: hat.id,
+        details: JSON.stringify({
+          name: hat.roleName,
+          description: hat.roleDescription,
+        }),
+      }));
 
-          case EditBadgeStatus.Updated:
-            let newRoleName = roleName;
-            let newRoleDescription = roleDescription;
-            let newMember = member;
-
-            editedRole.fieldNames.forEach(fieldName => {
-              switch (fieldName) {
-                case 'roleName':
-                  break;
-                case 'roleDescription':
-                  break;
-                case 'member':
-                  break;
-              }
-            });
-
-            updatedHats.push({
-              id,
-              eligibility: zeroAddress,
-              toggle: zeroAddress,
-              maxSupply: 1,
-              details: JSON.stringify({
-                name: roleName,
-                description: roleDescription,
-              }),
-              imageURI: '',
-              isMutable: true,
-              wearer: memberAddress,
-            });
-            break;
-        }
-      }
-    });
-
-    return { addedHats, removedHatIds, updatedHats };
+    return {
+      addedHats,
+      removedHatIds,
+      memberChangedHats,
+      roleDetailsChangedHats,
+    };
   };
 
   const prepareCreateTopHatProposal = useCallback(
     async (proposalMetadata: CreateProposalMetadata, addedHats: HatStruct[]) => {
-      if (!safe) return;
+      if (!safe) {
+        throw new Error('No safe found');
+      }
 
       const enableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
@@ -125,7 +143,7 @@ export const useRolesProposalFunctions = () => {
         args: [decentHatsAddress, decentHatsAddress], // @todo: Figure out prevModule arg. Need to retrieve from safe.
       });
 
-      const adminHat: HatStruct = {
+      const adminHat: HatStructWithoutPredictedId = {
         eligibility: zeroAddress,
         toggle: zeroAddress,
         maxSupply: 1,
@@ -169,17 +187,36 @@ export const useRolesProposalFunctions = () => {
       edits: {
         addedHats: HatStruct[];
         removedHatIds: bigint[];
-        updatedHats: HatStructWithId[];
+        memberChangedHats: {
+          id: bigint;
+          wearer: `0x${string}`;
+        }[];
+        roleDetailsChangedHats: {
+          id: bigint;
+          details: string;
+        }[];
       },
     ) => {
-      if (!safe) return;
+      if (!safe) {
+        throw new Error('No safe found');
+      }
 
-      const { addedHats, removedHatIds, updatedHats } = edits;
+      const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
 
       const addHatsTx = encodeFunctionData({
         abi: HatsAbi,
         functionName: 'batchCreateHats',
         args: prepareAddHatsArgs(addedHats),
+      });
+
+      // @todo: gotta mint the hats too.
+      // - treeid
+      // - admin hatid
+      // - count of hats under tree
+      const mintHatsTx = encodeFunctionData({
+        abi: HatsAbi,
+        functionName: 'batchMintHats',
+        args: [],
       });
 
       const removeHatTxs = removedHatIds.map(hatId =>

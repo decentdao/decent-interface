@@ -1,4 +1,4 @@
-import { Address, zeroAddress } from 'viem';
+import { Address } from 'viem';
 import { CreateProposalMetadata } from '../../../types';
 
 export type RoleViewMode = 'edit' | 'view';
@@ -77,7 +77,7 @@ export interface Role<T = Address> {
 }
 
 export interface EditedRole {
-  id?: bigint;
+  // id?: bigint;
   fieldNames: string[];
   status: EditBadgeStatus;
 }
