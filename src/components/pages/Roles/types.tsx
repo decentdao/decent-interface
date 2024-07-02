@@ -1,3 +1,4 @@
+import { Address } from 'viem';
 import { CreateProposalMetadata } from '../../../types';
 
 export type RoleViewMode = 'edit' | 'view';
@@ -45,6 +46,16 @@ export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.New]: 'celery--2',
   [EditBadgeStatus.Removed]: 'error-1',
 };
+
+export interface HatStruct {
+  eligibility: Address;
+  toggle: Address;
+  maxSupply: number; // No more than this number of wearers. Hardcode to 1
+  details: string; // JSON string, { name, description } OR IPFS url/hash to said JSON data
+  imageURI: string;
+  isMutable: boolean; // true
+  wearer: Address;
+}
 
 export interface Role {
   id: number;
