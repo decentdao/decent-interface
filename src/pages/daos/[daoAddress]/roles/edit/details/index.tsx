@@ -65,7 +65,6 @@ export default function RoleEditDetails() {
 
               <RoleFormTabs
                 hatIndex={hatEditingIndex}
-                existingRoleHat={values.hats[hatEditingIndex]}
                 save={() => {
                   navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
                 }}

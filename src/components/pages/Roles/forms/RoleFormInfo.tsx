@@ -1,9 +1,9 @@
 import { Box, FormControl } from '@chakra-ui/react';
-import { Field, FieldProps, FormikErrors } from 'formik';
+import { Field, FieldProps } from 'formik';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import { RoleFormValues, RoleValue } from '../types';
+import { RoleFormValues } from '../types';
 
 export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
   return (
@@ -17,22 +17,18 @@ export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
         <Field name={`hats.${hatIndex}.roleName`}>
           {({
             field,
-            form: { setFieldValue, setFieldTouched, errors, touched },
+            form: { setFieldValue, setFieldTouched },
+            meta,
           }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
               label="Role Name"
-              errorMessage={
-                !!touched?.hats?.[hatIndex].roleName &&
-                !!(errors?.hats?.[hatIndex] as FormikErrors<RoleValue>).roleName
-                  ? (errors?.hats?.[hatIndex] as FormikErrors<RoleValue>).roleName
-                  : undefined
-              }
+              errorMessage={meta.touched && meta.error ? meta.error : undefined}
             >
               <InputComponent
                 value={field.value}
                 onChange={e => {
-                  setFieldValue(field.name, e.target.value);
                   setFieldTouched(field.name, true);
+                  setFieldValue(field.name, e.target.value);
                 }}
                 testId="role-name"
                 placeholder="Role Name"
@@ -46,16 +42,12 @@ export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
         <Field name={`hats.${hatIndex}.roleDescription`}>
           {({
             field,
-            form: { setFieldValue, setFieldTouched, errors, touched },
+            form: { setFieldValue, setFieldTouched },
+            meta,
           }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
               label="Description"
-              errorMessage={
-                !!touched?.hats?.[hatIndex].roleName &&
-                !!(errors?.hats?.[hatIndex] as FormikErrors<RoleValue>).roleDescription
-                  ? (errors?.hats?.[hatIndex] as FormikErrors<RoleValue>).roleDescription
-                  : undefined
-              }
+              errorMessage={meta.touched && meta.error ? meta.error : undefined}
             >
               <TextareaComponent
                 value={field.value}
@@ -73,16 +65,12 @@ export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
         <Field name={`hats.${hatIndex}.member`}>
           {({
             field,
-            form: { setFieldValue, setFieldTouched, errors, touched },
+            form: { setFieldValue, setFieldTouched },
+            meta,
           }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
               label="Member"
-              errorMessage={
-                !!touched?.hats?.[hatIndex].roleName &&
-                !!(errors?.hats?.[hatIndex] as FormikErrors<RoleValue>).member
-                  ? (errors?.hats?.[hatIndex] as FormikErrors<RoleValue>).member
-                  : undefined
-              }
+              errorMessage={meta.touched && meta.error ? meta.error : undefined}
             >
               <AddressInput
                 value={field.value}

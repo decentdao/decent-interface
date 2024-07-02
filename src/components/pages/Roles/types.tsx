@@ -63,7 +63,6 @@ export interface Role {
 }
 
 export interface EditedRole {
-  id?: number;
   fieldNames: string[];
   status: EditBadgeStatus;
 }

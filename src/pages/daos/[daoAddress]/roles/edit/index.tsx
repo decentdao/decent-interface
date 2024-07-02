@@ -1,18 +1,16 @@
-import { Box, Button, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
-import { ArrowLeft, Plus } from '@phosphor-icons/react';
+import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
+import { Plus } from '@phosphor-icons/react';
 import { FieldArray, Formik } from 'formik';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { zeroAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import RoleFormCreateProposal from '../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
 import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
-import { useHeaderHeight } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import { useFractal } from '../../../../../providers/App/AppProvider';
@@ -26,7 +24,6 @@ function RolesEdit() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
-  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const { rolesSchema } = useRolesSchema();
   const { hatsTree } = useRolesState();
   const navigate = useNavigate();
@@ -56,7 +53,6 @@ function RolesEdit() {
     ];
   }, []);
 
-  const headerHeight = useHeaderHeight();
   if (daoAddress === null) return null;
 
   const showRoleEditDetails = (_hatIndex: number) => {
@@ -73,7 +69,7 @@ function RolesEdit() {
       }}
       validationSchema={rolesSchema}
       validateOnMount
-      onSubmit={(values) => {
+      onSubmit={values => {
         // @todo prepare transactions for adding/removing roles
         // @todo submit transactions
       }}
@@ -140,49 +136,12 @@ function RolesEdit() {
                   <RolesEditTable handleRoleClick={showRoleEditDetails} />
                 </Show>
                 <Show below="md">
-                  {isSummaryOpen && (
-                    <Box>
-                      <Portal>
-                        <Box
-                          position="fixed"
-                          top={headerHeight}
-                          h={`100vh`}
-                          w="full"
-                          bg="neutral-1"
-                          px="1rem"
-                        >
-                          <Flex
-                            justifyContent="space-between"
-                            alignItems="center"
-                            my="1.75rem"
-                          >
-                            <Flex
-                              gap="0.5rem"
-                              alignItems="center"
-                              aria-label={t('proposalNew')}
-                              onClick={() => {
-                                setIsSummaryOpen(false);
-                              }}
-                            >
-                              <Icon
-                                as={ArrowLeft}
-                                boxSize="1.5rem"
-                              />
-                              <Text textStyle="display-lg">
-                                {t('proposalNew', { ns: 'breadcrumbs' })}
-                              </Text>
-                            </Flex>
-                          </Flex>
-                          <RoleFormCreateProposal close={() => setIsSummaryOpen(false)} />
-                        </Box>
-                      </Portal>
-                    </Box>
-                  )}
                   {values.hats.map((hat, index) => (
                     <RoleCardEdit
                       key={index}
                       roleName={hat.roleName}
                       wearerAddress={hat.member}
+                      editStatus={hat.editedRole?.status}
                       handleRoleClick={() => showRoleEditDetails(index)}
                     />
                   ))}
@@ -201,7 +160,11 @@ function RolesEdit() {
               {t('cancel', { ns: 'common' })}
             </Button>
             <Button
-              onClick={() => setIsSummaryOpen(true)}
+              onClick={() =>
+                navigate(
+                  DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, daoAddress),
+                )
+              }
               isDisabled={!values.hats.some(hat => hat.editedRole)}
             >
               {t('createProposal', { ns: 'modals' })}
