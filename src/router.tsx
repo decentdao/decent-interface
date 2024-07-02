@@ -18,6 +18,7 @@ import ProposalDetailsPage from './pages/daos/[daoAddress]/proposals/[proposalId
 import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
 import Roles from './pages/daos/[daoAddress]/roles';
 import RolesEdit from './pages/daos/[daoAddress]/roles/edit';
+import RoleEditDetails from './pages/daos/[daoAddress]/roles/edit/details';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 import HomePage from './pages/home/HomePage';
 
@@ -69,15 +70,17 @@ export const router = (addressPrefix: string) =>
               element: <HierarchyPage />,
             },
             {
+              index: true,
+              path: DAO_ROUTES.roles.path,
+              element: <Roles />,
+            },
+            {
+              path: DAO_ROUTES.rolesEdit.path,
+              element: <RolesEdit />,
               children: [
                 {
-                  index: true,
-                  path: DAO_ROUTES.roles.path,
-                  element: <Roles />,
-                },
-                {
-                  path: DAO_ROUTES.rolesEdit.path,
-                  element: <RolesEdit />,
+                  path: "details",
+                  element: <RoleEditDetails />,
                 },
               ],
             },
