@@ -1,33 +1,41 @@
+import { Address } from 'viem';
 import { CreateProposalMetadata } from '../../../types';
 
 export type RoleViewMode = 'edit' | 'view';
+
+export interface SablierVesting {
+  vestingSchedule: string;
+  vestingAmount: string;
+  asset: {
+    address: Address;
+    symbol: string;
+    name: string;
+    iconUri: string;
+  };
+}
+
+export interface SablierPayroll {
+  payrollSchedule: string;
+  payrollAmount: string;
+  asset: {
+    address: Address;
+    symbol: string;
+    name: string;
+    iconUri: string;
+  };
+}
 export interface RoleProps {
-  mode?: RoleViewMode;
   editStatus?: EditBadgeStatus;
   handleRoleClick: (hatId: number) => void;
   hatId: number;
   roleName: string;
   wearerAddress: string | undefined;
-  vestingData?: {
-    vestingSchedule: string;
-    vestingAmount: string;
-    asset: {
-      address: string;
-      symbol: string;
-      name: string;
-      iconUri: string;
-    };
-  };
-  payrollData?: {
-    payrollSchedule: string;
-    payrollAmount: string;
-    asset: {
-      address: string;
-      symbol: string;
-      name: string;
-      iconUri: string;
-    };
-  };
+  vestingData?: SablierVesting;
+  payrollData?: SablierPayroll;
+}
+
+export interface RoleEditProps extends Omit<RoleProps, 'hatId'> {
+  handleRoleClick: () => void;
 }
 
 export enum EditBadgeStatus {

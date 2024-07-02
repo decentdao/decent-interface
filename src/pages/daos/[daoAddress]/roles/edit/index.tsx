@@ -5,8 +5,8 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { zeroAddress } from 'viem';
-import { RoleCard } from '../../../../../components/pages/Roles/RoleCard';
-import { RolesTable } from '../../../../../components/pages/Roles/RolesTable';
+import { RoleCard, RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
+import { RolesEditTable, RolesTable } from '../../../../../components/pages/Roles/RolesTable';
 import RoleFormCreateProposal from '../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
 import RoleFormTabs from '../../../../../components/pages/Roles/forms/RoleFormTabs';
 import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
@@ -139,10 +139,7 @@ function RolesEdit() {
                 )}
 
                 <Show above="md">
-                  <RolesTable
-                    mode="edit"
-                    handleRoleClick={handleRoleClick}
-                  />
+                  <RolesEditTable handleRoleClick={handleRoleClick} />
                 </Show>
                 <Show below="md">
                   {!!hatIndex && (
@@ -224,12 +221,10 @@ function RolesEdit() {
                     </Box>
                   )}
                   {values.hats.map((hat, index) => (
-                    <RoleCard
+                    <RoleCardEdit
                       key={index}
-                      hatId={hat.id}
                       roleName={hat.roleName}
                       wearerAddress={hat.member}
-                      mode="edit"
                       handleRoleClick={() => handleRoleClick(index)}
                     />
                   ))}

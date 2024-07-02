@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import { RoleCard } from '../RoleCard';
+import { RoleCardEdit } from '../RoleCard';
 import { RoleFormValues } from '../types';
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
@@ -72,16 +72,14 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         borderRadius="0.5rem"
       >
         {editedRoles.map((role, index) => (
-          <RoleCard
+          <RoleCardEdit
             key={index}
             wearerAddress={role.member}
             roleName={role.roleName}
             handleRoleClick={() => {
               // @todo open role details drawer
             }}
-            hatId={role.id}
             editStatus={role.editedRole?.status}
-            mode="edit"
           />
         ))}
       </Box>
