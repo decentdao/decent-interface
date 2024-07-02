@@ -1,35 +1,47 @@
 import { Box, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
 import { ArrowLeft, Plus } from '@phosphor-icons/react';
-import { FieldArray, Formik } from 'formik';
-import { useMemo, useState } from 'react';
+import { FieldArray, Form, Formik } from 'formik';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress } from 'viem';
+import { Address, encodeFunctionData, zeroAddress } from 'viem';
+import DecentHatsAbi from '../../../../../assets/abi/DecentHats';
+import GnosisSafeL2 from '../../../../../assets/abi/GnosisSafeL2';
 import { RoleCard } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesTable } from '../../../../../components/pages/Roles/RolesTable';
 import RoleFormCreateProposal from '../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
 import RoleForm from '../../../../../components/pages/Roles/forms/RoleFormTabs';
-import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
+import {
+  RoleFormValues,
+  DEFAULT_ROLE_HAT,
+  HatStruct,
+  RoleValue,
+  EditBadgeStatus,
+} from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { useHeaderHeight } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
+import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../../state/useRolesState';
+import { CreateProposalMetadata } from '../../../../../types';
 
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
   const {
-    node: { daoAddress },
+    node: { daoAddress, safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
   const [hatIndex, setHatIndex] = useState<number>();
   const [isSummaryOpen, setIsSummaryOpen] = useState(true);
   const { rolesSchema } = useRolesSchema();
-  const { hatsTree } = useRolesState();
+  const { hatsTree, hatsTreeId } = useRolesState();
+
+  const { submitProposal } = useSubmitProposal();
 
   const hats = useMemo(() => {
     // @todo get hats from hatsTree from state
@@ -56,10 +68,137 @@ function RolesEdit() {
     ];
   }, []);
 
+  const headerHeight = useHeaderHeight();
+
   const handleRoleClick = (_hatIndex: number) => {
     setHatIndex(_hatIndex);
   };
-  const headerHeight = useHeaderHeight();
+
+  const decentHatsAddress = '0x88e72194d93bf417310b197275d972cf78406163'; // @todo: sepolia only. Move to, and read from, network config
+
+  const prepareCreateHatProposal = useCallback(
+    async (proposalMetadata: CreateProposalMetadata, addedHats: HatStruct[]) => {
+      if (!safe) return;
+
+      const enableModuleData = encodeFunctionData({
+        abi: GnosisSafeL2,
+        functionName: 'enableModule',
+        args: [decentHatsAddress],
+      });
+
+      const disableModuleData = encodeFunctionData({
+        abi: GnosisSafeL2,
+        functionName: 'disableModule',
+        args: [decentHatsAddress, decentHatsAddress], // @todo: Figure out prevModule arg. Need to retrieve from safe.
+      });
+
+      const addressZero = zeroAddress as Address;
+      const adminHat: HatStruct = {
+        eligibility: addressZero,
+        toggle: addressZero,
+        maxSupply: 1,
+        details: JSON.stringify({
+          name: 'Admin',
+          description: '',
+        }),
+        imageURI: '',
+        isMutable: true,
+        wearer: addressZero,
+      };
+
+      const createAndDeclareTreeData = encodeFunctionData({
+        abi: DecentHatsAbi,
+        functionName: 'createAndDeclareTree',
+        args: [
+          JSON.stringify({
+            name: 'Top Hat',
+            description: 'top hat',
+          }),
+          '',
+          adminHat,
+          addedHats,
+        ],
+      });
+
+      return {
+        targets: [safe.address, decentHatsAddress, safe.address] as Address[],
+        calldatas: [enableModuleData, createAndDeclareTreeData, disableModuleData],
+        metaData: proposalMetadata,
+        values: [0n, 0n, 0n],
+      };
+    },
+    [safe],
+  );
+
+  const parsedEditedHats = (editedHats: RoleValue[]) => {
+    const addedHats: HatStruct[] = [];
+    
+    editedHats.forEach(hat => {
+      const { roleName, member, roleDescription, editedRole } = hat;
+      if (editedRole) {
+        if (editedRole.status === EditBadgeStatus.New) {
+          addedHats.push({
+            eligibility: zeroAddress,
+            toggle: zeroAddress,
+            maxSupply: 1,
+            details: JSON.stringify({
+              name: roleName,
+              description: roleDescription,
+            }),
+            imageURI: '',
+            isMutable: true,
+            wearer: member as Address,
+          });
+        }
+      }
+    });
+
+    return addedHats;
+  };
+
+  const setupAndCreateRolesEditProposal = useCallback(
+    async (values: RoleFormValues) => {
+      // filter to hats that have been modified (includes editedRole prop)
+      const modifiedHats = values.hats.filter(hat => !!hat.editedRole);
+
+      // if hatsTreeId is not set:
+      //  - add decent hats module to this safe
+      //  - call createAndDeclareTree on decent hats module:
+      //   - create a new top hat
+      //   - under that an admin hat
+      // else:
+      //  - assert no changes to either top hat or admin hat
+      //  - for each modified hat:
+      //   - check type of edit
+      //   - build hats tx for that edit
+
+      try {
+        const proposalData = await prepareCreateHatProposal(
+          values.proposalMetadata,
+          parsedEditedHats(modifiedHats),
+        );
+
+        if (proposalData) {
+          submitProposal({
+            proposalData,
+            nonce: safe?.nextNonce,
+            pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+            successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+            failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+            // successCallback,
+          });
+        }
+
+        console.log('values', values);
+        console.log('proposalData', proposalData);
+      } catch (e) {
+        console.error(e);
+        // toast(t('encodingFailedMessage', { ns: 'proposal' }));
+      }
+    },
+    [safe, prepareCreateHatProposal, submitProposal, t],
+  );
+
   if (daoAddress === null) return null;
 
   return (
@@ -73,18 +212,10 @@ function RolesEdit() {
       }}
       validationSchema={rolesSchema}
       validateOnMount
-      onSubmit={() => {
-        // @todo prepare transactions for adding/removing roles
-        // @todo submit transactions
-      }}
+      onSubmit={setupAndCreateRolesEditProposal}
     >
       {({ handleSubmit, values }) => (
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            handleSubmit(e);
-          }}
-        >
+        <Form onSubmit={handleSubmit}>
           <FieldArray name="hats">
             {({ push, remove }) => (
               <Box>
@@ -113,6 +244,7 @@ function RolesEdit() {
                   buttonClick={() => {
                     push(DEFAULT_ROLE_HAT);
                     setHatIndex(values.hats.length);
+                    handleSubmit();
                   }}
                 />
                 {hatsTree === undefined && (
@@ -233,7 +365,7 @@ function RolesEdit() {
               </Box>
             )}
           </FieldArray>
-        </form>
+        </Form>
       )}
     </Formik>
   );
