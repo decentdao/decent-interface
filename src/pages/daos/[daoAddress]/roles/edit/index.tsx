@@ -89,7 +89,7 @@ function RolesEdit() {
           proposalData = await prepareCreateTopHatProposal(values.proposalMetadata, addedHats);
         } else {
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
-          proposalData = await prepareEditHatsProposal(hatsTreeId, values.proposalMetadata, {
+          proposalData = await prepareEditHatsProposal(values.proposalMetadata, {
             addedHats,
             removedHatIds,
             updatedHats,
@@ -170,7 +170,6 @@ function RolesEdit() {
                   buttonClick={() => {
                     push(DEFAULT_ROLE_HAT);
                     setHatIndex(values.hats.length);
-                    handleSubmit();
                   }}
                 />
                 {hatsTree === undefined && (

@@ -163,7 +163,6 @@ export const useRolesProposalFunctions = () => {
 
   const prepareEditHatsProposal = useCallback(
     async (
-      treeId: number,
       proposalMetadata: CreateProposalMetadata,
       edits: {
         addedHats: HatStruct[];
@@ -174,11 +173,6 @@ export const useRolesProposalFunctions = () => {
       if (!safe) return;
 
       const { addedHats, removedHatIds, updatedHats } = edits;
-
-      // @todo: assert none of edited hats are top hat or admin hat
-      if (removedHatIds.includes(treeId) || updatedHats.some(hat => hat.id === treeId)) {
-        throw new Error('Cannot edit top hat');
-      }
 
       const addHatsTx = encodeFunctionData({
         abi: HatsAbi,
