@@ -1,6 +1,6 @@
 {
   "name": "decent-interface",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.7.10",
