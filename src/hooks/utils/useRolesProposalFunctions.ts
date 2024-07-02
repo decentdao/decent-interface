@@ -12,7 +12,6 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { CreateProposalMetadata } from '../../types';
 
 const decentHatsAddress = '0x88e72194d93bf417310b197275d972cf78406163'; // @todo: sepolia only. Move to, and read from, network config
-
 const HatsAbi = 'HatsAbi' as any;
 const hatsContractAddress = 'hatsAddress' as Address;
 
@@ -72,6 +71,10 @@ export const useRolesProposalFunctions = () => {
             break;
 
           case EditBadgeStatus.Updated:
+            let newRoleName = roleName;
+            let newRoleDescription = roleDescription;
+            let newMember = member;
+
             editedRole.fieldNames.forEach(fieldName => {
               switch (fieldName) {
                 case 'roleName':
