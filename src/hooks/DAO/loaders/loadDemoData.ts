@@ -39,7 +39,7 @@ const decentDAO = {
   address: decentDAOAddress,
   parentAddress: '',
   name: 'Decent DAO',
-  snapshotENS: 'decent-dao.eth',
+  snapshotENS: 'decentdao.eth',
   proposalTemplatesHash: '',
   hierarchy: [],
 };
