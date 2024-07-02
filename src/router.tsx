@@ -19,6 +19,7 @@ import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
 import Roles from './pages/daos/[daoAddress]/roles';
 import RolesEdit from './pages/daos/[daoAddress]/roles/edit';
 import RoleEditDetails from './pages/daos/[daoAddress]/roles/edit/details';
+import EditProposalSummary from './pages/daos/[daoAddress]/roles/edit/summary';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 import HomePage from './pages/home/HomePage';
 
@@ -81,6 +82,10 @@ export const router = (addressPrefix: string) =>
                 {
                   path: "details",
                   element: <RoleEditDetails />,
+                },
+                {
+                  path: "summary",
+                  element: <EditProposalSummary />,
                 },
               ],
             },

@@ -42,6 +42,11 @@ export const DAO_ROUTES = {
       `/roles/edit/details${getDaoQueryParam(addressPrefix, daoAddress)}&hatIndex=${hatIndex}`,
     path: 'roles/edit/details',
   },
+  rolesEditCreateProposalSummary: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/roles/edit/summary${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'roles/edit/summary',
+  },
   treasury: {
     relative: (addressPrefix: string, daoAddress: string) =>
       `/treasury${getDaoQueryParam(addressPrefix, daoAddress)}`,
