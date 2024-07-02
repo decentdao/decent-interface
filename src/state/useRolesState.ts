@@ -1,5 +1,5 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Hex } from 'viem';
+import { Address, Hex } from 'viem';
 import { create } from 'zustand';
 
 export class DecentHatsError extends Error {
@@ -15,20 +15,30 @@ export class DecentHatsError extends Error {
 
 interface DecentHat {
   id: Hex;
-  prettyId?: string;
-  name?: string;
-  description?: string;
+  prettyId: string;
+  name: string;
+  description: string;
+}
+
+interface DecentTopHat extends DecentHat {}
+
+interface DecentAdminHat extends DecentHat {}
+
+interface DecentRoleHat extends DecentHat {
+  wearer: Address;
 }
 
 interface DecentTree {
-  topHat: DecentHat;
-  adminHat: DecentHat;
-  roleHats: DecentHat[];
+  topHat: DecentTopHat;
+  adminHat: DecentAdminHat;
+  roleHats: DecentRoleHat[];
+  roleHatsTotalCount: number;
 }
 
 interface Roles {
   hatsTreeId: undefined | null | number;
   hatsTree: undefined | null | DecentTree;
+  getHat: (hatId: Hex) => DecentHat | null;
   setHatsTreeId: (hatsTreeId: undefined | null | number) => void;
   setHatsTree: (hatsTree: undefined | null | Tree) => void;
 }
@@ -93,33 +103,39 @@ const sanitize = (hatsTree: undefined | null | Tree): undefined | null | DecentT
 
   const topHat: DecentHat = {
     id: rawTopHat.id,
-    prettyId: rawTopHat.prettyId,
-    name: rawTopHat.details,
-    description: rawTopHat.details,
+    prettyId: rawTopHat.prettyId ?? '',
+    name: rawTopHat.details ?? '',
+    description: rawTopHat.details ?? '',
   };
 
   const rawAdminHat = getRawAdminHat(hatsTree.hats);
 
   const adminHat: DecentHat = {
     id: rawAdminHat.id,
-    prettyId: rawAdminHat.prettyId,
-    name: rawAdminHat.details,
-    description: rawAdminHat.details,
+    prettyId: rawAdminHat.prettyId ?? '',
+    name: rawAdminHat.details ?? '',
+    description: rawAdminHat.details ?? '',
   };
 
   const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
 
-  const roleHats: DecentHat[] = rawRoleHats.map(rawHat => ({
+  const rawRoleHatsPruned = rawRoleHats
+    .filter(rawHat => rawHat.status === true)
+    .filter(h => h.wearers !== undefined && h.wearers.length === 1);
+
+  const roleHats: DecentRoleHat[] = rawRoleHatsPruned.map(rawHat => ({
     id: rawHat.id,
-    prettyId: rawHat.prettyId,
-    name: rawHat.details,
-    description: rawHat.details,
+    prettyId: rawHat.prettyId ?? '',
+    name: rawHat.details ?? '',
+    description: rawHat.details ?? '',
+    wearer: rawHat.wearers![0].id,
   }));
 
   const decentTree: DecentTree = {
     topHat,
     adminHat,
     roleHats,
+    roleHatsTotalCount: rawRoleHats.length,
   };
 
   console.log({ decentTree });
@@ -127,9 +143,22 @@ const sanitize = (hatsTree: undefined | null | Tree): undefined | null | DecentT
   return decentTree;
 };
 
-const useRolesState = create<Roles>()(set => ({
+const useRolesState = create<Roles>()((set, get) => ({
   hatsTreeId: undefined,
   hatsTree: undefined,
+  getHat: hatId => {
+    const matches = get().hatsTree?.roleHats.filter(h => h.id === hatId);
+
+    if (matches === undefined || matches.length === 0) {
+      return null;
+    }
+
+    if (matches.length > 1) {
+      throw new Error('multiple hats with the same ID');
+    }
+
+    return matches[0];
+  },
   setHatsTreeId: hatsTreeId =>
     set(state => {
       // dev
