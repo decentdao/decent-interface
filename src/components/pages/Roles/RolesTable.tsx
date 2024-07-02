@@ -290,7 +290,7 @@ export function RolesTable({
   handleRoleClick,
   roleHats,
 }: {
-  handleRoleClick: (hatId: number) => void;
+  handleRoleClick: (hatId: bigint) => void;
   roleHats: Role[];
 }) {
   return (
@@ -317,7 +317,7 @@ export function RolesTable({
         >
           {roleHats.map(role => (
             <RolesRow
-              key={role.id}
+              key={role.id.toString()}
               hatId={role.id}
               wearerAddress={role.member}
               handleRoleClick={handleRoleClick}
@@ -359,7 +359,7 @@ export function RolesEditTable({
         >
           {values.hats.map((role, index) => (
             <RolesRowEdit
-              key={role.id}
+              key={role.id.toString()}
               wearerAddress={role.member}
               handleRoleClick={() => handleRoleClick(index)}
               {...role}

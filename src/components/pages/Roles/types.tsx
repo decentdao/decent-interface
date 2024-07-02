@@ -1,4 +1,4 @@
-import { Address } from 'viem';
+import { Address, zeroAddress } from 'viem';
 import { CreateProposalMetadata } from '../../../types';
 
 export type RoleViewMode = 'edit' | 'view';
@@ -26,8 +26,8 @@ export interface SablierPayroll {
 }
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
-  handleRoleClick: (hatId: number) => void;
-  hatId: number;
+  handleRoleClick: (hatId: bigint) => void;
+  hatId: bigint;
   roleName: string;
   wearerAddress: string | undefined;
   vestingData?: SablierVesting;
@@ -65,19 +65,19 @@ export interface HatStruct {
 }
 
 export interface HatStructWithId extends HatStruct {
-  id: number;
+  id: bigint;
 }
 
 export interface Role {
-  id: number;
-  member: string;
+  id: bigint;
+  member: Address;
   roleName: string;
   roleDescription: string;
   // @todo add vesting and payroll types
 }
 
 export interface EditedRole {
-  id?: number;
+  id?: bigint;
   fieldNames: string[];
   status: EditBadgeStatus;
 }
@@ -92,8 +92,8 @@ export interface RoleFormValues {
 }
 
 export const DEFAULT_ROLE_HAT: RoleValue = {
-  id: -1,
-  member: '',
+  id: -1n,
+  member: zeroAddress, // @todo: confirm this is fine when used on the add role form
   roleName: '',
   roleDescription: '',
 };

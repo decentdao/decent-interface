@@ -47,19 +47,19 @@ function RolesEdit() {
     // @todo will need to combine with Sablier information, down the road.
     return [
       {
-        id: 1,
+        id: 1n,
         member: zeroAddress,
         roleName: 'Legal Reviewer',
         roleDescription: 'The Legal Reviewer role has...',
       },
       {
-        id: 2,
+        id: 2n,
         member: zeroAddress,
         roleName: 'Marketer',
         roleDescription: 'The Marketer role has...',
       },
       {
-        id: 3,
+        id: 3n,
         member: zeroAddress,
         roleName: 'Developer',
         roleDescription: 'The Developer role has...',

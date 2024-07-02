@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { zeroAddress, Address, encodeFunctionData } from 'viem';
+import { zeroAddress, Address, encodeFunctionData, getAddress } from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import {
@@ -11,9 +11,8 @@ import {
 import { useFractal } from '../../providers/App/AppProvider';
 import { CreateProposalMetadata } from '../../types';
 
-const decentHatsAddress = '0x88e72194d93bf417310b197275d972cf78406163'; // @todo: sepolia only. Move to, and read from, network config
-const HatsAbi = 'HatsAbi' as any;
-const hatsContractAddress = 'hatsAddress' as Address;
+const decentHatsAddress = getAddress('0x88e72194d93bf417310b197275d972cf78406163'); // @todo: sepolia only. Move to, and read from, network config
+const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
 
 export const useRolesProposalFunctions = () => {
   const {
@@ -30,7 +29,7 @@ export const useRolesProposalFunctions = () => {
     const imageURIs: string[] = [];
 
     addedHats.forEach(hat => {
-      admins.push(0n);
+      admins.push(0n); // should be the safe's admin hat address
       details.push(hat.details);
       maxSupplies.push(hat.maxSupply);
       eligibilityModules.push(hat.eligibility);
@@ -39,12 +38,12 @@ export const useRolesProposalFunctions = () => {
       imageURIs.push(hat.imageURI);
     });
 
-    return [admins, details, maxSupplies, eligibilityModules, toggleModules, mutables, imageURIs];
+    return [admins, details, maxSupplies, eligibilityModules, toggleModules, mutables, imageURIs] as const;
   }, []);
 
   const parsedEditedHats = (editedHats: RoleValue[]) => {
     const addedHats: HatStruct[] = [];
-    const removedHatIds: number[] = [];
+    const removedHatIds: bigint[] = [];
     const updatedHats: HatStructWithId[] = [];
 
     editedHats.forEach(hat => {
@@ -62,7 +61,7 @@ export const useRolesProposalFunctions = () => {
               }),
               imageURI: '',
               isMutable: true,
-              wearer: member as Address,
+              wearer: member,
             });
             break;
 
@@ -97,7 +96,7 @@ export const useRolesProposalFunctions = () => {
               }),
               imageURI: '',
               isMutable: true,
-              wearer: member as Address,
+              wearer: member,
             });
             break;
         }
@@ -123,10 +122,9 @@ export const useRolesProposalFunctions = () => {
         args: [decentHatsAddress, decentHatsAddress], // @todo: Figure out prevModule arg. Need to retrieve from safe.
       });
 
-      const addressZero = zeroAddress as Address;
       const adminHat: HatStruct = {
-        eligibility: addressZero,
-        toggle: addressZero,
+        eligibility: zeroAddress,
+        toggle: zeroAddress,
         maxSupply: 1,
         details: JSON.stringify({
           name: 'Admin',
@@ -134,7 +132,7 @@ export const useRolesProposalFunctions = () => {
         }),
         imageURI: '',
         isMutable: true,
-        wearer: addressZero,
+        wearer: zeroAddress,
       };
 
       const createAndDeclareTreeData = encodeFunctionData({
@@ -151,8 +149,9 @@ export const useRolesProposalFunctions = () => {
         ],
       });
 
+      const safeAddress = getAddress(safe.address);
       return {
-        targets: [safe.address, decentHatsAddress, safe.address] as Address[],
+        targets: [safeAddress, decentHatsAddress, safeAddress],
         calldatas: [enableModuleData, createAndDeclareTreeData, disableModuleData],
         metaData: proposalMetadata,
         values: [0n, 0n, 0n],
@@ -167,7 +166,7 @@ export const useRolesProposalFunctions = () => {
       proposalMetadata: CreateProposalMetadata,
       edits: {
         addedHats: HatStruct[];
-        removedHatIds: number[];
+        removedHatIds: bigint[];
         updatedHats: HatStructWithId[];
       },
     ) => {
