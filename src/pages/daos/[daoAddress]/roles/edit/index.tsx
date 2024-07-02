@@ -3,6 +3,7 @@ import { ArrowLeft, Plus } from '@phosphor-icons/react';
 import { FieldArray, Form, Formik } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { Address, encodeFunctionData, zeroAddress } from 'viem';
 import DecentHatsAbi from '../../../../../assets/abi/DecentHats';
 import GnosisSafeL2 from '../../../../../assets/abi/GnosisSafeL2';
@@ -16,6 +17,7 @@ import {
   HatStruct,
   RoleValue,
   EditBadgeStatus,
+  HatStructWithId,
 } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
@@ -27,7 +29,7 @@ import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchem
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../../state/useRolesState';
-import { CreateProposalMetadata } from '../../../../../types';
+import { CreateProposalMetadata, ProposalExecuteData } from '../../../../../types';
 
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
@@ -76,7 +78,7 @@ function RolesEdit() {
 
   const decentHatsAddress = '0x88e72194d93bf417310b197275d972cf78406163'; // @todo: sepolia only. Move to, and read from, network config
 
-  const prepareCreateHatProposal = useCallback(
+  const prepareCreateTopHatProposal = useCallback(
     async (proposalMetadata: CreateProposalMetadata, addedHats: HatStruct[]) => {
       if (!safe) return;
 
@@ -130,54 +132,159 @@ function RolesEdit() {
     [safe],
   );
 
+  const prepareAddHatsArgs = useCallback((addedHats: HatStruct[]) => {
+    const admins: bigint[] = [];
+    const details: string[] = [];
+    const maxSupplies: number[] = [];
+    const eligibilityModules: Address[] = [];
+    const toggleModules: Address[] = [];
+    const mutables: boolean[] = [];
+    const imageURIs: string[] = [];
+
+    addedHats.forEach(hat => {
+      admins.push(0n);
+      details.push(hat.details);
+      maxSupplies.push(hat.maxSupply);
+      eligibilityModules.push(hat.eligibility);
+      toggleModules.push(hat.toggle);
+      mutables.push(hat.isMutable);
+      imageURIs.push(hat.imageURI);
+    });
+
+    return [admins, details, maxSupplies, eligibilityModules, toggleModules, mutables, imageURIs];
+  }, []);
+
+  const HatsAbi = 'HatsAbi' as any;
+  const hatsContractAddress = 'hatsAddress' as Address;
+
+  const prepareEditHatsProposal = useCallback(
+    async (
+      treeId: number,
+      proposalMetadata: CreateProposalMetadata,
+      edits: {
+        addedHats: HatStruct[];
+        removedHatIds: number[];
+        updatedHats: HatStructWithId[];
+      },
+    ) => {
+      if (!safe) return;
+
+      const { addedHats, removedHatIds, updatedHats } = edits;
+
+      // @todo: assert none of edited hats are top hat or admin hat
+      if (removedHatIds.includes(treeId) || updatedHats.some(hat => hat.id === treeId)) {
+        throw new Error('Cannot edit top hat');
+      }
+
+      const addHatsTx = encodeFunctionData({
+        abi: 'HatsAbi' as any,
+        functionName: 'batchCreateHats',
+        args: prepareAddHatsArgs(addedHats),
+      });
+
+      const removeHatTxs = removedHatIds.map(hatId =>
+        encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'setHatStatus',
+          args: [hatId, false],
+        }),
+      );
+
+      return {
+        targets: [hatsContractAddress, ...removeHatTxs.map(() => hatsContractAddress)],
+        calldatas: [addHatsTx, ...removeHatTxs],
+        metaData: proposalMetadata,
+        values: [0n, ...removeHatTxs.map(() => 0n)],
+      };
+    },
+    [prepareAddHatsArgs, safe],
+  );
+
   const parsedEditedHats = (editedHats: RoleValue[]) => {
     const addedHats: HatStruct[] = [];
-    
+    const removedHatIds: number[] = [];
+    const updatedHats: HatStructWithId[] = [];
+
     editedHats.forEach(hat => {
-      const { roleName, member, roleDescription, editedRole } = hat;
+      const { roleName, member, roleDescription, editedRole, id } = hat;
       if (editedRole) {
-        if (editedRole.status === EditBadgeStatus.New) {
-          addedHats.push({
-            eligibility: zeroAddress,
-            toggle: zeroAddress,
-            maxSupply: 1,
-            details: JSON.stringify({
-              name: roleName,
-              description: roleDescription,
-            }),
-            imageURI: '',
-            isMutable: true,
-            wearer: member as Address,
-          });
+        switch (editedRole.status) {
+          case EditBadgeStatus.New:
+            addedHats.push({
+              eligibility: zeroAddress,
+              toggle: zeroAddress,
+              maxSupply: 1,
+              details: JSON.stringify({
+                name: roleName,
+                description: roleDescription,
+              }),
+              imageURI: '',
+              isMutable: true,
+              wearer: member as Address,
+            });
+            break;
+
+          case EditBadgeStatus.Removed:
+            removedHatIds.push(id);
+            break;
+
+          case EditBadgeStatus.Updated:
+            editedRole.fieldNames.forEach(fieldName => {
+              switch (fieldName) {
+                case 'roleName':
+                  break;
+                case 'roleDescription':
+                  break;
+                case 'member':
+                  break;
+              }
+            });
+
+            updatedHats.push({
+              id,
+              eligibility: zeroAddress,
+              toggle: zeroAddress,
+              maxSupply: 1,
+              details: JSON.stringify({
+                name: roleName,
+                description: roleDescription,
+              }),
+              imageURI: '',
+              isMutable: true,
+              wearer: member as Address,
+            });
+            break;
         }
       }
     });
 
-    return addedHats;
+    return { addedHats, removedHatIds, updatedHats };
   };
 
-  const setupAndCreateRolesEditProposal = useCallback(
+  const createRolesEditProposal = useCallback(
     async (values: RoleFormValues) => {
-      // filter to hats that have been modified (includes editedRole prop)
-      const modifiedHats = values.hats.filter(hat => !!hat.editedRole);
-
-      // if hatsTreeId is not set:
-      //  - add decent hats module to this safe
-      //  - call createAndDeclareTree on decent hats module:
-      //   - create a new top hat
-      //   - under that an admin hat
-      // else:
-      //  - assert no changes to either top hat or admin hat
-      //  - for each modified hat:
-      //   - check type of edit
-      //   - build hats tx for that edit
-
       try {
-        const proposalData = await prepareCreateHatProposal(
-          values.proposalMetadata,
-          parsedEditedHats(modifiedHats),
-        );
+        // filter to hats that have been modified (ie includes `editedRole` prop)
+        const modifiedHats = values.hats.filter(hat => !!hat.editedRole);
 
+        let proposalData: ProposalExecuteData | undefined;
+
+        const { addedHats, removedHatIds, updatedHats } = parsedEditedHats(modifiedHats);
+        
+        if (hatsTreeId === null || hatsTreeId === undefined) {
+          // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat, 
+          // along with any other hats that are added.
+          proposalData = await prepareCreateTopHatProposal(values.proposalMetadata, addedHats);
+        } else {
+          // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
+          proposalData = await prepareEditHatsProposal(hatsTreeId, values.proposalMetadata, {
+            addedHats,
+            removedHatIds,
+            updatedHats,
+          });
+        }
+
+        // All done, submit the proposal!
         if (proposalData) {
           submitProposal({
             proposalData,
@@ -189,14 +296,20 @@ function RolesEdit() {
           });
         }
 
-        console.log('values', values);
         console.log('proposalData', proposalData);
       } catch (e) {
         console.error(e);
-        // toast(t('encodingFailedMessage', { ns: 'proposal' }));
+        toast(t('encodingFailedMessage', { ns: 'proposal' }));
       }
     },
-    [safe, prepareCreateHatProposal, submitProposal, t],
+    [
+      hatsTreeId,
+      prepareCreateTopHatProposal,
+      prepareEditHatsProposal,
+      submitProposal,
+      safe?.nextNonce,
+      t,
+    ],
   );
 
   if (daoAddress === null) return null;
@@ -212,7 +325,7 @@ function RolesEdit() {
       }}
       validationSchema={rolesSchema}
       validateOnMount
-      onSubmit={setupAndCreateRolesEditProposal}
+      onSubmit={createRolesEditProposal}
     >
       {({ handleSubmit, values }) => (
         <Form onSubmit={handleSubmit}>
