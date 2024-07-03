@@ -21,6 +21,7 @@ import {
   prepareEditHatsProposalData,
 } from '../../../../../hooks/utils/rolesProposalFunctions';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import useIPFSClient from '../../../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../../state/useRolesState';
 import { ProposalExecuteData } from '../../../../../types';
@@ -38,6 +39,8 @@ function RolesEdit() {
 
   const { submitProposal } = useSubmitProposal();
 
+  const ipfsClient = useIPFSClient();
+
   const createRolesEditProposal = useCallback(
     async (values: RoleFormValues) => {
       if (!safe) {
@@ -50,7 +53,14 @@ function RolesEdit() {
 
         let proposalData: ProposalExecuteData;
 
-        const editedHatStructs = parsedEditedHatsFormValues(modifiedHats, getHat);
+        const uploadHatDescriptionCallback = (hatDescription: string) =>
+          ipfsClient.add(hatDescription);
+
+        const editedHatStructs = await parsedEditedHatsFormValues(
+          modifiedHats,
+          getHat,
+          uploadHatDescriptionCallback,
+        );
 
         if (hatsTreeId === null || hatsTreeId === undefined) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
@@ -59,6 +69,7 @@ function RolesEdit() {
             values.proposalMetadata,
             editedHatStructs.addedHats,
             getAddress(safe.address),
+            uploadHatDescriptionCallback,
           );
         } else {
           if (hatsTree === undefined || hatsTree === null) {
@@ -94,7 +105,7 @@ function RolesEdit() {
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
       }
     },
-    [safe, getHat, hatsTreeId, submitProposal, t, hatsTree],
+    [safe, getHat, hatsTreeId, submitProposal, t, ipfsClient, hatsTree],
   );
 
   if (daoAddress === null) return null;

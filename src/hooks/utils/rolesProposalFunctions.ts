@@ -76,27 +76,36 @@ const prepareMintHatsTxArgs = (addedHats: HatStructWithId[]) => {
  * Given a list of edited hats, chunk them up into separate lists denoting the type of edit and the relevant updated data.
  * This is to prepare the data for the creation of a proposal to edit hats, in `prepareCreateTopHatProposal` and `prepareEditHatsProposal`.
  * @param editedHats The edited hats to be parsed. Form values from the roles form.
+ * @param getHat A function to get the hat details from the state, given a hat ID. Used to get the current wearer of a hat when the wearer is updated.
+ * @param uploadHatDescription A function to upload the hat description to IPFS. Returns the IPFS hash of the uploaded description, to be used to set the hat's details when it's created or updated.
  */
-export const parsedEditedHatsFormValues = (
+export const parsedEditedHatsFormValues = async (
   editedHats: RoleValue[],
   getHat: (hatId: `0x${string}`) => DecentRoleHat | null,
+  uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
   //
   //  Parse added hats
-  const addedHats: HatStruct[] = editedHats
-    .filter(hat => hat.editedRole?.status === EditBadgeStatus.New)
-    .map(hat => ({
-      eligibility: zeroAddress,
-      toggle: zeroAddress,
-      maxSupply: 1,
-      details: JSON.stringify({
-        name: hat.name,
-        description: hat.description,
+  const addedHats: HatStruct[] = await Promise.all(
+    editedHats
+      .filter(hat => hat.editedRole?.status === EditBadgeStatus.New)
+      .map(async hat => {
+        return {
+          eligibility: zeroAddress,
+          toggle: zeroAddress,
+          maxSupply: 1,
+          details: await uploadHatDescription(
+            JSON.stringify({
+              name: hat.name,
+              description: hat.description,
+            }),
+          ),
+          imageURI: '',
+          isMutable: true,
+          wearer: getAddress(hat.wearer),
+        };
       }),
-      imageURI: '',
-      isMutable: true,
-      wearer: getAddress(hat.wearer),
-    }));
+  );
 
   //
   // Parse removed hats
@@ -120,20 +129,24 @@ export const parsedEditedHatsFormValues = (
 
   //
   // Parse role details changed hats (name and/or description updated)
-  const roleDetailsChangedHats = editedHats
-    .filter(
-      hat =>
-        hat.editedRole?.status === EditBadgeStatus.Updated &&
-        (hat.editedRole.fieldNames.includes('roleName') ||
-          hat.editedRole.fieldNames.includes('roleDescription')),
-    )
-    .map(hat => ({
-      id: hat.id,
-      details: JSON.stringify({
-        name: hat.name,
-        description: hat.description,
-      }),
-    }));
+  const roleDetailsChangedHats = await Promise.all(
+    editedHats
+      .filter(
+        hat =>
+          hat.editedRole?.status === EditBadgeStatus.Updated &&
+          (hat.editedRole.fieldNames.includes('roleName') ||
+            hat.editedRole.fieldNames.includes('roleDescription')),
+      )
+      .map(async hat => ({
+        id: hat.id,
+        details: await uploadHatDescription(
+          JSON.stringify({
+            name: hat.name,
+            description: hat.description,
+          }),
+        ),
+      })),
+  );
 
   return {
     addedHats,
@@ -150,11 +163,13 @@ export const parsedEditedHatsFormValues = (
  * @param proposalMetadata The metadata for the proposal.
  * @param addedHats The hat roles to be added to the safe.
  * @param safeAddress The address of the safe.
+ * @param uploadHatDescription A function to upload the hat description to IPFS. Returns the IPFS hash of the uploaded description, to be used to set the hat's details.
  */
 export const prepareCreateTopHatProposalData = async (
   proposalMetadata: CreateProposalMetadata,
   addedHats: HatStruct[],
   safeAddress: Address,
+  uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
   const enableModuleData = encodeFunctionData({
     abi: GnosisSafeL2,
@@ -168,14 +183,23 @@ export const prepareCreateTopHatProposalData = async (
     args: ['0x1', decentHatsAddress],
   });
 
+  const topHatDetails = await uploadHatDescription(
+    JSON.stringify({
+      name: 'Top Hat',
+      description: 'top hat',
+    }),
+  );
+  const adminHatDetails = await uploadHatDescription(
+    JSON.stringify({
+      name: 'Admin',
+      description: '',
+    }),
+  );
   const adminHat: HatStruct = {
     eligibility: zeroAddress,
     toggle: zeroAddress,
     maxSupply: 1,
-    details: JSON.stringify({
-      name: 'Admin',
-      description: '',
-    }),
+    details: adminHatDetails,
     imageURI: '',
     isMutable: true,
     wearer: zeroAddress,
@@ -184,15 +208,7 @@ export const prepareCreateTopHatProposalData = async (
   const createAndDeclareTreeData = encodeFunctionData({
     abi: DecentHatsAbi,
     functionName: 'createAndDeclareTree',
-    args: [
-      JSON.stringify({
-        name: 'Top Hat',
-        description: 'top hat',
-      }),
-      '',
-      adminHat,
-      addedHats,
-    ],
+    args: [topHatDetails, '', adminHat, addedHats],
   });
 
   return {
