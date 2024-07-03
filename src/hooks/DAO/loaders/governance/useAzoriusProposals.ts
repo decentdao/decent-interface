@@ -187,6 +187,10 @@ export const useAzoriusProposals = () => {
           proposalCreatedEvent.args[1].eq(0) // proposal id 0
         ) {
           // skip
+          action.dispatch({
+            type: FractalGovernanceAction.SKIPPED_A_PROPOSAL,
+            payload: null,
+          });
           continue;
         }
 
