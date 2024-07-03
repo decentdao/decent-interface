@@ -12,6 +12,14 @@ import {
 import { DecentRoleHat } from '../../state/useRolesState';
 import { CreateProposalMetadata } from '../../types';
 
+// // // // // // // // // // // // // // // // // // // // // // // // // 
+// 
+//                        /!\ 
+//      WARNING: UNTESTED AND RADIOACTIVE CODE AHEAD
+//                  PROCEED WITH CAUTION 
+//
+// // // // // // // // // // // // // // // // // // // // // // // // // 
+
 const decentHatsAddress = getAddress('0x88e72194d93bf417310b197275d972cf78406163'); // @todo: sepolia only. Move to, and read from, network config
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
 
