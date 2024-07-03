@@ -24,7 +24,7 @@ interface DecentTopHat extends DecentHat {}
 
 interface DecentAdminHat extends DecentHat {}
 
-interface DecentRoleHat extends DecentHat {
+export interface DecentRoleHat extends DecentHat {
   wearer: Address;
 }
 

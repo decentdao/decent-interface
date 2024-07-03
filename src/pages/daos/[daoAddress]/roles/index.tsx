@@ -2,7 +2,7 @@ import { Box, Show, Text } from '@chakra-ui/react';
 import { Pencil } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { zeroAddress } from 'viem';
+import { Address, zeroAddress } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
 import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
 import { Card } from '../../../../components/ui/cards/Card';
@@ -14,6 +14,7 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { useRolesState } from '../../../../state/useRolesState';
 function Roles() {
   const { hatsTree } = useRolesState();
+  console.log('🚀 ~ hatsTree:', hatsTree);
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
   const {
@@ -22,11 +23,10 @@ function Roles() {
   const navigate = useNavigate();
 
   if (!daoAddress) return null;
-
-  const handleRoleClick = (roleIndex: bigint) => {
+  const handleRoleClick = (hatId: Address) => {
     // @todo open role details drawer
     // For Mobile, This is a new screen
-    return roleIndex; // @todo remove this line
+    return hatId; // @todo remove this line
   };
 
   return (
@@ -76,57 +76,17 @@ function Roles() {
         />
       </Show>
       <Show below="md">
-        <RoleCard
-          hatId={0n}
-          roleName="Admin"
-          wearerAddress={undefined}
-          handleRoleClick={handleRoleClick}
-        />
-        <RoleCard
-          hatId={1n}
-          roleName="CEO"
-          wearerAddress={zeroAddress}
-          handleRoleClick={handleRoleClick}
-          payrollData={{
-            payrollAmount: '1000',
-            payrollSchedule: 'mo',
-            asset: {
-              symbol: 'USDC',
-              name: 'USDC Stablecoin',
-              iconUri:
-                'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
-              address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-            },
-          }}
-          vestingData={{
-            vestingAmount: '1000',
-            vestingSchedule: '1yr',
-            asset: {
-              symbol: 'USDC',
-              name: 'USDC Stablecoin',
-              iconUri:
-                'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
-              address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-            },
-          }}
-        />
-        <RoleCard
-          roleName="Code Reviewer"
-          hatId={2n}
-          wearerAddress={zeroAddress}
-          handleRoleClick={handleRoleClick}
-          payrollData={{
-            payrollAmount: '1',
-            payrollSchedule: 'mo',
-            asset: {
-              symbol: 'USDC',
-              name: 'USDC Stablecoin',
-              iconUri:
-                'https://assets.coingecko.com/coins/images/279/small/usd-coin.png?1594842487',
-              address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
-            },
-          }}
-        />
+        {hatsTree &&
+          hatsTree.roleHats.map((roleHat, index) => (
+            <RoleCard
+              key={index}
+              name={roleHat.name}
+              wearerAddress={roleHat.wearer || zeroAddress}
+              hatId={roleHat.id}
+              handleRoleClick={() => handleRoleClick(roleHat.id)}
+            />
+          ))}
+        {/* // @todo implement RoleCard by looping through roleHats */}
       </Show>
     </Box>
   );

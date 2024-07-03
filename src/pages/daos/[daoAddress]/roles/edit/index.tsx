@@ -1,11 +1,11 @@
 import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { FieldArray, Formik } from 'formik';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { getAddress, zeroAddress } from 'viem';
+import { getAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
 import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
@@ -37,31 +37,6 @@ function RolesEdit() {
   const { hatsTree, hatsTreeId } = useRolesState();
 
   const { submitProposal } = useSubmitProposal();
-
-  const hats = useMemo(() => {
-    // @todo get hats from hatsTree from state
-    // @todo will need to combine with Sablier information, down the road.
-    return [
-      {
-        id: 12n,
-        member: zeroAddress,
-        roleName: 'Legal Reviewer',
-        roleDescription: 'The Legal Reviewer role has...',
-      },
-      {
-        id: 22n,
-        member: zeroAddress,
-        roleName: 'Marketer',
-        roleDescription: 'The Marketer role has...',
-      },
-      {
-        id: 33n,
-        member: zeroAddress,
-        roleName: 'Developer',
-        roleDescription: 'The Developer role has...',
-      },
-    ];
-  }, []);
 
   const createRolesEditProposal = useCallback(
     async (values: RoleFormValues) => {
@@ -98,7 +73,7 @@ function RolesEdit() {
           proposalData = await prepareEditHatsProposalData(
             values.proposalMetadata,
             editedHatStructs,
-            BigInt(hatsTreeId),
+            hatsTreeId,
             BigInt(adminHatId), // @todo: confirm adminHatId type -- it's an Address. Is that right?
             hatsCount,
           );
@@ -135,7 +110,7 @@ function RolesEdit() {
           title: '',
           description: '',
         },
-        hats,
+        hats: [],
       }}
       validationSchema={rolesSchema}
       validateOnMount
@@ -198,15 +173,16 @@ function RolesEdit() {
                   <RolesEditTable handleRoleClick={showRoleEditDetails} />
                 </Show>
                 <Show below="md">
-                  {values.hats.map((hat, index) => (
-                    <RoleCardEdit
-                      key={index}
-                      roleName={hat.roleName}
-                      wearerAddress={hat.member}
-                      editStatus={hat.editedRole?.status}
-                      handleRoleClick={() => showRoleEditDetails(index)}
-                    />
-                  ))}
+                  {values.hats &&
+                    values.hats.map((hat, index) => (
+                      <RoleCardEdit
+                        key={index}
+                        name={hat.name}
+                        wearerAddress={hat.wearer}
+                        editStatus={hat.editedRole?.status}
+                        handleRoleClick={() => showRoleEditDetails(index)}
+                      />
+                    ))}
                 </Show>
               </Box>
             )}

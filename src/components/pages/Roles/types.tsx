@@ -1,4 +1,5 @@
-import { Address } from 'viem';
+import { Address, zeroAddress } from 'viem';
+import { DecentRoleHat } from '../../../state/useRolesState';
 import { CreateProposalMetadata } from '../../../types';
 
 export type RoleViewMode = 'edit' | 'view';
@@ -26,16 +27,18 @@ export interface SablierPayroll {
 }
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
-  handleRoleClick: (hatId: bigint) => void;
-  hatId: bigint;
-  roleName: string;
-  wearerAddress: string | undefined;
+  handleRoleClick: (hatId: Address) => void;
+  hatId: Address;
+  name: string;
+  wearerAddress: Address | undefined;
   vestingData?: SablierVesting;
   payrollData?: SablierPayroll;
 }
 
-export interface RoleEditProps extends Omit<RoleProps, 'hatId'> {
+export interface RoleEditProps
+  extends Omit<RoleProps, 'hatId' | 'wearerAddress' | 'handleRoleClick'> {
   handleRoleClick: () => void;
+  wearerAddress: string | undefined;
 }
 
 export enum EditBadgeStatus {
@@ -68,20 +71,13 @@ export interface HatStructWithId extends HatStruct {
   id: bigint;
 }
 
-export interface Role<T = Address> {
-  id: bigint;
-  member: T;
-  roleName: string;
-  roleDescription: string;
-  // @todo add vesting and payroll types
-}
-
 export interface EditedRole {
   fieldNames: string[];
   status: EditBadgeStatus;
 }
 
-export interface RoleValue extends Role<string> {
+export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
+  wearer: string;
   editedRole?: EditedRole;
 }
 
@@ -91,8 +87,9 @@ export interface RoleFormValues {
 }
 
 export const DEFAULT_ROLE_HAT: RoleValue = {
-  id: -1n,
-  member: '',
-  roleName: '',
-  roleDescription: '',
+  id: zeroAddress,
+  wearer: '',
+  name: '',
+  description: '',
+  prettyId: '',
 };

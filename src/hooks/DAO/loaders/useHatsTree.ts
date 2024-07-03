@@ -14,7 +14,6 @@ const useHatsTree = () => {
     if (hatsTreeId === undefined || hatsTreeId === null) {
       return;
     }
-
     hatsSubgraphClient
       .getTree({
         chainId: chain.id,
@@ -32,6 +31,12 @@ const useHatsTree = () => {
               mutable: true,
               levelAtLocalTree: true,
               currentSupply: true,
+              wearers: {
+                props: {},
+                filters: {
+                  first: 1,
+                },
+              },
             },
           },
         },

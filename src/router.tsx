@@ -80,11 +80,11 @@ export const router = (addressPrefix: string) =>
               element: <RolesEdit />,
               children: [
                 {
-                  path: "details",
+                  path: 'details',
                   element: <RoleEditDetails />,
                 },
                 {
-                  path: "summary",
+                  path: 'summary',
                   element: <EditProposalSummary />,
                 },
               ],

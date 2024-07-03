@@ -74,8 +74,8 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         {editedRoles.map((role, index) => (
           <RoleCardEdit
             key={index}
-            wearerAddress={role.member}
-            roleName={role.roleName}
+            wearerAddress={role.wearer}
+            name={role.name}
             handleRoleClick={() => {
               // @todo open role details drawer
             }}

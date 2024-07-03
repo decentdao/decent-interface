@@ -14,7 +14,7 @@ const decentHatsAddress = getAddress('0x88e72194d93bf417310b197275d972cf78406163
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
 
 const predictHatId = async (args: {
-  treeId: bigint;
+  treeId: number;
   adminHatId: bigint;
   hatsCount: number;
   hat: HatStruct;
@@ -23,7 +23,7 @@ const predictHatId = async (args: {
   return 0n; // @todo: implement hat id prediction
 };
 
-const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint ) => {
+const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
   const admins: bigint[] = [];
   const details: string[] = [];
   const maxSupplies: number[] = [];
@@ -80,12 +80,12 @@ export const parsedEditedHatsFormValues = (editedHats: RoleValue[]) => {
       toggle: zeroAddress,
       maxSupply: 1,
       details: JSON.stringify({
-        name: hat.roleName,
-        description: hat.roleDescription,
+        name: hat.name,
+        description: hat.description,
       }),
       imageURI: '',
       isMutable: true,
-      wearer: getAddress(hat.member),
+      wearer: getAddress(hat.wearer),
     }));
 
   //
@@ -104,7 +104,7 @@ export const parsedEditedHatsFormValues = (editedHats: RoleValue[]) => {
     )
     .map(hat => ({
       id: hat.id,
-      wearer: getAddress(hat.member),
+      wearer: getAddress(hat.wearer),
     }));
 
   //
@@ -119,8 +119,8 @@ export const parsedEditedHatsFormValues = (editedHats: RoleValue[]) => {
     .map(hat => ({
       id: hat.id,
       details: JSON.stringify({
-        name: hat.roleName,
-        description: hat.roleDescription,
+        name: hat.name,
+        description: hat.description,
       }),
     }));
 
@@ -202,23 +202,28 @@ export const prepareEditHatsProposalData = async (
   proposalMetadata: CreateProposalMetadata,
   edits: {
     addedHats: HatStruct[];
-    removedHatIds: bigint[];
+    removedHatIds: Address[];
     memberChangedHats: {
-      id: bigint;
+      id: Address;
       wearer: `0x${string}`;
     }[];
     roleDetailsChangedHats: {
-      id: bigint;
+      id: Address;
       details: string;
     }[];
   },
-  treeId: bigint,
+  treeId: number,
   adminHatId: bigint,
   hatsCount: number,
 ) => {
   const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
 
-  if (!addedHats.length && !removedHatIds.length && !memberChangedHats.length && !roleDetailsChangedHats.length) {
+  if (
+    !addedHats.length &&
+    !removedHatIds.length &&
+    !memberChangedHats.length &&
+    !roleDetailsChangedHats.length
+  ) {
     // Cz like, why are we even here then?? That's a bug.
     throw new Error('No hats to edit');
   }
@@ -272,7 +277,7 @@ export const prepareEditHatsProposalData = async (
       encodeFunctionData({
         abi: HatsAbi,
         functionName: 'setHatStatus',
-        args: [hatId, false],
+        args: [BigInt(hatId), false],
       }),
     );
   }
@@ -284,7 +289,7 @@ export const prepareEditHatsProposalData = async (
       return encodeFunctionData({
         abi: HatsAbi,
         functionName: 'transferHat',
-        args: [id, currentWearer, wearer],
+        args: [BigInt(id), currentWearer, wearer],
       });
     });
   }
@@ -294,7 +299,7 @@ export const prepareEditHatsProposalData = async (
       return encodeFunctionData({
         abi: HatsAbi,
         functionName: 'changeHatDetails',
-        args: [id, details],
+        args: [BigInt(id), details],
       });
     });
   }
@@ -302,10 +307,10 @@ export const prepareEditHatsProposalData = async (
   // @dev
   // Depending on the number of hats to be added, removed, transferred, or updated, the number of txs included
   // to be executed in the proposal will be different:
-  // 
+  //
   // `includedAddAndMintHatsTx` will be an array of 0 or 2 elements.
   // the others will be arrays of 0 or more elements.
-  
+
   if (addAndMintHatsTxs.length > 2) {
     throw new Error('Too many create hats txs');
   }
@@ -317,12 +322,7 @@ export const prepareEditHatsProposalData = async (
       ...transferHatTxs.map(() => hatsContractAddress),
       ...hatDetailsChangedTxs.map(() => hatsContractAddress),
     ],
-    calldatas: [
-      ...addAndMintHatsTxs,
-      ...removeHatTxs,
-      ...transferHatTxs,
-      ...hatDetailsChangedTxs,
-    ],
+    calldatas: [...addAndMintHatsTxs, ...removeHatTxs, ...transferHatTxs, ...hatDetailsChangedTxs],
     metaData: proposalMetadata,
     values: [
       ...addAndMintHatsTxs.map(() => 0n),
