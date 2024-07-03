@@ -11,6 +11,7 @@ import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useEthersProvider } from '../../../../providers/Ethers/hooks/useEthersProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   CreateProposalMetadata,
   VotingStrategyType,
@@ -30,6 +31,7 @@ type OnProposalLoaded = (proposal: AzoriusProposal) => void;
 export const useAzoriusProposals = () => {
   const currentAzoriusAddress = useRef<string>();
   const { setValue, getValue } = useLocalStorage();
+  const network = useNetworkConfig();
 
   const {
     governanceContracts: {
@@ -179,6 +181,15 @@ export const useAzoriusProposals = () => {
       const propasalCacheKeyPrefix = `${CacheKeys.PROPOSAL_PREFIX}_${azoriusContractAddress}`;
 
       for (const proposalCreatedEvent of proposalCreatedEvents) {
+        if (
+          // oops
+          network.chain.id === 1 && // mainnet
+          azoriusContract?.address === '0x61BC890acf131f8dbd9C1DF8638b3c333dc1c6eC' && // decent dao's azorius
+          proposalCreatedEvent.args[1].eq(0) // proposal id 0
+        ) {
+          continue;
+        }
+
         const cachedProposal = getValue(
           `${propasalCacheKeyPrefix}_${proposalCreatedEvent.args.proposalId.toString()}`,
         ) as AzoriusProposal;
@@ -271,7 +282,14 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
     },
-    [action, azoriusContractAddress, getValue, setValue],
+    [
+      action,
+      azoriusContractAddress,
+      network.chain.id,
+      azoriusContract?.address,
+      getValue,
+      setValue,
+    ],
   );
 
   return (proposalLoaded: OnProposalLoaded) =>
