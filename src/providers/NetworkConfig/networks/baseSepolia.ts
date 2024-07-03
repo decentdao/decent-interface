@@ -40,6 +40,11 @@ export const baseSepoliaConfig: NetworkConfig = {
     slug: 'fractal-base-sepolia',
     version: 'v0.1.1',
   },
+  // @todo - not supported on baseSepolia. We might want to deploy own subgraph there
+  sablierSubgraph: {
+    space: 57079,
+    slug: 'sablier-v2-base',
+  },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,

@@ -40,6 +40,10 @@ export const optimismConfig: NetworkConfig = {
     slug: 'fractal-optimism',
     version: 'v0.1.1',
   },
+  sablierSubgraph: {
+    space: 57079,
+    slug: 'sablier-v2-optimism',
+  },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,

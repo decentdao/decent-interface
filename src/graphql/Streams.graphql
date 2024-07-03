@@ -1,0 +1,76 @@
+query StreamsQuery($recipientAddress: Bytes) {
+  streams(where: { recipient: $recipientAddress }) {
+    id
+    sender
+    startTime
+    endTime
+    transferable
+    cancelable
+    canceled
+    duration
+    category
+    cliff
+    cliffTime
+    cliffAmount
+    depositAmount
+    withdrawnAmount
+    intactAmount
+    alias
+    subgraphId
+    tokenId
+    version
+    chainId
+    funder
+    recipient
+    parties
+    proxied
+    brokerFeeAmount
+    protocolFeeAmount
+    position
+    actions {
+      id
+      timestamp
+      amountA
+      amountB
+    }
+    contract {
+      address
+      category
+      id
+    }
+    batch {
+      id
+      timestamp
+    }
+    hash
+    timestamp
+    segments {
+      id
+      startTime
+      endTime
+      amount
+      endAmount
+      position
+    }
+    tranches {
+      id
+      position
+      startTime
+      startAmount
+      amount
+      endTime
+      endAmount
+    }
+    asset {
+      name
+      symbol
+      address
+      id
+      chainId
+      decimals
+      streams {
+        id
+      }
+    }
+  }
+}

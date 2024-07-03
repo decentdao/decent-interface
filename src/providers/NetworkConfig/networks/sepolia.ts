@@ -40,6 +40,10 @@ export const sepoliaConfig: NetworkConfig = {
     slug: 'fractal-sepolia',
     version: 'v0.1.1',
   },
+  sablierSubgraph: {
+    space: 57079,
+    slug: 'sablier-v2-sepolia',
+  },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,
