@@ -219,84 +219,117 @@ export const prepareEditHatsProposal = async (
 ) => {
   const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
 
-  if (addedHats.length) {
+  if (!addedHats.length && !removedHatIds.length && !memberChangedHats.length && !roleDetailsChangedHats.length) {
+    // Cz like, why are we even here then?? That's a bug.
+    throw new Error('No hats to edit');
   }
 
-  const addHatsTx = encodeFunctionData({
-    abi: HatsAbi,
-    functionName: 'batchCreateHats',
-    args: prepareAddHatsArgs(addedHats),
-  });
+  type CallDataType = `0x${string}`;
+  const addAndMintHatsTxs: CallDataType[] = [];
+  let removeHatTxs: CallDataType[] = [];
+  let transferHatTxs: CallDataType[] = [];
+  let hatDetailsChangedTxs: CallDataType[] = [];
 
-  const predictedHatIds = await Promise.all(
-    addedHats.map(hat =>
-      predictHatId({
-        treeId,
-        adminHatId,
-        hat,
-        hatsCount,
+  if (addedHats.length) {
+    // First, prepare a single tx to create all the hats
+    const addHatsTx = encodeFunctionData({
+      abi: HatsAbi,
+      functionName: 'batchCreateHats',
+      args: prepareAddHatsArgs(addedHats),
+    });
+
+    // Next, predict the hat IDs for the added hats
+    const predictedHatIds = await Promise.all(
+      addedHats.map(hat =>
+        predictHatId({
+          treeId,
+          adminHatId,
+          hat,
+          hatsCount,
+        }),
+      ),
+    );
+
+    // Finally, prepare a single tx to mint all the hats to the wearers
+    const mintHatsTx = encodeFunctionData({
+      abi: HatsAbi,
+      functionName: 'batchMintHats',
+      args: prepareMintHatsArgs(
+        addedHats.map((hat, i) => ({
+          ...hat,
+          id: predictedHatIds[i],
+        })),
+      ),
+    });
+
+    // Push these two txs to the included txs array.
+    // They will be executed in order: add all hats first, then mint all hats to their respective wearers.
+    addAndMintHatsTxs.push(addHatsTx);
+    addAndMintHatsTxs.push(mintHatsTx);
+  }
+
+  if (removedHatIds.length) {
+    removeHatTxs = removedHatIds.map(hatId =>
+      encodeFunctionData({
+        abi: HatsAbi,
+        functionName: 'setHatStatus',
+        args: [hatId, false],
       }),
-    ),
-  );
+    );
+  }
 
-  const mintHatsTx = encodeFunctionData({
-    abi: HatsAbi,
-    functionName: 'batchMintHats',
-    args: prepareMintHatsArgs(
-      addedHats.map((hat, i) => ({
-        ...hat,
-        id: predictedHatIds[i],
-      })),
-    ),
-  });
-
-  const removeHatTxs = removedHatIds.map(hatId =>
-    encodeFunctionData({
-      abi: HatsAbi,
-      functionName: 'setHatStatus',
-      args: [hatId, false],
-    }),
-  );
-
-  const transferHatTxs = memberChangedHats.map(({ id, wearer }) => {
-    const currentWearer = zeroAddress; // @todo: get the current hat wearer
-    return encodeFunctionData({
-      abi: HatsAbi,
-      functionName: 'transferHat',
-      args: [id, currentWearer, wearer],
+  if (memberChangedHats.length) {
+    transferHatTxs = memberChangedHats.map(({ id, wearer }) => {
+      // @todo: get the current hat wearer
+      const currentWearer = zeroAddress;
+      return encodeFunctionData({
+        abi: HatsAbi,
+        functionName: 'transferHat',
+        args: [id, currentWearer, wearer],
+      });
     });
-  });
+  }
 
-  const roleDetailsChangedTxs = roleDetailsChangedHats.map(({ id, details }) => {
-    return encodeFunctionData({
-      abi: HatsAbi,
-      functionName: 'changeHatDetails',
-      args: [id, details],
+  if (roleDetailsChangedHats.length) {
+    hatDetailsChangedTxs = roleDetailsChangedHats.map(({ id, details }) => {
+      return encodeFunctionData({
+        abi: HatsAbi,
+        functionName: 'changeHatDetails',
+        args: [id, details],
+      });
     });
-  });
+  }
+
+  // @dev
+  // Depending on the number of hats to be added, removed, transferred, or updated, the number of txs included
+  // to be executed in the proposal will be different:
+  // 
+  // `includedAddAndMintHatsTx` will be an array of 0 or 2 elements.
+  // the others will be arrays of 0 or more elements.
+  
+  if (addAndMintHatsTxs.length > 2) {
+    throw new Error('Too many create hats txs');
+  }
 
   return {
     targets: [
-      hatsContractAddress,
-      hatsContractAddress,
+      ...addAndMintHatsTxs.map(() => hatsContractAddress),
       ...removeHatTxs.map(() => hatsContractAddress),
       ...transferHatTxs.map(() => hatsContractAddress),
-      ...roleDetailsChangedHats.map(() => hatsContractAddress),
+      ...hatDetailsChangedTxs.map(() => hatsContractAddress),
     ],
     calldatas: [
-      addHatsTx,
-      mintHatsTx,
+      ...addAndMintHatsTxs,
       ...removeHatTxs,
       ...transferHatTxs,
-      ...roleDetailsChangedTxs,
+      ...hatDetailsChangedTxs,
     ],
     metaData: proposalMetadata,
     values: [
-      0n,
-      0n,
+      ...addAndMintHatsTxs.map(() => 0n),
       ...removeHatTxs.map(() => 0n),
       ...transferHatTxs.map(() => 0n),
-      ...roleDetailsChangedHats.map(() => 0n),
+      ...hatDetailsChangedTxs.map(() => 0n),
     ],
   };
 };
