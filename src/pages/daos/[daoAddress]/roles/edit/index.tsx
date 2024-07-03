@@ -34,7 +34,7 @@ function RolesEdit() {
 
   const { rolesSchema } = useRolesSchema();
   const navigate = useNavigate();
-  const { hatsTree, hatsTreeId } = useRolesState();
+  const { hatsTree, hatsTreeId, getHat } = useRolesState();
 
   const { submitProposal } = useSubmitProposal();
 
@@ -50,7 +50,7 @@ function RolesEdit() {
 
         let proposalData: ProposalExecuteData;
 
-        const editedHatStructs = parsedEditedHatsFormValues(modifiedHats);
+        const editedHatStructs = parsedEditedHatsFormValues(modifiedHats, getHat);
 
         if (hatsTreeId === null || hatsTreeId === undefined) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
@@ -65,16 +65,15 @@ function RolesEdit() {
             throw new Error('Cannot edit Roles without a HatsTree');
           }
 
-          // @todo: confirm these are accurate
           const adminHatId = hatsTree.adminHat.id;
-          const hatsCount = hatsTree.roleHats.length;
+          const hatsCount = hatsTree.roleHatsTotalCount;
 
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
           proposalData = await prepareEditHatsProposalData(
             values.proposalMetadata,
             editedHatStructs,
             hatsTreeId,
-            BigInt(adminHatId), // @todo: confirm adminHatId type -- it's an Address. Is that right?
+            BigInt(adminHatId),
             hatsCount,
           );
         }

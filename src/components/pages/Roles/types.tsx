@@ -68,7 +68,7 @@ export interface HatStruct {
 }
 
 export interface HatStructWithId extends HatStruct {
-  id: bigint;
+  id: Address;
 }
 
 export interface EditedRole {
@@ -93,3 +93,9 @@ export const DEFAULT_ROLE_HAT: RoleValue = {
   description: '',
   prettyId: '',
 };
+
+export interface HatWearerChangedParams {
+  id: Address;
+  currentWearer: Address;
+  newWearer: Address;
+}

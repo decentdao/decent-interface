@@ -77,7 +77,10 @@ const prepareMintHatsTxArgs = (addedHats: HatStructWithId[]) => {
  * This is to prepare the data for the creation of a proposal to edit hats, in `prepareCreateTopHatProposal` and `prepareEditHatsProposal`.
  * @param editedHats The edited hats to be parsed. Form values from the roles form.
  */
-export const parsedEditedHatsFormValues = (editedHats: RoleValue[]) => {
+export const parsedEditedHatsFormValues = (
+  editedHats: RoleValue[],
+  getHat: (hatId: `0x${string}`) => DecentRoleHat | null,
+) => {
   //
   //  Parse added hats
   const addedHats: HatStruct[] = editedHats
