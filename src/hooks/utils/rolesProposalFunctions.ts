@@ -6,21 +6,27 @@ import {
   EditBadgeStatus,
   HatStruct,
   HatStructWithId,
+  HatWearerChangedParams,
   RoleValue,
 } from '../../components/pages/Roles/types';
+import { DecentRoleHat } from '../../state/useRolesState';
 import { CreateProposalMetadata } from '../../types';
 
 const decentHatsAddress = getAddress('0x88e72194d93bf417310b197275d972cf78406163'); // @todo: sepolia only. Move to, and read from, network config
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
 
-const predictHatId = async (args: {
-  treeId: number;
-  adminHatId: bigint;
-  hatsCount: number;
-  hat: HatStruct;
-}) => {
-  const { hat, treeId, adminHatId, hatsCount } = args;
-  return 0n; // @todo: implement hat id prediction
+const predictHatId = async (args: { treeId: number; adminHatId: bigint; hatsCount: number }) => {
+  const { treeId, adminHatId, hatsCount } = args;
+
+  const treeIdBinary = treeId.toString(2).padStart(32, '0');
+  const adminLevelBinary = adminHatId.toString(2).padStart(16, '0');
+  const newSiblingId = (hatsCount + 1).toString(2).padStart(16, '0');
+
+  let newHatBinaryId = `${treeIdBinary}${adminLevelBinary}${newSiblingId}`;
+  newHatBinaryId = newHatBinaryId.padEnd(256, '0');
+  let newHatIdHex = BigInt('0b' + newHatBinaryId).toString(16) as `0x${string}`;
+
+  return newHatIdHex;
 };
 
 const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
@@ -58,10 +64,11 @@ const prepareMintHatsTxArgs = (addedHats: HatStructWithId[]) => {
   const wearers: Address[] = [];
 
   addedHats.forEach(hat => {
-    hatIds.push(hat.id);
+    hatIds.push(BigInt(hat.id));
     wearers.push(hat.wearer);
   });
 
+  console.log({ hatIds, wearers });
   return [hatIds, wearers] as const;
 };
 
@@ -96,7 +103,7 @@ export const parsedEditedHatsFormValues = (editedHats: RoleValue[]) => {
 
   //
   // Parse member changed hats
-  const memberChangedHats = editedHats
+  const memberChangedHats: HatWearerChangedParams[] = editedHats
     .filter(
       hat =>
         hat.editedRole?.status === EditBadgeStatus.Updated &&
@@ -104,7 +111,8 @@ export const parsedEditedHatsFormValues = (editedHats: RoleValue[]) => {
     )
     .map(hat => ({
       id: hat.id,
-      wearer: getAddress(hat.wearer),
+      currentWearer: getHat(hat.id)!.wearer,
+      newWearer: getAddress(hat.wearer),
     }));
 
   //
@@ -154,7 +162,7 @@ export const prepareCreateTopHatProposalData = async (
   const disableModuleData = encodeFunctionData({
     abi: GnosisSafeL2,
     functionName: 'disableModule',
-    args: [decentHatsAddress, decentHatsAddress], // @todo: Figure out prevModule arg. Need to retrieve from safe.
+    args: ['0x1', decentHatsAddress],
   });
 
   const adminHat: HatStruct = {
@@ -203,10 +211,7 @@ export const prepareEditHatsProposalData = async (
   edits: {
     addedHats: HatStruct[];
     removedHatIds: Address[];
-    memberChangedHats: {
-      id: Address;
-      wearer: `0x${string}`;
-    }[];
+    memberChangedHats: HatWearerChangedParams[];
     roleDetailsChangedHats: {
       id: Address;
       details: string;
@@ -244,12 +249,11 @@ export const prepareEditHatsProposalData = async (
 
     // Next, predict the hat IDs for the added hats
     const predictedHatIds = await Promise.all(
-      addedHats.map(hat =>
+      addedHats.map((_, i) =>
         predictHatId({
           treeId,
           adminHatId,
-          hat,
-          hatsCount,
+          hatsCount: hatsCount + i,
         }),
       ),
     );
@@ -283,13 +287,11 @@ export const prepareEditHatsProposalData = async (
   }
 
   if (memberChangedHats.length) {
-    transferHatTxs = memberChangedHats.map(({ id, wearer }) => {
-      // @todo: get the current hat wearer
-      const currentWearer = zeroAddress;
+    transferHatTxs = memberChangedHats.map(({ id, currentWearer, newWearer }) => {
       return encodeFunctionData({
         abi: HatsAbi,
         functionName: 'transferHat',
-        args: [BigInt(id), currentWearer, wearer],
+        args: [BigInt(id), currentWearer, newWearer],
       });
     });
   }
