@@ -33,11 +33,11 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[]) => {
   const imageURIs: string[] = [];
 
   addedHats.forEach(hat => {
-    admins.push(0n); // should be the safe's admin hat ID
+    admins.push(0n); // @todo: should be the safe's admin hat ID
     details.push(hat.details);
     maxSupplies.push(hat.maxSupply);
-    eligibilityModules.push(hat.eligibility); // probably should be the safe's address (or more likely, the intended wearer's address)
-    toggleModules.push(hat.toggle); // probably should be the safe's address
+    eligibilityModules.push(hat.eligibility); // @todo: probably should be the safe's address (or more likely, the intended wearer's address)
+    toggleModules.push(hat.toggle); // @todo: probably should be the safe's address
     mutables.push(hat.isMutable);
     imageURIs.push(hat.imageURI);
   });
@@ -73,7 +73,7 @@ const prepareMintHatsTxArgs = (addedHats: HatStructWithId[]) => {
 export const parsedEditedHatsFormValues = (editedHats: RoleValue[]) => {
   //
   //  Parse added hats
-  const addedHats: HatStructWithId[] = editedHats
+  const addedHats: HatStruct[] = editedHats
     .filter(hat => hat.editedRole?.status === EditBadgeStatus.New)
     .map(hat => ({
       eligibility: zeroAddress,
@@ -86,7 +86,6 @@ export const parsedEditedHatsFormValues = (editedHats: RoleValue[]) => {
       imageURI: '',
       isMutable: true,
       wearer: getAddress(hat.member),
-      id: 0n, // @todo: implement hat id prediction
     }));
 
   //
