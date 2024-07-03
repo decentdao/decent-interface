@@ -23,7 +23,7 @@ const predictHatId = async (args: {
   return 0n; // @todo: implement hat id prediction
 };
 
-const prepareAddHatsTxArgs = (addedHats: HatStruct[]) => {
+const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint ) => {
   const admins: bigint[] = [];
   const details: string[] = [];
   const maxSupplies: number[] = [];
@@ -33,7 +33,7 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[]) => {
   const imageURIs: string[] = [];
 
   addedHats.forEach(hat => {
-    admins.push(0n); // @todo: should be the safe's admin hat ID
+    admins.push(adminHatId);
     details.push(hat.details);
     maxSupplies.push(hat.maxSupply);
     eligibilityModules.push(hat.eligibility); // @todo: probably should be the safe's address (or more likely, the intended wearer's address)
@@ -234,7 +234,7 @@ export const prepareEditHatsProposalData = async (
     const addHatsTx = encodeFunctionData({
       abi: HatsAbi,
       functionName: 'batchCreateHats',
-      args: prepareAddHatsTxArgs(addedHats),
+      args: prepareAddHatsTxArgs(addedHats, adminHatId),
     });
 
     // Next, predict the hat IDs for the added hats
