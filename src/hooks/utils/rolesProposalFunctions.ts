@@ -177,10 +177,11 @@ export const prepareCreateTopHatProposalData = async (
     args: [decentHatsAddress],
   });
 
+  const sentinelModule = '0x1';
   const disableModuleData = encodeFunctionData({
     abi: GnosisSafeL2,
     functionName: 'disableModule',
-    args: ['0x1', decentHatsAddress],
+    args: [sentinelModule, decentHatsAddress],
   });
 
   const topHatDetails = await uploadHatDescription(
