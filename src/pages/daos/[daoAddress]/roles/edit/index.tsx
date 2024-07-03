@@ -60,6 +60,7 @@ function RolesEdit() {
           modifiedHats,
           getHat,
           uploadHatDescriptionCallback,
+          getAddress(safe.address),
         );
 
         if (hatsTreeId === null || hatsTreeId === undefined) {

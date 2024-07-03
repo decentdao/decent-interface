@@ -42,8 +42,8 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
     admins.push(adminHatId);
     details.push(hat.details);
     maxSupplies.push(hat.maxSupply);
-    eligibilityModules.push(hat.eligibility); // @todo: probably should be the safe's address (or more likely, the intended wearer's address)
-    toggleModules.push(hat.toggle); // @todo: probably should be the safe's address
+    eligibilityModules.push(zeroAddress);
+    toggleModules.push(hat.toggle);
     mutables.push(hat.isMutable);
     imageURIs.push(hat.imageURI);
   });
@@ -83,6 +83,7 @@ export const parsedEditedHatsFormValues = async (
   editedHats: RoleValue[],
   getHat: (hatId: `0x${string}`) => DecentRoleHat | null,
   uploadHatDescription: (hatDescription: string) => Promise<string>,
+  safeAddress: Address,
 ) => {
   //
   //  Parse added hats
@@ -92,7 +93,7 @@ export const parsedEditedHatsFormValues = async (
       .map(async hat => {
         return {
           eligibility: zeroAddress,
-          toggle: zeroAddress,
+          toggle: safeAddress,
           maxSupply: 1,
           details: await uploadHatDescription(
             JSON.stringify({
@@ -273,6 +274,7 @@ export const prepareEditHatsProposalData = async (
         predictHatId({
           treeId,
           adminHatId,
+          // Each predicted hat id is based on the current hat count, plus however many hat id have been predicted so far
           hatsCount: hatsCount + i,
         }),
       ),
