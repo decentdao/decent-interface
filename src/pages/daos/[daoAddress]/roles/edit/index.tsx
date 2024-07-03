@@ -19,9 +19,9 @@ import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import {
-  parsedEditedHats,
-  prepareCreateTopHatProposal,
-  prepareEditHatsProposal,
+  parsedEditedHatsFormValues,
+  prepareCreateTopHatProposalData,
+  prepareEditHatsProposalData,
 } from '../../../../../hooks/utils/rolesProposalFunctions';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -86,12 +86,12 @@ function RolesEdit() {
 
         let proposalData: ProposalExecuteData;
 
-        const editedHatStructs = parsedEditedHats(modifiedHats);
+        const editedHatStructs = parsedEditedHatsFormValues(modifiedHats);
 
         if (hatsTreeId === null || hatsTreeId === undefined) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
           // along with any other hats that are added.
-          proposalData = await prepareCreateTopHatProposal(
+          proposalData = await prepareCreateTopHatProposalData(
             values.proposalMetadata,
             editedHatStructs.addedHats,
             getAddress(safe.address),
@@ -106,11 +106,11 @@ function RolesEdit() {
           const hatsCount = hatsTree.roleHats.length;
 
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
-          proposalData = await prepareEditHatsProposal(
+          proposalData = await prepareEditHatsProposalData(
             values.proposalMetadata,
             editedHatStructs,
             BigInt(hatsTreeId),
-            BigInt(adminHatId), // @todo: confirm adminHatId type -- it's an Address.
+            BigInt(adminHatId), // @todo: confirm adminHatId type -- it's an Address. Is that right?
             hatsCount,
           );
         }

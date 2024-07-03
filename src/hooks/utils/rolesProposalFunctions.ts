@@ -23,7 +23,7 @@ const predictHatId = async (args: {
   return 0n; // @todo: implement hat id prediction
 };
 
-const prepareAddHatsArgs = (addedHats: HatStruct[]) => {
+const prepareAddHatsTxArgs = (addedHats: HatStruct[]) => {
   const admins: bigint[] = [];
   const details: string[] = [];
   const maxSupplies: number[] = [];
@@ -53,7 +53,7 @@ const prepareAddHatsArgs = (addedHats: HatStruct[]) => {
   ] as const;
 };
 
-const prepareMintHatsArgs = (addedHats: HatStructWithId[]) => {
+const prepareMintHatsTxArgs = (addedHats: HatStructWithId[]) => {
   const hatIds: bigint[] = [];
   const wearers: Address[] = [];
 
@@ -70,7 +70,7 @@ const prepareMintHatsArgs = (addedHats: HatStructWithId[]) => {
  * This is to prepare the data for the creation of a proposal to edit hats, in `prepareCreateTopHatProposal` and `prepareEditHatsProposal`.
  * @param editedHats The edited hats to be parsed. Form values from the roles form.
  */
-export const parsedEditedHats = (editedHats: RoleValue[]) => {
+export const parsedEditedHatsFormValues = (editedHats: RoleValue[]) => {
   //
   //  Parse added hats
   const addedHats: HatStructWithId[] = editedHats
@@ -141,7 +141,7 @@ export const parsedEditedHats = (editedHats: RoleValue[]) => {
  * @param addedHats The hat roles to be added to the safe.
  * @param safeAddress The address of the safe.
  */
-export const prepareCreateTopHatProposal = async (
+export const prepareCreateTopHatProposalData = async (
   proposalMetadata: CreateProposalMetadata,
   addedHats: HatStruct[],
   safeAddress: Address,
@@ -199,7 +199,7 @@ export const prepareCreateTopHatProposal = async (
  * @param proposalMetadata
  * @param edits All the different updates that would be made to the safe's roles if this proposal is executed.
  */
-export const prepareEditHatsProposal = async (
+export const prepareEditHatsProposalData = async (
   proposalMetadata: CreateProposalMetadata,
   edits: {
     addedHats: HatStruct[];
@@ -235,7 +235,7 @@ export const prepareEditHatsProposal = async (
     const addHatsTx = encodeFunctionData({
       abi: HatsAbi,
       functionName: 'batchCreateHats',
-      args: prepareAddHatsArgs(addedHats),
+      args: prepareAddHatsTxArgs(addedHats),
     });
 
     // Next, predict the hat IDs for the added hats
@@ -254,7 +254,7 @@ export const prepareEditHatsProposal = async (
     const mintHatsTx = encodeFunctionData({
       abi: HatsAbi,
       functionName: 'batchMintHats',
-      args: prepareMintHatsArgs(
+      args: prepareMintHatsTxArgs(
         addedHats.map((hat, i) => ({
           ...hat,
           id: predictedHatIds[i],
