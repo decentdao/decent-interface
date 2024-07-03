@@ -2,7 +2,9 @@ import { Box, Tab, TabList, TabPanels, TabPanel, Tabs, Button, Flex } from '@cha
 import { useFormikContext } from 'formik';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { EditBadgeStatus, EditedRole, Role, RoleFormValues } from '../types';
+import { zeroAddress } from 'viem';
+import { useRolesState } from '../../../../state/useRolesState';
+import { EditBadgeStatus, EditedRole, RoleFormValues, RoleValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 
 enum EditRoleTabs {
@@ -20,32 +22,36 @@ const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: bool
 
 export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; save: () => void }) {
   const [tab, setTab] = useState<EditRoleTabs>(EditRoleTabs.RoleInfo);
+  const { hatsTree } = useRolesState();
 
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const editingRole = useMemo(() => values.hats[hatIndex], [hatIndex, values.hats]);
 
   const existingRoleHat = useMemo(
-    () => values.hats.find((role: Role) => role.id === editingRole.id && role.id !== -1),
-    [editingRole, values.hats],
+    () =>
+      hatsTree?.roleHats.find(
+        (role: RoleValue) => role.id === editingRole.id && role.id !== zeroAddress,
+      ),
+    [editingRole, hatsTree],
   );
   const isRoleNameUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && editingRole.roleName !== existingRoleHat.roleName,
+    () => !!existingRoleHat && editingRole.name !== existingRoleHat.name,
     [editingRole, existingRoleHat],
   );
 
   const isRoleDescriptionUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && editingRole.roleDescription !== existingRoleHat.roleDescription,
+    () => !!existingRoleHat && editingRole.description !== existingRoleHat.description,
     [editingRole, existingRoleHat],
   );
 
   const isMemberUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && editingRole.member !== existingRoleHat.member,
+    () => !!existingRoleHat && editingRole.wearer !== existingRoleHat.wearer,
     [editingRole, existingRoleHat],
   );
 
   const editedRole = useMemo<EditedRole>(() => {
-      if (!existingRoleHat) {
+    if (!existingRoleHat) {
       return {
         fieldNames: [],
         status: EditBadgeStatus.New,

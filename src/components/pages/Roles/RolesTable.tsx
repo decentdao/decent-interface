@@ -2,15 +2,15 @@ import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@
 import { Pencil } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getAddress, zeroAddress } from 'viem';
+import { Address, getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { DecentRoleHat } from '../../../state/useRolesState';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import {
-  Role,
   RoleEditProps,
   RoleFormValues,
   RoleProps,
@@ -230,7 +230,7 @@ function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefine
 }
 
 export function RolesRow({
-  roleName,
+  name,
   wearerAddress,
   payrollData,
   vestingData,
@@ -250,7 +250,7 @@ export function RolesRow({
       transition="all ease-out 300ms"
       onClick={() => handleRoleClick(hatId)}
     >
-      <RoleNameColumn roleName={roleName} />
+      <RoleNameColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
       <PayrollColumn payrollData={payrollData} />
       <VestingColumn vestingData={vestingData} />
@@ -259,7 +259,7 @@ export function RolesRow({
 }
 
 export function RolesRowEdit({
-  roleName,
+  name,
   wearerAddress,
   payrollData,
   vestingData,
@@ -278,7 +278,7 @@ export function RolesRowEdit({
       transition="all ease-out 300ms"
       onClick={handleRoleClick}
     >
-      <RoleNameEditColumn roleName={roleName} />
+      <RoleNameEditColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
       <PayrollColumn payrollData={payrollData} />
       <VestingColumn vestingData={vestingData} />
@@ -290,8 +290,8 @@ export function RolesTable({
   handleRoleClick,
   roleHats,
 }: {
-  handleRoleClick: (hatId: number) => void;
-  roleHats: Role[];
+  handleRoleClick: (hatId: Address) => void;
+  roleHats: DecentRoleHat[];
 }) {
   return (
     <Box
@@ -319,7 +319,7 @@ export function RolesTable({
             <RolesRow
               key={role.id}
               hatId={role.id}
-              wearerAddress={role.member}
+              wearerAddress={role.wearer}
               handleRoleClick={handleRoleClick}
               {...role}
             />
@@ -360,7 +360,7 @@ export function RolesEditTable({
           {values.hats.map((role, index) => (
             <RolesRowEdit
               key={role.id}
-              wearerAddress={role.member}
+              wearerAddress={role.wearer}
               handleRoleClick={() => handleRoleClick(index)}
               {...role}
             />

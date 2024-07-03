@@ -14,10 +14,10 @@ import { RoleEditProps, RoleProps, SablierPayroll, SablierVesting } from './type
 
 function AvatarAndRoleName({
   wearerAddress,
-  roleName,
+  name,
 }: {
   wearerAddress: string | undefined;
-  roleName: string;
+  name: string;
 }) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
@@ -26,6 +26,7 @@ function AvatarAndRoleName({
   });
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles']);
+
   return (
     <Flex alignItems="center">
       {wearerAddress ? (
@@ -49,7 +50,7 @@ function AvatarAndRoleName({
           textStyle="display-lg"
           color="white-0"
         >
-          {roleName}
+          {name}
         </Text>
         <Text
           textStyle="button-small"
@@ -165,7 +166,7 @@ function PayrollAndVesting({
 }
 
 export function RoleCard({
-  roleName,
+  name,
   wearerAddress,
   payrollData,
   vestingData,
@@ -181,7 +182,7 @@ export function RoleCard({
       <Flex justifyContent="space-between">
         <AvatarAndRoleName
           wearerAddress={wearerAddress}
-          roleName={roleName}
+          name={name}
         />
         <Flex
           alignItems="center"
@@ -203,7 +204,7 @@ export function RoleCard({
 }
 
 export function RoleCardEdit({
-  roleName,
+  name,
   wearerAddress,
   payrollData,
   vestingData,
@@ -218,7 +219,7 @@ export function RoleCardEdit({
       <Flex justifyContent="space-between">
         <AvatarAndRoleName
           wearerAddress={wearerAddress}
-          roleName={roleName}
+          name={name}
         />
         <Flex
           alignItems="center"

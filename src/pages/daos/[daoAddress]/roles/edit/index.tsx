@@ -1,10 +1,8 @@
 import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { FieldArray, Formik } from 'formik';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { zeroAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
 import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
@@ -28,31 +26,6 @@ function RolesEdit() {
   const { hatsTree } = useRolesState();
   const navigate = useNavigate();
 
-  const hats = useMemo(() => {
-    // @todo get hats from hatsTree from state
-    // @todo will need to combine with Sablier information, down the road.
-    return [
-      {
-        id: 12,
-        member: zeroAddress,
-        roleName: 'Legal Reviewer',
-        roleDescription: 'The Legal Reviewer role has...',
-      },
-      {
-        id: 22,
-        member: zeroAddress,
-        roleName: 'Marketer',
-        roleDescription: 'The Marketer role has...',
-      },
-      {
-        id: 33,
-        member: zeroAddress,
-        roleName: 'Developer',
-        roleDescription: 'The Developer role has...',
-      },
-    ];
-  }, []);
-
   if (daoAddress === null) return null;
 
   const showRoleEditDetails = (_hatIndex: number) => {
@@ -65,11 +38,12 @@ function RolesEdit() {
           title: '',
           description: '',
         },
-        hats,
+        hats: [],
       }}
       validationSchema={rolesSchema}
       validateOnMount
       onSubmit={values => {
+        console.log('🚀 ~ values:', values);
         // @todo prepare transactions for adding/removing roles
         // @todo submit transactions
       }}
@@ -136,15 +110,16 @@ function RolesEdit() {
                   <RolesEditTable handleRoleClick={showRoleEditDetails} />
                 </Show>
                 <Show below="md">
-                  {values.hats.map((hat, index) => (
-                    <RoleCardEdit
-                      key={index}
-                      roleName={hat.roleName}
-                      wearerAddress={hat.member}
-                      editStatus={hat.editedRole?.status}
-                      handleRoleClick={() => showRoleEditDetails(index)}
-                    />
-                  ))}
+                  {values.hats &&
+                    values.hats.map((hat, index) => (
+                      <RoleCardEdit
+                        key={index}
+                        name={hat.name}
+                        wearerAddress={hat.wearer}
+                        editStatus={hat.editedRole?.status}
+                        handleRoleClick={() => showRoleEditDetails(index)}
+                      />
+                    ))}
                 </Show>
               </Box>
             )}
