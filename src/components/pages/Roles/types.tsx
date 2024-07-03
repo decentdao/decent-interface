@@ -77,7 +77,6 @@ export interface Role<T = Address> {
 }
 
 export interface EditedRole {
-  // id?: bigint;
   fieldNames: string[];
   status: EditBadgeStatus;
 }

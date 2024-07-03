@@ -1,20 +1,17 @@
-import { Box, Button, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
-import { ArrowLeft, Plus } from '@phosphor-icons/react';
+import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
+import { Plus } from '@phosphor-icons/react';
 import { FieldArray, Formik } from 'formik';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getAddress, zeroAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import RoleFormCreateProposal from '../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
-import RoleFormTabs from '../../../../../components/pages/Roles/forms/RoleFormTabs';
 import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
-import { useHeaderHeight } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
@@ -35,8 +32,6 @@ function RolesEdit() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
-  const [hatIndex, setHatIndex] = useState<number>();
-  const [isSummaryOpen, setIsSummaryOpen] = useState(false);
   const { rolesSchema } = useRolesSchema();
   const navigate = useNavigate();
   const { hatsTree, hatsTreeId } = useRolesState();
@@ -48,31 +43,25 @@ function RolesEdit() {
     // @todo will need to combine with Sablier information, down the road.
     return [
       {
-        id: 1n,
+        id: 12n,
         member: zeroAddress,
         roleName: 'Legal Reviewer',
         roleDescription: 'The Legal Reviewer role has...',
       },
       {
-        id: 2n,
+        id: 22n,
         member: zeroAddress,
         roleName: 'Marketer',
         roleDescription: 'The Marketer role has...',
       },
       {
-        id: 3n,
+        id: 33n,
         member: zeroAddress,
         roleName: 'Developer',
         roleDescription: 'The Developer role has...',
       },
     ];
   }, []);
-
-  const headerHeight = useHeaderHeight();
-
-  const handleRoleClick = (_hatIndex: number) => {
-    setHatIndex(_hatIndex);
-  };
 
   const createRolesEditProposal = useCallback(
     async (values: RoleFormValues) => {
@@ -136,6 +125,9 @@ function RolesEdit() {
 
   if (daoAddress === null) return null;
 
+  const showRoleEditDetails = (_hatIndex: number) => {
+    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, _hatIndex));
+  };
   return (
     <Formik<RoleFormValues>
       initialValues={{
@@ -152,7 +144,7 @@ function RolesEdit() {
       {({ handleSubmit, values }) => (
         <form onSubmit={handleSubmit}>
           <FieldArray name="hats">
-            {({ push, remove }) => (
+            {({ push }) => (
               <Box>
                 <PageHeader
                   title={t('roles')}
@@ -178,7 +170,7 @@ function RolesEdit() {
                   }}
                   buttonClick={() => {
                     push(DEFAULT_ROLE_HAT);
-                    setHatIndex(values.hats.length);
+                    showRoleEditDetails(values.hats.length);
                   }}
                 />
                 {hatsTree === undefined && (
@@ -203,93 +195,16 @@ function RolesEdit() {
                 )}
 
                 <Show above="md">
-                  <RolesEditTable handleRoleClick={handleRoleClick} />
+                  <RolesEditTable handleRoleClick={showRoleEditDetails} />
                 </Show>
                 <Show below="md">
-                  {!!hatIndex && (
-                    <Portal>
-                      <Box
-                        position="fixed"
-                        top={headerHeight}
-                        h={`100vh`}
-                        w="full"
-                        bg="neutral-1"
-                        px="1rem"
-                      >
-                        <Flex
-                          justifyContent="space-between"
-                          alignItems="center"
-                          my="1.75rem"
-                        >
-                          <Flex
-                            gap="0.5rem"
-                            alignItems="center"
-                            aria-label={t('editRoles')}
-                            onClick={() => {
-                              remove(hatIndex);
-                              setHatIndex(undefined);
-                            }}
-                          >
-                            <Icon
-                              as={ArrowLeft}
-                              boxSize="1.5rem"
-                            />
-                            <Text textStyle="display-lg">{t('editRoles')}</Text>
-                          </Flex>
-                        </Flex>
-
-                        <RoleFormTabs
-                          hatIndex={hatIndex}
-                          existingRoleHat={hats.find(hat => hat.id === values.hats[hatIndex].id)}
-                          close={() => setHatIndex(undefined)}
-                        />
-                      </Box>
-                    </Portal>
-                  )}
-                  {isSummaryOpen && (
-                    <Box>
-                      <Portal>
-                        <Box
-                          position="fixed"
-                          top={headerHeight}
-                          h={`100vh`}
-                          w="full"
-                          bg="neutral-1"
-                          px="1rem"
-                        >
-                          <Flex
-                            justifyContent="space-between"
-                            alignItems="center"
-                            my="1.75rem"
-                          >
-                            <Flex
-                              gap="0.5rem"
-                              alignItems="center"
-                              aria-label={t('proposalNew')}
-                              onClick={() => {
-                                setIsSummaryOpen(false);
-                              }}
-                            >
-                              <Icon
-                                as={ArrowLeft}
-                                boxSize="1.5rem"
-                              />
-                              <Text textStyle="display-lg">
-                                {t('proposalNew', { ns: 'breadcrumbs' })}
-                              </Text>
-                            </Flex>
-                          </Flex>
-                          <RoleFormCreateProposal close={() => setIsSummaryOpen(false)} />
-                        </Box>
-                      </Portal>
-                    </Box>
-                  )}
                   {values.hats.map((hat, index) => (
                     <RoleCardEdit
                       key={index}
                       roleName={hat.roleName}
                       wearerAddress={hat.member}
-                      handleRoleClick={() => handleRoleClick(index)}
+                      editStatus={hat.editedRole?.status}
+                      handleRoleClick={() => showRoleEditDetails(index)}
                     />
                   ))}
                 </Show>
@@ -307,12 +222,17 @@ function RolesEdit() {
               {t('cancel', { ns: 'common' })}
             </Button>
             <Button
-              onClick={() => setIsSummaryOpen(true)}
+              onClick={() =>
+                navigate(
+                  DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, daoAddress),
+                )
+              }
               isDisabled={!values.hats.some(hat => hat.editedRole)}
             >
               {t('createProposal', { ns: 'modals' })}
             </Button>
           </Flex>
+          <Outlet />
         </form>
       )}
     </Formik>

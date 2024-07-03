@@ -11,20 +11,24 @@ enum EditRoleTabs {
   Vesting,
 }
 
-export default function RoleFormTabs({
-  hatIndex,
-  existingRoleHat,
-  close,
-}: {
-  hatIndex: number;
-  existingRoleHat?: Role;
-  close: () => void;
-}) {
+const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: boolean) => {
+  if (fieldNames.includes(fieldName) && isRemoved) {
+    return fieldNames.filter(field => field !== fieldName);
+  }
+  return [...fieldNames, fieldName];
+};
+
+export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; save: () => void }) {
   const [tab, setTab] = useState<EditRoleTabs>(EditRoleTabs.RoleInfo);
 
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
-  const editingRole = values.hats[hatIndex];
+  const editingRole = useMemo(() => values.hats[hatIndex], [hatIndex, values.hats]);
+
+  const existingRoleHat = useMemo(
+    () => values.hats.find((role: Role) => role.id === editingRole.id && role.id !== -1),
+    [editingRole, values.hats],
+  );
   const isRoleNameUpdated = useMemo<boolean>(
     () => !!existingRoleHat && editingRole.roleName !== existingRoleHat.roleName,
     [editingRole, existingRoleHat],
@@ -41,32 +45,22 @@ export default function RoleFormTabs({
   );
 
   const editedRole = useMemo<EditedRole>(() => {
-    if (!existingRoleHat)
+      if (!existingRoleHat) {
       return {
         fieldNames: [],
         status: EditBadgeStatus.New,
       };
+    }
     let fieldNames: string[] = ['roleName', 'roleDescription', 'member'];
-
-    if (isRoleNameUpdated) {
-      fieldNames = fieldNames.filter(field => field !== 'roleName');
-    }
-    if (isRoleDescriptionUpdated) {
-      fieldNames = fieldNames.filter(field => field !== 'roleDescription');
-    }
-    if (isMemberUpdated) {
-      fieldNames = fieldNames.filter(field => field !== 'member');
-    }
+    fieldNames = addRemoveField(fieldNames, 'roleName', isRoleNameUpdated);
+    fieldNames = addRemoveField(fieldNames, 'roleDescription', isRoleDescriptionUpdated);
+    fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
 
     return {
       fieldNames,
-      status:
-        isRoleNameUpdated || isRoleDescriptionUpdated || isMemberUpdated
-          ? EditBadgeStatus.Updated
-          : EditBadgeStatus.New,
-      id: editingRole.id,
+      status: EditBadgeStatus.Updated,
     };
-  }, [editingRole, existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
+  }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
 
   return (
     <Box>
@@ -142,7 +136,7 @@ export default function RoleFormTabs({
           isDisabled={!!errors.hats?.[hatIndex]}
           onClick={() => {
             setFieldValue(`hats.${hatIndex}`, { ...values.hats[hatIndex], editedRole });
-            close();
+            save();
           }}
         >
           {t('save')}
