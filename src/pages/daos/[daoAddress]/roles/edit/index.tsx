@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { zeroAddress } from 'viem';
+import { getAddress, zeroAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
 import RoleFormCreateProposal from '../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
@@ -18,7 +18,11 @@ import { useHeaderHeight } from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
-import { useRolesProposalFunctions } from '../../../../../hooks/utils/useRolesProposalFunctions';
+import {
+  parsedEditedHats,
+  prepareCreateTopHatProposal,
+  prepareEditHatsProposal,
+} from '../../../../../hooks/utils/rolesProposalFunctions';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../../state/useRolesState';
@@ -38,9 +42,6 @@ function RolesEdit() {
   const { hatsTree, hatsTreeId } = useRolesState();
 
   const { submitProposal } = useSubmitProposal();
-
-  const { parsedEditedHats, prepareCreateTopHatProposal, prepareEditHatsProposal } =
-    useRolesProposalFunctions();
 
   const hats = useMemo(() => {
     // @todo get hats from hatsTree from state
@@ -75,6 +76,10 @@ function RolesEdit() {
 
   const createRolesEditProposal = useCallback(
     async (values: RoleFormValues) => {
+      if (!safe) {
+        throw new Error('Cannot create Roles proposal without known Safe');
+      }
+
       try {
         // filter to hats that have been modified (ie includes `editedRole` prop)
         const modifiedHats = values.hats.filter(hat => !!hat.editedRole);
@@ -87,7 +92,11 @@ function RolesEdit() {
         if (hatsTreeId === null || hatsTreeId === undefined) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
           // along with any other hats that are added.
-          proposalData = await prepareCreateTopHatProposal(values.proposalMetadata, addedHats);
+          proposalData = await prepareCreateTopHatProposal(
+            values.proposalMetadata,
+            addedHats,
+            getAddress(safe.address),
+          );
         } else {
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
           proposalData = await prepareEditHatsProposal(values.proposalMetadata, {
@@ -114,15 +123,7 @@ function RolesEdit() {
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
       }
     },
-    [
-      parsedEditedHats,
-      hatsTreeId,
-      prepareCreateTopHatProposal,
-      prepareEditHatsProposal,
-      submitProposal,
-      safe?.nextNonce,
-      t,
-    ],
+    [safe, hatsTreeId, submitProposal, t],
   );
 
   if (daoAddress === null) return null;
