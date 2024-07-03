@@ -94,7 +94,7 @@ function RolesEdit() {
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
       }
     },
-    [safe, hatsTree, hatsTreeId, submitProposal, t],
+    [safe, getHat, hatsTreeId, submitProposal, t, hatsTree],
   );
 
   if (daoAddress === null) return null;
