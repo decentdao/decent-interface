@@ -13,17 +13,66 @@ import { CreateProposalMetadata } from '../../types';
 const decentHatsAddress = getAddress('0x88e72194d93bf417310b197275d972cf78406163'); // @todo: sepolia only. Move to, and read from, network config
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
 
-interface HatStructWithoutPredictedId {
-  eligibility: Address; // The address that can report on the Hat wearer's status
-  toggle: Address; // The address that can deactivate the Hat
-  maxSupply: number; // No more than this number of wearers. Hardcode to 1
-  details: string; // JSON string, { name, description } OR IPFS url/hash to said JSON data
-  imageURI: string;
-  isMutable: boolean; // true
-  wearer: Address;
-}
+const predictHatId = async (args: {
+  treeId: bigint;
+  adminHatId: bigint;
+  hatsCount: number;
+  hat: HatStruct;
+}) => {
+  const { hat, treeId, adminHatId, hatsCount } = args;
+  return 0n; // @todo: implement hat id prediction
+};
 
+const prepareAddHatsArgs = (addedHats: HatStruct[]) => {
+  const admins: bigint[] = [];
+  const details: string[] = [];
+  const maxSupplies: number[] = [];
+  const eligibilityModules: Address[] = [];
+  const toggleModules: Address[] = [];
+  const mutables: boolean[] = [];
+  const imageURIs: string[] = [];
+
+  addedHats.forEach(hat => {
+    admins.push(0n); // should be the safe's admin hat ID
+    details.push(hat.details);
+    maxSupplies.push(hat.maxSupply);
+    eligibilityModules.push(hat.eligibility); // probably should be the safe's address (or more likely, the intended wearer's address)
+    toggleModules.push(hat.toggle); // probably should be the safe's address
+    mutables.push(hat.isMutable);
+    imageURIs.push(hat.imageURI);
+  });
+
+  return [
+    admins,
+    details,
+    maxSupplies,
+    eligibilityModules,
+    toggleModules,
+    mutables,
+    imageURIs,
+  ] as const;
+};
+
+const prepareMintHatsArgs = (addedHats: HatStructWithId[]) => {
+  const hatIds: bigint[] = [];
+  const wearers: Address[] = [];
+
+  addedHats.forEach(hat => {
+    hatIds.push(hat.id);
+    wearers.push(hat.wearer);
+  });
+
+  return [hatIds, wearers] as const;
+};
+
+/**
+ * Given a list of edited hats, chunk them up into separate lists denoting the type of edit and the relevant updated data.
+ * This is to prepare the data for the creation of a proposal to edit hats, in `prepareCreateTopHatProposal` and `prepareEditHatsProposal`.
+ * @param editedHats The edited hats to be parsed. Form values from the roles form.
+ */
 export const parsedEditedHats = (editedHats: RoleValue[]) => {
+  //
+  //  Parse added hats
   const addedHats: HatStructWithId[] = editedHats
     .filter(hat => hat.editedRole?.status === EditBadgeStatus.New)
     .map(hat => ({
@@ -40,10 +89,14 @@ export const parsedEditedHats = (editedHats: RoleValue[]) => {
       id: 0n, // @todo: implement hat id prediction
     }));
 
+  //
+  // Parse removed hats
   const removedHatIds = editedHats
     .filter(hat => hat.editedRole?.status === EditBadgeStatus.Removed)
     .map(hat => hat.id);
 
+  //
+  // Parse member changed hats
   const memberChangedHats = editedHats
     .filter(
       hat =>
@@ -55,6 +108,8 @@ export const parsedEditedHats = (editedHats: RoleValue[]) => {
       wearer: getAddress(hat.member),
     }));
 
+  //
+  // Parse role details changed hats (name and/or description updated)
   const roleDetailsChangedHats = editedHats
     .filter(
       hat =>
@@ -78,36 +133,14 @@ export const parsedEditedHats = (editedHats: RoleValue[]) => {
   };
 };
 
-const prepareAddHatsArgs = (addedHats: HatStruct[]) => {
-  const admins: bigint[] = [];
-  const details: string[] = [];
-  const maxSupplies: number[] = [];
-  const eligibilityModules: Address[] = [];
-  const toggleModules: Address[] = [];
-  const mutables: boolean[] = [];
-  const imageURIs: string[] = [];
-
-  addedHats.forEach(hat => {
-    admins.push(0n); // should be the safe's admin hat address
-    details.push(hat.details);
-    maxSupplies.push(hat.maxSupply);
-    eligibilityModules.push(hat.eligibility);
-    toggleModules.push(hat.toggle);
-    mutables.push(hat.isMutable);
-    imageURIs.push(hat.imageURI);
-  });
-
-  return [
-    admins,
-    details,
-    maxSupplies,
-    eligibilityModules,
-    toggleModules,
-    mutables,
-    imageURIs,
-  ] as const;
-};
-
+/**
+ * Prepare the data for a proposal add new hats to a safe that has never used the roles feature before.
+ * This proposal will create a new top hat, an admin hat under it, and any added hats under the admin hat.
+ *
+ * @param proposalMetadata The metadata for the proposal.
+ * @param addedHats The hat roles to be added to the safe.
+ * @param safeAddress The address of the safe.
+ */
 export const prepareCreateTopHatProposal = async (
   proposalMetadata: CreateProposalMetadata,
   addedHats: HatStruct[],
@@ -125,7 +158,7 @@ export const prepareCreateTopHatProposal = async (
     args: [decentHatsAddress, decentHatsAddress], // @todo: Figure out prevModule arg. Need to retrieve from safe.
   });
 
-  const adminHat: HatStructWithoutPredictedId = {
+  const adminHat: HatStruct = {
     eligibility: zeroAddress,
     toggle: zeroAddress,
     maxSupply: 1,
@@ -160,6 +193,12 @@ export const prepareCreateTopHatProposal = async (
   };
 };
 
+/**
+ * Prepare the data for a proposal to edit hats on a safe.
+ *
+ * @param proposalMetadata
+ * @param edits All the different updates that would be made to the safe's roles if this proposal is executed.
+ */
 export const prepareEditHatsProposal = async (
   proposalMetadata: CreateProposalMetadata,
   edits: {
@@ -174,8 +213,14 @@ export const prepareEditHatsProposal = async (
       details: string;
     }[];
   },
+  treeId: bigint,
+  adminHatId: bigint,
+  hatsCount: number,
 ) => {
   const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
+
+  if (addedHats.length) {
+  }
 
   const addHatsTx = encodeFunctionData({
     abi: HatsAbi,
@@ -183,15 +228,27 @@ export const prepareEditHatsProposal = async (
     args: prepareAddHatsArgs(addedHats),
   });
 
-  // @todo: gotta mint the hats too.
-  // - treeid
-  // - admin hatid
-  // - count of hats under tree
-  // const mintHatsTx = encodeFunctionData({
-  //   abi: HatsAbi,
-  //   functionName: 'batchMintHats',
-  //   args: [],
-  // });
+  const predictedHatIds = await Promise.all(
+    addedHats.map(hat =>
+      predictHatId({
+        treeId,
+        adminHatId,
+        hat,
+        hatsCount,
+      }),
+    ),
+  );
+
+  const mintHatsTx = encodeFunctionData({
+    abi: HatsAbi,
+    functionName: 'batchMintHats',
+    args: prepareMintHatsArgs(
+      addedHats.map((hat, i) => ({
+        ...hat,
+        id: predictedHatIds[i],
+      })),
+    ),
+  });
 
   const removeHatTxs = removedHatIds.map(hatId =>
     encodeFunctionData({
@@ -201,10 +258,45 @@ export const prepareEditHatsProposal = async (
     }),
   );
 
+  const transferHatTxs = memberChangedHats.map(({ id, wearer }) => {
+    const currentWearer = zeroAddress; // @todo: get the current hat wearer
+    return encodeFunctionData({
+      abi: HatsAbi,
+      functionName: 'transferHat',
+      args: [id, currentWearer, wearer],
+    });
+  });
+
+  const roleDetailsChangedTxs = roleDetailsChangedHats.map(({ id, details }) => {
+    return encodeFunctionData({
+      abi: HatsAbi,
+      functionName: 'changeHatDetails',
+      args: [id, details],
+    });
+  });
+
   return {
-    targets: [hatsContractAddress, ...removeHatTxs.map(() => hatsContractAddress)],
-    calldatas: [addHatsTx, ...removeHatTxs],
+    targets: [
+      hatsContractAddress,
+      hatsContractAddress,
+      ...removeHatTxs.map(() => hatsContractAddress),
+      ...transferHatTxs.map(() => hatsContractAddress),
+      ...roleDetailsChangedHats.map(() => hatsContractAddress),
+    ],
+    calldatas: [
+      addHatsTx,
+      mintHatsTx,
+      ...removeHatTxs,
+      ...transferHatTxs,
+      ...roleDetailsChangedTxs,
+    ],
     metaData: proposalMetadata,
-    values: [0n, ...removeHatTxs.map(() => 0n)],
+    values: [
+      0n,
+      0n,
+      ...removeHatTxs.map(() => 0n),
+      ...transferHatTxs.map(() => 0n),
+      ...roleDetailsChangedHats.map(() => 0n),
+    ],
   };
 };

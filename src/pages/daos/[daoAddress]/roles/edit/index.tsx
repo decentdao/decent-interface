@@ -86,31 +86,39 @@ function RolesEdit() {
 
         let proposalData: ProposalExecuteData;
 
-        const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } =
-          parsedEditedHats(modifiedHats);
+        const editedHatStructs = parsedEditedHats(modifiedHats);
 
         if (hatsTreeId === null || hatsTreeId === undefined) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
           // along with any other hats that are added.
           proposalData = await prepareCreateTopHatProposal(
             values.proposalMetadata,
-            addedHats,
+            editedHatStructs.addedHats,
             getAddress(safe.address),
           );
         } else {
+          if (hatsTree === undefined || hatsTree === null) {
+            throw new Error('Cannot edit Roles without a HatsTree');
+          }
+
+          // @todo: confirm these are accurate
+          const adminHatId = hatsTree.adminHat.id;
+          const hatsCount = hatsTree.roleHats.length;
+
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
-          proposalData = await prepareEditHatsProposal(values.proposalMetadata, {
-            addedHats,
-            removedHatIds,
-            memberChangedHats,
-            roleDetailsChangedHats,
-          });
+          proposalData = await prepareEditHatsProposal(
+            values.proposalMetadata,
+            editedHatStructs,
+            BigInt(hatsTreeId),
+            BigInt(adminHatId), // @todo: confirm adminHatId type -- it's an Address.
+            hatsCount,
+          );
         }
 
         // All done, submit the proposal!
         submitProposal({
           proposalData,
-          nonce: safe?.nextNonce,
+          nonce: safe.nextNonce,
           pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
           successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
@@ -123,7 +131,7 @@ function RolesEdit() {
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
       }
     },
-    [safe, hatsTreeId, submitProposal, t],
+    [safe, hatsTree, hatsTreeId, submitProposal, t],
   );
 
   if (daoAddress === null) return null;
