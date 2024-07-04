@@ -6,7 +6,7 @@ import { InputComponent, TextareaComponent } from '../../../ui/forms/InputCompon
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleFormValues } from '../types';
 
-export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
+export default function RoleFormInfo() {
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -19,7 +19,7 @@ export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
       borderRadius="0.5rem"
     >
       <FormControl>
-        <Field name={`hats.${hatIndex}.roleName`}>
+        <Field name={`roleEditing.name`}>
           {({
             field,
             form: { setFieldValue, setFieldTouched },
@@ -50,7 +50,7 @@ export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
         </Field>
       </FormControl>
       <FormControl>
-        <Field name={`hats.${hatIndex}.roleDescription`}>
+        <Field name={`roleEditing.description`}>
           {({
             field,
             form: { setFieldValue, setFieldTouched },
@@ -82,7 +82,7 @@ export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
         </Field>
       </FormControl>
       <FormControl>
-        <Field name={`hats.${hatIndex}.member`}>
+        <Field name={`roleEditing.wearer`}>
           {({
             field,
             form: { setFieldValue, setFieldTouched },

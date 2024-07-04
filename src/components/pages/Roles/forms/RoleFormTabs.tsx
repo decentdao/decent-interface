@@ -27,28 +27,28 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
 
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
-  const editingRole = useMemo(() => values.hats[hatIndex], [hatIndex, values.hats]);
 
   const existingRoleHat = useMemo(
     () =>
       hatsTree?.roleHats.find(
-        (role: RoleValue) => !!editingRole && role.id === editingRole.id && role.id !== zeroAddress,
+        (role: RoleValue) =>
+          !!values.roleEditing && role.id === values.roleEditing.id && role.id !== zeroAddress,
       ),
-    [editingRole, hatsTree],
+    [values.roleEditing, hatsTree],
   );
   const isRoleNameUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && editingRole.name !== existingRoleHat.name,
-    [editingRole, existingRoleHat],
+    () => !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name,
+    [values.roleEditing, existingRoleHat],
   );
 
   const isRoleDescriptionUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && editingRole.description !== existingRoleHat.description,
-    [editingRole, existingRoleHat],
+    () => !!existingRoleHat && values.roleEditing?.description !== existingRoleHat.description,
+    [values.roleEditing, existingRoleHat],
   );
 
   const isMemberUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && editingRole.wearer !== existingRoleHat.wearer,
-    [editingRole, existingRoleHat],
+    () => !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer,
+    [values.roleEditing, existingRoleHat],
   );
 
   const editedRole = useMemo<EditedRole>(() => {
@@ -58,7 +58,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
         status: EditBadgeStatus.New,
       };
     }
-    let fieldNames: string[] = ['roleName', 'roleDescription', 'member'];
+    let fieldNames: string[] = [];
     fieldNames = addRemoveField(fieldNames, 'roleName', isRoleNameUpdated);
     fieldNames = addRemoveField(fieldNames, 'roleDescription', isRoleDescriptionUpdated);
     fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
@@ -69,7 +69,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
     };
   }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
 
-   return (
+  return (
     <Box>
       <Tabs
         index={tab}
@@ -126,7 +126,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
             padding="0"
             my="1.75rem"
           >
-            {tab === EditRoleTabs.RoleInfo && <RoleFormInfo hatIndex={hatIndex} />}
+            {tab === EditRoleTabs.RoleInfo && <RoleFormInfo />}
           </TabPanel>
           <TabPanel>{tab === EditRoleTabs.Payroll && <Box>Payroll</Box>}</TabPanel>
           <TabPanel>{tab === EditRoleTabs.Vesting && <Box>Vesting</Box>}</TabPanel>
@@ -137,9 +137,10 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
         my="1rem"
       >
         <Button
-          isDisabled={!!errors.hats?.[hatIndex]}
+          isDisabled={!!errors.roleEditing?.[hatIndex]}
           onClick={() => {
-            setFieldValue(`hats.${hatIndex}`, { ...values.hats[hatIndex], editedRole });
+            setFieldValue(`hats.${hatIndex}`, { ...values.roleEditing, editedRole });
+            setFieldValue('roleEditing', undefined);
             save();
           }}
         >

@@ -1,13 +1,16 @@
 import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
-import { FieldArray, Formik } from 'formik';
-import { useMemo } from 'react';
+import { Formik } from 'formik';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { zeroAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { RoleFormValues, DEFAULT_ROLE_HAT, RoleValue } from '../../../../../components/pages/Roles/types';
+import {
+  RoleFormValues,
+  DEFAULT_ROLE_HAT,
+  RoleValue,
+} from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
@@ -19,6 +22,7 @@ import { useRolesState } from '../../../../../state/useRolesState';
 
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'breadcrumbs', 'common']);
+  const [hats, setHats] = useState<RoleValue[]>([]);
   const {
     node: { daoAddress },
   } = useFractal();
@@ -26,33 +30,13 @@ function RolesEdit() {
 
   const { rolesSchema } = useRolesSchema();
   const { hatsTree } = useRolesState();
-  const navigate = useNavigate();
 
-  const hats: RoleValue[]= useMemo(() => {
-    return [
-      {
-        id: '0x1',
-        wearer: zeroAddress,
-        name: 'Legal Reviewer',
-        description: 'The Legal Reviewer role has...',
-        prettyId: '0001.0001',
-      },
-      {
-        id: '0x2',
-        wearer: zeroAddress,
-        name: 'Marketer',
-        description: 'The Marketer role has...',
-        prettyId: '0001.0001',
-      },
-      {
-        id: '0x3',
-        wearer: zeroAddress,
-        name: 'Developer',
-        description: 'The Developer role has...',
-        prettyId: '0001.0001',
-      },
-    ];
-  }, []);
+  useEffect(() => {
+    if (hatsTree !== null && hatsTree !== undefined) {
+      setHats(hatsTree?.roleHats);
+    }
+  }, [hatsTree]);
+  const navigate = useNavigate();
 
   if (daoAddress === null) return null;
 
@@ -60,7 +44,6 @@ function RolesEdit() {
     navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, _hatIndex));
   };
 
-  
   return (
     <Formik<RoleFormValues>
       initialValues={{
@@ -68,7 +51,7 @@ function RolesEdit() {
           title: '',
           description: '',
         },
-        hats: hats,
+        hats,
       }}
       validationSchema={rolesSchema}
       validateOnMount
@@ -78,82 +61,81 @@ function RolesEdit() {
         // @todo submit transactions
       }}
     >
-      {({ handleSubmit, values }) => (
+      {({ handleSubmit, values, setFieldValue }) => (
         <form
           onSubmit={e => {
             e.preventDefault();
             handleSubmit(e);
           }}
         >
-          <FieldArray name="hats">
-            {({ push }) => (
-              <Box>
-                <PageHeader
-                  title={t('roles')}
-                  breadcrumbs={[
-                    {
-                      terminus: t('roles', {
-                        ns: 'roles',
-                      }),
-                      path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
-                    },
-                    {
-                      terminus: t('editRoles', {
-                        ns: 'roles',
-                      }),
-                      path: '',
-                    },
-                  ]}
-                  buttonVariant="secondary"
-                  buttonText={t('addRole')}
-                  buttonProps={{
-                    size: 'sm',
-                    leftIcon: <Plus />,
-                  }}
-                  buttonClick={() => {
-                    push(DEFAULT_ROLE_HAT);
-                    showRoleEditDetails(values.hats.length);
-                  }}
-                />
-                {hatsTree === undefined && (
-                  <Card
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <BarLoader />
-                  </Card>
-                )}
-                {hatsTree === null && (
-                  <Card my="0.5rem">
-                    <Text
-                      textStyle="body-base"
-                      textAlign="center"
-                      color="white-alpha-16"
-                    >
-                      {t('noRoles')}
-                    </Text>
-                  </Card>
-                )}
-
-                <Show above="md">
-                  <RolesEditTable handleRoleClick={showRoleEditDetails} />
-                </Show>
-                <Show below="md">
-                  {values.hats &&
-                    values.hats.map((hat, index) => (
-                      <RoleCardEdit
-                        key={index}
-                        name={hat.name}
-                        wearerAddress={hat.wearer}
-                        editStatus={hat.editedRole?.status}
-                        handleRoleClick={() => showRoleEditDetails(index)}
-                      />
-                    ))}
-                </Show>
-              </Box>
+          <Box>
+            <PageHeader
+              title={t('roles')}
+              breadcrumbs={[
+                {
+                  terminus: t('roles', {
+                    ns: 'roles',
+                  }),
+                  path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
+                },
+                {
+                  terminus: t('editRoles', {
+                    ns: 'roles',
+                  }),
+                  path: '',
+                },
+              ]}
+              buttonVariant="secondary"
+              buttonText={t('addRole')}
+              buttonProps={{
+                size: 'sm',
+                leftIcon: <Plus />,
+              }}
+              buttonClick={() => {
+                setFieldValue('roleEditing', DEFAULT_ROLE_HAT);
+                showRoleEditDetails(values.hats.length);
+              }}
+            />
+            {hatsTree === undefined && (
+              <Card
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <BarLoader />
+              </Card>
             )}
-          </FieldArray>
+            {hatsTree === null && (
+              <Card my="0.5rem">
+                <Text
+                  textStyle="body-base"
+                  textAlign="center"
+                  color="white-alpha-16"
+                >
+                  {t('noRoles')}
+                </Text>
+              </Card>
+            )}
+
+            <Show above="md">
+              <RolesEditTable handleRoleClick={showRoleEditDetails} />
+            </Show>
+            <Show below="md">
+              {values.hats &&
+                values.hats.map((hat, index) => (
+                  <RoleCardEdit
+                    key={index}
+                    name={hat.name}
+                    wearerAddress={hat.wearer}
+                    editStatus={hat.editedRole?.status}
+                    handleRoleClick={() => {
+                      setFieldValue('roleEditing', hat);
+                      showRoleEditDetails(index);
+                    }}
+                  />
+                ))}
+            </Show>
+          </Box>
           <Flex
             gap="1rem"
             justifyContent="flex-end"

@@ -57,7 +57,6 @@ export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Removed]: 'error-1',
 };
 
-
 export interface EditedRole {
   fieldNames: string[];
   status: EditBadgeStatus;
@@ -71,6 +70,7 @@ export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
 export interface RoleFormValues {
   proposalMetadata: CreateProposalMetadata;
   hats: RoleValue[];
+  roleEditing?: RoleValue;
 }
 
 export const DEFAULT_ROLE_HAT: RoleValue = {
