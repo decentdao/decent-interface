@@ -22,7 +22,8 @@ export type NetworkConfig = {
     slug: string;
     version: string;
   };
-  sablierSubgraph: {
+  // @dev - might be not supported on some chains
+  sablierSubgraph?: {
     space: number;
     slug: string;
   };
