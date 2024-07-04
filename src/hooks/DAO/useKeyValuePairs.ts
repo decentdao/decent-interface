@@ -1,3 +1,4 @@
+import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { useEffect } from 'react';
 import { GetContractEventsReturnType, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
@@ -17,7 +18,7 @@ const getHatsTreeId = (
 
   // get most recent event where `hatsTreeId` was set
   const hatsTreeIdEvent = events
-    .filter(event => event.args.key && event.args.key === 'hatsTreeId')
+    .filter(event => event.args.key && event.args.key === 'topHatId')
     .pop();
 
   if (!hatsTreeIdEvent) {
@@ -36,8 +37,11 @@ const getHatsTreeId = (
     return undefined;
   }
 
-  const treeId = parseInt(hatsTreeIdEvent.args.value);
-  if (isNaN(treeId)) {
+  try {
+    const topHatId = BigInt(hatsTreeIdEvent.args.value);
+    const treeId = hatIdToTreeId(topHatId);
+    return treeId;
+  } catch (e) {
     logError({
       message: "KVPairs 'hatsTreeIdEvent' value not a number",
       network: chainId,
@@ -48,8 +52,6 @@ const getHatsTreeId = (
     });
     return undefined;
   }
-
-  return treeId;
 };
 
 const useKeyValuePairs = () => {
@@ -73,13 +75,22 @@ const useKeyValuePairs = () => {
     });
     keyValuePairsContract.getEvents
       .ValueUpdated({ theAddress: node.daoAddress }, { fromBlock: 0n })
-      .then(safeEvents => {
-        const newHatsTreeId = getHatsTreeId(safeEvents, chain.id);
-        setHatsTreeId(newHatsTreeId);
-      })
+      .then(safeEvents => setHatsTreeId(getHatsTreeId(safeEvents, chain.id)))
       .catch(error => {
         logError(error);
       });
+
+    const unwatch = keyValuePairsContract.watchEvent.ValueUpdated(
+      {
+        theAddress: node.daoAddress,
+      },
+      {
+        onLogs: logs => setHatsTreeId(getHatsTreeId(logs, chain.id)),
+      },
+    );
+    return () => {
+      unwatch();
+    };
   }, [chain.id, keyValuePairs, node.daoAddress, publicClient, setHatsTreeId]);
 };
 

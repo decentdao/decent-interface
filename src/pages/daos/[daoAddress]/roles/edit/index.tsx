@@ -1,9 +1,11 @@
 import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik } from 'formik';
-import { useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { getAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
 import {
@@ -15,28 +17,102 @@ import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
+import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
+import {
+  parsedEditedHatsFormValues,
+  prepareCreateTopHatProposalData,
+  prepareEditHatsProposalData,
+} from '../../../../../hooks/utils/rolesProposalFunctions';
 import { useFractal } from '../../../../../providers/App/AppProvider';
+import useIPFSClient from '../../../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../../state/useRolesState';
+import { ProposalExecuteData } from '../../../../../types';
 
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'breadcrumbs', 'common']);
-  const [hats, setHats] = useState<RoleValue[]>([]);
   const {
-    node: { daoAddress },
+    node: { daoAddress, safe, daoName },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
   const { rolesSchema } = useRolesSchema();
-  const { hatsTree } = useRolesState();
+  const { hatsTree, hatsTreeId, getHat } = useRolesState();
 
-  useEffect(() => {
-    if (hatsTree !== null && hatsTree !== undefined) {
-      setHats(hatsTree?.roleHats);
-    }
-  }, [hatsTree]);
   const navigate = useNavigate();
+
+  const { submitProposal } = useSubmitProposal();
+
+  const ipfsClient = useIPFSClient();
+
+  const createRolesEditProposal = useCallback(
+    async (values: RoleFormValues) => {
+      if (!safe) {
+        throw new Error('Cannot create Roles proposal without known Safe');
+      }
+
+      try {
+        // filter to hats that have been modified (ie includes `editedRole` prop)
+        const modifiedHats = values.hats.filter(hat => !!hat.editedRole);
+
+        let proposalData: ProposalExecuteData;
+
+        const uploadHatDescriptionCallback = async (hatDescription: string) =>
+          `ipfs://${(await ipfsClient.add(hatDescription)).Hash}`;
+
+        const editedHatStructs = await parsedEditedHatsFormValues(
+          modifiedHats,
+          getHat,
+          uploadHatDescriptionCallback,
+        );
+
+        if (hatsTreeId === null || hatsTreeId === undefined) {
+          // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
+          // along with any other hats that are added.
+          proposalData = await prepareCreateTopHatProposalData(
+            values.proposalMetadata,
+            editedHatStructs.addedHats,
+            getAddress(safe.address),
+            uploadHatDescriptionCallback,
+            daoName ?? safe.address,
+          );
+        } else {
+          if (hatsTree === undefined || hatsTree === null) {
+            throw new Error('Cannot edit Roles without a HatsTree');
+          }
+
+          const adminHatId = hatsTree.adminHat.id;
+          const hatsCount = hatsTree.roleHatsTotalCount;
+
+          // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
+          proposalData = await prepareEditHatsProposalData(
+            values.proposalMetadata,
+            editedHatStructs,
+            hatsTreeId,
+            BigInt(adminHatId),
+            hatsCount,
+          );
+        }
+
+        // All done, submit the proposal!
+        submitProposal({
+          proposalData,
+          nonce: safe.nextNonce,
+          pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+          successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+          failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+          // successCallback,
+        });
+
+        console.log('proposalData', proposalData);
+      } catch (e) {
+        console.error(e);
+        toast(t('encodingFailedMessage', { ns: 'proposal' }));
+      }
+    },
+    [safe, daoName, getHat, hatsTreeId, submitProposal, t, ipfsClient, hatsTree],
+  );
 
   if (daoAddress === null) return null;
 
@@ -51,23 +127,15 @@ function RolesEdit() {
           title: '',
           description: '',
         },
-        hats,
+        hats: hatsTree?.roleHats || ([] as RoleValue[]),
       }}
+      enableReinitialize
       validationSchema={rolesSchema}
       validateOnMount
-      onSubmit={values => {
-        console.log('🚀 ~ values:', values);
-        // @todo prepare transactions for adding/removing roles
-        // @todo submit transactions
-      }}
+      onSubmit={createRolesEditProposal}
     >
       {({ handleSubmit, values, setFieldValue }) => (
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            handleSubmit(e);
-          }}
-        >
+        <form onSubmit={handleSubmit}>
           <Box>
             <PageHeader
               title={t('roles')}

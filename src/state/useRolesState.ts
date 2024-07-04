@@ -38,7 +38,7 @@ interface DecentTree {
 interface Roles {
   hatsTreeId: undefined | null | number;
   hatsTree: undefined | null | DecentTree;
-  getHat: (hatId: Hex) => DecentHat | null;
+  getHat: (hatId: Hex) => DecentRoleHat | null;
   setHatsTreeId: (hatsTreeId: undefined | null | number) => void;
   setHatsTree: (hatsTree: undefined | null | Tree) => void;
 }

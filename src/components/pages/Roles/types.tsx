@@ -60,6 +60,20 @@ export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Removed]: 'error-1',
 };
 
+export interface HatStruct {
+  eligibility: Address; // The address that can report on the Hat wearer's status
+  toggle: Address; // The address that can deactivate the Hat
+  maxSupply: number; // No more than this number of wearers. Hardcode to 1
+  details: string; // JSON string, { name, description } OR IPFS url/hash to said JSON data
+  imageURI: string;
+  isMutable: boolean; // true
+  wearer: Address;
+}
+
+export interface HatStructWithId extends HatStruct {
+  id: Address;
+}
+
 export interface EditedRole {
   fieldNames: string[];
   status: EditBadgeStatus;
@@ -83,3 +97,9 @@ export const DEFAULT_ROLE_HAT: RoleValue = {
   description: '',
   prettyId: '',
 };
+
+export interface HatWearerChangedParams {
+  id: Address;
+  currentWearer: Address;
+  newWearer: Address;
+}

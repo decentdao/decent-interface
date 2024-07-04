@@ -12,7 +12,7 @@ import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import { RoleEditProps, RoleFormValues, RoleProps, SablierPayroll, SablierVesting } from './types';
 
-export function RolesHeader() {
+function RolesHeader() {
   const { t } = useTranslation(['roles']);
   return (
     <Thead
@@ -311,7 +311,7 @@ export function RolesTable({
         >
           {roleHats.map(role => (
             <RolesRow
-              key={role.id}
+              key={role.id.toString()}
               hatId={role.id}
               wearerAddress={role.wearer}
               handleRoleClick={handleRoleClick}
