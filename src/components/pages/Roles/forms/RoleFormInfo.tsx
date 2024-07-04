@@ -1,20 +1,25 @@
 import { Box, FormControl } from '@chakra-ui/react';
 import { Field, FieldProps } from 'formik';
+import { CARD_SHADOW } from '../../../../constants/common';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleFormValues } from '../types';
 
-export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
+export default function RoleFormInfo() {
   return (
     <Box
-      p="1rem"
+      px={{ base: '1rem', md: 0 }}
+      py="1rem"
       bg="neutral-2"
-      boxShadow="0 1px 0 0 rgba(248, 244, 252, 0.04), 0 1px 1px 0 rgba(248, 244, 252, 0.04), 0 0 1px 1px rgba(16, 4, 20, 1)"
+      boxShadow={{
+        base: CARD_SHADOW,
+        md: 'unset',
+      }}
       borderRadius="0.5rem"
     >
       <FormControl>
-        <Field name={`hats.${hatIndex}.roleName`}>
+        <Field name={`roleEditing.name`}>
           {({
             field,
             form: { setFieldValue, setFieldTouched },
@@ -33,13 +38,19 @@ export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
                 testId="role-name"
                 placeholder="Role Name"
                 isRequired
+                gridContainerProps={{
+                  gridTemplateColumns: { base: '1fr', md: '1fr' },
+                }}
+                inputContainerProps={{
+                  p: 0,
+                }}
               />
             </LabelWrapper>
           )}
         </Field>
       </FormControl>
       <FormControl>
-        <Field name={`hats.${hatIndex}.roleDescription`}>
+        <Field name={`roleEditing.description`}>
           {({
             field,
             form: { setFieldValue, setFieldTouched },
@@ -56,13 +67,22 @@ export default function RoleFormInfo({ hatIndex }: { hatIndex: number }) {
                   setFieldTouched(field.name, true);
                 }}
                 isRequired
+                gridContainerProps={{
+                  gridTemplateColumns: { base: '1fr', md: '1fr' },
+                }}
+                inputContainerProps={{
+                  p: 0,
+                }}
+                textAreaProps={{
+                  h: '12rem',
+                }}
               />
             </LabelWrapper>
           )}
         </Field>
       </FormControl>
       <FormControl>
-        <Field name={`hats.${hatIndex}.member`}>
+        <Field name={`roleEditing.wearer`}>
           {({
             field,
             form: { setFieldValue, setFieldTouched },

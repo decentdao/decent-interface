@@ -2,6 +2,7 @@ import { Box, Button, Flex, FormControl } from '@chakra-ui/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { CARD_SHADOW } from '../../../../constants/common';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleCardEdit } from '../RoleCard';
@@ -20,7 +21,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         gap="1rem"
         p="1rem"
         bg="neutral-2"
-        boxShadow="0 1px 0 0 rgba(248, 244, 252, 0.04), 0 1px 1px 0 rgba(248, 244, 252, 0.04), 0 0 1px 1px rgba(16, 4, 20, 1)"
+        boxShadow={CARD_SHADOW}
         borderRadius="0.5rem"
       >
         <FormControl>
@@ -68,7 +69,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
       <Box
         p="1rem"
         bg="neutral-2"
-        boxShadow="0 1px 0 0 rgba(248, 244, 252, 0.04), 0 1px 1px 0 rgba(248, 244, 252, 0.04), 0 0 1px 1px rgba(16, 4, 20, 1)"
+        boxShadow={CARD_SHADOW}
         borderRadius="0.5rem"
       >
         {editedRoles.map((role, index) => (

@@ -3,6 +3,7 @@ import { useFormikContext } from 'formik';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
+import { CARD_SHADOW, TAB_SHADOW } from '../../../../constants/common';
 import { useRolesState } from '../../../../state/useRolesState';
 import { EditBadgeStatus, EditedRole, RoleFormValues, RoleValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
@@ -26,28 +27,28 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
 
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
-  const editingRole = useMemo(() => values.hats[hatIndex], [hatIndex, values.hats]);
 
   const existingRoleHat = useMemo(
     () =>
       hatsTree?.roleHats.find(
-        (role: RoleValue) => role.id === editingRole.id && role.id !== zeroAddress,
+        (role: RoleValue) =>
+          !!values.roleEditing && role.id === values.roleEditing.id && role.id !== zeroAddress,
       ),
-    [editingRole, hatsTree],
+    [values.roleEditing, hatsTree],
   );
   const isRoleNameUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && editingRole.name !== existingRoleHat.name,
-    [editingRole, existingRoleHat],
+    () => !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name,
+    [values.roleEditing, existingRoleHat],
   );
 
   const isRoleDescriptionUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && editingRole.description !== existingRoleHat.description,
-    [editingRole, existingRoleHat],
+    () => !!existingRoleHat && values.roleEditing?.description !== existingRoleHat.description,
+    [values.roleEditing, existingRoleHat],
   );
 
   const isMemberUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && editingRole.wearer !== existingRoleHat.wearer,
-    [editingRole, existingRoleHat],
+    () => !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer,
+    [values.roleEditing, existingRoleHat],
   );
 
   const editedRole = useMemo<EditedRole>(() => {
@@ -57,7 +58,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
         status: EditBadgeStatus.New,
       };
     }
-    let fieldNames: string[] = ['roleName', 'roleDescription', 'member'];
+    let fieldNames: string[] = [];
     fieldNames = addRemoveField(fieldNames, 'roleName', isRoleNameUpdated);
     fieldNames = addRemoveField(fieldNames, 'roleDescription', isRoleDescriptionUpdated);
     fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
@@ -76,7 +77,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
         variant="unstyled"
       >
         <TabList
-          boxShadow="0 -1px 0 0 rgba(0, 0, 0, 0.24), 0 1px 0 0 rgba(255, 255, 255, 0.12)"
+          boxShadow={TAB_SHADOW}
           p="0.25rem"
           borderRadius="0.5rem"
           gap="0.25rem"
@@ -88,8 +89,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
             _selected={{
               bg: 'neutral-2',
               color: 'lilac-0',
-              boxShadow:
-                '0 1px 0 0 rgba(248, 244, 252, 0.04), 0 1px 1px 0 rgba(248, 244, 252, 0.04), 0 0 1px 1px rgba(16, 4, 20, 1)',
+              boxShadow: CARD_SHADOW,
             }}
           >
             Role Info
@@ -102,8 +102,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
             _selected={{
               bg: 'neutral-2',
               color: 'lilac-0',
-              boxShadow:
-                '0 1px 0 0 rgba(248, 244, 252, 0.04), 0 1px 1px 0 rgba(248, 244, 252, 0.04), 0 0 1px 1px rgba(16, 4, 20, 1)',
+              boxShadow: CARD_SHADOW,
             }}
           >
             Payroll
@@ -116,8 +115,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
             _selected={{
               bg: 'neutral-2',
               color: 'lilac-0',
-              boxShadow:
-                '0 1px 0 0 rgba(248, 244, 252, 0.04), 0 1px 1px 0 rgba(248, 244, 252, 0.04), 0 0 1px 1px rgba(16, 4, 20, 1)',
+              boxShadow: CARD_SHADOW,
             }}
           >
             Vesting
@@ -128,7 +126,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
             padding="0"
             my="1.75rem"
           >
-            {tab === EditRoleTabs.RoleInfo && <RoleFormInfo hatIndex={hatIndex} />}
+            {tab === EditRoleTabs.RoleInfo && <RoleFormInfo />}
           </TabPanel>
           <TabPanel>{tab === EditRoleTabs.Payroll && <Box>Payroll</Box>}</TabPanel>
           <TabPanel>{tab === EditRoleTabs.Vesting && <Box>Vesting</Box>}</TabPanel>
@@ -139,9 +137,10 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
         my="1rem"
       >
         <Button
-          isDisabled={!!errors.hats?.[hatIndex]}
+          isDisabled={!!errors.roleEditing?.[hatIndex]}
           onClick={() => {
-            setFieldValue(`hats.${hatIndex}`, { ...values.hats[hatIndex], editedRole });
+            setFieldValue(`hats.${hatIndex}`, { ...values.roleEditing, editedRole });
+            setFieldValue('roleEditing', undefined);
             save();
           }}
         >

@@ -328,7 +328,7 @@ export function RolesEditTable({
 }: {
   handleRoleClick: (hatIndex: number) => void;
 }) {
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   return (
     <Box
       overflow="hidden"
@@ -355,7 +355,10 @@ export function RolesEditTable({
             <RolesRowEdit
               key={role.id}
               wearerAddress={role.wearer}
-              handleRoleClick={() => handleRoleClick(index)}
+              handleRoleClick={() => {
+                setFieldValue('roleEditing', role);
+                handleRoleClick(index);
+              }}
               {...role}
             />
           ))}

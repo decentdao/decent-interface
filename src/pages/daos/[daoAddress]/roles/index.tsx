@@ -16,7 +16,6 @@ import { useRolesState } from '../../../../state/useRolesState';
 
 function Roles() {
   const { hatsTree } = useRolesState();
-  console.log('🚀 ~ hatsTree:', hatsTree);
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
   const {
@@ -95,7 +94,6 @@ function Roles() {
               handleRoleClick={handleNavigateToRole}
             />
           ))}
-        {/* // @todo implement RoleCard by looping through roleHats */}
       </Show>
       <Outlet />
     </Box>
