@@ -10,13 +10,7 @@ import { DecentRoleHat } from '../../../state/useRolesState';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
-import {
-  RoleEditProps,
-  RoleFormValues,
-  RoleProps,
-  SablierPayroll,
-  SablierVesting,
-} from './types';
+import { RoleEditProps, RoleFormValues, RoleProps, SablierPayroll, SablierVesting } from './types';
 
 export function RolesHeader() {
   const { t } = useTranslation(['roles']);

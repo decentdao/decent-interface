@@ -74,17 +74,22 @@ export const router = (addressPrefix: string) =>
               index: true,
               path: DAO_ROUTES.roles.path,
               element: <Roles />,
+              children: [
+                {
+                  path: 'details',
+                },
+              ],
             },
             {
               path: DAO_ROUTES.rolesEdit.path,
               element: <RolesEdit />,
               children: [
                 {
-                  path: "details",
+                  path: 'details',
                   element: <RoleEditDetails />,
                 },
                 {
-                  path: "summary",
+                  path: 'summary',
                   element: <EditProposalSummary />,
                 },
               ],

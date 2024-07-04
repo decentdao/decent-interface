@@ -57,7 +57,6 @@ export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Removed]: 'error-1',
 };
 
-
 export interface EditedRole {
   fieldNames: string[];
   status: EditBadgeStatus;
