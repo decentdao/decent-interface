@@ -18,6 +18,9 @@ export interface SablierVesting {
 export interface SablierPayroll {
   payrollSchedule: string;
   payrollAmount: string;
+  payrollAmountUSD: string;
+  payrollStartDate: string;
+  payrollEndDate: string;
   asset: {
     address: Address;
     symbol: string;

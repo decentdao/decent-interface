@@ -48,7 +48,9 @@ export default function EditProposalSummary() {
                 <Text textStyle="display-lg">{t('proposalNew', { ns: 'breadcrumbs' })}</Text>
               </Flex>
             </Flex>
-            <RoleFormCreateProposal close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))} />
+            <RoleFormCreateProposal
+              close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
+            />
           </Box>
         </Portal>
       </Show>

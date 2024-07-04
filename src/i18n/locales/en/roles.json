@@ -12,5 +12,10 @@
   "updated": "Updated",
   "new": "New",
   "removed": "Removed",
-  "save": "Save"
+  "save": "Save",
+  "roleDescription": "Role Description",
+  "frequency": "Frequency",
+  "amount": "Amount",
+  "starting": "Starting",
+  "ending": "Ending"
 }

@@ -1,5 +1,5 @@
 import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
-import { Pencil } from '@phosphor-icons/react';
+import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
@@ -69,7 +69,7 @@ function RoleNameEditColumn({ roleName }: { roleName: string }) {
         </Text>
         <Icon
           className="edit-role-icon"
-          as={Pencil}
+          as={PencilLine}
           color="white-0"
           boxSize="1rem"
           opacity={0}
