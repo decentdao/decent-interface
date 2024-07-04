@@ -79,6 +79,8 @@ const mainnetConfig: NetworkConfig = {
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
     erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
     hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
+    sablierV2Batch: '0xEa07DdBBeA804E7fe66b958329F8Fa5cDA95Bd55',
+    sablierV2LockupDynamic: '0x7CC7e125d83A581ff438608490Cc0f7bDff79127',
   },
   staking: {
     lido: {

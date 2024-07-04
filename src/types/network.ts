@@ -51,6 +51,8 @@ export type NetworkConfig = {
     hatsProtocol: Address;
     erc6551Registry: Address;
     hatsAccount1ofNMasterCopy: Address;
+    sablierV2Batch: Address;
+    sablierV2LockupDynamic: Address;
   };
   staking: {
     lido?: {
