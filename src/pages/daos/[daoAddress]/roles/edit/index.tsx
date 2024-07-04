@@ -11,7 +11,6 @@ import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable
 import {
   RoleFormValues,
   DEFAULT_ROLE_HAT,
-  EditBadgeStatus,
 } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
@@ -161,25 +160,6 @@ function RolesEdit() {
                   buttonClick={() => {
                     push(DEFAULT_ROLE_HAT);
                     showRoleEditDetails(values.hats.length);
-                    createRolesEditProposal({
-                      proposalMetadata: {
-                        title: 'values.proposalMetadata.title',
-                        description: 'values.proposalMetadata.description',
-                      },
-                      hats: [
-                        {
-                          id: '0x0',
-                          prettyId: '0',
-                          name: 'values.hats.name',
-                          description: 'values.hats.description',
-                          wearer: safe!.address,
-                          editedRole: {
-                            fieldNames: [],
-                            status: EditBadgeStatus.New,
-                          },
-                        },
-                      ],
-                    });
                   }}
                 />
                 {hatsTree === undefined && (
