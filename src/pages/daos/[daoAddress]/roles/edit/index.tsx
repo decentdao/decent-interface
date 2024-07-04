@@ -46,6 +46,12 @@ function RolesEdit() {
 
   const ipfsClient = useIPFSClient();
 
+  const submitProposalSuccessCallback = useCallback(() => {
+    if (daoAddress) {
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+    }
+  }, [daoAddress, addressPrefix, navigate]);
+
   const createRolesEditProposal = useCallback(
     async (values: RoleFormValues) => {
       if (!safe) {
@@ -102,16 +108,24 @@ function RolesEdit() {
           pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
           successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-          // successCallback,
+          successCallback: submitProposalSuccessCallback,
         });
-
-        console.log('proposalData', proposalData);
       } catch (e) {
         console.error(e);
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
       }
     },
-    [safe, daoName, getHat, hatsTreeId, submitProposal, t, ipfsClient, hatsTree],
+    [
+      safe,
+      daoName,
+      getHat,
+      hatsTreeId,
+      submitProposal,
+      t,
+      ipfsClient,
+      hatsTree,
+      submitProposalSuccessCallback,
+    ],
   );
 
   if (daoAddress === null) return null;

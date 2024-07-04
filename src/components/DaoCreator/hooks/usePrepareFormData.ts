@@ -11,6 +11,7 @@ import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
 } from '../../../types';
+import { SENTINEL_MODULE } from '../../../utils/address';
 import { getEstimatedNumberOfBlocks } from '../../../utils/contract';
 import { validateENSName } from '../../../utils/url';
 
@@ -55,8 +56,8 @@ export function usePrepareFormData() {
       if (provider) {
         try {
           const votesContract = IVotes__factory.connect(address, provider);
-          await votesContract.delegates('0x0000000000000000000000000000000000000001');
-          await votesContract.getVotes('0x0000000000000000000000000000000000000001');
+          await votesContract.delegates(SENTINEL_MODULE);
+          await votesContract.getVotes(SENTINEL_MODULE);
           return true;
         } catch (error) {
           return false;

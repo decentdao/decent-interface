@@ -81,7 +81,7 @@ const useHatsTree = () => {
         setHatsTree(undefined);
         const message = 'Hats Tree ID is not valid';
         toast(message);
-        console.error({
+        console.error(e, {
           message,
           args: {
             network: chain.id,

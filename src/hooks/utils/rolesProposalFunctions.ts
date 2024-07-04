@@ -1,4 +1,4 @@
-import { zeroAddress, Address, encodeFunctionData, getAddress } from 'viem';
+import { zeroAddress, Address, encodeFunctionData, getAddress, IntegerOutOfRangeError } from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
@@ -11,6 +11,7 @@ import {
 } from '../../components/pages/Roles/types';
 import { DecentRoleHat } from '../../state/useRolesState';
 import { CreateProposalMetadata } from '../../types';
+import { SENTINEL_MODULE } from '../../utils/address';
 
 // // // // // // // // // // // // // // // // // // // // // // // // //
 //
@@ -75,16 +76,31 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
   ] as const;
 };
 
+const convertHatIdToBigInt = (id: Address) => {
+  try {
+    return BigInt(id);
+  } catch (e) {
+    console.warn('Error directly converting hat id to bigint', e);
+    // @dev - see https://stackoverflow.com/questions/55646698/base-36-to-bigint
+    // Applying same approach but with radix 16
+    const parsedBigInt = [...id.toString()].reduce(
+      (r, v) => r * BigInt(16) + BigInt(parseInt(v, 16)),
+      0n,
+    );
+    console.log('parsed big int', parsedBigInt);
+    return parsedBigInt;
+  }
+};
+
 const prepareMintHatsTxArgs = (addedHats: HatStructWithId[]) => {
   const hatIds: bigint[] = [];
   const wearers: Address[] = [];
 
   addedHats.forEach(hat => {
-    hatIds.push(BigInt(hat.id));
+    hatIds.push(convertHatIdToBigInt(hat.id));
     wearers.push(hat.wearer);
   });
 
-  console.log({ hatIds, wearers });
   return [hatIds, wearers] as const;
 };
 
@@ -196,11 +212,10 @@ export const prepareCreateTopHatProposalData = async (
     args: [decentHatsAddress],
   });
 
-  const sentinelModule = '0x0000000000000000000000000000000000000001';
   const disableModuleData = encodeFunctionData({
     abi: GnosisSafeL2,
     functionName: 'disableModule',
-    args: [sentinelModule, decentHatsAddress],
+    args: [SENTINEL_MODULE, decentHatsAddress],
   });
 
   const topHatDetails = await uploadHatDescription(
@@ -300,6 +315,35 @@ export const prepareEditHatsProposalData = async (
     );
 
     // Finally, prepare a single tx to mint all the hats to the wearers
+    try {
+      encodeFunctionData({
+        abi: HatsAbi,
+        functionName: 'batchMintHats',
+        args: prepareMintHatsTxArgs(
+          addedHats.map((hat, i) => ({
+            ...hat,
+            id: predictedHatIds[i],
+          })),
+        ),
+      });
+    } catch (e) {
+      console.error(e);
+      if (e instanceof IntegerOutOfRangeError) {
+        // @todo - Seems like predicting hat id doesn't work well
+        // It shouldn't be out of uint256 range, but here we are
+        console.error(
+          'Error is instance of integer out of range error',
+          e.cause,
+          e.details,
+          e.docsPath,
+          e.message,
+          e.metaMessages,
+          e.name,
+          e.shortMessage,
+          e.version,
+        );
+      }
+    }
     const mintHatsTx = encodeFunctionData({
       abi: HatsAbi,
       functionName: 'batchMintHats',
@@ -322,7 +366,7 @@ export const prepareEditHatsProposalData = async (
       encodeFunctionData({
         abi: HatsAbi,
         functionName: 'setHatStatus',
-        args: [BigInt(hatId), false],
+        args: [convertHatIdToBigInt(hatId), false],
       }),
     );
   }
@@ -332,7 +376,7 @@ export const prepareEditHatsProposalData = async (
       return encodeFunctionData({
         abi: HatsAbi,
         functionName: 'transferHat',
-        args: [BigInt(id), currentWearer, newWearer],
+        args: [convertHatIdToBigInt(id), currentWearer, newWearer],
       });
     });
   }
@@ -342,7 +386,7 @@ export const prepareEditHatsProposalData = async (
       return encodeFunctionData({
         abi: HatsAbi,
         functionName: 'changeHatDetails',
-        args: [BigInt(id), details],
+        args: [convertHatIdToBigInt(id), details],
       });
     });
   }
