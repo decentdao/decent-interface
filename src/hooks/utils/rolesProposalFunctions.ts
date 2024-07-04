@@ -20,7 +20,7 @@ import { CreateProposalMetadata } from '../../types';
 //
 // // // // // // // // // // // // // // // // // // // // // // // // //
 
-const decentHatsAddress = getAddress('0x88e72194d93bf417310b197275d972cf78406163'); // @todo: sepolia only. Move to, and read from, network config
+const decentHatsAddress = getAddress('0xE7d0FD1714d57FA481ea60607C25EEB499000592'); // @todo: sepolia only. Move to, and read from, network config
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
 
 const predictHatId = async (args: { treeId: number; adminHatId: bigint; hatsCount: number }) => {
