@@ -5,9 +5,7 @@ import { StreamsQueryDocument } from '../../../.graphclient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function useSablierStreams() {
-  const {
-    sablierSubgraph,
-  } = useNetworkConfig();
+  const { sablierSubgraph } = useNetworkConfig();
   const [fetchStreams, { loading, data, error }] = useLazyQuery(StreamsQueryDocument);
 
   const handleSearchStreams = useCallback(
