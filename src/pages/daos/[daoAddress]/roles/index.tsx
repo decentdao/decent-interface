@@ -2,7 +2,7 @@ import { Box, Show, Text } from '@chakra-ui/react';
 import { Pencil } from '@phosphor-icons/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Address, zeroAddress } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
 import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
@@ -97,6 +97,7 @@ function Roles() {
           ))}
         {/* // @todo implement RoleCard by looping through roleHats */}
       </Show>
+      <Outlet />
     </Box>
   );
 }

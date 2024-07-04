@@ -12,7 +12,7 @@ import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleEditProps, RoleProps, SablierPayroll, SablierVesting } from './types';
 
-function AvatarAndRoleName({
+export function AvatarAndRoleName({
   wearerAddress,
   name,
 }: {
