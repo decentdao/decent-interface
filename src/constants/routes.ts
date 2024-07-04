@@ -6,6 +6,9 @@ export const BASE_ROUTES = {
 const getDaoQueryParam = (addressPrefix: string, daoAddress: string) =>
   `?dao=${addressPrefix}:${daoAddress}`;
 
+const getRoleQueryParam = (addressPrefix: string, daoAddress: string, hatIndex: number) =>
+  `${getDaoQueryParam(addressPrefix, daoAddress)}&hatIndex=${hatIndex}`;
+
 export const DAO_ROUTES = {
   dao: {
     relative: (addressPrefix: string, daoAddress: string) =>
@@ -32,10 +35,25 @@ export const DAO_ROUTES = {
       `/roles${getDaoQueryParam(addressPrefix, daoAddress)}`,
     path: 'roles',
   },
+  rolesDetails: {
+    relative: (addressPrefix: string, daoAddress: string, hatIndex: number) =>
+      `/roles/details${getRoleQueryParam(addressPrefix, daoAddress, hatIndex)}`,
+    path: 'roles/details',
+  },
   rolesEdit: {
     relative: (addressPrefix: string, daoAddress: string) =>
       `/roles/edit${getDaoQueryParam(addressPrefix, daoAddress)}`,
     path: 'roles/edit',
+  },
+  rolesEditDetails: {
+    relative: (addressPrefix: string, daoAddress: string, hatIndex: number) =>
+      `/roles/edit/details${getRoleQueryParam(addressPrefix, daoAddress, hatIndex)}`,
+    path: 'roles/edit/details',
+  },
+  rolesEditCreateProposalSummary: {
+    relative: (addressPrefix: string, daoAddress: string) =>
+      `/roles/edit/summary${getDaoQueryParam(addressPrefix, daoAddress)}`,
+    path: 'roles/edit/summary',
   },
   treasury: {
     relative: (addressPrefix: string, daoAddress: string) =>

@@ -32,6 +32,7 @@ export enum CacheKeys {
   AVERAGE_BLOCK_TIME = 'Average Block Time',
   PROPOSAL_CACHE = 'Proposal',
   MIGRATION = 'Migration',
+  IPFS_HASH = 'IPFS Hash',
   // indexDB keys
   DECODED_TRANSACTION_PREFIX = 'decode_trans_',
   MULTISIG_METADATA_PREFIX = 'm_m_',
@@ -63,11 +64,18 @@ export interface AverageBlockTimeCacheKey extends CacheKey {
   chainId: number;
 }
 
+export interface IPFSHashCacheKey extends CacheKey {
+  cacheName: CacheKeys.IPFS_HASH;
+  hash: string;
+  chainId: number;
+}
+
 export type CacheKeyType =
   | FavoritesCacheKey
   | MasterCacheKey
   | ProposalCacheKey
   | AverageBlockTimeCacheKey
+  | IPFSHashCacheKey
   | Omit<CacheKey, 'version'>;
 
 export type CacheValue = {
@@ -81,6 +89,7 @@ type CacheKeyToValueMap = {
   [CacheKeys.PROPOSAL_CACHE]: AzoriusProposal;
   [CacheKeys.AVERAGE_BLOCK_TIME]: number;
   [CacheKeys.MIGRATION]: number;
+  [CacheKeys.IPFS_HASH]: string;
 };
 
 export type CacheValueType<T extends CacheKeyType> = T extends { cacheName: infer U }

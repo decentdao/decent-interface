@@ -31,5 +31,7 @@ export default function useIPFSClient() {
     [cat, add],
   );
 
+  client.add('somedata');
+
   return client;
 }
