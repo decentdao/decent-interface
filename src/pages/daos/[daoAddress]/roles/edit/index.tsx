@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik } from 'formik';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -11,7 +11,6 @@ import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable
 import {
   RoleFormValues,
   DEFAULT_ROLE_HAT,
-  RoleValue,
 } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
@@ -128,6 +127,16 @@ function RolesEdit() {
     ],
   );
 
+  const initialValues = useMemo(() => {
+    return {
+      proposalMetadata: {
+        title: '',
+        description: '',
+      },
+      hats: hatsTree?.roleHats || [],
+    };
+  }, [hatsTree?.roleHats]);
+
   if (daoAddress === null) return null;
 
   const showRoleEditDetails = (_hatIndex: number) => {
@@ -136,13 +145,7 @@ function RolesEdit() {
 
   return (
     <Formik<RoleFormValues>
-      initialValues={{
-        proposalMetadata: {
-          title: '',
-          description: '',
-        },
-        hats: hatsTree?.roleHats || ([] as RoleValue[]),
-      }}
+      initialValues={initialValues}
       enableReinitialize
       validationSchema={rolesSchema}
       validateOnMount

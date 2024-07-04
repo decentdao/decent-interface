@@ -27,7 +27,7 @@ function Roles() {
     (hatId: Address) => {
       if (daoAddress) {
         const hatIndex = hatsTree?.roleHats.findIndex(hat => hat.id === hatId);
-        if (hatIndex) {
+        if (hatIndex !== undefined) {
           navigate(DAO_ROUTES.rolesDetails.relative(addressPrefix, daoAddress, hatIndex));
         }
       }

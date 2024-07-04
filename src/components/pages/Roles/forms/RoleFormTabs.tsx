@@ -1,6 +1,6 @@
 import { Box, Tab, TabList, TabPanels, TabPanel, Tabs, Button, Flex } from '@chakra-ui/react';
 import { useFormikContext } from 'formik';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { CARD_SHADOW, TAB_SHADOW } from '../../../../constants/common';
@@ -36,6 +36,16 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
       ),
     [values.roleEditing, hatsTree],
   );
+
+  useEffect(() => {
+    if (values.hats.length && !values.roleEditing) {
+      const role = values.hats[hatIndex];
+      if (role) {
+        setFieldValue('roleEditing', role);
+      }
+    }
+  }, [values.hats, values.roleEditing, hatIndex, setFieldValue]);
+
   const isRoleNameUpdated = useMemo<boolean>(
     () => !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name,
     [values.roleEditing, existingRoleHat],
