@@ -90,6 +90,24 @@ const getRawAdminHat = (hats: Hat[]) => {
   return potentialRawAdminHats[0];
 };
 
+const getHatMetadata = (hat: Hat) => {
+  const metadata = {
+    name: '',
+    description: '',
+  };
+
+  if (hat.details) {
+    try {
+      // At this stage hat.details should be not IPFS hash but stringified data from the IPFS
+      const parsedDetails = JSON.parse(hat.details);
+      metadata.name = parsedDetails.data.name;
+      metadata.description = parsedDetails.data.description;
+    } catch (e) {}
+  }
+
+  return metadata;
+};
+
 const sanitize = (hatsTree: undefined | null | Tree): undefined | null | DecentTree => {
   if (hatsTree === undefined || hatsTree === null) {
     return hatsTree;
@@ -100,21 +118,24 @@ const sanitize = (hatsTree: undefined | null | Tree): undefined | null | DecentT
   }
 
   const rawTopHat = getRawTopHat(hatsTree.hats);
+  const topHatMetadata = getHatMetadata(rawTopHat);
 
   const topHat: DecentHat = {
     id: rawTopHat.id,
     prettyId: rawTopHat.prettyId ?? '',
-    name: rawTopHat.details ?? '',
-    description: rawTopHat.details ?? '',
+    name: topHatMetadata.name,
+    description: topHatMetadata.description,
   };
 
   const rawAdminHat = getRawAdminHat(hatsTree.hats);
 
+  const adminHatMetadata = getHatMetadata(rawAdminHat);
+
   const adminHat: DecentHat = {
     id: rawAdminHat.id,
     prettyId: rawAdminHat.prettyId ?? '',
-    name: rawAdminHat.details ?? '',
-    description: rawAdminHat.details ?? '',
+    name: adminHatMetadata.name,
+    description: adminHatMetadata.description,
   };
 
   const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
@@ -123,13 +144,16 @@ const sanitize = (hatsTree: undefined | null | Tree): undefined | null | DecentT
     .filter(rawHat => rawHat.status === true)
     .filter(h => h.wearers !== undefined && h.wearers.length === 1);
 
-  const roleHats: DecentRoleHat[] = rawRoleHatsPruned.map(rawHat => ({
-    id: rawHat.id,
-    prettyId: rawHat.prettyId ?? '',
-    name: rawHat.details ?? '',
-    description: rawHat.details ?? '',
-    wearer: rawHat.wearers![0].id,
-  }));
+  const roleHats: DecentRoleHat[] = rawRoleHatsPruned.map(rawHat => {
+    const hatMetadata = getHatMetadata(rawHat);
+    return {
+      id: rawHat.id,
+      prettyId: rawHat.prettyId ?? '',
+      name: hatMetadata.name,
+      description: hatMetadata.description,
+      wearer: rawHat.wearers![0].id,
+    };
+  });
 
   const decentTree: DecentTree = {
     topHat,
