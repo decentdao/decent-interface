@@ -1,5 +1,6 @@
 import { ERC721__factory } from '@fractal-framework/fractal-contracts';
 import * as Sentry from '@sentry/react';
+import isEqual from 'lodash.isequal';
 import { useEffect, useState, useCallback } from 'react';
 import { getAddress } from 'viem';
 import useSignerOrProvider from '../../hooks/utils/useSignerOrProvider';
@@ -61,7 +62,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
     const address = _account ? getAddress(_account) : undefined;
     Sentry.setUser(address ? { id: address } : null);
 
-    setReadOnlyValues({
+    const newReadOnlyValues = {
       user: {
         address,
         votingWeight: await getVotingWeight(),
@@ -73,8 +74,11 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
               governance.type === GovernanceType.AZORIUS_ERC20 ||
               governance.type === GovernanceType.AZORIUS_ERC721,
           },
-    });
-  }, [node, governance, _account, signerOrProvider]);
+    }
+    if (!isEqual(newReadOnlyValues, readOnlyValues)) {
+      setReadOnlyValues(newReadOnlyValues);
+    }
+  }, [node, governance, _account, signerOrProvider, readOnlyValues]);
   useEffect(() => {
     loadReadOnlyValues();
   }, [loadReadOnlyValues]);
