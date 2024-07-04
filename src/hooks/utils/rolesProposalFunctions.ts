@@ -12,13 +12,13 @@ import {
 import { DecentRoleHat } from '../../state/useRolesState';
 import { CreateProposalMetadata } from '../../types';
 
-// // // // // // // // // // // // // // // // // // // // // // // // // 
-// 
-//                        /!\ 
-//      WARNING: UNTESTED AND RADIOACTIVE CODE AHEAD
-//                  PROCEED WITH CAUTION 
+// // // // // // // // // // // // // // // // // // // // // // // // //
 //
-// // // // // // // // // // // // // // // // // // // // // // // // // 
+//                        /!\
+//      WARNING: UNTESTED AND RADIOACTIVE CODE AHEAD
+//                  PROCEED WITH CAUTION
+//
+// // // // // // // // // // // // // // // // // // // // // // // // //
 
 const decentHatsAddress = getAddress('0x88e72194d93bf417310b197275d972cf78406163'); // @todo: sepolia only. Move to, and read from, network config
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
@@ -99,16 +99,18 @@ export const parsedEditedHatsFormValues = async (
     editedHats
       .filter(hat => hat.editedRole?.status === EditBadgeStatus.New)
       .map(async hat => {
+        const details = await uploadHatDescription(
+          JSON.stringify({
+            name: hat.name,
+            description: hat.description,
+          }),
+        );
+
         return {
           eligibility: zeroAddress,
           toggle: safeAddress,
           maxSupply: 1,
-          details: await uploadHatDescription(
-            JSON.stringify({
-              name: hat.name,
-              description: hat.description,
-            }),
-          ),
+          details,
           imageURI: '',
           isMutable: true,
           wearer: getAddress(hat.wearer),
@@ -186,7 +188,7 @@ export const prepareCreateTopHatProposalData = async (
     args: [decentHatsAddress],
   });
 
-  const sentinelModule = '0x1';
+  const sentinelModule = '0x0000000000000000000000000000000000000001';
   const disableModuleData = encodeFunctionData({
     abi: GnosisSafeL2,
     functionName: 'disableModule',
