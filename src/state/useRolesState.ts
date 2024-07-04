@@ -183,19 +183,6 @@ const useRolesState = create<Roles>()((set, get) => ({
   },
   setHatsTreeId: hatsTreeId =>
     set(state => {
-      // dev
-      // if you want to get some mock live data,
-      // switch app to Mainnet and, comment out next line:
-      // return { hatsTreeId: 21 };
-      // https://app.hatsprotocol.xyz/trees/1/22
-      // this has a Top Hat, Admin Hat, and some Roles Hats directly beneath Admin.
-      // it has more Hats too, but our app Ignores Those.
-      // Find some other Hat tree structures (through trial and error using Hats webapp)
-      // which violate the constraints we've declared (in code, above), to see how
-      // the app responds.
-      // ex: tree 23 has no Admin
-      // end dev
-
       // if `hatsTreeId` is null or undefined,
       // set `hatsTree` to that same value
       if (typeof hatsTreeId !== 'number') {
