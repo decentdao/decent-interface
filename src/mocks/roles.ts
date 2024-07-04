@@ -1,4 +1,5 @@
 import { zeroAddress } from 'viem';
+import { SablierPayroll } from '../components/pages/Roles/types';
 import { DecentRoleHat } from '../state/useRolesState';
 
 export const mockHats: DecentRoleHat[] = [
@@ -25,3 +26,17 @@ export const mockHats: DecentRoleHat[] = [
     prettyId: '0001.0001',
   },
 ];
+
+export const mockPayroll: SablierPayroll = {
+  payrollSchedule: 'Monthly',
+  payrollAmount: '5000',
+  payrollAmountUSD: '$5,000',
+  payrollStartDate: '2024-06-09, 12:30-06',
+  payrollEndDate: '2025-06-09, 12:30-06',
+  asset: {
+    symbol: 'USDC',
+    address: '0x73d219b3881e481394da6b5008a081d623992200', // Sepolia USDC,
+    name: 'USD Coin',
+    iconUri: 'https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=032',
+  },
+};
