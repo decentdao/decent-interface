@@ -8,7 +8,11 @@ import { toast } from 'react-toastify';
 import { getAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
+import {
+  RoleFormValues,
+  DEFAULT_ROLE_HAT,
+  EditBadgeStatus,
+} from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
@@ -53,6 +57,8 @@ function RolesEdit() {
 
         let proposalData: ProposalExecuteData;
 
+        // @todo might need to use this instead:
+        // const uploadHatDescriptionCallback = async (hatDescription: string) => `ipfs://${(await ipfsClient.add(hatDescription)).Hash}`;
         const uploadHatDescriptionCallback = async (hatDescription: string) =>
           (await ipfsClient.add(hatDescription)).Hash;
 
@@ -157,6 +163,26 @@ function RolesEdit() {
                   buttonClick={() => {
                     push(DEFAULT_ROLE_HAT);
                     showRoleEditDetails(values.hats.length);
+                    // @todo: REMOVE THIS
+                    createRolesEditProposal({
+                      proposalMetadata: {
+                        title: 'test proposal title',
+                        description: 'test proposal description',
+                      },
+                      hats: [
+                        {
+                          id: '0x0',
+                          prettyId: '0',
+                          name: 'values.hats.name',
+                          description: 'values.hats.description',
+                          wearer: safe!.address,
+                          editedRole: {
+                            fieldNames: [],
+                            status: EditBadgeStatus.New,
+                          },
+                        },
+                      ],
+                    });
                   }}
                 />
                 {hatsTree === undefined && (
