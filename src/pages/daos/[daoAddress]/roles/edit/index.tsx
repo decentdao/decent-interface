@@ -1,11 +1,13 @@
 import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { FieldArray, Formik } from 'formik';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
+import { zeroAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
+import { RoleFormValues, DEFAULT_ROLE_HAT, RoleValue } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
@@ -26,11 +28,39 @@ function RolesEdit() {
   const { hatsTree } = useRolesState();
   const navigate = useNavigate();
 
+  const hats: RoleValue[]= useMemo(() => {
+    return [
+      {
+        id: '0x1',
+        wearer: zeroAddress,
+        name: 'Legal Reviewer',
+        description: 'The Legal Reviewer role has...',
+        prettyId: '0001.0001',
+      },
+      {
+        id: '0x2',
+        wearer: zeroAddress,
+        name: 'Marketer',
+        description: 'The Marketer role has...',
+        prettyId: '0001.0001',
+      },
+      {
+        id: '0x3',
+        wearer: zeroAddress,
+        name: 'Developer',
+        description: 'The Developer role has...',
+        prettyId: '0001.0001',
+      },
+    ];
+  }, []);
+
   if (daoAddress === null) return null;
 
   const showRoleEditDetails = (_hatIndex: number) => {
     navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, _hatIndex));
   };
+
+  
   return (
     <Formik<RoleFormValues>
       initialValues={{
@@ -38,7 +68,7 @@ function RolesEdit() {
           title: '',
           description: '',
         },
-        hats: [],
+        hats: hats,
       }}
       validationSchema={rolesSchema}
       validateOnMount

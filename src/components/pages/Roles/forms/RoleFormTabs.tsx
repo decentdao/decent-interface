@@ -3,6 +3,7 @@ import { useFormikContext } from 'formik';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
+import { CARD_SHADOW, TAB_SHADOW } from '../../../../constants/common';
 import { useRolesState } from '../../../../state/useRolesState';
 import { EditBadgeStatus, EditedRole, RoleFormValues, RoleValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
@@ -31,7 +32,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
   const existingRoleHat = useMemo(
     () =>
       hatsTree?.roleHats.find(
-        (role: RoleValue) => role.id === editingRole.id && role.id !== zeroAddress,
+        (role: RoleValue) => !!editingRole && role.id === editingRole.id && role.id !== zeroAddress,
       ),
     [editingRole, hatsTree],
   );
@@ -68,7 +69,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
     };
   }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
 
-  return (
+   return (
     <Box>
       <Tabs
         index={tab}
@@ -76,7 +77,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
         variant="unstyled"
       >
         <TabList
-          boxShadow="0 -1px 0 0 rgba(0, 0, 0, 0.24), 0 1px 0 0 rgba(255, 255, 255, 0.12)"
+          boxShadow={TAB_SHADOW}
           p="0.25rem"
           borderRadius="0.5rem"
           gap="0.25rem"
@@ -88,8 +89,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
             _selected={{
               bg: 'neutral-2',
               color: 'lilac-0',
-              boxShadow:
-                '0 1px 0 0 rgba(248, 244, 252, 0.04), 0 1px 1px 0 rgba(248, 244, 252, 0.04), 0 0 1px 1px rgba(16, 4, 20, 1)',
+              boxShadow: CARD_SHADOW,
             }}
           >
             Role Info
@@ -102,8 +102,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
             _selected={{
               bg: 'neutral-2',
               color: 'lilac-0',
-              boxShadow:
-                '0 1px 0 0 rgba(248, 244, 252, 0.04), 0 1px 1px 0 rgba(248, 244, 252, 0.04), 0 0 1px 1px rgba(16, 4, 20, 1)',
+              boxShadow: CARD_SHADOW,
             }}
           >
             Payroll
@@ -116,8 +115,7 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
             _selected={{
               bg: 'neutral-2',
               color: 'lilac-0',
-              boxShadow:
-                '0 1px 0 0 rgba(248, 244, 252, 0.04), 0 1px 1px 0 rgba(248, 244, 252, 0.04), 0 0 1px 1px rgba(16, 4, 20, 1)',
+              boxShadow: CARD_SHADOW,
             }}
           >
             Vesting
