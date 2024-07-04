@@ -7,6 +7,9 @@ export type RoleViewMode = 'edit' | 'view';
 export interface SablierVesting {
   vestingSchedule: string;
   vestingAmount: string;
+  vestingAmountUSD: string;
+  vestingStartDate: string;
+  vestingEndDate: string;
   asset: {
     address: Address;
     symbol: string;
