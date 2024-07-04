@@ -1,4 +1,14 @@
-import { Box, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  Flex,
+  Icon,
+  Portal,
+  Show,
+  Text,
+} from '@chakra-ui/react';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
@@ -30,49 +40,78 @@ export default function RoleEditDetails() {
   return (
     <FieldArray name="hats">
       {({ remove }) => (
-        <Show below="md">
-          <Portal>
-            <Box
-              position="fixed"
-              top={headerHeight}
-              h={`100vh`}
-              w="full"
-              bg="neutral-1"
-              px="1rem"
-            >
-              <Flex
-                justifyContent="space-between"
-                alignItems="center"
-                my="1.75rem"
+        <>
+          <Show below="md">
+            <Portal>
+              <Box
+                position="fixed"
+                top={headerHeight}
+                h={`100vh`}
+                w="full"
+                bg="neutral-1"
+                px="1rem"
               >
                 <Flex
-                  gap="0.5rem"
+                  justifyContent="space-between"
                   alignItems="center"
-                  aria-label={t('editRoles')}
-                  onClick={() => {
-                    if (values.hats[hatEditingIndex].id === zeroAddress) {
-                      remove(hatEditingIndex);
-                    }
+                  my="1.75rem"
+                >
+                  <Flex
+                    gap="0.5rem"
+                    alignItems="center"
+                    aria-label={t('editRoles')}
+                    onClick={() => {
+                      if (values.hats[hatEditingIndex].id === zeroAddress) {
+                        remove(hatEditingIndex);
+                      }
+                      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                    }}
+                  >
+                    <Icon
+                      as={ArrowLeft}
+                      boxSize="1.5rem"
+                    />
+                    <Text textStyle="display-lg">{t('editRoles')}</Text>
+                  </Flex>
+                </Flex>
+
+                <RoleFormTabs
+                  hatIndex={hatEditingIndex}
+                  save={() => {
                     navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
                   }}
-                >
-                  <Icon
-                    as={ArrowLeft}
-                    boxSize="1.5rem"
+                />
+              </Box>
+            </Portal>
+          </Show>
+          <Show above="md">
+            <Drawer
+              isOpen
+              placement="right"
+              onClose={() => {
+                if (values.hats[hatEditingIndex].id === zeroAddress) {
+                  remove(hatEditingIndex);
+                }
+                navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+              }}
+            >
+              <DrawerContent
+                minW="50%"
+                bg="neutral-2"
+                pt="1rem"
+              >
+                <DrawerBody h="100vh">
+                  <RoleFormTabs
+                    hatIndex={hatEditingIndex}
+                    save={() => {
+                      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                    }}
                   />
-                  <Text textStyle="display-lg">{t('editRoles')}</Text>
-                </Flex>
-              </Flex>
-
-              <RoleFormTabs
-                hatIndex={hatEditingIndex}
-                save={() => {
-                  navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
-                }}
-              />
-            </Box>
-          </Portal>
-        </Show>
+                </DrawerBody>
+              </DrawerContent>
+            </Drawer>
+          </Show>
+        </>
       )}
     </FieldArray>
   );

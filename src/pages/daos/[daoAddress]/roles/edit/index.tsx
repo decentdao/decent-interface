@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
-import { FieldArray, Formik } from 'formik';
-import { useCallback } from 'react';
+import { Formik } from 'formik';
+import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -12,6 +12,7 @@ import {
   RoleFormValues,
   DEFAULT_ROLE_HAT,
   EditBadgeStatus,
+  RoleValue,
 } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
@@ -32,14 +33,21 @@ import { ProposalExecuteData } from '../../../../../types';
 
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'breadcrumbs', 'common']);
+  const [hats, setHats] = useState<RoleValue[]>([]);
   const {
     node: { daoAddress, safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
   const { rolesSchema } = useRolesSchema();
-  const navigate = useNavigate();
   const { hatsTree, hatsTreeId, getHat } = useRolesState();
+
+  useEffect(() => {
+    if (hatsTree !== null && hatsTree !== undefined) {
+      setHats(hatsTree?.roleHats);
+    }
+  }, [hatsTree]);
+  const navigate = useNavigate();
 
   const { submitProposal } = useSubmitProposal();
 
@@ -120,6 +128,7 @@ function RolesEdit() {
   const showRoleEditDetails = (_hatIndex: number) => {
     navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, _hatIndex));
   };
+
   return (
     <Formik<RoleFormValues>
       initialValues={{
@@ -127,103 +136,102 @@ function RolesEdit() {
           title: '',
           description: '',
         },
-        hats: [],
+        hats,
       }}
       validationSchema={rolesSchema}
       validateOnMount
       onSubmit={createRolesEditProposal}
     >
-      {({ handleSubmit, values }) => (
+      {({ handleSubmit, values, setFieldValue }) => (
         <form onSubmit={handleSubmit}>
-          <FieldArray name="hats">
-            {({ push }) => (
-              <Box>
-                <PageHeader
-                  title={t('roles')}
-                  breadcrumbs={[
+          <Box>
+            <PageHeader
+              title={t('roles')}
+              breadcrumbs={[
+                {
+                  terminus: t('roles', {
+                    ns: 'roles',
+                  }),
+                  path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
+                },
+                {
+                  terminus: t('editRoles', {
+                    ns: 'roles',
+                  }),
+                  path: '',
+                },
+              ]}
+              buttonVariant="secondary"
+              buttonText={t('addRole')}
+              buttonProps={{
+                size: 'sm',
+                leftIcon: <Plus />,
+              }}
+              buttonClick={() => {
+                setFieldValue('roleEditing', DEFAULT_ROLE_HAT);
+                showRoleEditDetails(values.hats.length);
+                // @todo: REMOVE THIS
+                createRolesEditProposal({
+                  proposalMetadata: {
+                    title: 'test proposal title',
+                    description: 'test proposal description',
+                  },
+                  hats: [
                     {
-                      terminus: t('roles', {
-                        ns: 'roles',
-                      }),
-                      path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
-                    },
-                    {
-                      terminus: t('editRoles', {
-                        ns: 'roles',
-                      }),
-                      path: '',
-                    },
-                  ]}
-                  buttonVariant="secondary"
-                  buttonText={t('addRole')}
-                  buttonProps={{
-                    size: 'sm',
-                    leftIcon: <Plus />,
-                  }}
-                  buttonClick={() => {
-                    push(DEFAULT_ROLE_HAT);
-                    showRoleEditDetails(values.hats.length);
-                    // @todo: REMOVE THIS
-                    createRolesEditProposal({
-                      proposalMetadata: {
-                        title: 'test proposal title',
-                        description: 'test proposal description',
+                      id: '0x0',
+                      prettyId: '0',
+                      name: 'values.hats.name',
+                      description: 'values.hats.description',
+                      wearer: safe!.address,
+                      editedRole: {
+                        fieldNames: [],
+                        status: EditBadgeStatus.New,
                       },
-                      hats: [
-                        {
-                          id: '0x0',
-                          prettyId: '0',
-                          name: 'values.hats.name',
-                          description: 'values.hats.description',
-                          wearer: safe!.address,
-                          editedRole: {
-                            fieldNames: [],
-                            status: EditBadgeStatus.New,
-                          },
-                        },
-                      ],
-                    });
-                  }}
-                />
-                {hatsTree === undefined && (
-                  <Card
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <BarLoader />
-                  </Card>
-                )}
-                {hatsTree === null && (
-                  <Card my="0.5rem">
-                    <Text
-                      textStyle="body-base"
-                      textAlign="center"
-                      color="white-alpha-16"
-                    >
-                      {t('noRoles')}
-                    </Text>
-                  </Card>
-                )}
-
-                <Show above="md">
-                  <RolesEditTable handleRoleClick={showRoleEditDetails} />
-                </Show>
-                <Show below="md">
-                  {values.hats &&
-                    values.hats.map((hat, index) => (
-                      <RoleCardEdit
-                        key={index}
-                        name={hat.name}
-                        wearerAddress={hat.wearer}
-                        editStatus={hat.editedRole?.status}
-                        handleRoleClick={() => showRoleEditDetails(index)}
-                      />
-                    ))}
-                </Show>
-              </Box>
+                    },
+                  ],
+                });
+              }}
+            />
+            {hatsTree === undefined && (
+              <Card
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+              >
+                <BarLoader />
+              </Card>
             )}
-          </FieldArray>
+            {hatsTree === null && (
+              <Card my="0.5rem">
+                <Text
+                  textStyle="body-base"
+                  textAlign="center"
+                  color="white-alpha-16"
+                >
+                  {t('noRoles')}
+                </Text>
+              </Card>
+            )}
+
+            <Show above="md">
+              <RolesEditTable handleRoleClick={showRoleEditDetails} />
+            </Show>
+            <Show below="md">
+              {values.hats &&
+                values.hats.map((hat, index) => (
+                  <RoleCardEdit
+                    key={index}
+                    name={hat.name}
+                    wearerAddress={hat.wearer}
+                    editStatus={hat.editedRole?.status}
+                    handleRoleClick={() => {
+                      setFieldValue('roleEditing', hat);
+                      showRoleEditDetails(index);
+                    }}
+                  />
+                ))}
+            </Show>
+          </Box>
           <Flex
             gap="1rem"
             justifyContent="flex-end"

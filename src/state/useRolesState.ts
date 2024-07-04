@@ -138,8 +138,6 @@ const sanitize = (hatsTree: undefined | null | Tree): undefined | null | DecentT
     roleHatsTotalCount: rawRoleHats.length,
   };
 
-  console.log({ decentTree });
-
   return decentTree;
 };
 
