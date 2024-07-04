@@ -74,7 +74,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
               governance.type === GovernanceType.AZORIUS_ERC20 ||
               governance.type === GovernanceType.AZORIUS_ERC721,
           },
-    }
+    };
     if (!isEqual(newReadOnlyValues, readOnlyValues)) {
       setReadOnlyValues(newReadOnlyValues);
     }
