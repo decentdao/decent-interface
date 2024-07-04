@@ -87,7 +87,6 @@ const convertHatIdToBigInt = (id: Address) => {
       (r, v) => r * BigInt(16) + BigInt(parseInt(v, 16)),
       0n,
     );
-    console.log('parsed big int', parsedBigInt);
     return parsedBigInt;
   }
 };
