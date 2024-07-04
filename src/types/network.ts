@@ -22,6 +22,10 @@ export type NetworkConfig = {
     slug: string;
     version: string;
   };
+  sablierSubgraph: {
+    space: number;
+    slug: string;
+  };
   contracts: {
     safe: string;
     safeFactory: string;

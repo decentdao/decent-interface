@@ -3,6 +3,11 @@ sources:
     handler:
       graphql:
         endpoint: https://api.studio.thegraph.com/query/{context.subgraphSpace:71032}/{context.subgraphSlug:fractal-mainnet}/{context.subgraphVersion:v0.1.1}
+  - name: sablier
+    handler:
+      graphql:
+        endpoint: https://api.studio.thegraph.com/query/{context.subgraphSpace:57079}/{context.subgraphSlug:sablier-v2}/version/latest
 
 documents:
   - ./src/graphql/DAO.graphql
+  - ./src/graphql/Streams.graphql

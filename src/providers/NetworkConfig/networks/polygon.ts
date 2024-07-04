@@ -40,6 +40,10 @@ export const polygonConfig: NetworkConfig = {
     slug: 'fractal-base-polygon',
     version: 'v0.1.1',
   },
+  sablierSubgraph: {
+    space: 57079,
+    slug: 'sablier-v2-polygon',
+  },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,

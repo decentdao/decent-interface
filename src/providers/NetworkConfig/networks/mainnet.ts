@@ -40,6 +40,10 @@ export const mainnetConfig: NetworkConfig = {
     slug: 'fractal-mainnet',
     version: 'v0.1.1',
   },
+  sablierSubgraph: {
+    space: 57079,
+    slug: 'sablier-v2',
+  },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
     fractalModuleMasterCopy: FractalModule.address,
