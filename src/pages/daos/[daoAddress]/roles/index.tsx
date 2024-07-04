@@ -36,7 +36,7 @@ function Roles() {
   );
 
   if (!daoAddress) return null;
-  
+
   return (
     <Box>
       <PageHeader

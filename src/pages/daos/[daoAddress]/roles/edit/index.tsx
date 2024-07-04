@@ -170,26 +170,6 @@ function RolesEdit() {
               buttonClick={() => {
                 setFieldValue('roleEditing', DEFAULT_ROLE_HAT);
                 showRoleEditDetails(values.hats.length);
-                // @todo: REMOVE THIS
-                createRolesEditProposal({
-                  proposalMetadata: {
-                    title: 'test proposal title',
-                    description: 'test proposal description',
-                  },
-                  hats: [
-                    {
-                      id: '0x0',
-                      prettyId: '0',
-                      name: 'values.hats.name',
-                      description: 'values.hats.description',
-                      wearer: safe!.address,
-                      editedRole: {
-                        fieldNames: [],
-                        status: EditBadgeStatus.New,
-                      },
-                    },
-                  ],
-                });
               }}
             />
             {hatsTree === undefined && (

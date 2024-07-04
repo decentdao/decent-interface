@@ -20,7 +20,7 @@ import { CreateProposalMetadata } from '../../types';
 //
 // // // // // // // // // // // // // // // // // // // // // // // // //
 
-const decentHatsAddress = getAddress('0xE7d0FD1714d57FA481ea60607C25EEB499000592'); // @todo: sepolia only. Move to, and read from, network config
+const decentHatsAddress = getAddress('0xa66696f25816D5635a7dd1c0f162D66549C69e97'); // @todo: sepolia only. Move to, and read from, network config
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
 
 const predictHatId = async (args: { treeId: number; adminHatId: bigint; hatsCount: number }) => {
@@ -207,14 +207,16 @@ export const prepareCreateTopHatProposalData = async (
       description: '',
     }),
   );
+
+  const ha75Address = '0x0000000000000000000000000000000000004a75';
   const adminHat: HatStruct = {
-    eligibility: zeroAddress,
-    toggle: zeroAddress,
+    eligibility: ha75Address,
+    toggle: ha75Address,
     maxSupply: 1,
     details: adminHatDetails,
     imageURI: '',
     isMutable: true,
-    wearer: zeroAddress,
+    wearer: ha75Address,
   };
 
   const createAndDeclareTreeData = encodeFunctionData({
