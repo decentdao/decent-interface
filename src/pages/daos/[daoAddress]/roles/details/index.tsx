@@ -22,7 +22,7 @@ import { DAO_ROUTES } from '../../../../../constants/routes';
 import { mockHats, mockPayroll } from '../../../../../mocks/roles';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../../../state/useRolesState';
+// import { useRolesState } from '../../../../../state/useRolesState';
 
 type AccordionItemRowProps = {
   title: string;
@@ -53,7 +53,7 @@ export default function RoleDetails() {
     node: { daoAddress },
   } = useFractal();
   const { t } = useTranslation('roles');
-  const { hatsTree } = useRolesState();
+  // const { hatsTree } = useRolesState();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -63,7 +63,7 @@ export default function RoleDetails() {
     ? parseInt(searchParams.get('hatIndex') as string)
     : -1;
   const hat = mockHats[0];
-  const roleHat = hatsTree?.roleHats[hatIndex];
+  // const roleHat = hatsTree?.roleHats[hatIndex];
   //   if (hat === undefined) return null; @todo - uncomment
 
   const handleEditRoleClick = () => {

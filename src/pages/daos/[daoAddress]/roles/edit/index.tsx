@@ -58,8 +58,8 @@ function RolesEdit() {
 
         let proposalData: ProposalExecuteData;
 
-        const uploadHatDescriptionCallback = async (hatDescription: string) => `ipfs://${(await ipfsClient.add(hatDescription)).Hash}`;
- 
+        const uploadHatDescriptionCallback = async (hatDescription: string) =>
+          `ipfs://${(await ipfsClient.add(hatDescription)).Hash}`;
 
         const editedHatStructs = await parsedEditedHatsFormValues(
           modifiedHats,
