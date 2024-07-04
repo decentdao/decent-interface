@@ -22,6 +22,14 @@ import { CreateProposalMetadata } from '../../types';
 
 const decentHatsAddress = getAddress('0xa66696f25816D5635a7dd1c0f162D66549C69e97'); // @todo: sepolia only. Move to, and read from, network config
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
+const ha75Address = getAddress('0x0000000000000000000000000000000000004a75');
+
+const hatsDetailsBuilder = (data: { name: string; description: string }) => {
+  return JSON.stringify({
+    type: '1.0',
+    data,
+  });
+};
 
 const predictHatId = async (args: { treeId: number; adminHatId: bigint; hatsCount: number }) => {
   const { treeId, adminHatId, hatsCount } = args;
@@ -91,7 +99,6 @@ export const parsedEditedHatsFormValues = async (
   editedHats: RoleValue[],
   getHat: (hatId: `0x${string}`) => DecentRoleHat | null,
   uploadHatDescription: (hatDescription: string) => Promise<string>,
-  safeAddress: Address,
 ) => {
   //
   //  Parse added hats
@@ -100,15 +107,15 @@ export const parsedEditedHatsFormValues = async (
       .filter(hat => hat.editedRole?.status === EditBadgeStatus.New)
       .map(async hat => {
         const details = await uploadHatDescription(
-          JSON.stringify({
+          hatsDetailsBuilder({
             name: hat.name,
             description: hat.description,
           }),
         );
 
         return {
-          eligibility: zeroAddress,
-          toggle: safeAddress,
+          eligibility: ha75Address,
+          toggle: ha75Address,
           maxSupply: 1,
           details,
           imageURI: '',
@@ -151,7 +158,7 @@ export const parsedEditedHatsFormValues = async (
       .map(async hat => ({
         id: hat.id,
         details: await uploadHatDescription(
-          JSON.stringify({
+          hatsDetailsBuilder({
             name: hat.name,
             description: hat.description,
           }),
@@ -181,6 +188,7 @@ export const prepareCreateTopHatProposalData = async (
   addedHats: HatStruct[],
   safeAddress: Address,
   uploadHatDescription: (hatDescription: string) => Promise<string>,
+  safeName: string,
 ) => {
   const enableModuleData = encodeFunctionData({
     abi: GnosisSafeL2,
@@ -196,19 +204,18 @@ export const prepareCreateTopHatProposalData = async (
   });
 
   const topHatDetails = await uploadHatDescription(
-    JSON.stringify({
-      name: 'Top Hat',
-      description: 'top hat',
+    hatsDetailsBuilder({
+      name: safeName,
+      description: '',
     }),
   );
   const adminHatDetails = await uploadHatDescription(
-    JSON.stringify({
+    hatsDetailsBuilder({
       name: 'Admin',
       description: '',
     }),
   );
 
-  const ha75Address = '0x0000000000000000000000000000000000004a75';
   const adminHat: HatStruct = {
     eligibility: ha75Address,
     toggle: ha75Address,
@@ -216,7 +223,7 @@ export const prepareCreateTopHatProposalData = async (
     details: adminHatDetails,
     imageURI: '',
     isMutable: true,
-    wearer: ha75Address,
+    wearer: zeroAddress,
   };
 
   const createAndDeclareTreeData = encodeFunctionData({

@@ -75,13 +75,22 @@ const useKeyValuePairs = () => {
     });
     keyValuePairsContract.getEvents
       .ValueUpdated({ theAddress: node.daoAddress }, { fromBlock: 0n })
-      .then(safeEvents => {
-        const newHatsTreeId = getHatsTreeId(safeEvents, chain.id);
-        setHatsTreeId(newHatsTreeId);
-      })
+      .then(safeEvents => setHatsTreeId(getHatsTreeId(safeEvents, chain.id)))
       .catch(error => {
         logError(error);
       });
+
+    const unwatch = keyValuePairsContract.watchEvent.ValueUpdated(
+      {
+        theAddress: node.daoAddress,
+      },
+      {
+        onLogs: logs => setHatsTreeId(getHatsTreeId(logs, chain.id)),
+      },
+    );
+    return () => {
+      unwatch();
+    };
   }, [chain.id, keyValuePairs, node.daoAddress, publicClient, setHatsTreeId]);
 };
 

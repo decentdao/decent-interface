@@ -13,7 +13,6 @@ import { ArrowLeft } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { zeroAddress } from 'viem';
 import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
 import { RoleFormValues } from '../../../../../../components/pages/Roles/types';
 import { useHeaderHeight } from '../../../../../../constants/common';
@@ -61,7 +60,7 @@ export default function RoleEditDetails() {
                     alignItems="center"
                     aria-label={t('editRoles')}
                     onClick={() => {
-                      if (values.hats[hatEditingIndex].id === zeroAddress) {
+                      if (!values.hats[hatEditingIndex]) {
                         remove(hatEditingIndex);
                       }
                       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
@@ -89,7 +88,7 @@ export default function RoleEditDetails() {
               isOpen
               placement="right"
               onClose={() => {
-                if (values.hats[hatEditingIndex].id === zeroAddress) {
+                if (!values.hats[hatEditingIndex]) {
                   remove(hatEditingIndex);
                 }
                 navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));

@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik } from 'formik';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -11,7 +11,6 @@ import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable
 import {
   RoleFormValues,
   DEFAULT_ROLE_HAT,
-  EditBadgeStatus,
   RoleValue,
 } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
@@ -33,20 +32,14 @@ import { ProposalExecuteData } from '../../../../../types';
 
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'breadcrumbs', 'common']);
-  const [hats, setHats] = useState<RoleValue[]>([]);
   const {
-    node: { daoAddress, safe },
+    node: { daoAddress, safe, daoName },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
   const { rolesSchema } = useRolesSchema();
   const { hatsTree, hatsTreeId, getHat } = useRolesState();
 
-  useEffect(() => {
-    if (hatsTree !== null && hatsTree !== undefined) {
-      setHats(hatsTree?.roleHats);
-    }
-  }, [hatsTree]);
   const navigate = useNavigate();
 
   const { submitProposal } = useSubmitProposal();
@@ -65,16 +58,13 @@ function RolesEdit() {
 
         let proposalData: ProposalExecuteData;
 
-        // @todo might need to use this instead:
-        // const uploadHatDescriptionCallback = async (hatDescription: string) => `ipfs://${(await ipfsClient.add(hatDescription)).Hash}`;
-        const uploadHatDescriptionCallback = async (hatDescription: string) =>
-          (await ipfsClient.add(hatDescription)).Hash;
+        const uploadHatDescriptionCallback = async (hatDescription: string) => `ipfs://${(await ipfsClient.add(hatDescription)).Hash}`;
+ 
 
         const editedHatStructs = await parsedEditedHatsFormValues(
           modifiedHats,
           getHat,
           uploadHatDescriptionCallback,
-          getAddress(safe.address),
         );
 
         if (hatsTreeId === null || hatsTreeId === undefined) {
@@ -85,6 +75,7 @@ function RolesEdit() {
             editedHatStructs.addedHats,
             getAddress(safe.address),
             uploadHatDescriptionCallback,
+            daoName ?? safe.address,
           );
         } else {
           if (hatsTree === undefined || hatsTree === null) {
@@ -120,7 +111,7 @@ function RolesEdit() {
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
       }
     },
-    [safe, getHat, hatsTreeId, submitProposal, t, ipfsClient, hatsTree],
+    [safe, daoName, getHat, hatsTreeId, submitProposal, t, ipfsClient, hatsTree],
   );
 
   if (daoAddress === null) return null;
@@ -136,8 +127,9 @@ function RolesEdit() {
           title: '',
           description: '',
         },
-        hats,
+        hats: hatsTree?.roleHats || ([] as RoleValue[]),
       }}
+      enableReinitialize
       validationSchema={rolesSchema}
       validateOnMount
       onSubmit={createRolesEditProposal}
