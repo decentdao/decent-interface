@@ -29,19 +29,9 @@ const useHatsTree = () => {
               props: {
                 prettyId: true,
                 status: true,
-                createdAt: true,
                 details: true,
-                maxSupply: true,
-                eligibility: true,
-                toggle: true,
-                mutable: true,
-                levelAtLocalTree: true,
-                currentSupply: true,
                 wearers: {
                   props: {},
-                  filters: {
-                    first: 1,
-                  },
                 },
               },
             },
