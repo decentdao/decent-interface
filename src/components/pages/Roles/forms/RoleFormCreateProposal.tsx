@@ -10,7 +10,7 @@ import { RoleFormValues } from '../types';
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const { t } = useTranslation(['modals', 'common', 'proposal']);
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values, handleSubmit } = useFormikContext<RoleFormValues>();
   const editedRoles = useMemo(() => {
     return values.hats.filter(hat => !!hat.editedRole);
   }, [values.hats]);
@@ -95,7 +95,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         >
           {t('cancel', { ns: 'common' })}
         </Button>
-        <Button type="submit">{t('sendAssetsSubmit')}</Button>
+        <Button onClick={() => handleSubmit()}>{t('sendAssetsSubmit')}</Button>
       </Flex>
     </Box>
   );
