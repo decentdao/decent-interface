@@ -1,6 +1,6 @@
 import { Box, Flex, Grid, GridItem, Icon, Portal, Show, Text } from '@chakra-ui/react';
 import { ArrowLeft, Trash } from '@phosphor-icons/react';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import RoleFormCreateProposal from '../../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
 import PageHeader from '../../../../../../components/ui/page/Header/PageHeader';
@@ -15,6 +15,7 @@ export default function EditProposalSummary() {
   const {
     node: { daoAddress },
   } = useFractal();
+  const { t } = useTranslation(['roles', 'breadcrumbs']);
   const { addressPrefix } = useNetworkConfig();
   if (!daoAddress) return null;
   return (
@@ -37,7 +38,7 @@ export default function EditProposalSummary() {
               <Flex
                 gap="0.5rem"
                 alignItems="center"
-                aria-label={t('proposalNew')}
+                aria-label={t('proposalNew', { ns: 'breadcrumbs' })}
                 onClick={() => {
                   navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
                 }}
@@ -60,10 +61,9 @@ export default function EditProposalSummary() {
           <Box
             position="fixed"
             top={`calc(1rem + ${headerHeight})`}
-            left={{base: SIDEBAR_WIDTH, '3xl': `calc(${SIDEBAR_WIDTH} + 9rem)`}}
+            left={{ base: SIDEBAR_WIDTH, '3xl': `calc(${SIDEBAR_WIDTH} + 9rem)` }}
             h={`100vh`}
             bg="neutral-1"
-        
             px="1rem"
             width={`calc(100% - ${SIDEBAR_WIDTH})`}
           >
@@ -71,9 +71,7 @@ export default function EditProposalSummary() {
               title={t('proposalNew', { ns: 'breadcrumbs' })}
               breadcrumbs={[
                 {
-                  terminus: t('roles', {
-                    ns: 'roles',
-                  }),
+                  terminus: t('roles'),
                   path: '',
                 },
               ]}

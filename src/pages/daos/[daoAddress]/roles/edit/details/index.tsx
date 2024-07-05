@@ -122,7 +122,7 @@ export default function RoleEditDetails() {
                         textStyle="body-base"
                         color="white-0"
                       >
-                        Edit Role
+                        {t('editRole')}
                       </Text>
                     </Flex>
                     {/* @todo add `...` Menu? */}

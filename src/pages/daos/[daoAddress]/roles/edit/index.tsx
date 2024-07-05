@@ -27,7 +27,7 @@ import { useRolesState } from '../../../../../state/useRolesState';
 import { ProposalExecuteData } from '../../../../../types';
 
 function RolesEdit() {
-  const { t } = useTranslation(['roles', 'navigation', 'modals', 'breadcrumbs', 'common']);
+  const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
   const {
     node: { daoAddress, safe, daoName },
   } = useFractal();
@@ -152,15 +152,11 @@ function RolesEdit() {
               title={t('roles')}
               breadcrumbs={[
                 {
-                  terminus: t('roles', {
-                    ns: 'roles',
-                  }),
+                  terminus: t('roles'),
                   path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
                 },
                 {
-                  terminus: t('editRoles', {
-                    ns: 'roles',
-                  }),
+                  terminus: t('editRoles'),
                   path: '',
                 },
               ]}

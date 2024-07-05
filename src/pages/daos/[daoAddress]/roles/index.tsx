@@ -16,7 +16,7 @@ import { useRolesState } from '../../../../state/useRolesState';
 function Roles() {
   const { hatsTree } = useRolesState();
   const { addressPrefix } = useNetworkConfig();
-  const { t } = useTranslation(['roles', 'navigation', 'breadcrumbs', 'dashboard']);
+  const { t } = useTranslation(['roles']);
   const {
     node: { daoAddress },
   } = useFractal();
@@ -32,9 +32,7 @@ function Roles() {
         title={t('roles')}
         breadcrumbs={[
           {
-            terminus: t('roles', {
-              ns: 'roles',
-            }),
+            terminus: t('roles'),
             path: '',
           },
         ]}

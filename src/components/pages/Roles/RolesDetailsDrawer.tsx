@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getAddress, zeroAddress } from 'viem';
 import { DAO_ROUTES } from '../../../constants/routes';
@@ -50,6 +51,7 @@ export default function RolesDetailsDrawer({
   } = useFractal();
   const { hatsTree } = useRolesState();
   const { addressPrefix } = useNetworkConfig();
+  const { t } = useTranslation(['roles']);
   const navigate = useNavigate();
   const { daoName: accountDisplayName } = useGetDAOName({
     address: getAddress(roleHat.wearer || zeroAddress),
@@ -113,7 +115,7 @@ export default function RolesDetailsDrawer({
             color="white-0"
             my="1rem"
           >
-            Developer
+            {roleHat.name}
           </Text>
           <Grid
             gridTemplateAreas={`"mLabel mValue"
@@ -123,13 +125,13 @@ export default function RolesDetailsDrawer({
           >
             <GridItem area="mLabel">
               <RoleAndDescriptionLabel
-                label="Member"
+                label={t('member')}
                 icon={User}
               />
             </GridItem>
             <GridItem area="dLabel">
               <RoleAndDescriptionLabel
-                label="Description"
+                label={t('description')}
                 icon={List}
               />
             </GridItem>
@@ -156,8 +158,7 @@ export default function RolesDetailsDrawer({
                 textStyle="body-base"
                 color="white-0"
               >
-                Magna dolor in reprehenderit cillum. Nulla culpa dolor cupidatat voluptate excepteur
-                aliquip fugiat aliquip. Eiusmod culpa aute amet minim excepteur aliqua.
+                {roleHat.description}
               </Text>
             </GridItem>
           </Grid>
