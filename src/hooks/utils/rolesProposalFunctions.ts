@@ -73,16 +73,20 @@ const predictHatId = ({
   // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
   const newHatHexId = `0x${treeIdBinary}${adminLevelBinary}${newSiblingId}`.padEnd(66, '0') as Hex;
   const newHatId = hexToBigInt(newHatHexId);
-  console.log(
+
+  console.log({
     treeIdBinary,
     adminLevelBinary,
     newSiblingId,
     newHatHexId,
     newHatId,
-    numberToHex(adminHatId),
-    numberToHex(newHatId),
-    hexToBigInt(numberToHex(newHatId)),
-  );
+    bigIntParseIntNewHatHexIdToString16: BigInt(parseInt(newHatHexId)).toString(16),
+    parseIntNewHatHexId: parseInt(newHatHexId),
+    parseIntNewHatHexIdToString16: parseInt(newHatHexId).toString(16),
+    numberToHexAdminHatId: numberToHex(adminHatId),
+    numberToHexNewHatId: numberToHex(newHatId),
+    hexToBigIntNumberToHexNewHatId: hexToBigInt(numberToHex(newHatId)),
+  });
   return newHatId;
 };
 
