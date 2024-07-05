@@ -1,9 +1,10 @@
-import { Box, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
-import { ArrowLeft } from '@phosphor-icons/react';
+import { Box, Flex, Grid, GridItem, Icon, Portal, Show, Text } from '@chakra-ui/react';
+import { ArrowLeft, Trash } from '@phosphor-icons/react';
 import { t } from 'i18next';
 import { useNavigate } from 'react-router-dom';
 import RoleFormCreateProposal from '../../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
-import { useHeaderHeight } from '../../../../../../constants/common';
+import PageHeader from '../../../../../../components/ui/page/Header/PageHeader';
+import { SIDEBAR_WIDTH, useHeaderHeight } from '../../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../../constants/routes';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -51,6 +52,43 @@ export default function EditProposalSummary() {
             <RoleFormCreateProposal
               close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
             />
+          </Box>
+        </Portal>
+      </Show>
+      <Show above="md">
+        <Portal>
+          <Box
+            position="fixed"
+            top={`calc(1rem + ${headerHeight})`}
+            h={`100vh`}
+            bg="neutral-1"
+            px="1rem"
+            left={SIDEBAR_WIDTH}
+            width={`calc(100% - ${SIDEBAR_WIDTH})`}
+          >
+            <PageHeader
+              title={t('proposalNew', { ns: 'breadcrumbs' })}
+              breadcrumbs={[
+                {
+                  terminus: t('roles', {
+                    ns: 'roles',
+                  }),
+                  path: '',
+                },
+              ]}
+              ButtonIcon={Trash}
+              buttonClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
+            />
+            <Grid
+              gridTemplateAreas={`"form details"`}
+              gridTemplateColumns="minmax(1fr, 736px) 1fr"
+            >
+              <GridItem area="form">
+                <RoleFormCreateProposal
+                  close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
+                />
+              </GridItem>
+            </Grid>
           </Box>
         </Portal>
       </Show>
