@@ -63,7 +63,7 @@ const predictHatId = ({
 }) => {
   // 1 byte = 8 bits = 2 string characters
   const treeIdBinary = treeId.toString(16).padStart(8, '0'); // Tree ID is first **4 bytes**
-  const adminLevelBinary = numberToHex(adminHatId).slice(5, 9); // Top Admin ID is next **16 bits**
+  const adminLevelBinary = adminHatId.toString(16).slice(3, 7); // Top Admin ID is next **16 bits**
 
   // Each next level is next **16 bits**
   // Since we're operating only with direct child of top level admin - we don't care about nested levels
@@ -72,7 +72,7 @@ const predictHatId = ({
 
   // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
   const newHatHexId = `0x${treeIdBinary}${adminLevelBinary}${newSiblingId}`.padEnd(66, '0') as Hex;
-  const newHatId = hexToBigInt(newHatHexId);
+  const newHatId = BigInt(newHatHexId);
 
   console.log({
     treeIdBinary,
@@ -87,6 +87,7 @@ const predictHatId = ({
     numberToHexNewHatId: numberToHex(newHatId),
     hexToBigIntNumberToHexNewHatId: hexToBigInt(numberToHex(newHatId)),
   });
+
   return newHatId;
 };
 
@@ -103,7 +104,7 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
     admins.push(adminHatId);
     details.push(hat.details);
     maxSupplies.push(hat.maxSupply);
-    eligibilityModules.push(zeroAddress);
+    eligibilityModules.push(hat.eligibility);
     toggleModules.push(hat.toggle);
     mutables.push(hat.isMutable);
     imageURIs.push(hat.imageURI);
@@ -328,14 +329,14 @@ export const prepareEditHatsProposalData = async (
   }
 
   type CallDataType = `0x${string}`;
-  const addAndMintHatsTxs: CallDataType[] = [];
+  const createAndMintHatsTxs: CallDataType[] = [];
   let removeHatTxs: CallDataType[] = [];
   let transferHatTxs: CallDataType[] = [];
   let hatDetailsChangedTxs: CallDataType[] = [];
 
   if (addedHats.length) {
     // First, prepare a single tx to create all the hats
-    const addHatsTx = encodeFunctionData({
+    const createHatsTx = encodeFunctionData({
       abi: HatsAbi,
       functionName: 'batchCreateHats',
       args: prepareAddHatsTxArgs(addedHats, adminHatId),
@@ -350,8 +351,8 @@ export const prepareEditHatsProposalData = async (
 
     // Push these two txs to the included txs array.
     // They will be executed in order: add all hats first, then mint all hats to their respective wearers.
-    addAndMintHatsTxs.push(addHatsTx);
-    addAndMintHatsTxs.push(mintHatsTx);
+    createAndMintHatsTxs.push(createHatsTx);
+    createAndMintHatsTxs.push(mintHatsTx);
   }
 
   if (removedHatIds.length) {
@@ -384,28 +385,17 @@ export const prepareEditHatsProposalData = async (
     });
   }
 
-  // @dev
-  // Depending on the number of hats to be added, removed, transferred, or updated, the number of txs included
-  // to be executed in the proposal will be different:
-  //
-  // `includedAddAndMintHatsTx` will be an array of 0 or 2 elements.
-  // the others will be arrays of 0 or more elements.
-
-  if (addAndMintHatsTxs.length > 2) {
-    throw new Error('Too many create hats txs');
-  }
-
   return {
     targets: [
-      ...addAndMintHatsTxs.map(() => hatsContractAddress),
+      ...createAndMintHatsTxs.map(() => hatsContractAddress),
       ...removeHatTxs.map(() => hatsContractAddress),
       ...transferHatTxs.map(() => hatsContractAddress),
       ...hatDetailsChangedTxs.map(() => hatsContractAddress),
     ],
-    calldatas: [...addAndMintHatsTxs, ...removeHatTxs, ...transferHatTxs, ...hatDetailsChangedTxs],
+    calldatas: [...createAndMintHatsTxs, ...removeHatTxs, ...transferHatTxs, ...hatDetailsChangedTxs],
     metaData: proposalMetadata,
     values: [
-      ...addAndMintHatsTxs.map(() => 0n),
+      ...createAndMintHatsTxs.map(() => 0n),
       ...removeHatTxs.map(() => 0n),
       ...transferHatTxs.map(() => 0n),
       ...hatDetailsChangedTxs.map(() => 0n),

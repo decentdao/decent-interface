@@ -70,6 +70,8 @@ function RolesEdit() {
           uploadHatDescriptionCallback,
         );
 
+        console.log(editedHatStructs.addedHats);
+
         if (hatsTreeId === null || hatsTreeId === undefined) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
           // along with any other hats that are added.
