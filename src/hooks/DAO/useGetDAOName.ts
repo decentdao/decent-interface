@@ -1,11 +1,10 @@
-import { FractalRegistry } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useState } from 'react';
-import { Address, PublicClient } from 'viem';
+import { Address, PublicClient, getContract, parseAbi, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FractalContracts } from '../../types';
 import { createAccountSubstring } from '../utils/useDisplayName';
+import { getNetworkConfig } from './../../providers/NetworkConfig/NetworkConfigProvider';
 import { demoData } from './loaders/loadDemoData';
 
 const getDAOName = async ({
@@ -19,7 +18,7 @@ const getDAOName = async ({
   publicClient: PublicClient | undefined;
   baseContracts: FractalContracts | undefined;
 }) => {
-  if (!publicClient) {
+  if (!publicClient || !publicClient.chain) {
     throw new Error('Public client not available');
   }
 
@@ -43,11 +42,24 @@ const getDAOName = async ({
     throw new Error('Base contracts not set');
   }
 
-  const rpc = getEventRPC<FractalRegistry>(baseContracts.fractalRegistryContract);
-  const events = await rpc.queryFilter(rpc.filters.FractalNameUpdated(address));
+  const {
+    contracts: { fractalRegistry },
+  } = getNetworkConfig(publicClient.chain.id);
+
+  const fractalRegistryContract = getContract({
+    abi: parseAbi(['event FractalNameUpdated(address indexed daoAddress, string daoName)']),
+    address: getAddress(fractalRegistry),
+    client: publicClient,
+  });
+
+  const events = await fractalRegistryContract.getEvents.FractalNameUpdated(
+    { daoAddress: address },
+    { fromBlock: 0n },
+  );
+
   const latestEvent = events.pop();
 
-  if (latestEvent) {
+  if (latestEvent?.args.daoName) {
     return latestEvent.args.daoName;
   }
 
@@ -64,11 +76,15 @@ const getDAOName = async ({
 const useGetDAOName = ({
   address,
   registryName,
+  chainId,
 }: {
   address: Address;
   registryName?: string | null;
+  chainId?: number;
 }) => {
-  const publicClient = usePublicClient();
+  const publicClient = usePublicClient({
+    chainId,
+  });
   const { baseContracts } = useFractal();
 
   const [daoName, setDaoName] = useState<string>();

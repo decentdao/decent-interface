@@ -1,5 +1,5 @@
 import { normalize } from 'viem/ens';
-
+import { supportedNetworks } from '../providers/NetworkConfig/NetworkConfigProvider';
 export const isValidUrl = (urlString: string) => {
   try {
     const url = new URL(urlString);
@@ -27,4 +27,36 @@ export const validateENSName = (ensAddress?: string): boolean => {
   } catch (e) {
     return false;
   }
+};
+
+export const addNetworkPrefix = (address: string, chainId: number): string => {
+  const network = supportedNetworks.find(_network => _network.chain.id === chainId);
+  if (!network) {
+    throw new Error(`No network found for chainId ${chainId}`);
+  }
+  return `${network.addressPrefix}:${address}`;
+};
+
+export const getNetworkIcon = (_networkPrefix: string): string => {
+  const network = supportedNetworks.find(_network => _network.addressPrefix === _networkPrefix);
+  if (!network) {
+    throw new Error(`No chain found for network prefix ${_networkPrefix}`);
+  }
+  return network.nativeTokenIcon;
+};
+
+export const getChainName = (_networkPrefix: string): string => {
+  const network = supportedNetworks.find(_network => _network.addressPrefix === _networkPrefix);
+  if (!network) {
+    throw new Error(`No chain found for network prefix ${_networkPrefix}`);
+  }
+  return network.chain.name;
+};
+
+export const getChainIdFromPrefix = (_networkPrefix: string): number => {
+  const network = supportedNetworks.find(_network => _network.addressPrefix === _networkPrefix);
+  if (!network) {
+    throw new Error(`No chain found for network prefix ${_networkPrefix}`);
+  }
+  return network.chain.id;
 };

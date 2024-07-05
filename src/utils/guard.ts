@@ -1,5 +1,5 @@
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
+import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { keccak256, encodePacked, isHex } from 'viem';
 import { buildSignatureBytes } from '../helpers/crypto';
 import { Activity } from '../types';

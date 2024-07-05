@@ -1,13 +1,11 @@
 import { Flex, Button, Icon } from '@chakra-ui/react';
 import { CaretRight, CaretLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useFractal } from '../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps } from '../../types';
 interface IStepButtons extends ICreationStepProps {
-  nextStep?: CreatorSteps;
-  prevStep?: CreatorSteps;
-  isLastStep?: boolean;
   isNextDisabled?: boolean;
   isEdit?: boolean;
 }
@@ -16,19 +14,28 @@ export function StepButtons({
   errors,
   transactionPending,
   isSubmitting,
-  step,
   isSubDAO,
-  updateStep,
-  nextStep,
-  prevStep,
-  isLastStep,
   isNextDisabled,
   isEdit,
+  steps,
 }: IStepButtons) {
+  const navigate = useNavigate();
   const { t } = useTranslation(['daoCreate', 'common']);
   const {
     readOnly: { user },
   } = useFractal();
+  const location = useLocation();
+  const paths = location.pathname.split('/');
+  // @dev paths[paths.length - 1] will be empty string if we have trailing slash, so then we're falling back to the item before that
+  const step = (paths[paths.length - 1] || paths[paths.length - 2]) as CreatorSteps | undefined;
+  const currentStepIndex = steps.findIndex(_step => _step === step);
+  const nextStep = steps[currentStepIndex + 1];
+  const prevStep = steps[currentStepIndex - 1];
+
+  const prevStepUrl = `${location.pathname.replace(`${step}`, `${prevStep}`)}${location.search}`;
+  const nextStepUrl = `${location.pathname.replace(`${step}`, `${nextStep}`)}${location.search}`;
+
+  const isLastStep = steps[steps.length - 1] === step;
 
   const forwardButtonText =
     isLastStep && isSubDAO
@@ -50,7 +57,7 @@ export function StepButtons({
           data-testid="create-prevButton"
           variant="text"
           isDisabled={transactionPending || isSubmitting}
-          onClick={() => updateStep(prevStep)}
+          onClick={() => navigate(prevStepUrl)}
           color="lilac-0"
           px="2rem"
         >
@@ -60,11 +67,11 @@ export function StepButtons({
       )}
       <Button
         type={buttonType}
-        isDisabled={transactionPending || isSubmitting || !!errors[step] || isNextDisabled}
+        isDisabled={transactionPending || isSubmitting || !step || !!errors[step] || isNextDisabled}
         px="2rem"
         onClick={() => {
           if (!isLastStep && nextStep) {
-            updateStep(nextStep);
+            navigate(nextStepUrl);
           } else if (isLastStep && !user.address) {
             toast(t('toastDisconnected'), {
               closeOnClick: true,

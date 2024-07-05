@@ -37,7 +37,7 @@ const proposalCreatedEventListener = (
   decode: (value: string, to: string, data?: string | undefined) => Promise<DecodedTransaction[]>,
   dispatch: Dispatch<FractalActions>,
 ): TypedListener<ProposalCreatedEvent> => {
-  return async (_strategyAddress, proposalId, proposer, transactions, metadata) => {
+  return async (_strategyAddress, proposalId, proposer, transactions, metadata, createdEvent) => {
     if (!metadata) {
       return;
     }
@@ -68,6 +68,7 @@ const proposalCreatedEventListener = (
     };
 
     const proposal = await mapProposalCreatedEventToProposal(
+      createdEvent,
       erc20StrategyContract,
       erc721StrategyContract,
       strategyType,

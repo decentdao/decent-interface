@@ -1,4 +1,4 @@
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
+import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { Activity } from '../types';
 import { isMultiSigTx } from '../utils';
 

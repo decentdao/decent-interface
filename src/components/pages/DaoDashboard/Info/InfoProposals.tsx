@@ -25,6 +25,7 @@ const nonSnapshotProposals = (proposals: FractalProposal[]) => {
 
 const totalProposalsCount = (
   proposals: FractalProposal[] | null,
+  skippedProposalCount: number,
   type: GovernanceType | undefined,
 ) => {
   if (!proposals) {
@@ -53,8 +54,11 @@ const totalProposalsCount = (
       }, 0);
 
       // Then, return the highest Azorius proposal ID
-      // plus the number of Snapshot proposals.
-      return highestNonSnapshotProposalId + proposals.length - nonSnapshot.length;
+      // plus the number of Snapshot proposals
+      // minus the number of skipped proposals.
+      return (
+        highestNonSnapshotProposalId + proposals.length - nonSnapshot.length - skippedProposalCount
+      );
     }
     default: {
       return 0;
@@ -79,6 +83,7 @@ const nonActiveProposals = (proposals: FractalProposal[]) => {
 
 const allActiveProposalsCount = (
   proposals: FractalProposal[] | null,
+  skippedProposalCount: number,
   type: GovernanceType | undefined,
 ) => {
   if (!proposals) {
@@ -103,7 +108,11 @@ const allActiveProposalsCount = (
       } else {
         // Getting here means that all of the loaded proposals so far are active
         // or there are no non-Snapshot proposals.
-        const totalNonSnapshotProposalsCount = totalProposalsCount(allNonSnapshotProposals, type);
+        const totalNonSnapshotProposalsCount = totalProposalsCount(
+          allNonSnapshotProposals,
+          skippedProposalCount,
+          type,
+        );
         if (totalNonSnapshotProposalsCount === activeNonSnapshotProposals.length) {
           // If we're here, then all of the proposals on this Safe are active, or there are zero of them!
           return activeNonSnapshotProposals.length + activeSnapshotProposals.length;
@@ -123,7 +132,7 @@ export function InfoProposals() {
   const { t } = useTranslation('dashboard');
   const {
     node: { daoAddress },
-    governance: { proposals, type },
+    governance: { proposals, type, skippedProposalCount },
   } = useFractal();
 
   if (!daoAddress || !type) {
@@ -139,11 +148,11 @@ export function InfoProposals() {
     );
   }
 
-  const totalProposalsValue = totalProposalsCount(proposals, type);
+  const totalProposalsValue = totalProposalsCount(proposals, skippedProposalCount, type);
   const totalProposalsDisplay =
     totalProposalsValue === undefined ? '...' : totalProposalsValue.toString();
 
-  const activeProposalsValue = allActiveProposalsCount(proposals, type);
+  const activeProposalsValue = allActiveProposalsCount(proposals, skippedProposalCount, type);
   const activeProposalsDisplay =
     activeProposalsValue === undefined ? '...' : activeProposalsValue.toString();
 

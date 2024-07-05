@@ -1,9 +1,9 @@
 import { Box, Flex, Grid, GridItem } from '@chakra-ui/react';
 import { Trash } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { DAO_ROUTES, BASE_ROUTES } from '../../constants/routes';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
@@ -11,14 +11,14 @@ import useCreateProposalSchema from '../../hooks/schemas/proposalBuilder/useCrea
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { CreateProposalState, ProposalExecuteData } from '../../types';
+import { CreateProposalSteps, ProposalExecuteData } from '../../types';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import { CustomNonceInput } from '../ui/forms/CustomNonceInput';
 import PageHeader from '../ui/page/Header/PageHeader';
 import ProposalDetails from './ProposalDetails';
 import ProposalMetadata from './ProposalMetadata';
 import ProposalTransactionsForm from './ProposalTransactionsForm';
-import StateButtons from './StateButtons';
+import StepButtons from './StepButtons';
 
 interface ProposalBuilderProps {
   mode: ProposalBuilderMode;
@@ -31,12 +31,16 @@ export function ProposalBuilder({
   initialValues,
   prepareProposalData,
 }: ProposalBuilderProps) {
-  const [formState, setFormState] = useState(CreateProposalState.METADATA_FORM);
+  const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
 
+  const paths = location.pathname.split('/');
+  const step = (paths[paths.length - 1] || paths[paths.length - 2]) as
+    | CreateProposalSteps
+    | undefined;
   const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
 
-  const navigate = useNavigate();
   const {
     node: { daoAddress, safe },
     readOnly: { dao },
@@ -52,6 +56,12 @@ export function ProposalBuilder({
       navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
     }
   };
+
+  useEffect(() => {
+    if (daoAddress && (!step || !Object.values(CreateProposalSteps).includes(step))) {
+      navigate(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress), { replace: true });
+    }
+  }, [daoAddress, step, navigate, addressPrefix]);
 
   return (
     <Formik<CreateProposalForm>
@@ -152,42 +162,62 @@ export function ProposalBuilder({
                       rounded="lg"
                       bg="neutral-2"
                     >
-                      {formState === CreateProposalState.METADATA_FORM ? (
-                        <ProposalMetadata
-                          mode={mode}
-                          {...formikProps}
+                      <Routes>
+                        <Route
+                          path={CreateProposalSteps.METADATA}
+                          element={
+                            <ProposalMetadata
+                              mode={mode}
+                              {...formikProps}
+                            />
+                          }
                         />
-                      ) : (
-                        <ProposalTransactionsForm
-                          pendingTransaction={pendingCreateTx}
-                          safeNonce={safe?.nextNonce}
-                          mode={mode}
-                          {...formikProps}
+                        <Route
+                          path={CreateProposalSteps.TRANSACTIONS}
+                          element={
+                            <>
+                              <ProposalTransactionsForm
+                                pendingTransaction={pendingCreateTx}
+                                safeNonce={safe?.nextNonce}
+                                mode={mode}
+                                {...formikProps}
+                              />
+                              {!dao?.isAzorius && (
+                                <Flex
+                                  alignItems="center"
+                                  justifyContent="space-between"
+                                  marginBottom="2rem"
+                                  rounded="lg"
+                                  p="1.5rem"
+                                  bg="neutral-2"
+                                >
+                                  <CustomNonceInput
+                                    nonce={formikProps.values.nonce}
+                                    onChange={newNonce =>
+                                      formikProps.setFieldValue('nonce', newNonce)
+                                    }
+                                    align="end"
+                                    renderTrimmed={false}
+                                  />
+                                </Flex>
+                              )}
+                            </>
+                          }
                         />
-                      )}
+                        <Route
+                          path="*"
+                          element={
+                            <Navigate
+                              to={`${CreateProposalSteps.METADATA}${location.search}`}
+                              replace
+                            />
+                          }
+                        />
+                      </Routes>
                     </Box>
-                    {formState === CreateProposalState.TRANSACTIONS_FORM && !dao?.isAzorius && (
-                      <Flex
-                        alignItems="center"
-                        justifyContent="space-between"
-                        marginBottom="2rem"
-                        rounded="lg"
-                        p="1.5rem"
-                        bg="neutral-2"
-                      >
-                        <CustomNonceInput
-                          nonce={formikProps.values.nonce}
-                          onChange={newNonce => formikProps.setFieldValue('nonce', newNonce)}
-                          align="end"
-                          renderTrimmed={false}
-                        />
-                      </Flex>
-                    )}
-                    <StateButtons
+                    <StepButtons
                       {...formikProps}
                       mode={mode}
-                      formState={formState}
-                      setFormState={setFormState}
                       canUserCreateProposal={canUserCreateProposal}
                       pendingTransaction={pendingCreateTx}
                     />

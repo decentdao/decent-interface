@@ -31,9 +31,9 @@
 
 - Some English text in the app uses ALL CAPS for emphasis. If your language does not have capitalized letters but does have some equivalent way to emphasize text, please do so.
 
-- Gnosis Safe, Gnosis, Safe{Wallet}, and the capitalized word Safe are products of [Gnosis](https://gnosis.io/) and should not be translated.
+- Safe{Wallet} and the capitalized word Safe are products of [Safe](https://safe.global/) and should not be translated.
 
-- Etherscan, CoinGecko, and ENS (Ethereum Name Service) are additional web3 products that are mentioned, and should not be translated.
+- Etherscan, Moralis, and ENS (Ethereum Name Service) are additional web3 products that are mentioned, and should not be translated.
 
 - The acronyms / abbreviation DAO (Decentralized Autonomous Organizatino), NFT (Non-Fungible Token), and ETH (Ether), should not be translated.
 

@@ -1,15 +1,16 @@
 import { Box, Button, Flex, Show, Text, useBreakpointValue, useDisclosure } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ErrorBoundary } from '../../components/ui/utils/ErrorBoundary';
+import { MySafesErrorFallback } from '../../components/ui/utils/MySafesErrorFallback';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { decodePrefixedAddress } from '../../utils/address';
 import { AllSafesDrawer } from './AllSafesDrawer';
 import { SafeDisplayRow } from './SafeDisplayRow';
 
 export function MySafes() {
   const { t } = useTranslation('home');
   const { favoritesList } = useAccountFavorites();
-  const { addressPrefix } = useNetworkConfig();
   const [showAll, setShowAll] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -22,42 +23,43 @@ export function MySafes() {
   return (
     <Box>
       <Box w="full">
-        {/* SAFES CONTENT */}
-        {favoritesList.length === 0 ? (
-          <Flex
-            direction={{ base: 'column', md: 'row' }}
-            columnGap="0.5rem"
-            justifyContent="center"
-            p="1rem"
-            maxW="100%"
-            my="0.5rem"
-            bg="neutral-2"
-            borderRadius="0.5rem"
-          >
-            <Text
-              color="white-alpha-16"
-              align="center"
+        <ErrorBoundary fallback={MySafesErrorFallback}>
+          {/* SAFES CONTENT */}
+          {favoritesList.length === 0 ? (
+            <Flex
+              direction={{ base: 'column', md: 'row' }}
+              columnGap="0.5rem"
+              justifyContent="center"
+              p="1rem"
+              maxW="100%"
+              my="0.5rem"
+              bg="neutral-2"
+              borderRadius="0.5rem"
             >
-              {t('emptyFavorites', { ns: 'dashboard' })}
-            </Text>
-            <Text
-              color="white-alpha-16"
-              align="center"
-            >
-              {t('emptyFavoritesSubtext', { ns: 'dashboard' })}
-            </Text>
-          </Flex>
-        ) : (
-          <Box>
-            {favoritesToShow.map(favorite => (
-              <SafeDisplayRow
-                key={favorite}
-                network={addressPrefix}
-                address={favorite}
-              />
-            ))}
-          </Box>
-        )}
+              <Text
+                color="white-alpha-16"
+                align="center"
+              >
+                {t('emptyFavorites', { ns: 'dashboard' })}
+              </Text>
+              <Text
+                color="white-alpha-16"
+                align="center"
+              >
+                {t('emptyFavoritesSubtext', { ns: 'dashboard' })}
+              </Text>
+            </Flex>
+          ) : (
+            <Box>
+              {favoritesToShow.map(favorite => (
+                <SafeDisplayRow
+                  key={favorite}
+                  {...decodePrefixedAddress(favorite)}
+                />
+              ))}
+            </Box>
+          )}
+        </ErrorBoundary>
       </Box>
 
       {/* VIEW ALL BUTTON */}
