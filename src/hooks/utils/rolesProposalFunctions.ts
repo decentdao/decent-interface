@@ -1,12 +1,4 @@
-import {
-  zeroAddress,
-  Address,
-  encodeFunctionData,
-  getAddress,
-  numberToHex,
-  hexToBigInt,
-  Hex,
-} from 'viem';
+import { zeroAddress, Address, encodeFunctionData, getAddress, Hex } from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
@@ -73,21 +65,6 @@ const predictHatId = ({
   // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
   const newHatHexId = `0x${treeIdBinary}${adminLevelBinary}${newSiblingId}`.padEnd(66, '0') as Hex;
   const newHatId = BigInt(newHatHexId);
-
-  console.log({
-    treeIdBinary,
-    adminLevelBinary,
-    newSiblingId,
-    newHatHexId,
-    newHatId,
-    bigIntParseIntNewHatHexIdToString16: BigInt(parseInt(newHatHexId)).toString(16),
-    parseIntNewHatHexId: parseInt(newHatHexId),
-    parseIntNewHatHexIdToString16: parseInt(newHatHexId).toString(16),
-    numberToHexAdminHatId: numberToHex(adminHatId),
-    numberToHexNewHatId: numberToHex(newHatId),
-    hexToBigIntNumberToHexNewHatId: hexToBigInt(numberToHex(newHatId)),
-  });
-
   return newHatId;
 };
 
@@ -392,7 +369,12 @@ export const prepareEditHatsProposalData = async (
       ...transferHatTxs.map(() => hatsContractAddress),
       ...hatDetailsChangedTxs.map(() => hatsContractAddress),
     ],
-    calldatas: [...createAndMintHatsTxs, ...removeHatTxs, ...transferHatTxs, ...hatDetailsChangedTxs],
+    calldatas: [
+      ...createAndMintHatsTxs,
+      ...removeHatTxs,
+      ...transferHatTxs,
+      ...hatDetailsChangedTxs,
+    ],
     metaData: proposalMetadata,
     values: [
       ...createAndMintHatsTxs.map(() => 0n),
