@@ -60,10 +60,11 @@ export default function EditProposalSummary() {
           <Box
             position="fixed"
             top={`calc(1rem + ${headerHeight})`}
+            left={{base: SIDEBAR_WIDTH, '3xl': `calc(${SIDEBAR_WIDTH} + 9rem)`}}
             h={`100vh`}
             bg="neutral-1"
+        
             px="1rem"
-            left={SIDEBAR_WIDTH}
             width={`calc(100% - ${SIDEBAR_WIDTH})`}
           >
             <PageHeader
