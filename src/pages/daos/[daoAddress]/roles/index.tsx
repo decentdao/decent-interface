@@ -66,24 +66,24 @@ function Roles() {
           <BarLoader />
         </Card>
       )}
-      {hatsTree === null && (
-        <Card my="0.5rem">
-          <Text
-            textStyle="body-base"
-            textAlign="center"
-            color="white-alpha-16"
-          >
-            {t('noRoles')}
-          </Text>
-        </Card>
-      )}
       <Show above="md">
         <RolesTable
           handleRoleClick={handleNavigateToRole}
-          roleHats={[]}
+          roleHats={hatsTree?.roleHats}
         />
       </Show>
       <Show below="md">
+        {hatsTree?.roleHats === null && (
+          <Card my="0.5rem">
+            <Text
+              textStyle="body-base"
+              textAlign="center"
+              color="white-alpha-16"
+            >
+              {t('noRoles')}
+            </Text>
+          </Card>
+        )}
         {hatsTree &&
           hatsTree.roleHats.map(roleHat => (
             <RoleCard
