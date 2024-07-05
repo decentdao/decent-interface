@@ -8,6 +8,7 @@ import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentRoleHat } from '../../../state/useRolesState';
 import { getChainIdFromPrefix } from '../../../utils/url';
+import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import { RoleEditProps, RoleFormValues, RoleProps, SablierPayroll, SablierVesting } from './types';
@@ -285,8 +286,9 @@ export function RolesTable({
   roleHats,
 }: {
   handleRoleClick: (hatId: Address) => void;
-  roleHats: DecentRoleHat[];
+  roleHats: DecentRoleHat[] | null | undefined;
 }) {
+  const { t } = useTranslation(['roles']);
   return (
     <Box
       overflow="hidden"
@@ -309,15 +311,27 @@ export function RolesTable({
             },
           }}
         >
-          {roleHats.map(role => (
-            <RolesRow
-              key={role.id.toString()}
-              hatId={role.id}
-              wearerAddress={role.wearer}
-              handleRoleClick={handleRoleClick}
-              {...role}
-            />
-          ))}
+          {roleHats === null && (
+            <Card my="0.5rem">
+              <Text
+                textStyle="body-base"
+                textAlign="center"
+                color="white-alpha-16"
+              >
+                {t('noRoles')}
+              </Text>
+            </Card>
+          )}
+          {roleHats &&
+            roleHats.map(role => (
+              <RolesRow
+                key={role.id.toString()}
+                hatId={role.id}
+                wearerAddress={role.wearer}
+                handleRoleClick={handleRoleClick}
+                {...role}
+              />
+            ))}
         </Tbody>
       </Table>
     </Box>
