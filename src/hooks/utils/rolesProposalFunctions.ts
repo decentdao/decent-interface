@@ -23,39 +23,9 @@ const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   });
 };
 
-const convertHatIdToBigInt = (id: string) => {
-  try {
-    return BigInt(id);
-  } catch (bigIntError) {
-    console.warn('Error directly converting hat id to bigint', bigIntError);
-    try {
-      return BigInt(parseInt(id, 16));
-    } catch (parseIntError) {
-      console.warn('Error converting hat id to BigInt using parseInt', parseIntError);
-
-      // @dev - see https://stackoverflow.com/questions/55646698/base-36-to-bigint
-      // Applying same approach but with radix 16
-      const parsedBigInt = [...id.toString()].reduce(
-        (r, v) => r * BigInt(16) + BigInt(parseInt(v, 16)),
-        0n,
-      );
-      return parsedBigInt;
-    }
-  }
-};
-
-const predictHatId = ({
-  treeId,
-  adminHatId,
-  hatsCount,
-}: {
-  treeId: number;
-  adminHatId: bigint;
-  hatsCount: number;
-}) => {
+const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsCount: number }) => {
   // 1 byte = 8 bits = 2 string characters
-  const treeIdBinary = treeId.toString(16).padStart(8, '0'); // Tree ID is first **4 bytes**
-  const adminLevelBinary = adminHatId.toString(16).slice(3, 7); // Top Admin ID is next **16 bits**
+  const adminLevelBinary = adminHatId.slice(0, 14); // Top Admin ID 1 byte 0x + 4 bytes (tree ID) + next **16 bits** (admin level ID)
 
   // Each next level is next **16 bits**
   // Since we're operating only with direct child of top level admin - we don't care about nested levels
@@ -63,12 +33,10 @@ const predictHatId = ({
   const newSiblingId = (hatsCount + 1).toString(16).padStart(4, '0');
 
   // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
-  const newHatHexId = `0x${treeIdBinary}${adminLevelBinary}${newSiblingId}`.padEnd(66, '0') as Hex;
-  const newHatId = BigInt(newHatHexId);
-  return newHatId;
+  return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
 };
 
-const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
+const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex) => {
   const admins: bigint[] = [];
   const details: string[] = [];
   const maxSupplies: number[] = [];
@@ -78,7 +46,7 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
   const imageURIs: string[] = [];
 
   addedHats.forEach(hat => {
-    admins.push(adminHatId);
+    admins.push(BigInt(adminHatId));
     details.push(hat.details);
     maxSupplies.push(hat.maxSupply);
     eligibilityModules.push(hat.eligibility);
@@ -98,18 +66,12 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
   ] as const;
 };
 
-const prepareMintHatsTxArgs = (
-  addedHats: HatStruct[],
-  treeId: number,
-  adminHatId: bigint,
-  hatsCount: number,
-) => {
+const prepareMintHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, hatsCount: number) => {
   const hatIds: bigint[] = [];
   const wearers: Address[] = [];
 
   addedHats.forEach((hat, i) => {
     const predictedHatId = predictHatId({
-      treeId,
       adminHatId,
       // Each predicted hat id is based on the current hat count, plus however many hat id have been predicted so far
       hatsCount: hatsCount + i,
@@ -130,7 +92,7 @@ const prepareMintHatsTxArgs = (
  */
 export const parsedEditedHatsFormValues = async (
   editedHats: RoleValue[],
-  getHat: (hatId: `0x${string}`) => DecentRoleHat | null,
+  getHat: (hatId: Hex) => DecentRoleHat | null,
   uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
   //
@@ -289,27 +251,15 @@ export const prepareEditHatsProposalData = async (
       details: string;
     }[];
   },
-  treeId: number,
-  adminHatId: bigint,
+  adminHatId: Hex,
   hatsCount: number,
 ) => {
   const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
 
-  if (
-    !addedHats.length &&
-    !removedHatIds.length &&
-    !memberChangedHats.length &&
-    !roleDetailsChangedHats.length
-  ) {
-    // Cz like, why are we even here then?? That's a bug.
-    throw new Error('No hats to edit');
-  }
-
-  type CallDataType = `0x${string}`;
-  const createAndMintHatsTxs: CallDataType[] = [];
-  let removeHatTxs: CallDataType[] = [];
-  let transferHatTxs: CallDataType[] = [];
-  let hatDetailsChangedTxs: CallDataType[] = [];
+  const createAndMintHatsTxs: Hex[] = [];
+  let removeHatTxs: Hex[] = [];
+  let transferHatTxs: Hex[] = [];
+  let hatDetailsChangedTxs: Hex[] = [];
 
   if (addedHats.length) {
     // First, prepare a single tx to create all the hats
@@ -323,7 +273,7 @@ export const prepareEditHatsProposalData = async (
     const mintHatsTx = encodeFunctionData({
       abi: HatsAbi,
       functionName: 'batchMintHats',
-      args: prepareMintHatsTxArgs(addedHats, treeId, adminHatId, hatsCount),
+      args: prepareMintHatsTxArgs(addedHats, adminHatId, hatsCount),
     });
 
     // Push these two txs to the included txs array.
@@ -337,7 +287,7 @@ export const prepareEditHatsProposalData = async (
       encodeFunctionData({
         abi: HatsAbi,
         functionName: 'setHatStatus',
-        args: [convertHatIdToBigInt(hatId), false],
+        args: [BigInt(hatId), false],
       }),
     );
   }
@@ -347,7 +297,7 @@ export const prepareEditHatsProposalData = async (
       return encodeFunctionData({
         abi: HatsAbi,
         functionName: 'transferHat',
-        args: [convertHatIdToBigInt(id), currentWearer, newWearer],
+        args: [BigInt(id), currentWearer, newWearer],
       });
     });
   }
@@ -357,7 +307,7 @@ export const prepareEditHatsProposalData = async (
       return encodeFunctionData({
         abi: HatsAbi,
         functionName: 'changeHatDetails',
-        args: [convertHatIdToBigInt(id), details],
+        args: [BigInt(id), details],
       });
     });
   }

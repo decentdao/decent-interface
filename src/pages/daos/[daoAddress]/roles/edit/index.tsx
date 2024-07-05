@@ -69,7 +69,7 @@ function RolesEdit() {
           uploadHatDescriptionCallback,
         );
 
-        if (hatsTreeId === null || hatsTreeId === undefined) {
+        if (!hatsTreeId) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
           // along with any other hats that are added.
           proposalData = await prepareCreateTopHatProposalData(
@@ -80,20 +80,15 @@ function RolesEdit() {
             daoName ?? safe.address,
           );
         } else {
-          if (hatsTree === undefined || hatsTree === null) {
+          if (!hatsTree) {
             throw new Error('Cannot edit Roles without a HatsTree');
           }
-
-          const adminHatId = hatsTree.adminHat.id;
-          const hatsCount = hatsTree.roleHatsTotalCount;
-
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
           proposalData = await prepareEditHatsProposalData(
             values.proposalMetadata,
             editedHatStructs,
-            hatsTreeId,
-            BigInt(adminHatId),
-            hatsCount,
+            hatsTree.adminHat.id,
+            hatsTree.roleHatsTotalCount,
           );
         }
 
