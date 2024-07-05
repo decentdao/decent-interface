@@ -1,4 +1,12 @@
-import { zeroAddress, Address, encodeFunctionData, getAddress, numberToHex } from 'viem';
+import {
+  zeroAddress,
+  Address,
+  encodeFunctionData,
+  getAddress,
+  numberToHex,
+  hexToBigInt,
+  Hex,
+} from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
@@ -55,16 +63,26 @@ const predictHatId = ({
 }) => {
   // 1 byte = 8 bits = 2 string characters
   const treeIdBinary = treeId.toString(16).padStart(8, '0'); // Tree ID is first **4 bytes**
-  const adminLevelBinary = numberToHex(adminHatId).slice(6, 9); // Top Admin ID is next **16 bits**
+  const adminLevelBinary = numberToHex(adminHatId).slice(5, 9); // Top Admin ID is next **16 bits**
 
   // Each next level is next **16 bits**
   // Since we're operating only with direct child of top level admin - we don't care about nested levels
   // @dev At least for now?
   const newSiblingId = (hatsCount + 1).toString(16).padStart(4, '0');
 
-  // Total length of Hat ID is **32 bytes**
-  const newHatBinaryId = `0b${treeIdBinary}${adminLevelBinary}${newSiblingId}`.padEnd(64, '0');
-  const newHatId = convertHatIdToBigInt(newHatBinaryId);
+  // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
+  const newHatHexId = `0x${treeIdBinary}${adminLevelBinary}${newSiblingId}`.padEnd(66, '0') as Hex;
+  const newHatId = hexToBigInt(newHatHexId);
+  console.log(
+    treeIdBinary,
+    adminLevelBinary,
+    newSiblingId,
+    newHatHexId,
+    newHatId,
+    numberToHex(adminHatId),
+    numberToHex(newHatId),
+    hexToBigInt(numberToHex(newHatId)),
+  );
   return newHatId;
 };
 

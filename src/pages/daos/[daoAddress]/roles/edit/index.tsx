@@ -36,6 +36,7 @@ function RolesEdit() {
   const { rolesSchema } = useRolesSchema();
   const { hatsTree, hatsTreeId, getHat } = useRolesState();
 
+  console.log(hatsTree, hatsTreeId);
   const navigate = useNavigate();
 
   const { submitProposal } = useSubmitProposal();
@@ -85,6 +86,7 @@ function RolesEdit() {
           }
 
           const adminHatId = hatsTree.adminHat.id;
+          console.log(hatsTree.adminHat.id);
           const hatsCount = hatsTree.roleHatsTotalCount;
 
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
