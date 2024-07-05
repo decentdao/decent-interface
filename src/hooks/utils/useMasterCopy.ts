@@ -4,12 +4,13 @@ import { useCallback } from 'react';
 import { Address, zeroAddress } from 'viem';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
-import { useLocalStorage } from './cache/useLocalStorage';
+import { getValue, setValue } from './cache/useLocalStorage';
 
 export function useMasterCopy() {
-  const { getValue, setValue } = useLocalStorage();
   const { baseContracts } = useFractal();
+  const { chain } = useNetworkConfig();
 
   const isOzLinearVoting = useCallback(
     (masterCopyAddress: Address) =>
@@ -50,22 +51,41 @@ export function useMasterCopy() {
 
   const getMasterCopyAddress = useCallback(
     async function (contract: Contract, proxyAddress: Address): Promise<[Address, string | null]> {
-      const cachedValue = getValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress);
+      const cachedValue = getValue({
+        cacheName: CacheKeys.MASTER_COPY,
+        chainId: chain.id,
+        proxyAddress,
+      });
       if (cachedValue) return [cachedValue, null] as const;
 
       const filter = contract.filters.ModuleProxyCreation(proxyAddress, null);
       return contract.queryFilter(filter).then(proxiesCreated => {
         // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
         if (proxiesCreated.length === 0) {
-          setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, zeroAddress, CacheExpiry.ONE_WEEK);
+          setValue(
+            {
+              cacheName: CacheKeys.MASTER_COPY,
+              chainId: chain.id,
+              proxyAddress,
+            },
+            zeroAddress,
+            CacheExpiry.ONE_WEEK,
+          );
           return [zeroAddress, 'No proxies created'] as const;
         }
         const masterCopyAddress = proxiesCreated[0].args!.masterCopy;
-        setValue(CacheKeys.MASTER_COPY_PREFIX + proxyAddress, masterCopyAddress);
+        setValue(
+          {
+            cacheName: CacheKeys.MASTER_COPY,
+            chainId: chain.id,
+            proxyAddress,
+          },
+          masterCopyAddress,
+        );
         return [masterCopyAddress, null] as const;
       });
     },
-    [getValue, setValue],
+    [chain.id],
   );
 
   const getZodiacModuleProxyMasterCopyData = useCallback(

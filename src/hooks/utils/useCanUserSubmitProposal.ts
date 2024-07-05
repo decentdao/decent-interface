@@ -94,7 +94,10 @@ export function useCanUserCreateProposal() {
   );
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
-      setCanUserCreateProposal(await getCanUserCreateProposal());
+      const newCanCreateProposal = await getCanUserCreateProposal();
+      if (newCanCreateProposal !== canUserCreateProposal) {
+        setCanUserCreateProposal(newCanCreateProposal);
+      }
     };
     loadCanUserCreateProposal();
   }, [getCanUserCreateProposal, canUserCreateProposal]);

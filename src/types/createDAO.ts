@@ -1,4 +1,3 @@
-import { SafeBalanceResponse, SafeCollectibleResponse } from '@safe-global/safe-service-client';
 import { FormikProps } from 'formik';
 import { Address } from 'viem';
 import { DAOCreateMode } from '../components/DaoCreator/formComponents/EstablishEssentials';
@@ -15,6 +14,37 @@ export enum CreatorSteps {
   FREEZE_DETAILS = 'freeze',
 }
 
+export const RootMultisigSteps = [CreatorSteps.ESSENTIALS, CreatorSteps.MULTISIG_DETAILS];
+export const ChildMultisigSteps = [
+  CreatorSteps.ESSENTIALS,
+  CreatorSteps.MULTISIG_DETAILS,
+  CreatorSteps.FREEZE_DETAILS,
+];
+
+export const RootERC20Steps = [
+  CreatorSteps.ESSENTIALS,
+  CreatorSteps.ERC20_DETAILS,
+  CreatorSteps.AZORIUS_DETAILS,
+];
+export const ChildERC20Steps = [
+  CreatorSteps.ESSENTIALS,
+  CreatorSteps.ERC20_DETAILS,
+  CreatorSteps.AZORIUS_DETAILS,
+  CreatorSteps.FREEZE_DETAILS,
+];
+
+export const RootERC721Steps = [
+  CreatorSteps.ESSENTIALS,
+  CreatorSteps.ERC721_DETAILS,
+  CreatorSteps.AZORIUS_DETAILS,
+];
+export const ChildERC721Steps = [
+  CreatorSteps.ESSENTIALS,
+  CreatorSteps.ERC721_DETAILS,
+  CreatorSteps.AZORIUS_DETAILS,
+  CreatorSteps.FREEZE_DETAILS,
+];
+
 export enum TokenCreationType {
   IMPORTED = 'imported',
   NEW = 'new',
@@ -22,9 +52,8 @@ export enum TokenCreationType {
 export interface ICreationStepProps extends Omit<FormikProps<CreatorFormState>, 'handleSubmit'> {
   transactionPending?: boolean;
   isSubDAO?: boolean;
-  step: CreatorSteps;
-  updateStep: (newStep: CreatorSteps) => void;
   mode: DAOCreateMode;
+  steps: CreatorSteps[];
 }
 
 export interface CreatorFormState<T = BigIntValuePair> {
@@ -117,15 +146,6 @@ export type AddressValidationMap = Map<string, AddressValidation>;
 export type AddressValidation = {
   address: string;
   isValidAddress: boolean;
-};
-
-export type TokenToFund = {
-  asset: SafeBalanceResponse;
-  amount: BigIntValuePair;
-};
-
-export type NFTToFund = {
-  asset: SafeCollectibleResponse;
 };
 
 export type TokenAllocation<T = bigint> = {

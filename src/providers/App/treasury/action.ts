@@ -1,4 +1,4 @@
-import { FractalTreasury } from '../../../types';
+import { DecentTreasury } from '../../../types';
 
 export enum TreasuryAction {
   UPDATE_TREASURY,
@@ -8,6 +8,6 @@ export enum TreasuryAction {
 export type TreasuryActions =
   | {
       type: TreasuryAction.UPDATE_TREASURY;
-      payload: FractalTreasury;
+      payload: DecentTreasury;
     }
   | { type: TreasuryAction.RESET };

@@ -1,14 +1,13 @@
-import axios from 'axios';
 import { useEffect, useCallback, useRef } from 'react';
-import { logError } from '../../../helpers/errorLogging';
+import { toast } from 'react-toastify';
 import { useFractal } from '../../../providers/App/AppProvider';
+import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { buildSafeApiUrl } from '../../../utils';
-import { useUpdateTimer } from './../../utils/useUpdateTimer';
+import { useUpdateTimer } from '../../utils/useUpdateTimer';
 
-export const useFractalTreasury = () => {
+export const useDecentTreasury = () => {
   // tracks the current valid DAO address / chain; helps prevent unnecessary calls
   const loadKey = useRef<string | null>();
   const {
@@ -16,10 +15,9 @@ export const useFractalTreasury = () => {
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
+  const { getTokenBalances, getNFTBalances } = useBalancesAPI();
 
   const { chain } = useNetworkConfig();
-
-  const { safeBaseURL } = useNetworkConfig();
 
   const { setMethodOnInterval, clearIntervals } = useUpdateTimer(daoAddress);
 
@@ -27,30 +25,35 @@ export const useFractalTreasury = () => {
     if (!daoAddress || !safeAPI) {
       return;
     }
-    const [assetsFungible, assetsNonFungible, transfers] = await Promise.all([
-      safeAPI.getBalances(daoAddress, { excludeSpamTokens: true }).catch(e => {
-        logError(e);
-        return [];
-      }),
-      axios
-        .get(buildSafeApiUrl(safeBaseURL, `/safes/${daoAddress}/collectibles/`, {}, 'v2'))
-        .catch(e => {
-          logError(e);
-          return { data: { results: [] } };
-        }),
-      axios.get(buildSafeApiUrl(safeBaseURL, `/safes/${daoAddress}/transfers/`)).catch(e => {
-        logError(e);
-        return { data: undefined };
-      }),
+
+    const [
+      transfers,
+      { data: tokenBalances, error: tokenBalancesError },
+      { data: nftBalances, error: nftBalancesError },
+    ] = await Promise.all([
+      safeAPI.getAllTransactions(daoAddress),
+      getTokenBalances(daoAddress),
+      getNFTBalances(daoAddress),
     ]);
 
+    if (tokenBalancesError) {
+      toast(tokenBalancesError, { autoClose: 2000 });
+    }
+    if (nftBalancesError) {
+      toast(nftBalancesError, { autoClose: 2000 });
+    }
+    const assetsFungible = tokenBalances || [];
+    const assetsNonFungible = nftBalances || [];
+
+    const totalUsdValue = assetsFungible.reduce((prev, curr) => prev + (curr.usdValue || 0), 0);
     const treasuryData = {
       assetsFungible,
-      assetsNonFungible: assetsNonFungible.data.results,
-      transfers: transfers.data,
+      assetsNonFungible,
+      transfers,
+      totalUsdValue,
     };
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
-  }, [daoAddress, safeAPI, safeBaseURL, action]);
+  }, [daoAddress, safeAPI, action, getTokenBalances, getNFTBalances]);
 
   useEffect(() => {
     if (daoAddress && chain.id + daoAddress !== loadKey.current) {

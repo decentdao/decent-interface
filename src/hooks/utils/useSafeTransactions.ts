@@ -4,7 +4,7 @@ import {
   EthereumTxWithTransfersResponse,
   SafeMultisigTransactionWithTransfersResponse,
   TransferWithTokenInfoResponse,
-} from '@safe-global/safe-service-client';
+} from '@safe-global/api-kit';
 import { useCallback } from 'react';
 import { zeroAddress } from 'viem';
 import { isApproved, isRejected } from '../../helpers/activity';
@@ -307,7 +307,10 @@ export const useSafeTransactions = () => {
                 : undefined,
             proposalId: eventSafeTxHash,
             targets,
-            transactionHash: multiSigTransaction.transactionHash,
+            // @todo typing for `multiSigTransaction.transactionHash` is misleading, as ` multiSigTransaction.transactionHash` is not always defined (if ever). Need to tighten up the typing here.
+            transactionHash:
+              multiSigTransaction.transactionHash ||
+              (transaction as SafeMultisigTransactionWithTransfersResponse).safeTxHash,
             data: data,
             state: null,
             nonce: eventNonce,

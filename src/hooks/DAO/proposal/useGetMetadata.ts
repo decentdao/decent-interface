@@ -1,12 +1,9 @@
+import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { decodeAbiParameters, parseAbiParameters, Hash } from 'viem';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
-import {
-  FractalProposal,
-  CreateProposalMetadata,
-  SafeMultisigTransactionResponse,
-} from '../../../types';
+import { FractalProposal, CreateProposalMetadata } from '../../../types';
 import { CacheKeys } from '../../utils/cache/cacheDefaults';
 import { DBObjectKeys, useIndexedDB } from '../../utils/cache/useLocalDB';
 
@@ -42,7 +39,7 @@ const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) =>
 
     if (!proposal.transaction) return;
 
-    const transaction = proposal.transaction as SafeMultisigTransactionResponse;
+    const transaction = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
 
     // transactionType either isn't SafeMultisigTransactionResponse, or
     // there is no dataDecoded field on it

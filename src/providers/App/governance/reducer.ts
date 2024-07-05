@@ -17,6 +17,8 @@ export const initialGovernanceState: FractalGovernance = {
   loadingProposals: true,
   allProposalsLoaded: false,
   proposals: null,
+  skippedProposalCount: 0,
+  pendingProposals: null,
   proposalTemplates: null,
   type: undefined,
   votingStrategy: undefined,
@@ -28,6 +30,17 @@ export const initialVotesTokenAccountData = {
   delegatee: null,
   votingWeight: null,
   isDelegatesSet: null,
+};
+
+const createPendingProposals = (
+  pendingProposals: string[] | null,
+  proposalIds: string[],
+): string[] | null => {
+  if (pendingProposals === null || proposalIds.length === 0) {
+    return null;
+  }
+
+  return pendingProposals.filter(p => !proposalIds.includes(p));
 };
 
 export const governanceReducer = (state: FractalGovernance, action: FractalGovernanceActions) => {
@@ -43,17 +56,36 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       return {
         ...state,
         proposals: [
+          // dev: what this does, is takes an array of proposals. the payload should, in practice,
+          // never be Snapshot Proposals objects.
+          // Then we create a new proposals list, by appending the payload to what already exists,
+          // while at the same time filtering out all of the non-Snapshot proposals from
+          // the existing list. This "refrehes" the non Snapshot propsoals while leaving Snapshot
+          // proposals alone.
           ...action.payload,
           ...(proposals || []).filter(
             proposal => !!(proposal as SnapshotProposal).snapshotProposalId,
           ),
         ],
+        pendingProposals: createPendingProposals(
+          state.pendingProposals,
+          action.payload.map(p => p.transactionHash),
+        ),
       };
     }
     case FractalGovernanceAction.SET_AZORIUS_PROPOSAL: {
       return {
         ...state,
         proposals: [...(proposals || []), action.payload],
+        pendingProposals: createPendingProposals(state.pendingProposals, [
+          action.payload.transactionHash,
+        ]),
+      };
+    }
+    case FractalGovernanceAction.SKIPPED_A_PROPOSAL: {
+      return {
+        ...state,
+        skippedProposalCount: state.skippedProposalCount + 1,
       };
     }
     case FractalGovernanceAction.SET_PROPOSAL_TEMPLATES: {
@@ -66,7 +98,16 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
       };
     }
     case FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS:
-      return { ...state, proposals: [...(proposals || []), ...action.payload] };
+      // TODO: what happens if this is called after some azorius or multisig proposals have already loaded in?
+      // I would expect that we lose them. Worth some investigation into when this action is called.
+      return {
+        ...state,
+        proposals: [...(proposals || []), ...action.payload],
+        pendingProposals: createPendingProposals(
+          state.pendingProposals,
+          action.payload.map(p => p.transactionHash),
+        ),
+      };
     case FractalGovernanceAction.UPDATE_PROPOSALS_NEW:
       return {
         ...state,
@@ -77,6 +118,9 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
           (proposal, index, array) =>
             index === array.findIndex(p => p.proposalId === proposal.proposalId),
         ),
+        pendingProposals: createPendingProposals(state.pendingProposals, [
+          action.payload.transactionHash,
+        ]),
       };
     case FractalGovernanceAction.UPDATE_NEW_AZORIUS_ERC20_VOTE: {
       const { proposalId, voter, support, votesSummary, weight } = action.payload;
@@ -171,6 +215,9 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
     case FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA: {
       const { votesToken } = state as AzoriusGovernance;
       return { ...state, votesToken: { ...votesToken, ...initialVotesTokenAccountData } };
+    }
+    case FractalGovernanceAction.PENDING_PROPOSAL_ADD: {
+      return { ...state, pendingProposals: [action.payload, ...(state.pendingProposals || [])] };
     }
     // Decent Governance only
     case DecentGovernanceAction.SET_LOCKED_TOKEN_ACCOUNT_DATA: {
