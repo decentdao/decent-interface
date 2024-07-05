@@ -1,9 +1,8 @@
 import { Box, Show, Text } from '@chakra-ui/react';
 import { Pencil } from '@phosphor-icons/react';
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Address, zeroAddress } from 'viem';
+import { Hex, zeroAddress } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
 import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
 import { Card } from '../../../../components/ui/cards/Card';
@@ -23,19 +22,9 @@ function Roles() {
   } = useFractal();
   const navigate = useNavigate();
 
-  const handleNavigateToRole = useCallback(
-    (hatId: Address) => {
-      if (daoAddress) {
-        const hatIndex = hatsTree?.roleHats.findIndex(hat => hat.id === hatId);
-        if (hatIndex !== undefined) {
-          navigate(DAO_ROUTES.rolesDetails.relative(addressPrefix, daoAddress, hatIndex));
-        }
-      }
-    },
-    [addressPrefix, daoAddress, hatsTree?.roleHats, navigate],
-  );
-
   if (!daoAddress) return null;
+  const handleNavigateToRole = (hatId: Hex) =>
+    navigate(DAO_ROUTES.rolesDetails.relative(addressPrefix, daoAddress, hatId));
 
   return (
     <Box>
