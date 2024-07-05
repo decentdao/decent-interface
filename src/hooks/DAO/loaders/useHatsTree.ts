@@ -55,9 +55,11 @@ const useHatsTree = () => {
                     } else {
                       try {
                         const detailsFromIpfs = await ipfsClient.cat(hash);
-                        const jsonStringDetails = JSON.stringify(detailsFromIpfs);
-                        setValue(cacheKey, jsonStringDetails, CacheExpiry.NEVER);
-                        return { ...hat, details: jsonStringDetails };
+                        if (typeof detailsFromIpfs !== 'string') {
+                          const jsonStringDetails = JSON.stringify(detailsFromIpfs);
+                          setValue(cacheKey, jsonStringDetails, CacheExpiry.NEVER);
+                          return { ...hat, details: jsonStringDetails };
+                        }
                       } catch (e) {
                         // Fuck it =/
                       }
