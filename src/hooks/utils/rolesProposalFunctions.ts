@@ -90,12 +90,11 @@ const prepareMintHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, hatsCoun
  * @param getHat A function to get the hat details from the state, given a hat ID. Used to get the current wearer of a hat when the wearer is updated.
  * @param uploadHatDescription A function to upload the hat description to IPFS. Returns the IPFS hash of the uploaded description, to be used to set the hat's details when it's created or updated.
  */
-export const parsedEditedHatsFormValues = async (
+export const parseEditedHatsFormValues = async (
   editedHats: RoleValue[],
   getHat: (hatId: Hex) => DecentRoleHat | null,
   uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
-  //
   //  Parse added hats
   const addedHats: HatStruct[] = await Promise.all(
     editedHats
@@ -120,13 +119,11 @@ export const parsedEditedHatsFormValues = async (
       }),
   );
 
-  //
   // Parse removed hats
   const removedHatIds = editedHats
     .filter(hat => hat.editedRole?.status === EditBadgeStatus.Removed)
     .map(hat => hat.id);
 
-  //
   // Parse member changed hats
   const memberChangedHats: HatWearerChangedParams[] = editedHats
     .filter(
@@ -136,11 +133,11 @@ export const parsedEditedHatsFormValues = async (
     )
     .map(hat => ({
       id: hat.id,
-      currentWearer: getHat(hat.id)!.wearer,
+      currentWearer: getAddress(getHat(hat.id)!.wearer),
       newWearer: getAddress(hat.wearer),
-    }));
+    }))
+    .filter(hat => hat.currentWearer !== hat.newWearer);
 
-  //
   // Parse role details changed hats (name and/or description updated)
   const roleDetailsChangedHats = await Promise.all(
     editedHats
@@ -244,7 +241,7 @@ export const prepareEditHatsProposalData = async (
   proposalMetadata: CreateProposalMetadata,
   edits: {
     addedHats: HatStruct[];
-    removedHatIds: Address[];
+    removedHatIds: Hex[];
     memberChangedHats: HatWearerChangedParams[];
     roleDetailsChangedHats: {
       id: Address;
@@ -253,6 +250,7 @@ export const prepareEditHatsProposalData = async (
   },
   adminHatId: Hex,
   hatsCount: number,
+  uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
   const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
 
@@ -303,15 +301,17 @@ export const prepareEditHatsProposalData = async (
   }
 
   if (roleDetailsChangedHats.length) {
-    hatDetailsChangedTxs = roleDetailsChangedHats.map(({ id, details }) => {
-      return encodeFunctionData({
-        abi: HatsAbi,
-        functionName: 'changeHatDetails',
-        args: [BigInt(id), details],
-      });
-    });
+    hatDetailsChangedTxs = await Promise.all(
+      roleDetailsChangedHats.map(async ({ id, details }) => {
+        const detailsIpfsUrl = await uploadHatDescription(details);
+        return encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'changeHatDetails',
+          args: [BigInt(id), detailsIpfsUrl],
+        });
+      }),
+    );
   }
-
   return {
     targets: [
       ...createAndMintHatsTxs.map(() => hatsContractAddress),

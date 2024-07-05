@@ -16,7 +16,7 @@ import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import {
-  parsedEditedHatsFormValues,
+  parseEditedHatsFormValues,
   prepareCreateTopHatProposalData,
   prepareEditHatsProposalData,
 } from '../../../../../hooks/utils/rolesProposalFunctions';
@@ -57,13 +57,12 @@ function RolesEdit() {
       try {
         // filter to hats that have been modified (ie includes `editedRole` prop)
         const modifiedHats = values.hats.filter(hat => !!hat.editedRole);
-
         let proposalData: ProposalExecuteData;
 
         const uploadHatDescriptionCallback = async (hatDescription: string) =>
           `ipfs://${(await ipfsClient.add(hatDescription)).Hash}`;
 
-        const editedHatStructs = await parsedEditedHatsFormValues(
+        const editedHatStructs = await parseEditedHatsFormValues(
           modifiedHats,
           getHat,
           uploadHatDescriptionCallback,
@@ -89,6 +88,7 @@ function RolesEdit() {
             editedHatStructs,
             hatsTree.adminHat.id,
             hatsTree.roleHatsTotalCount,
+            uploadHatDescriptionCallback,
           );
         }
 
