@@ -237,7 +237,7 @@ export const prepareCreateTopHatProposalData = async (
  * @param proposalMetadata
  * @param edits All the different updates that would be made to the safe's roles if this proposal is executed.
  */
-export const prepareEditHatsProposalData = async (
+export const prepareEditHatsProposalData = (
   proposalMetadata: CreateProposalMetadata,
   edits: {
     addedHats: HatStruct[];
@@ -250,7 +250,6 @@ export const prepareEditHatsProposalData = async (
   },
   adminHatId: Hex,
   hatsCount: number,
-  uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
   const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
 
@@ -301,16 +300,13 @@ export const prepareEditHatsProposalData = async (
   }
 
   if (roleDetailsChangedHats.length) {
-    hatDetailsChangedTxs = await Promise.all(
-      roleDetailsChangedHats.map(async ({ id, details }) => {
-        const detailsIpfsUrl = await uploadHatDescription(details);
-        return encodeFunctionData({
-          abi: HatsAbi,
-          functionName: 'changeHatDetails',
-          args: [BigInt(id), detailsIpfsUrl],
-        });
-      }),
-    );
+    hatDetailsChangedTxs = roleDetailsChangedHats.map(({ id, details }) => {
+      return encodeFunctionData({
+        abi: HatsAbi,
+        functionName: 'changeHatDetails',
+        args: [BigInt(id), details],
+      });
+    });
   }
   return {
     targets: [
