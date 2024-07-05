@@ -12,7 +12,7 @@ const getRoleQueryParam = (addressPrefix: string, daoAddress: string, hatId: Hex
   `${getDaoQueryParam(addressPrefix, daoAddress)}&hatId=${hatId}`;
 
 const getRoleEditQueryParam = (addressPrefix: string, daoAddress: string, hatIndex: number) =>
-  `${getDaoQueryParam(addressPrefix, daoAddress)}&hatId=${hatIndex}`;
+  `${getDaoQueryParam(addressPrefix, daoAddress)}&hatIndex=${hatIndex}`;
 
 export const DAO_ROUTES = {
   dao: {
