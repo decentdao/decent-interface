@@ -5,11 +5,12 @@ import {
   DrawerContent,
   Flex,
   Icon,
+  IconButton,
   Portal,
   Show,
   Text,
 } from '@chakra-ui/react';
-import { ArrowLeft } from '@phosphor-icons/react';
+import { ArrowLeft, X } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -100,6 +101,32 @@ export default function RoleEditDetails() {
                 pt="1rem"
               >
                 <DrawerBody h="100vh">
+                  <Flex
+                    justifyContent="space-between"
+                    my="1rem"
+                  >
+                    <Flex
+                      gap="1rem"
+                      alignItems="center"
+                    >
+                      <IconButton
+                        variant="tertiary"
+                        size="icon-sm"
+                        aria-label="Close Drawer"
+                        as={X}
+                        onClick={() => {
+                          navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress));
+                        }}
+                      />
+                      <Text
+                        textStyle="body-base"
+                        color="white-0"
+                      >
+                        Edit Role
+                      </Text>
+                    </Flex>
+                    {/* @todo add `...` Menu? */}
+                  </Flex>
                   <RoleFormTabs
                     hatIndex={hatEditingIndex}
                     save={() => {

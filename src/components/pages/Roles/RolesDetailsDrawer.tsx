@@ -89,16 +89,24 @@ export default function RolesDetailsDrawer({
                 navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress));
               }}
             />
-            <IconButton
-              variant="tertiary"
-              size="icon-sm"
-              aria-label="Edit Role"
-              as={PencilLine}
-              onClick={() => {
-                if (hatIndex === undefined) return;
-                navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatIndex));
-              }}
-            />
+            <Flex
+              gap="0.5rem"
+              alignItems="center"
+            >
+              {/* @todo add `...` Menu? */}
+              <IconButton
+                variant="tertiary"
+                size="icon-sm"
+                aria-label="Edit Role"
+                as={PencilLine}
+                onClick={() => {
+                  if (hatIndex === undefined) return;
+                  navigate(
+                    DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatIndex),
+                  );
+                }}
+              />
+            </Flex>
           </Flex>
           <Text
             textStyle="display-2xl"
