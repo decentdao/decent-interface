@@ -74,7 +74,7 @@ export interface HatStruct {
 }
 
 export interface HatStructWithId extends HatStruct {
-  id: Address;
+  id: string; // uint256
 }
 
 export interface EditedRole {

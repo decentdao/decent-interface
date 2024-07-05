@@ -1,25 +1,16 @@
-import { zeroAddress, Address, encodeFunctionData, getAddress, IntegerOutOfRangeError } from 'viem';
+import { zeroAddress, Address, encodeFunctionData, getAddress, numberToHex } from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import {
   EditBadgeStatus,
   HatStruct,
-  HatStructWithId,
   HatWearerChangedParams,
   RoleValue,
 } from '../../components/pages/Roles/types';
 import { DecentRoleHat } from '../../state/useRolesState';
 import { CreateProposalMetadata } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
-
-// // // // // // // // // // // // // // // // // // // // // // // // //
-//
-//                        /!\
-//      WARNING: UNTESTED AND RADIOACTIVE CODE AHEAD
-//                  PROCEED WITH CAUTION
-//
-// // // // // // // // // // // // // // // // // // // // // // // // //
 
 const decentHatsAddress = getAddress('0xa66696f25816D5635a7dd1c0f162D66549C69e97'); // @todo: sepolia only. Move to, and read from, network config
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
@@ -32,18 +23,49 @@ const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   });
 };
 
-const predictHatId = async (args: { treeId: number; adminHatId: bigint; hatsCount: number }) => {
-  const { treeId, adminHatId, hatsCount } = args;
+const convertHatIdToBigInt = (id: string) => {
+  try {
+    return BigInt(id);
+  } catch (bigIntError) {
+    console.warn('Error directly converting hat id to bigint', bigIntError);
+    try {
+      return BigInt(parseInt(id, 16));
+    } catch (parseIntError) {
+      console.warn('Error converting hat id to BigInt using parseInt', parseIntError);
 
-  const treeIdBinary = treeId.toString(2).padStart(32, '0');
-  const adminLevelBinary = adminHatId.toString(2).padStart(16, '0');
-  const newSiblingId = (hatsCount + 1).toString(2).padStart(16, '0');
+      // @dev - see https://stackoverflow.com/questions/55646698/base-36-to-bigint
+      // Applying same approach but with radix 16
+      const parsedBigInt = [...id.toString()].reduce(
+        (r, v) => r * BigInt(16) + BigInt(parseInt(v, 16)),
+        0n,
+      );
+      return parsedBigInt;
+    }
+  }
+};
 
-  let newHatBinaryId = `${treeIdBinary}${adminLevelBinary}${newSiblingId}`;
-  newHatBinaryId = newHatBinaryId.padEnd(256, '0');
-  let newHatIdHex = BigInt('0b' + newHatBinaryId).toString(16) as `0x${string}`;
+const predictHatId = ({
+  treeId,
+  adminHatId,
+  hatsCount,
+}: {
+  treeId: number;
+  adminHatId: bigint;
+  hatsCount: number;
+}) => {
+  // 1 byte = 8 bits = 2 string characters
+  const treeIdBinary = treeId.toString(16).padStart(8, '0'); // Tree ID is first **4 bytes**
+  const adminLevelBinary = numberToHex(adminHatId).slice(6, 9); // Top Admin ID is next **16 bits**
 
-  return newHatIdHex;
+  // Each next level is next **16 bits**
+  // Since we're operating only with direct child of top level admin - we don't care about nested levels
+  // @dev At least for now?
+  const newSiblingId = (hatsCount + 1).toString(16).padStart(4, '0');
+
+  // Total length of Hat ID is **32 bytes**
+  const newHatBinaryId = `0b${treeIdBinary}${adminLevelBinary}${newSiblingId}`.padEnd(64, '0');
+  const newHatId = convertHatIdToBigInt(newHatBinaryId);
+  return newHatId;
 };
 
 const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
@@ -76,27 +98,23 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
   ] as const;
 };
 
-const convertHatIdToBigInt = (id: Address) => {
-  try {
-    return BigInt(id);
-  } catch (e) {
-    console.warn('Error directly converting hat id to bigint', e);
-    // @dev - see https://stackoverflow.com/questions/55646698/base-36-to-bigint
-    // Applying same approach but with radix 16
-    const parsedBigInt = [...id.toString()].reduce(
-      (r, v) => r * BigInt(16) + BigInt(parseInt(v, 16)),
-      0n,
-    );
-    return parsedBigInt;
-  }
-};
-
-const prepareMintHatsTxArgs = (addedHats: HatStructWithId[]) => {
+const prepareMintHatsTxArgs = (
+  addedHats: HatStruct[],
+  treeId: number,
+  adminHatId: bigint,
+  hatsCount: number,
+) => {
   const hatIds: bigint[] = [];
   const wearers: Address[] = [];
 
-  addedHats.forEach(hat => {
-    hatIds.push(convertHatIdToBigInt(hat.id));
+  addedHats.forEach((hat, i) => {
+    const predictedHatId = predictHatId({
+      treeId,
+      adminHatId,
+      // Each predicted hat id is based on the current hat count, plus however many hat id have been predicted so far
+      hatsCount: hatsCount + i,
+    });
+    hatIds.push(predictedHatId);
     wearers.push(hat.wearer);
   });
 
@@ -301,57 +319,11 @@ export const prepareEditHatsProposalData = async (
       args: prepareAddHatsTxArgs(addedHats, adminHatId),
     });
 
-    // Next, predict the hat IDs for the added hats
-    const predictedHatIds = await Promise.all(
-      addedHats.map((_, i) =>
-        predictHatId({
-          treeId,
-          adminHatId,
-          // Each predicted hat id is based on the current hat count, plus however many hat id have been predicted so far
-          hatsCount: hatsCount + i,
-        }),
-      ),
-    );
-
     // Finally, prepare a single tx to mint all the hats to the wearers
-    try {
-      encodeFunctionData({
-        abi: HatsAbi,
-        functionName: 'batchMintHats',
-        args: prepareMintHatsTxArgs(
-          addedHats.map((hat, i) => ({
-            ...hat,
-            id: predictedHatIds[i],
-          })),
-        ),
-      });
-    } catch (e) {
-      console.error(e);
-      if (e instanceof IntegerOutOfRangeError) {
-        // @todo - Seems like predicting hat id doesn't work well
-        // It shouldn't be out of uint256 range, but here we are
-        console.error(
-          'Error is instance of integer out of range error',
-          e.cause,
-          e.details,
-          e.docsPath,
-          e.message,
-          e.metaMessages,
-          e.name,
-          e.shortMessage,
-          e.version,
-        );
-      }
-    }
     const mintHatsTx = encodeFunctionData({
       abi: HatsAbi,
       functionName: 'batchMintHats',
-      args: prepareMintHatsTxArgs(
-        addedHats.map((hat, i) => ({
-          ...hat,
-          id: predictedHatIds[i],
-        })),
-      ),
+      args: prepareMintHatsTxArgs(addedHats, treeId, adminHatId, hatsCount),
     });
 
     // Push these two txs to the included txs array.
