@@ -1,18 +1,14 @@
 import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik } from 'formik';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import {
-  RoleFormValues,
-  DEFAULT_ROLE_HAT,
-  RoleValue,
-} from '../../../../../components/pages/Roles/types';
+import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
 import { Card } from '../../../../../components/ui/cards/Card';
 import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
@@ -20,7 +16,7 @@ import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import {
-  parsedEditedHatsFormValues,
+  parseEditedHatsFormValues,
   prepareCreateTopHatProposalData,
   prepareEditHatsProposalData,
 } from '../../../../../hooks/utils/rolesProposalFunctions';
@@ -46,6 +42,12 @@ function RolesEdit() {
 
   const ipfsClient = useIPFSClient();
 
+  const submitProposalSuccessCallback = useCallback(() => {
+    if (daoAddress) {
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+    }
+  }, [daoAddress, addressPrefix, navigate]);
+
   const createRolesEditProposal = useCallback(
     async (values: RoleFormValues) => {
       if (!safe) {
@@ -55,19 +57,20 @@ function RolesEdit() {
       try {
         // filter to hats that have been modified (ie includes `editedRole` prop)
         const modifiedHats = values.hats.filter(hat => !!hat.editedRole);
-
         let proposalData: ProposalExecuteData;
 
-        const uploadHatDescriptionCallback = async (hatDescription: string) =>
-          `ipfs://${(await ipfsClient.add(hatDescription)).Hash}`;
+        const uploadHatDescriptionCallback = async (hatDescription: string) => {
+          const { Hash } = await ipfsClient.add(hatDescription);
+          return `ipfs://${Hash}`;
+        };
 
-        const editedHatStructs = await parsedEditedHatsFormValues(
+        const editedHatStructs = await parseEditedHatsFormValues(
           modifiedHats,
           getHat,
           uploadHatDescriptionCallback,
         );
 
-        if (hatsTreeId === null || hatsTreeId === undefined) {
+        if (!hatsTreeId) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
           // along with any other hats that are added.
           proposalData = await prepareCreateTopHatProposalData(
@@ -78,20 +81,16 @@ function RolesEdit() {
             daoName ?? safe.address,
           );
         } else {
-          if (hatsTree === undefined || hatsTree === null) {
+          if (!hatsTree) {
             throw new Error('Cannot edit Roles without a HatsTree');
           }
-
-          const adminHatId = hatsTree.adminHat.id;
-          const hatsCount = hatsTree.roleHatsTotalCount;
-
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
           proposalData = await prepareEditHatsProposalData(
             values.proposalMetadata,
             editedHatStructs,
-            hatsTreeId,
-            BigInt(adminHatId),
-            hatsCount,
+            hatsTree.adminHat.id,
+            hatsTree.roleHatsTotalCount,
+            uploadHatDescriptionCallback,
           );
         }
 
@@ -102,17 +101,35 @@ function RolesEdit() {
           pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
           successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-          // successCallback,
+          successCallback: submitProposalSuccessCallback,
         });
-
-        console.log('proposalData', proposalData);
       } catch (e) {
         console.error(e);
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
       }
     },
-    [safe, daoName, getHat, hatsTreeId, submitProposal, t, ipfsClient, hatsTree],
+    [
+      safe,
+      daoName,
+      getHat,
+      hatsTreeId,
+      submitProposal,
+      t,
+      ipfsClient,
+      hatsTree,
+      submitProposalSuccessCallback,
+    ],
   );
+
+  const initialValues = useMemo(() => {
+    return {
+      proposalMetadata: {
+        title: '',
+        description: '',
+      },
+      hats: hatsTree?.roleHats || [],
+    };
+  }, [hatsTree?.roleHats]);
 
   if (daoAddress === null) return null;
 
@@ -122,13 +139,7 @@ function RolesEdit() {
 
   return (
     <Formik<RoleFormValues>
-      initialValues={{
-        proposalMetadata: {
-          title: '',
-          description: '',
-        },
-        hats: hatsTree?.roleHats || ([] as RoleValue[]),
-      }}
+      initialValues={initialValues}
       enableReinitialize
       validationSchema={rolesSchema}
       validateOnMount

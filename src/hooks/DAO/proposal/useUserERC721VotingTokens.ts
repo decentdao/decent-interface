@@ -11,6 +11,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { AzoriusGovernance } from '../../../types';
 import { getAzoriusModuleFromModules } from '../../../utils';
+import { SENTINEL_MODULE } from '../../../utils/address';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
@@ -78,7 +79,7 @@ export default function useUserERC721VotingTokens(
           const azoriusContract = azoriusModule.moduleContract as Azorius;
           // @dev assumes the first strategy is the voting contract
           const votingContractAddress = (
-            await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
+            await azoriusContract.getStrategies(SENTINEL_MODULE, 0)
           )[1];
           votingContract = LinearERC721Voting__factory.connect(
             votingContractAddress,

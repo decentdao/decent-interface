@@ -1,24 +1,16 @@
-import { zeroAddress, Address, encodeFunctionData, getAddress } from 'viem';
+import { zeroAddress, Address, encodeFunctionData, getAddress, Hex } from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import {
   EditBadgeStatus,
   HatStruct,
-  HatStructWithId,
   HatWearerChangedParams,
   RoleValue,
 } from '../../components/pages/Roles/types';
 import { DecentRoleHat } from '../../state/useRolesState';
 import { CreateProposalMetadata } from '../../types';
-
-// // // // // // // // // // // // // // // // // // // // // // // // //
-//
-//                        /!\
-//      WARNING: UNTESTED AND RADIOACTIVE CODE AHEAD
-//                  PROCEED WITH CAUTION
-//
-// // // // // // // // // // // // // // // // // // // // // // // // //
+import { SENTINEL_MODULE } from '../../utils/address';
 
 const decentHatsAddress = getAddress('0xa66696f25816D5635a7dd1c0f162D66549C69e97'); // @todo: sepolia only. Move to, and read from, network config
 const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
@@ -31,21 +23,20 @@ const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   });
 };
 
-const predictHatId = async (args: { treeId: number; adminHatId: bigint; hatsCount: number }) => {
-  const { treeId, adminHatId, hatsCount } = args;
+const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsCount: number }) => {
+  // 1 byte = 8 bits = 2 string characters
+  const adminLevelBinary = adminHatId.slice(0, 14); // Top Admin ID 1 byte 0x + 4 bytes (tree ID) + next **16 bits** (admin level ID)
 
-  const treeIdBinary = treeId.toString(2).padStart(32, '0');
-  const adminLevelBinary = adminHatId.toString(2).padStart(16, '0');
-  const newSiblingId = (hatsCount + 1).toString(2).padStart(16, '0');
+  // Each next level is next **16 bits**
+  // Since we're operating only with direct child of top level admin - we don't care about nested levels
+  // @dev At least for now?
+  const newSiblingId = (hatsCount + 1).toString(16).padStart(4, '0');
 
-  let newHatBinaryId = `${treeIdBinary}${adminLevelBinary}${newSiblingId}`;
-  newHatBinaryId = newHatBinaryId.padEnd(256, '0');
-  let newHatIdHex = BigInt('0b' + newHatBinaryId).toString(16) as `0x${string}`;
-
-  return newHatIdHex;
+  // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
+  return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
 };
 
-const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
+const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex) => {
   const admins: bigint[] = [];
   const details: string[] = [];
   const maxSupplies: number[] = [];
@@ -55,10 +46,10 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
   const imageURIs: string[] = [];
 
   addedHats.forEach(hat => {
-    admins.push(adminHatId);
+    admins.push(BigInt(adminHatId));
     details.push(hat.details);
     maxSupplies.push(hat.maxSupply);
-    eligibilityModules.push(zeroAddress);
+    eligibilityModules.push(hat.eligibility);
     toggleModules.push(hat.toggle);
     mutables.push(hat.isMutable);
     imageURIs.push(hat.imageURI);
@@ -75,16 +66,20 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: bigint) => {
   ] as const;
 };
 
-const prepareMintHatsTxArgs = (addedHats: HatStructWithId[]) => {
+const prepareMintHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, hatsCount: number) => {
   const hatIds: bigint[] = [];
   const wearers: Address[] = [];
 
-  addedHats.forEach(hat => {
-    hatIds.push(BigInt(hat.id));
+  addedHats.forEach((hat, i) => {
+    const predictedHatId = predictHatId({
+      adminHatId,
+      // Each predicted hat id is based on the current hat count, plus however many hat id have been predicted so far
+      hatsCount: hatsCount + i,
+    });
+    hatIds.push(predictedHatId);
     wearers.push(hat.wearer);
   });
 
-  console.log({ hatIds, wearers });
   return [hatIds, wearers] as const;
 };
 
@@ -95,12 +90,11 @@ const prepareMintHatsTxArgs = (addedHats: HatStructWithId[]) => {
  * @param getHat A function to get the hat details from the state, given a hat ID. Used to get the current wearer of a hat when the wearer is updated.
  * @param uploadHatDescription A function to upload the hat description to IPFS. Returns the IPFS hash of the uploaded description, to be used to set the hat's details when it's created or updated.
  */
-export const parsedEditedHatsFormValues = async (
+export const parseEditedHatsFormValues = async (
   editedHats: RoleValue[],
-  getHat: (hatId: `0x${string}`) => DecentRoleHat | null,
+  getHat: (hatId: Hex) => DecentRoleHat | null,
   uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
-  //
   //  Parse added hats
   const addedHats: HatStruct[] = await Promise.all(
     editedHats
@@ -125,13 +119,11 @@ export const parsedEditedHatsFormValues = async (
       }),
   );
 
-  //
   // Parse removed hats
   const removedHatIds = editedHats
     .filter(hat => hat.editedRole?.status === EditBadgeStatus.Removed)
     .map(hat => hat.id);
 
-  //
   // Parse member changed hats
   const memberChangedHats: HatWearerChangedParams[] = editedHats
     .filter(
@@ -141,11 +133,11 @@ export const parsedEditedHatsFormValues = async (
     )
     .map(hat => ({
       id: hat.id,
-      currentWearer: getHat(hat.id)!.wearer,
+      currentWearer: getAddress(getHat(hat.id)!.wearer),
       newWearer: getAddress(hat.wearer),
-    }));
+    }))
+    .filter(hat => hat.currentWearer !== hat.newWearer);
 
-  //
   // Parse role details changed hats (name and/or description updated)
   const roleDetailsChangedHats = await Promise.all(
     editedHats
@@ -196,11 +188,10 @@ export const prepareCreateTopHatProposalData = async (
     args: [decentHatsAddress],
   });
 
-  const sentinelModule = '0x0000000000000000000000000000000000000001';
   const disableModuleData = encodeFunctionData({
     abi: GnosisSafeL2,
     functionName: 'disableModule',
-    args: [sentinelModule, decentHatsAddress],
+    args: [SENTINEL_MODULE, decentHatsAddress],
   });
 
   const topHatDetails = await uploadHatDescription(
@@ -250,71 +241,43 @@ export const prepareEditHatsProposalData = async (
   proposalMetadata: CreateProposalMetadata,
   edits: {
     addedHats: HatStruct[];
-    removedHatIds: Address[];
+    removedHatIds: Hex[];
     memberChangedHats: HatWearerChangedParams[];
     roleDetailsChangedHats: {
       id: Address;
       details: string;
     }[];
   },
-  treeId: number,
-  adminHatId: bigint,
+  adminHatId: Hex,
   hatsCount: number,
+  uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
   const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
 
-  if (
-    !addedHats.length &&
-    !removedHatIds.length &&
-    !memberChangedHats.length &&
-    !roleDetailsChangedHats.length
-  ) {
-    // Cz like, why are we even here then?? That's a bug.
-    throw new Error('No hats to edit');
-  }
-
-  type CallDataType = `0x${string}`;
-  const addAndMintHatsTxs: CallDataType[] = [];
-  let removeHatTxs: CallDataType[] = [];
-  let transferHatTxs: CallDataType[] = [];
-  let hatDetailsChangedTxs: CallDataType[] = [];
+  const createAndMintHatsTxs: Hex[] = [];
+  let removeHatTxs: Hex[] = [];
+  let transferHatTxs: Hex[] = [];
+  let hatDetailsChangedTxs: Hex[] = [];
 
   if (addedHats.length) {
     // First, prepare a single tx to create all the hats
-    const addHatsTx = encodeFunctionData({
+    const createHatsTx = encodeFunctionData({
       abi: HatsAbi,
       functionName: 'batchCreateHats',
       args: prepareAddHatsTxArgs(addedHats, adminHatId),
     });
 
-    // Next, predict the hat IDs for the added hats
-    const predictedHatIds = await Promise.all(
-      addedHats.map((_, i) =>
-        predictHatId({
-          treeId,
-          adminHatId,
-          // Each predicted hat id is based on the current hat count, plus however many hat id have been predicted so far
-          hatsCount: hatsCount + i,
-        }),
-      ),
-    );
-
     // Finally, prepare a single tx to mint all the hats to the wearers
     const mintHatsTx = encodeFunctionData({
       abi: HatsAbi,
       functionName: 'batchMintHats',
-      args: prepareMintHatsTxArgs(
-        addedHats.map((hat, i) => ({
-          ...hat,
-          id: predictedHatIds[i],
-        })),
-      ),
+      args: prepareMintHatsTxArgs(addedHats, adminHatId, hatsCount),
     });
 
     // Push these two txs to the included txs array.
     // They will be executed in order: add all hats first, then mint all hats to their respective wearers.
-    addAndMintHatsTxs.push(addHatsTx);
-    addAndMintHatsTxs.push(mintHatsTx);
+    createAndMintHatsTxs.push(createHatsTx);
+    createAndMintHatsTxs.push(mintHatsTx);
   }
 
   if (removedHatIds.length) {
@@ -338,37 +301,33 @@ export const prepareEditHatsProposalData = async (
   }
 
   if (roleDetailsChangedHats.length) {
-    hatDetailsChangedTxs = roleDetailsChangedHats.map(({ id, details }) => {
-      return encodeFunctionData({
-        abi: HatsAbi,
-        functionName: 'changeHatDetails',
-        args: [BigInt(id), details],
-      });
-    });
+    hatDetailsChangedTxs = await Promise.all(
+      roleDetailsChangedHats.map(async ({ id, details }) => {
+        const detailsIpfsUrl = await uploadHatDescription(details);
+        return encodeFunctionData({
+          abi: HatsAbi,
+          functionName: 'changeHatDetails',
+          args: [BigInt(id), detailsIpfsUrl],
+        });
+      }),
+    );
   }
-
-  // @dev
-  // Depending on the number of hats to be added, removed, transferred, or updated, the number of txs included
-  // to be executed in the proposal will be different:
-  //
-  // `includedAddAndMintHatsTx` will be an array of 0 or 2 elements.
-  // the others will be arrays of 0 or more elements.
-
-  if (addAndMintHatsTxs.length > 2) {
-    throw new Error('Too many create hats txs');
-  }
-
   return {
     targets: [
-      ...addAndMintHatsTxs.map(() => hatsContractAddress),
+      ...createAndMintHatsTxs.map(() => hatsContractAddress),
       ...removeHatTxs.map(() => hatsContractAddress),
       ...transferHatTxs.map(() => hatsContractAddress),
       ...hatDetailsChangedTxs.map(() => hatsContractAddress),
     ],
-    calldatas: [...addAndMintHatsTxs, ...removeHatTxs, ...transferHatTxs, ...hatDetailsChangedTxs],
+    calldatas: [
+      ...createAndMintHatsTxs,
+      ...removeHatTxs,
+      ...transferHatTxs,
+      ...hatDetailsChangedTxs,
+    ],
     metaData: proposalMetadata,
     values: [
-      ...addAndMintHatsTxs.map(() => 0n),
+      ...createAndMintHatsTxs.map(() => 0n),
       ...removeHatTxs.map(() => 0n),
       ...transferHatTxs.map(() => 0n),
       ...hatDetailsChangedTxs.map(() => 0n),

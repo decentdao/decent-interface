@@ -5,19 +5,22 @@ import { StreamsQueryDocument } from '../../../.graphclient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function useSablierStreams() {
-  const {
-    sablierSubgraph: { space, slug },
-  } = useNetworkConfig();
+  const { sablierSubgraph } = useNetworkConfig();
   const [fetchStreams, { loading, data, error }] = useLazyQuery(StreamsQueryDocument);
 
   const handleSearchStreams = useCallback(
     async (recipientAddress: Address) => {
-      await fetchStreams({
-        variables: { recipientAddress },
-        context: { subgraphSpace: space, subgraphSlug: slug },
-      });
+      if (sablierSubgraph) {
+        await fetchStreams({
+          variables: { recipientAddress },
+          context: { subgraphSpace: sablierSubgraph.space, subgraphSlug: sablierSubgraph.slug },
+        });
+      } else {
+        // @todo Maybe try to read from onchain?
+        throw new Error('Sablier Subgraph is not supported on this chain');
+      }
     },
-    [fetchStreams, space, slug],
+    [fetchStreams, sablierSubgraph],
   );
 
   return {

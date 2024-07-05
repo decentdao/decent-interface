@@ -18,6 +18,7 @@ import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
+import { SENTINEL_MODULE } from '../../../utils/address';
 import useSafeContracts from '../../safe/useSafeContracts';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { useFractalModules } from '../loaders/useFractalModules';
@@ -328,10 +329,7 @@ export default function useSubmitProposal() {
           const azoriusModuleContract = azoriusModule.moduleContract as Azorius;
           // @dev assumes the first strategy is the voting contract
           const votingStrategyAddress = (
-            await azoriusModuleContract.getStrategies(
-              '0x0000000000000000000000000000000000000001',
-              0,
-            )
+            await azoriusModuleContract.getStrategies(SENTINEL_MODULE, 0)
           )[1];
           submitAzoriusProposal({
             proposalData,

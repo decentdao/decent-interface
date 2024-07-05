@@ -55,9 +55,11 @@ const useHatsTree = () => {
                     } else {
                       try {
                         const detailsFromIpfs = await ipfsClient.cat(hash);
-                        const jsonStringDetails = JSON.stringify(detailsFromIpfs);
-                        setValue(cacheKey, jsonStringDetails, CacheExpiry.NEVER);
-                        return { ...hat, details: jsonStringDetails };
+                        if (typeof detailsFromIpfs !== 'string') {
+                          const jsonStringDetails = JSON.stringify(detailsFromIpfs);
+                          setValue(cacheKey, jsonStringDetails, CacheExpiry.NEVER);
+                          return { ...hat, details: jsonStringDetails };
+                        }
                       } catch (e) {
                         // Fuck it =/
                       }
@@ -81,7 +83,7 @@ const useHatsTree = () => {
         setHatsTree(undefined);
         const message = 'Hats Tree ID is not valid';
         toast(message);
-        console.error({
+        console.error(e, {
           message,
           args: {
             network: chain.id,

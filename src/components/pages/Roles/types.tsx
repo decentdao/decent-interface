@@ -1,4 +1,4 @@
-import { Address, zeroAddress } from 'viem';
+import { Address, Hex, zeroAddress } from 'viem';
 import { DecentRoleHat } from '../../../state/useRolesState';
 import { CreateProposalMetadata } from '../../../types';
 
@@ -7,6 +7,9 @@ export type RoleViewMode = 'edit' | 'view';
 export interface SablierVesting {
   vestingSchedule: string;
   vestingAmount: string;
+  vestingAmountUSD: string;
+  vestingStartDate: string;
+  vestingEndDate: string;
   asset: {
     address: Address;
     symbol: string;
@@ -64,14 +67,14 @@ export interface HatStruct {
   eligibility: Address; // The address that can report on the Hat wearer's status
   toggle: Address; // The address that can deactivate the Hat
   maxSupply: number; // No more than this number of wearers. Hardcode to 1
-  details: string; // JSON string, { name, description } OR IPFS url/hash to said JSON data
+  details: string; // IPFS url/hash to JSON { version: '1.0', data: { name, description, ...arbitraryData } }
   imageURI: string;
   isMutable: boolean; // true
   wearer: Address;
 }
 
 export interface HatStructWithId extends HatStruct {
-  id: Address;
+  id: Hex; // uint256 with padded zeros for the tree ID
 }
 
 export interface EditedRole {
