@@ -9,7 +9,7 @@ export function RoleCardLoading() {
       display="flex"
       alignItems="center"
       justifyContent="center"
-      minH="4rem"
+      minH="6rem"
     >
       <BarLoader />
     </Card>
