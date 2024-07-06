@@ -25,7 +25,7 @@ import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
-export const sepoliaConfig: NetworkConfig = {
+const sepoliaConfig: NetworkConfig = {
   order: 30,
   chain: sepolia,
   moralisSupported: true,
@@ -78,3 +78,5 @@ export const sepoliaConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC721,
   ],
 };
+
+export default sepoliaConfig;

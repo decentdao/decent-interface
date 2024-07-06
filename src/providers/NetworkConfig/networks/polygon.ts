@@ -25,7 +25,7 @@ import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
-export const polygonConfig: NetworkConfig = {
+const polygonConfig: NetworkConfig = {
   order: 20,
   chain: polygon,
   moralisSupported: true,
@@ -74,3 +74,5 @@ export const polygonConfig: NetworkConfig = {
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
+
+export default polygonConfig;
