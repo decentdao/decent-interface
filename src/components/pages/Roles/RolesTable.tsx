@@ -6,11 +6,11 @@ import { Address, getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentRoleHat } from '../../../state/useRolesState';
+import { useRolesState } from '../../../state/useRolesState';
 import { getChainIdFromPrefix } from '../../../utils/url';
-import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
+import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
 import { RoleEditProps, RoleFormValues, RoleProps, SablierPayroll, SablierVesting } from './types';
 
 function RolesHeader() {
@@ -281,14 +281,14 @@ export function RolesRowEdit({
   );
 }
 
-export function RolesTable({
-  handleRoleClick,
-  roleHats,
-}: {
-  handleRoleClick: (hatId: Address) => void;
-  roleHats: DecentRoleHat[] | null | undefined;
-}) {
-  const { t } = useTranslation(['roles']);
+export function RolesTable({ handleRoleClick }: { handleRoleClick: (hatId: Address) => void }) {
+  const { hatsTree } = useRolesState();
+  if (hatsTree === undefined) {
+    return <RoleCardLoading />;
+  }
+  if (hatsTree === null) {
+    return <RoleCardNoRoles />;
+  }
   return (
     <Box
       overflow="hidden"
@@ -296,34 +296,25 @@ export function RolesTable({
       border="1px solid"
       borderColor="white-alpha-08"
     >
-      <Table variant="unstyled">
-        <RolesHeader />
-        {/* Map Rows */}
-        <Tbody
-          sx={{
-            tr: {
-              transition: 'all ease-out 300ms',
-              borderBottom: '1px solid',
-              borderColor: 'white-alpha-08',
-            },
-            'tr:last-child': {
-              borderBottom: 'none',
-            },
-          }}
-        >
-          {roleHats === null && (
-            <Card my="0.5rem">
-              <Text
-                textStyle="body-base"
-                textAlign="center"
-                color="white-alpha-16"
-              >
-                {t('noRoles')}
-              </Text>
-            </Card>
-          )}
-          {roleHats &&
-            roleHats.map(role => (
+      {/* {roleHats === undefined && <RoleCardLoading />} */}
+      {/* {roleHats === null && <RoleCardNoRoles />} */}
+      {hatsTree.roleHats.length && (
+        <Table variant="unstyled">
+          <RolesHeader />
+          {/* Map Rows */}
+          <Tbody
+            sx={{
+              tr: {
+                transition: 'all ease-out 300ms',
+                borderBottom: '1px solid',
+                borderColor: 'white-alpha-08',
+              },
+              'tr:last-child': {
+                borderBottom: 'none',
+              },
+            }}
+          >
+            {hatsTree.roleHats.map(role => (
               <RolesRow
                 key={role.id.toString()}
                 hatId={role.id}
@@ -332,8 +323,9 @@ export function RolesTable({
                 {...role}
               />
             ))}
-        </Tbody>
-      </Table>
+          </Tbody>
+        </Table>
+      )}
     </Box>
   );
 }
@@ -342,7 +334,14 @@ export function RolesEditTable({
 }: {
   handleRoleClick: (hatIndex: number) => void;
 }) {
+  const { hatsTree } = useRolesState();
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  if (hatsTree === undefined) {
+    return <RoleCardLoading />;
+  }
+  if (hatsTree === null && !values.hats.length) {
+    return <RoleCardNoRoles />;
+  }
   return (
     <Box
       overflow="hidden"

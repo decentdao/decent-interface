@@ -1,12 +1,11 @@
-import { Box, Show, Text } from '@chakra-ui/react';
+import { Box, Show } from '@chakra-ui/react';
 import { Pencil } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, zeroAddress } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
+import { RoleCardLoading, RoleCardNoRoles } from '../../../../components/pages/Roles/RolePageCard';
 import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
-import { Card } from '../../../../components/ui/cards/Card';
-import { BarLoader } from '../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -44,33 +43,12 @@ function Roles() {
         }}
         buttonClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
       />
-      {hatsTree === undefined && (
-        <Card
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <BarLoader />
-        </Card>
-      )}
       <Show above="md">
-        <RolesTable
-          handleRoleClick={handleNavigateToRole}
-          roleHats={hatsTree?.roleHats}
-        />
+        <RolesTable handleRoleClick={handleNavigateToRole} />
       </Show>
       <Show below="md">
-        {hatsTree?.roleHats === null && (
-          <Card my="0.5rem">
-            <Text
-              textStyle="body-base"
-              textAlign="center"
-              color="white-alpha-16"
-            >
-              {t('noRoles')}
-            </Text>
-          </Card>
-        )}
+        {hatsTree === undefined && <RoleCardLoading />}
+        {hatsTree === null && <RoleCardNoRoles />}
         {hatsTree &&
           hatsTree.roleHats.map(roleHat => (
             <RoleCard

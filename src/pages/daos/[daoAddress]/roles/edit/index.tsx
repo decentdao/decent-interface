@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik } from 'formik';
 import { useCallback, useMemo } from 'react';
@@ -7,10 +7,12 @@ import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { getAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
+import {
+  RoleCardLoading,
+  RoleCardNoRoles,
+} from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
 import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
-import { Card } from '../../../../../components/ui/cards/Card';
-import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -171,44 +173,25 @@ function RolesEdit() {
                 showRoleEditDetails(values.hats.length);
               }}
             />
-            {hatsTree === undefined && (
-              <Card
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <BarLoader />
-              </Card>
-            )}
-            {hatsTree === null && (
-              <Card my="0.5rem">
-                <Text
-                  textStyle="body-base"
-                  textAlign="center"
-                  color="white-alpha-16"
-                >
-                  {t('noRoles')}
-                </Text>
-              </Card>
-            )}
 
             <Show above="md">
               <RolesEditTable handleRoleClick={showRoleEditDetails} />
             </Show>
             <Show below="md">
-              {values.hats &&
-                values.hats.map((hat, index) => (
-                  <RoleCardEdit
-                    key={index}
-                    name={hat.name}
-                    wearerAddress={hat.wearer}
-                    editStatus={hat.editedRole?.status}
-                    handleRoleClick={() => {
-                      setFieldValue('roleEditing', hat);
-                      showRoleEditDetails(index);
-                    }}
-                  />
-                ))}
+              {hatsTree === undefined && <RoleCardLoading />}
+              {(hatsTree === null || !values.hats.length) && <RoleCardNoRoles />}
+              {values.hats.map((hat, index) => (
+                <RoleCardEdit
+                  key={index}
+                  name={hat.name}
+                  wearerAddress={hat.wearer}
+                  editStatus={hat.editedRole?.status}
+                  handleRoleClick={() => {
+                    setFieldValue('roleEditing', hat);
+                    showRoleEditDetails(index);
+                  }}
+                />
+              ))}
             </Show>
           </Box>
           <Flex
