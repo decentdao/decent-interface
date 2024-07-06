@@ -28,7 +28,7 @@ export default function RoleDetails() {
 
   const handleEditRoleClick = () => {
     const hatIndex = hatsTree?.roleHats.findIndex(hat => hat.id === roleHat.id);
-    if (!hatIndex) return;
+    if (hatIndex === undefined) return;
     navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatIndex));
   };
   return (
