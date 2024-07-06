@@ -10,7 +10,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
-import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getAddress, zeroAddress } from 'viem';
@@ -19,10 +18,10 @@ import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentRoleHat, useRolesState } from '../../../state/useRolesState';
+import { DecentRoleHat } from '../../../state/useRolesState';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
-import { SablierVesting, SablierPayroll } from './types';
+import { SablierVesting, SablierPayroll, RoleValue } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -41,15 +40,25 @@ function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.E
   );
 }
 
+interface RoleDetailsDrawerProps {
+  roleHat:
+    | (DecentRoleHat & { vestingData?: SablierVesting; payrollData?: SablierPayroll })
+    | RoleValue;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onEdit?: () => void;
+  isOpen?: boolean;
+}
+
 export default function RolesDetailsDrawer({
   roleHat,
-}: {
-  roleHat: DecentRoleHat & { vestingData?: SablierVesting; payrollData?: SablierPayroll };
-}) {
+  onClose,
+  isOpen = true,
+  onEdit,
+}: RoleDetailsDrawerProps) {
   const {
     node: { daoAddress },
   } = useFractal();
-  const { hatsTree } = useRolesState();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
   const navigate = useNavigate();
@@ -58,19 +67,14 @@ export default function RolesDetailsDrawer({
     chainId: getChainIdFromPrefix(addressPrefix),
   });
   const avatarURL = useAvatar(roleHat.wearer || zeroAddress);
-  const hatIndex = useMemo(() => {
-    return hatsTree?.roleHats.findIndex(hat => hat.id === roleHat.id);
-  }, [hatsTree, roleHat.id]);
 
   if (!daoAddress) return null;
 
   return (
     <Drawer
-      isOpen
       placement="right"
-      onClose={() => {
-        navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress));
-      }}
+      onClose={onClose ?? (() => {})}
+      isOpen={isOpen}
     >
       <DrawerContent
         minW="50%"
@@ -101,12 +105,7 @@ export default function RolesDetailsDrawer({
                 size="icon-sm"
                 aria-label="Edit Role"
                 as={PencilLine}
-                onClick={() => {
-                  if (hatIndex === undefined) return;
-                  navigate(
-                    DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatIndex),
-                  );
-                }}
+                onClick={onEdit}
               />
             </Flex>
           </Flex>

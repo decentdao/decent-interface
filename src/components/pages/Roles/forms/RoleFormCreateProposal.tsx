@@ -1,19 +1,43 @@
-import { Box, Button, Flex, FormControl } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, Show } from '@chakra-ui/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { CARD_SHADOW } from '../../../../constants/common';
+import { DAO_ROUTES } from '../../../../constants/routes';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleCardEdit } from '../RoleCard';
+import RolesDetailsDrawer from '../RolesDetailsDrawer';
+import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
 import { RoleFormValues } from '../types';
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
+  const [drawerRoleIndex, setDrawerRoleIndex] = useState<number>();
+  console.log("🚀 ~ drawerRoleIndex:", drawerRoleIndex)
   const { t } = useTranslation(['modals', 'common', 'proposal']);
   const { values, handleSubmit } = useFormikContext<RoleFormValues>();
   const editedRoles = useMemo(() => {
     return values.hats.filter(hat => !!hat.editedRole);
   }, [values.hats]);
+
+  const {
+    node: { daoAddress },
+  } = useFractal();
+  const navigate = useNavigate();
+  const { addressPrefix } = useNetworkConfig();
+  const handleEditRoleClick = useCallback(() => {
+    if (drawerRoleIndex !== undefined && !!daoAddress) {
+      navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, drawerRoleIndex));
+    }
+  }, [drawerRoleIndex, navigate, addressPrefix, daoAddress]);
+
+  const handleCloseDrawer = () => {
+    setDrawerRoleIndex(undefined);
+  };
+
   return (
     <Box>
       <Flex
@@ -78,7 +102,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             wearerAddress={role.wearer}
             name={role.name}
             handleRoleClick={() => {
-              // @todo open role details drawer
+              setDrawerRoleIndex(index);
             }}
             editStatus={role.editedRole?.status}
           />
@@ -97,6 +121,26 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         </Button>
         <Button onClick={() => handleSubmit()}>{t('sendAssetsSubmit')}</Button>
       </Flex>
+      {drawerRoleIndex !== undefined && (
+        <>
+          <Show below="md">
+            <RolesDetailsDrawerMobile
+              roleHat={values.hats[drawerRoleIndex]}
+              isOpen={drawerRoleIndex !== undefined}
+              onClose={handleCloseDrawer}
+              onEdit={handleEditRoleClick}
+            />
+          </Show>
+          <Show above="md">
+            <RolesDetailsDrawer
+              roleHat={values.hats[drawerRoleIndex]}
+              isOpen={drawerRoleIndex !== undefined}
+              onClose={handleCloseDrawer}
+              onEdit={handleEditRoleClick}
+            />
+          </Show>
+        </>
+      )}
     </Box>
   );
 }
