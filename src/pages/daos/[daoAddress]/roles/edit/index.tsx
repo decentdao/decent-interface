@@ -12,7 +12,11 @@ import {
   RoleCardNoRoles,
 } from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
+import {
+  RoleFormValues,
+  DEFAULT_ROLE_HAT,
+  EditBadgeStatus,
+} from '../../../../../components/pages/Roles/types';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -49,6 +53,25 @@ function RolesEdit() {
       navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
     }
   }, [daoAddress, addressPrefix, navigate]);
+
+  function generateRoleProposalTitle({ formValues }: { formValues: RoleFormValues }) {
+    const filteredHats = formValues.hats.filter(hat => !!hat.editedRole);
+    const addedHatsCount = filteredHats.filter(
+      hat => hat.editedRole!.status === EditBadgeStatus.New,
+    ).length;
+    const updatedHatsCount = filteredHats.filter(
+      hat => hat.editedRole!.status === EditBadgeStatus.Updated,
+    ).length;
+    const removedHatsCount = filteredHats.filter(
+      hat => hat.editedRole!.status === EditBadgeStatus.Removed,
+    ).length;
+
+    const addedHatsText = addedHatsCount > 0 ? t('addedHats', { addedHatsCount }) : '';
+    const updatedHatsText = updatedHatsCount > 0 ? t('updatedHats', { updatedHatsCount }) : '';
+    const removedHatsText = removedHatsCount > 0 ? t('removedHats', { removedHatsCount }) : '';
+
+    return [addedHatsText, updatedHatsText, removedHatsText].filter(Boolean).join('. ');
+  }
 
   const createRolesEditProposal = useCallback(
     async (values: RoleFormValues) => {
@@ -206,11 +229,15 @@ function RolesEdit() {
               {t('cancel', { ns: 'common' })}
             </Button>
             <Button
-              onClick={() =>
+              onClick={() => {
+                setFieldValue(
+                  'proposalMetadata.title',
+                  generateRoleProposalTitle({ formValues: values }),
+                );
                 navigate(
                   DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, daoAddress),
-                )
-              }
+                );
+              }}
               isDisabled={!values.hats.some(hat => hat.editedRole)}
             >
               {t('createProposal', { ns: 'modals' })}
