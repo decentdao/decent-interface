@@ -115,7 +115,7 @@ export default function RoleEditDetails() {
                         aria-label="Close Drawer"
                         as={X}
                         onClick={() => {
-                          navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress));
+                          navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
                         }}
                       />
                       <Text
