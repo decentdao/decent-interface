@@ -296,8 +296,6 @@ export function RolesTable({ handleRoleClick }: { handleRoleClick: (hatId: Addre
       border="1px solid"
       borderColor="white-alpha-08"
     >
-      {/* {roleHats === undefined && <RoleCardLoading />} */}
-      {/* {roleHats === null && <RoleCardNoRoles />} */}
       {hatsTree.roleHats.length && (
         <Table variant="unstyled">
           <RolesHeader />
