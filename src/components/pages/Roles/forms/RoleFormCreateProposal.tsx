@@ -16,7 +16,7 @@ import { RoleFormValues } from '../types';
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerRoleIndex, setDrawerRoleIndex] = useState<number>();
-  console.log("🚀 ~ drawerRoleIndex:", drawerRoleIndex)
+  console.log('🚀 ~ drawerRoleIndex:', drawerRoleIndex);
   const { t } = useTranslation(['modals', 'common', 'proposal']);
   const { values, handleSubmit } = useFormikContext<RoleFormValues>();
   const editedRoles = useMemo(() => {
