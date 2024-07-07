@@ -250,7 +250,6 @@ export const prepareEditHatsProposalData = async (
   },
   adminHatId: Hex,
   hatsCount: number,
-  uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
   const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
 
@@ -303,11 +302,10 @@ export const prepareEditHatsProposalData = async (
   if (roleDetailsChangedHats.length) {
     hatDetailsChangedTxs = await Promise.all(
       roleDetailsChangedHats.map(async ({ id, details }) => {
-        const detailsIpfsUrl = await uploadHatDescription(details);
         return encodeFunctionData({
           abi: HatsAbi,
           functionName: 'changeHatDetails',
-          args: [BigInt(id), detailsIpfsUrl],
+          args: [BigInt(id), details],
         });
       }),
     );
