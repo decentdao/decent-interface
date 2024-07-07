@@ -92,7 +92,6 @@ function RolesEdit() {
             editedHatStructs,
             hatsTree.adminHat.id,
             hatsTree.roleHatsTotalCount,
-            uploadHatDescriptionCallback,
           );
         }
 
