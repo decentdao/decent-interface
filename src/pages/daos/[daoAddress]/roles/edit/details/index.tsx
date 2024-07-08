@@ -44,11 +44,13 @@ export default function RoleEditDetails() {
             <Portal>
               <Box
                 position="fixed"
-                top={headerHeight}
-                h={`100vh`}
+                top={0}
+                h="100vh"
                 w="full"
                 bg="neutral-1"
                 px="1rem"
+                pt={headerHeight}
+                overflow="scroll"
               >
                 <Flex
                   justifyContent="space-between"
