@@ -1,5 +1,6 @@
 import Azorius from '@fractal-framework/fractal-contracts/deployments/sepolia/Azorius.json' assert { type: 'json' };
 import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/sepolia/AzoriusFreezeGuard.json' assert { type: 'json' };
+import DecentHats from '@fractal-framework/fractal-contracts/deployments/sepolia/DecentHats.json' assert { type: 'json ' };
 import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC20Claim.json' assert { type: 'json' };
 import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC20FreezeVoting.json' assert { type: 'json' };
 import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC721FreezeVoting.json' assert { type: 'json' };
@@ -74,6 +75,11 @@ const sepoliaConfig: NetworkConfig = {
     })?.networkAddresses[sepolia.id.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
+    decentHatsMasterCopy: DecentHats.address,
+    hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
+  },
+  constants: {
+    ha75Address: '0x0000000000000000000000000000000000004a75',
   },
   staking: {},
   createOptions: [

@@ -12,10 +12,6 @@ import { DecentRoleHat } from '../../state/useRolesState';
 import { CreateProposalMetadata } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 
-const decentHatsAddress = getAddress('0xa66696f25816D5635a7dd1c0f162D66549C69e97'); // @todo: sepolia only. Move to, and read from, network config
-const hatsContractAddress = getAddress('0x3bc1A0Ad72417f2d411118085256fC53CBdDd137'); // @todo: move to network configs?
-const ha75Address = getAddress('0x0000000000000000000000000000000000004a75');
-
 const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   return JSON.stringify({
     type: '1.0',
@@ -92,6 +88,7 @@ const prepareMintHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, hatsCoun
  */
 export const parseEditedHatsFormValues = async (
   editedHats: RoleValue[],
+  ha75Address: Address,
   getHat: (hatId: Hex) => DecentRoleHat | null,
   uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
@@ -181,6 +178,8 @@ export const prepareCreateTopHatProposalData = async (
   safeAddress: Address,
   uploadHatDescription: (hatDescription: string) => Promise<string>,
   safeName: string,
+  decentHatsAddress: Address,
+  ha75Address: Address,
 ) => {
   const enableModuleData = encodeFunctionData({
     abi: GnosisSafeL2,
@@ -250,6 +249,7 @@ export const prepareEditHatsProposalData = (
   },
   adminHatId: Hex,
   hatsCount: number,
+  hatsContractAddress: Address,
 ) => {
   const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
 
