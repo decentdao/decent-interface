@@ -110,7 +110,7 @@ function RolesEdit() {
             throw new Error('Cannot edit Roles without a HatsTree');
           }
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
-          proposalData = await prepareEditHatsProposalData(
+          proposalData = prepareEditHatsProposalData(
             values.proposalMetadata,
             editedHatStructs,
             hatsTree.adminHat.id,
