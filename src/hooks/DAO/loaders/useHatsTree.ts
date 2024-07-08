@@ -37,39 +37,38 @@ const useHatsTree = () => {
             },
           },
         });
-        const hatsWithFetchedDetails = tree.hats
-          ? await Promise.all(
-              tree.hats.map(async hat => {
-                const ipfsPrefix = 'ipfs://';
-                if (hat.details && hat.details.includes(ipfsPrefix)) {
-                  const hash = hat.details.split(ipfsPrefix)[1];
-                  if (hash) {
-                    const cacheKey = {
-                      cacheName: CacheKeys.IPFS_HASH,
-                      hash,
-                      chainId: chain.id,
-                    } as const;
-                    const cachedDetails = getValue(cacheKey);
-                    if (cachedDetails) {
-                      return { ...hat, details: cachedDetails };
-                    } else {
-                      try {
-                        const detailsFromIpfs = await ipfsClient.cat(hash);
-                        if (typeof detailsFromIpfs !== 'string') {
-                          const jsonStringDetails = JSON.stringify(detailsFromIpfs);
-                          setValue(cacheKey, jsonStringDetails, CacheExpiry.NEVER);
-                          return { ...hat, details: jsonStringDetails };
-                        }
-                      } catch (e) {
-                        // Fuck it =/
-                      }
-                    }
-                  }
-                }
-                return hat;
-              }),
-            )
-          : tree.hats;
+
+        const hatsWithFetchedDetails = await Promise.all(
+          (tree.hats || []).map(async hat => {
+            const ipfsPrefix = 'ipfs://';
+
+            if (hat.details === undefined || !hat.details.startsWith(ipfsPrefix)) {
+              return hat;
+            }
+
+            const hash = hat.details.split(ipfsPrefix)[1];
+            const cacheKey = {
+              cacheName: CacheKeys.IPFS_HASH,
+              hash,
+              chainId: chain.id,
+            } as const;
+
+            const cachedDetails = getValue(cacheKey);
+
+            if (cachedDetails) {
+              return { ...hat, details: cachedDetails };
+            }
+
+            try {
+              const detailsFromIpfs = await ipfsClient.cat(hash);
+              const jsonStringDetails = JSON.stringify(detailsFromIpfs);
+              setValue(cacheKey, jsonStringDetails, CacheExpiry.NEVER);
+              return { ...hat, details: jsonStringDetails };
+            } catch {
+              return hat;
+            }
+          }),
+        );
 
         const treeWithFetchedDetails: Tree = { ...tree, hats: hatsWithFetchedDetails };
         try {
