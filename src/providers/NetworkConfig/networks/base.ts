@@ -25,7 +25,7 @@ import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
-export const baseConfig: NetworkConfig = {
+const baseConfig: NetworkConfig = {
   order: 10,
   chain: base,
   moralisSupported: true,
@@ -78,3 +78,5 @@ export const baseConfig: NetworkConfig = {
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
+
+export default baseConfig;

@@ -25,7 +25,7 @@ import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
-export const optimismConfig: NetworkConfig = {
+const optimismConfig: NetworkConfig = {
   order: 15,
   chain: optimism,
   moralisSupported: true,
@@ -78,3 +78,5 @@ export const optimismConfig: NetworkConfig = {
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
+
+export default optimismConfig;

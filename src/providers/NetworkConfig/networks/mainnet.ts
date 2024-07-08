@@ -25,7 +25,7 @@ import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
-export const mainnetConfig: NetworkConfig = {
+const mainnetConfig: NetworkConfig = {
   order: 0,
   chain: mainnet,
   moralisSupported: true,
@@ -84,3 +84,5 @@ export const mainnetConfig: NetworkConfig = {
   },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
+
+export default mainnetConfig;

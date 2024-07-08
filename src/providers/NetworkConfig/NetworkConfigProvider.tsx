@@ -2,7 +2,8 @@ import { Context, createContext, ReactNode, useContext, useEffect, useState } fr
 import { useChainId } from 'wagmi';
 import { NetworkConfig } from '../../types/network';
 
-import * as networks from './networks';
+const modules = import.meta.glob<{ default: NetworkConfig }>('./networks/*.ts', { eager: true });
+const networks = Object.values(modules).map(module => module.default);
 
 export const NetworkConfigContext = createContext({} as NetworkConfig);
 
