@@ -17,37 +17,37 @@ const getHatsTreeId = (
   }
 
   // get most recent event where `hatsTreeId` was set
-  const hatsTreeIdEvent = events
+  const topHatIdEvent = events
     .filter(event => event.args.key && event.args.key === 'topHatId')
     .pop();
 
-  if (!hatsTreeIdEvent) {
+  if (!topHatIdEvent) {
     return null;
   }
 
-  if (!hatsTreeIdEvent.args.value) {
+  if (!topHatIdEvent.args.value) {
     logError({
-      message: "KVPairs 'hatsTreeIdEvent' without a value",
+      message: "KVPairs 'topHatIdEvent' without a value",
       network: chainId,
       args: {
-        transactionHash: hatsTreeIdEvent.transactionHash,
-        logIndex: hatsTreeIdEvent.logIndex,
+        transactionHash: topHatIdEvent.transactionHash,
+        logIndex: topHatIdEvent.logIndex,
       },
     });
     return undefined;
   }
 
   try {
-    const topHatId = BigInt(hatsTreeIdEvent.args.value);
+    const topHatId = BigInt(topHatIdEvent.args.value);
     const treeId = hatIdToTreeId(topHatId);
     return treeId;
   } catch (e) {
     logError({
-      message: "KVPairs 'hatsTreeIdEvent' value not a number",
+      message: "KVPairs 'topHatIdEvent' value not a number",
       network: chainId,
       args: {
-        transactionHash: hatsTreeIdEvent.transactionHash,
-        logIndex: hatsTreeIdEvent.logIndex,
+        transactionHash: topHatIdEvent.transactionHash,
+        logIndex: topHatIdEvent.logIndex,
       },
     });
     return undefined;
@@ -85,7 +85,14 @@ const useKeyValuePairs = () => {
         theAddress: node.daoAddress,
       },
       {
-        onLogs: logs => setHatsTreeId(getHatsTreeId(logs, chain.id)),
+        onLogs: logs => {
+          // dev: when this event is captured in realtime, give the subgraph
+          // time to index, and do that most cleanly by not even telling the rest
+          // of our code that we have the hats tree id until some time has passed.
+          setTimeout(() => {
+            setHatsTreeId(getHatsTreeId(logs, chain.id));
+          }, 10_000);
+        },
       },
     );
     return () => {
