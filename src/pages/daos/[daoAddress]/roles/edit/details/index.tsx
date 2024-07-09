@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { ArrowLeft, DotsThree, Trash, X } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Hex } from 'viem';
@@ -36,6 +36,8 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
   const handleRemoveRole = () => {
     const editedRole: EditedRole = {
       fieldNames: [],
@@ -56,6 +58,19 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
     setFieldValue('editingRole', undefined);
     onRemove();
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
     <>
       <IconButton
@@ -69,6 +84,7 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
       {showMenu && (
         <Box
           position="absolute"
+          ref={menuRef}
           right="0%"
           minW="15.25rem"
           rounded="0.5rem"
