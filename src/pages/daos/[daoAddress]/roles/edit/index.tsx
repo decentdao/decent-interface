@@ -31,7 +31,11 @@ function RolesEdit() {
   const {
     node: { daoAddress, safe, daoName },
   } = useFractal();
-  const { addressPrefix } = useNetworkConfig();
+  const {
+    addressPrefix,
+    contracts: { hatsProtocol, decentHatsMasterCopy },
+    constants: { ha75Address },
+  } = useNetworkConfig();
 
   const { rolesSchema } = useRolesSchema();
   const { hatsTree, hatsTreeId, getHat } = useRolesState();
@@ -66,6 +70,7 @@ function RolesEdit() {
 
         const editedHatStructs = await parseEditedHatsFormValues(
           modifiedHats,
+          getAddress(ha75Address),
           getHat,
           uploadHatDescriptionCallback,
         );
@@ -79,6 +84,8 @@ function RolesEdit() {
             getAddress(safe.address),
             uploadHatDescriptionCallback,
             daoName ?? safe.address,
+            getAddress(decentHatsMasterCopy),
+            getAddress(ha75Address),
           );
         } else {
           if (!hatsTree) {
@@ -90,6 +97,7 @@ function RolesEdit() {
             editedHatStructs,
             hatsTree.adminHat.id,
             hatsTree.roleHatsTotalCount,
+            getAddress(hatsProtocol),
           );
         }
 
@@ -108,15 +116,18 @@ function RolesEdit() {
       }
     },
     [
-      safe,
       daoName,
+      decentHatsMasterCopy,
       getHat,
-      hatsTreeId,
-      submitProposal,
-      t,
-      ipfsClient,
+      ha75Address,
+      hatsProtocol,
       hatsTree,
+      hatsTreeId,
+      ipfsClient,
+      safe,
+      submitProposal,
       submitProposalSuccessCallback,
+      t,
     ],
   );
 
