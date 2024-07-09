@@ -161,10 +161,18 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
               color: 'lilac-0',
               boxShadow: CARD_SHADOW,
             }}
+            p="0"
           >
-            <Box ref={payrollTabContainerRef}>
-              <ComingSoonTooltip type="payroll">Payroll</ComingSoonTooltip>
-            </Box>
+            <Flex ref={payrollTabContainerRef}>
+              <ComingSoonTooltip type="payroll">
+                <Flex
+                  px={{ base: '10vw', md: '5vw' }}
+                  py="0.5rem"
+                >
+                  Payroll
+                </Flex>
+              </ComingSoonTooltip>
+            </Flex>
           </Tab>
           <Tab
             w="full"
@@ -176,10 +184,18 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
               color: 'lilac-0',
               boxShadow: CARD_SHADOW,
             }}
+            p="0"
           >
-            <Box ref={vestingTabContainerRef}>
-              <ComingSoonTooltip type="vesting">Vesting</ComingSoonTooltip>
-            </Box>
+            <Flex ref={vestingTabContainerRef}>
+              <ComingSoonTooltip type="vesting">
+                <Flex
+                  px={{ base: '10vw', md: '5vw' }}
+                  py="0.5rem"
+                >
+                  Vesting
+                </Flex>
+              </ComingSoonTooltip>
+            </Flex>
           </Tab>
         </TabList>
         <TabPanels>
