@@ -2,7 +2,7 @@ import { Box, Tab, TabList, TabPanels, TabPanel, Tabs, Button, Flex } from '@cha
 import { useFormikContext } from 'formik';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress } from 'viem';
+import { Hex, zeroAddress } from 'viem';
 import { CARD_SHADOW, TAB_SHADOW } from '../../../../constants/common';
 import { useRolesState } from '../../../../state/useRolesState';
 import { EditBadgeStatus, EditedRole, RoleFormValues, RoleValue } from '../types';
@@ -21,7 +21,13 @@ const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: bool
   return [...fieldNames, fieldName];
 };
 
-export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; save: () => void }) {
+export default function RoleFormTabs({
+  hatId,
+  saveRole,
+}: {
+  hatId: Hex;
+  saveRole: (hatIndex: number) => void;
+}) {
   const [tab, setTab] = useState<EditRoleTabs>(EditRoleTabs.RoleInfo);
   const { hatsTree } = useRolesState();
 
@@ -39,12 +45,12 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
 
   useEffect(() => {
     if (values.hats.length && !values.roleEditing) {
-      const role = values.hats[hatIndex];
+      const role = values.hats.find(hat => hat.id === hatId);
       if (role) {
         setFieldValue('roleEditing', role);
       }
     }
-  }, [values.hats, values.roleEditing, hatIndex, setFieldValue]);
+  }, [values.hats, values.roleEditing, hatId, setFieldValue]);
 
   const isRoleNameUpdated = useMemo<boolean>(
     () => !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name,
@@ -147,11 +153,11 @@ export default function RoleFormTabs({ hatIndex, save }: { hatIndex: number; sav
         my="1rem"
       >
         <Button
-          isDisabled={!!errors.roleEditing?.[hatIndex]}
+          isDisabled={!!errors.roleEditing}
           onClick={() => {
-            setFieldValue(`hats.${hatIndex}`, { ...values.roleEditing, editedRole });
-            setFieldValue('roleEditing', undefined);
-            save();
+            const hatIndex = values.hats.findIndex(h => h.id === hatId);
+            setFieldValue('roleEditing', { ...values.roleEditing, editedRole });
+            saveRole(hatIndex);
           }}
         >
           {t('save')}

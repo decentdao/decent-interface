@@ -1,21 +1,24 @@
 import { Flex, IconButton, Icon, Text, Box } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { Hex } from 'viem';
 import PayrollAndVesting from '../../../pages/daos/[daoAddress]/roles/details/PayrollAndVesting';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { DecentRoleHat, useRolesState } from '../../../state/useRolesState';
+import { useRolesState } from '../../../state/useRolesState';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import { AvatarAndRoleName } from './RoleCard';
-import { SablierVesting, SablierPayroll, RoleValue } from './types';
 
 interface RoleDetailsDrawerMobileProps {
-  roleHat:
-    | (DecentRoleHat & { vestingData?: SablierVesting; payrollData?: SablierPayroll })
-    | RoleValue;
+  roleHat: {
+    id: Hex;
+    name: string;
+    wearer: string;
+    description: string;
+  };
   onOpen?: () => void;
   onClose?: () => void;
   isOpen?: boolean;
-  onEdit?: () => void;
+  onEdit: (hatId: Hex) => void;
 }
 
 export default function RolesDetailsDrawerMobile({
@@ -54,7 +57,7 @@ export default function RolesDetailsDrawerMobile({
             <IconButton
               variant="tertiary"
               aria-label="Edit Role"
-              onClick={onEdit}
+              onClick={() => onEdit(roleHat.id)}
               size="icon-sm"
               icon={
                 <Icon

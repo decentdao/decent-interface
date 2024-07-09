@@ -1,7 +1,8 @@
-import { Address, Hex, zeroAddress } from 'viem';
+import { Address, Hex } from 'viem';
+import { toHex } from 'viem/utils';
+import { getRandomBytes } from '../../../helpers';
 import { DecentRoleHat } from '../../../state/useRolesState';
 import { CreateProposalMetadata } from '../../../types';
-
 export type RoleViewMode = 'edit' | 'view';
 
 export interface SablierVesting {
@@ -94,7 +95,8 @@ export interface RoleFormValues {
 }
 
 export const DEFAULT_ROLE_HAT: RoleValue = {
-  id: zeroAddress,
+  // @dev creates a unique id for the hat for new hats for use in form, not stored on chain
+  id: toHex(getRandomBytes(), { size: 32 }),
   wearer: '',
   name: '',
   description: '',

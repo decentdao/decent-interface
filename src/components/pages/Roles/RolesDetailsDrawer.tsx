@@ -12,16 +12,14 @@ import {
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress, zeroAddress } from 'viem';
+import { Hex, getAddress, zeroAddress } from 'viem';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentRoleHat } from '../../../state/useRolesState';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
-import { SablierVesting, SablierPayroll, RoleValue } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -41,12 +39,15 @@ function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.E
 }
 
 interface RoleDetailsDrawerProps {
-  roleHat:
-    | (DecentRoleHat & { vestingData?: SablierVesting; payrollData?: SablierPayroll })
-    | RoleValue;
+  roleHat: {
+    id: Hex;
+    name: string;
+    wearer: string;
+    description: string;
+  };
   onOpen?: () => void;
   onClose?: () => void;
-  onEdit?: () => void;
+  onEdit: (hatId: Hex) => void;
   isOpen?: boolean;
 }
 
@@ -105,7 +106,7 @@ export default function RolesDetailsDrawer({
                 size="icon-sm"
                 aria-label="Edit Role"
                 as={PencilLine}
-                onClick={onEdit}
+                onClick={() => onEdit(roleHat.id)}
               />
             </Flex>
           </Flex>

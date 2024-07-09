@@ -2,7 +2,7 @@ import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@
 import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Address, getAddress, zeroAddress } from 'viem';
+import { Address, Hex, getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -327,11 +327,7 @@ export function RolesTable({ handleRoleClick }: { handleRoleClick: (hatId: Addre
     </Box>
   );
 }
-export function RolesEditTable({
-  handleRoleClick,
-}: {
-  handleRoleClick: (hatIndex: number) => void;
-}) {
+export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
   const { hatsTree } = useRolesState();
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   if (hatsTree === undefined) {
@@ -362,13 +358,13 @@ export function RolesEditTable({
             },
           }}
         >
-          {values.hats.map((role, index) => (
+          {values.hats.map(role => (
             <RolesRowEdit
               key={role.id}
               wearerAddress={role.wearer}
               handleRoleClick={() => {
                 setFieldValue('roleEditing', role);
-                handleRoleClick(index);
+                handleRoleClick(role.id);
               }}
               {...role}
             />

@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { getAddress } from 'viem';
+import { Hex, getAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import {
   RoleCardLoading,
@@ -157,8 +157,8 @@ function RolesEdit() {
 
   if (daoAddress === null) return null;
 
-  const showRoleEditDetails = (_hatIndex: number) => {
-    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, _hatIndex));
+  const showRoleEditDetails = (hatId: Hex) => {
+    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatId));
   };
 
   return (
@@ -191,8 +191,9 @@ function RolesEdit() {
                 leftIcon: <Plus />,
               }}
               buttonClick={() => {
-                setFieldValue('roleEditing', DEFAULT_ROLE_HAT);
-                showRoleEditDetails(values.hats.length);
+                const newRole = DEFAULT_ROLE_HAT;
+                setFieldValue('roleEditing', newRole);
+                showRoleEditDetails(newRole.id);
               }}
             />
 
@@ -202,15 +203,15 @@ function RolesEdit() {
             <Show below="md">
               {hatsTree === undefined && <RoleCardLoading />}
               {(hatsTree === null || !values.hats.length) && <RoleCardNoRoles />}
-              {values.hats.map((hat, index) => (
+              {values.hats.map(hat => (
                 <RoleCardEdit
-                  key={index}
+                  key={hat.id}
                   name={hat.name}
                   wearerAddress={hat.wearer}
                   editStatus={hat.editedRole?.status}
                   handleRoleClick={() => {
                     setFieldValue('roleEditing', hat);
-                    showRoleEditDetails(index);
+                    showRoleEditDetails(hat.id);
                   }}
                 />
               ))}

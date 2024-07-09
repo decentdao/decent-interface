@@ -14,6 +14,7 @@ import { ArrowLeft, X } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Hex } from 'viem';
 import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
 import { RoleFormValues } from '../../../../../../components/pages/Roles/types';
 import { useHeaderHeight } from '../../../../../../constants/common';
@@ -29,17 +30,24 @@ export default function RoleEditDetails() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
-  const hatEditingIndex = searchParams.get('hatIndex')
-    ? parseInt(searchParams.get('hatIndex') as string)
-    : undefined;
+  const hatEditingId = searchParams.get('hatId') as Hex | undefined;
   if (!daoAddress) return null;
-  if (hatEditingIndex === undefined) return null;
+  if (hatEditingId === undefined) return null;
+
+  const saveRole = (hatIndex: number, push: (obj: any) => void) => {
+    if (hatIndex === -1) {
+      push(values.roleEditing);
+    }
+    setFieldValue(`hats.${hatIndex}`, { ...values.roleEditing });
+    setFieldValue('roleEditing', undefined);
+    navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+  };
 
   return (
     <FieldArray name="hats">
-      {({ remove }) => (
+      {({ remove, push }) => (
         <>
           <Show below="md">
             <Portal>
@@ -63,8 +71,9 @@ export default function RoleEditDetails() {
                     alignItems="center"
                     aria-label={t('editRoles')}
                     onClick={() => {
-                      if (!values.hats[hatEditingIndex]) {
-                        remove(hatEditingIndex);
+                      const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
+                      if (!hatIndex) {
+                        remove(hatIndex);
                       }
                       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
                     }}
@@ -78,9 +87,9 @@ export default function RoleEditDetails() {
                 </Flex>
 
                 <RoleFormTabs
-                  hatIndex={hatEditingIndex}
-                  save={() => {
-                    navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                  hatId={hatEditingId}
+                  saveRole={hatIndex => {
+                    saveRole(hatIndex, push);
                   }}
                 />
               </Box>
@@ -91,7 +100,8 @@ export default function RoleEditDetails() {
               isOpen
               placement="right"
               onClose={() => {
-                if (!values.hats[hatEditingIndex]) {
+                const hatEditingIndex = values.hats.findIndex(h => h.id === hatEditingId);
+                if (!hatEditingIndex) {
                   remove(hatEditingIndex);
                 }
                 navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
@@ -130,9 +140,9 @@ export default function RoleEditDetails() {
                     {/* @todo add `...` Menu? */}
                   </Flex>
                   <RoleFormTabs
-                    hatIndex={hatEditingIndex}
-                    save={() => {
-                      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                    hatId={hatEditingId}
+                    saveRole={hatIndex => {
+                      saveRole(hatIndex, push);
                     }}
                   />
                 </DrawerBody>

@@ -3,6 +3,7 @@ import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -12,10 +13,10 @@ import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleCardEdit } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
-import { RoleFormValues } from '../types';
+import { RoleFormValues, RoleValue } from '../types';
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
-  const [drawerRoleIndex, setDrawerRoleIndex] = useState<number>();
+  const [drawerViewingRole, setDrawerViewingRole] = useState<RoleValue>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
   const { values, handleSubmit } = useFormikContext<RoleFormValues>();
   const editedRoles = useMemo(() => {
@@ -27,14 +28,18 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
-  const handleEditRoleClick = useCallback(() => {
-    if (drawerRoleIndex !== undefined && !!daoAddress) {
-      navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, drawerRoleIndex));
-    }
-  }, [drawerRoleIndex, navigate, addressPrefix, daoAddress]);
+
+  const handleEditRoleClick = useCallback(
+    (hatId: Hex) => {
+      if (!!daoAddress) {
+        navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatId));
+      }
+    },
+    [navigate, addressPrefix, daoAddress],
+  );
 
   const handleCloseDrawer = () => {
-    setDrawerRoleIndex(undefined);
+    setDrawerViewingRole(undefined);
   };
 
   return (
@@ -101,7 +106,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             wearerAddress={role.wearer}
             name={role.name}
             handleRoleClick={() => {
-              setDrawerRoleIndex(index);
+              setDrawerViewingRole(role);
             }}
             editStatus={role.editedRole?.status}
           />
@@ -120,20 +125,20 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         </Button>
         <Button onClick={() => handleSubmit()}>{t('sendAssetsSubmit')}</Button>
       </Flex>
-      {drawerRoleIndex !== undefined && (
+      {drawerViewingRole !== undefined && (
         <>
           <Show below="md">
             <RolesDetailsDrawerMobile
-              roleHat={values.hats[drawerRoleIndex]}
-              isOpen={drawerRoleIndex !== undefined}
+              roleHat={drawerViewingRole}
+              isOpen={drawerViewingRole !== undefined}
               onClose={handleCloseDrawer}
               onEdit={handleEditRoleClick}
             />
           </Show>
           <Show above="md">
             <RolesDetailsDrawer
-              roleHat={values.hats[drawerRoleIndex]}
-              isOpen={drawerRoleIndex !== undefined}
+              roleHat={drawerViewingRole}
+              isOpen={drawerViewingRole !== undefined}
               onClose={handleCloseDrawer}
               onEdit={handleEditRoleClick}
             />

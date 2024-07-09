@@ -11,8 +11,6 @@ const getDaoQueryParam = (addressPrefix: string, daoAddress: string) =>
 const getRoleQueryParam = (addressPrefix: string, daoAddress: string, hatId: Hex) =>
   `${getDaoQueryParam(addressPrefix, daoAddress)}&hatId=${hatId}`;
 
-const getRoleEditQueryParam = (addressPrefix: string, daoAddress: string, hatIndex: number) =>
-  `${getDaoQueryParam(addressPrefix, daoAddress)}&hatIndex=${hatIndex}`;
 
 export const DAO_ROUTES = {
   dao: {
@@ -51,8 +49,8 @@ export const DAO_ROUTES = {
     path: 'roles/edit',
   },
   rolesEditDetails: {
-    relative: (addressPrefix: string, daoAddress: string, hatIndex: number) =>
-      `/roles/edit/details${getRoleEditQueryParam(addressPrefix, daoAddress, hatIndex)}`,
+    relative: (addressPrefix: string, daoAddress: string, hatId: Hex) =>
+      `/roles/edit/details${getRoleQueryParam(addressPrefix, daoAddress, hatId)}`,
     path: 'roles/edit/details',
   },
   rolesEditCreateProposalSummary: {
