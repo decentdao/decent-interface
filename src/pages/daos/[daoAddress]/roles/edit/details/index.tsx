@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Drawer,
   DrawerBody,
   DrawerContent,
@@ -10,17 +11,94 @@ import {
   Show,
   Text,
 } from '@chakra-ui/react';
-import { ArrowLeft, X } from '@phosphor-icons/react';
+import { ArrowLeft, DotsThree, Trash, X } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Hex } from 'viem';
 import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
-import { RoleFormValues } from '../../../../../../components/pages/Roles/types';
-import { useHeaderHeight } from '../../../../../../constants/common';
+import {
+  EditBadgeStatus,
+  EditedRole,
+  RoleFormValues,
+} from '../../../../../../components/pages/Roles/types';
+import {
+  CARD_SHADOW,
+  NEUTRAL_2_82_TRANSPARENT,
+  useHeaderHeight,
+} from '../../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../../constants/routes';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
+
+function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void }) {
+  const { t } = useTranslation(['roles']);
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const [showMenu, setShowMenu] = useState(false);
+  const handleRemoveRole = () => {
+    const editedRole: EditedRole = {
+      fieldNames: [],
+      status: EditBadgeStatus.Removed,
+    };
+    const hatIndex = values.hats.findIndex(h => h.id === hatId);
+    if (hatIndex !== -1) {
+      const role = values.hats[hatIndex];
+      if (role?.editedRole?.status === EditBadgeStatus.New) {
+        setFieldValue(
+          'hats',
+          values.hats.filter(h => h.id !== hatId),
+        );
+      } else {
+        setFieldValue(`hats.${hatIndex}`, { ...values.hats[hatIndex], editedRole });
+      }
+    }
+    setFieldValue('editingRole', undefined);
+    onRemove();
+  };
+  return (
+    <>
+      <IconButton
+        aria-label="edit role menu"
+        variant="tertiary"
+        h="fit-content"
+        size="lg"
+        as={DotsThree}
+        onClick={() => setShowMenu(show => !show)}
+      />
+      {showMenu && (
+        <Box
+          position="absolute"
+          right="0%"
+          minW="15.25rem"
+          rounded="0.5rem"
+          bg={NEUTRAL_2_82_TRANSPARENT}
+          border="1px solid"
+          borderColor="neutral-3"
+          boxShadow={CARD_SHADOW}
+          zIndex={10000}
+        >
+          <Button
+            variant="unstyled"
+            color="red-1"
+            _hover={{ bg: 'neutral-2' }}
+            onClick={handleRemoveRole}
+            rightIcon={
+              <Icon
+                as={Trash}
+                boxSize="1.5rem"
+              />
+            }
+            minW="full"
+            justifyContent="space-between"
+          >
+            {t('deleteRole')}
+          </Button>
+        </Box>
+      )}
+    </>
+  );
+}
 
 export default function RoleEditDetails() {
   const headerHeight = useHeaderHeight();
@@ -74,6 +152,14 @@ export default function RoleEditDetails() {
                       boxSize="1.5rem"
                     />
                     <Text textStyle="display-lg">{t('editRoles')}</Text>
+                    <Box position="relative">
+                      <EditRoleMenu
+                        onRemove={() => {
+                          navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                        }}
+                        hatId={hatEditingId}
+                      />
+                    </Box>
                   </Flex>
                 </Flex>
 
@@ -126,7 +212,14 @@ export default function RoleEditDetails() {
                         {t('editRole')}
                       </Text>
                     </Flex>
-                    {/* @todo add `...` Menu? */}
+                    <Box position="relative">
+                      <EditRoleMenu
+                        hatId={hatEditingId}
+                        onRemove={() => {
+                          navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                        }}
+                      />
+                    </Box>
                   </Flex>
                   <RoleFormTabs
                     hatId={hatEditingId}

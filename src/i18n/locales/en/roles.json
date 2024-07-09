@@ -22,5 +22,6 @@
   "ending": "Ending",
   "addedHats": "Add {{addedHatsCount}} new role",
   "updatedHats": "Update {{updatedHatsCount}} role",
-  "removedHats": "Remove {{removedHatsCount}} role"
+  "removedHats": "Remove {{removedHatsCount}} role",
+  "deleteRole": "Delete Role"
 }
