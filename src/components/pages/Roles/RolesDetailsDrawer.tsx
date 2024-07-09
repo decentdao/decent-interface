@@ -12,13 +12,12 @@ import {
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Hex, getAddress, zeroAddress } from 'viem';
+import { Hex, getAddress } from 'viem';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { getChainIdFromPrefix } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
@@ -60,14 +59,14 @@ export default function RolesDetailsDrawer({
   const {
     node: { daoAddress },
   } = useFractal();
-  const { addressPrefix } = useNetworkConfig();
+  const { addressPrefix, chain } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
   const navigate = useNavigate();
   const { daoName: accountDisplayName } = useGetDAOName({
-    address: getAddress(roleHat.wearer || zeroAddress),
-    chainId: getChainIdFromPrefix(addressPrefix),
+    address: getAddress(roleHat.wearer),
+    chainId: chain.id,
   });
-  const avatarURL = useAvatar(roleHat.wearer || zeroAddress);
+  const avatarURL = useAvatar(roleHat.wearer);
 
   if (!daoAddress) return null;
 
