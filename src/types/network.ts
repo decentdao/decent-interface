@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { Chain } from 'viem';
+import { Chain, Address } from 'viem';
 import { GovernanceType } from './fractal';
 
 export type Providers =
@@ -49,6 +49,8 @@ export type NetworkConfig = {
     keyValuePairs: string;
     decentHatsMasterCopy: string;
     hatsProtocol: string;
+    erc6551Registry: Address;
+    hatsAccount1ofNMasterCopy: Address;
   };
   constants: {
     ha75Address: string;
