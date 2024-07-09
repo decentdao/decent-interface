@@ -81,9 +81,6 @@ const sepoliaConfig: NetworkConfig = {
     erc6551Registry: getAddress('0x000000006551c19487814612e58FE06813775758'),
     hatsAccount1ofNMasterCopy: getAddress('0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29'),
   },
-  constants: {
-    ha75Address: '0x0000000000000000000000000000000000004a75',
-  },
   staking: {},
   createOptions: [
     GovernanceType.MULTISIG,

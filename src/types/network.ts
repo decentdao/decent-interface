@@ -52,9 +52,6 @@ export type NetworkConfig = {
     erc6551Registry: Address;
     hatsAccount1ofNMasterCopy: Address;
   };
-  constants: {
-    ha75Address: string;
-  };
   staking: {
     lido?: {
       stETHContractAddress: string;

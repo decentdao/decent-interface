@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Hex, getAddress } from 'viem';
+import { Hex, getAddress, zeroAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import {
   RoleCardLoading,
@@ -40,7 +40,6 @@ function RolesEdit() {
   const {
     addressPrefix,
     contracts: { hatsProtocol, decentHatsMasterCopy },
-    constants: { ha75Address },
   } = useNetworkConfig();
 
   const { rolesSchema } = useRolesSchema();
@@ -95,7 +94,7 @@ function RolesEdit() {
 
         const editedHatStructs = await parseEditedHatsFormValues(
           modifiedHats,
-          getAddress(ha75Address),
+          zeroAddress, // This needs to be the Top Hat Smart Address, hatsTree.topHat.smartAddress,
           getHat,
           uploadHatDescriptionCallback,
         );
@@ -110,7 +109,7 @@ function RolesEdit() {
             uploadHatDescriptionCallback,
             daoName ?? safe.address,
             getAddress(decentHatsMasterCopy),
-            getAddress(ha75Address),
+            zeroAddress, // This needs to be the Top Hat Smart Address, hatsTree.topHat.smartAddress,
           );
         } else {
           if (!hatsTree) {
@@ -144,7 +143,6 @@ function RolesEdit() {
       daoName,
       decentHatsMasterCopy,
       getHat,
-      ha75Address,
       hatsProtocol,
       hatsTree,
       hatsTreeId,

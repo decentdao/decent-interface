@@ -88,7 +88,7 @@ const prepareMintHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, hatsCoun
  */
 export const parseEditedHatsFormValues = async (
   editedHats: RoleValue[],
-  ha75Address: Address,
+  topHatAccount: Address,
   getHat: (hatId: Hex) => DecentRoleHat | null,
   uploadHatDescription: (hatDescription: string) => Promise<string>,
 ) => {
@@ -105,8 +105,8 @@ export const parseEditedHatsFormValues = async (
         );
 
         return {
-          eligibility: ha75Address,
-          toggle: ha75Address,
+          eligibility: topHatAccount,
+          toggle: topHatAccount,
           maxSupply: 1,
           details,
           imageURI: '',
@@ -179,7 +179,7 @@ export const prepareCreateTopHatProposalData = async (
   uploadHatDescription: (hatDescription: string) => Promise<string>,
   safeName: string,
   decentHatsAddress: Address,
-  ha75Address: Address,
+  topHatAccount: Address,
 ) => {
   const enableModuleData = encodeFunctionData({
     abi: GnosisSafeL2,
@@ -207,8 +207,8 @@ export const prepareCreateTopHatProposalData = async (
   );
 
   const adminHat: HatStruct = {
-    eligibility: ha75Address,
-    toggle: ha75Address,
+    eligibility: topHatAccount,
+    toggle: topHatAccount,
     maxSupply: 1,
     details: adminHatDetails,
     imageURI: '',
