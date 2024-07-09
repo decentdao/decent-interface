@@ -11,7 +11,7 @@ const blockAnimation = [
   `${waveKeyframes} 2s ease .0s infinite`,
   `${waveKeyframes} 2s ease .2s infinite`,
   `${waveKeyframes} 2s ease .4s infinite`,
-  `${waveKeyframes} 2s ease .6s infinite`
+  `${waveKeyframes} 2s ease .6s infinite`,
 ];
 
 // @dev Not changing the name of this component to WaveLoader, to avoid diffs across the entire codebase + this is a temporary update pending custom shimmer loader design.
@@ -25,14 +25,19 @@ export function BarLoader() {
       bg="white"
       opacity={0.4}
       borderRadius="2px"
-      m={(i+1)%4 ? "0 5px 5px 0": ""}
-      animation={blockAnimation[(i) % 4]}
+      m={(i + 1) % 4 ? '0 5px 5px 0' : ''}
+      animation={blockAnimation[i % 4]}
       display="inline-block"
     />
   ));
 
   return (
-    <Flex mb="70px" flexWrap="wrap" w="50px" h="10px">
+    <Flex
+      mb="70px"
+      flexWrap="wrap"
+      w="50px"
+      h="10px"
+    >
       {blocks}
     </Flex>
   );
