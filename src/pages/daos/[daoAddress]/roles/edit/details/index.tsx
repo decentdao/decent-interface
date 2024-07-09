@@ -14,7 +14,7 @@ import { ArrowLeft, X } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Hex } from 'viem';
+import { isHex } from 'viem';
 import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
 import { RoleFormValues } from '../../../../../../components/pages/Roles/types';
 import { useHeaderHeight } from '../../../../../../constants/common';
@@ -32,7 +32,8 @@ export default function RoleEditDetails() {
   const navigate = useNavigate();
   const { values } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
-  const hatEditingId = searchParams.get('hatId') as Hex | undefined;
+  const hatEditingId = searchParams.get('hatId');
+  if (!isHex(hatEditingId)) return null;
   if (!daoAddress) return null;
   if (hatEditingId === undefined) return null;
 
