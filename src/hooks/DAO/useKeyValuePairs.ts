@@ -16,7 +16,7 @@ const getHatsTreeId = (
     return null;
   }
 
-  // get most recent event where `hatsTreeId` was set
+  // get most recent event where `topHatId` was set
   const topHatIdEvent = events
     .filter(event => event.args.key && event.args.key === 'topHatId')
     .pop();
