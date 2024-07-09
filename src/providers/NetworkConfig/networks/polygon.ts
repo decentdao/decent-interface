@@ -1,5 +1,6 @@
 import Azorius from '@fractal-framework/fractal-contracts/deployments/polygon/Azorius.json' assert { type: 'json' };
 import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/polygon/AzoriusFreezeGuard.json' assert { type: 'json' };
+import DecentHats from '@fractal-framework/fractal-contracts/deployments/polygon/DecentHats.json' assert { type: 'json ' };
 import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/polygon/ERC20Claim.json' assert { type: 'json' };
 import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/ERC20FreezeVoting.json' assert { type: 'json' };
 import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/polygon/ERC721FreezeVoting.json' assert { type: 'json' };
@@ -25,7 +26,7 @@ import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
-export const polygonConfig: NetworkConfig = {
+const polygonConfig: NetworkConfig = {
   order: 20,
   chain: polygon,
   moralisSupported: true,
@@ -74,7 +75,14 @@ export const polygonConfig: NetworkConfig = {
     })?.networkAddresses[polygon.id.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
+    decentHatsMasterCopy: DecentHats.address,
+    hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
+  },
+  constants: {
+    ha75Address: '0x0000000000000000000000000000000000004a75',
   },
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
+
+export default polygonConfig;

@@ -47,6 +47,11 @@ export type NetworkConfig = {
     erc721FreezeVotingMasterCopy: string;
     votesERC20WrapperMasterCopy: string;
     keyValuePairs: string;
+    decentHatsMasterCopy: string;
+    hatsProtocol: string;
+  };
+  constants: {
+    ha75Address: string;
   };
   staking: {
     lido?: {

@@ -1,14 +1,25 @@
-import { Box, Tab, TabList, TabPanels, TabPanel, Tabs, Button, Flex } from '@chakra-ui/react';
+import {
+  Box,
+  Tab,
+  TabList,
+  TabPanels,
+  TabPanel,
+  Tabs,
+  Button,
+  Flex,
+  Tooltip,
+} from '@chakra-ui/react';
 import { useFormikContext } from 'formik';
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, ReactNode, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Hex, zeroAddress } from 'viem';
-import { CARD_SHADOW, TAB_SHADOW } from '../../../../constants/common';
+import { CARD_SHADOW, TAB_SHADOW, TOOLTIP_MAXW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../state/useRolesState';
+import ModalTooltip from '../../../ui/modals/ModalTooltip';
 import { EditBadgeStatus, EditedRole, RoleFormValues, RoleValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 
@@ -81,7 +92,40 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
     };
   }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
 
+  const payrollTabContainerRef = useRef<HTMLDivElement>(null);
+  const vestingTabContainerRef = useRef<HTMLDivElement>(null);
+
   if (!daoAddress) return null;
+
+  function ComingSoonTooltip({
+    children,
+    type,
+  }: {
+    children: ReactNode;
+    type: 'payroll' | 'vesting';
+  }) {
+    if (payrollTabContainerRef || vestingTabContainerRef) {
+      return (
+        <ModalTooltip
+          containerRef={type === 'payroll' ? payrollTabContainerRef : vestingTabContainerRef}
+          maxW={TOOLTIP_MAXW}
+          label="Coming soon"
+        >
+          {children}
+        </ModalTooltip>
+      );
+    }
+
+    return (
+      <Tooltip
+        label="Coming soon"
+        aria-label="Coming soon"
+      >
+        {children}
+      </Tooltip>
+    );
+  }
+
   return (
     <Box>
       <Tabs
@@ -117,8 +161,18 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
               color: 'lilac-0',
               boxShadow: CARD_SHADOW,
             }}
+            p="0"
           >
-            Payroll
+            <Flex ref={payrollTabContainerRef}>
+              <ComingSoonTooltip type="payroll">
+                <Flex
+                  px={{ base: '10vw', md: '5vw' }}
+                  py="0.5rem"
+                >
+                  Payroll
+                </Flex>
+              </ComingSoonTooltip>
+            </Flex>
           </Tab>
           <Tab
             w="full"
@@ -130,8 +184,18 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
               color: 'lilac-0',
               boxShadow: CARD_SHADOW,
             }}
+            p="0"
           >
-            Vesting
+            <Flex ref={vestingTabContainerRef}>
+              <ComingSoonTooltip type="vesting">
+                <Flex
+                  px={{ base: '10vw', md: '5vw' }}
+                  py="0.5rem"
+                >
+                  Vesting
+                </Flex>
+              </ComingSoonTooltip>
+            </Flex>
           </Tab>
         </TabList>
         <TabPanels>

@@ -20,6 +20,7 @@ const useHatsTree = () => {
       if (hatsTreeId === undefined || hatsTreeId === null) {
         return;
       }
+
       try {
         const tree = await hatsSubgraphClient.getTree({
           chainId: chain.id,
@@ -79,7 +80,7 @@ const useHatsTree = () => {
           }
         }
       } catch (e) {
-        setHatsTree(undefined);
+        setHatsTree(null);
         const message = 'Hats Tree ID is not valid';
         toast(message);
         console.error(e, {
