@@ -94,14 +94,16 @@ export interface RoleFormValues {
   roleEditing?: RoleValue;
 }
 
-export const DEFAULT_ROLE_HAT: RoleValue = {
+export function getNewRole(): RoleValue {
   // @dev creates a unique id for the hat for new hats for use in form, not stored on chain
-  id: toHex(getRandomBytes(), { size: 32 }),
-  wearer: '',
-  name: '',
-  description: '',
-  prettyId: '',
-};
+  return {
+    id: toHex(getRandomBytes(), { size: 32 }),
+    wearer: '',
+    name: '',
+    description: '',
+    prettyId: '',
+  };
+}
 
 export interface HatWearerChangedParams {
   id: Address;

@@ -14,7 +14,7 @@ import {
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
 import {
   RoleFormValues,
-  DEFAULT_ROLE_HAT,
+  getNewRole,
   EditBadgeStatus,
 } from '../../../../../components/pages/Roles/types';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
@@ -191,7 +191,7 @@ function RolesEdit() {
                 leftIcon: <Plus />,
               }}
               buttonClick={() => {
-                const newRole = DEFAULT_ROLE_HAT;
+                const newRole = getNewRole();
                 setFieldValue('roleEditing', newRole);
                 showRoleEditDetails(newRole.id);
               }}
@@ -230,10 +230,12 @@ function RolesEdit() {
             </Button>
             <Button
               onClick={() => {
+                if (!touched.proposalMetadata?.title || !values.proposalMetadata.title) {
                   setFieldValue(
                     'proposalMetadata.title',
                     generateRoleProposalTitle({ formValues: values }),
                   );
+                }
                 navigate(
                   DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, daoAddress),
                 );

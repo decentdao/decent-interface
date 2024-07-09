@@ -30,20 +30,11 @@ export default function RoleEditDetails() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId') as Hex | undefined;
   if (!daoAddress) return null;
   if (hatEditingId === undefined) return null;
-
-  const saveRole = (hatIndex: number, push: (obj: any) => void) => {
-    if (hatIndex === -1) {
-      push(values.roleEditing);
-    }
-    setFieldValue(`hats.${hatIndex}`, { ...values.roleEditing });
-    setFieldValue('roleEditing', undefined);
-    navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
-  };
 
   return (
     <FieldArray name="hats">
@@ -88,9 +79,7 @@ export default function RoleEditDetails() {
 
                 <RoleFormTabs
                   hatId={hatEditingId}
-                  saveRole={hatIndex => {
-                    saveRole(hatIndex, push);
-                  }}
+                  push={push}
                 />
               </Box>
             </Portal>
@@ -141,9 +130,7 @@ export default function RoleEditDetails() {
                   </Flex>
                   <RoleFormTabs
                     hatId={hatEditingId}
-                    saveRole={hatIndex => {
-                      saveRole(hatIndex, push);
-                    }}
+                    push={push}
                   />
                 </DrawerBody>
               </DrawerContent>

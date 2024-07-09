@@ -2,8 +2,12 @@ import { Box, Tab, TabList, TabPanels, TabPanel, Tabs, Button, Flex } from '@cha
 import { useFormikContext } from 'formik';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { Hex, zeroAddress } from 'viem';
 import { CARD_SHADOW, TAB_SHADOW } from '../../../../constants/common';
+import { DAO_ROUTES } from '../../../../constants/routes';
+import { useFractal } from '../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../state/useRolesState';
 import { EditBadgeStatus, EditedRole, RoleFormValues, RoleValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
@@ -21,15 +25,14 @@ const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: bool
   return [...fieldNames, fieldName];
 };
 
-export default function RoleFormTabs({
-  hatId,
-  saveRole,
-}: {
-  hatId: Hex;
-  saveRole: (hatIndex: number) => void;
-}) {
+export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: any) => void }) {
   const [tab, setTab] = useState<EditRoleTabs>(EditRoleTabs.RoleInfo);
   const { hatsTree } = useRolesState();
+  const {
+    node: { daoAddress },
+  } = useFractal();
+  const navigate = useNavigate();
+  const { addressPrefix } = useNetworkConfig();
 
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
@@ -52,20 +55,13 @@ export default function RoleFormTabs({
     }
   }, [values.hats, values.roleEditing, hatId, setFieldValue]);
 
-  const isRoleNameUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name,
-    [values.roleEditing, existingRoleHat],
-  );
+  const isRoleNameUpdated = !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name;
 
-  const isRoleDescriptionUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && values.roleEditing?.description !== existingRoleHat.description,
-    [values.roleEditing, existingRoleHat],
-  );
+  const isRoleDescriptionUpdated =
+    !!existingRoleHat && values.roleEditing?.description !== existingRoleHat.description;
 
-  const isMemberUpdated = useMemo<boolean>(
-    () => !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer,
-    [values.roleEditing, existingRoleHat],
-  );
+  const isMemberUpdated =
+    !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
 
   const editedRole = useMemo<EditedRole>(() => {
     if (!existingRoleHat) {
@@ -85,6 +81,7 @@ export default function RoleFormTabs({
     };
   }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
 
+  if (!daoAddress) return null;
   return (
     <Box>
       <Tabs
@@ -155,9 +152,16 @@ export default function RoleFormTabs({
         <Button
           isDisabled={!!errors.roleEditing}
           onClick={() => {
+            const roleUpdated = { ...values.roleEditing, editedRole };
             const hatIndex = values.hats.findIndex(h => h.id === hatId);
-            setFieldValue('roleEditing', { ...values.roleEditing, editedRole });
-            saveRole(hatIndex);
+            if (hatIndex === -1) {
+              // @dev new hat
+              push(roleUpdated);
+            } else {
+              setFieldValue(`hats.${hatIndex}`, roleUpdated);
+            }
+            setFieldValue('roleEditing', undefined);
+            navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
           }}
         >
           {t('save')}
