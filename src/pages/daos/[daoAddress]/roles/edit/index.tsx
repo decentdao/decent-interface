@@ -169,7 +169,7 @@ function RolesEdit() {
       validateOnMount
       onSubmit={createRolesEditProposal}
     >
-      {({ handleSubmit, values, setFieldValue }) => (
+      {({ handleSubmit, values, touched, setFieldValue }) => (
         <form onSubmit={handleSubmit}>
           <Box>
             <PageHeader
@@ -230,10 +230,10 @@ function RolesEdit() {
             </Button>
             <Button
               onClick={() => {
-                setFieldValue(
-                  'proposalMetadata.title',
-                  generateRoleProposalTitle({ formValues: values }),
-                );
+                  setFieldValue(
+                    'proposalMetadata.title',
+                    generateRoleProposalTitle({ formValues: values }),
+                  );
                 navigate(
                   DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, daoAddress),
                 );
