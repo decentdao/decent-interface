@@ -16,7 +16,7 @@ import { FieldArray, useFormikContext } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Hex } from 'viem';
+import { Hex, isHex } from 'viem';
 import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
 import {
   EditBadgeStatus,
@@ -37,15 +37,16 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const hatIndex = values.hats.findIndex(h => h.id === hatId);
+  const role = values.hats[hatIndex];
 
   const handleRemoveRole = () => {
     const editedRole: EditedRole = {
       fieldNames: [],
       status: EditBadgeStatus.Removed,
     };
-    const hatIndex = values.hats.findIndex(h => h.id === hatId);
+
     if (hatIndex !== -1) {
-      const role = values.hats[hatIndex];
       if (role?.editedRole?.status === EditBadgeStatus.New) {
         setFieldValue(
           'hats',
@@ -126,7 +127,9 @@ export default function RoleEditDetails() {
   const navigate = useNavigate();
   const { values } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
-  const hatEditingId = searchParams.get('hatId') as Hex | undefined;
+  const hatEditingId = searchParams.get('hatId');
+  const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
+  if (!isHex(hatEditingId)) return null;
   if (!daoAddress) return null;
   if (hatEditingId === undefined) return null;
 
@@ -156,7 +159,6 @@ export default function RoleEditDetails() {
                     alignItems="center"
                     aria-label={t('editRoles')}
                     onClick={() => {
-                      const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
                       if (!hatIndex) {
                         remove(hatIndex);
                       }
@@ -191,9 +193,8 @@ export default function RoleEditDetails() {
               isOpen
               placement="right"
               onClose={() => {
-                const hatEditingIndex = values.hats.findIndex(h => h.id === hatEditingId);
-                if (!hatEditingIndex) {
-                  remove(hatEditingIndex);
+                if (!hatIndex) {
+                  remove(hatIndex);
                 }
                 navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
               }}
