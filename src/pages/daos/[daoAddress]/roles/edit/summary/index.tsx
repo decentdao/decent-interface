@@ -1,5 +1,5 @@
 import { Box, Flex, Grid, GridItem, Icon, Portal, Show, Text } from '@chakra-ui/react';
-import { ArrowLeft, Trash } from '@phosphor-icons/react';
+import { ArrowLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import RoleFormCreateProposal from '../../../../../../components/pages/Roles/forms/RoleFormCreateProposal';
@@ -61,7 +61,7 @@ export default function EditProposalSummary() {
       <Show above="md">
         <Portal>
           <Box
-            position="fixed"
+            position="absolute"
             top={`calc(1rem + ${headerHeight})`}
             left={{ base: SIDEBAR_WIDTH, '3xl': `calc(${SIDEBAR_WIDTH} + 9rem)` }}
             h={`100vh`}
@@ -77,8 +77,6 @@ export default function EditProposalSummary() {
                   path: '',
                 },
               ]}
-              ButtonIcon={Trash}
-              buttonClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
             />
             <Grid
               gridTemplateAreas={`"form details"`}
