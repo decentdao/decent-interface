@@ -61,7 +61,7 @@ export const BadgeStatus: Record<EditBadgeStatus, string> = {
 export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Updated]: 'lilac-0',
   [EditBadgeStatus.New]: 'celery--2',
-  [EditBadgeStatus.Removed]: 'error-1',
+  [EditBadgeStatus.Removed]: 'red-1',
 };
 
 export interface HatStruct {
