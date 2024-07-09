@@ -64,7 +64,7 @@ export default function RoleEditDetails() {
                     aria-label={t('editRoles')}
                     onClick={() => {
                       const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
-                      if (!hatIndex) {
+                      if (hatIndex !== -1) {
                         remove(hatIndex);
                       }
                       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
@@ -91,7 +91,7 @@ export default function RoleEditDetails() {
               placement="right"
               onClose={() => {
                 const hatEditingIndex = values.hats.findIndex(h => h.id === hatEditingId);
-                if (!hatEditingIndex) {
+                if (hatEditingIndex !== -1) {
                   remove(hatEditingIndex);
                 }
                 navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
