@@ -129,7 +129,7 @@ function RolesEdit() {
         // All done, submit the proposal!
         submitProposal({
           proposalData,
-          nonce: safe.nextNonce,
+          nonce: values.customNonce ?? safe.nextNonce,
           pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
           successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
