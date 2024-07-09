@@ -1,3 +1,5 @@
+import { Hex } from 'viem';
+
 export const BASE_ROUTES = {
   landing: '/',
   create: '/create/essentials',
@@ -6,8 +8,8 @@ export const BASE_ROUTES = {
 const getDaoQueryParam = (addressPrefix: string, daoAddress: string) =>
   `?dao=${addressPrefix}:${daoAddress}`;
 
-const getRoleQueryParam = (addressPrefix: string, daoAddress: string, hatIndex: number) =>
-  `${getDaoQueryParam(addressPrefix, daoAddress)}&hatIndex=${hatIndex}`;
+const getRoleQueryParam = (addressPrefix: string, daoAddress: string, hatId: Hex) =>
+  `${getDaoQueryParam(addressPrefix, daoAddress)}&hatId=${hatId}`;
 
 export const DAO_ROUTES = {
   dao: {
@@ -36,8 +38,8 @@ export const DAO_ROUTES = {
     path: 'roles',
   },
   rolesDetails: {
-    relative: (addressPrefix: string, daoAddress: string, hatIndex: number) =>
-      `/roles/details${getRoleQueryParam(addressPrefix, daoAddress, hatIndex)}`,
+    relative: (addressPrefix: string, daoAddress: string, hatId: Hex) =>
+      `/roles/details${getRoleQueryParam(addressPrefix, daoAddress, hatId)}`,
     path: 'roles/details',
   },
   rolesEdit: {
@@ -46,8 +48,8 @@ export const DAO_ROUTES = {
     path: 'roles/edit',
   },
   rolesEditDetails: {
-    relative: (addressPrefix: string, daoAddress: string, hatIndex: number) =>
-      `/roles/edit/details${getRoleQueryParam(addressPrefix, daoAddress, hatIndex)}`,
+    relative: (addressPrefix: string, daoAddress: string, hatId: Hex) =>
+      `/roles/edit/details${getRoleQueryParam(addressPrefix, daoAddress, hatId)}`,
     path: 'roles/edit/details',
   },
   rolesEditCreateProposalSummary: {

@@ -5,14 +5,16 @@ import {
   DrawerContent,
   Flex,
   Icon,
+  IconButton,
   Portal,
   Show,
   Text,
 } from '@chakra-ui/react';
-import { ArrowLeft } from '@phosphor-icons/react';
+import { ArrowLeft, X } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { isHex } from 'viem';
 import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
 import { RoleFormValues } from '../../../../../../components/pages/Roles/types';
 import { useHeaderHeight } from '../../../../../../constants/common';
@@ -30,15 +32,14 @@ export default function RoleEditDetails() {
   const navigate = useNavigate();
   const { values } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
-  const hatEditingIndex = searchParams.get('hatIndex')
-    ? parseInt(searchParams.get('hatIndex') as string)
-    : undefined;
+  const hatEditingId = searchParams.get('hatId');
+  if (!isHex(hatEditingId)) return null;
   if (!daoAddress) return null;
-  if (hatEditingIndex === undefined) return null;
+  if (hatEditingId === undefined) return null;
 
   return (
     <FieldArray name="hats">
-      {({ remove }) => (
+      {({ remove, push }) => (
         <>
           <Show below="md">
             <Portal>
@@ -62,8 +63,9 @@ export default function RoleEditDetails() {
                     alignItems="center"
                     aria-label={t('editRoles')}
                     onClick={() => {
-                      if (!values.hats[hatEditingIndex]) {
-                        remove(hatEditingIndex);
+                      const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
+                      if (!hatIndex) {
+                        remove(hatIndex);
                       }
                       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
                     }}
@@ -77,10 +79,8 @@ export default function RoleEditDetails() {
                 </Flex>
 
                 <RoleFormTabs
-                  hatIndex={hatEditingIndex}
-                  save={() => {
-                    navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
-                  }}
+                  hatId={hatEditingId}
+                  push={push}
                 />
               </Box>
             </Portal>
@@ -90,7 +90,8 @@ export default function RoleEditDetails() {
               isOpen
               placement="right"
               onClose={() => {
-                if (!values.hats[hatEditingIndex]) {
+                const hatEditingIndex = values.hats.findIndex(h => h.id === hatEditingId);
+                if (!hatEditingIndex) {
                   remove(hatEditingIndex);
                 }
                 navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
@@ -102,11 +103,35 @@ export default function RoleEditDetails() {
                 pt="1rem"
               >
                 <DrawerBody h="100vh">
+                  <Flex
+                    justifyContent="space-between"
+                    my="1rem"
+                  >
+                    <Flex
+                      gap="1rem"
+                      alignItems="center"
+                    >
+                      <IconButton
+                        variant="tertiary"
+                        size="icon-sm"
+                        aria-label="Close Drawer"
+                        as={X}
+                        onClick={() => {
+                          navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                        }}
+                      />
+                      <Text
+                        textStyle="body-base"
+                        color="white-0"
+                      >
+                        {t('editRole')}
+                      </Text>
+                    </Flex>
+                    {/* @todo add `...` Menu? */}
+                  </Flex>
                   <RoleFormTabs
-                    hatIndex={hatEditingIndex}
-                    save={() => {
-                      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
-                    }}
+                    hatId={hatEditingId}
+                    push={push}
                   />
                 </DrawerBody>
               </DrawerContent>

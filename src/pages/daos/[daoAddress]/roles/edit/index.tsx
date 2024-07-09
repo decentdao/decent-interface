@@ -1,16 +1,22 @@
-import { Box, Button, Flex, Show, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { getAddress } from 'viem';
+import { Hex, getAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
+import {
+  RoleCardLoading,
+  RoleCardNoRoles,
+} from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { RoleFormValues, DEFAULT_ROLE_HAT } from '../../../../../components/pages/Roles/types';
-import { Card } from '../../../../../components/ui/cards/Card';
-import { BarLoader } from '../../../../../components/ui/loaders/BarLoader';
+import {
+  RoleFormValues,
+  getNewRole,
+  EditBadgeStatus,
+} from '../../../../../components/pages/Roles/types';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -27,7 +33,7 @@ import { useRolesState } from '../../../../../state/useRolesState';
 import { ProposalExecuteData } from '../../../../../types';
 
 function RolesEdit() {
-  const { t } = useTranslation(['roles', 'navigation', 'modals', 'breadcrumbs', 'common']);
+  const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
   const {
     node: { daoAddress, safe, daoName },
   } = useFractal();
@@ -51,6 +57,25 @@ function RolesEdit() {
       navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
     }
   }, [daoAddress, addressPrefix, navigate]);
+
+  function generateRoleProposalTitle({ formValues }: { formValues: RoleFormValues }) {
+    const filteredHats = formValues.hats.filter(hat => !!hat.editedRole);
+    const addedHatsCount = filteredHats.filter(
+      hat => hat.editedRole!.status === EditBadgeStatus.New,
+    ).length;
+    const updatedHatsCount = filteredHats.filter(
+      hat => hat.editedRole!.status === EditBadgeStatus.Updated,
+    ).length;
+    const removedHatsCount = filteredHats.filter(
+      hat => hat.editedRole!.status === EditBadgeStatus.Removed,
+    ).length;
+
+    const addedHatsText = addedHatsCount > 0 ? t('addedHats', { addedHatsCount }) : '';
+    const updatedHatsText = updatedHatsCount > 0 ? t('updatedHats', { updatedHatsCount }) : '';
+    const removedHatsText = removedHatsCount > 0 ? t('removedHats', { removedHatsCount }) : '';
+
+    return [addedHatsText, updatedHatsText, removedHatsText].filter(Boolean).join('. ');
+  }
 
   const createRolesEditProposal = useCallback(
     async (values: RoleFormValues) => {
@@ -143,8 +168,8 @@ function RolesEdit() {
 
   if (daoAddress === null) return null;
 
-  const showRoleEditDetails = (_hatIndex: number) => {
-    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, _hatIndex));
+  const showRoleEditDetails = (hatId: Hex) => {
+    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatId));
   };
 
   return (
@@ -155,22 +180,18 @@ function RolesEdit() {
       validateOnMount
       onSubmit={createRolesEditProposal}
     >
-      {({ handleSubmit, values, setFieldValue }) => (
+      {({ handleSubmit, values, touched, setFieldValue }) => (
         <form onSubmit={handleSubmit}>
           <Box>
             <PageHeader
               title={t('roles')}
               breadcrumbs={[
                 {
-                  terminus: t('roles', {
-                    ns: 'roles',
-                  }),
+                  terminus: t('roles'),
                   path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
                 },
                 {
-                  terminus: t('editRoles', {
-                    ns: 'roles',
-                  }),
+                  terminus: t('editRoles'),
                   path: '',
                 },
               ]}
@@ -181,51 +202,34 @@ function RolesEdit() {
                 leftIcon: <Plus />,
               }}
               buttonClick={() => {
-                setFieldValue('roleEditing', DEFAULT_ROLE_HAT);
-                showRoleEditDetails(values.hats.length);
+                const newRole = getNewRole();
+                setFieldValue('roleEditing', newRole);
+                showRoleEditDetails(newRole.id);
               }}
             />
-            {hatsTree === undefined && (
-              <Card
-                display="flex"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <BarLoader />
-              </Card>
-            )}
-            {hatsTree === null && (
-              <Card my="0.5rem">
-                <Text
-                  textStyle="body-base"
-                  textAlign="center"
-                  color="white-alpha-16"
-                >
-                  {t('noRoles')}
-                </Text>
-              </Card>
-            )}
 
             <Show above="md">
               <RolesEditTable handleRoleClick={showRoleEditDetails} />
             </Show>
             <Show below="md">
-              {values.hats &&
-                values.hats.map((hat, index) => (
-                  <RoleCardEdit
-                    key={index}
-                    name={hat.name}
-                    wearerAddress={hat.wearer}
-                    editStatus={hat.editedRole?.status}
-                    handleRoleClick={() => {
-                      setFieldValue('roleEditing', hat);
-                      showRoleEditDetails(index);
-                    }}
-                  />
-                ))}
+              {hatsTree === undefined && <RoleCardLoading />}
+              {(hatsTree === null || !values.hats.length) && <RoleCardNoRoles />}
+              {values.hats.map(hat => (
+                <RoleCardEdit
+                  key={hat.id}
+                  name={hat.name}
+                  wearerAddress={hat.wearer}
+                  editStatus={hat.editedRole?.status}
+                  handleRoleClick={() => {
+                    setFieldValue('roleEditing', hat);
+                    showRoleEditDetails(hat.id);
+                  }}
+                />
+              ))}
             </Show>
           </Box>
           <Flex
+            mt="1rem"
             gap="1rem"
             justifyContent="flex-end"
           >
@@ -236,11 +240,17 @@ function RolesEdit() {
               {t('cancel', { ns: 'common' })}
             </Button>
             <Button
-              onClick={() =>
+              onClick={() => {
+                if (!touched.proposalMetadata?.title || !values.proposalMetadata.title) {
+                  setFieldValue(
+                    'proposalMetadata.title',
+                    generateRoleProposalTitle({ formValues: values }),
+                  );
+                }
                 navigate(
                   DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, daoAddress),
-                )
-              }
+                );
+              }}
               isDisabled={!values.hats.some(hat => hat.editedRole)}
             >
               {t('createProposal', { ns: 'modals' })}

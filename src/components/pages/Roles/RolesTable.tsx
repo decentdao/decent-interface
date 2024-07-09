@@ -2,14 +2,15 @@ import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@
 import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Address, getAddress, zeroAddress } from 'viem';
+import { Address, Hex, getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentRoleHat } from '../../../state/useRolesState';
+import { useRolesState } from '../../../state/useRolesState';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
+import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
 import { RoleEditProps, RoleFormValues, RoleProps, SablierPayroll, SablierVesting } from './types';
 
 function RolesHeader() {
@@ -280,13 +281,14 @@ export function RolesRowEdit({
   );
 }
 
-export function RolesTable({
-  handleRoleClick,
-  roleHats,
-}: {
-  handleRoleClick: (hatId: Address) => void;
-  roleHats: DecentRoleHat[];
-}) {
+export function RolesTable({ handleRoleClick }: { handleRoleClick: (hatId: Address) => void }) {
+  const { hatsTree } = useRolesState();
+  if (hatsTree === undefined) {
+    return <RoleCardLoading />;
+  }
+  if (hatsTree === null) {
+    return <RoleCardNoRoles />;
+  }
   return (
     <Box
       overflow="hidden"
@@ -294,41 +296,46 @@ export function RolesTable({
       border="1px solid"
       borderColor="white-alpha-08"
     >
-      <Table variant="unstyled">
-        <RolesHeader />
-        {/* Map Rows */}
-        <Tbody
-          sx={{
-            tr: {
-              transition: 'all ease-out 300ms',
-              borderBottom: '1px solid',
-              borderColor: 'white-alpha-08',
-            },
-            'tr:last-child': {
-              borderBottom: 'none',
-            },
-          }}
-        >
-          {roleHats.map(role => (
-            <RolesRow
-              key={role.id.toString()}
-              hatId={role.id}
-              wearerAddress={role.wearer}
-              handleRoleClick={handleRoleClick}
-              {...role}
-            />
-          ))}
-        </Tbody>
-      </Table>
+      {hatsTree.roleHats.length && (
+        <Table variant="unstyled">
+          <RolesHeader />
+          {/* Map Rows */}
+          <Tbody
+            sx={{
+              tr: {
+                transition: 'all ease-out 300ms',
+                borderBottom: '1px solid',
+                borderColor: 'white-alpha-08',
+              },
+              'tr:last-child': {
+                borderBottom: 'none',
+              },
+            }}
+          >
+            {hatsTree.roleHats.map(role => (
+              <RolesRow
+                key={role.id.toString()}
+                hatId={role.id}
+                wearerAddress={role.wearer}
+                handleRoleClick={handleRoleClick}
+                {...role}
+              />
+            ))}
+          </Tbody>
+        </Table>
+      )}
     </Box>
   );
 }
-export function RolesEditTable({
-  handleRoleClick,
-}: {
-  handleRoleClick: (hatIndex: number) => void;
-}) {
+export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
+  const { hatsTree } = useRolesState();
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  if (hatsTree === undefined) {
+    return <RoleCardLoading />;
+  }
+  if (hatsTree === null && !values.hats.length) {
+    return <RoleCardNoRoles />;
+  }
   return (
     <Box
       overflow="hidden"
@@ -351,13 +358,13 @@ export function RolesEditTable({
             },
           }}
         >
-          {values.hats.map((role, index) => (
+          {values.hats.map(role => (
             <RolesRowEdit
               key={role.id}
               wearerAddress={role.wearer}
               handleRoleClick={() => {
                 setFieldValue('roleEditing', role);
-                handleRoleClick(index);
+                handleRoleClick(role.id);
               }}
               {...role}
             />

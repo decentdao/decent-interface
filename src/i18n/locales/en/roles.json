@@ -3,11 +3,13 @@
   "role": "Role",
   "member": "Member",
   "noRoles": "You haven’t added any Roles yet. Create one above.",
+  "description": "Description",
   "unassigned": "Unassigned",
   "after": "after",
   "payroll": "Payroll",
   "vesting": "Vesting",
   "editRoles": "Edit Roles",
+  "editRole": "Edit Role",
   "addRole": "Add Role",
   "updated": "Updated",
   "new": "New",
@@ -17,5 +19,8 @@
   "frequency": "Frequency",
   "amount": "Amount",
   "starting": "Starting",
-  "ending": "Ending"
+  "ending": "Ending",
+  "addedHats": "Add {{addedHatsCount}} new role",
+  "updatedHats": "Update {{updatedHatsCount}} role",
+  "removedHats": "Remove {{removedHatsCount}} role"
 }
