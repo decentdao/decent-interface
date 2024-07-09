@@ -16,8 +16,14 @@ import CreateProposalTemplatePage from './pages/daos/[daoAddress]/proposal-templ
 import ProposalsPage from './pages/daos/[daoAddress]/proposals';
 import ProposalDetailsPage from './pages/daos/[daoAddress]/proposals/[proposalId]';
 import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
+import Roles from './pages/daos/[daoAddress]/roles';
+import RoleDetails from './pages/daos/[daoAddress]/roles/details';
+import RolesEdit from './pages/daos/[daoAddress]/roles/edit';
+import RoleEditDetails from './pages/daos/[daoAddress]/roles/edit/details';
+import EditProposalSummary from './pages/daos/[daoAddress]/roles/edit/summary';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 import HomePage from './pages/home/HomePage';
+import StreamsPage from './pages/streams';
 
 export const router = (addressPrefix: string) =>
   wrapCreateBrowserRouter(createBrowserRouter)([
@@ -45,11 +51,15 @@ export const router = (addressPrefix: string) =>
           loader: () => redirect(BASE_ROUTES.create),
         },
         {
+          path: 'streams',
+          element: <StreamsPage />,
+        },
+        {
           path: '/',
           element: <DAOController />,
           children: [
             {
-              path: 'home',
+              path: DAO_ROUTES.dao.path,
               element: <DaoDashboardPage />,
             },
             {
@@ -63,8 +73,32 @@ export const router = (addressPrefix: string) =>
                 redirect(DAO_ROUTES.modifyGovernance.relative(addressPrefix, daoAddress)),
             },
             {
-              path: 'hierarchy',
+              path: DAO_ROUTES.hierarchy.path,
               element: <HierarchyPage />,
+            },
+            {
+              path: DAO_ROUTES.roles.path,
+              element: <Roles />,
+              children: [
+                {
+                  path: 'details',
+                  element: <RoleDetails />,
+                },
+              ],
+            },
+            {
+              path: DAO_ROUTES.rolesEdit.path,
+              element: <RolesEdit />,
+              children: [
+                {
+                  path: 'details',
+                  element: <RoleEditDetails />,
+                },
+                {
+                  path: 'summary',
+                  element: <EditProposalSummary />,
+                },
+              ],
             },
             {
               path: 'new/*',
@@ -96,7 +130,7 @@ export const router = (addressPrefix: string) =>
               ],
             },
             {
-              path: 'proposals',
+              path: DAO_ROUTES.proposals.path,
               children: [
                 {
                   index: true,
@@ -119,11 +153,11 @@ export const router = (addressPrefix: string) =>
               ],
             },
             {
-              path: 'settings',
+              path: DAO_ROUTES.settings.path,
               element: <SettingsPage />,
             },
             {
-              path: 'treasury',
+              path: DAO_ROUTES.treasury.path,
               element: <Treasury />,
             },
           ],

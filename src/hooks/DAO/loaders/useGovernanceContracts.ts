@@ -6,6 +6,7 @@ import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GovernanceContractAction } from '../../../providers/App/governanceContracts/action';
 import { getAzoriusModuleFromModules } from '../../../utils';
+import { SENTINEL_MODULE } from '../../../utils/address';
 import useSafeContracts from '../../safe/useSafeContracts';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 
@@ -45,9 +46,7 @@ export const useGovernanceContracts = () => {
       let lockReleaseContractAddress: string | undefined;
 
       // @dev assumes the first strategy is the voting contract
-      const votingStrategyAddress = (
-        await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
-      )[1];
+      const votingStrategyAddress = (await azoriusContract.getStrategies(SENTINEL_MODULE, 0))[1];
 
       const masterCopyData = await getZodiacModuleProxyMasterCopyData(
         getAddress(votingStrategyAddress),

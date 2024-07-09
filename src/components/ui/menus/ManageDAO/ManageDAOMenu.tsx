@@ -25,6 +25,7 @@ import {
   FreezeVotingType,
 } from '../../../../types';
 import { getAzoriusModuleFromModules } from '../../../../utils';
+import { SENTINEL_MODULE } from '../../../../utils/address';
 import { ModalType } from '../../modals/ModalProvider';
 import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
@@ -91,10 +92,7 @@ export function ManageDAOMenu({
 
             // @dev assumes the first strategy is the voting contract
             const votingContractAddress = (
-              await azoriusContract.asProvider.getStrategies(
-                '0x0000000000000000000000000000000000000001',
-                0,
-              )
+              await azoriusContract.asProvider.getStrategies(SENTINEL_MODULE, 0)
             )[1];
             const masterCopyData = await getZodiacModuleProxyMasterCopyData(
               getAddress(votingContractAddress),

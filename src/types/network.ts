@@ -22,6 +22,11 @@ export type NetworkConfig = {
     slug: string;
     version: string;
   };
+  // @dev - might be not supported on some chains
+  sablierSubgraph?: {
+    space: number;
+    slug: string;
+  };
   contracts: {
     safe: string;
     safeFactory: string;
@@ -42,6 +47,11 @@ export type NetworkConfig = {
     erc721FreezeVotingMasterCopy: string;
     votesERC20WrapperMasterCopy: string;
     keyValuePairs: string;
+    decentHatsMasterCopy: string;
+    hatsProtocol: string;
+  };
+  constants: {
+    ha75Address: string;
   };
   staking: {
     lido?: {
