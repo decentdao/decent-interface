@@ -11,7 +11,6 @@ const getDaoQueryParam = (addressPrefix: string, daoAddress: string) =>
 const getRoleQueryParam = (addressPrefix: string, daoAddress: string, hatId: Hex) =>
   `${getDaoQueryParam(addressPrefix, daoAddress)}&hatId=${hatId}`;
 
-
 export const DAO_ROUTES = {
   dao: {
     relative: (addressPrefix: string, daoAddress: string) =>
