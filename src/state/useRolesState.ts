@@ -1,6 +1,7 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex } from 'viem';
+import { Address, Hex, PublicClient, getContract, keccak256, toBytes } from 'viem';
 import { create } from 'zustand';
+import ERC6551RegistryAbi from '../assets/abi/ERC6551RegistryAbi';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -13,11 +14,39 @@ export class DecentHatsError extends Error {
   }
 }
 
+interface PredictAccountParams {
+  implementation: Address;
+  chainId: bigint;
+  tokenContract: Address;
+  tokenId: bigint;
+  registryAddress: Address;
+  publicClient: PublicClient;
+}
+
+const predictAccountAddress = (params: PredictAccountParams) => {
+  const { implementation, chainId, tokenContract, tokenId, registryAddress, publicClient } = params;
+
+  const erc6551RegistryContract = getContract({
+    abi: ERC6551RegistryAbi,
+    address: registryAddress,
+    client: publicClient,
+  });
+
+  return erc6551RegistryContract.read.account([
+    implementation,
+    keccak256(toBytes('DecentHats')),
+    chainId,
+    tokenContract,
+    tokenId,
+  ]);
+};
+
 interface DecentHat {
   id: Hex;
   prettyId: string;
   name: string;
   description: string;
+  smartAddress: Address;
 }
 
 interface DecentTopHat extends DecentHat {}
@@ -40,7 +69,14 @@ interface Roles {
   hatsTree: undefined | null | DecentTree;
   getHat: (hatId: Hex) => DecentRoleHat | null;
   setHatsTreeId: (hatsTreeId: undefined | null | number) => void;
-  setHatsTree: (hatsTree: undefined | null | Tree) => void;
+  setHatsTree: (params: {
+    hatsTree: Tree | null | undefined;
+    chainId: bigint;
+    hatsProtocol: Address;
+    erc6551Registry: Address;
+    hatsAccountImplementation: Address;
+    publicClient: PublicClient;
+  }) => Promise<void>;
 }
 
 const appearsExactlyNumberOfTimes = (
@@ -108,7 +144,14 @@ const getHatMetadata = (hat: Hat) => {
   return metadata;
 };
 
-const sanitize = (hatsTree: undefined | null | Tree): undefined | null | DecentTree => {
+const sanitize = async (
+  hatsTree: undefined | null | Tree,
+  hatsAccountImplementation: Address,
+  erc6551Registry: Address,
+  hats: Address,
+  chainId: bigint,
+  publicClient: PublicClient,
+): Promise<undefined | null | DecentTree> => {
   if (hatsTree === undefined || hatsTree === null) {
     return hatsTree;
   }
@@ -120,22 +163,41 @@ const sanitize = (hatsTree: undefined | null | Tree): undefined | null | DecentT
   const rawTopHat = getRawTopHat(hatsTree.hats);
   const topHatMetadata = getHatMetadata(rawTopHat);
 
+  const topHatSmartAddress = await predictAccountAddress({
+    implementation: hatsAccountImplementation,
+    registryAddress: erc6551Registry,
+    tokenContract: hats,
+    chainId,
+    tokenId: BigInt(rawTopHat.id),
+    publicClient,
+  });
+
   const topHat: DecentHat = {
     id: rawTopHat.id,
     prettyId: rawTopHat.prettyId ?? '',
     name: topHatMetadata.name,
     description: topHatMetadata.description,
+    smartAddress: topHatSmartAddress,
   };
 
   const rawAdminHat = getRawAdminHat(hatsTree.hats);
 
   const adminHatMetadata = getHatMetadata(rawAdminHat);
+  const adminHatSmartAddress = await predictAccountAddress({
+    implementation: hatsAccountImplementation,
+    registryAddress: erc6551Registry,
+    tokenContract: hats,
+    chainId,
+    tokenId: BigInt(rawAdminHat.id),
+    publicClient,
+  });
 
   const adminHat: DecentHat = {
     id: rawAdminHat.id,
     prettyId: rawAdminHat.prettyId ?? '',
     name: adminHatMetadata.name,
     description: adminHatMetadata.description,
+    smartAddress: adminHatSmartAddress,
   };
 
   const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
@@ -144,16 +206,28 @@ const sanitize = (hatsTree: undefined | null | Tree): undefined | null | DecentT
     .filter(rawHat => rawHat.status === true)
     .filter(h => h.wearers !== undefined && h.wearers.length === 1);
 
-  const roleHats: DecentRoleHat[] = rawRoleHatsPruned.map(rawHat => {
+  let roleHats: DecentRoleHat[] = [];
+
+  for (const rawHat of rawRoleHatsPruned) {
     const hatMetadata = getHatMetadata(rawHat);
-    return {
+    const roleHatSmartAddress = await predictAccountAddress({
+      implementation: hatsAccountImplementation,
+      registryAddress: erc6551Registry,
+      tokenContract: hats,
+      chainId,
+      tokenId: BigInt(rawHat.id),
+      publicClient,
+    });
+
+    roleHats.push({
       id: rawHat.id,
       prettyId: rawHat.prettyId ?? '',
       name: hatMetadata.name,
       description: hatMetadata.description,
       wearer: rawHat.wearers![0].id,
-    };
-  });
+      smartAddress: roleHatSmartAddress,
+    });
+  }
 
   const decentTree: DecentTree = {
     topHat,
@@ -182,15 +256,25 @@ const useRolesState = create<Roles>()((set, get) => ({
     return matches[0];
   },
   setHatsTreeId: hatsTreeId =>
-    set(state => {
+    set(() => {
       // if `hatsTreeId` is null or undefined,
       // set `hatsTree` to that same value
       if (typeof hatsTreeId !== 'number') {
-        state.setHatsTree(hatsTreeId);
+        return { hatsTreeId, hatsTree: hatsTreeId };
       }
       return { hatsTreeId };
     }),
-  setHatsTree: hatsTree => set(() => ({ hatsTree: sanitize(hatsTree) })),
+  setHatsTree: async params => {
+    const hatsTree = await sanitize(
+      params.hatsTree,
+      params.hatsAccountImplementation,
+      params.erc6551Registry,
+      params.hatsProtocol,
+      params.chainId,
+      params.publicClient,
+    );
+    set(() => ({ hatsTree }));
+  },
 }));
 
 export { useRolesState };

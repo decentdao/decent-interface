@@ -1,4 +1,4 @@
-import { Address, Hex } from 'viem';
+import { Address, Hex, zeroAddress } from 'viem';
 import { toHex } from 'viem/utils';
 import { getRandomBytes } from '../../../helpers';
 import { DecentRoleHat } from '../../../state/useRolesState';
@@ -102,6 +102,7 @@ export function getNewRole(): RoleValue {
     name: '',
     description: '',
     prettyId: '',
+    smartAddress: zeroAddress
   };
 }
 
