@@ -11,9 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { Hex, getAddress } from 'viem';
-import { DAO_ROUTES } from '../../../constants/routes';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -45,7 +43,7 @@ interface RoleDetailsDrawerProps {
     description: string;
   };
   onOpen?: () => void;
-  onClose?: () => void;
+  onClose: () => void;
   onEdit: (hatId: Hex) => void;
   isOpen?: boolean;
 }
@@ -59,9 +57,8 @@ export default function RolesDetailsDrawer({
   const {
     node: { daoAddress },
   } = useFractal();
-  const { addressPrefix, chain } = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
-  const navigate = useNavigate();
   const { daoName: accountDisplayName } = useGetDAOName({
     address: getAddress(roleHat.wearer),
     chainId: chain.id,
@@ -91,9 +88,7 @@ export default function RolesDetailsDrawer({
               size="icon-sm"
               aria-label="Close Drawer"
               as={X}
-              onClick={() => {
-                navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress));
-              }}
+              onClick={onClose}
             />
             <Flex
               gap="0.5rem"
