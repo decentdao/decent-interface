@@ -20,6 +20,7 @@ import {
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
+import { useHatsListeners } from '../../../../../hooks/DAO/useHatsListeners';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import {
   parseEditedHatsFormValues,
@@ -45,6 +46,8 @@ function RolesEdit() {
 
   const { rolesSchema } = useRolesSchema();
   const { hatsTree, hatsTreeId, getHat } = useRolesState();
+
+  useHatsListeners();
 
   const navigate = useNavigate();
 
