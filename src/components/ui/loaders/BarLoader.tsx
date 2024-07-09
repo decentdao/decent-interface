@@ -20,19 +20,19 @@ export function BarLoader() {
     <Box
       as={motion.div}
       key={i}
-      w="12px"
-      h="12px"
+      w="8px"
+      h="8px"
       bg="white"
       opacity={0.4}
-      borderRadius="3px"
-      m={(i+1)%4 ? "0 10px 10px 0": ""}
+      borderRadius="2px"
+      m={(i+1)%4 ? "0 5px 5px 0": ""}
       animation={blockAnimation[(i) % 4]}
       display="inline-block"
     />
   ));
 
   return (
-    <Flex mb="100px" flexWrap="wrap" w="80px" h="10px">
+    <Flex mb="70px" flexWrap="wrap" w="50px" h="10px">
       {blocks}
     </Flex>
   );
