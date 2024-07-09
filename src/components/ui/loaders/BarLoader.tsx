@@ -1,44 +1,39 @@
-import { Box, keyframes } from '@chakra-ui/react';
+import { Box, Flex, keyframes } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
-const animationKeyframes = keyframes`
-  0%   { height: 48px} 
-  100% { height: 4px}
+const waveKeyframes = keyframes`
+  0%   { transform: translateY(0px);     opacity: .4; }
+  50%  { transform: translateY(30px);  opacity: .08; }
+  100% { transform: translateY(0px);     opacity: .4; }
 `;
 
-const animation = `${animationKeyframes} 0.75s 1s linear infinite alternate`;
+const blockAnimation = [
+  `${waveKeyframes} 2s ease .0s infinite`,
+  `${waveKeyframes} 2s ease .2s infinite`,
+  `${waveKeyframes} 2s ease .4s infinite`,
+  `${waveKeyframes} 2s ease .6s infinite`
+];
 
+// @dev Not changing the name of this component to WaveLoader, to avoid diffs across the entire codebase + this is a temporary update pending custom shimmer loader design.
 export function BarLoader() {
-  return (
+  const blocks = Array.from({ length: 16 }, (_, i) => (
     <Box
-      as={motion.span}
-      animation={animation}
-      width="8px"
-      height="40px"
-      borderRadius="4px"
-      background="currentColor"
-      color="#FFF"
-      position="relative"
-      boxSizing="border-box"
-      sx={{
-        '&::after, &::before': {
-          content: '""',
-          width: '8px',
-          height: '40px',
-          borderRadius: '4px',
-          background: 'currentColor',
-          position: 'absolute',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          left: '20px',
-          boxSizing: 'border-box',
-          animation: animation,
-          animationDelay: '250ms',
-        },
-        '&::before': {
-          left: '-20px',
-        },
-      }}
+      as={motion.div}
+      key={i}
+      w="12px"
+      h="12px"
+      bg="white"
+      opacity={0.4}
+      borderRadius="3px"
+      m={(i+1)%4 ? "0 10px 10px 0": ""}
+      animation={blockAnimation[(i) % 4]}
+      display="inline-block"
     />
+  ));
+
+  return (
+    <Flex mb="100px" flexWrap="wrap" w="80px" h="10px">
+      {blocks}
+    </Flex>
   );
 }
