@@ -75,9 +75,13 @@ function RolesEdit() {
       hat => hat.editedRole!.status === EditBadgeStatus.Removed,
     ).length;
 
-    const addedHatsText = addedHatsCount > 0 ? t('addedHats', { addedHatsCount }) : '';
-    const updatedHatsText = updatedHatsCount > 0 ? t('updatedHats', { updatedHatsCount }) : '';
-    const removedHatsText = removedHatsCount > 0 ? t('removedHats', { removedHatsCount }) : '';
+    const addedHatsText = addedHatsCount > 0 ? t('addedHats', { count: addedHatsCount }) : '';
+
+    const updatedHatsText =
+      updatedHatsCount > 0 ? t('updatedHats', { count: updatedHatsCount }) : '';
+
+    const removedHatsText =
+      removedHatsCount > 0 ? t('removedHats', { count: removedHatsCount }) : '';
 
     return [addedHatsText, updatedHatsText, removedHatsText].filter(Boolean).join('. ');
   }
