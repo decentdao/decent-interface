@@ -6,7 +6,7 @@ import { Address, Hex, getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../state/useRolesState';
+import { DecentTree, useRolesState } from '../../../state/useRolesState';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
@@ -281,14 +281,13 @@ export function RolesRowEdit({
   );
 }
 
-export function RolesTable({ handleRoleClick }: { handleRoleClick: (hatId: Address) => void }) {
-  const { hatsTree } = useRolesState();
-  if (hatsTree === undefined) {
-    return <RoleCardLoading />;
-  }
-  if (hatsTree === null) {
-    return <RoleCardNoRoles />;
-  }
+export function RolesTable({
+  handleRoleClick,
+  hatsTree,
+}: {
+  handleRoleClick: (hatId: Address) => void;
+  hatsTree: DecentTree;
+}) {
   return (
     <Box
       overflow="hidden"

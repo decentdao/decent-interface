@@ -1,5 +1,5 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, encodePacked, getContract, keccak256, toBytes } from 'viem';
+import { Address, Hex, PublicClient, encodePacked, getContract, keccak256 } from 'viem';
 import { create } from 'zustand';
 import ERC6551RegistryAbi from '../assets/abi/ERC6551RegistryAbi';
 
@@ -77,7 +77,7 @@ export interface DecentRoleHat extends DecentHat {
   wearer: Address;
 }
 
-interface DecentTree {
+export interface DecentTree {
   topHat: DecentTopHat;
   adminHat: DecentAdminHat;
   roleHats: DecentRoleHat[];
