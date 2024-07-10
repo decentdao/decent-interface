@@ -14,7 +14,7 @@ import { useMemo, useState, useEffect, ReactNode, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Hex, zeroAddress } from 'viem';
-import { CARD_SHADOW, TAB_SHADOW, TOOLTIP_MAXW } from '../../../../constants/common';
+import { TOOLTIP_MAXW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -131,38 +131,11 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
       <Tabs
         index={tab}
         onChange={index => setTab(index)}
-        variant="unstyled"
+        variant="twoTone"
       >
-        <TabList
-          boxShadow={TAB_SHADOW}
-          p="0.25rem"
-          borderRadius="0.5rem"
-          gap="0.25rem"
-        >
-          <Tab
-            w="full"
-            borderRadius="0.25rem"
-            color="neutral-6"
-            _selected={{
-              bg: 'neutral-2',
-              color: 'lilac-0',
-              boxShadow: CARD_SHADOW,
-            }}
-          >
-            Role Info
-          </Tab>
-          <Tab
-            w="full"
-            color="neutral-6"
-            borderRadius="0.25rem"
-            isDisabled
-            _selected={{
-              bg: 'neutral-2',
-              color: 'lilac-0',
-              boxShadow: CARD_SHADOW,
-            }}
-            p="0"
-          >
+        <TabList>
+          <Tab>Role Info</Tab>
+          <Tab isDisabled={true}>
             <Flex ref={payrollTabContainerRef}>
               <ComingSoonTooltip type="payroll">
                 <Flex
@@ -174,18 +147,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
               </ComingSoonTooltip>
             </Flex>
           </Tab>
-          <Tab
-            w="full"
-            color="neutral-6"
-            borderRadius="0.25rem"
-            isDisabled
-            _selected={{
-              bg: 'neutral-2',
-              color: 'lilac-0',
-              boxShadow: CARD_SHADOW,
-            }}
-            p="0"
-          >
+          <Tab isDisabled={true}>
             <Flex ref={vestingTabContainerRef}>
               <ComingSoonTooltip type="vesting">
                 <Flex
@@ -198,13 +160,8 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
             </Flex>
           </Tab>
         </TabList>
-        <TabPanels>
-          <TabPanel
-            padding="0"
-            my="1.75rem"
-          >
-            {tab === EditRoleTabs.RoleInfo && <RoleFormInfo />}
-          </TabPanel>
+        <TabPanels my="1.75rem">
+          <TabPanel>{tab === EditRoleTabs.RoleInfo && <RoleFormInfo />}</TabPanel>
           <TabPanel>{tab === EditRoleTabs.Payroll && <Box>Payroll</Box>}</TabPanel>
           <TabPanel>{tab === EditRoleTabs.Vesting && <Box>Vesting</Box>}</TabPanel>
         </TabPanels>
