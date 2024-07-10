@@ -135,7 +135,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
       >
         <TabList>
           <Tab>Role Info</Tab>
-          <Tab>
+          <Tab isDisabled={true}>
             <Flex ref={payrollTabContainerRef}>
               <ComingSoonTooltip type="payroll">
                 <Flex
@@ -147,7 +147,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
               </ComingSoonTooltip>
             </Flex>
           </Tab>
-          <Tab>
+          <Tab isDisabled={true}>
             <Flex ref={vestingTabContainerRef}>
               <ComingSoonTooltip type="vesting">
                 <Flex
