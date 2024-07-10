@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -87,8 +87,10 @@ function RolesEdit() {
   }
 
   const createRolesEditProposal = useCallback(
-    async (values: RoleFormValues) => {
+    async (values: RoleFormValues, formikHelpers: FormikHelpers<RoleFormValues>) => {
+      formikHelpers.setSubmitting(true);
       if (!safe) {
+        formikHelpers.setSubmitting(false);
         throw new Error('Cannot create Roles proposal without known Safe');
       }
 
@@ -126,6 +128,7 @@ function RolesEdit() {
           );
         } else {
           if (!hatsTree) {
+            formikHelpers.setSubmitting(false);
             throw new Error('Cannot edit Roles without a HatsTree');
           }
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
@@ -140,7 +143,7 @@ function RolesEdit() {
         }
 
         // All done, submit the proposal!
-        submitProposal({
+        await submitProposal({
           proposalData,
           nonce: values.customNonce ?? safe.nextNonce,
           pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
@@ -148,7 +151,9 @@ function RolesEdit() {
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
           successCallback: submitProposalSuccessCallback,
         });
+        formikHelpers.setSubmitting(false);
       } catch (e) {
+        formikHelpers.setSubmitting(false);
         console.error(e);
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
       }
