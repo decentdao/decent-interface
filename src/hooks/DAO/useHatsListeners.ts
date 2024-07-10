@@ -1,3 +1,4 @@
+import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { useCallback, useEffect } from 'react';
 
 import { getAddress, getContract, zeroAddress } from 'viem';
@@ -5,6 +6,7 @@ import { usePublicClient } from 'wagmi';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { useRolesState } from '../../state/useRolesState';
 import { useHatsTree } from './loaders/useHatsTree';
 
 export function useHatsListeners() {
@@ -18,6 +20,17 @@ export function useHatsListeners() {
 
   const publicClient = usePublicClient();
   const { getHatsTree } = useHatsTree();
+  const { hatsTreeId } = useRolesState();
+
+  const isNotFromThisSafesTree = useCallback(
+    (hatId: bigint | undefined) => {
+      if (!hatId) return true;
+
+      const treeId = hatIdToTreeId(hatId);
+      return treeId !== hatsTreeId;
+    },
+    [hatsTreeId],
+  );
 
   // @todo Each of these `handle*` functions can probably be updated to more granularly update a specific node on the hats tree. If it turns out to be impossible or unnecessary, them these functions are entirely bloat and `getHatsTree` should be called directly in each listener's `onLogs` callback.
   const handleHatCreated = useCallback(
@@ -26,26 +39,35 @@ export function useHatsListeners() {
       details?: string | undefined;
       imageURI?: string | undefined;
     }) => {
-      const { id, details, imageURI } = args;
+      const { id } = args;
+      if (isNotFromThisSafesTree(id)) {
+        return;
+      }
       getHatsTree();
     },
-    [getHatsTree],
+    [getHatsTree, isNotFromThisSafesTree],
   );
 
   const handleHatDetailsChanged = useCallback(
     (args: { hatId?: bigint | undefined; newDetails?: string | undefined }) => {
-      const { hatId, newDetails } = args;
+      const { hatId } = args;
+      if (isNotFromThisSafesTree(hatId)) {
+        return;
+      }
       getHatsTree();
     },
-    [getHatsTree],
+    [getHatsTree, isNotFromThisSafesTree],
   );
 
   const handleHatStatusChanged = useCallback(
     (args: { hatId?: bigint | undefined; newStatus?: boolean | undefined }) => {
-      const { hatId, newStatus } = args;
+      const { hatId } = args;
+      if (isNotFromThisSafesTree(hatId)) {
+        return;
+      }
       getHatsTree();
     },
-    [getHatsTree],
+    [getHatsTree, isNotFromThisSafesTree],
   );
 
   const handleTransferSingle = useCallback(
@@ -56,13 +78,13 @@ export function useHatsListeners() {
       id?: bigint | undefined;
     }) => {
       const { from } = args;
-      if (from === zeroAddress) {
+      if (from === zeroAddress || isNotFromThisSafesTree(args.id)) {
         return;
       }
 
       getHatsTree();
     },
-    [getHatsTree],
+    [getHatsTree, isNotFromThisSafesTree],
   );
 
   useEffect(() => {
