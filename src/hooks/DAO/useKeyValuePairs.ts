@@ -91,7 +91,7 @@ const useKeyValuePairs = () => {
           // of our code that we have the hats tree id until some time has passed.
           setTimeout(() => {
             setHatsTreeId(getHatsTreeId(logs, chain.id));
-          }, 10_000);
+          }, 20_000);
         },
       },
     );

@@ -8,6 +8,7 @@ import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleCardEdit } from '../RoleCard';
@@ -90,6 +91,22 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                   placeholder="Description"
                 />
               </LabelWrapper>
+            )}
+          </Field>
+        </FormControl>
+
+        <FormControl>
+          <Field name="customNonce">
+            {({ form: { setFieldValue } }: FieldProps<string, RoleFormValues>) => (
+              <Flex
+                w="100%"
+                justifyContent="flex-end"
+              >
+                <CustomNonceInput
+                  nonce={values.customNonce}
+                  onChange={newNonce => setFieldValue('customNonce', newNonce ?? undefined)}
+                />
+              </Flex>
             )}
           </Field>
         </FormControl>

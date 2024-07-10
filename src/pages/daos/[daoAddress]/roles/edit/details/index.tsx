@@ -159,7 +159,7 @@ export default function RoleEditDetails() {
                     alignItems="center"
                     aria-label={t('editRoles')}
                     onClick={() => {
-                      if (!hatIndex) {
+                      if (hatIndex !== -1) {
                         remove(hatIndex);
                       }
                       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
@@ -193,7 +193,7 @@ export default function RoleEditDetails() {
               isOpen
               placement="right"
               onClose={() => {
-                if (!hatIndex) {
+                if (hatIndex !== -1) {
                   remove(hatIndex);
                 }
                 navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
