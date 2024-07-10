@@ -80,7 +80,13 @@ export default function PayrollStreamBuilder() {
       const segments: { amount: bigint; exponent: bigint; duration: number }[] = [];
 
       for (let i = 0; i <= totalSegments; i++) {
-        const duration = 30 * 24 * 60 * 60 * months * (i + 1);
+        let duration = 30 * 24 * 60 * 60 * (i + 1);
+        if (frequency === 'weekly') {
+          duration = 7 * 24 * 60 * 60 * (i + 1);
+        } else if(frequency === 'biweekly') {
+          duration = 14 * 24 * 60 * 60 * (i + 1);
+        }
+
         segments.push({
           amount: segmentAmount,
           exponent,
