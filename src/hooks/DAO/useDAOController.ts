@@ -12,6 +12,7 @@ import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
 import { useFractalNode } from './loaders/useFractalNode';
 import { useGovernanceContracts } from './loaders/useGovernanceContracts';
 import { useHatsTree } from './loaders/useHatsTree';
+import { useHatsListeners } from './useHatsListeners';
 import { useKeyValuePairs } from './useKeyValuePairs';
 
 export default function useDAOController() {
@@ -52,6 +53,7 @@ export default function useDAOController() {
   useERC20Claim();
   useSnapshotProposals();
   useAzoriusListeners();
+  useHatsListeners();
 
   useKeyValuePairs();
   useHatsTree();
