@@ -1,6 +1,6 @@
 import Azorius from '@fractal-framework/fractal-contracts/deployments/sepolia/Azorius.json' assert { type: 'json' };
 import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/sepolia/AzoriusFreezeGuard.json' assert { type: 'json' };
-import DecentHats from '@fractal-framework/fractal-contracts/deployments/sepolia/DecentHats.json' assert { type: 'json ' };
+import DecentHats from '@fractal-framework/fractal-contracts/deployments/sepolia/DecentHats.json' assert { type: 'json' };
 import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC20Claim.json' assert { type: 'json' };
 import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC20FreezeVoting.json' assert { type: 'json' };
 import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC721FreezeVoting.json' assert { type: 'json' };
