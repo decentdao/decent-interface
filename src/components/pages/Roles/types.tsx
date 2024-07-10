@@ -92,6 +92,7 @@ export interface RoleFormValues {
   proposalMetadata: CreateProposalMetadata;
   hats: RoleValue[];
   roleEditing?: RoleValue;
+  customNonce?: number;
 }
 
 export function getNewRole(): RoleValue {
