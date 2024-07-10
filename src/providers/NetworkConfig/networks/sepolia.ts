@@ -79,8 +79,8 @@ const sepoliaConfig: NetworkConfig = {
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
     erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
     hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
-    sablierV2Batch: '0xd2569DC4A58dfE85d807Dffb976dbC0a3bf0B0Fb',
-    sablierV2LockupDynamic: '0xc9940AD8F43aAD8e8f33A4D5dbBf0a8F7FF4429A',
+    sablierV2Batch: '0x04A9c14b7a000640419aD5515Db4eF4172C00E31',
+    sablierV2LockupDynamic: '0x73BB6dD3f5828d60F8b3dBc8798EB10fbA2c5636',
   },
   staking: {},
   createOptions: [
