@@ -30,7 +30,7 @@ export default function PayrollStreamBuilder() {
   const [recipient, setRecipient] = useState<Address | undefined>(account);
   const [totalAmount, setTotalAmount] = useState<string>('25000');
   const [startDate, setStartDate] = useState(Math.round(Date.now() / 1000) + 60 * 15); // Unix timestamp. 15 minutes from moment of proposal creation by default for development purposes
-  const [frequency, setFrequency] = useState<PayrollFrequency>();
+  const [frequency, setFrequency] = useState<PayrollFrequency>('monthly');
   const [months, setMonths] = useState(0); // Total number of months
   // @todo - seems like good chunk of this logic can be re-used between payroll/vesting stream building and send assets modal
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
@@ -64,10 +64,12 @@ export default function PayrollStreamBuilder() {
       startDate &&
       recipient &&
       selectedAsset &&
+      frequency &&
       months > 0
     ) {
       const tokenAddress = getAddress(selectedAsset.tokenAddress);
       const exponent = 10n ** BigInt(selectedAsset.decimals);
+      const totalAmountExponented = BigInt(totalAmount) * exponent;
       let totalSegments = months;
       if (frequency === 'weekly') {
         // @todo - obviously this isn't correct and we need proper calculation of how many weeks are in the amount of months entered
@@ -76,11 +78,11 @@ export default function PayrollStreamBuilder() {
         // @todo - again, not correct - need to get exact number of 2-weeks cycles from the total number of months
         totalSegments = months * 2;
       }
-      const segmentAmount = (BigInt(totalAmount) * exponent) / BigInt(totalSegments);
+      const segmentAmount = totalAmountExponented / BigInt(totalSegments);
       const segments: { amount: bigint; exponent: bigint; duration: number }[] = [];
 
       const SECONDS_IN_DAY = 24 * 60 * 60;
-      for (let i = 0; i <= totalSegments; i++) {
+      for (let i = 1; i <= totalSegments; i++) {
         let days = 30;
         if (frequency === 'weekly') {
           days = 7;
@@ -88,12 +90,12 @@ export default function PayrollStreamBuilder() {
           days = 14;
         }
 
-        const duration = days * SECONDS_IN_DAY * (i + 1);
+        const duration = days * SECONDS_IN_DAY * i;
 
         segments.push({
           amount: segmentAmount,
           exponent,
-          duration: i === 0 ? Math.round(startDate - Date.now() / 1000 + duration) : duration, // Sablier sets startTime to block.timestamp - so we need to make first segment being streamed longer
+          duration: i === 1 ? Math.round(startDate - Date.now() / 1000) + duration : duration, // Sablier sets startTime to block.timestamp - so we need to make first segment being streamed longer
         });
       }
 
@@ -109,7 +111,7 @@ export default function PayrollStreamBuilder() {
               cancelable: true, // Cancelable - is it possible to cancel this stream
               transferable: false, // Transferable - is Recipient able to transfer receiving rights to someone else
               recipient, // Recipient of tokens through stream
-              totalAmount: BigInt(totalAmount), // total amount of tokens sent
+              totalAmount: totalAmountExponented, // total amount of tokens sent
               broker: { account: zeroAddress, fee: 0n }, // Optional broker
               segments, // Segments array of tuples
             },
@@ -117,11 +119,10 @@ export default function PayrollStreamBuilder() {
         ],
       });
 
-      console.log();
       const tokenCalldata = encodeFunctionData({
         abi: erc20Abi,
         functionName: 'approve',
-        args: [sablierV2Batch, BigInt(totalAmount)],
+        args: [sablierV2Batch, totalAmountExponented],
       });
       const proposalData: ProposalExecuteData = {
         targets: [tokenAddress, sablierV2Batch],
