@@ -46,7 +46,6 @@ function RolesEdit() {
   const { rolesSchema } = useRolesSchema();
   const { hatsTree, hatsTreeId, getHat } = useRolesState();
 
-
   const navigate = useNavigate();
 
   const { submitProposal } = useSubmitProposal();

@@ -9,7 +9,7 @@ import { useHatsTree } from './loaders/useHatsTree';
 
 export function useHatsListeners() {
   const {
-    node: { safe },
+    node: { daoAddress },
   } = useFractal();
 
   const {
@@ -19,6 +19,7 @@ export function useHatsListeners() {
   const publicClient = usePublicClient();
   const { getHatsTree } = useHatsTree();
 
+  // @todo Each of these `handle*` functions can probably be updated to more granularly update a specific node on the hats tree. If it turns out to be impossible or unnecessary, them these functions are entirely bloat and `getHatsTree` should be called directly in each listener's `onLogs` callback.
   const handleHatCreated = useCallback(
     (args: {
       id?: bigint | undefined;
@@ -65,7 +66,7 @@ export function useHatsListeners() {
   );
 
   useEffect(() => {
-    if (!publicClient || !safe) return;
+    if (!publicClient || !daoAddress) return;
 
     const hatsContract = getContract({
       abi: HatsAbi,
@@ -73,35 +74,41 @@ export function useHatsListeners() {
       client: publicClient,
     });
 
-    if (!hatsContract) return;
-
-    hatsContract.watchEvent.HatCreated({
+    const unwatchHatCreated = hatsContract.watchEvent.HatCreated({
       onLogs: log => handleHatCreated(log[0].args),
     });
 
-    hatsContract.watchEvent.HatDetailsChanged({
+    const unwatchHatDetailsChanged = hatsContract.watchEvent.HatDetailsChanged({
       onLogs: log => handleHatDetailsChanged(log[0].args),
     });
 
-    hatsContract.watchEvent.HatStatusChanged({
+    const unwatchHatStatusChanged = hatsContract.watchEvent.HatStatusChanged({
       onLogs: log => handleHatStatusChanged(log[0].args),
     });
 
-    hatsContract.watchEvent.TransferSingle(
+    const unwatchTransferSingle = hatsContract.watchEvent.TransferSingle(
       {
-        operator: getAddress(safe.address),
+        operator: daoAddress,
       },
       {
         onLogs: log => handleTransferSingle(log[0].args),
       },
     );
+
+    return () => {
+      unwatchHatCreated();
+      unwatchHatDetailsChanged();
+      unwatchHatStatusChanged();
+      unwatchTransferSingle();
+    };
   }, [
+    getHatsTree,
     handleHatCreated,
     handleHatDetailsChanged,
     handleHatStatusChanged,
     handleTransferSingle,
     hatsProtocol,
     publicClient,
-    safe,
+    daoAddress,
   ]);
 }
