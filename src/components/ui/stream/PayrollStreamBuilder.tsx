@@ -79,24 +79,27 @@ export default function PayrollStreamBuilder() {
       const segmentAmount = (BigInt(totalAmount) * exponent) / BigInt(totalSegments);
       const segments: { amount: bigint; exponent: bigint; duration: number }[] = [];
 
+      const SECONDS_IN_DAY = 24 * 60 * 60;
       for (let i = 0; i <= totalSegments; i++) {
-        let duration = 30 * 24 * 60 * 60 * (i + 1);
+        let days = 30;
         if (frequency === 'weekly') {
-          duration = 7 * 24 * 60 * 60 * (i + 1);
-        } else if(frequency === 'biweekly') {
-          duration = 14 * 24 * 60 * 60 * (i + 1);
+          days = 7;
+        } else if (frequency === 'biweekly') {
+          days = 14;
         }
+
+        const duration = days * SECONDS_IN_DAY * (i + 1);
 
         segments.push({
           amount: segmentAmount,
           exponent,
-          duration: startDate + duration,
+          duration: i === 0 ? Math.round(startDate - Date.now() / 1000 + duration) : duration, // Sablier sets startTime to block.timestamp - so we need to make first segment being streamed longer
         });
       }
 
       const sablierBatchCalldata = encodeFunctionData({
         abi: SablierBatchAbi,
-        functionName: 'createWithDurationsLD',
+        functionName: 'createWithDurationsLD', // Another option would be to use createWithTimestampsLD. Essentially they're doing the same
         args: [
           sablierV2LockupDynamic,
           tokenAddress,
