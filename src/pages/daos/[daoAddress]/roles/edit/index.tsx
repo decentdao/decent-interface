@@ -115,7 +115,7 @@ function RolesEdit() {
             uploadHatDescriptionCallback,
             daoName ?? safe.address,
             getAddress(decentHatsMasterCopy),
-            getAddress(hatsProtocol),
+            hatsProtocol,
             hatsAccount1ofNMasterCopy,
             erc6551Registry,
             getAddress(keyValuePairs),
@@ -131,7 +131,7 @@ function RolesEdit() {
             hatsTree.adminHat.id,
             hatsTree.topHat.smartAddress,
             hatsTree.roleHatsTotalCount,
-            getAddress(hatsProtocol),
+            hatsProtocol,
           );
         }
 

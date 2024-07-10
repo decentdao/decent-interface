@@ -48,7 +48,7 @@ export type NetworkConfig = {
     votesERC20WrapperMasterCopy: string;
     keyValuePairs: string;
     decentHatsMasterCopy: string;
-    hatsProtocol: string;
+    hatsProtocol: Address;
     erc6551Registry: Address;
     hatsAccount1ofNMasterCopy: Address;
   };

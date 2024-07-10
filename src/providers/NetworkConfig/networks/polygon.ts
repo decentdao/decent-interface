@@ -20,7 +20,6 @@ import {
   getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
 } from '@safe-global/safe-deployments';
-import { getAddress } from 'viem';
 import { polygon } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
@@ -78,8 +77,8 @@ const polygonConfig: NetworkConfig = {
     keyValuePairs: KeyValuePairs.address,
     decentHatsMasterCopy: DecentHats.address,
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
-    erc6551Registry: getAddress('0x000000006551c19487814612e58FE06813775758'),
-    hatsAccount1ofNMasterCopy: getAddress('0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29'),
+    erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
+    hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
   },
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],

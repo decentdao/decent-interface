@@ -92,7 +92,7 @@ const useHatsTree = () => {
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
             chainId: BigInt(chain.id),
-            hatsProtocol: getAddress(hatsProtocol),
+            hatsProtocol: hatsProtocol,
             erc6551Registry,
             hatsAccountImplementation,
             publicClient,
@@ -107,7 +107,7 @@ const useHatsTree = () => {
         setHatsTree({
           hatsTree: null,
           chainId: BigInt(chain.id),
-          hatsProtocol: getAddress(hatsProtocol),
+          hatsProtocol: hatsProtocol,
           erc6551Registry,
           hatsAccountImplementation,
           publicClient,
