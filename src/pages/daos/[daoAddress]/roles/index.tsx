@@ -25,6 +25,10 @@ function Roles() {
   const handleNavigateToRole = (hatId: Hex) =>
     navigate(DAO_ROUTES.rolesDetails.relative(addressPrefix, daoAddress, hatId));
 
+  const hatsTreeLoading = hatsTree === undefined;
+  const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
+  const showRolesTable = !hatsTreeLoading && hatsTree !== null && hatsTree.roleHats.length > 0;
+
   return (
     <Box>
       <PageHeader
@@ -43,23 +47,31 @@ function Roles() {
         }}
         buttonClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
       />
-      <Show above="md">
-        <RolesTable handleRoleClick={handleNavigateToRole} />
-      </Show>
-      <Show below="md">
-        {hatsTree === undefined && <RoleCardLoading />}
-        {hatsTree === null && <RoleCardNoRoles />}
-        {hatsTree &&
-          hatsTree.roleHats.map(roleHat => (
-            <RoleCard
-              key={roleHat.id}
-              name={roleHat.name}
-              wearerAddress={roleHat.wearer || zeroAddress}
-              hatId={roleHat.id}
+      {hatsTreeLoading && <RoleCardLoading />}
+      {showNoRolesCard && <RoleCardNoRoles />}
+
+      {showRolesTable && (
+        <>
+          <Show above="md">
+            <RolesTable
               handleRoleClick={handleNavigateToRole}
+              hatsTree={hatsTree}
             />
-          ))}
-      </Show>
+          </Show>
+
+          <Show below="md">
+            {hatsTree.roleHats.map(roleHat => (
+              <RoleCard
+                key={roleHat.id}
+                name={roleHat.name}
+                wearerAddress={roleHat.wearer || zeroAddress}
+                hatId={roleHat.id}
+                handleRoleClick={handleNavigateToRole}
+              />
+            ))}
+          </Show>
+        </>
+      )}
       <Outlet />
     </Box>
   );

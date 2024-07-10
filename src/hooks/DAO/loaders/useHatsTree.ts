@@ -1,6 +1,8 @@
 import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
+import { getAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentHatsError, useRolesState } from '../../../state/useRolesState';
@@ -10,14 +12,28 @@ import { useHatsSubgraphClient } from './useHatsSubgraphClient';
 
 const useHatsTree = () => {
   const { hatsTreeId } = useRolesState();
-  const { chain } = useNetworkConfig();
   const hatsSubgraphClient = useHatsSubgraphClient();
   const { setHatsTree } = useRolesState();
   const ipfsClient = useIPFSClient();
+  const {
+    chain,
+    contracts: {
+      hatsProtocol,
+      erc6551Registry,
+      hatsAccount1ofNMasterCopy: hatsAccountImplementation,
+      decentHatsMasterCopy,
+    },
+  } = useNetworkConfig();
+  const publicClient = usePublicClient();
 
   useEffect(() => {
     async function getHatsTree() {
-      if (hatsTreeId === undefined || hatsTreeId === null) {
+      if (
+        hatsTreeId === undefined ||
+        hatsTreeId === null ||
+        publicClient === undefined ||
+        decentHatsMasterCopy === undefined
+      ) {
         return;
       }
 
@@ -73,14 +89,30 @@ const useHatsTree = () => {
 
         const treeWithFetchedDetails: Tree = { ...tree, hats: hatsWithFetchedDetails };
         try {
-          setHatsTree(treeWithFetchedDetails);
+          await setHatsTree({
+            hatsTree: treeWithFetchedDetails,
+            chainId: BigInt(chain.id),
+            hatsProtocol: hatsProtocol,
+            erc6551Registry,
+            hatsAccountImplementation,
+            publicClient,
+            decentHats: getAddress(decentHatsMasterCopy),
+          });
         } catch (e) {
           if (e instanceof DecentHatsError) {
             toast(e.message);
           }
         }
       } catch (e) {
-        setHatsTree(null);
+        setHatsTree({
+          hatsTree: null,
+          chainId: BigInt(chain.id),
+          hatsProtocol: hatsProtocol,
+          erc6551Registry,
+          hatsAccountImplementation,
+          publicClient,
+          decentHats: getAddress(decentHatsMasterCopy),
+        });
         const message = 'Hats Tree ID is not valid';
         toast(message);
         console.error(e, {
@@ -94,7 +126,18 @@ const useHatsTree = () => {
     }
 
     getHatsTree();
-  }, [chain.id, hatsSubgraphClient, hatsTreeId, setHatsTree, ipfsClient]);
+  }, [
+    chain.id,
+    decentHatsMasterCopy,
+    erc6551Registry,
+    hatsAccountImplementation,
+    hatsProtocol,
+    hatsSubgraphClient,
+    hatsTreeId,
+    ipfsClient,
+    publicClient,
+    setHatsTree,
+  ]);
 };
 
 export { useHatsTree };

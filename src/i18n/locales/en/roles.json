@@ -20,6 +20,7 @@
   "amount": "Amount",
   "starting": "Starting",
   "ending": "Ending",
+  "deleteRole": "Delete Role",
   "addedHats": "Add {{count}} new role",
   "addedHats_other": "Add {{count}} new roles",
   "updatedHats": "Update {{count}} role",

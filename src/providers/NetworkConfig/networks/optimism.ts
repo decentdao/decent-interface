@@ -1,6 +1,6 @@
 import Azorius from '@fractal-framework/fractal-contracts/deployments/optimism/Azorius.json' assert { type: 'json' };
 import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/optimism/AzoriusFreezeGuard.json' assert { type: 'json' };
-import DecentHats from '@fractal-framework/fractal-contracts/deployments/optimism/DecentHats.json' assert { type: 'json' };
+import DecentHats from '@fractal-framework/fractal-contracts/deployments/optimism/DecentHats_0_1_0.json' assert { type: 'json' };
 import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/optimism/ERC20Claim.json' assert { type: 'json' };
 import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/optimism/ERC20FreezeVoting.json' assert { type: 'json' };
 import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/optimism/ERC721FreezeVoting.json' assert { type: 'json' };
@@ -77,9 +77,8 @@ const optimismConfig: NetworkConfig = {
     keyValuePairs: KeyValuePairs.address,
     decentHatsMasterCopy: DecentHats.address,
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
-  },
-  constants: {
-    ha75Address: '0x0000000000000000000000000000000000004a75',
+    erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
+    hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
   },
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],

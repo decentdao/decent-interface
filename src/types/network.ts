@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { Chain } from 'viem';
+import { Chain, Address } from 'viem';
 import { GovernanceType } from './fractal';
 
 export type Providers =
@@ -48,10 +48,9 @@ export type NetworkConfig = {
     votesERC20WrapperMasterCopy: string;
     keyValuePairs: string;
     decentHatsMasterCopy: string;
-    hatsProtocol: string;
-  };
-  constants: {
-    ha75Address: string;
+    hatsProtocol: Address;
+    erc6551Registry: Address;
+    hatsAccount1ofNMasterCopy: Address;
   };
   staking: {
     lido?: {

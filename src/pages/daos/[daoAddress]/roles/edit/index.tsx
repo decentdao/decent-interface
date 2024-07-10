@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Hex, getAddress } from 'viem';
+import { Hex, getAddress, zeroAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import {
   RoleCardLoading,
@@ -39,8 +39,13 @@ function RolesEdit() {
   } = useFractal();
   const {
     addressPrefix,
-    contracts: { hatsProtocol, decentHatsMasterCopy },
-    constants: { ha75Address },
+    contracts: {
+      hatsProtocol,
+      decentHatsMasterCopy,
+      hatsAccount1ofNMasterCopy,
+      erc6551Registry,
+      keyValuePairs,
+    },
   } = useNetworkConfig();
 
   const { rolesSchema } = useRolesSchema();
@@ -99,7 +104,7 @@ function RolesEdit() {
 
         const editedHatStructs = await parseEditedHatsFormValues(
           modifiedHats,
-          getAddress(ha75Address),
+          hatsTree?.topHat.smartAddress ?? zeroAddress, // dev: "should never be the zero address in practice"
           getHat,
           uploadHatDescriptionCallback,
         );
@@ -114,7 +119,10 @@ function RolesEdit() {
             uploadHatDescriptionCallback,
             daoName ?? safe.address,
             getAddress(decentHatsMasterCopy),
-            getAddress(ha75Address),
+            hatsProtocol,
+            hatsAccount1ofNMasterCopy,
+            erc6551Registry,
+            getAddress(keyValuePairs),
           );
         } else {
           if (!hatsTree) {
@@ -125,8 +133,9 @@ function RolesEdit() {
             values.proposalMetadata,
             editedHatStructs,
             hatsTree.adminHat.id,
+            hatsTree.topHat.smartAddress,
             hatsTree.roleHatsTotalCount,
-            getAddress(hatsProtocol),
+            hatsProtocol,
           );
         }
 
@@ -147,12 +156,14 @@ function RolesEdit() {
     [
       daoName,
       decentHatsMasterCopy,
+      erc6551Registry,
       getHat,
-      ha75Address,
+      hatsAccount1ofNMasterCopy,
       hatsProtocol,
       hatsTree,
       hatsTreeId,
       ipfsClient,
+      keyValuePairs,
       safe,
       submitProposal,
       submitProposalSuccessCallback,

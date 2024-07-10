@@ -1,4 +1,4 @@
-import { Address, Hex } from 'viem';
+import { Address, Hex, zeroAddress } from 'viem';
 import { toHex } from 'viem/utils';
 import { getRandomBytes } from '../../../helpers';
 import { DecentRoleHat } from '../../../state/useRolesState';
@@ -61,12 +61,10 @@ export const BadgeStatus: Record<EditBadgeStatus, string> = {
 export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Updated]: 'lilac-0',
   [EditBadgeStatus.New]: 'celery--2',
-  [EditBadgeStatus.Removed]: 'error-1',
+  [EditBadgeStatus.Removed]: 'red-1',
 };
 
 export interface HatStruct {
-  eligibility: Address; // The address that can report on the Hat wearer's status
-  toggle: Address; // The address that can deactivate the Hat
   maxSupply: number; // No more than this number of wearers. Hardcode to 1
   details: string; // IPFS url/hash to JSON { version: '1.0', data: { name, description, ...arbitraryData } }
   imageURI: string;
@@ -103,6 +101,7 @@ export function getNewRole(): RoleValue {
     name: '',
     description: '',
     prettyId: '',
+    smartAddress: zeroAddress,
   };
 }
 
