@@ -19,7 +19,7 @@ import { RoleFormValues, RoleValue } from '../types';
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleValue>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
-  const { values, handleSubmit } = useFormikContext<RoleFormValues>();
+  const { values, handleSubmit, isSubmitting } = useFormikContext<RoleFormValues>();
   const editedRoles = useMemo(() => {
     return values.hats.filter(hat => !!hat.editedRole);
   }, [values.hats]);
@@ -140,7 +140,12 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         >
           {t('cancel', { ns: 'common' })}
         </Button>
-        <Button onClick={() => handleSubmit()}>{t('sendAssetsSubmit')}</Button>
+        <Button
+          onClick={() => handleSubmit()}
+          isDisabled={isSubmitting}
+        >
+          {t('sendAssetsSubmit')}
+        </Button>
       </Flex>
       {drawerViewingRole !== undefined && (
         <>
