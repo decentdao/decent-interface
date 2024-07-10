@@ -29,7 +29,7 @@ export default function PayrollStreamBuilder() {
   const [sender, setSender] = useState(daoAddress);
   const [recipient, setRecipient] = useState<Address | undefined>(account);
   const [totalAmount, setTotalAmount] = useState<string>('25000');
-  const [startDate, setStartDate] = useState(Math.round(Date.now() / 1000) + 60 * 15); // Unix timestamp. 15 minutes from moment of proposal creation by default
+  const [startDate, setStartDate] = useState(Math.round(Date.now() / 1000) + 60 * 15); // Unix timestamp. 15 minutes from moment of proposal creation by default for development purposes
   const [frequency, setFrequency] = useState<PayrollFrequency>();
   const [months, setMonths] = useState(0); // Total number of months
   // @todo - seems like good chunk of this logic can be re-used between payroll/vesting stream building and send assets modal
@@ -73,31 +73,30 @@ export default function PayrollStreamBuilder() {
         // @todo - obviously this isn't correct and we need proper calculation of how many weeks are in the amount of months entered
         totalSegments = months * 4;
       } else if (frequency === 'biweekly') {
-        // @todo - another example of Kirill being lazy and pushing off stuff to later in favour of keep shit rollin
+        // @todo - again, not correct - need to get exact number of 2-weeks cycles from the total number of months
         totalSegments = months * 2;
       }
       const segmentAmount = (BigInt(totalAmount) * exponent) / BigInt(totalSegments);
-      const segments: { amount: bigint; exponent: bigint; milestone: number }[] = [];
+      const segments: { amount: bigint; exponent: bigint; duration: number }[] = [];
+
       for (let i = 0; i <= totalSegments; i++) {
-        const milestone = startDate + 3600 * 24 * i;
-        if (i === 0) {
-          segments.push({ amount: 0n, exponent, milestone: startDate - 1 });
-        } else if (i % 2 === 1) {
-          segments.push({ amount: segmentAmount, exponent, milestone });
-        } else {
-          segments.push({ amount: 0n, exponent, milestone: milestone - 1 });
-        }
+        const duration = 30 * 24 * 60 * 60 * months * (i + 1);
+        segments.push({
+          amount: segmentAmount,
+          exponent,
+          duration: startDate + duration,
+        });
       }
+
       const sablierBatchCalldata = encodeFunctionData({
         abi: SablierBatchAbi,
-        functionName: 'createWithMilestones',
+        functionName: 'createWithDurationsLD',
         args: [
           sablierV2LockupDynamic,
           tokenAddress,
           [
             {
               sender, // Tokens sender. This address will be able to cancel the stream
-              startTime: startDate, // Timestamp when stream starts unlocking
               cancelable: true, // Cancelable - is it possible to cancel this stream
               transferable: false, // Transferable - is Recipient able to transfer receiving rights to someone else
               recipient, // Recipient of tokens through stream
@@ -108,6 +107,8 @@ export default function PayrollStreamBuilder() {
           ],
         ],
       });
+
+      console.log();
       const tokenCalldata = encodeFunctionData({
         abi: erc20Abi,
         functionName: 'approve',
