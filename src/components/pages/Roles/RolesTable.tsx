@@ -10,10 +10,11 @@ import { useRolesState } from '../../../state/useRolesState';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
+import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
 import { RoleEditProps, RoleFormValues, RoleProps, SablierPayroll, SablierVesting } from './types';
 
-function RolesHeader() {
+function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
   const { t } = useTranslation(['roles']);
   return (
     <Thead
@@ -32,6 +33,7 @@ function RolesHeader() {
         <Th>{t('member')}</Th>
         <Th>{t('payroll')}</Th>
         <Th>{t('vesting')}</Th>
+        {addHiddenColumn && <Th w="10%" />}
       </Tr>
     </Thead>
   );
@@ -256,6 +258,7 @@ export function RolesRow({
 export function RolesRowEdit({
   name,
   wearerAddress,
+  editStatus,
   payrollData,
   vestingData,
   handleRoleClick,
@@ -277,6 +280,9 @@ export function RolesRowEdit({
       <MemberColumn wearerAddress={wearerAddress} />
       <PayrollColumn payrollData={payrollData} />
       <VestingColumn vestingData={vestingData} />
+      <Td w="10%">
+        <EditBadge editStatus={editStatus} />
+      </Td>
     </Tr>
   );
 }
@@ -344,7 +350,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
       borderColor="white-alpha-08"
     >
       <Table variant="unstyled">
-        <RolesHeader />
+        <RolesHeader addHiddenColumn />
         {/* Map Rows */}
         <Tbody
           sx={{
@@ -366,6 +372,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
                 setFieldValue('roleEditing', role);
                 handleRoleClick(role.id);
               }}
+              editStatus={role.editedRole?.status}
               {...role}
             />
           ))}
