@@ -163,8 +163,9 @@ function RolesEdit() {
         description: '',
       },
       hats: hatsTree?.roleHats || [],
+      customNonce: safe?.nextNonce || 0,
     };
-  }, [hatsTree?.roleHats]);
+  }, [hatsTree?.roleHats, safe?.nextNonce]);
 
   if (daoAddress === null) return null;
 
