@@ -94,7 +94,7 @@ const useHatsTree = () => {
 
   useEffect(() => {
     getHatsTree();
-  }, [chain.id, hatsSubgraphClient, hatsTreeId, setHatsTree, ipfsClient, getHatsTree]);
+  }, [getHatsTree]);
 
   return {
     getHatsTree,
