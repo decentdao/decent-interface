@@ -1,11 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 
-import { getAddress, getContract, zeroAddress } from 'viem';
+import { getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { useHatsTree } from './loaders/useHatsTree';
 
 export function useHatsListeners() {
   const {
@@ -17,52 +16,41 @@ export function useHatsListeners() {
   } = useNetworkConfig();
 
   const publicClient = usePublicClient();
-  const { getHatsTree } = useHatsTree();
 
-  const handleHatCreated = useCallback(
-    (args: {
-      id?: bigint | undefined;
-      details?: string | undefined;
-      imageURI?: string | undefined;
-    }) => {
-      const { id, details, imageURI } = args;
-      getHatsTree();
-    },
-    [getHatsTree],
-  );
+  const handleHatCreated = (args: {
+    id?: bigint | undefined;
+    details?: string | undefined;
+    imageURI?: string | undefined;
+  }) => {
+    const { id, details, imageURI } = args;
+    console.log('Hat Created:', { id, details, imageURI });
+  };
 
-  const handleHatDetailsChanged = useCallback(
-    (args: { hatId?: bigint | undefined; newDetails?: string | undefined }) => {
-      const { hatId, newDetails } = args;
-      getHatsTree();
-    },
-    [getHatsTree],
-  );
+  const handleHatDetailsChanged = (args: {
+    hatId?: bigint | undefined;
+    newDetails?: string | undefined;
+  }) => {
+    const { hatId, newDetails } = args;
+    console.log('Hat Details Changed:', { hatId, newDetails });
+  };
 
-  const handleHatStatusChanged = useCallback(
-    (args: { hatId?: bigint | undefined; newStatus?: boolean | undefined }) => {
-      const { hatId, newStatus } = args;
-      getHatsTree();
-    },
-    [getHatsTree],
-  );
+  const handleHatStatusChanged = (args: {
+    hatId?: bigint | undefined;
+    newStatus?: boolean | undefined;
+  }) => {
+    const { hatId, newStatus } = args;
+    console.log('Hat Details Changed:', { hatId, newStatus });
+  };
 
-  const handleTransferSingle = useCallback(
-    (args: {
-      operator?: string | undefined;
-      from?: string | undefined;
-      to?: string | undefined;
-      id?: bigint | undefined;
-    }) => {
-      const { from } = args;
-      if (from === zeroAddress) {
-        return;
-      }
-
-      getHatsTree();
-    },
-    [getHatsTree],
-  );
+  const handleTransferSingle = (args: {
+    operator?: string | undefined;
+    from?: string | undefined;
+    to?: string | undefined;
+    id?: bigint | undefined;
+  }) => {
+    const { operator, from, to, id } = args;
+    console.log('Transfer Single:', { operator, from, to, id });
+  };
 
   useEffect(() => {
     if (!publicClient || !safe) return;
@@ -95,13 +83,5 @@ export function useHatsListeners() {
         onLogs: log => handleTransferSingle(log[0].args),
       },
     );
-  }, [
-    handleHatCreated,
-    handleHatDetailsChanged,
-    handleHatStatusChanged,
-    handleTransferSingle,
-    hatsProtocol,
-    publicClient,
-    safe,
-  ]);
+  }, [hatsProtocol, publicClient, safe]);
 }
