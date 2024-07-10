@@ -1,6 +1,6 @@
 import Azorius from '@fractal-framework/fractal-contracts/deployments/mainnet/Azorius.json' assert { type: 'json' };
 import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/mainnet/AzoriusFreezeGuard.json' assert { type: 'json' };
-import DecentHats from '@fractal-framework/fractal-contracts/deployments/mainnet/DecentHats.json' assert { type: 'json ' };
+import DecentHats from '@fractal-framework/fractal-contracts/deployments/mainnet/DecentHats_0_1_0.json' assert { type: 'json' };
 import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/mainnet/ERC20Claim.json' assert { type: 'json' };
 import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/mainnet/ERC20FreezeVoting.json' assert { type: 'json' };
 import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/mainnet/ERC721FreezeVoting.json' assert { type: 'json' };

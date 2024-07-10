@@ -1,5 +1,5 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, getContract, keccak256, toBytes } from 'viem';
+import { Address, Hex, PublicClient, encodePacked, getContract, keccak256, toBytes } from 'viem';
 import { create } from 'zustand';
 import ERC6551RegistryAbi from '../assets/abi/ERC6551RegistryAbi';
 
@@ -21,10 +21,19 @@ interface PredictAccountParams {
   tokenId: bigint;
   registryAddress: Address;
   publicClient: PublicClient;
+  decentHats: Address;
 }
 
 const predictAccountAddress = (params: PredictAccountParams) => {
-  const { implementation, chainId, tokenContract, tokenId, registryAddress, publicClient } = params;
+  const {
+    implementation,
+    chainId,
+    tokenContract,
+    tokenId,
+    registryAddress,
+    publicClient,
+    decentHats,
+  } = params;
 
   const erc6551RegistryContract = getContract({
     abi: ERC6551RegistryAbi,
@@ -32,9 +41,20 @@ const predictAccountAddress = (params: PredictAccountParams) => {
     client: publicClient,
   });
 
+  if (!publicClient.chain) {
+    throw new Error('Public client needs to be on a chain');
+  }
+
+  const salt = keccak256(
+    encodePacked(
+      ['string', 'uint256', 'address'],
+      ['DecentHats_0_1_0', BigInt(publicClient.chain.id), decentHats],
+    ),
+  );
+
   return erc6551RegistryContract.read.account([
     implementation,
-    keccak256(toBytes('DecentHats')),
+    salt,
     chainId,
     tokenContract,
     tokenId,
@@ -76,6 +96,7 @@ interface Roles {
     erc6551Registry: Address;
     hatsAccountImplementation: Address;
     publicClient: PublicClient;
+    decentHats: Address;
   }) => Promise<void>;
 }
 
@@ -151,6 +172,7 @@ const sanitize = async (
   hats: Address,
   chainId: bigint,
   publicClient: PublicClient,
+  decentHats: Address,
 ): Promise<undefined | null | DecentTree> => {
   if (hatsTree === undefined || hatsTree === null) {
     return hatsTree;
@@ -170,6 +192,7 @@ const sanitize = async (
     chainId,
     tokenId: BigInt(rawTopHat.id),
     publicClient,
+    decentHats,
   });
 
   const topHat: DecentHat = {
@@ -190,6 +213,7 @@ const sanitize = async (
     chainId,
     tokenId: BigInt(rawAdminHat.id),
     publicClient,
+    decentHats,
   });
 
   const adminHat: DecentHat = {
@@ -217,6 +241,7 @@ const sanitize = async (
       chainId,
       tokenId: BigInt(rawHat.id),
       publicClient,
+      decentHats,
     });
 
     roleHats.push({
@@ -272,6 +297,7 @@ const useRolesState = create<Roles>()((set, get) => ({
       params.hatsProtocol,
       params.chainId,
       params.publicClient,
+      params.decentHats,
     );
     set(() => ({ hatsTree }));
   },

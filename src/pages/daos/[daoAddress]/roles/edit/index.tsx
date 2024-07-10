@@ -39,7 +39,13 @@ function RolesEdit() {
   } = useFractal();
   const {
     addressPrefix,
-    contracts: { hatsProtocol, decentHatsMasterCopy },
+    contracts: {
+      hatsProtocol,
+      decentHatsMasterCopy,
+      hatsAccount1ofNMasterCopy,
+      erc6551Registry,
+      keyValuePairs,
+    },
   } = useNetworkConfig();
 
   const { rolesSchema } = useRolesSchema();
@@ -94,7 +100,7 @@ function RolesEdit() {
 
         const editedHatStructs = await parseEditedHatsFormValues(
           modifiedHats,
-          zeroAddress, // This needs to be the Top Hat Smart Address, hatsTree.topHat.smartAddress,
+          hatsTree?.topHat.smartAddress ?? zeroAddress, // dev: "should never be the zero address in practice"
           getHat,
           uploadHatDescriptionCallback,
         );
@@ -109,7 +115,10 @@ function RolesEdit() {
             uploadHatDescriptionCallback,
             daoName ?? safe.address,
             getAddress(decentHatsMasterCopy),
-            zeroAddress, // This needs to be the Top Hat Smart Address, hatsTree.topHat.smartAddress,
+            getAddress(hatsProtocol),
+            hatsAccount1ofNMasterCopy,
+            erc6551Registry,
+            getAddress(keyValuePairs),
           );
         } else {
           if (!hatsTree) {
@@ -120,6 +129,7 @@ function RolesEdit() {
             values.proposalMetadata,
             editedHatStructs,
             hatsTree.adminHat.id,
+            hatsTree.topHat.smartAddress,
             hatsTree.roleHatsTotalCount,
             getAddress(hatsProtocol),
           );
@@ -142,11 +152,14 @@ function RolesEdit() {
     [
       daoName,
       decentHatsMasterCopy,
+      erc6551Registry,
       getHat,
+      hatsAccount1ofNMasterCopy,
       hatsProtocol,
       hatsTree,
       hatsTreeId,
       ipfsClient,
+      keyValuePairs,
       safe,
       submitProposal,
       submitProposalSuccessCallback,

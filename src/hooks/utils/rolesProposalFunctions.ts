@@ -1,7 +1,8 @@
 import { zeroAddress, Address, encodeFunctionData, getAddress, Hex } from 'viem';
-import DecentHatsAbi from '../../assets/abi/DecentHats';
+import DecentHatsAbi from '../../assets/abi/DecentHats_0_1_0_Abi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
+import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import {
   EditBadgeStatus,
   HatStruct,
@@ -32,7 +33,7 @@ const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsCount: n
   return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
 };
 
-const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex) => {
+const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, topHatAccount: Address) => {
   const admins: bigint[] = [];
   const details: string[] = [];
   const maxSupplies: number[] = [];
@@ -45,8 +46,8 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex) => {
     admins.push(BigInt(adminHatId));
     details.push(hat.details);
     maxSupplies.push(hat.maxSupply);
-    eligibilityModules.push(hat.eligibility);
-    toggleModules.push(hat.toggle);
+    eligibilityModules.push(topHatAccount);
+    toggleModules.push(topHatAccount);
     mutables.push(hat.isMutable);
     imageURIs.push(hat.imageURI);
   });
@@ -179,7 +180,10 @@ export const prepareCreateTopHatProposalData = async (
   uploadHatDescription: (hatDescription: string) => Promise<string>,
   safeName: string,
   decentHatsAddress: Address,
-  topHatAccount: Address,
+  hatsAddress: Address,
+  hatsAccountImplementation: Address,
+  registry: Address,
+  keyValuePairs: Address,
 ) => {
   const enableModuleData = encodeFunctionData({
     abi: GnosisSafeL2,
@@ -207,8 +211,6 @@ export const prepareCreateTopHatProposalData = async (
   );
 
   const adminHat: HatStruct = {
-    eligibility: topHatAccount,
-    toggle: topHatAccount,
     maxSupply: 1,
     details: adminHatDetails,
     imageURI: '',
@@ -219,7 +221,18 @@ export const prepareCreateTopHatProposalData = async (
   const createAndDeclareTreeData = encodeFunctionData({
     abi: DecentHatsAbi,
     functionName: 'createAndDeclareTree',
-    args: [topHatDetails, '', adminHat, addedHats],
+    args: [
+      {
+        hatsProtocol: hatsAddress,
+        hatsAccountImplementation,
+        registry,
+        keyValuePairs,
+        topHatDetails,
+        topHatImageURI: '',
+        adminHat,
+        hats: addedHats,
+      },
+    ],
   });
 
   return {
@@ -248,6 +261,7 @@ export const prepareEditHatsProposalData = (
     }[];
   },
   adminHatId: Hex,
+  topHatAccount: Address,
   hatsCount: number,
   hatsContractAddress: Address,
 ) => {
@@ -263,7 +277,7 @@ export const prepareEditHatsProposalData = (
     const createHatsTx = encodeFunctionData({
       abi: HatsAbi,
       functionName: 'batchCreateHats',
-      args: prepareAddHatsTxArgs(addedHats, adminHatId),
+      args: prepareAddHatsTxArgs(addedHats, adminHatId, topHatAccount),
     });
 
     // Finally, prepare a single tx to mint all the hats to the wearers
@@ -281,10 +295,20 @@ export const prepareEditHatsProposalData = (
 
   if (removedHatIds.length) {
     removeHatTxs = removedHatIds.map(hatId =>
+      // make transaction proxy through erc6551 contract
       encodeFunctionData({
-        abi: HatsAbi,
-        functionName: 'setHatStatus',
-        args: [BigInt(hatId), false],
+        abi: HatsAccount1ofNAbi,
+        functionName: 'execute',
+        args: [
+          hatsContractAddress,
+          0n,
+          encodeFunctionData({
+            abi: HatsAbi,
+            functionName: 'setHatStatus',
+            args: [BigInt(hatId), false],
+          }),
+          0,
+        ],
       }),
     );
   }
@@ -308,10 +332,11 @@ export const prepareEditHatsProposalData = (
       });
     });
   }
+
   return {
     targets: [
       ...createAndMintHatsTxs.map(() => hatsContractAddress),
-      ...removeHatTxs.map(() => hatsContractAddress),
+      ...removeHatTxs.map(() => topHatAccount),
       ...transferHatTxs.map(() => hatsContractAddress),
       ...hatDetailsChangedTxs.map(() => hatsContractAddress),
     ],
