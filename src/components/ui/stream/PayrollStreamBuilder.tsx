@@ -45,7 +45,6 @@ export default function PayrollStreamBuilder() {
 
   const successCallback = useCallback(() => {
     if (daoAddress) {
-      close();
       navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
     }
   }, [addressPrefix, daoAddress, navigate]);
@@ -82,15 +81,15 @@ export default function PayrollStreamBuilder() {
       const segments: { amount: bigint; exponent: bigint; duration: number }[] = [];
 
       const SECONDS_IN_DAY = 24 * 60 * 60;
-      for (let i = 1; i <= totalSegments; i++) {
-        let days = 30;
-        if (frequency === 'weekly') {
-          days = 7;
-        } else if (frequency === 'biweekly') {
-          days = 14;
-        }
+      let days = 30;
+      if (frequency === 'weekly') {
+        days = 7;
+      } else if (frequency === 'biweekly') {
+        days = 14;
+      }
+      const duration = days * SECONDS_IN_DAY;
 
-        const duration = days * SECONDS_IN_DAY * i;
+      for (let i = 1; i <= totalSegments; i++) {
 
         segments.push({
           amount: segmentAmount,
@@ -211,7 +210,7 @@ export default function PayrollStreamBuilder() {
             label="Total Amount"
             placeholder="25,000"
             value={totalAmount}
-            onChange={event => setTotalAmount(event.target.value as Address)}
+            onChange={event => setTotalAmount(event.target.value)}
           />
         </Flex>
         <Box

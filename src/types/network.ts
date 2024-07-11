@@ -53,6 +53,7 @@ export type NetworkConfig = {
     hatsAccount1ofNMasterCopy: Address;
     sablierV2Batch: Address;
     sablierV2LockupDynamic: Address;
+    sablierV2LockupTranched: Address;
   };
   staking: {
     lido?: {
