@@ -1,4 +1,4 @@
-import { Box, Flex, Grid, GridItem, Icon, Portal, Show, Text } from '@chakra-ui/react';
+import { Box, Flex, Icon, Portal, Show, Text } from '@chakra-ui/react';
 import { ArrowLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -64,10 +64,12 @@ export default function EditProposalSummary() {
             position="absolute"
             top={`calc(1rem + ${headerHeight})`}
             left={{ base: SIDEBAR_WIDTH, '3xl': `calc(${SIDEBAR_WIDTH} + 9rem)` }}
-            h={`100vh`}
             bg="neutral-1"
             px="1rem"
-            width={`calc(100% - ${SIDEBAR_WIDTH})`}
+            width={{
+              base: `calc(100% - ${SIDEBAR_WIDTH})`,
+              '3xl': `calc(100% - 9rem - ${SIDEBAR_WIDTH})`,
+            }}
           >
             <PageHeader
               title={t('proposalNew', { ns: 'breadcrumbs' })}
@@ -78,16 +80,9 @@ export default function EditProposalSummary() {
                 },
               ]}
             />
-            <Grid
-              gridTemplateAreas={`"form details"`}
-              gridTemplateColumns="minmax(1fr, 736px) 1fr"
-            >
-              <GridItem area="form">
-                <RoleFormCreateProposal
-                  close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
-                />
-              </GridItem>
-            </Grid>
+            <RoleFormCreateProposal
+              close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
+            />
           </Box>
         </Portal>
       </Show>
