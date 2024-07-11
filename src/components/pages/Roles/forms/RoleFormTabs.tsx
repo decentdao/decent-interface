@@ -134,7 +134,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
         variant="twoTone"
       >
         <TabList>
-          <Tab>Role Info</Tab>
+          <Tab>{t('roleInfo')}</Tab>
           <Tab isDisabled={true}>
             <Flex ref={payrollTabContainerRef}>
               <ComingSoonTooltip type="payroll">
@@ -142,7 +142,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
                   px={{ base: '10vw', md: '5vw' }}
                   py="0.5rem"
                 >
-                  Payroll
+                  {t('payroll')}
                 </Flex>
               </ComingSoonTooltip>
             </Flex>
@@ -154,7 +154,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
                   px={{ base: '10vw', md: '5vw' }}
                   py="0.5rem"
                 >
-                  Vesting
+                  {t('vesting')}
                 </Flex>
               </ComingSoonTooltip>
             </Flex>
