@@ -20,19 +20,14 @@ export default function RoleFormInfo() {
     >
       <FormControl>
         <Field name={`roleEditing.name`}>
-          {({
-            field,
-            form: { setFieldValue, setFieldTouched },
-            meta,
-          }: FieldProps<string, RoleFormValues>) => (
+          {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
               label="Role Name"
-              errorMessage={meta.touched && meta.error ? meta.error : undefined}
+              errorMessage={meta.error}
             >
               <InputComponent
                 value={field.value}
                 onChange={e => {
-                  setFieldTouched(field.name, true);
                   setFieldValue(field.name, e.target.value);
                 }}
                 testId="role-name"
@@ -51,20 +46,15 @@ export default function RoleFormInfo() {
       </FormControl>
       <FormControl>
         <Field name={`roleEditing.description`}>
-          {({
-            field,
-            form: { setFieldValue, setFieldTouched },
-            meta,
-          }: FieldProps<string, RoleFormValues>) => (
+          {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
               label="Description"
-              errorMessage={meta.touched && meta.error ? meta.error : undefined}
+              errorMessage={meta.error}
             >
               <TextareaComponent
                 value={field.value}
                 onChange={e => {
                   setFieldValue(field.name, e.target.value);
-                  setFieldTouched(field.name, true);
                 }}
                 isRequired
                 gridContainerProps={{
@@ -83,20 +73,15 @@ export default function RoleFormInfo() {
       </FormControl>
       <FormControl>
         <Field name={`roleEditing.wearer`}>
-          {({
-            field,
-            form: { setFieldValue, setFieldTouched },
-            meta,
-          }: FieldProps<string, RoleFormValues>) => (
+          {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
               label="Member"
-              errorMessage={meta.touched && meta.error ? meta.error : undefined}
+              errorMessage={meta.error}
             >
               <AddressInput
                 value={field.value}
                 onChange={e => {
                   setFieldValue(field.name, e.target.value);
-                  setFieldTouched(field.name, true);
                 }}
               />
             </LabelWrapper>
