@@ -180,11 +180,12 @@ export default function RoleEditDetails() {
                     </Box>
                   </Flex>
                 </Flex>
-
-                <RoleFormTabs
-                  hatId={hatEditingId}
-                  push={push}
-                />
+                <Box pb="5rem">
+                  <RoleFormTabs
+                    hatId={hatEditingId}
+                    push={push}
+                  />
+                </Box>
               </Box>
             </Portal>
           </Show>
