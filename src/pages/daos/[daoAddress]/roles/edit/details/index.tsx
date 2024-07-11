@@ -170,21 +170,22 @@ export default function RoleEditDetails() {
                       boxSize="1.5rem"
                     />
                     <Text textStyle="display-lg">{t('editRoles')}</Text>
-                    <Box position="relative">
-                      <EditRoleMenu
-                        onRemove={() => {
-                          navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
-                        }}
-                        hatId={hatEditingId}
-                      />
-                    </Box>
                   </Flex>
+                  <Box position="relative">
+                    <EditRoleMenu
+                      onRemove={() => {
+                        navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                      }}
+                      hatId={hatEditingId}
+                    />
+                  </Box>
                 </Flex>
-
-                <RoleFormTabs
-                  hatId={hatEditingId}
-                  push={push}
-                />
+                <Box pb="5rem">
+                  <RoleFormTabs
+                    hatId={hatEditingId}
+                    push={push}
+                  />
+                </Box>
               </Box>
             </Portal>
           </Show>
