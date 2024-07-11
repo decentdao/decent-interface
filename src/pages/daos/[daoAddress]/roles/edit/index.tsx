@@ -88,9 +88,10 @@ function RolesEdit() {
 
   const createRolesEditProposal = useCallback(
     async (values: RoleFormValues, formikHelpers: FormikHelpers<RoleFormValues>) => {
-      formikHelpers.setSubmitting(true);
+      const { setSubmitting } = formikHelpers;
+      setSubmitting(true);
       if (!safe) {
-        formikHelpers.setSubmitting(false);
+        setSubmitting(false);
         throw new Error('Cannot create Roles proposal without known Safe');
       }
 
@@ -128,7 +129,6 @@ function RolesEdit() {
           );
         } else {
           if (!hatsTree) {
-            formikHelpers.setSubmitting(false);
             throw new Error('Cannot edit Roles without a HatsTree');
           }
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
@@ -151,11 +151,11 @@ function RolesEdit() {
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
           successCallback: submitProposalSuccessCallback,
         });
-        formikHelpers.setSubmitting(false);
       } catch (e) {
-        formikHelpers.setSubmitting(false);
         console.error(e);
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
+      } finally {
+        formikHelpers.setSubmitting(false);
       }
     },
     [
