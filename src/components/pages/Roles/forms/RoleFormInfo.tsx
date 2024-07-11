@@ -23,7 +23,7 @@ export default function RoleFormInfo() {
           {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
               label="Role Name"
-              errorMessage={meta.error ? meta.error : undefined}
+              errorMessage={meta.error}
             >
               <InputComponent
                 value={field.value}
@@ -49,7 +49,7 @@ export default function RoleFormInfo() {
           {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
               label="Description"
-              errorMessage={meta.error ? meta.error : undefined}
+              errorMessage={meta.error}
             >
               <TextareaComponent
                 value={field.value}
@@ -76,7 +76,7 @@ export default function RoleFormInfo() {
           {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
               label="Member"
-              errorMessage={meta.error ? meta.error : undefined}
+              errorMessage={meta.error}
             >
               <AddressInput
                 value={field.value}
