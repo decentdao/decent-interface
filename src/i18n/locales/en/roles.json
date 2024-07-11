@@ -6,6 +6,7 @@
   "description": "Description",
   "unassigned": "Unassigned",
   "after": "after",
+  "roleInfo": "Role Info",
   "payroll": "Payroll",
   "vesting": "Vesting",
   "editRoles": "Edit Roles",
