@@ -22,9 +22,7 @@ export default function PayrollStreamBuilder() {
     node: { daoAddress, safe },
     treasury: { assetsFungible },
   } = useFractal();
-  const {
-    addressPrefix,
-  } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfig();
   const [recipient, setRecipient] = useState<Address | undefined>(account);
   const [totalAmount, setTotalAmount] = useState<string>('25000');
   const [startDate, setStartDate] = useState(Math.round(Date.now() / 1000) + 60 * 15); // Unix timestamp. 15 minutes from moment of proposal creation by default for development purposes
@@ -36,7 +34,7 @@ export default function PayrollStreamBuilder() {
   const selectedAssetIndex = fungibleAssetsWithBalance.findIndex(
     asset => asset.tokenAddress === selectedAsset?.tokenAddress,
   );
-  const { prepareCreateDynamicLockupProposal } = useCreateSablierStream();
+  const { prepareCreateTranchedLockupProposal } = useCreateSablierStream();
 
   const { submitProposal } = useSubmitProposal();
   const navigate = useNavigate();
@@ -55,14 +53,15 @@ export default function PayrollStreamBuilder() {
   }, [fungibleAssetsWithBalance]);
 
   const handleSubmitProposal = useCallback(() => {
-    if (
-      startDate &&
-      recipient &&
-      selectedAsset &&
-      frequency &&
-      months > 0
-    ) {
-      const proposalData = prepareCreateDynamicLockupProposal({ months, frequency, totalAmount, asset: selectedAsset, recipient, startDate })
+    if (startDate && recipient && selectedAsset && frequency && months > 0) {
+      const proposalData = prepareCreateTranchedLockupProposal({
+        months,
+        frequency,
+        totalAmount,
+        asset: selectedAsset,
+        recipient,
+        startDate,
+      });
       submitProposal({
         nonce: safe?.nonce,
         pendingToastMessage: t('proposalCreatePendingToastMessage'),
@@ -72,7 +71,19 @@ export default function PayrollStreamBuilder() {
         proposalData,
       });
     }
-  }, [frequency, months, prepareCreateDynamicLockupProposal, recipient, safe?.nonce, selectedAsset, startDate, submitProposal, successCallback, t, totalAmount]);
+  }, [
+    frequency,
+    months,
+    prepareCreateTranchedLockupProposal,
+    recipient,
+    safe?.nonce,
+    selectedAsset,
+    startDate,
+    submitProposal,
+    successCallback,
+    t,
+    totalAmount,
+  ]);
 
   const inputBasicProps = {
     testId: '',
