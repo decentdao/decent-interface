@@ -1,9 +1,19 @@
-import { Box, Button, Flex, Show } from '@chakra-ui/react';
-import { Plus } from '@phosphor-icons/react';
-import { Formik } from 'formik';
-import { useCallback, useMemo } from 'react';
+import {
+  Box,
+  Button,
+  Drawer,
+  DrawerContent,
+  DrawerOverlay,
+  Flex,
+  Hide,
+  Show,
+  Text,
+} from '@chakra-ui/react';
+import { Plus, Trash, WarningCircle } from '@phosphor-icons/react';
+import { Formik, useFormikContext } from 'formik';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Blocker, Outlet, useBlocker, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Hex, getAddress, zeroAddress } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
@@ -18,6 +28,11 @@ import {
   EditBadgeStatus,
 } from '../../../../../components/pages/Roles/types';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
+import {
+  MOBILE_DRAWER_OVERLAY,
+  NEUTRAL_2_82_TRANSPARENT,
+  SEXY_BOX_SHADOW_T_T,
+} from '../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
@@ -182,100 +197,198 @@ function RolesEdit() {
     };
   }, [hatsTree?.roleHats, safe?.nextNonce]);
 
+  const [formEdited, setFormEdited] = useState(false);
+
+  const blocker: Blocker = useBlocker(({ currentLocation, nextLocation }) => {
+    console.log({
+      formEdited,
+      currentLocation,
+      nextLocation,
+      thePath: DAO_ROUTES.rolesEdit.path,
+    });
+
+    return (
+      formEdited &&
+      currentLocation.pathname !== `/${DAO_ROUTES.rolesEdit.path}` &&
+      currentLocation.pathname !== nextLocation.pathname
+    );
+  });
+
   if (daoAddress === null) return null;
 
   const showRoleEditDetails = (hatId: Hex) => {
     navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatId));
   };
 
-  return (
-    <Formik<RoleFormValues>
-      initialValues={initialValues}
-      enableReinitialize
-      validationSchema={rolesSchema}
-      validateOnMount
-      onSubmit={createRolesEditProposal}
-    >
-      {({ handleSubmit, values, touched, setFieldValue }) => (
-        <form onSubmit={handleSubmit}>
-          <Box>
-            <PageHeader
-              title={t('roles')}
-              breadcrumbs={[
-                {
-                  terminus: t('roles'),
-                  path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
-                },
-                {
-                  terminus: t('editRoles'),
-                  path: '',
-                },
-              ]}
-              buttonVariant="secondary"
-              buttonText={t('addRole')}
-              buttonProps={{
-                size: 'sm',
-                leftIcon: <Plus />,
-              }}
-              buttonClick={() => {
-                const newRole = getNewRole();
-                setFieldValue('roleEditing', newRole);
-                showRoleEditDetails(newRole.id);
-              }}
-            />
+  function EditedFormProtector() {
+    const { dirty } = useFormikContext();
+    useEffect(() => setFormEdited(dirty), [dirty]);
+    return null;
+  }
 
-            <Show above="md">
-              <RolesEditTable handleRoleClick={showRoleEditDetails} />
-            </Show>
-            <Show below="md">
-              {hatsTree === undefined && <RoleCardLoading />}
-              {(hatsTree === null || !values.hats.length) && <RoleCardNoRoles />}
-              {values.hats.map(hat => (
-                <RoleCardEdit
-                  key={hat.id}
-                  name={hat.name}
-                  wearerAddress={hat.wearer}
-                  editStatus={hat.editedRole?.status}
-                  handleRoleClick={() => {
-                    setFieldValue('roleEditing', hat);
-                    showRoleEditDetails(hat.id);
-                  }}
-                />
-              ))}
-            </Show>
-          </Box>
-          <Flex
-            mt="1rem"
-            gap="1rem"
-            justifyContent="flex-end"
-          >
-            <Button
-              variant="tertiary"
-              onClick={() => navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress))}
+  return (
+    <>
+      {blocker.state === 'blocked' && (
+        <Hide above="md">
+          <>
+            <Drawer
+              placement="bottom"
+              isOpen={true}
+              onClose={() => {}}
             >
-              {t('cancel', { ns: 'common' })}
-            </Button>
-            <Button
-              onClick={() => {
-                if (!touched.proposalMetadata?.title || !values.proposalMetadata.title) {
-                  setFieldValue(
-                    'proposalMetadata.title',
-                    generateRoleProposalTitle({ formValues: values }),
-                  );
-                }
-                navigate(
-                  DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, daoAddress),
-                );
-              }}
-              isDisabled={!values.hats.some(hat => hat.editedRole)}
-            >
-              {t('createProposal', { ns: 'modals' })}
-            </Button>
-          </Flex>
-          <Outlet />
-        </form>
+              <DrawerOverlay
+                bg={MOBILE_DRAWER_OVERLAY}
+                backdropFilter="blur(6px)"
+              />
+              <DrawerContent
+                bg={NEUTRAL_2_82_TRANSPARENT}
+                border="none"
+                borderTopRightRadius="1rem"
+                borderBottomRightRadius="1rem"
+                boxShadow={SEXY_BOX_SHADOW_T_T}
+                py="2rem"
+                px="4rem"
+              >
+                <Flex
+                  height="full"
+                  direction="column"
+                  alignItems="center"
+                  my="1.5rem"
+                >
+                  <WarningCircle size="2.5rem" />
+                  <Text
+                    mt="1rem"
+                    textStyle="display-xl"
+                  >
+                    Unsaved Changes
+                  </Text>
+                  <Text
+                    mt="0.5rem"
+                    textStyle="body-base"
+                    textAlign="center"
+                  >
+                    You have unsaved changes that will be lost if you continue. Do you want to
+                    discard your changes?
+                  </Text>
+                </Flex>
+                <Flex
+                  justifyContent="center"
+                  gap="0.75rem"
+                >
+                  <Button
+                    color="red-1"
+                    borderWidth="1px"
+                    borderColor="red-1"
+                    border-radius="0.25rem"
+                    leftIcon={<Trash />}
+                    variant="outline"
+                    px="2rem"
+                    onClick={() => blocker.proceed()}
+                  >
+                    Discard
+                  </Button>
+                  <Button
+                    onClick={() => blocker.reset()}
+                    px="2rem"
+                  >
+                    Keep Editing
+                  </Button>
+                </Flex>
+              </DrawerContent>
+            </Drawer>
+          </>
+        </Hide>
       )}
-    </Formik>
+
+      <Formik<RoleFormValues>
+        initialValues={initialValues}
+        enableReinitialize
+        validationSchema={rolesSchema}
+        validateOnMount
+        onSubmit={createRolesEditProposal}
+      >
+        {({ handleSubmit, values, touched, setFieldValue }) => (
+          <form onSubmit={handleSubmit}>
+            <Box>
+              <PageHeader
+                title={t('roles')}
+                breadcrumbs={[
+                  {
+                    terminus: t('roles'),
+                    path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
+                  },
+                  {
+                    terminus: t('editRoles'),
+                    path: '',
+                  },
+                ]}
+                buttonVariant="secondary"
+                buttonText={t('addRole')}
+                buttonProps={{
+                  size: 'sm',
+                  leftIcon: <Plus />,
+                }}
+                buttonClick={() => {
+                  const newRole = getNewRole();
+                  setFieldValue('roleEditing', newRole);
+                  showRoleEditDetails(newRole.id);
+                }}
+              />
+
+              <Show above="md">
+                <RolesEditTable handleRoleClick={showRoleEditDetails} />
+              </Show>
+              <Show below="md">
+                {hatsTree === undefined && <RoleCardLoading />}
+                {(hatsTree === null || !values.hats.length) && <RoleCardNoRoles />}
+                {values.hats.map(hat => (
+                  <RoleCardEdit
+                    key={hat.id}
+                    name={hat.name}
+                    wearerAddress={hat.wearer}
+                    editStatus={hat.editedRole?.status}
+                    handleRoleClick={() => {
+                      setFieldValue('roleEditing', hat);
+                      showRoleEditDetails(hat.id);
+                    }}
+                  />
+                ))}
+              </Show>
+            </Box>
+            <Flex
+              mt="1rem"
+              gap="1rem"
+              justifyContent="flex-end"
+            >
+              <Button
+                variant="tertiary"
+                onClick={() => navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress))}
+              >
+                {t('cancel', { ns: 'common' })}
+              </Button>
+              <Button
+                onClick={() => {
+                  if (!touched.proposalMetadata?.title || !values.proposalMetadata.title) {
+                    setFieldValue(
+                      'proposalMetadata.title',
+                      generateRoleProposalTitle({ formValues: values }),
+                    );
+                  }
+                  navigate(
+                    DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, daoAddress),
+                  );
+                }}
+                isDisabled={!values.hats.some(hat => hat.editedRole)}
+              >
+                {t('createProposal', { ns: 'modals' })}
+              </Button>
+            </Flex>
+            <Outlet />
+            <EditedFormProtector />
+          </form>
+        )}
+      </Formik>
+    </>
   );
 }
 
