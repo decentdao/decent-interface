@@ -44,12 +44,13 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   };
 
   return (
-    <Box>
+    <Box maxW="736px">
       <Flex
         flexDir="column"
         gap="1rem"
         p="1rem"
         bg="neutral-2"
+        maxW="736px"
         boxShadow={CARD_SHADOW}
         borderRadius="0.5rem"
       >
