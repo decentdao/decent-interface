@@ -81,7 +81,7 @@ const mainnetConfig: NetworkConfig = {
     hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
     sablierV2Batch: '0xB5Ec9706C3Be9d22326D208f491E5DEef7C8d9f0',
     sablierV2LockupDynamic: '0x9DeaBf7815b42Bf4E9a03EEc35a486fF74ee7459',
-    sablierV2LockupTranched: '0xf86B359035208e4529686A1825F2D5BeE38c28A8'
+    sablierV2LockupTranched: '0xf86B359035208e4529686A1825F2D5BeE38c28A8',
   },
   staking: {
     lido: {

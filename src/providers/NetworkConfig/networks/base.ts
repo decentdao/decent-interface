@@ -81,7 +81,7 @@ const baseConfig: NetworkConfig = {
     hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
     sablierV2Batch: '0xc1c548F980669615772dadcBfEBC29937c29481A',
     sablierV2LockupDynamic: '0xF9E9eD67DD2Fab3b3ca024A2d66Fcf0764d36742',
-    sablierV2LockupTranched: '0xf4937657Ed8B3f3cB379Eed47b8818eE947BEb1e'
+    sablierV2LockupTranched: '0xf4937657Ed8B3f3cB379Eed47b8818eE947BEb1e',
   },
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],

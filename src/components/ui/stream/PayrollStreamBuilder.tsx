@@ -90,7 +90,6 @@ export default function PayrollStreamBuilder() {
       const duration = days * SECONDS_IN_DAY;
 
       for (let i = 1; i <= totalSegments; i++) {
-
         segments.push({
           amount: segmentAmount,
           exponent,
