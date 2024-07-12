@@ -1,12 +1,18 @@
 import { Box, FormControl } from '@chakra-ui/react';
 import { Field, FieldProps } from 'formik';
 import { CARD_SHADOW } from '../../../../constants/common';
+import { DecentRoleHat } from '../../../../state/useRolesState';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleFormValues } from '../types';
 
-export default function RoleFormInfo() {
+export default function RoleFormInfo(props: {
+  hatIndex: number;
+  existingRole: DecentRoleHat | undefined;
+}) {
+  const { hatIndex, existingRole } = props;
+
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -34,6 +40,10 @@ export default function RoleFormInfo() {
                 onChange={e => {
                   setFieldTouched(field.name, true);
                   setFieldValue(field.name, e.target.value);
+
+                  if (hatIndex !== -1 && existingRole) {
+                    setFieldValue(`unsavedEdits.${hatIndex}`, existingRole.name !== e.target.value);
+                  }
                 }}
                 testId="role-name"
                 placeholder="Role Name"
@@ -65,6 +75,13 @@ export default function RoleFormInfo() {
                 onChange={e => {
                   setFieldValue(field.name, e.target.value);
                   setFieldTouched(field.name, true);
+
+                  if (hatIndex !== -1 && existingRole) {
+                    setFieldValue(
+                      `unsavedEdits.${hatIndex}`,
+                      existingRole.description !== e.target.value,
+                    );
+                  }
                 }}
                 isRequired
                 gridContainerProps={{
@@ -97,6 +114,13 @@ export default function RoleFormInfo() {
                 onChange={e => {
                   setFieldValue(field.name, e.target.value);
                   setFieldTouched(field.name, true);
+
+                  if (hatIndex !== -1 && existingRole) {
+                    setFieldValue(
+                      `unsavedEdits.${hatIndex}`,
+                      existingRole.wearer !== e.target.value,
+                    );
+                  }
                 }}
               />
             </LabelWrapper>

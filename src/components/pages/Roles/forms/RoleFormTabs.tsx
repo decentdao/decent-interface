@@ -57,14 +57,14 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
     [values.roleEditing, hatsTree],
   );
 
+  const hatIndex = values.hats.findIndex(h => h.id === hatId);
+
   useEffect(() => {
-    if (values.hats.length && !values.roleEditing) {
-      const role = values.hats.find(hat => hat.id === hatId);
-      if (role) {
-        setFieldValue('roleEditing', role);
-      }
+    if (values.hats.length && !values.roleEditing && hatIndex !== -1) {
+      const role = values.hats[hatIndex];
+      setFieldValue('roleEditing', role);
     }
-  }, [values.hats, values.roleEditing, hatId, setFieldValue]);
+  }, [values.hats, values.roleEditing, hatId, setFieldValue, hatIndex]);
 
   const isRoleNameUpdated = !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name;
 
@@ -73,6 +73,13 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
 
   const isMemberUpdated =
     !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
+
+  const isRoleActuallyEdited = useMemo(() => {
+    if (!existingRoleHat) {
+      return true;
+    }
+    return isRoleNameUpdated || isRoleDescriptionUpdated || isMemberUpdated;
+  }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
 
   const editedRole = useMemo<EditedRole>(() => {
     if (!existingRoleHat) {
@@ -161,7 +168,14 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
           </Tab>
         </TabList>
         <TabPanels my="1.75rem">
-          <TabPanel>{tab === EditRoleTabs.RoleInfo && <RoleFormInfo />}</TabPanel>
+          <TabPanel>
+            {tab === EditRoleTabs.RoleInfo && (
+              <RoleFormInfo
+                hatIndex={hatIndex}
+                existingRole={existingRoleHat}
+              />
+            )}
+          </TabPanel>
           <TabPanel>{tab === EditRoleTabs.Payroll && <Box>Payroll</Box>}</TabPanel>
           <TabPanel>{tab === EditRoleTabs.Vesting && <Box>Vesting</Box>}</TabPanel>
         </TabPanels>
@@ -174,14 +188,25 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
           isDisabled={!!errors.roleEditing}
           onClick={() => {
             const roleUpdated = { ...values.roleEditing, editedRole };
-            const hatIndex = values.hats.findIndex(h => h.id === hatId);
             if (hatIndex === -1) {
               // @dev new hat
               push(roleUpdated);
+              setFieldValue('hasSavedEdits', true);
             } else {
-              setFieldValue(`hats.${hatIndex}`, roleUpdated);
+              if (isRoleActuallyEdited) {
+                setFieldValue(`hats.${hatIndex}`, roleUpdated);
+                setFieldValue('hasSavedEdits', true);
+              } else {
+                setFieldValue(`hats.${hatIndex}`, existingRoleHat);
+                setFieldValue(
+                  'hasSavedEdits',
+                  values.hats.some(h => h.id !== hatId && !!h.editedRole),
+                );
+              }
             }
+
             setFieldValue('roleEditing', undefined);
+            setFieldValue(`unsavedEdits.${hatIndex}`, false);
             navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
           }}
         >

@@ -5,11 +5,9 @@ import {
   DrawerContent,
   DrawerOverlay,
   Flex,
-  Hide,
   Show,
-  Text,
 } from '@chakra-ui/react';
-import { Plus, Trash, WarningCircle } from '@phosphor-icons/react';
+import { Plus } from '@phosphor-icons/react';
 import { Formik, useFormikContext } from 'formik';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -186,14 +184,17 @@ function RolesEdit() {
     ],
   );
 
-  const initialValues = useMemo(() => {
+  const initialValues: RoleFormValues = useMemo(() => {
+    const hats = hatsTree?.roleHats || [];
     return {
       proposalMetadata: {
         title: '',
         description: '',
       },
-      hats: hatsTree?.roleHats || [],
+      hats,
+      unsavedEdits: hats.map(() => false),
       customNonce: safe?.nextNonce || 0,
+      hasSavedEdits: false,
     };
   }, [hatsTree?.roleHats, safe?.nextNonce]);
 
@@ -201,14 +202,14 @@ function RolesEdit() {
 
   const blocker: Blocker = useBlocker(({ currentLocation, nextLocation }) => {
     console.log({
-      formEdited,
+      rolesHaveUnsavedEdits,
       currentLocation,
       nextLocation,
-      thePath: DAO_ROUTES.rolesEdit.path,
     });
 
     return (
-      formEdited &&
+      rolesHaveUnsavedEdits &&
+      currentLocation.pathname !== `/${DAO_ROUTES.roles.path}` &&
       currentLocation.pathname !== `/${DAO_ROUTES.rolesEdit.path}` &&
       currentLocation.pathname !== nextLocation.pathname
     );
