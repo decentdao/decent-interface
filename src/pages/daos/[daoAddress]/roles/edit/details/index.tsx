@@ -125,7 +125,7 @@ export default function RoleEditDetails() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
   const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
@@ -174,6 +174,7 @@ export default function RoleEditDetails() {
                   <Box position="relative">
                     <EditRoleMenu
                       onRemove={() => {
+                        setFieldValue('hasSavedEdits', true);
                         navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
                       }}
                       hatId={hatEditingId}
