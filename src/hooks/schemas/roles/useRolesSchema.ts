@@ -18,6 +18,23 @@ export const useRolesSchema = () => {
                 name: Yup.string().required('Role name is required'),
                 description: Yup.string().required('Role description is required'),
                 wearer: Yup.string().required('Member is required').test(addressValidationTest),
+                payroll: Yup.object()
+                  .default(undefined)
+                  .nullable()
+                  .shape({
+                    asset: Yup.object().shape({
+                      address: Yup.string(),
+                      name: Yup.string(),
+                      symbol: Yup.string(),
+                      decimals: Yup.number(),
+                    }),
+                    amount: Yup.object().shape({
+                      value: Yup.string(),
+                    }),
+                    paymentFrequency: Yup.string(),
+                    paymentStartData: Yup.date(),
+                    paymentFrequencyNumber: Yup.number(),
+                  }),
               }),
           }),
       }),
