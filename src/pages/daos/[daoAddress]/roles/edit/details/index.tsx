@@ -125,15 +125,17 @@ export default function RoleEditDetails() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
+  const { values } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
+  const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
   if (!isHex(hatEditingId)) return null;
   if (!daoAddress) return null;
   if (hatEditingId === undefined) return null;
 
   return (
     <FieldArray name="hats">
-      {({ push }) => (
+      {({ remove, push }) => (
         <>
           <Show below="md">
             <Portal>
@@ -157,6 +159,9 @@ export default function RoleEditDetails() {
                     alignItems="center"
                     aria-label={t('editRoles')}
                     onClick={() => {
+                      if (hatIndex === -1) {
+                        remove(hatIndex);
+                      }
                       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
                     }}
                   >
