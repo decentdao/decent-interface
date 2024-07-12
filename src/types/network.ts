@@ -10,6 +10,7 @@ export type Providers =
 export type NetworkConfig = {
   order: number; // any arbitrary integer, used to "order" the networks in the dropdown
   chain: Chain;
+  isMainnet: boolean;
   moralisSupported: boolean;
   rpcEndpoint: string;
   safeBaseURL: string;

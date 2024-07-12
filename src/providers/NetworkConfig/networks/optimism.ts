@@ -29,6 +29,7 @@ const SAFE_VERSION = '1.3.0';
 const optimismConfig: NetworkConfig = {
   order: 15,
   chain: optimism,
+  isMainnet: true,
   moralisSupported: true,
   rpcEndpoint: `https://opt-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_OPTIMISM_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-optimism.safe.global',

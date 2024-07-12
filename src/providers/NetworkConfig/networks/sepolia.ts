@@ -29,6 +29,7 @@ const SAFE_VERSION = '1.3.0';
 const sepoliaConfig: NetworkConfig = {
   order: 30,
   chain: sepolia,
+  isMainnet: false,
   moralisSupported: true,
   rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',

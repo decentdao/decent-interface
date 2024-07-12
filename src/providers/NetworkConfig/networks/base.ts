@@ -29,6 +29,7 @@ const SAFE_VERSION = '1.3.0';
 const baseConfig: NetworkConfig = {
   order: 10,
   chain: base,
+  isMainnet: true,
   moralisSupported: true,
   rpcEndpoint: `https://base-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_BASE_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-base.safe.global',
