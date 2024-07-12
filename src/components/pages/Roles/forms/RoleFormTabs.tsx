@@ -59,13 +59,6 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
 
   const hatIndex = values.hats.findIndex(h => h.id === hatId);
 
-  useEffect(() => {
-    if (values.hats.length && !values.roleEditing && hatIndex !== -1) {
-      const role = values.hats[hatIndex];
-      setFieldValue('roleEditing', role);
-    }
-  }, [values.hats, values.roleEditing, hatId, setFieldValue, hatIndex]);
-
   const isRoleNameUpdated = !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name;
 
   const isRoleDescriptionUpdated =
@@ -75,11 +68,18 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
     !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
 
   const isRoleActuallyEdited = useMemo(() => {
-    if (!existingRoleHat) {
-      return true;
-    }
     return isRoleNameUpdated || isRoleDescriptionUpdated || isMemberUpdated;
-  }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
+  }, [isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
+
+  const isInitialised = useRef(false);
+
+  useEffect(() => {
+    if (!isInitialised.current && values.hats.length && hatIndex !== -1) {
+      isInitialised.current = true;
+      const role = values.hats[hatIndex];
+      setFieldValue('roleEditing', role);
+    }
+  }, [hatIndex, setFieldValue, values.hats, values.roleEditing]);
 
   const editedRole = useMemo<EditedRole>(() => {
     if (!existingRoleHat) {
@@ -193,21 +193,17 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
               push(roleUpdated);
               setFieldValue('hasSavedEdits', true);
             } else {
-              if (isRoleActuallyEdited) {
-                setFieldValue(`hats.${hatIndex}`, roleUpdated);
-                setFieldValue('hasSavedEdits', true);
-              } else {
-                setFieldValue(`hats.${hatIndex}`, existingRoleHat);
-                setFieldValue(
-                  'hasSavedEdits',
-                  values.hats.some(h => h.id !== hatId && !!h.editedRole),
-                );
-              }
+              setFieldValue(
+                `hats.${hatIndex}`,
+                isRoleActuallyEdited ? roleUpdated : existingRoleHat,
+              );
             }
-
             setFieldValue('roleEditing', undefined);
-            setFieldValue(`unsavedEdits.${hatIndex}`, false);
-            navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+
+            setTimeout(() => {
+              isInitialised.current = false;
+              navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+            }, 50);
           }}
         >
           {t('save')}
