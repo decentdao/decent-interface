@@ -7,8 +7,6 @@ import { Chain } from 'wagmi/chains';
 import { NetworkConfig } from '../../types/network';
 import { supportedNetworks } from './NetworkConfigProvider';
 
-const supportedWagmiChains = supportedNetworks.map(network => network.chain);
-
 export const walletConnectProjectId = import.meta.env.VITE_APP_WALLET_CONNECT_PROJECT_ID;
 export const queryClient = new QueryClient();
 
@@ -28,7 +26,7 @@ const transportsReducer = (accumulator: Record<string, HttpTransport>, network: 
 };
 
 export const wagmiConfig = defaultWagmiConfig({
-  chains: supportedWagmiChains as [Chain, ...Chain[]],
+  chains: supportedNetworks.map(network => network.chain) as [Chain, ...Chain[]],
   projectId: walletConnectProjectId,
   metadata: wagmiMetadata,
   transports: supportedNetworks.reduce(transportsReducer, {}),

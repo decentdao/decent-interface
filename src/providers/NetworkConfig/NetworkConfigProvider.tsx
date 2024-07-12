@@ -9,7 +9,10 @@ export const NetworkConfigContext = createContext({} as NetworkConfig);
 export const useNetworkConfig = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
-export const supportedNetworks = Object.values(networks).sort((a, b) => a.order - b.order);
+export const supportedNetworks = Object.values(networks)
+  .filter(n => (import.meta.env.VITE_APP_TESTNETS_ONLY ? !n.isMainnet : true))
+  .sort((a, b) => a.order - b.order);
+
 export const moralisSupportedChainIds = supportedNetworks
   .filter(network => network.moralisSupported)
   .map(network => network.chain.id);

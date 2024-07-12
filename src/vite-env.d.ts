@@ -27,6 +27,8 @@ interface ImportMetaEnv {
 
   readonly VITE_APP_SITE_URL: string;
 
+  readonly VITE_APP_TESTNETS_ONLY: boolean;
+
   readonly VITE_APP_WALLET_CONNECT_PROJECT_ID: string;
 }
 
