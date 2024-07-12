@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import * as Yup from 'yup';
-import { EditedRole } from '../../../components/pages/Roles/types';
+import { RoleValue } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
@@ -9,15 +9,9 @@ export const useRolesSchema = () => {
     () =>
       Yup.object().shape({
         roleEditing: Yup.object()
-          .shape({
-            name: Yup.string(),
-            description: Yup.string(),
-            wearer: Yup.string(),
-          })
+          .default(undefined)
           .when({
-            is: (roleEditing: EditedRole) => {
-              return !!roleEditing;
-            },
+            is: (roleEditing: RoleValue) => roleEditing !== undefined,
             then: _schema =>
               _schema.shape({
                 name: Yup.string().required('Role name is required'),
