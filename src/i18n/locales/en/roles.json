@@ -27,5 +27,12 @@
   "updatedHats": "Update {{count}} role",
   "updatedHats_other": "Update {{count}} roles",
   "removedHats": "Remove {{count}} role",
-  "removedHats_other": "Remove {{count}} roles"
+  "removedHats_other": "Remove {{count}} roles",
+  "totalAmount": "Total Amount",
+  "paymentStart": "Payment Start",
+  "Months": "Months",
+  "asset": "Asset",
+  "assetSubtitle": "Define a stream of assets for this role.",
+  "paymentFrequency": "Payment Frequency",
+  "paymentFrequencySubtitle": "Define how often the payments will be made available."
 }

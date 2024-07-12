@@ -41,7 +41,6 @@ function SectionTitle({ title, subTitle }: { title: string; subTitle: string }) 
             </Flex>
           </ModalTooltip>
         </Box>
-        {/* @todo check translation */}
         <ExternalLink href="#">
           <Flex
             alignItems="center"
@@ -66,7 +65,7 @@ function SectionTitle({ title, subTitle }: { title: string; subTitle: string }) 
 }
 
 function AssetSelector() {
-  const { t } = useTranslation(['common']);
+  const { t } = useTranslation(['roles']);
   return (
     <>
       <FormControl my="0.5rem">
@@ -107,7 +106,7 @@ function AssetSelector() {
           }: FieldProps<BigIntValuePair, RoleFormValues>) => (
             <LabelWrapper
               // @todo - add translation
-              label="Total Amount"
+              label={t('totalAmount')}
             >
               <BigIntInput
                 // @todo - add translation
@@ -123,11 +122,12 @@ function AssetSelector() {
 }
 
 function FrequencySelector() {
+  const { t } = useTranslation(['roles']);
   return (
     <FormControl my="1rem">
       <Field name="selectedAsset">
         {({ field }: FieldProps<string, RoleFormValues>) => (
-          <LabelWrapper label="Frequency">
+          <LabelWrapper label={t('frequency')}>
             <Select
               bgColor="neutral-2"
               border="none"
@@ -160,12 +160,13 @@ function FrequencySelector() {
 }
 
 function PaymentStartDatePicker() {
+  const { t } = useTranslation(['roles']);
   return (
     <FormControl my="1rem">
       <Field>
         {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => (
           <LabelWrapper
-            label="Payment Start"
+            label={t('paymentStart')}
             tooltipContent={<Box></Box>}
           >
             <Input
@@ -180,12 +181,15 @@ function PaymentStartDatePicker() {
 }
 
 function PaymentFrequencyAmount() {
+  const { t } = useTranslation(['roles']);
+  // ? @todo Will this label change based on the choice of frequency?
+  const frequencyLabel = t('frequency');
   return (
     <FormControl my="1rem">
       <Field>
         {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => (
           <LabelWrapper
-            label="Months"
+            label={frequencyLabel}
             tooltipContent={<Box></Box>}
           >
             <Flex gap="0.25rem">
@@ -226,6 +230,7 @@ function PaymentFrequencyAmount() {
 }
 
 export default function RoleFormPayroll() {
+  const { t } = useTranslation(['roles']);
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -238,13 +243,13 @@ export default function RoleFormPayroll() {
       borderRadius="0.5rem"
     >
       <SectionTitle
-        title="Asset"
-        subTitle="Define a stream of assets for this role."
+        title={t('asset')}
+        subTitle={t('assetSubTitle')}
       />
       <AssetSelector />
       <SectionTitle
-        title="Payment Frequency"
-        subTitle="Define how often the payments will be made available."
+        title={t('paymentFrequency')}
+        subTitle={t('paymentFrequencySubTitle')}
       />
       <FrequencySelector />
       <PaymentStartDatePicker />
