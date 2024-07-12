@@ -94,7 +94,7 @@ export default function RoleFormInfo() {
           }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
               label="Member"
-              errorMessage={meta.error}
+              errorMessage={meta.touched && meta.error ? meta.error : undefined}
             >
               <AddressInput
                 value={field.value}
