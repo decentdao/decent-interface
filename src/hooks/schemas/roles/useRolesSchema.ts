@@ -10,6 +10,7 @@ export const useRolesSchema = () => {
       Yup.object().shape({
         roleEditing: Yup.object()
           .default(undefined)
+          .nullable()
           .when({
             is: (roleEditing: RoleValue) => roleEditing !== undefined,
             then: _schema =>
