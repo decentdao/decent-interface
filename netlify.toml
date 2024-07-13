@@ -1,4 +1,4 @@
 [dev]
 command = "vite --force" # This starts your Vite server
-targetPort = 8888        # Vite server should run on this port
-port = 3000              # Netlify Dev will proxy this port
+targetPort = 3000        # Vite server should run on this port
+port = 8888              # Netlify Dev will proxy this port
