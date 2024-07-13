@@ -7,7 +7,7 @@ import packageJson from './package.json';
 export default defineConfig({
   plugins: [react(), checker({ typescript: true })],
   server: {
-    port: 3000,
+    port: 8888,
   },
   build: {
     sourcemap: true,
