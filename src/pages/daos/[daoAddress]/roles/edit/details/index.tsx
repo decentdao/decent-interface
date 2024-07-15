@@ -60,8 +60,9 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
         setFieldValue(`hats.${hatIndex}`, { ...values.hats[hatIndex], editedRole });
       }
     }
-    setFieldValue('editingRole', undefined);
-    onRemove();
+    
+    setFieldValue('roleEditing', undefined);
+    setTimeout(() => onRemove(), 50);
   };
 
   useEffect(() => {
@@ -174,10 +175,7 @@ export default function RoleEditDetails() {
             px="4rem"
           >
             <UnsavedChangesWarningContent
-              onDiscard={() => {
-                // if (discardEdits) discardEdits();
-                blocker.proceed();
-              }}
+              onDiscard={() => blocker.proceed()}
               onKeepEditing={() => blocker.reset()}
             />
           </DrawerContent>

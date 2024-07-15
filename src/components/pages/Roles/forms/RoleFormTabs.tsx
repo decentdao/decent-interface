@@ -78,6 +78,8 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
       isInitialised.current = true;
       const role = values.hats[hatIndex];
       setFieldValue('roleEditing', role);
+    } else if (!isInitialised.current && hatIndex === -1) {
+      isInitialised.current = true;
     }
   }, [hatIndex, setFieldValue, values.hats, values.roleEditing]);
 
@@ -191,13 +193,12 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
             } else {
               setFieldValue(
                 `hats.${hatIndex}`,
-                isRoleActuallyEdited ? roleUpdated : existingRoleHat,
+                isRoleActuallyEdited || editedRole.status === EditBadgeStatus.New ? roleUpdated : existingRoleHat,
               );
             }
-            setFieldValue('roleEditing', undefined);
 
+            setFieldValue('roleEditing', undefined);
             setTimeout(() => {
-              isInitialised.current = false;
               navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
             }, 50);
           }}
