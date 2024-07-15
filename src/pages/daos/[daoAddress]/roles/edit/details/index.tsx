@@ -136,12 +136,6 @@ export default function RoleEditDetails() {
   const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
 
   const blocker: Blocker = useBlocker(({ currentLocation, nextLocation }) => {
-    // console.log({
-    //   roleEditing: values.roleEditing,
-    //   currentLocation,
-    //   nextLocation,
-    // });
-
     return !!values.roleEditing && currentLocation.pathname !== nextLocation.pathname;
   });
 
@@ -240,9 +234,6 @@ export default function RoleEditDetails() {
                 isOpen
                 placement="right"
                 onClose={() => {
-                  if (hatIndex === -1) {
-                    remove(hatIndex);
-                  }
                   goBackToRolesEdit();
                 }}
               >
@@ -279,9 +270,7 @@ export default function RoleEditDetails() {
                       <Box position="relative">
                         <EditRoleMenu
                           hatId={hatEditingId}
-                          onRemove={() => {
-                            navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
-                          }}
+                          onRemove={() => goBackToRolesEdit()}
                         />
                       </Box>
                     </Flex>
