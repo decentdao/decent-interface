@@ -36,7 +36,7 @@ export default function useCreateSablierStream() {
       }
       const tokenAddress = getAddress(asset.tokenAddress);
       const exponent = 10n ** BigInt(asset.decimals);
-      const totalAmountExponented = BigInt(totalAmount) * exponent;
+      const totalAmountInTokenDecimals = BigInt(totalAmount) * exponent;
       let totalSegments = months;
       if (frequency === 'weekly') {
         // @todo - obviously this isn't correct and we need proper calculation of how many weeks are in the amount of months entered
@@ -45,7 +45,7 @@ export default function useCreateSablierStream() {
         // @todo - again, not correct - need to get exact number of 2-weeks cycles from the total number of months
         totalSegments = months * 2;
       }
-      const segmentAmount = totalAmountExponented / BigInt(totalSegments);
+      const segmentAmount = totalAmountInTokenDecimals / BigInt(totalSegments);
       // Sablier sets startTime to block.timestamp - so we need to simulate startTime through streaming 0 tokens at first segment till startDate
       const segments: { amount: bigint; exponent: bigint; duration: number }[] = [
         { amount: 0n, exponent, duration: Math.round(startDate - Date.now() / 1000) },
@@ -79,7 +79,7 @@ export default function useCreateSablierStream() {
               cancelable: true, // Cancelable - is it possible to cancel this stream
               transferable: false, // Transferable - is Recipient able to transfer receiving rights to someone else
               recipient, // Recipient of tokens through stream
-              totalAmount: totalAmountExponented, // total amount of tokens sent
+              totalAmount: totalAmountInTokenDecimals, // total amount of tokens sent
               broker: { account: zeroAddress, fee: 0n }, // Optional broker
               segments, // Segments array of tuples
             },
@@ -90,7 +90,7 @@ export default function useCreateSablierStream() {
       const tokenCalldata = encodeFunctionData({
         abi: erc20Abi,
         functionName: 'approve',
-        args: [sablierV2Batch, totalAmountExponented],
+        args: [sablierV2Batch, totalAmountInTokenDecimals],
       });
       const proposalData: ProposalExecuteData = {
         targets: [tokenAddress, sablierV2Batch],
@@ -129,7 +129,7 @@ export default function useCreateSablierStream() {
       }
       const tokenAddress = getAddress(asset.tokenAddress);
       const exponent = 10n ** BigInt(asset.decimals);
-      const totalAmountExponented = BigInt(totalAmount) * exponent;
+      const totalAmountInTokenDecimals = BigInt(totalAmount) * exponent;
       let totalSegments = months;
       if (frequency === 'weekly') {
         // @todo - obviously this isn't correct and we need proper calculation of how many weeks are in the amount of months entered
@@ -138,7 +138,7 @@ export default function useCreateSablierStream() {
         // @todo - again, not correct - need to get exact number of 2-weeks cycles from the total number of months
         totalSegments = months * 2;
       }
-      const segmentAmount = totalAmountExponented / BigInt(totalSegments);
+      const segmentAmount = totalAmountInTokenDecimals / BigInt(totalSegments);
       // Sablier sets startTime to block.timestamp - so we need to simulate startTime through streaming 0 tokens at first segment till startDate
       const tranches: { amount: bigint; exponent: bigint; duration: number }[] = [
         { amount: 0n, exponent, duration: Math.round(startDate - Date.now() / 1000) },
@@ -172,7 +172,7 @@ export default function useCreateSablierStream() {
               cancelable: true, // Cancelable - is it possible to cancel this stream
               transferable: false, // Transferable - is Recipient able to transfer receiving rights to someone else
               recipient, // Recipient of tokens through stream
-              totalAmount: totalAmountExponented, // total amount of tokens sent
+              totalAmount: totalAmountInTokenDecimals, // total amount of tokens sent
               broker: { account: zeroAddress, fee: 0n }, // Optional broker
               tranches,
             },
@@ -183,7 +183,7 @@ export default function useCreateSablierStream() {
       const tokenCalldata = encodeFunctionData({
         abi: erc20Abi,
         functionName: 'approve',
-        args: [sablierV2Batch, totalAmountExponented],
+        args: [sablierV2Batch, totalAmountInTokenDecimals],
       });
       const proposalData: ProposalExecuteData = {
         targets: [tokenAddress, sablierV2Batch],
