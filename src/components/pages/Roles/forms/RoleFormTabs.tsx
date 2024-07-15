@@ -188,7 +188,6 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
             if (hatIndex === -1) {
               // @dev new hat
               push(roleUpdated);
-              setFieldValue('hasSavedEdits', true);
             } else {
               setFieldValue(
                 `hats.${hatIndex}`,
