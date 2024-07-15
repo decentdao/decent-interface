@@ -170,10 +170,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
         <TabPanels my="1.75rem">
           <TabPanel>
             {tab === EditRoleTabs.RoleInfo && (
-              <RoleFormInfo
-                hatIndex={hatIndex}
-                existingRole={existingRoleHat}
-              />
+              <RoleFormInfo />
             )}
           </TabPanel>
           <TabPanel>{tab === EditRoleTabs.Payroll && <Box>Payroll</Box>}</TabPanel>
