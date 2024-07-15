@@ -89,7 +89,6 @@ export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
 export interface RoleFormValues {
   proposalMetadata: CreateProposalMetadata;
   hats: RoleValue[];
-  unsavedEdits: boolean[];
   roleEditing?: RoleValue;
   customNonce?: number;
 }

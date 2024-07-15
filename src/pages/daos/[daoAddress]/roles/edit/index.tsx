@@ -184,7 +184,6 @@ function RolesEdit() {
         description: '',
       },
       hats,
-      unsavedEdits: hats.map(() => false),
       customNonce: safe?.nextNonce || 0,
     };
   }, [hatsTree?.roleHats, safe?.nextNonce]);
