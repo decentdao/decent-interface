@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { RoleValue } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
+  const { t } = useTranslation(['roles']);
   const { addressValidationTest } = useValidationAddress();
   const rolesSchema = useMemo(
     () =>
@@ -15,22 +17,36 @@ export const useRolesSchema = () => {
             is: (roleEditing: RoleValue) => roleEditing !== undefined,
             then: _schema =>
               _schema.shape({
-                name: Yup.string().required('Role name is required'),
-                description: Yup.string().required('Role description is required'),
-                wearer: Yup.string().required('Member is required').test(addressValidationTest),
+                name: Yup.string().required(t('roleInfoErrorNameRequired')),
+                description: Yup.string().required(t('roleInfoErrorDescriptionRequired')),
+                wearer: Yup.string()
+                  .required(t('roleInfoErrorMemberRequired'))
+                  .test(addressValidationTest),
                 payroll: Yup.object()
                   .default(undefined)
                   .nullable()
                   .shape({
                     asset: Yup.object().shape({
                       address: Yup.string(),
-                      name: Yup.string(),
                       symbol: Yup.string(),
                       decimals: Yup.number(),
+                      logo: Yup.string(),
+                      balance: Yup.string(),
                     }),
-                    amount: Yup.object().shape({
-                      value: Yup.string(),
-                    }),
+                    amount: Yup.object()
+                      .shape({
+                        value: Yup.string().required(),
+                        bigIntValue: Yup.mixed().nullable(),
+                      })
+                      .test({
+                        name: 'isAmountValid',
+                        message: t('roleInfoErrorAmountInvalid'),
+                        test: (v, cxt) => {
+                          const balance: string | undefined = cxt.parent.asset.balance;
+                          if (balance === undefined || !v.bigIntValue) return false;
+                          return (v.bigIntValue as bigint) > BigInt(balance);
+                        },
+                      }),
                     paymentFrequency: Yup.string(),
                     paymentStartData: Yup.date(),
                     paymentFrequencyNumber: Yup.number(),
@@ -38,7 +54,7 @@ export const useRolesSchema = () => {
               }),
           }),
       }),
-    [addressValidationTest],
+    [addressValidationTest, t],
   );
   return { rolesSchema };
 };
