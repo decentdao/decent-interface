@@ -19,7 +19,7 @@ import { RoleFormValues, RoleValue } from '../types';
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleValue>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
-  const { values, handleSubmit } = useFormikContext<RoleFormValues>();
+  const { values, isSubmitting, submitForm } = useFormikContext<RoleFormValues>();
   const editedRoles = useMemo(() => {
     return values.hats.filter(hat => !!hat.editedRole);
   }, [values.hats]);
@@ -44,12 +44,13 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   };
 
   return (
-    <Box>
+    <Box maxW="736px">
       <Flex
         flexDir="column"
         gap="1rem"
         p="1rem"
         bg="neutral-2"
+        maxW="736px"
         boxShadow={CARD_SHADOW}
         borderRadius="0.5rem"
       >
@@ -140,7 +141,12 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         >
           {t('cancel', { ns: 'common' })}
         </Button>
-        <Button onClick={() => handleSubmit()}>{t('sendAssetsSubmit')}</Button>
+        <Button
+          onClick={submitForm}
+          isDisabled={isSubmitting}
+        >
+          {t('sendAssetsSubmit')}
+        </Button>
       </Flex>
       {drawerViewingRole !== undefined && (
         <>

@@ -1,18 +1,12 @@
 import { Box, FormControl } from '@chakra-ui/react';
 import { Field, FieldProps } from 'formik';
 import { CARD_SHADOW } from '../../../../constants/common';
-import { DecentRoleHat } from '../../../../state/useRolesState';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleFormValues } from '../types';
 
-export default function RoleFormInfo(props: {
-  hatIndex: number;
-  existingRole: DecentRoleHat | undefined;
-}) {
-  const { hatIndex, existingRole } = props;
-
+export default function RoleFormInfo() {
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -38,12 +32,10 @@ export default function RoleFormInfo(props: {
               <InputComponent
                 value={field.value}
                 onChange={e => {
-                  setFieldTouched(field.name, true);
                   setFieldValue(field.name, e.target.value);
-
-                  if (hatIndex !== -1 && existingRole) {
-                    setFieldValue(`unsavedEdits.${hatIndex}`, existingRole.name !== e.target.value);
-                  }
+                }}
+                onBlur={() => {
+                  setFieldTouched(field.name, true);
                 }}
                 testId="role-name"
                 placeholder="Role Name"
@@ -74,14 +66,6 @@ export default function RoleFormInfo(props: {
                 value={field.value}
                 onChange={e => {
                   setFieldValue(field.name, e.target.value);
-                  setFieldTouched(field.name, true);
-
-                  if (hatIndex !== -1 && existingRole) {
-                    setFieldValue(
-                      `unsavedEdits.${hatIndex}`,
-                      existingRole.description !== e.target.value,
-                    );
-                  }
                 }}
                 isRequired
                 gridContainerProps={{
@@ -92,6 +76,9 @@ export default function RoleFormInfo(props: {
                 }}
                 textAreaProps={{
                   h: '12rem',
+                  onBlur: () => {
+                    setFieldTouched(field.name, true);
+                  },
                 }}
               />
             </LabelWrapper>
@@ -111,16 +98,11 @@ export default function RoleFormInfo(props: {
             >
               <AddressInput
                 value={field.value}
+                onBlur={() => {
+                  setFieldTouched(field.name, true);
+                }}
                 onChange={e => {
                   setFieldValue(field.name, e.target.value);
-                  setFieldTouched(field.name, true);
-
-                  if (hatIndex !== -1 && existingRole) {
-                    setFieldValue(
-                      `unsavedEdits.${hatIndex}`,
-                      existingRole.wearer !== e.target.value,
-                    );
-                  }
                 }}
               />
             </LabelWrapper>

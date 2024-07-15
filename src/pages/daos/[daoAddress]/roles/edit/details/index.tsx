@@ -129,7 +129,7 @@ export default function RoleEditDetails() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
   const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
@@ -223,10 +223,7 @@ export default function RoleEditDetails() {
                     </Flex>
                     <Box position="relative">
                       <EditRoleMenu
-                        onRemove={() => {
-                          setFieldValue('hasSavedEdits', true);
-                          goBackToRolesEdit();
-                        }}
+                        onRemove={() => goBackToRolesEdit()}
                         hatId={hatEditingId}
                       />
                     </Box>

@@ -1,6 +1,6 @@
 import { Box, Button, Flex, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
-import { Formik } from 'formik';
+import { Formik, FormikHelpers } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
@@ -87,8 +87,11 @@ function RolesEdit() {
   }
 
   const createRolesEditProposal = useCallback(
-    async (values: RoleFormValues) => {
+    async (values: RoleFormValues, formikHelpers: FormikHelpers<RoleFormValues>) => {
+      const { setSubmitting } = formikHelpers;
+      setSubmitting(true);
       if (!safe) {
+        setSubmitting(false);
         throw new Error('Cannot create Roles proposal without known Safe');
       }
 
@@ -140,7 +143,7 @@ function RolesEdit() {
         }
 
         // All done, submit the proposal!
-        submitProposal({
+        await submitProposal({
           proposalData,
           nonce: values.customNonce ?? safe.nextNonce,
           pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
@@ -151,6 +154,8 @@ function RolesEdit() {
       } catch (e) {
         console.error(e);
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
+      } finally {
+        formikHelpers.setSubmitting(false);
       }
     },
     [
