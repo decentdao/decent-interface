@@ -421,7 +421,7 @@ export default function RoleFormPayroll() {
       <AssetSelector />
       <SectionTitle
         title={t('paymentFrequency')}
-        subTitle={t('paymentFrequencySubTitle')}
+        subTitle={t('paymentFrequencySubtitle')}
       />
       <FrequencySelector />
       <PaymentStartDatePicker />
