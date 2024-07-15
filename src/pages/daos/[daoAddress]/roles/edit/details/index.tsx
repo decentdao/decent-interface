@@ -130,7 +130,7 @@ export default function RoleEditDetails() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
   const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
@@ -143,8 +143,10 @@ export default function RoleEditDetails() {
   if (!daoAddress) return null;
   if (hatEditingId === undefined) return null;
 
-  const goBackToRolesEdit = () =>
-    navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true });
+  const goBackToRolesEdit = () => {
+    setFieldValue('roleEditing', undefined);
+    navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true })
+  };
 
   return (
     <>
