@@ -273,20 +273,29 @@ function AssetSelector() {
       </FormControl>
       <FormControl my="1rem">
         <Field name="roleEditing.payroll.amount">
-          {({ field, meta }: FieldProps<BigIntValuePair, RoleFormValues>) => (
-            <LabelWrapper
-              label={t('totalAmount')}
-              errorMessage={meta.touched && meta.error ? meta.error : undefined}
-            >
-              <BigIntInput
-                isDisabled={!values?.roleEditing?.payroll?.asset}
-                value={field.value?.bigintValue}
-                onChange={valuePair => {
-                  setFieldValue(field.name, valuePair);
-                }}
-              />
-            </LabelWrapper>
-          )}
+          {({
+            field,
+            meta,
+            form: { setFieldTouched },
+          }: FieldProps<BigIntValuePair, RoleFormValues>) => {
+            return (
+              <LabelWrapper
+                label={t('totalAmount')}
+                errorMessage={meta.error}
+              >
+                <BigIntInput
+                  isDisabled={!values?.roleEditing?.payroll?.asset}
+                  value={field.value?.bigintValue}
+                  onChange={valuePair => {
+                    setFieldValue(field.name, valuePair, true);
+                  }}
+                  onBlur={() => {
+                    setFieldTouched(field.name, true);
+                  }}
+                />
+              </LabelWrapper>
+            );
+          }}
         </Field>
       </FormControl>
     </>

@@ -35,16 +35,23 @@ export const useRolesSchema = () => {
                     }),
                     amount: Yup.object()
                       .shape({
-                        value: Yup.string().required(),
-                        bigIntValue: Yup.mixed().nullable(),
+                        value: Yup.string(),
+                        bigintValue: Yup.mixed().nullable(),
                       })
+                      .required()
                       .test({
                         name: 'isAmountValid',
                         message: t('roleInfoErrorAmountInvalid'),
                         test: (v, cxt) => {
                           const balance: string | undefined = cxt.parent.asset.balance;
-                          if (balance === undefined || !v.bigIntValue) return false;
-                          return (v.bigIntValue as bigint) > BigInt(balance);
+                          if (
+                            balance === undefined ||
+                            v.bigintValue === undefined ||
+                            !v.value === undefined
+                          ) {
+                            return false;
+                          }
+                          return (v.bigintValue as bigint) <= BigInt(balance);
                         },
                       }),
                     paymentFrequency: Yup.string(),
