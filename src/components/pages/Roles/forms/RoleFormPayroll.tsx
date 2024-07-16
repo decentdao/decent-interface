@@ -161,17 +161,17 @@ function AssetSelector() {
                 </MenuButton>
                 <MenuList
                   zIndex={1}
-                  bg="neutral-2"
+                  bg="linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.04) 100%), #221D25"
                   py="1rem"
                   boxShadow={CARD_SHADOW}
                   borderRadius="0.5rem"
                   px="0.25rem"
+                  w={{ base: '300px', md: '428px' }}
                 >
                   <EaseOutComponent>
                     <Text
                       textStyle="display-lg"
                       px="1rem"
-                      w={{ base: 'min-content', md: '428px' }}
                     >
                       {t('titleAssets', { ns: 'treasury' })}
                     </Text>
@@ -185,7 +185,7 @@ function AssetSelector() {
                         <MenuItem
                           key={index}
                           p="1rem"
-                          _hover={{ color: 'lilac--1', bg: 'white-alpha-04' }}
+                          _hover={{ bg: 'neutral-4' }}
                           display="flex"
                           alignItems="center"
                           gap={2}
