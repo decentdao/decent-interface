@@ -41,5 +41,7 @@
   "roleInfoErrorAmountInvalid": "Invalid amount.",
   "monthly": "Monthly",
   "everyTwoWeeks": "Every Two Weeks",
-  "weekly": "weekly"
+  "weekly": "Weekly",
+  "months": "Months",
+  "weeks": "Weeks"
 }

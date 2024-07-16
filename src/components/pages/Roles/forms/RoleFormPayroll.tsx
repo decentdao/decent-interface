@@ -13,7 +13,8 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Select,
+  NumberInput,
+  NumberInputField,
   Text,
 } from '@chakra-ui/react';
 import {
@@ -38,7 +39,7 @@ import ExternalLink from '../../../ui/links/ExternalLink';
 import ModalTooltip from '../../../ui/modals/ModalTooltip';
 import Divider from '../../../ui/utils/Divider';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
-import { RoleFormValues, frequencyOptions } from '../types';
+import { RoleFormValues, frequencyAmountLabel, frequencyOptions } from '../types';
 
 function SectionTitle({ title, subTitle }: { title: string; subTitle: string }) {
   const { t } = useTranslation(['common']);
@@ -304,7 +305,7 @@ function FrequencySelector() {
   const { t } = useTranslation(['roles']);
   return (
     <FormControl my="1rem">
-      <Field name="roleEditing.payroll.frequency">
+      <Field name="roleEditing.payroll.paymentFrequency">
         {({ field, form: { setFieldValue } }: FieldProps<string, RoleFormValues>) => {
           const inputValue = field.value ? t(frequencyOptions[field.value]) : 'Select';
           return (
@@ -372,11 +373,12 @@ function FrequencySelector() {
 }
 
 function PaymentStartDatePicker() {
+  // @todo implement date picker
   const { t } = useTranslation(['roles']);
   return (
     <FormControl my="1rem">
       <Field>
-        {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => (
+        {({ field }: FieldProps<string, RoleFormValues>) => (
           <LabelWrapper
             label={t('paymentStart')}
             tooltipContent={<Box></Box>}
@@ -394,48 +396,68 @@ function PaymentStartDatePicker() {
 
 function PaymentFrequencyAmount() {
   const { t } = useTranslation(['roles']);
-  // ? @todo Will this label change based on the choice of frequency?
-  const frequencyLabel = t('frequency');
   return (
     <FormControl my="1rem">
-      <Field>
-        {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => (
-          <LabelWrapper
-            label={frequencyLabel}
-            tooltipContent={<Box></Box>}
-          >
-            <Flex gap="0.25rem">
-              <IconButton
-                aria-label="stepper-minus"
-                minW="40px"
-                h="40px"
-                variant="stepper"
-                icon={
-                  <Icon
-                    as={Minus}
-                    boxSize="1rem"
+      <Field name="roleEditing.payroll.paymentFrequencyNumber">
+        {({ field, form: { setFieldValue, values }, meta }: FieldProps<string, RoleFormValues>) => {
+          const paymentFrequency = values.roleEditing?.payroll?.paymentFrequency;
+          const frequencyLabel = !!paymentFrequency
+            ? t(frequencyAmountLabel[paymentFrequency])
+            : '';
+          return (
+            <LabelWrapper
+              label={frequencyLabel}
+              tooltipContent={<Box></Box>}
+              errorMessage={meta.error && meta.touched ? meta.error : undefined}
+            >
+              <Flex gap="0.25rem">
+                <IconButton
+                  aria-label="stepper-minus"
+                  minW="40px"
+                  h="40px"
+                  variant="stepper"
+                  icon={
+                    <Icon
+                      as={Minus}
+                      boxSize="1rem"
+                    />
+                  }
+                  onClick={() => {
+                    if (field.value === undefined || Number(field.value) <= 0) return;
+                    setFieldValue(field.name, Number(field.value) - 1);
+                  }}
+                />
+                <NumberInput w="full">
+                  <NumberInputField
+                    value={field.value}
+                    onChange={() => {
+                      setFieldValue(field.name, field.value);
+                    }}
                   />
-                }
-              />
-              <Input
-                value={field.value}
-                onChange={() => ''}
-              />
-              <IconButton
-                aria-label="stepper-plus"
-                minW="40px"
-                h="40px"
-                variant="stepper"
-                icon={
-                  <Icon
-                    as={Plus}
-                    boxSize="1rem"
-                  />
-                }
-              />
-            </Flex>
-          </LabelWrapper>
-        )}
+                </NumberInput>
+                <IconButton
+                  aria-label="stepper-plus"
+                  minW="40px"
+                  h="40px"
+                  variant="stepper"
+                  icon={
+                    <Icon
+                      as={Plus}
+                      boxSize="1rem"
+                    />
+                  }
+                  onClick={() => {
+                    if (field.value === undefined) {
+                      setFieldValue(field.name, 1);
+                      return;
+                    }
+                    setFieldValue(field.name, Number(field.value) + 1);
+                  }}
+                />
+              </Flex>
+            </LabelWrapper>
+          );
+        }}
       </Field>
     </FormControl>
   );
@@ -443,6 +465,7 @@ function PaymentFrequencyAmount() {
 
 export default function RoleFormPayroll() {
   const { t } = useTranslation(['roles']);
+  const { values } = useFormikContext<RoleFormValues>();
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -464,8 +487,12 @@ export default function RoleFormPayroll() {
         subTitle={t('paymentFrequencySubtitle')}
       />
       <FrequencySelector />
-      <PaymentStartDatePicker />
-      <PaymentFrequencyAmount />
+      {values.roleEditing?.payroll?.paymentFrequency && (
+        <>
+          <PaymentStartDatePicker />
+          <PaymentFrequencyAmount />
+        </>
+      )}
     </Box>
   );
 }
