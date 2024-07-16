@@ -82,6 +82,7 @@ const mainnetConfig: NetworkConfig = {
     sablierV2Batch: '0xB5Ec9706C3Be9d22326D208f491E5DEef7C8d9f0',
     sablierV2LockupDynamic: '0x9DeaBf7815b42Bf4E9a03EEc35a486fF74ee7459',
     sablierV2LockupTranched: '0xf86B359035208e4529686A1825F2D5BeE38c28A8',
+    sablierV2LockupLinear: '0x3962f6585946823440d274aD7C719B02b49DE51E',
   },
   staking: {
     lido: {
