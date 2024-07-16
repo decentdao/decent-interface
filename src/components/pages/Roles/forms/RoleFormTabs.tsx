@@ -170,11 +170,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
           </Tab>
         </TabList>
         <TabPanels my="1.75rem">
-          <TabPanel>
-            {tab === EditRoleTabs.RoleInfo && (
-              <RoleFormInfo />
-            )}
-          </TabPanel>
+          <TabPanel>{tab === EditRoleTabs.RoleInfo && <RoleFormInfo />}</TabPanel>
           <TabPanel>{tab === EditRoleTabs.Payroll && <Box>Payroll</Box>}</TabPanel>
           <TabPanel>{tab === EditRoleTabs.Vesting && <Box>Vesting</Box>}</TabPanel>
         </TabPanels>
@@ -193,7 +189,9 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
             } else {
               setFieldValue(
                 `hats.${hatIndex}`,
-                isRoleActuallyEdited || editedRole.status === EditBadgeStatus.New ? roleUpdated : existingRoleHat,
+                isRoleActuallyEdited || editedRole.status === EditBadgeStatus.New
+                  ? roleUpdated
+                  : existingRoleHat,
               );
             }
 

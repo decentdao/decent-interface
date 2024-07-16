@@ -60,7 +60,7 @@ function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void })
         setFieldValue(`hats.${hatIndex}`, { ...values.hats[hatIndex], editedRole });
       }
     }
-    
+
     setFieldValue('roleEditing', undefined);
     setTimeout(() => onRemove(), 50);
   };
@@ -130,22 +130,33 @@ export default function RoleEditDetails() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue, touched, setTouched } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
   const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
 
   const blocker: Blocker = useBlocker(({ currentLocation, nextLocation }) => {
-    return !!values.roleEditing && currentLocation.pathname !== nextLocation.pathname;
+    return (
+      !!values.roleEditing &&
+      !!touched.roleEditing &&
+      currentLocation.pathname !== nextLocation.pathname
+    );
   });
+
+  const backupRoleEditing = useRef(values.roleEditing);
+  const backupTouched = useRef(touched.roleEditing);
 
   if (!isHex(hatEditingId)) return null;
   if (!daoAddress) return null;
   if (hatEditingId === undefined) return null;
 
   const goBackToRolesEdit = () => {
+    backupRoleEditing.current = values.roleEditing;
+    backupTouched.current = touched.roleEditing;
+
+    setTouched({});
     setFieldValue('roleEditing', undefined);
-    navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true })
+    navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true });
   };
 
   return (
@@ -172,7 +183,11 @@ export default function RoleEditDetails() {
           >
             <UnsavedChangesWarningContent
               onDiscard={() => blocker.proceed()}
-              onKeepEditing={() => blocker.reset()}
+              onKeepEditing={() => {
+                setFieldValue('roleEditing', backupRoleEditing.current);
+                setTouched({ roleEditing: backupTouched.current });
+                blocker.reset();
+              }}
             />
           </DrawerContent>
         </Drawer>

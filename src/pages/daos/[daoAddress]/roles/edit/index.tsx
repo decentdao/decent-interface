@@ -257,7 +257,9 @@ function RolesEdit() {
           >
             <Button
               variant="tertiary"
-              onClick={() => navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress))}
+              onClick={() =>
+                navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress), { replace: true })
+              }
             >
               {t('cancel', { ns: 'common' })}
             </Button>
