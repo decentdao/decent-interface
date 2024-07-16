@@ -3,14 +3,14 @@ import { CaretDown } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Address, encodeFunctionData, erc20Abi, getAddress, zeroAddress } from 'viem';
+import { Address } from 'viem';
 import { useAccount } from 'wagmi';
-import SablierBatchAbi from '../../../assets/abi/SablierV2Batch';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
+import useCreateSablierStream from '../../../hooks/streams/useCreateSablierStream';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { ProposalExecuteData, TokenBalance } from '../../../types';
+import { TokenBalance } from '../../../types';
 import { PayrollFrequency } from '../../../types/sablier';
 import { InputComponent } from '../forms/InputComponent';
 import LabelWrapper from '../forms/LabelWrapper';
@@ -22,11 +22,7 @@ export default function PayrollStreamBuilder() {
     node: { daoAddress, safe },
     treasury: { assetsFungible },
   } = useFractal();
-  const {
-    contracts: { sablierV2Batch, sablierV2LockupDynamic },
-    addressPrefix,
-  } = useNetworkConfig();
-  const [sender, setSender] = useState(daoAddress);
+  const { addressPrefix } = useNetworkConfig();
   const [recipient, setRecipient] = useState<Address | undefined>(account);
   const [totalAmount, setTotalAmount] = useState<string>('25000');
   const [startDate, setStartDate] = useState(Math.round(Date.now() / 1000) + 60 * 15); // Unix timestamp. 15 minutes from moment of proposal creation by default for development purposes
@@ -38,6 +34,7 @@ export default function PayrollStreamBuilder() {
   const selectedAssetIndex = fungibleAssetsWithBalance.findIndex(
     asset => asset.tokenAddress === selectedAsset?.tokenAddress,
   );
+  const { prepareCreateTranchedLockupProposal } = useCreateSablierStream();
 
   const { submitProposal } = useSubmitProposal();
   const navigate = useNavigate();
@@ -56,82 +53,15 @@ export default function PayrollStreamBuilder() {
   }, [fungibleAssetsWithBalance]);
 
   const handleSubmitProposal = useCallback(() => {
-    if (
-      sender &&
-      sablierV2Batch &&
-      sablierV2LockupDynamic &&
-      startDate &&
-      recipient &&
-      selectedAsset &&
-      frequency &&
-      months > 0
-    ) {
-      const tokenAddress = getAddress(selectedAsset.tokenAddress);
-      const exponent = 10n ** BigInt(selectedAsset.decimals);
-      const totalAmountExponented = BigInt(totalAmount) * exponent;
-      let totalSegments = months;
-      if (frequency === 'weekly') {
-        // @todo - obviously this isn't correct and we need proper calculation of how many weeks are in the amount of months entered
-        totalSegments = months * 4;
-      } else if (frequency === 'biweekly') {
-        // @todo - again, not correct - need to get exact number of 2-weeks cycles from the total number of months
-        totalSegments = months * 2;
-      }
-      const segmentAmount = totalAmountExponented / BigInt(totalSegments);
-      const segments: { amount: bigint; exponent: bigint; duration: number }[] = [];
-
-      const SECONDS_IN_DAY = 24 * 60 * 60;
-      let days = 30;
-      if (frequency === 'weekly') {
-        days = 7;
-      } else if (frequency === 'biweekly') {
-        days = 14;
-      }
-      const duration = days * SECONDS_IN_DAY;
-
-      for (let i = 1; i <= totalSegments; i++) {
-        segments.push({
-          amount: segmentAmount,
-          exponent,
-          duration: i === 1 ? Math.round(startDate - Date.now() / 1000) + duration : duration, // Sablier sets startTime to block.timestamp - so we need to make first segment being streamed longer
-        });
-      }
-
-      const sablierBatchCalldata = encodeFunctionData({
-        abi: SablierBatchAbi,
-        functionName: 'createWithDurationsLD', // Another option would be to use createWithTimestampsLD. Essentially they're doing the same
-        args: [
-          sablierV2LockupDynamic,
-          tokenAddress,
-          [
-            {
-              sender, // Tokens sender. This address will be able to cancel the stream
-              cancelable: true, // Cancelable - is it possible to cancel this stream
-              transferable: false, // Transferable - is Recipient able to transfer receiving rights to someone else
-              recipient, // Recipient of tokens through stream
-              totalAmount: totalAmountExponented, // total amount of tokens sent
-              broker: { account: zeroAddress, fee: 0n }, // Optional broker
-              segments, // Segments array of tuples
-            },
-          ],
-        ],
+    if (startDate && recipient && selectedAsset && frequency && months > 0) {
+      const proposalData = prepareCreateTranchedLockupProposal({
+        months,
+        frequency,
+        totalAmount,
+        asset: selectedAsset,
+        recipient,
+        startDate,
       });
-
-      const tokenCalldata = encodeFunctionData({
-        abi: erc20Abi,
-        functionName: 'approve',
-        args: [sablierV2Batch, totalAmountExponented],
-      });
-      const proposalData: ProposalExecuteData = {
-        targets: [tokenAddress, sablierV2Batch],
-        values: [0n, 0n],
-        calldatas: [tokenCalldata, sablierBatchCalldata],
-        metaData: {
-          title: 'Create Payroll Stream for Role',
-          description: `This madafaking rocket science proposal will create AI Blockchain Crypto Currency Bitcoin BUIDL HODL Sablier V2 Stream of $$$ flowing to ${recipient}`,
-          documentationUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        },
-      };
       submitProposal({
         nonce: safe?.nonce,
         pendingToastMessage: t('proposalCreatePendingToastMessage'),
@@ -144,12 +74,10 @@ export default function PayrollStreamBuilder() {
   }, [
     frequency,
     months,
+    prepareCreateTranchedLockupProposal,
     recipient,
-    sablierV2Batch,
-    sablierV2LockupDynamic,
     safe?.nonce,
     selectedAsset,
-    sender,
     startDate,
     submitProposal,
     successCallback,
@@ -173,19 +101,6 @@ export default function PayrollStreamBuilder() {
   return (
     <Box>
       <VStack>
-        <Flex
-          width="100%"
-          flexWrap="wrap"
-          marginTop="1.5rem"
-        >
-          <InputComponent
-            {...inputBasicProps}
-            label="Stream Sender"
-            placeholder="0xD26c85D435F02DaB8B220cd4D2d398f6f646e235"
-            value={sender || ''}
-            onChange={event => setSender(event.target.value as Address)}
-          />
-        </Flex>
         <Flex
           width="100%"
           flexWrap="wrap"
