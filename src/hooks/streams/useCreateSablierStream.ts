@@ -240,7 +240,7 @@ export default function useCreateSablierStream() {
       if (
         streamRelativeSchedule.years ||
         streamRelativeSchedule.days ||
-        streamRelativeSchedule.days
+        streamRelativeSchedule.hours
       ) {
         streamDuration += streamRelativeSchedule.years * SECONDS_IN_DAY * 365;
         streamDuration += streamRelativeSchedule.days * SECONDS_IN_DAY;
@@ -253,12 +253,16 @@ export default function useCreateSablierStream() {
       const cliffRelativeSchedule = cliff as StreamRelativeSchedule;
       const cliffAbsoluteSchedule = cliff as StreamAbsoluteSchedule;
 
-      if (cliffRelativeSchedule.years || cliffRelativeSchedule.days || cliffRelativeSchedule.days) {
+      if (cliffRelativeSchedule.years || cliffRelativeSchedule.days || cliffRelativeSchedule.hours) {
         cliffDuration += cliffRelativeSchedule.years * SECONDS_IN_DAY * 365;
         cliffDuration += cliffRelativeSchedule.days * SECONDS_IN_DAY;
         cliffDuration += cliffRelativeSchedule.hours * SECONDS_IN_HOUR;
       } else if (cliffAbsoluteSchedule.startDate) {
         cliffDuration = (Date.now() - cliffAbsoluteSchedule.startDate) / 1000;
+      }
+
+      if (!streamDuration) {
+        throw new Error('Stream duration can not be 0');
       }
 
       const sablierBatchCalldata = encodeFunctionData({
@@ -275,7 +279,7 @@ export default function useCreateSablierStream() {
               recipient, // Recipient of tokens through stream
               totalAmount: totalAmountInTokenDecimals, // total amount of tokens sent
               broker: { account: zeroAddress, fee: 0n }, // Optional broker
-              durations: { cliff: cliffDuration, total: streamDuration },
+              durations: { cliff: cliffDuration, total: streamDuration + cliffDuration }, // Total duration has to include cliff duration
             },
           ],
         ],
