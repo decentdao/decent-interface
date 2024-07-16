@@ -32,8 +32,10 @@ export default function RoleFormInfo() {
               <InputComponent
                 value={field.value}
                 onChange={e => {
-                  setFieldTouched(field.name, true);
                   setFieldValue(field.name, e.target.value);
+                }}
+                onBlur={() => {
+                  setFieldTouched(field.name, true);
                 }}
                 testId="role-name"
                 placeholder="Role Name"
@@ -64,7 +66,6 @@ export default function RoleFormInfo() {
                 value={field.value}
                 onChange={e => {
                   setFieldValue(field.name, e.target.value);
-                  setFieldTouched(field.name, true);
                 }}
                 isRequired
                 gridContainerProps={{
@@ -75,6 +76,9 @@ export default function RoleFormInfo() {
                 }}
                 textAreaProps={{
                   h: '12rem',
+                  onBlur: () => {
+                    setFieldTouched(field.name, true);
+                  },
                 }}
               />
             </LabelWrapper>
@@ -94,9 +98,11 @@ export default function RoleFormInfo() {
             >
               <AddressInput
                 value={field.value}
+                onBlur={() => {
+                  setFieldTouched(field.name, true);
+                }}
                 onChange={e => {
                   setFieldValue(field.name, e.target.value);
-                  setFieldTouched(field.name, true);
                 }}
               />
             </LabelWrapper>

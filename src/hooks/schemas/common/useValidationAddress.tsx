@@ -84,12 +84,17 @@ export const useValidationAddress = () => {
       test: async function (address: string | undefined) {
         if (!address) return false;
         setIsValidating(true);
-        const { validation } = await validateAddress({ signerOrProvider, address });
-        if (validation.isValidAddress) {
-          addressValidationMap.current.set(address, validation);
+        try {
+          const { validation } = await validateAddress({ signerOrProvider, address });
+          if (validation.isValidAddress) {
+            addressValidationMap.current.set(address, validation);
+          }
+          return validation.isValidAddress;
+        } catch (error) {
+          return false;
+        } finally {
+          setIsValidating(false);
         }
-        setIsValidating(false);
-        return validation.isValidAddress;
       },
     };
   }, [signerOrProvider, addressValidationMap, t]);

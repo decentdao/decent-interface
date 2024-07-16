@@ -1,22 +1,30 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { RoleValue } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
   const { addressValidationTest } = useValidationAddress();
+  const { t } = useTranslation(['roles']);
+
   const rolesSchema = useMemo(
     () =>
-      Yup.object().when('roleEditing', {
-        is: (property: RoleValue) => !!property,
-        then: _schema =>
-          _schema.shape({
-            name: Yup.string().required('Role name is required'),
-            description: Yup.string().required('Role description is required'),
-            wearer: Yup.string().required('Member is required').test(addressValidationTest),
+      Yup.object().shape({
+        roleEditing: Yup.object()
+          .default(undefined)
+          .nullable()
+          .when({
+            is: (roleEditing: RoleValue) => roleEditing !== undefined,
+            then: _schema =>
+              _schema.shape({
+                name: Yup.string().required(t('roleNameRequired')),
+                description: Yup.string().required(t('roleDescriptionRequired')),
+                wearer: Yup.string().required(t('roleMemberRequired')).test(addressValidationTest),
+              }),
           }),
       }),
-    [addressValidationTest],
+    [addressValidationTest, t],
   );
   return { rolesSchema };
 };

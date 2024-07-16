@@ -6,6 +6,7 @@
   "description": "Description",
   "unassigned": "Unassigned",
   "after": "after",
+  "roleInfo": "Role Info",
   "payroll": "Payroll",
   "vesting": "Vesting",
   "editRoles": "Edit Roles",
@@ -26,5 +27,8 @@
   "updatedHats": "Update {{count}} role",
   "updatedHats_other": "Update {{count}} roles",
   "removedHats": "Remove {{count}} role",
-  "removedHats_other": "Remove {{count}} roles"
+  "removedHats_other": "Remove {{count}} roles",
+  "roleNameRequired": "Role name is required",
+  "roleDescriptionRequired": "Role description is required",
+  "roleMemberRequired": "Member is required"
 }
