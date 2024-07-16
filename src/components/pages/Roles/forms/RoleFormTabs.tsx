@@ -48,7 +48,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
 
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
-  
+
   const existingRoleHat = useMemo(
     () =>
       hatsTree?.roleHats.find(
