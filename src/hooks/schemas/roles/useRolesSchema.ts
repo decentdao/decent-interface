@@ -7,6 +7,7 @@ import { useValidationAddress } from '../common/useValidationAddress';
 export const useRolesSchema = () => {
   const { t } = useTranslation(['roles']);
   const { addressValidationTest } = useValidationAddress();
+
   const rolesSchema = useMemo(
     () =>
       Yup.object().shape({
