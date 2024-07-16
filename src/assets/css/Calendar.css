@@ -1,14 +1,10 @@
 .react-calendar {
-  width: 350px;
+  /* width: 350px; */
   max-width: 100%;
   background: var(--Neutral-2, #221d25);
-  border-radius: var(--Small, 0.5rem) var(--Small, 0.5rem) 0rem 0rem;
+  border-radius: 0.5rem;
   border: 0;
   font-family: 'TT Firs Neue Variable';
-  box-shadow:
-    0px 0px 0px 1px #100414,
-    0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset,
-    0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset;
 }
 
 .react-calendar,

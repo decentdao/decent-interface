@@ -1,9 +1,10 @@
-import { Box, Icon } from '@chakra-ui/react';
+import { Box, Icon, useBreakpointValue } from '@chakra-ui/react';
 import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { Calendar } from 'react-calendar';
 
 import '../../../assets/css/Calendar.css';
+import { CARD_SHADOW, SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 
 interface DecentDatePickerProps {
   minDate?: Date;
@@ -25,10 +26,14 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
 
   const [selectedDate, setSelectedDate] = useState<DateOrNull>();
 
+  const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
+
   return (
     <Box
       display="flex"
       justifySelf="center"
+      borderRadius="0.5rem"
+      boxShadow={boxShadow}
     >
       <Calendar
         formatShortWeekday={(_, date) => date.toString().slice(0, 2)}
