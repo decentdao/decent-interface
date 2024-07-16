@@ -253,7 +253,11 @@ export default function useCreateSablierStream() {
       const cliffRelativeSchedule = cliff as StreamRelativeSchedule;
       const cliffAbsoluteSchedule = cliff as StreamAbsoluteSchedule;
 
-      if (cliffRelativeSchedule.years || cliffRelativeSchedule.days || cliffRelativeSchedule.hours) {
+      if (
+        cliffRelativeSchedule.years ||
+        cliffRelativeSchedule.days ||
+        cliffRelativeSchedule.hours
+      ) {
         cliffDuration += cliffRelativeSchedule.years * SECONDS_IN_DAY * 365;
         cliffDuration += cliffRelativeSchedule.days * SECONDS_IN_DAY;
         cliffDuration += cliffRelativeSchedule.hours * SECONDS_IN_HOUR;
