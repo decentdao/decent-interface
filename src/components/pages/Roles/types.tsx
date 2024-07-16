@@ -137,3 +137,8 @@ export const frequencyOptions: Record<string, string> = {
   [Frequency.EveryTwoWeeks]: 'everyTwoWeeks',
   [Frequency.Weekly]: 'weekly',
 };
+export const frequencyAmountLabel: Record<string, string> = {
+  [Frequency.Monthly]: 'months',
+  [Frequency.EveryTwoWeeks]: 'weeks',
+  [Frequency.Weekly]: 'weeks',
+};
