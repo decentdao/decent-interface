@@ -125,3 +125,15 @@ export interface HatWearerChangedParams {
   currentWearer: Address;
   newWearer: Address;
 }
+
+export enum Frequency {
+  Monthly,
+  EveryTwoWeeks,
+  Weekly,
+}
+
+export const frequencyOptions: Record<string, string> = {
+  [Frequency.Monthly]: 'monthly',
+  [Frequency.EveryTwoWeeks]: 'everyTwoWeeks',
+  [Frequency.Weekly]: 'weekly',
+};

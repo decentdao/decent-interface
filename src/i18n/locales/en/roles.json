@@ -38,5 +38,8 @@
   "roleInfoErrorNameRequired": "Role name is required.",
   "roleInfoErrorDescriptionRequired": "Role description is required.",
   "roleInfoErrorMemberRequired": "Role member is required.",
-  "roleInfoErrorAmountInvalid": "Invalid amount."
+  "roleInfoErrorAmountInvalid": "Invalid amount.",
+  "monthly": "Monthly",
+  "everyTwoWeeks": "Every Two Weeks",
+  "weekly": "weekly"
 }
