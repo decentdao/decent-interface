@@ -1,0 +1,141 @@
+.react-calendar {
+  /* width: 350px; */
+  max-width: 100%;
+  background: var(--Neutral-2, #221d25);
+  border-radius: 0.5rem;
+  border: 0;
+  font-family: 'TT Firs Neue Variable';
+}
+
+.react-calendar,
+.react-calendar *,
+.react-calendar *:before,
+.react-calendar *:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.react-calendar button {
+  margin: 0;
+  border: 0;
+  outline: none;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+}
+
+.react-calendar button:enabled:hover {
+  cursor: pointer;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  height: 44px;
+  margin-bottom: 1em;
+}
+
+.react-calendar__navigation button {
+  min-width: 44px;
+  background: var(--Neutral-2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 0.5rem;
+  color: #dcc8f0;
+}
+
+.react-calendar__navigation button:disabled {
+  background-color: var(--Neutral-2);
+  color: #524f55;
+}
+
+.react-calendar__navigation button:enabled:focus {
+  background-color: var(--Neutral-2);
+}
+
+.react-calendar__navigation button:enabled:hover {
+  background: var(--Neutral-3, #2e2833);
+  border-radius: 0.5rem;
+}
+
+.react-calendar__month-view__weekdays {
+  text-decoration: none;
+  text-underline-offset: 2rem;
+  text-align: center;
+  text-transform: capitalize;
+  font-size: 0.75rem;
+  color: #9ea8b3;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 0.5em;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth,
+.react-calendar__decade-view__years__year--neighboringDecade,
+.react-calendar__century-view__decades__decade--neighboringCentury {
+  color: #8f8796;
+}
+
+.react-calendar__year-view .react-calendar__tile,
+.react-calendar__decade-view .react-calendar__tile,
+.react-calendar__century-view .react-calendar__tile {
+  padding: 2em 0.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.react-calendar__tile {
+  height: 2.5rem;
+  width: 2.5rem;
+  max-width: 100%;
+  padding: 10px 6.6667px;
+  background: none;
+  text-align: center;
+  line-height: 16px;
+  font: inherit;
+  font-size: 0.833em;
+}
+
+.react-calendar__tile:disabled {
+  background-color: #221d25;
+  color: #524f55;
+  cursor: not-allowed;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth:disabled,
+.react-calendar__decade-view__years__year--neighboringDecade:disabled,
+.react-calendar__century-view__decades__decade--neighboringCentury:disabled {
+  color: #524f55;
+}
+
+.react-calendar__tile:enabled:hover {
+  background: var(--Neutral-3);
+}
+
+.react-calendar__tile:enabled:focus {
+  background-color: #221d25;
+}
+
+.react-calendar__tile--hasActive {
+  background: #dcc8f0;
+  color: #501464;
+}
+
+.react-calendar__tile--hasActive:enabled:hover,
+.react-calendar__tile--hasActive:enabled:focus {
+  background: #dcc8f0;
+  color: #501464;
+}
+
+.react-calendar__tile--active {
+  background: #dcc8f0;
+  color: #501464;
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background: #dcc8f0;
+  color: #501464;
+}
