@@ -27,13 +27,14 @@ import {
   Minus,
   Plus,
 } from '@phosphor-icons/react';
+import { format } from 'date-fns';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW, TOOLTIP_MAXW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
-import { formatUSD } from '../../../../utils';
+import { DEFAULT_DATE_FORMAT, formatUSD } from '../../../../utils';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import ExternalLink from '../../../ui/links/ExternalLink';
@@ -379,12 +380,8 @@ function PaymentStartDatePicker() {
 
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
-
   const selectedDate = values.roleEditing?.payroll?.paymentStartDate;
-  const selectedDateStr =
-    selectedDate &&
-    `${selectedDate.getUTCFullYear()}-${selectedDate.getMonth() < 9 ? '0' : ''}${selectedDate.getMonth() + 1}-${selectedDate.getDate() < 10 ? '0' : ''}${selectedDate.getDate()}`;
+  const selectedDateStr = selectedDate && format(selectedDate, DEFAULT_DATE_FORMAT);
 
   return (
     <FormControl my="1rem">
@@ -397,7 +394,6 @@ function PaymentStartDatePicker() {
                 variant="unstyled"
                 p="0"
                 w="full"
-                onClick={() => setShowDatePicker(!showDatePicker)}
               >
                 <Flex
                   borderRadius="0.25rem"
