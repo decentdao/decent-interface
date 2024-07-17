@@ -54,19 +54,22 @@ export default function useCreateSablierStream() {
     [sablierV2Batch],
   );
 
-  const prepareBasicStreamData = useCallback((recipient: Address, amountInTokenDecimals: bigint) => {
-    if (!daoAddress) {
-      throw new Error('Can not create sablier stream proposal while DAO is not set.');
-    }
-    return {
-      sender: daoAddress, // Tokens sender. This address will be able to cancel the stream
-      cancelable: true, // Cancelable - is it possible to cancel this stream
-      transferable: false, // Transferable - is Recipient able to transfer receiving rights to someone else
-      recipient, // Recipient of tokens through stream
-      totalAmount: amountInTokenDecimals, // total amount of tokens sent
-      broker: { account: zeroAddress, fee: 0n }, // Optional broker
-    }
-  }, [daoAddress])
+  const prepareBasicStreamData = useCallback(
+    (recipient: Address, amountInTokenDecimals: bigint) => {
+      if (!daoAddress) {
+        throw new Error('Can not create sablier stream proposal while DAO is not set.');
+      }
+      return {
+        sender: daoAddress, // Tokens sender. This address will be able to cancel the stream
+        cancelable: true, // Cancelable - is it possible to cancel this stream
+        transferable: false, // Transferable - is Recipient able to transfer receiving rights to someone else
+        recipient, // Recipient of tokens through stream
+        totalAmount: amountInTokenDecimals, // total amount of tokens sent
+        broker: { account: zeroAddress, fee: 0n }, // Optional broker
+      };
+    },
+    [daoAddress],
+  );
 
   const prepareDynamicOrTranchedStream = useCallback(
     ({
