@@ -27,6 +27,7 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
   const [selectedDate, setSelectedDate] = useState<DateOrNull>();
 
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
+  const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
 
   return (
     <Box
@@ -34,7 +35,7 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
       justifySelf="center"
       borderRadius="0.5rem"
       boxShadow={boxShadow}
-      maxW="26.875rem"
+      maxW={maxBoxW}
     >
       <Calendar
         formatShortWeekday={(_, date) => date.toString().slice(0, 2)}

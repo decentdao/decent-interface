@@ -57,11 +57,13 @@ export const useRolesSchema = () => {
                               return (v.bigintValue as bigint) <= BigInt(balance);
                             },
                           }),
-                        paymentFrequency: Yup.string().oneOf([
-                          Frequency.Monthly.toString(),
-                          Frequency.EveryTwoWeeks.toString(),
-                          Frequency.Weekly.toString(),
-                        ]).required(t('roleInfoErrorPaymentFrequencyRequired')),
+                        paymentFrequency: Yup.string()
+                          .oneOf([
+                            Frequency.Monthly.toString(),
+                            Frequency.EveryTwoWeeks.toString(),
+                            Frequency.Weekly.toString(),
+                          ])
+                          .required(t('roleInfoErrorPaymentFrequencyRequired')),
                         paymentStartDate: Yup.date().required(
                           t('roleInfoErrorPaymentStartDateRequired'),
                         ),

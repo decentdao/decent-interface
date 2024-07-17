@@ -15,6 +15,7 @@ import {
   MenuList,
   NumberInput,
   NumberInputField,
+  Show,
   Text,
 } from '@chakra-ui/react';
 import {
@@ -29,12 +30,13 @@ import {
 } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW, TOOLTIP_MAXW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
 import { DEFAULT_DATE_FORMAT, formatUSD } from '../../../../utils';
+import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import ExternalLink from '../../../ui/links/ExternalLink';
@@ -383,45 +385,70 @@ function PaymentStartDatePicker() {
   const selectedDate = values.roleEditing?.payroll?.paymentStartDate;
   const selectedDateStr = selectedDate && format(selectedDate, DEFAULT_DATE_FORMAT);
 
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  function DatePickerTrigger() {
+    return (
+      <Flex
+        borderRadius="0.25rem"
+        bg="neutral-1"
+        borderWidth="1px"
+        borderColor="neutral-3"
+        padding="0.5rem 1rem"
+        alignItems="center"
+        gap="0.5rem"
+      >
+        <Icon
+          as={CalendarBlank}
+          boxSize="24px"
+          color="neutral-5"
+        />
+        <Text>{selectedDateStr ?? t('select')}</Text>
+      </Flex>
+    );
+  }
+
   return (
     <FormControl my="1rem">
       <Field name="roleEditing.payroll.paymentStartDate">
         {({ field }: FieldProps<string, RoleFormValues>) => (
-          <Menu placement="top">
-            <>
-              <MenuButton
-                as={Button}
+          <>
+            <Show below="md">
+              <Button
+                onClick={() => setIsDrawerOpen(true)}
                 variant="unstyled"
-                p="0"
-                w="full"
               >
-                <Flex
-                  borderRadius="0.25rem"
-                  bg="neutral-1"
-                  borderWidth="1px"
-                  borderColor="neutral-3"
-                  padding="0.5rem 1rem"
-                  alignItems="center"
-                  gap="0.5rem"
-                >
-                  <Icon
-                    as={CalendarBlank}
-                    boxSize="24px"
-                    color="neutral-5"
-                  />
-                  <Text>{selectedDateStr ?? t('select')}</Text>
-                </Flex>
-              </MenuButton>
-              <MenuList>
-                <DecentDatePicker
-                  onChange={date => {
-                    console.log(date);
-                    setFieldValue(field.name, date);
-                  }}
-                />
-              </MenuList>
-            </>
-          </Menu>
+                <DatePickerTrigger />
+              </Button>
+
+              <DraggableDrawer
+                isOpen={isDrawerOpen}
+                headerContent={undefined}
+                onOpen={() => {}}
+                onClose={() => setIsDrawerOpen(false)}
+              >
+                <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
+              </DraggableDrawer>
+            </Show>
+
+            <Show above="md">
+              <Menu placement="top">
+                <>
+                  <MenuButton
+                    as={Button}
+                    variant="unstyled"
+                    p="0"
+                    w="full"
+                  >
+                    <DatePickerTrigger />
+                  </MenuButton>
+                  <MenuList>
+                    <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
+                  </MenuList>
+                </>
+              </Menu>
+            </Show>
+          </>
         )}
       </Field>
     </FormControl>

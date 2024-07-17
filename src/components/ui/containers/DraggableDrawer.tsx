@@ -96,6 +96,7 @@ export default function DraggableDrawer({
         onClose();
       }}
       size="md"
+      onOverlayClick={onClose}
     >
       <DrawerOverlay
         bg={BACKGROUND_SEMI_TRANSPARENT}
