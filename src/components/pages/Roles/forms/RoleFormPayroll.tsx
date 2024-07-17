@@ -19,6 +19,7 @@ import {
 } from '@chakra-ui/react';
 import {
   ArrowUpRight,
+  CalendarBlank,
   CaretDown,
   CaretUp,
   CheckCircle,
@@ -27,7 +28,7 @@ import {
   Plus,
 } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW, TOOLTIP_MAXW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -37,6 +38,7 @@ import { BigIntInput } from '../../../ui/forms/BigIntInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import ExternalLink from '../../../ui/links/ExternalLink';
 import ModalTooltip from '../../../ui/modals/ModalTooltip';
+import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import Divider from '../../../ui/utils/Divider';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
 import { RoleFormValues, frequencyAmountLabel, frequencyOptions } from '../types';
@@ -373,21 +375,57 @@ function FrequencySelector() {
 }
 
 function PaymentStartDatePicker() {
-  // @todo implement date picker
-  const { t } = useTranslation(['roles']);
+  const { t } = useTranslation(['common']);
+
+  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  const selectedDate = values.roleEditing?.payroll?.paymentStartDate;
+  const selectedDateStr =
+    selectedDate &&
+    `${selectedDate.getUTCFullYear()}-${selectedDate.getMonth() < 9 ? '0' : ''}${selectedDate.getMonth() + 1}-${selectedDate.getDate() < 10 ? '0' : ''}${selectedDate.getDate()}`;
+
   return (
     <FormControl my="1rem">
-      <Field>
+      <Field name="roleEditing.payroll.paymentStartDate">
         {({ field }: FieldProps<string, RoleFormValues>) => (
-          <LabelWrapper
-            label={t('paymentStart')}
-            tooltipContent={<Box></Box>}
-          >
-            <Input
-              value={field.value}
-              onChange={() => ''}
-            />
-          </LabelWrapper>
+          <Menu placement="top">
+            <>
+              <MenuButton
+                as={Button}
+                variant="unstyled"
+                p="0"
+                w="full"
+                onClick={() => setShowDatePicker(!showDatePicker)}
+              >
+                <Flex
+                  borderRadius="0.25rem"
+                  bg="neutral-1"
+                  borderWidth="1px"
+                  borderColor="neutral-3"
+                  padding="0.5rem 1rem"
+                  alignItems="center"
+                  gap="0.5rem"
+                >
+                  <Icon
+                    as={CalendarBlank}
+                    boxSize="24px"
+                    color="neutral-5"
+                  />
+                  <Text>{selectedDateStr ?? t('select')}</Text>
+                </Flex>
+              </MenuButton>
+              <MenuList>
+                <DecentDatePicker
+                  onChange={date => {
+                    console.log(date);
+                    setFieldValue(field.name, date);
+                  }}
+                />
+              </MenuList>
+            </>
+          </Menu>
         )}
       </Field>
     </FormControl>

@@ -34,6 +34,7 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
       justifySelf="center"
       borderRadius="0.5rem"
       boxShadow={boxShadow}
+      maxW="26.875rem"
     >
       <Calendar
         formatShortWeekday={(_, date) => date.toString().slice(0, 2)}
