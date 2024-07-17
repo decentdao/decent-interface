@@ -8,7 +8,6 @@ import { AddressInput } from '../../components/ui/forms/EthAddressInput';
 import LabelWrapper from '../../components/ui/forms/LabelWrapper';
 import { InfoBoxLoader } from '../../components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../components/ui/page/Header/PageHeader';
-import PayrollStreamBuilder from '../../components/ui/stream/PayrollStreamBuilder';
 import StreamCard from '../../components/ui/stream/StreamCard';
 import useSablierStreams from '../../hooks/streams/useSablierStreams';
 
@@ -97,7 +96,6 @@ export default function StreamsPage() {
           />
         ))
       ) : null}
-      <PayrollStreamBuilder />
     </Box>
   );
 }
