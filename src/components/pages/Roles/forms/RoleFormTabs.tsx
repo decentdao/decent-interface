@@ -93,22 +93,17 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
     };
   }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
 
-  const payrollTabContainerRef = useRef<HTMLDivElement>(null);
   const vestingTabContainerRef = useRef<HTMLDivElement>(null);
 
   if (!daoAddress) return null;
 
-  function ComingSoonTooltip({
-    children,
-    type,
-  }: {
+  function ComingSoonTooltip({children}: {
     children: ReactNode;
-    type: 'payroll' | 'vesting';
   }) {
-    if (payrollTabContainerRef || vestingTabContainerRef) {
+    if (vestingTabContainerRef) {
       return (
         <ModalTooltip
-          containerRef={type === 'payroll' ? payrollTabContainerRef : vestingTabContainerRef}
+          containerRef={vestingTabContainerRef}
           maxW={TOOLTIP_MAXW}
           label="Coming soon"
         >
@@ -137,20 +132,18 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
           <Tab>
-            <Flex ref={payrollTabContainerRef}>
-              <ComingSoonTooltip type="payroll">
+            <Flex>
                 <Flex
                   px={{ base: '10vw', md: '5vw' }}
                   py="0.5rem"
                 >
                   {t('payroll')}
                 </Flex>
-              </ComingSoonTooltip>
             </Flex>
           </Tab>
           <Tab isDisabled={true}>
             <Flex ref={vestingTabContainerRef}>
-              <ComingSoonTooltip type="vesting">
+              <ComingSoonTooltip>
                 <Flex
                   px={{ base: '10vw', md: '5vw' }}
                   py="0.5rem"
