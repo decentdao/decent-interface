@@ -432,7 +432,7 @@ function PaymentStartDatePicker() {
   );
 }
 
-function PaymentFrequencyAmount() {
+function PaymentFrequency() {
   const { t } = useTranslation(['roles']);
   return (
     <FormControl my="1rem">
@@ -442,6 +442,7 @@ function PaymentFrequencyAmount() {
           const frequencyLabel = !!paymentFrequency
             ? t(frequencyAmountLabel[paymentFrequency])
             : '';
+
           return (
             <LabelWrapper
               label={frequencyLabel}
@@ -461,17 +462,18 @@ function PaymentFrequencyAmount() {
                     />
                   }
                   onClick={() => {
-                    if (field.value === undefined || Number(field.value) <= 0) return;
+                    if (field.value === undefined || Number(field.value) <= 1) return;
                     setFieldValue(field.name, Number(field.value) - 1);
                   }}
                 />
-                <NumberInput w="full">
-                  <NumberInputField
-                    value={field.value}
-                    onChange={() => {
-                      setFieldValue(field.name, field.value);
-                    }}
-                  />
+                <NumberInput
+                  w="full"
+                  value={values.roleEditing?.payroll?.paymentFrequencyNumber ?? 1}
+                  onChange={() => {
+                    setFieldValue(field.name, field.value);
+                  }}
+                >
+                  <NumberInputField />
                 </NumberInput>
                 <IconButton
                   aria-label="stepper-plus"
@@ -528,7 +530,7 @@ export default function RoleFormPayroll() {
       {values.roleEditing?.payroll?.paymentFrequency && (
         <>
           <PaymentStartDatePicker />
-          <PaymentFrequencyAmount />
+          <PaymentFrequency />
         </>
       )}
     </Box>

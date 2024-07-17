@@ -97,9 +97,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
 
   if (!daoAddress) return null;
 
-  function ComingSoonTooltip({children}: {
-    children: ReactNode;
-  }) {
+  function ComingSoonTooltip({ children }: { children: ReactNode }) {
     if (vestingTabContainerRef) {
       return (
         <ModalTooltip
@@ -133,12 +131,12 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
           <Tab>{t('roleInfo')}</Tab>
           <Tab>
             <Flex>
-                <Flex
-                  px={{ base: '10vw', md: '5vw' }}
-                  py="0.5rem"
-                >
-                  {t('payroll')}
-                </Flex>
+              <Flex
+                px={{ base: '10vw', md: '5vw' }}
+                py="0.5rem"
+              >
+                {t('payroll')}
+              </Flex>
             </Flex>
           </Tab>
           <Tab isDisabled={true}>
