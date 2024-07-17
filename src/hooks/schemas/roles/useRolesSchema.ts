@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { RoleFormPayrollValue, RoleValue } from '../../../components/pages/Roles/types';
+import { Frequency, RoleFormPayrollValue, RoleValue } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
@@ -34,7 +34,6 @@ export const useRolesSchema = () => {
                           address: Yup.string(),
                           symbol: Yup.string(),
                           decimals: Yup.number(),
-                          logo: Yup.string(),
                           balance: Yup.string(),
                         }),
                         amount: Yup.object()
@@ -58,9 +57,17 @@ export const useRolesSchema = () => {
                               return (v.bigintValue as bigint) <= BigInt(balance);
                             },
                           }),
-                        paymentFrequency: Yup.string(),
-                        paymentStartData: Yup.date(),
-                        paymentFrequencyNumber: Yup.number(),
+                        paymentFrequency: Yup.string().oneOf([
+                          Frequency.Monthly.toString(),
+                          Frequency.EveryTwoWeeks.toString(),
+                          Frequency.Weekly.toString(),
+                        ]).required(t('roleInfoErrorPaymentFrequencyRequired')),
+                        paymentStartDate: Yup.date().required(
+                          t('roleInfoErrorPaymentStartDateRequired'),
+                        ),
+                        paymentFrequencyNumber: Yup.number().required(
+                          t('roleInfoErrorPaymentFrequencyNumberRequired'),
+                        ),
                       }),
                   }),
               }),
