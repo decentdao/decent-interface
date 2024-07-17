@@ -91,7 +91,7 @@ export interface RoleFormPayrollValue {
   };
   amount: BigIntValuePair;
   paymentFrequency: string;
-  paymentStartDate: string;
+  paymentStartDate: Date;
   paymentFrequencyNumber: number;
 }
 

@@ -15,10 +15,12 @@ import {
   MenuList,
   NumberInput,
   NumberInputField,
+  Show,
   Text,
 } from '@chakra-ui/react';
 import {
   ArrowUpRight,
+  CalendarBlank,
   CaretDown,
   CaretUp,
   CheckCircle,
@@ -26,17 +28,20 @@ import {
   Minus,
   Plus,
 } from '@phosphor-icons/react';
+import { format } from 'date-fns';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW, TOOLTIP_MAXW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
-import { formatUSD } from '../../../../utils';
+import { DEFAULT_DATE_FORMAT, formatUSD } from '../../../../utils';
+import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import ExternalLink from '../../../ui/links/ExternalLink';
 import ModalTooltip from '../../../ui/modals/ModalTooltip';
+import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import Divider from '../../../ui/utils/Divider';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
 import { RoleFormValues, frequencyAmountLabel, frequencyOptions } from '../types';
@@ -373,28 +378,85 @@ function FrequencySelector() {
 }
 
 function PaymentStartDatePicker() {
-  // @todo implement date picker
-  const { t } = useTranslation(['roles']);
+  const { t } = useTranslation(['common']);
+
+  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
+
+  const selectedDate = values.roleEditing?.payroll?.paymentStartDate;
+  const selectedDateStr = selectedDate && format(selectedDate, DEFAULT_DATE_FORMAT);
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  function DatePickerTrigger() {
+    return (
+      <Flex
+        borderRadius="0.25rem"
+        bg="neutral-1"
+        borderWidth="1px"
+        borderColor="neutral-3"
+        padding="0.5rem 1rem"
+        alignItems="center"
+        gap="0.5rem"
+      >
+        <Icon
+          as={CalendarBlank}
+          boxSize="24px"
+          color="neutral-5"
+        />
+        <Text>{selectedDateStr ?? t('select')}</Text>
+      </Flex>
+    );
+  }
+
   return (
     <FormControl my="1rem">
-      <Field>
+      <Field name="roleEditing.payroll.paymentStartDate">
         {({ field }: FieldProps<string, RoleFormValues>) => (
-          <LabelWrapper
-            label={t('paymentStart')}
-            tooltipContent={<Box></Box>}
-          >
-            <Input
-              value={field.value}
-              onChange={() => ''}
-            />
-          </LabelWrapper>
+          <>
+            <Show below="md">
+              <Button
+                onClick={() => setIsDrawerOpen(true)}
+                variant="unstyled"
+              >
+                <DatePickerTrigger />
+              </Button>
+
+              <DraggableDrawer
+                isOpen={isDrawerOpen}
+                headerContent={undefined}
+                onOpen={() => {}}
+                onClose={() => setIsDrawerOpen(false)}
+              >
+                <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
+              </DraggableDrawer>
+            </Show>
+
+            <Show above="md">
+              <Menu placement="top">
+                <>
+                  <MenuButton
+                    as={Button}
+                    variant="unstyled"
+                    p="0"
+                    w="full"
+                  >
+                    <DatePickerTrigger />
+                  </MenuButton>
+                  <MenuList>
+                    <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
+                  </MenuList>
+                </>
+              </Menu>
+            </Show>
+          </>
         )}
       </Field>
     </FormControl>
   );
 }
 
-function PaymentFrequencyAmount() {
+// @todo @dev is this frequency or period???
+function PaymentFrequency() {
   const { t } = useTranslation(['roles']);
   return (
     <FormControl my="1rem">
@@ -404,6 +466,7 @@ function PaymentFrequencyAmount() {
           const frequencyLabel = !!paymentFrequency
             ? t(frequencyAmountLabel[paymentFrequency])
             : '';
+
           return (
             <LabelWrapper
               label={frequencyLabel}
@@ -423,17 +486,16 @@ function PaymentFrequencyAmount() {
                     />
                   }
                   onClick={() => {
-                    if (field.value === undefined || Number(field.value) <= 0) return;
+                    if (field.value === undefined || Number(field.value) <= 1) return;
                     setFieldValue(field.name, Number(field.value) - 1);
                   }}
                 />
-                <NumberInput w="full">
-                  <NumberInputField
-                    value={field.value}
-                    onChange={() => {
-                      setFieldValue(field.name, field.value);
-                    }}
-                  />
+                <NumberInput
+                  w="full"
+                  value={values.roleEditing?.payroll?.paymentFrequencyNumber}
+                  onChange={(value: string) => setFieldValue(field.name, Number(value))}
+                >
+                  <NumberInputField />
                 </NumberInput>
                 <IconButton
                   aria-label="stepper-plus"
@@ -490,7 +552,7 @@ export default function RoleFormPayroll() {
       {values.roleEditing?.payroll?.paymentFrequency && (
         <>
           <PaymentStartDatePicker />
-          <PaymentFrequencyAmount />
+          <PaymentFrequency />
         </>
       )}
     </Box>
