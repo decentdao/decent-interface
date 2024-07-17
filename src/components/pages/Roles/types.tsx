@@ -2,7 +2,7 @@ import { Address, Hex, zeroAddress } from 'viem';
 import { toHex } from 'viem/utils';
 import { getRandomBytes } from '../../../helpers';
 import { DecentRoleHat } from '../../../state/useRolesState';
-import { CreateProposalMetadata } from '../../../types';
+import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 export type RoleViewMode = 'edit' | 'view';
 
 export interface SablierVesting {
@@ -81,9 +81,24 @@ export interface EditedRole {
   status: EditBadgeStatus;
 }
 
+export interface RoleFormPayrollValue {
+  asset: {
+    address: Address;
+    name: string;
+    symbol: string;
+    decimals: number;
+    logo: string;
+  };
+  amount: BigIntValuePair;
+  paymentFrequency: string;
+  paymentStartDate: string;
+  paymentFrequencyNumber: number;
+}
+
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
+  payroll?: RoleFormPayrollValue;
 }
 
 export interface RoleFormValues {
@@ -110,3 +125,20 @@ export interface HatWearerChangedParams {
   currentWearer: Address;
   newWearer: Address;
 }
+
+export enum Frequency {
+  Monthly,
+  EveryTwoWeeks,
+  Weekly,
+}
+
+export const frequencyOptions: Record<string, string> = {
+  [Frequency.Monthly]: 'monthly',
+  [Frequency.EveryTwoWeeks]: 'everyTwoWeeks',
+  [Frequency.Weekly]: 'weekly',
+};
+export const frequencyAmountLabel: Record<string, string> = {
+  [Frequency.Monthly]: 'months',
+  [Frequency.EveryTwoWeeks]: 'weeks',
+  [Frequency.Weekly]: 'weeks',
+};

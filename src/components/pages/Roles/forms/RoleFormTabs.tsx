@@ -22,6 +22,7 @@ import { useRolesState } from '../../../../state/useRolesState';
 import ModalTooltip from '../../../ui/modals/ModalTooltip';
 import { EditBadgeStatus, EditedRole, RoleFormValues, RoleValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
+import RoleFormPayroll from './RoleFormPayroll';
 
 enum EditRoleTabs {
   RoleInfo,
@@ -135,7 +136,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
       >
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
-          <Tab isDisabled={true}>
+          <Tab>
             <Flex ref={payrollTabContainerRef}>
               <ComingSoonTooltip type="payroll">
                 <Flex
@@ -162,7 +163,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
         </TabList>
         <TabPanels my="1.75rem">
           <TabPanel>{tab === EditRoleTabs.RoleInfo && <RoleFormInfo />}</TabPanel>
-          <TabPanel>{tab === EditRoleTabs.Payroll && <Box>Payroll</Box>}</TabPanel>
+          <TabPanel>{tab === EditRoleTabs.Payroll && <RoleFormPayroll />}</TabPanel>
           <TabPanel>{tab === EditRoleTabs.Vesting && <Box>Vesting</Box>}</TabPanel>
         </TabPanels>
       </Tabs>
