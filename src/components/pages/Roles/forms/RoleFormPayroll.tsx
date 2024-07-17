@@ -428,6 +428,7 @@ function PaymentStartDatePicker() {
   );
 }
 
+// @todo @dev is this frequency or period???
 function PaymentFrequency() {
   const { t } = useTranslation(['roles']);
   return (
@@ -464,10 +465,8 @@ function PaymentFrequency() {
                 />
                 <NumberInput
                   w="full"
-                  value={values.roleEditing?.payroll?.paymentFrequencyNumber ?? 1}
-                  onChange={() => {
-                    setFieldValue(field.name, field.value);
-                  }}
+                  value={values.roleEditing?.payroll?.paymentFrequencyNumber}
+                  onChange={(value: string) => setFieldValue(field.name, Number(value))}
                 >
                   <NumberInputField />
                 </NumberInput>

@@ -2,9 +2,9 @@ import { Box, Icon, useBreakpointValue } from '@chakra-ui/react';
 import { CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { useState } from 'react';
 import { Calendar } from 'react-calendar';
+import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 
 import '../../../assets/css/Calendar.css';
-import { CARD_SHADOW, SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 
 interface DecentDatePickerProps {
   minDate?: Date;
