@@ -2,6 +2,8 @@ import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
+import PayrollStreamBuilder from './components/ui/stream/PayrollStreamBuilder';
+import VestingStreamBuilder from './components/ui/stream/VestingStreamBuilder';
 import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
@@ -93,6 +95,14 @@ export const router = (addressPrefix: string) =>
                 {
                   path: 'details',
                   element: <RoleEditDetails />,
+                },
+                {
+                  path: 'payroll',
+                  element: <PayrollStreamBuilder />,
+                },
+                {
+                  path: 'vesting',
+                  element: <VestingStreamBuilder />,
                 },
                 {
                   path: 'summary',
