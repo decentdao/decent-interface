@@ -181,7 +181,6 @@ function PaymentStartDatePicker() {
   );
 }
 
-// @todo @dev is this frequency or period???
 function PaymentFrequency() {
   const { t } = useTranslation(['roles']);
   return (

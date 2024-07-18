@@ -12,7 +12,11 @@ import {
 import { CaretRight, CaretDown } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SablierPayroll, SablierVesting } from '../../../../../components/pages/Roles/types';
+import {
+  SablierPayroll,
+  SablierVesting,
+  frequencyOptions,
+} from '../../../../../components/pages/Roles/types';
 
 type AccordionItemRowProps = {
   title: string;
@@ -82,7 +86,7 @@ export default function PayrollAndVesting({
                       alignItems="center"
                     >
                       <Image
-                        src={payrollData.asset.iconUri}
+                        src={payrollData.asset.logo}
                         fallbackSrc="/images/coin-icon-default.svg"
                         alt={payrollData.asset.symbol}
                         w="2rem"
@@ -90,28 +94,29 @@ export default function PayrollAndVesting({
                       />
                       <Box>
                         <Text textStyle="body-base">
-                          {payrollData.payrollAmount} {payrollData.asset.symbol}
+                          {payrollData.amount.value} {payrollData.asset.symbol}
                         </Text>
                         <Text
                           color="neutral-7"
                           textStyle="button-small"
                         >
-                          {payrollData.payrollAmountUSD}
+                          {/* @todo - show amount in USD based off price of the asset */}
+                          {payrollData.amount.value}
                         </Text>
                       </Box>
                     </Flex>
                   </AccordionItemRow>
                   <AccordionItemRow
                     title={t('frequency')}
-                    value={payrollData.payrollSchedule}
+                    value={t(`${frequencyOptions[payrollData.paymentFrequency]}Short`)}
                   />
                   <AccordionItemRow
                     title={t('starting')}
-                    value={payrollData.payrollStartDate}
+                    value={payrollData.paymentStartDate.toISOString()}
                   />
                   <AccordionItemRow
                     title={t('ending')}
-                    value={payrollData.payrollEndDate}
+                    value={payrollData.paymentStartDate.toISOString()} // @todo - calculate end date based off start date + frequency
                   />
                 </AccordionPanel>
               </>

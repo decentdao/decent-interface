@@ -18,6 +18,7 @@ import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
 import { formatUSD } from '../../../../utils';
+import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
@@ -28,7 +29,9 @@ export function AssetSelector({ formName }: { formName: 'vesting' | 'payroll' })
   const {
     treasury: { assetsFungible },
   } = useFractal();
-  const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
+  const fungibleAssetsWithBalance = assetsFungible.filter(
+    asset => parseFloat(asset.balance) > 0 && asset.tokenAddress !== MOCK_MORALIS_ETH_ADDRESS, // Can't stream native token
+  );
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const selectedAsset = values.roleEditing?.[formName]?.asset;
   return (
