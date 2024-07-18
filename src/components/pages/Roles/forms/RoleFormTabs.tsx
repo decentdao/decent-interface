@@ -1,34 +1,17 @@
-import {
-  Box,
-  Tab,
-  TabList,
-  TabPanels,
-  TabPanel,
-  Tabs,
-  Button,
-  Flex,
-  Tooltip,
-} from '@chakra-ui/react';
+import { Box, Tab, TabList, TabPanels, TabPanel, Tabs, Button, Flex } from '@chakra-ui/react';
 import { useFormikContext } from 'formik';
-import { useMemo, useState, useEffect, ReactNode, useRef } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Hex, zeroAddress } from 'viem';
-import { TOOLTIP_MAXW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../state/useRolesState';
-import ModalTooltip from '../../../ui/modals/ModalTooltip';
 import { EditBadgeStatus, EditedRole, RoleFormValues, RoleValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormPayroll from './RoleFormPayroll';
-
-enum EditRoleTabs {
-  RoleInfo,
-  Payroll,
-  Vesting,
-}
+import RoleFormVesting from './RoleFormVesting';
 
 const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: boolean) => {
   if (fieldNames.includes(fieldName) && isRemoved) {
@@ -38,7 +21,6 @@ const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: bool
 };
 
 export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: any) => void }) {
-  const [tab, setTab] = useState<EditRoleTabs>(EditRoleTabs.RoleInfo);
   const { hatsTree } = useRolesState();
   const {
     node: { daoAddress },
@@ -93,69 +75,26 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
     };
   }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
 
-  const vestingTabContainerRef = useRef<HTMLDivElement>(null);
-
   if (!daoAddress) return null;
-
-  function ComingSoonTooltip({ children }: { children: ReactNode }) {
-    if (vestingTabContainerRef) {
-      return (
-        <ModalTooltip
-          containerRef={vestingTabContainerRef}
-          maxW={TOOLTIP_MAXW}
-          label="Coming soon"
-        >
-          {children}
-        </ModalTooltip>
-      );
-    }
-
-    return (
-      <Tooltip
-        label="Coming soon"
-        aria-label="Coming soon"
-      >
-        {children}
-      </Tooltip>
-    );
-  }
 
   return (
     <Box>
-      <Tabs
-        index={tab}
-        onChange={index => setTab(index)}
-        variant="twoTone"
-      >
+      <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
-          <Tab>
-            <Flex>
-              <Flex
-                px={{ base: '10vw', md: '5vw' }}
-                py="0.5rem"
-              >
-                {t('payroll')}
-              </Flex>
-            </Flex>
-          </Tab>
-          <Tab isDisabled={true}>
-            <Flex ref={vestingTabContainerRef}>
-              <ComingSoonTooltip>
-                <Flex
-                  px={{ base: '10vw', md: '5vw' }}
-                  py="0.5rem"
-                >
-                  {t('vesting')}
-                </Flex>
-              </ComingSoonTooltip>
-            </Flex>
-          </Tab>
+          <Tab>{t('payroll')}</Tab>
+          <Tab>{t('vesting')}</Tab>
         </TabList>
         <TabPanels my="1.75rem">
-          <TabPanel>{tab === EditRoleTabs.RoleInfo && <RoleFormInfo />}</TabPanel>
-          <TabPanel>{tab === EditRoleTabs.Payroll && <RoleFormPayroll />}</TabPanel>
-          <TabPanel>{tab === EditRoleTabs.Vesting && <Box>Vesting</Box>}</TabPanel>
+          <TabPanel>
+            <RoleFormInfo />
+          </TabPanel>
+          <TabPanel>
+            <RoleFormPayroll />
+          </TabPanel>
+          <TabPanel>
+            <RoleFormVesting />
+          </TabPanel>
         </TabPanels>
       </Tabs>
       <Flex
