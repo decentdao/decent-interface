@@ -92,13 +92,13 @@ function PayrollAndVesting({
             my="0.5rem"
           >
             <Image
-              src={payrollData.asset.iconUri}
+              src={payrollData.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
               alt={payrollData.asset.symbol}
               w="1.25rem"
               h="1.25rem"
             />
-            {payrollData.payrollAmount}
+            {payrollData.amount.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}
@@ -112,7 +112,7 @@ function PayrollAndVesting({
               {payrollData.asset.symbol}
             </EtherscanLink>
             <Text>
-              {'/'} {payrollData.payrollSchedule}
+              {'/'} {payrollData.paymentFrequency}
             </Text>
           </Flex>
         </Box>

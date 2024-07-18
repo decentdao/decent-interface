@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { Frequency, RoleFormPayrollValue, RoleValue } from '../../../components/pages/Roles/types';
+import { Frequency, SablierPayroll, RoleValue } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
@@ -27,7 +27,7 @@ export const useRolesSchema = () => {
                   .default(undefined)
                   .nullable()
                   .when({
-                    is: (payroll: RoleFormPayrollValue) => payroll !== undefined,
+                    is: (payroll: SablierPayroll) => payroll !== undefined,
                     then: _payrollSchema =>
                       _payrollSchema.shape({
                         asset: Yup.object().shape({

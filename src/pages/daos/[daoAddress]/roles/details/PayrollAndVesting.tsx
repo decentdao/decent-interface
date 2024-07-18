@@ -82,7 +82,7 @@ export default function PayrollAndVesting({
                       alignItems="center"
                     >
                       <Image
-                        src={payrollData.asset.iconUri}
+                        src={payrollData.asset.logo}
                         fallbackSrc="/images/coin-icon-default.svg"
                         alt={payrollData.asset.symbol}
                         w="2rem"
@@ -90,28 +90,29 @@ export default function PayrollAndVesting({
                       />
                       <Box>
                         <Text textStyle="body-base">
-                          {payrollData.payrollAmount} {payrollData.asset.symbol}
+                          {payrollData.amount.value} {payrollData.asset.symbol}
                         </Text>
                         <Text
                           color="neutral-7"
                           textStyle="button-small"
                         >
-                          {payrollData.payrollAmountUSD}
+                          {/* @todo - show amount in USD based off price of the asset */}
+                          {payrollData.amount.value}
                         </Text>
                       </Box>
                     </Flex>
                   </AccordionItemRow>
                   <AccordionItemRow
                     title={t('frequency')}
-                    value={payrollData.payrollSchedule}
+                    value={payrollData.paymentFrequency}
                   />
                   <AccordionItemRow
                     title={t('starting')}
-                    value={payrollData.payrollStartDate}
+                    value={payrollData.paymentStartDate.toISOString()}
                   />
                   <AccordionItemRow
                     title={t('ending')}
-                    value={payrollData.payrollEndDate}
+                    value={payrollData.paymentStartDate.toISOString()} // @todo - calculate end date based off start date + frequency
                   />
                 </AccordionPanel>
               </>
