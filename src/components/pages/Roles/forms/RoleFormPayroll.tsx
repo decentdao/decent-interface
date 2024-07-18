@@ -5,7 +5,6 @@ import {
   FormControl,
   Icon,
   IconButton,
-  Image,
   Input,
   InputGroup,
   InputRightElement,
@@ -18,230 +17,20 @@ import {
   Show,
   Text,
 } from '@chakra-ui/react';
-import { CalendarBlank, CaretDown, CaretUp, CheckCircle, Minus, Plus } from '@phosphor-icons/react';
+import { CalendarBlank, CaretDown, CaretUp, Minus, Plus } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
-import { useFractal } from '../../../../providers/App/AppProvider';
-import { BigIntValuePair } from '../../../../types';
-import { DEFAULT_DATE_FORMAT, formatUSD } from '../../../../utils';
+import { DEFAULT_DATE_FORMAT } from '../../../../utils';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
-import { BigIntInput } from '../../../ui/forms/BigIntInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
-import Divider from '../../../ui/utils/Divider';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
 import { RoleFormValues, frequencyAmountLabel, frequencyOptions } from '../types';
+import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
-
-function AssetSelector() {
-  const { t } = useTranslation(['roles', 'treasury', 'modals']);
-  const {
-    treasury: { assetsFungible },
-  } = useFractal();
-  const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const selectedAsset = values.roleEditing?.payroll?.asset;
-  return (
-    <>
-      <FormControl my="0.5rem">
-        <Field name="roleEditing.payroll.asset">
-          {({ field }: FieldProps<string, RoleFormValues>) => (
-            <Menu
-              placement="bottom-end"
-              offset={[0, 8]}
-            >
-              <>
-                <MenuButton
-                  as={Button}
-                  variant="unstyled"
-                  bgColor="transparent"
-                  p={0}
-                  sx={{
-                    '&:hover': {
-                      'div.payroll-menu-asset': {
-                        color: 'lilac--1',
-                        bg: 'white-alpha-04',
-                      },
-                    },
-                  }}
-                >
-                  <Flex
-                    alignItems="center"
-                    gap={2}
-                  >
-                    <Flex
-                      gap={2}
-                      alignItems="center"
-                      border="1px solid"
-                      borderColor="neutral-3"
-                      borderRadius="9999px"
-                      w="fit-content"
-                      px="1rem"
-                      className="payroll-menu-asset"
-                      py="0.5rem"
-                    >
-                      <Image
-                        src={selectedAsset?.logo}
-                        fallbackSrc="/images/coin-icon-default.svg"
-                        boxSize="2rem"
-                      />
-                      <Text
-                        textStyle="label-base"
-                        color="white-0"
-                      >
-                        {selectedAsset?.symbol ?? t('selectLabel', { ns: 'modals' })}
-                      </Text>
-                    </Flex>
-                    <Icon
-                      as={CaretDown}
-                      boxSize="1.5rem"
-                    />
-                  </Flex>
-                </MenuButton>
-                <MenuList
-                  zIndex={1}
-                  bg="linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.04) 100%), #221D25"
-                  py="1rem"
-                  boxShadow={CARD_SHADOW}
-                  borderRadius="0.5rem"
-                  px="0.25rem"
-                  w={{ base: '300px', md: '428px' }}
-                >
-                  <EaseOutComponent>
-                    <Text
-                      textStyle="display-lg"
-                      px="1rem"
-                    >
-                      {t('titleAssets', { ns: 'treasury' })}
-                    </Text>
-                    <Divider
-                      variant="darker"
-                      my="1rem"
-                    />
-                    {fungibleAssetsWithBalance.map((asset, index) => {
-                      const isSelected = selectedAsset?.address === asset.tokenAddress;
-                      return (
-                        <MenuItem
-                          key={index}
-                          p="1rem"
-                          _hover={{ bg: 'neutral-4' }}
-                          display="flex"
-                          alignItems="center"
-                          gap={2}
-                          justifyContent="space-between"
-                          w="full"
-                          onClick={() => {
-                            setFieldValue(field.name, {
-                              address: fungibleAssetsWithBalance[index].tokenAddress,
-                              symbol: fungibleAssetsWithBalance[index].symbol,
-                              logo: fungibleAssetsWithBalance[index].logo,
-                              balance: fungibleAssetsWithBalance[index].balance,
-                              balanceFormatted: fungibleAssetsWithBalance[index].balanceFormatted,
-                              decimals: fungibleAssetsWithBalance[index].decimals,
-                            });
-                          }}
-                        >
-                          <Flex
-                            alignItems="center"
-                            gap="1rem"
-                          >
-                            <Image
-                              src={asset.logo ?? asset.thumbnail}
-                              fallbackSrc="/images/coin-icon-default.svg"
-                              boxSize="2rem"
-                            />
-                            <Flex flexDir="column">
-                              <Text
-                                textStyle="label-base"
-                                color="white-0"
-                              >
-                                {asset.symbol}
-                              </Text>
-                              <Flex
-                                alignItems="center"
-                                gap={2}
-                              >
-                                <Text
-                                  textStyle="button-base"
-                                  color="neutral-7"
-                                >
-                                  {asset.balanceFormatted}
-                                </Text>
-                                <Text
-                                  textStyle="button-base"
-                                  color="neutral-7"
-                                >
-                                  {asset.symbol}
-                                </Text>
-                                {asset.usdValue && (
-                                  <>
-                                    <Text
-                                      textStyle="button-base"
-                                      color="neutral-7"
-                                    >
-                                      {'•'}
-                                    </Text>
-                                    <Text
-                                      textStyle="button-base"
-                                      color="neutral-7"
-                                    >
-                                      {formatUSD(asset.usdValue)}
-                                    </Text>
-                                  </>
-                                )}
-                              </Flex>
-                            </Flex>
-                          </Flex>
-                          {isSelected && (
-                            <Icon
-                              as={CheckCircle}
-                              boxSize="1.5rem"
-                              color="lilac-0"
-                            />
-                          )}
-                        </MenuItem>
-                      );
-                    })}
-                  </EaseOutComponent>
-                </MenuList>
-              </>
-            </Menu>
-          )}
-        </Field>
-      </FormControl>
-      <FormControl my="1rem">
-        <Field name="roleEditing.payroll.amount">
-          {({
-            field,
-            meta,
-            form: { setFieldTouched },
-          }: FieldProps<BigIntValuePair, RoleFormValues>) => {
-            return (
-              <LabelWrapper
-                label={t('totalAmount')}
-                errorMessage={meta.error}
-              >
-                <BigIntInput
-                  isDisabled={!values?.roleEditing?.payroll?.asset}
-                  value={field.value?.bigintValue}
-                  onChange={valuePair => {
-                    setFieldValue(field.name, valuePair, true);
-                  }}
-                  onBlur={() => {
-                    setFieldTouched(field.name, true);
-                  }}
-                />
-              </LabelWrapper>
-            );
-          }}
-        </Field>
-      </FormControl>
-    </>
-  );
-}
 
 function FrequencySelector() {
   const { t } = useTranslation(['roles']);
@@ -482,7 +271,7 @@ export default function RoleFormPayroll() {
         // @todo Add Learn More link
         externalLink="#"
       />
-      <AssetSelector />
+      <AssetSelector formName="vesting" />
       <SectionTitle
         title={t('paymentFrequency')}
         subTitle={t('paymentFrequencySubtitle')}
