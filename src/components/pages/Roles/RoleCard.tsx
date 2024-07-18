@@ -10,7 +10,13 @@ import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { RoleEditProps, RoleProps, SablierPayroll, SablierVesting } from './types';
+import {
+  RoleEditProps,
+  RoleProps,
+  SablierPayroll,
+  SablierVesting,
+  frequencyOptions,
+} from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -112,7 +118,7 @@ function PayrollAndVesting({
               {payrollData.asset.symbol}
             </EtherscanLink>
             <Text>
-              {'/'} {payrollData.paymentFrequency}
+              {'/'} {t(`${frequencyOptions[payrollData.paymentFrequency]}Short`)}
             </Text>
           </Flex>
         </Box>

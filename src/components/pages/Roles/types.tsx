@@ -28,7 +28,7 @@ export interface SablierPayroll {
     logo: string;
   };
   amount: BigIntValuePair;
-  paymentFrequency: string;
+  paymentFrequency: Frequency;
   paymentStartDate: Date;
   paymentFrequencyNumber: number;
 }

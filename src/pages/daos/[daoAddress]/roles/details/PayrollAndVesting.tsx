@@ -12,7 +12,11 @@ import {
 import { CaretRight, CaretDown } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SablierPayroll, SablierVesting } from '../../../../../components/pages/Roles/types';
+import {
+  SablierPayroll,
+  SablierVesting,
+  frequencyOptions,
+} from '../../../../../components/pages/Roles/types';
 
 type AccordionItemRowProps = {
   title: string;
@@ -104,7 +108,7 @@ export default function PayrollAndVesting({
                   </AccordionItemRow>
                   <AccordionItemRow
                     title={t('frequency')}
-                    value={payrollData.paymentFrequency}
+                    value={t(`${frequencyOptions[payrollData.paymentFrequency]}Short`)}
                   />
                   <AccordionItemRow
                     title={t('starting')}

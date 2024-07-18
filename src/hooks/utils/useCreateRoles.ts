@@ -23,6 +23,7 @@ import { useRolesState } from '../../state/useRolesState';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
+import useCreateSablierStream from '../streams/useCreateSablierStream';
 
 const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   return JSON.stringify({
@@ -110,6 +111,7 @@ export default function useCreateRoles() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
 
   const { submitProposal } = useSubmitProposal();
+  const { prepareBatchTranchedStreamCreation } = useCreateSablierStream();
   const ipfsClient = useIPFSClient();
 
   const navigate = useNavigate();
@@ -192,11 +194,15 @@ export default function useCreateRoles() {
           })),
       );
 
+      // Parse role with added payroll hats
+      const rolePayrollAddedHats = await Promise.all(editedHats.filter(hat => !!hat.payroll));
+
       return {
         addedHats,
         removedHatIds,
         memberChangedHats,
         roleDetailsChangedHats,
+        rolePayrollAddedHats,
       };
     },
     [getHat, hatsTree?.topHat.smartAddress, uploadHatDescription],
@@ -289,6 +295,7 @@ export default function useCreateRoles() {
           id: Address;
           details: string;
         }[];
+        rolePayrollAddedHats: RoleValue[];
       },
     ) => {
       if (!hatsTree) {
@@ -297,12 +304,20 @@ export default function useCreateRoles() {
 
       const adminHatId = hatsTree.adminHat.id;
       const topHatAccount = hatsTree.topHat.smartAddress;
-      const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
+      const {
+        addedHats,
+        removedHatIds,
+        memberChangedHats,
+        roleDetailsChangedHats,
+        rolePayrollAddedHats,
+      } = edits;
 
       const createAndMintHatsTxs: Hex[] = [];
       let removeHatTxs: Hex[] = [];
       let transferHatTxs: Hex[] = [];
       let hatDetailsChangedTxs: Hex[] = [];
+      let hatPayrollAddedTxs: { calldata: Hex; targetAddress: Address }[] = [];
+      let hatPayrollTokenApprovalTxs: { calldata: Hex; tokenAddress: Address }[] = [];
 
       if (addedHats.length) {
         // First, prepare a single tx to create all the hats
@@ -365,18 +380,34 @@ export default function useCreateRoles() {
         });
       }
 
-      return {
+      if (rolePayrollAddedHats.length) {
+        const streamsData = rolePayrollAddedHats.map(role => role.payroll!);
+        const recipients = rolePayrollAddedHats.map(role => role.smartAddress);
+        const preparedPayrollTransactions = prepareBatchTranchedStreamCreation(
+          streamsData,
+          recipients,
+        );
+
+        hatPayrollTokenApprovalTxs = preparedPayrollTransactions.preparedTokenApprovalsTransactions;
+        hatPayrollAddedTxs = preparedPayrollTransactions.preparedStreamCreationTransactions;
+      }
+
+      const proposalTransactions = {
         targets: [
           ...createAndMintHatsTxs.map(() => hatsProtocol),
           ...removeHatTxs.map(() => topHatAccount),
           ...transferHatTxs.map(() => hatsProtocol),
           ...hatDetailsChangedTxs.map(() => hatsProtocol),
+          ...hatPayrollTokenApprovalTxs.map(({ tokenAddress }) => tokenAddress),
+          ...hatPayrollAddedTxs.map(({ targetAddress }) => targetAddress),
         ],
         calldatas: [
           ...createAndMintHatsTxs,
           ...removeHatTxs,
           ...transferHatTxs,
           ...hatDetailsChangedTxs,
+          ...hatPayrollTokenApprovalTxs.map(({ calldata }) => calldata),
+          ...hatPayrollAddedTxs.map(({ calldata }) => calldata),
         ],
         metaData: proposalMetadata,
         values: [
@@ -384,10 +415,14 @@ export default function useCreateRoles() {
           ...removeHatTxs.map(() => 0n),
           ...transferHatTxs.map(() => 0n),
           ...hatDetailsChangedTxs.map(() => 0n),
+          ...hatPayrollTokenApprovalTxs.map(() => 0n),
+          ...hatPayrollAddedTxs.map(() => 0n),
         ],
       };
+
+      return proposalTransactions;
     },
-    [hatsProtocol, hatsTree],
+    [hatsProtocol, hatsTree, prepareBatchTranchedStreamCreation],
   );
 
   const createRolesEditProposal = useCallback(
