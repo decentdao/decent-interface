@@ -18,86 +18,23 @@ import {
   Show,
   Text,
 } from '@chakra-ui/react';
-import {
-  ArrowUpRight,
-  CalendarBlank,
-  CaretDown,
-  CaretUp,
-  CheckCircle,
-  Info,
-  Minus,
-  Plus,
-} from '@phosphor-icons/react';
+import { CalendarBlank, CaretDown, CaretUp, CheckCircle, Minus, Plus } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { CARD_SHADOW, TOOLTIP_MAXW } from '../../../../constants/common';
+import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
 import { DEFAULT_DATE_FORMAT, formatUSD } from '../../../../utils';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import ExternalLink from '../../../ui/links/ExternalLink';
-import ModalTooltip from '../../../ui/modals/ModalTooltip';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import Divider from '../../../ui/utils/Divider';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
 import { RoleFormValues, frequencyAmountLabel, frequencyOptions } from '../types';
-
-function SectionTitle({ title, subTitle }: { title: string; subTitle: string }) {
-  const { t } = useTranslation(['common']);
-  const titleRef = useRef<HTMLDivElement>(null);
-  return (
-    <Flex flexDir="column">
-      <Flex
-        justifyContent="space-between"
-        alignItems="center"
-      >
-        <Box ref={titleRef}>
-          <ModalTooltip
-            containerRef={titleRef}
-            maxW={TOOLTIP_MAXW}
-            // @todo add COPY
-            label="I need copy"
-          >
-            <Flex
-              alignItems="center"
-              gap="0.25rem"
-            >
-              <Text
-                textStyle="display-lg"
-                color="white-0"
-              >
-                {title}
-              </Text>
-              <Icon as={Info} />
-            </Flex>
-          </ModalTooltip>
-        </Box>
-        <ExternalLink href="#">
-          <Flex
-            alignItems="center"
-            gap="0.25rem"
-          >
-            {t('learnMore')}
-            <Icon
-              as={ArrowUpRight}
-              boxSize="1rem"
-            />
-          </Flex>
-        </ExternalLink>
-      </Flex>
-      <Text
-        textStyle="label-base"
-        color="neutral-7"
-      >
-        {subTitle}
-      </Text>
-    </Flex>
-  );
-}
+import { SectionTitle } from './RoleFormSectionTitle';
 
 function AssetSelector() {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
@@ -542,11 +479,15 @@ export default function RoleFormPayroll() {
       <SectionTitle
         title={t('asset')}
         subTitle={t('assetSubTitle')}
+        // @todo Add Learn More link
+        externalLink="#"
       />
       <AssetSelector />
       <SectionTitle
         title={t('paymentFrequency')}
         subTitle={t('paymentFrequencySubtitle')}
+        // @todo Add Learn More link
+        externalLink="#"
       />
       <FrequencySelector />
       {values.roleEditing?.payroll?.paymentFrequency && (
