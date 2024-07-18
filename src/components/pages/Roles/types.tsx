@@ -20,17 +20,17 @@ export interface SablierVesting {
 }
 
 export interface SablierPayroll {
-  payrollSchedule: string;
-  payrollAmount: string;
-  payrollAmountUSD: string;
-  payrollStartDate: string;
-  payrollEndDate: string;
   asset: {
     address: Address;
-    symbol: string;
     name: string;
-    iconUri: string;
+    symbol: string;
+    decimals: number;
+    logo: string;
   };
+  amount: BigIntValuePair;
+  paymentFrequency: Frequency;
+  paymentStartDate: Date;
+  paymentFrequencyNumber: number;
 }
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
@@ -81,24 +81,10 @@ export interface EditedRole {
   status: EditBadgeStatus;
 }
 
-export interface RoleFormPayrollValue {
-  asset: {
-    address: Address;
-    name: string;
-    symbol: string;
-    decimals: number;
-    logo: string;
-  };
-  amount: BigIntValuePair;
-  paymentFrequency: string;
-  paymentStartDate: Date;
-  paymentFrequencyNumber: number;
-}
-
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
-  payroll?: RoleFormPayrollValue;
+  payroll?: SablierPayroll;
 }
 
 export interface RoleFormValues {

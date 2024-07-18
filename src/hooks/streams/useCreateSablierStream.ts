@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
-import { getAddress, zeroAddress, encodeFunctionData, erc20Abi, Address } from 'viem';
+import { getAddress, zeroAddress, encodeFunctionData, erc20Abi, Address, Hex } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
+import { Frequency, SablierPayroll } from '../../components/pages/Roles/types';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { TokenBalance, ProposalExecuteData } from '../../types';
 import {
-  PayrollFrequency,
   StreamAbsoluteSchedule,
   StreamRelativeSchedule,
   StreamSchedule,
@@ -15,10 +15,10 @@ const SECONDS_IN_HOUR = 60 * 60;
 const SECONDS_IN_DAY = 24 * SECONDS_IN_HOUR;
 
 type DynamicOrTranchedStreamInputs = {
-  months: number;
-  frequency: PayrollFrequency;
+  frequencyNumber: number;
+  frequency: Frequency;
   totalAmount: string;
-  asset: TokenBalance;
+  asset: SablierPayroll['asset'];
   recipient: Address;
   startDate: number;
 };
@@ -32,12 +32,7 @@ type LinearStreamInputs = {
 };
 export default function useCreateSablierStream() {
   const {
-    contracts: {
-      sablierV2LockupDynamic,
-      sablierV2LockupTranched,
-      sablierV2LockupLinear,
-      sablierV2Batch,
-    },
+    contracts: { sablierV2LockupTranched, sablierV2LockupLinear, sablierV2Batch },
   } = useNetworkConfig();
   const {
     node: { daoAddress },
@@ -73,7 +68,7 @@ export default function useCreateSablierStream() {
 
   const prepareDynamicOrTranchedStream = useCallback(
     ({
-      months,
+      frequencyNumber,
       frequency,
       totalAmount,
       asset,
@@ -82,34 +77,32 @@ export default function useCreateSablierStream() {
     }: DynamicOrTranchedStreamInputs) => {
       const exponent = 10n ** BigInt(asset.decimals);
       const totalAmountInTokenDecimals = BigInt(totalAmount) * exponent;
-      let totalSegments = months;
-      if (frequency === 'weekly') {
-        // @todo - obviously this isn't correct and we need proper calculation of how many weeks are in the amount of months entered
-        totalSegments = months * 4;
-      } else if (frequency === 'biweekly') {
-        // @todo - again, not correct - need to get exact number of 2-weeks cycles from the total number of months
-        totalSegments = months * 2;
-      }
-      const segmentAmount = totalAmountInTokenDecimals / BigInt(totalSegments);
+      const segmentAmount = totalAmountInTokenDecimals / BigInt(frequencyNumber);
       // Sablier sets startTime to block.timestamp - so we need to simulate startTime through streaming 0 tokens at first segment till startDate
-      const segments: { amount: bigint; exponent: bigint; duration: number }[] = [
-        { amount: 0n, exponent, duration: Math.round(startDate - Date.now() / 1000) },
+      const tranches: { amount: bigint; exponent: bigint; duration: number }[] = [
+        { amount: 0n, exponent, duration: Math.round((startDate - Date.now()) / 1000) },
       ];
 
       let days = 30;
-      if (frequency === 'weekly') {
+      if (frequency === Frequency.Weekly) {
         days = 7;
-      } else if (frequency === 'biweekly') {
+      } else if (frequency === Frequency.EveryTwoWeeks) {
         days = 14;
       }
       const duration = days * SECONDS_IN_DAY;
 
-      for (let i = 1; i <= totalSegments; i++) {
-        segments.push({
+      for (let i = 1; i <= frequencyNumber; i++) {
+        tranches.push({
           amount: segmentAmount,
           exponent,
           duration,
         });
+      }
+
+      const totalTranchesAmount = tranches.reduce((prev, curr) => prev + curr.amount, 0n);
+      if (totalTranchesAmount < totalAmountInTokenDecimals) {
+        // @dev We can't always equally divide between tranches, so we're putting the leftover into the very last tranche
+        tranches[tranches.length - 1].amount += totalAmountInTokenDecimals - totalTranchesAmount;
       }
 
       const tokenCalldata = prepareStreamTokenCallData(totalAmountInTokenDecimals);
@@ -117,7 +110,7 @@ export default function useCreateSablierStream() {
 
       const assembledStream = {
         ...basicStreamData,
-        segments, // Segments array of tuples
+        tranches, // Tranches array of tuples
       };
 
       return { tokenCalldata, assembledStream };
@@ -164,61 +157,44 @@ export default function useCreateSablierStream() {
     [prepareBasicStreamData, prepareStreamTokenCallData],
   );
 
-  const prepareCreateDynamicLockupProposal = useCallback(
-    (inputs: DynamicOrTranchedStreamInputs) => {
-      const { asset, recipient } = inputs;
-      const tokenAddress = getAddress(asset.tokenAddress);
-      const { tokenCalldata, assembledStream } = prepareDynamicOrTranchedStream(inputs);
+  const prepareBatchTranchedStreamCreation = useCallback(
+    (tranchedStreams: SablierPayroll[], recipients: Address[]) => {
+      if (tranchedStreams.length !== recipients.length) {
+        throw new Error(
+          'Parameters mismatch. Amount of created streams has to match amount of recipients',
+        );
+      }
 
-      const sablierBatchCalldata = encodeFunctionData({
-        abi: SablierV2BatchAbi,
-        functionName: 'createWithDurationsLD',
-        args: [sablierV2LockupDynamic, tokenAddress, [assembledStream]],
+      const preparedStreamCreationTransactions: { calldata: Hex; targetAddress: Address }[] = [];
+      const preparedTokenApprovalsTransactions: { calldata: Hex; tokenAddress: Address }[] = [];
+
+      tranchedStreams.forEach((streamData, index) => {
+        const recipient = recipients[index];
+        const tokenAddress = streamData.asset.address;
+        // @todo - Smarter way would be to batch token approvals and streams creation, and not just build single approval + creation transactions for each stream
+        const { tokenCalldata, assembledStream } = prepareDynamicOrTranchedStream({
+          recipient,
+          totalAmount: streamData.amount.value,
+          asset: streamData.asset,
+          frequencyNumber: streamData.paymentFrequencyNumber,
+          frequency: streamData.paymentFrequency,
+          startDate: streamData.paymentStartDate.getTime(),
+        });
+
+        const sablierBatchCalldata = encodeFunctionData({
+          abi: SablierV2BatchAbi,
+          functionName: 'createWithDurationsLT', // Another option would be to use createWithTimestampsLT. Essentially they're doing the same, `WithDurations` just simpler for usage
+          args: [sablierV2LockupTranched, tokenAddress, [assembledStream]],
+        });
+
+        preparedStreamCreationTransactions.push({
+          calldata: sablierBatchCalldata,
+          targetAddress: sablierV2Batch,
+        });
+        preparedTokenApprovalsTransactions.push({ calldata: tokenCalldata, tokenAddress });
       });
 
-      const proposalData: ProposalExecuteData = {
-        targets: [tokenAddress, sablierV2Batch],
-        values: [0n, 0n],
-        calldatas: [tokenCalldata, sablierBatchCalldata],
-        metaData: {
-          title: 'Create Payroll Stream for Role',
-          description: `This madafaking rocket science proposal will create AI Blockchain Crypto Currency Bitcoin BUIDL HODL Sablier V2 Stream of $$$ flowing to ${recipient}`,
-          documentationUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        },
-      };
-
-      return proposalData;
-    },
-    [sablierV2Batch, sablierV2LockupDynamic, prepareDynamicOrTranchedStream],
-  );
-
-  const prepareCreateTranchedLockupProposal = useCallback(
-    (inputs: DynamicOrTranchedStreamInputs) => {
-      const { asset, recipient } = inputs;
-      const tokenAddress = getAddress(asset.tokenAddress);
-      const {
-        tokenCalldata,
-        assembledStream: { segments: tranches, ...assembledTranchedStream },
-      } = prepareDynamicOrTranchedStream(inputs);
-
-      const sablierBatchCalldata = encodeFunctionData({
-        abi: SablierV2BatchAbi,
-        functionName: 'createWithDurationsLT',
-        args: [sablierV2LockupTranched, tokenAddress, [{ ...assembledTranchedStream, tranches }]],
-      });
-
-      const proposalData: ProposalExecuteData = {
-        targets: [tokenAddress, sablierV2Batch],
-        values: [0n, 0n],
-        calldatas: [tokenCalldata, sablierBatchCalldata],
-        metaData: {
-          title: 'Create Payroll Stream for Role',
-          description: `This madafaking rocket science proposal will create AI Blockchain Crypto Currency Bitcoin BUIDL HODL Sablier V2 Stream of $$$ flowing to ${recipient}`,
-          documentationUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        },
-      };
-
-      return proposalData;
+      return { preparedStreamCreationTransactions, preparedTokenApprovalsTransactions };
     },
     [prepareDynamicOrTranchedStream, sablierV2Batch, sablierV2LockupTranched],
   );
@@ -251,8 +227,7 @@ export default function useCreateSablierStream() {
   );
 
   return {
-    prepareCreateDynamicLockupProposal,
-    prepareCreateTranchedLockupProposal,
     prepareCreateLinearLockupProposal,
+    prepareBatchTranchedStreamCreation,
   };
 }

@@ -12,7 +12,14 @@ import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
-import { RoleEditProps, RoleFormValues, RoleProps, SablierPayroll, SablierVesting } from './types';
+import {
+  RoleEditProps,
+  RoleFormValues,
+  RoleProps,
+  SablierPayroll,
+  SablierVesting,
+  frequencyOptions,
+} from './types';
 
 function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
   const { t } = useTranslation(['roles']);
@@ -124,7 +131,7 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
 }
 
 function PayrollColumn({ payrollData }: { payrollData: SablierPayroll | undefined }) {
-  const { t } = useTranslation(['daoCreate']);
+  const { t } = useTranslation(['roles', 'daoCreate']);
   return (
     <Td>
       <Flex flexDir="column">
@@ -136,13 +143,13 @@ function PayrollColumn({ payrollData }: { payrollData: SablierPayroll | undefine
               my="0.5rem"
             >
               <Image
-                src={payrollData.asset.iconUri}
+                src={payrollData.asset.logo}
                 fallbackSrc="/images/coin-icon-default.svg"
                 alt={payrollData.asset.symbol}
                 w="1.25rem"
                 h="1.25rem"
               />
-              {payrollData.payrollAmount}
+              {payrollData.amount.value}
               <EtherscanLink
                 color="white-0"
                 _hover={{ bg: 'transparent' }}
@@ -159,7 +166,7 @@ function PayrollColumn({ payrollData }: { payrollData: SablierPayroll | undefine
                 color="white-0"
                 textStyle="body-base"
               >
-                {'/'} {payrollData.payrollSchedule}
+                {'/'} {t(`${frequencyOptions[payrollData.paymentFrequency]}Short`)}
               </Text>
             </Flex>
           </Box>
@@ -168,7 +175,7 @@ function PayrollColumn({ payrollData }: { payrollData: SablierPayroll | undefine
             textStyle="body-base"
             color="neutral-6"
           >
-            {t('n/a')}
+            {t('n/a', { ns: 'daoCreate' })}
           </Text>
         )}
       </Flex>
@@ -366,13 +373,14 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
           {values.hats.map(role => (
             <RolesRowEdit
               key={role.id}
+              name={role.name}
               wearerAddress={role.wearer}
               handleRoleClick={() => {
                 setFieldValue('roleEditing', role);
                 handleRoleClick(role.id);
               }}
               editStatus={role.editedRole?.status}
-              {...role}
+              payrollData={role.payroll}
             />
           ))}
         </Tbody>

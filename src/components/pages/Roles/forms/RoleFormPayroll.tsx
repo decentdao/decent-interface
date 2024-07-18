@@ -36,6 +36,7 @@ import { CARD_SHADOW, TOOLTIP_MAXW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
 import { DEFAULT_DATE_FORMAT, formatUSD } from '../../../../utils';
+import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -104,7 +105,9 @@ function AssetSelector() {
   const {
     treasury: { assetsFungible },
   } = useFractal();
-  const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
+  const fungibleAssetsWithBalance = assetsFungible.filter(
+    asset => parseFloat(asset.balance) > 0 && asset.tokenAddress !== MOCK_MORALIS_ETH_ADDRESS, // Can't stream native token
+  );
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const selectedAsset = values.roleEditing?.payroll?.asset;
   return (
@@ -455,7 +458,6 @@ function PaymentStartDatePicker() {
   );
 }
 
-// @todo @dev is this frequency or period???
 function PaymentFrequency() {
   const { t } = useTranslation(['roles']);
   return (
