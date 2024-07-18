@@ -95,10 +95,34 @@ export interface RoleFormPayrollValue {
   paymentFrequencyNumber: number;
 }
 
+export interface VestingDuration {
+  years: number;
+  hours: number;
+  days: number;
+}
+
+export interface RoleFormVestingValue {
+  asset: {
+    address: Address;
+    name: string;
+    symbol: string;
+    decimals: number;
+    logo: string;
+  };
+  amount: BigIntValuePair;
+  vestingSchedule: {
+    vestingDuration?: VestingDuration;
+    vestingFixedDate?: Date;
+    cliffDuration?: VestingDuration;
+    cliffFixedDate?: Date;
+  };
+}
+
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
   payroll?: RoleFormPayrollValue;
+  vesting?: RoleFormVestingValue;
 }
 
 export interface RoleFormValues {
