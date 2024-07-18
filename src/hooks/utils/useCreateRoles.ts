@@ -195,7 +195,11 @@ export default function useCreateRoles() {
       );
 
       // Parse role with added payroll hats
-      const rolePayrollAddedHats = await Promise.all(editedHats.filter(hat => !!hat.payroll));
+      const rolePayrollAddedHats = [
+        ...editedHats.filter(
+          hat => hat.editedRole?.status === EditBadgeStatus.Updated && !!hat.payroll,
+        ),
+      ];
 
       return {
         addedHats,
