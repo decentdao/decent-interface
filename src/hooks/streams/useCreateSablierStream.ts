@@ -77,18 +77,10 @@ export default function useCreateSablierStream() {
     }: DynamicOrTranchedStreamInputs) => {
       const exponent = 10n ** BigInt(asset.decimals);
       const totalAmountInTokenDecimals = BigInt(totalAmount) * exponent;
-      let totalSegments = frequencyNumber;
-      if (frequency === Frequency.Monthly) {
-        // @todo - obviously this isn't correct and we need proper calculation of how many weeks are in the amount of months entered
-        totalSegments = frequencyNumber * 4;
-      } else if (frequency === Frequency.EveryTwoWeeks) {
-        // @todo - again, not correct - need to get exact number of 2-weeks cycles from the total number of months
-        totalSegments = frequencyNumber * 2;
-      }
-      const segmentAmount = totalAmountInTokenDecimals / BigInt(totalSegments);
+      const segmentAmount = totalAmountInTokenDecimals / BigInt(frequencyNumber);
       // Sablier sets startTime to block.timestamp - so we need to simulate startTime through streaming 0 tokens at first segment till startDate
       const tranches: { amount: bigint; exponent: bigint; duration: number }[] = [
-        { amount: 0n, exponent, duration: Math.round(startDate - Date.now() / 1000) },
+        { amount: 0n, exponent, duration: Math.round((startDate - Date.now()) / 1000) },
       ];
 
       let days = 30;
@@ -99,12 +91,18 @@ export default function useCreateSablierStream() {
       }
       const duration = days * SECONDS_IN_DAY;
 
-      for (let i = 1; i <= totalSegments; i++) {
+      for (let i = 1; i <= frequencyNumber; i++) {
         tranches.push({
           amount: segmentAmount,
           exponent,
           duration,
         });
+      }
+
+      const totalTranchesAmount = tranches.reduce((prev, curr) => prev + curr.amount, 0n);
+      if (totalTranchesAmount < totalAmountInTokenDecimals) {
+        // @dev We can't always equally divide between tranches, so we're putting the leftover into the very last tranche
+        tranches[tranches.length - 1].amount += totalAmountInTokenDecimals - totalTranchesAmount;
       }
 
       const tokenCalldata = prepareStreamTokenCallData(totalAmountInTokenDecimals);
