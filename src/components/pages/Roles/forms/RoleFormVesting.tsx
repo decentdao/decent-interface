@@ -231,14 +231,20 @@ function VestingFixedDate() {
 
 function VestingTabs() {
   const { t } = useTranslation(['roles']);
+  const { setFieldValue } = useFormikContext<RoleFormValues>();
+
   return (
     <Tabs
       variant={'twoTone'}
       my="1rem"
     >
       <TabList my="1rem">
-        <Tab>{t('duration')}</Tab>
-        <Tab>{t('fixedDates')}</Tab>
+        <Tab onClick={() => setFieldValue('roleEditing.vesting.scheduleType', 'duration')}>
+          {t('duration')}
+        </Tab>
+        <Tab onClick={() => setFieldValue('roleEditing.vesting.scheduleType', 'fixedDate')}>
+          {t('fixedDates')}
+        </Tab>
       </TabList>
 
       <TabPanels>

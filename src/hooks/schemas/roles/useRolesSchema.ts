@@ -88,6 +88,10 @@ export const useRolesSchema = () => {
                         .shape({
                           asset: assetValidationSchema,
                           amount: bigIntValidationSchema,
+                          scheduleType: Yup.string()
+                            .oneOf(['duration', 'fixedDate'])
+                            .required()
+                            .default('duration'),
 
                           // If duration tab is selected and its form has a value, then validate it:
                           // duration and cliff should both have years, days, and hours

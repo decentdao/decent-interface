@@ -102,6 +102,7 @@ export interface RoleFormVestingValue {
     startDate: Date;
     endDate: Date;
   };
+  scheduleType: 'duration' | 'fixedDate';
 }
 
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
