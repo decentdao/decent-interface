@@ -215,7 +215,7 @@ function VestingFixedDate() {
       <Text textStyle="label-base"> {t('fixedDates')} </Text>
       <FormControl my="1rem">
         <Flex
-          gap={{ base: "0", md: "0.5rem" }}
+          gap={{ base: '0', md: '0.5rem' }}
           alignItems="center"
           justifyContent="space-between"
           wrap={{ base: 'wrap', md: 'nowrap' }}
