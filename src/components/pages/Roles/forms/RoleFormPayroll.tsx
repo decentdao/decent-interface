@@ -266,7 +266,7 @@ export default function RoleFormPayroll() {
     >
       <SectionTitle
         title={t('asset')}
-        subTitle={t('assetSubTitle')}
+        subTitle={t('assetSubtitle')}
         // @todo Add Learn More link
         externalLink="#"
       />
