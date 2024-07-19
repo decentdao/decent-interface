@@ -1,12 +1,42 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { Frequency, SablierPayroll, RoleValue } from '../../../components/pages/Roles/types';
+import {
+  Frequency,
+  SablierPayroll,
+  RoleValue,
+  SablierVesting,
+} from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
   const { t } = useTranslation(['roles']);
   const { addressValidationTest } = useValidationAddress();
+
+  const bigIntValidationSchema = Yup.object()
+    .shape({
+      value: Yup.string(),
+      bigintValue: Yup.mixed().nullable(),
+    })
+    .required()
+    .test({
+      name: 'isAmountValid',
+      message: t('roleInfoErrorAmountInvalid'),
+      test: (v, cxt) => {
+        const balance: string | undefined = cxt.parent.asset.balance;
+        if (balance === undefined || v.bigintValue === undefined || !v.value === undefined) {
+          return false;
+        }
+        return (v.bigintValue as bigint) <= BigInt(balance);
+      },
+    });
+
+  const assetValidationSchema = Yup.object().shape({
+    address: Yup.string(),
+    symbol: Yup.string(),
+    decimals: Yup.number(),
+    balance: Yup.string(),
+  });
 
   const rolesSchema = useMemo(
     () =>
@@ -30,33 +60,8 @@ export const useRolesSchema = () => {
                     is: (payroll: SablierPayroll) => payroll !== undefined,
                     then: _payrollSchema =>
                       _payrollSchema.shape({
-                        asset: Yup.object().shape({
-                          address: Yup.string(),
-                          symbol: Yup.string(),
-                          decimals: Yup.number(),
-                          balance: Yup.string(),
-                        }),
-                        amount: Yup.object()
-                          .shape({
-                            value: Yup.string(),
-                            bigintValue: Yup.mixed().nullable(),
-                          })
-                          .required()
-                          .test({
-                            name: 'isAmountValid',
-                            message: t('roleInfoErrorAmountInvalid'),
-                            test: (v, cxt) => {
-                              const balance: string | undefined = cxt.parent.asset.balance;
-                              if (
-                                balance === undefined ||
-                                v.bigintValue === undefined ||
-                                !v.value === undefined
-                              ) {
-                                return false;
-                              }
-                              return (v.bigintValue as bigint) <= BigInt(balance);
-                            },
-                          }),
+                        asset: assetValidationSchema,
+                        amount: bigIntValidationSchema,
                         paymentFrequency: Yup.string()
                           .oneOf([
                             Frequency.Monthly.toString(),
@@ -72,10 +77,64 @@ export const useRolesSchema = () => {
                         ),
                       }),
                   }),
+                vesting: Yup.object()
+                  .default(undefined)
+                  .nullable()
+                  .when({
+                    is: (vesting: SablierVesting) => vesting !== undefined,
+                    then: _vestingSchema =>
+                      _vestingSchema.shape({
+                        asset: assetValidationSchema,
+                        vestingAmount: bigIntValidationSchema,
+                        vestingSchedule: Yup.string().required(
+                          t('roleInfoErrorVestingScheduleRequired'),
+                        ),
+
+                        // If duration tab is selected and its form has a value, then validate it:
+                        // duration and cliff should both have years, days, and hours
+                        duration: Yup.object()
+                          .default(undefined)
+                          .nullable()
+                          .when({
+                            is: (duration: any) => duration !== undefined,
+                            then: _durationSchema =>
+                              _durationSchema.shape({
+                                vesting: Yup.object().shape({
+                                  years: Yup.number().required().default(0),
+                                  days: Yup.number().required().default(0),
+                                  hours: Yup.number().required().default(0),
+                                }),
+                                cliff: Yup.object().shape({
+                                  years: Yup.number().required().default(0),
+                                  days: Yup.number().required().default(0),
+                                  hours: Yup.number().required().default(0),
+                                }),
+                              }),
+                          }),
+
+                        // If fixed date tab is selected and its form has a value, then validate it:
+                        // fixed date should have a start date and an end date
+                        fixedDate: Yup.object()
+                          .nullable()
+                          .default(undefined)
+                          .when({
+                            is: (fixedDate: Date[]) => fixedDate !== undefined,
+                            then: _fixedDateSchema =>
+                              _fixedDateSchema.shape({
+                                startDate: Yup.date().required(
+                                  t('roleInfoErrorVestingFixedDateStartDateRequired'),
+                                ),
+                                endDate: Yup.date().required(
+                                  t('roleInfoErrorVestingFixedDateEndDateRequired'),
+                                ),
+                              }),
+                          }),
+                      }),
+                  }),
               }),
           }),
       }),
-    [addressValidationTest, t],
+    [addressValidationTest, assetValidationSchema, bigIntValidationSchema, t],
   );
   return { rolesSchema };
 };
