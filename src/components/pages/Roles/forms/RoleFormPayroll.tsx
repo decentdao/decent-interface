@@ -243,7 +243,7 @@ export default function RoleFormPayroll() {
         // @todo Add Learn More link
         externalLink="#"
       />
-      <AssetSelector formName="vesting" />
+      <AssetSelector formName="payroll" />
       <SectionTitle
         title={t('paymentFrequency')}
         subTitle={t('paymentFrequencySubtitle')}

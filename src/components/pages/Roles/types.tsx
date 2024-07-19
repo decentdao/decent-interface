@@ -93,12 +93,14 @@ export interface RoleFormVestingValue {
     decimals: number;
     logo: string;
   };
-  amount: BigIntValuePair;
-  vestingSchedule: {
-    vestingDuration?: VestingDuration;
-    vestingFixedDate?: Date;
-    cliffDuration?: VestingDuration;
-    cliffFixedDate?: Date;
+  vestingAmount: BigIntValuePair;
+  scheduleDuration?: {
+    vestingDuration: VestingDuration;
+    cliffDuration: VestingDuration;
+  };
+  scheduleFixedDate?: {
+    startDate: Date;
+    endDate: Date;
   };
 }
 

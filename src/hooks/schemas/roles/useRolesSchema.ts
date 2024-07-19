@@ -5,7 +5,7 @@ import {
   Frequency,
   SablierPayroll,
   RoleValue,
-  SablierVesting,
+  RoleFormVestingValue,
 } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
@@ -27,6 +27,7 @@ export const useRolesSchema = () => {
         if (balance === undefined || v.bigintValue === undefined || !v.value === undefined) {
           return false;
         }
+
         return (v.bigintValue as bigint) <= BigInt(balance);
       },
     });
@@ -81,30 +82,27 @@ export const useRolesSchema = () => {
                   .default(undefined)
                   .nullable()
                   .when({
-                    is: (vesting: SablierVesting) => vesting !== undefined,
+                    is: (vesting: RoleFormVestingValue) => vesting !== undefined,
                     then: _vestingSchema =>
                       _vestingSchema.shape({
                         asset: assetValidationSchema,
-                        vestingAmount: bigIntValidationSchema,
-                        vestingSchedule: Yup.string().required(
-                          t('roleInfoErrorVestingScheduleRequired'),
-                        ),
+                        amount: bigIntValidationSchema,
 
                         // If duration tab is selected and its form has a value, then validate it:
                         // duration and cliff should both have years, days, and hours
-                        duration: Yup.object()
+                        scheduleDuration: Yup.object()
                           .default(undefined)
                           .nullable()
                           .when({
                             is: (duration: any) => duration !== undefined,
                             then: _durationSchema =>
                               _durationSchema.shape({
-                                vesting: Yup.object().shape({
+                                vestingDuration: Yup.object().shape({
                                   years: Yup.number().required().default(0),
                                   days: Yup.number().required().default(0),
                                   hours: Yup.number().required().default(0),
                                 }),
-                                cliff: Yup.object().shape({
+                                cliffDuration: Yup.object().shape({
                                   years: Yup.number().required().default(0),
                                   days: Yup.number().required().default(0),
                                   hours: Yup.number().required().default(0),
@@ -114,9 +112,9 @@ export const useRolesSchema = () => {
 
                         // If fixed date tab is selected and its form has a value, then validate it:
                         // fixed date should have a start date and an end date
-                        fixedDate: Yup.object()
-                          .nullable()
+                        scheduleFixedDate: Yup.object()
                           .default(undefined)
+                          .nullable()
                           .when({
                             is: (fixedDate: Date[]) => fixedDate !== undefined,
                             then: _fixedDateSchema =>
