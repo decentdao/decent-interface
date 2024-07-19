@@ -5,33 +5,31 @@ import { DecentRoleHat } from '../../../state/useRolesState';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 export type RoleViewMode = 'edit' | 'view';
 
+export interface SablierAsset {
+  address: Address;
+  name: string;
+  symbol: string;
+  decimals: number;
+  logo: string;
+}
+
 export interface SablierVesting {
+  asset: SablierAsset;
   vestingSchedule: string;
   vestingAmount: string;
   vestingAmountUSD: string;
   vestingStartDate: string;
   vestingEndDate: string;
-  asset: {
-    address: Address;
-    symbol: string;
-    name: string;
-    iconUri: string;
-  };
 }
 
 export interface SablierPayroll {
-  asset: {
-    address: Address;
-    name: string;
-    symbol: string;
-    decimals: number;
-    logo: string;
-  };
+  asset: SablierAsset;
   amount: BigIntValuePair;
   paymentFrequency: Frequency;
   paymentStartDate: Date;
   paymentFrequencyNumber: number;
 }
+
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
   handleRoleClick: (hatId: Address) => void;

@@ -197,7 +197,7 @@ function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefine
             my="0.5rem"
           >
             <Image
-              src={vestingData.asset.iconUri}
+              src={vestingData.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
               alt={vestingData.asset.symbol}
               w="1.25rem"
