@@ -168,6 +168,8 @@ function VestingDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
             <Button
               onClick={() => setIsDrawerOpen(true)}
               variant="unstyled"
+              p="0"
+              flex={1}
             >
               <DatePickerTrigger selectedDate={selectedDate} />
             </Button>
@@ -213,8 +215,10 @@ function VestingFixedDate() {
       <Text textStyle="label-base"> {t('fixedDates')} </Text>
       <FormControl my="1rem">
         <Flex
-          gap="0.5rem"
+          gap={{ base: '0', md: '0.5rem' }}
           alignItems="center"
+          justifyContent="space-between"
+          wrap={{ base: 'wrap', md: 'nowrap' }}
         >
           <VestingDatePicker type="startDate" />
           <Icon
