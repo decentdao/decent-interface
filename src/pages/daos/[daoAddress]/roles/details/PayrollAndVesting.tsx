@@ -152,7 +152,7 @@ export default function PayrollAndVesting({
                       alignItems="center"
                     >
                       <Image
-                        src={vestingData.asset.iconUri}
+                        src={vestingData.asset.logo}
                         fallbackSrc="/images/coin-icon-default.svg"
                         alt={vestingData.asset.symbol}
                         w="2rem"

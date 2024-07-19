@@ -1,27 +1,37 @@
 import {
   Box,
+  Button,
   Flex,
   FormControl,
   Icon,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
   NumberInput,
   NumberInputField,
+  Show,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
 } from '@chakra-ui/react';
-import { Minus, Plus } from '@phosphor-icons/react';
-import { Field, FieldProps } from 'formik';
+import { ArrowRight, Minus, Plus } from '@phosphor-icons/react';
+import { Field, FieldProps, useFormikContext } from 'formik';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
+import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
+import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
+import { DatePickerTrigger } from '../DatePickerTrigger';
 import { RoleFormValues } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
-function VestingDurationStepperInput({
+function VestingDurationTicker({
   fieldName,
   fieldType,
 }: {
@@ -31,7 +41,7 @@ function VestingDurationStepperInput({
   const { t } = useTranslation(['roles']);
   return (
     <FormControl>
-      <Field name={`roleEditing.vesting.vestingSchedule.[${fieldType}].[${fieldName}]`}>
+      <Field name={`roleEditing.vesting.scheduleDuration.[${fieldType}].[${fieldName}]`}>
         {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => {
           return (
             <LabelWrapper
@@ -51,7 +61,7 @@ function VestingDurationStepperInput({
                     />
                   }
                   onClick={() => {
-                    if (field.value === undefined || Number(field.value) <= 1) return;
+                    if (field.value === undefined || Number(field.value) <= 0) return;
                     setFieldValue(field.name, Number(field.value) - 1);
                   }}
                 />
@@ -96,15 +106,15 @@ function VestingScheduleDuration() {
       flexDir="column"
       gap="0.5rem"
     >
-      <VestingDurationStepperInput
+      <VestingDurationTicker
         fieldName="years"
         fieldType="vestingDuration"
       />
-      <VestingDurationStepperInput
+      <VestingDurationTicker
         fieldName="days"
         fieldType="vestingDuration"
       />
-      <VestingDurationStepperInput
+      <VestingDurationTicker
         fieldName="hours"
         fieldType="vestingDuration"
       />
@@ -124,15 +134,15 @@ function VestingCliffDuration() {
         subTitle={t('cliffSubTitle')}
       />
       <Box mt="1rem">
-        <VestingDurationStepperInput
+        <VestingDurationTicker
           fieldName="years"
           fieldType="cliffDuration"
         />
-        <VestingDurationStepperInput
+        <VestingDurationTicker
           fieldName="days"
           fieldType="cliffDuration"
         />
-        <VestingDurationStepperInput
+        <VestingDurationTicker
           fieldName="hours"
           fieldType="cliffDuration"
         />
@@ -141,25 +151,102 @@ function VestingCliffDuration() {
   );
 }
 
+function VestingDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
+  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
+  const selectedDate =
+    type === 'startDate'
+      ? values.roleEditing?.vesting?.scheduleFixedDate?.startDate
+      : values.roleEditing?.vesting?.scheduleFixedDate?.endDate;
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  return (
+    <Field name={`roleEditing.vesting.scheduleFixedDate.${type}`}>
+      {({ field }: FieldProps<string, RoleFormValues>) => (
+        <>
+          <Show below="md">
+            <Button
+              onClick={() => setIsDrawerOpen(true)}
+              variant="unstyled"
+            >
+              <DatePickerTrigger selectedDate={selectedDate} />
+            </Button>
+
+            <DraggableDrawer
+              isOpen={isDrawerOpen}
+              headerContent={undefined}
+              onOpen={() => {}}
+              onClose={() => setIsDrawerOpen(false)}
+            >
+              <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
+            </DraggableDrawer>
+          </Show>
+
+          <Show above="md">
+            <Menu placement="top">
+              <>
+                <MenuButton
+                  as={Button}
+                  variant="unstyled"
+                  p="0"
+                  w="full"
+                >
+                  <DatePickerTrigger selectedDate={selectedDate} />
+                </MenuButton>
+                <MenuList>
+                  <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
+                </MenuList>
+              </>
+            </Menu>
+          </Show>
+        </>
+      )}
+    </Field>
+  );
+}
+
 function VestingFixedDate() {
+  const { t } = useTranslation(['roles']);
+
   return (
     <Box>
-      <Box></Box>
+      <Text textStyle="label-base"> {t('fixedDates')} </Text>
+      <FormControl my="1rem">
+        <Flex
+          gap="0.5rem"
+          alignItems="center"
+        >
+          <VestingDatePicker type="startDate" />
+          <Icon
+            as={ArrowRight}
+            boxSize="1.5rem"
+            color="lilac-0"
+          />
+          <VestingDatePicker type="endDate" />
+        </Flex>
+      </FormControl>
     </Box>
   );
 }
 
 function VestingTabs() {
   const { t } = useTranslation(['roles']);
+  const { setFieldValue } = useFormikContext<RoleFormValues>();
+
   return (
     <Tabs
       variant={'twoTone'}
       my="1rem"
     >
       <TabList my="1rem">
-        <Tab>{t('duration')}</Tab>
-        <Tab>{t('fixedDates')}</Tab>
+        <Tab onClick={() => setFieldValue('roleEditing.vesting.scheduleType', 'duration')}>
+          {t('duration')}
+        </Tab>
+        <Tab onClick={() => setFieldValue('roleEditing.vesting.scheduleType', 'fixedDate')}>
+          {t('fixedDates')}
+        </Tab>
       </TabList>
+
       <TabPanels>
         <TabPanel>
           <Flex
@@ -170,6 +257,7 @@ function VestingTabs() {
             <VestingCliffDuration />
           </Flex>
         </TabPanel>
+
         <TabPanel>
           <VestingFixedDate />
         </TabPanel>

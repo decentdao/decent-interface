@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { getAddress, zeroAddress, encodeFunctionData, erc20Abi, Address, Hex } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
-import { Frequency, SablierPayroll } from '../../components/pages/Roles/types';
+import { Frequency, SablierAsset, SablierPayroll } from '../../components/pages/Roles/types';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { TokenBalance, ProposalExecuteData } from '../../types';
@@ -18,7 +18,7 @@ type DynamicOrTranchedStreamInputs = {
   frequencyNumber: number;
   frequency: Frequency;
   totalAmount: string;
-  asset: SablierPayroll['asset'];
+  asset: SablierAsset;
   recipient: Address;
   startDate: number;
 };
