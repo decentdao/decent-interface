@@ -56,7 +56,6 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
           ) : null
         }
         onChange={(e: OnDateChangeValue) => {
-          console.log(e);
           if (e instanceof Date) {
             setSelectedDate(e);
             onChange?.(e);

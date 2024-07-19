@@ -15,19 +15,17 @@ import {
   NumberInput,
   NumberInputField,
   Show,
-  Text,
 } from '@chakra-ui/react';
-import { CalendarBlank, CaretDown, CaretUp, Minus, Plus } from '@phosphor-icons/react';
-import { format } from 'date-fns';
+import { CaretDown, CaretUp, Minus, Plus } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
-import { DEFAULT_DATE_FORMAT } from '../../../../utils';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
+import { DatePickerTrigger } from '../DatePickerTrigger';
 import { RoleFormValues, frequencyAmountLabel, frequencyOptions } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
@@ -104,35 +102,10 @@ function FrequencySelector() {
 }
 
 function PaymentStartDatePicker() {
-  const { t } = useTranslation(['common']);
-
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
-
   const selectedDate = values.roleEditing?.payroll?.paymentStartDate;
-  const selectedDateStr = selectedDate && format(selectedDate, DEFAULT_DATE_FORMAT);
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  function DatePickerTrigger() {
-    return (
-      <Flex
-        borderRadius="0.25rem"
-        bg="neutral-1"
-        borderWidth="1px"
-        borderColor="neutral-3"
-        padding="0.5rem 1rem"
-        alignItems="center"
-        gap="0.5rem"
-      >
-        <Icon
-          as={CalendarBlank}
-          boxSize="24px"
-          color="neutral-5"
-        />
-        <Text>{selectedDateStr ?? t('select')}</Text>
-      </Flex>
-    );
-  }
 
   return (
     <FormControl my="1rem">
@@ -144,7 +117,7 @@ function PaymentStartDatePicker() {
                 onClick={() => setIsDrawerOpen(true)}
                 variant="unstyled"
               >
-                <DatePickerTrigger />
+                <DatePickerTrigger selectedDate={selectedDate} />
               </Button>
 
               <DraggableDrawer
@@ -166,7 +139,7 @@ function PaymentStartDatePicker() {
                     p="0"
                     w="full"
                   >
-                    <DatePickerTrigger />
+                    <DatePickerTrigger selectedDate={selectedDate} />
                   </MenuButton>
                   <MenuList>
                     <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
