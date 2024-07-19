@@ -61,7 +61,7 @@ function VestingDurationTicker({
                     />
                   }
                   onClick={() => {
-                    if (field.value === undefined || Number(field.value) <= 1) return;
+                    if (field.value === undefined || Number(field.value) <= 0) return;
                     setFieldValue(field.name, Number(field.value) - 1);
                   }}
                 />
