@@ -1,7 +1,13 @@
 import { useCallback } from 'react';
 import { getAddress, zeroAddress, encodeFunctionData, erc20Abi, Address, Hex } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
-import { Frequency, SablierAsset, SablierPayroll } from '../../components/pages/Roles/types';
+import SablierV2LockupTranchedAbi from '../../assets/abi/SablierV2LockupTranched';
+import {
+  BaseSablierStream,
+  Frequency,
+  SablierAsset,
+  SablierPayroll,
+} from '../../components/pages/Roles/types';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -204,6 +210,40 @@ export default function useCreateSablierStream() {
     [prepareDynamicOrTranchedStream, sablierV2Batch, sablierV2LockupTranched],
   );
 
+  const prepareFlushStreamTx = useCallback((stream: BaseSablierStream, to: Address) => {
+    if (!stream.streamId || !stream.contractAddress) {
+      throw new Error('Can not flush stream without streamId or contract address');
+    }
+
+    // @dev This function comes from "basic" SablierV2
+    // all the types of streams are inheriting from that
+    // so it's safe to rely on TranchedAbi
+    const flushCalldata = encodeFunctionData({
+      abi: SablierV2LockupTranchedAbi,
+      functionName: 'withdrawMax',
+      args: [BigInt(stream.streamId), to],
+    });
+
+    return { calldata: flushCalldata, targetAddress: stream.contractAddress };
+  }, []);
+
+  const prepareCancelStreamTx = useCallback((stream: BaseSablierStream) => {
+    if (!stream.streamId || !stream.contractAddress) {
+      throw new Error('Can not flush stream without streamId or contract address');
+    }
+
+    // @dev This function comes from "basic" SablierV2 
+    // all the types of streams are inheriting from that
+    // so it's safe to rely on TranchedAbi
+    const flushCalldata = encodeFunctionData({
+      abi: SablierV2LockupTranchedAbi,
+      functionName: 'cancel',
+      args: [BigInt(stream.streamId)],
+    });
+
+    return { calldata: flushCalldata, targetAddress: stream.contractAddress };
+  }, []);
+
   const prepareCreateLinearLockupProposal = useCallback(
     (inputs: LinearStreamInputs) => {
       const { asset, recipient } = inputs;
@@ -234,5 +274,7 @@ export default function useCreateSablierStream() {
   return {
     prepareCreateLinearLockupProposal,
     prepareBatchTranchedStreamCreation,
+    prepareFlushStreamTx,
+    prepareCancelStreamTx,
   };
 }

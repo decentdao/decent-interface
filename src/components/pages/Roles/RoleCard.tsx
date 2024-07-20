@@ -148,7 +148,7 @@ function PayrollAndVesting({
               w="1.25rem"
               h="1.25rem"
             />
-            {vesting.vestingAmount.value}
+            {vesting.amount.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}

@@ -160,13 +160,13 @@ export default function PayrollAndVesting({
                       />
                       <Box>
                         <Text textStyle="body-base">
-                          {vesting.vestingAmount.value} {vesting.asset.symbol}
+                          {vesting.amount.value} {vesting.asset.symbol}
                         </Text>
                         <Text
                           color="neutral-7"
                           textStyle="button-small"
                         >
-                          {vesting.vestingAmount.value}
+                          {vesting.amount.value}
                         </Text>
                       </Box>
                     </Flex>

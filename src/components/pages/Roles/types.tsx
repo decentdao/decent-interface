@@ -13,9 +13,14 @@ export interface SablierAsset {
   logo: string;
 }
 
-export interface SablierVesting {
+export interface BaseSablierStream {
+  streamId?: string;
+  contractAddress?: Address;
   asset: SablierAsset;
-  vestingAmount: BigIntValuePair;
+  amount: BigIntValuePair;
+}
+
+export interface SablierVesting extends BaseSablierStream {
   scheduleDuration?: {
     vestingDuration: VestingDuration;
     cliffDuration: VestingDuration;
@@ -27,9 +32,7 @@ export interface SablierVesting {
   scheduleType: 'duration' | 'fixedDate';
 }
 
-export interface SablierPayroll {
-  asset: SablierAsset;
-  amount: BigIntValuePair;
+export interface SablierPayroll extends BaseSablierStream {
   paymentFrequency: Frequency;
   paymentStartDate: Date;
   paymentFrequencyNumber: number;

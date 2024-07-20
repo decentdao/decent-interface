@@ -7,7 +7,7 @@ import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
-import useCreateSablierStream from '../../../hooks/streams/useCreateSablierStream';
+import useCreateSablierStream from '../../../hooks/streams/useSablierStream';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { TokenBalance } from '../../../types';

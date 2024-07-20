@@ -203,6 +203,8 @@ const useHatsTree = () => {
                     BigInt(firstActualTranche.amount) /
                     10n ** BigInt(activePayrollStream.asset.decimals);
                   payroll = {
+                    streamId: activePayrollStream.id,
+                    contractAddress: activePayrollStream.contract.address,
                     asset: {
                       address: getAddress(
                         activePayrollStream.asset.address,
@@ -231,6 +233,8 @@ const useHatsTree = () => {
                   BigInt(activeVestingStream.depositAmount) /
                   10n ** BigInt(activeVestingStream.asset.decimals);
                 vesting = {
+                  streamId: activeVestingStream.id,
+                  contractAddress: activeVestingStream.contract.address,
                   asset: {
                     address: getAddress(
                       activeVestingStream.asset.address,
@@ -241,7 +245,7 @@ const useHatsTree = () => {
                     decimals: activeVestingStream.asset.decimals,
                     logo: '', // @todo - how do we get logo?
                   },
-                  vestingAmount: {
+                  amount: {
                     bigintValue: bigintAmount,
                     value: bigintAmount.toString(),
                   },
@@ -267,8 +271,6 @@ const useHatsTree = () => {
         };
 
         setHatsStreams(updatedDecentTree);
-
-        console.log(updatedHatsRoles, updatedDecentTree);
       }
     }
 
