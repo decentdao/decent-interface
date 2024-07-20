@@ -14,6 +14,7 @@ import {
   HatWearerChangedParams,
   RoleValue,
   RoleFormValues,
+  BaseSablierStream,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -289,6 +290,50 @@ export default function useCreateRoles() {
     ],
   );
 
+  const prepareChangeHatWearerTx = useCallback(
+    (stream: BaseSablierStream, wearer: Address) => {
+      const flushStreamTx = prepareFlushStreamTx(stream, wearer);
+      const wrappedFlushStreamTx = encodeFunctionData({
+        abi: HatsAccount1ofNAbi,
+        functionName: 'execute',
+        args: [flushStreamTx.targetAddress, 0n, flushStreamTx.calldata, 0],
+      });
+
+      return wrappedFlushStreamTx;
+    },
+    [prepareFlushStreamTx],
+  );
+
+  const prepareDeleteHatStreamTx = useCallback(
+    (stream: BaseSablierStream, wearer: Address) => {
+      const flushStreamTx = prepareFlushStreamTx(stream, wearer);
+      const cancelStreamTx = prepareCancelStreamTx(stream);
+      const wrappedCancelStreamTx = encodeFunctionData({
+        abi: HatsAccount1ofNAbi,
+        functionName: 'executeBatch',
+        args: [
+          [
+            {
+              to: flushStreamTx.targetAddress,
+              value: 0n,
+              data: flushStreamTx.calldata,
+              operation: 0,
+            },
+            {
+              to: cancelStreamTx.targetAddress,
+              value: 0n,
+              data: cancelStreamTx.calldata,
+              operation: 0,
+            },
+          ],
+        ],
+      });
+
+      return wrappedCancelStreamTx;
+    },
+    [prepareCancelStreamTx, prepareFlushStreamTx],
+  );
+
   const prepareEditHatsProposalData = useCallback(
     (
       proposalMetadata: CreateProposalMetadata,
@@ -352,63 +397,26 @@ export default function useCreateRoles() {
       if (removedHatIds.length) {
         removeHatTxs = removedHatIds.map(hatId => {
           const roleHat = hatsTree.roleHats.find(hat => hat.id === hatId);
-          if (roleHat && roleHat.payroll) {
+          if (roleHat) {
             if (roleHat.payroll) {
-              const flushStreamTx = prepareFlushStreamTx(roleHat.payroll, roleHat.wearer);
-              const cancelStreamTx = prepareCancelStreamTx(roleHat.payroll);
-              const wrappedCancelStreamTx = encodeFunctionData({
-                abi: HatsAccount1ofNAbi,
-                functionName: 'executeBatch',
-                args: [
-                  [
-                    {
-                      to: flushStreamTx.targetAddress,
-                      value: 0n,
-                      data: flushStreamTx.calldata,
-                      operation: 0,
-                    },
-                    {
-                      to: cancelStreamTx.targetAddress,
-                      value: 0n,
-                      data: cancelStreamTx.calldata,
-                      operation: 0,
-                    },
-                  ],
-                ],
-              });
+              const wrappedCancelStreamTx = prepareDeleteHatStreamTx(
+                roleHat.payroll,
+                roleHat.wearer,
+              );
               hatPayrollHatRemovedTxs.push({
                 calldata: wrappedCancelStreamTx,
                 targetAddress: roleHat.smartAddress,
               });
             }
             if (roleHat.vesting) {
-              const flushStreamTx = prepareFlushStreamTx(roleHat.payroll, roleHat.wearer);
-              const cancelStreamTx = prepareCancelStreamTx(roleHat.vesting);
-              const wrappedCancelStreamTx = encodeFunctionData({
-                abi: HatsAccount1ofNAbi,
-                functionName: 'executeBatch',
-                args: [
-                  [
-                    {
-                      to: flushStreamTx.targetAddress,
-                      value: 0n,
-                      data: flushStreamTx.calldata,
-                      operation: 0,
-                    },
-                    {
-                      to: cancelStreamTx.targetAddress,
-                      value: 0n,
-                      data: cancelStreamTx.calldata,
-                      operation: 0,
-                    },
-                  ],
-                ],
-              });
+              const wrappedCancelStreamTx = prepareDeleteHatStreamTx(
+                roleHat.vesting,
+                roleHat.wearer,
+              );
               hatPayrollHatRemovedTxs.push({
                 calldata: wrappedCancelStreamTx,
                 targetAddress: roleHat.smartAddress,
               });
-              hatPayrollHatRemovedTxs.push(cancelStreamTx);
             }
           }
 
@@ -435,24 +443,20 @@ export default function useCreateRoles() {
           const roleHat = hatsTree.roleHats.find(hat => hat.id === id);
           if (roleHat && roleHat.payroll) {
             if (roleHat.payroll) {
-              const flushStreamTx = prepareFlushStreamTx(roleHat.payroll, roleHat.wearer);
-              const wrappedFlushStreamTx = encodeFunctionData({
-                abi: HatsAccount1ofNAbi,
-                functionName: 'execute',
-                args: [flushStreamTx.targetAddress, 0n, flushStreamTx.calldata, 0],
-              });
+              const wrappedFlushStreamTx = prepareChangeHatWearerTx(
+                roleHat.payroll,
+                roleHat.wearer,
+              );
               hatPayrollWearerChangedTxs.push({
                 calldata: wrappedFlushStreamTx,
                 targetAddress: roleHat.smartAddress,
               });
             }
             if (roleHat.vesting) {
-              const flushStreamTx = prepareFlushStreamTx(roleHat.vesting, roleHat.wearer);
-              const wrappedFlushStreamTx = encodeFunctionData({
-                abi: HatsAccount1ofNAbi,
-                functionName: 'execute',
-                args: [flushStreamTx.targetAddress, 0n, flushStreamTx.calldata, 0],
-              });
+              const wrappedFlushStreamTx = prepareChangeHatWearerTx(
+                roleHat.vesting,
+                roleHat.wearer,
+              );
               hatPayrollWearerChangedTxs.push({
                 calldata: wrappedFlushStreamTx,
                 targetAddress: roleHat.smartAddress,
@@ -530,8 +534,8 @@ export default function useCreateRoles() {
       hatsProtocol,
       hatsTree,
       prepareBatchTranchedStreamCreation,
-      prepareCancelStreamTx,
-      prepareFlushStreamTx,
+      prepareChangeHatWearerTx,
+      prepareDeleteHatStreamTx,
     ],
   );
 
