@@ -15,11 +15,16 @@ export interface SablierAsset {
 
 export interface SablierVesting {
   asset: SablierAsset;
-  vestingSchedule: string;
-  vestingAmount: string;
-  vestingAmountUSD: string;
-  vestingStartDate: string;
-  vestingEndDate: string;
+  vestingAmount: BigIntValuePair;
+  scheduleDuration?: {
+    vestingDuration: VestingDuration;
+    cliffDuration: VestingDuration;
+  };
+  scheduleFixedDate?: {
+    startDate: Date;
+    endDate: Date;
+  };
+  scheduleType: 'duration' | 'fixedDate';
 }
 
 export interface SablierPayroll {
@@ -36,8 +41,8 @@ export interface RoleProps {
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  vestingData?: SablierVesting;
-  payrollData?: SablierPayroll;
+  vesting?: SablierVesting;
+  payroll?: SablierPayroll;
 }
 
 export interface RoleEditProps
@@ -85,31 +90,11 @@ export interface VestingDuration {
   days: number;
 }
 
-export interface RoleFormVestingValue {
-  asset: {
-    address: Address;
-    name: string;
-    symbol: string;
-    decimals: number;
-    logo: string;
-  };
-  vestingAmount: BigIntValuePair;
-  scheduleDuration?: {
-    vestingDuration: VestingDuration;
-    cliffDuration: VestingDuration;
-  };
-  scheduleFixedDate?: {
-    startDate: Date;
-    endDate: Date;
-  };
-  scheduleType: 'duration' | 'fixedDate';
-}
-
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
   payroll?: SablierPayroll;
-  vesting?: RoleFormVestingValue;
+  vesting?: SablierVesting;
 }
 
 export interface RoleFormValues {

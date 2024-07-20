@@ -24,7 +24,6 @@ import RoleEditDetails from './pages/daos/[daoAddress]/roles/edit/details';
 import EditProposalSummary from './pages/daos/[daoAddress]/roles/edit/summary';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 import HomePage from './pages/home/HomePage';
-import StreamsPage from './pages/streams';
 
 export const router = (addressPrefix: string) =>
   wrapCreateBrowserRouter(createBrowserRouter)([
@@ -50,10 +49,6 @@ export const router = (addressPrefix: string) =>
         {
           path: 'create',
           loader: () => redirect(BASE_ROUTES.create),
-        },
-        {
-          path: 'streams',
-          element: <StreamsPage />,
         },
         {
           path: '/',

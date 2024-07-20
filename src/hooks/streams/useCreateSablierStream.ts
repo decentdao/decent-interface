@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { getAddress, zeroAddress, encodeFunctionData, erc20Abi, Address, Hex } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
 import { Frequency, SablierAsset, SablierPayroll } from '../../components/pages/Roles/types';
+import { SECONDS_IN_DAY, SECONDS_IN_HOUR } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { TokenBalance, ProposalExecuteData } from '../../types';
@@ -10,9 +11,6 @@ import {
   StreamRelativeSchedule,
   StreamSchedule,
 } from '../../types/sablier';
-
-const SECONDS_IN_HOUR = 60 * 60;
-const SECONDS_IN_DAY = 24 * SECONDS_IN_HOUR;
 
 type DynamicOrTranchedStreamInputs = {
   frequencyNumber: number;
@@ -30,6 +28,7 @@ type LinearStreamInputs = {
   schedule: StreamSchedule;
   cliff: StreamSchedule;
 };
+
 export default function useCreateSablierStream() {
   const {
     contracts: { sablierV2LockupTranched, sablierV2LockupLinear, sablierV2Batch },
@@ -78,9 +77,15 @@ export default function useCreateSablierStream() {
       const exponent = 10n ** BigInt(asset.decimals);
       const totalAmountInTokenDecimals = BigInt(totalAmount) * exponent;
       const segmentAmount = totalAmountInTokenDecimals / BigInt(frequencyNumber);
-      // Sablier sets startTime to block.timestamp - so we need to simulate startTime through streaming 0 tokens at first segment till startDate
+
+      // Sablier sets startTime to block.timestamp - so we need to simulate startTime through streaming 0 tokens at first tranche till startDate
+      const delayingByStartDateTranche = {
+        amount: 0n,
+        exponent,
+        duration: Math.round((startDate - Date.now()) / 1000),
+      };
       const tranches: { amount: bigint; exponent: bigint; duration: number }[] = [
-        { amount: 0n, exponent, duration: Math.round((startDate - Date.now()) / 1000) },
+        delayingByStartDateTranche,
       ];
 
       let days = 30;

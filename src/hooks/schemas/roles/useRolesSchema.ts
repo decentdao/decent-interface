@@ -4,8 +4,8 @@ import * as Yup from 'yup';
 import {
   Frequency,
   SablierPayroll,
+  SablierVesting,
   RoleValue,
-  RoleFormVestingValue,
 } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
@@ -82,7 +82,7 @@ export const useRolesSchema = () => {
                   .default(undefined)
                   .nullable()
                   .when({
-                    is: (vesting: RoleFormVestingValue) => vesting !== undefined,
+                    is: (vesting: SablierVesting) => vesting !== undefined,
                     then: _vestingSchema =>
                       _vestingSchema
                         .shape({
