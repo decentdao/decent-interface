@@ -232,7 +232,7 @@ export default function useCreateSablierStream() {
       throw new Error('Can not flush stream without streamId or contract address');
     }
 
-    // @dev This function comes from "basic" SablierV2 
+    // @dev This function comes from "basic" SablierV2
     // all the types of streams are inheriting from that
     // so it's safe to rely on TranchedAbi
     const flushCalldata = encodeFunctionData({
