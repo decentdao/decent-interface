@@ -31,7 +31,7 @@ export default function RolesDetailsDrawerMobile({
   isOpen = true,
   onEdit,
   payroll,
-  vesting
+  vesting,
 }: RoleDetailsDrawerMobileProps) {
   const {
     node: { daoAddress },
@@ -93,7 +93,10 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        <PayrollAndVesting payroll={payroll} vesting={vesting} />
+        <PayrollAndVesting
+          payroll={payroll}
+          vesting={vesting}
+        />
       </Box>
     </DraggableDrawer>
   );

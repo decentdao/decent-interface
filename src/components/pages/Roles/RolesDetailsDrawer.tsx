@@ -58,7 +58,7 @@ export default function RolesDetailsDrawer({
   isOpen = true,
   onEdit,
   payroll,
-  vesting
+  vesting,
 }: RoleDetailsDrawerProps) {
   const {
     node: { daoAddress },
@@ -163,7 +163,10 @@ export default function RolesDetailsDrawer({
             </GridItem>
           </Grid>
           {/* @todo: proper styling here */}
-          <PayrollAndVesting payroll={payroll} vesting={vesting} />
+          <PayrollAndVesting
+            payroll={payroll}
+            vesting={vesting}
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>
