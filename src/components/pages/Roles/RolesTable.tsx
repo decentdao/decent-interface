@@ -324,7 +324,6 @@ export function RolesTable({
       {hatsTree.roleHats.length && (
         <Table variant="unstyled">
           <RolesHeader />
-          {/* Map Rows */}
           <Tbody
             sx={{
               tr: {
@@ -370,7 +369,6 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
     >
       <Table variant="unstyled">
         <RolesHeader />
-        {/* Map Rows */}
         <Tbody
           sx={{
             tr: {
