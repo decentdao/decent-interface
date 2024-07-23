@@ -1,5 +1,5 @@
 import { Box, Flex, Icon, useBreakpointValue } from '@chakra-ui/react';
-import { CalendarBlank, CaretLeft, CaretRight } from '@phosphor-icons/react';
+import { ArrowRight, CalendarBlank, CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { Calendar } from 'react-calendar';
@@ -19,16 +19,10 @@ interface DecentDatePickerProps {
 type DateOrNull = Date | null;
 type OnDateChangeValue = DateOrNull | [DateOrNull, DateOrNull];
 
-function SelectedDateDisplay({
-  selectedDate,
-}: {
-  selectedDate: DateOrNull;
-  selectedRange?: [DateOrNull, DateOrNull];
-}) {
+function DateDisplayBox({ date }: { date: DateOrNull }) {
   return (
     <Flex
       gap="0.5rem"
-      ml="1rem"
       p="0.5rem 1rem"
       width="11.125rem"
       bg="neutral-1"
@@ -41,9 +35,37 @@ function SelectedDateDisplay({
         boxSize="24px"
         color="neutral-5"
       />
-      <Box color="neutral-7">
-        {(selectedDate && format(selectedDate, DEFAULT_DATE_FORMAT)) ?? 'Select'}
-      </Box>
+      <Box color="neutral-7">{(date && format(date, DEFAULT_DATE_FORMAT)) ?? 'Select'}</Box>
+    </Flex>
+  );
+}
+
+function SelectedDateDisplay({
+  selectedDate,
+  selectedRange,
+  isRange,
+}: {
+  selectedDate: DateOrNull;
+  selectedRange: [DateOrNull, DateOrNull];
+  isRange?: boolean;
+}) {
+  return !isRange ? (
+    <Box ml="1rem">
+      <DateDisplayBox date={selectedDate} />{' '}
+    </Box>
+  ) : (
+    <Flex
+      gap={{ base: '0', md: '0.5rem' }}
+      alignItems="center"
+      mx="1rem"
+    >
+      <DateDisplayBox date={selectedRange[0] as Date} />
+      <Icon
+        as={ArrowRight}
+        boxSize="1.5rem"
+        color="lilac-0"
+      />
+      <DateDisplayBox date={selectedRange[1] as Date} />
     </Flex>
   );
 }
@@ -74,7 +96,6 @@ export function DecentDatePicker({
 
   return (
     <Flex
-      // display="flex"
       flexDir="column"
       justifySelf="center"
       borderRadius="0.5rem"
@@ -86,6 +107,7 @@ export function DecentDatePicker({
       <SelectedDateDisplay
         selectedDate={selectedDate}
         selectedRange={selectedRange}
+        isRange={isRange}
       />
       <Divider my="1.5rem" />
       <Calendar
@@ -111,8 +133,9 @@ export function DecentDatePicker({
             setSelectedDate(e);
             onChange?.(e);
           } else if (Array.isArray(e) && e.length === 2 && e.every(d => d instanceof Date)) {
-            setSelectedRange(e);
-            onRangeChange?.(e as [Date, Date]);
+            const dateRange = e as [Date, Date];
+            setSelectedRange(dateRange);
+            onRangeChange?.(dateRange);
           }
         }}
         selectRange={isRange}
