@@ -16,8 +16,11 @@ export async function validateAddress({
   publicClient: PublicClient;
   address: string;
   checkENS?: boolean;
-}) {
-  if (checkENS) {
+}): Promise<{
+  validation: { address: string; isValidAddress: boolean };
+  isValid: boolean;
+}> {
+  if (checkENS && !isAddress(address)) {
     const resolvedAddress = await publicClient.getEnsAddress({ name: normalize(address) });
     if (resolvedAddress) {
       return {
@@ -38,6 +41,7 @@ export async function validateAddress({
     }
   }
   const isValidAddress = isAddress(address);
+  console.log('🚀 ~ isValidAddress:', isValidAddress);
   if (isValidAddress) {
     return {
       validation: {
@@ -84,7 +88,9 @@ export const useValidationAddress = () => {
         if (!address || !publicClient) return false;
         setIsValidating(true);
         try {
+          console.log('🚀 ~ address:', address);
           const { validation } = await validateAddress({ publicClient, address });
+          console.log('🚀 ~ validation:', validation);
           if (validation.isValidAddress) {
             addressValidationMap.current.set(address, validation);
           }
