@@ -55,7 +55,7 @@ function SelectedDateDisplay({
     </Box>
   ) : (
     <Flex
-      gap={{ base: '0', md: '0.5rem' }}
+      gap="0.5rem"
       alignItems="center"
       mx="1rem"
     >
