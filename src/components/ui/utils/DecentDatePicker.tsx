@@ -12,6 +12,7 @@ import Divider from './Divider';
 interface DecentDatePickerProps {
   minDate?: Date;
   onChange?: (date: Date) => void;
+  isRange?: boolean;
 }
 
 type DateOrNull = Date | null;
@@ -41,16 +42,16 @@ function SelectedDateDisplay({ selectedDate }: { selectedDate: DateOrNull }) {
   );
 }
 
-export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
-  const isToday = (someDate: Date) => {
-    const today = new Date();
-    return (
-      someDate.getDate() === today.getDate() &&
-      someDate.getMonth() === today.getMonth() &&
-      someDate.getFullYear() === today.getFullYear()
-    );
-  };
+const isToday = (someDate: Date) => {
+  const today = new Date();
+  return (
+    someDate.getDate() === today.getDate() &&
+    someDate.getMonth() === today.getMonth() &&
+    someDate.getFullYear() === today.getFullYear()
+  );
+};
 
+export function DecentDatePicker({ minDate, onChange, isRange }: DecentDatePickerProps) {
   const [selectedDate, setSelectedDate] = useState<DateOrNull>(null);
 
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
@@ -96,6 +97,7 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
             onChange?.(e);
           }
         }}
+        selectRange={isRange}
       />
     </Flex>
   );
