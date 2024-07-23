@@ -21,9 +21,7 @@ const wagmiMetadata = {
 };
 
 const transportsReducer = (accumulator: Record<string, HttpTransport>, network: NetworkConfig) => {
-  accumulator[network.chain.id] = http(network.rpcEndpoint, {
-    batch: true,
-  });
+  accumulator[network.chain.id] = http(network.rpcEndpoint);
   return accumulator;
 };
 
