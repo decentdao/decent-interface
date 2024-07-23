@@ -12,9 +12,16 @@ import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
-import { RoleEditProps, RoleFormValues, RoleProps, SablierPayroll, SablierVesting } from './types';
+import {
+  EditBadgeStatus,
+  RoleEditProps,
+  RoleFormValues,
+  RoleProps,
+  SablierPayroll,
+  SablierVesting,
+} from './types';
 
-function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
+function RolesHeader() {
   const { t } = useTranslation(['roles']);
   return (
     <Thead
@@ -33,7 +40,6 @@ function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
         <Th>{t('member')}</Th>
         <Th>{t('payroll')}</Th>
         <Th>{t('vesting')}</Th>
-        {addHiddenColumn && <Th w="10%" />}
       </Tr>
     </Thead>
   );
@@ -57,19 +63,33 @@ function RoleNameColumn({ roleName }: { roleName: string }) {
   );
 }
 
-function RoleNameEditColumn({ roleName }: { roleName: string }) {
+function RoleNameEditColumn({
+  roleName,
+  editStatus,
+}: {
+  roleName: string;
+  editStatus?: EditBadgeStatus;
+}) {
   return (
     <Td>
       <Flex
         alignItems="center"
         justifyContent="space-between"
+        gap="1rem"
       >
-        <Text
-          textStyle="body-base"
-          color="lilac-0"
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          w="full"
         >
-          {roleName}
-        </Text>
+          <Text
+            textStyle="body-base"
+            color="lilac-0"
+          >
+            {roleName}
+          </Text>
+          <EditBadge editStatus={editStatus} />
+        </Flex>
         <Icon
           className="edit-role-icon"
           as={PencilLine}
@@ -276,13 +296,13 @@ export function RolesRowEdit({
       transition="all ease-out 300ms"
       onClick={handleRoleClick}
     >
-      <RoleNameEditColumn roleName={name} />
+      <RoleNameEditColumn
+        roleName={name}
+        editStatus={editStatus}
+      />
       <MemberColumn wearerAddress={wearerAddress} />
       <PayrollColumn payrollData={payrollData} />
       <VestingColumn vestingData={vestingData} />
-      <Td w="10%">
-        <EditBadge editStatus={editStatus} />
-      </Td>
     </Tr>
   );
 }
@@ -304,7 +324,6 @@ export function RolesTable({
       {hatsTree.roleHats.length && (
         <Table variant="unstyled">
           <RolesHeader />
-          {/* Map Rows */}
           <Tbody
             sx={{
               tr: {
@@ -349,8 +368,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
       borderColor="white-alpha-08"
     >
       <Table variant="unstyled">
-        <RolesHeader addHiddenColumn />
-        {/* Map Rows */}
+        <RolesHeader />
         <Tbody
           sx={{
             tr: {
