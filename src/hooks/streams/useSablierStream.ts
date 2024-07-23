@@ -43,6 +43,13 @@ export default function useCreateSablierStream() {
     node: { daoAddress },
   } = useFractal();
 
+  const convertStreamIdToBigInt = (streamId: string) => {
+    // streamId is formatted as ${recipientAddress}-${chainId}-${numericId}
+    const lastDash = streamId.lastIndexOf('-');
+    const numericId = streamId.substring(lastDash + 1);
+    return BigInt(numericId);
+  }
+
   const prepareStreamTokenCallData = useCallback(
     (amountInTokenDecimals: bigint) => {
       return encodeFunctionData({
@@ -218,10 +225,11 @@ export default function useCreateSablierStream() {
     // @dev This function comes from "basic" SablierV2
     // all the types of streams are inheriting from that
     // so it's safe to rely on TranchedAbi
+    
     const flushCalldata = encodeFunctionData({
       abi: SablierV2LockupTranchedAbi,
       functionName: 'withdrawMax',
-      args: [BigInt(stream.streamId), to],
+      args: [convertStreamIdToBigInt(stream.streamId), to],
     });
 
     return { calldata: flushCalldata, targetAddress: stream.contractAddress };
@@ -238,7 +246,7 @@ export default function useCreateSablierStream() {
     const flushCalldata = encodeFunctionData({
       abi: SablierV2LockupTranchedAbi,
       functionName: 'cancel',
-      args: [BigInt(stream.streamId)],
+      args: [convertStreamIdToBigInt(stream.streamId)],
     });
 
     return { calldata: flushCalldata, targetAddress: stream.contractAddress };
