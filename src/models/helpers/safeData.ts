@@ -10,6 +10,7 @@ import {
   GetContractReturnType,
   PublicClient,
   Address,
+  getAddress,
 } from 'viem';
 import GnosisSafeL2Abi from '../../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../../assets/abi/GnosisSafeProxyFactory';
@@ -28,11 +29,11 @@ export const safeData = async (
   const signers = hasAzorius
     ? [multiSendCallOnlyAddress]
     : [...daoData.trustedAddresses, multiSendCallOnlyAddress];
-
+  const signerAddresses = signers.map(signer => getAddress(signer));
   const createSafeCalldata = encodeFunctionData({
     functionName: 'setup',
     args: [
-      signers,
+      signerAddresses,
       1n, // Threshold
       zeroAddress,
       zeroHash,

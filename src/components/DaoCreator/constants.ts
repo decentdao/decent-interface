@@ -98,7 +98,7 @@ export const initialState: CreatorFormState = {
     },
   },
   multisig: {
-    trustedAddresses: [],
+    trustedAddresses: [''],
     signatureThreshold: 1,
     numOfSigners: 1,
     customNonce: 0,
