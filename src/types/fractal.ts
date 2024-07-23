@@ -206,7 +206,7 @@ export interface FractalGovernanceContracts {
   isLoaded: boolean;
 }
 
-export type SafeWithNextNonce = SafeInfoResponseWithGuard & { address: Address, nextNonce: number };
+export type SafeWithNextNonce = SafeInfoResponseWithGuard & { address: Address; nextNonce: number };
 
 export interface FractalNode {
   daoName: string | null;

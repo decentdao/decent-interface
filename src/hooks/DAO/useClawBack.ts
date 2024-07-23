@@ -2,7 +2,14 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { Address, encodeAbiParameters, encodeFunctionData, erc20Abi, getAddress, parseAbiParameters } from 'viem';
+import {
+  Address,
+  encodeAbiParameters,
+  encodeFunctionData,
+  erc20Abi,
+  getAddress,
+  parseAbiParameters,
+} from 'viem';
 import useBalancesAPI from '../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { FractalModuleType, FractalNode } from '../../types';
