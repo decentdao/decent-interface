@@ -2,7 +2,7 @@ import { Context, createContext, ReactNode, useContext, useEffect, useState } fr
 import { useChainId } from 'wagmi';
 import { NetworkConfig } from '../../types/network';
 
-import * as networks from './networks';
+import { networks } from './networks';
 
 export const NetworkConfigContext = createContext({} as NetworkConfig);
 
@@ -10,6 +10,9 @@ export const useNetworkConfig = (): NetworkConfig =>
   useContext(NetworkConfigContext as Context<NetworkConfig>);
 
 export const supportedNetworks = Object.values(networks).sort((a, b) => a.order - b.order);
+export const moralisSupportedChainIds = supportedNetworks
+  .filter(network => network.moralisSupported)
+  .map(network => network.chain.id);
 
 export const getNetworkConfig = (chainId: number) => {
   const foundChain = supportedNetworks.find(network => network.chain.id === chainId);

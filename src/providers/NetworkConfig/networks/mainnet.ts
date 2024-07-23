@@ -20,15 +20,20 @@ export const mainnetConfig: NetworkConfig = {
   order: 0,
   chain,
   rpcEndpoint: `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_MAINNET_API_KEY}`,
+  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
   etherscanBaseURL: 'https://etherscan.io',
-  etherscanAPIUrl: `https://api.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_MAINNET_API_KEY}`,
+  etherscanAPIUrl: `https://api.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_MAINNET_API_KEY}`,
   addressPrefix: 'eth',
   nativeTokenIcon: '/images/coin-icon-eth.svg',
   subgraph: {
     space: 71032,
     slug: 'fractal-mainnet',
     version: 'v0.1.1',
+  },
+  sablierSubgraph: {
+    space: 57079,
+    slug: 'sablier-v2',
   },
   contracts: {
     gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
@@ -74,6 +79,10 @@ export const mainnetConfig: NetworkConfig = {
 
     fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
+    decentHatsMasterCopy: getAddress(a.DecentHats_0_1_0),
+    hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
+    erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
+    hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
   },
   staking: {
     lido: {
@@ -84,3 +93,5 @@ export const mainnetConfig: NetworkConfig = {
   },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
+
+export default mainnetConfig;

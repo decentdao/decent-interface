@@ -20,15 +20,20 @@ export const optimismConfig: NetworkConfig = {
   order: 15,
   chain,
   rpcEndpoint: `https://opt-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_OPTIMISM_API_KEY}`,
+  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-optimism.safe.global',
   etherscanBaseURL: 'https://optimistic.etherscan.io/',
-  etherscanAPIUrl: `https://api-optimistic.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_OPTIMISM_API_KEY}`,
+  etherscanAPIUrl: `https://api-optimistic.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_OPTIMISM_API_KEY}`,
   addressPrefix: 'oeth',
   nativeTokenIcon: '/images/coin-icon-op.svg',
   subgraph: {
     space: 71032,
     slug: 'fractal-optimism',
     version: 'v0.1.1',
+  },
+  sablierSubgraph: {
+    space: 57079,
+    slug: 'sablier-v2-optimism',
   },
   contracts: {
     gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
@@ -74,7 +79,13 @@ export const optimismConfig: NetworkConfig = {
 
     fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
+    decentHatsMasterCopy: getAddress(a.DecentHats_0_1_0),
+    hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
+    erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
+    hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
   },
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
+
+export default optimismConfig;

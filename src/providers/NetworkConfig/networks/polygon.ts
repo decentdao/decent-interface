@@ -20,15 +20,20 @@ export const polygonConfig: NetworkConfig = {
   order: 20,
   chain,
   rpcEndpoint: `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_POLYGON_API_KEY}`,
+  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',
-  etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
+  etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
   addressPrefix: 'matic',
   nativeTokenIcon: '/images/coin-icon-pol.svg',
   subgraph: {
     space: 71032,
     slug: 'fractal-base-polygon',
     version: 'v0.1.1',
+  },
+  sablierSubgraph: {
+    space: 57079,
+    slug: 'sablier-v2-polygon',
   },
   contracts: {
     gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
@@ -74,7 +79,13 @@ export const polygonConfig: NetworkConfig = {
 
     fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
+    decentHatsMasterCopy: getAddress(a.DecentHats_0_1_0),
+    hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
+    erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
+    hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
   },
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
+
+export default polygonConfig;

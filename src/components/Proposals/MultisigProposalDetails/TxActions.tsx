@@ -1,6 +1,6 @@
 import { Box, Button, Text, Flex, Tooltip } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
+import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Hex, getAddress, getContract, isHex } from 'viem';
@@ -96,7 +96,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         pendingMessage: t('pendingSign'),
         successMessage: t('successSign'),
         successCallback: async (signature: string) => {
-          await safeAPI!.confirmTransaction(proposal.proposalId, signature);
+          await safeAPI.confirmTransaction(proposal.proposalId, signature);
           await loadSafeMultisigProposals();
         },
       });
@@ -238,7 +238,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     }
   };
 
-  const hasSigned = proposal.confirmations.find(confirm => confirm.owner === user.address);
+  const hasSigned = !!proposal.confirmations?.find(confirm => confirm.owner === user.address);
   const isOwner = safe?.owners?.includes(user.address || '');
   const isPending = asyncRequestPending || contractCallPending;
   if (

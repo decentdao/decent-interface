@@ -1,5 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/safe-service-client';
+import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import {
   Address,
   GetContractEventsReturnType,
@@ -18,7 +18,6 @@ import {
   AzoriusProposal,
   ActivityEventType,
   Parameter,
-  SafeMultisigTransactionResponse,
   DataDecoded,
   FractalModuleData,
   FractalModuleType,
@@ -307,9 +306,7 @@ export const parseMultiSendTransactions = (
 };
 
 export const parseDecodedData = (
-  multiSigTransaction:
-    | SafeMultisigTransactionWithTransfersResponse
-    | SafeMultisigTransactionResponse,
+  multiSigTransaction: SafeMultisigTransactionWithTransfersResponse,
   isMultiSigTransaction: boolean,
 ): DecodedTransaction[] => {
   const eventTransactionMap = new Map<number, any>();

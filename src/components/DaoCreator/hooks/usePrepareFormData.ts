@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import IVotesAbi from '../../../assets/abi/IVotes';
-import { SENTINEL_ADDRESS } from '../../../constants/common';
 import {
   SafeMultisigDAO,
   DAOFreezeGuardConfig,
@@ -11,6 +10,7 @@ import {
   AzoriusERC20DAO,
   AzoriusERC721DAO,
 } from '../../../types';
+import { SENTINEL_MODULE } from '../../../utils/address';
 import { getEstimatedNumberOfBlocks } from '../../../utils/contract';
 import { validateENSName } from '../../../utils/url';
 
@@ -61,8 +61,8 @@ export function usePrepareFormData() {
             client: publicClient,
           });
           await Promise.all([
-            votesContract.read.delegates([SENTINEL_ADDRESS]),
-            votesContract.read.getVotes([SENTINEL_ADDRESS]),
+            votesContract.read.delegates([SENTINEL_MODULE]),
+            votesContract.read.getVotes([SENTINEL_MODULE]),
           ]);
           return true;
         } catch (error) {

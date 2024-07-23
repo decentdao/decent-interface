@@ -14,7 +14,6 @@ import {
   getAddress,
 } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
-import { SENTINEL_ADDRESS } from '../constants/common';
 import { buildContractCall, getRandomBytes } from '../helpers';
 import {
   SafeTransaction,
@@ -23,6 +22,7 @@ import {
   AzoriusERC721DAO,
   VotingStrategyType,
 } from '../types';
+import { SENTINEL_MODULE } from '../utils/address';
 import { BaseTxBuilder } from './BaseTxBuilder';
 import { generateContractByteCodeLinear, generateSalt } from './helpers/utils';
 
@@ -439,7 +439,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         [
           this.safeContractAddress, // owner
           this.predictedTokenAddress, // governance token
-          SENTINEL_ADDRESS, // Azorius module
+          SENTINEL_MODULE, // Azorius module
           Number(azoriusGovernanceDaoData.votingPeriod),
           1n, // proposer weight, how much is needed to create a proposal.
           (azoriusGovernanceDaoData.quorumPercentage * quorumDenominator) / 100n, // quorom numerator, denominator is 1,000,000, so quorum percentage is quorumNumerator * 100 / quorumDenominator
@@ -482,7 +482,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
           this.safeContractAddress, // owner
           daoData.nfts.map(nft => nft.tokenAddress!), // governance tokens addresses
           daoData.nfts.map(nft => nft.tokenWeight), // governance tokens weights
-          SENTINEL_ADDRESS, // Azorius module
+          SENTINEL_MODULE, // Azorius module
           Number(azoriusGovernanceDaoData.votingPeriod),
           daoData.quorumThreshold, // quorom threshold. Since smart contract can't know total of NFTs minted - we need to provide it manually
           1n, // proposer weight, how much is needed to create a proposal.

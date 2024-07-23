@@ -18,6 +18,7 @@ export enum FractalGovernanceAction {
   SET_GOVERNANCE_TYPE = 'SET_GOVERNANCE_TYPE',
   SET_PROPOSALS = 'SET_PROPOSALS',
   SET_AZORIUS_PROPOSAL = 'SET_AZORIUS_PROPOSAL',
+  SKIPPED_A_PROPOSAL = 'SKIPPED_A_PROPOSAL',
   SET_SNAPSHOT_PROPOSALS = 'SET_SNAPSHOT_PROPOSALS',
   SET_PROPOSAL_TEMPLATES = 'SET_PROPOSAL_TEMPLATES',
   SET_STRATEGY = 'SET_STRATEGY',
@@ -68,6 +69,10 @@ export type FractalGovernanceActions =
   | {
       type: FractalGovernanceAction.SET_AZORIUS_PROPOSAL;
       payload: FractalProposal;
+    }
+  | {
+      type: FractalGovernanceAction.SKIPPED_A_PROPOSAL;
+      payload: null;
     }
   | {
       type: FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS;

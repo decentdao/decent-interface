@@ -1,7 +1,7 @@
-import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { Hex, encodeFunctionData, erc20Abi, Address, getAddress } from 'viem';
 import { SubmitProposalFunction } from '../../../hooks/DAO/proposal/useSubmitProposal';
-import { ProposalExecuteData } from '../../../types';
+import { ProposalExecuteData, TokenBalance } from '../../../types';
+import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import { formatCoin } from '../../../utils/numberFormats';
 
 export const sendAssets = async ({
@@ -13,19 +13,17 @@ export const sendAssets = async ({
   t,
 }: {
   transferAmount: bigint;
-  asset: SafeBalanceResponse;
+  asset: TokenBalance;
   destinationAddress: Address | undefined;
   nonce: number | undefined;
   submitProposal: SubmitProposalFunction;
   t: any;
 }) => {
-  const isEth = !asset.tokenAddress;
-  const description = formatCoin(
-    transferAmount,
-    false,
-    asset?.token?.decimals,
-    asset?.token?.symbol,
-  );
+  const isEth =
+    !asset.tokenAddress ||
+    asset.nativeToken ||
+    asset.tokenAddress.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase();
+  const description = formatCoin(transferAmount, false, asset.decimals, asset.symbol);
 
   let calldatas = ['0x' as Hex];
   let target = isEth && destinationAddress ? destinationAddress : getAddress(asset.tokenAddress);

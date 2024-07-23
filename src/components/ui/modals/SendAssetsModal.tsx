@@ -1,6 +1,5 @@
 import { Box, Flex, Select, HStack, Text, Button } from '@chakra-ui/react';
 import { CaretDown } from '@phosphor-icons/react';
-import { SafeBalanceResponse } from '@safe-global/safe-service-client';
 import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -9,7 +8,7 @@ import * as Yup from 'yup';
 import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { BigIntValuePair } from '../../../types';
+import { BigIntValuePair, TokenBalance } from '../../../types';
 import { formatCoinFromAsset, formatCoinUnitsFromAsset } from '../../../utils/numberFormats';
 import { sendAssets } from '../../pages/DAOTreasury/sendAssets';
 import { BigIntInput } from '../forms/BigIntInput';
@@ -20,7 +19,7 @@ import Divider from '../utils/Divider';
 
 interface SendAssetsFormValues {
   destinationAddress: string;
-  selectedAsset: SafeBalanceResponse;
+  selectedAsset: TokenBalance;
   inputAmount?: BigIntValuePair;
 }
 
@@ -39,7 +38,25 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
   const { addressValidationTest, isValidating } = useValidationAddress();
 
-  const submitSendAssets = async (values: SendAssetsFormValues) => {
+  const sendAssetsValidationSchema = Yup.object().shape({
+    destinationAddress: Yup.string().test(addressValidationTest),
+    selectedAsset: Yup.object()
+      .shape({
+        tokenAddress: Yup.string().required(),
+        name: Yup.string().required(),
+        symbol: Yup.string().required(),
+        decimals: Yup.number().required(),
+        balance: Yup.string().required(),
+      })
+      .required(),
+    inputAmount: Yup.object()
+      .shape({
+        value: Yup.string().required(),
+      })
+      .required(),
+  });
+
+  const handleSendAssetsSubmit = async (values: SendAssetsFormValues) => {
     const { destinationAddress, selectedAsset, inputAmount } = values;
 
     await sendAssets({
@@ -54,21 +71,6 @@ export function SendAssetsModal({ close }: { close: () => void }) {
     if (close) close();
   };
 
-  const sendAssetsValidationSchema = Yup.object().shape({
-    destinationAddress: Yup.string().test(addressValidationTest),
-    selectedAsset: Yup.object()
-      .shape({
-        tokenAddress: Yup.string().required(),
-        token: Yup.object().shape({
-          name: Yup.string().required(),
-          symbol: Yup.string().required(),
-          decimals: Yup.number().required(),
-        }),
-        balance: Yup.string().required(),
-      })
-      .required(),
-  });
-
   return (
     <Box>
       <Formik<SendAssetsFormValues>
@@ -77,10 +79,10 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           selectedAsset: fungibleAssetsWithBalance[0],
           inputAmount: undefined,
         }}
-        onSubmit={submitSendAssets}
+        onSubmit={handleSendAssetsSubmit}
         validationSchema={sendAssetsValidationSchema}
       >
-        {({ errors, values, setFieldValue }) => {
+        {({ errors, values, setFieldValue, handleSubmit }) => {
           const overDraft =
             Number(values.inputAmount?.value || '0') >
             formatCoinUnitsFromAsset(values.selectedAsset);
@@ -95,11 +97,11 @@ export function SendAssetsModal({ close }: { close: () => void }) {
           );
 
           return (
-            <Form>
+            <Form onSubmit={handleSubmit}>
               <Flex>
                 {/* ASSET SELECT */}
                 <Field name="selectedAsset">
-                  {({ field }: FieldAttributes<FieldProps<SafeBalanceResponse>>) => (
+                  {({ field }: FieldAttributes<FieldProps<TokenBalance>>) => (
                     <Box
                       width="40%"
                       marginEnd="0.75rem"
@@ -127,7 +129,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                               key={index}
                               value={index}
                             >
-                              {asset.token ? asset.token.symbol : 'ETH'}
+                              {asset.symbol}
                             </option>
                           ))}
                         </Select>
@@ -148,7 +150,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                             setFieldValue('inputAmount', value);
                           }}
                           currentValue={values.inputAmount}
-                          decimalPlaces={values.selectedAsset.token.decimals}
+                          decimalPlaces={values.selectedAsset.decimals}
                           placeholder="0"
                           maxValue={BigInt(values.selectedAsset.balance)}
                           isInvalid={overDraft}
@@ -204,7 +206,13 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                 marginTop="2rem"
                 width="100%"
                 type="submit"
-                isDisabled={isValidating || !!errors.destinationAddress || isSubmitDisabled}
+                isDisabled={
+                  isValidating ||
+                  !!errors.destinationAddress ||
+                  !!errors.selectedAsset ||
+                  !!errors.inputAmount ||
+                  isSubmitDisabled
+                }
               >
                 {t('sendAssetsSubmit')}
               </Button>

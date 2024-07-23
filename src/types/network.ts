@@ -4,6 +4,7 @@ import { GovernanceType } from './fractal';
 export type NetworkConfig = {
   order: number; // any arbitrary integer, used to "order" the networks in the dropdown
   chain: Chain;
+  moralisSupported: boolean;
   rpcEndpoint: string;
   safeBaseURL: string;
   etherscanBaseURL: string;
@@ -14,6 +15,11 @@ export type NetworkConfig = {
     space: number;
     slug: string;
     version: string;
+  };
+  // @dev - might be not supported on some chains
+  sablierSubgraph?: {
+    space: number;
+    slug: string;
   };
   contracts: {
     gnosisSafeL2Singleton: Address;
@@ -44,6 +50,11 @@ export type NetworkConfig = {
 
     fractalRegistry: Address;
     keyValuePairs: Address;
+
+    decentHatsMasterCopy: Address;
+    hatsProtocol: Address;
+    erc6551Registry: Address;
+    hatsAccount1ofNMasterCopy: Address;
   };
   staking: {
     lido?: {

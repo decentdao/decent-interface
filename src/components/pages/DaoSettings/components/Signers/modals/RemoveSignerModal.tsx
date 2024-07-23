@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { useEnsName } from 'wagmi';
-import { SENTINEL_ADDRESS } from '../../../../../../constants/common';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { SENTINEL_MODULE } from '../../../../../../utils/address';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
 import Divider from '../../../../../ui/utils/Divider';
@@ -57,7 +57,7 @@ function RemoveSignerModal({
 
   useEffect(() => {
     const signerIndex = signers.findIndex(signer => signer === selectedSigner);
-    setPrevSigner(signerIndex > 0 ? signers[signerIndex - 1] : SENTINEL_ADDRESS);
+    setPrevSigner(signerIndex > 0 ? signers[signerIndex - 1] : SENTINEL_MODULE);
   }, [selectedSigner, signers]);
 
   return (

@@ -17,6 +17,7 @@ export const initialGovernanceState: FractalGovernance = {
   loadingProposals: true,
   allProposalsLoaded: false,
   proposals: null,
+  skippedProposalCount: 0,
   pendingProposals: null,
   proposalTemplates: null,
   type: undefined,
@@ -78,6 +79,12 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
         pendingProposals: createPendingProposals(state.pendingProposals, [
           action.payload.transactionHash,
         ]),
+      };
+    }
+    case FractalGovernanceAction.SKIPPED_A_PROPOSAL: {
+      return {
+        ...state,
+        skippedProposalCount: state.skippedProposalCount + 1,
       };
     }
     case FractalGovernanceAction.SET_PROPOSAL_TEMPLATES: {

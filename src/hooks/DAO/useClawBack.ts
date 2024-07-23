@@ -1,14 +1,9 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Address,
-  encodeAbiParameters,
-  encodeFunctionData,
-  erc20Abi,
-  getAddress,
-  parseAbiParameters,
-} from 'viem';
+import { toast } from 'react-toastify';
+import { Address, encodeAbiParameters, encodeFunctionData, erc20Abi, getAddress, parseAbiParameters } from 'viem';
+import useBalancesAPI from '../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { FractalModuleType, FractalNode } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
@@ -24,10 +19,16 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const safeAPI = useSafeAPI();
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
+  const { getTokenBalances } = useBalancesAPI();
 
   const handleClawBack = useCallback(async () => {
     if (childSafeInfo.daoAddress && parentAddress && safeAPI) {
-      const childSafeBalance = await safeAPI.getBalances(childSafeInfo.daoAddress);
+      const childSafeBalance = await getTokenBalances(childSafeInfo.daoAddress);
+
+      if (childSafeBalance.error || !childSafeBalance.data) {
+        toast(t('clawBackBalancesError', { autoClose: false }));
+        return;
+      }
 
       const santitizedParentAddress = parentAddress;
       const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
@@ -38,49 +39,51 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         );
 
         if (fractalModule) {
-          const transactions = childSafeBalance.map(asset => {
-            if (!asset.tokenAddress) {
-              // Seems like we're operating with native coin i.e ETH
-              const txData = encodeAbiParameters(
-                parseAbiParameters('address, uint256, bytes, uint8'),
-                [parentAddress, BigInt(asset.balance), '0x', 0],
-              );
+          const transactions = childSafeBalance.data
+            .filter(tokenBalance => !tokenBalance.possibleSpam)
+            .map(asset => {
+              if (!asset.tokenAddress) {
+                // Seems like we're operating with native coin i.e ETH
+                const txData = encodeAbiParameters(
+                  parseAbiParameters('address, uint256, bytes, uint8'),
+                  [parentAddress, BigInt(asset.balance), '0x', 0],
+                );
 
-              const fractalModuleCalldata = encodeFunctionData({
-                abi: abis.FractalModule,
-                functionName: 'execTx',
-                args: [txData],
-              });
+                const fractalModuleCalldata = encodeFunctionData({
+                  abi: abis.FractalModule,
+                  functionName: 'execTx',
+                  args: [txData],
+                });
 
-              return {
-                target: fractalModule.moduleAddress,
-                value: 0,
-                calldata: fractalModuleCalldata,
-              };
-            } else {
-              const clawBackCalldata = encodeFunctionData({
-                abi: erc20Abi,
-                functionName: 'transfer',
-                args: [parentAddress, BigInt(asset.balance)] as const,
-              });
-              const txData = encodeAbiParameters(
-                parseAbiParameters('address, uint256, bytes, uint8'),
-                [getAddress(asset.tokenAddress), 0n, clawBackCalldata, 0],
-              );
+                return {
+                  target: fractalModule.moduleAddress,
+                  value: 0,
+                  calldata: fractalModuleCalldata,
+                };
+              } else {
+                const clawBackCalldata = encodeFunctionData({
+                  abi: erc20Abi,
+                  functionName: 'transfer',
+                  args: [parentAddress, BigInt(asset.balance)] as const,
+                });
+                const txData = encodeAbiParameters(
+                  parseAbiParameters('address, uint256, bytes, uint8'),
+                  [getAddress(asset.tokenAddress), 0n, clawBackCalldata, 0],
+                );
 
-              const fractalModuleCalldata = encodeFunctionData({
-                abi: abis.FractalModule,
-                functionName: 'execTx',
-                args: [txData],
-              });
+                const fractalModuleCalldata = encodeFunctionData({
+                  abi: abis.FractalModule,
+                  functionName: 'execTx',
+                  args: [txData],
+                });
 
-              return {
-                target: fractalModule.moduleAddress,
-                value: 0,
-                calldata: fractalModuleCalldata,
-              };
-            }
-          });
+                return {
+                  target: fractalModule.moduleAddress,
+                  value: 0,
+                  calldata: fractalModuleCalldata,
+                };
+              }
+            });
 
           submitProposal({
             proposalData: {
@@ -104,7 +107,15 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         }
       }
     }
-  }, [canUserCreateProposal, childSafeInfo, parentAddress, submitProposal, t, safeAPI]);
+  }, [
+    canUserCreateProposal,
+    childSafeInfo,
+    parentAddress,
+    submitProposal,
+    t,
+    safeAPI,
+    getTokenBalances,
+  ]);
 
   return { handleClawBack };
 }

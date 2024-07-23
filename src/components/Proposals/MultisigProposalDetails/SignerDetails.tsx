@@ -19,7 +19,7 @@ function OwnerInfoRow({
   proposal: MultisigProposal;
   isMe: boolean;
 }) {
-  const ownerConfirmed = proposal.confirmations.find(confirmInfo => confirmInfo.owner === owner);
+  const ownerConfirmed = proposal.confirmations?.find(confirmInfo => confirmInfo.owner === owner);
 
   return (
     <>

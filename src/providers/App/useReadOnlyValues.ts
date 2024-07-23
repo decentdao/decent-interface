@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react';
+import isEqual from 'lodash.isequal';
 import { useEffect, useState, useCallback } from 'react';
 import { Address, erc721Abi, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
@@ -64,7 +65,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: Addr
     const address = _account;
     Sentry.setUser(address ? { id: address } : null);
 
-    setReadOnlyValues({
+    const newReadOnlyValues = {
       user: {
         address,
         votingWeight: await getVotingWeight(),
@@ -76,8 +77,11 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: Addr
               governance.type === GovernanceType.AZORIUS_ERC20 ||
               governance.type === GovernanceType.AZORIUS_ERC721,
           },
-    });
-  }, [node, governance, _account, publicClient]);
+    };
+    if (!isEqual(newReadOnlyValues, readOnlyValues)) {
+      setReadOnlyValues(newReadOnlyValues);
+    }
+  }, [node, governance, _account, publicClient, readOnlyValues]);
   useEffect(() => {
     loadReadOnlyValues();
   }, [loadReadOnlyValues]);

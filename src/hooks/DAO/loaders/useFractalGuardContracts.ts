@@ -1,11 +1,11 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
-import { getContract, zeroAddress } from 'viem';
+import { Address, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { SafeInfoResponseWithGuard, FreezeGuardType, FreezeVotingType } from '../../../types';
+import { FreezeGuardType, FreezeVotingType, SafeInfoResponseWithGuard } from '../../../types';
 import { useMasterCopy } from '../../utils/useMasterCopy';
 import { FractalModuleData, FractalModuleType } from './../../../types/fractal';
 
@@ -24,7 +24,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
 
   const loadFractalGuardContracts = useCallback(
     async (
-      _daoAddress: string,
+      _daoAddress: Address,
       _safe: SafeInfoResponseWithGuard,
       _fractalModules: FractalModuleData[],
     ) => {

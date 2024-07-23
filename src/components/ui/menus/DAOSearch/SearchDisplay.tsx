@@ -96,7 +96,7 @@ export function SearchDisplay({
               onClickView();
               if (closeDrawer) closeDrawer();
             }}
-            showAddress={true}
+            showAddress
           />
         </ErrorBoundary>
       </Flex>

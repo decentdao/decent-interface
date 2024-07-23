@@ -137,5 +137,6 @@
   "shutterPrivacy": "Shielded",
   "shutterVotesHidden": "Results hidden during voting",
   "totalVotes": "Total votes",
+  "clawBackBalancesError": "Failed to process clawback due to unexpected error while retrieving child Safe balances.",
   "pendingProposalNotice": "Pending proposal still processing"
 }

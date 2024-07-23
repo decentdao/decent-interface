@@ -20,15 +20,20 @@ export const sepoliaConfig: NetworkConfig = {
   order: 30,
   chain,
   rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
+  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.etherscan.io',
-  etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
+  etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
   addressPrefix: 'sep',
   nativeTokenIcon: '/images/coin-icon-sep.svg',
   subgraph: {
     space: 71032,
     slug: 'fractal-sepolia',
     version: 'v0.1.1',
+  },
+  sablierSubgraph: {
+    space: 57079,
+    slug: 'sablier-v2-sepolia',
   },
   contracts: {
     gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
@@ -74,6 +79,10 @@ export const sepoliaConfig: NetworkConfig = {
 
     fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
+    decentHatsMasterCopy: getAddress(a.DecentHats_0_1_0),
+    hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
+    erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
+    hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
   },
   staking: {},
   createOptions: [
@@ -82,3 +91,5 @@ export const sepoliaConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC721,
   ],
 };
+
+export default sepoliaConfig;

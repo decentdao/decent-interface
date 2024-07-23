@@ -4,7 +4,7 @@ import {
   EthereumTxWithTransfersResponse,
   SafeMultisigTransactionWithTransfersResponse,
   TransferWithTokenInfoResponse,
-} from '@safe-global/safe-service-client';
+} from '@safe-global/api-kit';
 import { useCallback } from 'react';
 import { Address, getAddress, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
