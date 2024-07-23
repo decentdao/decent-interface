@@ -12,13 +12,19 @@ import Divider from './Divider';
 interface DecentDatePickerProps {
   minDate?: Date;
   onChange?: (date: Date) => void;
+  onRangeChange?: (date: [Date, Date]) => void;
   isRange?: boolean;
 }
 
 type DateOrNull = Date | null;
 type OnDateChangeValue = DateOrNull | [DateOrNull, DateOrNull];
 
-function SelectedDateDisplay({ selectedDate }: { selectedDate: DateOrNull }) {
+function SelectedDateDisplay({
+  selectedDate,
+}: {
+  selectedDate: DateOrNull;
+  selectedRange?: [DateOrNull, DateOrNull];
+}) {
   return (
     <Flex
       gap="0.5rem"
@@ -51,8 +57,14 @@ const isToday = (someDate: Date) => {
   );
 };
 
-export function DecentDatePicker({ minDate, onChange, isRange }: DecentDatePickerProps) {
+export function DecentDatePicker({
+  minDate,
+  onChange,
+  isRange,
+  onRangeChange,
+}: DecentDatePickerProps) {
   const [selectedDate, setSelectedDate] = useState<DateOrNull>(null);
+  const [selectedRange, setSelectedRange] = useState<[DateOrNull, DateOrNull]>([null, null]);
 
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
   const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
@@ -71,7 +83,10 @@ export function DecentDatePicker({ minDate, onChange, isRange }: DecentDatePicke
       bg="neutral-2"
       pt="1.5rem"
     >
-      <SelectedDateDisplay selectedDate={selectedDate} />
+      <SelectedDateDisplay
+        selectedDate={selectedDate}
+        selectedRange={selectedRange}
+      />
       <Divider my="1.5rem" />
       <Calendar
         formatShortWeekday={(_, date) => date.toString().slice(0, 2)}
@@ -95,6 +110,9 @@ export function DecentDatePicker({ minDate, onChange, isRange }: DecentDatePicke
           if (e instanceof Date) {
             setSelectedDate(e);
             onChange?.(e);
+          } else if (Array.isArray(e) && e.length === 2 && e.every(d => d instanceof Date)) {
+            setSelectedRange(e);
+            onRangeChange?.(e as [Date, Date]);
           }
         }}
         selectRange={isRange}

@@ -162,7 +162,7 @@ function VestingDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
 
   return (
     <Field name={`roleEditing.vesting.scheduleFixedDate.${type}`}>
-      {({ field }: FieldProps<string, RoleFormValues>) => (
+      {() => (
         <>
           <Show below="md">
             <Button
@@ -180,7 +180,13 @@ function VestingDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
               onOpen={() => {}}
               onClose={() => setIsDrawerOpen(false)}
             >
-              <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
+              <DecentDatePicker
+                isRange
+                onRangeChange={dateRange => {
+                  setFieldValue('roleEditing.vesting.scheduleFixedDate.startDate', dateRange[0]);
+                  setFieldValue('roleEditing.vesting.scheduleFixedDate.endDate', dateRange[1]);
+                }}
+              />
             </DraggableDrawer>
           </Show>
 
@@ -196,7 +202,16 @@ function VestingDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
                   <DatePickerTrigger selectedDate={selectedDate} />
                 </MenuButton>
                 <MenuList>
-                  <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
+                  <DecentDatePicker
+                    isRange
+                    onRangeChange={dateRange => {
+                      setFieldValue(
+                        'roleEditing.vesting.scheduleFixedDate.startDate',
+                        dateRange[0],
+                      );
+                      setFieldValue('roleEditing.vesting.scheduleFixedDate.endDate', dateRange[1]);
+                    }}
+                  />
                 </MenuList>
               </>
             </Menu>
