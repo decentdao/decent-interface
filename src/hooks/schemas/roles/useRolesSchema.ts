@@ -20,7 +20,7 @@ export const useRolesSchema = () => {
       // @todo - add validation for balance bigger than entered amount
       // It's problematic at the moment due to how streams are passed into Zustand store
     })
-    .required()
+    .required();
 
   const assetValidationSchema = Yup.object().shape({
     address: Yup.string(),

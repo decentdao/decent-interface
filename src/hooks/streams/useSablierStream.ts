@@ -48,7 +48,7 @@ export default function useCreateSablierStream() {
     const lastDash = streamId.lastIndexOf('-');
     const numericId = streamId.substring(lastDash + 1);
     return BigInt(numericId);
-  }
+  };
 
   const prepareStreamTokenCallData = useCallback(
     (amountInTokenDecimals: bigint) => {
@@ -225,7 +225,7 @@ export default function useCreateSablierStream() {
     // @dev This function comes from "basic" SablierV2
     // all the types of streams are inheriting from that
     // so it's safe to rely on TranchedAbi
-    
+
     const flushCalldata = encodeFunctionData({
       abi: SablierV2LockupTranchedAbi,
       functionName: 'withdrawMax',
