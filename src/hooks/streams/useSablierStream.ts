@@ -7,11 +7,12 @@ import {
   Frequency,
   SablierAsset,
   SablierPayroll,
+  SablierVesting,
 } from '../../components/pages/Roles/types';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { TokenBalance, ProposalExecuteData } from '../../types';
+import { ProposalExecuteData } from '../../types';
 import {
   StreamAbsoluteSchedule,
   StreamRelativeSchedule,
@@ -29,7 +30,7 @@ type DynamicOrTranchedStreamInputs = {
 
 type LinearStreamInputs = {
   totalAmount: string;
-  asset: TokenBalance;
+  asset: SablierAsset;
   recipient: Address;
   schedule: StreamSchedule;
   cliff: StreamSchedule;
@@ -168,6 +169,47 @@ export default function useCreateSablierStream() {
     [prepareBasicStreamData, prepareStreamTokenCallData],
   );
 
+  const prepareBatchLinearStreamCreation = useCallback(
+    (linearStreams: SablierVesting[], recipients: Address[]) => {
+      if (linearStreams.length !== recipients.length) {
+        throw new Error(
+          'Parameters mismatch. Amount of created streams has to match amount of recipients',
+        );
+      }
+
+      const preparedStreamCreationTransactions: { calldata: Hex; targetAddress: Address }[] = [];
+      const preparedTokenApprovalsTransactions: { calldata: Hex; tokenAddress: Address }[] = [];
+
+      linearStreams.forEach((streamData, index) => {
+        const recipient = recipients[index];
+        const tokenAddress = streamData.asset.address;
+        // @todo - Smarter way would be to batch token approvals and streams creation, and not just build single approval + creation transactions for each stream
+        const { tokenCalldata, assembledStream } = prepareLinearStream({
+          recipient,
+          totalAmount: streamData.amount.value,
+          asset: streamData.asset,
+          
+          
+        });
+
+        const sablierBatchCalldata = encodeFunctionData({
+          abi: SablierV2BatchAbi,
+          functionName: 'createWithDurationsLL', // Another option would be to use createWithTimestampsLL. Essentially they're doing the same, `WithDurations` just simpler for usage
+          args: [sablierV2LockupTranched, tokenAddress, [assembledStream]],
+        });
+
+        preparedStreamCreationTransactions.push({
+          calldata: sablierBatchCalldata,
+          targetAddress: sablierV2Batch,
+        });
+        preparedTokenApprovalsTransactions.push({ calldata: tokenCalldata, tokenAddress });
+      });
+
+      return { preparedStreamCreationTransactions, preparedTokenApprovalsTransactions };
+    },
+    [],
+  );
+
   const prepareBatchTranchedStreamCreation = useCallback(
     (tranchedStreams: SablierPayroll[], recipients: Address[]) => {
       if (tranchedStreams.length !== recipients.length) {
@@ -244,35 +286,8 @@ export default function useCreateSablierStream() {
     return { calldata: flushCalldata, targetAddress: stream.contractAddress };
   }, []);
 
-  const prepareCreateLinearLockupProposal = useCallback(
-    (inputs: LinearStreamInputs) => {
-      const { asset, recipient } = inputs;
-      const tokenAddress = getAddress(asset.tokenAddress);
-      const { tokenCalldata, assembledStream } = prepareLinearStream(inputs);
-      const sablierBatchCalldata = encodeFunctionData({
-        abi: SablierV2BatchAbi,
-        functionName: 'createWithDurationsLL', // Another option would be to use createWithTimestampsLD. Essentially they're doing the same
-        args: [sablierV2LockupLinear, tokenAddress, [assembledStream]],
-      });
-
-      const proposalData: ProposalExecuteData = {
-        targets: [tokenAddress, sablierV2Batch],
-        values: [0n, 0n],
-        calldatas: [tokenCalldata, sablierBatchCalldata],
-        metaData: {
-          title: 'Create Vesting Stream for Role',
-          description: `This madafaking rocket science proposal will create AI Blockchain Crypto Currency Bitcoin BUIDL HODL Sablier V2 Vesting Stream of $$$ flowing to ${recipient}`,
-          documentationUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        },
-      };
-
-      return proposalData;
-    },
-    [prepareLinearStream, sablierV2Batch, sablierV2LockupLinear],
-  );
-
   return {
-    prepareCreateLinearLockupProposal,
+    prepareBatchLinearStreamCreation,
     prepareBatchTranchedStreamCreation,
     prepareFlushStreamTx,
     prepareCancelStreamTx,
