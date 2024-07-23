@@ -136,7 +136,7 @@ export default function RolesDetailsDrawer({
               >
                 <Avatar
                   size="icon"
-                  address={roleHat.wearer}
+                  address={getAddress(roleHat.wearer)}
                   url={avatarURL}
                 />
                 <Text

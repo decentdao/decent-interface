@@ -97,7 +97,7 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
         {wearerAddress ? (
           <Avatar
             size="icon"
-            address={wearerAddress}
+            address={getAddress(wearerAddress)}
             url={avatarURL}
           />
         ) : (

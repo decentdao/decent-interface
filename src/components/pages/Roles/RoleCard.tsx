@@ -32,7 +32,7 @@ export function AvatarAndRoleName({
       {wearerAddress ? (
         <Avatar
           size="xl"
-          address={wearerAddress}
+          address={getAddress(wearerAddress)}
           url={avatarURL}
         />
       ) : (
