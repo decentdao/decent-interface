@@ -17,5 +17,5 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["src", "tests", "test", "app", "netlify/functions", "vite.config.mts"]
+  "include": ["src", "tests", "test", "app", "netlify/functions", "vite.config.mts", "vitest.setup.ts"]
 }
