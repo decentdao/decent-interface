@@ -29,6 +29,9 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
   const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
 
+  // @dev @todo - This is a workaround to fix an issue with the dot not being centered on the current day. Gotta be a better way to fix this.
+  const todayDotLeftMargin = useBreakpointValue({ base: '5vw', md: '1.35rem' });
+
   return (
     <Box
       display="flex"
@@ -47,7 +50,7 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
         tileContent={({ date }) =>
           isToday(date) ? (
             <Box
-              ml="1rem"
+              ml={todayDotLeftMargin}
               bg={selectedDate && isToday(selectedDate) ? 'cosmic-nebula-0' : 'white-1'}
               borderRadius="50%"
               w="4px"
