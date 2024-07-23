@@ -1,10 +1,13 @@
-import { Box, Icon, useBreakpointValue } from '@chakra-ui/react';
-import { CaretLeft, CaretRight } from '@phosphor-icons/react';
+import { Box, Flex, Icon, useBreakpointValue } from '@chakra-ui/react';
+import { CalendarBlank, CaretLeft, CaretRight } from '@phosphor-icons/react';
+import { format } from 'date-fns';
 import { useState } from 'react';
 import { Calendar } from 'react-calendar';
 import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 
 import '../../../assets/css/Calendar.css';
+import { DEFAULT_DATE_FORMAT } from '../../../utils';
+import Divider from './Divider';
 
 interface DecentDatePickerProps {
   minDate?: Date;
@@ -13,6 +16,30 @@ interface DecentDatePickerProps {
 
 type DateOrNull = Date | null;
 type OnDateChangeValue = DateOrNull | [DateOrNull, DateOrNull];
+
+function SelectedDateDisplay({ selectedDate }: { selectedDate: DateOrNull }) {
+  return (
+    <Flex
+      gap="0.5rem"
+      ml="1rem"
+      p="0.5rem 1rem"
+      width="11.125rem"
+      bg="neutral-1"
+      borderWidth="1px"
+      borderRadius="0.25rem"
+      borderColor="neutral-3"
+    >
+      <Icon
+        as={CalendarBlank}
+        boxSize="24px"
+        color="neutral-5"
+      />
+      <Box color="neutral-7">
+        {(selectedDate && format(selectedDate, DEFAULT_DATE_FORMAT)) ?? 'Select'}
+      </Box>
+    </Flex>
+  );
+}
 
 export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
   const isToday = (someDate: Date) => {
@@ -24,7 +51,7 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
     );
   };
 
-  const [selectedDate, setSelectedDate] = useState<DateOrNull>();
+  const [selectedDate, setSelectedDate] = useState<DateOrNull>(null);
 
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
   const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
@@ -33,13 +60,18 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
   const todayDotLeftMargin = useBreakpointValue({ base: '5vw', md: '1.35rem' });
 
   return (
-    <Box
-      display="flex"
+    <Flex
+      // display="flex"
+      flexDir="column"
       justifySelf="center"
       borderRadius="0.5rem"
       boxShadow={boxShadow}
       maxW={maxBoxW}
+      bg="neutral-2"
+      pt="1.5rem"
     >
+      <SelectedDateDisplay selectedDate={selectedDate} />
+      <Divider my="1.5rem" />
       <Calendar
         formatShortWeekday={(_, date) => date.toString().slice(0, 2)}
         minDate={minDate || new Date()}
@@ -65,6 +97,6 @@ export function DecentDatePicker({ minDate, onChange }: DecentDatePickerProps) {
           }
         }}
       />
-    </Box>
+    </Flex>
   );
 }
