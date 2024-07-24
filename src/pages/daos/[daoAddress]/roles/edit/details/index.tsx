@@ -131,7 +131,6 @@ export default function RoleEditDetails() {
   const { values, setFieldValue, touched, setTouched } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
-  const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
 
   const blocker: Blocker = useBlocker(({ currentLocation, nextLocation }) => {
     return (
@@ -166,22 +165,22 @@ export default function RoleEditDetails() {
           onClose={() => {}}
           onOpen={() => {}}
           headerContent={null}
-          initialHeight='23rem'
+          initialHeight="23rem"
           closeOnOverlayClick={false}
         >
-            <UnsavedChangesWarningContent
-              onDiscard={blocker.proceed}
-              onKeepEditing={() => {
-                setFieldValue('roleEditing', backupRoleEditing.current);
-                setTouched({ roleEditing: backupTouched.current });
-                blocker.reset();
-              }}
-            />
+          <UnsavedChangesWarningContent
+            onDiscard={blocker.proceed}
+            onKeepEditing={() => {
+              setFieldValue('roleEditing', backupRoleEditing.current);
+              setTouched({ roleEditing: backupTouched.current });
+              blocker.reset();
+            }}
+          />
         </DraggableDrawer>
         // </Hide>
       )}
       <FieldArray name="hats">
-        {({ remove, push }) => (
+        {({ push }) => (
           <>
             <Show below="md">
               <Portal>
@@ -205,12 +204,7 @@ export default function RoleEditDetails() {
                       gap="0.5rem"
                       alignItems="center"
                       aria-label={t('editRoles')}
-                      onClick={() => {
-                        if (hatIndex === -1) {
-                          remove(hatIndex);
-                        }
-                        goBackToRolesEdit();
-                      }}
+                      onClick={goBackToRolesEdit}
                     >
                       <Icon
                         as={ArrowLeft}
