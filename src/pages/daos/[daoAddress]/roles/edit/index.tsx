@@ -194,6 +194,9 @@ function RolesEdit() {
     navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatId));
   };
 
+  const hatsTreeLoading = hatsTree === undefined;
+  const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
+
   return (
     <Formik<RoleFormValues>
       initialValues={initialValues}
@@ -235,7 +238,7 @@ function RolesEdit() {
             </Show>
             <Show below="md">
               {hatsTree === undefined && <RoleCardLoading />}
-              {(hatsTree === null || !values.hats.length) && <RoleCardNoRoles />}
+              {showNoRolesCard && values.hats.length === 0 && <RoleCardNoRoles />}
               {values.hats.map(hat => (
                 <RoleCardEdit
                   key={hat.id}
