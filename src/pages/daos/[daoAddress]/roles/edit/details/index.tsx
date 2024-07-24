@@ -131,11 +131,13 @@ export default function RoleEditDetails() {
   const { values, setFieldValue, touched, setTouched } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
+  
+  const [ wasRoleActuallyEdited, setWasRoleActuallyEdited] = useState(false);
 
   const blocker: Blocker = useBlocker(({ currentLocation, nextLocation }) => {
     return (
       !!values.roleEditing &&
-      !!touched.roleEditing &&
+      !!touched.roleEditing && wasRoleActuallyEdited &&
       currentLocation.pathname !== nextLocation.pathname
     );
   });
@@ -151,9 +153,13 @@ export default function RoleEditDetails() {
     backupRoleEditing.current = values.roleEditing;
     backupTouched.current = touched.roleEditing;
 
-    setTouched({});
-    setFieldValue('roleEditing', undefined);
-    navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true });
+    setWasRoleActuallyEdited(values.roleEditing !== undefined)
+    
+    setTimeout(() => {
+      setTouched({});
+      setFieldValue('roleEditing', undefined);
+      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true });
+    }, 50);
   };
 
   return (
