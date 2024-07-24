@@ -1,5 +1,6 @@
 import { Button, Flex, Text } from '@chakra-ui/react';
 import { Trash, WarningCircle } from '@phosphor-icons/react';
+import { useTranslation } from 'react-i18next';
 
 interface UnsavedChangesWarningContentProps {
   onDiscard: () => void;
@@ -10,6 +11,7 @@ export function UnsavedChangesWarningContent({
   onDiscard,
   onKeepEditing,
 }: UnsavedChangesWarningContentProps) {
+  const { t } = useTranslation(['roles']);
   return (
     <>
       <Flex
@@ -23,15 +25,14 @@ export function UnsavedChangesWarningContent({
           mt="1rem"
           textStyle="display-xl"
         >
-          Unsaved Changes
+          {t('unsavedChanges')}
         </Text>
         <Text
           mt="0.5rem"
           textStyle="body-base"
           textAlign="center"
         >
-          You have unsaved changes that will be lost if you continue. Do you want to discard your
-          changes?
+          {t('unsavedChangesDescription')}
         </Text>
       </Flex>
       <Flex
@@ -48,13 +49,13 @@ export function UnsavedChangesWarningContent({
           px="2rem"
           onClick={onDiscard}
         >
-          Discard
+          {t('discardChanges')}
         </Button>
         <Button
           onClick={onKeepEditing}
           px="2rem"
         >
-          Keep Editing
+          {t('keepEditing')}
         </Button>
       </Flex>
     </>
