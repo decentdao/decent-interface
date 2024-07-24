@@ -1,7 +1,7 @@
 import { Box, Button, Flex, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik, FormikHelpers } from 'formik';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -17,6 +17,7 @@ import {
   getNewRole,
   EditBadgeStatus,
 } from '../../../../../components/pages/Roles/types';
+import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -26,11 +27,13 @@ import {
   prepareCreateTopHatProposalData,
   prepareEditHatsProposalData,
 } from '../../../../../hooks/utils/rolesProposalFunctions';
+import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBlocker';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import useIPFSClient from '../../../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../../state/useRolesState';
 import { ProposalExecuteData } from '../../../../../types';
+import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
@@ -188,6 +191,10 @@ function RolesEdit() {
     };
   }, [hatsTree?.roleHats, safe?.nextNonce]);
 
+  const [hasEditedRoles, setHasEditedRoles] = useState(false);
+
+  const blocker = useNavigationBlocker({ hasEditedRoles });
+
   if (daoAddress === null) return null;
 
   const showRoleEditDetails = (hatId: Hex) => {
@@ -207,6 +214,23 @@ function RolesEdit() {
     >
       {({ handleSubmit, values, touched, setFieldValue }) => (
         <form onSubmit={handleSubmit}>
+          {blocker.state === 'blocked' && (
+            // <Hide above="md">
+            <DraggableDrawer
+              isOpen
+              onClose={() => {}}
+              onOpen={() => {}}
+              headerContent={null}
+              initialHeight="23rem"
+              closeOnOverlayClick={false}
+            >
+              <UnsavedChangesWarningContent
+                onDiscard={blocker.proceed}
+                onKeepEditing={blocker.reset}
+              />
+            </DraggableDrawer>
+            // </Hide>
+          )}
           <Box>
             <PageHeader
               title={t('roles')}
@@ -260,9 +284,16 @@ function RolesEdit() {
           >
             <Button
               variant="tertiary"
-              onClick={() =>
-                navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress), { replace: true })
-              }
+              onClick={() => {
+                setHasEditedRoles(values.hats.some(hat => !!hat.editedRole));
+                setTimeout(
+                  () =>
+                    navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress), {
+                      replace: true,
+                    }),
+                  50,
+                );
+              }}
             >
               {t('cancel', { ns: 'common' })}
             </Button>

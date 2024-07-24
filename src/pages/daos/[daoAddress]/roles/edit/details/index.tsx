@@ -15,7 +15,7 @@ import { ArrowLeft, DotsThree, Trash, X } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Blocker, useBlocker, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Hex, isHex } from 'viem';
 import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFormTabs';
 import {
@@ -30,6 +30,7 @@ import {
   useHeaderHeight,
 } from '../../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../../constants/routes';
+import { useNavigationBlocker } from '../../../../../../hooks/utils/useNavigationBlocker';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { UnsavedChangesWarningContent } from '../unsavedChangesWarningContent';
@@ -134,14 +135,8 @@ export default function RoleEditDetails() {
 
   const [wasRoleActuallyEdited, setWasRoleActuallyEdited] = useState(false);
 
-  const blocker: Blocker = useBlocker(({ currentLocation, nextLocation }) => {
-    return (
-      !!values.roleEditing &&
-      !!touched.roleEditing &&
-      wasRoleActuallyEdited &&
-      currentLocation.pathname !== nextLocation.pathname
-    );
-  });
+  const editRolesFormikContext = useFormikContext<RoleFormValues>();
+  const blocker = useNavigationBlocker({ wasRoleActuallyEdited, ...editRolesFormikContext });
 
   const backupRoleEditing = useRef(values.roleEditing);
   const backupTouched = useRef(touched.roleEditing);
