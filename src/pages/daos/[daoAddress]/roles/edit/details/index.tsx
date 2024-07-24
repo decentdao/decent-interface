@@ -131,13 +131,14 @@ export default function RoleEditDetails() {
   const { values, setFieldValue, touched, setTouched } = useFormikContext<RoleFormValues>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
-  
-  const [ wasRoleActuallyEdited, setWasRoleActuallyEdited] = useState(false);
+
+  const [wasRoleActuallyEdited, setWasRoleActuallyEdited] = useState(false);
 
   const blocker: Blocker = useBlocker(({ currentLocation, nextLocation }) => {
     return (
       !!values.roleEditing &&
-      !!touched.roleEditing && wasRoleActuallyEdited &&
+      !!touched.roleEditing &&
+      wasRoleActuallyEdited &&
       currentLocation.pathname !== nextLocation.pathname
     );
   });
@@ -153,8 +154,8 @@ export default function RoleEditDetails() {
     backupRoleEditing.current = values.roleEditing;
     backupTouched.current = touched.roleEditing;
 
-    setWasRoleActuallyEdited(values.roleEditing !== undefined)
-    
+    setWasRoleActuallyEdited(values.roleEditing !== undefined);
+
     setTimeout(() => {
       setTouched({});
       setFieldValue('roleEditing', undefined);
