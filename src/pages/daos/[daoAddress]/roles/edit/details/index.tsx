@@ -136,7 +136,9 @@ export default function RoleEditDetails() {
   const [wasRoleActuallyEdited, setWasRoleActuallyEdited] = useState(false);
 
   const editRolesFormikContext = useFormikContext<RoleFormValues>();
-  const blocker = useNavigationBlocker({ wasRoleActuallyEdited, ...editRolesFormikContext });
+  const blocker = useNavigationBlocker({
+    roleEditDetailsNavigationBlockerParams: { wasRoleActuallyEdited, ...editRolesFormikContext },
+  });
 
   const backupRoleEditing = useRef(values.roleEditing);
   const backupTouched = useRef(touched.roleEditing);

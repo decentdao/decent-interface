@@ -12,15 +12,28 @@ interface RoleEditPageNavigationBlockerParams {
   hasEditedRoles: boolean;
 }
 
-export const useNavigationBlocker = (
-  navigationBlockDecisionParams:
-    | RoleEditDetailsNavigationBlockerParams
-    | RoleEditPageNavigationBlockerParams,
-) => {
+interface NavigationBlockDecisionParams {
+  roleEditPageNavigationBlockerParams?: RoleEditPageNavigationBlockerParams;
+  roleEditDetailsNavigationBlockerParams?: RoleEditDetailsNavigationBlockerParams;
+}
+
+export const useNavigationBlocker = ({
+  roleEditDetailsNavigationBlockerParams,
+  roleEditPageNavigationBlockerParams,
+}: NavigationBlockDecisionParams) => {
+  console.log({
+    params: {
+      roleEditDetailsNavigationBlockerParams,
+      roleEditPageNavigationBlockerParams,
+    },
+  });
+
   const blocker: Blocker = useBlocker(({ currentLocation, nextLocation }) => {
-    if (currentLocation.pathname === `/${DAO_ROUTES.rolesEditDetails.path}`) {
-      const { wasRoleActuallyEdited, values, touched } =
-        navigationBlockDecisionParams as RoleEditDetailsNavigationBlockerParams;
+    if (
+      currentLocation.pathname === `/${DAO_ROUTES.rolesEditDetails.path}` &&
+      !!roleEditDetailsNavigationBlockerParams
+    ) {
+      const { wasRoleActuallyEdited, values, touched } = roleEditDetailsNavigationBlockerParams;
 
       return (
         !!values.roleEditing &&
@@ -30,9 +43,11 @@ export const useNavigationBlocker = (
       );
     }
 
-    if (currentLocation.pathname === `/${DAO_ROUTES.rolesEdit.path}`) {
-      const { hasEditedRoles } =
-        navigationBlockDecisionParams as RoleEditPageNavigationBlockerParams;
+    if (
+      currentLocation.pathname === `/${DAO_ROUTES.rolesEdit.path}` &&
+      !!roleEditPageNavigationBlockerParams
+    ) {
+      const { hasEditedRoles } = roleEditPageNavigationBlockerParams;
 
       return (
         hasEditedRoles &&

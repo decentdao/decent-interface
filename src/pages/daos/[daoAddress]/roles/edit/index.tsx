@@ -193,7 +193,7 @@ function RolesEdit() {
 
   const [hasEditedRoles, setHasEditedRoles] = useState(false);
 
-  const blocker = useNavigationBlocker({ hasEditedRoles });
+  const blocker = useNavigationBlocker({ roleEditPageNavigationBlockerParams: { hasEditedRoles } });
 
   if (daoAddress === null) return null;
 
