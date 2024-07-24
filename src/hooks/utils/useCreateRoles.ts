@@ -379,6 +379,7 @@ export default function useCreateRoles() {
           const roleHat = hatsTree.roleHats.find(hat => hat.id === hatId);
           if (roleHat) {
             if (roleHat.payroll) {
+              // @todo Do not add flush out stream transaction if available balance to withdraw is 0
               const { wrappedFlushStreamTx, cancelStreamTx } = prepareDeleteHatStreamTx(
                 roleHat.payroll,
                 roleHat.wearer,
@@ -406,6 +407,7 @@ export default function useCreateRoles() {
               });
             }
             if (roleHat.vesting) {
+              // @todo Do not add flush out stream transaction if available balance to withdraw is 0
               const { wrappedFlushStreamTx, cancelStreamTx } = prepareDeleteHatStreamTx(
                 roleHat.vesting,
                 roleHat.wearer,
@@ -458,6 +460,7 @@ export default function useCreateRoles() {
             const roleHat = hatsTree.roleHats.find(hat => hat.id === id);
             if (roleHat && (roleHat.payroll || roleHat.vesting)) {
               if (roleHat.payroll) {
+                // @todo Do not add flush out stream transaction if available balance to withdraw is 0
                 const wrappedFlushStreamTx = prepareChangeHatWearerTx(
                   roleHat.payroll,
                   roleHat.wearer,
@@ -484,6 +487,7 @@ export default function useCreateRoles() {
                 });
               }
               if (roleHat.vesting) {
+                // @todo Do not add flush out stream transaction if available balance to withdraw is 0
                 const wrappedFlushStreamTx = prepareChangeHatWearerTx(
                   roleHat.vesting,
                   roleHat.wearer,
