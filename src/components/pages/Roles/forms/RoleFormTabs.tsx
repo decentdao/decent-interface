@@ -46,7 +46,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
   const { addressPrefix } = useNetworkConfig();
 
   const { t } = useTranslation(['roles']);
-  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, errors, setFieldValue, setTouched } = useFormikContext<RoleFormValues>();
 
   const existingRoleHat = useMemo(
     () =>
@@ -195,6 +195,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
 
             setFieldValue('roleEditing', undefined);
             setTimeout(() => {
+              setTouched({});
               navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
             }, 50);
           }}
