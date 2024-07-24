@@ -15,10 +15,10 @@ export function UnsavedChangesWarningContent({
   return (
     <>
       <Flex
-        height="full"
         direction="column"
         alignItems="center"
-        my="1.5rem"
+        px="4rem"
+        py="2rem"
       >
         <WarningCircle size="2.5rem" />
         <Text

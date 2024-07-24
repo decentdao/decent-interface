@@ -4,7 +4,6 @@ import {
   Drawer,
   DrawerBody,
   DrawerContent,
-  DrawerOverlay,
   Flex,
   Icon,
   IconButton,
@@ -24,11 +23,10 @@ import {
   EditedRole,
   RoleFormValues,
 } from '../../../../../../components/pages/Roles/types';
+import DraggableDrawer from '../../../../../../components/ui/containers/DraggableDrawer';
 import {
   CARD_SHADOW,
-  MOBILE_DRAWER_OVERLAY,
   NEUTRAL_2_82_TRANSPARENT,
-  SEXY_BOX_SHADOW_T_T,
   useHeaderHeight,
 } from '../../../../../../constants/common';
 import { DAO_ROUTES } from '../../../../../../constants/routes';
@@ -163,24 +161,14 @@ export default function RoleEditDetails() {
     <>
       {blocker.state === 'blocked' && (
         // <Hide above="md">
-        <Drawer
-          placement="bottom"
+        <DraggableDrawer
           isOpen
           onClose={() => {}}
+          onOpen={() => {}}
+          headerContent={null}
+          initialHeight='23rem'
+          closeOnOverlayClick={false}
         >
-          <DrawerOverlay
-            bg={MOBILE_DRAWER_OVERLAY}
-            backdropFilter="blur(6px)"
-          />
-          <DrawerContent
-            bg={NEUTRAL_2_82_TRANSPARENT}
-            border="none"
-            borderTopRightRadius="1rem"
-            borderBottomRightRadius="1rem"
-            boxShadow={SEXY_BOX_SHADOW_T_T}
-            py="2rem"
-            px="4rem"
-          >
             <UnsavedChangesWarningContent
               onDiscard={blocker.proceed}
               onKeepEditing={() => {
@@ -189,8 +177,7 @@ export default function RoleEditDetails() {
                 blocker.reset();
               }}
             />
-          </DrawerContent>
-        </Drawer>
+        </DraggableDrawer>
         // </Hide>
       )}
       <FieldArray name="hats">

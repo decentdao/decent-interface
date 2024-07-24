@@ -15,8 +15,10 @@ export interface DrawerControllingProps {
   onClose: () => void;
 }
 export interface DraggableDrawerProps extends DrawerControllingProps {
-  headerContent: ReactNode;
+  headerContent: ReactNode | null;
   children: ReactNode;
+  initialHeight?: string;
+  closeOnOverlayClick?: boolean;
 }
 
 export default function DraggableDrawer({
@@ -24,8 +26,10 @@ export default function DraggableDrawer({
   onClose,
   headerContent,
   children,
+  initialHeight,
+  closeOnOverlayClick,
 }: DraggableDrawerProps) {
-  const [drawerHeight, setDrawerHeight] = useState('50%');
+  const [drawerHeight, setDrawerHeight] = useState(initialHeight || '50%');
   const [isDragging, setIsDragging] = useState(false);
   const startY = useRef(0);
   const startHeight = useRef(0);
@@ -96,6 +100,7 @@ export default function DraggableDrawer({
         onClose();
       }}
       size="md"
+      closeOnOverlayClick={closeOnOverlayClick}
     >
       <DrawerOverlay
         bg={BACKGROUND_SEMI_TRANSPARENT}
