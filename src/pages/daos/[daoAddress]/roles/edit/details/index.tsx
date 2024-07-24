@@ -165,7 +165,7 @@ export default function RoleEditDetails() {
         // <Hide above="md">
         <Drawer
           placement="bottom"
-          isOpen={true}
+          isOpen
           onClose={() => {}}
         >
           <DrawerOverlay
@@ -182,7 +182,7 @@ export default function RoleEditDetails() {
             px="4rem"
           >
             <UnsavedChangesWarningContent
-              onDiscard={() => blocker.proceed()}
+              onDiscard={blocker.proceed}
               onKeepEditing={() => {
                 setFieldValue('roleEditing', backupRoleEditing.current);
                 setTouched({ roleEditing: backupTouched.current });
@@ -213,7 +213,8 @@ export default function RoleEditDetails() {
                     alignItems="center"
                     my="1.75rem"
                   >
-                    <Flex
+                    <Button
+                      variant="tertiary"
                       gap="0.5rem"
                       alignItems="center"
                       aria-label={t('editRoles')}
@@ -229,10 +230,10 @@ export default function RoleEditDetails() {
                         boxSize="1.5rem"
                       />
                       <Text textStyle="display-lg">{t('editRoles')}</Text>
-                    </Flex>
+                    </Button>
                     <Box position="relative">
                       <EditRoleMenu
-                        onRemove={() => goBackToRolesEdit()}
+                        onRemove={goBackToRolesEdit}
                         hatId={hatEditingId}
                       />
                     </Box>
@@ -250,9 +251,7 @@ export default function RoleEditDetails() {
               <Drawer
                 isOpen
                 placement="right"
-                onClose={() => {
-                  goBackToRolesEdit();
-                }}
+                onClose={goBackToRolesEdit}
               >
                 <DrawerContent
                   minW="50%"
@@ -272,22 +271,15 @@ export default function RoleEditDetails() {
                           variant="tertiary"
                           size="icon-sm"
                           aria-label="Close Drawer"
-                          as={X}
-                          onClick={() => {
-                            goBackToRolesEdit();
-                          }}
+                          icon={<X size="1.5rem" />}
+                          onClick={goBackToRolesEdit}
                         />
-                        <Text
-                          textStyle="body-base"
-                          color="white-0"
-                        >
-                          {t('editRole')}
-                        </Text>
+                        <Text textStyle="body-base">{t('editRole')}</Text>
                       </Flex>
                       <Box position="relative">
                         <EditRoleMenu
                           hatId={hatEditingId}
-                          onRemove={() => goBackToRolesEdit()}
+                          onRemove={goBackToRolesEdit}
                         />
                       </Box>
                     </Flex>

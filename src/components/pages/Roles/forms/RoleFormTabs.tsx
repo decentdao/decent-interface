@@ -67,9 +67,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
   const isMemberUpdated =
     !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
 
-  const isRoleActuallyEdited = useMemo(() => {
-    return isRoleNameUpdated || isRoleDescriptionUpdated || isMemberUpdated;
-  }, [isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
+  const isRoleActuallyEdited = isRoleNameUpdated || isRoleDescriptionUpdated || isMemberUpdated;
 
   const isInitialised = useRef(false);
 
