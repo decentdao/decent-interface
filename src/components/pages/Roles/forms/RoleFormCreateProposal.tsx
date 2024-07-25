@@ -6,11 +6,14 @@ import { useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
+import { ModalType } from '../../../ui/modals/ModalProvider';
+import { useFractalModal } from '../../../ui/modals/useFractalModal';
 import { RoleCardEdit } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
@@ -39,9 +42,10 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
     [navigate, addressPrefix, daoAddress],
   );
 
-  const handleCloseDrawer = () => {
-    setDrawerViewingRole(undefined);
-  };
+  const { canDelegate, canUserCreateProposal } = useCanUserCreateProposal();
+  const delegate = useFractalModal(ModalType.DELEGATE);
+
+  const handleCloseDrawer = () => setDrawerViewingRole(undefined);
 
   return (
     <Box maxW="736px">
@@ -141,12 +145,17 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         >
           {t('cancel', { ns: 'common' })}
         </Button>
-        <Button
-          onClick={submitForm}
-          isDisabled={isSubmitting}
-        >
-          {t('sendAssetsSubmit')}
-        </Button>
+        {canUserCreateProposal === false && canDelegate && (
+          <Button onClick={delegate}>{t('delegate', { ns: 'common' })}</Button>
+        )}
+        {canUserCreateProposal && (
+          <Button
+            onClick={submitForm}
+            isDisabled={isSubmitting}
+          >
+            {t('submitProposal')}
+          </Button>
+        )}
       </Flex>
       {drawerViewingRole !== undefined && (
         <>
