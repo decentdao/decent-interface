@@ -24,7 +24,7 @@ function DateDisplayBox({ date }: { date: DateOrNull }) {
     <Flex
       gap="0.5rem"
       p="0.5rem 1rem"
-      width="11.125rem"
+      width={{base: "100%", md: "11.125rem"}}
       bg="neutral-1"
       borderWidth="1px"
       borderRadius="0.25rem"
