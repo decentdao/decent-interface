@@ -3,6 +3,8 @@ import {
   Button,
   Flex,
   FormControl,
+  Grid,
+  GridItem,
   Icon,
   IconButton,
   Menu,
@@ -159,7 +161,6 @@ function VestingDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
       : values.roleEditing?.vesting?.scheduleFixedDate?.endDate;
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
   return (
     <Field name={`roleEditing.vesting.scheduleFixedDate.${type}`}>
       {() => (
@@ -170,6 +171,7 @@ function VestingDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
               variant="unstyled"
               p="0"
               flex={1}
+              w="full"
             >
               <DatePickerTrigger selectedDate={selectedDate} />
             </Button>
@@ -229,20 +231,37 @@ function VestingFixedDate() {
     <Box>
       <Text textStyle="label-base"> {t('fixedDates')} </Text>
       <FormControl my="1rem">
-        <Flex
-          gap={{ base: '0', md: '0.5rem' }}
+        <Grid
+          gridTemplateAreas={{
+            base: `"start arrow"
+          "end blank"`,
+            sm: `"start arrow end"`,
+          }}
+          gap="0.5rem"
+          gridTemplateColumns={{
+            base: '1fr max-content',
+            sm: '1fr 1.5rem 1fr',
+          }}
           alignItems="center"
-          justifyContent="space-between"
-          wrap={{ base: 'wrap', md: 'nowrap' }}
         >
-          <VestingDatePicker type="startDate" />
-          <Icon
-            as={ArrowRight}
-            boxSize="1.5rem"
-            color="lilac-0"
-          />
-          <VestingDatePicker type="endDate" />
-        </Flex>
+          <GridItem area="start">
+            <VestingDatePicker type="startDate" />
+          </GridItem>
+          <GridItem
+            area="arrow"
+            display="flex"
+            alignItems="center"
+          >
+            <Icon
+              as={ArrowRight}
+              boxSize="1.5rem"
+              color="lilac-0"
+            />
+          </GridItem>
+          <GridItem area="end">
+            <VestingDatePicker type="endDate" />
+          </GridItem>
+        </Grid>
       </FormControl>
     </Box>
   );
