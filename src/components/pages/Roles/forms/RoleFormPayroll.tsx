@@ -131,7 +131,7 @@ function PaymentStartDatePicker() {
             </Show>
 
             <Show above="md">
-              <Menu placement="top">
+              <Menu placement="top-start">
                 <>
                   <MenuButton
                     as={Button}
