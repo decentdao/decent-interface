@@ -24,7 +24,7 @@ import { useRolesState } from '../../state/useRolesState';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
-import useCreateSablierStream from '../streams/useSablierStream';
+import useCreateSablierStream from '../streams/useCreateSablierStream';
 
 const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   return JSON.stringify({
