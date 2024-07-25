@@ -30,7 +30,9 @@ export function AssetSelector({ formName }: { formName: 'vesting' | 'payroll' })
     treasury: { assetsFungible },
   } = useFractal();
   const fungibleAssetsWithBalance = assetsFungible.filter(
-    asset => parseFloat(asset.balance) > 0 && asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
+    asset =>
+      parseFloat(asset.balance) > 0 &&
+      asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
   );
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const selectedAsset = values.roleEditing?.[formName]?.asset;
