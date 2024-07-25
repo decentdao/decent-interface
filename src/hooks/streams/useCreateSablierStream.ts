@@ -1,13 +1,8 @@
 import { useCallback } from 'react';
-import { getAddress, zeroAddress, encodeFunctionData, erc20Abi, Address, Hex } from 'viem';
+import { getAddress, zeroAddress, encodeFunctionData, erc20Abi, Address } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
 import SablierV2LockupTranchedAbi from '../../assets/abi/SablierV2LockupTranched';
-import {
-  BaseSablierStream,
-  Frequency,
-  SablierAsset,
-  SablierPayroll,
-} from '../../components/pages/Roles/types';
+import { BaseSablierStream } from '../../components/pages/Roles/types';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -17,15 +12,6 @@ import {
   StreamRelativeSchedule,
   StreamSchedule,
 } from '../../types/sablier';
-
-type DynamicOrTranchedStreamInputs = {
-  frequencyNumber: number;
-  frequency: Frequency;
-  totalAmount: string;
-  asset: SablierAsset;
-  recipient: Address;
-  startDate: number;
-};
 
 type LinearStreamInputs = {
   totalAmount: string;
@@ -37,7 +23,7 @@ type LinearStreamInputs = {
 
 export default function useCreateSablierStream() {
   const {
-    contracts: { sablierV2LockupTranched, sablierV2LockupLinear, sablierV2Batch },
+    contracts: { sablierV2LockupLinear, sablierV2Batch },
   } = useNetworkConfig();
   const {
     node: { daoAddress },
@@ -78,64 +64,6 @@ export default function useCreateSablierStream() {
     [daoAddress],
   );
 
-  const prepareDynamicOrTranchedStream = useCallback(
-    ({
-      frequencyNumber,
-      frequency,
-      totalAmount,
-      asset,
-      recipient,
-      startDate,
-    }: DynamicOrTranchedStreamInputs) => {
-      const exponent = 10n ** BigInt(asset.decimals);
-      const totalAmountInTokenDecimals = BigInt(totalAmount) * exponent;
-      const segmentAmount = totalAmountInTokenDecimals / BigInt(frequencyNumber);
-
-      // Sablier sets startTime to block.timestamp - so we need to simulate startTime through streaming 0 tokens at first tranche till startDate
-      const delayingByStartDateTranche = {
-        amount: 0n,
-        exponent,
-        duration: Math.round((startDate - Date.now()) / 1000),
-      };
-      const tranches: { amount: bigint; exponent: bigint; duration: number }[] = [
-        delayingByStartDateTranche,
-      ];
-
-      let days = 30;
-      if (frequency === Frequency.Weekly) {
-        days = 7;
-      } else if (frequency === Frequency.EveryTwoWeeks) {
-        days = 14;
-      }
-      const duration = days * SECONDS_IN_DAY;
-
-      for (let i = 1; i <= frequencyNumber; i++) {
-        tranches.push({
-          amount: segmentAmount,
-          exponent,
-          duration,
-        });
-      }
-
-      const totalTranchesAmount = tranches.reduce((prev, curr) => prev + curr.amount, 0n);
-      if (totalTranchesAmount < totalAmountInTokenDecimals) {
-        // @dev We can't always equally divide between tranches, so we're putting the leftover into the very last tranche
-        tranches[tranches.length - 1].amount += totalAmountInTokenDecimals - totalTranchesAmount;
-      }
-
-      const tokenCalldata = prepareStreamTokenCallData(totalAmountInTokenDecimals);
-      const basicStreamData = prepareBasicStreamData(recipient, totalAmountInTokenDecimals);
-
-      const assembledStream = {
-        ...basicStreamData,
-        tranches, // Tranches array of tuples
-      };
-
-      return { tokenCalldata, assembledStream };
-    },
-    [prepareBasicStreamData, prepareStreamTokenCallData],
-  );
-
   const prepareLinearStream = useCallback(
     ({ totalAmount, asset, recipient, schedule, cliff }: LinearStreamInputs) => {
       const exponent = 10n ** BigInt(asset.decimals);
@@ -173,48 +101,6 @@ export default function useCreateSablierStream() {
       return { tokenCalldata, assembledStream };
     },
     [prepareBasicStreamData, prepareStreamTokenCallData],
-  );
-
-  const prepareBatchTranchedStreamCreation = useCallback(
-    (tranchedStreams: SablierPayroll[], recipients: Address[]) => {
-      if (tranchedStreams.length !== recipients.length) {
-        throw new Error(
-          'Parameters mismatch. Amount of created streams has to match amount of recipients',
-        );
-      }
-
-      const preparedStreamCreationTransactions: { calldata: Hex; targetAddress: Address }[] = [];
-      const preparedTokenApprovalsTransactions: { calldata: Hex; tokenAddress: Address }[] = [];
-
-      tranchedStreams.forEach((streamData, index) => {
-        const recipient = recipients[index];
-        const tokenAddress = streamData.asset.address;
-        // @todo - Smarter way would be to batch token approvals and streams creation, and not just build single approval + creation transactions for each stream
-        const { tokenCalldata, assembledStream } = prepareDynamicOrTranchedStream({
-          recipient,
-          totalAmount: streamData.amount.value,
-          asset: streamData.asset,
-          frequencyNumber: streamData.paymentFrequencyNumber,
-          frequency: streamData.paymentFrequency,
-          startDate: streamData.paymentStartDate.getTime(),
-        });
-
-        const sablierBatchCalldata = encodeFunctionData({
-          abi: SablierV2BatchAbi,
-          functionName: 'createWithDurationsLT', // Another option would be to use createWithTimestampsLT. Essentially they're doing the same, `WithDurations` just simpler for usage
-          args: [sablierV2LockupTranched, tokenAddress, [assembledStream]],
-        });
-
-        preparedStreamCreationTransactions.push({
-          calldata: sablierBatchCalldata,
-          targetAddress: sablierV2Batch,
-        });
-        preparedTokenApprovalsTransactions.push({ calldata: tokenCalldata, tokenAddress });
-      });
-
-      return { preparedStreamCreationTransactions, preparedTokenApprovalsTransactions };
-    },
-    [prepareDynamicOrTranchedStream, sablierV2Batch, sablierV2LockupTranched],
   );
 
   const prepareFlushStreamTx = useCallback((stream: BaseSablierStream, to: Address) => {
@@ -281,7 +167,6 @@ export default function useCreateSablierStream() {
 
   return {
     prepareCreateLinearLockupProposal,
-    prepareBatchTranchedStreamCreation,
     prepareFlushStreamTx,
     prepareCancelStreamTx,
   };

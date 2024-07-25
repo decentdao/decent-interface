@@ -2,7 +2,7 @@ import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, encodePacked, getContract, keccak256 } from 'viem';
 import { create } from 'zustand';
 import ERC6551RegistryAbi from '../assets/abi/ERC6551RegistryAbi';
-import { SablierPayroll, SablierVesting } from '../components/pages/Roles/types';
+import { SablierVesting } from '../components/pages/Roles/types';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -68,7 +68,6 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
-  payroll?: SablierPayroll;
   vesting?: SablierVesting;
 }
 

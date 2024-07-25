@@ -112,8 +112,7 @@ export default function useCreateRoles() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
 
   const { submitProposal } = useSubmitProposal();
-  const { prepareBatchTranchedStreamCreation, prepareFlushStreamTx, prepareCancelStreamTx } =
-    useCreateSablierStream();
+  const { prepareFlushStreamTx, prepareCancelStreamTx } = useCreateSablierStream();
   const ipfsClient = useIPFSClient();
 
   const navigate = useNavigate();
@@ -196,19 +195,11 @@ export default function useCreateRoles() {
           })),
       );
 
-      // Parse role with added payroll hats
-      const rolePayrollAddedHats = [
-        ...editedHats.filter(
-          hat => hat.editedRole?.status === EditBadgeStatus.Updated && !!hat.payroll,
-        ),
-      ];
-
       return {
         addedHats,
         removedHatIds,
         memberChangedHats,
         roleDetailsChangedHats,
-        rolePayrollAddedHats,
       };
     },
     [getHat, hatsTree?.topHat.smartAddress, uploadHatDescription],
@@ -325,7 +316,6 @@ export default function useCreateRoles() {
           id: Address;
           details: string;
         }[];
-        rolePayrollAddedHats: RoleValue[];
       },
     ) => {
       if (!hatsTree || !daoAddress) {
@@ -334,13 +324,7 @@ export default function useCreateRoles() {
 
       const adminHatId = hatsTree.adminHat.id;
       const topHatAccount = hatsTree.topHat.smartAddress;
-      const {
-        addedHats,
-        removedHatIds,
-        memberChangedHats,
-        roleDetailsChangedHats,
-        rolePayrollAddedHats,
-      } = edits;
+      const { addedHats, removedHatIds, memberChangedHats, roleDetailsChangedHats } = edits;
 
       const createAndMintHatsTxs: Hex[] = [];
       let removeHatTxs: Hex[] = [];
@@ -378,34 +362,6 @@ export default function useCreateRoles() {
         removeHatTxs = removedHatIds.map(hatId => {
           const roleHat = hatsTree.roleHats.find(hat => hat.id === hatId);
           if (roleHat) {
-            if (roleHat.payroll) {
-              // @todo Do not add flush out stream transaction if available balance to withdraw is 0
-              const { wrappedFlushStreamTx, cancelStreamTx } = prepareDeleteHatStreamTx(
-                roleHat.payroll,
-                roleHat.wearer,
-              );
-              hatPayrollHatRemovedTxs.push({
-                calldata: encodeFunctionData({
-                  abi: HatsAbi,
-                  functionName: 'transferHat',
-                  args: [BigInt(hatId), roleHat.wearer, daoAddress],
-                }),
-                targetAddress: hatsProtocol,
-              });
-              hatPayrollHatRemovedTxs.push({
-                calldata: wrappedFlushStreamTx,
-                targetAddress: roleHat.smartAddress,
-              });
-              hatPayrollHatRemovedTxs.push(cancelStreamTx);
-              hatPayrollHatRemovedTxs.push({
-                calldata: encodeFunctionData({
-                  abi: HatsAbi,
-                  functionName: 'transferHat',
-                  args: [BigInt(hatId), daoAddress, roleHat.wearer],
-                }),
-                targetAddress: hatsProtocol,
-              });
-            }
             if (roleHat.vesting) {
               // @todo Do not add flush out stream transaction if available balance to withdraw is 0
               const { wrappedFlushStreamTx, cancelStreamTx } = prepareDeleteHatStreamTx(
@@ -458,34 +414,7 @@ export default function useCreateRoles() {
         transferHatTxs = memberChangedHats
           .map(({ id, currentWearer, newWearer }) => {
             const roleHat = hatsTree.roleHats.find(hat => hat.id === id);
-            if (roleHat && (roleHat.payroll || roleHat.vesting)) {
-              if (roleHat.payroll) {
-                // @todo Do not add flush out stream transaction if available balance to withdraw is 0
-                const wrappedFlushStreamTx = prepareChangeHatWearerTx(
-                  roleHat.payroll,
-                  roleHat.wearer,
-                );
-                hatPayrollWearerChangedTxs.push({
-                  calldata: encodeFunctionData({
-                    abi: HatsAbi,
-                    functionName: 'transferHat',
-                    args: [BigInt(id), currentWearer, daoAddress],
-                  }),
-                  targetAddress: hatsProtocol,
-                });
-                hatPayrollWearerChangedTxs.push({
-                  calldata: wrappedFlushStreamTx,
-                  targetAddress: roleHat.smartAddress,
-                });
-                hatPayrollWearerChangedTxs.push({
-                  calldata: encodeFunctionData({
-                    abi: HatsAbi,
-                    functionName: 'transferHat',
-                    args: [BigInt(id), daoAddress, newWearer],
-                  }),
-                  targetAddress: hatsProtocol,
-                });
-              }
+            if (roleHat && roleHat.vesting) {
               if (roleHat.vesting) {
                 // @todo Do not add flush out stream transaction if available balance to withdraw is 0
                 const wrappedFlushStreamTx = prepareChangeHatWearerTx(
@@ -534,38 +463,18 @@ export default function useCreateRoles() {
         });
       }
 
-      if (rolePayrollAddedHats.length) {
-        const streamsData = rolePayrollAddedHats.map(role => role.payroll!);
-        const recipients = rolePayrollAddedHats.map(role => role.smartAddress);
-        const preparedPayrollTransactions = prepareBatchTranchedStreamCreation(
-          streamsData,
-          recipients,
-        );
-
-        hatPayrollTokenApprovalTxs = preparedPayrollTransactions.preparedTokenApprovalsTransactions;
-        hatPayrollAddedTxs = preparedPayrollTransactions.preparedStreamCreationTransactions;
-      }
-
       const proposalTransactions = {
         targets: [
-          ...hatPayrollHatRemovedTxs.map(({ targetAddress }) => targetAddress),
-          ...hatPayrollWearerChangedTxs.map(({ targetAddress }) => targetAddress),
           ...createAndMintHatsTxs.map(() => hatsProtocol),
           ...removeHatTxs.map(() => topHatAccount),
           ...transferHatTxs.map(() => hatsProtocol),
           ...hatDetailsChangedTxs.map(() => hatsProtocol),
-          ...hatPayrollTokenApprovalTxs.map(({ tokenAddress }) => tokenAddress),
-          ...hatPayrollAddedTxs.map(({ targetAddress }) => targetAddress),
         ],
         calldatas: [
-          ...hatPayrollHatRemovedTxs.map(({ calldata }) => calldata),
-          ...hatPayrollWearerChangedTxs.map(({ calldata }) => calldata),
           ...createAndMintHatsTxs,
           ...removeHatTxs,
           ...transferHatTxs,
           ...hatDetailsChangedTxs,
-          ...hatPayrollTokenApprovalTxs.map(({ calldata }) => calldata),
-          ...hatPayrollAddedTxs.map(({ calldata }) => calldata),
         ],
         metaData: proposalMetadata,
         values: [
@@ -582,14 +491,7 @@ export default function useCreateRoles() {
 
       return proposalTransactions;
     },
-    [
-      hatsProtocol,
-      hatsTree,
-      prepareBatchTranchedStreamCreation,
-      prepareChangeHatWearerTx,
-      prepareDeleteHatStreamTx,
-      daoAddress,
-    ],
+    [hatsProtocol, hatsTree, prepareChangeHatWearerTx, prepareDeleteHatStreamTx, daoAddress],
   );
 
   const createRolesEditProposal = useCallback(

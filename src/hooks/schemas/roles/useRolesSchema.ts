@@ -1,12 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import {
-  Frequency,
-  SablierPayroll,
-  SablierVesting,
-  RoleValue,
-} from '../../../components/pages/Roles/types';
+import { SablierVesting, RoleValue } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
@@ -43,30 +38,6 @@ export const useRolesSchema = () => {
                 wearer: Yup.string()
                   .required(t('roleInfoErrorMemberRequired'))
                   .test(addressValidationTest),
-                payroll: Yup.object()
-                  .default(undefined)
-                  .nullable()
-                  .when({
-                    is: (payroll: SablierPayroll) => payroll !== undefined,
-                    then: _payrollSchema =>
-                      _payrollSchema.shape({
-                        asset: assetValidationSchema,
-                        amount: bigIntValidationSchema,
-                        paymentFrequency: Yup.string()
-                          .oneOf([
-                            Frequency.Monthly.toString(),
-                            Frequency.EveryTwoWeeks.toString(),
-                            Frequency.Weekly.toString(),
-                          ])
-                          .required(t('roleInfoErrorPaymentFrequencyRequired')),
-                        paymentStartDate: Yup.date().required(
-                          t('roleInfoErrorPaymentStartDateRequired'),
-                        ),
-                        paymentFrequencyNumber: Yup.number().required(
-                          t('roleInfoErrorPaymentFrequencyNumberRequired'),
-                        ),
-                      }),
-                  }),
                 vesting: Yup.object()
                   .default(undefined)
                   .nullable()
