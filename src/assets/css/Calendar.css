@@ -86,10 +86,8 @@
 }
 
 .react-calendar__tile {
-  height: 2.5rem;
-  width: 2.5rem;
   max-width: 100%;
-  padding: 10px 6.6667px;
+  padding: 14px 10px;
   font-size: 0.833em;
 }
 
