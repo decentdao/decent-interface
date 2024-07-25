@@ -161,9 +161,7 @@ export default function RolesDetailsDrawer({
             </GridItem>
           </Grid>
           {/* @todo: proper styling here */}
-          <Vesting
-            vesting={vesting}
-          />
+          <Vesting vesting={vesting} />
         </DrawerBody>
       </DrawerContent>
     </Drawer>
