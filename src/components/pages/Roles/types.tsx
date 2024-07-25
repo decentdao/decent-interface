@@ -32,12 +32,6 @@ export interface SablierVesting extends BaseSablierStream {
   scheduleType: 'duration' | 'fixedDate';
 }
 
-export interface SablierPayroll extends BaseSablierStream {
-  paymentFrequency: Frequency;
-  paymentStartDate: Date;
-  paymentFrequencyNumber: number;
-}
-
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
   handleRoleClick: (hatId: Address) => void;
@@ -45,7 +39,6 @@ export interface RoleProps {
   name: string;
   wearerAddress: Address | undefined;
   vesting?: SablierVesting;
-  payroll?: SablierPayroll;
 }
 
 export interface RoleEditProps
@@ -96,7 +89,6 @@ export interface VestingDuration {
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
-  payroll?: SablierPayroll;
   vesting?: SablierVesting;
 }
 
@@ -124,20 +116,3 @@ export interface HatWearerChangedParams {
   currentWearer: Address;
   newWearer: Address;
 }
-
-export enum Frequency {
-  Monthly,
-  EveryTwoWeeks,
-  Weekly,
-}
-
-export const frequencyOptions: Record<string, string> = {
-  [Frequency.Monthly]: 'monthly',
-  [Frequency.EveryTwoWeeks]: 'everyTwoWeeks',
-  [Frequency.Weekly]: 'weekly',
-};
-export const frequencyAmountLabel: Record<string, string> = {
-  [Frequency.Monthly]: 'months',
-  [Frequency.EveryTwoWeeks]: 'weeks',
-  [Frequency.Weekly]: 'weeks',
-};

@@ -12,11 +12,7 @@ import {
 import { CaretRight, CaretDown } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  SablierPayroll,
-  SablierVesting,
-  frequencyOptions,
-} from '../../../../../components/pages/Roles/types';
+import { SablierVesting } from '../../../../../components/pages/Roles/types';
 
 type AccordionItemRowProps = {
   title: string;
@@ -41,16 +37,10 @@ function AccordionItemRow({ title, value, children }: AccordionItemRowProps) {
   );
 }
 
-export default function PayrollAndVesting({
-  payroll,
-  vesting,
-}: {
-  payroll?: SablierPayroll;
-  vesting?: SablierVesting;
-}) {
+export default function PayrollAndVesting({ vesting }: { vesting?: SablierVesting }) {
   const { t } = useTranslation('roles');
 
-  if (!payroll && !vesting) {
+  if (!vesting) {
     return null;
   }
 
@@ -59,71 +49,6 @@ export default function PayrollAndVesting({
       allowToggle
       allowMultiple
     >
-      {payroll && (
-        <AccordionItem
-          borderTop="none"
-          borderBottom="none"
-          padding="1rem"
-          bg="neutral-3"
-          borderRadius="0.5rem"
-        >
-          {({ isExpanded }) => {
-            return (
-              <>
-                <AccordionButton
-                  p={0}
-                  textStyle="display-lg"
-                  color="lilac-0"
-                  gap="0.5rem"
-                >
-                  {isExpanded ? <CaretDown /> : <CaretRight />}
-                  {t('payroll')}
-                </AccordionButton>
-                <AccordionPanel>
-                  <AccordionItemRow title={t('amount')}>
-                    <Flex
-                      gap="0.75rem"
-                      alignItems="center"
-                    >
-                      <Image
-                        src={payroll.asset.logo}
-                        fallbackSrc="/images/coin-icon-default.svg"
-                        alt={payroll.asset.symbol}
-                        w="2rem"
-                        h="2rem"
-                      />
-                      <Box>
-                        <Text textStyle="body-base">
-                          {payroll.amount.value} {payroll.asset.symbol}
-                        </Text>
-                        <Text
-                          color="neutral-7"
-                          textStyle="button-small"
-                        >
-                          {/* @todo - show amount in USD based off price of the asset */}
-                          {payroll.amount.value}
-                        </Text>
-                      </Box>
-                    </Flex>
-                  </AccordionItemRow>
-                  <AccordionItemRow
-                    title={t('frequency')}
-                    value={t(`${frequencyOptions[payroll.paymentFrequency]}Short`)}
-                  />
-                  <AccordionItemRow
-                    title={t('starting')}
-                    value={payroll.paymentStartDate.toISOString()}
-                  />
-                  <AccordionItemRow
-                    title={t('ending')}
-                    value={payroll.paymentStartDate.toISOString()} // @todo - calculate end date based off start date + frequency
-                  />
-                </AccordionPanel>
-              </>
-            );
-          }}
-        </AccordionItem>
-      )}
       {vesting && (
         <AccordionItem
           borderTop="none"
