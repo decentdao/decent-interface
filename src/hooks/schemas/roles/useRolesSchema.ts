@@ -4,8 +4,8 @@ import * as Yup from 'yup';
 import {
   Frequency,
   SablierPayroll,
+  SablierVesting,
   RoleValue,
-  RoleFormVestingValue,
 } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
@@ -17,26 +17,15 @@ export const useRolesSchema = () => {
     .shape({
       value: Yup.string(),
       bigintValue: Yup.mixed().nullable(),
+      // @todo - add validation for balance bigger than entered amount
+      // It's problematic at the moment due to how streams are passed into Zustand store
     })
-    .required()
-    .test({
-      name: 'isAmountValid',
-      message: t('roleInfoErrorAmountInvalid'),
-      test: (v, cxt) => {
-        const balance: string | undefined = cxt.parent.asset.balance;
-        if (balance === undefined || v.bigintValue === undefined || !v.value === undefined) {
-          return false;
-        }
-
-        return (v.bigintValue as bigint) <= BigInt(balance);
-      },
-    });
+    .required();
 
   const assetValidationSchema = Yup.object().shape({
     address: Yup.string(),
     symbol: Yup.string(),
     decimals: Yup.number(),
-    balance: Yup.string(),
   });
 
   const rolesSchema = useMemo(
@@ -82,7 +71,7 @@ export const useRolesSchema = () => {
                   .default(undefined)
                   .nullable()
                   .when({
-                    is: (vesting: RoleFormVestingValue) => vesting !== undefined,
+                    is: (vesting: SablierVesting) => vesting !== undefined,
                     then: _vestingSchema =>
                       _vestingSchema
                         .shape({

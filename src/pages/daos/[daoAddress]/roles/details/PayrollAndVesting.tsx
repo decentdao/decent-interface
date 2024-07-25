@@ -42,15 +42,15 @@ function AccordionItemRow({ title, value, children }: AccordionItemRowProps) {
 }
 
 export default function PayrollAndVesting({
-  payrollData,
-  vestingData,
+  payroll,
+  vesting,
 }: {
-  payrollData?: SablierPayroll;
-  vestingData?: SablierVesting;
+  payroll?: SablierPayroll;
+  vesting?: SablierVesting;
 }) {
   const { t } = useTranslation('roles');
 
-  if (!payrollData && !vestingData) {
+  if (!payroll && !vesting) {
     return null;
   }
 
@@ -59,7 +59,7 @@ export default function PayrollAndVesting({
       allowToggle
       allowMultiple
     >
-      {payrollData && (
+      {payroll && (
         <AccordionItem
           borderTop="none"
           borderBottom="none"
@@ -86,37 +86,37 @@ export default function PayrollAndVesting({
                       alignItems="center"
                     >
                       <Image
-                        src={payrollData.asset.logo}
+                        src={payroll.asset.logo}
                         fallbackSrc="/images/coin-icon-default.svg"
-                        alt={payrollData.asset.symbol}
+                        alt={payroll.asset.symbol}
                         w="2rem"
                         h="2rem"
                       />
                       <Box>
                         <Text textStyle="body-base">
-                          {payrollData.amount.value} {payrollData.asset.symbol}
+                          {payroll.amount.value} {payroll.asset.symbol}
                         </Text>
                         <Text
                           color="neutral-7"
                           textStyle="button-small"
                         >
                           {/* @todo - show amount in USD based off price of the asset */}
-                          {payrollData.amount.value}
+                          {payroll.amount.value}
                         </Text>
                       </Box>
                     </Flex>
                   </AccordionItemRow>
                   <AccordionItemRow
                     title={t('frequency')}
-                    value={t(`${frequencyOptions[payrollData.paymentFrequency]}Short`)}
+                    value={t(`${frequencyOptions[payroll.paymentFrequency]}Short`)}
                   />
                   <AccordionItemRow
                     title={t('starting')}
-                    value={payrollData.paymentStartDate.toISOString()}
+                    value={payroll.paymentStartDate.toISOString()}
                   />
                   <AccordionItemRow
                     title={t('ending')}
-                    value={payrollData.paymentStartDate.toISOString()} // @todo - calculate end date based off start date + frequency
+                    value={payroll.paymentStartDate.toISOString()} // @todo - calculate end date based off start date + frequency
                   />
                 </AccordionPanel>
               </>
@@ -124,7 +124,7 @@ export default function PayrollAndVesting({
           }}
         </AccordionItem>
       )}
-      {vestingData && (
+      {vesting && (
         <AccordionItem
           borderTop="none"
           borderBottom="none"
@@ -152,36 +152,32 @@ export default function PayrollAndVesting({
                       alignItems="center"
                     >
                       <Image
-                        src={vestingData.asset.logo}
+                        src={vesting.asset.logo}
                         fallbackSrc="/images/coin-icon-default.svg"
-                        alt={vestingData.asset.symbol}
+                        alt={vesting.asset.symbol}
                         w="2rem"
                         h="2rem"
                       />
                       <Box>
                         <Text textStyle="body-base">
-                          {vestingData.vestingAmount} {vestingData.asset.symbol}
+                          {vesting.amount.value} {vesting.asset.symbol}
                         </Text>
                         <Text
                           color="neutral-7"
                           textStyle="button-small"
                         >
-                          {vestingData.vestingAmountUSD}
+                          {vesting.amount.value}
                         </Text>
                       </Box>
                     </Flex>
                   </AccordionItemRow>
                   <AccordionItemRow
-                    title={t('frequency')}
-                    value={vestingData.vestingSchedule}
-                  />
-                  <AccordionItemRow
                     title={t('starting')}
-                    value={vestingData.vestingStartDate}
+                    value={vesting.scheduleFixedDate?.startDate?.toDateString()}
                   />
                   <AccordionItemRow
                     title={t('ending')}
-                    value={vestingData.vestingEndDate}
+                    value={vesting.scheduleFixedDate?.startDate?.toDateString()}
                   />
                 </AccordionPanel>
               </>

@@ -13,18 +13,26 @@ export interface SablierAsset {
   logo: string;
 }
 
-export interface SablierVesting {
-  asset: SablierAsset;
-  vestingSchedule: string;
-  vestingAmount: string;
-  vestingAmountUSD: string;
-  vestingStartDate: string;
-  vestingEndDate: string;
-}
-
-export interface SablierPayroll {
+export interface BaseSablierStream {
+  streamId?: string;
+  contractAddress?: Address;
   asset: SablierAsset;
   amount: BigIntValuePair;
+}
+
+export interface SablierVesting extends BaseSablierStream {
+  scheduleDuration?: {
+    vestingDuration: VestingDuration;
+    cliffDuration: VestingDuration;
+  };
+  scheduleFixedDate?: {
+    startDate: Date;
+    endDate: Date;
+  };
+  scheduleType: 'duration' | 'fixedDate';
+}
+
+export interface SablierPayroll extends BaseSablierStream {
   paymentFrequency: Frequency;
   paymentStartDate: Date;
   paymentFrequencyNumber: number;
@@ -36,8 +44,8 @@ export interface RoleProps {
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  vestingData?: SablierVesting;
-  payrollData?: SablierPayroll;
+  vesting?: SablierVesting;
+  payroll?: SablierPayroll;
 }
 
 export interface RoleEditProps
@@ -85,31 +93,11 @@ export interface VestingDuration {
   days: number;
 }
 
-export interface RoleFormVestingValue {
-  asset: {
-    address: Address;
-    name: string;
-    symbol: string;
-    decimals: number;
-    logo: string;
-  };
-  vestingAmount: BigIntValuePair;
-  scheduleDuration?: {
-    vestingDuration: VestingDuration;
-    cliffDuration: VestingDuration;
-  };
-  scheduleFixedDate?: {
-    startDate: Date;
-    endDate: Date;
-  };
-  scheduleType: 'duration' | 'fixedDate';
-}
-
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
   payroll?: SablierPayroll;
-  vesting?: RoleFormVestingValue;
+  vesting?: SablierVesting;
 }
 
 export interface RoleFormValues {

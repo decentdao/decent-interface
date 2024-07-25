@@ -130,12 +130,12 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
   );
 }
 
-function PayrollColumn({ payrollData }: { payrollData: SablierPayroll | undefined }) {
+function PayrollColumn({ payroll }: { payroll: SablierPayroll | undefined }) {
   const { t } = useTranslation(['roles', 'daoCreate']);
   return (
     <Td>
       <Flex flexDir="column">
-        {payrollData ? (
+        {payroll ? (
           <Box>
             <Flex
               alignItems="center"
@@ -143,30 +143,30 @@ function PayrollColumn({ payrollData }: { payrollData: SablierPayroll | undefine
               my="0.5rem"
             >
               <Image
-                src={payrollData.asset.logo}
+                src={payroll.asset.logo}
                 fallbackSrc="/images/coin-icon-default.svg"
-                alt={payrollData.asset.symbol}
+                alt={payroll.asset.symbol}
                 w="1.25rem"
                 h="1.25rem"
               />
-              {payrollData.amount.value}
+              {payroll.amount.value}
               <EtherscanLink
                 color="white-0"
                 _hover={{ bg: 'transparent' }}
                 textStyle="body-base"
                 padding={0}
                 borderWidth={0}
-                value={payrollData.asset.address}
+                value={payroll.asset.address}
                 type="token"
                 wordBreak="break-word"
               >
-                {payrollData.asset.symbol}
+                {payroll.asset.symbol}
               </EtherscanLink>
               <Text
                 color="white-0"
                 textStyle="body-base"
               >
-                {'/'} {t(`${frequencyOptions[payrollData.paymentFrequency]}Short`)}
+                {'/'} {t(`${frequencyOptions[payroll.paymentFrequency]}Short`)}
               </Text>
             </Flex>
           </Box>
@@ -183,11 +183,11 @@ function PayrollColumn({ payrollData }: { payrollData: SablierPayroll | undefine
   );
 }
 
-function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefined }) {
+function VestingColumn({ vesting }: { vesting: SablierVesting | undefined }) {
   const { t } = useTranslation(['daoCreate']);
   return (
     <Td>
-      {vestingData ? (
+      {vesting ? (
         <Box>
           <Flex
             textStyle="body-base"
@@ -197,27 +197,27 @@ function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefine
             my="0.5rem"
           >
             <Image
-              src={vestingData.asset.logo}
+              src={vesting.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={vestingData.asset.symbol}
+              alt={vesting.asset.symbol}
               w="1.25rem"
               h="1.25rem"
             />
-            {vestingData.vestingAmount}
+            {vesting.amount?.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}
               textStyle="body-base"
               padding={0}
               borderWidth={0}
-              value={vestingData.asset.address}
+              value={vesting.asset.address}
               type="token"
               wordBreak="break-word"
             >
-              {vestingData.asset.symbol}
+              {vesting.asset.symbol}
             </EtherscanLink>
             <Text>
-              {t('after')} {vestingData.vestingSchedule}
+              {t('after')} {vesting.scheduleDuration?.cliffDuration?.years}
             </Text>
           </Flex>
         </Box>
@@ -236,8 +236,8 @@ function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefine
 export function RolesRow({
   name,
   wearerAddress,
-  payrollData,
-  vestingData,
+  payroll,
+  vesting,
   handleRoleClick,
   hatId,
 }: RoleProps) {
@@ -256,8 +256,8 @@ export function RolesRow({
     >
       <RoleNameColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PayrollColumn payrollData={payrollData} />
-      <VestingColumn vestingData={vestingData} />
+      <PayrollColumn payroll={payroll} />
+      <VestingColumn vesting={vesting} />
     </Tr>
   );
 }
@@ -266,8 +266,8 @@ export function RolesRowEdit({
   name,
   wearerAddress,
   editStatus,
-  payrollData,
-  vestingData,
+  payroll,
+  vesting,
   handleRoleClick,
 }: RoleEditProps) {
   return (
@@ -285,8 +285,8 @@ export function RolesRowEdit({
     >
       <RoleNameEditColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PayrollColumn payrollData={payrollData} />
-      <VestingColumn vestingData={vestingData} />
+      <PayrollColumn payroll={payroll} />
+      <VestingColumn vesting={vesting} />
       <Td w="10%">
         <EditBadge editStatus={editStatus} />
       </Td>
@@ -328,9 +328,11 @@ export function RolesTable({
               <RolesRow
                 key={role.id.toString()}
                 hatId={role.id}
+                name={role.name}
                 wearerAddress={role.wearer}
                 handleRoleClick={handleRoleClick}
-                {...role}
+                payroll={role.payroll}
+                vesting={role.vesting}
               />
             ))}
           </Tbody>
@@ -380,7 +382,8 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
                 handleRoleClick(role.id);
               }}
               editStatus={role.editedRole?.status}
-              payrollData={role.payroll}
+              payroll={role.payroll}
+              vesting={role.vesting}
             />
           ))}
         </Tbody>

@@ -70,16 +70,16 @@ export function AvatarAndRoleName({
 }
 
 function PayrollAndVesting({
-  payrollData,
-  vestingData,
+  payroll,
+  vesting,
 }: {
-  payrollData: SablierPayroll | undefined;
-  vestingData: SablierVesting | undefined;
+  payroll: SablierPayroll | undefined;
+  vesting: SablierVesting | undefined;
 }) {
   const { t } = useTranslation(['roles']);
   return (
     <Flex flexDir="column">
-      {payrollData && (
+      {payroll && (
         <Box
           mt="1rem"
           ml="4rem"
@@ -98,32 +98,32 @@ function PayrollAndVesting({
             my="0.5rem"
           >
             <Image
-              src={payrollData.asset.logo}
+              src={payroll.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={payrollData.asset.symbol}
+              alt={payroll.asset.symbol}
               w="1.25rem"
               h="1.25rem"
             />
-            {payrollData.amount.value}
+            {payroll.amount.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}
               textStyle="body-base"
               padding={0}
               borderWidth={0}
-              value={payrollData.asset.address}
+              value={payroll.asset.address}
               type="token"
               wordBreak="break-word"
             >
-              {payrollData.asset.symbol}
+              {payroll.asset.symbol}
             </EtherscanLink>
             <Text>
-              {'/'} {t(`${frequencyOptions[payrollData.paymentFrequency]}Short`)}
+              {'/'} {t(`${frequencyOptions[payroll.paymentFrequency]}Short`)}
             </Text>
           </Flex>
         </Box>
       )}
-      {vestingData && (
+      {vesting && (
         <Box
           mt="0.25rem"
           ml="4rem"
@@ -142,27 +142,27 @@ function PayrollAndVesting({
             my="0.5rem"
           >
             <Image
-              src={vestingData.asset.logo}
+              src={vesting.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={vestingData.asset.symbol}
+              alt={vesting.asset.symbol}
               w="1.25rem"
               h="1.25rem"
             />
-            {vestingData.vestingAmount}
+            {vesting.amount.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}
               textStyle="body-base"
               padding={0}
               borderWidth={0}
-              value={vestingData.asset.address}
+              value={vesting.asset.address}
               type="token"
               wordBreak="break-word"
             >
-              {vestingData.asset.symbol}
+              {vesting.asset.symbol}
             </EtherscanLink>
             <Text>
-              {t('after')} {vestingData.vestingSchedule}
+              {t('after')} {vesting.scheduleDuration?.vestingDuration.years}
             </Text>
           </Flex>
         </Box>
@@ -174,8 +174,8 @@ function PayrollAndVesting({
 export function RoleCard({
   name,
   wearerAddress,
-  payrollData,
-  vestingData,
+  payroll,
+  vesting,
   editStatus,
   handleRoleClick,
   hatId,
@@ -202,8 +202,8 @@ export function RoleCard({
         </Flex>
       </Flex>
       <PayrollAndVesting
-        payrollData={payrollData}
-        vestingData={vestingData}
+        payroll={payroll}
+        vesting={vesting}
       />
     </Card>
   );
@@ -212,8 +212,8 @@ export function RoleCard({
 export function RoleCardEdit({
   name,
   wearerAddress,
-  payrollData,
-  vestingData,
+  payroll,
+  vesting,
   editStatus,
   handleRoleClick,
 }: RoleEditProps) {
@@ -239,8 +239,8 @@ export function RoleCardEdit({
         </Flex>
       </Flex>
       <PayrollAndVesting
-        payrollData={payrollData}
-        vestingData={vestingData}
+        payroll={payroll}
+        vesting={vesting}
       />
     </Card>
   );
