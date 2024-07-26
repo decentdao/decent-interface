@@ -5,6 +5,7 @@ import {
   DrawerBody,
   DrawerContent,
   Flex,
+  Hide,
   Icon,
   IconButton,
   Portal,
@@ -163,25 +164,25 @@ export default function RoleEditDetails() {
   return (
     <>
       {blocker.state === 'blocked' && (
-        // <Hide above="md">
-        <DraggableDrawer
-          isOpen
-          onClose={() => {}}
-          onOpen={() => {}}
-          headerContent={null}
-          initialHeight="23rem"
-          closeOnOverlayClick={false}
-        >
-          <UnsavedChangesWarningContent
-            onDiscard={blocker.proceed}
-            onKeepEditing={() => {
-              setFieldValue('roleEditing', backupRoleEditing.current);
-              setTouched({ roleEditing: backupTouched.current });
-              blocker.reset();
-            }}
-          />
-        </DraggableDrawer>
-        // </Hide>
+        <Hide above="md">
+          <DraggableDrawer
+            isOpen
+            onClose={() => {}}
+            onOpen={() => {}}
+            headerContent={null}
+            initialHeight="23rem"
+            closeOnOverlayClick={false}
+          >
+            <UnsavedChangesWarningContent
+              onDiscard={blocker.proceed}
+              onKeepEditing={() => {
+                setFieldValue('roleEditing', backupRoleEditing.current);
+                setTouched({ roleEditing: backupTouched.current });
+                blocker.reset();
+              }}
+            />
+          </DraggableDrawer>
+        </Hide>
       )}
       <FieldArray name="hats">
         {({ push }) => (

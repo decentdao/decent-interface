@@ -18,7 +18,7 @@ export function UnsavedChangesWarningContent({
         direction="column"
         alignItems="center"
         px="4rem"
-        py="2rem"
+        pb="2rem"
       >
         <WarningCircle size="2.5rem" />
         <Text

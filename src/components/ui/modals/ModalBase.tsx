@@ -31,7 +31,8 @@ export function ModalBase(props: ModuleBaseProps) {
       <ModalOverlay
         backgroundColor={BACKGROUND_SEMI_TRANSPARENT}
         backdropFilter="auto"
-        backdropBlur={props.isSearchInputModal ? '12px' : '0px'}
+        backdropBlur={'10px'}
+        zIndex={1400}
       />
       {props.isSearchInputModal ? (
         <ModalContent
@@ -50,26 +51,30 @@ export function ModalBase(props: ModuleBaseProps) {
           borderColor="neutral-4"
           padding="1.5rem"
         >
-          <Flex
-            color="lilac-0"
-            marginBottom="1rem"
-          >
-            <HStack>
-              {props.warn && <Warning size="20" />}
-              <Text
-                color="white-0"
-                textStyle="display-lg"
+          {props.title && (
+            <>
+              <Flex
+                color="lilac-0"
+                marginBottom="1rem"
               >
-                {props.title}
-              </Text>
-            </HStack>
-            <Spacer />
-            <X
-              cursor="pointer"
-              onClick={props.onClose}
-            />
-          </Flex>
-          <Divider marginBottom="1rem" />
+                <HStack>
+                  {props.warn && <Warning size="20" />}
+                  <Text
+                    color="white-0"
+                    textStyle="display-lg"
+                  >
+                    {props.title}
+                  </Text>
+                </HStack>
+                <Spacer />
+                <X
+                  cursor="pointer"
+                  onClick={props.onClose}
+                />
+              </Flex>
+              <Divider marginBottom="1rem" />
+            </>
+          )}
           {props.children}
         </ModalContent>
       )}

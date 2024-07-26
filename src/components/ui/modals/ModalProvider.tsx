@@ -1,6 +1,7 @@
 import { Portal, useDisclosure } from '@chakra-ui/react';
 import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { UnsavedChangesWarningContent } from '../../../pages/daos/[daoAddress]/roles/edit/unsavedChangesWarningContent';
 import AddSignerModal from '../../pages/DaoSettings/components/Signers/modals/AddSignerModal';
 import RemoveSignerModal from '../../pages/DaoSettings/components/Signers/modals/RemoveSignerModal';
 import { DAOSearch } from '../menus/DAOSearch';
@@ -29,6 +30,7 @@ export enum ModalType {
   COPY_PROPOSAL_TEMPLATE,
   CONFIRM_MODIFY_GOVERNANCE,
   SEARCH_SAFE,
+  WARN_UNSAVED_CHANGES,
 }
 
 export interface CurrentModal {
@@ -161,6 +163,20 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       case ModalType.SEARCH_SAFE:
         isSearchInput = true;
         modalContent = <DAOSearch closeDrawer={closeModal} />;
+        break;
+      case ModalType.WARN_UNSAVED_CHANGES:
+        modalContent = (
+          <UnsavedChangesWarningContent
+            onDiscard={() => {
+              current.props.discardChanges();
+              closeModal();
+            }}
+            onKeepEditing={() => {
+              current.props.keepEditing();
+              closeModal();
+            }}
+          />
+        );
         break;
       case ModalType.NONE:
       default:

@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Show } from '@chakra-ui/react';
+import { Box, Button, Flex, Hide, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik, FormikHelpers } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
@@ -215,21 +215,21 @@ function RolesEdit() {
       {({ handleSubmit, values, touched, setFieldValue }) => (
         <form onSubmit={handleSubmit}>
           {blocker.state === 'blocked' && (
-            // <Hide above="md">
-            <DraggableDrawer
-              isOpen
-              onClose={() => {}}
-              onOpen={() => {}}
-              headerContent={null}
-              initialHeight="23rem"
-              closeOnOverlayClick={false}
-            >
-              <UnsavedChangesWarningContent
-                onDiscard={blocker.proceed}
-                onKeepEditing={blocker.reset}
-              />
-            </DraggableDrawer>
-            // </Hide>
+            <Hide above="md">
+              <DraggableDrawer
+                isOpen
+                onClose={() => {}}
+                onOpen={() => {}}
+                headerContent={null}
+                initialHeight="23rem"
+                closeOnOverlayClick={false}
+              >
+                <UnsavedChangesWarningContent
+                  onDiscard={blocker.proceed}
+                  onKeepEditing={blocker.reset}
+                />
+              </DraggableDrawer>
+            </Hide>
           )}
           <Box>
             <PageHeader
