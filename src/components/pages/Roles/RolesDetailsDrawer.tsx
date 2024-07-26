@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { Hex, getAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import Vesting from '../../../pages/daos/[daoAddress]/roles/details/PayrollAndVesting';
+import PaymentDetails from '../../../pages/daos/[daoAddress]/roles/details/PaymentDetails';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import Avatar from '../../ui/page/Header/Avatar';
@@ -161,7 +161,7 @@ export default function RolesDetailsDrawer({
             </GridItem>
           </Grid>
           {/* @todo: proper styling here */}
-          <Vesting vesting={vesting} />
+          <PaymentDetails vesting={vesting} />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

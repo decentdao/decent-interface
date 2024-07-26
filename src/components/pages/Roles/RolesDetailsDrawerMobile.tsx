@@ -2,7 +2,7 @@ import { Flex, IconButton, Icon, Text, Box } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Hex } from 'viem';
-import PayrollAndVesting from '../../../pages/daos/[daoAddress]/roles/details/PayrollAndVesting';
+import PaymentDetails from '../../../pages/daos/[daoAddress]/roles/details/PaymentDetails';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useRolesState } from '../../../state/useRolesState';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
@@ -91,7 +91,7 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        <PayrollAndVesting vesting={vesting} />
+        <PaymentDetails vesting={vesting} />
       </Box>
     </DraggableDrawer>
   );

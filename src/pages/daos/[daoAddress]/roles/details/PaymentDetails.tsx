@@ -37,7 +37,7 @@ function AccordionItemRow({ title, value, children }: AccordionItemRowProps) {
   );
 }
 
-export default function PayrollAndVesting({ vesting }: { vesting?: SablierVesting }) {
+export default function PaymentDetails({ vesting }: { vesting?: SablierVesting }) {
   const { t } = useTranslation('roles');
 
   if (!vesting) {
