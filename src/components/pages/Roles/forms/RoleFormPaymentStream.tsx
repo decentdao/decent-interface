@@ -270,7 +270,7 @@ function VestingTabs() {
   );
 }
 
-export default function RoleFormVesting() {
+export default function RoleFormPaymentStream() {
   const { t } = useTranslation(['roles']);
   return (
     <Box
