@@ -12,7 +12,7 @@ import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
-import { RoleEditProps, RoleFormValues, RoleProps, SablierVesting } from './types';
+import { RoleEditProps, RoleFormValues, RoleProps, SablierPayment } from './types';
 
 function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
   const { t } = useTranslation(['roles']);
@@ -31,7 +31,7 @@ function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
       >
         <Th>{t('role')}</Th>
         <Th>{t('member')}</Th>
-        <Th>{t('vesting')}</Th>
+        <Th>{t('payment')}</Th>
         {addHiddenColumn && <Th w="10%" />}
       </Tr>
     </Thead>
@@ -122,11 +122,11 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
   );
 }
 
-function VestingColumn({ vesting }: { vesting: SablierVesting | undefined }) {
+function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
   const { t } = useTranslation(['daoCreate']);
   return (
     <Td>
-      {vesting ? (
+      {payment ? (
         <Box>
           <Flex
             textStyle="body-base"
@@ -136,27 +136,27 @@ function VestingColumn({ vesting }: { vesting: SablierVesting | undefined }) {
             my="0.5rem"
           >
             <Image
-              src={vesting.asset.logo}
+              src={payment.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={vesting.asset.symbol}
+              alt={payment.asset.symbol}
               w="1.25rem"
               h="1.25rem"
             />
-            {vesting.amount?.value}
+            {payment.amount?.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}
               textStyle="body-base"
               padding={0}
               borderWidth={0}
-              value={vesting.asset.address}
+              value={payment.asset.address}
               type="token"
               wordBreak="break-word"
             >
-              {vesting.asset.symbol}
+              {payment.asset.symbol}
             </EtherscanLink>
             <Text>
-              {t('after')} {vesting.scheduleDuration?.cliffDuration?.years}
+              {t('after')} {payment.scheduleDuration?.cliffDuration?.years}
             </Text>
           </Flex>
         </Box>
@@ -172,7 +172,7 @@ function VestingColumn({ vesting }: { vesting: SablierVesting | undefined }) {
   );
 }
 
-export function RolesRow({ name, wearerAddress, vesting, handleRoleClick, hatId }: RoleProps) {
+export function RolesRow({ name, wearerAddress, payment, handleRoleClick, hatId }: RoleProps) {
   return (
     <Tr
       sx={{
@@ -188,7 +188,7 @@ export function RolesRow({ name, wearerAddress, vesting, handleRoleClick, hatId 
     >
       <RoleNameColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <VestingColumn vesting={vesting} />
+      <PaymentColumn payment={payment} />
     </Tr>
   );
 }
@@ -197,7 +197,7 @@ export function RolesRowEdit({
   name,
   wearerAddress,
   editStatus,
-  vesting,
+  payment,
   handleRoleClick,
 }: RoleEditProps) {
   return (
@@ -215,7 +215,7 @@ export function RolesRowEdit({
     >
       <RoleNameEditColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <VestingColumn vesting={vesting} />
+      <PaymentColumn payment={payment} />
       <Td w="10%">
         <EditBadge editStatus={editStatus} />
       </Td>
@@ -260,7 +260,7 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearer}
                 handleRoleClick={handleRoleClick}
-                vesting={role.vesting}
+                payment={role.vesting}
               />
             ))}
           </Tbody>
@@ -310,7 +310,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
                 handleRoleClick(role.id);
               }}
               editStatus={role.editedRole?.status}
-              vesting={role.vesting}
+              payment={role.vesting}
             />
           ))}
         </Tbody>

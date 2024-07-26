@@ -81,7 +81,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
       <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
-          <Tab>{t('vesting')}</Tab>
+          <Tab>{t('paymentStream')}</Tab>
         </TabList>
         <TabPanels my="1.75rem">
           <TabPanel>

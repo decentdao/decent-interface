@@ -10,7 +10,7 @@ import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { RoleEditProps, RoleProps, SablierVesting } from './types';
+import { RoleEditProps, RoleProps, SablierPayment } from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -63,11 +63,11 @@ export function AvatarAndRoleName({
   );
 }
 
-function Vesting({ vesting }: { vesting: SablierVesting | undefined }) {
+function Payment({ payment }: { payment: SablierPayment | undefined }) {
   const { t } = useTranslation(['roles']);
   return (
     <Flex flexDir="column">
-      {vesting && (
+      {payment && (
         <Box
           mt="0.25rem"
           ml="4rem"
@@ -76,7 +76,7 @@ function Vesting({ vesting }: { vesting: SablierVesting | undefined }) {
             textStyle="button-small"
             color="neutral-7"
           >
-            {t('vesting')}
+            {t('payment')}
           </Text>
           <Flex
             textStyle="body-base"
@@ -86,27 +86,27 @@ function Vesting({ vesting }: { vesting: SablierVesting | undefined }) {
             my="0.5rem"
           >
             <Image
-              src={vesting.asset.logo}
+              src={payment.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={vesting.asset.symbol}
+              alt={payment.asset.symbol}
               w="1.25rem"
               h="1.25rem"
             />
-            {vesting.amount.value}
+            {payment.amount.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}
               textStyle="body-base"
               padding={0}
               borderWidth={0}
-              value={vesting.asset.address}
+              value={payment.asset.address}
               type="token"
               wordBreak="break-word"
             >
-              {vesting.asset.symbol}
+              {payment.asset.symbol}
             </EtherscanLink>
             <Text>
-              {t('after')} {vesting.scheduleDuration?.vestingDuration.years}
+              {t('after')} {payment.scheduleDuration?.vestingDuration.years}
             </Text>
           </Flex>
         </Box>
@@ -118,7 +118,7 @@ function Vesting({ vesting }: { vesting: SablierVesting | undefined }) {
 export function RoleCard({
   name,
   wearerAddress,
-  vesting,
+  payment,
   editStatus,
   handleRoleClick,
   hatId,
@@ -144,7 +144,7 @@ export function RoleCard({
           />
         </Flex>
       </Flex>
-      <Vesting vesting={vesting} />
+      <Payment payment={payment} />
     </Card>
   );
 }
@@ -152,7 +152,7 @@ export function RoleCard({
 export function RoleCardEdit({
   name,
   wearerAddress,
-  vesting,
+  payment,
   editStatus,
   handleRoleClick,
 }: RoleEditProps) {
@@ -177,7 +177,7 @@ export function RoleCardEdit({
           />
         </Flex>
       </Flex>
-      <Vesting vesting={vesting} />
+      <Payment payment={payment} />
     </Card>
   );
 }

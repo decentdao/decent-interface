@@ -7,7 +7,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useRolesState } from '../../../state/useRolesState';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import { AvatarAndRoleName } from './RoleCard';
-import { SablierVesting } from './types';
+import { SablierPayment } from './types';
 
 interface RoleDetailsDrawerMobileProps {
   roleHat: {
@@ -16,7 +16,7 @@ interface RoleDetailsDrawerMobileProps {
     wearer: string;
     description: string;
   };
-  vesting?: SablierVesting;
+  payment?: SablierPayment;
   onOpen?: () => void;
   onClose?: () => void;
   isOpen?: boolean;
@@ -29,7 +29,7 @@ export default function RolesDetailsDrawerMobile({
   onOpen,
   isOpen = true,
   onEdit,
-  vesting,
+  payment,
 }: RoleDetailsDrawerMobileProps) {
   const {
     node: { daoAddress },
@@ -91,7 +91,7 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        <PaymentDetails vesting={vesting} />
+        <PaymentDetails payment={payment} />
       </Box>
     </DraggableDrawer>
   );

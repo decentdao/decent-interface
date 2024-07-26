@@ -12,7 +12,7 @@ import {
 import { CaretRight, CaretDown } from '@phosphor-icons/react';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SablierVesting } from '../../../../../components/pages/Roles/types';
+import { SablierPayment } from '../../../../../components/pages/Roles/types';
 
 type AccordionItemRowProps = {
   title: string;
@@ -37,10 +37,10 @@ function AccordionItemRow({ title, value, children }: AccordionItemRowProps) {
   );
 }
 
-export default function PaymentDetails({ vesting }: { vesting?: SablierVesting }) {
+export default function PaymentDetails({ payment }: { payment?: SablierPayment }) {
   const { t } = useTranslation('roles');
 
-  if (!vesting) {
+  if (!payment) {
     return null;
   }
 
@@ -49,7 +49,7 @@ export default function PaymentDetails({ vesting }: { vesting?: SablierVesting }
       allowToggle
       allowMultiple
     >
-      {vesting && (
+      {payment && (
         <AccordionItem
           borderTop="none"
           borderBottom="none"
@@ -68,7 +68,7 @@ export default function PaymentDetails({ vesting }: { vesting?: SablierVesting }
                   gap="0.5rem"
                 >
                   {isExpanded ? <CaretDown /> : <CaretRight />}
-                  {t('vesting')}
+                  {t('payment')}
                 </AccordionButton>
                 <AccordionPanel>
                   <AccordionItemRow title={t('amount')}>
@@ -77,32 +77,32 @@ export default function PaymentDetails({ vesting }: { vesting?: SablierVesting }
                       alignItems="center"
                     >
                       <Image
-                        src={vesting.asset.logo}
+                        src={payment.asset.logo}
                         fallbackSrc="/images/coin-icon-default.svg"
-                        alt={vesting.asset.symbol}
+                        alt={payment.asset.symbol}
                         w="2rem"
                         h="2rem"
                       />
                       <Box>
                         <Text textStyle="body-base">
-                          {vesting.amount.value} {vesting.asset.symbol}
+                          {payment.amount.value} {payment.asset.symbol}
                         </Text>
                         <Text
                           color="neutral-7"
                           textStyle="button-small"
                         >
-                          {vesting.amount.value}
+                          {payment.amount.value}
                         </Text>
                       </Box>
                     </Flex>
                   </AccordionItemRow>
                   <AccordionItemRow
                     title={t('starting')}
-                    value={vesting.scheduleFixedDate?.startDate?.toDateString()}
+                    value={payment.scheduleFixedDate?.startDate?.toDateString()}
                   />
                   <AccordionItemRow
                     title={t('ending')}
-                    value={vesting.scheduleFixedDate?.startDate?.toDateString()}
+                    value={payment.scheduleFixedDate?.startDate?.toDateString()}
                   />
                 </AccordionPanel>
               </>
