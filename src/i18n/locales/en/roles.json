@@ -46,7 +46,7 @@
   "addPaymentStream": "Add Payment Stream",
   "addPaymentStreamSubTitle": "Define a payment schedule to unlock a predefined amount of an asset after a specific time.",
   "schedule": "Schedule",
-  "vestingScheduleSubTitle": "Define the overall length of the payment schedule.",
+  "scheduleSubTitle": "Define the overall length of the payment schedule.",
   "duration": "Duration",
   "fixedDates": "Fixed Dates",
   "years": "Years",
