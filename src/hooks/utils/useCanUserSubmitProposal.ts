@@ -1,9 +1,9 @@
 import { Azorius } from '@fractal-framework/fractal-contracts';
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { getAddress } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { AzoriusGovernance, DecentGovernance, GovernanceType } from '../../types';
+import { GovernanceType } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
 import { SENTINEL_MODULE } from '../../utils/address';
 import { useFractalModules } from '../DAO/loaders/useFractalModules';
@@ -12,7 +12,7 @@ import useSafeContracts from '../safe/useSafeContracts';
 export function useCanUserCreateProposal() {
   const {
     node: { safe },
-    governance,
+    governance: { type },
     governanceContracts: { ozLinearVotingContractAddress, erc721LinearVotingContractAddress },
     readOnly: { user },
   } = useFractal();
@@ -20,8 +20,6 @@ export function useCanUserCreateProposal() {
   const baseContracts = useSafeContracts();
   const lookupModules = useFractalModules();
   const [canUserCreateProposal, setCanUserCreateProposal] = useState<boolean>();
-
-  const { type } = governance || {};
 
   /**
    * Performs a check whether user has access rights to create proposal for DAO
@@ -107,20 +105,5 @@ export function useCanUserCreateProposal() {
     loadCanUserCreateProposal();
   }, [getCanUserCreateProposal, canUserCreateProposal]);
 
-  const canDelegate = useMemo(() => {
-    const azoriusGovernance = governance as AzoriusGovernance;
-    if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC20) {
-      const decentGovernance = azoriusGovernance as DecentGovernance;
-
-      const lockedTokenBalance = decentGovernance?.lockedVotesToken?.balance;
-      const hasLockedTokenBalance = lockedTokenBalance ? lockedTokenBalance > 0n : undefined;
-
-      const votesTokenBalance = azoriusGovernance?.votesToken?.balance;
-      const hasVotesTokenBalance = votesTokenBalance ? votesTokenBalance > 0n : undefined;
-      return hasVotesTokenBalance || hasLockedTokenBalance;
-    }
-    return false;
-  }, [governance]);
-
-  return { canUserCreateProposal, getCanUserCreateProposal, canDelegate };
+  return { canUserCreateProposal, getCanUserCreateProposal };
 }

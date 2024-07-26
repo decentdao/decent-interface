@@ -1,4 +1,5 @@
 import { Button, Flex, Show, Text } from '@chakra-ui/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { AddPlus } from '../../../../assets/theme/custom/icons/AddPlus';
@@ -11,7 +12,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { AzoriusGovernance } from '../../../../types';
+import { AzoriusGovernance, DecentGovernance, GovernanceType } from '../../../../types';
 
 export default function ProposalsPage() {
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
@@ -24,8 +25,20 @@ export default function ProposalsPage() {
   const delegate = useFractalModal(ModalType.DELEGATE);
   const wrapTokenOpen = useFractalModal(ModalType.WRAP_TOKEN);
   const unwrapTokenOpen = useFractalModal(ModalType.UNWRAP_TOKEN);
+  const canDelegate = useMemo(() => {
+    if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC20) {
+      const decentGovernance = azoriusGovernance as DecentGovernance;
 
-  const { canUserCreateProposal, canDelegate } = useCanUserCreateProposal();
+      const lockedTokenBalance = decentGovernance?.lockedVotesToken?.balance;
+      const hasLockedTokenBalance = lockedTokenBalance ? lockedTokenBalance > 0n : undefined;
+
+      const votesTokenBalance = azoriusGovernance?.votesToken?.balance;
+      const hasVotesTokenBalance = votesTokenBalance ? votesTokenBalance > 0n : undefined;
+      return hasVotesTokenBalance || hasLockedTokenBalance;
+    }
+    return false;
+  }, [azoriusGovernance]);
+  const { canUserCreateProposal } = useCanUserCreateProposal();
 
   const showWrapTokenButton = !!azoriusGovernance.votesToken?.underlyingTokenData;
   const showUnWrapTokenButton =
