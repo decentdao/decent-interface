@@ -14,11 +14,11 @@ import { useTranslation } from 'react-i18next';
 import { Hex, getAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import PayrollAndVesting from '../../../pages/daos/[daoAddress]/roles/details/PayrollAndVesting';
+import Vesting from '../../../pages/daos/[daoAddress]/roles/details/PayrollAndVesting';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import Avatar from '../../ui/page/Header/Avatar';
-import { SablierPayroll, SablierVesting } from './types';
+import { SablierVesting } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -44,7 +44,6 @@ interface RoleDetailsDrawerProps {
     wearer: string;
     description: string;
   };
-  payroll?: SablierPayroll;
   vesting?: SablierVesting;
   onOpen?: () => void;
   onClose: () => void;
@@ -57,7 +56,6 @@ export default function RolesDetailsDrawer({
   onClose,
   isOpen = true,
   onEdit,
-  payroll,
   vesting,
 }: RoleDetailsDrawerProps) {
   const {
@@ -163,10 +161,7 @@ export default function RolesDetailsDrawer({
             </GridItem>
           </Grid>
           {/* @todo: proper styling here */}
-          <PayrollAndVesting
-            payroll={payroll}
-            vesting={vesting}
-          />
+          <Vesting vesting={vesting} />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

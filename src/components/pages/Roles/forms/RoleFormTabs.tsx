@@ -10,7 +10,6 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { useRolesState } from '../../../../state/useRolesState';
 import { EditBadgeStatus, EditedRole, RoleFormValues, RoleValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
-import RoleFormPayroll from './RoleFormPayroll';
 import RoleFormVesting from './RoleFormVesting';
 
 const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: boolean) => {
@@ -82,15 +81,11 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
       <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
-          <Tab>{t('payroll')}</Tab>
           <Tab>{t('vesting')}</Tab>
         </TabList>
         <TabPanels my="1.75rem">
           <TabPanel>
             <RoleFormInfo />
-          </TabPanel>
-          <TabPanel>
-            <RoleFormPayroll />
           </TabPanel>
           <TabPanel>
             <RoleFormVesting />

@@ -10,13 +10,7 @@ import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import {
-  RoleEditProps,
-  RoleProps,
-  SablierPayroll,
-  SablierVesting,
-  frequencyOptions,
-} from './types';
+import { RoleEditProps, RoleProps, SablierVesting } from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -69,60 +63,10 @@ export function AvatarAndRoleName({
   );
 }
 
-function PayrollAndVesting({
-  payroll,
-  vesting,
-}: {
-  payroll: SablierPayroll | undefined;
-  vesting: SablierVesting | undefined;
-}) {
+function Vesting({ vesting }: { vesting: SablierVesting | undefined }) {
   const { t } = useTranslation(['roles']);
   return (
     <Flex flexDir="column">
-      {payroll && (
-        <Box
-          mt="1rem"
-          ml="4rem"
-        >
-          <Text
-            textStyle="button-small"
-            color="neutral-7"
-          >
-            {t('payroll')}
-          </Text>
-          <Flex
-            textStyle="body-base"
-            color="white-0"
-            gap="0.25rem"
-            alignItems="center"
-            my="0.5rem"
-          >
-            <Image
-              src={payroll.asset.logo}
-              fallbackSrc="/images/coin-icon-default.svg"
-              alt={payroll.asset.symbol}
-              w="1.25rem"
-              h="1.25rem"
-            />
-            {payroll.amount.value}
-            <EtherscanLink
-              color="white-0"
-              _hover={{ bg: 'transparent' }}
-              textStyle="body-base"
-              padding={0}
-              borderWidth={0}
-              value={payroll.asset.address}
-              type="token"
-              wordBreak="break-word"
-            >
-              {payroll.asset.symbol}
-            </EtherscanLink>
-            <Text>
-              {'/'} {t(`${frequencyOptions[payroll.paymentFrequency]}Short`)}
-            </Text>
-          </Flex>
-        </Box>
-      )}
       {vesting && (
         <Box
           mt="0.25rem"
@@ -174,7 +118,6 @@ function PayrollAndVesting({
 export function RoleCard({
   name,
   wearerAddress,
-  payroll,
   vesting,
   editStatus,
   handleRoleClick,
@@ -201,10 +144,7 @@ export function RoleCard({
           />
         </Flex>
       </Flex>
-      <PayrollAndVesting
-        payroll={payroll}
-        vesting={vesting}
-      />
+      <Vesting vesting={vesting} />
     </Card>
   );
 }
@@ -212,7 +152,6 @@ export function RoleCard({
 export function RoleCardEdit({
   name,
   wearerAddress,
-  payroll,
   vesting,
   editStatus,
   handleRoleClick,
@@ -238,10 +177,7 @@ export function RoleCardEdit({
           />
         </Flex>
       </Flex>
-      <PayrollAndVesting
-        payroll={payroll}
-        vesting={vesting}
-      />
+      <Vesting vesting={vesting} />
     </Card>
   );
 }

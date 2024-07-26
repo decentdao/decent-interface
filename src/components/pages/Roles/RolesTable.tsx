@@ -12,14 +12,7 @@ import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
-import {
-  RoleEditProps,
-  RoleFormValues,
-  RoleProps,
-  SablierPayroll,
-  SablierVesting,
-  frequencyOptions,
-} from './types';
+import { RoleEditProps, RoleFormValues, RoleProps, SablierVesting } from './types';
 
 function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
   const { t } = useTranslation(['roles']);
@@ -38,7 +31,6 @@ function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
       >
         <Th>{t('role')}</Th>
         <Th>{t('member')}</Th>
-        <Th>{t('payroll')}</Th>
         <Th>{t('vesting')}</Th>
         {addHiddenColumn && <Th w="10%" />}
       </Tr>
@@ -130,59 +122,6 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
   );
 }
 
-function PayrollColumn({ payroll }: { payroll: SablierPayroll | undefined }) {
-  const { t } = useTranslation(['roles', 'daoCreate']);
-  return (
-    <Td>
-      <Flex flexDir="column">
-        {payroll ? (
-          <Box>
-            <Flex
-              alignItems="center"
-              gap="0.25rem"
-              my="0.5rem"
-            >
-              <Image
-                src={payroll.asset.logo}
-                fallbackSrc="/images/coin-icon-default.svg"
-                alt={payroll.asset.symbol}
-                w="1.25rem"
-                h="1.25rem"
-              />
-              {payroll.amount.value}
-              <EtherscanLink
-                color="white-0"
-                _hover={{ bg: 'transparent' }}
-                textStyle="body-base"
-                padding={0}
-                borderWidth={0}
-                value={payroll.asset.address}
-                type="token"
-                wordBreak="break-word"
-              >
-                {payroll.asset.symbol}
-              </EtherscanLink>
-              <Text
-                color="white-0"
-                textStyle="body-base"
-              >
-                {'/'} {t(`${frequencyOptions[payroll.paymentFrequency]}Short`)}
-              </Text>
-            </Flex>
-          </Box>
-        ) : (
-          <Text
-            textStyle="body-base"
-            color="neutral-6"
-          >
-            {t('n/a', { ns: 'daoCreate' })}
-          </Text>
-        )}
-      </Flex>
-    </Td>
-  );
-}
-
 function VestingColumn({ vesting }: { vesting: SablierVesting | undefined }) {
   const { t } = useTranslation(['daoCreate']);
   return (
@@ -233,14 +172,7 @@ function VestingColumn({ vesting }: { vesting: SablierVesting | undefined }) {
   );
 }
 
-export function RolesRow({
-  name,
-  wearerAddress,
-  payroll,
-  vesting,
-  handleRoleClick,
-  hatId,
-}: RoleProps) {
+export function RolesRow({ name, wearerAddress, vesting, handleRoleClick, hatId }: RoleProps) {
   return (
     <Tr
       sx={{
@@ -256,7 +188,6 @@ export function RolesRow({
     >
       <RoleNameColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PayrollColumn payroll={payroll} />
       <VestingColumn vesting={vesting} />
     </Tr>
   );
@@ -266,7 +197,6 @@ export function RolesRowEdit({
   name,
   wearerAddress,
   editStatus,
-  payroll,
   vesting,
   handleRoleClick,
 }: RoleEditProps) {
@@ -285,7 +215,6 @@ export function RolesRowEdit({
     >
       <RoleNameEditColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PayrollColumn payroll={payroll} />
       <VestingColumn vesting={vesting} />
       <Td w="10%">
         <EditBadge editStatus={editStatus} />
@@ -331,7 +260,6 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearer}
                 handleRoleClick={handleRoleClick}
-                payroll={role.payroll}
                 vesting={role.vesting}
               />
             ))}
@@ -382,7 +310,6 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
                 handleRoleClick(role.id);
               }}
               editStatus={role.editedRole?.status}
-              payroll={role.payroll}
               vesting={role.vesting}
             />
           ))}

@@ -24,7 +24,7 @@ import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
 import { RoleFormValues } from '../types';
 
-export function AssetSelector({ formName }: { formName: 'vesting' | 'payroll' }) {
+export function AssetSelector({ formName }: { formName: 'vesting' }) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
   const {
     treasury: { assetsFungible },
