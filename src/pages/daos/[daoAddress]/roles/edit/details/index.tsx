@@ -25,6 +25,7 @@ import {
   RoleFormValues,
 } from '../../../../../../components/pages/Roles/types';
 import DraggableDrawer from '../../../../../../components/ui/containers/DraggableDrawer';
+import { ModalBase } from '../../../../../../components/ui/modals/ModalBase';
 import {
   CARD_SHADOW,
   NEUTRAL_2_82_TRANSPARENT,
@@ -164,25 +165,44 @@ export default function RoleEditDetails() {
   return (
     <>
       {blocker.state === 'blocked' && (
-        <Hide above="md">
-          <DraggableDrawer
-            isOpen
-            onClose={() => {}}
-            onOpen={() => {}}
-            headerContent={null}
-            initialHeight="23rem"
-            closeOnOverlayClick={false}
-          >
-            <UnsavedChangesWarningContent
-              onDiscard={blocker.proceed}
-              onKeepEditing={() => {
-                setFieldValue('roleEditing', backupRoleEditing.current);
-                setTouched({ roleEditing: backupTouched.current });
-                blocker.reset();
-              }}
-            />
-          </DraggableDrawer>
-        </Hide>
+        <>
+          <Hide above="md">
+            <DraggableDrawer
+              isOpen
+              onClose={() => {}}
+              onOpen={() => {}}
+              headerContent={null}
+              initialHeight="23rem"
+              closeOnOverlayClick={false}
+            >
+              <UnsavedChangesWarningContent
+                onDiscard={blocker.proceed}
+                onKeepEditing={() => {
+                  setFieldValue('roleEditing', backupRoleEditing.current);
+                  setTouched({ roleEditing: backupTouched.current });
+                  blocker.reset();
+                }}
+              />
+            </DraggableDrawer>
+          </Hide>
+          <Hide below="md">
+            <ModalBase
+              isOpen={true}
+              title=""
+              onClose={() => {}}
+              isSearchInputModal={false}
+            >
+              <UnsavedChangesWarningContent
+                onDiscard={blocker.proceed}
+                onKeepEditing={() => {
+                  setFieldValue('roleEditing', backupRoleEditing.current);
+                  setTouched({ roleEditing: backupTouched.current });
+                  blocker.reset();
+                }}
+              />
+            </ModalBase>
+          </Hide>
+        </>
       )}
       <FieldArray name="hats">
         {({ push }) => (

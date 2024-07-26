@@ -18,6 +18,7 @@ import {
   EditBadgeStatus,
 } from '../../../../../components/pages/Roles/types';
 import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
+import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSubmitProposal from '../../../../../hooks/DAO/proposal/useSubmitProposal';
@@ -215,21 +216,36 @@ function RolesEdit() {
       {({ handleSubmit, values, touched, setFieldValue }) => (
         <form onSubmit={handleSubmit}>
           {blocker.state === 'blocked' && (
-            <Hide above="md">
-              <DraggableDrawer
-                isOpen
-                onClose={() => {}}
-                onOpen={() => {}}
-                headerContent={null}
-                initialHeight="23rem"
-                closeOnOverlayClick={false}
-              >
-                <UnsavedChangesWarningContent
-                  onDiscard={blocker.proceed}
-                  onKeepEditing={blocker.reset}
-                />
-              </DraggableDrawer>
-            </Hide>
+            <>
+              <Hide above="md">
+                <DraggableDrawer
+                  isOpen
+                  onClose={() => {}}
+                  onOpen={() => {}}
+                  headerContent={null}
+                  initialHeight="23rem"
+                  closeOnOverlayClick={false}
+                >
+                  <UnsavedChangesWarningContent
+                    onDiscard={blocker.proceed}
+                    onKeepEditing={blocker.reset}
+                  />
+                </DraggableDrawer>
+              </Hide>
+              <Hide below="md">
+                <ModalBase
+                  isOpen={true}
+                  title=""
+                  onClose={() => {}}
+                  isSearchInputModal={false}
+                >
+                  <UnsavedChangesWarningContent
+                    onDiscard={blocker.proceed}
+                    onKeepEditing={blocker.reset}
+                  />
+                </ModalBase>
+              </Hide>
+            </>
           )}
           <Box>
             <PageHeader

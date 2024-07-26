@@ -1,9 +1,5 @@
-import { useBreakpointValue } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
 import { Blocker, useBlocker } from 'react-router-dom';
 import { RoleFormValues } from '../../components/pages/Roles/types';
-import { ModalType } from '../../components/ui/modals/ModalProvider';
-import { useFractalModal } from '../../components/ui/modals/useFractalModal';
 import { DAO_ROUTES } from '../../constants/routes';
 
 interface RoleEditDetailsNavigationBlockerParams {
@@ -55,26 +51,6 @@ export const useNavigationBlocker = ({
 
     return false;
   });
-
-  const shouldEditWarnModalOpen = useBreakpointValue({
-    base: false,
-    md: blocker.state === 'blocked',
-  });
-
-  const [isWarnModalOpen, setIsWarnModalOpen] = useState(false);
-
-  const warnEditModal = useFractalModal(ModalType.WARN_UNSAVED_CHANGES, {
-    discardChanges: blocker.proceed,
-    keepEditing: blocker.reset,
-    onClose: () => setIsWarnModalOpen(false),
-  });
-
-  useEffect(() => {
-    if (shouldEditWarnModalOpen && !isWarnModalOpen) {
-      setIsWarnModalOpen(true);
-      warnEditModal();
-    }
-  }, [isWarnModalOpen, shouldEditWarnModalOpen, warnEditModal]);
 
   return blocker;
 };
