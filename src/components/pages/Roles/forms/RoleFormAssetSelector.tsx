@@ -24,7 +24,7 @@ import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
 import { RoleFormValues } from '../types';
 
-export function AssetSelector({ formName }: { formName: 'vesting' }) {
+export function AssetSelector() {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
   const {
     treasury: { assetsFungible },
@@ -35,11 +35,11 @@ export function AssetSelector({ formName }: { formName: 'vesting' }) {
       asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
   );
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const selectedAsset = values.roleEditing?.[formName]?.asset;
+  const selectedAsset = values.roleEditing?.vesting?.asset;
   return (
     <>
       <FormControl my="0.5rem">
-        <Field name={`roleEditing.${formName}.asset`}>
+        <Field name="roleEditing.vesting.asset">
           {({ field }: FieldProps<string, RoleFormValues>) => (
             <Menu
               placement="bottom-end"
@@ -53,7 +53,7 @@ export function AssetSelector({ formName }: { formName: 'vesting' }) {
                   p={0}
                   sx={{
                     '&:hover': {
-                      [`div.${formName}-menu-asset`]: {
+                      'vesting-menu-asset': {
                         color: 'lilac--1',
                         bg: 'white-alpha-04',
                       },
@@ -72,7 +72,7 @@ export function AssetSelector({ formName }: { formName: 'vesting' }) {
                       borderRadius="9999px"
                       w="fit-content"
                       px="1rem"
-                      className={`${formName}-menu-asset`}
+                      className="vesting-menu-asset"
                       py="0.5rem"
                     >
                       <Image
@@ -205,7 +205,7 @@ export function AssetSelector({ formName }: { formName: 'vesting' }) {
         </Field>
       </FormControl>
       <FormControl my="1rem">
-        <Field name={`roleEditing.${formName}.amount`}>
+        <Field name="roleEditing.vesting.amount">
           {({
             field,
             meta,
@@ -217,7 +217,7 @@ export function AssetSelector({ formName }: { formName: 'vesting' }) {
                 errorMessage={meta.error}
               >
                 <BigIntInput
-                  isDisabled={!values?.roleEditing?.[formName]?.asset}
+                  isDisabled={!values?.roleEditing?.vesting?.asset}
                   value={field.value?.bigintValue}
                   onChange={valuePair => {
                     setFieldValue(field.name, valuePair, true);
