@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
@@ -39,9 +40,9 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
     [navigate, addressPrefix, daoAddress],
   );
 
-  const handleCloseDrawer = () => {
-    setDrawerViewingRole(undefined);
-  };
+  const { canUserCreateProposal } = useCanUserCreateProposal();
+
+  const handleCloseDrawer = () => setDrawerViewingRole(undefined);
 
   return (
     <Box maxW="736px">
@@ -141,12 +142,14 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         >
           {t('cancel', { ns: 'common' })}
         </Button>
-        <Button
-          onClick={submitForm}
-          isDisabled={isSubmitting}
-        >
-          {t('sendAssetsSubmit')}
-        </Button>
+        {canUserCreateProposal && (
+          <Button
+            onClick={submitForm}
+            isDisabled={isSubmitting}
+          >
+            {t('submitProposal')}
+          </Button>
+        )}
       </Flex>
       {drawerViewingRole !== undefined && (
         <>
