@@ -32,7 +32,6 @@ export function ModalBase(props: ModuleBaseProps) {
         backgroundColor={BACKGROUND_SEMI_TRANSPARENT}
         backdropFilter="auto"
         backdropBlur={'10px'}
-        zIndex={1400}
       />
       {props.isSearchInputModal ? (
         <ModalContent
