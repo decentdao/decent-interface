@@ -12,8 +12,6 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import { ModalType } from '../../../ui/modals/ModalProvider';
-import { useFractalModal } from '../../../ui/modals/useFractalModal';
 import { RoleCardEdit } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
