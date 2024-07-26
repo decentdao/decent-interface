@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
-import { SablierVesting } from '../../../components/pages/Roles/types';
+import { SablierPayment } from '../../../components/pages/Roles/types';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentHatsError, useRolesState } from '../../../state/useRolesState';
@@ -160,7 +160,7 @@ const useHatsTree = () => {
             });
 
             if (!streamQueryResult.error) {
-              let vesting: SablierVesting | undefined;
+              let vesting: SablierPayment | undefined;
 
               if (!streamQueryResult.data.streams.length) {
                 return hat;

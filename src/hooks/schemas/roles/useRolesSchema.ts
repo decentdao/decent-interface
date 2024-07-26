@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { SablierVesting, RoleValue } from '../../../components/pages/Roles/types';
+import { SablierPayment, RoleValue } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
@@ -42,7 +42,7 @@ export const useRolesSchema = () => {
                   .default(undefined)
                   .nullable()
                   .when({
-                    is: (vesting: SablierVesting) => vesting !== undefined,
+                    is: (vesting: SablierPayment) => vesting !== undefined,
                     then: _vestingSchema =>
                       _vestingSchema
                         .shape({

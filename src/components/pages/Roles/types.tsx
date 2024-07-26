@@ -20,7 +20,7 @@ export interface BaseSablierStream {
   amount: BigIntValuePair;
 }
 
-export interface SablierVesting extends BaseSablierStream {
+export interface SablierPayment extends BaseSablierStream {
   scheduleDuration?: {
     vestingDuration: VestingDuration;
     cliffDuration: VestingDuration;
@@ -38,7 +38,7 @@ export interface RoleProps {
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  vesting?: SablierVesting;
+  payment?: SablierPayment;
 }
 
 export interface RoleEditProps
@@ -89,7 +89,7 @@ export interface VestingDuration {
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
-  vesting?: SablierVesting;
+  vesting?: SablierPayment;
 }
 
 export interface RoleFormValues {
