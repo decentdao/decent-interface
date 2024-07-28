@@ -35,11 +35,11 @@ export function AssetSelector() {
       asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
   );
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const selectedAsset = values.roleEditing?.vesting?.asset;
+  const selectedAsset = values.roleEditing?.payment?.asset;
   return (
     <>
       <FormControl my="0.5rem">
-        <Field name="roleEditing.vesting.asset">
+        <Field name="roleEditing.payment.asset">
           {({ field }: FieldProps<string, RoleFormValues>) => (
             <Menu
               placement="bottom-end"
@@ -53,7 +53,7 @@ export function AssetSelector() {
                   p={0}
                   sx={{
                     '&:hover': {
-                      'vesting-menu-asset': {
+                      'payment-menu-asset': {
                         color: 'lilac--1',
                         bg: 'white-alpha-04',
                       },
@@ -72,7 +72,7 @@ export function AssetSelector() {
                       borderRadius="9999px"
                       w="fit-content"
                       px="1rem"
-                      className="vesting-menu-asset"
+                      className="payment-menu-asset"
                       py="0.5rem"
                     >
                       <Image
@@ -205,7 +205,7 @@ export function AssetSelector() {
         </Field>
       </FormControl>
       <FormControl my="1rem">
-        <Field name="roleEditing.vesting.amount">
+        <Field name="roleEditing.payment.amount">
           {({
             field,
             meta,
@@ -217,7 +217,7 @@ export function AssetSelector() {
                 errorMessage={meta.error}
               >
                 <BigIntInput
-                  isDisabled={!values?.roleEditing?.vesting?.asset}
+                  isDisabled={!values?.roleEditing?.payment?.asset}
                   value={field.value?.bigintValue}
                   onChange={valuePair => {
                     setFieldValue(field.name, valuePair, true);

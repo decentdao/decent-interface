@@ -41,7 +41,7 @@ function DurationTicker({
   const { t } = useTranslation(['roles']);
   return (
     <FormControl>
-      <Field name={`roleEditing.vesting.scheduleDuration.[${fieldType}].[${fieldName}]`}>
+      <Field name={`roleEditing.payment.scheduleDuration.[${fieldType}].[${fieldName}]`}>
         {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => {
           return (
             <LabelWrapper
@@ -155,13 +155,13 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
   const selectedDate =
     type === 'startDate'
-      ? values.roleEditing?.vesting?.scheduleFixedDate?.startDate
-      : values.roleEditing?.vesting?.scheduleFixedDate?.endDate;
+      ? values.roleEditing?.payment?.scheduleFixedDate?.startDate
+      : values.roleEditing?.payment?.scheduleFixedDate?.endDate;
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
-    <Field name={`roleEditing.vesting.scheduleFixedDate.${type}`}>
+    <Field name={`roleEditing.payment.scheduleFixedDate.${type}`}>
       {({ field }: FieldProps<string, RoleFormValues>) => (
         <>
           <Show below="md">
@@ -243,10 +243,10 @@ function DurationTabs() {
       my="1rem"
     >
       <TabList my="1rem">
-        <Tab onClick={() => setFieldValue('roleEditing.vesting.scheduleType', 'duration')}>
+        <Tab onClick={() => setFieldValue('roleEditing.payment.scheduleType', 'duration')}>
           {t('duration')}
         </Tab>
-        <Tab onClick={() => setFieldValue('roleEditing.vesting.scheduleType', 'fixedDate')}>
+        <Tab onClick={() => setFieldValue('roleEditing.payment.scheduleType', 'fixedDate')}>
           {t('fixedDates')}
         </Tab>
       </TabList>

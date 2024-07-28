@@ -150,7 +150,7 @@ const useHatsTree = () => {
         const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
         const updatedHatsRoles = await Promise.all(
           hatsTree.roleHats.map(async hat => {
-            if (hat.vesting) {
+            if (hat.payment) {
               return hat;
             }
             const streamQueryResult = await apolloClient.query({
@@ -160,7 +160,7 @@ const useHatsTree = () => {
             });
 
             if (!streamQueryResult.error) {
-              let vesting: SablierPayment | undefined;
+              let payment: SablierPayment | undefined;
 
               if (!streamQueryResult.data.streams.length) {
                 return hat;
@@ -180,7 +180,7 @@ const useHatsTree = () => {
                 const bigintAmount =
                   BigInt(activeVestingStream.depositAmount) /
                   10n ** BigInt(activeVestingStream.asset.decimals);
-                vesting = {
+                payment = {
                   streamId: activeVestingStream.id,
                   contractAddress: activeVestingStream.contract.address,
                   asset: {
@@ -206,7 +206,7 @@ const useHatsTree = () => {
                 };
               }
 
-              return { ...hat, vesting };
+              return { ...hat, payment };
             } else {
               return hat;
             }

@@ -362,10 +362,10 @@ export default function useCreateRoles() {
         removeHatTxs = removedHatIds.map(hatId => {
           const roleHat = hatsTree.roleHats.find(hat => hat.id === hatId);
           if (roleHat) {
-            if (roleHat.vesting) {
+            if (roleHat.payment) {
               // @todo Do not add flush out stream transaction if available balance to withdraw is 0
               const { wrappedFlushStreamTx, cancelStreamTx } = prepareDeleteHatStreamTx(
-                roleHat.vesting,
+                roleHat.payment,
                 roleHat.wearer,
               );
               hatPayrollHatRemovedTxs.push({
@@ -414,11 +414,11 @@ export default function useCreateRoles() {
         transferHatTxs = memberChangedHats
           .map(({ id, currentWearer, newWearer }) => {
             const roleHat = hatsTree.roleHats.find(hat => hat.id === id);
-            if (roleHat && roleHat.vesting) {
-              if (roleHat.vesting) {
+            if (roleHat && roleHat.payment) {
+              if (roleHat.payment) {
                 // @todo Do not add flush out stream transaction if available balance to withdraw is 0
                 const wrappedFlushStreamTx = prepareChangeHatWearerTx(
-                  roleHat.vesting,
+                  roleHat.payment,
                   roleHat.wearer,
                 );
                 hatPayrollWearerChangedTxs.push({

@@ -38,11 +38,11 @@ export const useRolesSchema = () => {
                 wearer: Yup.string()
                   .required(t('roleInfoErrorMemberRequired'))
                   .test(addressValidationTest),
-                vesting: Yup.object()
+                payment: Yup.object()
                   .default(undefined)
                   .nullable()
                   .when({
-                    is: (vesting: SablierPayment) => vesting !== undefined,
+                    is: (payment: SablierPayment) => payment !== undefined,
                     then: _vestingSchema =>
                       _vestingSchema
                         .shape({
@@ -71,7 +71,7 @@ export const useRolesSchema = () => {
                               }),
                             })
                             .test({
-                              name: 'valid-vesting-schedule',
+                              name: 'valid-payment-schedule',
                               message: t('roleInfoErrorVestingScheduleInvalid'),
                               test: _scheduleDuration => {
                                 if (!_scheduleDuration) return true;

@@ -260,7 +260,7 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearer}
                 handleRoleClick={handleRoleClick}
-                payment={role.vesting}
+                payment={role.payment}
               />
             ))}
           </Tbody>
@@ -310,7 +310,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
                 handleRoleClick(role.id);
               }}
               editStatus={role.editedRole?.status}
-              payment={role.vesting}
+              payment={role.payment}
             />
           ))}
         </Tbody>

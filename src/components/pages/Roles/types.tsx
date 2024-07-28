@@ -89,7 +89,7 @@ export interface VestingDuration {
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
-  vesting?: SablierPayment;
+  payment?: SablierPayment;
 }
 
 export interface RoleFormValues {
