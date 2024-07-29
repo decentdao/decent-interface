@@ -52,7 +52,6 @@ export default function RoleFormTabs({
 
   if (!daoAddress) return null;
 
-  console.log('🚀 ~ values.roleEditing.payments:', values.roleEditing?.payments);
   return (
     <FieldArray name="roleEditing.payments">
       {({ push: pushPayment, remove: removePayment }) => (
