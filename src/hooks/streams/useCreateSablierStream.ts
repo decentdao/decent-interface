@@ -77,11 +77,11 @@ export default function useCreateSablierStream() {
         const relativeSchedule = abstractSchedule as StreamRelativeSchedule;
         const absoluteSchedule = abstractSchedule as StreamAbsoluteSchedule;
 
-        if (relativeSchedule.years || relativeSchedule.days || relativeSchedule.hours) {
+        if (relativeSchedule && (relativeSchedule.years || relativeSchedule.days || relativeSchedule.hours)) {
           duration += (relativeSchedule.years ?? 0) * SECONDS_IN_DAY * 365;
           duration += (relativeSchedule.days ?? 0) * SECONDS_IN_DAY;
           duration += (relativeSchedule.hours ?? 0) * SECONDS_IN_HOUR;
-        } else if (absoluteSchedule.startDate) {
+        } else if (absoluteSchedule && absoluteSchedule.startDate) {
           duration = (Date.now() - absoluteSchedule.startDate + absoluteSchedule.endDate) / 1000;
         }
 
