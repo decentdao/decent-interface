@@ -23,7 +23,7 @@ export interface BaseSablierStream {
 export interface SablierPayment extends BaseSablierStream {
   scheduleDuration?: {
     duration: DurationBreakdown;
-    cliff: DurationBreakdown;
+    cliffDuration: DurationBreakdown;
   };
   scheduleFixedDate?: {
     startDate: Date;

@@ -101,7 +101,9 @@ export default function RoleFormTabs({
                   <Box>
                     <Button
                       onClick={() => {
-                        pushPayment({});
+                        pushPayment({
+                          scheduleType: 'duration',
+                        });
                       }}
                     >
                       Add New Payment Stream
