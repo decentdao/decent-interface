@@ -19,7 +19,7 @@ export function DatePickerTrigger({ selectedDate }: DatePickerTriggerProps) {
       borderColor="neutral-3"
       padding="0.5rem 1rem"
       alignItems="center"
-      minW="10rem"
+      minW={{ base: 'full', md: '10rem' }}
       gap="0.5rem"
     >
       <Icon
