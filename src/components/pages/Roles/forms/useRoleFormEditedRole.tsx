@@ -29,6 +29,26 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
   const isMemberUpdated =
     !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
 
+  const isPaymentsUpdated = useMemo(() => {
+    if (!existingRoleHat?.payments?.length || !values.roleEditing || !values.roleEditing.payments) {
+      return false;
+    }
+    return values.roleEditing.payments.some((payment, i) => {
+      const existingPayment = existingRoleHat.payments![i];
+      return (
+        payment.amount !== existingPayment.amount ||
+        payment.scheduleType !== existingPayment.scheduleType ||
+        payment.scheduleDuration?.cliff.days !== existingPayment.scheduleDuration?.cliff.days ||
+        payment.scheduleDuration?.cliff.hours !== existingPayment.scheduleDuration?.cliff.hours ||
+        payment.scheduleDuration?.cliff.years !== existingPayment.scheduleDuration?.cliff.years ||
+        payment.asset.address !== existingPayment.asset.address ||
+        payment.scheduleFixedDate?.cliffDate !== existingPayment.scheduleFixedDate?.cliffDate ||
+        payment.scheduleFixedDate?.startDate !== existingPayment.scheduleFixedDate?.startDate ||
+        payment.scheduleFixedDate?.endDate !== existingPayment.scheduleFixedDate?.endDate
+      );
+    });
+  }, [existingRoleHat, values.roleEditing]);
+
   const editedRoleData = useMemo<EditedRole>(() => {
     if (!existingRoleHat) {
       return {
@@ -40,12 +60,13 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     fieldNames = addRemoveField(fieldNames, 'roleName', isRoleNameUpdated);
     fieldNames = addRemoveField(fieldNames, 'roleDescription', isRoleDescriptionUpdated);
     fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
+    fieldNames = addRemoveField(fieldNames, 'payments', isPaymentsUpdated);
 
     return {
       fieldNames,
       status: EditBadgeStatus.Updated,
     };
-  }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
+  }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated, isPaymentsUpdated]);
 
   return {
     editedRoleData,
