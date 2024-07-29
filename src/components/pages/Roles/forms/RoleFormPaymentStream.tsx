@@ -3,6 +3,8 @@ import {
   Button,
   Flex,
   FormControl,
+  Grid,
+  GridItem,
   Icon,
   IconButton,
   Menu,
@@ -159,10 +161,9 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
       : values.roleEditing?.payments?.[0].scheduleFixedDate?.endDate;
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
   return (
     <Field name={`roleEditing.payment.scheduleFixedDate.${type}`}>
-      {({ field }: FieldProps<string, RoleFormValues>) => (
+      {() => (
         <>
           <Show below="md">
             <Button
@@ -170,6 +171,7 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
               variant="unstyled"
               p="0"
               flex={1}
+              w="full"
             >
               <DatePickerTrigger selectedDate={selectedDate} />
             </Button>
@@ -180,12 +182,18 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
               onOpen={() => {}}
               onClose={() => setIsDrawerOpen(false)}
             >
-              <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
+              <DecentDatePicker
+                isRange
+                onRangeChange={dateRange => {
+                  setFieldValue('roleEditing.vesting.scheduleFixedDate.startDate', dateRange[0]);
+                  setFieldValue('roleEditing.vesting.scheduleFixedDate.endDate', dateRange[1]);
+                }}
+              />
             </DraggableDrawer>
           </Show>
 
           <Show above="md">
-            <Menu placement="top">
+            <Menu placement="top-start">
               <>
                 <MenuButton
                   as={Button}
@@ -196,7 +204,16 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
                   <DatePickerTrigger selectedDate={selectedDate} />
                 </MenuButton>
                 <MenuList>
-                  <DecentDatePicker onChange={date => setFieldValue(field.name, date)} />
+                  <DecentDatePicker
+                    isRange
+                    onRangeChange={dateRange => {
+                      setFieldValue(
+                        'roleEditing.vesting.scheduleFixedDate.startDate',
+                        dateRange[0],
+                      );
+                      setFieldValue('roleEditing.vesting.scheduleFixedDate.endDate', dateRange[1]);
+                    }}
+                  />
                 </MenuList>
               </>
             </Menu>
@@ -214,20 +231,37 @@ function FixedDate() {
     <Box>
       <Text textStyle="label-base"> {t('fixedDates')} </Text>
       <FormControl my="1rem">
-        <Flex
-          gap={{ base: '0', md: '0.5rem' }}
+        <Grid
+          gridTemplateAreas={{
+            base: `"start arrow"
+          "end blank"`,
+            sm: `"start arrow end"`,
+          }}
+          gap="0.5rem"
+          gridTemplateColumns={{
+            base: '1fr max-content',
+            sm: '1fr 1.5rem 1fr',
+          }}
           alignItems="center"
-          justifyContent="space-between"
-          wrap={{ base: 'wrap', md: 'nowrap' }}
         >
-          <PaymentDatePicker type="startDate" />
-          <Icon
-            as={ArrowRight}
-            boxSize="1.5rem"
-            color="lilac-0"
-          />
-          <PaymentDatePicker type="endDate" />
-        </Flex>
+          <GridItem area="start">
+            <PaymentDatePicker type="startDate" />
+          </GridItem>
+          <GridItem
+            area="arrow"
+            display="flex"
+            alignItems="center"
+          >
+            <Icon
+              as={ArrowRight}
+              boxSize="1.5rem"
+              color="lilac-0"
+            />
+          </GridItem>
+          <GridItem area="end">
+            <PaymentDatePicker type="endDate" />
+          </GridItem>
+        </Grid>
       </FormControl>
     </Box>
   );

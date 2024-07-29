@@ -1,7 +1,6 @@
 .react-calendar {
-  /* width: 350px; */
   max-width: 100%;
-  background: var(--Neutral-2, #221d25);
+  background: #221d25;
   border-radius: 0.5rem;
   border: 0;
   font-family: 'TT Firs Neue Variable';
@@ -36,7 +35,7 @@
 
 .react-calendar__navigation button {
   min-width: 44px;
-  background: var(--Neutral-2);
+  background: #221d25;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -45,16 +44,16 @@
 }
 
 .react-calendar__navigation button:disabled {
-  background-color: var(--Neutral-2);
+  background-color: #221d25;
   color: #524f55;
 }
 
 .react-calendar__navigation button:enabled:focus {
-  background-color: var(--Neutral-2);
+  background-color: #221d25;
 }
 
 .react-calendar__navigation button:enabled:hover {
-  background: var(--Neutral-3, #2e2833);
+  background: #2e2833;
   border-radius: 0.5rem;
 }
 
@@ -87,10 +86,8 @@
 }
 
 .react-calendar__tile {
-  height: 2.5rem;
-  width: 2.5rem;
   max-width: 100%;
-  padding: 10px 6.6667px;
+  padding: 14px 10px;
   font-size: 0.833em;
 }
 
@@ -107,7 +104,7 @@
 }
 
 .react-calendar__tile:enabled:hover {
-  background: var(--Neutral-3);
+  background: #2e2833;
 }
 
 .react-calendar__tile:enabled:focus {
@@ -134,4 +131,27 @@
 .react-calendar__tile--active:enabled:focus {
   background: #dcc8f0;
   color: #501464;
+}
+
+.react-calendar--selectRange .react-calendar__tile--hover {
+  background-color: #332b3b;
+  border-radius: 0;
+}
+
+.react-calendar__tile.react-calendar__tile--active.react-calendar__tile--range.react-calendar__tile--rangeStart.react-calendar__month-view__days__day {
+  background: #dcc8f0;
+  color: #501464;
+  border-radius: 0.25rem;
+}
+
+.react-calendar__tile.react-calendar__tile--active.react-calendar__tile--range.react-calendar__tile--rangeEnd.react-calendar__month-view__days__day {
+  background: #dcc8f0;
+  color: #501464;
+  border-radius: 0.25rem;
+}
+
+.react-calendar__tile.react-calendar__tile--active.react-calendar__tile--range.react-calendar__month-view__days__day {
+  background: #332b3b;
+  color: white;
+  border-radius: 0;
 }
