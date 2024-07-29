@@ -145,7 +145,13 @@ export function RoleCard({
           />
         </Flex>
       </Flex>
-      <Payment payment={payments?.[0]} />
+      {payments &&
+        payments.map((payment, index) => (
+          <Payment
+            key={index}
+            payment={payment}
+          />
+        ))}
     </Card>
   );
 }
@@ -178,7 +184,13 @@ export function RoleCardEdit({
           />
         </Flex>
       </Flex>
-      <Payment payment={payments?.[0]} />
+      {payments &&
+        payments.map((payment, index) => (
+          <Payment
+            key={index}
+            payment={payment}
+          />
+        ))}
     </Card>
   );
 }

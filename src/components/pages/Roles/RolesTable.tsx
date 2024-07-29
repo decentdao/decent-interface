@@ -32,6 +32,7 @@ function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
         <Th>{t('role')}</Th>
         <Th>{t('member')}</Th>
         <Th>{t('payment')}</Th>
+        <Th>{t('payment')}</Th>
         {addHiddenColumn && <Th w="10%" />}
       </Tr>
     </Thead>
@@ -189,6 +190,7 @@ export function RolesRow({ name, wearerAddress, payments, handleRoleClick, hatId
       <RoleNameColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
       <PaymentColumn payment={payments?.[0]} />
+      <PaymentColumn payment={payments?.[1]} />
     </Tr>
   );
 }
@@ -216,6 +218,7 @@ export function RolesRowEdit({
       <RoleNameEditColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
       <PaymentColumn payment={payments?.[0]} />
+      <PaymentColumn payment={payments?.[1]} />
       <Td w="10%">
         <EditBadge editStatus={editStatus} />
       </Td>
