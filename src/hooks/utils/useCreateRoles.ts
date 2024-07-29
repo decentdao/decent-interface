@@ -501,12 +501,16 @@ export default function useCreateRoles() {
           ...removeHatTxs.map(() => topHatAccount),
           ...transferHatTxs.map(() => hatsProtocol),
           ...hatDetailsChangedTxs.map(() => hatsProtocol),
+          ...hatPaymentTokenApprovalTxs.map(({ tokenAddress }) => tokenAddress),
+          ...hatPaymentAddedTxs.map(({ targetAddress }) => targetAddress),
         ],
         calldatas: [
           ...createAndMintHatsTxs,
           ...removeHatTxs,
           ...transferHatTxs,
           ...hatDetailsChangedTxs,
+          ...hatPaymentTokenApprovalTxs.map(({ calldata }) => calldata),
+          ...hatPaymentAddedTxs.map(({ calldata }) => calldata),
         ],
         metaData: proposalMetadata,
         values: [
@@ -523,7 +527,14 @@ export default function useCreateRoles() {
 
       return proposalTransactions;
     },
-    [hatsProtocol, hatsTree, prepareChangeHatWearerTx, prepareDeleteHatStreamTx, daoAddress, prepareBatchLinearStreamCreation],
+    [
+      hatsProtocol,
+      hatsTree,
+      prepareChangeHatWearerTx,
+      prepareDeleteHatStreamTx,
+      daoAddress,
+      prepareBatchLinearStreamCreation,
+    ],
   );
 
   const createRolesEditProposal = useCallback(

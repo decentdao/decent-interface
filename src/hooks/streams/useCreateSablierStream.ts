@@ -162,21 +162,21 @@ export default function useCreateSablierStream() {
           totalAmount: streamData.amount.value,
           asset: streamData.asset,
           schedule:
-            streamData.scheduleType === 'duration'
-              ? streamData.scheduleDuration!.duration
-              : {
-                  startDate: streamData.scheduleFixedDate!.startDate.getTime(),
-                  endDate: streamData.scheduleFixedDate!.endDate.getTime(),
-                },
+          streamData.scheduleType === 'duration'
+          ? streamData.scheduleDuration!.duration
+          : {
+            startDate: streamData.scheduleFixedDate!.startDate.getTime(),
+            endDate: streamData.scheduleFixedDate!.endDate.getTime(),
+          },
           cliff:
-            streamData.scheduleType === 'duration'
-              ? streamData.scheduleDuration!.cliffDuration
-              : {
-                  startDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
-                  endDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
-                },
+          streamData.scheduleType === 'duration'
+          ? streamData.scheduleDuration!.cliffDuration
+          : {
+            startDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
+            endDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
+          },
         });
-
+        
         const sablierBatchCalldata = encodeFunctionData({
           abi: SablierV2BatchAbi,
           functionName: 'createWithDurationsLL', // Another option would be to use createWithTimestampsLL. Essentially they're doing the same, `WithDurations` just simpler for usage
