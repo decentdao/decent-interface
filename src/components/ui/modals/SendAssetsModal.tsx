@@ -22,7 +22,6 @@ interface SendAssetsFormValues {
   inputAmount?: BigIntValuePair;
 }
 
-// @todo add Yup and Formik to this modal
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
     node: { safe },

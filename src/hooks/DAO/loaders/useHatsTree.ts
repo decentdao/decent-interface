@@ -1,22 +1,27 @@
-import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
+import { useApolloClient } from '@apollo/client';
+import { Tree, HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import { StreamsQueryDocument } from '../../../../.graphclient';
+import { SablierPayment } from '../../../components/pages/Roles/types';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentHatsError, useRolesState } from '../../../state/useRolesState';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
-import { useHatsSubgraphClient } from './useHatsSubgraphClient';
+
+const hatsSubgraphClient = new HatsSubgraphClient({
+  // TODO config for prod
+});
 
 const useHatsTree = () => {
-  const { hatsTreeId } = useRolesState();
-  const hatsSubgraphClient = useHatsSubgraphClient();
-  const { setHatsTree } = useRolesState();
+  const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, setHatsStreams } = useRolesState();
   const ipfsClient = useIPFSClient();
   const {
     chain,
+    sablierSubgraph,
     contracts: {
       hatsProtocol,
       erc6551Registry,
@@ -25,6 +30,7 @@ const useHatsTree = () => {
     },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
+  const apolloClient = useApolloClient();
 
   useEffect(() => {
     async function getHatsTree() {
@@ -132,12 +138,92 @@ const useHatsTree = () => {
     erc6551Registry,
     hatsAccountImplementation,
     hatsProtocol,
-    hatsSubgraphClient,
     hatsTreeId,
     ipfsClient,
     publicClient,
     setHatsTree,
   ]);
+
+  useEffect(() => {
+    async function getHatsStreams() {
+      if (sablierSubgraph && hatsTree && hatsTree.roleHats.length > 0 && !streamsFetched) {
+        const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
+        const updatedHatsRoles = await Promise.all(
+          hatsTree.roleHats.map(async hat => {
+            if (hat.vesting) {
+              return hat;
+            }
+            const streamQueryResult = await apolloClient.query({
+              query: StreamsQueryDocument,
+              variables: { recipientAddress: hat.smartAddress },
+              context: { subgraphSpace: sablierSubgraph.space, subgraphSlug: sablierSubgraph.slug },
+            });
+
+            if (!streamQueryResult.error) {
+              let vesting: SablierPayment | undefined;
+
+              if (!streamQueryResult.data.streams.length) {
+                return hat;
+              }
+
+              const activeStreams = streamQueryResult.data.streams.filter(
+                stream =>
+                  parseInt(stream.endTime) <= Date.now() / 1000 ||
+                  BigInt(stream.withdrawnAmount) !== BigInt(stream.intactAmount),
+              );
+
+              const activeVestingStream = activeStreams.find(
+                stream => stream.category === 'LockupLinear',
+              );
+
+              if (activeVestingStream) {
+                const bigintAmount =
+                  BigInt(activeVestingStream.depositAmount) /
+                  10n ** BigInt(activeVestingStream.asset.decimals);
+                vesting = {
+                  streamId: activeVestingStream.id,
+                  contractAddress: activeVestingStream.contract.address,
+                  asset: {
+                    address: getAddress(
+                      activeVestingStream.asset.address,
+                      activeVestingStream.asset.chainId,
+                    ),
+                    name: activeVestingStream.asset.name,
+                    symbol: activeVestingStream.asset.symbol,
+                    decimals: activeVestingStream.asset.decimals,
+                    logo: '', // @todo - how do we get logo?
+                  },
+                  amount: {
+                    bigintValue: bigintAmount,
+                    value: bigintAmount.toString(),
+                  },
+                  scheduleFixedDate: {
+                    startDate: secondsTimestampToDate(activeVestingStream.startTime),
+                    endDate: secondsTimestampToDate(activeVestingStream.endTime),
+                  },
+                  // @dev We can't recover which UI element was used during initial stream creation
+                  scheduleType: 'fixedDate',
+                };
+              }
+
+              return { ...hat, vesting };
+            } else {
+              return hat;
+            }
+          }),
+        );
+
+        const updatedDecentTree = {
+          ...hatsTree,
+          roleHats: updatedHatsRoles,
+        };
+
+        setHatsStreams(updatedDecentTree);
+      }
+    }
+
+    getHatsStreams();
+  }, [apolloClient, hatsTree, sablierSubgraph, setHatsStreams, streamsFetched]);
 };
 
 export { useHatsTree };

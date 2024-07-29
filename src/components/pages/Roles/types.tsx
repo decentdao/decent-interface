@@ -13,21 +13,23 @@ export interface SablierAsset {
   logo: string;
 }
 
-export interface SablierVesting {
-  asset: SablierAsset;
-  vestingSchedule: string;
-  vestingAmount: string;
-  vestingAmountUSD: string;
-  vestingStartDate: string;
-  vestingEndDate: string;
-}
-
-export interface SablierPayroll {
+export interface BaseSablierStream {
+  streamId?: string;
+  contractAddress?: Address;
   asset: SablierAsset;
   amount: BigIntValuePair;
-  paymentFrequency: Frequency;
-  paymentStartDate: Date;
-  paymentFrequencyNumber: number;
+}
+
+export interface SablierPayment extends BaseSablierStream {
+  scheduleDuration?: {
+    vestingDuration: VestingDuration;
+    cliffDuration: VestingDuration;
+  };
+  scheduleFixedDate?: {
+    startDate: Date;
+    endDate: Date;
+  };
+  scheduleType: 'duration' | 'fixedDate';
 }
 
 export interface RoleProps {
@@ -36,8 +38,7 @@ export interface RoleProps {
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  vestingData?: SablierVesting;
-  payrollData?: SablierPayroll;
+  payment?: SablierPayment;
 }
 
 export interface RoleEditProps
@@ -85,31 +86,10 @@ export interface VestingDuration {
   days: number;
 }
 
-export interface RoleFormVestingValue {
-  asset: {
-    address: Address;
-    name: string;
-    symbol: string;
-    decimals: number;
-    logo: string;
-  };
-  vestingAmount: BigIntValuePair;
-  scheduleDuration?: {
-    vestingDuration: VestingDuration;
-    cliffDuration: VestingDuration;
-  };
-  scheduleFixedDate?: {
-    startDate: Date;
-    endDate: Date;
-  };
-  scheduleType: 'duration' | 'fixedDate';
-}
-
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
-  payroll?: SablierPayroll;
-  vesting?: RoleFormVestingValue;
+  vesting?: SablierPayment;
 }
 
 export interface RoleFormValues {
@@ -136,20 +116,3 @@ export interface HatWearerChangedParams {
   currentWearer: Address;
   newWearer: Address;
 }
-
-export enum Frequency {
-  Monthly,
-  EveryTwoWeeks,
-  Weekly,
-}
-
-export const frequencyOptions: Record<string, string> = {
-  [Frequency.Monthly]: 'monthly',
-  [Frequency.EveryTwoWeeks]: 'everyTwoWeeks',
-  [Frequency.Weekly]: 'weekly',
-};
-export const frequencyAmountLabel: Record<string, string> = {
-  [Frequency.Monthly]: 'months',
-  [Frequency.EveryTwoWeeks]: 'weeks',
-  [Frequency.Weekly]: 'weeks',
-};

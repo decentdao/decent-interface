@@ -2,7 +2,6 @@ import { wrapCreateBrowserRouter } from '@sentry/react';
 import { createBrowserRouter, redirect } from 'react-router-dom';
 import { ModalProvider } from './components/ui/modals/ModalProvider';
 import Layout from './components/ui/page/Layout';
-import VestingStreamBuilder from './components/ui/stream/VestingStreamBuilder';
 import { BASE_ROUTES, DAO_ROUTES } from './constants/routes';
 import FourOhFourPage from './pages/404';
 import DAOController from './pages/DAOController';
@@ -24,7 +23,6 @@ import RoleEditDetails from './pages/daos/[daoAddress]/roles/edit/details';
 import EditProposalSummary from './pages/daos/[daoAddress]/roles/edit/summary';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 import HomePage from './pages/home/HomePage';
-import StreamsPage from './pages/streams';
 
 export const router = (addressPrefix: string) =>
   wrapCreateBrowserRouter(createBrowserRouter)([
@@ -50,10 +48,6 @@ export const router = (addressPrefix: string) =>
         {
           path: 'create',
           loader: () => redirect(BASE_ROUTES.create),
-        },
-        {
-          path: 'streams',
-          element: <StreamsPage />,
         },
         {
           path: '/',
@@ -94,10 +88,6 @@ export const router = (addressPrefix: string) =>
                 {
                   path: 'details',
                   element: <RoleEditDetails />,
-                },
-                {
-                  path: 'vesting',
-                  element: <VestingStreamBuilder />,
                 },
                 {
                   path: 'summary',

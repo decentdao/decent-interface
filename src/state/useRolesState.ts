@@ -2,6 +2,7 @@ import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, encodePacked, getContract, keccak256 } from 'viem';
 import { create } from 'zustand';
 import ERC6551RegistryAbi from '../assets/abi/ERC6551RegistryAbi';
+import { SablierPayment } from '../components/pages/Roles/types';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -67,6 +68,7 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
+  vesting?: SablierPayment;
 }
 
 interface DecentTopHat extends DecentHat {}
@@ -87,6 +89,7 @@ export interface DecentTree {
 interface Roles {
   hatsTreeId: undefined | null | number;
   hatsTree: undefined | null | DecentTree;
+  streamsFetched: boolean;
   getHat: (hatId: Hex) => DecentRoleHat | null;
   setHatsTreeId: (hatsTreeId: undefined | null | number) => void;
   setHatsTree: (params: {
@@ -98,6 +101,7 @@ interface Roles {
     publicClient: PublicClient;
     decentHats: Address;
   }) => Promise<void>;
+  setHatsStreams: (updatedDecentTree: DecentTree) => void;
 }
 
 const appearsExactlyNumberOfTimes = (
@@ -267,6 +271,7 @@ const sanitize = async (
 const useRolesState = create<Roles>()((set, get) => ({
   hatsTreeId: undefined,
   hatsTree: undefined,
+  streamsFetched: false,
   getHat: hatId => {
     const matches = get().hatsTree?.roleHats.filter(h => h.id === hatId);
 
@@ -285,9 +290,9 @@ const useRolesState = create<Roles>()((set, get) => ({
       // if `hatsTreeId` is null or undefined,
       // set `hatsTree` to that same value
       if (typeof hatsTreeId !== 'number') {
-        return { hatsTreeId, hatsTree: hatsTreeId };
+        return { hatsTreeId, hatsTree: hatsTreeId, streamsFetched: false };
       }
-      return { hatsTreeId };
+      return { hatsTreeId, streamsFetched: false };
     }),
   setHatsTree: async params => {
     const hatsTree = await sanitize(
@@ -300,6 +305,9 @@ const useRolesState = create<Roles>()((set, get) => ({
       params.decentHats,
     );
     set(() => ({ hatsTree }));
+  },
+  setHatsStreams: updatedDecentTree => {
+    set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
   },
 }));
 

@@ -33,7 +33,7 @@ import { RoleFormValues } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
-function VestingDurationTicker({
+function DurationTicker({
   fieldName,
   fieldType,
 }: {
@@ -102,21 +102,21 @@ function VestingDurationTicker({
   );
 }
 
-function VestingScheduleDuration() {
+function ScheduleDuration() {
   return (
     <Flex
       flexDir="column"
       gap="0.5rem"
     >
-      <VestingDurationTicker
+      <DurationTicker
         fieldName="years"
         fieldType="vestingDuration"
       />
-      <VestingDurationTicker
+      <DurationTicker
         fieldName="days"
         fieldType="vestingDuration"
       />
-      <VestingDurationTicker
+      <DurationTicker
         fieldName="hours"
         fieldType="vestingDuration"
       />
@@ -124,7 +124,7 @@ function VestingScheduleDuration() {
   );
 }
 
-function VestingCliffDuration() {
+function CliffDuration() {
   const { t } = useTranslation(['roles']);
   return (
     <Flex
@@ -136,15 +136,15 @@ function VestingCliffDuration() {
         subTitle={t('cliffSubTitle')}
       />
       <Box mt="1rem">
-        <VestingDurationTicker
+        <DurationTicker
           fieldName="years"
           fieldType="cliffDuration"
         />
-        <VestingDurationTicker
+        <DurationTicker
           fieldName="days"
           fieldType="cliffDuration"
         />
-        <VestingDurationTicker
+        <DurationTicker
           fieldName="hours"
           fieldType="cliffDuration"
         />
@@ -153,7 +153,7 @@ function VestingCliffDuration() {
   );
 }
 
-function VestingDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
+function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
   const selectedDate =
     type === 'startDate'
@@ -224,7 +224,7 @@ function VestingDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
   );
 }
 
-function VestingFixedDate() {
+function FixedDate() {
   const { t } = useTranslation(['roles']);
 
   return (
@@ -245,7 +245,7 @@ function VestingFixedDate() {
           alignItems="center"
         >
           <GridItem area="start">
-            <VestingDatePicker type="startDate" />
+            <PaymentDatePicker type="startDate" />
           </GridItem>
           <GridItem
             area="arrow"
@@ -259,7 +259,7 @@ function VestingFixedDate() {
             />
           </GridItem>
           <GridItem area="end">
-            <VestingDatePicker type="endDate" />
+            <PaymentDatePicker type="endDate" />
           </GridItem>
         </Grid>
       </FormControl>
@@ -267,7 +267,7 @@ function VestingFixedDate() {
   );
 }
 
-function VestingTabs() {
+function DurationTabs() {
   const { t } = useTranslation(['roles']);
   const { setFieldValue } = useFormikContext<RoleFormValues>();
 
@@ -291,20 +291,20 @@ function VestingTabs() {
             flexDir="column"
             gap="1rem"
           >
-            <VestingScheduleDuration />
-            <VestingCliffDuration />
+            <ScheduleDuration />
+            <CliffDuration />
           </Flex>
         </TabPanel>
 
         <TabPanel>
-          <VestingFixedDate />
+          <FixedDate />
         </TabPanel>
       </TabPanels>
     </Tabs>
   );
 }
 
-export default function RoleFormVesting() {
+export default function RoleFormPaymentStream() {
   const { t } = useTranslation(['roles']);
   return (
     <Box
@@ -318,17 +318,17 @@ export default function RoleFormVesting() {
       borderRadius="0.5rem"
     >
       <SectionTitle
-        title={t('addVesting')}
-        subTitle={t('addVestingSubTitle')}
+        title={t('addPaymentStream')}
+        subTitle={t('addPaymentStreamSubTitle')}
         // @todo Add Learn More link
         externalLink="#"
       />
-      <AssetSelector formName="vesting" />
+      <AssetSelector />
       <SectionTitle
-        title={t('vestingSchedule')}
-        subTitle={t('vestingScheduleSubTitle')}
+        title={t('schedule')}
+        subTitle={t('scheduleSubTitle')}
       />
-      <VestingTabs />
+      <DurationTabs />
     </Box>
   );
 }

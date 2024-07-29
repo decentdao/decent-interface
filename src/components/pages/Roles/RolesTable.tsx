@@ -12,14 +12,7 @@ import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
-import {
-  RoleEditProps,
-  RoleFormValues,
-  RoleProps,
-  SablierPayroll,
-  SablierVesting,
-  frequencyOptions,
-} from './types';
+import { RoleEditProps, RoleFormValues, RoleProps, SablierPayment } from './types';
 
 function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
   const { t } = useTranslation(['roles']);
@@ -38,8 +31,7 @@ function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
       >
         <Th>{t('role')}</Th>
         <Th>{t('member')}</Th>
-        <Th>{t('payroll')}</Th>
-        <Th>{t('vesting')}</Th>
+        <Th>{t('payment')}</Th>
         {addHiddenColumn && <Th w="10%" />}
       </Tr>
     </Thead>
@@ -130,64 +122,11 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
   );
 }
 
-function PayrollColumn({ payrollData }: { payrollData: SablierPayroll | undefined }) {
-  const { t } = useTranslation(['roles', 'daoCreate']);
-  return (
-    <Td>
-      <Flex flexDir="column">
-        {payrollData ? (
-          <Box>
-            <Flex
-              alignItems="center"
-              gap="0.25rem"
-              my="0.5rem"
-            >
-              <Image
-                src={payrollData.asset.logo}
-                fallbackSrc="/images/coin-icon-default.svg"
-                alt={payrollData.asset.symbol}
-                w="1.25rem"
-                h="1.25rem"
-              />
-              {payrollData.amount.value}
-              <EtherscanLink
-                color="white-0"
-                _hover={{ bg: 'transparent' }}
-                textStyle="body-base"
-                padding={0}
-                borderWidth={0}
-                value={payrollData.asset.address}
-                type="token"
-                wordBreak="break-word"
-              >
-                {payrollData.asset.symbol}
-              </EtherscanLink>
-              <Text
-                color="white-0"
-                textStyle="body-base"
-              >
-                {'/'} {t(`${frequencyOptions[payrollData.paymentFrequency]}Short`)}
-              </Text>
-            </Flex>
-          </Box>
-        ) : (
-          <Text
-            textStyle="body-base"
-            color="neutral-6"
-          >
-            {t('n/a', { ns: 'daoCreate' })}
-          </Text>
-        )}
-      </Flex>
-    </Td>
-  );
-}
-
-function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefined }) {
+function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
   const { t } = useTranslation(['daoCreate']);
   return (
     <Td>
-      {vestingData ? (
+      {payment ? (
         <Box>
           <Flex
             textStyle="body-base"
@@ -197,27 +136,27 @@ function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefine
             my="0.5rem"
           >
             <Image
-              src={vestingData.asset.logo}
+              src={payment.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={vestingData.asset.symbol}
+              alt={payment.asset.symbol}
               w="1.25rem"
               h="1.25rem"
             />
-            {vestingData.vestingAmount}
+            {payment.amount?.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}
               textStyle="body-base"
               padding={0}
               borderWidth={0}
-              value={vestingData.asset.address}
+              value={payment.asset.address}
               type="token"
               wordBreak="break-word"
             >
-              {vestingData.asset.symbol}
+              {payment.asset.symbol}
             </EtherscanLink>
             <Text>
-              {t('after')} {vestingData.vestingSchedule}
+              {t('after')} {payment.scheduleDuration?.cliffDuration?.years}
             </Text>
           </Flex>
         </Box>
@@ -233,14 +172,7 @@ function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefine
   );
 }
 
-export function RolesRow({
-  name,
-  wearerAddress,
-  payrollData,
-  vestingData,
-  handleRoleClick,
-  hatId,
-}: RoleProps) {
+export function RolesRow({ name, wearerAddress, payment, handleRoleClick, hatId }: RoleProps) {
   return (
     <Tr
       sx={{
@@ -256,8 +188,7 @@ export function RolesRow({
     >
       <RoleNameColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PayrollColumn payrollData={payrollData} />
-      <VestingColumn vestingData={vestingData} />
+      <PaymentColumn payment={payment} />
     </Tr>
   );
 }
@@ -266,8 +197,7 @@ export function RolesRowEdit({
   name,
   wearerAddress,
   editStatus,
-  payrollData,
-  vestingData,
+  payment,
   handleRoleClick,
 }: RoleEditProps) {
   return (
@@ -285,8 +215,7 @@ export function RolesRowEdit({
     >
       <RoleNameEditColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PayrollColumn payrollData={payrollData} />
-      <VestingColumn vestingData={vestingData} />
+      <PaymentColumn payment={payment} />
       <Td w="10%">
         <EditBadge editStatus={editStatus} />
       </Td>
@@ -328,9 +257,10 @@ export function RolesTable({
               <RolesRow
                 key={role.id.toString()}
                 hatId={role.id}
+                name={role.name}
                 wearerAddress={role.wearer}
                 handleRoleClick={handleRoleClick}
-                {...role}
+                payment={role.vesting}
               />
             ))}
           </Tbody>
@@ -380,7 +310,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
                 handleRoleClick(role.id);
               }}
               editStatus={role.editedRole?.status}
-              payrollData={role.payroll}
+              payment={role.vesting}
             />
           ))}
         </Tbody>

@@ -1,12 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import {
-  Frequency,
-  SablierPayroll,
-  RoleValue,
-  RoleFormVestingValue,
-} from '../../../components/pages/Roles/types';
+import { SablierPayment, RoleValue } from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
@@ -17,26 +12,15 @@ export const useRolesSchema = () => {
     .shape({
       value: Yup.string(),
       bigintValue: Yup.mixed().nullable(),
+      // @todo - add validation for balance bigger than entered amount
+      // It's problematic at the moment due to how streams are passed into Zustand store
     })
-    .required()
-    .test({
-      name: 'isAmountValid',
-      message: t('roleInfoErrorAmountInvalid'),
-      test: (v, cxt) => {
-        const balance: string | undefined = cxt.parent.asset.balance;
-        if (balance === undefined || v.bigintValue === undefined || !v.value === undefined) {
-          return false;
-        }
-
-        return (v.bigintValue as bigint) <= BigInt(balance);
-      },
-    });
+    .required();
 
   const assetValidationSchema = Yup.object().shape({
     address: Yup.string(),
     symbol: Yup.string(),
     decimals: Yup.number(),
-    balance: Yup.string(),
   });
 
   const rolesSchema = useMemo(
@@ -54,35 +38,11 @@ export const useRolesSchema = () => {
                 wearer: Yup.string()
                   .required(t('roleInfoErrorMemberRequired'))
                   .test(addressValidationTest),
-                payroll: Yup.object()
-                  .default(undefined)
-                  .nullable()
-                  .when({
-                    is: (payroll: SablierPayroll) => payroll !== undefined,
-                    then: _payrollSchema =>
-                      _payrollSchema.shape({
-                        asset: assetValidationSchema,
-                        amount: bigIntValidationSchema,
-                        paymentFrequency: Yup.string()
-                          .oneOf([
-                            Frequency.Monthly.toString(),
-                            Frequency.EveryTwoWeeks.toString(),
-                            Frequency.Weekly.toString(),
-                          ])
-                          .required(t('roleInfoErrorPaymentFrequencyRequired')),
-                        paymentStartDate: Yup.date().required(
-                          t('roleInfoErrorPaymentStartDateRequired'),
-                        ),
-                        paymentFrequencyNumber: Yup.number().required(
-                          t('roleInfoErrorPaymentFrequencyNumberRequired'),
-                        ),
-                      }),
-                  }),
                 vesting: Yup.object()
                   .default(undefined)
                   .nullable()
                   .when({
-                    is: (vesting: RoleFormVestingValue) => vesting !== undefined,
+                    is: (vesting: SablierPayment) => vesting !== undefined,
                     then: _vestingSchema =>
                       _vestingSchema
                         .shape({

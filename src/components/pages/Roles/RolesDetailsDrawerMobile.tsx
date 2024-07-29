@@ -2,11 +2,12 @@ import { Flex, IconButton, Icon, Text, Box } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Hex } from 'viem';
-import PayrollAndVesting from '../../../pages/daos/[daoAddress]/roles/details/PayrollAndVesting';
+import PaymentDetails from '../../../pages/daos/[daoAddress]/roles/details/PaymentDetails';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useRolesState } from '../../../state/useRolesState';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import { AvatarAndRoleName } from './RoleCard';
+import { SablierPayment } from './types';
 
 interface RoleDetailsDrawerMobileProps {
   roleHat: {
@@ -15,6 +16,7 @@ interface RoleDetailsDrawerMobileProps {
     wearer: string;
     description: string;
   };
+  payment?: SablierPayment;
   onOpen?: () => void;
   onClose?: () => void;
   isOpen?: boolean;
@@ -27,6 +29,7 @@ export default function RolesDetailsDrawerMobile({
   onOpen,
   isOpen = true,
   onEdit,
+  payment,
 }: RoleDetailsDrawerMobileProps) {
   const {
     node: { daoAddress },
@@ -88,7 +91,7 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        <PayrollAndVesting />
+        <PaymentDetails payment={payment} />
       </Box>
     </DraggableDrawer>
   );
