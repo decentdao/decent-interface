@@ -205,7 +205,7 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
         </Field>
       </FormControl>
       <FormControl my="1rem">
-        <Field name="roleEditing.payment.amount">
+        <Field name={`roleEditing.payments[${formIndex}].amount`}>
           {({
             field,
             meta,
