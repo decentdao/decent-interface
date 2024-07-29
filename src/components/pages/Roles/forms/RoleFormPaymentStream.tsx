@@ -155,8 +155,8 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
   const selectedDate =
     type === 'startDate'
-      ? values.roleEditing?.payment?.scheduleFixedDate?.startDate
-      : values.roleEditing?.payment?.scheduleFixedDate?.endDate;
+      ? values.roleEditing?.payments?.[0].scheduleFixedDate?.startDate
+      : values.roleEditing?.payments?.[0].scheduleFixedDate?.endDate;
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 

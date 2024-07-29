@@ -127,7 +127,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               setDrawerViewingRole(role);
             }}
             editStatus={role.editedRole?.status}
-            payment={role.payment}
+            payments={role.payments}
           />
         ))}
       </Box>
@@ -157,7 +157,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               isOpen={drawerViewingRole !== undefined}
               onClose={handleCloseDrawer}
               onEdit={handleEditRoleClick}
-              payment={drawerViewingRole.payment}
+              payments={drawerViewingRole.payments}
             />
           </Show>
           <Show above="md">
@@ -166,7 +166,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               isOpen={drawerViewingRole !== undefined}
               onClose={handleCloseDrawer}
               onEdit={handleEditRoleClick}
-              payment={drawerViewingRole.payment}
+              payments={drawerViewingRole.payments}
             />
           </Show>
         </>

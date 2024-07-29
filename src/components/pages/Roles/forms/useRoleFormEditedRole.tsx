@@ -29,6 +29,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
   const isMemberUpdated =
     !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
 
+
   const editedRoleData = useMemo<EditedRole>(() => {
     if (!existingRoleHat) {
       return {

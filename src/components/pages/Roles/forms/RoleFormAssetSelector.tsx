@@ -35,7 +35,7 @@ export function AssetSelector() {
       asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
   );
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const selectedAsset = values.roleEditing?.payment?.asset;
+  const selectedAsset = values.roleEditing?.payments?.[0]?.asset;
   return (
     <>
       <FormControl my="0.5rem">
@@ -217,7 +217,7 @@ export function AssetSelector() {
                 errorMessage={meta.error}
               >
                 <BigIntInput
-                  isDisabled={!values?.roleEditing?.payment?.asset}
+                  isDisabled={!values?.roleEditing?.payments?.[0]?.asset}
                   value={field.value?.bigintValue}
                   onChange={valuePair => {
                     setFieldValue(field.name, valuePair, true);

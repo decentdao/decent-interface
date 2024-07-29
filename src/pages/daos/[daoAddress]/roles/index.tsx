@@ -67,7 +67,7 @@ function Roles() {
                 wearerAddress={roleHat.wearer || zeroAddress}
                 hatId={roleHat.id}
                 handleRoleClick={handleNavigateToRole}
-                payment={roleHat.payment}
+                payments={roleHat.payments}
               />
             ))}
           </Show>

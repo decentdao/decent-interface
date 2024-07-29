@@ -129,7 +129,7 @@ function RolesEdit() {
                     setFieldValue('roleEditing', hat);
                     showRoleEditDetails(hat.id);
                   }}
-                  payment={hat.payment}
+                  payments={hat.payments}
                 />
               ))}
             </Show>
