@@ -1,12 +1,15 @@
 import { useCallback } from 'react';
-import { getAddress, zeroAddress, encodeFunctionData, erc20Abi, Address } from 'viem';
+import { zeroAddress, encodeFunctionData, erc20Abi, Address, Hex } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
 import SablierV2LockupTranchedAbi from '../../assets/abi/SablierV2LockupTranched';
-import { BaseSablierStream } from '../../components/pages/Roles/types';
+import {
+  BaseSablierStream,
+  SablierAsset,
+  SablierPayment,
+} from '../../components/pages/Roles/types';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { TokenBalance, ProposalExecuteData } from '../../types';
 import {
   StreamAbsoluteSchedule,
   StreamRelativeSchedule,
@@ -15,7 +18,7 @@ import {
 
 type LinearStreamInputs = {
   totalAmount: string;
-  asset: TokenBalance;
+  asset: SablierAsset;
   recipient: Address;
   schedule: StreamSchedule;
   cliff: StreamSchedule;
@@ -138,35 +141,62 @@ export default function useCreateSablierStream() {
     return { calldata: flushCalldata, targetAddress: stream.contractAddress };
   }, []);
 
-  const prepareCreateLinearLockupProposal = useCallback(
-    (inputs: LinearStreamInputs) => {
-      const { asset, recipient } = inputs;
-      const tokenAddress = getAddress(asset.tokenAddress);
-      const { tokenCalldata, assembledStream } = prepareLinearStream(inputs);
-      const sablierBatchCalldata = encodeFunctionData({
-        abi: SablierV2BatchAbi,
-        functionName: 'createWithDurationsLL', // Another option would be to use createWithTimestampsLD. Essentially they're doing the same
-        args: [sablierV2LockupLinear, tokenAddress, [assembledStream]],
+  const prepareBatchLinearStreamCreation = useCallback(
+    (linearStreams: SablierPayment[], recipients: Address[]) => {
+      if (linearStreams.length !== recipients.length) {
+        throw new Error(
+          'Parameters mismatch. Amount of created streams has to match amount of recipients',
+        );
+      }
+
+      const preparedStreamCreationTransactions: { calldata: Hex; targetAddress: Address }[] = [];
+      const preparedTokenApprovalsTransactions: { calldata: Hex; tokenAddress: Address }[] = [];
+
+      linearStreams.forEach((streamData, index) => {
+        const recipient = recipients[index];
+        const tokenAddress = streamData.asset.address;
+        // @todo - Smarter way would be to batch token approvals and streams creation, and not just build single approval + creation transactions for each stream
+        const { tokenCalldata, assembledStream } = prepareLinearStream({
+          recipient,
+          ...streamData,
+          totalAmount: streamData.amount.value,
+          asset: streamData.asset,
+          schedule:
+            streamData.scheduleType === 'duration'
+              ? streamData.scheduleDuration!.duration
+              : {
+                  startDate: streamData.scheduleFixedDate!.startDate.getTime(),
+                  endDate: streamData.scheduleFixedDate!.endDate.getTime(),
+                },
+          cliff:
+            streamData.scheduleType === 'duration'
+              ? streamData.scheduleDuration!.cliff
+              : {
+                  startDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
+                  endDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
+                },
+        });
+
+        const sablierBatchCalldata = encodeFunctionData({
+          abi: SablierV2BatchAbi,
+          functionName: 'createWithDurationsLL', // Another option would be to use createWithTimestampsLL. Essentially they're doing the same, `WithDurations` just simpler for usage
+          args: [sablierV2LockupLinear, tokenAddress, [assembledStream]],
+        });
+
+        preparedStreamCreationTransactions.push({
+          calldata: sablierBatchCalldata,
+          targetAddress: sablierV2Batch,
+        });
+        preparedTokenApprovalsTransactions.push({ calldata: tokenCalldata, tokenAddress });
       });
 
-      const proposalData: ProposalExecuteData = {
-        targets: [tokenAddress, sablierV2Batch],
-        values: [0n, 0n],
-        calldatas: [tokenCalldata, sablierBatchCalldata],
-        metaData: {
-          title: 'Create Vesting Stream for Role',
-          description: `This madafaking rocket science proposal will create AI Blockchain Crypto Currency Bitcoin BUIDL HODL Sablier V2 Vesting Stream of $$$ flowing to ${recipient}`,
-          documentationUrl: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
-        },
-      };
-
-      return proposalData;
+      return { preparedStreamCreationTransactions, preparedTokenApprovalsTransactions };
     },
     [prepareLinearStream, sablierV2Batch, sablierV2LockupLinear],
   );
 
   return {
-    prepareCreateLinearLockupProposal,
+    prepareBatchLinearStreamCreation,
     prepareFlushStreamTx,
     prepareCancelStreamTx,
   };
