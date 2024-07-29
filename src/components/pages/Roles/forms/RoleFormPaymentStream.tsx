@@ -36,14 +36,18 @@ import { SectionTitle } from './RoleFormSectionTitle';
 function DurationTicker({
   fieldName,
   fieldType,
+  formIndex,
 }: {
   fieldType: 'vestingDuration' | 'cliffDuration';
   fieldName: 'years' | 'days' | 'hours';
+  formIndex: number;
 }) {
   const { t } = useTranslation(['roles']);
   return (
     <FormControl>
-      <Field name={`roleEditing.payment.scheduleDuration.[${fieldType}].[${fieldName}]`}>
+      <Field
+        name={`roleEditing.payments[${formIndex}].scheduleDuration.[${fieldType}].[${fieldName}]`}
+      >
         {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => {
           return (
             <LabelWrapper
@@ -102,7 +106,7 @@ function DurationTicker({
   );
 }
 
-function ScheduleDuration() {
+function ScheduleDuration({ formIndex }: { formIndex: number }) {
   return (
     <Flex
       flexDir="column"
@@ -111,20 +115,23 @@ function ScheduleDuration() {
       <DurationTicker
         fieldName="years"
         fieldType="vestingDuration"
+        formIndex={formIndex}
       />
       <DurationTicker
         fieldName="days"
         fieldType="vestingDuration"
+        formIndex={formIndex}
       />
       <DurationTicker
         fieldName="hours"
         fieldType="vestingDuration"
+        formIndex={formIndex}
       />
     </Flex>
   );
 }
 
-function CliffDuration() {
+function CliffDuration({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   return (
     <Flex
@@ -139,30 +146,39 @@ function CliffDuration() {
         <DurationTicker
           fieldName="years"
           fieldType="cliffDuration"
+          formIndex={formIndex}
         />
         <DurationTicker
           fieldName="days"
           fieldType="cliffDuration"
+          formIndex={formIndex}
         />
         <DurationTicker
           fieldName="hours"
           fieldType="cliffDuration"
+          formIndex={formIndex}
         />
       </Box>
     </Flex>
   );
 }
 
-function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
+function PaymentDatePicker({
+  type,
+  formIndex,
+}: {
+  type: 'startDate' | 'endDate';
+  formIndex: number;
+}) {
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
   const selectedDate =
     type === 'startDate'
-      ? values.roleEditing?.payments?.[0].scheduleFixedDate?.startDate
-      : values.roleEditing?.payments?.[0].scheduleFixedDate?.endDate;
+      ? values.roleEditing?.payments?.[formIndex].scheduleFixedDate?.startDate
+      : values.roleEditing?.payments?.[formIndex].scheduleFixedDate?.endDate;
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   return (
-    <Field name={`roleEditing.payment.scheduleFixedDate.${type}`}>
+    <Field name={`roleEditing.payments[${formIndex}].scheduleFixedDate.${type}`}>
       {() => (
         <>
           <Show below="md">
@@ -185,8 +201,14 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
               <DecentDatePicker
                 isRange
                 onRangeChange={dateRange => {
-                  setFieldValue('roleEditing.vesting.scheduleFixedDate.startDate', dateRange[0]);
-                  setFieldValue('roleEditing.vesting.scheduleFixedDate.endDate', dateRange[1]);
+                  setFieldValue(
+                    `roleEditing.payments[${formIndex}].scheduleFixedDate.startDate`,
+                    dateRange[0],
+                  );
+                  setFieldValue(
+                    `roleEditing.payments[${formIndex}].scheduleFixedDate.endDate`,
+                    dateRange[1],
+                  );
                 }}
               />
             </DraggableDrawer>
@@ -208,10 +230,13 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
                     isRange
                     onRangeChange={dateRange => {
                       setFieldValue(
-                        'roleEditing.vesting.scheduleFixedDate.startDate',
+                        `roleEditing.payments[${formIndex}].scheduleFixedDate.startDate`,
                         dateRange[0],
                       );
-                      setFieldValue('roleEditing.vesting.scheduleFixedDate.endDate', dateRange[1]);
+                      setFieldValue(
+                        `roleEditing.payments[${formIndex}].scheduleFixedDate.endDate`,
+                        dateRange[1],
+                      );
                     }}
                   />
                 </MenuList>
@@ -224,7 +249,7 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
   );
 }
 
-function FixedDate() {
+function FixedDate({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
 
   return (
@@ -245,7 +270,10 @@ function FixedDate() {
           alignItems="center"
         >
           <GridItem area="start">
-            <PaymentDatePicker type="startDate" />
+            <PaymentDatePicker
+              type="startDate"
+              formIndex={formIndex}
+            />
           </GridItem>
           <GridItem
             area="arrow"
@@ -259,7 +287,10 @@ function FixedDate() {
             />
           </GridItem>
           <GridItem area="end">
-            <PaymentDatePicker type="endDate" />
+            <PaymentDatePicker
+              type="endDate"
+              formIndex={formIndex}
+            />
           </GridItem>
         </Grid>
       </FormControl>
@@ -267,7 +298,7 @@ function FixedDate() {
   );
 }
 
-function DurationTabs() {
+function DurationTabs({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { setFieldValue } = useFormikContext<RoleFormValues>();
 
@@ -277,10 +308,18 @@ function DurationTabs() {
       my="1rem"
     >
       <TabList my="1rem">
-        <Tab onClick={() => setFieldValue('roleEditing.payment.scheduleType', 'duration')}>
+        <Tab
+          onClick={() =>
+            setFieldValue(`roleEditing.payments[${formIndex}].scheduleType`, 'duration')
+          }
+        >
           {t('duration')}
         </Tab>
-        <Tab onClick={() => setFieldValue('roleEditing.payment.scheduleType', 'fixedDate')}>
+        <Tab
+          onClick={() =>
+            setFieldValue(`roleEditing.payments[${formIndex}].scheduleType`, 'fixedDate')
+          }
+        >
           {t('fixedDates')}
         </Tab>
       </TabList>
@@ -291,20 +330,20 @@ function DurationTabs() {
             flexDir="column"
             gap="1rem"
           >
-            <ScheduleDuration />
-            <CliffDuration />
+            <ScheduleDuration formIndex={formIndex} />
+            <CliffDuration formIndex={formIndex} />
           </Flex>
         </TabPanel>
 
         <TabPanel>
-          <FixedDate />
+          <FixedDate formIndex={formIndex} />
         </TabPanel>
       </TabPanels>
     </Tabs>
   );
 }
 
-export default function RoleFormPaymentStream() {
+export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   return (
     <Box
@@ -323,12 +362,12 @@ export default function RoleFormPaymentStream() {
         // @todo Add Learn More link
         externalLink="#"
       />
-      <AssetSelector />
+      <AssetSelector formIndex={formIndex} />
       <SectionTitle
         title={t('schedule')}
         subTitle={t('scheduleSubTitle')}
       />
-      <DurationTabs />
+      <DurationTabs formIndex={formIndex} />
     </Box>
   );
 }

@@ -93,7 +93,7 @@ export default function RoleFormTabs({
               {values.roleEditing?.payments &&
                 values.roleEditing.payments.map((_, i) => (
                   <TabPanel key={i}>
-                    <RoleFormPaymentStream />
+                    <RoleFormPaymentStream formIndex={i} />
                   </TabPanel>
                 ))}
               {(values.roleEditing?.payments?.length ?? 0) < 2 && (

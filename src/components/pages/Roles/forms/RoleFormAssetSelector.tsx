@@ -24,7 +24,7 @@ import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
 import { RoleFormValues } from '../types';
 
-export function AssetSelector() {
+export function AssetSelector({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
   const {
     treasury: { assetsFungible },
@@ -35,11 +35,11 @@ export function AssetSelector() {
       asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
   );
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const selectedAsset = values.roleEditing?.payments?.[0]?.asset;
+  const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
   return (
     <>
       <FormControl my="0.5rem">
-        <Field name="roleEditing.payment.asset">
+        <Field name={`roleEditing.payments[${formIndex}].asset`}>
           {({ field }: FieldProps<string, RoleFormValues>) => (
             <Menu
               placement="bottom-end"
@@ -217,7 +217,7 @@ export function AssetSelector() {
                 errorMessage={meta.error}
               >
                 <BigIntInput
-                  isDisabled={!values?.roleEditing?.payments?.[0]?.asset}
+                  isDisabled={!values?.roleEditing?.payments?.[formIndex]?.asset}
                   value={field.value?.bigintValue}
                   onChange={valuePair => {
                     setFieldValue(field.name, valuePair, true);
