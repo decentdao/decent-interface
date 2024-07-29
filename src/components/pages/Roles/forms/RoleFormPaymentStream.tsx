@@ -38,7 +38,7 @@ function DurationTicker({
   fieldType,
   formIndex,
 }: {
-  fieldType: 'vestingDuration' | 'cliffDuration';
+  fieldType: 'duration' | 'cliffDuration';
   fieldName: 'years' | 'days' | 'hours';
   formIndex: number;
 }) {
@@ -114,17 +114,17 @@ function ScheduleDuration({ formIndex }: { formIndex: number }) {
     >
       <DurationTicker
         fieldName="years"
-        fieldType="vestingDuration"
+        fieldType="duration"
         formIndex={formIndex}
       />
       <DurationTicker
         fieldName="days"
-        fieldType="vestingDuration"
+        fieldType="duration"
         formIndex={formIndex}
       />
       <DurationTicker
         fieldName="hours"
-        fieldType="vestingDuration"
+        fieldType="duration"
         formIndex={formIndex}
       />
     </Flex>
@@ -167,7 +167,7 @@ function PaymentDatePicker({
   type,
   formIndex,
 }: {
-  type: 'startDate' | 'endDate';
+  type: 'startDate' | 'endDate' | 'cliffDate';
   formIndex: number;
 }) {
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
@@ -293,6 +293,16 @@ function FixedDate({ formIndex }: { formIndex: number }) {
             />
           </GridItem>
         </Grid>
+      </FormControl>
+      <FormControl my="1rem" display="flex" flexDir="column" gap="1rem">
+        <SectionTitle
+          title={t('cliff')}
+          subTitle={t('cliffSubTitle')}
+        />
+        <PaymentDatePicker
+          type="cliffDate"
+          formIndex={formIndex}
+        />
       </FormControl>
     </Box>
   );
