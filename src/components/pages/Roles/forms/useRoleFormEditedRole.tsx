@@ -66,7 +66,13 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
       fieldNames,
       status: EditBadgeStatus.Updated,
     };
-  }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated, isPaymentsUpdated]);
+  }, [
+    existingRoleHat,
+    isRoleNameUpdated,
+    isRoleDescriptionUpdated,
+    isMemberUpdated,
+    isPaymentsUpdated,
+  ]);
 
   return {
     editedRoleData,
