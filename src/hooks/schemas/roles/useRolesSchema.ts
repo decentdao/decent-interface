@@ -77,7 +77,7 @@ export const useRolesSchema = () => {
                                 test: _scheduleDuration => {
                                   if (!_scheduleDuration) return false;
 
-                                  const { duration, cliffDuration } = _scheduleDuration;
+                                  const { duration } = _scheduleDuration;
 
                                   const hasDuration =
                                     !!_scheduleDuration &&
@@ -86,12 +86,7 @@ export const useRolesSchema = () => {
 
                                   if (hasDuration) {
                                     return (
-                                      (duration.years > 0 ||
-                                        duration.days > 0 ||
-                                        duration.hours > 0) &&
-                                      (cliffDuration.years > 0 ||
-                                        cliffDuration.days > 0 ||
-                                        cliffDuration.hours > 0)
+                                      duration.years > 0 || duration.days > 0 || duration.hours > 0
                                     );
                                   }
                                 },
