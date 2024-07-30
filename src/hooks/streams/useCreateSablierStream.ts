@@ -21,7 +21,7 @@ type LinearStreamInputs = {
   asset: SablierAsset;
   recipient: Address;
   schedule: StreamSchedule;
-  cliff: StreamSchedule;
+  cliff: StreamSchedule | undefined;
 };
 
 export default function useCreateSablierStream() {
@@ -77,7 +77,10 @@ export default function useCreateSablierStream() {
         const relativeSchedule = abstractSchedule as StreamRelativeSchedule;
         const absoluteSchedule = abstractSchedule as StreamAbsoluteSchedule;
 
-        if (relativeSchedule && (relativeSchedule.years || relativeSchedule.days || relativeSchedule.hours)) {
+        if (
+          relativeSchedule &&
+          (relativeSchedule.years || relativeSchedule.days || relativeSchedule.hours)
+        ) {
           duration += (relativeSchedule.years ?? 0) * SECONDS_IN_DAY * 365;
           duration += (relativeSchedule.days ?? 0) * SECONDS_IN_DAY;
           duration += (relativeSchedule.hours ?? 0) * SECONDS_IN_HOUR;
@@ -88,7 +91,7 @@ export default function useCreateSablierStream() {
         return duration;
       };
       const streamDuration = calculateDuration(schedule);
-      const cliffDuration = calculateDuration(cliff);
+      const cliffDuration = cliff ? calculateDuration(cliff) : 0;
 
       if (!streamDuration) {
         throw new Error('Stream duration can not be 0');
@@ -155,28 +158,33 @@ export default function useCreateSablierStream() {
       linearStreams.forEach((streamData, index) => {
         const recipient = recipients[index];
         const tokenAddress = streamData.asset.address;
+        const schedule =
+          streamData.scheduleType === 'duration' && streamData.scheduleDuration
+            ? streamData.scheduleDuration.duration
+            : {
+                startDate: streamData.scheduleFixedDate!.startDate.getTime(),
+                endDate: streamData.scheduleFixedDate!.endDate.getTime(),
+              };
+        const cliff =
+          streamData.scheduleType === 'duration'
+            ? streamData.scheduleDuration!.cliffDuration
+            : streamData.scheduleFixedDate?.cliffDate !== undefined
+              ? {
+                  startDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
+                  endDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
+                }
+              : undefined;
+
         // @todo - Smarter way would be to batch token approvals and streams creation, and not just build single approval + creation transactions for each stream
         const { tokenCalldata, assembledStream } = prepareLinearStream({
           recipient,
           ...streamData,
           totalAmount: streamData.amount.value,
           asset: streamData.asset,
-          schedule:
-          streamData.scheduleType === 'duration'
-          ? streamData.scheduleDuration!.duration
-          : {
-            startDate: streamData.scheduleFixedDate!.startDate.getTime(),
-            endDate: streamData.scheduleFixedDate!.endDate.getTime(),
-          },
-          cliff:
-          streamData.scheduleType === 'duration'
-          ? streamData.scheduleDuration!.cliffDuration
-          : {
-            startDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
-            endDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
-          },
+          schedule,
+          cliff,
         });
-        
+
         const sablierBatchCalldata = encodeFunctionData({
           abi: SablierV2BatchAbi,
           functionName: 'createWithDurationsLL', // Another option would be to use createWithTimestampsLL. Essentially they're doing the same, `WithDurations` just simpler for usage

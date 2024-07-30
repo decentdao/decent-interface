@@ -38,9 +38,9 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
       return (
         payment.amount !== existingPayment.amount ||
         payment.scheduleType !== existingPayment.scheduleType ||
-        payment.scheduleDuration?.cliffDuration.days !== existingPayment.scheduleDuration?.cliffDuration.days ||
-        payment.scheduleDuration?.cliffDuration.hours !== existingPayment.scheduleDuration?.cliffDuration.hours ||
-        payment.scheduleDuration?.cliffDuration.years !== existingPayment.scheduleDuration?.cliffDuration.years ||
+        payment.scheduleDuration?.cliffDuration?.days !== existingPayment.scheduleDuration?.cliffDuration?.days ||
+        payment.scheduleDuration?.cliffDuration?.hours !== existingPayment.scheduleDuration?.cliffDuration?.hours ||
+        payment.scheduleDuration?.cliffDuration?.years !== existingPayment.scheduleDuration?.cliffDuration?.years ||
         payment.asset.address !== existingPayment.asset.address ||
         payment.scheduleFixedDate?.cliffDate !== existingPayment.scheduleFixedDate?.cliffDate ||
         payment.scheduleFixedDate?.startDate !== existingPayment.scheduleFixedDate?.startDate ||
