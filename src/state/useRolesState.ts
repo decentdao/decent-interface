@@ -86,10 +86,13 @@ export interface DecentTree {
   roleHatsTotalCount: number;
 }
 
-interface Roles {
+interface RolesStoreData {
   hatsTreeId: undefined | null | number;
   hatsTree: undefined | null | DecentTree;
   streamsFetched: boolean;
+}
+
+interface RolesStore extends RolesStoreData {
   getHat: (hatId: Hex) => DecentRoleHat | null;
   setHatsTreeId: (hatsTreeId: undefined | null | number) => void;
   setHatsTree: (params: {
@@ -102,6 +105,7 @@ interface Roles {
     decentHats: Address;
   }) => Promise<void>;
   setHatsStreams: (updatedDecentTree: DecentTree) => void;
+  resetHatsStore: () => void;
 }
 
 const appearsExactlyNumberOfTimes = (
@@ -268,10 +272,14 @@ const sanitize = async (
   return decentTree;
 };
 
-const useRolesState = create<Roles>()((set, get) => ({
+const initialHatsStore: RolesStoreData = {
   hatsTreeId: undefined,
   hatsTree: undefined,
   streamsFetched: false,
+};
+
+const useRolesState = create<RolesStore>()((set, get) => ({
+  ...initialHatsStore,
   getHat: hatId => {
     const matches = get().hatsTree?.roleHats.filter(h => h.id === hatId);
 
@@ -309,6 +317,7 @@ const useRolesState = create<Roles>()((set, get) => ({
   setHatsStreams: updatedDecentTree => {
     set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
   },
+  resetHatsStore: () => set(() => initialHatsStore),
 }));
 
 export { useRolesState };

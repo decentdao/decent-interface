@@ -15,14 +15,14 @@ export default function HomePage() {
   } = useFractal();
 
   const { t } = useTranslation('home');
-  const { setHatsTreeId } = useRolesState();
+  const { resetHatsStore } = useRolesState();
 
   useEffect(() => {
     if (daoAddress) {
       action.resetSafeState();
-      setHatsTreeId(null);
+      resetHatsStore();
     }
-  }, [daoAddress, action, setHatsTreeId]);
+  }, [daoAddress, action, resetHatsStore]);
 
   return (
     <Flex
