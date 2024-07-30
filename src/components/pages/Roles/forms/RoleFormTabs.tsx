@@ -68,18 +68,18 @@ export default function RoleFormTabs({
                     <Box key={i}>
                       <Tab key={i}>
                         {t('paymentStream')}
-                        <IconButton
-                          aria-label="Remove payment stream"
-                          size="icon-sm"
-                          variant="tertiary"
-                          as={X}
-                          onClick={() => {
-                            if (!savedRole && !existingRoleHat) {
+                        {!savedRole && !existingRoleHat && (
+                          <IconButton
+                            aria-label="Remove payment stream"
+                            size="icon-sm"
+                            variant="tertiary"
+                            as={X}
+                            onClick={() => {
                               removePayment(i);
-                            }
-                          }}
-                          ml="1rem"
-                        />
+                            }}
+                            ml="1rem"
+                          />
+                        )}
                       </Tab>
                     </Box>
                   );
