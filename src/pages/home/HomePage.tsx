@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { DecentSignature } from '../../assets/theme/custom/icons/DecentSignature';
 import { BASE_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
+import { useRolesState } from '../../state/useRolesState';
 import { MySafes } from './MySafes';
 
 export default function HomePage() {
@@ -14,12 +15,14 @@ export default function HomePage() {
   } = useFractal();
 
   const { t } = useTranslation('home');
+  const { setHatsTreeId } = useRolesState();
 
   useEffect(() => {
     if (daoAddress) {
       action.resetSafeState();
+      setHatsTreeId(null);
     }
-  }, [daoAddress, action]);
+  }, [daoAddress, action, setHatsTreeId]);
 
   return (
     <Flex
