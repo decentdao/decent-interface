@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { zeroAddress, encodeFunctionData, erc20Abi, Address, Hex } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
-import SablierV2LockupTranchedAbi from '../../assets/abi/SablierV2LockupTranched';
+import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import {
   BaseSablierStream,
   SablierAsset,
@@ -119,7 +119,7 @@ export default function useCreateSablierStream() {
     // so it's safe to rely on TranchedAbi
 
     const flushCalldata = encodeFunctionData({
-      abi: SablierV2LockupTranchedAbi,
+      abi: SablierV2LockupLinearAbi,
       functionName: 'withdrawMax',
       args: [convertStreamIdToBigInt(stream.streamId), to],
     });
@@ -136,7 +136,7 @@ export default function useCreateSablierStream() {
     // all the types of streams are inheriting from that
     // so it's safe to rely on TranchedAbi
     const flushCalldata = encodeFunctionData({
-      abi: SablierV2LockupTranchedAbi,
+      abi: SablierV2LockupLinearAbi,
       functionName: 'cancel',
       args: [convertStreamIdToBigInt(stream.streamId)],
     });
