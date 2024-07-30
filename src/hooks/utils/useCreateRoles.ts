@@ -296,9 +296,9 @@ export default function useCreateRoles() {
   );
 
   const prepareDeleteHatStreamTx = useCallback(
-    (stream: BaseSablierStream, wearer: Address) => {
-      const cancelStreamTx = prepareCancelStreamTx(stream);
-      const wrappedFlushStreamTx = prepareChangeHatWearerTx(stream, wearer);
+    (streams: BaseSablierStream[], wearer: Address) => {
+      const cancelStreamTx = prepareCancelStreamTx(streams[0]);
+      const wrappedFlushStreamTx = prepareChangeHatWearerTx(streams[0], wearer);
 
       return { wrappedFlushStreamTx, cancelStreamTx };
     },
@@ -362,10 +362,10 @@ export default function useCreateRoles() {
         removeHatTxs = removedHatIds.map(hatId => {
           const roleHat = hatsTree.roleHats.find(hat => hat.id === hatId);
           if (roleHat) {
-            if (roleHat.vesting) {
+            if (roleHat.payments?.length) {
               // @todo Do not add flush out stream transaction if available balance to withdraw is 0
               const { wrappedFlushStreamTx, cancelStreamTx } = prepareDeleteHatStreamTx(
-                roleHat.vesting,
+                roleHat.payments,
                 roleHat.wearer,
               );
               hatPayrollHatRemovedTxs.push({
@@ -414,11 +414,11 @@ export default function useCreateRoles() {
         transferHatTxs = memberChangedHats
           .map(({ id, currentWearer, newWearer }) => {
             const roleHat = hatsTree.roleHats.find(hat => hat.id === id);
-            if (roleHat && roleHat.vesting) {
-              if (roleHat.vesting) {
+            if (roleHat && roleHat.payments?.length) {
+              if (roleHat.payments && roleHat.payments.length) {
                 // @todo Do not add flush out stream transaction if available balance to withdraw is 0
                 const wrappedFlushStreamTx = prepareChangeHatWearerTx(
-                  roleHat.vesting,
+                  roleHat.payments[0],
                   roleHat.wearer,
                 );
                 hatPayrollWearerChangedTxs.push({

@@ -169,7 +169,7 @@ function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
               {payment.asset.symbol}
             </EtherscanLink>
             <Text>
-              {t('after')} {payment.scheduleDuration?.cliffDuration?.years}
+              {t('after')} {payment.scheduleDuration?.duration?.years}
             </Text>
           </Flex>
         </Box>
@@ -185,7 +185,7 @@ function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
   );
 }
 
-export function RolesRow({ name, wearerAddress, payment, handleRoleClick, hatId }: RoleProps) {
+export function RolesRow({ name, wearerAddress, payments, handleRoleClick, hatId }: RoleProps) {
   return (
     <Tr
       sx={{
@@ -201,7 +201,7 @@ export function RolesRow({ name, wearerAddress, payment, handleRoleClick, hatId 
     >
       <RoleNameColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentColumn payment={payment} />
+      <PaymentColumn payment={payments?.[0]} />
     </Tr>
   );
 }
@@ -210,7 +210,7 @@ export function RolesRowEdit({
   name,
   wearerAddress,
   editStatus,
-  payment,
+  payments,
   handleRoleClick,
 }: RoleEditProps) {
   return (
@@ -231,7 +231,7 @@ export function RolesRowEdit({
         editStatus={editStatus}
       />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentColumn payment={payment} />
+      <PaymentColumn payment={payments?.[0]} />
     </Tr>
   );
 }
@@ -272,7 +272,7 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearer}
                 handleRoleClick={handleRoleClick}
-                payment={role.vesting}
+                payments={role.payments}
               />
             ))}
           </Tbody>
@@ -321,7 +321,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
                 handleRoleClick(role.id);
               }}
               editStatus={role.editedRole?.status}
-              payment={role.vesting}
+              payments={role.payments}
             />
           ))}
         </Tbody>

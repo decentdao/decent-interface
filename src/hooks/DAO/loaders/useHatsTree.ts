@@ -150,7 +150,8 @@ const useHatsTree = () => {
         const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
         const updatedHatsRoles = await Promise.all(
           hatsTree.roleHats.map(async hat => {
-            if (hat.vesting) {
+            // @todo role | check logic
+            if (hat.payments?.length) {
               return hat;
             }
             const streamQueryResult = await apolloClient.query({
@@ -160,7 +161,7 @@ const useHatsTree = () => {
             });
 
             if (!streamQueryResult.error) {
-              let vesting: SablierPayment | undefined;
+              let payment: SablierPayment | undefined;
 
               if (!streamQueryResult.data.streams.length) {
                 return hat;
@@ -180,7 +181,7 @@ const useHatsTree = () => {
                 const bigintAmount =
                   BigInt(activeVestingStream.depositAmount) /
                   10n ** BigInt(activeVestingStream.asset.decimals);
-                vesting = {
+                payment = {
                   streamId: activeVestingStream.id,
                   contractAddress: activeVestingStream.contract.address,
                   asset: {
@@ -200,13 +201,14 @@ const useHatsTree = () => {
                   scheduleFixedDate: {
                     startDate: secondsTimestampToDate(activeVestingStream.startTime),
                     endDate: secondsTimestampToDate(activeVestingStream.endTime),
+                    cliffDate: secondsTimestampToDate(activeVestingStream.cliffTime),
                   },
                   // @dev We can't recover which UI element was used during initial stream creation
                   scheduleType: 'fixedDate',
                 };
               }
 
-              return { ...hat, vesting };
+              return { ...hat, payment };
             } else {
               return hat;
             }

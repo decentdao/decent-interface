@@ -14,20 +14,21 @@ export interface SablierAsset {
 }
 
 export interface BaseSablierStream {
-  streamId?: string;
-  contractAddress?: Address;
+  streamId: string;
+  contractAddress: Address;
   asset: SablierAsset;
   amount: BigIntValuePair;
 }
 
 export interface SablierPayment extends BaseSablierStream {
   scheduleDuration?: {
-    vestingDuration: VestingDuration;
-    cliffDuration: VestingDuration;
+    duration: DurationBreakdown;
+    cliff: DurationBreakdown;
   };
   scheduleFixedDate?: {
     startDate: Date;
     endDate: Date;
+    cliffDate: Date;
   };
   scheduleType: 'duration' | 'fixedDate';
 }
@@ -38,7 +39,7 @@ export interface RoleProps {
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  payment?: SablierPayment;
+  payments?: SablierPayment[];
 }
 
 export interface RoleEditProps
@@ -80,7 +81,7 @@ export interface EditedRole {
   status: EditBadgeStatus;
 }
 
-export interface VestingDuration {
+export interface DurationBreakdown {
   years: number;
   hours: number;
   days: number;
@@ -89,7 +90,7 @@ export interface VestingDuration {
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
-  vesting?: SablierPayment;
+  payments?: SablierPayment[];
 }
 
 export interface RoleFormValues {

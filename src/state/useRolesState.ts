@@ -68,7 +68,7 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
-  vesting?: SablierPayment;
+  payments?: SablierPayment[];
 }
 
 interface DecentTopHat extends DecentHat {}

@@ -106,7 +106,8 @@ function Payment({ payment }: { payment: SablierPayment | undefined }) {
               {payment.asset.symbol}
             </EtherscanLink>
             <Text>
-              {t('after')} {payment.scheduleDuration?.vestingDuration.years}
+              {/* @todo role | Refactor this */}
+              {/* {t('after')} {payment.scheduleDuration?.duration.years} */}
             </Text>
           </Flex>
         </Box>
@@ -118,7 +119,7 @@ function Payment({ payment }: { payment: SablierPayment | undefined }) {
 export function RoleCard({
   name,
   wearerAddress,
-  payment,
+  payments,
   editStatus,
   handleRoleClick,
   hatId,
@@ -144,7 +145,7 @@ export function RoleCard({
           />
         </Flex>
       </Flex>
-      <Payment payment={payment} />
+      <Payment payment={payments?.[0]} />
     </Card>
   );
 }
@@ -152,7 +153,7 @@ export function RoleCard({
 export function RoleCardEdit({
   name,
   wearerAddress,
-  payment,
+  payments,
   editStatus,
   handleRoleClick,
 }: RoleEditProps) {
@@ -177,7 +178,7 @@ export function RoleCardEdit({
           />
         </Flex>
       </Flex>
-      <Payment payment={payment} />
+      <Payment payment={payments?.[0]} />
     </Card>
   );
 }
