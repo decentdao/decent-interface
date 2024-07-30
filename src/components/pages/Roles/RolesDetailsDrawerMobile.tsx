@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Hex } from 'viem';
 import PaymentDetails from '../../../pages/daos/[daoAddress]/roles/details/PaymentDetails';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useRolesState } from '../../../state/useRolesState';
+import { useRolesState } from '../../../state/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import { AvatarAndRoleName } from './RoleCard';
 import { SablierPayment } from './types';

@@ -10,7 +10,7 @@ import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../../state/useRolesState';
+import { useRolesState } from '../../../../state/roles';
 
 function Roles() {
   const { hatsTree } = useRolesState();

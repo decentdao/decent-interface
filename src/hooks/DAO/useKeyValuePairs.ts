@@ -6,7 +6,7 @@ import KeyValuePairsAbi from '../../assets/abi/KeyValuePairs';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../state/useRolesState';
+import { useRolesState } from '../../state/roles';
 
 const getHatsTreeId = (
   events: GetContractEventsReturnType<typeof KeyValuePairsAbi> | undefined,
