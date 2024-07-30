@@ -144,7 +144,7 @@ function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
     payment?.scheduleFixedDate?.endDate &&
     formatDuration(
       intervalToDuration({
-        start: new Date(),
+        start: payment.scheduleFixedDate.startDate,
         end: payment.scheduleFixedDate.endDate,
       }),
       { format },
@@ -153,7 +153,7 @@ function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
     payment?.scheduleFixedDate?.cliffDate &&
     formatDuration(
       intervalToDuration({
-        start: new Date(),
+        start: payment.scheduleFixedDate.startDate,
         end: payment.scheduleFixedDate.cliffDate,
       }),
       { format },
