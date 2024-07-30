@@ -70,12 +70,12 @@ function SelectedDateDisplay({
   );
 }
 
-const isToday = (someDate: Date) => {
+const isToday = (date: Date) => {
   const today = new Date();
   return (
-    someDate.getDate() === today.getDate() &&
-    someDate.getMonth() === today.getMonth() &&
-    someDate.getFullYear() === today.getFullYear()
+    date.getDate() === today.getDate() &&
+    date.getMonth() === today.getMonth() &&
+    date.getFullYear() === today.getFullYear()
   );
 };
 
@@ -92,7 +92,17 @@ export function DecentDatePicker({
   const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
 
   // @dev @todo - This is a workaround to fix an issue with the dot not being centered on the current day. Gotta be a better way to fix this.
-  const todayDotLeftMargin = useBreakpointValue({ base: '5vw', md: '1.35rem' });
+  const todayDotLeftMargin = useBreakpointValue({ base: '4.5vw', md: '1.15rem' });
+
+  const isTodaySelected = () => {
+    if (isRange) {
+      const startDate = selectedRange[0];
+      const endDate = selectedRange[1];
+      return (!!startDate && isToday(startDate)) || (!!endDate && isToday(endDate));
+    } else if (!!selectedDate) {
+      return isToday(selectedDate);
+    }
+  };
 
   return (
     <Flex
@@ -121,7 +131,7 @@ export function DecentDatePicker({
           isToday(date) ? (
             <Box
               ml={todayDotLeftMargin}
-              bg={selectedDate && isToday(selectedDate) ? 'cosmic-nebula-0' : 'white-1'}
+              bg={isTodaySelected() ? 'cosmic-nebula-0' : 'white-1'}
               borderRadius="50%"
               w="4px"
               h="4px"
