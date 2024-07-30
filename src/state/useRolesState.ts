@@ -104,7 +104,7 @@ interface RolesStore extends RolesStoreData {
     publicClient: PublicClient;
     decentHats: Address;
   }) => Promise<void>;
-  setHatsStreams: (updatedDecentTree: DecentTree) => void;
+  updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
   resetHatsStore: () => void;
 }
 
@@ -314,7 +314,15 @@ const useRolesState = create<RolesStore>()((set, get) => ({
     );
     set(() => ({ hatsTree }));
   },
-  setHatsStreams: updatedDecentTree => {
+  updateRolesWithStreams: (updatedRoles: DecentRoleHat[]) => {
+    const existingHatsTree = get().hatsTree;
+    if (!existingHatsTree) return;
+
+    const updatedDecentTree = {
+      ...existingHatsTree,
+      roleHats: updatedRoles,
+    };
+
     set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
   },
   resetHatsStore: () => set(() => initialHatsStore),

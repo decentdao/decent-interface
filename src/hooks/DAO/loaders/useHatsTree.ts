@@ -17,7 +17,7 @@ const hatsSubgraphClient = new HatsSubgraphClient({
 });
 
 const useHatsTree = () => {
-  const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, setHatsStreams } = useRolesState();
+  const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, updateRolesWithStreams } = useRolesState();
   const ipfsClient = useIPFSClient();
   const {
     chain,
@@ -213,17 +213,12 @@ const useHatsTree = () => {
           }),
         );
 
-        const updatedDecentTree = {
-          ...hatsTree,
-          roleHats: updatedHatsRoles,
-        };
-
-        setHatsStreams(updatedDecentTree);
+        updateRolesWithStreams(updatedHatsRoles);
       }
     }
 
     getHatsStreams();
-  }, [apolloClient, hatsTree, sablierSubgraph, setHatsStreams, streamsFetched]);
+  }, [apolloClient, hatsTree, sablierSubgraph, updateRolesWithStreams, streamsFetched]);
 };
 
 export { useHatsTree };
