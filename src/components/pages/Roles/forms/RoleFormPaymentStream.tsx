@@ -294,7 +294,12 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           </GridItem>
         </Grid>
       </FormControl>
-      <FormControl my="1rem" display="flex" flexDir="column" gap="1rem">
+      <FormControl
+        my="1rem"
+        display="flex"
+        flexDir="column"
+        gap="1rem"
+      >
         <SectionTitle
           title={t('cliff')}
           subTitle={t('cliffSubTitle')}
