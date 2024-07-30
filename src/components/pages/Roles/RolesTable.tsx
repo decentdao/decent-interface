@@ -1,5 +1,6 @@
 import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex, getAddress, zeroAddress } from 'viem';
@@ -124,7 +125,26 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
 }
 
 function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
-  const { t } = useTranslation(['daoCreate']);
+  const { t } = useTranslation(['roles']);
+  const format = ['years', 'days', 'hours'];
+  const endDate =
+    payment?.scheduleFixedDate?.endDate &&
+    formatDuration(
+      intervalToDuration({
+        start: new Date(),
+        end: payment.scheduleFixedDate.endDate,
+      }),
+      { format },
+    );
+  const cliffDate =
+    payment?.scheduleFixedDate?.cliffDate &&
+    formatDuration(
+      intervalToDuration({
+        start: new Date(),
+        end: payment.scheduleFixedDate.cliffDate,
+      }),
+      { format },
+    );
   return (
     <Td>
       {payment ? (
@@ -156,10 +176,14 @@ function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
             >
               {payment.asset.symbol}
             </EtherscanLink>
-            <Text>
-              {t('after')} {payment.scheduleDuration?.duration?.years}
-            </Text>
+            <Flex
+              flexDir="column"
+              gap="0.25rem"
+            >
+              <Text>{endDate && `${t('after')} ${endDate}`}</Text>
+            </Flex>
           </Flex>
+          <Text>{cliffDate && `${t('cliff')} ${t('after')} ${cliffDate}`}</Text>
         </Box>
       ) : (
         <Text

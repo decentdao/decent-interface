@@ -1,5 +1,6 @@
 import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
 import { CaretRight } from '@phosphor-icons/react';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
@@ -65,6 +66,25 @@ export function AvatarAndRoleName({
 
 function Payment({ payment }: { payment: SablierPayment | undefined }) {
   const { t } = useTranslation(['roles']);
+  const format = ['years', 'days', 'hours'];
+  const endDate =
+    payment?.scheduleFixedDate?.endDate &&
+    formatDuration(
+      intervalToDuration({
+        start: new Date(),
+        end: payment.scheduleFixedDate.endDate,
+      }),
+      { format },
+    );
+  const cliffDate =
+    payment?.scheduleFixedDate?.cliffDate &&
+    formatDuration(
+      intervalToDuration({
+        start: new Date(),
+        end: payment.scheduleFixedDate.cliffDate,
+      }),
+      { format },
+    );
   return (
     <Flex flexDir="column">
       {payment && (
@@ -105,11 +125,14 @@ function Payment({ payment }: { payment: SablierPayment | undefined }) {
             >
               {payment.asset.symbol}
             </EtherscanLink>
-            <Text>
-              {/* @todo role | Refactor this */}
-              {/* {t('after')} {payment.scheduleDuration?.duration.years} */}
-            </Text>
+            <Flex
+              flexDir="column"
+              gap="0.25rem"
+            >
+              <Text>{endDate && `${t('after')} ${endDate}`}</Text>
+            </Flex>
           </Flex>
+          <Text>{cliffDate && `${t('cliff')} ${t('after')} ${cliffDate}`}</Text>
         </Box>
       )}
     </Flex>
