@@ -8,7 +8,7 @@ import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierPayment } from '../../../components/pages/Roles/types';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState, DecentHatsError } from '../../../state/roles';
+import { useRolesStore, DecentHatsError } from '../../../store/roles';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
@@ -18,7 +18,7 @@ const hatsSubgraphClient = new HatsSubgraphClient({
 
 const useHatsTree = () => {
   const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, updateRolesWithStreams } =
-    useRolesState();
+    useRolesStore();
 
   const ipfsClient = useIPFSClient();
   const {

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { DecentRoleHat, initialHatsStore, RolesStore, sanitize } from './rolesStateUtils';
+import { DecentRoleHat, initialHatsStore, RolesStore, sanitize } from './rolesStoreUtils';
 
-const useRolesState = create<RolesStore>()((set, get) => ({
+const useRolesStore = create<RolesStore>()((set, get) => ({
   ...initialHatsStore,
   getHat: hatId => {
     const matches = get().hatsTree?.roleHats.filter(h => h.id === hatId);
@@ -51,4 +51,4 @@ const useRolesState = create<RolesStore>()((set, get) => ({
   resetHatsStore: () => set(() => initialHatsStore),
 }));
 
-export { useRolesState };
+export { useRolesStore };
