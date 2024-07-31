@@ -171,13 +171,13 @@ function PaymentDatePicker({
   formIndex: number;
 }) {
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
-  
+
   const selectedDate = values.roleEditing?.payments?.[formIndex].scheduleFixedDate?.[type];
-  
+
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  
+
   const isCliffDate = type === 'cliffDate';
-  
+
   const onCliffDateChange = isCliffDate
     ? (date: Date) => {
         setFieldValue(`roleEditing.payments[${formIndex}].scheduleFixedDate.cliffDate`, date);
