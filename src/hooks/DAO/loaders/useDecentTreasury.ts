@@ -5,7 +5,6 @@ import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { TreasuryAction } from '../../../providers/App/treasury/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useUpdateTimer } from '../../utils/useUpdateTimer';
 
 export const useDecentTreasury = () => {
   // tracks the current valid DAO address / chain; helps prevent unnecessary calls
@@ -18,8 +17,6 @@ export const useDecentTreasury = () => {
   const { getTokenBalances, getNFTBalances } = useBalancesAPI();
 
   const { chain } = useNetworkConfig();
-
-  const { setMethodOnInterval, clearIntervals } = useUpdateTimer(daoAddress);
 
   const loadTreasury = useCallback(async () => {
     if (!daoAddress || !safeAPI) {
@@ -58,13 +55,12 @@ export const useDecentTreasury = () => {
   useEffect(() => {
     if (daoAddress && chain.id + daoAddress !== loadKey.current) {
       loadKey.current = chain.id + daoAddress;
-      setMethodOnInterval(loadTreasury);
+      loadTreasury();
     }
     if (!daoAddress) {
       loadKey.current = null;
-      clearIntervals();
     }
-  }, [chain, daoAddress, loadTreasury, setMethodOnInterval, clearIntervals]);
+  }, [chain, daoAddress, loadTreasury]);
 
   return;
 };
