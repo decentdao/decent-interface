@@ -17,6 +17,7 @@ import {
   BaseSablierStream,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
+import { predictHatId } from '../../helpers/roles';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -31,19 +32,6 @@ const hatsDetailsBuilder = (data: { name: string; description: string }) => {
     type: '1.0',
     data,
   });
-};
-
-const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsCount: number }) => {
-  // 1 byte = 8 bits = 2 string characters
-  const adminLevelBinary = adminHatId.slice(0, 14); // Top Admin ID 1 byte 0x + 4 bytes (tree ID) + next **16 bits** (admin level ID)
-
-  // Each next level is next **16 bits**
-  // Since we're operating only with direct child of top level admin - we don't care about nested levels
-  // @dev At least for now?
-  const newSiblingId = (hatsCount + 1).toString(16).padStart(4, '0');
-
-  // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
-  return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
 };
 
 const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, topHatAccount: Address) => {
@@ -134,6 +122,7 @@ export default function useCreateRoles() {
   const parseEditedHatsFormValues = useCallback(
     async (editedHats: RoleValue[]) => {
       //  Parse added hats
+
       const addedHats: HatStruct[] = await Promise.all(
         editedHats
           .filter(hat => hat.editedRole?.status === EditBadgeStatus.New)
@@ -380,6 +369,8 @@ export default function useCreateRoles() {
           args: prepareMintHatsTxArgs(addedHats, adminHatId, hatsTree.roleHatsTotalCount),
         });
 
+        // @todo finally, finally create smart account for hats.
+
         // Push these two txs to the included txs array.
         // They will be executed in order: add all hats first, then mint all hats to their respective wearers.
         createAndMintHatsTxs.push(createHatsTx);
@@ -557,7 +548,10 @@ export default function useCreateRoles() {
           streamsData,
           recipients,
         );
-        hatPaymentTokenApprovalTxs = preparedPaymentTransactions.preparedTokenApprovalsTransactions;
+        hatPaymentTokenApprovalTxs = [
+          ...hatPaymentTokenApprovalTxs,
+          ...preparedPaymentTransactions.preparedTokenApprovalsTransactions,
+        ];
         hatPaymentEditedTxs = [
           ...paymentCancelTxs,
           ...preparedPaymentTransactions.preparedStreamCreationTransactions,
@@ -585,8 +579,6 @@ export default function useCreateRoles() {
         ],
         metaData: proposalMetadata,
         values: [
-          ...hatPaymentHatRemovedTxs.map(() => 0n),
-          ...hatPaymentWearerChangedTxs.map(() => 0n),
           ...createAndMintHatsTxs.map(() => 0n),
           ...removeHatTxs.map(() => 0n),
           ...transferHatTxs.map(() => 0n),
