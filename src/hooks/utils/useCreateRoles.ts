@@ -505,7 +505,9 @@ export default function useCreateRoles() {
         const streamsData = addedNewPaymentsHats.flatMap(role =>
           (role.payments ?? []).map(payment => payment),
         );
-        const recipients = addedNewPaymentsHats.map(role => role.smartAddress);
+        const recipients = addedNewPaymentsHats.flatMap(role =>
+          (role.payments ?? []).map(() => role.smartAddress),
+        );
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
           streamsData,
           recipients,
