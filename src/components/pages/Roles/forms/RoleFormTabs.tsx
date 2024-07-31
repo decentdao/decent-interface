@@ -59,7 +59,8 @@ export default function RoleFormTabs({
           <Tabs variant="twoTone">
             <TabList>
               <Tab>{t('roleInfo')}</Tab>
-              {!!hatsTree && values.roleEditing?.payments &&
+              {!!hatsTree &&
+                values.roleEditing?.payments &&
                 values.roleEditing.payments.map((_, i) => {
                   const savedRole = values.hats.find(hat => hat.id === hatId)?.payments?.[i];
                   const existingRoleHat = hatsTree?.roleHats.find(hat => hat.id === hatId)
@@ -84,7 +85,9 @@ export default function RoleFormTabs({
                     </Box>
                   );
                 })}
-              {!!hatsTree && (values.roleEditing?.payments?.length ?? 0) < 2 && <Tab>{t('paymentStream')}</Tab>}
+              {!!hatsTree && (values.roleEditing?.payments?.length ?? 0) < 2 && (
+                <Tab>{t('paymentStream')}</Tab>
+              )}
             </TabList>
             <TabPanels my="1.75rem">
               <TabPanel>
