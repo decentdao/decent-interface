@@ -1,5 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 import { Tree, HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
+import { intervalToDuration } from 'date-fns';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { getAddress } from 'viem';
@@ -200,6 +201,20 @@ const useHatsTree = () => {
                   const bigintAmount =
                     BigInt(lockupLinearStream.depositAmount) /
                     10n ** BigInt(lockupLinearStream.asset.decimals);
+                  const cliffDuration = lockupLinearStream.cliff
+                    ? (() => {
+                        const duration = intervalToDuration({
+                          start: secondsTimestampToDate(lockupLinearStream.startTime),
+                          end: secondsTimestampToDate(lockupLinearStream.cliffTime),
+                        });
+                        return {
+                          years: duration.years || 0,
+                          days: duration.days || 0,
+                          hours: duration.hours || 0,
+                        };
+                      })()
+                    : undefined;
+
                   return {
                     streamId: lockupLinearStream.id,
                     contractAddress: lockupLinearStream.contract.address,
@@ -226,9 +241,7 @@ const useHatsTree = () => {
                     },
                     scheduleDuration: {
                       duration: convertDuration(lockupLinearStream.duration),
-                      cliffDuration: lockupLinearStream.cliff
-                        ? convertDuration(lockupLinearStream.cliffTime)
-                        : undefined,
+                      cliffDuration,
                     },
                     scheduleType: 'duration',
                   };
