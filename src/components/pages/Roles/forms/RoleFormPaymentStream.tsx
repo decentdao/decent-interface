@@ -171,12 +171,29 @@ function PaymentDatePicker({
   formIndex: number;
 }) {
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
-  const selectedDate =
-    type === 'startDate'
-      ? values.roleEditing?.payments?.[formIndex].scheduleFixedDate?.startDate
-      : values.roleEditing?.payments?.[formIndex].scheduleFixedDate?.endDate;
-
+  
+  const selectedDate = values.roleEditing?.payments?.[formIndex].scheduleFixedDate?.[type];
+  
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  
+  const isCliffDate = type === 'cliffDate';
+  
+  const onCliffDateChange = isCliffDate
+    ? (date: Date) => {
+        setFieldValue(`roleEditing.payments[${formIndex}].scheduleFixedDate.cliffDate`, date);
+      }
+    : undefined;
+
+  const onDateRangeChange = !isCliffDate
+    ? (dateRange: Date[]) => {
+        setFieldValue(
+          `roleEditing.payments[${formIndex}].scheduleFixedDate.startDate`,
+          dateRange[0],
+        );
+        setFieldValue(`roleEditing.payments[${formIndex}].scheduleFixedDate.endDate`, dateRange[1]);
+      }
+    : undefined;
+
   return (
     <Field name={`roleEditing.payments[${formIndex}].scheduleFixedDate.${type}`}>
       {() => (
@@ -199,17 +216,9 @@ function PaymentDatePicker({
               onClose={() => setIsDrawerOpen(false)}
             >
               <DecentDatePicker
-                isRange
-                onRangeChange={dateRange => {
-                  setFieldValue(
-                    `roleEditing.payments[${formIndex}].scheduleFixedDate.startDate`,
-                    dateRange[0],
-                  );
-                  setFieldValue(
-                    `roleEditing.payments[${formIndex}].scheduleFixedDate.endDate`,
-                    dateRange[1],
-                  );
-                }}
+                isRange={!isCliffDate}
+                onChange={onCliffDateChange}
+                onRangeChange={onDateRangeChange}
               />
             </DraggableDrawer>
           </Show>
@@ -227,17 +236,9 @@ function PaymentDatePicker({
                 </MenuButton>
                 <MenuList>
                   <DecentDatePicker
-                    isRange
-                    onRangeChange={dateRange => {
-                      setFieldValue(
-                        `roleEditing.payments[${formIndex}].scheduleFixedDate.startDate`,
-                        dateRange[0],
-                      );
-                      setFieldValue(
-                        `roleEditing.payments[${formIndex}].scheduleFixedDate.endDate`,
-                        dateRange[1],
-                      );
-                    }}
+                    isRange={!isCliffDate}
+                    onChange={onCliffDateChange}
+                    onRangeChange={onDateRangeChange}
                   />
                 </MenuList>
               </>
