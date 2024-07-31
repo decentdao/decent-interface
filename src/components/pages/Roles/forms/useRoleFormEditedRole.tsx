@@ -33,8 +33,11 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     if (!existingRoleHat?.payments?.length || !values.roleEditing || !values.roleEditing.payments) {
       return false;
     }
-    return values.roleEditing.payments.some((payment, i) => {
-      const existingPayment = existingRoleHat.payments![i];
+    return values.roleEditing.payments.some((payment) => {
+      const existingPayment = existingRoleHat.payments?.find(p => p.streamId === payment.streamId);
+      if (!existingPayment) {
+        return false;
+      }
       return (
         payment.amount !== existingPayment.amount ||
         payment.scheduleType !== existingPayment.scheduleType ||
