@@ -195,7 +195,10 @@ export default function useCreateSablierStream() {
           calldata: sablierBatchCalldata,
           targetAddress: sablierV2Batch,
         });
-        preparedTokenApprovalsTransactions.push({ calldata: tokenCalldata, targetAddress: tokenAddress });
+        preparedTokenApprovalsTransactions.push({
+          calldata: tokenCalldata,
+          targetAddress: tokenAddress,
+        });
       });
 
       return { preparedStreamCreationTransactions, preparedTokenApprovalsTransactions };
