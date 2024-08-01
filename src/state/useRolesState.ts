@@ -1,8 +1,8 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, encodePacked, getContract, keccak256 } from 'viem';
+import { Address, Hex, PublicClient } from 'viem';
 import { create } from 'zustand';
-import ERC6551RegistryAbi from '../assets/abi/ERC6551RegistryAbi';
 import { SablierPayment } from '../components/pages/Roles/types';
+import { predictAccountAddress } from '../helpers/roles';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -14,53 +14,6 @@ export class DecentHatsError extends Error {
     }
   }
 }
-
-interface PredictAccountParams {
-  implementation: Address;
-  chainId: bigint;
-  tokenContract: Address;
-  tokenId: bigint;
-  registryAddress: Address;
-  publicClient: PublicClient;
-  decentHats: Address;
-}
-
-const predictAccountAddress = (params: PredictAccountParams) => {
-  const {
-    implementation,
-    chainId,
-    tokenContract,
-    tokenId,
-    registryAddress,
-    publicClient,
-    decentHats,
-  } = params;
-
-  const erc6551RegistryContract = getContract({
-    abi: ERC6551RegistryAbi,
-    address: registryAddress,
-    client: publicClient,
-  });
-
-  if (!publicClient.chain) {
-    throw new Error('Public client needs to be on a chain');
-  }
-
-  const salt = keccak256(
-    encodePacked(
-      ['string', 'uint256', 'address'],
-      ['DecentHats_0_1_0', BigInt(publicClient.chain.id), decentHats],
-    ),
-  );
-
-  return erc6551RegistryContract.read.account([
-    implementation,
-    salt,
-    chainId,
-    tokenContract,
-    tokenId,
-  ]);
-};
 
 interface DecentHat {
   id: Hex;

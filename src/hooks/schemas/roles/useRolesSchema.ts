@@ -44,8 +44,8 @@ export const useRolesSchema = () => {
                     .nullable()
                     .when({
                       is: (payment: SablierPayment) => payment !== undefined,
-                      then: _vestingSchema =>
-                        _vestingSchema
+                      then: _paymentSchema =>
+                        _paymentSchema
                           .shape({
                             asset: assetValidationSchema,
                             amount: bigIntValidationSchema,
@@ -60,7 +60,7 @@ export const useRolesSchema = () => {
                               .default(undefined)
                               .nullable()
                               .shape({
-                                vestingDuration: Yup.object().shape({
+                                duration: Yup.object().shape({
                                   years: Yup.number().required().default(0),
                                   days: Yup.number().required().default(0),
                                   hours: Yup.number().required().default(0),
@@ -73,25 +73,20 @@ export const useRolesSchema = () => {
                               })
                               .test({
                                 name: 'valid-payment-schedule',
-                                message: t('roleInfoErrorVestingScheduleInvalid'),
+                                message: t('roleInfoErrorPaymentScheduleInvalid'),
                                 test: _scheduleDuration => {
-                                  if (!_scheduleDuration) return true;
+                                  if (!_scheduleDuration) return false;
 
-                                  const { vestingDuration, cliffDuration } = _scheduleDuration;
+                                  const { duration } = _scheduleDuration;
 
                                   const hasDuration =
-                                    _scheduleDuration &&
-                                    (_scheduleDuration.vestingDuration ||
-                                      _scheduleDuration.cliffDuration);
+                                    !!_scheduleDuration &&
+                                    (!!_scheduleDuration.duration ||
+                                      !!_scheduleDuration.cliffDuration);
 
                                   if (hasDuration) {
                                     return (
-                                      (vestingDuration.years > 0 ||
-                                        vestingDuration.days > 0 ||
-                                        vestingDuration.hours > 0) &&
-                                      (cliffDuration.years > 0 ||
-                                        cliffDuration.days > 0 ||
-                                        cliffDuration.hours > 0)
+                                      duration.years > 0 || duration.days > 0 || duration.hours > 0
                                     );
                                   }
                                 },
@@ -104,15 +99,15 @@ export const useRolesSchema = () => {
                               .nullable()
                               .shape({
                                 startDate: Yup.date().required(
-                                  t('roleInfoErrorVestingFixedDateStartDateRequired'),
+                                  t('roleInfoErrorPaymentFixedDateStartDateRequired'),
                                 ),
                                 endDate: Yup.date().required(
-                                  t('roleInfoErrorVestingFixedDateEndDateRequired'),
+                                  t('roleInfoErrorPaymentFixedDateEndDateRequired'),
                                 ),
                               })
                               .test({
                                 name: 'end-date-after-start-date',
-                                message: t('roleInfoErrorVestingFixedDateEndDateAfterStartDate'),
+                                message: t('roleInfoErrorPaymentFixedDateEndDateAfterStartDate'),
                                 test: _scheduleFixedDate => {
                                   if (!_scheduleFixedDate) return true;
 
@@ -123,7 +118,7 @@ export const useRolesSchema = () => {
                           })
                           .test({
                             name: 'either-duration-or-fixed-date-required',
-                            message: t('roleInfoErrorVestingScheduleOrFixedDateRequired'),
+                            message: t('roleInfoErrorPaymentScheduleOrFixedDateRequired'),
                             test: vestingFormValue => {
                               if (!vestingFormValue) return true;
 
@@ -131,8 +126,7 @@ export const useRolesSchema = () => {
 
                               const hasDuration =
                                 scheduleDuration &&
-                                (scheduleDuration.vestingDuration ||
-                                  scheduleDuration.cliffDuration);
+                                (scheduleDuration.duration || scheduleDuration.cliffDuration);
 
                               const hasFixedDate =
                                 scheduleFixedDate &&

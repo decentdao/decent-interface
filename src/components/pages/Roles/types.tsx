@@ -1,6 +1,4 @@
-import { Address, Hex, zeroAddress } from 'viem';
-import { toHex } from 'viem/utils';
-import { getRandomBytes } from '../../../helpers';
+import { Address, Hex } from 'viem';
 import { DecentRoleHat } from '../../../state/useRolesState';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 export type RoleViewMode = 'edit' | 'view';
@@ -23,12 +21,12 @@ export interface BaseSablierStream {
 export interface SablierPayment extends BaseSablierStream {
   scheduleDuration?: {
     duration: DurationBreakdown;
-    cliff: DurationBreakdown;
+    cliffDuration: DurationBreakdown | undefined;
   };
   scheduleFixedDate?: {
     startDate: Date;
     endDate: Date;
-    cliffDate: Date;
+    cliffDate: Date | undefined;
   };
   scheduleType: 'duration' | 'fixedDate';
 }
@@ -98,18 +96,6 @@ export interface RoleFormValues {
   hats: RoleValue[];
   roleEditing?: RoleValue;
   customNonce?: number;
-}
-
-export function getNewRole(): RoleValue {
-  // @dev creates a unique id for the hat for new hats for use in form, not stored on chain
-  return {
-    id: toHex(getRandomBytes(), { size: 32 }),
-    wearer: '',
-    name: '',
-    description: '',
-    prettyId: '',
-    smartAddress: zeroAddress,
-  };
 }
 
 export interface HatWearerChangedParams {
