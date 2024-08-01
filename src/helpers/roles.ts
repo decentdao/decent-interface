@@ -26,6 +26,12 @@ interface PredictAccountParams {
   decentHats: Address;
 }
 
+export function getERC6551RegistrySalt(chainId: bigint, decentHats: Address) {
+  return keccak256(
+    encodePacked(['string', 'uint256', 'address'], ['DecentHats_0_1_0', chainId, decentHats]),
+  );
+}
+
 export const predictAccountAddress = (params: PredictAccountParams) => {
   const {
     implementation,
@@ -47,12 +53,7 @@ export const predictAccountAddress = (params: PredictAccountParams) => {
     throw new Error('Public client needs to be on a chain');
   }
 
-  const salt = keccak256(
-    encodePacked(
-      ['string', 'uint256', 'address'],
-      ['DecentHats_0_1_0', BigInt(publicClient.chain.id), decentHats],
-    ),
-  );
+  const salt = getERC6551RegistrySalt(chainId, decentHats);
 
   return erc6551RegistryContract.read.account([
     implementation,

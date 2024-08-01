@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { zeroAddress, Address, encodeFunctionData, getAddress, Hex, Hash } from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats_0_1_0_Abi';
+import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
@@ -17,7 +18,7 @@ import {
   BaseSablierStream,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
-import { predictHatId } from '../../helpers/roles';
+import { getERC6551RegistrySalt, predictHatId } from '../../helpers/roles';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -88,6 +89,7 @@ export default function useCreateRoles() {
   const { hatsTree, hatsTreeId, getHat } = useRolesState();
   const {
     addressPrefix,
+    chain,
     contracts: {
       hatsProtocol,
       decentHatsMasterCopy,
@@ -347,6 +349,7 @@ export default function useCreateRoles() {
       let transferHatTxs: Hex[] = [];
       let hatDetailsChangedTxs: Hex[] = [];
 
+      let smartAccountTxs: { calldata: Hex; targetAddress: Address }[] = [];
       let hatPaymentAddedTxs: { calldata: Hex; targetAddress: Address }[] = [];
       let hatPaymentEditedTxs: { calldata: Hex; targetAddress: Address }[] = [];
       let hatPaymentTokenApprovalTxs: { calldata: Hex; tokenAddress: Address }[] = [];
@@ -363,18 +366,41 @@ export default function useCreateRoles() {
         });
 
         // Finally, prepare a single tx to mint all the hats to the wearers
+        const [hatIds, wearers] = prepareMintHatsTxArgs(
+          addedHats,
+          adminHatId,
+          hatsTree.roleHatsTotalCount,
+        );
         const mintHatsTx = encodeFunctionData({
           abi: HatsAbi,
           functionName: 'batchMintHats',
-          args: prepareMintHatsTxArgs(addedHats, adminHatId, hatsTree.roleHatsTotalCount),
+          args: [hatIds, wearers],
         });
 
-        // @todo finally, finally create smart account for hats.
-
+        // finally, finally create smart account for hats.
+        const createSmartAccountCallDatas = addedHats.map((_, i) => {
+          return encodeFunctionData({
+            abi: ERC6551RegistryAbi,
+            functionName: 'createAccount',
+            args: [
+              hatsAccount1ofNMasterCopy,
+              getERC6551RegistrySalt(BigInt(chain.id), getAddress(decentHatsMasterCopy)),
+              BigInt(chain.id),
+              hatsProtocol,
+              hatIds[i],
+            ],
+          });
+        });
         // Push these two txs to the included txs array.
         // They will be executed in order: add all hats first, then mint all hats to their respective wearers.
         createAndMintHatsTxs.push(createHatsTx);
         createAndMintHatsTxs.push(mintHatsTx);
+        smartAccountTxs.push(
+          ...createSmartAccountCallDatas.map(calldata => ({
+            calldata,
+            targetAddress: erc6551Registry,
+          })),
+        );
       }
 
       if (removedHatIds.length) {
@@ -504,8 +530,10 @@ export default function useCreateRoles() {
           recipients,
         );
 
-        hatPaymentTokenApprovalTxs = preparedPaymentTransactions.preparedTokenApprovalsTransactions;
-        hatPaymentAddedTxs = preparedPaymentTransactions.preparedStreamCreationTransactions;
+        hatPaymentTokenApprovalTxs.push(
+          ...preparedPaymentTransactions.preparedTokenApprovalsTransactions,
+        );
+        hatPaymentAddedTxs.push(...preparedPaymentTransactions.preparedStreamCreationTransactions);
       }
 
       if (editedPayrollHats.length) {
@@ -548,19 +576,16 @@ export default function useCreateRoles() {
           streamsData,
           recipients,
         );
-        hatPaymentTokenApprovalTxs = [
-          ...hatPaymentTokenApprovalTxs,
+        hatPaymentTokenApprovalTxs.push(
           ...preparedPaymentTransactions.preparedTokenApprovalsTransactions,
-        ];
-        hatPaymentEditedTxs = [
-          ...paymentCancelTxs,
-          ...preparedPaymentTransactions.preparedStreamCreationTransactions,
-        ];
+        );
+        hatPaymentEditedTxs.push(...preparedPaymentTransactions.preparedStreamCreationTransactions);
       }
 
       const proposalTransactions = {
         targets: [
           ...createAndMintHatsTxs.map(() => hatsProtocol),
+          ...smartAccountTxs.map(({ targetAddress }) => targetAddress),
           ...removeHatTxs.map(() => topHatAccount),
           ...transferHatTxs.map(() => hatsProtocol),
           ...hatDetailsChangedTxs.map(() => hatsProtocol),
@@ -570,6 +595,7 @@ export default function useCreateRoles() {
         ],
         calldatas: [
           ...createAndMintHatsTxs,
+          ...smartAccountTxs.map(({ calldata }) => calldata),
           ...removeHatTxs,
           ...transferHatTxs,
           ...hatDetailsChangedTxs,
@@ -580,6 +606,7 @@ export default function useCreateRoles() {
         metaData: proposalMetadata,
         values: [
           ...createAndMintHatsTxs.map(() => 0n),
+          ...smartAccountTxs.map(() => 0n),
           ...removeHatTxs.map(() => 0n),
           ...transferHatTxs.map(() => 0n),
           ...hatDetailsChangedTxs.map(() => 0n),
@@ -598,6 +625,10 @@ export default function useCreateRoles() {
       prepareHatsAccountFlushExecData,
       daoAddress,
       prepareBatchLinearStreamCreation,
+      hatsAccount1ofNMasterCopy,
+      chain.id,
+      decentHatsMasterCopy,
+      erc6551Registry,
     ],
   );
 
