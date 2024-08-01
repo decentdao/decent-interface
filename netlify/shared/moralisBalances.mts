@@ -15,6 +15,7 @@ export interface BalanceDataWithMetadata<T> {
 
 export async function getBalances<T>(
   request: Request,
+  storeName: string,
   fetchFromStore: (store: Store, storeKey: string) => Promise<BalanceDataWithMetadata<T> | null>,
   fetchFromMoralis: (scope: { chain: string; address: Address }) => Promise<T[]>,
 ) {
@@ -54,13 +55,13 @@ export async function getBalances<T>(
     return Response.json({ error: 'Requested network is not supported' }, { status: 400 });
   }
 
-  const tokensStore = getStore(`moralis-balances-tokens-${networkParam}`);
+  const store = getStore(`moralis-balances-${storeName}-${networkParam}`);
   const nowSeconds = Math.floor(Date.now() / 1000);
   const cacheTimeSeconds = parseInt(process.env.BALANCES_CACHE_INTERVAL_MINUTES) * 60;
   const moralisIndexDelaySeconds = parseInt(process.env.BALANCES_MORALIS_INDEX_DELAY_MINUTES) * 60;
   const storeKey = addressParam;
   try {
-    const balances = await fetchFromStore(tokensStore, storeKey);
+    const balances = await fetchFromStore(store, storeKey);
 
     // Determine whether to return cached token balances or fetch new data from Moralis API:
     // 1. Check if the cached data is still valid:
@@ -78,6 +79,7 @@ export async function getBalances<T>(
         (balances.data.length > 0 &&
           balances.metadata.firstFetched + moralisIndexDelaySeconds > nowSeconds))
     ) {
+      console.log('in here');
       return Response.json({ data: balances.data });
     }
 
@@ -93,7 +95,7 @@ export async function getBalances<T>(
       mappedData = await fetchFromMoralis({ chain: chainId.toString(), address: addressParam });
 
       const firstFetched = balances?.metadata.firstFetched ?? nowSeconds;
-      await tokensStore.setJSON(storeKey, mappedData, {
+      await store.setJSON(storeKey, mappedData, {
         metadata: { fetched: nowSeconds, firstFetched },
       });
     } catch (e) {

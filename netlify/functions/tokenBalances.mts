@@ -3,7 +3,7 @@ import Moralis from 'moralis';
 import type { Address } from 'viem';
 import type { TokenBalance } from '../../src/types';
 import { camelCaseKeys } from '../../src/utils/dataFormatter';
-import { BalanceDataWithMetadata, getBalances } from './balances.mts';
+import { BalanceDataWithMetadata, getBalances } from '../shared/moralisBalances.mts';
 
 export default async function getTokenBalancesWithPrices(request: Request) {
   const fetchFromStore = async (store: Store, storeKey: string) => {
@@ -28,5 +28,5 @@ export default async function getTokenBalancesWithPrices(request: Request) {
     return mappedTokensData;
   };
 
-  return getBalances(request, fetchFromStore, fetchFromMoralis);
+  return getBalances(request, 'tokens', fetchFromStore, fetchFromMoralis);
 }

@@ -3,7 +3,7 @@ import Moralis from 'moralis';
 import type { Address } from 'viem';
 import type { NFTBalance } from '../../src/types';
 import { camelCaseKeys } from '../../src/utils/dataFormatter';
-import { BalanceDataWithMetadata, getBalances } from './balances.mts';
+import { BalanceDataWithMetadata, getBalances } from '../shared/moralisBalances.mts';
 
 export default async function getNftBalances(request: Request) {
   const fetchFromStore = async (store: Store, storeKey: string) => {
@@ -22,8 +22,9 @@ export default async function getNftBalances(request: Request) {
         ) as unknown as NFTBalance,
     );
 
+    console.log({ mappedNftsData });
     return mappedNftsData;
   };
 
-  return getBalances(request, fetchFromStore, fetchFromMoralis);
+  return getBalances(request, 'nfts', fetchFromStore, fetchFromMoralis);
 }
