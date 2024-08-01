@@ -79,7 +79,6 @@ export async function getBalances<T>(
         (balances.data.length > 0 &&
           balances.metadata.firstFetched + moralisIndexDelaySeconds > nowSeconds))
     ) {
-      console.log('in here');
       return Response.json({ data: balances.data });
     }
 

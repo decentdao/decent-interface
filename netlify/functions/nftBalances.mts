@@ -22,7 +22,6 @@ export default async function getNftBalances(request: Request) {
         ) as unknown as NFTBalance,
     );
 
-    console.log({ mappedNftsData });
     return mappedNftsData;
   };
 
