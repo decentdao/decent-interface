@@ -352,7 +352,6 @@ export default function useCreateRoles() {
       let smartAccountTxs: { calldata: Hex; targetAddress: Address }[] = [];
       let hatPaymentAddedTxs: { calldata: Hex; targetAddress: Address }[] = [];
       let hatPaymentEditedTxs: { calldata: Hex; targetAddress: Address }[] = [];
-      let hatPaymentTokenApprovalTxs: { calldata: Hex; tokenAddress: Address }[] = [];
 
       let hatPaymentWearerChangedTxs: { calldata: Hex; targetAddress: Address }[] = [];
       let hatPaymentHatRemovedTxs: { calldata: Hex; targetAddress: Address }[] = [];
@@ -530,10 +529,14 @@ export default function useCreateRoles() {
           recipients,
         );
 
-        hatPaymentTokenApprovalTxs.push(
-          ...preparedPaymentTransactions.preparedTokenApprovalsTransactions,
-        );
-        hatPaymentAddedTxs.push(...preparedPaymentTransactions.preparedStreamCreationTransactions);
+        streamsData.forEach((_, i) => {
+          hatPaymentAddedTxs.push(
+            preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
+          );
+          hatPaymentAddedTxs.push(
+            preparedPaymentTransactions.preparedStreamCreationTransactions[i],
+          );
+        });
       }
 
       if (editedPayrollHats.length) {
@@ -576,10 +579,15 @@ export default function useCreateRoles() {
           streamsData,
           recipients,
         );
-        hatPaymentTokenApprovalTxs.push(
-          ...preparedPaymentTransactions.preparedTokenApprovalsTransactions,
-        );
-        hatPaymentEditedTxs.push(...preparedPaymentTransactions.preparedStreamCreationTransactions);
+
+        streamsData.forEach((_, i) => {
+          hatPaymentEditedTxs.push(
+            preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
+          );
+          hatPaymentEditedTxs.push(
+            preparedPaymentTransactions.preparedStreamCreationTransactions[i],
+          );
+        });
       }
 
       const proposalTransactions = {
@@ -589,7 +597,6 @@ export default function useCreateRoles() {
           ...removeHatTxs.map(() => topHatAccount),
           ...transferHatTxs.map(() => hatsProtocol),
           ...hatDetailsChangedTxs.map(() => hatsProtocol),
-          ...hatPaymentTokenApprovalTxs.map(({ tokenAddress }) => tokenAddress),
           ...hatPaymentAddedTxs.map(({ targetAddress }) => targetAddress),
           ...hatPaymentEditedTxs.map(({ targetAddress }) => targetAddress),
         ],
@@ -599,7 +606,6 @@ export default function useCreateRoles() {
           ...removeHatTxs,
           ...transferHatTxs,
           ...hatDetailsChangedTxs,
-          ...hatPaymentTokenApprovalTxs.map(({ calldata }) => calldata),
           ...hatPaymentAddedTxs.map(({ calldata }) => calldata),
           ...hatPaymentEditedTxs.map(({ calldata }) => calldata),
         ],
@@ -610,7 +616,6 @@ export default function useCreateRoles() {
           ...removeHatTxs.map(() => 0n),
           ...transferHatTxs.map(() => 0n),
           ...hatDetailsChangedTxs.map(() => 0n),
-          ...hatPaymentTokenApprovalTxs.map(() => 0n),
           ...hatPaymentAddedTxs.map(() => 0n),
           ...hatPaymentEditedTxs.map(() => 0n),
         ],

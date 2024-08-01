@@ -153,7 +153,7 @@ export default function useCreateSablierStream() {
       }
 
       const preparedStreamCreationTransactions: { calldata: Hex; targetAddress: Address }[] = [];
-      const preparedTokenApprovalsTransactions: { calldata: Hex; tokenAddress: Address }[] = [];
+      const preparedTokenApprovalsTransactions: { calldata: Hex; targetAddress: Address }[] = [];
 
       linearStreams.forEach((streamData, index) => {
         const recipient = recipients[index];
@@ -195,7 +195,7 @@ export default function useCreateSablierStream() {
           calldata: sablierBatchCalldata,
           targetAddress: sablierV2Batch,
         });
-        preparedTokenApprovalsTransactions.push({ calldata: tokenCalldata, tokenAddress });
+        preparedTokenApprovalsTransactions.push({ calldata: tokenCalldata, targetAddress: tokenAddress });
       });
 
       return { preparedStreamCreationTransactions, preparedTokenApprovalsTransactions };
