@@ -22,7 +22,7 @@ import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchem
 import useCreateRoles from '../../../../../hooks/utils/useCreateRoles';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../../../state/useRolesState';
+import { useRolesStore } from '../../../../../store/roles';
 
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
@@ -32,7 +32,7 @@ function RolesEdit() {
   const { addressPrefix } = useNetworkConfig();
 
   const { rolesSchema } = useRolesSchema();
-  const { hatsTree } = useRolesState();
+  const { hatsTree } = useRolesStore();
 
   const navigate = useNavigate();
   const { createRolesEditProposal } = useCreateRoles();

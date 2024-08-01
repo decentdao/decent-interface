@@ -6,7 +6,7 @@ import { Address, Hex, getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentTree, useRolesState } from '../../../state/useRolesState';
+import { DecentTree, useRolesStore } from '../../../store/roles';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
@@ -270,7 +270,7 @@ export function RolesTable({
   );
 }
 export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
-  const { hatsTree } = useRolesState();
+  const { hatsTree } = useRolesStore();
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   if (hatsTree === undefined) {
     return <RoleCardLoading />;

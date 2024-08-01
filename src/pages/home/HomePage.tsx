@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { DecentSignature } from '../../assets/theme/custom/icons/DecentSignature';
 import { BASE_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useRolesState } from '../../state/useRolesState';
+import { useRolesStore } from '../../store/roles';
 import { MySafes } from './MySafes';
 
 export default function HomePage() {
@@ -15,7 +15,7 @@ export default function HomePage() {
   } = useFractal();
 
   const { t } = useTranslation('home');
-  const { resetHatsStore } = useRolesState();
+  const { resetHatsStore } = useRolesStore();
 
   useEffect(() => {
     if (daoAddress) {

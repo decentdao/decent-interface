@@ -1,7 +1,7 @@
 import { Address, Hex, zeroAddress } from 'viem';
 import { toHex } from 'viem/utils';
 import { getRandomBytes } from '../../../helpers';
-import { DecentRoleHat } from '../../../state/useRolesState';
+import { DecentRoleHat } from '../../../store/roles';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 export type RoleViewMode = 'edit' | 'view';
 

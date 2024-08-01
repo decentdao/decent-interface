@@ -1,8 +1,7 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, encodePacked, getContract, keccak256 } from 'viem';
-import { create } from 'zustand';
-import ERC6551RegistryAbi from '../assets/abi/ERC6551RegistryAbi';
-import { SablierPayment } from '../components/pages/Roles/types';
+import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
+import { SablierPayment } from '../../components/pages/Roles/types';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -15,7 +14,7 @@ export class DecentHatsError extends Error {
   }
 }
 
-interface PredictAccountParams {
+export interface PredictAccountParams {
   implementation: Address;
   chainId: bigint;
   tokenContract: Address;
@@ -24,43 +23,6 @@ interface PredictAccountParams {
   publicClient: PublicClient;
   decentHats: Address;
 }
-
-const predictAccountAddress = (params: PredictAccountParams) => {
-  const {
-    implementation,
-    chainId,
-    tokenContract,
-    tokenId,
-    registryAddress,
-    publicClient,
-    decentHats,
-  } = params;
-
-  const erc6551RegistryContract = getContract({
-    abi: ERC6551RegistryAbi,
-    address: registryAddress,
-    client: publicClient,
-  });
-
-  if (!publicClient.chain) {
-    throw new Error('Public client needs to be on a chain');
-  }
-
-  const salt = keccak256(
-    encodePacked(
-      ['string', 'uint256', 'address'],
-      ['DecentHats_0_1_0', BigInt(publicClient.chain.id), decentHats],
-    ),
-  );
-
-  return erc6551RegistryContract.read.account([
-    implementation,
-    salt,
-    chainId,
-    tokenContract,
-    tokenId,
-  ]);
-};
 
 interface DecentHat {
   id: Hex;
@@ -75,6 +37,12 @@ interface DecentTopHat extends DecentHat {}
 
 interface DecentAdminHat extends DecentHat {}
 
+interface RolesStoreData {
+  hatsTreeId: undefined | null | number;
+  hatsTree: undefined | null | DecentTree;
+  streamsFetched: boolean;
+}
+
 export interface DecentRoleHat extends DecentHat {
   wearer: Address;
 }
@@ -86,13 +54,7 @@ export interface DecentTree {
   roleHatsTotalCount: number;
 }
 
-interface RolesStoreData {
-  hatsTreeId: undefined | null | number;
-  hatsTree: undefined | null | DecentTree;
-  streamsFetched: boolean;
-}
-
-interface RolesStore extends RolesStoreData {
+export interface RolesStore extends RolesStoreData {
   getHat: (hatId: Hex) => DecentRoleHat | null;
   setHatsTreeId: (hatsTreeId: undefined | null | number) => void;
   setHatsTree: (params: {
@@ -104,7 +66,7 @@ interface RolesStore extends RolesStoreData {
     publicClient: PublicClient;
     decentHats: Address;
   }) => Promise<void>;
-  setHatsStreams: (updatedDecentTree: DecentTree) => void;
+  updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
   resetHatsStore: () => void;
 }
 
@@ -173,7 +135,50 @@ const getHatMetadata = (hat: Hat) => {
   return metadata;
 };
 
-const sanitize = async (
+export const initialHatsStore: RolesStoreData = {
+  hatsTreeId: undefined,
+  hatsTree: undefined,
+  streamsFetched: false,
+};
+
+export const predictAccountAddress = (params: PredictAccountParams) => {
+  const {
+    implementation,
+    chainId,
+    tokenContract,
+    tokenId,
+    registryAddress,
+    publicClient,
+    decentHats,
+  } = params;
+
+  const erc6551RegistryContract = getContract({
+    abi: ERC6551RegistryAbi,
+    address: registryAddress,
+    client: publicClient,
+  });
+
+  if (!publicClient.chain) {
+    throw new Error('Public client needs to be on a chain');
+  }
+
+  const salt = keccak256(
+    encodePacked(
+      ['string', 'uint256', 'address'],
+      ['DecentHats_0_1_0', BigInt(publicClient.chain.id), decentHats],
+    ),
+  );
+
+  return erc6551RegistryContract.read.account([
+    implementation,
+    salt,
+    chainId,
+    tokenContract,
+    tokenId,
+  ]);
+};
+
+export const sanitize = async (
   hatsTree: undefined | null | Tree,
   hatsAccountImplementation: Address,
   erc6551Registry: Address,
@@ -271,53 +276,3 @@ const sanitize = async (
 
   return decentTree;
 };
-
-const initialHatsStore: RolesStoreData = {
-  hatsTreeId: undefined,
-  hatsTree: undefined,
-  streamsFetched: false,
-};
-
-const useRolesState = create<RolesStore>()((set, get) => ({
-  ...initialHatsStore,
-  getHat: hatId => {
-    const matches = get().hatsTree?.roleHats.filter(h => h.id === hatId);
-
-    if (matches === undefined || matches.length === 0) {
-      return null;
-    }
-
-    if (matches.length > 1) {
-      throw new Error('multiple hats with the same ID');
-    }
-
-    return matches[0];
-  },
-  setHatsTreeId: hatsTreeId =>
-    set(() => {
-      // if `hatsTreeId` is null or undefined,
-      // set `hatsTree` to that same value
-      if (typeof hatsTreeId !== 'number') {
-        return { hatsTreeId, hatsTree: hatsTreeId, streamsFetched: false };
-      }
-      return { hatsTreeId, streamsFetched: false };
-    }),
-  setHatsTree: async params => {
-    const hatsTree = await sanitize(
-      params.hatsTree,
-      params.hatsAccountImplementation,
-      params.erc6551Registry,
-      params.hatsProtocol,
-      params.chainId,
-      params.publicClient,
-      params.decentHats,
-    );
-    set(() => ({ hatsTree }));
-  },
-  setHatsStreams: updatedDecentTree => {
-    set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
-  },
-  resetHatsStore: () => set(() => initialHatsStore),
-}));
-
-export { useRolesState };
