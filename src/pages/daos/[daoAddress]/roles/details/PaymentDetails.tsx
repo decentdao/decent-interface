@@ -323,7 +323,7 @@ export default function PaymentDetails({
                             onClick={handleSetMax}
                             cursor="pointer"
                           >
-                            {t('max', { ns: 'common'})}
+                            {t('max', { ns: 'common' })}
                           </InputRightElement>
                         </InputGroup>
                         <Flex
