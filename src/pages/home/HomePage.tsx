@@ -1,28 +1,12 @@
 import { Flex, Button, Text, Spacer, Hide } from '@chakra-ui/react';
-import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DecentSignature } from '../../assets/theme/custom/icons/DecentSignature';
 import { BASE_ROUTES } from '../../constants/routes';
-import { useFractal } from '../../providers/App/AppProvider';
-import { useRolesState } from '../../state/useRolesState';
 import { MySafes } from './MySafes';
 
 export default function HomePage() {
-  const {
-    node: { daoAddress },
-    action,
-  } = useFractal();
-
   const { t } = useTranslation('home');
-  const { resetHatsStore } = useRolesState();
-
-  useEffect(() => {
-    if (daoAddress) {
-      action.resetSafeState();
-      resetHatsStore();
-    }
-  }, [daoAddress, action, resetHatsStore]);
 
   return (
     <Flex
