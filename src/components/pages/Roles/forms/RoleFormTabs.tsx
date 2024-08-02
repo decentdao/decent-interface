@@ -46,7 +46,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
   const { addressPrefix } = useNetworkConfig();
 
   const { t } = useTranslation(['roles']);
-  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, errors, setFieldValue, setTouched } = useFormikContext<RoleFormValues>();
 
   const existingRoleHat = useMemo(
     () =>
@@ -57,14 +57,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
     [values.roleEditing, hatsTree],
   );
 
-  useEffect(() => {
-    if (values.hats.length && !values.roleEditing) {
-      const role = values.hats.find(hat => hat.id === hatId);
-      if (role) {
-        setFieldValue('roleEditing', role);
-      }
-    }
-  }, [values.hats, values.roleEditing, hatId, setFieldValue]);
+  const hatIndex = values.hats.findIndex(h => h.id === hatId);
 
   const isRoleNameUpdated = !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name;
 
@@ -73,6 +66,20 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
 
   const isMemberUpdated =
     !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
+
+  const isRoleActuallyEdited = isRoleNameUpdated || isRoleDescriptionUpdated || isMemberUpdated;
+
+  const isInitialised = useRef(false);
+
+  useEffect(() => {
+    if (!isInitialised.current && values.hats.length && hatIndex !== -1) {
+      isInitialised.current = true;
+      const role = values.hats[hatIndex];
+      setFieldValue('roleEditing', role);
+    } else if (!isInitialised.current && hatIndex === -1) {
+      isInitialised.current = true;
+    }
+  }, [hatIndex, setFieldValue, values.hats, values.roleEditing]);
 
   const editedRole = useMemo<EditedRole>(() => {
     if (!existingRoleHat) {
@@ -174,15 +181,23 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
           isDisabled={!!errors.roleEditing}
           onClick={() => {
             const roleUpdated = { ...values.roleEditing, editedRole };
-            const hatIndex = values.hats.findIndex(h => h.id === hatId);
             if (hatIndex === -1) {
               // @dev new hat
               push(roleUpdated);
             } else {
-              setFieldValue(`hats.${hatIndex}`, roleUpdated);
+              setFieldValue(
+                `hats.${hatIndex}`,
+                isRoleActuallyEdited || editedRole.status === EditBadgeStatus.New
+                  ? roleUpdated
+                  : existingRoleHat,
+              );
             }
+
             setFieldValue('roleEditing', undefined);
-            navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+            setTimeout(() => {
+              setTouched({});
+              navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+            }, 50);
           }}
         >
           {t('save')}

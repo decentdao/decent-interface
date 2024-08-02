@@ -23,11 +23,13 @@ export default function RoleDetails() {
   // @todo add redirect for hat not found
   if (!roleHat || !daoAddress) return null;
   const handleDrawerClose = () => {
-    navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress));
+    navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress), { replace: true });
   };
 
   const handleEditRoleClick = () => {
-    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, roleHat.id));
+    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, roleHat.id), {
+      replace: true,
+    });
   };
   return (
     <>

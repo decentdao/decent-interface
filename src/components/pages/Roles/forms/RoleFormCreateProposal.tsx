@@ -39,9 +39,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
     [navigate, addressPrefix, daoAddress],
   );
 
-  const handleCloseDrawer = () => {
-    setDrawerViewingRole(undefined);
-  };
+  const handleCloseDrawer = () => setDrawerViewingRole(undefined);
 
   return (
     <Box maxW="736px">
@@ -145,7 +143,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           onClick={submitForm}
           isDisabled={isSubmitting}
         >
-          {t('sendAssetsSubmit')}
+          {t('submitProposal')}
         </Button>
       </Flex>
       {drawerViewingRole !== undefined && (

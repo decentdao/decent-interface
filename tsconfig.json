@@ -15,7 +15,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
+    "allowImportingTsExtensions": true
   },
   "include": [
     "src",
@@ -23,6 +24,7 @@
     "test",
     "app",
     "netlify/functions",
+    "netlify/shared",
     "vite.config.mts",
     "vitest.setup.ts"
   ]

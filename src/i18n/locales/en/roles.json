@@ -30,5 +30,9 @@
   "removedHats_other": "Remove {{count}} roles",
   "roleNameRequired": "Role name is required",
   "roleDescriptionRequired": "Role description is required",
-  "roleMemberRequired": "Member is required"
+  "roleMemberRequired": "Member is required",
+  "unsavedChanges": "Unsaved Changes",
+  "unsavedChangesDescription": "You have unsaved changes that will be lost if you continue. Do you want to discard your changes?",
+  "discardChanges": "Discard",
+  "keepEditing": "Keep Editing"
 }

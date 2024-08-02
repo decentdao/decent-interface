@@ -214,7 +214,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                   isSubmitDisabled
                 }
               >
-                {t('sendAssetsSubmit')}
+                {t('submitProposal')}
               </Button>
             </Form>
           );
