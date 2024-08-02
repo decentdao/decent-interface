@@ -62,7 +62,7 @@ export default function PaymentDetails({
   };
 }) {
   const { address: account } = useAccount();
-  const { t } = useTranslation('roles');
+  const { t } = useTranslation(['roles', 'common']);
   const [withdrawableAmount, setWithdrawableAmount] = useState(0n);
   const [withdrawAmount, setWithdrawAmount] = useState<BigIntValuePair>({
     value: '0',
@@ -268,7 +268,7 @@ export default function PaymentDetails({
                         >
                           {t('remaining')}
                         </Text>
-                        <Flex>
+                        <Flex alignItems="center">
                           <Image
                             src={payment.asset.logo}
                             fallbackSrc="/images/coin-icon-default.svg"
@@ -291,7 +291,7 @@ export default function PaymentDetails({
                         >
                           {t('withdrawable')}
                         </Text>
-                        <Flex>
+                        <Flex alignItems="center">
                           <Image
                             src={payment.asset.logo}
                             fallbackSrc="/images/coin-icon-default.svg"
@@ -323,7 +323,7 @@ export default function PaymentDetails({
                             onClick={handleSetMax}
                             cursor="pointer"
                           >
-                            {t('max')}
+                            {t('max', { ns: 'common'})}
                           </InputRightElement>
                         </InputGroup>
                         <Flex
