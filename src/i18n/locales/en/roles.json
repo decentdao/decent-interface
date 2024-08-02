@@ -55,5 +55,9 @@
   "cliff": "Cliff",
   "cliffSubTitle": "How long until the assets are claimable?",
   "paymentStream": "Payment Stream",
-  "payment": "Payment"
+  "payment": "Payment",
+  "withdraw": "Withdraw",
+  "withdrawHelper": "Withdrawing will transfer the funds to the recipient's address.",
+  "remaining": "Remaining",
+  "withdrawable": "Withdrawable"
 }
