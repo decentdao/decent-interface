@@ -56,13 +56,11 @@ export default function DAOController() {
 
   // Reset Safe state when daoAddress is goes null
   useEffect(() => {
-    console.log({daoAddress});
-
     if (!daoAddress) {
       action.resetSafeState();
       resetHatsStore();
     }
-  } ,[action, resetHatsStore, daoName, daoAddress]);
+  }, [action, resetHatsStore, daoName, daoAddress]);
 
   let display;
 
