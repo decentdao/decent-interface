@@ -87,7 +87,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                     setFieldTouched(field.name, true);
                   }}
                   isRequired={false}
-                  placeholder="Description"
+                  placeholder={t('proposalDescriptionPlaceholder', { ns: 'proposal' })}
                 />
               </LabelWrapper>
             )}
