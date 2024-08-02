@@ -222,6 +222,7 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
                   onChange={valuePair => {
                     setFieldValue(field.name, valuePair, true);
                   }}
+                  decimalPlaces={values?.roleEditing?.payments?.[formIndex]?.asset?.decimals ?? 18}
                   onBlur={() => {
                     setFieldTouched(field.name, true);
                   }}
