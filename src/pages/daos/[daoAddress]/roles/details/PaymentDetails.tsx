@@ -17,7 +17,7 @@ import { ReactNode, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { Address, encodeFunctionData, getContract, Hex, getAddress } from 'viem';
-import { useAccount, useWalletClient } from 'wagmi';
+import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../../../assets/abi/HatsAccount1ofN';
 import { SablierV2LockupLinearAbi } from '../../../../../assets/abi/SablierV2LockupLinear';
 import { SablierPayment } from '../../../../../components/pages/Roles/types';
@@ -70,26 +70,26 @@ export default function PaymentDetails({
   });
   const [withdrawMax, setWithdrawMax] = useState(false);
 
+  const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
-  useEffect(() => {
-    async function loadWithdrawableAmount() {
-      if (walletClient && payment?.streamId && payment?.contractAddress) {
-        const streamContract = getContract({
-          abi: SablierV2LockupLinearAbi,
-          address: payment.contractAddress,
-          client: walletClient,
-        });
+  const loadWithdrawableAmount = useCallback(async () => {
+    if (walletClient && payment?.streamId && payment?.contractAddress) {
+      const streamContract = getContract({
+        abi: SablierV2LockupLinearAbi,
+        address: payment.contractAddress,
+        client: walletClient,
+      });
 
-        const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
-          convertStreamIdToBigInt(payment.streamId),
-        ]);
-        setWithdrawableAmount(newWithdrawableAmount / 10n ** BigInt(payment.asset.decimals));
-      }
+      const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
+        convertStreamIdToBigInt(payment.streamId),
+      ]);
+      setWithdrawableAmount(newWithdrawableAmount / 10n ** BigInt(payment.asset.decimals));
     }
-
-    loadWithdrawableAmount();
   }, [payment?.streamId, payment?.contractAddress, payment?.asset?.decimals, walletClient]);
+  useEffect(() => {
+    loadWithdrawableAmount();
+  }, [loadWithdrawableAmount]);
 
   useEffect(() => {
     if (payment?.asset?.decimals) {
@@ -119,6 +119,7 @@ export default function PaymentDetails({
       payment?.contractAddress &&
       payment?.streamId &&
       walletClient &&
+      publicClient &&
       withdrawAmount.bigintValue
     ) {
       try {
@@ -149,14 +150,19 @@ export default function PaymentDetails({
           closeButton: false,
           progress: 1,
         });
-        await hatsAccountContract.write.execute([
+        const txHash = await hatsAccountContract.write.execute([
           payment.contractAddress,
           0n,
           hatsAccountCalldata,
           0,
         ]);
+        const transaction = await publicClient.waitForTransactionReceipt({ hash: txHash });
         toast.dismiss(withdrawToast);
-        toast('Payment successfully withdrawn. Check your wallet :)');
+        if (transaction.status === 'success') {
+          toast('Payment successfully withdrawn. Check your wallet :)');
+        } else {
+          toast('Transaction for withdrawing your payment reverted :(');
+        }
       } catch (e) {
         console.error('Error withdrawing from stream', e);
       }
@@ -164,6 +170,7 @@ export default function PaymentDetails({
   }, [
     payment?.contractAddress,
     payment?.streamId,
+    publicClient,
     walletClient,
     withdrawAmount.bigintValue,
     roleHat.smartAddress,
@@ -319,7 +326,10 @@ export default function PaymentDetails({
                             {t('max')}
                           </InputRightElement>
                         </InputGroup>
-                        <Flex justifyContent="flex-end" w="full">
+                        <Flex
+                          justifyContent="flex-end"
+                          w="full"
+                        >
                           <Button
                             leftIcon={<Download />}
                             onClick={handleWithdraw}
