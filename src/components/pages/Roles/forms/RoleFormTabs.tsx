@@ -134,7 +134,7 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
   }
 
   return (
-    <Box>
+    <Box pb="4rem">
       <Tabs
         index={tab}
         onChange={index => setTab(index)}
