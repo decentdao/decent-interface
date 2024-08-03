@@ -36,14 +36,18 @@ import { SectionTitle } from './RoleFormSectionTitle';
 function DurationTicker({
   fieldName,
   fieldType,
+  formIndex,
 }: {
-  fieldType: 'vestingDuration' | 'cliffDuration';
+  fieldType: 'duration' | 'cliffDuration';
   fieldName: 'years' | 'days' | 'hours';
+  formIndex: number;
 }) {
   const { t } = useTranslation(['roles']);
   return (
     <FormControl>
-      <Field name={`roleEditing.vesting.scheduleDuration.[${fieldType}].[${fieldName}]`}>
+      <Field
+        name={`roleEditing.payments[${formIndex}].scheduleDuration.[${fieldType}].[${fieldName}]`}
+      >
         {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => {
           return (
             <LabelWrapper
@@ -102,7 +106,7 @@ function DurationTicker({
   );
 }
 
-function ScheduleDuration() {
+function ScheduleDuration({ formIndex }: { formIndex: number }) {
   return (
     <Flex
       flexDir="column"
@@ -110,21 +114,24 @@ function ScheduleDuration() {
     >
       <DurationTicker
         fieldName="years"
-        fieldType="vestingDuration"
+        fieldType="duration"
+        formIndex={formIndex}
       />
       <DurationTicker
         fieldName="days"
-        fieldType="vestingDuration"
+        fieldType="duration"
+        formIndex={formIndex}
       />
       <DurationTicker
         fieldName="hours"
-        fieldType="vestingDuration"
+        fieldType="duration"
+        formIndex={formIndex}
       />
     </Flex>
   );
 }
 
-function CliffDuration() {
+function CliffDuration({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   return (
     <Flex
@@ -139,30 +146,56 @@ function CliffDuration() {
         <DurationTicker
           fieldName="years"
           fieldType="cliffDuration"
+          formIndex={formIndex}
         />
         <DurationTicker
           fieldName="days"
           fieldType="cliffDuration"
+          formIndex={formIndex}
         />
         <DurationTicker
           fieldName="hours"
           fieldType="cliffDuration"
+          formIndex={formIndex}
         />
       </Box>
     </Flex>
   );
 }
 
-function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
+function PaymentDatePicker({
+  type,
+  formIndex,
+}: {
+  type: 'startDate' | 'endDate' | 'cliffDate';
+  formIndex: number;
+}) {
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
-  const selectedDate =
-    type === 'startDate'
-      ? values.roleEditing?.vesting?.scheduleFixedDate?.startDate
-      : values.roleEditing?.vesting?.scheduleFixedDate?.endDate;
+
+  const selectedDate = values.roleEditing?.payments?.[formIndex].scheduleFixedDate?.[type];
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const isCliffDate = type === 'cliffDate';
+
+  const onCliffDateChange = isCliffDate
+    ? (date: Date) => {
+        setFieldValue(`roleEditing.payments[${formIndex}].scheduleFixedDate.cliffDate`, date);
+      }
+    : undefined;
+
+  const onDateRangeChange = !isCliffDate
+    ? (dateRange: Date[]) => {
+        setFieldValue(
+          `roleEditing.payments[${formIndex}].scheduleFixedDate.startDate`,
+          dateRange[0],
+        );
+        setFieldValue(`roleEditing.payments[${formIndex}].scheduleFixedDate.endDate`, dateRange[1]);
+      }
+    : undefined;
+
   return (
-    <Field name={`roleEditing.vesting.scheduleFixedDate.${type}`}>
+    <Field name={`roleEditing.payments[${formIndex}].scheduleFixedDate.${type}`}>
       {() => (
         <>
           <Show below="md">
@@ -183,11 +216,9 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
               onClose={() => setIsDrawerOpen(false)}
             >
               <DecentDatePicker
-                isRange
-                onRangeChange={dateRange => {
-                  setFieldValue('roleEditing.vesting.scheduleFixedDate.startDate', dateRange[0]);
-                  setFieldValue('roleEditing.vesting.scheduleFixedDate.endDate', dateRange[1]);
-                }}
+                isRange={!isCliffDate}
+                onChange={onCliffDateChange}
+                onRangeChange={onDateRangeChange}
               />
             </DraggableDrawer>
           </Show>
@@ -205,14 +236,9 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
                 </MenuButton>
                 <MenuList>
                   <DecentDatePicker
-                    isRange
-                    onRangeChange={dateRange => {
-                      setFieldValue(
-                        'roleEditing.vesting.scheduleFixedDate.startDate',
-                        dateRange[0],
-                      );
-                      setFieldValue('roleEditing.vesting.scheduleFixedDate.endDate', dateRange[1]);
-                    }}
+                    isRange={!isCliffDate}
+                    onChange={onCliffDateChange}
+                    onRangeChange={onDateRangeChange}
                   />
                 </MenuList>
               </>
@@ -224,7 +250,7 @@ function PaymentDatePicker({ type }: { type: 'startDate' | 'endDate' }) {
   );
 }
 
-function FixedDate() {
+function FixedDate({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
 
   return (
@@ -245,7 +271,10 @@ function FixedDate() {
           alignItems="center"
         >
           <GridItem area="start">
-            <PaymentDatePicker type="startDate" />
+            <PaymentDatePicker
+              type="startDate"
+              formIndex={formIndex}
+            />
           </GridItem>
           <GridItem
             area="arrow"
@@ -259,15 +288,33 @@ function FixedDate() {
             />
           </GridItem>
           <GridItem area="end">
-            <PaymentDatePicker type="endDate" />
+            <PaymentDatePicker
+              type="endDate"
+              formIndex={formIndex}
+            />
           </GridItem>
         </Grid>
+      </FormControl>
+      <FormControl
+        my="1rem"
+        display="flex"
+        flexDir="column"
+        gap="1rem"
+      >
+        <SectionTitle
+          title={t('cliff')}
+          subTitle={t('cliffSubTitle')}
+        />
+        <PaymentDatePicker
+          type="cliffDate"
+          formIndex={formIndex}
+        />
       </FormControl>
     </Box>
   );
 }
 
-function DurationTabs() {
+function DurationTabs({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { setFieldValue } = useFormikContext<RoleFormValues>();
 
@@ -277,10 +324,18 @@ function DurationTabs() {
       my="1rem"
     >
       <TabList my="1rem">
-        <Tab onClick={() => setFieldValue('roleEditing.vesting.scheduleType', 'duration')}>
+        <Tab
+          onClick={() =>
+            setFieldValue(`roleEditing.payments[${formIndex}].scheduleType`, 'duration')
+          }
+        >
           {t('duration')}
         </Tab>
-        <Tab onClick={() => setFieldValue('roleEditing.vesting.scheduleType', 'fixedDate')}>
+        <Tab
+          onClick={() =>
+            setFieldValue(`roleEditing.payments[${formIndex}].scheduleType`, 'fixedDate')
+          }
+        >
           {t('fixedDates')}
         </Tab>
       </TabList>
@@ -291,20 +346,20 @@ function DurationTabs() {
             flexDir="column"
             gap="1rem"
           >
-            <ScheduleDuration />
-            <CliffDuration />
+            <ScheduleDuration formIndex={formIndex} />
+            <CliffDuration formIndex={formIndex} />
           </Flex>
         </TabPanel>
 
         <TabPanel>
-          <FixedDate />
+          <FixedDate formIndex={formIndex} />
         </TabPanel>
       </TabPanels>
     </Tabs>
   );
 }
 
-export default function RoleFormPaymentStream() {
+export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   return (
     <Box
@@ -323,12 +378,12 @@ export default function RoleFormPaymentStream() {
         // @todo Add Learn More link
         externalLink="#"
       />
-      <AssetSelector />
+      <AssetSelector formIndex={formIndex} />
       <SectionTitle
         title={t('schedule')}
         subTitle={t('scheduleSubTitle')}
       />
-      <DurationTabs />
+      <DurationTabs formIndex={formIndex} />
     </Box>
   );
 }

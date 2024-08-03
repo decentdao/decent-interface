@@ -1,7 +1,5 @@
-import { Address, Hex, zeroAddress } from 'viem';
-import { toHex } from 'viem/utils';
-import { getRandomBytes } from '../../../helpers';
-import { DecentRoleHat } from '../../../state/useRolesState';
+import { Address, Hex } from 'viem';
+import { DecentRoleHat } from '../../../store/roles';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 export type RoleViewMode = 'edit' | 'view';
 
@@ -14,20 +12,21 @@ export interface SablierAsset {
 }
 
 export interface BaseSablierStream {
-  streamId?: string;
-  contractAddress?: Address;
+  streamId: string;
+  contractAddress: Address;
   asset: SablierAsset;
   amount: BigIntValuePair;
 }
 
 export interface SablierPayment extends BaseSablierStream {
   scheduleDuration?: {
-    vestingDuration: VestingDuration;
-    cliffDuration: VestingDuration;
+    duration: DurationBreakdown;
+    cliffDuration: DurationBreakdown | undefined;
   };
   scheduleFixedDate?: {
     startDate: Date;
     endDate: Date;
+    cliffDate: Date | undefined;
   };
   scheduleType: 'duration' | 'fixedDate';
 }
@@ -38,7 +37,7 @@ export interface RoleProps {
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  payment?: SablierPayment;
+  payments?: SablierPayment[];
 }
 
 export interface RoleEditProps
@@ -80,7 +79,7 @@ export interface EditedRole {
   status: EditBadgeStatus;
 }
 
-export interface VestingDuration {
+export interface DurationBreakdown {
   years: number;
   hours: number;
   days: number;
@@ -89,7 +88,7 @@ export interface VestingDuration {
 export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
-  vesting?: SablierPayment;
+  payments?: SablierPayment[];
 }
 
 export interface RoleFormValues {
@@ -97,18 +96,6 @@ export interface RoleFormValues {
   hats: RoleValue[];
   roleEditing?: RoleValue;
   customNonce?: number;
-}
-
-export function getNewRole(): RoleValue {
-  // @dev creates a unique id for the hat for new hats for use in form, not stored on chain
-  return {
-    id: toHex(getRandomBytes(), { size: 32 }),
-    wearer: '',
-    name: '',
-    description: '',
-    prettyId: '',
-    smartAddress: zeroAddress,
-  };
 }
 
 export interface HatWearerChangedParams {

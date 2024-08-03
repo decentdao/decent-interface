@@ -1,43 +1,45 @@
-import { Box, Tab, TabList, TabPanels, TabPanel, Tabs, Button, Flex } from '@chakra-ui/react';
-import { useFormikContext } from 'formik';
-import { useMemo, useEffect } from 'react';
+import {
+  Box,
+  Tab,
+  TabList,
+  TabPanels,
+  TabPanel,
+  Tabs,
+  Button,
+  Flex,
+  IconButton,
+} from '@chakra-ui/react';
+import { X } from '@phosphor-icons/react';
+import { FieldArray, useFormikContext } from 'formik';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Hex, zeroAddress } from 'viem';
+import { Hex } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../../state/useRolesState';
-import { EditBadgeStatus, EditedRole, RoleFormValues, RoleValue } from '../types';
+import { useRolesStore } from '../../../../store/roles';
+import { RoleFormValues } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
+import { useRoleFormEditedRole } from './useRoleFormEditedRole';
 
-const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: boolean) => {
-  if (fieldNames.includes(fieldName) && isRemoved) {
-    return fieldNames.filter(field => field !== fieldName);
-  }
-  return [...fieldNames, fieldName];
-};
-
-export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: any) => void }) {
-  const { hatsTree } = useRolesState();
+export default function RoleFormTabs({
+  hatId,
+  pushRole,
+}: {
+  hatId: Hex;
+  pushRole: (obj: any) => void;
+}) {
+  const { hatsTree } = useRolesStore();
   const {
     node: { daoAddress },
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
-
+  const { editedRoleData } = useRoleFormEditedRole({ hatsTree });
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
-
-  const existingRoleHat = useMemo(
-    () =>
-      hatsTree?.roleHats.find(
-        (role: RoleValue) =>
-          !!values.roleEditing && role.id === values.roleEditing.id && role.id !== zeroAddress,
-      ),
-    [values.roleEditing, hatsTree],
-  );
 
   useEffect(() => {
     if (values.hats.length && !values.roleEditing) {
@@ -48,72 +50,96 @@ export default function RoleFormTabs({ hatId, push }: { hatId: Hex; push: (obj: 
     }
   }, [values.hats, values.roleEditing, hatId, setFieldValue]);
 
-  const isRoleNameUpdated = !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name;
-
-  const isRoleDescriptionUpdated =
-    !!existingRoleHat && values.roleEditing?.description !== existingRoleHat.description;
-
-  const isMemberUpdated =
-    !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
-
-  const editedRole = useMemo<EditedRole>(() => {
-    if (!existingRoleHat) {
-      return {
-        fieldNames: [],
-        status: EditBadgeStatus.New,
-      };
-    }
-    let fieldNames: string[] = [];
-    fieldNames = addRemoveField(fieldNames, 'roleName', isRoleNameUpdated);
-    fieldNames = addRemoveField(fieldNames, 'roleDescription', isRoleDescriptionUpdated);
-    fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
-
-    return {
-      fieldNames,
-      status: EditBadgeStatus.Updated,
-    };
-  }, [existingRoleHat, isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated]);
-
   if (!daoAddress) return null;
 
   return (
-    <Box>
-      <Tabs variant="twoTone">
-        <TabList>
-          <Tab>{t('roleInfo')}</Tab>
-          <Tab>{t('paymentStream')}</Tab>
-        </TabList>
-        <TabPanels my="1.75rem">
-          <TabPanel>
-            <RoleFormInfo />
-          </TabPanel>
-          <TabPanel>
-            <RoleFormPaymentStream />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-      <Flex
-        justifyContent="flex-end"
-        my="1rem"
-      >
-        <Button
-          isDisabled={!!errors.roleEditing}
-          onClick={() => {
-            const roleUpdated = { ...values.roleEditing, editedRole };
-            const hatIndex = values.hats.findIndex(h => h.id === hatId);
-            if (hatIndex === -1) {
-              // @dev new hat
-              push(roleUpdated);
-            } else {
-              setFieldValue(`hats.${hatIndex}`, roleUpdated);
-            }
-            setFieldValue('roleEditing', undefined);
-            navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
-          }}
-        >
-          {t('save')}
-        </Button>
-      </Flex>
-    </Box>
+    <FieldArray name="roleEditing.payments">
+      {({ push: pushPayment, remove: removePayment }) => (
+        <>
+          <Tabs variant="twoTone">
+            <TabList>
+              <Tab>{t('roleInfo')}</Tab>
+              {!!hatsTree &&
+                values.roleEditing?.payments &&
+                values.roleEditing.payments.map((_, i) => {
+                  const savedRole = values.hats.find(hat => hat.id === hatId)?.payments?.[i];
+                  const existingRoleHat = hatsTree?.roleHats.find(hat => hat.id === hatId)
+                    ?.payments?.[i];
+                  return (
+                    <Box key={i}>
+                      <Tab key={i}>
+                        {t('paymentStream')}
+                        {!savedRole && !existingRoleHat && (
+                          <IconButton
+                            aria-label="Remove payment stream"
+                            size="icon-sm"
+                            variant="tertiary"
+                            as={X}
+                            onClick={() => {
+                              removePayment(i);
+                            }}
+                            ml="1rem"
+                          />
+                        )}
+                      </Tab>
+                    </Box>
+                  );
+                })}
+              {!!hatsTree && (values.roleEditing?.payments?.length ?? 0) < 2 && (
+                <Tab>{t('paymentStream')}</Tab>
+              )}
+            </TabList>
+            <TabPanels my="1.75rem">
+              <TabPanel>
+                <RoleFormInfo />
+              </TabPanel>
+              {values.roleEditing?.payments &&
+                values.roleEditing.payments.map((_, i) => (
+                  <TabPanel key={i}>
+                    <RoleFormPaymentStream formIndex={i} />
+                  </TabPanel>
+                ))}
+              {(values.roleEditing?.payments?.length ?? 0) < 2 && (
+                <TabPanel>
+                  <Box>
+                    <Button
+                      onClick={() => {
+                        pushPayment({
+                          scheduleType: 'duration',
+                        });
+                      }}
+                    >
+                      Add New Payment Stream
+                    </Button>
+                  </Box>
+                </TabPanel>
+              )}
+            </TabPanels>
+          </Tabs>
+          <Flex
+            justifyContent="flex-end"
+            my="1rem"
+          >
+            <Button
+              isDisabled={!!errors.roleEditing}
+              onClick={() => {
+                const roleUpdated = { ...values.roleEditing, editedRole: editedRoleData };
+                const hatIndex = values.hats.findIndex(h => h.id === hatId);
+                if (hatIndex === -1) {
+                  // @dev new hat
+                  pushRole(roleUpdated);
+                } else {
+                  setFieldValue(`hats.${hatIndex}`, roleUpdated);
+                }
+                setFieldValue('roleEditing', undefined);
+                navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+              }}
+            >
+              {t('save')}
+            </Button>
+          </Flex>
+        </>
+      )}
+    </FieldArray>
   );
 }

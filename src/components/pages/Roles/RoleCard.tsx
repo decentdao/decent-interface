@@ -1,5 +1,6 @@
 import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
 import { CaretRight } from '@phosphor-icons/react';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
@@ -65,6 +66,25 @@ export function AvatarAndRoleName({
 
 function Payment({ payment }: { payment: SablierPayment | undefined }) {
   const { t } = useTranslation(['roles']);
+  const format = ['years', 'days', 'hours'];
+  const endDate =
+    payment?.scheduleFixedDate?.endDate &&
+    formatDuration(
+      intervalToDuration({
+        start: payment.scheduleFixedDate.startDate,
+        end: payment.scheduleFixedDate.endDate,
+      }),
+      { format },
+    );
+  const cliffDate =
+    payment?.scheduleFixedDate?.cliffDate &&
+    formatDuration(
+      intervalToDuration({
+        start: payment.scheduleFixedDate.startDate,
+        end: payment.scheduleFixedDate.cliffDate,
+      }),
+      { format },
+    );
   return (
     <Flex flexDir="column">
       {payment && (
@@ -105,10 +125,14 @@ function Payment({ payment }: { payment: SablierPayment | undefined }) {
             >
               {payment.asset.symbol}
             </EtherscanLink>
-            <Text>
-              {t('after')} {payment.scheduleDuration?.vestingDuration.years}
-            </Text>
+            <Flex
+              flexDir="column"
+              gap="0.25rem"
+            >
+              <Text>{endDate && `${t('after')} ${endDate}`}</Text>
+            </Flex>
           </Flex>
+          <Text>{cliffDate && `${t('cliff')} ${t('after')} ${cliffDate}`}</Text>
         </Box>
       )}
     </Flex>
@@ -118,7 +142,7 @@ function Payment({ payment }: { payment: SablierPayment | undefined }) {
 export function RoleCard({
   name,
   wearerAddress,
-  payment,
+  payments,
   editStatus,
   handleRoleClick,
   hatId,
@@ -144,7 +168,13 @@ export function RoleCard({
           />
         </Flex>
       </Flex>
-      <Payment payment={payment} />
+      {payments &&
+        payments.map((payment, index) => (
+          <Payment
+            key={index}
+            payment={payment}
+          />
+        ))}
     </Card>
   );
 }
@@ -152,7 +182,7 @@ export function RoleCard({
 export function RoleCardEdit({
   name,
   wearerAddress,
-  payment,
+  payments,
   editStatus,
   handleRoleClick,
 }: RoleEditProps) {
@@ -177,7 +207,13 @@ export function RoleCardEdit({
           />
         </Flex>
       </Flex>
-      <Payment payment={payment} />
+      {payments &&
+        payments.map((payment, index) => (
+          <Payment
+            key={index}
+            payment={payment}
+          />
+        ))}
     </Card>
   );
 }

@@ -39,9 +39,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
     [navigate, addressPrefix, daoAddress],
   );
 
-  const handleCloseDrawer = () => {
-    setDrawerViewingRole(undefined);
-  };
+  const handleCloseDrawer = () => setDrawerViewingRole(undefined);
 
   return (
     <Box maxW="736px">
@@ -127,7 +125,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               setDrawerViewingRole(role);
             }}
             editStatus={role.editedRole?.status}
-            payment={role.vesting}
+            payments={role.payments}
           />
         ))}
       </Box>
@@ -146,7 +144,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           onClick={submitForm}
           isDisabled={isSubmitting}
         >
-          {t('sendAssetsSubmit')}
+          {t('submitProposal')}
         </Button>
       </Flex>
       {drawerViewingRole !== undefined && (
@@ -157,7 +155,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               isOpen={drawerViewingRole !== undefined}
               onClose={handleCloseDrawer}
               onEdit={handleEditRoleClick}
-              payment={drawerViewingRole.vesting}
+              payments={drawerViewingRole.payments}
             />
           </Show>
           <Show above="md">
@@ -166,7 +164,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               isOpen={drawerViewingRole !== undefined}
               onClose={handleCloseDrawer}
               onEdit={handleEditRoleClick}
-              payment={drawerViewingRole.vesting}
+              payments={drawerViewingRole.payments}
             />
           </Show>
         </>

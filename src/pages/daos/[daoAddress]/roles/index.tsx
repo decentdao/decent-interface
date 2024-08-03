@@ -8,12 +8,13 @@ import { RoleCardLoading, RoleCardNoRoles } from '../../../../components/pages/R
 import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
+import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../../state/useRolesState';
+import { useRolesStore } from '../../../../store/roles';
 
 function Roles() {
-  const { hatsTree } = useRolesState();
+  const { hatsTree } = useRolesStore();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
   const {
@@ -21,7 +22,10 @@ function Roles() {
   } = useFractal();
   const navigate = useNavigate();
 
+  const { canUserCreateProposal } = useCanUserCreateProposal();
+
   if (!daoAddress) return null;
+
   const handleNavigateToRole = (hatId: Hex) =>
     navigate(DAO_ROUTES.rolesDetails.relative(addressPrefix, daoAddress, hatId));
 
@@ -40,7 +44,7 @@ function Roles() {
           },
         ]}
         buttonVariant="secondary"
-        buttonText={t('editRoles')}
+        buttonText={canUserCreateProposal ? t('editRoles') : undefined}
         buttonProps={{
           size: 'sm',
           leftIcon: <Pencil />,
@@ -67,7 +71,7 @@ function Roles() {
                 wearerAddress={roleHat.wearer || zeroAddress}
                 hatId={roleHat.id}
                 handleRoleClick={handleNavigateToRole}
-                payment={roleHat.vesting}
+                payments={roleHat.payments}
               />
             ))}
           </Show>

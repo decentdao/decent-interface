@@ -4,35 +4,42 @@ import { Formik } from 'formik';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Hex } from 'viem';
+import { Hex, getAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import {
   RoleCardLoading,
   RoleCardNoRoles,
 } from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import {
-  RoleFormValues,
-  getNewRole,
-  EditBadgeStatus,
-} from '../../../../../components/pages/Roles/types';
+import { RoleFormValues, EditBadgeStatus } from '../../../../../components/pages/Roles/types';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import useCreateRoles from '../../../../../hooks/utils/useCreateRoles';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../../../state/useRolesState';
+import { getNewRole, useRolesStore } from '../../../../../store/roles';
 
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
   const {
     node: { daoAddress, safe },
   } = useFractal();
-  const { addressPrefix } = useNetworkConfig();
+  const {
+    addressPrefix,
+    chain,
+    contracts: {
+      hatsProtocol,
+      erc6551Registry,
+      decentHatsMasterCopy,
+      hatsAccount1ofNMasterCopy: hatsAccountImplementation,
+    },
+  } = useNetworkConfig();
 
+  const publicClient = usePublicClient();
   const { rolesSchema } = useRolesSchema();
-  const { hatsTree } = useRolesState();
+  const { hatsTree } = useRolesStore();
 
   const navigate = useNavigate();
   const { createRolesEditProposal } = useCreateRoles();
@@ -106,8 +113,19 @@ function RolesEdit() {
                 size: 'sm',
                 leftIcon: <Plus />,
               }}
-              buttonClick={() => {
-                const newRole = getNewRole();
+              buttonClick={async () => {
+                if (!publicClient) return;
+
+                const newRole = await getNewRole({
+                  adminHatId: hatsTree?.adminHat.id,
+                  hatsCount: values.hats.length,
+                  implementation: hatsAccountImplementation,
+                  chainId: BigInt(chain.id),
+                  publicClient,
+                  registryAddress: erc6551Registry,
+                  decentHats: getAddress(decentHatsMasterCopy),
+                  tokenContract: hatsProtocol,
+                });
                 setFieldValue('roleEditing', newRole);
                 showRoleEditDetails(newRole.id);
               }}
@@ -129,7 +147,7 @@ function RolesEdit() {
                     setFieldValue('roleEditing', hat);
                     showRoleEditDetails(hat.id);
                   }}
-                  payment={hat.vesting}
+                  payments={hat.payments}
                 />
               ))}
             </Show>
