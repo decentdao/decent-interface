@@ -326,4 +326,3 @@ export async function getNewRole({
     }),
   };
 }
-
