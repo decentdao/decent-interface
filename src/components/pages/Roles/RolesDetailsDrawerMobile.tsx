@@ -16,7 +16,7 @@ interface RoleDetailsDrawerMobileProps {
     wearer: string;
     description: string;
   };
-  payment?: SablierPayment;
+  payments?: SablierPayment[];
   onOpen?: () => void;
   onClose?: () => void;
   isOpen?: boolean;
@@ -29,7 +29,7 @@ export default function RolesDetailsDrawerMobile({
   onOpen,
   isOpen = true,
   onEdit,
-  payment,
+  payments,
 }: RoleDetailsDrawerMobileProps) {
   const {
     node: { daoAddress },
@@ -91,7 +91,7 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        <PaymentDetails payment={payment} />
+        <PaymentDetails payment={payments?.[0]} />
       </Box>
     </DraggableDrawer>
   );

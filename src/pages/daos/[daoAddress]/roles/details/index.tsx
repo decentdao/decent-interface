@@ -36,7 +36,7 @@ export default function RoleDetails() {
           roleHat={roleHat}
           onClose={handleDrawerClose}
           onEdit={handleEditRoleClick}
-          payment={roleHat.vesting}
+          payments={roleHat.payments}
         />
       </Show>
       <Show above="md">
@@ -44,7 +44,7 @@ export default function RoleDetails() {
           roleHat={roleHat}
           onClose={handleDrawerClose}
           onEdit={handleEditRoleClick}
-          payment={roleHat.vesting}
+          payments={roleHat.payments}
         />
       </Show>
     </>

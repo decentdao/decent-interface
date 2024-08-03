@@ -1,5 +1,6 @@
 import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex, getAddress, zeroAddress } from 'viem';
@@ -12,9 +13,9 @@ import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
-import { RoleEditProps, RoleFormValues, RoleProps, SablierPayment } from './types';
+import { EditBadgeStatus, RoleEditProps, RoleFormValues, RoleProps, SablierPayment } from './types';
 
-function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
+function RolesHeader() {
   const { t } = useTranslation(['roles']);
   return (
     <Thead
@@ -32,7 +33,7 @@ function RolesHeader({ addHiddenColumn }: { addHiddenColumn?: boolean }) {
         <Th>{t('role')}</Th>
         <Th>{t('member')}</Th>
         <Th>{t('payment')}</Th>
-        {addHiddenColumn && <Th w="10%" />}
+        <Th>{t('payment')}</Th>
       </Tr>
     </Thead>
   );
@@ -56,19 +57,33 @@ function RoleNameColumn({ roleName }: { roleName: string }) {
   );
 }
 
-function RoleNameEditColumn({ roleName }: { roleName: string }) {
+function RoleNameEditColumn({
+  roleName,
+  editStatus,
+}: {
+  roleName: string;
+  editStatus?: EditBadgeStatus;
+}) {
   return (
     <Td>
       <Flex
         alignItems="center"
         justifyContent="space-between"
+        gap="1rem"
       >
-        <Text
-          textStyle="body-base"
-          color="lilac-0"
+        <Flex
+          alignItems="center"
+          justifyContent="space-between"
+          w="full"
         >
-          {roleName}
-        </Text>
+          <Text
+            textStyle="body-base"
+            color="lilac-0"
+          >
+            {roleName}
+          </Text>
+          <EditBadge editStatus={editStatus} />
+        </Flex>
         <Icon
           className="edit-role-icon"
           as={PencilLine}
@@ -123,7 +138,26 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
 }
 
 function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
-  const { t } = useTranslation(['daoCreate']);
+  const { t } = useTranslation(['roles']);
+  const format = ['years', 'days', 'hours'];
+  const endDate =
+    payment?.scheduleFixedDate?.endDate &&
+    formatDuration(
+      intervalToDuration({
+        start: payment.scheduleFixedDate.startDate,
+        end: payment.scheduleFixedDate.endDate,
+      }),
+      { format },
+    );
+  const cliffDate =
+    payment?.scheduleFixedDate?.cliffDate &&
+    formatDuration(
+      intervalToDuration({
+        start: payment.scheduleFixedDate.startDate,
+        end: payment.scheduleFixedDate.cliffDate,
+      }),
+      { format },
+    );
   return (
     <Td>
       {payment ? (
@@ -155,10 +189,14 @@ function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
             >
               {payment.asset.symbol}
             </EtherscanLink>
-            <Text>
-              {t('after')} {payment.scheduleDuration?.cliffDuration?.years}
-            </Text>
+            <Flex
+              flexDir="column"
+              gap="0.25rem"
+            >
+              <Text>{endDate && `${t('after')} ${endDate}`}</Text>
+            </Flex>
           </Flex>
+          <Text>{cliffDate && `${t('cliff')} ${t('after')} ${cliffDate}`}</Text>
         </Box>
       ) : (
         <Text
@@ -172,7 +210,7 @@ function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
   );
 }
 
-export function RolesRow({ name, wearerAddress, payment, handleRoleClick, hatId }: RoleProps) {
+export function RolesRow({ name, wearerAddress, payments, handleRoleClick, hatId }: RoleProps) {
   return (
     <Tr
       sx={{
@@ -188,7 +226,8 @@ export function RolesRow({ name, wearerAddress, payment, handleRoleClick, hatId 
     >
       <RoleNameColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentColumn payment={payment} />
+      <PaymentColumn payment={payments?.[0]} />
+      <PaymentColumn payment={payments?.[1]} />
     </Tr>
   );
 }
@@ -197,7 +236,7 @@ export function RolesRowEdit({
   name,
   wearerAddress,
   editStatus,
-  payment,
+  payments,
   handleRoleClick,
 }: RoleEditProps) {
   return (
@@ -213,12 +252,13 @@ export function RolesRowEdit({
       transition="all ease-out 300ms"
       onClick={handleRoleClick}
     >
-      <RoleNameEditColumn roleName={name} />
+      <RoleNameEditColumn
+        roleName={name}
+        editStatus={editStatus}
+      />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentColumn payment={payment} />
-      <Td w="10%">
-        <EditBadge editStatus={editStatus} />
-      </Td>
+      <PaymentColumn payment={payments?.[0]} />
+      <PaymentColumn payment={payments?.[1]} />
     </Tr>
   );
 }
@@ -240,7 +280,6 @@ export function RolesTable({
       {hatsTree.roleHats.length && (
         <Table variant="unstyled">
           <RolesHeader />
-          {/* Map Rows */}
           <Tbody
             sx={{
               tr: {
@@ -260,7 +299,7 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearer}
                 handleRoleClick={handleRoleClick}
-                payment={role.vesting}
+                payments={role.payments}
               />
             ))}
           </Tbody>
@@ -286,8 +325,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
       borderColor="white-alpha-08"
     >
       <Table variant="unstyled">
-        <RolesHeader addHiddenColumn />
-        {/* Map Rows */}
+        <RolesHeader />
         <Tbody
           sx={{
             tr: {
@@ -310,7 +348,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
                 handleRoleClick(role.id);
               }}
               editStatus={role.editedRole?.status}
-              payment={role.vesting}
+              payments={role.payments}
             />
           ))}
         </Tbody>

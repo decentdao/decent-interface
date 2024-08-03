@@ -44,7 +44,7 @@ interface RoleDetailsDrawerProps {
     wearer: string;
     description: string;
   };
-  payment?: SablierPayment;
+  payments?: SablierPayment[];
   onOpen?: () => void;
   onClose: () => void;
   onEdit: (hatId: Hex) => void;
@@ -56,7 +56,7 @@ export default function RolesDetailsDrawer({
   onClose,
   isOpen = true,
   onEdit,
-  payment,
+  payments,
 }: RoleDetailsDrawerProps) {
   const {
     node: { daoAddress },
@@ -161,7 +161,7 @@ export default function RolesDetailsDrawer({
             </GridItem>
           </Grid>
           {/* @todo: proper styling here */}
-          <PaymentDetails payment={payment} />
+          <PaymentDetails payment={payments?.[0]} />
         </DrawerBody>
       </DrawerContent>
     </Drawer>
