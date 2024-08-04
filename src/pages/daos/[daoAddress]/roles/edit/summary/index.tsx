@@ -70,6 +70,7 @@ export default function EditProposalSummary() {
               base: `calc(100% - ${SIDEBAR_WIDTH})`,
               '3xl': `calc(100% - 9rem - ${SIDEBAR_WIDTH})`,
             }}
+            h={`calc(100vh - ${headerHeight})`}
           >
             <PageHeader
               title={t('proposalNew', { ns: 'breadcrumbs' })}
