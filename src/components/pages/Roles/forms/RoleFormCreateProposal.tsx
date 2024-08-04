@@ -125,7 +125,6 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               setDrawerViewingRole(role);
             }}
             editStatus={role.editedRole?.status}
-            payments={role.payments}
           />
         ))}
       </Box>
