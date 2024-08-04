@@ -1,5 +1,5 @@
 import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
-import { CaretRight } from '@phosphor-icons/react';
+import { CaretCircleRight, CaretRight } from '@phosphor-icons/react';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { getAddress, zeroAddress } from 'viem';
@@ -11,7 +11,7 @@ import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { RoleEditProps, RoleProps, SablierPayment } from './types';
+import { EditBadgeStatus, RoleEditProps, RoleProps, SablierPayment } from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -214,6 +214,40 @@ export function RoleCardEdit({
             payment={payment}
           />
         ))}
+    </Card>
+  );
+}
+
+export function RoleCardShort({
+  name,
+  editStatus,
+  handleRoleClick,
+}: {
+  name: string;
+  editStatus?: EditBadgeStatus;
+  handleRoleClick: () => void;
+}) {
+  return (
+    <Card onClick={handleRoleClick}>
+      <Flex justifyContent="space-between">
+        <Text
+          textStyle="display-lg"
+          color="lilac-0"
+        >
+          {name}
+        </Text>
+        <Flex
+          alignItems="center"
+          gap="1rem"
+        >
+          <EditBadge editStatus={editStatus} />
+          <Icon
+            as={CaretCircleRight}
+            color="white-0"
+            boxSize="1.5rem"
+          />
+        </Flex>
+      </Flex>
     </Card>
   );
 }
