@@ -216,7 +216,7 @@ export default function ProposalTemplateModal({
       <Box marginTop="1.5rem">
         <CustomNonceInput
           nonce={nonce}
-          onChange={newNonce => setNonce(newNonce ? newNonce : undefined)}
+          onChange={newNonce => setNonce(newNonce)}
         />
       </Box>
       <Button

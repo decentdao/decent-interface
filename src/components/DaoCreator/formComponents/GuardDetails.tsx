@@ -35,9 +35,10 @@ function GuardDetails(props: ICreationStepProps) {
   const minutes = t('minutes', { ns: 'common' });
   const azoriusGovernance = governance as AzoriusGovernance;
   const governanceFormType = values.essentials.governance;
+
   const handleNonceChange = useCallback(
     (nonce?: number) => {
-      setFieldValue('multisig.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
+      setFieldValue('multisig.customNonce', nonce);
     },
     [setFieldValue],
   );
