@@ -91,10 +91,7 @@ export default function PaymentDetails({
 
   useEffect(() => {
     if (payment?.asset?.decimals) {
-      if (
-        withdrawAmount.bigintValue ===
-        withdrawableAmount
-      ) {
+      if (withdrawAmount.bigintValue === withdrawableAmount) {
         setWithdrawMax(true);
       } else {
         setWithdrawMax(false);
@@ -291,7 +288,8 @@ export default function PaymentDetails({
                             textStyle="body-base"
                             color="white-0"
                           >
-                            {formatUnits(withdrawableAmount, payment.asset.decimals)} {payment.asset.symbol}
+                            {formatUnits(withdrawableAmount, payment.asset.decimals)}{' '}
+                            {payment.asset.symbol}
                           </Text>
                         </Flex>
                       </Flex>
@@ -299,12 +297,12 @@ export default function PaymentDetails({
                     {withdrawableAmount > 0n && (
                       <>
                         <BigIntInput
-                            value={withdrawAmount.bigintValue}
-                            onChange={valuePair => setWithdrawAmount(valuePair)}
-                            decimalPlaces={payment.asset.decimals}
-                            maxValue={withdrawableAmount}
-                            data-testid="withdraw-stream-amount-input"
-                          />
+                          value={withdrawAmount.bigintValue}
+                          onChange={valuePair => setWithdrawAmount(valuePair)}
+                          decimalPlaces={payment.asset.decimals}
+                          maxValue={withdrawableAmount}
+                          data-testid="withdraw-stream-amount-input"
+                        />
                         <Flex
                           justifyContent="flex-end"
                           w="full"
