@@ -12,6 +12,10 @@ const filteredDefaultComponents = Object.fromEntries(
 export const theme = mergeThemeOverride({
   // @note There are other properties that are not included in mergeThemeOverride
   ...defaultTheme,
+  fonts: {
+    heading: `'DM Sans Variable', sans-serif`,
+    body: `'DM Sans Variable', sans-serif`,
+  },
   config: {
     initialColorMode: 'dark',
     useSystemColorMode: false,
