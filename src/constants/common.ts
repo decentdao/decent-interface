@@ -39,6 +39,7 @@ export const TAB_SHADOW = '0 -1px 0 0 rgba(0, 0, 0, 0.24), 0 1px 0 0 rgba(255, 2
 export const TOOLTIP_MAXW = '18rem';
 export const CONTENT_MAXW = 'calc(100vw - 3rem)';
 export const ADDRESS_MULTISIG_METADATA = '0xdA00000000000000000000000000000000000Da0';
+export const SENTINEL_ADDRESS = '0x0000000000000000000000000000000000000001';
 
 export const SIDEBAR_WIDTH = '4.25rem';
 

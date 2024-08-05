@@ -1,3 +1,6 @@
+import { SafeInfoResponse } from '@safe-global/api-kit';
+import { Address } from 'viem';
+
 export declare enum Operation {
   CALL = 0,
   DELEGATE = 1,
@@ -23,4 +26,10 @@ export type Parameter = {
 export declare type DataDecoded = {
   method: string;
   parameters?: Parameter[];
+};
+
+export type SafeInfoResponseWithGuard = SafeInfoResponse & {
+  nextNonce: number;
+  guard?: Address;
+  address: Address;
 };

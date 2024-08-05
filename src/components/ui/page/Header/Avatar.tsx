@@ -2,7 +2,7 @@ import { Box, Image } from '@chakra-ui/react';
 import { blo } from 'blo';
 import { Suspense } from 'react';
 import { useImage } from 'react-image';
-import { getAddress } from 'viem';
+import { Address } from 'viem';
 
 export type AvatarSize = 'icon' | 'lg' | 'sm' | 'xl';
 const avatarSizes: { [size: string]: string } = {
@@ -12,7 +12,7 @@ const avatarSizes: { [size: string]: string } = {
   xl: '3rem',
 };
 
-function BlockieAvatar({ address, size }: { size: AvatarSize; address: string }) {
+function BlockieAvatar({ address, size }: { size: AvatarSize; address: Address }) {
   return (
     <Box
       h={avatarSizes[size]}
@@ -20,7 +20,7 @@ function BlockieAvatar({ address, size }: { size: AvatarSize; address: string })
     >
       <Image
         borderRadius="full"
-        src={blo(getAddress(address))}
+        src={blo(address)}
         alt={address}
       />
     </Box>
@@ -49,7 +49,7 @@ function Avatar({
   url,
 }: {
   size?: AvatarSize;
-  address: string;
+  address: Address;
   url?: string | null;
 }) {
   if (!url) {

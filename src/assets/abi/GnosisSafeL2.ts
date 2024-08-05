@@ -1,4 +1,4 @@
-export default [
+const GnosisSafeL2Abi = [
   {
     anonymous: false,
     inputs: [
@@ -1136,3 +1136,5 @@ export default [
     type: 'receive',
   },
 ] as const;
+
+export default GnosisSafeL2Abi;

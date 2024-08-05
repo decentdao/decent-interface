@@ -19,20 +19,20 @@ function RemoveSignerModal({
   currentThreshold,
 }: {
   close: () => void;
-  selectedSigner: string;
-  signers: string[];
+  selectedSigner: Address;
+  signers: Address[];
   currentThreshold: number;
 }) {
   const {
     node: { daoAddress, safe },
   } = useFractal();
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
-  const [prevSigner, setPrevSigner] = useState<string>('');
+  const [prevSigner, setPrevSigner] = useState<Address>();
   const [threshold, setThreshold] = useState<number>(currentThreshold);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nextNonce);
   const { chain } = useNetworkConfig();
   const { data: ensName } = useEnsName({
-    address: selectedSigner as Address,
+    address: selectedSigner,
     chainId: chain.id,
   });
   const { t } = useTranslation(['modals', 'common']);

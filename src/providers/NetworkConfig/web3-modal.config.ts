@@ -21,9 +21,7 @@ const wagmiMetadata = {
 };
 
 const transportsReducer = (accumulator: Record<string, HttpTransport>, network: NetworkConfig) => {
-  accumulator[network.chain.id] = http(network.rpcEndpoint, {
-    batch: true,
-  });
+  accumulator[network.chain.id] = http(network.rpcEndpoint);
   return accumulator;
 };
 
@@ -32,6 +30,9 @@ export const wagmiConfig = defaultWagmiConfig({
   projectId: walletConnectProjectId,
   metadata: wagmiMetadata,
   transports: supportedNetworks.reduce(transportsReducer, {}),
+  batch: {
+    multicall: true,
+  },
 });
 
 if (walletConnectProjectId) {

@@ -1,4 +1,4 @@
-import { ContractEvent } from './contract';
+import { Address } from 'viem';
 import { ActivityBase } from './fractal';
 import { EthAddress } from './utils';
 
@@ -7,10 +7,11 @@ export enum TokenEventType {
   WITHDRAW = 'WITHDRAW',
 }
 
-export interface TokenEvent extends ContractEvent {
+export interface TokenEvent {
   transactionHash: string;
   blockNumber: number;
   eventType: TokenEventType;
+  blockTimestamp: number;
 }
 
 export type TokenBalance = {
@@ -105,7 +106,7 @@ export enum TreasuryActivityTypes {
 }
 
 export interface TreasuryActivity extends ActivityBase {
-  transferAddresses: string[];
+  transferAddresses: Address[];
   transferAmountTotals: string[];
   isDeposit: boolean;
 }

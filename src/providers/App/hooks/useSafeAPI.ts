@@ -6,6 +6,7 @@ import SafeApiKit, {
   SafeApiKitConfig,
 } from '@safe-global/api-kit';
 import { useMemo } from 'react';
+import { Address, getAddress } from 'viem';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
 import {
   DBObjectKeys,
@@ -54,20 +55,20 @@ class EnhancedSafeApiKit extends SafeApiKit {
     }
     return value;
   }
-  override async getSafeInfo(safeAddress: string): Promise<SafeInfoResponse> {
+  override async getSafeInfo(safeAddress: Address): Promise<SafeInfoResponse> {
     const value = await this.request('getSafeInfo' + safeAddress, 5, () => {
       return super.getSafeInfo(safeAddress);
     });
     return value;
   }
-  override async getSafeCreationInfo(safeAddress: string): Promise<SafeCreationInfoResponse> {
+  override async getSafeCreationInfo(safeAddress: Address): Promise<SafeCreationInfoResponse> {
     const value = await this.request('getSafeCreationInfo' + safeAddress, CacheExpiry.NEVER, () => {
       return super.getSafeCreationInfo(safeAddress);
     });
     return value;
   }
   override async getAllTransactions(
-    safeAddress: string,
+    safeAddress: Address,
     options?: AllTransactionsOptions,
   ): Promise<AllTransactionsListResponse> {
     const value = await this.request(
@@ -80,10 +81,15 @@ class EnhancedSafeApiKit extends SafeApiKit {
     return value;
   }
 
-  async getSafeData(safeAddress: string): Promise<SafeWithNextNonce> {
+  async getSafeData(safeAddress: Address): Promise<SafeWithNextNonce> {
     const safeInfoResponse = await this.getSafeInfo(safeAddress);
     const nextNonce = await this.getNextNonce(safeAddress);
-    const safeInfo = { ...safeInfoResponse, nextNonce };
+    const safeInfo = {
+      ...safeInfoResponse,
+      nextNonce,
+      address: getAddress(safeInfoResponse.address),
+      guard: getAddress(safeInfoResponse.guard),
+    };
     return safeInfo;
   }
 }
