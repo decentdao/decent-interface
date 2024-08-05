@@ -57,7 +57,7 @@ export function CustomNonceInput({
         helper={renderTrimmed ? '' : t('customNonceTooltip', { ns: 'proposal' })}
         isRequired={false}
         value={nonce?.toString() || ''}
-        onChange={e => onChange(e.target.value ? Number(e.target.value) : undefined)}
+        onChange={e => onChange(e.target.value !== undefined ? Number(e.target.value) : undefined)}
         disabled={disabled}
         subLabel={
           renderTrimmed ? null : (
