@@ -47,7 +47,7 @@ export function MetadataContainer() {
 
   const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
     setSnapshotENS(e.target.value);
-    if (validateENSName(e.target.value)) {
+    if (validateENSName(e.target.value) || (e.target.value === '' && daoSnapshotENS)) {
       setSnapshotENSValid(true);
     } else {
       setSnapshotENSValid(false);

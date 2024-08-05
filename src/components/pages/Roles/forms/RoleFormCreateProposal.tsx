@@ -68,6 +68,9 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                   testId={field.name}
                   placeholder="Proposal Title"
                   isRequired={false}
+                  gridContainerProps={{
+                    gridTemplateColumns: { base: '1fr', md: '1fr' },
+                  }}
                 />
               </LabelWrapper>
             )}
@@ -87,7 +90,10 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                     setFieldTouched(field.name, true);
                   }}
                   isRequired={false}
-                  placeholder="Description"
+                  placeholder={t('proposalDescriptionPlaceholder', { ns: 'proposal' })}
+                  gridContainerProps={{
+                    gridTemplateColumns: { base: '1fr', md: '1fr' },
+                  }}
                 />
               </LabelWrapper>
             )}

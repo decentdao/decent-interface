@@ -5,6 +5,7 @@ import { normalize } from 'viem/ens';
 import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AddressValidationMap, ERC721TokenConfig } from '../../../types';
 import { validateENSName } from '../../../utils/url';
 
@@ -75,6 +76,7 @@ export const useValidationAddress = () => {
   const {
     node: { safe },
   } = useFractal();
+  const { chain } = useNetworkConfig();
 
   const publicClient = usePublicClient();
 
@@ -83,7 +85,7 @@ export const useValidationAddress = () => {
   const addressValidationTest = useMemo(() => {
     return {
       name: 'Address Validation',
-      message: t('errorInvalidENSAddress', { ns: 'common' }),
+      message: t('errorInvalidENSAddress', { ns: 'common', chain: chain.name }),
       test: async function (address: string | undefined) {
         if (!address || !publicClient) return false;
         setIsValidating(true);
@@ -102,7 +104,7 @@ export const useValidationAddress = () => {
         }
       },
     };
-  }, [publicClient, addressValidationMap, t]);
+  }, [publicClient, addressValidationMap, t, chain.name]);
 
   const ensNameValidationTest = useMemo(() => {
     return {

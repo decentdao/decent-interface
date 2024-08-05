@@ -1,5 +1,6 @@
 import { Box, FormControl } from '@chakra-ui/react';
 import { Field, FieldProps } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
@@ -7,6 +8,8 @@ import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleFormValues } from '../types';
 
 export default function RoleFormInfo() {
+  const { t } = useTranslation('roles');
+
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -26,7 +29,7 @@ export default function RoleFormInfo() {
             meta,
           }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
-              label="Role Name"
+              label={t('roleName')}
               errorMessage={meta.touched && meta.error ? meta.error : undefined}
             >
               <InputComponent
@@ -38,7 +41,7 @@ export default function RoleFormInfo() {
                   setFieldTouched(field.name, true);
                 }}
                 testId="role-name"
-                placeholder="Role Name"
+                placeholder={t('roleName')}
                 isRequired
                 gridContainerProps={{
                   gridTemplateColumns: { base: '1fr', md: '1fr' },
@@ -59,7 +62,7 @@ export default function RoleFormInfo() {
             meta,
           }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
-              label="Description"
+              label={t('description')}
               errorMessage={meta.touched && meta.error ? meta.error : undefined}
             >
               <TextareaComponent
@@ -93,7 +96,7 @@ export default function RoleFormInfo() {
             meta,
           }: FieldProps<string, RoleFormValues>) => (
             <LabelWrapper
-              label="Member"
+              label={t('member')}
               errorMessage={meta.touched && meta.error ? meta.error : undefined}
             >
               <AddressInput
