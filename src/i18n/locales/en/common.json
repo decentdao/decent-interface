@@ -39,7 +39,7 @@
   "labelDAOFound": "Safe Found",
   "labelCurrentDAO": "You are currently viewing this Safe.",
   "labelEtherscan": "View on Etherscan",
-  "errorInvalidENSAddress": "Invalid ENS name or address",
+  "errorInvalidENSAddress": "Invalid ENS name or address on {{chain}}",
   "errorInvalidENSName": "Invalid ENS name",
   "errorInvalidERC20Address": "Invalid ERC-20 token address",
   "errorInvalidERC721Address": "Invalid ERC-721 token address",

@@ -4,6 +4,7 @@ import { isAddress, erc20Abi, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { logError } from '../../../helpers/errorLogging';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { validateENSName } from '../../../utils/url';
 import useSignerOrProvider from '../../utils/useSignerOrProvider';
@@ -23,6 +24,7 @@ export function useDAOCreateTests() {
   const signerOrProvider = useSignerOrProvider();
   const { t } = useTranslation(['daoCreate', 'common']);
   const publicClient = usePublicClient();
+  const { chain } = useNetworkConfig();
 
   const minValueValidation = useMemo(
     () => (minValue: number) => {
@@ -43,7 +45,7 @@ export function useDAOCreateTests() {
   const allocationValidationTest = useMemo(() => {
     return {
       name: 'Address Validation',
-      message: t('errorInvalidENSAddress', { ns: 'common' }),
+      message: t('errorInvalidENSAddress', { ns: 'common', chain: chain.name }),
       test: async function (address: string | undefined) {
         if (!address) return false;
         const { validation } = await validateAddress({ signerOrProvider, address });
@@ -53,7 +55,7 @@ export function useDAOCreateTests() {
         return validation.isValidAddress;
       },
     };
-  }, [signerOrProvider, addressValidationMap, t]);
+  }, [signerOrProvider, addressValidationMap, t, chain.name]);
 
   const uniqueAllocationValidationTest = useMemo(() => {
     return {

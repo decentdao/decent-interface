@@ -6,6 +6,7 @@ import { normalize } from 'viem/ens';
 import { AnyObject } from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AddressValidationMap, ERC721TokenConfig } from '../../../types';
 import { Providers } from '../../../types/network';
 import { validateENSName } from '../../../utils/url';
@@ -74,13 +75,14 @@ export const useValidationAddress = () => {
   const {
     node: { safe },
   } = useFractal();
+  const { chain } = useNetworkConfig();
 
   const [isValidating, setIsValidating] = useState(false);
 
   const addressValidationTest = useMemo(() => {
     return {
       name: 'Address Validation',
-      message: t('errorInvalidENSAddress', { ns: 'common' }),
+      message: t('errorInvalidENSAddress', { ns: 'common', chain: chain.name }),
       test: async function (address: string | undefined) {
         if (!address) return false;
         setIsValidating(true);
@@ -97,7 +99,7 @@ export const useValidationAddress = () => {
         }
       },
     };
-  }, [signerOrProvider, addressValidationMap, t]);
+  }, [signerOrProvider, addressValidationMap, t, chain.name]);
 
   const ensNameValidationTest = useMemo(() => {
     return {
