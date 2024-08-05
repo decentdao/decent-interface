@@ -61,6 +61,7 @@ export default function PaymentDetails({
 }) {
   const { address: account } = useAccount();
   const { t } = useTranslation(['roles', 'common']);
+  const [remainingAmount, setRemainingAmount] = useState('0');
   const [withdrawableAmount, setWithdrawableAmount] = useState(0n);
   const [withdrawAmount, setWithdrawAmount] = useState<BigIntValuePair>({
     value: '0',
@@ -71,7 +72,7 @@ export default function PaymentDetails({
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
-  const loadWithdrawableAmount = useCallback(async () => {
+  const loadAmounts = useCallback(async () => {
     if (walletClient && payment?.streamId && payment?.contractAddress) {
       const streamContract = getContract({
         abi: SablierV2LockupLinearAbi,
@@ -79,15 +80,28 @@ export default function PaymentDetails({
         client: walletClient,
       });
 
-      const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
-        convertStreamIdToBigInt(payment.streamId),
+      const bigintStreamId = convertStreamIdToBigInt(payment.streamId);
+
+      const [newWithdrawableAmount, withdrawnAmount] = await Promise.all([
+        streamContract.read.withdrawableAmountOf([bigintStreamId]),
+        streamContract.read.getWithdrawnAmount([bigintStreamId]),
       ]);
+
+      const newRemainingAmount = BigInt(payment.amount.bigintValue || 0n) - withdrawnAmount;
       setWithdrawableAmount(newWithdrawableAmount);
+      setRemainingAmount(formatUnits(newRemainingAmount, payment.asset.decimals));
     }
-  }, [payment?.streamId, payment?.contractAddress, walletClient]);
+  }, [
+    walletClient,
+    payment?.streamId,
+    payment?.contractAddress,
+    payment?.amount.bigintValue,
+    payment?.asset.decimals,
+  ]);
+
   useEffect(() => {
-    loadWithdrawableAmount();
-  }, [loadWithdrawableAmount]);
+    loadAmounts();
+  }, [loadAmounts]);
 
   useEffect(() => {
     if (payment?.asset?.decimals) {
@@ -129,7 +143,7 @@ export default function PaymentDetails({
           });
         }
         // @todo - Add proper copy
-        const withdrawToast = toast('Withdrawing your payment, hand tight', {
+        const withdrawToast = toast('Withdrawing your payment, hang tight', {
           autoClose: false,
           closeOnClick: false,
           draggable: false,
@@ -145,8 +159,12 @@ export default function PaymentDetails({
         const transaction = await publicClient.waitForTransactionReceipt({ hash: txHash });
         toast.dismiss(withdrawToast);
         if (transaction.status === 'success') {
-          await loadWithdrawableAmount();
+          await loadAmounts();
           toast('Payment successfully withdrawn. Check your wallet :)'); // @todo - Add proper copy
+          setWithdrawAmount({
+            value: '0',
+            bigintValue: 0n,
+          });
         } else {
           toast('Transaction for withdrawing your payment reverted :('); // @todo - Add proper copy
         }
@@ -164,7 +182,7 @@ export default function PaymentDetails({
     roleHat.smartAddress,
     roleHat.wearer,
     withdrawMax,
-    loadWithdrawableAmount,
+    loadAmounts,
   ]);
 
   if (!payment) {
@@ -269,7 +287,7 @@ export default function PaymentDetails({
                             textStyle="body-base"
                             color="white-0"
                           >
-                            {payment.amount.value} {payment.asset.symbol}
+                            {remainingAmount} {payment.asset.symbol}
                           </Text>
                         </Flex>
                       </Flex>
