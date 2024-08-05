@@ -9,14 +9,12 @@ import {
   AccordionPanel,
   Grid,
   Button,
-  InputGroup,
-  InputRightElement,
 } from '@chakra-ui/react';
 import { CaretRight, CaretDown, Download } from '@phosphor-icons/react';
 import { ReactNode, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import { Address, encodeFunctionData, getContract, Hex, getAddress } from 'viem';
+import { Address, encodeFunctionData, getContract, Hex, getAddress, formatUnits } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../../../assets/abi/HatsAccount1ofN';
 import { SablierV2LockupLinearAbi } from '../../../../../assets/abi/SablierV2LockupLinear';
@@ -84,9 +82,9 @@ export default function PaymentDetails({
       const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
         convertStreamIdToBigInt(payment.streamId),
       ]);
-      setWithdrawableAmount(newWithdrawableAmount / 10n ** BigInt(payment.asset.decimals));
+      setWithdrawableAmount(newWithdrawableAmount);
     }
-  }, [payment?.streamId, payment?.contractAddress, payment?.asset?.decimals, walletClient]);
+  }, [payment?.streamId, payment?.contractAddress, walletClient]);
   useEffect(() => {
     loadWithdrawableAmount();
   }, [loadWithdrawableAmount]);
@@ -95,7 +93,7 @@ export default function PaymentDetails({
     if (payment?.asset?.decimals) {
       if (
         withdrawAmount.bigintValue ===
-        withdrawableAmount * 10n ** BigInt(payment.asset.decimals)
+        withdrawableAmount
       ) {
         setWithdrawMax(true);
       } else {
@@ -103,16 +101,6 @@ export default function PaymentDetails({
       }
     }
   }, [payment?.asset.decimals, withdrawAmount.bigintValue, withdrawableAmount]);
-
-  const handleSetMax = useCallback(() => {
-    if (payment?.asset?.decimals) {
-      const bigintValue = withdrawableAmount * 10n ** BigInt(payment.asset.decimals);
-      setWithdrawAmount({
-        bigintValue,
-        value: bigintValue.toString(),
-      });
-    }
-  }, [payment?.asset?.decimals, withdrawableAmount]);
 
   const handleWithdraw = useCallback(async () => {
     if (
@@ -303,29 +291,20 @@ export default function PaymentDetails({
                             textStyle="body-base"
                             color="white-0"
                           >
-                            {withdrawableAmount.toString()} {payment.asset.symbol}
+                            {formatUnits(withdrawableAmount, payment.asset.decimals)} {payment.asset.symbol}
                           </Text>
                         </Flex>
                       </Flex>
                     </Box>
                     {withdrawableAmount > 0n && (
                       <>
-                        <InputGroup>
-                          <BigIntInput
+                        <BigIntInput
                             value={withdrawAmount.bigintValue}
                             onChange={valuePair => setWithdrawAmount(valuePair)}
                             decimalPlaces={payment.asset.decimals}
-                            min="1"
+                            maxValue={withdrawableAmount}
                             data-testid="withdraw-stream-amount-input"
                           />
-                          <InputRightElement
-                            mr="4"
-                            onClick={handleSetMax}
-                            cursor="pointer"
-                          >
-                            {t('max', { ns: 'common' })}
-                          </InputRightElement>
-                        </InputGroup>
                         <Flex
                           justifyContent="flex-end"
                           w="full"
