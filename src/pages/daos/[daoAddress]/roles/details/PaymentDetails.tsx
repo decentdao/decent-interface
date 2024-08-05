@@ -128,6 +128,7 @@ export default function PaymentDetails({
             args: [bigIntStreamId, getAddress(roleHat.wearer), withdrawAmount.bigintValue],
           });
         }
+        // @todo - Add proper copy
         const withdrawToast = toast('Withdrawing your payment, hand tight', {
           autoClose: false,
           closeOnClick: false,
@@ -144,12 +145,14 @@ export default function PaymentDetails({
         const transaction = await publicClient.waitForTransactionReceipt({ hash: txHash });
         toast.dismiss(withdrawToast);
         if (transaction.status === 'success') {
-          toast('Payment successfully withdrawn. Check your wallet :)');
+          await loadWithdrawableAmount();
+          toast('Payment successfully withdrawn. Check your wallet :)'); // @todo - Add proper copy
         } else {
-          toast('Transaction for withdrawing your payment reverted :(');
+          toast('Transaction for withdrawing your payment reverted :('); // @todo - Add proper copy
         }
       } catch (e) {
         console.error('Error withdrawing from stream', e);
+        toast('Transaction for withdrawing your payment failed :('); // @todo - Add proper copy
       }
     }
   }, [
@@ -161,6 +164,7 @@ export default function PaymentDetails({
     roleHat.smartAddress,
     roleHat.wearer,
     withdrawMax,
+    loadWithdrawableAmount,
   ]);
 
   if (!payment) {
