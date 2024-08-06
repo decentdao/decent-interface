@@ -30,6 +30,54 @@ export type TokenBalance = {
   portfolioPercentage: number;
 };
 
+// All these props are coming from *all available DeFi protocols*
+interface DefiPositionDetails {
+  feeTier?: number;
+  rangeTnd?: number;
+  reserves?: string[];
+  currentPrice?: number;
+  isInRange?: boolean;
+  priceUpper?: number;
+  priceLower?: number;
+  priceLabel?: string;
+  liquidity?: number;
+  rangeStart?: number;
+  poolAddress?: string;
+  positionKey?: string;
+  assetStandard?: string;
+  apy?: number;
+  isDebt?: boolean;
+  isVariableDebt?: boolean;
+  isStableDebt?: boolean;
+  shares?: string;
+  reserve0?: string;
+  reserve1?: string;
+  factory?: string;
+  pair?: string;
+  shareOfPool?: number;
+  noPriceAvailable?: boolean;
+  sharesInStrategy?: string;
+  strategyAddress?: string;
+  baseType?: string;
+  healthFactor?: number;
+}
+
+export type DefiPosition = {
+  label: string;
+  tokens: TokenBalance[];
+  address?: string;
+  balanceUsd: number;
+  totalUnclaimedUsdValue: number;
+  positionDetails?: DefiPositionDetails;
+};
+export type DefiBalance = {
+  protocolName?: string;
+  protocolId?: string;
+  protocolUrl?: string;
+  protocolLogo?: string;
+  position?: DefiPosition;
+};
+
 type NftMediaItem = {
   height: number;
   width: number;
