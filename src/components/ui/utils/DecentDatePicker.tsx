@@ -99,9 +99,9 @@ export function DecentDatePicker({
       const startDate = selectedRange[0];
       const endDate = selectedRange[1];
       return (!!startDate && isToday(startDate)) || (!!endDate && isToday(endDate));
-    } else if (!!selectedDate) {
-      return isToday(selectedDate);
     }
+
+    return !!selectedDate ? isToday(selectedDate) : false;
   };
 
   return (
