@@ -37,7 +37,7 @@ function GuardDetails(props: ICreationStepProps) {
   const governanceFormType = values.essentials.governance;
 
   const handleNonceChange = useCallback(
-    (nonce?: number) => {
+    (nonce?: string) => {
       setFieldValue('multisig.customNonce', nonce);
     },
     [setFieldValue],
