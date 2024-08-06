@@ -143,7 +143,6 @@ export default function PaymentDetails({
             args: [bigIntStreamId, getAddress(roleHat.wearer), withdrawAmount.bigintValue],
           });
         }
-        // @todo - Add proper copy
         withdrawToast = toast(t('withdrawPendingMessage'), {
           autoClose: false,
           closeOnClick: false,
@@ -161,20 +160,20 @@ export default function PaymentDetails({
         toast.dismiss(withdrawToast);
         if (transaction.status === 'success') {
           await loadAmounts();
-          toast('withdrawSuccessMessage'); // @todo - Add proper copy
+          toast(t('withdrawSuccessMessage'));
           setWithdrawAmount({
             value: '0',
             bigintValue: 0n,
           });
         } else {
-          toast('withdrawRevertedMessage'); // @todo - Add proper copy
+          toast(t('withdrawRevertedMessage'));
         }
       } catch (e) {
         if (typeof withdrawToast !== 'undefined') {
           toast.dismiss(withdrawToast);
         }
         console.error('Error withdrawing from stream', e);
-        toast(t('withdrawErrorMessage')); // @todo - Add proper copy
+        toast(t('withdrawErrorMessage'));
       }
     }
   }, [
