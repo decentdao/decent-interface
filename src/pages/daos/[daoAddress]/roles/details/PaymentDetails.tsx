@@ -169,7 +169,7 @@ export default function PaymentDetails({
           toast(t('withdrawRevertedMessage'));
         }
       } catch (e) {
-        if (typeof withdrawToast !== 'undefined') {
+        if (withdrawToast !== undefined) {
           toast.dismiss(withdrawToast);
         }
         console.error('Error withdrawing from stream', e);
