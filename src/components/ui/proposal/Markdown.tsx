@@ -154,7 +154,7 @@ export default function Markdown({
     <>
       {collapsed ? (
         <MarkdowContentWithoutTabs
-          collapsed={collapsed}
+          collapsed={true}
           truncate={truncate}
           collapsedLines={collapsedLines}
           markdownTextContainerRef={markdownTextContainerRef}
@@ -163,7 +163,7 @@ export default function Markdown({
         </MarkdowContentWithoutTabs>
       ) : (
         <MarkdowContentWithTabs
-          collapsed={collapsed}
+          collapsed={false}
           truncate={truncate}
           collapsedLines={collapsedLines}
           markdownTextContainerRef={markdownTextContainerRef}
