@@ -1,5 +1,6 @@
 import { Divider, HStack, Flex, Tooltip, Text, Image, Box } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { parseUnits } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { DefiBalance } from '../../../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
@@ -102,7 +103,9 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
         >
           <Tooltip
             label={formatCoin(
-              positionToken?.balance || 0n,
+              positionToken?.balance
+                ? parseUnits(positionToken.balance, positionToken.decimals)
+                : 0n,
               false,
               positionToken?.decimals,
               positionToken?.symbol,
@@ -110,7 +113,9 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
             placement="top-start"
           >
             {formatCoin(
-              positionToken?.balance || 0n,
+              positionToken?.balance
+                ? parseUnits(positionToken.balance, positionToken.decimals)
+                : 0n,
               true,
               positionToken?.decimals,
               positionToken?.symbol,
