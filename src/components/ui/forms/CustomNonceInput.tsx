@@ -15,7 +15,7 @@ export function CustomNonceInput({
 }: {
   align?: 'start' | 'end';
   nonce: number | undefined;
-  onChange: (nonce?: number) => void;
+  onChange: (nonce?: string) => void;
   disabled?: boolean;
   renderTrimmed?: boolean;
 }) {
@@ -57,7 +57,12 @@ export function CustomNonceInput({
         helper={renderTrimmed ? '' : t('customNonceTooltip', { ns: 'proposal' })}
         isRequired={false}
         value={nonce?.toString() || ''}
-        onChange={e => onChange(e.target.value !== undefined ? Number(e.target.value) : undefined)}
+        onChange={e => {
+          const value = e.target.value;
+          if (/^\d*$/.test(value)) {
+            onChange(value);
+          }
+        }}
         disabled={disabled}
         subLabel={
           renderTrimmed ? null : (
