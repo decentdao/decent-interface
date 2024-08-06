@@ -59,5 +59,9 @@
   "withdraw": "Withdraw",
   "withdrawHelper": "Withdrawing will transfer the funds to the recipient's address.",
   "remaining": "Remaining",
-  "withdrawable": "Withdrawable"
+  "withdrawable": "Withdrawable",
+  "withdrawPendingMessage": "Withdrawing your payment, hang tight",
+  "withdrawSuccessMessage": "Payment successfully withdrawn. Check your wallet :)",
+  "withdrawRevertedMessage": "Transaction for withdrawing your payment reverted :(",
+  "withdrawErrorMessage": "Transaction for withdrawing your payment failed :("
 }

@@ -143,7 +143,7 @@ export default function PaymentDetails({
           });
         }
         // @todo - Add proper copy
-        const withdrawToast = toast('Withdrawing your payment, hang tight', {
+        const withdrawToast = toast(t('withdrawPendingMessage'), {
           autoClose: false,
           closeOnClick: false,
           draggable: false,
@@ -160,17 +160,17 @@ export default function PaymentDetails({
         toast.dismiss(withdrawToast);
         if (transaction.status === 'success') {
           await loadAmounts();
-          toast('Payment successfully withdrawn. Check your wallet :)'); // @todo - Add proper copy
+          toast('withdrawSuccessMessage'); // @todo - Add proper copy
           setWithdrawAmount({
             value: '0',
             bigintValue: 0n,
           });
         } else {
-          toast('Transaction for withdrawing your payment reverted :('); // @todo - Add proper copy
+          toast('withdrawRevertedMessage'); // @todo - Add proper copy
         }
       } catch (e) {
         console.error('Error withdrawing from stream', e);
-        toast('Transaction for withdrawing your payment failed :('); // @todo - Add proper copy
+        toast(t('withdrawErrorMessage')); // @todo - Add proper copy
       }
     }
   }, [
@@ -183,6 +183,7 @@ export default function PaymentDetails({
     roleHat.wearer,
     withdrawMax,
     loadAmounts,
+    t,
   ]);
 
   if (!payment) {
