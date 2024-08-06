@@ -59,6 +59,8 @@ export function CustomNonceInput({
         value={nonce?.toString() || ''}
         onChange={e => {
           const value = e.target.value;
+
+          // @dev This regex /^\d*$/ ensures the input contains only digits (0-9).
           if (/^\d*$/.test(value)) {
             onChange(value);
           }
