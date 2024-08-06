@@ -50,9 +50,9 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
     treasury: { totalUsdValue },
   } = useFractal();
 
-
-  const isNativeCoin = asset.position?.address?.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase();
-  const positionToken = asset?.position?.tokens[0]
+  const isNativeCoin =
+    asset.position?.address?.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase();
+  const positionToken = asset?.position?.tokens[0];
   return (
     <Flex
       my="0.5rem"
@@ -79,7 +79,11 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
           textStyle="body-base"
           padding={0}
           borderWidth={0}
-          value={isNativeCoin ? daoAddress : asset.position?.address || asset?.position?.tokens[0]?.tokenAddress || null}
+          value={
+            isNativeCoin
+              ? daoAddress
+              : asset.position?.address || asset?.position?.tokens[0]?.tokenAddress || null
+          }
           type={isNativeCoin ? 'address' : 'token'}
           wordBreak="break-word"
         >
@@ -97,10 +101,21 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
           isTruncated
         >
           <Tooltip
-            label={formatCoin(positionToken?.balance || 0n, false, positionToken?.decimals, positionToken?.symbol)}
+            label={formatCoin(
+              positionToken?.balance || 0n,
+              false,
+              positionToken?.decimals,
+              positionToken?.symbol,
+            )}
             placement="top-start"
           >
-            {formatCoin(positionToken?.balance || 0n, true, positionToken?.decimals, positionToken?.symbol, false)}
+            {formatCoin(
+              positionToken?.balance || 0n,
+              true,
+              positionToken?.decimals,
+              positionToken?.symbol,
+              false,
+            )}
           </Tooltip>
         </Text>
         {asset?.position?.balanceUsd && positionToken && positionToken.usdPrice && (
@@ -124,7 +139,9 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
         alignItems="flex-start"
       >
         {asset?.position?.balanceUsd && (
-          <Text>{totalUsdValue > 0 && formatPercentage(asset?.position?.balanceUsd, totalUsdValue)}</Text>
+          <Text>
+            {totalUsdValue > 0 && formatPercentage(asset?.position?.balanceUsd, totalUsdValue)}
+          </Text>
         )}
       </Flex>
     </Flex>

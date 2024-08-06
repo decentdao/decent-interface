@@ -16,8 +16,8 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { formatUSD } from '../../../../utils/numberFormats';
 import Divider from '../../../ui/utils/Divider';
 import { CoinHeader, CoinRow } from './AssetCoin';
-import { NFTHeader, NFTRow } from './AssetNFT';
 import { DeFiHeader, DeFiRow } from './AssetDeFi';
+import { NFTHeader, NFTRow } from './AssetNFT';
 import LidoButtons from './LidoButtons';
 
 export function Assets() {
@@ -216,7 +216,12 @@ export function Assets() {
             })}
             {assetsDeFi.length > 0 && <DeFiHeader />}
             {assetsDeFi.map((asset, index) => {
-              return <DeFiRow key={index} asset={asset} />
+              return (
+                <DeFiRow
+                  key={index}
+                  asset={asset}
+                />
+              );
             })}
             {assetsNonFungible.length > 0 && <NFTHeader />}
             {assetsNonFungible.map((asset, index) => (
