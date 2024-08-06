@@ -13,7 +13,7 @@ import {
 import { CaretRight, CaretDown, Download } from '@phosphor-icons/react';
 import { ReactNode, useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
+import { Id, toast } from 'react-toastify';
 import { Address, encodeFunctionData, getContract, Hex, getAddress, formatUnits } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../../../assets/abi/HatsAccount1ofN';
@@ -121,6 +121,7 @@ export default function PaymentDetails({
       publicClient &&
       withdrawAmount.bigintValue
     ) {
+      let withdrawToast: Id | undefined = undefined;
       try {
         const hatsAccountContract = getContract({
           abi: HatsAccount1ofNAbi,
@@ -143,7 +144,7 @@ export default function PaymentDetails({
           });
         }
         // @todo - Add proper copy
-        const withdrawToast = toast(t('withdrawPendingMessage'), {
+        withdrawToast = toast(t('withdrawPendingMessage'), {
           autoClose: false,
           closeOnClick: false,
           draggable: false,
@@ -169,6 +170,9 @@ export default function PaymentDetails({
           toast('withdrawRevertedMessage'); // @todo - Add proper copy
         }
       } catch (e) {
+        if (typeof withdrawToast !== 'undefined') {
+          toast.dismiss(withdrawToast);
+        }
         console.error('Error withdrawing from stream', e);
         toast(t('withdrawErrorMessage')); // @todo - Add proper copy
       }
