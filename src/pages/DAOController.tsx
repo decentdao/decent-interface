@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import useDAOController from '../hooks/DAO/useDAOController';
 import { useUpdateSafeData } from '../hooks/utils/useUpdateSafeData';
 import { useFractal } from '../providers/App/AppProvider';
-import { useRolesState } from '../state/useRolesState';
+import { useRolesStore } from '../store/roles';
 import LoadingProblem from './LoadingProblem';
 
 const useTemporaryProposals = () => {
@@ -34,7 +34,7 @@ const useTemporaryProposals = () => {
 
 export default function DAOController() {
   const { errorLoading, wrongNetwork, invalidQuery } = useDAOController();
-  const { resetHatsStore } = useRolesState();
+  const { resetHatsStore } = useRolesStore();
 
   useUpdateSafeData();
   const {
