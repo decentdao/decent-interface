@@ -9,6 +9,7 @@
   "columnValue": "Value",
   "columnAllocation": "Allocation",
   "columnNFTs": "NFTs",
+  "columnProtocols": "Protocols",
   "labelSent": "Sent",
   "labelReceived": "Received",
   "textEmptyTransactions": "No transfers yet",

@@ -24,7 +24,7 @@ export function DeFiHeader() {
           textStyle="label-small"
           color="neutral-7"
         >
-          {t('columnCoins')}
+          {t('columnProtocols')}
         </Text>
         <Text
           w="35%"
