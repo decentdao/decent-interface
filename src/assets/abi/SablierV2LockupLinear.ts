@@ -902,4 +902,4 @@ export const SablierV2LockupLinearAbi = [
     name: 'SafeERC20FailedOperation',
     inputs: [{ name: 'token', type: 'address', internalType: 'address' }],
   },
-];
+] as const;
