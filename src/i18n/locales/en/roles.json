@@ -2,7 +2,7 @@
   "roles": "Roles",
   "role": "Role",
   "member": "Member",
-  "noRoles": "You haven’t added any Roles yet. Create one above.",
+  "noRoles": "You haven't added any Roles yet. Create one above.",
   "description": "Description",
   "unassigned": "Unassigned",
   "after": "after",
@@ -63,5 +63,13 @@
   "withdrawPendingMessage": "Withdrawing your payment, hang tight",
   "withdrawSuccessMessage": "Payment successfully withdrawn. Check your wallet :)",
   "withdrawRevertedMessage": "Transaction for withdrawing your payment reverted :(",
-  "withdrawErrorMessage": "Transaction for withdrawing your payment failed :("
+  "withdrawErrorMessage": "Transaction for withdrawing your payment failed :(",
+  "roleName": "Role Name",
+  "roleNameRequired": "Role name is required",
+  "roleDescriptionRequired": "Role description is required",
+  "roleMemberRequired": "Member is required",
+  "unsavedChanges": "Unsaved Changes",
+  "unsavedChangesDescription": "You have unsaved changes that will be lost if you continue. Do you want to discard your changes?",
+  "discardChanges": "Discard",
+  "keepEditing": "Keep Editing"
 }

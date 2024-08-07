@@ -73,6 +73,7 @@ function DaoCreator({
             deployDAO(daoData, customNonce);
           }
         }}
+        enableReinitialize
         validateOnMount
       >
         {({ handleSubmit, ...rest }) => (

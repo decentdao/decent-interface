@@ -1,7 +1,7 @@
-import { Box, Button, Flex, Show } from '@chakra-ui/react';
+import { Box, Button, Flex, Hide, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik } from 'formik';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, getAddress } from 'viem';
@@ -13,14 +13,18 @@ import {
 } from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
 import { RoleFormValues, EditBadgeStatus } from '../../../../../components/pages/Roles/types';
+import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
+import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { getNewRole } from '../../../../../helpers/roles';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import useCreateRoles from '../../../../../hooks/utils/useCreateRoles';
+import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBlocker';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../../state/useRolesState';
+import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
@@ -68,22 +72,30 @@ function RolesEdit() {
     return [addedHatsText, updatedHatsText, removedHatsText].filter(Boolean).join('. ');
   }
 
-  const initialValues = useMemo(() => {
+  const initialValues: RoleFormValues = useMemo(() => {
+    const hats = hatsTree?.roleHats || [];
     return {
       proposalMetadata: {
         title: '',
         description: '',
       },
-      hats: hatsTree?.roleHats || [],
+      hats,
       customNonce: safe?.nextNonce || 0,
     };
   }, [hatsTree?.roleHats, safe?.nextNonce]);
+
+  const [hasEditedRoles, setHasEditedRoles] = useState(false);
+
+  const blocker = useNavigationBlocker({ roleEditPageNavigationBlockerParams: { hasEditedRoles } });
 
   if (daoAddress === null) return null;
 
   const showRoleEditDetails = (hatId: Hex) => {
     navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatId));
   };
+
+  const hatsTreeLoading = hatsTree === undefined;
+  const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
 
   return (
     <Formik<RoleFormValues>
@@ -95,6 +107,38 @@ function RolesEdit() {
     >
       {({ handleSubmit, values, touched, setFieldValue }) => (
         <form onSubmit={handleSubmit}>
+          {blocker.state === 'blocked' && (
+            <>
+              <Hide above="md">
+                <DraggableDrawer
+                  isOpen
+                  onClose={() => {}}
+                  onOpen={() => {}}
+                  headerContent={null}
+                  initialHeight="23rem"
+                  closeOnOverlayClick={false}
+                >
+                  <UnsavedChangesWarningContent
+                    onDiscard={blocker.proceed}
+                    onKeepEditing={blocker.reset}
+                  />
+                </DraggableDrawer>
+              </Hide>
+              <Hide below="md">
+                <ModalBase
+                  isOpen={true}
+                  title=""
+                  onClose={() => {}}
+                  isSearchInputModal={false}
+                >
+                  <UnsavedChangesWarningContent
+                    onDiscard={blocker.proceed}
+                    onKeepEditing={blocker.reset}
+                  />
+                </ModalBase>
+              </Hide>
+            </>
+          )}
           <Box>
             <PageHeader
               title={t('roles')}
@@ -137,7 +181,7 @@ function RolesEdit() {
             </Show>
             <Show below="md">
               {hatsTree === undefined && <RoleCardLoading />}
-              {(hatsTree === null || !values.hats.length) && <RoleCardNoRoles />}
+              {showNoRolesCard && values.hats.length === 0 && <RoleCardNoRoles />}
               {values.hats.map(hat => (
                 <RoleCardEdit
                   key={hat.id}
@@ -160,7 +204,16 @@ function RolesEdit() {
           >
             <Button
               variant="tertiary"
-              onClick={() => navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress))}
+              onClick={() => {
+                setHasEditedRoles(values.hats.some(hat => !!hat.editedRole));
+                setTimeout(
+                  () =>
+                    navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress), {
+                      replace: true,
+                    }),
+                  50,
+                );
+              }}
             >
               {t('cancel', { ns: 'common' })}
             </Button>

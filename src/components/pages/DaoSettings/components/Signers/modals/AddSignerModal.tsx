@@ -166,7 +166,7 @@ function AddSignerModal({
               <Divider my={6} />
               <CustomNonceInput
                 nonce={values.nonce}
-                onChange={newNonce => setFieldValue('nonce', newNonce ? newNonce : undefined)}
+                onChange={newNonce => setFieldValue('nonce', newNonce)}
               />
               <Button
                 type="submit"

@@ -32,6 +32,7 @@ export function AllSafesDrawer({ isOpen, onClose, onOpen }: DrawerControllingPro
           <SafeDisplayRow
             key={favorite}
             {...decodePrefixedAddress(favorite)}
+            onClick={onClose}
           />
         ))}
       </ErrorBoundary>

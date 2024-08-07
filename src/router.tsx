@@ -172,5 +172,3 @@ export const router = (addressPrefix: string) =>
       ],
     },
   ]);
-
-export default router;

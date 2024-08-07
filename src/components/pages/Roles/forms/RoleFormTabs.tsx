@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { X } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
@@ -19,7 +19,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesState } from '../../../../state/useRolesState';
-import { RoleFormValues } from '../types';
+import { EditBadgeStatus, RoleFormValues } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
 import { useRoleFormEditedRole } from './useRoleFormEditedRole';
@@ -37,9 +37,9 @@ export default function RoleFormTabs({
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
-  const { editedRoleData } = useRoleFormEditedRole({ hatsTree });
+  const { editedRoleData, isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
   const { t } = useTranslation(['roles']);
-  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, errors, setFieldValue, setTouched } = useFormikContext<RoleFormValues>();
 
   useEffect(() => {
     if (values.hats.length && !values.roleEditing) {
@@ -49,6 +49,19 @@ export default function RoleFormTabs({
       }
     }
   }, [values.hats, values.roleEditing, hatId, setFieldValue]);
+
+  const isInitialised = useRef(false);
+
+  useEffect(() => {
+    const hatIndex = values.hats.findIndex(h => h.id === hatId);
+    if (!isInitialised.current && values.hats.length && hatIndex !== -1) {
+      isInitialised.current = true;
+      const role = values.hats[hatIndex];
+      setFieldValue('roleEditing', role);
+    } else if (!isInitialised.current && hatIndex === -1) {
+      isInitialised.current = true;
+    }
+  }, [setFieldValue, values.hats, values.roleEditing, hatId]);
 
   if (!daoAddress) return null;
 
@@ -63,13 +76,13 @@ export default function RoleFormTabs({
                 values.roleEditing?.payments &&
                 values.roleEditing.payments.map((_, i) => {
                   const savedRole = values.hats.find(hat => hat.id === hatId)?.payments?.[i];
-                  const existingRoleHat = hatsTree?.roleHats.find(hat => hat.id === hatId)
+                  const existingRoleHatPayment = hatsTree?.roleHats.find(hat => hat.id === hatId)
                     ?.payments?.[i];
                   return (
                     <Box key={i}>
                       <Tab key={i}>
                         {t('paymentStream')}
-                        {!savedRole && !existingRoleHat && (
+                        {!savedRole && !existingRoleHatPayment && (
                           <IconButton
                             aria-label="Remove payment stream"
                             size="icon-sm"
@@ -129,10 +142,18 @@ export default function RoleFormTabs({
                   // @dev new hat
                   pushRole(roleUpdated);
                 } else {
-                  setFieldValue(`hats.${hatIndex}`, roleUpdated);
+                  setFieldValue(
+                    `hats.${hatIndex}`,
+                    isRoleUpdated || editedRoleData.status === EditBadgeStatus.New
+                      ? roleUpdated
+                      : existingRoleHat,
+                  );
                 }
                 setFieldValue('roleEditing', undefined);
-                navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                setTimeout(() => {
+                  setTouched({});
+                  navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                }, 50);
               }}
             >
               {t('save')}

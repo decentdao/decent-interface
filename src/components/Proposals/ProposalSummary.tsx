@@ -254,9 +254,9 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
             {
               quorum: strategyQuorum,
               total: isERC721
-                ? totalVotingWeight?.toString()
+                ? totalVotingWeight?.toLocaleString()
                 : votesToken
-                  ? (votesToken.totalSupply / votesTokenDecimalsDenominator).toString()
+                  ? (votesToken.totalSupply / votesTokenDecimalsDenominator).toLocaleString()
                   : undefined,
             },
           )}

@@ -30,10 +30,10 @@ const sepoliaConfig: NetworkConfig = {
   order: 30,
   chain: sepolia,
   moralisSupported: true,
-  rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
+  rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.etherscan.io',
-  etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
+  etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
   addressPrefix: 'sep',
   nativeTokenIcon: '/images/coin-icon-sep.svg',
   subgraph: {
