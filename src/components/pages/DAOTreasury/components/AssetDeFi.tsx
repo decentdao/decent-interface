@@ -53,6 +53,12 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
   const isNativePosition =
     asset.position?.address?.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase();
 
+  const tooltipLabel = asset.position?.tokens
+    .map(token =>
+      formatCoin(BigInt(Math.floor(Number(token.balance))), false, token.decimals, token.symbol),
+    )
+    .join(' / ');
+
   return (
     <Flex
       my="0.5rem"
@@ -66,10 +72,9 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
         alignItems="center"
         gap="0.5rem"
       >
-        <Flex
-          gap="0.25rem"
-          flexWrap="wrap"
-          w="30%"
+        <Tooltip
+          label={tooltipLabel}
+          placement="top-start"
         >
           <Image
             src={asset.protocolLogo}
@@ -79,18 +84,7 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
             w="1rem"
             h="1rem"
           />
-          {asset.position?.tokens.map(token => (
-            <Image
-              key={token.contractAddress || token.tokenAddress}
-              src={token.thumbnail}
-              fallbackSrc="/images/coin-icon-default.svg"
-              alt={token.name}
-              title={token.name}
-              w="1rem"
-              h="1rem"
-            />
-          ))}
-        </Flex>
+        </Tooltip>
         <EtherscanLink
           color="white-0"
           _hover={{ bg: 'transparent' }}
@@ -109,57 +103,13 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
         alignItems="flex-start"
         flexWrap="wrap"
       >
-        <Text
-          maxWidth="23.8rem"
-          width="100%"
-          isTruncated
-        >
-          {asset.position?.tokens.length && (
-            <Tooltip
-              label={asset.position.tokens
-                .map(token =>
-                  formatCoin(
-                    BigInt(Math.floor(Number(token.balance))),
-                    false,
-                    token?.decimals,
-                    token?.symbol,
-                  ),
-                )
-                .join(' / ')}
-              placement="top-start"
-            >
-              {asset.position.tokens
-                .map(token =>
-                  formatCoin(
-                    BigInt(Math.floor(Number(token.balance))),
-                    true,
-                    token?.decimals,
-                    token?.symbol,
-                    false,
-                  ),
-                )
-                .join(' / ')}
-            </Tooltip>
-          )}
-        </Text>
         {asset.position?.balanceUsd && (
-          <Text
-            textStyle="label-small"
-            color="neutral-7"
-            width="100%"
+          <Tooltip
+            label={tooltipLabel}
+            placement="top-start"
           >
-            <Tooltip
-              label={asset.position.tokens
-                .map(token =>
-                  token.usdPrice ? `1 ${token?.symbol} = ${formatUSD(token.usdPrice)}` : null,
-                )
-                .filter(priceDescription => !!priceDescription)
-                .join(' / ')}
-              placement="top-start"
-            >
-              {formatUSD(asset.position.balanceUsd)}
-            </Tooltip>
-          </Text>
+            <Text width="100%">{formatUSD(asset.position.balanceUsd)}</Text>
+          </Tooltip>
         )}
       </Flex>
 

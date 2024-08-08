@@ -145,6 +145,12 @@ export function Assets() {
                           {t('columnDeFis')}
                         </Flex>
                       </AccordionButton>
+                      {assetsNonFungible.length > 0 && (
+                        <Divider
+                          variant="darker"
+                          my="1rem"
+                        />
+                      )}
                       <AccordionPanel
                         p={0}
                         overflowX="auto"

@@ -8,6 +8,7 @@
   "columnCoins": "Coins",
   "columnValue": "Value",
   "columnAllocation": "Allocation",
+  "columnDeFis": "DeFi Positions",
   "columnNFTs": "NFTs",
   "columnProtocols": "Protocols",
   "labelSent": "Sent",
