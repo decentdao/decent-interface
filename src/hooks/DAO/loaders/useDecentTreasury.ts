@@ -14,7 +14,7 @@ export const useDecentTreasury = () => {
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
-  const { getTokenBalances, getNFTBalances } = useBalancesAPI();
+  const { getTokenBalances, getNFTBalances, getDeFiBalances } = useBalancesAPI();
 
   const { chain } = useNetworkConfig();
 
@@ -27,10 +27,12 @@ export const useDecentTreasury = () => {
       transfers,
       { data: tokenBalances, error: tokenBalancesError },
       { data: nftBalances, error: nftBalancesError },
+      { data: defiBalances, error: defiBalancesError },
     ] = await Promise.all([
       safeAPI.getAllTransactions(daoAddress),
       getTokenBalances(daoAddress),
       getNFTBalances(daoAddress),
+      getDeFiBalances(daoAddress),
     ]);
 
     if (tokenBalancesError) {
@@ -39,18 +41,33 @@ export const useDecentTreasury = () => {
     if (nftBalancesError) {
       toast(nftBalancesError, { autoClose: 2000 });
     }
+    if (defiBalancesError) {
+      toast(defiBalancesError, { autoClose: 2000 });
+    }
     const assetsFungible = tokenBalances || [];
     const assetsNonFungible = nftBalances || [];
+    const assetsDeFi = defiBalances || [];
 
-    const totalUsdValue = assetsFungible.reduce((prev, curr) => prev + (curr.usdValue || 0), 0);
+    const totalAssetsFungibleUsd = assetsFungible.reduce(
+      (prev, curr) => prev + (curr.usdValue || 0),
+      0,
+    );
+    const totalAssetsDeFiUsd = assetsDeFi.reduce(
+      (prev, curr) => prev + (curr.position?.balanceUsd || 0),
+      0,
+    );
+
+    const totalUsdValue = totalAssetsFungibleUsd + totalAssetsDeFiUsd;
+
     const treasuryData = {
       assetsFungible,
+      assetsDeFi,
       assetsNonFungible,
       transfers,
       totalUsdValue,
     };
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
-  }, [daoAddress, safeAPI, action, getTokenBalances, getNFTBalances]);
+  }, [daoAddress, safeAPI, action, getTokenBalances, getNFTBalances, getDeFiBalances]);
 
   useEffect(() => {
     if (daoAddress && chain.id + daoAddress !== loadKey.current) {
