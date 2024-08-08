@@ -200,7 +200,7 @@ const useHatsTree = () => {
               );
               const formattedActiveStreams: SablierPayment[] = lockupLinearStreams.map(
                 lockupLinearStream => {
-                  const bigintAmount =
+                  const parsedAmount =
                     BigInt(lockupLinearStream.depositAmount) /
                     10n ** BigInt(lockupLinearStream.asset.decimals);
                   const cliffDuration = lockupLinearStream.cliff
@@ -231,8 +231,8 @@ const useHatsTree = () => {
                       logo: '', // @todo - how do we get logo?
                     },
                     amount: {
-                      bigintValue: bigintAmount,
-                      value: bigintAmount.toString(),
+                      bigintValue: lockupLinearStream.depositAmount,
+                      value: parsedAmount.toString(),
                     },
                     scheduleFixedDate: {
                       startDate: secondsTimestampToDate(lockupLinearStream.startTime),

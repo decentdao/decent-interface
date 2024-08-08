@@ -11,7 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Hex, getAddress } from 'viem';
+import { Address, Hex, getAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import PaymentDetails from '../../../pages/daos/[daoAddress]/roles/details/PaymentDetails';
@@ -43,6 +43,7 @@ interface RoleDetailsDrawerProps {
     name: string;
     wearer: string;
     description: string;
+    smartAddress: Address;
   };
   payments?: SablierPayment[];
   onOpen?: () => void;
@@ -161,7 +162,10 @@ export default function RolesDetailsDrawer({
             </GridItem>
           </Grid>
           {/* @todo: proper styling here */}
-          <PaymentDetails payment={payments?.[0]} />
+          <PaymentDetails
+            payment={payments?.[0]}
+            roleHat={roleHat}
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

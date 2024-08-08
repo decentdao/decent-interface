@@ -11,7 +11,7 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import { RoleCardEdit } from '../RoleCard';
+import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
 import { RoleFormValues, RoleValue } from '../types';
@@ -68,6 +68,9 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                   testId={field.name}
                   placeholder="Proposal Title"
                   isRequired={false}
+                  gridContainerProps={{
+                    gridTemplateColumns: { base: '1fr', md: '1fr' },
+                  }}
                 />
               </LabelWrapper>
             )}
@@ -87,7 +90,10 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                     setFieldTouched(field.name, true);
                   }}
                   isRequired={false}
-                  placeholder="Description"
+                  placeholder={t('proposalDescriptionPlaceholder', { ns: 'proposal' })}
+                  gridContainerProps={{
+                    gridTemplateColumns: { base: '1fr', md: '1fr' },
+                  }}
                 />
               </LabelWrapper>
             )}
@@ -103,7 +109,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               >
                 <CustomNonceInput
                   nonce={values.customNonce}
-                  onChange={newNonce => setFieldValue('customNonce', newNonce ?? undefined)}
+                  onChange={newNonce => setFieldValue('customNonce', newNonce)}
                 />
               </Flex>
             )}
@@ -117,15 +123,13 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         borderRadius="0.5rem"
       >
         {editedRoles.map((role, index) => (
-          <RoleCardEdit
+          <RoleCardShort
             key={index}
-            wearerAddress={role.wearer}
             name={role.name}
             handleRoleClick={() => {
               setDrawerViewingRole(role);
             }}
             editStatus={role.editedRole?.status}
-            payments={role.payments}
           />
         ))}
       </Box>

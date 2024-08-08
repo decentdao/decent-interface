@@ -80,7 +80,15 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     isPaymentsUpdated,
   ]);
 
+  const isRoleUpdated = useMemo(() => {
+    return (
+      !!isRoleNameUpdated || !!isRoleDescriptionUpdated || !!isMemberUpdated || !!isPaymentsUpdated
+    );
+  }, [isRoleNameUpdated, isRoleDescriptionUpdated, isMemberUpdated, isPaymentsUpdated]);
+
   return {
+    existingRoleHat,
     editedRoleData,
+    isRoleUpdated,
   };
 }

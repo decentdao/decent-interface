@@ -15,7 +15,7 @@ export function CustomNonceInput({
 }: {
   align?: 'start' | 'end';
   nonce: number | undefined;
-  onChange: (nonce?: number) => void;
+  onChange: (nonce?: string) => void;
   disabled?: boolean;
   renderTrimmed?: boolean;
 }) {
@@ -57,7 +57,14 @@ export function CustomNonceInput({
         helper={renderTrimmed ? '' : t('customNonceTooltip', { ns: 'proposal' })}
         isRequired={false}
         value={nonce?.toString() || ''}
-        onChange={e => onChange(e.target.value ? Number(e.target.value) : undefined)}
+        onChange={e => {
+          const value = e.target.value;
+
+          // @dev This regex /^\d*$/ ensures the input contains only digits (0-9).
+          if (/^\d*$/.test(value)) {
+            onChange(value);
+          }
+        }}
         disabled={disabled}
         subLabel={
           renderTrimmed ? null : (

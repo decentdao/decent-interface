@@ -24,8 +24,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
   const minutes = t('minutes', { ns: 'common' });
 
   const handleNonceChange = useCallback(
-    (nonce?: number) => {
-      setFieldValue('multisig.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
+    (nonce?: string) => {
+      setFieldValue('multisig.customNonce', nonce);
     },
     [setFieldValue],
   );

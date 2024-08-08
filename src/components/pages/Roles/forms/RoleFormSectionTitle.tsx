@@ -23,7 +23,10 @@ export function SectionTitle({
         justifyContent="space-between"
         alignItems="center"
       >
-        <Box ref={titleRef}>
+        <Box
+          ref={titleRef}
+          zIndex={1}
+        >
           <ModalTooltip
             containerRef={titleRef}
             maxW={TOOLTIP_MAXW}

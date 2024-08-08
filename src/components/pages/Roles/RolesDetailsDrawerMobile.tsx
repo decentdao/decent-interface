@@ -1,7 +1,7 @@
 import { Flex, IconButton, Icon, Text, Box } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Hex } from 'viem';
+import { Address, Hex } from 'viem';
 import PaymentDetails from '../../../pages/daos/[daoAddress]/roles/details/PaymentDetails';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useRolesStore } from '../../../store/roles';
@@ -15,6 +15,7 @@ interface RoleDetailsDrawerMobileProps {
     name: string;
     wearer: string;
     description: string;
+    smartAddress: Address;
   };
   payments?: SablierPayment[];
   onOpen?: () => void;
@@ -91,7 +92,10 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        <PaymentDetails payment={payments?.[0]} />
+        <PaymentDetails
+          payment={payments?.[0]}
+          roleHat={roleHat}
+        />
       </Box>
     </DraggableDrawer>
   );
