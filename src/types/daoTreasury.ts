@@ -62,9 +62,13 @@ interface DefiPositionDetails {
   healthFactor?: number;
 }
 
+export type DefiPositionTokenBalance = {
+  contractAddress?: string;
+  tokenType: 'supplied' | 'defi-token';
+} & TokenBalance;
 export type DefiPosition = {
   label: string;
-  tokens: TokenBalance[];
+  tokens: DefiPositionTokenBalance[];
   address?: string;
   balanceUsd: number;
   totalUnclaimedUsdValue: number;
@@ -98,6 +102,11 @@ export type NFTBalance = {
           | undefined;
       }
     | undefined;
+  metadata?: {
+    backgroundImage?: string;
+    image?: string;
+    imageUrl?: string;
+  };
   tokenId: string | number;
   tokenUri?: string | undefined;
   name?: string | undefined;

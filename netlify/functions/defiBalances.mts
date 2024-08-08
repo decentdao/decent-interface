@@ -17,12 +17,19 @@ export default async function getDefiBalancesWithPrices(request: Request) {
 
     const mappedDefiData = defiResponse.result
       .filter(defiBalance => !!defiBalance.position?.balanceUsd)
-      .map(
-        defiBalance =>
-          ({
-            ...camelCaseKeys(defiBalance.toJSON()),
-          }) as unknown as DefiBalance,
-      );
+      .map(defiBalance => {
+        const balanceJSON = camelCaseKeys(defiBalance.toJSON()) as unknown as DefiBalance;
+        const mappedBalance = {
+          ...balanceJSON,
+          position: balanceJSON.position
+            ? {
+                ...camelCaseKeys(balanceJSON.position),
+                tokens: balanceJSON.position.tokens.map(token => camelCaseKeys(token)),
+              }
+            : undefined,
+        };
+        return mappedBalance;
+      });
 
     return mappedDefiData;
   };
