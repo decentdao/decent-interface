@@ -16,7 +16,7 @@ import {
   ERC721FreezeVoting,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
-import { SafeInfoResponse, AllTransactionsListResponse } from '@safe-global/api-kit';
+import { SafeInfoResponse, TransferResponse, TokenInfoResponse } from '@safe-global/api-kit';
 import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types';
 import { Dispatch } from 'react';
 import { Address } from 'viem';
@@ -268,11 +268,12 @@ export interface FreezeGuard {
   userHasVotes: boolean;
 }
 
+export type TransfersWithTokenInfo = TransferResponse & { tokenInfo: TokenInfoResponse };
 export interface DecentTreasury {
   totalUsdValue: number;
   assetsFungible: TokenBalance[];
   assetsNonFungible: NFTBalance[];
-  transfers?: AllTransactionsListResponse;
+  transfers?: TransfersWithTokenInfo[];
 }
 
 export type FractalGovernance = AzoriusGovernance | DecentGovernance | SafeMultisigGovernance;
