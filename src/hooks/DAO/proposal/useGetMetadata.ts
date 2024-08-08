@@ -1,4 +1,3 @@
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { decodeAbiParameters, parseAbiParameters, Hash } from 'viem';
@@ -39,7 +38,7 @@ const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) =>
 
     if (!proposal.transaction) return;
 
-    const transaction = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
+    const transaction = proposal.transaction;
 
     // transactionType either isn't SafeMultisigTransactionResponse, or
     // there is no dataDecoded field on it

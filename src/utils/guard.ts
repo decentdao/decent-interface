@@ -1,5 +1,4 @@
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { keccak256, encodePacked, isHex } from 'viem';
 import { buildSignatureBytes } from '../helpers/crypto';
 import { Activity } from '../types';
@@ -11,9 +10,9 @@ export async function getTxTimelockedTimestamp(
   freezeGuard: MultisigFreezeGuard,
   provider: Providers,
 ) {
-  const multiSigTransaction = activity.transaction as SafeMultisigTransactionWithTransfersResponse;
+  const multiSigTransaction = activity.transaction;
 
-  if (!multiSigTransaction.confirmations) {
+  if (!multiSigTransaction?.confirmations) {
     throw new Error(
       'Error getting transaction timelocked timestamp - invalid format of multisig transaction',
     );
