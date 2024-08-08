@@ -33,7 +33,9 @@ const useTemporaryProposals = () => {
 
 export default function DAOController() {
   const { errorLoading, wrongNetwork, invalidQuery } = useDAOController();
+
   useUpdateSafeData();
+
   const {
     node: { daoName },
   } = useFractal();
