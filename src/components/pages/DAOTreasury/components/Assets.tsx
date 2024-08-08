@@ -28,8 +28,10 @@ export function Assets() {
   const { t } = useTranslation('treasury');
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([]);
 
-  const hasAssets =
-    assetsFungible.length > 0 || assetsNonFungible.length > 0 || assetsDeFi.length > 0;
+  const hasCoins = assetsFungible.length > 0;
+  const hasNFTs = assetsNonFungible.length > 0;
+  const hasDeFis = assetsDeFi.length > 0;
+  const hasAssets = hasCoins || hasNFTs || hasDeFis;
 
   const toggleAccordionItem = (index: number) => {
     setExpandedIndecies(indexArray => {
@@ -42,6 +44,8 @@ export function Assets() {
       }
     });
   };
+
+  const nftAccordionItemsIndex = hasCoins ? (hasDeFis ? 2 : 1) : 0;
 
   return (
     <Box mt={{ base: '1rem', lg: 0 }}>
@@ -72,7 +76,7 @@ export function Assets() {
               allowMultiple
               index={expandedIndecies}
             >
-              {assetsFungible.length > 0 && (
+              {hasCoins && (
                 <AccordionItem
                   borderTop="none"
                   borderBottom="none"
@@ -131,7 +135,7 @@ export function Assets() {
                   {({ isExpanded }) => (
                     <Box>
                       <AccordionButton
-                        onClick={() => toggleAccordionItem(assetsFungible.length > 0 ? 1 : 0)}
+                        onClick={() => toggleAccordionItem(hasCoins ? 1 : 0)}
                         p="0.25rem"
                         textStyle="body-base"
                         color="white-0"
@@ -164,11 +168,17 @@ export function Assets() {
                           />
                         ))}
                       </AccordionPanel>
+                      {hasNFTs && isExpanded && (
+                        <Divider
+                          variant="darker"
+                          my="1rem"
+                        />
+                      )}
                     </Box>
                   )}
                 </AccordionItem>
               )}
-              {assetsNonFungible.length > 0 && (
+              {hasNFTs && (
                 <AccordionItem
                   borderTop="none"
                   borderBottom="none"
@@ -176,7 +186,7 @@ export function Assets() {
                   {({ isExpanded }) => (
                     <Box>
                       <AccordionButton
-                        onClick={() => toggleAccordionItem(assetsFungible.length > 0 ? 1 : 0)}
+                        onClick={() => toggleAccordionItem(nftAccordionItemsIndex)}
                         p="0.25rem"
                         textStyle="body-base"
                         color="white-0"
@@ -211,7 +221,7 @@ export function Assets() {
             </Accordion>
           </Show>
           <Show above="lg">
-            {assetsFungible.length > 0 && <CoinHeader />}
+            {hasCoins && <CoinHeader />}
             {assetsFungible.map((coin, index) => {
               return (
                 <CoinRow
@@ -220,7 +230,7 @@ export function Assets() {
                 />
               );
             })}
-            {assetsDeFi.length > 0 && <DeFiHeader />}
+            {hasDeFis && <DeFiHeader />}
             {assetsDeFi.map((asset, index) => {
               return (
                 <DeFiRow
@@ -229,7 +239,7 @@ export function Assets() {
                 />
               );
             })}
-            {assetsNonFungible.length > 0 && <NFTHeader />}
+            {hasNFTs && <NFTHeader />}
             {assetsNonFungible.map((asset, index) => (
               <NFTRow
                 key={index}
