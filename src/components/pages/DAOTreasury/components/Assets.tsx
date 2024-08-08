@@ -50,7 +50,7 @@ export function Assets() {
         color="neutral-7"
         px={{ base: '1rem', lg: '1.5rem' }}
       >
-        {t('subtitleCoinBalance')}
+        {t('subtitleTreasuryBalance')}
       </Text>
       <Text
         data-testid="text-usd-total"
