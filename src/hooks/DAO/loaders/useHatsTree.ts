@@ -150,6 +150,7 @@ const useHatsTree = () => {
             decentHats: getAddress(decentHatsMasterCopy),
           });
         } catch (e) {
+          console.log('error in tree load', e);
           if (e instanceof DecentHatsError) {
             toast(e.message);
           }
