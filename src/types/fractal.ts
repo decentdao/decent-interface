@@ -16,13 +16,8 @@ import {
   ERC721FreezeVoting,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
-import {
-  SafeInfoResponse,
-  SafeModuleTransactionWithTransfersResponse,
-  SafeMultisigTransactionWithTransfersResponse,
-  EthereumTxWithTransfersResponse,
-  AllTransactionsListResponse,
-} from '@safe-global/api-kit';
+import { SafeInfoResponse, AllTransactionsListResponse } from '@safe-global/api-kit';
+import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types';
 import { Dispatch } from 'react';
 import { Address } from 'viem';
 import { MultiSend } from '../assets/typechain-types/usul';
@@ -37,7 +32,7 @@ import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
-import { NFTBalance, TokenBalance, TreasuryActivity } from './daoTreasury';
+import { NFTBalance, TokenBalance } from './daoTreasury';
 import { ProposalTemplate } from './proposalBuilder';
 import { BIFormattedPair } from './votingFungibleToken';
 /**
@@ -157,12 +152,9 @@ export interface ActivityBase {
   transactionHash: string;
 }
 
-export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal | SnapshotProposal;
+export type Activity = MultisigProposal | AzoriusProposal | SnapshotProposal;
 
-export type ActivityTransactionType =
-  | SafeMultisigTransactionWithTransfersResponse
-  | SafeModuleTransactionWithTransfersResponse
-  | EthereumTxWithTransfersResponse;
+export type ActivityTransactionType = SafeMultisigTransactionResponse;
 
 export enum ActivityEventType {
   Treasury,

@@ -1,6 +1,5 @@
 import { Box, Button, Text, Flex, Tooltip } from '@chakra-ui/react';
 import { TypedDataSigner } from '@ethersproject/abstract-signer';
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { Signer } from 'ethers';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -53,7 +52,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const baseContracts = useSafeContracts();
   if (user.votingWeight === 0n) return <></>;
 
-  const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
+  const multisigTx = proposal.transaction;
 
   if (!multisigTx) return null;
 
