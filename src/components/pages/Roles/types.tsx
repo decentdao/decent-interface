@@ -1,5 +1,5 @@
 import { Address, Hex } from 'viem';
-import { DecentRoleHat } from '../../../state/useRolesState';
+import { DecentRoleHat } from '../../../store/roles';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 export type RoleViewMode = 'edit' | 'view';
 

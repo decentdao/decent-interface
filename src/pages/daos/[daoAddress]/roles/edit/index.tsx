@@ -17,13 +17,12 @@ import DraggableDrawer from '../../../../../components/ui/containers/DraggableDr
 import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
-import { getNewRole } from '../../../../../helpers/roles';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import useCreateRoles from '../../../../../hooks/utils/useCreateRoles';
 import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBlocker';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../../../state/useRolesState';
+import { getNewRole, useRolesStore } from '../../../../../store/roles';
 import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
@@ -44,7 +43,7 @@ function RolesEdit() {
 
   const publicClient = usePublicClient();
   const { rolesSchema } = useRolesSchema();
-  const { hatsTree } = useRolesState();
+  const { hatsTree } = useRolesStore();
 
   const navigate = useNavigate();
   const { createRolesEditProposal } = useCreateRoles();

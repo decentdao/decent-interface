@@ -9,7 +9,7 @@ import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierPayment } from '../../../components/pages/Roles/types';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentHatsError, useRolesState } from '../../../state/useRolesState';
+import { useRolesStore, DecentHatsError } from '../../../store/roles';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
@@ -39,7 +39,9 @@ function convertDuration(_duration: number): { years: number; days: number; hour
 }
 
 const useHatsTree = () => {
-  const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, setHatsStreams } = useRolesState();
+  const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, updateRolesWithStreams } =
+    useRolesStore();
+
   const ipfsClient = useIPFSClient();
   const {
     chain,
@@ -255,17 +257,12 @@ const useHatsTree = () => {
           }),
         );
 
-        const updatedDecentTree = {
-          ...hatsTree,
-          roleHats: updatedHatsRoles,
-        };
-
-        setHatsStreams(updatedDecentTree);
+        updateRolesWithStreams(updatedHatsRoles);
       }
     }
 
     getHatsStreams();
-  }, [apolloClient, hatsTree, sablierSubgraph, setHatsStreams, streamsFetched]);
+  }, [apolloClient, hatsTree, sablierSubgraph, updateRolesWithStreams, streamsFetched]);
 };
 
 export { useHatsTree };

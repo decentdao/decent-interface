@@ -1,8 +1,8 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient } from 'viem';
-import { create } from 'zustand';
-import { SablierPayment } from '../components/pages/Roles/types';
-import { predictAccountAddress } from '../helpers/roles';
+import { Address, Hex, PublicClient, encodePacked, getContract, keccak256, toHex } from 'viem';
+import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
+import { RoleValue, SablierPayment } from '../../components/pages/Roles/types';
+import { getRandomBytes } from '../../helpers';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -13,6 +13,16 @@ export class DecentHatsError extends Error {
       Error.captureStackTrace(this, DecentHatsError);
     }
   }
+}
+
+export interface PredictAccountParams {
+  implementation: Address;
+  chainId: bigint;
+  tokenContract: Address;
+  tokenId: bigint;
+  registryAddress: Address;
+  publicClient: PublicClient;
+  decentHats: Address;
 }
 
 interface DecentHat {
@@ -28,6 +38,12 @@ interface DecentTopHat extends DecentHat {}
 
 interface DecentAdminHat extends DecentHat {}
 
+interface RolesStoreData {
+  hatsTreeId: undefined | null | number;
+  hatsTree: undefined | null | DecentTree;
+  streamsFetched: boolean;
+}
+
 export interface DecentRoleHat extends DecentHat {
   wearer: Address;
 }
@@ -39,10 +55,7 @@ export interface DecentTree {
   roleHatsTotalCount: number;
 }
 
-interface Roles {
-  hatsTreeId: undefined | null | number;
-  hatsTree: undefined | null | DecentTree;
-  streamsFetched: boolean;
+export interface RolesStore extends RolesStoreData {
   getHat: (hatId: Hex) => DecentRoleHat | null;
   setHatsTreeId: (hatsTreeId: undefined | null | number) => void;
   setHatsTree: (params: {
@@ -54,7 +67,8 @@ interface Roles {
     publicClient: PublicClient;
     decentHats: Address;
   }) => Promise<void>;
-  setHatsStreams: (updatedDecentTree: DecentTree) => void;
+  updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
+  resetHatsStore: () => void;
 }
 
 const appearsExactlyNumberOfTimes = (
@@ -122,7 +136,51 @@ const getHatMetadata = (hat: Hat) => {
   return metadata;
 };
 
-const sanitize = async (
+export const initialHatsStore: RolesStoreData = {
+  hatsTreeId: undefined,
+  hatsTree: undefined,
+  streamsFetched: false,
+};
+
+export function getERC6551RegistrySalt(chainId: bigint, decentHats: Address) {
+  return keccak256(
+    encodePacked(['string', 'uint256', 'address'], ['DecentHats_0_1_0', chainId, decentHats]),
+  );
+}
+
+export const predictAccountAddress = (params: PredictAccountParams) => {
+  const {
+    implementation,
+    chainId,
+    tokenContract,
+    tokenId,
+    registryAddress,
+    publicClient,
+    decentHats,
+  } = params;
+
+  const erc6551RegistryContract = getContract({
+    abi: ERC6551RegistryAbi,
+    address: registryAddress,
+    client: publicClient,
+  });
+
+  if (!publicClient.chain) {
+    throw new Error('Public client needs to be on a chain');
+  }
+
+  const salt = getERC6551RegistrySalt(chainId, decentHats);
+
+  return erc6551RegistryContract.read.account([
+    implementation,
+    salt,
+    chainId,
+    tokenContract,
+    tokenId,
+  ]);
+};
+
+export const sanitize = async (
   hatsTree: undefined | null | Tree,
   hatsAccountImplementation: Address,
   erc6551Registry: Address,
@@ -221,47 +279,50 @@ const sanitize = async (
   return decentTree;
 };
 
-const useRolesState = create<Roles>()((set, get) => ({
-  hatsTreeId: undefined,
-  hatsTree: undefined,
-  streamsFetched: false,
-  getHat: hatId => {
-    const matches = get().hatsTree?.roleHats.filter(h => h.id === hatId);
+export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsCount: number }) => {
+  // 1 byte = 8 bits = 2 string characters
+  const adminLevelBinary = adminHatId.slice(0, 14); // Top Admin ID 1 byte 0x + 4 bytes (tree ID) + next **16 bits** (admin level ID)
 
-    if (matches === undefined || matches.length === 0) {
-      return null;
-    }
+  // Each next level is next **16 bits**
+  // Since we're operating only with direct child of top level admin - we don't care about nested levels
+  // @dev At least for now?
+  const newSiblingId = (hatsCount + 1).toString(16).padStart(4, '0');
 
-    if (matches.length > 1) {
-      throw new Error('multiple hats with the same ID');
-    }
+  // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
+  return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
+};
 
-    return matches[0];
-  },
-  setHatsTreeId: hatsTreeId =>
-    set(() => {
-      // if `hatsTreeId` is null or undefined,
-      // set `hatsTree` to that same value
-      if (typeof hatsTreeId !== 'number') {
-        return { hatsTreeId, hatsTree: hatsTreeId, streamsFetched: false };
-      }
-      return { hatsTreeId, streamsFetched: false };
+export async function getNewRole({
+  adminHatId,
+  hatsCount,
+  chainId,
+  publicClient,
+  implementation,
+  tokenContract,
+  registryAddress,
+  decentHats,
+}: {
+  adminHatId?: Hex;
+  hatsCount: number;
+} & Omit<PredictAccountParams, 'tokenId'>): Promise<RoleValue> {
+  // @dev creates a unique id for the hat for new hats for use in form, not stored on chain
+  const id = adminHatId
+    ? toHex(predictHatId({ adminHatId, hatsCount }))
+    : toHex(getRandomBytes(), { size: 32 });
+  return {
+    id,
+    wearer: '',
+    name: '',
+    description: '',
+    prettyId: '',
+    smartAddress: await predictAccountAddress({
+      implementation,
+      chainId: BigInt(chainId),
+      tokenContract,
+      tokenId: BigInt(id),
+      registryAddress,
+      publicClient,
+      decentHats,
     }),
-  setHatsTree: async params => {
-    const hatsTree = await sanitize(
-      params.hatsTree,
-      params.hatsAccountImplementation,
-      params.erc6551Registry,
-      params.hatsProtocol,
-      params.chainId,
-      params.publicClient,
-      params.decentHats,
-    );
-    set(() => ({ hatsTree }));
-  },
-  setHatsStreams: updatedDecentTree => {
-    set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
-  },
-}));
-
-export { useRolesState };
+  };
+}

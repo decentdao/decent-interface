@@ -18,7 +18,7 @@ import { Hex } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../../state/useRolesState';
+import { useRolesStore } from '../../../../store/roles';
 import { EditBadgeStatus, RoleFormValues } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
@@ -31,7 +31,7 @@ export default function RoleFormTabs({
   hatId: Hex;
   pushRole: (obj: any) => void;
 }) {
-  const { hatsTree } = useRolesState();
+  const { hatsTree } = useRolesStore();
   const {
     node: { daoAddress },
   } = useFractal();
