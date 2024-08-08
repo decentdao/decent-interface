@@ -1,9 +1,10 @@
 import { useApolloClient } from '@apollo/client';
+import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { Tree, HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
 import { intervalToDuration } from 'date-fns';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { getAddress } from 'viem';
+import { getAddress, hexToBigInt } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierPayment } from '../../../components/pages/Roles/types';
@@ -41,6 +42,12 @@ function convertDuration(_duration: number): { years: number; days: number; hour
 const useHatsTree = () => {
   const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, updateRolesWithStreams } =
     useRolesStore();
+
+  console.log({
+    hatsTreeId,
+    hatsTree,
+    streamsFetched,
+  });
 
   const ipfsClient = useIPFSClient();
   const {
@@ -119,6 +126,20 @@ const useHatsTree = () => {
 
         const treeWithFetchedDetails: Tree = { ...tree, hats: hatsWithFetchedDetails };
         try {
+          const firstHatId = treeWithFetchedDetails.hats?.at(0)?.id;
+          const fetchedHatsTreeId = !!firstHatId
+            ? hatIdToTreeId(hexToBigInt(firstHatId))
+            : undefined;
+
+          console.log('in tree load');
+          console.log({ fetchedHatsTreeId, hatsTreeId, treeWithFetchedDetails });
+
+          if (fetchedHatsTreeId !== hatsTreeId) {
+            console.log('Hats Tree ID does not match the fetched Hats Tree ID');
+            return;
+          }
+
+          // console.log('treeWithFetchedDetails', treeWithFetchedDetails.hats);
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
             chainId: BigInt(chain.id),
@@ -170,6 +191,21 @@ const useHatsTree = () => {
 
   useEffect(() => {
     async function getHatsStreams() {
+      if (hatsTreeId === undefined || hatsTreeId === null) {
+        return;
+      }
+
+      const firstHatId = hatsTree?.roleHats?.at(0)?.id;
+      const fetchedHatsTreeId = !!firstHatId ? hatIdToTreeId(hexToBigInt(firstHatId)) : undefined;
+
+      console.log('in payments');
+      console.log({ fetchedHatsTreeId, hatsTreeId });
+
+      if (fetchedHatsTreeId !== hatsTreeId) {
+        console.log('Hats Tree ID does not match the fetched Hats Tree ID');
+        return;
+      }
+
       if (sablierSubgraph && hatsTree && hatsTree.roleHats.length > 0 && !streamsFetched) {
         const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
         const updatedHatsRoles = await Promise.all(
@@ -262,7 +298,7 @@ const useHatsTree = () => {
     }
 
     getHatsStreams();
-  }, [apolloClient, hatsTree, sablierSubgraph, updateRolesWithStreams, streamsFetched]);
+  }, [apolloClient, hatsTree, sablierSubgraph, updateRolesWithStreams, streamsFetched, hatsTreeId]);
 };
 
 export { useHatsTree };
