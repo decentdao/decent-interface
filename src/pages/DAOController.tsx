@@ -5,7 +5,6 @@ import { toast } from 'react-toastify';
 import useDAOController from '../hooks/DAO/useDAOController';
 import { useUpdateSafeData } from '../hooks/utils/useUpdateSafeData';
 import { useFractal } from '../providers/App/AppProvider';
-import { useRolesStore } from '../store/roles';
 import LoadingProblem from './LoadingProblem';
 
 const useTemporaryProposals = () => {
@@ -34,12 +33,9 @@ const useTemporaryProposals = () => {
 
 export default function DAOController() {
   const { errorLoading, wrongNetwork, invalidQuery } = useDAOController();
-  const { resetHatsStore } = useRolesStore();
-
   useUpdateSafeData();
   const {
-    node: { daoName, daoAddress },
-    action,
+    node: { daoName },
   } = useFractal();
 
   useTemporaryProposals();
@@ -53,14 +49,6 @@ export default function DAOController() {
       document.title = import.meta.env.VITE_APP_NAME;
     };
   }, [daoName]);
-
-  // Reset Safe state when daoAddress is goes null
-  useEffect(() => {
-    if (!daoAddress) {
-      action.resetSafeState();
-      resetHatsStore();
-    }
-  }, [action, resetHatsStore, daoName, daoAddress]);
 
   let display;
 
