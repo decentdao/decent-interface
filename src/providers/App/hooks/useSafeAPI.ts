@@ -86,6 +86,13 @@ class EnhancedSafeApiKit extends SafeApiKit {
     const safeInfo = { ...safeInfoResponse, nextNonce };
     return safeInfo;
   }
+
+  override async getToken(tokenAddress: string): Promise<any> {
+    const value = await this.request('getTokenData' + tokenAddress, CacheExpiry.NEVER, () => {
+      return super.getToken(tokenAddress);
+    });
+    return value;
+  }
 }
 
 export function useSafeAPI() {
