@@ -27,9 +27,8 @@ export function useFormatTransfers(): TransferDisplayData[] {
     node: { daoAddress },
     treasury: { transfers },
   } = useFractal();
-  const transfersFromTransactions = (transfers?.results || [])
-    .map(transaction => transaction.transfers)
-    .flat();
+  const transfersFromTransactions = transfers ?? [];
+
   let displayData: TransferDisplayData[] = new Array(transfersFromTransactions.length);
   const { chain, nativeTokenIcon } = useNetworkConfig();
 
