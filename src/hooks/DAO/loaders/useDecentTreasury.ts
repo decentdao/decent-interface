@@ -92,11 +92,32 @@ export const useDecentTreasury = () => {
     };
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
+    const uniqueTokenAddress = new Set(
+      transfers.results
+        .map(transfer => (transfer.tokenAddress ? getAddress(transfer.tokenAddress) : undefined))
+        .filter(addr => !!addr),
+    );
 
-    await Promise.all(
-      transfers.results.map(async (transfer, index, _transfers) => {
+    const tokenData = await Promise.all(
+      Array.from(uniqueTokenAddress).map(async addr => {
+        try {
+          return await safeAPI.getToken(addr);
+        } catch (e) {
+          setTimeout(async () => {
+            // @note retry fetching token data in case of rate limit
+            if (addr) {
+              return safeAPI.getToken(addr);
+            }
+          }, 300);
+        }
+      }),
+    ).then(tokens => tokens.filter(token => !!token));
+
+    transfers.results
+      .sort((a, b) => b.blockNumber - a.blockNumber)
+      .forEach(async (transfer, index, _transfers) => {
         // @note assume native token if no token address
-        let tokenData: TokenInfoResponse = {
+        let tokenInfo: TokenInfoResponse = {
           address: '0x',
           name: chain.nativeCurrency.name,
           symbol: chain.nativeCurrency.symbol,
@@ -104,28 +125,24 @@ export const useDecentTreasury = () => {
           logoUri: nativeTokenIcon,
         };
 
-        if (transfer.tokenAddress) {
-          try {
-            tokenData = await safeAPI.getToken(getAddress(transfer.tokenAddress));
-          } catch (e) {
-            setTimeout(async () => {
-              // @note retry fetching token data in case of rate limit
-              if (transfer.tokenAddress) {
-                tokenData = await safeAPI.getToken(getAddress(transfer.tokenAddress));
-              }
-            }, 300);
-          }
+        const token = tokenData.find(
+          _token =>
+            transfer.tokenAddress &&
+            getAddress(_token.address) === getAddress(transfer.tokenAddress),
+        );
+        if (token) {
+          tokenInfo = token;
         }
+
         const formattedTransfer: TransferDisplayData = formatTransfer({
-          transfer: { ...transfer, tokenInfo: tokenData },
+          transfer: { ...transfer, tokenInfo },
           isLast: _transfers[_transfers.length - 1] === transfer,
         });
         action.dispatch({ type: TreasuryAction.ADD_TRANSFER, payload: formattedTransfer });
         if (_transfers.length - 1 === index) {
           action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED, payload: true });
         }
-      }),
-    );
+      });
 
     action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADING, payload: false });
   }, [
