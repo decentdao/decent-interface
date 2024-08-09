@@ -3,7 +3,7 @@ import { TypedDataSigner } from '@ethersproject/abstract-signer';
 import { Signer } from 'ethers';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Hex, getAddress, isHex } from 'viem';
+import { getAddress, isHex } from 'viem';
 import { Check } from '../../../assets/theme/custom/icons/Check';
 import { GnosisSafeL2__factory } from '../../../assets/typechain-types/usul/factories/@gnosis.pm/safe-contracts/contracts';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
@@ -59,7 +59,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       !signerOrProvider ||
       !safe?.address ||
       !proposal.transaction ||
-      (proposal.transaction.data && !isHex(proposal.transaction.data)) ||
+      !isHex(proposal.transaction.data) ||
       !safeAPI
     ) {
       return;
@@ -69,7 +69,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         ...proposal.transaction,
         to: getAddress(proposal.transaction.to),
         value: BigInt(proposal.transaction.value),
-        data: proposal.transaction.data as Hex | undefined,
+        data: proposal.transaction.data,
         operation: proposal.transaction.operation as 0 | 1,
       });
 
@@ -100,7 +100,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         !proposal.transaction.confirmations ||
         !baseContracts ||
         !freezeGuardContractAddress ||
-        (proposal.transaction.data && !isHex(proposal.transaction.data))
+        !isHex(proposal.transaction.data)
       ) {
         return;
       }
@@ -108,7 +108,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         ...proposal.transaction,
         to: getAddress(proposal.transaction.to),
         value: BigInt(proposal.transaction.value),
-        data: proposal.transaction.data as Hex | undefined,
+        data: proposal.transaction.data,
         operation: proposal.transaction.operation as 0 | 1,
       });
       const signatures = buildSignatureBytes(
@@ -160,7 +160,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         !proposal.transaction ||
         !safe?.address ||
         !proposal.transaction.confirmations ||
-        (proposal.transaction.data && !isHex(proposal.transaction.data))
+        !isHex(proposal.transaction.data)
       ) {
         return;
       }
@@ -170,7 +170,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
         ...proposal.transaction,
         to: getAddress(proposal.transaction.to),
         value: BigInt(proposal.transaction.value),
-        data: proposal.transaction.data as Hex | undefined,
+        data: proposal.transaction.data,
         operation: proposal.transaction.operation as 0 | 1,
       });
 

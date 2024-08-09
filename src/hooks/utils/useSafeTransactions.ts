@@ -36,14 +36,12 @@ export const useSafeTransactions = () => {
               return activity;
             }
 
-            const multiSigTransaction = activity.transaction;
-
             let state: FractalProposalState;
 
-            if (multiSigTransaction.isExecuted) {
+            if (activity.transaction.isExecuted) {
               // the transaction has already been executed
               state = FractalProposalState.EXECUTED;
-            } else if (isRejected(activityArr, multiSigTransaction)) {
+            } else if (isRejected(activityArr, activity.transaction)) {
               // a different transaction with the same nonce has already
               // been executed, so this is no longer valid
               state = FractalProposalState.REJECTED;
@@ -53,7 +51,7 @@ export const useSafeTransactions = () => {
                 (await getTxTimelockedTimestamp(activity, freezeGuard, provider)) * 1000;
               if (timelockedTimestampMs === 0) {
                 // not yet timelocked
-                if (isApproved(multiSigTransaction)) {
+                if (isApproved(activity.transaction)) {
                   // the proposal has enough signatures, so it can now be timelocked
                   state = FractalProposalState.TIMELOCKABLE;
                 } else {
