@@ -1,5 +1,6 @@
 import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
-import { CaretRight } from '@phosphor-icons/react';
+import { CaretCircleRight, CaretRight } from '@phosphor-icons/react';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
@@ -10,7 +11,7 @@ import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { RoleEditProps, RoleProps, SablierPayroll, SablierVesting } from './types';
+import { EditBadgeStatus, RoleEditProps, RoleProps, SablierPayment } from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -63,61 +64,30 @@ export function AvatarAndRoleName({
   );
 }
 
-function PayrollAndVesting({
-  payrollData,
-  vestingData,
-}: {
-  payrollData: SablierPayroll | undefined;
-  vestingData: SablierVesting | undefined;
-}) {
+function Payment({ payment }: { payment: SablierPayment | undefined }) {
   const { t } = useTranslation(['roles']);
+  const format = ['years', 'days', 'hours'];
+  const endDate =
+    payment?.scheduleFixedDate?.endDate &&
+    formatDuration(
+      intervalToDuration({
+        start: payment.scheduleFixedDate.startDate,
+        end: payment.scheduleFixedDate.endDate,
+      }),
+      { format },
+    );
+  const cliffDate =
+    payment?.scheduleFixedDate?.cliffDate &&
+    formatDuration(
+      intervalToDuration({
+        start: payment.scheduleFixedDate.startDate,
+        end: payment.scheduleFixedDate.cliffDate,
+      }),
+      { format },
+    );
   return (
     <Flex flexDir="column">
-      {payrollData && (
-        <Box
-          mt="1rem"
-          ml="4rem"
-        >
-          <Text
-            textStyle="button-small"
-            color="neutral-7"
-          >
-            {t('payroll')}
-          </Text>
-          <Flex
-            textStyle="body-base"
-            color="white-0"
-            gap="0.25rem"
-            alignItems="center"
-            my="0.5rem"
-          >
-            <Image
-              src={payrollData.asset.iconUri}
-              fallbackSrc="/images/coin-icon-default.svg"
-              alt={payrollData.asset.symbol}
-              w="1.25rem"
-              h="1.25rem"
-            />
-            {payrollData.payrollAmount}
-            <EtherscanLink
-              color="white-0"
-              _hover={{ bg: 'transparent' }}
-              textStyle="body-base"
-              padding={0}
-              borderWidth={0}
-              value={payrollData.asset.address}
-              type="token"
-              wordBreak="break-word"
-            >
-              {payrollData.asset.symbol}
-            </EtherscanLink>
-            <Text>
-              {'/'} {payrollData.payrollSchedule}
-            </Text>
-          </Flex>
-        </Box>
-      )}
-      {vestingData && (
+      {payment && (
         <Box
           mt="0.25rem"
           ml="4rem"
@@ -126,7 +96,7 @@ function PayrollAndVesting({
             textStyle="button-small"
             color="neutral-7"
           >
-            {t('vesting')}
+            {t('payment')}
           </Text>
           <Flex
             textStyle="body-base"
@@ -136,29 +106,33 @@ function PayrollAndVesting({
             my="0.5rem"
           >
             <Image
-              src={vestingData.asset.iconUri}
+              src={payment.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={vestingData.asset.symbol}
+              alt={payment.asset.symbol}
               w="1.25rem"
               h="1.25rem"
             />
-            {vestingData.vestingAmount}
+            {payment.amount.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}
               textStyle="body-base"
               padding={0}
               borderWidth={0}
-              value={vestingData.asset.address}
+              value={payment.asset.address}
               type="token"
               wordBreak="break-word"
             >
-              {vestingData.asset.symbol}
+              {payment.asset.symbol}
             </EtherscanLink>
-            <Text>
-              {t('after')} {vestingData.vestingSchedule}
-            </Text>
+            <Flex
+              flexDir="column"
+              gap="0.25rem"
+            >
+              <Text>{endDate && `${t('after')} ${endDate}`}</Text>
+            </Flex>
           </Flex>
+          <Text>{cliffDate && `${t('cliff')} ${t('after')} ${cliffDate}`}</Text>
         </Box>
       )}
     </Flex>
@@ -168,8 +142,7 @@ function PayrollAndVesting({
 export function RoleCard({
   name,
   wearerAddress,
-  payrollData,
-  vestingData,
+  payments,
   editStatus,
   handleRoleClick,
   hatId,
@@ -195,10 +168,13 @@ export function RoleCard({
           />
         </Flex>
       </Flex>
-      <PayrollAndVesting
-        payrollData={payrollData}
-        vestingData={vestingData}
-      />
+      {payments &&
+        payments.map((payment, index) => (
+          <Payment
+            key={index}
+            payment={payment}
+          />
+        ))}
     </Card>
   );
 }
@@ -206,8 +182,7 @@ export function RoleCard({
 export function RoleCardEdit({
   name,
   wearerAddress,
-  payrollData,
-  vestingData,
+  payments,
   editStatus,
   handleRoleClick,
 }: RoleEditProps) {
@@ -232,10 +207,47 @@ export function RoleCardEdit({
           />
         </Flex>
       </Flex>
-      <PayrollAndVesting
-        payrollData={payrollData}
-        vestingData={vestingData}
-      />
+      {payments &&
+        payments.map((payment, index) => (
+          <Payment
+            key={index}
+            payment={payment}
+          />
+        ))}
+    </Card>
+  );
+}
+
+export function RoleCardShort({
+  name,
+  editStatus,
+  handleRoleClick,
+}: {
+  name: string;
+  editStatus?: EditBadgeStatus;
+  handleRoleClick: () => void;
+}) {
+  return (
+    <Card onClick={handleRoleClick}>
+      <Flex justifyContent="space-between">
+        <Text
+          textStyle="display-lg"
+          color="lilac-0"
+        >
+          {name}
+        </Text>
+        <Flex
+          alignItems="center"
+          gap="1rem"
+        >
+          <EditBadge editStatus={editStatus} />
+          <Icon
+            as={CaretCircleRight}
+            color="white-0"
+            boxSize="1.5rem"
+          />
+        </Flex>
+      </Flex>
     </Card>
   );
 }

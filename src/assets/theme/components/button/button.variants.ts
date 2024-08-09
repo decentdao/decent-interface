@@ -74,10 +74,30 @@ const tertiary = defineStyle({
   _focus: {},
 });
 
+const stepper = defineStyle({
+  border: '1px solid',
+  borderColor: 'neutral-3',
+  bg: 'neutral-1',
+  color: 'lilac-0',
+  _active: {
+    borderColor: 'neutral-4',
+    boxShadow: '0px 0px 0px 3px #534D58',
+  },
+  _hover: {
+    borderColor: 'neutral-4',
+  },
+  _focus: {
+    outline: 'none',
+    borderColor: 'neutral-4',
+    boxShadow: '0px 0px 0px 3px #534D58',
+  },
+});
+
 const buttonVariants = {
   primary,
   secondary,
   tertiary,
+  stepper,
 };
 
 export default buttonVariants;

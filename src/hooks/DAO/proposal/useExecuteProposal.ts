@@ -51,7 +51,6 @@ export default function useExecuteProposal() {
         failedMessage: t('failedExecute'),
         successMessage: t('successExecute'),
         successCallback: async () => {
-          // @todo may need to re-add a loader here
           updateProposalState(BigInt(proposal.proposalId));
         },
       });

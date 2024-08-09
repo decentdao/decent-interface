@@ -6,7 +6,7 @@ import KeyValuePairsAbi from '../../assets/abi/KeyValuePairs';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../state/useRolesState';
+import { useRolesStore } from '../../store/roles';
 
 const getHatsTreeId = (
   events: GetContractEventsReturnType<typeof KeyValuePairsAbi> | undefined,
@@ -61,7 +61,7 @@ const useKeyValuePairs = () => {
     chain,
     contracts: { keyValuePairs },
   } = useNetworkConfig();
-  const { setHatsTreeId } = useRolesState();
+  const { setHatsTreeId } = useRolesStore();
 
   useEffect(() => {
     if (!publicClient || !node.daoAddress) {

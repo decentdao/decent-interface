@@ -5,7 +5,7 @@ import RolesDetailsDrawerMobile from '../../../../../components/pages/Roles/Role
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../../../state/useRolesState';
+import { useRolesStore } from '../../../../../store/roles';
 
 export default function RoleDetails() {
   const {
@@ -14,7 +14,7 @@ export default function RoleDetails() {
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
 
-  const { hatsTree } = useRolesState();
+  const { hatsTree } = useRolesStore();
   const [searchParams] = useSearchParams();
   const hatId = searchParams.get('hatId');
   const roleHat = hatsTree?.roleHats.find(hat => hat.id === hatId);
@@ -38,6 +38,7 @@ export default function RoleDetails() {
           roleHat={roleHat}
           onClose={handleDrawerClose}
           onEdit={handleEditRoleClick}
+          payments={roleHat.payments}
         />
       </Show>
       <Show above="md">
@@ -45,6 +46,7 @@ export default function RoleDetails() {
           roleHat={roleHat}
           onClose={handleDrawerClose}
           onEdit={handleEditRoleClick}
+          payments={roleHat.payments}
         />
       </Show>
     </>

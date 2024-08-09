@@ -247,7 +247,7 @@ export default function RoleEditDetails() {
                   <Box pb="5rem">
                     <RoleFormTabs
                       hatId={hatEditingId}
-                      push={push}
+                      pushRole={push}
                     />
                   </Box>
                 </Box>
@@ -291,7 +291,7 @@ export default function RoleEditDetails() {
                     </Flex>
                     <RoleFormTabs
                       hatId={hatEditingId}
-                      push={push}
+                      pushRole={push}
                     />
                   </DrawerBody>
                 </DrawerContent>

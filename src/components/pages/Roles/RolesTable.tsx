@@ -1,25 +1,19 @@
 import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex, getAddress, zeroAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentTree, useRolesState } from '../../../state/useRolesState';
+import { DecentTree, useRolesStore } from '../../../store/roles';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
-import {
-  EditBadgeStatus,
-  RoleEditProps,
-  RoleFormValues,
-  RoleProps,
-  SablierPayroll,
-  SablierVesting,
-} from './types';
+import { EditBadgeStatus, RoleEditProps, RoleFormValues, RoleProps, SablierPayment } from './types';
 
 function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -38,8 +32,8 @@ function RolesHeader() {
       >
         <Th>{t('role')}</Th>
         <Th>{t('member')}</Th>
-        <Th>{t('payroll')}</Th>
-        <Th>{t('vesting')}</Th>
+        <Th>{t('payment')}</Th>
+        <Th>{t('payment')}</Th>
       </Tr>
     </Thead>
   );
@@ -143,64 +137,30 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
   );
 }
 
-function PayrollColumn({ payrollData }: { payrollData: SablierPayroll | undefined }) {
-  const { t } = useTranslation(['daoCreate']);
+function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
+  const { t } = useTranslation(['roles']);
+  const format = ['years', 'days', 'hours'];
+  const endDate =
+    payment?.scheduleFixedDate?.endDate &&
+    formatDuration(
+      intervalToDuration({
+        start: payment.scheduleFixedDate.startDate,
+        end: payment.scheduleFixedDate.endDate,
+      }),
+      { format },
+    );
+  const cliffDate =
+    payment?.scheduleFixedDate?.cliffDate &&
+    formatDuration(
+      intervalToDuration({
+        start: payment.scheduleFixedDate.startDate,
+        end: payment.scheduleFixedDate.cliffDate,
+      }),
+      { format },
+    );
   return (
     <Td>
-      <Flex flexDir="column">
-        {payrollData ? (
-          <Box>
-            <Flex
-              alignItems="center"
-              gap="0.25rem"
-              my="0.5rem"
-            >
-              <Image
-                src={payrollData.asset.iconUri}
-                fallbackSrc="/images/coin-icon-default.svg"
-                alt={payrollData.asset.symbol}
-                w="1.25rem"
-                h="1.25rem"
-              />
-              {payrollData.payrollAmount}
-              <EtherscanLink
-                color="white-0"
-                _hover={{ bg: 'transparent' }}
-                textStyle="body-base"
-                padding={0}
-                borderWidth={0}
-                value={payrollData.asset.address}
-                type="token"
-                wordBreak="break-word"
-              >
-                {payrollData.asset.symbol}
-              </EtherscanLink>
-              <Text
-                color="white-0"
-                textStyle="body-base"
-              >
-                {'/'} {payrollData.payrollSchedule}
-              </Text>
-            </Flex>
-          </Box>
-        ) : (
-          <Text
-            textStyle="body-base"
-            color="neutral-6"
-          >
-            {t('n/a')}
-          </Text>
-        )}
-      </Flex>
-    </Td>
-  );
-}
-
-function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefined }) {
-  const { t } = useTranslation(['daoCreate']);
-  return (
-    <Td>
-      {vestingData ? (
+      {payment ? (
         <Box>
           <Flex
             textStyle="body-base"
@@ -210,29 +170,33 @@ function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefine
             my="0.5rem"
           >
             <Image
-              src={vestingData.asset.iconUri}
+              src={payment.asset.logo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={vestingData.asset.symbol}
+              alt={payment.asset.symbol}
               w="1.25rem"
               h="1.25rem"
             />
-            {vestingData.vestingAmount}
+            {payment.amount?.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}
               textStyle="body-base"
               padding={0}
               borderWidth={0}
-              value={vestingData.asset.address}
+              value={payment.asset.address}
               type="token"
               wordBreak="break-word"
             >
-              {vestingData.asset.symbol}
+              {payment.asset.symbol}
             </EtherscanLink>
-            <Text>
-              {t('after')} {vestingData.vestingSchedule}
-            </Text>
+            <Flex
+              flexDir="column"
+              gap="0.25rem"
+            >
+              <Text>{endDate && `${t('after')} ${endDate}`}</Text>
+            </Flex>
           </Flex>
+          <Text>{cliffDate && `${t('cliff')} ${t('after')} ${cliffDate}`}</Text>
         </Box>
       ) : (
         <Text
@@ -246,14 +210,7 @@ function VestingColumn({ vestingData }: { vestingData: SablierVesting | undefine
   );
 }
 
-export function RolesRow({
-  name,
-  wearerAddress,
-  payrollData,
-  vestingData,
-  handleRoleClick,
-  hatId,
-}: RoleProps) {
+export function RolesRow({ name, wearerAddress, payments, handleRoleClick, hatId }: RoleProps) {
   return (
     <Tr
       sx={{
@@ -269,8 +226,8 @@ export function RolesRow({
     >
       <RoleNameColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PayrollColumn payrollData={payrollData} />
-      <VestingColumn vestingData={vestingData} />
+      <PaymentColumn payment={payments?.[0]} />
+      <PaymentColumn payment={payments?.[1]} />
     </Tr>
   );
 }
@@ -279,8 +236,7 @@ export function RolesRowEdit({
   name,
   wearerAddress,
   editStatus,
-  payrollData,
-  vestingData,
+  payments,
   handleRoleClick,
 }: RoleEditProps) {
   return (
@@ -301,8 +257,8 @@ export function RolesRowEdit({
         editStatus={editStatus}
       />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PayrollColumn payrollData={payrollData} />
-      <VestingColumn vestingData={vestingData} />
+      <PaymentColumn payment={payments?.[0]} />
+      <PaymentColumn payment={payments?.[1]} />
     </Tr>
   );
 }
@@ -340,9 +296,10 @@ export function RolesTable({
               <RolesRow
                 key={role.id.toString()}
                 hatId={role.id}
+                name={role.name}
                 wearerAddress={role.wearer}
                 handleRoleClick={handleRoleClick}
-                {...role}
+                payments={role.payments}
               />
             ))}
           </Tbody>
@@ -352,7 +309,7 @@ export function RolesTable({
   );
 }
 export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
-  const { hatsTree } = useRolesState();
+  const { hatsTree } = useRolesStore();
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   if (hatsTree === undefined) {
     return <RoleCardLoading />;
@@ -384,13 +341,14 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
           {values.hats.map(role => (
             <RolesRowEdit
               key={role.id}
+              name={role.name}
               wearerAddress={role.wearer}
               handleRoleClick={() => {
                 setFieldValue('roleEditing', role);
                 handleRoleClick(role.id);
               }}
               editStatus={role.editedRole?.status}
-              {...role}
+              payments={role.payments}
             />
           ))}
         </Tbody>

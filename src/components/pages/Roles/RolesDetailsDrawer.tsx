@@ -11,12 +11,14 @@ import {
 } from '@chakra-ui/react';
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Hex, getAddress } from 'viem';
+import { Address, Hex, getAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
+import PaymentDetails from '../../../pages/daos/[daoAddress]/roles/details/PaymentDetails';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import Avatar from '../../ui/page/Header/Avatar';
+import { SablierPayment } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -41,7 +43,9 @@ interface RoleDetailsDrawerProps {
     name: string;
     wearer: string;
     description: string;
+    smartAddress: Address;
   };
+  payments?: SablierPayment[];
   onOpen?: () => void;
   onClose: () => void;
   onEdit: (hatId: Hex) => void;
@@ -53,6 +57,7 @@ export default function RolesDetailsDrawer({
   onClose,
   isOpen = true,
   onEdit,
+  payments,
 }: RoleDetailsDrawerProps) {
   const {
     node: { daoAddress },
@@ -156,6 +161,11 @@ export default function RolesDetailsDrawer({
               </Text>
             </GridItem>
           </Grid>
+          {/* @todo: proper styling here */}
+          <PaymentDetails
+            payment={payments?.[0]}
+            roleHat={roleHat}
+          />
         </DrawerBody>
       </DrawerContent>
     </Drawer>

@@ -1,13 +1,12 @@
-import { Context, createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { useChainId } from 'wagmi';
 import { NetworkConfig } from '../../types/network';
 
 import { networks } from './networks';
 
-export const NetworkConfigContext = createContext({} as NetworkConfig);
+export const NetworkConfigContext = createContext<NetworkConfig>({} as NetworkConfig);
 
-export const useNetworkConfig = (): NetworkConfig =>
-  useContext(NetworkConfigContext as Context<NetworkConfig>);
+export const useNetworkConfig = () => useContext(NetworkConfigContext);
 
 export const supportedNetworks = Object.values(networks).sort((a, b) => a.order - b.order);
 export const moralisSupportedChainIds = supportedNetworks
