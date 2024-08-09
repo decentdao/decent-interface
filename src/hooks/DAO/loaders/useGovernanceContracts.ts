@@ -18,7 +18,9 @@ export const useGovernanceContracts = () => {
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const publicClient = usePublicClient();
 
-  const { fractalModules, isModulesLoaded, daoAddress } = node;
+  const { fractalModules, isModulesLoaded, safe } = node;
+
+  const daoAddress = safe?.address;
 
   const loadGovernanceContracts = useCallback(async () => {
     if (!baseContracts || !publicClient) {

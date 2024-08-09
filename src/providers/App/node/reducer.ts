@@ -3,13 +3,12 @@ import { FractalNode, NodeHierarchy } from '../../../types';
 import { NodeAction, NodeActions } from './action';
 
 export const initialNodeHierarchyState: NodeHierarchy = {
-  parentAddress: null,
+  parentAddress: undefined,
   childNodes: [],
 };
 
 export const initialNodeState: FractalNode = {
   daoName: null,
-  daoAddress: null,
   safe: null,
   fractalModules: [],
   nodeHierarchy: initialNodeHierarchyState,

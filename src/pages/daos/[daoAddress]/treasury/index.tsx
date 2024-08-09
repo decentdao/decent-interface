@@ -17,7 +17,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function Treasury() {
   const {
-    node: { daoName, daoAddress },
+    node: { daoName, safe },
     treasury: { assetsFungible },
   } = useFractal();
   const [shownTransactions, setShownTransactions] = useState(20);
@@ -32,6 +32,8 @@ export default function Treasury() {
   const showSendButton = canUserCreateProposal && hasAnyBalanceOfAnyFungibleTokens;
   const totalTransfers = formattedTransfers.length;
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
+
+  const daoAddress = safe?.address;
 
   return (
     <Box>

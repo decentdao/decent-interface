@@ -19,7 +19,7 @@ const useCastFreezeVote = ({
     },
   } = useFractal();
   const baseContracts = useSafeContracts();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(null, undefined, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(undefined, undefined, false);
 
   useEffect(() => {
     setPending(contractCallPending);

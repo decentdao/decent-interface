@@ -8,12 +8,14 @@ import { useSafeTransactions } from '../../../utils/useSafeTransactions';
 
 export const useSafeMultisigProposals = () => {
   const {
-    node: { daoAddress },
+    node: { safe },
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
 
   const { parseTransactions } = useSafeTransactions();
+
+  const daoAddress = safe?.address;
 
   const loadSafeMultisigProposals = useCallback(async () => {
     if (!daoAddress || !safeAPI) {

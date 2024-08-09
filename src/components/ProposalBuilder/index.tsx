@@ -42,9 +42,11 @@ export function ProposalBuilder({
   const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
 
   const {
-    node: { daoAddress, safe },
+    node: { safe },
     readOnly: { dao },
   } = useFractal();
+  const daoAddress = safe?.address;
+
   const { addressPrefix } = useNetworkConfig();
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();

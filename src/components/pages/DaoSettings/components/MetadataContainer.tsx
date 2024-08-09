@@ -25,12 +25,14 @@ export function MetadataContainer() {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
     baseContracts,
-    node: { daoName, daoSnapshotENS, daoAddress, safe },
+    node: { daoName, daoSnapshotENS, safe },
     readOnly: {
       user: { votingWeight },
     },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
+
+  const daoAddress = safe?.address;
 
   useEffect(() => {
     if (daoName && daoAddress && createAccountSubstring(daoAddress) !== daoName) {

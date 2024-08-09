@@ -55,6 +55,7 @@ const useCastVote = ({
   const [contractCallCastVote, contractCallPending] = useTransaction();
 
   const { remainingTokenIds, remainingTokenAddresses } = useUserERC721VotingTokens(
+    undefined,
     proposal.proposalId,
   );
   const { getCanVote, getHasVoted } = useVoteContext();

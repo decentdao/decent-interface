@@ -7,9 +7,11 @@ import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 export function InfoTreasury() {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { totalUsdValue },
   } = useFractal();
+
+  const daoAddress = safe?.address;
 
   const { t } = useTranslation('dashboard');
 

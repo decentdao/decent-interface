@@ -31,7 +31,7 @@ import { useFractalModal } from '../../modals/useFractalModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
-  parentAddress: Address | null;
+  parentAddress: Address | undefined;
   fractalNode: FractalNode;
   freezeGuard: FreezeGuard;
   guardContracts: FractalGuardContracts;
@@ -60,7 +60,7 @@ export function ManageDAOMenu({
   const baseContracts = useSafeContracts();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = fractalNode.daoAddress;
+  const safeAddress = fractalNode.safe?.address;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, undefined, false);

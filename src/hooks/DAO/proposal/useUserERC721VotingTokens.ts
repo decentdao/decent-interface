@@ -5,7 +5,7 @@ import {
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
 import { useState, useEffect, useCallback } from 'react';
-import { getAddress } from 'viem';
+import { Address, getAddress } from 'viem';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -27,7 +27,7 @@ import { useFractalModules } from '../loaders/useFractalModules';
  * @returns {string[]} `remainingTokenAddresses` - same as `totalVotingTokenAddresses` - repeats contract address of NFT for each token ID in `remainingTokenIds` array.
  */
 export default function useUserERC721VotingTokens(
-  safeAddress: string | null,
+  safeAddress: Address | undefined,
   proposalId?: string,
   loadOnMount: boolean = true,
 ) {
@@ -38,7 +38,7 @@ export default function useUserERC721VotingTokens(
 
   const signerOrProvider = useSignerOrProvider();
   const {
-    node: { daoAddress },
+    node: { safe },
     governanceContracts: { erc721LinearVotingContractAddress },
     governance,
     readOnly: { user },
@@ -50,8 +50,10 @@ export default function useUserERC721VotingTokens(
   const azoriusGovernance = governance as AzoriusGovernance;
   const { erc721Tokens } = azoriusGovernance;
 
+  const daoAddress = safe?.address;
+
   const getUserERC721VotingTokens = useCallback(
-    async (_safeAddress: string | null, _proposalId?: string) => {
+    async (_safeAddress?: Address, _proposalId?: string) => {
       const totalTokenAddresses: string[] = [];
       const totalTokenIds: string[] = [];
       const tokenAddresses: string[] = [];

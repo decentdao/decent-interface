@@ -8,10 +8,12 @@ import { useSafeMultisigProposals } from './governance/useSafeMultisigProposals'
 
 export const useLoadDAOProposals = () => {
   const {
-    node: { daoAddress },
+    node: { safe },
     governance: { type },
     action,
   } = useFractal();
+
+  const daoAddress = safe?.address;
 
   const { setMethodOnInterval, clearIntervals } = useUpdateTimer(daoAddress);
   const loadAzoriusProposals = useAzoriusProposals();

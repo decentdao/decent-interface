@@ -83,7 +83,7 @@ const prepareMintHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, hatsCoun
 
 export default function useCreateRoles() {
   const {
-    node: { safe, daoAddress, daoName },
+    node: { safe, daoName },
   } = useFractal();
   const { hatsTree, hatsTreeId, getHat } = useRolesStore();
   const {
@@ -104,6 +104,8 @@ export default function useCreateRoles() {
   const { prepareBatchLinearStreamCreation, prepareFlushStreamTx, prepareCancelStreamTx } =
     useCreateSablierStream();
   const ipfsClient = useIPFSClient();
+
+  const daoAddress = safe?.address;
 
   const navigate = useNavigate();
   const submitProposalSuccessCallback = useCallback(() => {

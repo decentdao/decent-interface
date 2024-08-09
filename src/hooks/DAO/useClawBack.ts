@@ -12,7 +12,7 @@ import useSubmitProposal from './proposal/useSubmitProposal';
 
 interface IUseClawBack {
   childSafeInfo: FractalNode;
-  parentAddress: Address | null;
+  parentAddress: Address | undefined;
 }
 
 export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBack) {
@@ -24,8 +24,8 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
   const { getTokenBalances } = useBalancesAPI();
 
   const handleClawBack = useCallback(async () => {
-    if (childSafeInfo.daoAddress && parentAddress && safeAPI && provider) {
-      const childSafeBalance = await getTokenBalances(childSafeInfo.daoAddress);
+    if (childSafeInfo?.safe?.address && parentAddress && safeAPI && provider) {
+      const childSafeBalance = await getTokenBalances(childSafeInfo.safe.address);
 
       if (childSafeBalance.error || !childSafeBalance.data) {
         toast(t('clawBackBalancesError', { autoClose: false }));

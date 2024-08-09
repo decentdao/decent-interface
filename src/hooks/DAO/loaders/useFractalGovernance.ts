@@ -18,12 +18,14 @@ export const useFractalGovernance = () => {
   const loadKey = useRef<string>();
 
   const {
-    node: { daoAddress },
+    node: { safe },
     governanceContracts,
     action,
     governance: { type },
     guardContracts: { isGuardLoaded },
   } = useFractal();
+
+  const daoAddress = safe?.address;
 
   const loadDAOProposals = useLoadDAOProposals();
   const loadERC20Strategy = useERC20LinearStrategy();

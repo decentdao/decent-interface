@@ -12,11 +12,12 @@ import ProposalTemplateCard from './ProposalTemplateCard';
 export default function ProposalTemplates() {
   const { t } = useTranslation('proposalTemplate');
   const {
-    node: { daoAddress },
+    node: { safe },
     governance: { proposalTemplates },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { canUserCreateProposal } = useCanUserCreateProposal();
+  const daoAddress = safe?.address;
 
   return (
     <Flex

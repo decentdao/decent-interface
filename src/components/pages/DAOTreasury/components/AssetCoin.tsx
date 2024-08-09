@@ -46,9 +46,10 @@ export function CoinHeader() {
 
 export function CoinRow({ asset }: { asset: TokenBalance }) {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { totalUsdValue },
   } = useFractal();
+  const daoAddress = safe?.address;
 
   const isNativeCoin =
     asset.tokenAddress.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase() ||

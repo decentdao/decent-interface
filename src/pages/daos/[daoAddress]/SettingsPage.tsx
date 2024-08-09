@@ -9,10 +9,11 @@ import { useFractal } from '../../../providers/App/AppProvider';
 export function SettingsPage() {
   const { t } = useTranslation('breadcrumbs');
   const {
-    node: { daoAddress, daoName },
+    node: { safe, daoName },
   } = useFractal();
 
   const HEADER_HEIGHT = useHeaderHeight();
+  const daoAddress = safe?.address;
 
   if (!daoAddress) {
     return (

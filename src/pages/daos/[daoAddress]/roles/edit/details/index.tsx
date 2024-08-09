@@ -121,7 +121,7 @@ export default function RoleEditDetails() {
   const headerHeight = useHeaderHeight();
   const { t } = useTranslation(['roles']);
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
@@ -129,6 +129,9 @@ export default function RoleEditDetails() {
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
   const hatIndex = values.hats.findIndex(h => h.id === hatEditingId);
+
+  const daoAddress = safe?.address;
+
   if (!isHex(hatEditingId)) return null;
   if (!daoAddress) return null;
   if (hatEditingId === undefined) return null;

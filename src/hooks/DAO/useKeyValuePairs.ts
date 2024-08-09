@@ -67,9 +67,9 @@ const useKeyValuePairs = () => {
 
   useEffect(() => {
     const safeParam = searchParams.get('dao');
-    console.log({ safeAddress: node.daoAddress, safeParam });
+    console.log({ safeAddress: node.safe?.address, safeParam });
 
-    if (!publicClient || !node.daoAddress || node.daoAddress !== safeParam?.split(':')[1]) {
+    if (!publicClient || !node.safe?.address || node.safe?.address !== safeParam?.split(':')[1]) {
       console.log('not gonna load tree from keyvaluepairs');
       return;
     }
@@ -80,7 +80,7 @@ const useKeyValuePairs = () => {
       client: publicClient,
     });
     keyValuePairsContract.getEvents
-      .ValueUpdated({ theAddress: node.daoAddress }, { fromBlock: 0n })
+      .ValueUpdated({ theAddress: node.safe?.address }, { fromBlock: 0n })
       .then(safeEvents => setHatsTreeId(getHatsTreeId(safeEvents, chain.id)))
       .catch(error => {
         logError(error);
@@ -88,7 +88,7 @@ const useKeyValuePairs = () => {
 
     const unwatch = keyValuePairsContract.watchEvent.ValueUpdated(
       {
-        theAddress: node.daoAddress,
+        theAddress: node.safe?.address,
       },
       {
         onLogs: logs => {
@@ -104,7 +104,7 @@ const useKeyValuePairs = () => {
     return () => {
       unwatch();
     };
-  }, [chain.id, keyValuePairs, node.daoAddress, publicClient, searchParams, setHatsTreeId]);
+  }, [chain.id, keyValuePairs, node.safe?.address, publicClient, searchParams, setHatsTreeId]);
 };
 
 export { useKeyValuePairs };
