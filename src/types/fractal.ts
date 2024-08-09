@@ -16,13 +16,8 @@ import {
   ERC721FreezeVoting,
   LinearERC721Voting,
 } from '@fractal-framework/fractal-contracts';
-import {
-  SafeInfoResponse,
-  SafeModuleTransactionWithTransfersResponse,
-  SafeMultisigTransactionWithTransfersResponse,
-  EthereumTxWithTransfersResponse,
-  AllTransactionsListResponse,
-} from '@safe-global/api-kit';
+import { SafeInfoResponse, TransferResponse, TokenInfoResponse } from '@safe-global/api-kit';
+import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types';
 import { Dispatch } from 'react';
 import { Address } from 'viem';
 import { MultiSend } from '../assets/typechain-types/usul';
@@ -37,7 +32,7 @@ import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
-import { NFTBalance, TokenBalance, TreasuryActivity } from './daoTreasury';
+import { NFTBalance, TokenBalance, TokenEventType, TransferType } from './daoTreasury';
 import { ProposalTemplate } from './proposalBuilder';
 import { BIFormattedPair } from './votingFungibleToken';
 /**
@@ -157,12 +152,9 @@ export interface ActivityBase {
   transactionHash: string;
 }
 
-export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal | SnapshotProposal;
+export type Activity = MultisigProposal | AzoriusProposal | SnapshotProposal;
 
-export type ActivityTransactionType =
-  | SafeMultisigTransactionWithTransfersResponse
-  | SafeModuleTransactionWithTransfersResponse
-  | EthereumTxWithTransfersResponse;
+export type ActivityTransactionType = SafeMultisigTransactionResponse;
 
 export enum ActivityEventType {
   Treasury,
@@ -276,11 +268,14 @@ export interface FreezeGuard {
   userHasVotes: boolean;
 }
 
+export type TransferWithTokenInfo = TransferResponse & { tokenInfo: TokenInfoResponse };
 export interface DecentTreasury {
   totalUsdValue: number;
   assetsFungible: TokenBalance[];
   assetsNonFungible: NFTBalance[];
-  transfers?: AllTransactionsListResponse;
+  transfers?: TransferDisplayData[];
+  transfersLoading?: boolean;
+  transfersLoaded?: boolean;
 }
 
 export type FractalGovernance = AzoriusGovernance | DecentGovernance | SafeMultisigGovernance;
@@ -379,4 +374,18 @@ export interface ReadOnlyUser {
 export interface ReadOnlyDAO {
   /** Whether the connected DAO is an Azorius DAO.  */
   isAzorius: boolean;
+}
+
+export interface TransferDisplayData {
+  eventType: TokenEventType;
+  transferType: TransferType;
+  executionDate: string;
+  image: string;
+  assetDisplay: string;
+  fullCoinTotal: string | undefined;
+  transferAddress: string;
+  isLast: boolean;
+  transactionHash: string;
+  tokenId: string;
+  tokenInfo?: TokenInfoResponse;
 }

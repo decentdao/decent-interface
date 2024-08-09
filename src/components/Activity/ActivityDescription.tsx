@@ -3,7 +3,6 @@ import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import { Activity, FractalProposal, SnapshotProposal } from '../../types';
 import Markdown from '../ui/proposal/Markdown';
 import { ProposalTitle } from './ActivityDescriptionGovernance';
-import { ActivityDescriptionTreasury } from './ActivityDescriptionTreasury';
 
 interface IActivityDescription {
   activity: Activity;
@@ -44,9 +43,6 @@ export function ActivityDescription({
           />
         </Box>
       )}
-      <Box mt={2}>
-        {!!activity.transaction && <ActivityDescriptionTreasury activity={activity} />}
-      </Box>
     </Box>
   );
 }

@@ -1,4 +1,3 @@
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { decodeAbiParameters, parseAbiParameters, Hash } from 'viem';
@@ -39,15 +38,13 @@ const useGetMultisigMetadata = (proposal: FractalProposal | null | undefined) =>
 
     if (!proposal.transaction) return;
 
-    const transaction = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
-
     // transactionType either isn't SafeMultisigTransactionResponse, or
     // there is no dataDecoded field on it
-    if (!transaction?.dataDecoded) return;
+    if (!proposal.transaction?.dataDecoded) return;
 
     // find the last transaction in the multiSend batch, which *should* be the metadata
     // transaction, which contains the IPFS hash as its data array
-    const dataDecoded: DataDecoded = JSON.parse(JSON.stringify(transaction.dataDecoded));
+    const dataDecoded: DataDecoded = JSON.parse(JSON.stringify(proposal.transaction.dataDecoded));
     const transactions: Transaction[] = dataDecoded.parameters[0]?.valueDecoded;
 
     if (!transactions) return;

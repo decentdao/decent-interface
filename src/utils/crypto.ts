@@ -1,5 +1,4 @@
 import { encodeFunctionData, parseAbiParameters } from 'viem';
-import { ActivityTransactionType } from '../types';
 
 function splitIgnoreBrackets(str: string): string[] {
   const result = str
@@ -92,11 +91,3 @@ export const encodeFunction = (
 
   return functionData;
 };
-
-export function isMultiSigTx(transaction: ActivityTransactionType): boolean {
-  return transaction.txType === 'MULTISIG_TRANSACTION';
-}
-
-export function isModuleTx(transaction: ActivityTransactionType): boolean {
-  return transaction.txType === 'MODULE_TRANSACTION';
-}
