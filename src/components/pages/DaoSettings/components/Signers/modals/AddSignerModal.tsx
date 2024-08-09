@@ -3,11 +3,11 @@ import { WarningCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, getAddress, isAddress } from 'viem';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../../../../providers/Ethers/hooks/useEthersSigner';
-import { validateENSName } from '../../../../../../utils/url';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
 import { AddressInput } from '../../../../../ui/forms/EthAddressInput';
@@ -25,30 +25,42 @@ function AddSignerModal({
   currentThreshold: number;
 }) {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
   const signer = useEthersSigner();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
   const tooltipContainer = useRef<HTMLDivElement>(null);
 
+  const daoAddress = safe?.address;
+
   const addSigner = useAddSigner();
 
   const onSubmit = useCallback(
-    async (values: { address: string; threshold: number; nonce: number }) => {
-      const { address, nonce, threshold } = values;
-      let validAddress = address;
-      if (validateENSName(validAddress) && signer) {
-        validAddress = await signer.resolveName(address);
-      }
+    async (values: { addressOrENS: string; threshold: number; nonce: number }) => {
+      const { addressOrENS, nonce, threshold } = values;
 
-      await addSigner({
-        newSigner: validAddress,
-        threshold: threshold,
-        nonce: nonce,
-        daoAddress: daoAddress,
-        close: close,
-      });
+      let validAddress: Address;
+      try {
+        if (isAddress(addressOrENS)) {
+          validAddress = getAddress(addressOrENS);
+        } else if (signer) {
+          validAddress = (await signer.resolveName(addressOrENS)) as Address;
+        } else {
+          throw new Error('No signer found');
+        }
+
+        await addSigner({
+          newSigner: validAddress,
+          threshold: threshold,
+          nonce: nonce,
+          daoAddress: daoAddress,
+          close: close,
+        });
+      } catch (e) {
+        console.error(e);
+        throw new Error('Error adding signer');
+      }
     },
     [addSigner, close, daoAddress, signer],
   );
@@ -66,7 +78,7 @@ function AddSignerModal({
     <Box>
       <Formik
         initialValues={{
-          address: '',
+          addressOrENS: '',
           nonce: safe?.nextNonce || 0,
           threshold: currentThreshold,
           thresholdOptions: Array.from({ length: signers.length + 1 }, (_, i) => i + 1),
@@ -83,11 +95,11 @@ function AddSignerModal({
                   // LabelWrapper title styling needs to updated on @decent-org/fractal-ui, it seems
                   <LabelWrapper
                     subLabel={t('addSignerSublabel', { ns: 'modals' })}
-                    errorMessage={field.value && errors.address}
+                    errorMessage={field.value && errors.addressOrENS}
                   >
                     <AddressInput
                       {...field}
-                      isInvalid={!!field.value && !!errors.address}
+                      isInvalid={!!field.value && !!errors.addressOrENS}
                     />
                   </LabelWrapper>
                 )}

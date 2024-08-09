@@ -59,8 +59,8 @@ export function VoteContextProvider({
 
   const { loadVotingWeight } = useSnapshotProposal(proposal as SnapshotProposal);
   const { remainingTokenIds, getUserERC721VotingTokens } = useUserERC721VotingTokens(
-    proposal.proposalId,
     undefined,
+    proposal.proposalId,
     true,
   );
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
@@ -109,7 +109,7 @@ export function VoteContextProvider({
             ).toBigInt() > 0n && !hasVoted;
         } else if (type === GovernanceType.AZORIUS_ERC721) {
           if (refetchUserTokens) {
-            await getUserERC721VotingTokens(null);
+            await getUserERC721VotingTokens();
           }
           newCanVote = user.votingWeight > 0 && remainingTokenIds.length > 0;
         } else if (type === GovernanceType.MULTISIG) {

@@ -62,9 +62,11 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
 
 function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
+
+  const daoAddress = safe?.address;
 
   if (!daoAddress) {
     return null;

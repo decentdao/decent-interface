@@ -6,7 +6,7 @@ import {
 import { TypedListener } from '@fractal-framework/fractal-contracts/dist/typechain-types/common';
 import { FreezeVoteCastEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/ERC20FreezeVoting';
 import { useCallback, useEffect, useRef } from 'react';
-import { zeroAddress } from 'viem';
+import { Address, zeroAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import {
   isWithinFreezeProposalPeriod,
@@ -26,7 +26,7 @@ export const useFractalFreeze = ({
   parentSafeAddress,
 }: {
   loadOnMount?: boolean;
-  parentSafeAddress: string | null;
+  parentSafeAddress?: Address;
 }) => {
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();

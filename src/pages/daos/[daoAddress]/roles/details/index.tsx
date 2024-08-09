@@ -9,7 +9,7 @@ import { useRolesStore } from '../../../../../store/roles';
 
 export default function RoleDetails() {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
@@ -18,6 +18,7 @@ export default function RoleDetails() {
   const [searchParams] = useSearchParams();
   const hatId = searchParams.get('hatId');
   const roleHat = hatsTree?.roleHats.find(hat => hat.id === hatId);
+  const daoAddress = safe?.address;
 
   // @todo add logic for loading
   // @todo add redirect for hat not found

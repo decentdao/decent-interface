@@ -7,11 +7,12 @@ import { NodeAction } from '../../providers/App/node/action';
 export const useUpdateSafeData = () => {
   const {
     action,
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const safeAPI = useSafeAPI();
   const location = useLocation();
   const prevPathname = useRef(location.pathname);
+  const daoAddress = safe?.address;
 
   useEffect(() => {
     if (!safeAPI || !daoAddress) {

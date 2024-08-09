@@ -30,7 +30,7 @@ import { NFTHeader, NFTRow } from './AssetNFT';
 
 export function Assets() {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { assetsFungible, assetsNonFungible, totalUsdValue },
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
@@ -39,6 +39,8 @@ export function Assets() {
   const ethAsset = assetsFungible.find(asset => !asset.tokenAddress);
   const { handleUnstake, handleClaimUnstakedETH } = useLidoStaking();
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([]);
+
+  const daoAddress = safe?.address;
 
   // --- Lido Stake button setup ---
   const showStakeButton =

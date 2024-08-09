@@ -9,9 +9,11 @@ import Divider from '../utils/Divider';
 export function ConfirmModifyGovernanceModal({ close }: { close: () => void }) {
   const { t } = useTranslation('modals');
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
+
+  const daoAddress = safe?.address;
 
   if (!daoAddress) {
     return null;

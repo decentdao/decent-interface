@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Address } from 'viem';
 import { initialGuardState } from '../../providers/App/guard/reducer';
 import { initialGuardContractsState } from '../../providers/App/guardContracts/reducer';
 import { FractalNode } from '../../types';
@@ -11,7 +12,7 @@ import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
  * A hook for loading guard and freeze guard contract data for the provided
  * FractalNode.
  */
-export function useLoadDAOData(parentAddress: string | null, fractalNode?: FractalNode) {
+export function useLoadDAOData(parentAddress?: Address, fractalNode?: FractalNode) {
   const [daoData, setDAOData] = useState<DAOData>();
   const loadFractalGuardContracts = useFractalGuardContracts({ loadOnMount: false });
   const loadFractalFreezeGuard = useFractalFreeze({
@@ -24,7 +25,8 @@ export function useLoadDAOData(parentAddress: string | null, fractalNode?: Fract
       if (!fractalNode) {
         return;
       }
-      const { daoAddress, safe, fractalModules } = fractalNode;
+      const { safe, fractalModules } = fractalNode;
+      const daoAddress = safe?.address;
 
       if (!daoAddress || !safe) {
         return;

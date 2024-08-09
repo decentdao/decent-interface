@@ -18,11 +18,12 @@ function Roles() {
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const navigate = useNavigate();
 
   const { canUserCreateProposal } = useCanUserCreateProposal();
+  const daoAddress = safe?.address;
 
   if (!daoAddress) return null;
 

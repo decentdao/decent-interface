@@ -1,5 +1,6 @@
 import { DelegateChangedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/VotesERC20';
 import { useCallback, useEffect, useRef } from 'react';
+import { getAddress } from 'viem';
 import { LockRelease__factory } from '../../../../assets/typechain-types/dcnt';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { DecentGovernanceAction } from '../../../../providers/App/governance/action';
@@ -31,7 +32,7 @@ export const useLockRelease = ({ onMount = true }: { onMount?: boolean }) => {
       await Promise.all([
         (await lockReleaseContract.getTotal(account)).toBigInt(),
         (await lockReleaseContract.getReleased(account)).toBigInt(),
-        lockReleaseContract.delegates(account),
+        getAddress(await lockReleaseContract.delegates(account)),
         (await lockReleaseContract.getVotes(account)).toBigInt(),
       ]);
 

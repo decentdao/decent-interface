@@ -25,13 +25,16 @@ const useDeployAzorius = () => {
     addressPrefix,
   } = useNetworkConfig();
   const {
-    node: { daoAddress, safe },
+    node: { safe },
     baseContracts,
   } = useFractal();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
+
+  const daoAddress = safe?.address;
+
   const deployAzorius = useCallback(
     async (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO,

@@ -1,6 +1,6 @@
 import { getStore } from '@netlify/blobs';
 import Moralis from 'moralis';
-import { isAddress } from 'viem';
+import { getAddress, isAddress } from 'viem';
 import { moralisSupportedChainIds } from '../../src/providers/NetworkConfig/NetworkConfigProvider';
 import type { NFTBalance } from '../../src/types';
 import { camelCaseKeys } from '../../src/utils/dataFormatter';
@@ -73,9 +73,14 @@ export default async function getNftBalances(request: Request) {
           chain: chainId.toString(),
           address: addressParam,
         });
-        mappedNftsData = nftsResponse.result.map(nftBalance =>
-          camelCaseKeys<ReturnType<typeof nftBalance.toJSON>>(nftBalance.toJSON()),
-        );
+        mappedNftsData = nftsResponse.result
+          .map(nftBalance =>
+            camelCaseKeys<ReturnType<typeof nftBalance.toJSON>>(nftBalance.toJSON()),
+          )
+          .map(nft => ({
+            ...nft,
+            tokenAddress: getAddress(nft.tokenAddress),
+          }));
         nftsFetched = true;
       } catch (e) {
         console.error('Error while fetching address NFTs', e);

@@ -17,7 +17,7 @@ import { FractalProposal, AzoriusProposal, SnapshotProposal } from '../../../../
 
 export default function ProposalDetailsPage() {
   const {
-    node: { daoAddress },
+    node: { safe },
     governance: { proposals },
     readOnly: { dao },
   } = useFractal();
@@ -27,6 +27,8 @@ export default function ProposalDetailsPage() {
   const { isSnapshotProposal, snapshotProposal } = useSnapshotProposal(proposal);
   const metaData = useGetMetadata(proposal);
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
+
+  const daoAddress = safe?.address;
 
   const azoriusProposal = proposal as AzoriusProposal;
 

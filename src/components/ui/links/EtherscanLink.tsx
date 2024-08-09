@@ -1,13 +1,14 @@
 import { Box, LinkProps } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Hex } from 'viem';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import ModalTooltip from '../modals/ModalTooltip';
 import ExternalLink from './ExternalLink';
 
 export interface EtherscanLinkProps extends LinkProps {
   type: 'address' | 'block' | 'token' | 'tx';
-  value: string | null;
+  value?: Hex | bigint;
   secondaryValue?: string;
   isTextLink?: boolean;
 }
@@ -26,7 +27,7 @@ export default function EtherscanLink({
   if (!value) {
     return null;
   }
-  const href = `${etherscanBaseURL}/${type}/${value}${secondaryValue ? `?a=${secondaryValue}` : ''}`;
+  const href = `${etherscanBaseURL}/${type}/${value.toString()}${secondaryValue ? `?a=${secondaryValue}` : ''}`;
 
   return (
     <ExternalLink

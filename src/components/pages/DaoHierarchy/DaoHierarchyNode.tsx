@@ -5,7 +5,7 @@ import { Address, getAddress, zeroAddress } from 'viem';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { FractalNode, WithError } from '../../../types';
+import { FractalNode, WithError, Node } from '../../../types';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../../ui/cards/DAONodeInfoCard';
 
 /**
@@ -22,22 +22,22 @@ export function DaoHierarchyNode({
   daoAddress,
   depth,
 }: {
-  parentAddress: Address | null;
-  daoAddress: Address | null;
+  parentAddress: Address | undefined;
+  daoAddress: Address | undefined;
   depth: number;
 }) {
   const {
-    node: { daoAddress: currentDAOAddress },
+    node: { safe: currentSafe },
   } = useFractal();
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
   const { daoData } = useLoadDAOData(parentAddress, fractalNode);
 
   // calculates the total number of descendants below the given node
-  const getTotalDescendants = useCallback((node: FractalNode): number => {
+  const getTotalDescendants = useCallback((node: Node): number => {
     let count = node.nodeHierarchy.childNodes.length;
     node.nodeHierarchy.childNodes.forEach(child => {
-      count += getTotalDescendants(child as FractalNode);
+      count += getTotalDescendants(child);
     });
     return count;
   }, []);
@@ -52,11 +52,10 @@ export function DaoHierarchyNode({
         } else if (errorNode.error === 'errorFailedSearch') {
           setNode({
             daoName: null,
-            daoAddress,
             safe: null,
             fractalModules: [],
             nodeHierarchy: {
-              parentAddress: null,
+              parentAddress: undefined,
               childNodes: [],
             },
           });
@@ -91,7 +90,7 @@ export function DaoHierarchyNode({
             ml="0.5rem"
             boxSize="32px"
             color={
-              currentDAOAddress === getAddress(childNode.daoAddress || zeroAddress)
+              currentSafe?.address === getAddress(childNode.daoAddress || zeroAddress)
                 ? 'celery-0'
                 : 'neutral-6'
             }

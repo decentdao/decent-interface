@@ -24,7 +24,7 @@ import { getNewRole, useRolesStore } from '../../../../../store/roles';
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
   const {
     addressPrefix,
@@ -77,6 +77,8 @@ function RolesEdit() {
       customNonce: safe?.nextNonce || 0,
     };
   }, [hatsTree?.roleHats, safe?.nextNonce]);
+
+  const daoAddress = `${safe?.address}`; // force cast to string to fit with type in navigate's `.relative`
 
   if (daoAddress === null) return null;
 

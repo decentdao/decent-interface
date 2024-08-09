@@ -13,10 +13,12 @@ export default function EditProposalSummary() {
   const headerHeight = useHeaderHeight();
   const navigate = useNavigate();
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { t } = useTranslation(['roles', 'breadcrumbs']);
   const { addressPrefix } = useNetworkConfig();
+  const daoAddress = safe?.address;
+
   if (!daoAddress) return null;
   return (
     <Box>

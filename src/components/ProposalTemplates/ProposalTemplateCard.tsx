@@ -28,8 +28,10 @@ export default function ProposalTemplateCard({
   const navigate = useNavigate();
   const { t } = useTranslation('proposalTemplate');
   const {
-    node: { safe, daoAddress },
+    node: { safe },
   } = useFractal();
+  const daoAddress = safe?.address;
+
   const { addressPrefix } = useNetworkConfig();
 
   const { prepareRemoveProposalTemplateProposal } = useRemoveProposalTemplate();

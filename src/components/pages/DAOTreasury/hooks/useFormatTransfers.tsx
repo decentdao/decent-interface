@@ -1,4 +1,5 @@
 import { TokenInfoResponse } from '@safe-global/api-kit';
+import { Address, getAddress } from 'viem';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { TransferType } from '../../../../types';
@@ -15,7 +16,7 @@ export interface TransferDisplayData {
   image: string;
   assetDisplay: string;
   fullCoinTotal: string | undefined;
-  transferAddress: string;
+  transferAddress: Address;
   isLast: boolean;
   transactionHash: string;
   tokenId: string;
@@ -24,9 +25,12 @@ export interface TransferDisplayData {
 
 export function useFormatTransfers(): TransferDisplayData[] {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { transfers },
   } = useFractal();
+
+  const daoAddress = safe?.address;
+
   const transfersFromTransactions = (transfers?.results || [])
     .map(transaction => transaction.transfers)
     .flat();
@@ -64,7 +68,7 @@ export function useFormatTransfers(): TransferDisplayData[] {
         transfer.type === TransferType.ERC721_TRANSFER
           ? undefined
           : formatCoin(transfer.value, false, info?.decimals, symbol),
-      transferAddress: daoAddress === transfer.from ? transfer.to : transfer.from,
+      transferAddress: getAddress(daoAddress === transfer.from ? transfer.to : transfer.from),
       isLast: transfersFromTransactions[transfersFromTransactions.length - 1] === transfer,
       transactionHash: transfer.transactionHash,
       tokenId: transfer.tokenId,

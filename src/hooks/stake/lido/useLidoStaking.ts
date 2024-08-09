@@ -10,7 +10,7 @@ import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export default function useLidoStaking() {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
   const {
     staking: { lido },
@@ -18,6 +18,8 @@ export default function useLidoStaking() {
   const signerOrProvider = useSignerOrProvider();
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation('proposal');
+
+  const daoAddress = safe?.address;
 
   const handleStake = useCallback(
     async (value: bigint) => {

@@ -73,7 +73,7 @@ const proposalCreatedEventListener = (
       erc721StrategyContract,
       strategyType,
       proposalId.toBigInt(),
-      proposer,
+      getAddress(proposer),
       azoriusContract,
       provider,
       Promise.resolve(undefined),

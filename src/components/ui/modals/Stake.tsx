@@ -11,12 +11,14 @@ import { BigIntInput } from '../forms/BigIntInput';
 
 export default function StakeModal({ close }: { close: () => void }) {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { assetsFungible },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
   const { t } = useTranslation('stake');
+
+  const daoAddress = safe?.address;
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 

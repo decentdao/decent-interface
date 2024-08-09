@@ -255,7 +255,7 @@ export const useAzoriusProposals = () => {
           _erc721StrategyContract,
           _strategyType,
           proposalCreatedEvent.args.proposalId.toBigInt(),
-          proposalCreatedEvent.args.proposer,
+          getAddress(proposalCreatedEvent.args.proposer),
           _azoriusContract,
           _provider,
           _erc20VotedEvents,
