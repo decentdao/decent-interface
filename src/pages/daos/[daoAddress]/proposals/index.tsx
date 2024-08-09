@@ -18,8 +18,10 @@ export default function ProposalsPage() {
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
   const {
     governance,
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
+  const daoAddress = safe?.address;
+
   const { addressPrefix } = useNetworkConfig();
   const azoriusGovernance = governance as AzoriusGovernance;
   const delegate = useFractalModal(ModalType.DELEGATE);

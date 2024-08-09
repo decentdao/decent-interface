@@ -28,7 +28,7 @@ import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 function RolesEdit() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
   const {
     addressPrefix,
@@ -82,10 +82,11 @@ function RolesEdit() {
       customNonce: safe?.nextNonce || 0,
     };
   }, [hatsTree?.roleHats, safe?.nextNonce]);
-
+  
   const [hasEditedRoles, setHasEditedRoles] = useState(false);
 
   const blocker = useNavigationBlocker({ roleEditPageNavigationBlockerParams: { hasEditedRoles } });
+  const daoAddress = `${safe?.address}`; // force cast to string to fit with type in navigate's `.relative`
 
   if (daoAddress === null) return null;
 

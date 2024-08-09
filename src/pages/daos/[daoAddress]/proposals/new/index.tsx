@@ -9,9 +9,11 @@ import { ProposalBuilderMode } from '../../../../../types';
 
 export default function CreateProposalPage() {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
     governance: { type },
   } = useFractal();
+  const daoAddress = safe?.address;
+
   const { prepareProposal } = usePrepareProposal();
 
   const HEADER_HEIGHT = useHeaderHeight();

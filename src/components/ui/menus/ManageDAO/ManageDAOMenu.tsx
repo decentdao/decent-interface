@@ -60,10 +60,10 @@ export function ManageDAOMenu({
   const baseContracts = useSafeContracts();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = fractalNode.daoAddress;
+  const safeAddress = fractalNode.safe?.address;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, undefined, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(`${safeAddress}`, undefined, false);
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeInfo: fractalNode,

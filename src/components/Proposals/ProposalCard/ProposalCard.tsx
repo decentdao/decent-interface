@@ -20,10 +20,11 @@ import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
 function ProposalCard({ proposal }: { proposal: FractalProposal }) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation('common');
+  const daoAddress = safe?.address;
 
   const eventDateLabel = t(
     proposal.eventType === ActivityEventType.Treasury

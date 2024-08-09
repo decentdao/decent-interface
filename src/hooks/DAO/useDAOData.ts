@@ -24,7 +24,8 @@ export function useLoadDAOData(parentAddress: string | null, fractalNode?: Fract
       if (!fractalNode) {
         return;
       }
-      const { daoAddress, safe, fractalModules } = fractalNode;
+      const { safe, fractalModules } = fractalNode;
+      const daoAddress = safe?.address;
 
       if (!daoAddress || !safe) {
         return;

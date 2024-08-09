@@ -10,6 +10,7 @@ import {
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
+import { Address, Hex } from 'viem';
 import { strategyFractalProposalStates } from '../constants/strategy';
 import { logError } from '../helpers/errorLogging';
 import {
@@ -155,7 +156,7 @@ export const mapProposalCreatedEventToProposal = async (
   erc721StrategyContract: LinearERC721Voting | undefined,
   strategyType: VotingStrategyType,
   proposalId: bigint,
-  proposer: string,
+  proposer: Address,
   azoriusContract: Azorius,
   provider: Providers,
   erc20VotedEvents: Promise<ERC20VotedEvent[] | undefined>,
@@ -214,7 +215,7 @@ export const mapProposalCreatedEventToProposal = async (
 
   const targets = data ? data.decodedTransactions.map(tx => tx.target) : [];
 
-  let transactionHash: string | undefined;
+  let transactionHash: Hex | undefined;
   if (state === FractalProposalState.EXECUTED) {
     const executedEvent = (await executedEvents)?.find(
       event => BigInt(event.args[0]) === proposalId,
@@ -224,9 +225,9 @@ export const mapProposalCreatedEventToProposal = async (
       throw new Error('Proposal state is EXECUTED, but no event found');
     }
 
-    transactionHash = executedEvent.transactionHash;
+    transactionHash = executedEvent.transactionHash as Hex;
   } else {
-    transactionHash = createdEvent.transactionHash;
+    transactionHash = createdEvent.transactionHash as Hex;
   }
 
   const proposal: AzoriusProposal = {

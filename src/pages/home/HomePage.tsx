@@ -10,12 +10,14 @@ import { MySafes } from './MySafes';
 
 export default function HomePage() {
   const {
-    node: { daoAddress },
+    node: { safe },
     action,
   } = useFractal();
 
   const { t } = useTranslation('home');
   const { resetHatsStore } = useRolesStore();
+
+  const daoAddress = safe?.address;
 
   useEffect(() => {
     if (daoAddress) {

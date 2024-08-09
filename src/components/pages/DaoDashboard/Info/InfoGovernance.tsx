@@ -13,7 +13,7 @@ import { BarLoader } from '../../../ui/loaders/BarLoader';
 export function InfoGovernance() {
   const { t } = useTranslation(['dashboard', 'daoCreate', 'common']);
   const {
-    node: { daoAddress },
+    node: { safe },
     governance,
     guardContracts: { freezeGuardType, freezeGuardContractAddress },
     readOnly: { dao },
@@ -23,6 +23,9 @@ export function InfoGovernance() {
   const baseContracts = useSafeContracts();
   const [timelockPeriod, setTimelockPeriod] = useState<string>();
   const [executionPeriod, setExecutionPeriod] = useState<string>();
+
+  const daoAddress = safe?.address;
+
   useEffect(() => {
     const setTimelockInfo = async () => {
       const formatBlocks = async (blocks: number): Promise<string | undefined> => {

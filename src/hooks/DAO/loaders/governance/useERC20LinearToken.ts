@@ -72,7 +72,7 @@ export const useERC20LinearToken = ({ onMount = true }: { onMount?: boolean }) =
     // @todo We could probably save on some requests here.
     const [tokenBalance, tokenDelegatee, tokenVotingWeight] = await Promise.all([
       (await tokenContract.balanceOf(account)).toBigInt(),
-      tokenContract.delegates(account),
+      getAddress(await tokenContract.delegates(account)),
       (await tokenContract.getVotes(account)).toBigInt(),
     ]);
 

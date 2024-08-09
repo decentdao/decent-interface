@@ -9,7 +9,6 @@ export const initialNodeHierarchyState: NodeHierarchy = {
 
 export const initialNodeState: FractalNode = {
   daoName: null,
-  daoAddress: null,
   safe: null,
   fractalModules: [],
   nodeHierarchy: initialNodeHierarchyState,

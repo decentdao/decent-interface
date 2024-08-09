@@ -16,10 +16,13 @@ export const useCreateSubDAOProposal = () => {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const [build] = useBuildDAOTx();
   const {
-    node: { daoAddress },
+    node: { safe },
     governance,
   } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
+
+  const daoAddress = safe?.address;
+
   const proposeDao = useCallback(
     (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,

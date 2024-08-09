@@ -14,10 +14,12 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();
   const {
-    node: { daoAddress, safe, fractalModules, isHierarchyLoaded },
+    node: { safe, fractalModules, isHierarchyLoaded },
     action,
   } = useFractal();
   const baseContracts = useSafeContracts();
+
+  const daoAddress = safe?.address;
 
   const { chain } = useNetworkConfig();
 

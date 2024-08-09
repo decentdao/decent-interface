@@ -12,10 +12,11 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 export default function ProposalTemplatesPage() {
   const { t } = useTranslation();
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { addressPrefix } = useNetworkConfig();
+  const daoAddress = safe?.address;
 
   return (
     <div>

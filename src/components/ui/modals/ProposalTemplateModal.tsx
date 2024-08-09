@@ -26,9 +26,11 @@ export default function ProposalTemplateModal({
   onClose,
 }: IProposalTemplateModalProps) {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
+
+  const daoAddress = safe?.address;
 
   const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nextNonce);

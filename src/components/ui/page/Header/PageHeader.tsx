@@ -45,9 +45,10 @@ function PageHeader({
   children,
 }: PageHeaderProps) {
   const {
-    node: { daoAddress, daoName },
+    node: { safe, daoName },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
+  const daoAddress = safe?.address;
 
   const [links, setLinks] = useState([...breadcrumbs]);
 

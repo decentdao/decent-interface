@@ -10,13 +10,15 @@ export const useDecentTreasury = () => {
   // tracks the current valid DAO address / chain; helps prevent unnecessary calls
   const loadKey = useRef<string | null>();
   const {
-    node: { daoAddress },
+    node: { safe },
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
   const { getTokenBalances, getNFTBalances } = useBalancesAPI();
 
   const { chain } = useNetworkConfig();
+
+  const daoAddress = safe?.address;
 
   const loadTreasury = useCallback(async () => {
     if (!daoAddress || !safeAPI) {

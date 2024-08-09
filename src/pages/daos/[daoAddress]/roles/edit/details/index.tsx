@@ -127,7 +127,7 @@ export default function RoleEditDetails() {
   const headerHeight = useHeaderHeight();
   const { t } = useTranslation(['roles']);
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
@@ -144,6 +144,7 @@ export default function RoleEditDetails() {
 
   const backupRoleEditing = useRef(values.roleEditing);
   const backupTouched = useRef(touched.roleEditing);
+  const daoAddress = safe?.address;
 
   if (!isHex(hatEditingId)) return null;
   if (!daoAddress) return null;

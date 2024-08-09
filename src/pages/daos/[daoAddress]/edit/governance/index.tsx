@@ -20,7 +20,7 @@ import {
 
 export default function ModifyGovernancePage() {
   const {
-    node: { daoAddress, safe, daoName, daoSnapshotENS },
+    node: { safe, daoName, daoSnapshotENS },
     governance: { type },
     readOnly: { user },
   } = useFractal();
@@ -30,6 +30,8 @@ export default function ModifyGovernancePage() {
   const isMultisig = type === GovernanceType.MULTISIG;
   const isSigner = user.address && safe?.owners.includes(user.address);
   const deployAzorius = useDeployAzorius();
+
+  const daoAddress = safe?.address;
 
   const handleDeployAzorius: DAOTrigger = (daoData, customNonce) => {
     deployAzorius(

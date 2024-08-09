@@ -60,8 +60,10 @@ export default function RolesDetailsDrawer({
   payments,
 }: RoleDetailsDrawerProps) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
+  const daoAddress = safe?.address;
+
   const { chain } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
   const { daoName: accountDisplayName } = useGetDAOName({

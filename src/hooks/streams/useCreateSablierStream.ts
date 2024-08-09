@@ -36,7 +36,7 @@ export default function useCreateSablierStream() {
     contracts: { sablierV2LockupLinear, sablierV2Batch },
   } = useNetworkConfig();
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
 
   const prepareStreamTokenCallData = useCallback(
@@ -49,6 +49,8 @@ export default function useCreateSablierStream() {
     },
     [sablierV2Batch],
   );
+
+  const daoAddress = safe?.address;
 
   const prepareBasicStreamData = useCallback(
     (recipient: Address, amountInTokenDecimals: bigint) => {

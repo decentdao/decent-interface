@@ -27,11 +27,13 @@ export function StepWrapper({
   shouldWrapChildren = true,
 }: IStepWrapper) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['daoCreate']);
   const navigate = useNavigate();
+
+  const daoAddress = safe?.address;
 
   const isEdit = mode === DAOCreateMode.EDIT;
   return (

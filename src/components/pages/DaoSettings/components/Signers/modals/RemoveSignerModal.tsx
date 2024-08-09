@@ -24,7 +24,7 @@ function RemoveSignerModal({
   currentThreshold: number;
 }) {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
   const [prevSigner, setPrevSigner] = useState<string>('');
@@ -37,6 +37,7 @@ function RemoveSignerModal({
   });
   const { t } = useTranslation(['modals', 'common']);
   const tooltipContainer = useRef<HTMLDivElement>(null);
+  const daoAddress = safe?.address;
 
   useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length - 1 }, (_, i) => i + 1));

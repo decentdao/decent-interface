@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, isHex } from 'viem';
+import { Address, getAddress, isHex } from 'viem';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -17,10 +17,10 @@ const useAddSigner = () => {
       daoAddress,
       close,
     }: {
-      newSigner: string;
+      newSigner: Address;
       threshold: number;
       nonce: number;
-      daoAddress: string | null;
+      daoAddress?: Address;
       close: () => void;
     }) => {
       if (!baseContracts || !daoAddress) {

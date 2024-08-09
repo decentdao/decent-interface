@@ -33,13 +33,14 @@ export default function RoleFormTabs({
 }) {
   const { hatsTree } = useRolesStore();
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
   const { editedRoleData, isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue, setTouched } = useFormikContext<RoleFormValues>();
+  const daoAddress = safe?.address;
 
   useEffect(() => {
     if (values.hats.length && !values.roleEditing) {

@@ -25,10 +25,12 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   }, [values.hats]);
 
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
+
+  const daoAddress = safe?.address;
 
   const handleEditRoleClick = useCallback(
     (hatId: Hex) => {

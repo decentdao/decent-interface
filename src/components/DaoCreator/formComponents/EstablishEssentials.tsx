@@ -24,10 +24,12 @@ export function EstablishEssentials(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, errors, mode } = props;
 
   const {
-    node: { daoName, daoSnapshotENS, daoAddress },
+    node: { daoName, daoSnapshotENS, safe },
   } = useFractal();
 
   const isEdit = mode === DAOCreateMode.EDIT;
+
+  const daoAddress = safe?.address;
 
   useEffect(() => {
     if (isEdit) {

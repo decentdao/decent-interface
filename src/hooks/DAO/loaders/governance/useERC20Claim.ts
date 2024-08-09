@@ -9,11 +9,14 @@ import useSafeContracts from '../../../safe/useSafeContracts';
 
 export function useERC20Claim() {
   const {
-    node: { daoAddress },
+    node: { safe },
     governanceContracts: { votesTokenContractAddress },
     action,
   } = useFractal();
   const baseContracts = useSafeContracts();
+
+  const daoAddress = safe?.address;
+
   const loadTokenClaimContract = useCallback(async () => {
     if (!baseContracts || !votesTokenContractAddress) {
       return;

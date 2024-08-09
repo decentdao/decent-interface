@@ -9,7 +9,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 export default function HierarchyPage() {
   const {
     node: {
-      daoAddress,
+      safe,
       daoName,
       nodeHierarchy: { parentAddress },
       isHierarchyLoaded,
@@ -18,6 +18,8 @@ export default function HierarchyPage() {
   const { t } = useTranslation('breadcrumbs');
 
   const HEADER_HEIGHT = useHeaderHeight();
+
+  const daoAddress = safe?.address;
 
   if (!daoAddress || !isHierarchyLoaded) {
     return (

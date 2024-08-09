@@ -38,7 +38,7 @@ export default function useUserERC721VotingTokens(
 
   const signerOrProvider = useSignerOrProvider();
   const {
-    node: { daoAddress },
+    node: { safe },
     governanceContracts: { erc721LinearVotingContractAddress },
     governance,
     readOnly: { user },
@@ -49,6 +49,8 @@ export default function useUserERC721VotingTokens(
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { erc721Tokens } = azoriusGovernance;
+
+  const daoAddress = safe?.address;
 
   const getUserERC721VotingTokens = useCallback(
     async (_safeAddress: string | null, _proposalId?: string) => {

@@ -24,7 +24,7 @@ import {
   AllTransactionsListResponse,
 } from '@safe-global/api-kit';
 import { Dispatch } from 'react';
-import { Address } from 'viem';
+import { Address, Hex } from 'viem';
 import { MultiSend } from '../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
@@ -154,7 +154,7 @@ export interface ActivityBase {
   eventDate: Date;
   eventType: ActivityEventType;
   transaction?: ActivityTransactionType;
-  transactionHash: string;
+  transactionHash: Hex;
 }
 
 export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal | SnapshotProposal;
@@ -229,11 +229,10 @@ export interface FractalGovernanceContracts {
   isLoaded: boolean;
 }
 
-export type SafeWithNextNonce = SafeInfoResponse & { nextNonce: number };
+export type SafeWithNextNonce = SafeInfoResponse & { nextNonce: number; address: Address };
 
 export interface FractalNode {
   daoName: string | null;
-  daoAddress: Address | null;
   safe: SafeWithNextNonce | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
@@ -244,11 +243,13 @@ export interface FractalNode {
 }
 
 export interface Node
-  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {}
+  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {
+  daoAddress: Address; // TODO: Gotta try to get rid of this and use `safe.address` EVERYWHERE (may or may not be possible, depending on subgraph query result data structure)
+}
 
 export interface FractalModuleData {
   moduleContract: Azorius | FractalModule | undefined;
-  moduleAddress: string;
+  moduleAddress: Address;
   moduleType: FractalModuleType;
 }
 

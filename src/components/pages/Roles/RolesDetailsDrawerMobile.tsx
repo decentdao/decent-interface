@@ -33,10 +33,12 @@ export default function RolesDetailsDrawerMobile({
   payments,
 }: RoleDetailsDrawerMobileProps) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { t } = useTranslation('roles');
   const { hatsTree } = useRolesStore();
+
+  const daoAddress = safe?.address;
 
   if (!daoAddress || !hatsTree) return null;
 
