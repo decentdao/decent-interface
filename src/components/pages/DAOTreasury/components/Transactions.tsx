@@ -111,10 +111,10 @@ function EmptyTransactions() {
 
 export function Transactions({ shownTransactions }: { shownTransactions: number }) {
   const {
-    treasury: { transfers },
+    treasury: { transfers, transfersLoaded, transfersLoading },
   } = useFractal();
 
-  if (!transfers || transfers.length === 0) return <EmptyTransactions />;
+  if (!transfers || (transfers.length === 0 && transfersLoaded)) return <EmptyTransactions />;
 
   return (
     <Box
@@ -127,6 +127,7 @@ export function Transactions({ shownTransactions }: { shownTransactions: number 
           displayData={transfer}
         />
       ))}
+      {(transfersLoading || !transfersLoaded) && <Box>{/* @todo add Wave Loader */}</Box>}
     </Box>
   );
 }

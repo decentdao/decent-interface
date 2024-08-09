@@ -63,7 +63,7 @@ export const useDecentTreasury = () => {
     if (!daoAddress || !safeAPI) {
       return;
     }
-
+    action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADING, payload: true });
     const [
       transfers,
       { data: tokenBalances, error: tokenBalancesError },
@@ -85,34 +85,49 @@ export const useDecentTreasury = () => {
 
     const totalUsdValue = assetsFungible.reduce((prev, curr) => prev + (curr.usdValue || 0), 0);
 
-    const transfersWithTokenInfo = await Promise.all(
-      transfers.results.map(async (transfer, _, _transfers) => {
-        let tokenData: TokenInfoResponse | undefined;
-        if (transfer.tokenAddress) {
-          tokenData = await safeAPI.getToken(getAddress(transfer.tokenAddress));
-        }
-        // @note When would there be a transfer with no token address? Should this just throw an error?
-        tokenData = {
+    const treasuryData = {
+      assetsFungible,
+      assetsNonFungible,
+      totalUsdValue,
+    };
+
+    action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
+
+    await Promise.all(
+      transfers.results.map(async (transfer, index, _transfers) => {
+        // @note assume native token if no token address
+        let tokenData: TokenInfoResponse = {
           address: '0x',
           name: chain.nativeCurrency.name,
           symbol: chain.nativeCurrency.symbol,
           decimals: chain.nativeCurrency.decimals,
           logoUri: nativeTokenIcon,
         };
+
+        if (transfer.tokenAddress) {
+          try {
+            tokenData = await safeAPI.getToken(getAddress(transfer.tokenAddress));
+          } catch (e) {
+            setTimeout(async () => {
+              // @note retry fetching token data in case of rate limit
+              if (transfer.tokenAddress) {
+                tokenData = await safeAPI.getToken(getAddress(transfer.tokenAddress));
+              }
+            }, 300);
+          }
+        }
         const formattedTransfer: TransferDisplayData = formatTransfer({
           transfer: { ...transfer, tokenInfo: tokenData },
           isLast: _transfers[_transfers.length - 1] === transfer,
         });
-        return formattedTransfer;
+        action.dispatch({ type: TreasuryAction.ADD_TRANSFER, payload: formattedTransfer });
+        if (_transfers.length - 1 === index) {
+          action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED, payload: true });
+        }
       }),
     );
-    const treasuryData = {
-      assetsFungible,
-      assetsNonFungible,
-      transfers: transfersWithTokenInfo,
-      totalUsdValue,
-    };
-    action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
+
+    action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADING, payload: false });
   }, [
     daoAddress,
     safeAPI,
@@ -127,7 +142,7 @@ export const useDecentTreasury = () => {
   useEffect(() => {
     if (daoAddress && chain.id + daoAddress !== loadKey.current) {
       loadKey.current = chain.id + daoAddress;
-      setMethodOnInterval(loadTreasury);
+      loadTreasury();
     }
     if (!daoAddress) {
       loadKey.current = null;
