@@ -92,14 +92,12 @@ export const useSafeTransactions = () => {
             return activity;
           }
 
-          const multiSigTransaction = activity.transaction;
-
           let state;
-          if (multiSigTransaction.isExecuted) {
+          if (activity.transaction.isExecuted) {
             state = FractalProposalState.EXECUTED;
-          } else if (isRejected(activityArr, multiSigTransaction)) {
+          } else if (isRejected(activityArr, activity.transaction)) {
             state = FractalProposalState.REJECTED;
-          } else if (isApproved(multiSigTransaction)) {
+          } else if (isApproved(activity.transaction)) {
             state = FractalProposalState.EXECUTABLE;
           } else {
             state = FractalProposalState.ACTIVE;

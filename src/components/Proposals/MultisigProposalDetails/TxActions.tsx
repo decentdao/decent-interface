@@ -50,28 +50,27 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const [contractCall, contractCallPending] = useTransaction();
   const { loadSafeMultisigProposals } = useSafeMultisigProposals();
   const baseContracts = useSafeContracts();
-  if (user.votingWeight === 0n) return <></>;
+  if (user.votingWeight === 0n) return null;
 
-  const multisigTx = proposal.transaction;
-
-  if (!multisigTx) return null;
+  if (!proposal.transaction) return null;
 
   const signTransaction = async () => {
     if (
       !signerOrProvider ||
       !safe?.address ||
-      (multisigTx.data && !isHex(multisigTx.data)) ||
+      !proposal.transaction ||
+      (proposal.transaction.data && !isHex(proposal.transaction.data)) ||
       !safeAPI
     ) {
       return;
     }
     try {
       const safeTx = buildSafeTransaction({
-        ...multisigTx,
-        to: getAddress(multisigTx.to),
-        value: BigInt(multisigTx.value),
-        data: multisigTx.data as Hex | undefined,
-        operation: multisigTx.operation as 0 | 1,
+        ...proposal.transaction,
+        to: getAddress(proposal.transaction.to),
+        value: BigInt(proposal.transaction.value),
+        data: proposal.transaction.data as Hex | undefined,
+        operation: proposal.transaction.operation as 0 | 1,
       });
 
       asyncRequest({
@@ -97,22 +96,23 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const timelockTransaction = async () => {
     try {
       if (
-        !multisigTx.confirmations ||
+        !proposal.transaction ||
+        !proposal.transaction.confirmations ||
         !baseContracts ||
         !freezeGuardContractAddress ||
-        (multisigTx.data && !isHex(multisigTx.data))
+        (proposal.transaction.data && !isHex(proposal.transaction.data))
       ) {
         return;
       }
       const safeTx = buildSafeTransaction({
-        ...multisigTx,
-        to: getAddress(multisigTx.to),
-        value: BigInt(multisigTx.value),
-        data: multisigTx.data as Hex | undefined,
-        operation: multisigTx.operation as 0 | 1,
+        ...proposal.transaction,
+        to: getAddress(proposal.transaction.to),
+        value: BigInt(proposal.transaction.value),
+        data: proposal.transaction.data as Hex | undefined,
+        operation: proposal.transaction.operation as 0 | 1,
       });
       const signatures = buildSignatureBytes(
-        multisigTx.confirmations.map(confirmation => {
+        proposal.transaction.confirmations.map(confirmation => {
           if (!isHex(confirmation.signature)) {
             throw new Error('Confirmation signature is malfunctioned');
           }
@@ -157,24 +157,25 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
     try {
       if (
         !signerOrProvider ||
+        !proposal.transaction ||
         !safe?.address ||
-        !multisigTx.confirmations ||
-        (multisigTx.data && !isHex(multisigTx.data))
+        !proposal.transaction.confirmations ||
+        (proposal.transaction.data && !isHex(proposal.transaction.data))
       ) {
         return;
       }
       const safeContract = GnosisSafeL2__factory.connect(safe.address, signerOrProvider);
 
       const safeTx = buildSafeTransaction({
-        ...multisigTx,
-        to: getAddress(multisigTx.to),
-        value: BigInt(multisigTx.value),
-        data: multisigTx.data as Hex | undefined,
-        operation: multisigTx.operation as 0 | 1,
+        ...proposal.transaction,
+        to: getAddress(proposal.transaction.to),
+        value: BigInt(proposal.transaction.value),
+        data: proposal.transaction.data as Hex | undefined,
+        operation: proposal.transaction.operation as 0 | 1,
       });
 
       const signatures = buildSignatureBytes(
-        multisigTx.confirmations.map(confirmation => {
+        proposal.transaction.confirmations.map(confirmation => {
           if (!isHex(confirmation.signature)) {
             throw new Error('Confirmation signature is malfunctioned');
           }
@@ -256,7 +257,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       pageTitle: 'executeTitle',
     },
   };
-  const isActiveNonce = !!safe && multisigTx.nonce === safe.nonce;
+  const isActiveNonce = !!safe && proposal.transaction.nonce === safe.nonce;
   const isButtonDisabled =
     isSubmitDisabled ||
     isPending ||
