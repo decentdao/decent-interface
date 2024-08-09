@@ -32,7 +32,7 @@ import { ERC721TokenData, VotesTokenData } from './account';
 import { ContractConnection } from './contract';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
-import { NFTBalance, TokenBalance } from './daoTreasury';
+import { NFTBalance, TokenBalance, TokenEventType, TransferType } from './daoTreasury';
 import { ProposalTemplate } from './proposalBuilder';
 import { BIFormattedPair } from './votingFungibleToken';
 /**
@@ -268,12 +268,12 @@ export interface FreezeGuard {
   userHasVotes: boolean;
 }
 
-export type TransfersWithTokenInfo = TransferResponse & { tokenInfo: TokenInfoResponse };
+export type TransferWithTokenInfo = TransferResponse & { tokenInfo: TokenInfoResponse };
 export interface DecentTreasury {
   totalUsdValue: number;
   assetsFungible: TokenBalance[];
   assetsNonFungible: NFTBalance[];
-  transfers?: TransfersWithTokenInfo[];
+  transfers?: TransferDisplayData[];
 }
 
 export type FractalGovernance = AzoriusGovernance | DecentGovernance | SafeMultisigGovernance;
@@ -372,4 +372,18 @@ export interface ReadOnlyUser {
 export interface ReadOnlyDAO {
   /** Whether the connected DAO is an Azorius DAO.  */
   isAzorius: boolean;
+}
+
+export interface TransferDisplayData {
+  eventType: TokenEventType;
+  transferType: TransferType;
+  executionDate: string;
+  image: string;
+  assetDisplay: string;
+  fullCoinTotal: string | undefined;
+  transferAddress: string;
+  isLast: boolean;
+  transactionHash: string;
+  tokenId: string;
+  tokenInfo?: TokenInfoResponse;
 }
