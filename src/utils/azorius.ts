@@ -18,7 +18,6 @@ import {
   ProposalVote,
   ProposalData,
   AzoriusProposal,
-  ActivityEventType,
   Parameter,
   DataDecoded,
   FractalModuleData,
@@ -230,7 +229,6 @@ export const mapProposalCreatedEventToProposal = async (
   }
 
   const proposal: AzoriusProposal = {
-    eventType: ActivityEventType.Governance,
     eventDate: new Date(block.timestamp * 1000),
     proposalId: proposalId.toString(),
     targets,

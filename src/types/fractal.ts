@@ -147,7 +147,6 @@ export interface GovernanceActivity extends ActivityBase {
 
 export interface ActivityBase {
   eventDate: Date;
-  eventType: ActivityEventType;
   transaction?: ActivityTransactionType;
   transactionHash: string;
 }
@@ -155,11 +154,6 @@ export interface ActivityBase {
 export type Activity = MultisigProposal | AzoriusProposal | SnapshotProposal;
 
 export type ActivityTransactionType = SafeMultisigTransactionResponse;
-
-export enum ActivityEventType {
-  Treasury,
-  Governance,
-}
 
 export enum SafeTransferType {
   ERC721 = 'ERC721_TRANSFER',

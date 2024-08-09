@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
-import { ActivityEventType, Activity, FractalProposalState } from '../../types';
+import { Activity, FractalProposalState } from '../../types';
 import { parseDecodedData } from '../../utils';
 import { getAverageBlockTime } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
@@ -32,7 +32,7 @@ export const useSafeTransactions = () => {
       if (freezeGuard && freezeGuardData && provider) {
         return Promise.all(
           activities.map(async (activity, _, activityArr) => {
-            if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
+            if (!activity.transaction) {
               return activity;
             }
 
@@ -86,7 +86,7 @@ export const useSafeTransactions = () => {
         );
       } else {
         return activities.map((activity, _, activityArr) => {
-          if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
+          if (!activity.transaction) {
             return activity;
           }
 
@@ -118,8 +118,6 @@ export const useSafeTransactions = () => {
           const eventDate = new Date(transaction.submissionDate);
 
           const eventSafeTxHash = transaction.safeTxHash;
-
-          const eventType = ActivityEventType.Governance;
 
           const eventNonce = transaction.nonce;
 
@@ -155,7 +153,6 @@ export const useSafeTransactions = () => {
           const activity: Activity = {
             transaction,
             eventDate,
-            eventType,
             confirmations,
             signersThreshold: transaction.confirmationsRequired,
             multisigRejectedProposalNumber:
