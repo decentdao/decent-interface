@@ -1,7 +1,7 @@
 import { TokenInfoResponse } from '@safe-global/api-kit';
 import { useEffect, useCallback, useRef } from 'react';
 import { toast } from 'react-toastify';
-import { getAddress } from 'viem';
+import { Address, getAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -92,11 +92,15 @@ export const useDecentTreasury = () => {
     };
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
-    const uniqueTokenAddress = new Set(
-      transfers.results
-        .map(transfer => (transfer.tokenAddress ? getAddress(transfer.tokenAddress) : undefined))
-        .filter(addr => !!addr),
-    );
+    const tokenAddresses: Address[] = [];
+    transfers.results.forEach(transfer => {
+      // @note the build fails if not explicitly defined as a variable
+      const transferTokenAddress = transfer.tokenAddress;
+      if (transferTokenAddress) {
+        tokenAddresses.push(getAddress(transfer.tokenAddress));
+      }
+    });
+    const uniqueTokenAddress = new Set(tokenAddresses);
 
     const tokenData = await Promise.all(
       Array.from(uniqueTokenAddress).map(async addr => {
@@ -111,7 +115,7 @@ export const useDecentTreasury = () => {
           }, 300);
         }
       }),
-    ).then(tokens => tokens.filter(token => !!token));
+    );
 
     transfers.results
       .sort((a, b) => b.blockNumber - a.blockNumber)
@@ -124,14 +128,14 @@ export const useDecentTreasury = () => {
           decimals: chain.nativeCurrency.decimals,
           logoUri: nativeTokenIcon,
         };
-
-        const token = tokenData.find(
-          _token =>
-            transfer.tokenAddress &&
-            getAddress(_token.address) === getAddress(transfer.tokenAddress),
-        );
-        if (token) {
-          tokenInfo = token;
+        const transferTokenAddress = transfer.tokenAddress;
+        if (transferTokenAddress) {
+          const token = tokenData.find(
+            _token => _token && getAddress(_token.address) === getAddress(transferTokenAddress),
+          );
+          if (token) {
+            tokenInfo = token;
+          }
         }
 
         const formattedTransfer: TransferDisplayData = formatTransfer({
