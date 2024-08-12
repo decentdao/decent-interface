@@ -419,7 +419,7 @@ function StreamBuilder({
               checked={stream.transferable}
               onChange={() => handleUpdateStream(index, { transferable: !stream.transferable })}
             />
-            <Text>Transferrable</Text>
+            <Text>Transferable</Text>
           </Flex>
           <Text color="neutral-7">
             Can this stream be transferred by the recipient to another recipient?
