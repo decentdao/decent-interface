@@ -1,6 +1,6 @@
 import { Alert, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ICreationStepProps, VotingStrategyType } from '../../../types';

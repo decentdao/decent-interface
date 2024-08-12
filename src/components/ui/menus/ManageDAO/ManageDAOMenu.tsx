@@ -1,7 +1,7 @@
 import { Icon, IconButton } from '@chakra-ui/react';
 import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { GearFine } from '@phosphor-icons/react';
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -21,8 +21,8 @@ import {
   FractalGuardContracts,
   FractalNode,
   FreezeGuard,
-  GovernanceType,
   FreezeVotingType,
+  GovernanceType,
 } from '../../../../types';
 import { getAzoriusModuleFromModules } from '../../../../utils';
 import { SENTINEL_MODULE } from '../../../../utils/address';

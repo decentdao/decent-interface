@@ -3,10 +3,10 @@ import {
   AccordionButton,
   AccordionItem,
   AccordionPanel,
+  Alert,
   Box,
   Button,
   Center,
-  Divider,
   Flex,
   Grid,
   GridItem,
@@ -16,7 +16,15 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { CaretDown, CaretLeft, CaretRight, MinusCircle, Plus, Trash } from '@phosphor-icons/react';
+import {
+  CaretDown,
+  CaretLeft,
+  CaretRight,
+  MinusCircle,
+  Plus,
+  Trash,
+  WarningCircle,
+} from '@phosphor-icons/react';
 import {
   Dispatch,
   FormEvent,
@@ -43,7 +51,8 @@ import PageHeader from '../../../../../../components/ui/page/Header/PageHeader';
 import Markdown from '../../../../../../components/ui/proposal/Markdown';
 import CeleryButtonWithIcon from '../../../../../../components/ui/utils/CeleryButtonWithIcon';
 import { CeleryTextLink } from '../../../../../../components/ui/utils/CeleryTextLink';
-import { useHeaderHeight } from '../../../../../../constants/common';
+import Divider from '../../../../../../components/ui/utils/Divider';
+import { SECONDS_IN_DAY, useHeaderHeight } from '../../../../../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../../constants/routes';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../../../hooks/utils/useCanUserSubmitProposal';
@@ -224,12 +233,27 @@ function ProposalMetadata({
   );
 }
 
+type Tranche = {
+  amount: BigIntValuePair;
+  duration: BigIntValuePair;
+};
+
+const DEFAULT_TRANCHE: Tranche = {
+  amount: {
+    value: '0',
+    bigintValue: 0n,
+  },
+  duration: {
+    value: (SECONDS_IN_DAY * 14).toString(),
+    bigintValue: BigInt(SECONDS_IN_DAY * 14),
+  },
+};
 const DEFAULT_STREAM: Stream = {
   type: 'tranched',
   tokenAddress: '',
   recipientAddress: '',
   startDate: new Date(),
-  tranches: [],
+  tranches: [DEFAULT_TRANCHE],
   totalAmount: {
     value: '0',
     bigintValue: 0n,
@@ -237,11 +261,11 @@ const DEFAULT_STREAM: Stream = {
 };
 
 type Stream = {
-  type: 'linear' | 'dynamic' | 'tranched';
+  type: 'tranched';
   tokenAddress: string;
   recipientAddress: string;
   startDate: Date;
-  tranches: {}[];
+  tranches: Tranche[];
   totalAmount: BigIntValuePair;
 };
 
@@ -260,6 +284,7 @@ function StreamBuilder({
   const [tokenDecimals, setTokenDecimals] = useState(0);
   const [rawTokenBalance, setRawTokenBalnace] = useState(0n);
   const [tokenBalanceFormatted, setTokenBalanceFormatted] = useState('');
+  const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
   const {
     node: { daoAddress },
   } = useFractal();
@@ -314,6 +339,10 @@ function StreamBuilder({
           testId="stream.tokenAddress"
           onChange={e => handleUpdateStream(index, { tokenAddress: e.target.value })}
         />
+        <Divider
+          variant="light"
+          my="1rem"
+        />
         <InputComponent
           label="Recipient Address"
           helper="Who will be recipient of this stream - only owner of this address will be able to receive tokens."
@@ -331,9 +360,19 @@ function StreamBuilder({
           testId="stream.recipientAddress"
           onChange={e => handleUpdateStream(index, { recipientAddress: e.target.value })}
         />
+        <Divider
+          variant="light"
+          my="1rem"
+        />
         <LabelComponent
           label="Stream Total Amount"
           helper="The total amount of token to stream. Has to be equal to the sum of tranches amount"
+          subLabel={
+            <HStack textStyle="helper-text-base">
+              <Text>{t('example', { ns: 'common' })}:</Text>
+              <ExampleLabel>10000</ExampleLabel>
+            </HStack>
+          }
           isRequired
         >
           <BigIntInput
@@ -343,6 +382,191 @@ function StreamBuilder({
             maxValue={rawTokenBalance}
           />
         </LabelComponent>
+        <Divider
+          variant="light"
+          my="1rem"
+        />
+        <Box mt="1.5rem">
+          <Accordion
+            allowMultiple
+            index={expandedIndecies}
+          >
+            {stream.tranches.map((tranche, trancheIndex) => (
+              <AccordionItem
+                key={trancheIndex}
+                borderTop="none"
+                borderBottom="none"
+                padding="1rem"
+                borderRadius={4}
+                bg="neutral-3"
+                px={0}
+                py="1.5rem"
+              >
+                {({ isExpanded }) => (
+                  <>
+                    <Box>
+                      {/* STREAM TRANCHE HEADER */}
+                      <HStack
+                        px="1.5rem"
+                        justify="space-between"
+                      >
+                        <AccordionButton
+                          onClick={() => {
+                            setExpandedIndecies(indexArray => {
+                              if (indexArray.includes(trancheIndex)) {
+                                const newTxArr = [...indexArray];
+                                newTxArr.splice(newTxArr.indexOf(trancheIndex), 1);
+                                return newTxArr;
+                              } else {
+                                return [...indexArray, trancheIndex];
+                              }
+                            });
+                          }}
+                          p={0}
+                          textStyle="display-lg"
+                          color="lilac-0"
+                        >
+                          <Text textStyle="display-lg">
+                            <Flex
+                              alignItems="center"
+                              gap={2}
+                            >
+                              {isExpanded ? <CaretDown /> : <CaretRight />}
+                              Tranche {trancheIndex + 1}
+                            </Flex>
+                          </Text>
+                        </AccordionButton>
+
+                        {/* Remove tranche button */}
+                        {trancheIndex !== 0 || stream.tranches.length !== 1 ? (
+                          <IconButton
+                            icon={<MinusCircle />}
+                            aria-label="Remove tranche"
+                            variant="unstyled"
+                            onClick={() =>
+                              handleUpdateStream(index, {
+                                tranches: stream.tranches.filter(
+                                  (_, removedTrancheIndex) => removedTrancheIndex !== trancheIndex,
+                                ),
+                              })
+                            }
+                            minWidth="auto"
+                            color="lilac-0"
+                            _disabled={{ opacity: 0.4, cursor: 'default' }}
+                            sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
+                            isDisabled={pendingTransaction}
+                          />
+                        ) : (
+                          <Box h="2.25rem" />
+                        )}
+                      </HStack>
+
+                      {/* STREAM TRANCHE SECTION */}
+                      <AccordionPanel p={0}>
+                        <Flex mt="1rem">
+                          <Box
+                            px="1.5rem"
+                            w="100%"
+                          >
+                            <Box mt={4}>
+                              <LabelComponent
+                                isRequired
+                                label="Tranche amount"
+                                subLabel={
+                                  <HStack wordBreak="break-all">
+                                    <Text>
+                                      {t('example', { ns: 'common' })}:{' '}
+                                      <ExampleLabel bg="neutral-4">1000</ExampleLabel>
+                                    </Text>
+                                  </HStack>
+                                }
+                              >
+                                <BigIntInput
+                                  isRequired
+                                  value={tranche.amount.bigintValue}
+                                  decimalPlaces={tokenDecimals}
+                                  placeholder="1000"
+                                  onChange={value =>
+                                    handleUpdateStream(index, {
+                                      tranches: stream.tranches.map((item, updatedTrancheIndex) =>
+                                        updatedTrancheIndex === trancheIndex
+                                          ? { ...item, amount: value }
+                                          : item,
+                                      ),
+                                    })
+                                  }
+                                />
+                              </LabelComponent>
+                            </Box>
+                            <Box mt={4}>
+                              <LabelComponent
+                                isRequired
+                                label="Tranche duration"
+                                subLabel={
+                                  <VStack wordBreak="break-all">
+                                    <Text>Duration in seconds</Text>
+                                    <Text>
+                                      {t('example', { ns: 'common' })}:{' '}
+                                      <ExampleLabel bg="neutral-4">
+                                        {SECONDS_IN_DAY * 30} (1 month)
+                                      </ExampleLabel>
+                                    </Text>
+                                  </VStack>
+                                }
+                              >
+                                <BigIntInput
+                                  isRequired
+                                  value={tranche.duration.bigintValue}
+                                  placeholder={(SECONDS_IN_DAY * 365).toString()}
+                                  decimalPlaces={1}
+                                  onChange={value =>
+                                    handleUpdateStream(index, {
+                                      tranches: stream.tranches.map((item, updatedTrancheIndex) =>
+                                        updatedTrancheIndex === trancheIndex
+                                          ? { ...item, duration: value }
+                                          : item,
+                                      ),
+                                    })
+                                  }
+                                />
+                              </LabelComponent>
+                            </Box>
+                            <Divider
+                              variant="light"
+                              my="1rem"
+                            />
+                          </Box>
+                        </Flex>
+                      </AccordionPanel>
+                    </Box>
+
+                    {!isExpanded && (
+                      <Divider
+                        variant="light"
+                        mt="0.5rem"
+                      />
+                    )}
+
+                    {/* ADD TRANCHE BUTTON */}
+                    {trancheIndex === stream.tranches.length - 1 && (
+                      <CeleryButtonWithIcon
+                        onClick={() => {
+                          handleUpdateStream(index, {
+                            tranches: [...stream.tranches, DEFAULT_TRANCHE],
+                          });
+                          setExpandedIndecies([stream.tranches.length]);
+                          scrollToBottom(100, 'smooth');
+                        }}
+                        icon={Plus}
+                        text="Add tranche"
+                      />
+                    )}
+                  </>
+                )}
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </Box>
       </VStack>
     </AccordionPanel>
   );
@@ -363,8 +587,11 @@ function StreamsBuilder({
     );
   };
   return (
-    <Box py="1.5rem">
-      <Accordion allowMultiple>
+    <Box>
+      <Accordion
+        allowMultiple
+        defaultIndex={[0]}
+      >
         {streams.map((stream, index) => (
           <AccordionItem
             key={index}
@@ -375,7 +602,8 @@ function StreamsBuilder({
             {({ isExpanded }) => (
               <Box borderRadius={4}>
                 <AccordionButton
-                  p="0.25rem"
+                  py="0.25rem"
+                  px="1.5rem"
                   textStyle="display-lg"
                   color="lilac-0"
                 >
@@ -417,21 +645,40 @@ function StreamsBuilder({
                   index={index}
                   pendingTransaction={pendingTransaction}
                 />
+                <Box
+                  mt="1.5rem"
+                  px="1.5rem"
+                >
+                  <Alert status="info">
+                    <WarningCircle size="24" />
+                    <Text
+                      textStyle="body-base-strong"
+                      whiteSpace="pre-wrap"
+                      ml="1rem"
+                    >
+                      Stream will be started in the moment of proposal execution. In order to
+                      {` "emulate"`} delay of stream start - first tranche should have amount set to
+                      0 with desired {`"delay"`} duration.
+                    </Text>
+                  </Alert>
+                </Box>
               </Box>
             )}
           </AccordionItem>
         ))}
       </Accordion>
       <Divider my="1.5rem" />
-      <CeleryButtonWithIcon
-        onClick={() => {
-          setStreams(prevState => [...prevState, DEFAULT_STREAM]);
-          scrollToBottom(100, 'smooth');
-        }}
-        isDisabled={pendingTransaction}
-        icon={Plus}
-        text="Add stream"
-      />
+      <Box p="1.5rem">
+        <CeleryButtonWithIcon
+          onClick={() => {
+            setStreams(prevState => [...prevState, DEFAULT_STREAM]);
+            scrollToBottom(100, 'smooth');
+          }}
+          isDisabled={pendingTransaction}
+          icon={Plus}
+          text="Add stream"
+        />
+      </Box>
     </Box>
   );
 }
