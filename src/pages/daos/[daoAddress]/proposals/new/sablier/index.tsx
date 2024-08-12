@@ -1,29 +1,47 @@
 import {
-  Center,
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
   Box,
-  Grid,
-  Flex,
-  GridItem,
   Button,
-  Icon,
-  VStack,
-  Text,
-  HStack,
+  Center,
   Divider,
+  Flex,
+  Grid,
+  GridItem,
+  HStack,
+  Icon,
+  IconButton,
+  Text,
+  VStack,
 } from '@chakra-ui/react';
-import { Trash, CaretRight, CaretLeft } from '@phosphor-icons/react';
-import { Dispatch, FormEvent, SetStateAction, useMemo, useState, useCallback } from 'react';
+import { CaretDown, CaretLeft, CaretRight, MinusCircle, Plus, Trash } from '@phosphor-icons/react';
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation, Routes, Navigate, Route } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Address, Hash } from 'viem';
+import { Address, erc20Abi, formatUnits, getContract, Hash, isAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
+import { BigIntInput } from '../../../../../../components/ui/forms/BigIntInput';
+import ExampleLabel from '../../../../../../components/ui/forms/ExampleLabel';
 import {
   InputComponent,
+  LabelComponent,
   TextareaComponent,
 } from '../../../../../../components/ui/forms/InputComponent';
 import { BarLoader } from '../../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../../components/ui/page/Header/PageHeader';
 import Markdown from '../../../../../../components/ui/proposal/Markdown';
+import CeleryButtonWithIcon from '../../../../../../components/ui/utils/CeleryButtonWithIcon';
 import { CeleryTextLink } from '../../../../../../components/ui/utils/CeleryTextLink';
 import { useHeaderHeight } from '../../../../../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../../constants/routes';
@@ -31,7 +49,8 @@ import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitPro
 import { useCanUserCreateProposal } from '../../../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { CreateProposalSteps } from '../../../../../../types';
+import { BigIntValuePair, CreateProposalSteps } from '../../../../../../types';
+import { scrollToBottom } from '../../../../../../utils/ui';
 
 function StepButtons({
   values: { proposalMetadata },
@@ -205,8 +224,216 @@ function ProposalMetadata({
   );
 }
 
-function StreamBuilder() {
-  return <p>I am stream builder</p>;
+const DEFAULT_STREAM: Stream = {
+  type: 'tranched',
+  tokenAddress: '',
+  recipientAddress: '',
+  startDate: new Date(),
+  tranches: [],
+  totalAmount: {
+    value: '0',
+    bigintValue: 0n,
+  },
+};
+
+type Stream = {
+  type: 'linear' | 'dynamic' | 'tranched';
+  tokenAddress: string;
+  recipientAddress: string;
+  startDate: Date;
+  tranches: {}[];
+  totalAmount: BigIntValuePair;
+};
+
+function StreamBuilder({
+  stream,
+  handleUpdateStream,
+  index,
+  pendingTransaction,
+}: {
+  stream: Stream;
+  handleUpdateStream: (streamIndex: number, values: Partial<Stream>) => void;
+  index: number;
+  pendingTransaction: boolean;
+}) {
+  const publicClient = usePublicClient();
+  const [tokenDecimals, setTokenDecimals] = useState(0);
+  const [rawTokenBalance, setRawTokenBalnace] = useState(0n);
+  const [tokenBalanceFormatted, setTokenBalanceFormatted] = useState('');
+  const {
+    node: { daoAddress },
+  } = useFractal();
+  const { t } = useTranslation(['common']);
+
+  useEffect(() => {
+    const fetchFormattedTokenBalance = async () => {
+      if (publicClient && daoAddress && stream.tokenAddress && isAddress(stream.tokenAddress)) {
+        const tokenContract = getContract({
+          abi: erc20Abi,
+          client: publicClient,
+          address: stream.tokenAddress,
+        });
+        const [tokenBalance, decimals, symbol, name] = await Promise.all([
+          tokenContract.read.balanceOf([daoAddress]),
+          tokenContract.read.decimals(),
+          tokenContract.read.symbol(),
+          tokenContract.read.name(),
+        ]);
+        setTokenDecimals(decimals);
+        setRawTokenBalnace(tokenBalance);
+        if (tokenBalance > 0n) {
+          const balanceFormatted = formatUnits(tokenBalance, decimals);
+          setTokenBalanceFormatted(`${balanceFormatted} ${symbol} (${name})`);
+        }
+      }
+    };
+
+    fetchFormattedTokenBalance();
+  }, [daoAddress, publicClient, stream.tokenAddress]);
+  return (
+    <AccordionPanel p={0}>
+      <VStack
+        align="left"
+        px="1.5rem"
+        mt={6}
+      >
+        <InputComponent
+          label="Streamed Token Address"
+          helper={`Treasury balance: ${tokenBalanceFormatted}`}
+          placeholder="0x0000"
+          isRequired
+          disabled={pendingTransaction}
+          subLabel={
+            <HStack textStyle="helper-text-base">
+              <Text>{t('example', { ns: 'common' })}:</Text>
+              <ExampleLabel>0x4168592...</ExampleLabel>
+            </HStack>
+          }
+          isInvalid={!!stream.tokenAddress && !isAddress(stream.tokenAddress)}
+          value={stream.tokenAddress}
+          testId="stream.tokenAddress"
+          onChange={e => handleUpdateStream(index, { tokenAddress: e.target.value })}
+        />
+        <InputComponent
+          label="Recipient Address"
+          helper="Who will be recipient of this stream - only owner of this address will be able to receive tokens."
+          placeholder="0x0000"
+          isRequired
+          disabled={pendingTransaction}
+          subLabel={
+            <HStack textStyle="helper-text-base">
+              <Text>{t('example', { ns: 'common' })}:</Text>
+              <ExampleLabel>0x4168592...</ExampleLabel>
+            </HStack>
+          }
+          isInvalid={!!stream.recipientAddress && !isAddress(stream.recipientAddress)}
+          value={stream.recipientAddress}
+          testId="stream.recipientAddress"
+          onChange={e => handleUpdateStream(index, { recipientAddress: e.target.value })}
+        />
+        <LabelComponent
+          label="Stream Total Amount"
+          helper="The total amount of token to stream. Has to be equal to the sum of tranches amount"
+          isRequired
+        >
+          <BigIntInput
+            value={stream.totalAmount.bigintValue}
+            onChange={value => handleUpdateStream(index, { totalAmount: value })}
+            decimalPlaces={tokenDecimals}
+            maxValue={rawTokenBalance}
+          />
+        </LabelComponent>
+      </VStack>
+    </AccordionPanel>
+  );
+}
+
+function StreamsBuilder({
+  streams,
+  setStreams,
+  pendingTransaction,
+}: {
+  streams: Stream[];
+  setStreams: Dispatch<SetStateAction<Stream[]>>;
+  pendingTransaction: boolean;
+}) {
+  const handleUpdateStream = (streamIndex: number, values: Partial<Stream>) => {
+    setStreams(prevState =>
+      prevState.map((item, index) => (streamIndex === index ? { ...item, ...values } : item)),
+    );
+  };
+  return (
+    <Box py="1.5rem">
+      <Accordion allowMultiple>
+        {streams.map((stream, index) => (
+          <AccordionItem
+            key={index}
+            borderTop="none"
+            borderBottom="none"
+            my="1.5rem"
+          >
+            {({ isExpanded }) => (
+              <Box borderRadius={4}>
+                <AccordionButton
+                  p="0.25rem"
+                  textStyle="display-lg"
+                  color="lilac-0"
+                >
+                  <Flex
+                    alignItems="center"
+                    gap={2}
+                  >
+                    {isExpanded ? <CaretDown /> : <CaretRight />}
+                    <Text
+                      textStyle="display-lg"
+                      textTransform="capitalize"
+                    >
+                      Stream {index + 1} ({stream.type})
+                    </Text>
+                  </Flex>
+                </AccordionButton>
+                {index !== 0 || streams.length !== 1 ? (
+                  <IconButton
+                    icon={<MinusCircle />}
+                    aria-label="Remove stream"
+                    variant="unstyled"
+                    onClick={() =>
+                      setStreams(prevState =>
+                        prevState.filter((_, filteredIndex) => filteredIndex !== index),
+                      )
+                    }
+                    minWidth="auto"
+                    color="lilac-0"
+                    _disabled={{ opacity: 0.4, cursor: 'default' }}
+                    sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
+                    isDisabled={pendingTransaction}
+                  />
+                ) : (
+                  <Box h="2.25rem" />
+                )}
+                <StreamBuilder
+                  stream={stream}
+                  handleUpdateStream={handleUpdateStream}
+                  index={index}
+                  pendingTransaction={pendingTransaction}
+                />
+              </Box>
+            )}
+          </AccordionItem>
+        ))}
+      </Accordion>
+      <Divider my="1.5rem" />
+      <CeleryButtonWithIcon
+        onClick={() => {
+          setStreams(prevState => [...prevState, DEFAULT_STREAM]);
+          scrollToBottom(100, 'smooth');
+        }}
+        isDisabled={pendingTransaction}
+        icon={Plus}
+        text="Add stream"
+      />
+    </Box>
+  );
 }
 
 export default function SablierProposalCreatePage() {
@@ -221,6 +448,7 @@ export default function SablierProposalCreatePage() {
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [streams, setStreams] = useState<Stream[]>([DEFAULT_STREAM]);
   const HEADER_HEIGHT = useHeaderHeight();
 
   const successCallback = () => {
@@ -334,7 +562,13 @@ export default function SablierProposalCreatePage() {
                   />
                   <Route
                     path={CreateProposalSteps.TRANSACTIONS}
-                    element={<StreamBuilder />}
+                    element={
+                      <StreamsBuilder
+                        streams={streams}
+                        setStreams={setStreams}
+                        pendingTransaction={pendingCreateTx}
+                      />
+                    }
                   />
                   <Route
                     path="*"
