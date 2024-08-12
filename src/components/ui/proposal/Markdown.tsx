@@ -1,9 +1,11 @@
 import { Button, Image, Box } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown, { Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import '../../../assets/css/Markdown.css';
+import { getRandomBytes } from '../../../helpers';
+import useSkipTab from '../../../hooks/utils/useSkipTab';
 
 function CustomMarkdownImage({ src, alt }: { src?: string; alt?: string }) {
   const [error, setError] = useState(false);
@@ -37,6 +39,56 @@ interface IMarkdown {
   collapsedLines?: number;
   hideCollapsed?: boolean;
   content: string;
+}
+
+interface IMarkdownContent {
+  children: React.ReactNode;
+  collapsed: boolean;
+  truncate: boolean | undefined;
+  collapsedLines: number;
+  markdownTextContainerRef: React.RefObject<HTMLParagraphElement>;
+}
+
+function MarkdowContentWithoutTabs({
+  children,
+  collapsed,
+  truncate,
+  collapsedLines,
+  markdownTextContainerRef,
+}: IMarkdownContent) {
+  const markdownId = getRandomBytes().toString();
+  useSkipTab(markdownId);
+
+  return (
+    <Box
+      id={markdownId}
+      noOfLines={collapsed || truncate ? collapsedLines : undefined}
+      ref={markdownTextContainerRef}
+      maxWidth="100%"
+      width="100%"
+    >
+      {children}
+    </Box>
+  );
+}
+
+function MarkdowContentWithTabs({
+  children,
+  collapsed,
+  truncate,
+  collapsedLines,
+  markdownTextContainerRef,
+}: IMarkdownContent) {
+  return (
+    <Box
+      noOfLines={collapsed || truncate ? collapsedLines : undefined}
+      ref={markdownTextContainerRef}
+      maxWidth="100%"
+      width="100%"
+    >
+      {children}
+    </Box>
+  );
 }
 
 export default function Markdown({
@@ -87,25 +139,38 @@ export default function Markdown({
     return uri;
   };
 
+  const innerContent = (!hideCollapsed || !collapsed) && (
+    <ReactMarkdown
+      remarkPlugins={truncate ? [] : [remarkGfm]}
+      urlTransform={handleTransformURI}
+      components={MarkdownComponents}
+      className="markdown-body"
+    >
+      {content}
+    </ReactMarkdown>
+  );
+
   return (
     <>
-      <Box
-        noOfLines={collapsed || truncate ? collapsedLines : undefined}
-        ref={markdownTextContainerRef}
-        maxWidth="100%"
-        width="100%"
-      >
-        {(!hideCollapsed || !collapsed) && (
-          <ReactMarkdown
-            remarkPlugins={truncate ? [] : [remarkGfm]}
-            urlTransform={handleTransformURI}
-            components={MarkdownComponents}
-            className="markdown-body"
-          >
-            {content}
-          </ReactMarkdown>
-        )}
-      </Box>
+      {collapsed ? (
+        <MarkdowContentWithoutTabs
+          collapsed={true}
+          truncate={truncate}
+          collapsedLines={collapsedLines}
+          markdownTextContainerRef={markdownTextContainerRef}
+        >
+          {innerContent}
+        </MarkdowContentWithoutTabs>
+      ) : (
+        <MarkdowContentWithTabs
+          collapsed={false}
+          truncate={truncate}
+          collapsedLines={collapsedLines}
+          markdownTextContainerRef={markdownTextContainerRef}
+        >
+          {innerContent}
+        </MarkdowContentWithTabs>
+      )}
 
       {((hideCollapsed && content) ||
         (totalLines > collapsedLines && !totalLinesError && !truncate)) && (

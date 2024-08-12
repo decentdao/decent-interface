@@ -20,7 +20,7 @@ const a = addresses[chain.id];
 export const baseConfig: NetworkConfig = {
   order: 10,
   chain,
-  rpcEndpoint: `https://base-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_BASE_API_KEY}`,
+  rpcEndpoint: `https://base-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
   moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-base.safe.global',
   etherscanBaseURL: 'https://basescan.org/',

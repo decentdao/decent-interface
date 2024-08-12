@@ -15,7 +15,7 @@ import { NodeActions } from './../providers/App/node/action';
 import { ERC721TokenData, VotesTokenData } from './account';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
 import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
-import { NFTBalance, TokenBalance, TreasuryActivity } from './daoTreasury';
+import { DefiBalance, NFTBalance, TokenBalance, TreasuryActivity } from './daoTreasury';
 import { ProposalTemplate } from './proposalBuilder';
 import { SafeInfoResponseWithGuard } from './safeGlobal';
 import { BIFormattedPair } from './votingFungibleToken';
@@ -256,6 +256,7 @@ export interface DecentTreasury {
   totalUsdValue: number;
   assetsFungible: TokenBalance[];
   assetsNonFungible: NFTBalance[];
+  assetsDeFi: DefiBalance[];
   transfers?: AllTransactionsListResponse;
 }
 

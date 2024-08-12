@@ -158,7 +158,7 @@ function RemoveSignerModal({
       />
       <CustomNonceInput
         nonce={nonce}
-        onChange={newNonce => setNonce(newNonce ? newNonce : undefined)}
+        onChange={newNonce => setNonce(newNonce !== undefined ? parseInt(newNonce) : undefined)}
       />
       <Button
         isDisabled={!threshold || !nonce || !safe || nonce < safe.nonce}

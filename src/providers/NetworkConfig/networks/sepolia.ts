@@ -19,7 +19,7 @@ const a = addresses[chain.id];
 export const sepoliaConfig: NetworkConfig = {
   order: 30,
   chain,
-  rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
+  rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
   moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.etherscan.io',

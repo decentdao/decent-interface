@@ -19,7 +19,7 @@ const a = addresses[chain.id];
 export const polygonConfig: NetworkConfig = {
   order: 20,
   chain,
-  rpcEndpoint: `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_POLYGON_API_KEY}`,
+  rpcEndpoint: `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
   moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',

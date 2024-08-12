@@ -19,7 +19,7 @@ const a = addresses[chain.id];
 export const optimismConfig: NetworkConfig = {
   order: 15,
   chain,
-  rpcEndpoint: `https://opt-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_OPTIMISM_API_KEY}`,
+  rpcEndpoint: `https://opt-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
   moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-optimism.safe.global',
   etherscanBaseURL: 'https://optimistic.etherscan.io/',
