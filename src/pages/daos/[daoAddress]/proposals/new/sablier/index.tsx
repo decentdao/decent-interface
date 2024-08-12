@@ -7,6 +7,7 @@ import {
   Box,
   Button,
   Center,
+  Checkbox,
   Flex,
   Grid,
   GridItem,
@@ -25,6 +26,7 @@ import {
   Trash,
   WarningCircle,
 } from '@phosphor-icons/react';
+import { groupBy } from 'lodash';
 import {
   Dispatch,
   FormEvent,
@@ -37,8 +39,19 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Address, erc20Abi, formatUnits, getContract, Hash, isAddress } from 'viem';
+import {
+  Address,
+  encodeFunctionData,
+  erc20Abi,
+  formatUnits,
+  getAddress,
+  getContract,
+  Hash,
+  isAddress,
+  zeroAddress,
+} from 'viem';
 import { usePublicClient } from 'wagmi';
+import SablierV2BatchAbi from '../../../../../../assets/abi/SablierV2Batch';
 import { BigIntInput } from '../../../../../../components/ui/forms/BigIntInput';
 import ExampleLabel from '../../../../../../components/ui/forms/ExampleLabel';
 import {
@@ -258,6 +271,8 @@ const DEFAULT_STREAM: Stream = {
     value: '0',
     bigintValue: 0n,
   },
+  cancelable: true,
+  transferable: false,
 };
 
 type Stream = {
@@ -267,6 +282,8 @@ type Stream = {
   startDate: Date;
   tranches: Tranche[];
   totalAmount: BigIntValuePair;
+  cancelable: boolean;
+  transferable: boolean;
 };
 
 function StreamBuilder({
@@ -382,6 +399,32 @@ function StreamBuilder({
             maxValue={rawTokenBalance}
           />
         </LabelComponent>
+        <Divider
+          variant="light"
+          my="1rem"
+        />
+        <Box>
+          <Flex gap="0.5rem">
+            <Checkbox
+              isChecked={stream.cancelable}
+              onChange={() => handleUpdateStream(index, { cancelable: !stream.cancelable })}
+            />
+            <Text>Cancelable</Text>
+          </Flex>
+          <Text color="neutral-7">Can this stream be cancelled by DAO in the future?</Text>
+        </Box>
+        <Box>
+          <Flex gap="0.5rem">
+            <Checkbox
+              checked={stream.transferable}
+              onChange={() => handleUpdateStream(index, { transferable: !stream.transferable })}
+            />
+            <Text>Transferrable</Text>
+          </Flex>
+          <Text color="neutral-7">
+            Can this stream be transferred by the recipient to another recipient?
+          </Text>
+        </Box>
         <Divider
           variant="light"
           my="1rem"
@@ -690,7 +733,10 @@ export default function SablierProposalCreatePage() {
   } = useFractal();
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { addressPrefix } = useNetworkConfig();
+  const {
+    addressPrefix,
+    contracts: { sablierV2Batch, sablierV2LockupTranched },
+  } = useNetworkConfig();
   const navigate = useNavigate();
   const { t } = useTranslation(['proposalTemplate', 'proposal']);
   const [title, setTitle] = useState('');
@@ -711,14 +757,68 @@ export default function SablierProposalCreatePage() {
   );
 
   const prepareProposalData = useCallback(async () => {
+    if (!daoAddress) {
+      throw new Error('Can not create stream without DAO address set');
+    }
     const targets: Address[] = [];
+    const txValues: bigint[] = [];
+    const calldatas: Hash[] = [];
+
+    const groupedStreams = groupBy(streams, 'tokenAddress');
+
+    Object.keys(groupedStreams).forEach(token => {
+      const tokenAddress = getAddress(token);
+      const tokenStreams = groupedStreams[token];
+      const approvedTotal = tokenStreams.reduce(
+        (prev, curr) => prev + (curr.totalAmount.bigintValue || 0n),
+        0n,
+      );
+      const approveCalldata = encodeFunctionData({
+        abi: erc20Abi,
+        functionName: 'approve',
+        args: [sablierV2Batch, approvedTotal],
+      });
+
+      targets.push(tokenAddress);
+      txValues.push(0n);
+      calldatas.push(approveCalldata);
+
+      const createStreamsCalldata = encodeFunctionData({
+        abi: SablierV2BatchAbi,
+        functionName: 'createWithDurationsLT',
+        args: [
+          sablierV2LockupTranched,
+          tokenAddress,
+          tokenStreams.map(stream => ({
+            sender: daoAddress,
+            recipient: getAddress(stream.recipientAddress),
+            totalAmount: stream.totalAmount.bigintValue!,
+            broker: {
+              account: zeroAddress,
+              fee: 0n,
+            },
+            cancelable: stream.cancelable,
+            transferable: stream.transferable,
+            tranches: stream.tranches.map(tranche => ({
+              amount: tranche.amount.bigintValue!,
+              duration: Number(tranche.duration.bigintValue!),
+            })),
+          })),
+        ],
+      });
+
+      targets.push(sablierV2Batch);
+      txValues.push(0n);
+      calldatas.push(createStreamsCalldata);
+    });
+
     return {
       targets,
-      values: targets.map(() => 0n),
-      calldatas: targets.map(() => '0x' as Hash), // TODO: Proper calldata
+      values: txValues,
+      calldatas,
       metaData: values.proposalMetadata,
     };
-  }, [values]);
+  }, [values, streams, sablierV2Batch, sablierV2LockupTranched, daoAddress]);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
