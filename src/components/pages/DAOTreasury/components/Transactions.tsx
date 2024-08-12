@@ -111,11 +111,13 @@ function EmptyTransactions() {
 
 export function Transactions({ shownTransactions }: { shownTransactions: number }) {
   const {
-    treasury: { transfers, transfersLoaded, transfersLoading },
+    treasury: { transfers, transfersLoaded },
   } = useFractal();
 
-  if (!transfers || (transfers.length === 0 && transfersLoaded)) return <EmptyTransactions />;
-
+  if (!transfers) {
+    return null;
+  }
+  if (transfers.length === 0 && transfersLoaded) return <EmptyTransactions />;
   return (
     <Box
       overflowX="auto"
@@ -127,7 +129,7 @@ export function Transactions({ shownTransactions }: { shownTransactions: number 
           displayData={transfer}
         />
       ))}
-      {(transfersLoading || !transfersLoaded) && <Box>{/* @todo add Wave Loader */}</Box>}
+      {(transfers === null || !transfersLoaded) && <Box>{/* @todo add Wave Loader */}</Box>}
     </Box>
   );
 }

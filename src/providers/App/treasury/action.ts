@@ -18,10 +18,6 @@ export type TreasuryActions =
       payload: TransferDisplayData;
     }
   | {
-      type: TreasuryAction.SET_TRANSFERS_LOADING;
-      payload: boolean;
-    }
-  | {
       type: TreasuryAction.SET_TRANSFERS_LOADED;
       payload: boolean;
     }

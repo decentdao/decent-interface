@@ -63,7 +63,6 @@ export const useDecentTreasury = () => {
     if (!daoAddress || !safeAPI) {
       return;
     }
-    action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADING, payload: true });
     const [
       transfers,
       { data: tokenBalances, error: tokenBalancesError },
@@ -147,8 +146,6 @@ export const useDecentTreasury = () => {
           action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED, payload: true });
         }
       });
-
-    action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADING, payload: false });
   }, [
     daoAddress,
     safeAPI,

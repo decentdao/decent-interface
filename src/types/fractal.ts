@@ -267,8 +267,7 @@ export interface DecentTreasury {
   totalUsdValue: number;
   assetsFungible: TokenBalance[];
   assetsNonFungible: NFTBalance[];
-  transfers?: TransferDisplayData[];
-  transfersLoading?: boolean;
+  transfers?: TransferDisplayData[] | null;
   transfersLoaded?: boolean;
 }
 
