@@ -182,7 +182,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
           </Text>
           <EtherscanLink
             type="block"
-            value={startBlock}
+            value={startBlock.toString()}
             pl={0}
             isTextLink
           >

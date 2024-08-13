@@ -6,7 +6,7 @@ import {
   TransferWithTokenInfoResponse,
 } from '@safe-global/api-kit';
 import { useCallback } from 'react';
-import { getAddress, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
@@ -244,7 +244,7 @@ export const useSafeTransactions = () => {
             transferAmountTotals.push(
               `${formatWeiToValue(multiSigTransaction.value, 18)} ${chain.nativeCurrency.symbol}`,
             );
-            transferAddresses.push(getAddress(multiSigTransaction.to));
+            transferAddresses.push(multiSigTransaction.to);
           }
 
           const eventSafeTxHash = multiSigTransaction.safeTxHash;
@@ -308,7 +308,8 @@ export const useSafeTransactions = () => {
             proposalId: eventSafeTxHash,
             targets,
             // @todo typing for `multiSigTransaction.transactionHash` is misleading, as ` multiSigTransaction.transactionHash` is not always defined (if ever). Need to tighten up the typing here.
-            transactionHash: multiSigTransaction.transactionHash ||
+            transactionHash:
+              multiSigTransaction.transactionHash ||
               (transaction as SafeMultisigTransactionWithTransfersResponse).safeTxHash,
             data: data,
             state: null,
