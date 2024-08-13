@@ -20,7 +20,7 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
-import { ArrowRight, Minus, Plus } from '@phosphor-icons/react';
+import { ArrowLeft, ArrowRight, Minus, Plus } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -361,19 +361,36 @@ function DurationTabs({ formIndex }: { formIndex: number }) {
 
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
+  const { setFieldValue } = useFormikContext<RoleFormValues>();
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
-      py="1rem"
+      pb="1rem"
       bg="neutral-2"
       boxShadow={{
         base: CARD_SHADOW,
         md: 'unset',
       }}
+      mt="-8.5rem"
       borderRadius="0.5rem"
+      position="relative"
     >
+      <Button
+        variant="tertiary"
+        p="0"
+        _hover={{
+          bg: 'transparent',
+        }}
+        mb="1rem"
+        leftIcon={<ArrowLeft size="1.5rem" />}
+        onClick={() => {
+          setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+        }}
+      >
+        {t('addPayment')}
+      </Button>
       <SectionTitle
-        title={t('addPaymentStream')}
+        title={t('addPayment')}
         subTitle={t('addPaymentStreamSubTitle')}
         // @todo Add Learn More link
         externalLink="#"
