@@ -82,7 +82,7 @@ function RolesEdit() {
       customNonce: safe?.nextNonce || 0,
     };
   }, [hatsTree?.roleHats, safe?.nextNonce]);
-  
+
   const [hasEditedRoles, setHasEditedRoles] = useState(false);
 
   const blocker = useNavigationBlocker({ roleEditPageNavigationBlockerParams: { hasEditedRoles } });

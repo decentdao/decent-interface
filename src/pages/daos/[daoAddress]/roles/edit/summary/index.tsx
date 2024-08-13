@@ -23,7 +23,7 @@ export default function EditProposalSummary() {
   const { values } = useFormikContext<RoleFormValues>();
 
   const daoAddress = safe?.address;
-  
+
   // @dev redirects back to roles edit page if no roles are edited (user refresh)
   useEffect(() => {
     const editedRoles = values.hats.filter(hat => !!hat.editedRole);
