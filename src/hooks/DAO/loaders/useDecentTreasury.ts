@@ -14,6 +14,7 @@ import {
   TransferWithTokenInfo,
 } from '../../../types';
 import { formatCoin } from '../../../utils';
+import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import { useUpdateTimer } from '../../utils/useUpdateTimer';
 
 export const useDecentTreasury = () => {
@@ -121,7 +122,7 @@ export const useDecentTreasury = () => {
       .forEach(async (transfer, index, _transfers) => {
         // @note assume native token if no token address
         let tokenInfo: TokenInfoResponse = {
-          address: '0x',
+          address: MOCK_MORALIS_ETH_ADDRESS,
           name: chain.nativeCurrency.name,
           symbol: chain.nativeCurrency.symbol,
           decimals: chain.nativeCurrency.decimals,
@@ -139,7 +140,7 @@ export const useDecentTreasury = () => {
 
         const formattedTransfer: TransferDisplayData = formatTransfer({
           transfer: { ...transfer, tokenInfo },
-          isLast: _transfers[_transfers.length - 1] === transfer,
+          isLast: _transfers.length - 1 === index,
         });
         action.dispatch({ type: TreasuryAction.ADD_TRANSFER, payload: formattedTransfer });
         if (_transfers.length - 1 === index) {

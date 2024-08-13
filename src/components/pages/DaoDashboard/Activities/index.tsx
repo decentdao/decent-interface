@@ -48,14 +48,12 @@ export function Activities() {
             flexDirection="column"
             gap="1rem"
           >
-            {sortedActivities.map((activity, i) => {
-              return (
-                <ProposalCard
-                  key={i}
-                  proposal={activity as FractalProposal}
-                />
-              );
-            })}
+            {sortedActivities.map((activity, i) => (
+              <ProposalCard
+                key={i}
+                proposal={activity as FractalProposal}
+              />
+            ))}
             {!allProposalsLoaded && <InfoBoxLoader />}
           </Flex>
         ) : (
