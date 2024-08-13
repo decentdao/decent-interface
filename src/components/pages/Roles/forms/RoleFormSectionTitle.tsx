@@ -10,10 +10,12 @@ export function SectionTitle({
   title,
   subTitle,
   externalLink,
+  tooltipContent,
 }: {
   title: string;
   subTitle: string;
   externalLink?: string;
+  tooltipContent?: string;
 }) {
   const { t } = useTranslation(['common']);
   const titleRef = useRef<HTMLDivElement>(null);
@@ -31,7 +33,8 @@ export function SectionTitle({
             containerRef={titleRef}
             maxW={TOOLTIP_MAXW}
             // @todo add COPY
-            label="I need copy"
+            label={tooltipContent}
+            isDisabled={!tooltipContent}
           >
             <Flex
               alignItems="center"

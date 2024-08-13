@@ -392,13 +392,14 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
       <SectionTitle
         title={t('addPayment')}
         subTitle={t('addPaymentStreamSubTitle')}
-        // @todo Add Learn More link
-        externalLink="#"
+        externalLink="https://docs.decentdao.org/app/user-guide/roles-and-streaming/streaming-payroll-and-vesting"
+        tooltipContent={t('addPaymentStreamTooltip')}
       />
       <AssetSelector formIndex={formIndex} />
       <SectionTitle
         title={t('schedule')}
         subTitle={t('scheduleSubTitle')}
+        tooltipContent={t('cliffPaymentTooltip')}
       />
       <DurationTabs formIndex={formIndex} />
     </Box>
