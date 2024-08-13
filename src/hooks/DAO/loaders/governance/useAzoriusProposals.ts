@@ -201,7 +201,7 @@ export const useAzoriusProposals = () => {
 
           continue;
         }
-        if (!proposalCreatedEvent.args.proposalId) {
+        if (proposalCreatedEvent.args.proposalId === undefined) {
           continue;
         }
 
@@ -258,7 +258,7 @@ export const useAzoriusProposals = () => {
           }
         }
 
-        if (!proposalCreatedEvent.args.proposalId || !proposalCreatedEvent.args.proposer) {
+        if (proposalCreatedEvent.args.proposer === undefined) {
           continue;
         }
 
