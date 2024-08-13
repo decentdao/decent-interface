@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isHex, Address } from 'viem';
+import { isHex, getAddress } from 'viem';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { ProposalExecuteData } from '../../../../../../types';
@@ -16,7 +16,7 @@ const useRemoveSigner = ({
   signerToRemove: string;
   threshold: number;
   nonce: number | undefined;
-  daoAddress?: Address;
+  daoAddress: string | null;
 }) => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
@@ -41,7 +41,7 @@ const useRemoveSigner = ({
     const calldatas = [encodedRemoveOwner];
 
     const proposalData: ProposalExecuteData = {
-      targets: [daoAddress],
+      targets: [getAddress(daoAddress)],
       values: [0n],
       calldatas,
       metaData: {

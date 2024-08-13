@@ -1,5 +1,4 @@
 import { Box, Text, Tooltip } from '@chakra-ui/react';
-import { Hex } from 'viem';
 import DisplayTransaction from '../../ui/links/DisplayTransaction';
 
 export default function InfoRow({
@@ -10,7 +9,7 @@ export default function InfoRow({
 }: {
   property: string;
   value?: string;
-  txHash?: Hex | null;
+  txHash?: string | null;
   tooltip?: string;
 }) {
   return (

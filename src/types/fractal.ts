@@ -24,7 +24,7 @@ import {
   AllTransactionsListResponse,
 } from '@safe-global/api-kit';
 import { Dispatch } from 'react';
-import { Address, Hex } from 'viem';
+import { Address } from 'viem';
 import { MultiSend } from '../assets/typechain-types/usul';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { FractalGovernanceActions } from '../providers/App/governance/action';
@@ -154,7 +154,7 @@ export interface ActivityBase {
   eventDate: Date;
   eventType: ActivityEventType;
   transaction?: ActivityTransactionType;
-  transactionHash: Hex;
+  transactionHash: string;
 }
 
 export type Activity = TreasuryActivity | MultisigProposal | AzoriusProposal | SnapshotProposal;
@@ -249,7 +249,7 @@ export interface Node
 
 export interface FractalModuleData {
   moduleContract: Azorius | FractalModule | undefined;
-  moduleAddress: Address;
+  moduleAddress: string;
   moduleType: FractalModuleType;
 }
 

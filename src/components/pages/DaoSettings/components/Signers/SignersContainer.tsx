@@ -2,7 +2,6 @@ import { Button, Flex, HStack, Show, Text, Hide, Icon } from '@chakra-ui/react';
 import { PlusCircle, MinusCircle } from '@phosphor-icons/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, getAddress } from 'viem';
 import { useAccount } from 'wagmi';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
@@ -16,7 +15,7 @@ function Signer({
   threshold,
   disabled,
 }: {
-  signer: Address;
+  signer: string;
   signers: string[];
   threshold: number | undefined;
   disabled: boolean;
@@ -66,7 +65,7 @@ export function SignersContainer() {
   const {
     node: { safe },
   } = useFractal();
-  const [signers, setSigners] = useState<Address[]>();
+  const [signers, setSigners] = useState<string[]>();
   const [userIsSigner, setUserIsSigner] = useState<boolean>();
 
   const addSigner = useFractalModal(ModalType.ADD_SIGNER, {
@@ -78,7 +77,7 @@ export function SignersContainer() {
   const enableRemove = userIsSigner && signers && signers?.length > 1;
 
   useEffect(() => {
-    setSigners(safe?.owners.map(getAddress));
+    setSigners(safe?.owners.map(owner => owner));
   }, [safe?.owners]);
 
   useEffect(() => {

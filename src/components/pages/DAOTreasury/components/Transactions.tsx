@@ -1,7 +1,6 @@
 import { Box, Button, HStack, Image, Text, Tooltip, Icon, Flex } from '@chakra-ui/react';
 import { ArrowUp, ArrowDown } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Address } from 'viem';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -170,7 +169,7 @@ export function PaginationCount({
 }: {
   totalTransfers: number;
   shownTransactions: number;
-  daoAddress: Address | undefined;
+  daoAddress: string | null;
 }) {
   const { t } = useTranslation('treasury');
   if (!totalTransfers || !daoAddress) {

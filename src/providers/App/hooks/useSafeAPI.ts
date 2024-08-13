@@ -6,7 +6,6 @@ import SafeApiKit, {
   SafeApiKitConfig,
 } from '@safe-global/api-kit';
 import { useMemo } from 'react';
-import { Address } from 'viem';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
 import {
   DBObjectKeys,
@@ -81,7 +80,7 @@ class EnhancedSafeApiKit extends SafeApiKit {
     return value;
   }
 
-  async getSafeData(safeAddress: Address): Promise<SafeWithNextNonce> {
+  async getSafeData(safeAddress: string): Promise<SafeWithNextNonce> {
     const safeInfoResponse = await this.getSafeInfo(safeAddress);
     const nextNonce = await this.getNextNonce(safeAddress);
     const safeInfo = { ...safeInfoResponse, nextNonce } as SafeWithNextNonce;

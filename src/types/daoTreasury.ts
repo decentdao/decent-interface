@@ -1,4 +1,3 @@
-import { Address, Hex } from 'viem';
 import { ContractEvent } from './contract';
 import { ActivityBase } from './fractal';
 import { EthAddress } from './utils';
@@ -9,13 +8,13 @@ export enum TokenEventType {
 }
 
 export interface TokenEvent extends ContractEvent {
-  transactionHash: Hex;
+  transactionHash: string;
   blockNumber: number; // TODO: PROBABLY not being used. Remove?
   eventType: TokenEventType;
 }
 
 export type TokenBalance = {
-  tokenAddress: Address;
+  tokenAddress: string;
   symbol: string;
   name: string;
   logo?: string;
@@ -38,7 +37,7 @@ type NftMediaItem = {
 };
 
 export type NFTBalance = {
-  tokenAddress: Address;
+  tokenAddress: string;
   media:
     | {
         originalMediaUrl?: string | undefined;
@@ -106,7 +105,7 @@ export enum TreasuryActivityTypes {
 }
 
 export interface TreasuryActivity extends ActivityBase {
-  transferAddresses: Address[];
+  transferAddresses: string[];
   transferAmountTotals: string[];
   isDeposit: boolean;
 }

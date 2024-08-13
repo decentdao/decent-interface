@@ -6,7 +6,7 @@ import {
   TransferWithTokenInfoResponse,
 } from '@safe-global/api-kit';
 import { useCallback } from 'react';
-import { getAddress, Hex, zeroAddress } from 'viem';
+import { getAddress, zeroAddress } from 'viem';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
@@ -230,9 +230,7 @@ export const useSafeTransactions = () => {
 
           // maps address for each transfer
           const transferAddresses = transaction.transfers.map(transfer =>
-            getAddress(
-              transfer.to.toLowerCase() === daoAddress.toLowerCase() ? transfer.from : transfer.to,
-            ),
+            transfer.to.toLowerCase() === daoAddress.toLowerCase() ? transfer.from : transfer.to,
           );
 
           // @note this indentifies transaction a simple ETH transfer
@@ -310,8 +308,8 @@ export const useSafeTransactions = () => {
             proposalId: eventSafeTxHash,
             targets,
             // @todo typing for `multiSigTransaction.transactionHash` is misleading, as ` multiSigTransaction.transactionHash` is not always defined (if ever). Need to tighten up the typing here.
-            transactionHash: (multiSigTransaction.transactionHash ||
-              (transaction as SafeMultisigTransactionWithTransfersResponse).safeTxHash) as Hex,
+            transactionHash: multiSigTransaction.transactionHash ||
+              (transaction as SafeMultisigTransactionWithTransfersResponse).safeTxHash,
             data: data,
             state: null,
             nonce: eventNonce,
