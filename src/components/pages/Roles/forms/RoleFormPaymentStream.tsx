@@ -21,7 +21,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { ArrowLeft, ArrowRight, Minus, Plus } from '@phosphor-icons/react';
-import { Field, FieldProps, useFormikContext } from 'formik';
+import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
@@ -29,7 +29,7 @@ import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import { DatePickerTrigger } from '../DatePickerTrigger';
-import { RoleFormValues } from '../types';
+import { RoleFormValues, RoleValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
@@ -361,7 +361,9 @@ function DurationTabs({ formIndex }: { formIndex: number }) {
 
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
+
+  const roleEditingErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -413,6 +415,16 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         tooltipContent={t('cliffPaymentTooltip')}
       />
       <DurationTabs formIndex={formIndex} />
+      <Flex justifyContent="flex-end">
+        <Button
+          isDisabled={!!roleEditingErrors}
+          onClick={() => {
+            setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+          }}
+        >
+          {t('save')}
+        </Button>
+      </Flex>
     </Box>
   );
 }
