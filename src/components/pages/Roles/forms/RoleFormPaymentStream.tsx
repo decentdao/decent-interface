@@ -392,10 +392,10 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
             formIndex === values.roleEditing.payments.length - 1 &&
             !values.roleEditing.editedRole
           ) {
-            setFieldValue('roleEditing.payments', [
-              ...values.roleEditing.payments.slice(0, formIndex),
-              ...values.roleEditing.payments.slice(formIndex + 1),
-            ]);
+            setFieldValue(
+              'roleEditing.payments',
+              values.roleEditing.payments.filter((_, index) => index !== formIndex),
+            );
           }
           setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
         }}
