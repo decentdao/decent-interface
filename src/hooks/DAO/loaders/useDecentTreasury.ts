@@ -92,18 +92,19 @@ export const useDecentTreasury = () => {
     };
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
-    const tokenAddresses: Address[] = [];
-    transfers.results.forEach(transfer => {
-      // @note the build fails if not explicitly defined as a variable
-      const transferTokenAddress = transfer.tokenAddress;
-      if (transferTokenAddress) {
-        tokenAddresses.push(getAddress(transfer.tokenAddress));
-      }
-    });
-    const uniqueTokenAddress = new Set(tokenAddresses);
+
+    const tokenAddresses = transfers.results
+      .map(transfer => {
+        if (transfer.tokenAddress === undefined) {
+          return undefined;
+        }
+        return getAddress(transfer.tokenAddress);
+      })
+      .filter((address): address is Address => !!address) // only addresses (works with Typescript)
+      .filter((value, index, self) => self.indexOf(value) === index); // make unique
 
     const tokenData = await Promise.all(
-      Array.from(uniqueTokenAddress).map(async addr => {
+      tokenAddresses.map(async addr => {
         try {
           return await safeAPI.getToken(addr);
         } catch (e) {
