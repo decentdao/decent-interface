@@ -10,6 +10,7 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { useRolesStore } from '../../../../store/roles';
 import { EditBadgeStatus, RoleFormValues } from '../types';
 import RoleFormInfo from './RoleFormInfo';
+import RoleFormPaymentStream from './RoleFormPaymentStream';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
 import { useRoleFormEditedRole } from './useRoleFormEditedRole';
 
@@ -53,6 +54,10 @@ export default function RoleFormTabs({
   }, [setFieldValue, values.hats, values.roleEditing, hatId]);
 
   if (!daoAddress) return null;
+
+  if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
+    return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
+  }
 
   return (
     <>

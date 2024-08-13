@@ -361,7 +361,7 @@ function DurationTabs({ formIndex }: { formIndex: number }) {
 
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
-  const { setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -371,7 +371,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         base: CARD_SHADOW,
         md: 'unset',
       }}
-      mt="-8.5rem"
+      mt="-4.5rem"
       borderRadius="0.5rem"
       position="relative"
     >
@@ -384,6 +384,17 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         mb="1rem"
         leftIcon={<ArrowLeft size="1.5rem" />}
         onClick={() => {
+          if (!values?.roleEditing?.payments) return;
+          // if payment is new, and unedited, remove it
+          if (
+            formIndex === values.roleEditing.payments.length - 1 &&
+            !values.roleEditing.editedRole
+          ) {
+            setFieldValue('roleEditing.payments', [
+              ...values.roleEditing.payments.slice(0, formIndex),
+              ...values.roleEditing.payments.slice(formIndex + 1),
+            ]);
+          }
           setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
         }}
       >

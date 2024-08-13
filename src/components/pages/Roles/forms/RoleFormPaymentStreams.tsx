@@ -3,16 +3,11 @@ import { Plus } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { RoleFormValues } from '../types';
-import RoleFormPaymentStream from './RoleFormPaymentStream';
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const payments = values.roleEditing?.payments;
-
-  if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
-    return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
-  }
 
   return (
     <FieldArray name="roleEditing.payments">
