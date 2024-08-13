@@ -95,7 +95,7 @@ export const useDecentTreasury = () => {
 
     const tokenAddresses = transfers.results
       .map(transfer => {
-        if (transfer.tokenAddress === undefined) {
+        if (transfer.tokenAddress === undefined || transfer.tokenAddress === null) {
           return undefined;
         }
         return getAddress(transfer.tokenAddress);
