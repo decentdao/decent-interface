@@ -32,7 +32,6 @@ export function SectionTitle({
           <ModalTooltip
             containerRef={titleRef}
             maxW={TOOLTIP_MAXW}
-            // @todo add COPY
             label={tooltipContent}
             isDisabled={!tooltipContent}
           >
