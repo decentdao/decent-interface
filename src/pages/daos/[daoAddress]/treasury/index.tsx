@@ -75,7 +75,7 @@ export default function Treasury() {
                   <PaginationCount
                     totalTransfers={totalTransfers}
                     shownTransactions={shownTransactions}
-                    daoAddress={daoAddress}
+                    daoAddress={`${daoAddress}`}
                   />
                 </Box>
               </Show>
@@ -92,7 +92,7 @@ export default function Treasury() {
                   <PaginationCount
                     totalTransfers={totalTransfers}
                     shownTransactions={shownTransactions}
-                    daoAddress={daoAddress}
+                    daoAddress={`${daoAddress}`}
                   />
                 </Box>
               </Show>

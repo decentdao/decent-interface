@@ -80,7 +80,7 @@ export function CoinRow({ asset }: { asset: TokenBalance }) {
           textStyle="body-base"
           padding={0}
           borderWidth={0}
-          value={isNativeCoin ? daoAddress : asset.tokenAddress}
+          value={isNativeCoin ? `${daoAddress}` : asset.tokenAddress}
           type={isNativeCoin ? 'address' : 'token'}
           wordBreak="break-word"
         >

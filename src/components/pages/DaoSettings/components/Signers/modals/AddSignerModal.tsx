@@ -54,7 +54,7 @@ function AddSignerModal({
           newSigner: validAddress,
           threshold: threshold,
           nonce: nonce,
-          daoAddress: daoAddress,
+          daoAddress: `${daoAddress}`,
           close: close,
         });
       } catch (e) {

@@ -48,7 +48,7 @@ function RemoveSignerModal({
     signerToRemove: selectedSigner,
     threshold: threshold,
     nonce: nonce,
-    daoAddress: daoAddress,
+    daoAddress: `${daoAddress}`,
   });
 
   const onSubmit = async () => {
