@@ -1,7 +1,7 @@
-import { TokenInfoResponse } from '@safe-global/api-kit';
+import { TokenInfoResponse, TransferResponse } from '@safe-global/api-kit';
 import { useEffect, useCallback, useRef } from 'react';
 import { toast } from 'react-toastify';
-import { Address, getAddress } from 'viem';
+import { getAddress } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -93,15 +93,15 @@ export const useDecentTreasury = () => {
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
 
+    type TransferResponse2 = TransferResponse & { tokenAddress: string };
+
     const tokenAddresses = transfers.results
-      .map(transfer => {
-        if (transfer.tokenAddress === undefined || transfer.tokenAddress === null) {
-          return undefined;
-        }
-        return getAddress(transfer.tokenAddress);
-      })
-      .filter((address): address is Address => !!address) // only addresses (works with Typescript)
-      .filter((value, index, self) => self.indexOf(value) === index); // make unique
+      // no null or undefined tokenAddresses
+      .filter((transfer): transfer is TransferResponse2 => !!transfer.tokenAddress)
+      // make unique
+      .filter((value, index, self) => self.indexOf(value) === index)
+      // turn them into Address type
+      .map(transfer => getAddress(transfer.tokenAddress));
 
     const tokenData = await Promise.all(
       tokenAddresses.map(async addr => {
