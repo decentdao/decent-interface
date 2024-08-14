@@ -103,6 +103,8 @@ export const useDecentTreasury = () => {
       // turn them into Address type
       .map(transfer => getAddress(transfer.tokenAddress));
 
+    // Instead of this block of code, check the commented out snippet
+    // below this for a half-implemented alternative.
     const tokenData = await Promise.all(
       tokenAddresses.map(async addr => {
         try {
@@ -117,6 +119,26 @@ export const useDecentTreasury = () => {
         }
       }),
     );
+
+    // For all of these Token Addresses
+    // 1. give me all of the data that lives in the cache
+    //   (can "getValue" from local storage to grab these token datas)
+    // 2. if there are any addresses remaining
+    //   get them from the API and store the results in the cache
+    //   in a delayed loop
+
+    // The code below this doesn't implement "1.", but does implement "2."
+
+    // const tokenData: TokenInfoResponse[] = [];
+    // const batchSize = 5;
+    // for (let i = 0; i < tokenAddresses.length; i += batchSize) {
+    //   const batch = tokenAddresses.slice(i, i + batchSize);
+    //   const batchResults = await Promise.all(batch.map(a => safeAPI.getToken(a)));
+    //   tokenData.push(...batchResults);
+    //   if (i + batch.length < tokenAddresses.length) {
+    //     await new Promise(resolve => setTimeout(resolve, 1000));
+    //   }
+    // }
 
     transfers.results
       .sort((a, b) => b.blockNumber - a.blockNumber)
