@@ -5,12 +5,7 @@ import { Link } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  ActivityEventType,
-  AzoriusProposal,
-  FractalProposal,
-  SnapshotProposal,
-} from '../../../types';
+import { AzoriusProposal, FractalProposal, SnapshotProposal } from '../../../types';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { ActivityDescription } from '../../Activity/ActivityDescription';
 import { Badge } from '../../ui/badges/Badge';
@@ -24,14 +19,6 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation('common');
-
-  const eventDateLabel = t(
-    proposal.eventType === ActivityEventType.Treasury
-      ? proposal.transaction?.to === daoAddress
-        ? 'received'
-        : 'sent'
-      : 'created',
-  );
 
   const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
   const isAzoriusProposal = !!(proposal as AzoriusProposal).votesSummary;
@@ -87,7 +74,7 @@ function ProposalCard({ proposal }: { proposal: FractalProposal }) {
               textStyle="helper-text-base"
               color="neutral-6"
             >
-              {eventDateLabel} {format(proposal.eventDate, DEFAULT_DATE_FORMAT)}
+              {t('created')} {format(proposal.eventDate, DEFAULT_DATE_FORMAT)}
             </Text>
           )}
         </Box>
