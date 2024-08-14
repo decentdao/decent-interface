@@ -1,5 +1,6 @@
 import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { GetContractEventsReturnType, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import KeyValuePairsAbi from '../../assets/abi/KeyValuePairs';
@@ -62,9 +63,14 @@ const useKeyValuePairs = () => {
     contracts: { keyValuePairs },
   } = useNetworkConfig();
   const { setHatsTreeId } = useRolesStore();
+  const [searchParams] = useSearchParams();
 
   useEffect(() => {
-    if (!publicClient || !node.daoAddress) {
+    const safeParam = searchParams.get('dao');
+    console.log({ safeAddress: node.daoAddress, safeParam });
+
+    if (!publicClient || !node.daoAddress || node.daoAddress !== safeParam?.split(':')[1]) {
+      console.log('not gonna load tree from keyvaluepairs');
       return;
     }
 
@@ -98,7 +104,7 @@ const useKeyValuePairs = () => {
     return () => {
       unwatch();
     };
-  }, [chain.id, keyValuePairs, node.daoAddress, publicClient, setHatsTreeId]);
+  }, [chain.id, keyValuePairs, node.daoAddress, publicClient, searchParams, setHatsTreeId]);
 };
 
 export { useKeyValuePairs };

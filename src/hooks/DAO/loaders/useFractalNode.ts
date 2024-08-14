@@ -6,6 +6,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { NodeAction } from '../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useRolesStore } from '../../../store/roles';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
 import { useGetDAONameDeferred } from '../useGetDAOName';
@@ -35,6 +36,7 @@ export const useFractalNode = (
   const lookupModules = useFractalModules();
 
   const networkConfig = useNetworkConfig();
+  const { resetHatsStore } = useRolesStore();
 
   const formatDAOQuery = useCallback(
     (result: { data?: DAOQueryQuery }, _daoAddress: string) => {
@@ -92,13 +94,16 @@ export const useFractalNode = (
     ({ error }: { error: boolean }) => {
       currentValidSafe.current = undefined;
       action.resetSafeState();
+      resetHatsStore();
       setErrorLoading(error);
     },
-    [action],
+    [action, resetHatsStore],
   );
 
   const setDAO = useCallback(
     async (_addressPrefix: string, _daoAddress: string) => {
+      console.log('setDAO', _daoAddress);
+
       currentValidSafe.current = _addressPrefix + _daoAddress;
       setErrorLoading(false);
 
@@ -135,6 +140,8 @@ export const useFractalNode = (
       daoAddress === undefined ||
       addressPrefix + daoAddress !== currentValidSafe.current
     ) {
+      console.count('reset hats store from useFractalNode because:');
+      console.log({ skip, currentValidSafe: currentValidSafe.current, daoAddress });
       reset({ error: false });
       if (addressPrefix && daoAddress) {
         setDAO(addressPrefix, daoAddress);
