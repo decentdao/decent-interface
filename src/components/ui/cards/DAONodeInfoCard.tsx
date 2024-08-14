@@ -1,10 +1,10 @@
-import { Flex, Text, FlexProps, Link, Center, VStack } from '@chakra-ui/react';
+import { Center, Flex, FlexProps, Link, Text, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { FreezeGuard, FractalGuardContracts, FractalNode } from '../../../types';
+import { FractalGuardContracts, FractalNode, FreezeGuard } from '../../../types';
 import { SnapshotButton } from '../badges/Snapshot';
 import { FavoriteIcon } from '../icons/FavoriteIcon';
 import AddressCopier from '../links/AddressCopier';
@@ -104,7 +104,9 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
             />
 
             {/* SNAPSHOT ICON LINK */}
-            {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
+            {node.daoSnapshotENS && (
+              <SnapshotButton snapshotENS={node.daoSnapshotENS.toLowerCase()} />
+            )}
           </Flex>
 
           {/* DAO ADDRESS */}

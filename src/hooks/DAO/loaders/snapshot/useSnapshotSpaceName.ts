@@ -5,5 +5,5 @@ export default function useSnapshotSpaceName() {
     node: { daoSnapshotENS },
   } = useFractal();
 
-  return daoSnapshotENS;
+  return daoSnapshotENS?.toLowerCase();
 }

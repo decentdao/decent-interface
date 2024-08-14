@@ -3,12 +3,12 @@ import { zeroAddress } from 'viem';
 import { GnosisSafeL2 } from '../assets/typechain-types/usul/@gnosis.pm/safe-contracts/contracts';
 import { buildContractCall, encodeMultiSend } from '../helpers';
 import {
-  BaseContracts,
-  SafeMultisigDAO,
-  SafeTransaction,
   AzoriusContracts,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
+  BaseContracts,
+  SafeMultisigDAO,
+  SafeTransaction,
   VotingStrategyType,
 } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';
@@ -228,7 +228,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     return buildContractCall(
       this.baseContracts.keyValuePairsContract,
       'updateValues',
-      [['snapshotENS'], [this.daoData.snapshotENS]],
+      [['snapshotENS'], [this.daoData.snapshotENS.toLowerCase()]],
       0,
       false,
     );

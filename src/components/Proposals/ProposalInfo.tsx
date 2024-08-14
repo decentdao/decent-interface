@@ -1,4 +1,4 @@
-import { Box, Flex, Button, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Link } from '@chakra-ui/react';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Shield } from '../../assets/theme/custom/icons/Shield';
@@ -53,7 +53,9 @@ export function ProposalInfo({
         />
         {isSnapshotProposal && (
           <>
-            <SnapshotButton snapshotENS={`${daoSnapshotENS}/proposal/${proposal.proposalId}`} />
+            <SnapshotButton
+              snapshotENS={`${daoSnapshotENS?.toLowerCase()}/proposal/${proposal.proposalId}`}
+            />
             {(proposal as ExtendedSnapshotProposal).privacy === 'shutter' && (
               <Button
                 as={Link}

@@ -5,7 +5,7 @@ import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { ICreationStepProps, VotingStrategyType, GovernanceType } from '../../../types';
+import { GovernanceType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
@@ -34,7 +34,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       setFieldValue('essentials.daoName', daoName, false);
       if (createAccountSubstring(daoAddress!) !== daoName) {
         // Pre-fill the snapshot URL form field when editing
-        setFieldValue('essentials.snapshotENS', daoSnapshotENS || '', false);
+        setFieldValue('essentials.snapshotENS', daoSnapshotENS?.toLowerCase() || '', false);
       }
     }
   }, [setFieldValue, mode, daoName, daoSnapshotENS, isEdit, daoAddress]);
@@ -70,7 +70,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
           helper={t('helperDAOName')}
           isRequired
           value={values.essentials.daoName}
-          id="searchEssentials-daoName"
+          id="essentials-daoName"
           onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
           onBlur={cEvent => setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)}
           disabled={daoNameDisabled}

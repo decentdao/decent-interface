@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Link, Center } from '@chakra-ui/react';
+import { Box, Center, Flex, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -111,7 +111,7 @@ export function DAOInfoCard() {
         <AddressCopier address={displayedAddress} />
 
         {/* SNAPSHOT ICON LINK */}
-        {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
+        {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS.toLowerCase()} />}
       </Flex>
     </Box>
   );

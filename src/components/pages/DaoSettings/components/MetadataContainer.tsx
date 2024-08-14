@@ -1,8 +1,8 @@
 import { Button } from '@chakra-ui/react';
-import { useState, useEffect, ChangeEventHandler } from 'react';
+import { ChangeEventHandler, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { isHex, getAddress } from 'viem';
+import { getAddress, isHex } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
@@ -38,7 +38,7 @@ export function MetadataContainer() {
     }
 
     if (daoSnapshotENS) {
-      setSnapshotENS(daoSnapshotENS);
+      setSnapshotENS(daoSnapshotENS.toLowerCase());
     }
   }, [daoName, daoSnapshotENS, daoAddress]);
 
