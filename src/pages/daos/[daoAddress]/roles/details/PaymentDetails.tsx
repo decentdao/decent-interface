@@ -13,12 +13,12 @@ import {
 import { CaretDown, CaretRight, Download } from '@phosphor-icons/react';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Id, toast } from 'react-toastify';
-import { encodeFunctionData, formatUnits, getAddress, getContract } from 'viem';
-import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
-import HatsAccount1ofNAbi from '../../../../../assets/abi/HatsAccount1ofN';
+import { getContract } from 'viem';
+import { useAccount, useWalletClient } from 'wagmi';
 import { SablierV2LockupLinearAbi } from '../../../../../assets/abi/SablierV2LockupLinear';
 import { RoleValue, SablierPayment } from '../../../../../components/pages/Roles/types';
+import { ModalType } from '../../../../../components/ui/modals/ModalProvider';
+import { useDecentModal } from '../../../../../components/ui/modals/useDecentModal';
 import { convertStreamIdToBigInt } from '../../../../../hooks/streams/useCreateSablierStream';
 import { DecentRoleHat } from '../../../../../store/roles';
 
@@ -56,7 +56,6 @@ export default function PaymentDetails({
   const { t } = useTranslation(['roles', 'common']);
   const [withdrawableAmount, setWithdrawableAmount] = useState(0n);
 
-  const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
   const loadAmounts = useCallback(async () => {
@@ -77,64 +76,16 @@ export default function PaymentDetails({
     }
   }, [walletClient, payment?.streamId, payment?.contractAddress]);
 
+  const withdraw = useDecentModal(ModalType.WITHDRAW_PAYMENT, {
+    payment,
+    roleHat,
+    onSuccess: loadAmounts,
+    withdrawableAmount,
+  });
+
   useEffect(() => {
     loadAmounts();
   }, [loadAmounts]);
-
-  const handleWithdraw = useCallback(async () => {
-    if (payment?.contractAddress && payment?.streamId && walletClient && publicClient) {
-      let withdrawToast: Id | undefined = undefined;
-      try {
-        const hatsAccountContract = getContract({
-          abi: HatsAccount1ofNAbi,
-          address: roleHat.smartAddress,
-          client: walletClient,
-        });
-        const bigIntStreamId = convertStreamIdToBigInt(payment.streamId);
-        let hatsAccountCalldata = encodeFunctionData({
-          abi: SablierV2LockupLinearAbi,
-          functionName: 'withdrawMax',
-          args: [bigIntStreamId, getAddress(roleHat.wearer)],
-        });
-        withdrawToast = toast(t('withdrawPendingMessage'), {
-          autoClose: false,
-          closeOnClick: false,
-          draggable: false,
-          closeButton: false,
-          progress: 1,
-        });
-        const txHash = await hatsAccountContract.write.execute([
-          payment.contractAddress,
-          0n,
-          hatsAccountCalldata,
-          0,
-        ]);
-        const transaction = await publicClient.waitForTransactionReceipt({ hash: txHash });
-        toast.dismiss(withdrawToast);
-        if (transaction.status === 'success') {
-          await loadAmounts();
-          toast(t('withdrawSuccessMessage'));
-        } else {
-          toast(t('withdrawRevertedMessage'));
-        }
-      } catch (e) {
-        if (withdrawToast !== undefined) {
-          toast.dismiss(withdrawToast);
-        }
-        console.error('Error withdrawing from stream', e);
-        toast(t('withdrawErrorMessage'));
-      }
-    }
-  }, [
-    payment?.contractAddress,
-    payment?.streamId,
-    publicClient,
-    walletClient,
-    roleHat.smartAddress,
-    roleHat.wearer,
-    loadAmounts,
-    t,
-  ]);
 
   if (!payment) {
     return null;
@@ -197,62 +148,14 @@ export default function PaymentDetails({
                   value={payment.scheduleFixedDate?.endDate?.toDateString()}
                 />
                 {account?.toLowerCase() === roleHat.wearer.toLowerCase() && (
-                  <Flex
-                    bg="white-alpha-04"
-                    borderRadius="0.5rem"
-                    padding="1rem"
-                    gap="1rem"
-                    flexWrap="wrap"
+                  <Button
+                    w="full"
+                    leftIcon={<Download />}
+                    onClick={withdraw}
+                    disabled={withdrawableAmount <= 0n}
                   >
-                    <Box w="full">
-                      <Text
-                        textStyle="body-base"
-                        color="white-0"
-                      >
-                        {t('withdraw')}
-                      </Text>
-                      <Text
-                        textStyle="body-base"
-                        color="neutral-7"
-                      >
-                        {t('withdrawHelper')}
-                      </Text>
-                    </Box>
-                    <Box w="full">
-                      <Flex justifyContent="space-between">
-                        <Text
-                          textStyle="label-base"
-                          color="neutral-7"
-                        >
-                          {t('withdrawable')}
-                        </Text>
-                        <Flex alignItems="center">
-                          <Image
-                            src={payment.asset.logo}
-                            fallbackSrc="/images/coin-icon-default.svg"
-                            alt={payment.asset.symbol}
-                            w="1rem"
-                            h="1rem"
-                          />
-                          <Text
-                            textStyle="body-base"
-                            color="white-0"
-                          >
-                            {formatUnits(withdrawableAmount, payment.asset.decimals)}{' '}
-                            {payment.asset.symbol}
-                          </Text>
-                        </Flex>
-                      </Flex>
-                    </Box>
-                    <Button
-                      w="full"
-                      leftIcon={<Download />}
-                      onClick={handleWithdraw}
-                      disabled={withdrawableAmount <= 0n}
-                    >
-                      {t('withdraw')}
-                    </Button>
-                  </Flex>
+                    {t('withdraw')}
+                  </Button>
                 )}
               </AccordionPanel>
             </>

@@ -10,6 +10,7 @@ import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
 import ForkProposalTemplateModal from './ForkProposalTemplateModal';
 import { ModalBase } from './ModalBase';
+import PaymentWithdrawModal from './PaymentWithdrawModal';
 import ProposalTemplateModal from './ProposalTemplateModal';
 import { SendAssetsModal } from './SendAssetsModal';
 import StakeModal from './Stake';
@@ -176,6 +177,18 @@ export function ModalProvider({ children }: { children: ReactNode }) {
               current.props.keepEditing();
               closeModal();
             }}
+          />
+        );
+        break;
+      case ModalType.WITHDRAW_PAYMENT:
+        modalTitle = t('withdrawPaymentTitle');
+        modalContent = (
+          <PaymentWithdrawModal
+            payment={current.props.payment}
+            roleHat={current.props.roleHat}
+            withdrawableAmount={current.props.withdrawableAmount}
+            onSuccess={current.props.onSuccess}
+            onClose={closeModal}
           />
         );
         break;
