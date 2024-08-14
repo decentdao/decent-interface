@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Image, Text, useBreakpointValue } from '@chakra-ui/react';
+import { Download } from '@phosphor-icons/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Id, toast } from 'react-toastify';
@@ -175,6 +176,7 @@ export default function PaymentWithdrawModal({
         <Button
           size="md"
           onClick={handleWithdraw}
+          leftIcon={<Download />}
         >
           {t('withdraw')}
         </Button>
