@@ -32,6 +32,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   } = proposal;
   const {
     governance,
+    governanceContracts,
     readOnly: {
       user: { votingWeight, address },
     },
@@ -61,11 +62,18 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
 
   useEffect(() => {
     async function loadProposalVotingWeight() {
-      if (address && baseContracts && votesToken) {
-        const tokenContract = baseContracts.votesTokenMasterCopyContract.asProvider.attach(
-          votesToken.address,
+      if (
+        address &&
+        baseContracts &&
+        governanceContracts.ozLinearVotingContractAddress !== undefined
+      ) {
+        const strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+          governanceContracts.ozLinearVotingContractAddress,
         );
-        const pastVotingWeight = (await tokenContract.getPastVotes(address, startBlock)).toBigInt();
+        const pastVotingWeight = (
+          await strategyContract.getVotingWeight(address, proposal.proposalId)
+        ).toBigInt();
+
         setProposalsERC20VotingWeight(
           (pastVotingWeight / votesTokenDecimalsDenominator).toString(),
         );
@@ -73,7 +81,13 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
     }
 
     loadProposalVotingWeight();
-  }, [address, startBlock, votesTokenDecimalsDenominator, baseContracts, votesToken]);
+  }, [
+    address,
+    baseContracts,
+    governanceContracts.ozLinearVotingContractAddress,
+    proposal.proposalId,
+    votesTokenDecimalsDenominator,
+  ]);
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;
