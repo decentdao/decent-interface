@@ -7,7 +7,7 @@ import { Address, getAddress, isAddress } from 'viem';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../../../../providers/Ethers/hooks/useEthersSigner';
+import { useEthersProvider } from '../../../../../../providers/Ethers/hooks/useEthersProvider';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
 import { AddressInput } from '../../../../../ui/forms/EthAddressInput';
@@ -28,7 +28,7 @@ function AddSignerModal({
     node: { safe },
   } = useFractal();
   const { t } = useTranslation(['modals', 'common']);
-  const signer = useEthersSigner();
+  const provider = useEthersProvider();
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
   const tooltipContainer = useRef<HTMLDivElement>(null);
 
@@ -41,28 +41,35 @@ function AddSignerModal({
       const { addressOrENS, nonce, threshold } = values;
 
       let validAddress: Address;
-      try {
-        if (isAddress(addressOrENS)) {
-          validAddress = getAddress(addressOrENS);
-        } else if (signer) {
-          validAddress = (await signer.resolveName(addressOrENS)) as Address;
-        } else {
-          throw new Error('No signer found');
+
+      if (isAddress(addressOrENS)) {
+        validAddress = getAddress(addressOrENS);
+      } else if (provider) {
+        let resolvedAddress: string | null;
+        try {
+          resolvedAddress = await provider.resolveName(addressOrENS);
+        } catch (e) {
+          throw e;
         }
 
-        await addSigner({
-          newSigner: validAddress,
-          threshold: threshold,
-          nonce: nonce,
-          daoAddress: `${daoAddress}`,
-          close: close,
-        });
-      } catch (e) {
-        console.error(e);
-        throw new Error('Error adding signer');
+        if (resolvedAddress === null) {
+          throw new Error('Given ENS name does not resolve to an address.');
+        }
+
+        validAddress = getAddress(resolvedAddress);
+      } else {
+        throw new Error('No provider found');
       }
+
+      await addSigner({
+        newSigner: validAddress,
+        threshold: threshold,
+        nonce: nonce,
+        daoAddress: `${daoAddress}`,
+        close: close,
+      });
     },
-    [addSigner, close, daoAddress, signer],
+    [addSigner, close, daoAddress, provider],
   );
 
   const addSignerValidationSchema = Yup.object().shape({
