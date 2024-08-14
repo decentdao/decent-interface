@@ -8,7 +8,6 @@ export function EmptyBox({
 }: {
   emptyText: string;
   children?: ReactNode;
-  m?: string | number;
 }) {
   return (
     <ActivityBox>

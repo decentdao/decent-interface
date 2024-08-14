@@ -27,6 +27,7 @@ import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
 import { RoleFormValues } from '../types';
 
 function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; formIndex: number }) {
+  const { t } = useTranslation('roles');
   const {
     treasury: { assetsFungible },
   } = useFractal();
@@ -37,6 +38,23 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
   );
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
+
+  if (fungibleAssetsWithBalance.length === 0) {
+    return (
+      <Flex
+        p="1rem"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Text
+          textStyle="display-lg"
+          color="neutral-7"
+        >
+          {t('emptyRolesAssets')}
+        </Text>
+      </Flex>
+    );
+  }
 
   return (
     <>
@@ -127,6 +145,7 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
     </>
   );
 }
+
 export function AssetSelector({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
