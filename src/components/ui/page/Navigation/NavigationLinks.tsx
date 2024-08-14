@@ -6,11 +6,11 @@ import {
   Coins,
   SquaresFour,
   Question,
-  DiscordLogo,
+  ArrowSquareOut,
   BookOpen,
 } from '@phosphor-icons/react';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
+import { URL_FAQ, URL_CHAT, URL_DOCS } from '../../../../constants/url';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import Divider from '../../utils/Divider';
@@ -40,10 +40,10 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         closeDrawer={closeDrawer}
       />
       <NavigationLink
-        href={URL_DISCORD}
-        labelKey="discord"
-        testId="navigationExternal-discord"
-        NavigationIcon={DiscordLogo}
+        href={URL_CHAT}
+        labelKey="chat"
+        testId="navigationExternal-chat"
+        NavigationIcon={ArrowSquareOut}
         scope="external"
         closeDrawer={closeDrawer}
       />
