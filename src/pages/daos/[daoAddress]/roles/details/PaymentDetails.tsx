@@ -1,27 +1,26 @@
 import {
-  Flex,
-  Text,
-  Box,
-  Image,
   Accordion,
-  AccordionItem,
   AccordionButton,
+  AccordionItem,
   AccordionPanel,
-  Grid,
+  Box,
   Button,
+  Flex,
+  Grid,
+  Image,
+  Text,
 } from '@chakra-ui/react';
-import { CaretRight, CaretDown, Download } from '@phosphor-icons/react';
-import { ReactNode, useState, useEffect, useCallback } from 'react';
+import { CaretDown, CaretRight, Download } from '@phosphor-icons/react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Id, toast } from 'react-toastify';
-import { Address, encodeFunctionData, getContract, Hex, getAddress, formatUnits } from 'viem';
+import { encodeFunctionData, formatUnits, getAddress, getContract } from 'viem';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../../../assets/abi/HatsAccount1ofN';
 import { SablierV2LockupLinearAbi } from '../../../../../assets/abi/SablierV2LockupLinear';
-import { SablierPayment } from '../../../../../components/pages/Roles/types';
-import { BigIntInput } from '../../../../../components/ui/forms/BigIntInput';
+import { RoleValue, SablierPayment } from '../../../../../components/pages/Roles/types';
 import { convertStreamIdToBigInt } from '../../../../../hooks/streams/useCreateSablierStream';
-import { BigIntValuePair } from '../../../../../types';
+import { DecentRoleHat } from '../../../../../store/roles';
 
 type AccordionItemRowProps = {
   title: string;
@@ -51,23 +50,11 @@ export default function PaymentDetails({
   roleHat,
 }: {
   payment?: SablierPayment;
-  roleHat: {
-    id: Hex;
-    name: string;
-    wearer: string;
-    description: string;
-    smartAddress: Address;
-  };
+  roleHat: DecentRoleHat | RoleValue;
 }) {
   const { address: account } = useAccount();
   const { t } = useTranslation(['roles', 'common']);
-  const [remainingAmount, setRemainingAmount] = useState('0');
   const [withdrawableAmount, setWithdrawableAmount] = useState(0n);
-  const [withdrawAmount, setWithdrawAmount] = useState<BigIntValuePair>({
-    value: '0',
-    bigintValue: 0n,
-  });
-  const [withdrawMax, setWithdrawMax] = useState(false);
 
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
@@ -82,45 +69,20 @@ export default function PaymentDetails({
 
       const bigintStreamId = convertStreamIdToBigInt(payment.streamId);
 
-      const [newWithdrawableAmount, withdrawnAmount] = await Promise.all([
-        streamContract.read.withdrawableAmountOf([bigintStreamId]),
-        streamContract.read.getWithdrawnAmount([bigintStreamId]),
+      const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
+        bigintStreamId,
       ]);
 
-      const newRemainingAmount = BigInt(payment.amount.bigintValue || 0n) - withdrawnAmount;
       setWithdrawableAmount(newWithdrawableAmount);
-      setRemainingAmount(formatUnits(newRemainingAmount, payment.asset.decimals));
     }
-  }, [
-    walletClient,
-    payment?.streamId,
-    payment?.contractAddress,
-    payment?.amount.bigintValue,
-    payment?.asset.decimals,
-  ]);
+  }, [walletClient, payment?.streamId, payment?.contractAddress]);
 
   useEffect(() => {
     loadAmounts();
   }, [loadAmounts]);
 
-  useEffect(() => {
-    if (payment?.asset?.decimals) {
-      if (withdrawAmount.bigintValue === withdrawableAmount) {
-        setWithdrawMax(true);
-      } else {
-        setWithdrawMax(false);
-      }
-    }
-  }, [payment?.asset.decimals, withdrawAmount.bigintValue, withdrawableAmount]);
-
   const handleWithdraw = useCallback(async () => {
-    if (
-      payment?.contractAddress &&
-      payment?.streamId &&
-      walletClient &&
-      publicClient &&
-      withdrawAmount.bigintValue
-    ) {
+    if (payment?.contractAddress && payment?.streamId && walletClient && publicClient) {
       let withdrawToast: Id | undefined = undefined;
       try {
         const hatsAccountContract = getContract({
@@ -129,20 +91,11 @@ export default function PaymentDetails({
           client: walletClient,
         });
         const bigIntStreamId = convertStreamIdToBigInt(payment.streamId);
-        let hatsAccountCalldata: Hex;
-        if (withdrawMax) {
-          hatsAccountCalldata = encodeFunctionData({
-            abi: SablierV2LockupLinearAbi,
-            functionName: 'withdrawMax',
-            args: [bigIntStreamId, getAddress(roleHat.wearer)],
-          });
-        } else {
-          hatsAccountCalldata = encodeFunctionData({
-            abi: SablierV2LockupLinearAbi,
-            functionName: 'withdraw',
-            args: [bigIntStreamId, getAddress(roleHat.wearer), withdrawAmount.bigintValue],
-          });
-        }
+        let hatsAccountCalldata = encodeFunctionData({
+          abi: SablierV2LockupLinearAbi,
+          functionName: 'withdrawMax',
+          args: [bigIntStreamId, getAddress(roleHat.wearer)],
+        });
         withdrawToast = toast(t('withdrawPendingMessage'), {
           autoClose: false,
           closeOnClick: false,
@@ -161,10 +114,6 @@ export default function PaymentDetails({
         if (transaction.status === 'success') {
           await loadAmounts();
           toast(t('withdrawSuccessMessage'));
-          setWithdrawAmount({
-            value: '0',
-            bigintValue: 0n,
-          });
         } else {
           toast(t('withdrawRevertedMessage'));
         }
@@ -181,10 +130,8 @@ export default function PaymentDetails({
     payment?.streamId,
     publicClient,
     walletClient,
-    withdrawAmount.bigintValue,
     roleHat.smartAddress,
     roleHat.wearer,
-    withdrawMax,
     loadAmounts,
     t,
   ]);
@@ -277,29 +224,6 @@ export default function PaymentDetails({
                           textStyle="label-base"
                           color="neutral-7"
                         >
-                          {t('remaining')}
-                        </Text>
-                        <Flex alignItems="center">
-                          <Image
-                            src={payment.asset.logo}
-                            fallbackSrc="/images/coin-icon-default.svg"
-                            alt={payment.asset.symbol}
-                            w="1rem"
-                            h="1rem"
-                          />
-                          <Text
-                            textStyle="body-base"
-                            color="white-0"
-                          >
-                            {remainingAmount} {payment.asset.symbol}
-                          </Text>
-                        </Flex>
-                      </Flex>
-                      <Flex justifyContent="space-between">
-                        <Text
-                          textStyle="label-base"
-                          color="neutral-7"
-                        >
                           {t('withdrawable')}
                         </Text>
                         <Flex alignItems="center">
@@ -320,28 +244,14 @@ export default function PaymentDetails({
                         </Flex>
                       </Flex>
                     </Box>
-                    {withdrawableAmount > 0n && (
-                      <>
-                        <BigIntInput
-                          value={withdrawAmount.bigintValue}
-                          onChange={valuePair => setWithdrawAmount(valuePair)}
-                          decimalPlaces={payment.asset.decimals}
-                          maxValue={withdrawableAmount}
-                          data-testid="withdraw-stream-amount-input"
-                        />
-                        <Flex
-                          justifyContent="flex-end"
-                          w="full"
-                        >
-                          <Button
-                            leftIcon={<Download />}
-                            onClick={handleWithdraw}
-                          >
-                            {t('withdraw')}
-                          </Button>
-                        </Flex>
-                      </>
-                    )}
+                    <Button
+                      w="full"
+                      leftIcon={<Download />}
+                      onClick={handleWithdraw}
+                      disabled={withdrawableAmount <= 0n}
+                    >
+                      {t('withdraw')}
+                    </Button>
                   </Flex>
                 )}
               </AccordionPanel>

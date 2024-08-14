@@ -1,20 +1,20 @@
 import {
-  Box,
-  Flex,
-  Button,
-  HStack,
-  Text,
-  Tooltip,
-  Show,
-  Hide,
   Accordion,
   AccordionButton,
   AccordionItem,
   AccordionPanel,
+  Box,
+  Button,
+  Flex,
+  Hide,
+  HStack,
+  Show,
+  Text,
+  Tooltip,
 } from '@chakra-ui/react';
 import { getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import useLidoStaking from '../../../../hooks/stake/lido/useLidoStaking';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
@@ -23,7 +23,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatUSD } from '../../../../utils/numberFormats';
 import { ModalType } from '../../../ui/modals/ModalProvider';
-import { useFractalModal } from '../../../ui/modals/useFractalModal';
+import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import Divider from '../../../ui/utils/Divider';
 import { CoinHeader, CoinRow } from './AssetCoin';
 import { NFTHeader, NFTRow } from './AssetNFT';
@@ -46,7 +46,7 @@ export function Assets() {
     Object.keys(staking).length > 0 &&
     ethAsset &&
     BigInt(ethAsset.balance) > 0n;
-  const openStakingModal = useFractalModal(ModalType.STAKE);
+  const openStakingModal = useDecentModal(ModalType.STAKE);
 
   // --- Lido Unstake button setup ---
   const stETHAsset = assetsFungible.find(

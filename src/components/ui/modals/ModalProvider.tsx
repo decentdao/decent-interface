@@ -31,6 +31,7 @@ export enum ModalType {
   CONFIRM_MODIFY_GOVERNANCE,
   SEARCH_SAFE,
   WARN_UNSAVED_CHANGES,
+  WITHDRAW_PAYMENT,
 }
 
 export interface CurrentModal {
@@ -62,7 +63,7 @@ interface ModalUI {
  *  1. Create the modal content as a component, excluding the title of the modal (see e.g. DelegateModal).
  *  2. Add the modal to the ModalType enum.
  *  3. Handle assigning your new modal component for that ModalType here in the provider switch case.
- *  4. Utilize the useFractalModal hook to get a click listener to open your new modal.
+ *  4. Utilize the useDecentModal hook to get a click listener to open your new modal.
  */
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [current, setCurrent] = useState<CurrentModal>({ type: ModalType.NONE, props: [] });
