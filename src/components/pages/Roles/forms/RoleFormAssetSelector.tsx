@@ -64,10 +64,11 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
           <MenuItem
             key={index}
             p="1rem"
-            _hover={{ bg: 'neutral-4' }}
+            _hover={{ bg: 'white-alpha-04' }}
             display="flex"
             alignItems="center"
             gap={2}
+            borderRadius="0.25rem"
             justifyContent="space-between"
             w="full"
             onClick={() => {
