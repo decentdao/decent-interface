@@ -70,5 +70,7 @@
   "unsavedChangesDescription": "You have unsaved changes that will be lost if you continue. Do you want to discard your changes?",
   "discardChanges": "Discard",
   "keepEditing": "Keep Editing",
-  "emptyRolesAssets": "No assets that can be used for payment in treasury"
+  "emptyRolesAssets": "No assets that can be used for payment in treasury",
+  "withdrawTo": "Withdraw to",
+  "withdrawPaymentTitle": "Does everything looks right?"
 }

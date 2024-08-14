@@ -3,10 +3,7 @@ import { useCallback } from 'react';
 import { Address, Hex, encodeFunctionData, erc20Abi, getAddress, zeroAddress } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
-import {
-  BaseSablierStream,
-  SablierPayment,
-} from '../../components/pages/Roles/types';
+import { BaseSablierStream, SablierPayment } from '../../components/pages/Roles/types';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -68,7 +65,6 @@ export default function useCreateSablierStream() {
 
   const prepareLinearStream = useCallback(
     ({ totalAmount, recipient, schedule, cliff }: LinearStreamInputs) => {
-
       const calculateDuration = (abstractSchedule: StreamSchedule) => {
         let duration = 0;
         const relativeSchedule = abstractSchedule as StreamRelativeSchedule;

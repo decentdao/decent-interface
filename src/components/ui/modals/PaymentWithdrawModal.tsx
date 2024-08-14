@@ -32,7 +32,7 @@ export default function PaymentWithdrawModal({
 }) {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-  const { t } = useTranslation('roles');
+  const { t } = useTranslation(['roles', 'menu', 'common', 'modals']);
   const { displayName: accountDisplayName } = useDisplayName(roleHat.wearer);
   const avatarURL = useAvatar(accountDisplayName);
   const iconSize = useBreakpointValue<AvatarSize>({ base: 'sm', md: 'icon' }) || 'sm';
@@ -71,6 +71,7 @@ export default function PaymentWithdrawModal({
         if (transaction.status === 'success') {
           await onSuccess();
           toast(t('withdrawSuccessMessage'));
+          onClose();
         } else {
           toast(t('withdrawRevertedMessage'));
         }
@@ -90,93 +91,134 @@ export default function PaymentWithdrawModal({
     roleHat.smartAddress,
     roleHat.wearer,
     onSuccess,
+    onClose,
     t,
   ]);
 
   return (
-    <Flex gap="1rem">
+    <Flex
+      gap="1.5rem"
+      flexWrap="wrap"
+    >
+      <Text
+        textAlign="center"
+        px="1.5rem"
+        textStyle="display-lg"
+        w="full"
+      >
+        {t('withdrawPaymentTitle')}
+      </Text>
       <Flex
-        py="1rem"
         gap="1rem"
-        borderRadius="0.5rem"
-        boxShadow={SEXY_BOX_SHADOW_T_T}
-        bg="neutral-2"
+        flexWrap="wrap"
       >
         <Flex
-          w="50%"
-          gap="0.5rem"
-          alignItems="center"
-          px="1rem"
+          w="full"
+          py="1rem"
+          gap="1rem"
+          borderRadius="0.5rem"
+          boxShadow={SEXY_BOX_SHADOW_T_T}
+          bg="neutral-2"
+          justifyContent="center"
         >
-          <Image
-            src={payment.asset.logo}
-            fallbackSrc="/images/coin-icon-default.svg"
-            alt={payment.asset.symbol}
-            w="2rem"
-            h="2rem"
-          />
-          <Text textStyle="label-large">{payment.asset.symbol}</Text>
-        </Flex>
-        <Flex
-          w="50%"
-          flexWrap="wrap"
-          px="1rem"
-          alignItems="center"
-        >
-          <Text
-            textStyle="label-small"
-            color="neutral-7"
-          >
-            {t('available')}
-          </Text>
-          <Text textStyle="display-4xl">
-            {formatCoin(withdrawableAmount, true, payment.asset.decimals, undefined, false)}
-          </Text>
-        </Flex>
-      </Flex>
-      <Box>
-        <Flex gap="0.5rem">
-          <Text textStyle="label-small">{t('withdrawTo')}</Text>
           <Flex
+            gap="0.5rem"
+            px="1rem"
             alignItems="center"
-            gap={{ base: '0.25rem', md: '0.75rem' }}
+            flex="1"
+            justifyContent="center"
           >
-            <Box>
-              <Avatar
-                address={roleHat.wearer}
-                url={avatarURL}
-                size={iconSize}
-              />
-            </Box>
+            <Image
+              src={payment.asset.logo}
+              fallbackSrc="/images/coin-icon-default.svg"
+              alt={payment.asset.symbol}
+              w="2rem"
+              h="2rem"
+            />
+            <Text textStyle="label-large">{payment.asset.symbol}</Text>
+          </Flex>
+          <Flex
+            px="1rem"
+            flexWrap="wrap"
+            alignItems="center"
+            flex="1"
+          >
             <Text
-              textStyle={{ base: 'label-small', md: 'button-base' }}
-              mb="1px"
+              textStyle="label-small"
+              color="neutral-7"
+              w="full"
             >
-              {accountDisplayName}
+              {t('available')}
+            </Text>
+            <Text
+              textStyle="display-4xl"
+              w="full"
+            >
+              {formatCoin(withdrawableAmount, true, payment.asset.decimals, undefined, false)}
             </Text>
           </Flex>
         </Flex>
-        <Flex gap="0.5rem">
-          <Text
-            textStyle="label-small"
-            color="neutral-7"
+        <Flex
+          gap="1rem"
+          flexWrap="wrap"
+        >
+          <Flex
+            gap="0.5rem"
+            flexWrap="wrap"
+            w="full"
           >
-            {t('network', { ns: 'menu' })}
-          </Text>
-          <Text>{chain.name}</Text>
+            <Text
+              textStyle="label-small"
+              color="neutral-7"
+              w="100px"
+            >
+              {t('withdrawTo')}
+            </Text>
+            <Flex
+              alignItems="center"
+              gap={{ base: '0.25rem', md: '0.5rem' }}
+            >
+              <Box>
+                <Avatar
+                  address={roleHat.wearer}
+                  url={avatarURL}
+                  size={iconSize}
+                />
+              </Box>
+              <Text textStyle="label-base">{accountDisplayName}</Text>
+            </Flex>
+          </Flex>
+          <Flex
+            gap="0.5rem"
+            flexWrap="wrap"
+            w="full"
+          >
+            <Text
+              textStyle="label-small"
+              color="neutral-7"
+              w="100px"
+            >
+              {t('network', { ns: 'menu' })}
+            </Text>
+            <Text>{chain.name}</Text>
+          </Flex>
         </Flex>
-      </Box>
-      <Flex gap="0.75rem">
+      </Flex>
+      <Flex
+        gap="0.75rem"
+        w="full"
+      >
         <Button
-          size="md"
+          variant="secondary"
           onClick={onClose}
+          flex="1"
         >
           {t('cancel', { ns: 'common' })}
         </Button>
         <Button
-          size="md"
           onClick={handleWithdraw}
           leftIcon={<Download />}
+          flex="1"
         >
           {t('withdraw')}
         </Button>

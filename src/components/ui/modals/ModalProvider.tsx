@@ -181,7 +181,6 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         );
         break;
       case ModalType.WITHDRAW_PAYMENT:
-        modalTitle = t('withdrawPaymentTitle');
         modalContent = (
           <PaymentWithdrawModal
             payment={current.props.payment}

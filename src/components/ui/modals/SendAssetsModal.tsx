@@ -83,7 +83,11 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         {({ errors, values, setFieldValue, handleSubmit }) => {
           const overDraft =
             Number(values.inputAmount?.value || '0') >
-            formatCoinUnits(values.selectedAsset.balance, values.selectedAsset.decimals, values.selectedAsset.symbol);
+            formatCoinUnits(
+              values.selectedAsset.balance,
+              values.selectedAsset.decimals,
+              values.selectedAsset.symbol,
+            );
 
           // @dev next couple of lines are written like this, to keep typing equivalent during the conversion from BN to bigint
           const inputBigint = values.inputAmount?.bigintValue;

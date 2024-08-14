@@ -13,13 +13,17 @@ import {
 import { CaretDown, CaretRight, Download } from '@phosphor-icons/react';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { getContract } from 'viem';
 import { useAccount, useWalletClient } from 'wagmi';
 import { SablierV2LockupLinearAbi } from '../../../../../assets/abi/SablierV2LockupLinear';
 import { RoleValue, SablierPayment } from '../../../../../components/pages/Roles/types';
 import { ModalType } from '../../../../../components/ui/modals/ModalProvider';
 import { useDecentModal } from '../../../../../components/ui/modals/useDecentModal';
+import { DAO_ROUTES } from '../../../../../constants/routes';
 import { convertStreamIdToBigInt } from '../../../../../hooks/streams/useCreateSablierStream';
+import { useFractal } from '../../../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentRoleHat } from '../../../../../store/roles';
 
 type AccordionItemRowProps = {
@@ -52,8 +56,13 @@ export default function PaymentDetails({
   payment?: SablierPayment;
   roleHat: DecentRoleHat | RoleValue;
 }) {
+  const {
+    node: { safe },
+  } = useFractal();
+  const { addressPrefix } = useNetworkConfig();
   const { address: account } = useAccount();
   const { t } = useTranslation(['roles', 'common']);
+  const navigate = useNavigate();
   const [withdrawableAmount, setWithdrawableAmount] = useState(0n);
 
   const { data: walletClient } = useWalletClient();
@@ -86,6 +95,13 @@ export default function PaymentDetails({
   useEffect(() => {
     loadAmounts();
   }, [loadAmounts]);
+
+  const handleClickWithdraw = useCallback(() => {
+    if (safe?.address) {
+      navigate(DAO_ROUTES.roles.relative(addressPrefix, safe.address));
+      withdraw();
+    }
+  }, [addressPrefix, navigate, safe?.address, withdraw]);
 
   if (!payment) {
     return null;
@@ -151,7 +167,7 @@ export default function PaymentDetails({
                   <Button
                     w="full"
                     leftIcon={<Download />}
-                    onClick={withdraw}
+                    onClick={handleClickWithdraw}
                     disabled={withdrawableAmount <= 0n}
                   >
                     {t('withdraw')}
