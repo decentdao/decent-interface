@@ -94,7 +94,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         setFieldValue('erc20Token.tokenSymbol', symbol, true);
       }
     } else {
-      setIsImportedVotesToken(false);
+      setIsImportedVotesToken(undefined);
     }
   }, [
     checkVotesToken,
