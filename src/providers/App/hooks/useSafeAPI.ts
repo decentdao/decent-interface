@@ -4,6 +4,7 @@ import SafeApiKit, {
   SafeCreationInfoResponse,
   SafeInfoResponse,
   SafeApiKitConfig,
+  TokenInfoResponse,
 } from '@safe-global/api-kit';
 import { useMemo } from 'react';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
@@ -85,6 +86,13 @@ class EnhancedSafeApiKit extends SafeApiKit {
     const nextNonce = await this.getNextNonce(safeAddress);
     const safeInfo = { ...safeInfoResponse, nextNonce };
     return safeInfo;
+  }
+
+  override async getToken(tokenAddress: string): Promise<TokenInfoResponse> {
+    const value = await this.request('getTokenData' + tokenAddress, CacheExpiry.NEVER, () => {
+      return super.getToken(tokenAddress);
+    });
+    return value;
   }
 }
 

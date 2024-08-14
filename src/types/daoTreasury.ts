@@ -1,5 +1,4 @@
 import { ContractEvent } from './contract';
-import { ActivityBase } from './fractal';
 import { EthAddress } from './utils';
 
 export enum TokenEventType {
@@ -159,10 +158,4 @@ export type AssetTotals = {
 export enum TreasuryActivityTypes {
   DEPOSIT,
   WITHDRAW,
-}
-
-export interface TreasuryActivity extends ActivityBase {
-  transferAddresses: string[];
-  transferAmountTotals: string[];
-  isDeposit: boolean;
 }
