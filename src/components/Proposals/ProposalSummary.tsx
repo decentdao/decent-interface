@@ -75,7 +75,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
         ).toBigInt();
 
         setProposalsERC20VotingWeight(
-          (pastVotingWeight / votesTokenDecimalsDenominator).toString(),
+          (pastVotingWeight / votesTokenDecimalsDenominator).toLocaleString(),
         );
       }
     }
