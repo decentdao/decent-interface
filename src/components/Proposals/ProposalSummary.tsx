@@ -86,6 +86,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
     baseContracts,
     governanceContracts.ozLinearVotingContractAddress,
     proposal.proposalId,
+    votesToken?.decimals,
   ]);
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
