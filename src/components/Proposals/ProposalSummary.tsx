@@ -9,7 +9,7 @@ import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
-import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
+import { DEFAULT_DATE_TIME_FORMAT, formatCoin } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
 import DisplayTransaction from '../ui/links/DisplayTransaction';
 import EtherscanLink from '../ui/links/EtherscanLink';
@@ -75,7 +75,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
         ).toBigInt();
 
         setProposalsERC20VotingWeight(
-          (pastVotingWeight / votesTokenDecimalsDenominator).toLocaleString(),
+          formatCoin(pastVotingWeight, true, votesToken?.decimals, undefined, false),
         );
       }
     }
@@ -86,7 +86,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
     baseContracts,
     governanceContracts.ozLinearVotingContractAddress,
     proposal.proposalId,
-    votesTokenDecimalsDenominator,
   ]);
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
