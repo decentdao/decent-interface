@@ -1,6 +1,5 @@
-import { Box, Flex, Icon, Image, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
+import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
-import { formatDuration, intervalToDuration } from 'date-fns';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex, getAddress, zeroAddress } from 'viem';
@@ -9,7 +8,6 @@ import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentTree, useRolesStore } from '../../../store/roles';
 import { getChainIdFromPrefix } from '../../../utils/url';
-import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
@@ -22,6 +20,8 @@ function RolesHeader() {
       sx={{
         th: {
           padding: '0.75rem',
+          textTransform: 'none',
+          fontWeight: 'normal',
         },
       }}
       bg="white-alpha-04"
@@ -32,8 +32,7 @@ function RolesHeader() {
       >
         <Th>{t('role')}</Th>
         <Th>{t('member')}</Th>
-        <Th>{t('payment')}</Th>
-        <Th>{t('payment')}</Th>
+        <Th>{t('activePayments')}</Th>
       </Tr>
     </Thead>
   );
@@ -137,75 +136,27 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
   );
 }
 
-function PaymentColumn({ payment }: { payment: SablierPayment | undefined }) {
-  const { t } = useTranslation(['roles']);
-  const format = ['years', 'days', 'hours'];
-  const endDate =
-    payment?.scheduleFixedDate?.endDate &&
-    formatDuration(
-      intervalToDuration({
-        start: payment.scheduleFixedDate.startDate,
-        end: payment.scheduleFixedDate.endDate,
-      }),
-      { format },
-    );
-  const cliffDate =
-    payment?.scheduleFixedDate?.cliffDate &&
-    formatDuration(
-      intervalToDuration({
-        start: payment.scheduleFixedDate.startDate,
-        end: payment.scheduleFixedDate.cliffDate,
-      }),
-      { format },
-    );
+function PaymentsColumn({ payments }: { payments?: SablierPayment[] }) {
   return (
     <Td>
-      {payment ? (
-        <Box>
-          <Flex
-            textStyle="body-base"
-            color="white-0"
-            gap="0.25rem"
-            alignItems="center"
-            my="0.5rem"
-          >
-            <Image
-              src={payment.asset.logo}
-              fallbackSrc="/images/coin-icon-default.svg"
-              alt={payment.asset.symbol}
-              w="1.25rem"
-              h="1.25rem"
-            />
-            {payment.amount?.value}
-            <EtherscanLink
-              color="white-0"
-              _hover={{ bg: 'transparent' }}
-              textStyle="body-base"
-              padding={0}
-              borderWidth={0}
-              value={payment.asset.address}
-              type="token"
-              wordBreak="break-word"
-            >
-              {payment.asset.symbol}
-            </EtherscanLink>
-            <Flex
-              flexDir="column"
-              gap="0.25rem"
-            >
-              <Text>{endDate && `${t('after')} ${endDate}`}</Text>
-            </Flex>
-          </Flex>
-          <Text>{cliffDate && `${t('cliff')} ${t('after')} ${cliffDate}`}</Text>
-        </Box>
-      ) : (
+      <Box
+        bg="celery--2"
+        color="neutral-3"
+        borderColor="neutral-3"
+        borderWidth="2px"
+        borderRadius="50%"
+        w="1.25rem"
+        h="1.25rem"
+        mx="1.5rem"
+      >
         <Text
-          textStyle="body-base"
-          color="neutral-6"
+          textStyle="helper-text-small"
+          lineHeight="1rem"
+          align="center"
         >
-          {t('n/a')}
+          {payments?.length ?? 0}
         </Text>
-      )}
+      </Box>
     </Td>
   );
 }
@@ -226,8 +177,7 @@ export function RolesRow({ name, wearerAddress, payments, handleRoleClick, hatId
     >
       <RoleNameColumn roleName={name} />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentColumn payment={payments?.[0]} />
-      <PaymentColumn payment={payments?.[1]} />
+      <PaymentsColumn payments={payments} />
     </Tr>
   );
 }
@@ -257,8 +207,7 @@ export function RolesRowEdit({
         editStatus={editStatus}
       />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentColumn payment={payments?.[0]} />
-      <PaymentColumn payment={payments?.[1]} />
+      <PaymentsColumn payments={payments} />
     </Tr>
   );
 }
