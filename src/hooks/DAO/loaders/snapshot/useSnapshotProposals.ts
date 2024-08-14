@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { ActivityEventType, FractalProposalState } from '../../../../types';
+import { FractalProposalState } from '../../../../types';
 import { SnapshotProposal } from '../../../../types/daoProposal';
 import useSnapshotSpaceName from './useSnapshotSpaceName';
 import { createSnapshotGraphQlClient } from './';
@@ -48,7 +48,6 @@ export const useSnapshotProposals = () => {
           const proposals: SnapshotProposal[] = result.data.proposals.map((proposal: any) => {
             return {
               eventDate: new Date(proposal.start * 1000),
-              eventType: ActivityEventType.Governance,
               state:
                 proposal.state === 'active'
                   ? FractalProposalState.ACTIVE

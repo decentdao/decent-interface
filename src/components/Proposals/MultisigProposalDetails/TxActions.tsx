@@ -1,9 +1,8 @@
 import { Box, Button, Text, Flex, Tooltip } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
-import { SafeMultisigTransactionWithTransfersResponse } from '@safe-global/api-kit';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Hex, getAddress, getContract, isHex } from 'viem';
+import { getAddress, getContract, isHex } from 'viem';
 import { useWalletClient } from 'wagmi';
 import GnosisSafeL2Abi from '../../../assets/abi/GnosisSafeL2';
 import { Check } from '../../../assets/theme/custom/icons/Check';
@@ -49,27 +48,31 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const { loadSafeMultisigProposals } = useSafeMultisigProposals();
   const { data: walletClient } = useWalletClient();
 
-  if (user.votingWeight === 0n) return <></>;
+  if (user.votingWeight === 0n) return null;
 
-  const multisigTx = proposal.transaction as SafeMultisigTransactionWithTransfersResponse;
-
-  if (!multisigTx) return null;
+  if (!proposal.transaction) return null;
 
   const signTransaction = async () => {
-    if (!walletClient || !safe?.address || (multisigTx.data && !isHex(multisigTx.data))) {
+    if (
+      !walletClient ||
+      !safe?.address ||
+      !proposal.transaction ||
+      !isHex(proposal.transaction.data) ||
+      !safeAPI
+    ) {
       return;
     }
     try {
       const safeTx = buildSafeTransaction({
-        ...multisigTx,
-        gasToken: getAddress(multisigTx.gasToken),
-        refundReceiver: multisigTx.refundReceiver
-          ? getAddress(multisigTx.refundReceiver)
+        ...proposal.transaction,
+        gasToken: getAddress(proposal.transaction.gasToken),
+        refundReceiver: proposal.transaction.refundReceiver
+          ? getAddress(proposal.transaction.refundReceiver)
           : undefined,
-        to: getAddress(multisigTx.to),
-        value: BigInt(multisigTx.value),
-        data: multisigTx.data as Hex | undefined,
-        operation: multisigTx.operation as 0 | 1,
+        to: getAddress(proposal.transaction.to),
+        value: BigInt(proposal.transaction.value),
+        data: proposal.transaction.data,
+        operation: proposal.transaction.operation as 0 | 1,
       });
 
       asyncRequest({
@@ -108,26 +111,27 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const timelockTransaction = async () => {
     try {
       if (
-        !multisigTx.confirmations ||
+        !proposal.transaction ||
+        !proposal.transaction.confirmations ||
+        !walletClient ||
         !freezeGuardContractAddress ||
-        (multisigTx.data && !isHex(multisigTx.data)) ||
-        !walletClient
+        !isHex(proposal.transaction.data)
       ) {
         return;
       }
       const safeTx = buildSafeTransaction({
-        ...multisigTx,
-        gasToken: getAddress(multisigTx.gasToken),
-        refundReceiver: multisigTx.refundReceiver
-          ? getAddress(multisigTx.refundReceiver)
+        ...proposal.transaction,
+        gasToken: getAddress(proposal.transaction.gasToken),
+        refundReceiver: proposal.transaction.refundReceiver
+          ? getAddress(proposal.transaction.refundReceiver)
           : undefined,
-        to: getAddress(multisigTx.to),
-        value: BigInt(multisigTx.value),
-        data: multisigTx.data as Hex | undefined,
-        operation: multisigTx.operation as 0 | 1,
+        to: getAddress(proposal.transaction.to),
+        value: BigInt(proposal.transaction.value),
+        data: proposal.transaction.data,
+        operation: proposal.transaction.operation as 0 | 1,
       });
       const signatures = buildSignatureBytes(
-        multisigTx.confirmations.map(confirmation => {
+        proposal.transaction.confirmations.map(confirmation => {
           if (!isHex(confirmation.signature)) {
             throw new Error('Confirmation signature is malfunctioned');
           }
@@ -173,10 +177,11 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   const executeTransaction = async () => {
     try {
       if (
+        !walletClient ||
         !safe?.address ||
-        !multisigTx.confirmations ||
-        (multisigTx.data && !isHex(multisigTx.data)) ||
-        !walletClient
+        !proposal.transaction ||
+        !proposal.transaction.confirmations ||
+        !isHex(proposal.transaction.data)
       ) {
         return;
       }
@@ -188,19 +193,19 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       });
 
       const safeTx = buildSafeTransaction({
-        ...multisigTx,
-        gasToken: getAddress(multisigTx.gasToken),
-        refundReceiver: multisigTx.refundReceiver
-          ? getAddress(multisigTx.refundReceiver)
+        ...proposal.transaction,
+        gasToken: getAddress(proposal.transaction.gasToken),
+        refundReceiver: proposal.transaction.refundReceiver
+          ? getAddress(proposal.transaction.refundReceiver)
           : undefined,
-        to: getAddress(multisigTx.to),
-        value: BigInt(multisigTx.value),
-        data: multisigTx.data as Hex | undefined,
-        operation: multisigTx.operation as 0 | 1,
+        to: getAddress(proposal.transaction.to),
+        value: BigInt(proposal.transaction.value),
+        data: proposal.transaction.data,
+        operation: proposal.transaction.operation as 0 | 1,
       });
 
       const signatures = buildSignatureBytes(
-        multisigTx.confirmations.map(confirmation => {
+        proposal.transaction.confirmations.map(confirmation => {
           if (!isHex(confirmation.signature)) {
             throw new Error('Confirmation signature is malfunctioned');
           }
@@ -282,7 +287,7 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
       pageTitle: 'executeTitle',
     },
   };
-  const isActiveNonce = !!safe && multisigTx.nonce === safe.nonce;
+  const isActiveNonce = !!safe && proposal.transaction.nonce === safe.nonce;
   const isButtonDisabled =
     isSubmitDisabled ||
     isPending ||

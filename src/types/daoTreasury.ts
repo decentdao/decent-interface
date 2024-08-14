@@ -1,5 +1,3 @@
-import { Address } from 'viem';
-import { ActivityBase } from './fractal';
 import { EthAddress } from './utils';
 
 export enum TokenEventType {
@@ -149,21 +147,4 @@ export enum TransferType {
 export enum TokenType {
   ERC20,
   ERC721,
-}
-
-export type AssetTotals = {
-  bi: bigint;
-  symbol: string;
-  decimals: number;
-};
-
-export enum TreasuryActivityTypes {
-  DEPOSIT,
-  WITHDRAW,
-}
-
-export interface TreasuryActivity extends ActivityBase {
-  transferAddresses: Address[];
-  transferAmountTotals: string[];
-  isDeposit: boolean;
 }

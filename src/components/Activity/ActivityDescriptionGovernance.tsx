@@ -8,7 +8,6 @@ import {
   Activity,
   GovernanceActivity,
   MultisigProposal,
-  ActivityEventType,
   SnapshotProposal,
   FractalProposal,
   AzoriusProposal,
@@ -87,10 +86,6 @@ export function ProposalTitle({
   showAuthor?: boolean;
 }) {
   const metaData = useGetMetadata(activity as FractalProposal);
-
-  if (activity.eventType !== ActivityEventType.Governance) {
-    return null;
-  }
 
   // Check if it's a SnapshotProposal and set variables accordingly
   const isSnapshotProposal = (activity as SnapshotProposal).snapshotProposalId !== undefined;
