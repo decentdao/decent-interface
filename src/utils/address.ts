@@ -1,3 +1,4 @@
+import { JsonRpcProvider, FallbackProvider } from '@ethersproject/providers';
 import { Address, getAddress, isAddress } from 'viem';
 
 export const MOCK_MORALIS_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
@@ -18,7 +19,10 @@ export const encodePrefixedAddress = (address: Address, network: string) => {
   return `${network}:${address}`;
 };
 
-export const resolveAddress = async (addressOrENS: string, provider?: any): Promise<Address> => {
+export const resolveAddress = async (
+  addressOrENS: string,
+  provider?: JsonRpcProvider | FallbackProvider,
+): Promise<Address> => {
   let validAddress: Address;
 
   if (isAddress(addressOrENS)) {
