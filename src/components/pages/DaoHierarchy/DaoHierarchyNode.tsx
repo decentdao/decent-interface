@@ -81,7 +81,7 @@ export function DaoHierarchyNode({
       {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
         <Flex
           minH={`${NODE_HEIGHT_REM}rem`}
-          key={childNode.daoAddress}
+          key={childNode.address}
           gap="1.25rem"
         >
           <Icon
@@ -90,7 +90,7 @@ export function DaoHierarchyNode({
             ml="0.5rem"
             boxSize="32px"
             color={
-              currentSafe?.address === getAddress(childNode.daoAddress || zeroAddress)
+              currentSafe?.address === getAddress(childNode.address || zeroAddress)
                 ? 'celery-0'
                 : 'neutral-6'
             }
@@ -98,7 +98,7 @@ export function DaoHierarchyNode({
 
           <DaoHierarchyNode
             parentAddress={safeAddress}
-            safeAddress={childNode.daoAddress}
+            safeAddress={childNode.address}
             depth={depth + 1}
           />
         </Flex>

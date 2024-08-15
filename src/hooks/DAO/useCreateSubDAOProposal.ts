@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isHex, getAddress } from 'viem';
+import { getAddress, isHex } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
-import { SafeMultisigDAO, AzoriusGovernance, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
+import { AzoriusERC20DAO, AzoriusERC721DAO, AzoriusGovernance, SafeMultisigDAO } from '../../types';
 import { ProposalExecuteData } from '../../types/daoProposal';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
@@ -27,7 +27,7 @@ export const useCreateSubDAOProposal = () => {
     (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
       nonce: number | undefined,
-      successCallback: (addressPrefix: string, daoAddress: string) => void,
+      successCallback: (addressPrefix: string, safeAddress: string) => void,
     ) => {
       const propose = async () => {
         if (!baseContracts || !safeAddress) {

@@ -244,7 +244,7 @@ export interface FractalNode {
 
 export interface Node
   extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {
-  daoAddress: Address; // TODO: Gotta try to get rid of this and use `safe.address` EVERYWHERE (may or may not be possible, depending on subgraph query result data structure)
+  address: Address;
 }
 
 export interface FractalModuleData {

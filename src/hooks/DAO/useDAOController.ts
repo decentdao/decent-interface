@@ -21,12 +21,12 @@ export default function useDAOController() {
 
   const prefixAndAddress = addressWithPrefix?.split(':');
   const addressPrefix = prefixAndAddress?.[0];
-  const daoAddress = prefixAndAddress?.[1];
+  const safeAddress = prefixAndAddress?.[1];
 
   const invalidQuery =
     addressWithPrefix === null ||
     !validDaoQueryString.test(addressWithPrefix) ||
-    !isAddress(daoAddress || '');
+    !isAddress(safeAddress || '');
 
   const { addressPrefix: connectedAddressPrefix } = useNetworkConfig();
   const wrongNetwork = addressPrefix !== connectedAddressPrefix;
@@ -41,7 +41,7 @@ export default function useDAOController() {
 
   const { errorLoading } = useFractalNode(skip, {
     addressPrefix,
-    daoAddress,
+    safeAddress,
   });
 
   useGovernanceContracts();

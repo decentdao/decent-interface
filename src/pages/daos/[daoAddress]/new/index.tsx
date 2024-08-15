@@ -14,9 +14,9 @@ export default function SubDaoCreate() {
     node: { safe },
   } = useFractal();
 
-  const successCallback = async (addressPrefix: string, daoAddress: string) => {
+  const successCallback = async (addressPrefix: string, safeAddress: string) => {
     setRedirectPending(true);
-    navigate(DAO_ROUTES.dao.relative(addressPrefix, daoAddress));
+    navigate(DAO_ROUTES.dao.relative(addressPrefix, safeAddress));
   };
 
   const { proposeDao, pendingCreateTx } = useCreateSubDAOProposal();

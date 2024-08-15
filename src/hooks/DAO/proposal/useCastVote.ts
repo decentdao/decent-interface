@@ -9,9 +9,9 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import {
   AzoriusGovernance,
-  GovernanceType,
-  FractalProposal,
   ExtendedSnapshotProposal,
+  FractalProposal,
+  GovernanceType,
 } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
 import useSafeContracts from '../../safe/useSafeContracts';

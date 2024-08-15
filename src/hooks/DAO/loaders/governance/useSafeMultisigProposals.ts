@@ -12,16 +12,17 @@ export const useSafeMultisigProposals = () => {
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
+  const safeAddress = safe?.address
 
   const { parseTransactions } = useSafeTransactions();
 
   const loadSafeMultisigProposals = useCallback(async () => {
-    if (!safe?.address || !safeAPI) {
+    if (!safeAddress || !safeAPI) {
       return;
     }
     try {
-      const transactions = await safeAPI.getAllTransactions(safe.address);
-      const activities = await parseTransactions(transactions, safe.address);
+      const transactions = await safeAPI.getAllTransactions(safeAddress);
+      const activities = await parseTransactions(transactions, safeAddress);
       const multisendProposals = activities.filter(
         activity => activity.eventType !== ActivityEventType.Treasury,
       ) as MultisigProposal[];
@@ -42,7 +43,7 @@ export const useSafeMultisigProposals = () => {
     } catch (e) {
       logError(e);
     }
-  }, [safe, safeAPI, parseTransactions, action]);
+  }, [safeAddress, safeAPI, parseTransactions, action]);
 
   return { loadSafeMultisigProposals };
 };

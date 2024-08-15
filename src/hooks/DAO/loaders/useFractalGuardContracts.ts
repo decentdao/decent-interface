@@ -26,7 +26,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
   const loadFractalGuardContracts = useCallback(
-    async (_daoAddress: string, _safe: SafeInfoResponse, _fractalModules: FractalModuleData[]) => {
+    async (_safe: SafeInfoResponse, _fractalModules: FractalModuleData[]) => {
       if (!baseContracts) {
         return;
       }
@@ -103,11 +103,11 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   );
 
   const setGuardContracts = useCallback(async () => {
-    if (!safeAddress || !safe) return;
-    const contracts = await loadFractalGuardContracts(safeAddress, safe, fractalModules);
+    if (!safe) return;
+    const contracts = await loadFractalGuardContracts(safe, fractalModules);
     if (!contracts) return;
     action.dispatch({ type: GuardContractAction.SET_GUARD_CONTRACT, payload: contracts });
-  }, [action, safeAddress, safe, fractalModules, loadFractalGuardContracts]);
+  }, [action, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
     if (

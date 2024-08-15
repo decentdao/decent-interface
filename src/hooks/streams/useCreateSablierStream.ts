@@ -39,6 +39,8 @@ export default function useCreateSablierStream() {
     node: { safe },
   } = useFractal();
 
+  const safeAddress = safe?.address;
+
   const prepareStreamTokenCallData = useCallback(
     (amountInTokenDecimals: bigint) => {
       return encodeFunctionData({
@@ -52,11 +54,11 @@ export default function useCreateSablierStream() {
 
   const prepareBasicStreamData = useCallback(
     (recipient: Address, amountInTokenDecimals: bigint) => {
-      if (!safe?.address) {
+      if (!safeAddress) {
         throw new Error('Can not create sablier stream proposal while DAO is not set.');
       }
       return {
-        sender: safe.address, // Tokens sender. This address will be able to cancel the stream
+        sender: safeAddress, // Tokens sender. This address will be able to cancel the stream
         cancelable: true, // Cancelable - is it possible to cancel this stream
         transferable: false, // Transferable - is Recipient able to transfer receiving rights to someone else
         recipient, // Recipient of tokens through stream
@@ -64,7 +66,7 @@ export default function useCreateSablierStream() {
         broker: { account: zeroAddress, fee: 0n }, // Optional broker
       };
     },
-    [safe],
+    [safeAddress],
   );
 
   const prepareLinearStream = useCallback(
