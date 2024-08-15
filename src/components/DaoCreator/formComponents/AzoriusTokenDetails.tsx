@@ -19,9 +19,7 @@ import { AzoriusTokenAllocations } from './AzoriusTokenAllocations';
 import { VotesTokenImport } from './VotesTokenImport';
 import { VotesTokenNew } from './VotesTokenNew';
 
-function TokenConfigDisplay(
-  props: ICreationStepProps & { isImportedVotesToken: boolean | undefined },
-) {
+function TokenConfigDisplay(props: ICreationStepProps) {
   switch (props.values.erc20Token.tokenCreationType) {
     case TokenCreationType.NEW:
       return <VotesTokenNew {...props} />;
@@ -210,10 +208,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         bg="neutral-2"
         borderRadius="0.25rem"
       >
-        <TokenConfigDisplay
-          {...props}
-          isImportedVotesToken={isImportedVotesToken}
-        />
+        <TokenConfigDisplay {...props} />
       </Box>
       {values.erc20Token.tokenCreationType === TokenCreationType.NEW && (
         <Box
