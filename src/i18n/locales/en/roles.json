@@ -43,7 +43,7 @@
   "weeklyShort": "w",
   "months": "Months",
   "weeks": "Weeks",
-  "addPaymentStream": "Add Payment Stream",
+  "addPayment": "Add Payment",
   "addPaymentStreamSubTitle": "Define a payment schedule to unlock a predefined amount of an asset after a specific time.",
   "schedule": "Schedule",
   "scheduleSubTitle": "Define the overall length of the payment schedule.",
@@ -54,7 +54,7 @@
   "hours": "Hours",
   "cliff": "Cliff",
   "cliffSubTitle": "How long until the assets are claimable?",
-  "paymentStream": "Payment Stream",
+  "payments": "Payments",
   "payment": "Payment",
   "withdraw": "Withdraw",
   "withdrawHelper": "Withdrawing will transfer the funds to the recipient's address.",
@@ -72,5 +72,7 @@
   "unsavedChangesDescription": "You have unsaved changes that will be lost if you continue. Do you want to discard your changes?",
   "discardChanges": "Discard",
   "keepEditing": "Keep Editing",
+  "addPaymentTooltip": "Payments on a per-second basis; powered by Sablier.",
+  "cliffPaymentTooltip": "Assets continue to accrue but aren't yet claimable here.",
   "emptyRolesAssets": "No assets available for payments."
 }

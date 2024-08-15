@@ -89,6 +89,7 @@ export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
   wearer: string;
   editedRole?: EditedRole;
   payments?: SablierPayment[];
+  roleEditingPaymentIndex?: number;
 }
 
 export interface RoleFormValues {
