@@ -3,11 +3,7 @@ import { useCallback } from 'react';
 import { Address, Hex, encodeFunctionData, erc20Abi, getAddress, zeroAddress } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
-import {
-  BaseSablierStream,
-  SablierAsset,
-  SablierPayment,
-} from '../../components/pages/Roles/types';
+import { BaseSablierStream, SablierPayment } from '../../components/pages/Roles/types';
 import { SECONDS_IN_DAY, SECONDS_IN_HOUR } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -19,7 +15,6 @@ import {
 
 type LinearStreamInputs = {
   totalAmount: bigint;
-  asset: SablierAsset;
   recipient: Address;
   schedule: StreamSchedule;
   cliff: StreamSchedule | undefined;
@@ -69,10 +64,7 @@ export default function useCreateSablierStream() {
   );
 
   const prepareLinearStream = useCallback(
-    ({ totalAmount, asset, recipient, schedule, cliff }: LinearStreamInputs) => {
-      const exponent = 10n ** BigInt(asset.decimals);
-      const totalAmountInTokenDecimals = BigInt(totalAmount) * exponent;
-
+    ({ totalAmount, recipient, schedule, cliff }: LinearStreamInputs) => {
       const calculateDuration = (abstractSchedule: StreamSchedule) => {
         let duration = 0;
         const relativeSchedule = abstractSchedule as StreamRelativeSchedule;
@@ -97,7 +89,7 @@ export default function useCreateSablierStream() {
       if (!streamDuration) {
         throw new Error('Stream duration can not be 0');
       }
-      const basicStreamData = prepareBasicStreamData(recipient, totalAmountInTokenDecimals);
+      const basicStreamData = prepareBasicStreamData(recipient, totalAmount);
       const assembledStream = {
         ...basicStreamData,
         durations: { cliff: cliffDuration, total: streamDuration + cliffDuration }, // Total duration has to include cliff duration
@@ -192,7 +184,6 @@ export default function useCreateSablierStream() {
             recipient,
             ...streamData,
             totalAmount: streamData.amount.bigintValue,
-            asset: streamData.asset,
             schedule,
             cliff,
           });
@@ -201,7 +192,7 @@ export default function useCreateSablierStream() {
 
         const sablierBatchCalldata = encodeFunctionData({
           abi: SablierV2BatchAbi,
-          functionName: 'createWithDurationsLL', // Another option would be to use createWithTimestampsLL. Essentially they're doing the same, `WithDurations` just simpler for usage
+          functionName: 'createWithDurationsLL', // @dev Another option would be to use `createWithTimestampsLL`. Essentially they're doing the same, `WithDurations` just simpler for usage
           args: [sablierV2LockupLinear, tokenAddress, assembledStreams],
         });
 
