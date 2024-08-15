@@ -363,7 +363,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
 
-  const roleEditingErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
+  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -417,7 +417,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
       <DurationTabs formIndex={formIndex} />
       <Flex justifyContent="flex-end">
         <Button
-          isDisabled={!!roleEditingErrors}
+          isDisabled={!!roleEditingPaymentsErrors}
           onClick={() => {
             setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
           }}
