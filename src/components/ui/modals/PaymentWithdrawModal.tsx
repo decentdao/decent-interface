@@ -99,6 +99,7 @@ export default function PaymentWithdrawModal({
     <Flex
       gap="1.5rem"
       flexWrap="wrap"
+      px={{ base: '1rem', md: 0 }}
     >
       <Text
         textAlign="center"

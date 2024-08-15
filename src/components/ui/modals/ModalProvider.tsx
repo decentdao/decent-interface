@@ -1,9 +1,10 @@
-import { Portal, useDisclosure } from '@chakra-ui/react';
+import { Portal, Show, useDisclosure } from '@chakra-ui/react';
 import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UnsavedChangesWarningContent } from '../../../pages/daos/[daoAddress]/roles/edit/unsavedChangesWarningContent';
 import AddSignerModal from '../../pages/DaoSettings/components/Signers/modals/AddSignerModal';
 import RemoveSignerModal from '../../pages/DaoSettings/components/Signers/modals/RemoveSignerModal';
+import DraggableDrawer from '../containers/DraggableDrawer';
 import { DAOSearch } from '../menus/DAOSearch';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
@@ -206,7 +207,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     };
   }, [current, onClose, t]);
 
-  const display = content ? (
+  let display = content ? (
     <ModalBase
       title={title}
       warn={warn}
@@ -217,6 +218,35 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       {content}
     </ModalBase>
   ) : null;
+
+  if (current.type === ModalType.WITHDRAW_PAYMENT) {
+    display = (
+      <>
+        <Show below="md">
+          <DraggableDrawer
+            isOpen={isOpen}
+            onClose={onSetClosed}
+            onOpen={onOpen}
+            closeOnOverlayClick
+            headerContent={null}
+          >
+            {content}
+          </DraggableDrawer>
+        </Show>
+        <Show above="md">
+          <ModalBase
+            title={title}
+            warn={warn}
+            isOpen={isOpen}
+            onClose={onSetClosed}
+            isSearchInputModal={isSearchInputModal}
+          >
+            {content}
+          </ModalBase>
+        </Show>
+      </>
+    );
+  }
 
   return (
     <ModalContext.Provider value={{ current, setCurrent }}>
