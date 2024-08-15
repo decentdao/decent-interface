@@ -22,7 +22,7 @@ export function RoleFormPaymentStreams() {
               pushPayment({
                 scheduleType: 'duration',
               });
-              setFieldValue('roleEditing.roleEditingPaymentIndex', payments?.length);
+              setFieldValue('roleEditing.roleEditingPaymentIndex', (payments ?? []).length);
             }}
           >
             {t('addPayment')}

@@ -74,5 +74,6 @@
   "discardChanges": "Discard",
   "keepEditing": "Keep Editing",
   "addPaymentTooltip": "Payments on a per-second basis; powered by Sablier.",
-  "cliffPaymentTooltip": "Assets continue to accrue but aren't yet claimable here."
+  "cliffPaymentTooltip": "Assets continue to accrue but aren't yet claimable here.",
+  "emptyRolesAssets": "No assets available for payments."
 }

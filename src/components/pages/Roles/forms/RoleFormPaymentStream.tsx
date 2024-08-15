@@ -24,7 +24,7 @@ import { ArrowLeft, ArrowRight, Minus, Plus } from '@phosphor-icons/react';
 import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
@@ -365,8 +365,8 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const { hatsTree } = useRolesStore();
-  const [, setSearchParams] = useSearchParams();
-  const roleEditingErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
+  const navigate = useNavigate();
+  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -412,10 +412,8 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
               values.roleEditing.payments.filter((_, index) => index !== formIndex),
             );
           }
-          setSearchParams(prevParams => {
-            prevParams.set('tab', '1');
-            return prevParams;
-          });
+          const currentPath = location.pathname + location.search;
+          navigate(`${currentPath}#tab1`);
           setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
         }}
       >
@@ -436,12 +434,10 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
       <DurationTabs formIndex={formIndex} />
       <Flex justifyContent="flex-end">
         <Button
-          isDisabled={!!roleEditingErrors}
+          isDisabled={!!roleEditingPaymentsErrors}
           onClick={() => {
-            setSearchParams(prevParams => {
-              prevParams.set('tab', '1');
-              return prevParams;
-            });
+            const currentPath = location.pathname + location.search;
+            navigate(`${currentPath}#tab1`);
             setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
           }}
         >
