@@ -144,10 +144,9 @@ export default function RoleEditDetails() {
 
   const backupRoleEditing = useRef(values.roleEditing);
   const backupTouched = useRef(touched.roleEditing);
-  const daoAddress = safe?.address;
 
   if (!isHex(hatEditingId)) return null;
-  if (!daoAddress) return null;
+  if (!safe?.address) return null;
   if (hatEditingId === undefined) return null;
 
   const goBackToRolesEdit = () => {
@@ -159,7 +158,7 @@ export default function RoleEditDetails() {
     setTimeout(() => {
       setTouched({});
       setFieldValue('roleEditing', undefined);
-      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true });
+      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address), { replace: true });
     }, 50);
   };
 

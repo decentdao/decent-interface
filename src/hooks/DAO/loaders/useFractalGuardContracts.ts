@@ -19,7 +19,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   } = useFractal();
   const baseContracts = useSafeContracts();
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   const { chain } = useNetworkConfig();
 
@@ -103,27 +103,27 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   );
 
   const setGuardContracts = useCallback(async () => {
-    if (!daoAddress || !safe) return;
-    const contracts = await loadFractalGuardContracts(daoAddress, safe, fractalModules);
+    if (!safeAddress || !safe) return;
+    const contracts = await loadFractalGuardContracts(safeAddress, safe, fractalModules);
     if (!contracts) return;
     action.dispatch({ type: GuardContractAction.SET_GUARD_CONTRACT, payload: contracts });
-  }, [action, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
+  }, [action, safeAddress, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
     if (
       loadOnMount &&
-      daoAddress &&
-      daoAddress + chain.id !== loadKey.current &&
+      safeAddress &&
+      safeAddress + chain.id !== loadKey.current &&
       isHierarchyLoaded &&
       safe
     ) {
-      loadKey.current = daoAddress + chain.id;
+      loadKey.current = safeAddress + chain.id;
       setGuardContracts();
     }
 
-    if (!daoAddress) {
+    if (!safeAddress) {
       loadKey.current = undefined;
     }
-  }, [setGuardContracts, isHierarchyLoaded, loadOnMount, chain, daoAddress, safe]);
+  }, [setGuardContracts, isHierarchyLoaded, loadOnMount, chain, safeAddress, safe]);
   return loadFractalGuardContracts;
 };

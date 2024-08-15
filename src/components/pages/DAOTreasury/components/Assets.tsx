@@ -40,8 +40,6 @@ export function Assets() {
   const { handleUnstake, handleClaimUnstakedETH } = useLidoStaking();
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([]);
 
-  const daoAddress = safe?.address;
-
   // --- Lido Stake button setup ---
   const showStakeButton =
     canUserCreateProposal &&
@@ -174,7 +172,7 @@ export function Assets() {
           </HStack>
         </Show>
       )}
-      {hasAssets && daoAddress && (
+      {hasAssets && safe?.address && (
         <>
           <Show below="lg">
             <Accordion

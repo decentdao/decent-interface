@@ -21,7 +21,7 @@ export const useCreateSubDAOProposal = () => {
   } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   const proposeDao = useCallback(
     (
@@ -30,12 +30,16 @@ export const useCreateSubDAOProposal = () => {
       successCallback: (addressPrefix: string, daoAddress: string) => void,
     ) => {
       const propose = async () => {
-        if (!baseContracts || !daoAddress) {
+        if (!baseContracts || !safeAddress) {
           return;
         }
         const { multiSendContract, fractalRegistryContract } = baseContracts;
 
-        const builtSafeTx = await build(daoData, daoAddress, azoriusGovernance.votesToken?.address);
+        const builtSafeTx = await build(
+          daoData,
+          safeAddress,
+          azoriusGovernance.votesToken?.address,
+        );
         if (!builtSafeTx) {
           return;
         }
@@ -77,7 +81,7 @@ export const useCreateSubDAOProposal = () => {
       };
       propose();
     },
-    [baseContracts, build, daoAddress, submitProposal, azoriusGovernance, t],
+    [baseContracts, build, safeAddress, submitProposal, azoriusGovernance, t],
   );
 
   return { proposeDao, pendingCreateTx, canUserCreateProposal } as const;

@@ -29,20 +29,20 @@ export function EstablishEssentials(props: ICreationStepProps) {
 
   const isEdit = mode === DAOCreateMode.EDIT;
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   useEffect(() => {
     if (isEdit) {
       setFieldValue('essentials.daoName', daoName, false);
-      if (createAccountSubstring(daoAddress!) !== daoName) {
+      if (safeAddress && createAccountSubstring(safeAddress) !== daoName) {
         // Pre-fill the snapshot URL form field when editing
         setFieldValue('essentials.snapshotENS', daoSnapshotENS || '', false);
       }
     }
-  }, [setFieldValue, mode, daoName, daoSnapshotENS, isEdit, daoAddress]);
+  }, [setFieldValue, mode, daoName, daoSnapshotENS, isEdit, safeAddress]);
 
   const daoNameDisabled =
-    isEdit && !!daoName && !!daoAddress && createAccountSubstring(daoAddress) !== daoName;
+    isEdit && !!daoName && !!safeAddress && createAccountSubstring(safeAddress) !== daoName;
 
   // If in governance edit mode and snapshot URL is already set, disable the field
   const snapshotENSDisabled = isEdit && !!daoSnapshotENS;

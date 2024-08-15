@@ -30,7 +30,6 @@ export default function ProposalTemplateCard({
   const {
     node: { safe },
   } = useFractal();
-  const daoAddress = safe?.address;
 
   const { addressPrefix } = useNetworkConfig();
 
@@ -48,11 +47,11 @@ export default function ProposalTemplateCard({
   });
 
   const successCallback = useCallback(() => {
-    if (daoAddress) {
+    if (safe?.address) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
     }
-  }, [navigate, daoAddress, addressPrefix]);
+  }, [navigate, safe, addressPrefix]);
 
   const nonce = safe?.nextNonce;
   const handleRemoveTemplate = useCallback(async () => {

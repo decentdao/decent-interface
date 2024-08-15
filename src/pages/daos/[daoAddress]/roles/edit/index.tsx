@@ -86,12 +86,12 @@ function RolesEdit() {
   const [hasEditedRoles, setHasEditedRoles] = useState(false);
 
   const blocker = useNavigationBlocker({ roleEditPageNavigationBlockerParams: { hasEditedRoles } });
-  const daoAddress = `${safe?.address}`; // force cast to string to fit with type in navigate's `.relative`
 
-  if (daoAddress === null) return null;
+  const safeAddress = safe?.address;
+  if (!safeAddress) return null;
 
   const showRoleEditDetails = (hatId: Hex) => {
-    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatId));
+    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, safeAddress, hatId));
   };
 
   const hatsTreeLoading = hatsTree === undefined;
@@ -145,7 +145,7 @@ function RolesEdit() {
               breadcrumbs={[
                 {
                   terminus: t('roles'),
-                  path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
+                  path: DAO_ROUTES.roles.relative(addressPrefix, safeAddress),
                 },
                 {
                   terminus: t('editRoles'),
@@ -208,7 +208,7 @@ function RolesEdit() {
                 setHasEditedRoles(values.hats.some(hat => !!hat.editedRole));
                 setTimeout(
                   () =>
-                    navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress), {
+                    navigate(DAO_ROUTES.roles.relative(addressPrefix, safeAddress), {
                       replace: true,
                     }),
                   50,
@@ -226,7 +226,7 @@ function RolesEdit() {
                   );
                 }
                 navigate(
-                  DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, daoAddress),
+                  DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, safeAddress),
                 );
               }}
               isDisabled={!values.hats.some(hat => hat.editedRole)}

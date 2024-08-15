@@ -16,7 +16,8 @@ export default function ProposalTemplatesPage() {
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { addressPrefix } = useNetworkConfig();
-  const daoAddress = safe?.address;
+
+  const safeAddress = safe?.address;
 
   return (
     <div>
@@ -29,8 +30,8 @@ export default function ProposalTemplatesPage() {
           },
         ]}
       >
-        {canUserCreateProposal && daoAddress && (
-          <Link to={DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)}>
+        {canUserCreateProposal && safeAddress && (
+          <Link to={DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, safeAddress)}>
             <Button minW={0}>
               <AddPlus />
               <Show above="sm">{t('create')}</Show>

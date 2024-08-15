@@ -15,7 +15,7 @@ export function useERC20Claim() {
   } = useFractal();
   const baseContracts = useSafeContracts();
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   const loadTokenClaimContract = useCallback(async () => {
     if (!baseContracts || !votesTokenContractAddress) {
@@ -52,16 +52,16 @@ export function useERC20Claim() {
 
   useEffect(() => {
     if (
-      daoAddress &&
+      safeAddress &&
       votesTokenContractAddress &&
-      daoAddress + votesTokenContractAddress !== loadKey.current
+      safeAddress + votesTokenContractAddress !== loadKey.current
     ) {
-      loadKey.current = daoAddress + votesTokenContractAddress;
+      loadKey.current = safeAddress + votesTokenContractAddress;
       loadTokenClaimContract();
     }
-    if (!daoAddress || !votesTokenContractAddress) {
+    if (!safeAddress || !votesTokenContractAddress) {
       loadKey.current = undefined;
     }
-  }, [loadTokenClaimContract, daoAddress, votesTokenContractAddress]);
+  }, [loadTokenClaimContract, safeAddress, votesTokenContractAddress]);
   return;
 }

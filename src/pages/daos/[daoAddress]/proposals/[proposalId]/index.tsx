@@ -28,8 +28,6 @@ export default function ProposalDetailsPage() {
   const metaData = useGetMetadata(proposal);
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
-  const daoAddress = safe?.address;
-
   const azoriusProposal = proposal as AzoriusProposal;
 
   useEffect(() => {
@@ -52,7 +50,7 @@ export default function ProposalDetailsPage() {
     setProposal(foundProposal);
   }, [proposals, proposalId, isSnapshotProposal]);
 
-  if (!daoAddress) {
+  if (!safe?.address) {
     return null;
   }
 
@@ -63,7 +61,7 @@ export default function ProposalDetailsPage() {
         breadcrumbs={[
           {
             terminus: t('proposals', { ns: 'breadcrumbs' }),
-            path: DAO_ROUTES.proposals.relative(addressPrefix, daoAddress),
+            path: DAO_ROUTES.proposals.relative(addressPrefix, safe.address),
           },
           {
             terminus: t('proposal', {

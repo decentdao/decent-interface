@@ -62,7 +62,6 @@ export default function RolesDetailsDrawer({
   const {
     node: { safe },
   } = useFractal();
-  const daoAddress = safe?.address;
 
   const { chain } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
@@ -72,7 +71,7 @@ export default function RolesDetailsDrawer({
   });
   const avatarURL = useAvatar(roleHat.wearer);
 
-  if (!daoAddress) return null;
+  if (!safe?.address) return null;
 
   return (
     <Drawer

@@ -19,11 +19,11 @@ export default function useLidoStaking() {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation('proposal');
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   const handleStake = useCallback(
     async (value: bigint) => {
-      if (!lido || !daoAddress || !signerOrProvider) {
+      if (!lido || !safeAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
       }
@@ -54,12 +54,12 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, signerOrProvider, daoAddress, safe, submitProposal, t],
+    [lido, signerOrProvider, safeAddress, safe, submitProposal, t],
   );
 
   const handleUnstake = useCallback(
     async (value: string) => {
-      if (!lido || !daoAddress || !signerOrProvider) {
+      if (!lido || !safeAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
       }
@@ -80,7 +80,7 @@ export default function useLidoStaking() {
 
       const encodedWithdraw = withdrawalQueueContract.interface.encodeFunctionData(
         'requestWithdrawals',
-        [[value], daoAddress],
+        [[value], safeAddress],
       );
       if (!isHex(encodedWithdraw)) {
         return;
@@ -107,12 +107,12 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t, signerOrProvider],
+    [lido, safeAddress, safe, submitProposal, t, signerOrProvider],
   );
 
   const handleClaimUnstakedETH = useCallback(
     async (nftId: bigint) => {
-      if (!lido || !daoAddress || !signerOrProvider) {
+      if (!lido || !safeAddress || !signerOrProvider) {
         // Means it is not supported on current network
         return;
       }
@@ -146,7 +146,7 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t, signerOrProvider],
+    [lido, safeAddress, safe, submitProposal, t, signerOrProvider],
   );
 
   return { handleStake, handleUnstake, handleClaimUnstakedETH };

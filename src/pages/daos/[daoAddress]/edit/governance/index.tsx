@@ -31,18 +31,18 @@ export default function ModifyGovernancePage() {
   const isSigner = user.address && safe?.owners.includes(user.address);
   const deployAzorius = useDeployAzorius();
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   const handleDeployAzorius: DAOTrigger = (daoData, customNonce) => {
     deployAzorius(
       daoData as AzoriusERC20DAO | AzoriusERC721DAO,
-      !daoName || createAccountSubstring(daoAddress!) === daoName,
+      !daoName || createAccountSubstring(safeAddress!) === daoName,
       !daoSnapshotENS && !!daoData.snapshotENS,
       customNonce,
     );
   };
 
-  if (!daoAddress) {
+  if (!safeAddress) {
     return null;
   }
 
@@ -52,7 +52,7 @@ export default function ModifyGovernancePage() {
         hasDAOLink
         ButtonIcon={X}
         buttonVariant="secondary"
-        buttonClick={() => navigate(DAO_ROUTES.dao.relative(addressPrefix, daoAddress))}
+        buttonClick={() => navigate(DAO_ROUTES.dao.relative(addressPrefix, safeAddress))}
         isButtonDisabled={false}
         breadcrumbs={[
           {

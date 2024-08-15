@@ -17,7 +17,6 @@ export default function ProposalTemplates() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const daoAddress = safe?.address;
 
   return (
     <Flex
@@ -39,8 +38,8 @@ export default function ProposalTemplates() {
         ))
       ) : (
         <EmptyBox emptyText={t('emptyProposalTemplates')}>
-          {canUserCreateProposal && daoAddress && (
-            <Link to={DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)}>
+          {canUserCreateProposal && safe?.address && (
+            <Link to={DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, safe.address)}>
               <Button
                 variant="text"
                 textStyle="display-xl"

@@ -22,17 +22,17 @@ export default function EditProposalSummary() {
   const { addressPrefix } = useNetworkConfig();
   const { values } = useFormikContext<RoleFormValues>();
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   // @dev redirects back to roles edit page if no roles are edited (user refresh)
   useEffect(() => {
     const editedRoles = values.hats.filter(hat => !!hat.editedRole);
-    if (!editedRoles.length && daoAddress) {
-      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+    if (!editedRoles.length && safeAddress) {
+      navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress));
     }
-  }, [values.hats, daoAddress, navigate, addressPrefix]);
+  }, [values.hats, safeAddress, navigate, addressPrefix]);
 
-  if (!daoAddress) return null;
+  if (!safeAddress) return null;
   return (
     <Box>
       <Show below="md">
@@ -57,7 +57,7 @@ export default function EditProposalSummary() {
                 alignItems="center"
                 aria-label={t('proposalNew', { ns: 'breadcrumbs' })}
                 onClick={() => {
-                  navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                  navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress));
                 }}
               >
                 <Icon
@@ -68,7 +68,7 @@ export default function EditProposalSummary() {
               </Flex>
             </Flex>
             <RoleFormCreateProposal
-              close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
+              close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress))}
             />
           </Box>
         </Portal>
@@ -97,7 +97,7 @@ export default function EditProposalSummary() {
               ]}
             />
             <RoleFormCreateProposal
-              close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
+              close={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress))}
             />
           </Box>
         </Portal>

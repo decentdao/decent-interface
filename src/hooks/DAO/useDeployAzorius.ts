@@ -33,7 +33,7 @@ const useDeployAzorius = () => {
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   const deployAzorius = useCallback(
     async (
@@ -42,7 +42,7 @@ const useDeployAzorius = () => {
       shouldSetSnapshot?: boolean,
       customNonce?: number,
     ) => {
-      if (!daoAddress || !canUserCreateProposal || !safe || !baseContracts) {
+      if (!safeAddress || !canUserCreateProposal || !safe || !baseContracts) {
         return;
       }
       const {
@@ -97,7 +97,7 @@ const useDeployAzorius = () => {
         undefined,
       );
 
-      txBuilderFactory.setSafeContract(daoAddress);
+      txBuilderFactory.setSafeContract(safeAddress);
 
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
       const safeTx = await daoTxBuilder.buildAzoriusTx(shouldSetName, shouldSetSnapshot, {
@@ -120,7 +120,7 @@ const useDeployAzorius = () => {
         return;
       }
       const proposalData: ProposalExecuteData = {
-        targets: [daoAddress, getAddress(multiSendContract.asProvider.address)],
+        targets: [safeAddress, getAddress(multiSendContract.asProvider.address)],
         values: [0n, 0n],
         calldatas: [encodedAddOwnerWithThreshold, encodedMultisend],
         metaData: {
@@ -136,7 +136,7 @@ const useDeployAzorius = () => {
         pendingToastMessage: t('modifyGovernanceSetAzoriusProposalPendingMessage'),
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-        successCallback: () => navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)),
+        successCallback: () => navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)),
       });
     },
     [
@@ -144,7 +144,7 @@ const useDeployAzorius = () => {
       baseContracts,
       t,
       canUserCreateProposal,
-      daoAddress,
+      safeAddress,
       submitProposal,
       navigate,
       safe,

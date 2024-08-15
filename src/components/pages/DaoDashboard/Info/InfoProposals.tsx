@@ -135,9 +135,7 @@ export function InfoProposals() {
     governance: { proposals, type, skippedProposalCount },
   } = useFractal();
 
-  const daoAddress = safe?.address;
-
-  if (!daoAddress || !type) {
+  if (!safe?.address || !type) {
     return (
       <Flex
         h="8.5rem"

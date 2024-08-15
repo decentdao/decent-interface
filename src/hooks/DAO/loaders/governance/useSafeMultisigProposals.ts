@@ -15,15 +15,13 @@ export const useSafeMultisigProposals = () => {
 
   const { parseTransactions } = useSafeTransactions();
 
-  const daoAddress = safe?.address;
-
   const loadSafeMultisigProposals = useCallback(async () => {
-    if (!daoAddress || !safeAPI) {
+    if (!safe?.address || !safeAPI) {
       return;
     }
     try {
-      const transactions = await safeAPI.getAllTransactions(daoAddress);
-      const activities = await parseTransactions(transactions, daoAddress);
+      const transactions = await safeAPI.getAllTransactions(safe.address);
+      const activities = await parseTransactions(transactions, safe.address);
       const multisendProposals = activities.filter(
         activity => activity.eventType !== ActivityEventType.Treasury,
       ) as MultisigProposal[];
@@ -44,7 +42,7 @@ export const useSafeMultisigProposals = () => {
     } catch (e) {
       logError(e);
     }
-  }, [daoAddress, safeAPI, parseTransactions, action]);
+  }, [safe, safeAPI, parseTransactions, action]);
 
   return { loadSafeMultisigProposals };
 };

@@ -18,10 +18,10 @@ export const useDecentTreasury = () => {
 
   const { chain } = useNetworkConfig();
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   const loadTreasury = useCallback(async () => {
-    if (!daoAddress || !safeAPI) {
+    if (!safeAddress || !safeAPI) {
       return;
     }
 
@@ -30,9 +30,9 @@ export const useDecentTreasury = () => {
       { data: tokenBalances, error: tokenBalancesError },
       { data: nftBalances, error: nftBalancesError },
     ] = await Promise.all([
-      safeAPI.getAllTransactions(daoAddress),
-      getTokenBalances(daoAddress),
-      getNFTBalances(daoAddress),
+      safeAPI.getAllTransactions(safeAddress),
+      getTokenBalances(safeAddress),
+      getNFTBalances(safeAddress),
     ]);
 
     if (tokenBalancesError) {
@@ -52,17 +52,17 @@ export const useDecentTreasury = () => {
       totalUsdValue,
     };
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
-  }, [daoAddress, safeAPI, action, getTokenBalances, getNFTBalances]);
+  }, [safeAddress, safeAPI, action, getTokenBalances, getNFTBalances]);
 
   useEffect(() => {
-    if (daoAddress && chain.id + daoAddress !== loadKey.current) {
-      loadKey.current = chain.id + daoAddress;
+    if (safeAddress && chain.id + safeAddress !== loadKey.current) {
+      loadKey.current = chain.id + safeAddress;
       loadTreasury();
     }
-    if (!daoAddress) {
+    if (!safeAddress) {
       loadKey.current = null;
     }
-  }, [chain, daoAddress, loadTreasury]);
+  }, [chain, safeAddress, loadTreasury]);
 
   return;
 };

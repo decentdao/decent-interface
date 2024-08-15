@@ -32,12 +32,14 @@ function AddSignerModal({
   const { addressValidationTest, newSignerValidationTest } = useValidationAddress();
   const tooltipContainer = useRef<HTMLDivElement>(null);
 
-  const daoAddress = safe?.address;
-
   const addSigner = useAddSigner();
 
   const onSubmit = useCallback(
     async (values: { addressOrENS: string; threshold: number; nonce: number }) => {
+      if (!safe) {
+        throw new Error('No safe found');
+      }
+
       const { addressOrENS, nonce, threshold } = values;
 
       let validAddress: Address;
@@ -65,11 +67,11 @@ function AddSignerModal({
         newSigner: validAddress,
         threshold: threshold,
         nonce: nonce,
-        daoAddress: `${daoAddress}`,
+        safeAddress: safe.address,
         close: close,
       });
     },
-    [addSigner, close, daoAddress, provider],
+    [addSigner, close, provider, safe],
   );
 
   const addSignerValidationSchema = Yup.object().shape({

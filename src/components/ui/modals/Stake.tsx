@@ -18,8 +18,6 @@ export default function StakeModal({ close }: { close: () => void }) {
   const navigate = useNavigate();
   const { t } = useTranslation('stake');
 
-  const daoAddress = safe?.address;
-
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
 
   const [selectedAsset] = useState<TokenBalance>(fungibleAssetsWithBalance[0]);
@@ -33,8 +31,8 @@ export default function StakeModal({ close }: { close: () => void }) {
     if (inputAmount?.bigintValue) {
       await handleStake(inputAmount?.bigintValue);
       close();
-      if (daoAddress) {
-        navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+      if (safe?.address) {
+        navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
       }
     }
   };

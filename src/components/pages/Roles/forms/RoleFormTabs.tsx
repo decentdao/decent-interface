@@ -40,7 +40,6 @@ export default function RoleFormTabs({
   const { editedRoleData, isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue, setTouched } = useFormikContext<RoleFormValues>();
-  const daoAddress = safe?.address;
 
   useEffect(() => {
     if (values.hats.length && !values.roleEditing) {
@@ -64,7 +63,7 @@ export default function RoleFormTabs({
     }
   }, [setFieldValue, values.hats, values.roleEditing, hatId]);
 
-  if (!daoAddress) return null;
+  if (!safe?.address) return null;
 
   return (
     <FieldArray name="roleEditing.payments">
@@ -153,7 +152,7 @@ export default function RoleFormTabs({
                 setFieldValue('roleEditing', undefined);
                 setTimeout(() => {
                   setTouched({});
-                  navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                  navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address));
                 }, 50);
               }}
             >

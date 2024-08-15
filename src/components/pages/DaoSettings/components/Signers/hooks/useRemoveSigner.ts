@@ -10,20 +10,20 @@ const useRemoveSigner = ({
   signerToRemove,
   threshold,
   nonce,
-  daoAddress,
+  safeAddress,
 }: {
   prevSigner: string;
   signerToRemove: string;
   threshold: number;
   nonce: number | undefined;
-  daoAddress: string | null;
+  safeAddress: string | null;
 }) => {
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation(['modals']);
   const { baseContracts } = useFractal();
 
   const removeSigner = useCallback(async () => {
-    if (!baseContracts || !daoAddress) {
+    if (!baseContracts || !safeAddress) {
       return;
     }
     const { safeSingletonContract } = baseContracts;
@@ -41,7 +41,7 @@ const useRemoveSigner = ({
     const calldatas = [encodedRemoveOwner];
 
     const proposalData: ProposalExecuteData = {
-      targets: [getAddress(daoAddress)],
+      targets: [getAddress(safeAddress)],
       values: [0n],
       calldatas,
       metaData: {
@@ -58,7 +58,7 @@ const useRemoveSigner = ({
       successToastMessage: t('removeSignerSuccessToastMessage'),
       failedToastMessage: t('removeSignerFailureToastMessage'),
     });
-  }, [baseContracts, prevSigner, signerToRemove, threshold, daoAddress, submitProposal, nonce, t]);
+  }, [baseContracts, prevSigner, signerToRemove, threshold, safeAddress, submitProposal, nonce, t]);
 
   return removeSigner;
 };

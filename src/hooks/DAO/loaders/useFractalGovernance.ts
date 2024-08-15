@@ -25,7 +25,7 @@ export const useFractalGovernance = () => {
     guardContracts: { isGuardLoaded },
   } = useFractal();
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   const loadDAOProposals = useLoadDAOProposals();
   const loadERC20Strategy = useERC20LinearStrategy();
@@ -40,9 +40,9 @@ export const useFractalGovernance = () => {
   const { subgraph } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
-    variables: { daoAddress },
+    variables: { daoAddress: safeAddress },
     onCompleted: async data => {
-      if (!daoAddress) return;
+      if (!safeAddress) return;
       const { daos } = data;
       const dao = daos[0];
 
@@ -74,7 +74,7 @@ export const useFractalGovernance = () => {
       subgraphVersion: subgraph.version,
     },
     pollInterval: ONE_MINUTE,
-    skip: !daoAddress || !type,
+    skip: !safeAddress || !type,
   });
 
   useEffect(() => {
@@ -127,13 +127,13 @@ export const useFractalGovernance = () => {
   ]);
 
   useEffect(() => {
-    const newLoadKey = daoAddress || '0x';
-    if (type && daoAddress && daoAddress !== loadKey.current && isGuardLoaded) {
+    const newLoadKey = safeAddress || '0x';
+    if (type && safeAddress && safeAddress !== loadKey.current && isGuardLoaded) {
       loadKey.current = newLoadKey;
       loadDAOProposals();
     }
-    if (!type || !daoAddress) {
+    if (!type || !safeAddress) {
       loadKey.current = undefined;
     }
-  }, [type, loadDAOProposals, isGuardLoaded, daoAddress]);
+  }, [type, loadDAOProposals, isGuardLoaded, safeAddress]);
 };

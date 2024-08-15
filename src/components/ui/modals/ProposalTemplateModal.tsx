@@ -30,8 +30,6 @@ export default function ProposalTemplateModal({
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
-  const daoAddress = safe?.address;
-
   const [filledProposalTransactions, setFilledProposalTransactions] = useState(transactions);
   const [nonce, setNonce] = useState<number | undefined>(safe!.nextNonce);
   const [showAll, setShowAll] = useState(false);
@@ -94,8 +92,8 @@ export default function ProposalTemplateModal({
   };
 
   const successCallback = () => {
-    if (daoAddress) {
-      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+    if (safe?.address) {
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
       onClose();
     }
   };

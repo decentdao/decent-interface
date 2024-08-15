@@ -37,7 +37,6 @@ function RemoveSignerModal({
   });
   const { t } = useTranslation(['modals', 'common']);
   const tooltipContainer = useRef<HTMLDivElement>(null);
-  const daoAddress = safe?.address;
 
   useEffect(() => {
     setThresholdOptions(Array.from({ length: signers.length - 1 }, (_, i) => i + 1));
@@ -48,7 +47,7 @@ function RemoveSignerModal({
     signerToRemove: selectedSigner,
     threshold: threshold,
     nonce: nonce,
-    daoAddress: `${daoAddress}`,
+    safeAddress: safe?.address ?? null,
   });
 
   const onSubmit = async () => {

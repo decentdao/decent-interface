@@ -24,8 +24,6 @@ export function InfoGovernance() {
   const [timelockPeriod, setTimelockPeriod] = useState<string>();
   const [executionPeriod, setExecutionPeriod] = useState<string>();
 
-  const daoAddress = safe?.address;
-
   useEffect(() => {
     const setTimelockInfo = async () => {
       const formatBlocks = async (blocks: number): Promise<string | undefined> => {
@@ -72,7 +70,7 @@ export function InfoGovernance() {
     dao,
   ]);
 
-  if (!daoAddress || !governance.type) {
+  if (!safe?.address || !governance.type) {
     return (
       <Flex
         h="8.5rem"

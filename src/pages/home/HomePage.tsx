@@ -17,14 +17,12 @@ export default function HomePage() {
   const { t } = useTranslation('home');
   const { resetHatsStore } = useRolesStore();
 
-  const daoAddress = safe?.address;
-
   useEffect(() => {
-    if (daoAddress) {
+    if (safe?.address) {
       action.resetSafeState();
       resetHatsStore();
     }
-  }, [daoAddress, action, resetHatsStore]);
+  }, [safe?.address, action, resetHatsStore]);
 
   return (
     <Flex

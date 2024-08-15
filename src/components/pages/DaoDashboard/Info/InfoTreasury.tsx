@@ -11,11 +11,9 @@ export function InfoTreasury() {
     treasury: { totalUsdValue },
   } = useFractal();
 
-  const daoAddress = safe?.address;
-
   const { t } = useTranslation('dashboard');
 
-  if (!daoAddress) {
+  if (!safe?.address) {
     return (
       <Flex
         h="8.5rem"

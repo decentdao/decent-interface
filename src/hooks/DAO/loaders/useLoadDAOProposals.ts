@@ -13,9 +13,7 @@ export const useLoadDAOProposals = () => {
     action,
   } = useFractal();
 
-  const daoAddress = safe?.address;
-
-  const { setMethodOnInterval, clearIntervals } = useUpdateTimer(daoAddress);
+  const { setMethodOnInterval, clearIntervals } = useUpdateTimer(safe?.address);
   const loadAzoriusProposals = useAzoriusProposals();
   const { loadSafeMultisigProposals } = useSafeMultisigProposals();
 

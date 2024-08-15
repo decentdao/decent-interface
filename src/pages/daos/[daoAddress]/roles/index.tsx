@@ -23,12 +23,12 @@ function Roles() {
   const navigate = useNavigate();
 
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
-  if (!daoAddress) return null;
+  if (!safeAddress) return null;
 
   const handleNavigateToRole = (hatId: Hex) =>
-    navigate(DAO_ROUTES.rolesDetails.relative(addressPrefix, daoAddress, hatId));
+    navigate(DAO_ROUTES.rolesDetails.relative(addressPrefix, safeAddress, hatId));
 
   const hatsTreeLoading = hatsTree === undefined;
   const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
@@ -50,7 +50,7 @@ function Roles() {
           size: 'sm',
           leftIcon: <Pencil />,
         }}
-        buttonClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
+        buttonClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress))}
       />
       {hatsTreeLoading && <RoleCardLoading />}
       {showNoRolesCard && <RoleCardNoRoles />}

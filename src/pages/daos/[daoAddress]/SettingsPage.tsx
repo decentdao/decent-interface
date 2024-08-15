@@ -13,9 +13,8 @@ export function SettingsPage() {
   } = useFractal();
 
   const HEADER_HEIGHT = useHeaderHeight();
-  const daoAddress = safe?.address;
 
-  if (!daoAddress) {
+  if (!safe?.address) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />

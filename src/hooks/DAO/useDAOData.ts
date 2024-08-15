@@ -25,14 +25,13 @@ export function useLoadDAOData(parentAddress: string | null, fractalNode?: Fract
         return;
       }
       const { safe, fractalModules } = fractalNode;
-      const daoAddress = safe?.address;
 
-      if (!daoAddress || !safe) {
+      if (!safe?.address || !safe) {
         return;
       }
 
       let freezeGuardContracts: FractalGuardContracts | undefined = await loadFractalGuardContracts(
-        daoAddress,
+        safe.address,
         safe,
         fractalModules,
       );

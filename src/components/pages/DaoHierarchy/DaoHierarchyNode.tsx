@@ -19,11 +19,11 @@ import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../../ui/cards/DAONodeInfoCard
  */
 export function DaoHierarchyNode({
   parentAddress,
-  daoAddress,
+  safeAddress,
   depth,
 }: {
   parentAddress: Address | null;
-  daoAddress: Address | null;
+  safeAddress: Address | null;
   depth: number;
 }) {
   const {
@@ -43,8 +43,8 @@ export function DaoHierarchyNode({
   }, []);
 
   useEffect(() => {
-    if (daoAddress) {
-      loadDao(getAddress(daoAddress)).then(_node => {
+    if (safeAddress) {
+      loadDao(getAddress(safeAddress)).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
           const fnode = _node as FractalNode;
@@ -62,7 +62,7 @@ export function DaoHierarchyNode({
         }
       });
     }
-  }, [loadDao, daoAddress, depth, getTotalDescendants]);
+  }, [loadDao, safeAddress, depth, getTotalDescendants]);
 
   return (
     <Flex
@@ -97,8 +97,8 @@ export function DaoHierarchyNode({
           />
 
           <DaoHierarchyNode
-            parentAddress={daoAddress}
-            daoAddress={childNode.daoAddress}
+            parentAddress={safeAddress}
+            safeAddress={childNode.daoAddress}
             depth={depth + 1}
           />
         </Flex>

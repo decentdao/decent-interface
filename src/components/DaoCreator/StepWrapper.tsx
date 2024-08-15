@@ -33,8 +33,6 @@ export function StepWrapper({
   const { t } = useTranslation(['daoCreate']);
   const navigate = useNavigate();
 
-  const daoAddress = safe?.address;
-
   const isEdit = mode === DAOCreateMode.EDIT;
   return (
     <Box>
@@ -67,9 +65,9 @@ export function StepWrapper({
           isButtonDisabled={isFormSubmitting}
           buttonClick={() =>
             navigate(
-              !isSubDAO || !daoAddress
+              !isSubDAO || !safe?.address
                 ? BASE_ROUTES.landing
-                : DAO_ROUTES.dao.relative(addressPrefix, daoAddress),
+                : DAO_ROUTES.dao.relative(addressPrefix, safe.address),
             )
           }
         />

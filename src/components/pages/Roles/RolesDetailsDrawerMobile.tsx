@@ -38,9 +38,7 @@ export default function RolesDetailsDrawerMobile({
   const { t } = useTranslation('roles');
   const { hatsTree } = useRolesStore();
 
-  const daoAddress = safe?.address;
-
-  if (!daoAddress || !hatsTree) return null;
+  if (!safe?.address || !hatsTree) return null;
 
   return (
     <DraggableDrawer

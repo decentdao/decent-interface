@@ -32,9 +32,7 @@ export default function StepButtons(props: StepButtonsProps) {
   } = props;
   const { t } = useTranslation(['common', 'proposal']);
 
-  const daoAddress = safe?.address;
-
-  if (!daoAddress) {
+  if (!safe?.address) {
     return null;
   }
 

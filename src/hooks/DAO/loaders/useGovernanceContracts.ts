@@ -20,7 +20,7 @@ export const useGovernanceContracts = () => {
 
   const { fractalModules, isModulesLoaded, safe } = node;
 
-  const daoAddress = safe?.address;
+  const safeAddress = safe?.address;
 
   const loadGovernanceContracts = useCallback(async () => {
     if (!baseContracts || !publicClient) {
@@ -121,12 +121,12 @@ export const useGovernanceContracts = () => {
   }, [action, getZodiacModuleProxyMasterCopyData, baseContracts, fractalModules, publicClient]);
 
   useEffect(() => {
-    if (currentValidAddress.current !== daoAddress && isModulesLoaded) {
+    if (currentValidAddress.current !== safeAddress && isModulesLoaded) {
       loadGovernanceContracts();
-      currentValidAddress.current = daoAddress;
+      currentValidAddress.current = safeAddress;
     }
-    if (!daoAddress) {
+    if (!safeAddress) {
       currentValidAddress.current = null;
     }
-  }, [isModulesLoaded, loadGovernanceContracts, daoAddress]);
+  }, [isModulesLoaded, loadGovernanceContracts, safeAddress]);
 };
