@@ -192,7 +192,7 @@ export default function useCreateSablierStream() {
 
         const sablierBatchCalldata = encodeFunctionData({
           abi: SablierV2BatchAbi,
-          functionName: 'createWithDurationsLL', // Another option would be to use createWithTimestampsLL. Essentially they're doing the same, `WithDurations` just simpler for usage
+          functionName: 'createWithDurationsLL', // @dev Another option would be to use `createWithTimestampsLL`. Essentially they're doing the same, `WithDurations` just simpler for usage
           args: [sablierV2LockupLinear, tokenAddress, assembledStreams],
         });
 

@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../../types';
-import { formatUSD } from '../../../../utils';
+import { formatCoin, formatUSD } from '../../../../utils';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';
@@ -64,10 +64,11 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
           <MenuItem
             key={index}
             p="1rem"
-            _hover={{ bg: 'neutral-4' }}
+            _hover={{ bg: 'white-alpha-04' }}
             display="flex"
             alignItems="center"
             gap={2}
+            borderRadius="0.25rem"
             justifyContent="space-between"
             w="full"
             onClick={() => {
@@ -105,13 +106,7 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
                     textStyle="button-base"
                     color="neutral-7"
                   >
-                    {asset.balanceFormatted}
-                  </Text>
-                  <Text
-                    textStyle="button-base"
-                    color="neutral-7"
-                  >
-                    {asset.symbol}
+                    {formatCoin(asset.balance, true, asset.decimals, asset.symbol, true)}
                   </Text>
                   {asset.usdValue && (
                     <>
@@ -178,7 +173,7 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
                   >
                     <Flex
                       alignItems="center"
-                      gap={2}
+                      gap="0.75rem"
                     >
                       <Flex
                         gap={2}
@@ -187,17 +182,16 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
                         borderColor="neutral-3"
                         borderRadius="9999px"
                         w="fit-content"
-                        px="1rem"
                         className="payment-menu-asset"
-                        py="0.5rem"
+                        p="0.5rem"
                       >
                         <Image
                           src={selectedAsset?.logo}
                           fallbackSrc="/images/coin-icon-default.svg"
-                          boxSize="2rem"
+                          boxSize="2.25rem"
                         />
                         <Text
-                          textStyle="label-base"
+                          textStyle="label-large"
                           color="white-0"
                         >
                           {selectedAsset?.symbol ?? t('selectLabel', { ns: 'modals' })}
@@ -245,22 +239,27 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
                     <MenuList
                       zIndex={2}
                       bg="linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.04) 100%), #221D25"
-                      py="1rem"
+                      pt="1rem"
                       boxShadow={CARD_SHADOW}
                       borderRadius="0.5rem"
                       px="0.25rem"
+                      pb="0.25rem"
                       w={{ base: '300px', md: '428px' }}
                     >
                       <EaseOutComponent>
                         <Text
-                          textStyle="display-lg"
                           px="1rem"
+                          textStyle="helper-text-small"
+                          color="neutral-7"
                         >
                           {t('titleAssets', { ns: 'treasury' })}
                         </Text>
                         <Divider
                           variant="darker"
-                          my="1rem"
+                          mt="1rem"
+                          mb="0.25rem"
+                          mx="-0.25rem"
+                          width="calc(100% + 0.5rem)"
                         />
                         <AssetsList
                           field={field}

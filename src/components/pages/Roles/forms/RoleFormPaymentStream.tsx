@@ -20,8 +20,8 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
-import { ArrowRight, Minus, Plus } from '@phosphor-icons/react';
-import { Field, FieldProps, useFormikContext } from 'formik';
+import { ArrowLeft, ArrowRight, Minus, Plus } from '@phosphor-icons/react';
+import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
@@ -29,7 +29,7 @@ import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import { DatePickerTrigger } from '../DatePickerTrigger';
-import { RoleFormValues } from '../types';
+import { RoleFormValues, RoleValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
@@ -361,29 +361,70 @@ function DurationTabs({ formIndex }: { formIndex: number }) {
 
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
+  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
+
+  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
-      py="1rem"
+      pb="1rem"
       bg="neutral-2"
       boxShadow={{
         base: CARD_SHADOW,
         md: 'unset',
       }}
+      mt="-4.5rem"
       borderRadius="0.5rem"
+      position="relative"
     >
+      <Button
+        variant="tertiary"
+        p="0"
+        _hover={{
+          bg: 'transparent',
+        }}
+        mb="1rem"
+        leftIcon={<ArrowLeft size="1.5rem" />}
+        onClick={() => {
+          if (!values?.roleEditing?.payments) return;
+          // if payment is new, and unedited, remove it
+          if (
+            formIndex === values.roleEditing.payments.length - 1 &&
+            !values.roleEditing.editedRole
+          ) {
+            setFieldValue(
+              'roleEditing.payments',
+              values.roleEditing.payments.filter((_, index) => index !== formIndex),
+            );
+          }
+          setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+        }}
+      >
+        {t('addPayment')}
+      </Button>
       <SectionTitle
-        title={t('addPaymentStream')}
+        title={t('addPayment')}
         subTitle={t('addPaymentStreamSubTitle')}
-        // @todo Add Learn More link
-        externalLink="#"
+        externalLink="https://docs.decentdao.org/app/user-guide/roles-and-streaming/streaming-payroll-and-vesting"
+        tooltipContent={t('addPaymentStreamTooltip')}
       />
       <AssetSelector formIndex={formIndex} />
       <SectionTitle
         title={t('schedule')}
         subTitle={t('scheduleSubTitle')}
+        tooltipContent={t('cliffPaymentTooltip')}
       />
       <DurationTabs formIndex={formIndex} />
+      <Flex justifyContent="flex-end">
+        <Button
+          isDisabled={!!roleEditingPaymentsErrors}
+          onClick={() => {
+            setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+          }}
+        >
+          {t('save')}
+        </Button>
+      </Flex>
     </Box>
   );
 }
