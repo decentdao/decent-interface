@@ -55,8 +55,9 @@ function GreenActiveDot({ isActive }: { isActive: boolean }) {
 
 interface RolePaymentDetailsProps {
   payment: SablierPayment;
+  onClick?: () => void;
 }
-export function RolePaymentDetails({ payment }: RolePaymentDetailsProps) {
+export function RolePaymentDetails({ payment, onClick }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
     treasury: { assetsFungible },
@@ -131,6 +132,8 @@ export function RolePaymentDetails({ payment }: RolePaymentDetailsProps) {
       pt="1rem"
       my="0.5rem"
       w="full"
+      onClick={onClick}
+      cursor={!!onClick ? 'pointer' : 'default'}
     >
       <Box>
         <Flex

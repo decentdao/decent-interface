@@ -30,7 +30,12 @@ export function RoleFormPaymentStreams() {
           <Box mt="0.5rem">
             {payments?.map((payment, index) => (
               <Flex key={index}>
-                <RolePaymentDetails payment={payment} />
+                <RolePaymentDetails
+                  payment={payment}
+                  onClick={() => {
+                    setFieldValue('roleEditing.roleEditingPaymentIndex', index);
+                  }}
+                />
               </Flex>
             ))}
           </Box>
