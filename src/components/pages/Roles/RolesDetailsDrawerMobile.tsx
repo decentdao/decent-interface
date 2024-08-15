@@ -105,6 +105,7 @@ export default function RolesDetailsDrawerMobile({
               <RolePaymentDetails
                 key={index}
                 payment={payment}
+                roleHat={roleHat}
                 showWithdraw
               />
             ))}

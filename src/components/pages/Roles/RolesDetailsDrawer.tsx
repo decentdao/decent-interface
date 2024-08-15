@@ -173,6 +173,7 @@ export default function RolesDetailsDrawer({
                 <RolePaymentDetails
                   key={index}
                   payment={payment}
+                  roleHat={roleHat}
                   showWithdraw
                 />
               ))}
