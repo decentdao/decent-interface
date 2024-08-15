@@ -434,7 +434,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
       <DurationTabs formIndex={formIndex} />
       <Flex justifyContent="flex-end">
         <Button
-          isDisabled={!!roleEditingPaymentsErrors}
+          isDisabled={!!roleEditingPaymentsErrors || !values?.roleEditing?.payments || !hatsTree}
           onClick={() => {
             const currentPath = location.pathname + location.search;
             navigate(`${currentPath}#tab1`);
