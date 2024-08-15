@@ -106,11 +106,16 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
     if (isStreamActive || !payment.amount || !payment.scheduleFixedDate) {
       return;
     }
+
     const totalAmount = Number(payment.amount.value);
     const endDate = payment.scheduleFixedDate.endDate.getTime();
     const startDate = payment.scheduleFixedDate.startDate.getTime();
-    const numberOfWeeks = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24 * 7));
-    return totalAmount / numberOfWeeks;
+
+    const totalMilliseconds = endDate - startDate;
+    const totalWeeks = totalMilliseconds / (1000 * 60 * 60 * 24 * 7);
+    const roundedWeeks = Math.ceil(totalWeeks);
+
+    return totalAmount / roundedWeeks;
   }, [payment.amount, payment.scheduleFixedDate, isStreamActive]);
 
   const streamAmountUSD = useMemo(() => {
