@@ -3,11 +3,11 @@ import { WarningCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, getAddress, isAddress } from 'viem';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useEthersProvider } from '../../../../../../providers/Ethers/hooks/useEthersProvider';
+import { resolveAddress } from '../../../../../../utils/address';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
 import { AddressInput } from '../../../../../ui/forms/EthAddressInput';
@@ -42,29 +42,10 @@ function AddSignerModal({
 
       const { addressOrENS, nonce, threshold } = values;
 
-      let validAddress: Address;
-
-      if (isAddress(addressOrENS)) {
-        validAddress = getAddress(addressOrENS);
-      } else if (provider) {
-        let resolvedAddress: string | null;
-        try {
-          resolvedAddress = await provider.resolveName(addressOrENS);
-        } catch (e) {
-          throw e;
-        }
-
-        if (resolvedAddress === null) {
-          throw new Error('Given ENS name does not resolve to an address.');
-        }
-
-        validAddress = getAddress(resolvedAddress);
-      } else {
-        throw new Error('No provider found');
-      }
+      const newSigner = await resolveAddress(addressOrENS, provider);
 
       await addSigner({
-        newSigner: validAddress,
+        newSigner,
         threshold: threshold,
         nonce: nonce,
         safeAddress: safe.address,

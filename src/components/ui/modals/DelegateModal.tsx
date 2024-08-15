@@ -1,7 +1,7 @@
 import { Box, Button, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress, getAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import * as Yup from 'yup';
 import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
 import useDelegateVote from '../../../hooks/DAO/useDelegateVote';
@@ -9,10 +9,11 @@ import useSafeContracts from '../../../hooks/safe/useSafeContracts';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useEthersProvider } from '../../../providers/Ethers/hooks/useEthersProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { AzoriusGovernance, DecentGovernance } from '../../../types';
+import { resolveAddress } from '../../../utils/address';
 import { formatCoin } from '../../../utils/numberFormats';
-import { validateENSName } from '../../../utils/url';
 import { AddressInput } from '../forms/EthAddressInput';
 import LabelWrapper from '../forms/LabelWrapper';
 import EtherscanLink from '../links/EtherscanLink';
@@ -20,6 +21,7 @@ import Divider from '../utils/Divider';
 
 export function DelegateModal({ close }: { close: Function }) {
   const { t } = useTranslation(['modals', 'common']);
+  const provider = useEthersProvider();
 
   const {
     governance,
@@ -40,14 +42,13 @@ export function DelegateModal({ close }: { close: Function }) {
 
   const submitDelegation = async (values: { address: string }) => {
     if (!votesTokenContractAddress || !baseContracts) return;
-    let validAddress = values.address;
-    if (validateENSName(validAddress) && signer) {
-      validAddress = getAddress(await signer.resolveName(values.address));
-    }
+
+    const delegatee = await resolveAddress(values.address, provider);
+
     const votingTokenContract =
       baseContracts.votesERC20WrapperMasterCopyContract.asSigner.attach(votesTokenContractAddress);
     delegateVote({
-      delegatee: validAddress,
+      delegatee,
       votingTokenContract,
       successCallback: () => {
         close();
@@ -56,13 +57,12 @@ export function DelegateModal({ close }: { close: Function }) {
   };
   const submitLockedDelegation = async (values: { address: string }) => {
     if (!lockReleaseContractAddress || !baseContracts || !signer) return;
-    let validAddress = values.address;
-    if (validateENSName(validAddress)) {
-      validAddress = await signer.resolveName(values.address);
-    }
+
+    const delegatee = await resolveAddress(values.address, provider);
+
     const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, signer);
     delegateVote({
-      delegatee: validAddress,
+      delegatee,
       votingTokenContract: lockReleaseContract,
       successCallback: async () => {
         await loadReadOnlyValues();
