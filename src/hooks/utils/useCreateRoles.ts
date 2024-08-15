@@ -83,7 +83,7 @@ const prepareMintHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, hatsCoun
 
 export default function useCreateRoles() {
   const {
-    node: { safe, daoAddress, daoName },
+    node: { safe, daoName },
   } = useFractal();
   const { hatsTree, hatsTreeId, getHat } = useRolesStore();
   const {
@@ -105,12 +105,14 @@ export default function useCreateRoles() {
     useCreateSablierStream();
   const ipfsClient = useIPFSClient();
 
+  const safeAddress = safe?.address;
+
   const navigate = useNavigate();
   const submitProposalSuccessCallback = useCallback(() => {
-    if (daoAddress) {
-      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+    if (safeAddress) {
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress));
     }
-  }, [daoAddress, addressPrefix, navigate]);
+  }, [safeAddress, navigate, addressPrefix]);
 
   const uploadHatDescription = useCallback(
     async (hatDescription: string) => {
@@ -214,7 +216,7 @@ export default function useCreateRoles() {
 
   const prepareCreateTopHatProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, addedHats: HatStruct[]) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Can not create top hat without DAO Address');
       }
 
@@ -233,7 +235,7 @@ export default function useCreateRoles() {
 
       const topHatDetails = await uploadHatDescription(
         hatsDetailsBuilder({
-          name: daoName || daoAddress,
+          name: daoName || safeAddress,
           description: '',
         }),
       );
@@ -270,14 +272,14 @@ export default function useCreateRoles() {
       });
 
       return {
-        targets: [daoAddress, decentHatsAddress, daoAddress],
+        targets: [safeAddress, decentHatsAddress, safeAddress],
         calldatas: [enableModuleData, createAndDeclareTreeData, disableModuleData],
         metaData: proposalMetadata,
         values: [0n, 0n, 0n],
       };
     },
     [
-      daoAddress,
+      safeAddress,
       decentHatsMasterCopy,
       uploadHatDescription,
       daoName,
@@ -327,7 +329,7 @@ export default function useCreateRoles() {
         editedPayrollHats: RoleValue[];
       },
     ) => {
-      if (!hatsTree || !daoAddress) {
+      if (!hatsTree || !safeAddress) {
         throw new Error('Can not edit hats without Hats Tree!');
       }
 
@@ -421,7 +423,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(hatId), roleHat.wearer, daoAddress],
+                  args: [BigInt(hatId), roleHat.wearer, safeAddress],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -438,7 +440,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(hatId), daoAddress, roleHat.wearer],
+                  args: [BigInt(hatId), safeAddress, roleHat.wearer],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -478,7 +480,7 @@ export default function useCreateRoles() {
                   calldata: encodeFunctionData({
                     abi: HatsAbi,
                     functionName: 'transferHat',
-                    args: [BigInt(id), currentWearer, daoAddress],
+                    args: [BigInt(id), currentWearer, safeAddress],
                   }),
                   targetAddress: hatsProtocol,
                 });
@@ -490,7 +492,7 @@ export default function useCreateRoles() {
                   calldata: encodeFunctionData({
                     abi: HatsAbi,
                     functionName: 'transferHat',
-                    args: [BigInt(id), daoAddress, newWearer],
+                    args: [BigInt(id), safeAddress, newWearer],
                   }),
                   targetAddress: hatsProtocol,
                 });
@@ -551,7 +553,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(role.id), getAddress(role.wearer), daoAddress],
+                  args: [BigInt(role.id), getAddress(role.wearer), safeAddress],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -564,7 +566,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(role.id), daoAddress, getAddress(role.wearer)],
+                  args: [BigInt(role.id), safeAddress, getAddress(role.wearer)],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -628,7 +630,7 @@ export default function useCreateRoles() {
       hatsTree,
       prepareHatFlushAndCancelPayment,
       prepareHatsAccountFlushExecData,
-      daoAddress,
+      safeAddress,
       prepareBatchLinearStreamCreation,
       hatsAccount1ofNMasterCopy,
       chain.id,

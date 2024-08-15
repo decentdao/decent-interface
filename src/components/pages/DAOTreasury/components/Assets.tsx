@@ -30,7 +30,7 @@ import { NFTHeader, NFTRow } from './AssetNFT';
 
 export function Assets() {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { assetsFungible, assetsNonFungible, totalUsdValue },
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
@@ -172,7 +172,7 @@ export function Assets() {
           </HStack>
         </Show>
       )}
-      {hasAssets && daoAddress && (
+      {hasAssets && safe?.address && (
         <>
           <Show below="lg">
             <Accordion

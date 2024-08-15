@@ -13,12 +13,13 @@ import ProposalCard from './ProposalCard/ProposalCard';
 
 export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const {
-    node: { daoAddress },
+    node: { safe },
     governance: { loadingProposals, allProposalsLoaded },
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['proposal']);
+
   return (
     <Flex
       flexDirection="column"
@@ -41,8 +42,8 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
         ]
       ) : (
         <EmptyBox emptyText={t('emptyProposals')}>
-          {canUserCreateProposal && daoAddress && (
-            <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)}>
+          {canUserCreateProposal && safe?.address && (
+            <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}>
               <Button variant="text">{t('createProposal')}</Button>
             </Link>
           )}

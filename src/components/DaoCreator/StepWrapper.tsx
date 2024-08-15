@@ -27,7 +27,7 @@ export function StepWrapper({
   shouldWrapChildren = true,
 }: IStepWrapper) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['daoCreate']);
@@ -65,9 +65,9 @@ export function StepWrapper({
           isButtonDisabled={isFormSubmitting}
           buttonClick={() =>
             navigate(
-              !isSubDAO || !daoAddress
+              !isSubDAO || !safe?.address
                 ? BASE_ROUTES.landing
-                : DAO_ROUTES.dao.relative(addressPrefix, daoAddress),
+                : DAO_ROUTES.dao.relative(addressPrefix, safe.address),
             )
           }
         />

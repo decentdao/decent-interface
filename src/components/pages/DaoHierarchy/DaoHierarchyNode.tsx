@@ -5,7 +5,7 @@ import { Address, getAddress, zeroAddress } from 'viem';
 import { useLoadDAONode } from '../../../hooks/DAO/loaders/useLoadDAONode';
 import { useLoadDAOData } from '../../../hooks/DAO/useDAOData';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { FractalNode, WithError } from '../../../types';
+import { FractalNode, WithError, Node } from '../../../types';
 import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../../ui/cards/DAONodeInfoCard';
 
 /**
@@ -19,32 +19,32 @@ import { DAONodeInfoCard, NODE_HEIGHT_REM } from '../../ui/cards/DAONodeInfoCard
  */
 export function DaoHierarchyNode({
   parentAddress,
-  daoAddress,
+  safeAddress,
   depth,
 }: {
   parentAddress: Address | null;
-  daoAddress: Address | null;
+  safeAddress: Address | null;
   depth: number;
 }) {
   const {
-    node: { daoAddress: currentDAOAddress },
+    node: { safe: currentSafe },
   } = useFractal();
   const [fractalNode, setNode] = useState<FractalNode>();
   const { loadDao } = useLoadDAONode();
   const { daoData } = useLoadDAOData(parentAddress, fractalNode);
 
   // calculates the total number of descendants below the given node
-  const getTotalDescendants = useCallback((node: FractalNode): number => {
+  const getTotalDescendants = useCallback((node: Node): number => {
     let count = node.nodeHierarchy.childNodes.length;
     node.nodeHierarchy.childNodes.forEach(child => {
-      count += getTotalDescendants(child as FractalNode);
+      count += getTotalDescendants(child);
     });
     return count;
   }, []);
 
   useEffect(() => {
-    if (daoAddress) {
-      loadDao(getAddress(daoAddress)).then(_node => {
+    if (safeAddress) {
+      loadDao(getAddress(safeAddress)).then(_node => {
         const errorNode = _node as WithError;
         if (!errorNode.error) {
           const fnode = _node as FractalNode;
@@ -52,7 +52,6 @@ export function DaoHierarchyNode({
         } else if (errorNode.error === 'errorFailedSearch') {
           setNode({
             daoName: null,
-            daoAddress,
             safe: null,
             fractalModules: [],
             nodeHierarchy: {
@@ -63,7 +62,7 @@ export function DaoHierarchyNode({
         }
       });
     }
-  }, [loadDao, daoAddress, depth, getTotalDescendants]);
+  }, [loadDao, safeAddress, depth, getTotalDescendants]);
 
   return (
     <Flex
@@ -82,7 +81,7 @@ export function DaoHierarchyNode({
       {fractalNode?.nodeHierarchy.childNodes.map(childNode => (
         <Flex
           minH={`${NODE_HEIGHT_REM}rem`}
-          key={childNode.daoAddress}
+          key={childNode.address}
           gap="1.25rem"
         >
           <Icon
@@ -91,15 +90,15 @@ export function DaoHierarchyNode({
             ml="0.5rem"
             boxSize="32px"
             color={
-              currentDAOAddress === getAddress(childNode.daoAddress || zeroAddress)
+              currentSafe?.address === getAddress(childNode.address || zeroAddress)
                 ? 'celery-0'
                 : 'neutral-6'
             }
           />
 
           <DaoHierarchyNode
-            parentAddress={daoAddress}
-            daoAddress={childNode.daoAddress}
+            parentAddress={safeAddress}
+            safeAddress={childNode.address}
             depth={depth + 1}
           />
         </Flex>

@@ -24,9 +24,10 @@ export interface TransferDisplayData {
 
 export function useFormatTransfers(): TransferDisplayData[] {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { transfers },
   } = useFractal();
+
   const transfersFromTransactions = (transfers?.results || [])
     .map(transaction => transaction.transfers)
     .flat();
@@ -52,7 +53,7 @@ export function useFormatTransfers(): TransferDisplayData[] {
     let symbol =
       transfer.type === TransferType.ETHER_TRANSFER ? chain.nativeCurrency.symbol : info?.symbol;
     const formatted: TransferDisplayData = {
-      eventType: daoAddress === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
+      eventType: safe?.address === transfer.from ? TokenEventType.WITHDRAW : TokenEventType.DEPOSIT,
       transferType: transfer.type as TransferType,
       executionDate: transfer.executionDate,
       image: imageSrc,
@@ -64,7 +65,7 @@ export function useFormatTransfers(): TransferDisplayData[] {
         transfer.type === TransferType.ERC721_TRANSFER
           ? undefined
           : formatCoin(transfer.value, false, info?.decimals, symbol),
-      transferAddress: daoAddress === transfer.from ? transfer.to : transfer.from,
+      transferAddress: safe?.address === transfer.from ? transfer.to : transfer.from,
       isLast: transfersFromTransactions[transfersFromTransactions.length - 1] === transfer,
       transactionHash: transfer.transactionHash,
       tokenId: transfer.tokenId,

@@ -12,11 +12,12 @@ import { ActivityDescription } from './ActivityDescription';
 export function ActivityTreasury({ activity }: { activity: TreasuryActivity }) {
   const { t } = useTranslation();
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
+
   const eventDateLabel = t(
     activity.eventType === ActivityEventType.Treasury
-      ? activity.transaction?.to === daoAddress
+      ? activity.transaction?.to === safe?.address
         ? 'received'
         : 'sent'
       : 'created',

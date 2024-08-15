@@ -1,4 +1,3 @@
-import { getAddress } from 'viem';
 import { FractalNode, NodeHierarchy } from '../../../types';
 import { NodeAction, NodeActions } from './action';
 
@@ -9,7 +8,6 @@ export const initialNodeHierarchyState: NodeHierarchy = {
 
 export const initialNodeState: FractalNode = {
   daoName: null,
-  daoAddress: null,
   safe: null,
   fractalModules: [],
   nodeHierarchy: initialNodeHierarchyState,
@@ -23,7 +21,6 @@ export function nodeReducer(state: FractalNode, action: NodeActions) {
       return {
         ...state,
         safe: action.payload,
-        daoAddress: getAddress(action.payload.address),
       };
     }
     case NodeAction.SET_DAO_INFO: {

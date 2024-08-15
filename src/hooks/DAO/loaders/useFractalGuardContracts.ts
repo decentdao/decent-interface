@@ -14,17 +14,19 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   // load key for component; helps prevent unnecessary calls
   const loadKey = useRef<string>();
   const {
-    node: { daoAddress, safe, fractalModules, isHierarchyLoaded },
+    node: { safe, fractalModules, isHierarchyLoaded },
     action,
   } = useFractal();
   const baseContracts = useSafeContracts();
+
+  const safeAddress = safe?.address;
 
   const { chain } = useNetworkConfig();
 
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
 
   const loadFractalGuardContracts = useCallback(
-    async (_daoAddress: string, _safe: SafeInfoResponse, _fractalModules: FractalModuleData[]) => {
+    async (_safe: SafeInfoResponse, _fractalModules: FractalModuleData[]) => {
       if (!baseContracts) {
         return;
       }
@@ -101,27 +103,27 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   );
 
   const setGuardContracts = useCallback(async () => {
-    if (!daoAddress || !safe) return;
-    const contracts = await loadFractalGuardContracts(daoAddress, safe, fractalModules);
+    if (!safe) return;
+    const contracts = await loadFractalGuardContracts(safe, fractalModules);
     if (!contracts) return;
     action.dispatch({ type: GuardContractAction.SET_GUARD_CONTRACT, payload: contracts });
-  }, [action, daoAddress, safe, fractalModules, loadFractalGuardContracts]);
+  }, [action, safe, fractalModules, loadFractalGuardContracts]);
 
   useEffect(() => {
     if (
       loadOnMount &&
-      daoAddress &&
-      daoAddress + chain.id !== loadKey.current &&
+      safeAddress &&
+      safeAddress + chain.id !== loadKey.current &&
       isHierarchyLoaded &&
       safe
     ) {
-      loadKey.current = daoAddress + chain.id;
+      loadKey.current = safeAddress + chain.id;
       setGuardContracts();
     }
 
-    if (!daoAddress) {
+    if (!safeAddress) {
       loadKey.current = undefined;
     }
-  }, [setGuardContracts, isHierarchyLoaded, loadOnMount, chain, daoAddress, safe]);
+  }, [setGuardContracts, isHierarchyLoaded, loadOnMount, chain, safeAddress, safe]);
   return loadFractalGuardContracts;
 };

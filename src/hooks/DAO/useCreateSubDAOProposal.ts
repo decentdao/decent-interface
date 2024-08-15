@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isHex, getAddress } from 'viem';
+import { getAddress, isHex } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
-import { SafeMultisigDAO, AzoriusGovernance, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
+import { AzoriusERC20DAO, AzoriusERC721DAO, AzoriusGovernance, SafeMultisigDAO } from '../../types';
 import { ProposalExecuteData } from '../../types/daoProposal';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
@@ -16,23 +16,30 @@ export const useCreateSubDAOProposal = () => {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const [build] = useBuildDAOTx();
   const {
-    node: { daoAddress },
+    node: { safe },
     governance,
   } = useFractal();
   const azoriusGovernance = governance as AzoriusGovernance;
+
+  const safeAddress = safe?.address;
+
   const proposeDao = useCallback(
     (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
       nonce: number | undefined,
-      successCallback: (addressPrefix: string, daoAddress: string) => void,
+      successCallback: (addressPrefix: string, safeAddress: string) => void,
     ) => {
       const propose = async () => {
-        if (!baseContracts || !daoAddress) {
+        if (!baseContracts || !safeAddress) {
           return;
         }
         const { multiSendContract, fractalRegistryContract } = baseContracts;
 
-        const builtSafeTx = await build(daoData, daoAddress, azoriusGovernance.votesToken?.address);
+        const builtSafeTx = await build(
+          daoData,
+          safeAddress,
+          azoriusGovernance.votesToken?.address,
+        );
         if (!builtSafeTx) {
           return;
         }
@@ -74,7 +81,7 @@ export const useCreateSubDAOProposal = () => {
       };
       propose();
     },
-    [baseContracts, build, daoAddress, submitProposal, azoriusGovernance, t],
+    [baseContracts, build, safeAddress, submitProposal, azoriusGovernance, t],
   );
 
   return { proposeDao, pendingCreateTx, canUserCreateProposal } as const;

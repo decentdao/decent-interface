@@ -165,14 +165,14 @@ export function PaginationButton({ onClick }: { onClick: () => void }) {
 export function PaginationCount({
   totalTransfers,
   shownTransactions,
-  daoAddress,
+  safeAddress,
 }: {
   totalTransfers: number;
   shownTransactions: number;
-  daoAddress: string | null;
+  safeAddress: string | null;
 }) {
   const { t } = useTranslation('treasury');
-  if (!totalTransfers || !daoAddress) {
+  if (!totalTransfers || !safeAddress) {
     return null;
   }
   return (
@@ -187,7 +187,7 @@ export function PaginationCount({
       </Text>
       <EtherscanLink
         type="address"
-        value={daoAddress}
+        value={safeAddress}
         p={0}
         textStyle="helper-text-base"
         outline="unset"

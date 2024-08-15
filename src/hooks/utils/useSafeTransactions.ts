@@ -190,7 +190,7 @@ export const useSafeTransactions = () => {
   );
 
   const parseTransactions = useCallback(
-    async (transactions: AllTransactionsListResponse, daoAddress: string) => {
+    async (transactions: AllTransactionsListResponse, safeAddress: string) => {
       if (!transactions.results.length || !provider) {
         return [];
       }
@@ -213,7 +213,7 @@ export const useSafeTransactions = () => {
 
           // @note it can be assumed that if there is no transfers it a receiving event
           const isDeposit: boolean = transaction.transfers.length
-            ? transaction.transfers.every(t => t.to.toLowerCase() === daoAddress.toLowerCase())
+            ? transaction.transfers.every(t => t.to.toLowerCase() === safeAddress.toLowerCase())
             : false;
 
           // returns mapping of Asset -> Asset Total Value by getting the total of each asset transfered
@@ -230,7 +230,7 @@ export const useSafeTransactions = () => {
 
           // maps address for each transfer
           const transferAddresses = transaction.transfers.map(transfer =>
-            transfer.to.toLowerCase() === daoAddress.toLowerCase() ? transfer.from : transfer.to,
+            transfer.to.toLowerCase() === safeAddress.toLowerCase() ? transfer.from : transfer.to,
           );
 
           // @note this indentifies transaction a simple ETH transfer

@@ -45,23 +45,24 @@ function PageHeader({
   children,
 }: PageHeaderProps) {
   const {
-    node: { daoAddress, daoName },
+    node: { safe, daoName },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
+  const safeAddress = safe?.address;
 
   const [links, setLinks] = useState([...breadcrumbs]);
 
   useEffect(() => {
-    if (hasDAOLink && daoAddress) {
+    if (hasDAOLink && safeAddress) {
       setLinks([
         {
-          terminus: daoName || (daoAddress && createAccountSubstring(daoAddress)) || '',
-          path: DAO_ROUTES.dao.relative(addressPrefix, daoAddress),
+          terminus: daoName || (safeAddress && createAccountSubstring(safeAddress)) || '',
+          path: DAO_ROUTES.dao.relative(addressPrefix, safeAddress),
         },
         ...breadcrumbs,
       ]);
     }
-  }, [hasDAOLink, daoName, daoAddress, breadcrumbs, addressPrefix]);
+  }, [hasDAOLink, daoName, safeAddress, breadcrumbs, addressPrefix]);
 
   const showAction = !!buttonText || !!ButtonIcon || !!children;
 

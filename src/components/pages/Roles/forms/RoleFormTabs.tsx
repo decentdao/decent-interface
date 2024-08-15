@@ -33,7 +33,7 @@ export default function RoleFormTabs({
 }) {
   const { hatsTree } = useRolesStore();
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
@@ -63,7 +63,7 @@ export default function RoleFormTabs({
     }
   }, [setFieldValue, values.hats, values.roleEditing, hatId]);
 
-  if (!daoAddress) return null;
+  if (!safe?.address) return null;
 
   return (
     <FieldArray name="roleEditing.payments">
@@ -152,7 +152,7 @@ export default function RoleFormTabs({
                 setFieldValue('roleEditing', undefined);
                 setTimeout(() => {
                   setTouched({});
-                  navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+                  navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safe.address));
                 }, 50);
               }}
             >

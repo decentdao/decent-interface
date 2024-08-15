@@ -9,7 +9,7 @@ export const mapChildNodes = (dao: DAO) => {
         childNodes: mapChildNodes(node),
       },
       daoName: node.name === null || node.name === undefined ? null : node.name,
-      daoAddress: node.address,
+      address: node.address,
     };
   });
 };

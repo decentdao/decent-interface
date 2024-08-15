@@ -38,7 +38,7 @@ export default function useUserERC721VotingTokens(
 
   const signerOrProvider = useSignerOrProvider();
   const {
-    node: { daoAddress },
+    node: { safe },
     governanceContracts: { erc721LinearVotingContractAddress },
     governance,
     readOnly: { user },
@@ -49,6 +49,8 @@ export default function useUserERC721VotingTokens(
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const { erc721Tokens } = azoriusGovernance;
+
+  const globalContextSafeAddress = safe?.address;
 
   const getUserERC721VotingTokens = useCallback(
     async (_safeAddress: string | null, _proposalId?: string) => {
@@ -61,7 +63,7 @@ export default function useUserERC721VotingTokens(
       let govTokens = erc721Tokens;
       let votingContract: LinearERC721Voting | undefined;
 
-      if (!baseContracts || !signerOrProvider || !daoAddress) {
+      if (!baseContracts || !signerOrProvider || !globalContextSafeAddress) {
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
@@ -70,7 +72,7 @@ export default function useUserERC721VotingTokens(
         };
       }
 
-      if (_safeAddress && daoAddress !== _safeAddress) {
+      if (_safeAddress && globalContextSafeAddress !== _safeAddress) {
         // Means getting these for any safe, primary use case - calculating user voting weight for freeze voting
         const safeInfo = await safeAPI!.getSafeInfo(getAddress(_safeAddress));
         const safeModules = await lookupModules(safeInfo.modules);
@@ -197,7 +199,7 @@ export default function useUserERC721VotingTokens(
       signerOrProvider,
       lookupModules,
       safeAPI,
-      daoAddress,
+      globalContextSafeAddress,
       user.address,
       baseContracts,
     ],

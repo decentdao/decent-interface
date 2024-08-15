@@ -18,8 +18,9 @@ export default function ProposalsPage() {
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
   const {
     governance,
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
+
   const { addressPrefix } = useNetworkConfig();
   const azoriusGovernance = governance as AzoriusGovernance;
   const delegate = useFractalModal(ModalType.DELEGATE);
@@ -98,8 +99,8 @@ export default function ProposalsPage() {
             </Flex>
           </Button>
         )}
-        {canUserCreateProposal && daoAddress && (
-          <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)}>
+        {canUserCreateProposal && safe?.address && (
+          <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}>
             <Button minW={0}>
               <AddPlus />
               <Show above="sm">{t('create')}</Show>

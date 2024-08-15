@@ -9,7 +9,7 @@ export enum TokenEventType {
 
 export interface TokenEvent extends ContractEvent {
   transactionHash: string;
-  blockNumber: number;
+  blockNumber: number; // TODO: PROBABLY not being used. Remove?
   eventType: TokenEventType;
 }
 

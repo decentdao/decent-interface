@@ -229,11 +229,10 @@ export interface FractalGovernanceContracts {
   isLoaded: boolean;
 }
 
-export type SafeWithNextNonce = SafeInfoResponse & { nextNonce: number };
+export type SafeWithNextNonce = SafeInfoResponse & { nextNonce: number; address: Address };
 
 export interface FractalNode {
   daoName: string | null;
-  daoAddress: Address | null;
   safe: SafeWithNextNonce | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
@@ -244,7 +243,9 @@ export interface FractalNode {
 }
 
 export interface Node
-  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {}
+  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {
+  address: Address;
+}
 
 export interface FractalModuleData {
   moduleContract: Azorius | FractalModule | undefined;

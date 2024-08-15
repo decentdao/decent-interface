@@ -7,7 +7,7 @@ import ExternalLink from './ExternalLink';
 
 export interface EtherscanLinkProps extends LinkProps {
   type: 'address' | 'block' | 'token' | 'tx';
-  value: string | null;
+  value: string | null; // TODO: prefer `value?: Hex | bigint`
   secondaryValue?: string;
   isTextLink?: boolean;
 }

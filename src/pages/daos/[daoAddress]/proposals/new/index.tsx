@@ -9,14 +9,15 @@ import { ProposalBuilderMode } from '../../../../../types';
 
 export default function CreateProposalPage() {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
     governance: { type },
   } = useFractal();
+
   const { prepareProposal } = usePrepareProposal();
 
   const HEADER_HEIGHT = useHeaderHeight();
 
-  if (!type || !daoAddress || !safe) {
+  if (!type || !safe?.address || !safe) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />

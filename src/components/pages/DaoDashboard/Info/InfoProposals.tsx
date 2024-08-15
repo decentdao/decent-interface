@@ -131,11 +131,11 @@ const allActiveProposalsCount = (
 export function InfoProposals() {
   const { t } = useTranslation('dashboard');
   const {
-    node: { daoAddress },
+    node: { safe },
     governance: { proposals, type, skippedProposalCount },
   } = useFractal();
 
-  if (!daoAddress || !type) {
+  if (!safe?.address || !type) {
     return (
       <Flex
         h="8.5rem"

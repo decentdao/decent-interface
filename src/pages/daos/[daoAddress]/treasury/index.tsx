@@ -17,7 +17,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function Treasury() {
   const {
-    node: { daoName, daoAddress },
+    node: { daoName, safe },
     treasury: { assetsFungible },
   } = useFractal();
   const [shownTransactions, setShownTransactions] = useState(20);
@@ -33,6 +33,8 @@ export default function Treasury() {
   const totalTransfers = formattedTransfers.length;
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
 
+  const safeAddress = safe?.address;
+
   return (
     <Box>
       <PageHeader
@@ -41,7 +43,7 @@ export default function Treasury() {
           daoName,
           subject: t('treasury', { ns: 'breadcrumbs' }),
         })}
-        address={daoAddress ? daoAddress : undefined}
+        address={safeAddress}
         breadcrumbs={[
           {
             terminus: t('treasury', { ns: 'breadcrumbs' }),
@@ -73,7 +75,7 @@ export default function Treasury() {
                   <PaginationCount
                     totalTransfers={totalTransfers}
                     shownTransactions={shownTransactions}
-                    daoAddress={daoAddress}
+                    safeAddress={safeAddress ?? null}
                   />
                 </Box>
               </Show>
@@ -90,7 +92,7 @@ export default function Treasury() {
                   <PaginationCount
                     totalTransfers={totalTransfers}
                     shownTransactions={shownTransactions}
-                    daoAddress={daoAddress}
+                    safeAddress={safeAddress ?? null}
                   />
                 </Box>
               </Show>

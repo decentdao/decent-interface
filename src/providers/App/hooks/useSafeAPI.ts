@@ -6,6 +6,7 @@ import SafeApiKit, {
   SafeApiKitConfig,
 } from '@safe-global/api-kit';
 import { useMemo } from 'react';
+import { getAddress } from 'viem';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
 import {
   DBObjectKeys,
@@ -83,8 +84,12 @@ class EnhancedSafeApiKit extends SafeApiKit {
   async getSafeData(safeAddress: string): Promise<SafeWithNextNonce> {
     const safeInfoResponse = await this.getSafeInfo(safeAddress);
     const nextNonce = await this.getNextNonce(safeAddress);
-    const safeInfo = { ...safeInfoResponse, nextNonce };
-    return safeInfo;
+
+    return {
+      ...safeInfoResponse,
+      address: getAddress(safeInfoResponse.address), // TODO: remove this line when typechain PR is merged
+      nextNonce,
+    };
   }
 }
 

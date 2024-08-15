@@ -19,7 +19,7 @@ const useDeployDAO = () => {
   const deployDao = useCallback(
     (
       daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
-      successCallback: (addressPrefix: string, daoAddress: string) => void,
+      successCallback: (addressPrefix: string, safeAddress: string) => void,
     ) => {
       const deploy = async () => {
         if (!baseContracts) {
