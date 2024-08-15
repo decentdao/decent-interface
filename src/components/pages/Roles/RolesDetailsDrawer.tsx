@@ -18,6 +18,8 @@ import PaymentDetails from '../../../pages/daos/[daoAddress]/roles/details/Payme
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import Avatar from '../../ui/page/Header/Avatar';
+import Divider from '../../ui/utils/Divider';
+import { RolePaymentDetails } from './RolePaymentDetails';
 import { SablierPayment } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
@@ -161,11 +163,27 @@ export default function RolesDetailsDrawer({
               </Text>
             </GridItem>
           </Grid>
-          {/* @todo: proper styling here */}
-          <PaymentDetails
-            payment={payments?.[0]}
-            roleHat={roleHat}
-          />
+          {payments && (
+            <>
+              <Divider
+                variant="darker"
+                my={4}
+              />
+              <Text
+                textStyle="display-lg"
+                color="white-0"
+              >
+                {t('payments')}
+              </Text>
+              {payments.map((payment, index) => (
+                <RolePaymentDetails
+                  key={index}
+                  payment={payment}
+                  showWithdraw
+                />
+              ))}
+            </>
+          )}
         </DrawerBody>
       </DrawerContent>
     </Drawer>

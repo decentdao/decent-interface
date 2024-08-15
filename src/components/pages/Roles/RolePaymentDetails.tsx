@@ -1,10 +1,13 @@
-import { Box, Flex, Grid, GridItem, Icon, Image, Text } from '@chakra-ui/react';
-import { Calendar } from '@phosphor-icons/react';
+import { Box, Button, Flex, Grid, GridItem, Icon, Image, Text } from '@chakra-ui/react';
+import { Calendar, Download } from '@phosphor-icons/react';
 import { format } from 'date-fns';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
+import { getAddress, getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
+import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
 import { DETAILS_SHADOW } from '../../../constants/common';
+import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablierStream';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { DEFAULT_DATE_FORMAT, formatUSD } from '../../../utils';
 import { SablierPayment } from './types';
@@ -56,37 +59,38 @@ function GreenActiveDot({ isActive }: { isActive: boolean }) {
 interface RolePaymentDetailsProps {
   payment: SablierPayment;
   onClick?: () => void;
+  showWithdraw?: boolean;
 }
-export function RolePaymentDetails({ payment, onClick }: RolePaymentDetailsProps) {
+export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
     treasury: { assetsFungible },
   } = useFractal();
-  // const publicClient = usePublicClient();
+  const publicClient = usePublicClient();
 
-  // const [withdrawableAmount, setWithdrawableAmount] = useState(0n);
+  const [withdrawableAmount, setWithdrawableAmount] = useState(0n);
 
-  // const loadAmounts = useCallback(async () => {
-  //   if (publicClient && payment?.streamId && payment?.contractAddress) {
-  //     const streamContract = getContract({
-  //       abi: SablierV2LockupLinearAbi,
-  //       address: payment.contractAddress,
-  //       client: publicClient,
-  //     });
+  const loadAmounts = useCallback(async () => {
+    if (publicClient && payment?.streamId && payment?.contractAddress) {
+      const streamContract = getContract({
+        abi: SablierV2LockupLinearAbi,
+        address: payment.contractAddress,
+        client: publicClient,
+      });
 
-  //     const bigintStreamId = convertStreamIdToBigInt(payment.streamId);
+      const bigintStreamId = convertStreamIdToBigInt(payment.streamId);
 
-  //     const [newWithdrawableAmount] = await Promise.all([
-  //       streamContract.read.withdrawableAmountOf([bigintStreamId]),
-  //     ]);
+      const [newWithdrawableAmount] = await Promise.all([
+        streamContract.read.withdrawableAmountOf([bigintStreamId]),
+      ]);
 
-  //     setWithdrawableAmount(newWithdrawableAmount);
-  //   }
-  // }, [publicClient, payment?.streamId, payment?.contractAddress]);
+      setWithdrawableAmount(newWithdrawableAmount);
+    }
+  }, [publicClient, payment?.streamId, payment?.contractAddress]);
 
-  // useEffect(() => {
-  //   loadAmounts();
-  // }, [loadAmounts]);
+  useEffect(() => {
+    loadAmounts();
+  }, [loadAmounts]);
 
   const isStreamActive = useMemo(() => {
     if (
@@ -123,6 +127,10 @@ export function RolePaymentDetails({ payment, onClick }: RolePaymentDetailsProps
     }
     return Number(totalAmount) * foundAsset.usdPrice;
   }, [payment.amount, payment.asset.address, assetsFungible]);
+
+  const openWithdrawModal = () => {
+    // @todo implement
+  };
 
   return (
     <Box
@@ -243,6 +251,17 @@ export function RolePaymentDetails({ payment, onClick }: RolePaymentDetailsProps
             />
           </GridItem>
         </Grid>
+        {!!showWithdraw && !!withdrawableAmount && (
+          <Box mt={4} px={4}>
+            <Button
+              w="full"
+              leftIcon={<Download />}
+              onClick={openWithdrawModal}
+            >
+              {t('withdraw')}
+            </Button>
+          </Box>
+        )}
       </Box>
     </Box>
   );
