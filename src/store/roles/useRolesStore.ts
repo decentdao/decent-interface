@@ -16,6 +16,25 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
 
     return matches[0];
   },
+  getPayment: (hatId, streamId) => {
+    const hat = get().getHat(hatId);
+
+    if (!hat || !hat.payments) {
+      return null;
+    }
+
+    const matches = hat.payments.filter(p => p.streamId === streamId);
+
+    if (matches.length === 0) {
+      return null;
+    }
+
+    if (matches.length > 1) {
+      throw new Error('multiple payments with the same ID');
+    }
+
+    return matches[0];
+  },
   setHatsTreeId: hatsTreeId =>
     set(() => {
       // if `hatsTreeId` is null or undefined,
