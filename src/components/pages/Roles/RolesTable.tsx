@@ -31,15 +31,15 @@ function RolesHeader() {
         color="neutral-7"
       >
         <Th>
-          <Flex>{t('role')}</Flex>
+          <Flex minW="10vw">{t('role')}</Flex>
         </Th>
 
         <Th>
-          <Flex minW="30vw">{t('member')}</Flex>
+          <Flex minW="20vw">{t('member')}</Flex>
         </Th>
 
         <Th>
-          <Flex justifyContent="center">{t('activePayments')}</Flex>
+          <Flex justifyContent="flex-end">{t('activePayments')}</Flex>
         </Th>
       </Tr>
     </Thead>
@@ -145,7 +145,10 @@ function PaymentsColumn({ payments }: { payments?: SablierPayment[] }) {
   const hasPayments = payments && payments.length > 0;
   return (
     <Td>
-      <Flex justifyContent="center">
+      <Flex
+        justifyContent="flex-end"
+        mr={hasPayments ? '1rem' : '2rem'}
+      >
         {hasPayments ? (
           <Box
             bg="celery--2"
@@ -162,7 +165,7 @@ function PaymentsColumn({ payments }: { payments?: SablierPayment[] }) {
               lineHeight="1rem"
               align="center"
             >
-              {payments?.length ?? 0}
+              {payments.length}
             </Text>
           </Box>
         ) : (
