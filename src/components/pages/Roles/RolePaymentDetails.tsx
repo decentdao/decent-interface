@@ -196,7 +196,7 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
                 textStyle="label-small"
                 color="white-0"
               >
-                {`${amountPerWeek} ${payment.asset.symbol} / week`}
+                {`${amountPerWeek} ${payment.asset.symbol} / ${t('week')}`}
               </Text>
             </Flex>
           </Flex>
