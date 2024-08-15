@@ -25,6 +25,7 @@ import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
+import { useRolesStore } from '../../../../store/roles';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
@@ -362,7 +363,7 @@ function DurationTabs({ formIndex }: { formIndex: number }) {
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
-
+  const { hatsTree } = useRolesStore();
   const roleEditingErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
   return (
     <Box
@@ -373,7 +374,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         base: CARD_SHADOW,
         md: 'unset',
       }}
-      mt="-4.5rem"
+      mt="-3.5rem"
       borderRadius="0.5rem"
       position="relative"
     >
@@ -386,11 +387,23 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         mb="1rem"
         leftIcon={<ArrowLeft size="1.5rem" />}
         onClick={() => {
-          if (!values?.roleEditing?.payments) return;
+          if (!values?.roleEditing?.payments || !hatsTree) return;
+
+          let isExistingPayment: boolean = false;
+          const foundRole = hatsTree.roleHats.find(role => role.id === values?.roleEditing?.id);
+          if (!!foundRole?.payments) {
+            const foundPayment = foundRole.payments.find(
+              payment => payment.streamId === values?.roleEditing?.payments?.[formIndex].streamId,
+            );
+            if (foundPayment) {
+              isExistingPayment = true;
+            }
+          }
           // if payment is new, and unedited, remove it
           if (
             formIndex === values.roleEditing.payments.length - 1 &&
-            !values.roleEditing.editedRole
+            !values.roleEditing.editedRole &&
+            !isExistingPayment
           ) {
             setFieldValue(
               'roleEditing.payments',
