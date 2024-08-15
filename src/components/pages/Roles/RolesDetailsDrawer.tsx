@@ -14,7 +14,6 @@ import { useTranslation } from 'react-i18next';
 import { Address, Hex, getAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import PaymentDetails from '../../../pages/daos/[daoAddress]/roles/details/PaymentDetails';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import Avatar from '../../ui/page/Header/Avatar';
