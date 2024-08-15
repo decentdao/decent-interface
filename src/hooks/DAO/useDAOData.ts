@@ -11,12 +11,12 @@ import { useFractalGuardContracts } from './loaders/useFractalGuardContracts';
  * A hook for loading guard and freeze guard contract data for the provided
  * FractalNode.
  */
-export function useLoadDAOData(parentAddress: string | null, fractalNode?: FractalNode) {
+export function useLoadDAOData(parentSafeAddress: string | null, fractalNode?: FractalNode) {
   const [daoData, setDAOData] = useState<DAOData>();
   const loadFractalGuardContracts = useFractalGuardContracts({ loadOnMount: false });
   const loadFractalFreezeGuard = useFractalFreeze({
     loadOnMount: false,
-    parentSafeAddress: parentAddress,
+    parentSafeAddress,
   });
 
   useEffect(() => {
@@ -26,12 +26,11 @@ export function useLoadDAOData(parentAddress: string | null, fractalNode?: Fract
       }
       const { safe, fractalModules } = fractalNode;
 
-      if (!safe?.address || !safe) {
+      if (!safe?.address) {
         return;
       }
 
       let freezeGuardContracts: FractalGuardContracts | undefined = await loadFractalGuardContracts(
-        safe.address,
         safe,
         fractalModules,
       );
