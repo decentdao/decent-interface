@@ -7,7 +7,10 @@ import { SnapshotProposal } from '../../../../types/daoProposal';
 import { createSnapshotGraphQlClient } from './';
 
 export const useSnapshotProposals = () => {
-  const { node: { daoSnapshotENS }, action } = useFractal();
+  const {
+    node: { daoSnapshotENS },
+    action,
+  } = useFractal();
   const currentSnapshotENS = useRef<string | undefined>();
   const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphQlClient(), []);
 
