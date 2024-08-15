@@ -53,7 +53,7 @@ export const useFractalNode = (
           },
           daoName: name as string,
           daoAddress: getAddress(_daoAddress),
-          daoSnapshotENS: snapshotENS?.toLowerCase() as string,
+          daoSnapshotENS: snapshotENS as string,
           proposalTemplatesHash: proposalTemplatesHash as string,
         };
         return currentNode;

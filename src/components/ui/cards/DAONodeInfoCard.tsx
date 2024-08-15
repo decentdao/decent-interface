@@ -104,9 +104,7 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
             />
 
             {/* SNAPSHOT ICON LINK */}
-            {node.daoSnapshotENS && (
-              <SnapshotButton snapshotENS={node.daoSnapshotENS.toLowerCase()} />
-            )}
+            {node.daoSnapshotENS && <SnapshotButton snapshotENS={node.daoSnapshotENS} />}
           </Flex>
 
           {/* DAO ADDRESS */}

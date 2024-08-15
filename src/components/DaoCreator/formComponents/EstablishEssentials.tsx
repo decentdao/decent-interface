@@ -34,7 +34,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
       setFieldValue('essentials.daoName', daoName, false);
       if (createAccountSubstring(daoAddress!) !== daoName) {
         // Pre-fill the snapshot URL form field when editing
-        setFieldValue('essentials.snapshotENS', daoSnapshotENS?.toLowerCase() || '', false);
+        setFieldValue('essentials.snapshotENS', daoSnapshotENS || '', false);
       }
     }
   }, [setFieldValue, mode, daoName, daoSnapshotENS, isEdit, daoAddress]);

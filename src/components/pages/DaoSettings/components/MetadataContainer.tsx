@@ -38,7 +38,7 @@ export function MetadataContainer() {
     }
 
     if (daoSnapshotENS) {
-      setSnapshotENS(daoSnapshotENS.toLowerCase());
+      setSnapshotENS(daoSnapshotENS);
     }
   }, [daoName, daoSnapshotENS, daoAddress]);
 
