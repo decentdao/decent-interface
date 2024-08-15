@@ -252,7 +252,10 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
           </GridItem>
         </Grid>
         {!!showWithdraw && !!withdrawableAmount && (
-          <Box mt={4} px={4}>
+          <Box
+            mt={4}
+            px={4}
+          >
             <Button
               w="full"
               leftIcon={<Download />}
