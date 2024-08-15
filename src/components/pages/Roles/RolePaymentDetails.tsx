@@ -80,10 +80,9 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
 
       const bigintStreamId = convertStreamIdToBigInt(payment.streamId);
 
-      const [newWithdrawableAmount] = await Promise.all([
-        streamContract.read.withdrawableAmountOf([bigintStreamId]),
+      const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
+        bigintStreamId,
       ]);
-
       setWithdrawableAmount(newWithdrawableAmount);
     }
   }, [publicClient, payment?.streamId, payment?.contractAddress]);
