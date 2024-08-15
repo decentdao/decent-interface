@@ -16,9 +16,11 @@ import { EditBadgeStatus, RoleEditProps, RoleProps, SablierPayment } from './typ
 export function AvatarAndRoleName({
   wearerAddress,
   name,
+  payments,
 }: {
   wearerAddress: string | undefined;
   name: string;
+  payments?: SablierPayment[];
 }) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
@@ -59,6 +61,37 @@ export function AvatarAndRoleName({
         >
           {wearerAddress ? accountDisplayName : t('unassigned')}
         </Text>
+        {payments && (
+          <Flex
+            mt="1rem"
+            gap="0.25rem"
+          >
+            <Text
+              textStyle="button-small"
+              color="neutral-7"
+              alignSelf="center"
+            >
+              {t('activePayments')}
+            </Text>
+            <Box
+              bg="celery--2"
+              color="neutral-3"
+              borderColor="neutral-3"
+              borderWidth="2px"
+              borderRadius="50%"
+              w="1.25rem"
+              h="1.25rem"
+            >
+              <Text
+                textStyle="helper-text-small"
+                lineHeight="1rem"
+                align="center"
+              >
+                {payments.length}
+              </Text>
+            </Box>
+          </Flex>
+        )}
       </Flex>
     </Flex>
   );
@@ -156,25 +189,15 @@ export function RoleCard({
         <AvatarAndRoleName
           wearerAddress={wearerAddress}
           name={name}
+          payments={payments}
         />
         <Flex
           alignItems="center"
           gap="1rem"
         >
           <EditBadge editStatus={editStatus} />
-          <Icon
-            as={CaretRight}
-            color="white-0"
-          />
         </Flex>
       </Flex>
-      {payments &&
-        payments.map((payment, index) => (
-          <Payment
-            key={index}
-            payment={payment}
-          />
-        ))}
     </Card>
   );
 }

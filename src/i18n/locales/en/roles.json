@@ -54,6 +54,7 @@
   "hours": "Hours",
   "cliff": "Cliff",
   "cliffSubTitle": "How long until the assets are claimable?",
+  "activePayments": "Active Payments",
   "payments": "Payments",
   "payment": "Payment",
   "withdraw": "Withdraw",
@@ -73,6 +74,7 @@
   "addPaymentTooltip": "Payments on a per-second basis; powered by Sablier.",
   "cliffPaymentTooltip": "Assets continue to accrue but aren't yet claimable here.",
   "emptyRolesAssets": "No assets available for payments.",
+  "week": "Week",
   "withdrawTo": "Withdraw to",
   "withdrawPaymentTitle": "Does everything look right?"
 }
