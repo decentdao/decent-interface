@@ -12,7 +12,7 @@ export const useSafeMultisigProposals = () => {
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
-  const safeAddress = safe?.address
+  const safeAddress = safe?.address;
 
   const { parseTransactions } = useSafeTransactions();
 
