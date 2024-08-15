@@ -366,7 +366,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const { hatsTree } = useRolesStore();
   const navigate = useNavigate();
-  const roleEditingErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
+  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -434,7 +434,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
       <DurationTabs formIndex={formIndex} />
       <Flex justifyContent="flex-end">
         <Button
-          isDisabled={!!roleEditingErrors}
+          isDisabled={!!roleEditingPaymentsErrors}
           onClick={() => {
             const currentPath = location.pathname + location.search;
             navigate(`${currentPath}#tab1`);
