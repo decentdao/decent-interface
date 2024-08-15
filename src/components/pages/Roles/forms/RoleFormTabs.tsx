@@ -2,7 +2,7 @@ import { Tab, TabList, TabPanels, TabPanel, Tabs, Button, Flex } from '@chakra-u
 import { useFormikContext } from 'formik';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Hex } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -22,6 +22,8 @@ export default function RoleFormTabs({
   pushRole: (obj: any) => void;
 }) {
   const { hatsTree } = useRolesStore();
+  const [searchParams] = useSearchParams();
+  const tabIndex = searchParams.get('tab') ? parseInt(searchParams.get('tab') as string) : 0;
   const {
     node: { daoAddress },
   } = useFractal();
@@ -61,7 +63,10 @@ export default function RoleFormTabs({
 
   return (
     <>
-      <Tabs variant="twoTone">
+      <Tabs
+        variant="twoTone"
+        defaultIndex={tabIndex}
+      >
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
           <Tab>{t('payments')}</Tab>

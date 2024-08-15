@@ -24,7 +24,9 @@ import { ArrowLeft, ArrowRight, Minus, Plus } from '@phosphor-icons/react';
 import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { CARD_SHADOW } from '../../../../constants/common';
+import { useRolesStore } from '../../../../store/roles';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
@@ -362,7 +364,8 @@ function DurationTabs({ formIndex }: { formIndex: number }) {
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
-
+  const { hatsTree } = useRolesStore();
+  const [, setSearchParams] = useSearchParams();
   const roleEditingErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
   return (
     <Box
@@ -373,7 +376,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         base: CARD_SHADOW,
         md: 'unset',
       }}
-      mt="-4.5rem"
+      mt="-3.5rem"
       borderRadius="0.5rem"
       position="relative"
     >
@@ -386,17 +389,33 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         mb="1rem"
         leftIcon={<ArrowLeft size="1.5rem" />}
         onClick={() => {
-          if (!values?.roleEditing?.payments) return;
+          if (!values?.roleEditing?.payments || !hatsTree) return;
+
+          let isExistingPayment: boolean = false;
+          const foundRole = hatsTree.roleHats.find(role => role.id === values?.roleEditing?.id);
+          if (!!foundRole?.payments) {
+            const foundPayment = foundRole.payments.find(
+              payment => payment.streamId === values?.roleEditing?.payments?.[formIndex].streamId,
+            );
+            if (foundPayment) {
+              isExistingPayment = true;
+            }
+          }
           // if payment is new, and unedited, remove it
           if (
             formIndex === values.roleEditing.payments.length - 1 &&
-            !values.roleEditing.editedRole
+            !values.roleEditing.editedRole &&
+            !isExistingPayment
           ) {
             setFieldValue(
               'roleEditing.payments',
               values.roleEditing.payments.filter((_, index) => index !== formIndex),
             );
           }
+          setSearchParams(prevParams => {
+            prevParams.set('tab', '1');
+            return prevParams;
+          });
           setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
         }}
       >
@@ -419,6 +438,10 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         <Button
           isDisabled={!!roleEditingErrors}
           onClick={() => {
+            setSearchParams(prevParams => {
+              prevParams.set('tab', '1');
+              return prevParams;
+            });
             setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
           }}
         >

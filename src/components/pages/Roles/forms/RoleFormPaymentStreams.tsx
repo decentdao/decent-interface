@@ -2,6 +2,7 @@ import { Box, Button, Flex } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { RolePaymentDetails } from '../RolePaymentDetails';
 import { RoleFormValues } from '../types';
 
 export function RoleFormPaymentStreams() {
@@ -26,25 +27,15 @@ export function RoleFormPaymentStreams() {
           >
             {t('addPayment')}
           </Button>
-          <Box>
+          <Box mt="0.5rem">
             {payments?.map((payment, index) => (
               <Flex key={index}>
-                {/* @todo replace with Actual component */}
-                <Flex
-                  flexDir="column"
-                  gap="0.5rem"
-                  my="1rem"
-                  p="1rem"
-                  border="1px solid"
-                  borderRadius="md"
-                  borderColor="white-0"
-                  cursor="pointer"
+                <RolePaymentDetails
+                  payment={payment}
                   onClick={() => {
                     setFieldValue('roleEditing.roleEditingPaymentIndex', index);
                   }}
-                >
-                  {payment.streamId}
-                </Flex>
+                />
               </Flex>
             ))}
           </Box>
