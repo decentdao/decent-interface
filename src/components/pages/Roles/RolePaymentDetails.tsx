@@ -154,7 +154,7 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
               color="white-0"
             >
               {payment.amount
-                ? Intl.NumberFormat(undefined).format(Number(payment.amount.value))
+                ? Intl.NumberFormat().format(Number(payment.amount.value))
                 : undefined}
             </Text>
             <Flex
