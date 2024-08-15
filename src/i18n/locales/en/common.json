@@ -110,5 +110,6 @@
   "show": "Show",
   "hide": "Hide",
   "poweredBy": "Powered by",
-  "goTo": "Go to"
+  "goTo": "Go to",
+  "none": "None"
 }

@@ -30,34 +30,22 @@ function RolesHeader() {
         textStyle="label-base"
         color="neutral-7"
       >
-        <Th>
-          <Flex minW="10vw">{t('role')}</Flex>
+        <Th
+          width="25%"
+          minW="230px"
+        >
+          {t('role')}
         </Th>
-
-        <Th>
-          <Flex minW="20vw">{t('member')}</Flex>
-        </Th>
-
-        <Th>
-          <Flex justifyContent="flex-end">{t('activePayments')}</Flex>
+        <Th width="60%">{t('member')}</Th>
+        <Th
+          width="15%"
+          minWidth="140px"
+          textAlign="center"
+        >
+          {t('activePayments')}
         </Th>
       </Tr>
     </Thead>
-  );
-}
-
-function RoleNameColumn({ roleName }: { roleName: string }) {
-  return (
-    <Td>
-      <Flex>
-        <Text
-          textStyle="body-base"
-          color="lilac-0"
-        >
-          {roleName}
-        </Text>
-      </Flex>
-    </Td>
   );
 }
 
@@ -69,7 +57,10 @@ function RoleNameEditColumn({
   editStatus?: EditBadgeStatus;
 }) {
   return (
-    <Td>
+    <Td
+      width="25%"
+      minW="230px"
+    >
       <Flex
         alignItems="center"
         justifyContent="space-between"
@@ -108,9 +99,9 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
     chainId: getChainIdFromPrefix(addressPrefix),
   });
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
-  const { t } = useTranslation(['roles']);
+  const { t } = useTranslation('roles');
   return (
-    <Td>
+    <Td width="60%">
       <Flex justifyContent="flex-start">
         {wearerAddress ? (
           <Avatar
@@ -125,58 +116,48 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
             bg="white-alpha-04"
           />
         )}
-        <Flex
-          direction="column"
+        <Text
+          textStyle="body-base"
+          color="white-0"
           ml="0.5rem"
         >
-          <Text
-            textStyle="body-base"
-            color="white-0"
-          >
-            {wearerAddress ? accountDisplayName : t('unassigned')}
-          </Text>
-        </Flex>
+          {wearerAddress ? accountDisplayName : t('unassigned')}
+        </Text>
       </Flex>
     </Td>
   );
 }
 
 function PaymentsColumn({ payments }: { payments?: SablierPayment[] }) {
-  const hasPayments = payments && payments.length > 0;
+  const { t } = useTranslation('common');
   return (
-    <Td>
-      <Flex
-        justifyContent="flex-end"
-        mr={hasPayments ? '1rem' : '2rem'}
-      >
-        {hasPayments ? (
-          <Box
-            bg="celery--2"
-            color="neutral-3"
-            borderColor="neutral-3"
-            borderWidth="2px"
-            borderRadius="50%"
-            w="1.25rem"
-            h="1.25rem"
-            mx="1.5rem"
-          >
-            <Text
-              textStyle="helper-text-small"
-              lineHeight="1rem"
-              align="center"
-            >
-              {payments.length}
-            </Text>
-          </Box>
-        ) : (
-          <Text
-            color="neutral-5"
-            textStyle="body-base"
-          >
-            None
-          </Text>
-        )}
-      </Flex>
+    <Td
+      width="15%"
+      minWidth="140px"
+      textAlign="center"
+      color="neutral-5"
+      textStyle="body-base"
+    >
+      {payments ? (
+        <Box
+          as="span"
+          display="inline-block"
+          textStyle="helper-text-small"
+          lineHeight="1rem"
+          textAlign="center"
+          bg="celery--2"
+          color="neutral-3"
+          borderColor="neutral-3"
+          borderWidth="2px"
+          borderRadius="50%"
+          w="1.25rem"
+          h="1.25rem"
+        >
+          {payments.length}
+        </Box>
+      ) : (
+        t('none')
+      )}
     </Td>
   );
 }
@@ -195,7 +176,14 @@ export function RolesRow({ name, wearerAddress, payments, handleRoleClick, hatId
       transition="all ease-out 300ms"
       onClick={() => handleRoleClick(hatId)}
     >
-      <RoleNameColumn roleName={name} />
+      <Td
+        textStyle="body-base"
+        color="lilac-0"
+        width="25%"
+        minW="230px"
+      >
+        {name}
+      </Td>
       <MemberColumn wearerAddress={wearerAddress} />
       <PaymentsColumn payments={payments} />
     </Tr>
