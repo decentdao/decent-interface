@@ -142,27 +142,37 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
 }
 
 function PaymentsColumn({ payments }: { payments?: SablierPayment[] }) {
+  const hasPayments = payments && payments.length > 0;
   return (
     <Td>
       <Flex justifyContent="center">
-        <Box
-          bg="celery--2"
-          color="neutral-3"
-          borderColor="neutral-3"
-          borderWidth="2px"
-          borderRadius="50%"
-          w="1.25rem"
-          h="1.25rem"
-          mx="1.5rem"
-        >
-          <Text
-            textStyle="helper-text-small"
-            lineHeight="1rem"
-            align="center"
+        {hasPayments ? (
+          <Box
+            bg="celery--2"
+            color="neutral-3"
+            borderColor="neutral-3"
+            borderWidth="2px"
+            borderRadius="50%"
+            w="1.25rem"
+            h="1.25rem"
+            mx="1.5rem"
           >
-            {payments?.length ?? 0}
+            <Text
+              textStyle="helper-text-small"
+              lineHeight="1rem"
+              align="center"
+            >
+              {payments?.length ?? 0}
+            </Text>
+          </Box>
+        ) : (
+          <Text
+            color="neutral-5"
+            textStyle="body-base"
+          >
+            None
           </Text>
-        </Box>
+        )}
       </Flex>
     </Td>
   );
