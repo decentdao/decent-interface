@@ -30,9 +30,17 @@ function RolesHeader() {
         textStyle="label-base"
         color="neutral-7"
       >
-        <Th>{t('role')}</Th>
-        <Th>{t('member')}</Th>
-        <Th>{t('activePayments')}</Th>
+        <Th>
+          <Flex>{t('role')}</Flex>
+        </Th>
+
+        <Th>
+          <Flex minW="30vw">{t('member')}</Flex>
+        </Th>
+
+        <Th>
+          <Flex justifyContent="center">{t('activePayments')}</Flex>
+        </Th>
       </Tr>
     </Thead>
   );
@@ -41,10 +49,7 @@ function RolesHeader() {
 function RoleNameColumn({ roleName }: { roleName: string }) {
   return (
     <Td>
-      <Flex
-        alignItems="center"
-        justifyContent="space-between"
-      >
+      <Flex>
         <Text
           textStyle="body-base"
           color="lilac-0"
@@ -106,7 +111,7 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
   const { t } = useTranslation(['roles']);
   return (
     <Td>
-      <Flex alignItems="center">
+      <Flex justifyContent="flex-start">
         {wearerAddress ? (
           <Avatar
             size="icon"
@@ -139,24 +144,26 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
 function PaymentsColumn({ payments }: { payments?: SablierPayment[] }) {
   return (
     <Td>
-      <Box
-        bg="celery--2"
-        color="neutral-3"
-        borderColor="neutral-3"
-        borderWidth="2px"
-        borderRadius="50%"
-        w="1.25rem"
-        h="1.25rem"
-        mx="1.5rem"
-      >
-        <Text
-          textStyle="helper-text-small"
-          lineHeight="1rem"
-          align="center"
+      <Flex justifyContent="center">
+        <Box
+          bg="celery--2"
+          color="neutral-3"
+          borderColor="neutral-3"
+          borderWidth="2px"
+          borderRadius="50%"
+          w="1.25rem"
+          h="1.25rem"
+          mx="1.5rem"
         >
-          {payments?.length ?? 0}
-        </Text>
-      </Box>
+          <Text
+            textStyle="helper-text-small"
+            lineHeight="1rem"
+            align="center"
+          >
+            {payments?.length ?? 0}
+          </Text>
+        </Box>
+      </Flex>
     </Td>
   );
 }
