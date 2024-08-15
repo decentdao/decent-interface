@@ -64,7 +64,7 @@ export function ManageDAOMenu({
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(
-    `${safeAddress}`,
+    safeAddress ?? null,
     undefined,
     false,
   );
