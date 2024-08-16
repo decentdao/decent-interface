@@ -60,14 +60,13 @@ export default function useCreateSablierStream() {
 
   const prepareLinearStream = useCallback(
     ({ totalAmount, recipient, startDate, endDate, cliffDate }: LinearStreamInputs) => {
-      const streamDuration = Math.ceil(
-        (Date.now() - startDate.getTime() + endDate.getTime()) / 1000,
-      );
+      const streamDuration = Math.ceil((endDate.getTime() - startDate.getTime()) / 1000);
       const cliffDuration = cliffDate ? Math.ceil(cliffDate.getTime()) : 0;
 
-      if (!streamDuration) {
-        throw new Error('Stream duration can not be 0');
+      if (streamDuration <= 0) {
+        throw new Error('Stream duration must be positive number');
       }
+
       const basicStreamData = prepareBasicStreamData(recipient, totalAmount);
       const assembledStream = {
         ...basicStreamData,
