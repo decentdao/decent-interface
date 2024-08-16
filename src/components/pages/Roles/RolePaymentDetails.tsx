@@ -102,9 +102,8 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
 
     const totalMilliseconds = endDate - startDate;
     const totalWeeks = totalMilliseconds / (1000 * 60 * 60 * 24 * 7);
-    const roundedWeeks = Math.ceil(totalWeeks);
 
-    return totalAmount / roundedWeeks;
+    return totalAmount / totalWeeks;
   }, [payment]);
 
   const streamAmountUSD = useMemo(() => {
