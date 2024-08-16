@@ -76,5 +76,10 @@
   "emptyRolesAssets": "No assets available for payments.",
   "week": "Week",
   "withdrawTo": "Withdraw to",
-  "withdrawPaymentTitle": "Does everything look right?"
+  "withdrawPaymentTitle": "Does everything look right?",
+  "roleInfoErrorPaymentFixedDateStartDateRequired": "Start date is required.",
+  "roleInfoErrorPaymentFixedDateEndDateRequired": "End date is required.",
+  "roleInfoErrorPaymentFixedDateEndDateAfterStartDate": "End date must be after start date.",
+  "roleInfoErrorPaymentScheduleOrFixedDateRequired": "Payment schedule or fixed dates are required.",
+  "roleInfoErrorPaymentScheduleInvalid": "Invalid payment schedule."
 }

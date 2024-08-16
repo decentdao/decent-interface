@@ -24,7 +24,7 @@ import { ArrowLeft, ArrowRight, Minus, Plus } from '@phosphor-icons/react';
 import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
@@ -236,7 +236,7 @@ function PaymentDatePicker({
                 >
                   <DatePickerTrigger selectedDate={selectedDate} />
                 </MenuButton>
-                <MenuList>
+                <MenuList zIndex={1}>
                   <DecentDatePicker
                     isRange={!isCliffDate}
                     onChange={onCliffDateChange}
@@ -364,8 +364,7 @@ function DurationTabs({ formIndex }: { formIndex: number }) {
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
-  const { hatsTree, getHat } = useRolesStore();
-  const navigate = useNavigate();
+  const { getPayment } = useRolesStore();
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
   return (
     <Box
@@ -388,19 +387,16 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         }}
         mb="1rem"
         leftIcon={<ArrowLeft size="1.5rem" />}
+        isDisabled={!values?.roleEditing?.payments?.[formIndex]}
         onClick={() => {
-          if (!values?.roleEditing?.payments || !hatsTree) return;
+          if (!values?.roleEditing?.payments?.[formIndex]) return;
 
-          let isExistingPayment: boolean = false;
-          const foundRole = getHat(values.roleEditing.id);
-          if (!!foundRole?.payments) {
-            const foundPayment = foundRole.payments.find(
-              payment => payment.streamId === values?.roleEditing?.payments?.[formIndex].streamId,
+          const isExistingPayment =
+            values.roleEditing.payments[formIndex].streamId &&
+            getPayment(
+              values.roleEditing.id,
+              getAddress(values.roleEditing.payments[formIndex].streamId),
             );
-            if (foundPayment) {
-              isExistingPayment = true;
-            }
-          }
           // if payment is new, and unedited, remove it
           if (
             formIndex === values.roleEditing.payments.length - 1 &&
@@ -412,8 +408,6 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
               values.roleEditing.payments.filter((_, index) => index !== formIndex),
             );
           }
-          const currentPath = location.pathname + location.search;
-          navigate(`${currentPath}#tab1`);
           setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
         }}
       >
@@ -434,10 +428,8 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
       <DurationTabs formIndex={formIndex} />
       <Flex justifyContent="flex-end">
         <Button
-          isDisabled={!!roleEditingPaymentsErrors || !values?.roleEditing?.payments || !hatsTree}
+          isDisabled={!!roleEditingPaymentsErrors}
           onClick={() => {
-            const currentPath = location.pathname + location.search;
-            navigate(`${currentPath}#tab1`);
             setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
           }}
         >

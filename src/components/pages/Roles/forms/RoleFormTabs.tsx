@@ -22,7 +22,6 @@ export default function RoleFormTabs({
   pushRole: (obj: any) => void;
 }) {
   const { hatsTree } = useRolesStore();
-  const tabIndex = window.location.hash ? parseInt(window.location.hash.replace('#tab', '')) : 0;
   const {
     node: { daoAddress },
   } = useFractal();
@@ -62,10 +61,7 @@ export default function RoleFormTabs({
 
   return (
     <>
-      <Tabs
-        variant="twoTone"
-        defaultIndex={tabIndex}
-      >
+      <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
           <Tab>{t('payments')}</Tab>

@@ -57,6 +57,7 @@ export interface DecentTree {
 
 export interface RolesStore extends RolesStoreData {
   getHat: (hatId: Hex) => DecentRoleHat | null;
+  getPayment: (hatId: Hex, streamId: Hex) => SablierPayment | null;
   setHatsTreeId: (hatsTreeId: undefined | null | number) => void;
   setHatsTree: (params: {
     hatsTree: Tree | null | undefined;

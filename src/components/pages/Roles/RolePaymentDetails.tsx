@@ -13,7 +13,7 @@ import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablier
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentRoleHat } from '../../../store/roles';
-import { DEFAULT_DATE_FORMAT, formatUSD } from '../../../utils';
+import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 import { RoleValue, SablierPayment } from './types';
@@ -98,7 +98,6 @@ export function RolePaymentDetails({
       const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
         bigintStreamId,
       ]);
-
       setWithdrawableAmount(newWithdrawableAmount);
     }
   }, [walletClient, payment?.streamId, payment?.contractAddress]);
@@ -121,40 +120,34 @@ export function RolePaymentDetails({
     }
   }, [addressPrefix, navigate, safe?.address, withdraw]);
 
-  const isStreamActive = useMemo(() => {
-    if (
-      payment.scheduleFixedDate &&
-      payment.scheduleFixedDate.endDate.getTime() < new Date().getTime()
-    ) {
-      return false;
-    }
-    return true;
-  }, [payment.scheduleFixedDate]);
-
   const amountPerWeek = useMemo(() => {
-    if (isStreamActive || !payment.amount || !payment.scheduleFixedDate) {
+    if (!payment.amount || !payment.scheduleFixedDate) {
       return;
     }
+
     const totalAmount = Number(payment.amount.value);
     const endDate = payment.scheduleFixedDate.endDate.getTime();
     const startDate = payment.scheduleFixedDate.startDate.getTime();
-    const numberOfWeeks = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24 * 7));
-    return totalAmount / numberOfWeeks;
-  }, [payment.amount, payment.scheduleFixedDate, isStreamActive]);
+
+    const totalMilliseconds = endDate - startDate;
+    const totalWeeks = totalMilliseconds / (1000 * 60 * 60 * 24 * 7);
+    const roundedWeeks = Math.ceil(totalWeeks);
+
+    return totalAmount / roundedWeeks;
+  }, [payment.amount, payment.scheduleFixedDate]);
 
   const streamAmountUSD = useMemo(() => {
     if (!payment.amount) {
       return;
     }
-    const totalAmount = payment.amount.bigintValue;
     // @todo add price support for tokens not found in assetsFungible
     const foundAsset = assetsFungible.find(
       asset => getAddress(asset.tokenAddress) === payment.asset.address,
     );
-    if (!foundAsset || !foundAsset.usdPrice) {
+    if (!foundAsset || foundAsset.usdPrice === undefined) {
       return;
     }
-    return Number(totalAmount) * foundAsset.usdPrice;
+    return Number(payment.amount.value) * foundAsset.usdPrice;
   }, [payment.amount, payment.asset.address, assetsFungible]);
 
   return (
@@ -178,8 +171,13 @@ export function RolePaymentDetails({
               textStyle="display-2xl"
               color="white-0"
             >
-              {payment.amount
-                ? Intl.NumberFormat().format(Number(payment.amount.value))
+              {payment.amount.bigintValue
+                ? formatCoin(
+                    payment.amount.bigintValue,
+                    false,
+                    payment.asset.decimals,
+                    payment.asset?.symbol,
+                  )
                 : undefined}
             </Text>
             <Flex
@@ -210,13 +208,13 @@ export function RolePaymentDetails({
               textStyle="label-small"
               color="neutral-7"
             >
-              {streamAmountUSD !== undefined ? formatUSD(streamAmountUSD) : '$ ---'}
+              {streamAmountUSD !== undefined ? formatUSD(streamAmountUSD.toString()) : '$ ---'}
             </Text>
             <Flex
               alignItems="center"
               gap="0.5rem"
             >
-              <GreenActiveDot isActive={isStreamActive} />
+              <GreenActiveDot isActive={payment.isActive} />
               <Text
                 textStyle="label-small"
                 color="white-0"
