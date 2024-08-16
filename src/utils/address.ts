@@ -22,7 +22,7 @@ export const encodePrefixedAddress = (address: Address, network: string) => {
 export const resolveAddress = async (
   addressOrENS: string,
   provider?: JsonRpcProvider | FallbackProvider,
-): Promise<Address> => {
+): Promise<Address | null> => {
   let validAddress: Address;
 
   if (isAddress(addressOrENS)) {
@@ -32,7 +32,7 @@ export const resolveAddress = async (
     resolvedAddress = await provider.resolveName(addressOrENS);
 
     if (resolvedAddress === null) {
-      throw new Error('Given ENS name does not resolve to an address.');
+      return null;
     }
 
     validAddress = getAddress(resolvedAddress);

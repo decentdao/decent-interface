@@ -1,6 +1,7 @@
 import { Box, Button, Flex, SimpleGrid, Spacer, Text } from '@chakra-ui/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import { zeroAddress } from 'viem';
 import * as Yup from 'yup';
 import { LockRelease__factory } from '../../../assets/typechain-types/dcnt';
@@ -43,32 +44,53 @@ export function DelegateModal({ close }: { close: Function }) {
   const submitDelegation = async (values: { address: string }) => {
     if (!votesTokenContractAddress || !baseContracts) return;
 
-    const delegatee = await resolveAddress(values.address, provider);
+    try {
+      const delegatee = await resolveAddress(values.address, provider);
 
-    const votingTokenContract =
-      baseContracts.votesERC20WrapperMasterCopyContract.asSigner.attach(votesTokenContractAddress);
-    delegateVote({
-      delegatee,
-      votingTokenContract,
-      successCallback: () => {
-        close();
-      },
-    });
+      if (!delegatee) {
+        toast.error(t('unknownENS', { ns: 'common' }));
+        return;
+      }
+
+      const votingTokenContract =
+        baseContracts.votesERC20WrapperMasterCopyContract.asSigner.attach(
+          votesTokenContractAddress,
+        );
+      delegateVote({
+        delegatee,
+        votingTokenContract,
+        successCallback: () => {
+          close();
+        },
+      });
+    } catch (error) {
+      toast.error(t('errorSentryFallbackTitle', { ns: 'common' }));
+      return;
+    }
   };
   const submitLockedDelegation = async (values: { address: string }) => {
     if (!lockReleaseContractAddress || !baseContracts || !signer) return;
 
-    const delegatee = await resolveAddress(values.address, provider);
+    try {
+      const delegatee = await resolveAddress(values.address, provider);
 
-    const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, signer);
-    delegateVote({
-      delegatee,
-      votingTokenContract: lockReleaseContract,
-      successCallback: async () => {
-        await loadReadOnlyValues();
-        close();
-      },
-    });
+      if (!delegatee) {
+        toast.error(t('unknownENS', { ns: 'common' }));
+        return;
+      }
+
+      const lockReleaseContract = LockRelease__factory.connect(lockReleaseContractAddress, signer);
+      delegateVote({
+        delegatee,
+        votingTokenContract: lockReleaseContract,
+        successCallback: async () => {
+          await loadReadOnlyValues();
+          close();
+        },
+      });
+    } catch (error) {
+      toast.error(t('errorSentryFallbackTitle', { ns: 'common' }));
+    }
   };
 
   const delegationValidationSchema = Yup.object().shape({

@@ -3,6 +3,7 @@ import { WarningCircle } from '@phosphor-icons/react';
 import { Field, FieldAttributes, Formik } from 'formik';
 import { useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
@@ -36,23 +37,33 @@ function AddSignerModal({
 
   const onSubmit = useCallback(
     async (values: { addressOrENS: string; threshold: number; nonce: number }) => {
-      if (!safe) {
-        throw new Error('No safe found');
+      try {
+        if (!safe) {
+          console.error('No safe found');
+          throw new Error('No safe found');
+        }
+
+        const { addressOrENS, nonce, threshold } = values;
+
+        const newSigner = await resolveAddress(addressOrENS, provider);
+        if (!newSigner) {
+          toast.error(t('unknownENS', { ns: 'common' }));
+          return;
+        }
+
+        await addSigner({
+          newSigner,
+          threshold: threshold,
+          nonce: nonce,
+          safeAddress: safe.address,
+          close: close,
+        });
+      } catch (e) {
+        toast.error(t('errorSentryFallbackTitle', { ns: 'common' }));
+        return;
       }
-
-      const { addressOrENS, nonce, threshold } = values;
-
-      const newSigner = await resolveAddress(addressOrENS, provider);
-
-      await addSigner({
-        newSigner,
-        threshold: threshold,
-        nonce: nonce,
-        safeAddress: safe.address,
-        close: close,
-      });
     },
-    [addSigner, close, provider, safe],
+    [addSigner, close, provider, safe, t],
   );
 
   const addSignerValidationSchema = Yup.object().shape({
