@@ -413,8 +413,6 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
               values.roleEditing.payments.filter((_, index) => index !== formIndex),
             );
           }
-          const currentPath = location.pathname + location.search;
-          navigate(`${currentPath}#tab1`);
           setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
         }}
       >
