@@ -54,6 +54,7 @@
   "hours": "Hours",
   "cliff": "Cliff",
   "cliffSubTitle": "How long until the assets are claimable?",
+  "activePayments": "Active Payments",
   "payments": "Payments",
   "payment": "Payment",
   "withdraw": "Withdraw",
@@ -74,5 +75,11 @@
   "keepEditing": "Keep Editing",
   "addPaymentTooltip": "Payments on a per-second basis; powered by Sablier.",
   "cliffPaymentTooltip": "Assets continue to accrue but aren't yet claimable here.",
-  "emptyRolesAssets": "No assets available for payments."
+  "emptyRolesAssets": "No assets available for payments.",
+  "week": "Week",
+  "roleInfoErrorPaymentFixedDateStartDateRequired": "Start date is required.",
+  "roleInfoErrorPaymentFixedDateEndDateRequired": "End date is required.",
+  "roleInfoErrorPaymentFixedDateEndDateAfterStartDate": "End date must be after start date.",
+  "roleInfoErrorPaymentScheduleOrFixedDateRequired": "Payment schedule or fixed dates are required.",
+  "roleInfoErrorPaymentScheduleInvalid": "Invalid payment schedule."
 }
