@@ -364,7 +364,7 @@ function DurationTabs({ formIndex }: { formIndex: number }) {
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
-  const { hatsTree, getPayment } = useRolesStore();
+  const { getPayment } = useRolesStore();
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
   return (
     <Box
@@ -428,7 +428,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
       <DurationTabs formIndex={formIndex} />
       <Flex justifyContent="flex-end">
         <Button
-          isDisabled={!!roleEditingPaymentsErrors || !values?.roleEditing?.payments || !hatsTree}
+          isDisabled={!!roleEditingPaymentsErrors}
           onClick={() => {
             setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
           }}
