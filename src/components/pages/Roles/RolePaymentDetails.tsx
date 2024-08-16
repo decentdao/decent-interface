@@ -238,7 +238,7 @@ export function RolePaymentDetails({
         >
           <GridItem area="starting">
             <PaymentDate
-              label="Starting"
+              label="starting"
               date={payment.startDate}
             />
           </GridItem>
@@ -253,7 +253,7 @@ export function RolePaymentDetails({
           </GridItem>
           <GridItem area="cliff">
             <PaymentDate
-              label="Cliff"
+              label="cliff"
               date={payment.cliffDate}
             />
           </GridItem>
@@ -268,7 +268,7 @@ export function RolePaymentDetails({
           </GridItem>
           <GridItem area="ending">
             <PaymentDate
-              label="Ending"
+              label="ending"
               date={payment.endDate}
             />
           </GridItem>

@@ -4,20 +4,15 @@ import { Address, Hex, encodeFunctionData, erc20Abi, getAddress, zeroAddress } f
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { BaseSablierStream, SablierPayment } from '../../components/pages/Roles/types';
-import { SECONDS_IN_DAY, SECONDS_IN_HOUR } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  StreamAbsoluteSchedule,
-  StreamRelativeSchedule,
-  StreamSchedule,
-} from '../../types/sablier';
 
 type LinearStreamInputs = {
   totalAmount: bigint;
   recipient: Address;
-  schedule: StreamSchedule;
-  cliff: StreamSchedule | undefined;
+  startDate: Date;
+  endDate: Date;
+  cliffDate: Date | undefined;
 };
 
 export function convertStreamIdToBigInt(streamId: string) {
@@ -64,27 +59,11 @@ export default function useCreateSablierStream() {
   );
 
   const prepareLinearStream = useCallback(
-    ({ totalAmount, recipient, schedule, cliff }: LinearStreamInputs) => {
-      const calculateDuration = (abstractSchedule: StreamSchedule) => {
-        let duration = 0;
-        const relativeSchedule = abstractSchedule as StreamRelativeSchedule;
-        const absoluteSchedule = abstractSchedule as StreamAbsoluteSchedule;
-
-        if (
-          relativeSchedule &&
-          (relativeSchedule.years || relativeSchedule.days || relativeSchedule.hours)
-        ) {
-          duration += (relativeSchedule.years ?? 0) * SECONDS_IN_DAY * 365;
-          duration += (relativeSchedule.days ?? 0) * SECONDS_IN_DAY;
-          duration += (relativeSchedule.hours ?? 0) * SECONDS_IN_HOUR;
-        } else if (absoluteSchedule && absoluteSchedule.startDate) {
-          duration = (Date.now() - absoluteSchedule.startDate + absoluteSchedule.endDate) / 1000;
-        }
-
-        return duration;
-      };
-      const streamDuration = calculateDuration(schedule);
-      const cliffDuration = cliff ? calculateDuration(cliff) : 0;
+    ({ totalAmount, recipient, startDate, endDate, cliffDate }: LinearStreamInputs) => {
+      const streamDuration = Math.ceil(
+        (Date.now() - startDate.getTime() + endDate.getTime()) / 1000,
+      );
+      const cliffDuration = cliffDate ? Math.ceil(cliffDate.getTime()) : 0;
 
       if (!streamDuration) {
         throw new Error('Stream duration can not be 0');
@@ -92,7 +71,10 @@ export default function useCreateSablierStream() {
       const basicStreamData = prepareBasicStreamData(recipient, totalAmount);
       const assembledStream = {
         ...basicStreamData,
-        durations: { cliff: cliffDuration, total: streamDuration + cliffDuration }, // Total duration has to include cliff duration
+        durations: {
+          cliff: cliffDuration,
+          total: streamDuration + cliffDuration, // Total duration has to include cliff duration
+        },
       };
 
       return assembledStream;
@@ -163,24 +145,11 @@ export default function useCreateSablierStream() {
           }
           totalStreamsAmount += streamData.amount.bigintValue;
           const recipient = recipients[index];
-          const schedule = {
-            startDate: streamData.startDate.getTime(),
-            endDate: streamData.endDate.getTime(),
-          };
-          const cliff =
-            streamData.cliffDate !== undefined
-              ? {
-                  startDate: streamData.cliffDate.getTime(),
-                  endDate: streamData.cliffDate.getTime(),
-                }
-              : undefined;
 
           const assembledStream = prepareLinearStream({
             recipient,
             ...streamData,
             totalAmount: streamData.amount.bigintValue,
-            schedule,
-            cliff,
           });
           assembledStreams.push(assembledStream);
         });
