@@ -92,7 +92,7 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
   }, [loadAmounts]);
 
   const amountPerWeek = useMemo(() => {
-    if (!payment.amount.bigintValue) {
+    if (!payment.amount?.bigintValue) {
       return;
     }
 
@@ -119,7 +119,7 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
       return;
     }
     return Number(payment.amount.value) * foundAsset.usdPrice;
-  }, [payment.amount, payment.asset.address, assetsFungible]);
+  }, [payment.amount, payment.asset?.address, assetsFungible]);
 
   const openWithdrawModal = () => {
     // @todo implement
