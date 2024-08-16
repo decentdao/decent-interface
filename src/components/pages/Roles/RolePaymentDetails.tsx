@@ -92,11 +92,11 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
   }, [loadAmounts]);
 
   const amountPerWeek = useMemo(() => {
-    if (!payment.amount?.bigintValue) {
+    if (!payment.amount) {
       return;
     }
 
-    const totalAmount = payment.amount.bigintValue;
+    const totalAmount = Number(payment.amount.value);
     const endDate = payment.endDate.getTime();
     const startDate = payment.startDate.getTime();
 
@@ -104,7 +104,7 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
     const totalWeeks = totalMilliseconds / (1000 * 60 * 60 * 24 * 7);
     const roundedWeeks = Math.ceil(totalWeeks);
 
-    return totalAmount / BigInt(roundedWeeks);
+    return totalAmount / roundedWeeks;
   }, [payment]);
 
   const streamAmountUSD = useMemo(() => {
