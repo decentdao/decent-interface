@@ -111,16 +111,15 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
     if (!payment.amount) {
       return;
     }
-    const totalAmount = payment.amount.bigintValue;
     // @todo add price support for tokens not found in assetsFungible
     const foundAsset = assetsFungible.find(
       asset => getAddress(asset.tokenAddress) === payment.asset.address,
     );
-    if (!foundAsset || foundAsset.usdPrice === undefined || totalAmount === undefined) {
+    if (!foundAsset || foundAsset.usdPrice === undefined) {
       return;
     }
-    return totalAmount * BigInt(foundAsset.usdPrice);
-  }, [payment, assetsFungible]);
+    return Number(payment.amount.value) * foundAsset.usdPrice;
+  }, [payment.amount, payment.asset.address, assetsFungible]);
 
   const openWithdrawModal = () => {
     // @todo implement
@@ -147,8 +146,13 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
               textStyle="display-2xl"
               color="white-0"
             >
-              {payment.amount?.bigintValue
-                ? formatCoin(payment.amount.bigintValue, false, payment.asset.decimals)
+              {payment.amount.bigintValue
+                ? formatCoin(
+                    payment.amount.bigintValue,
+                    false,
+                    payment.asset.decimals,
+                    payment.asset?.symbol,
+                  )
                 : undefined}
             </Text>
             <Flex
