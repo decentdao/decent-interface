@@ -246,6 +246,8 @@ const useHatsTree = () => {
                       cliffDuration,
                     },
                     scheduleType: 'duration',
+                    // @todo - factor in cliff date.
+                    // @todo - handle cancelled streams
                     isActive:
                       secondsTimestampToDate(lockupLinearStream.endTime).getTime() >
                       new Date().getTime(),
