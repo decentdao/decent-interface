@@ -204,6 +204,8 @@ const useHatsTree = () => {
                     cliffDate: lockupLinearStream.cliff
                       ? secondsTimestampToDate(lockupLinearStream.cliffTime)
                       : undefined,
+                    // @todo - factor in cliff date.
+                    // @todo - handle cancelled streams
                     isActive:
                       secondsTimestampToDate(lockupLinearStream.endTime).getTime() >
                       new Date().getTime(),
