@@ -30,27 +30,35 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
 
   const isPaymentsUpdated = useMemo(() => {
-    if (!existingRoleHat?.payments?.length || !values.roleEditing || !values.roleEditing.payments) {
+    if (!values.roleEditing || !values.roleEditing.payments) {
       return false;
     }
     return values.roleEditing.payments.some(payment => {
-      const existingPayment = existingRoleHat.payments?.find(p => p.streamId === payment.streamId);
+      const existingPayment = existingRoleHat?.payments?.find(p => p.streamId === payment.streamId);
       if (!existingPayment) {
-        return false;
+        return true;
       }
+
+      const hasAddedCliff = !!payment.cliffDate || !existingPayment.cliffDate;
+      const hasRemovedCliff = !payment.cliffDate || !!existingPayment.cliffDate;
+      const hasCliffChanged =
+        !!payment.cliffDate &&
+        !!existingPayment.cliffDate &&
+        payment.cliffDate.getTime() !== existingPayment.cliffDate.getTime();
+      const hasAmountChanged = payment.amount !== existingPayment.amount;
+      const hasAssetChanged = payment.asset.address !== existingPayment.asset.address;
+      const hasStartDateChanged =
+        payment.startDate.getTime() !== existingPayment.startDate.getTime();
+      const hasEndDateChanged = payment.endDate.getTime() !== existingPayment.endDate.getTime();
+
       return (
-        payment.amount !== existingPayment.amount ||
-        payment.scheduleType !== existingPayment.scheduleType ||
-        payment.scheduleDuration?.cliffDuration?.days !==
-          existingPayment.scheduleDuration?.cliffDuration?.days ||
-        payment.scheduleDuration?.cliffDuration?.hours !==
-          existingPayment.scheduleDuration?.cliffDuration?.hours ||
-        payment.scheduleDuration?.cliffDuration?.years !==
-          existingPayment.scheduleDuration?.cliffDuration?.years ||
-        payment.asset.address !== existingPayment.asset.address ||
-        payment.scheduleFixedDate?.cliffDate !== existingPayment.scheduleFixedDate?.cliffDate ||
-        payment.scheduleFixedDate?.startDate !== existingPayment.scheduleFixedDate?.startDate ||
-        payment.scheduleFixedDate?.endDate !== existingPayment.scheduleFixedDate?.endDate
+        hasAddedCliff ||
+        hasRemovedCliff ||
+        hasCliffChanged ||
+        hasAmountChanged ||
+        hasAssetChanged ||
+        hasStartDateChanged ||
+        hasEndDateChanged
       );
     });
   }, [existingRoleHat, values.roleEditing]);

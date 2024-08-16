@@ -20,16 +20,9 @@ export interface BaseSablierStream {
 }
 
 export interface SablierPayment extends BaseSablierStream {
-  scheduleDuration?: {
-    duration: DurationBreakdown;
-    cliffDuration: DurationBreakdown | undefined;
-  };
-  scheduleFixedDate?: {
-    startDate: Date;
-    endDate: Date;
-    cliffDate: Date | undefined;
-  };
-  scheduleType: 'duration' | 'fixedDate';
+  startDate: Date;
+  endDate: Date;
+  cliffDate: Date | undefined;
 }
 
 export interface RoleProps {

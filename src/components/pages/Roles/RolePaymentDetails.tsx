@@ -121,20 +121,19 @@ export function RolePaymentDetails({
   }, [addressPrefix, navigate, safe?.address, withdraw]);
 
   const amountPerWeek = useMemo(() => {
-    if (!payment.amount || !payment.scheduleFixedDate) {
+    if (!payment.amount) {
       return;
     }
 
     const totalAmount = Number(payment.amount.value);
-    const endDate = payment.scheduleFixedDate.endDate.getTime();
-    const startDate = payment.scheduleFixedDate.startDate.getTime();
+    const endDate = payment.endDate.getTime();
+    const startDate = payment.startDate.getTime();
 
     const totalMilliseconds = endDate - startDate;
     const totalWeeks = totalMilliseconds / (1000 * 60 * 60 * 24 * 7);
-    const roundedWeeks = Math.ceil(totalWeeks);
 
-    return totalAmount / roundedWeeks;
-  }, [payment.amount, payment.scheduleFixedDate]);
+    return totalAmount / totalWeeks;
+  }, [payment]);
 
   const streamAmountUSD = useMemo(() => {
     if (!payment.amount) {
@@ -148,7 +147,7 @@ export function RolePaymentDetails({
       return;
     }
     return Number(payment.amount.value) * foundAsset.usdPrice;
-  }, [payment.amount, payment.asset.address, assetsFungible]);
+  }, [payment.amount, payment.asset?.address, assetsFungible]);
 
   return (
     <Box
@@ -171,11 +170,11 @@ export function RolePaymentDetails({
               textStyle="display-2xl"
               color="white-0"
             >
-              {payment.amount.bigintValue
+              {payment.amount?.bigintValue
                 ? formatCoin(
                     payment.amount.bigintValue,
                     false,
-                    payment.asset.decimals,
+                    payment.asset?.decimals,
                     payment.asset?.symbol,
                   )
                 : undefined}
@@ -191,7 +190,7 @@ export function RolePaymentDetails({
               p="0.5rem"
             >
               <Image
-                src={payment.asset.logo}
+                src={payment.asset?.logo}
                 fallbackSrc="/images/coin-icon-default.svg"
                 boxSize="1.5rem"
               />
@@ -199,7 +198,7 @@ export function RolePaymentDetails({
                 textStyle="label-base"
                 color="white-0"
               >
-                {payment.asset.symbol ?? t('selectLabel', { ns: 'modals' })}
+                {payment.asset?.symbol ?? t('selectLabel', { ns: 'modals' })}
               </Text>
             </Flex>
           </Flex>
@@ -219,7 +218,7 @@ export function RolePaymentDetails({
                 textStyle="label-small"
                 color="white-0"
               >
-                {`${amountPerWeek} ${payment.asset.symbol} / ${t('week')}`}
+                {`${amountPerWeek?.toLocaleString()} ${payment.asset?.symbol} / ${t('week')}`}
               </Text>
             </Flex>
           </Flex>
@@ -240,7 +239,7 @@ export function RolePaymentDetails({
           <GridItem area="starting">
             <PaymentDate
               label="Starting"
-              date={payment.scheduleFixedDate?.startDate}
+              date={payment.startDate}
             />
           </GridItem>
           <GridItem area="dividerOne">
@@ -255,7 +254,7 @@ export function RolePaymentDetails({
           <GridItem area="cliff">
             <PaymentDate
               label="Cliff"
-              date={payment.scheduleFixedDate?.cliffDate}
+              date={payment.cliffDate}
             />
           </GridItem>
           <GridItem area="dividerTwo">
@@ -270,7 +269,7 @@ export function RolePaymentDetails({
           <GridItem area="ending">
             <PaymentDate
               label="Ending"
-              date={payment.scheduleFixedDate?.endDate}
+              date={payment.endDate}
             />
           </GridItem>
         </Grid>
