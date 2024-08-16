@@ -9,7 +9,7 @@ import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLin
 import { DETAILS_SHADOW } from '../../../constants/common';
 import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablierStream';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { DEFAULT_DATE_FORMAT, formatUSD } from '../../../utils';
+import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { SablierPayment } from './types';
 
 function PaymentDate({ label, date }: { label: string; date?: Date }) {
@@ -116,10 +116,10 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
     const foundAsset = assetsFungible.find(
       asset => getAddress(asset.tokenAddress) === payment.asset.address,
     );
-    if (!foundAsset || !foundAsset.usdPrice) {
+    if (!foundAsset || foundAsset.usdPrice === undefined || totalAmount === undefined) {
       return;
     }
-    return Number(totalAmount) * foundAsset.usdPrice;
+    return totalAmount * BigInt(foundAsset.usdPrice);
   }, [payment.amount, payment.asset.address, assetsFungible]);
 
   const openWithdrawModal = () => {
@@ -147,8 +147,8 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
               textStyle="display-2xl"
               color="white-0"
             >
-              {payment.amount
-                ? Intl.NumberFormat().format(Number(payment.amount.value))
+              {payment.amount.bigintValue
+                ? formatCoin(payment.amount.bigintValue, false, payment.asset.decimals)
                 : undefined}
             </Text>
             <Flex
