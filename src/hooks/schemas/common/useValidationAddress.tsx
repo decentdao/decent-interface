@@ -138,12 +138,13 @@ export const useValidationAddress = () => {
     return {
       name: 'New Signer Validation',
       message: t('alreadySigner', { ns: 'modals' }),
-      test: async function (address: string | undefined) {
-        if (!address || !safe || !signer) return false;
-        if (normalize(address)) {
-          address = await signer.resolveName(address);
+      test: async function (addressOrENS: string | undefined) {
+        if (!addressOrENS || !safe || !signer) return false;
+        let resolvedAddress = addressOrENS;
+        if (normalize(addressOrENS)) {
+          resolvedAddress = await signer.resolveName(addressOrENS);
         }
-        return !safe.owners.includes(address);
+        return !safe.owners.includes(resolvedAddress);
       },
     };
   }, [safe, signer, t]);

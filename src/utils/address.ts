@@ -29,11 +29,7 @@ export const resolveAddress = async (
     return addressOrENS;
   } else if (provider) {
     let resolvedAddress: string | null;
-    try {
-      resolvedAddress = await provider.resolveName(addressOrENS);
-    } catch (e) {
-      throw e;
-    }
+    resolvedAddress = await provider.resolveName(addressOrENS);
 
     if (resolvedAddress === null) {
       throw new Error('Given ENS name does not resolve to an address.');

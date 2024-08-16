@@ -56,7 +56,7 @@ function AddSignerModal({
   );
 
   const addSignerValidationSchema = Yup.object().shape({
-    address: Yup.string().test(addressValidationTest).test(newSignerValidationTest),
+    addressOrENS: Yup.string().test(addressValidationTest).test(newSignerValidationTest),
     nonce: Yup.number()
       .required()
       .moreThan((!!safe && safe.nonce - 1) || 0),
@@ -80,9 +80,8 @@ function AddSignerModal({
           return (
             <form onSubmit={handleSubmit}>
               <Text>{t('addSignerLabel', { ns: 'modals' })}</Text>
-              <Field name={'address'}>
+              <Field name={'addressOrENS'}>
                 {({ field }: FieldAttributes<any>) => (
-                  // LabelWrapper title styling needs to updated on @decent-org/fractal-ui, it seems
                   <LabelWrapper
                     subLabel={t('addSignerSublabel', { ns: 'modals' })}
                     errorMessage={field.value && errors.addressOrENS}
