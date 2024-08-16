@@ -76,5 +76,10 @@
   "addPaymentTooltip": "Payments on a per-second basis; powered by Sablier.",
   "cliffPaymentTooltip": "Assets continue to accrue but aren't yet claimable here.",
   "emptyRolesAssets": "No assets available for payments.",
-  "week": "Week"
+  "week": "Week",
+  "roleInfoErrorPaymentFixedDateStartDateRequired": "Start date is required.",
+  "roleInfoErrorPaymentFixedDateEndDateRequired": "End date is required.",
+  "roleInfoErrorPaymentFixedDateEndDateAfterStartDate": "End date must be after start date.",
+  "roleInfoErrorPaymentScheduleOrFixedDateRequired": "Payment schedule or fixed dates are required.",
+  "roleInfoErrorPaymentScheduleInvalid": "Invalid payment schedule."
 }
