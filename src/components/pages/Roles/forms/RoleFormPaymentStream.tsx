@@ -237,7 +237,7 @@ function PaymentDatePicker({
                 >
                   <DatePickerTrigger selectedDate={selectedDate} />
                 </MenuButton>
-                <MenuList>
+                <MenuList zIndex={1}>
                   <DecentDatePicker
                     isRange={!isCliffDate}
                     onChange={onCliffDateChange}
