@@ -246,6 +246,7 @@ const useHatsTree = () => {
                       cliffDuration,
                     },
                     scheduleType: 'duration',
+                    isActive: secondsTimestampToDate(lockupLinearStream.endTime).getTime() > new Date().getTime(),
                   };
                 },
               );

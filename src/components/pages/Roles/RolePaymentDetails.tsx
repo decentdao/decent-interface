@@ -91,18 +91,8 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
     loadAmounts();
   }, [loadAmounts]);
 
-  const isStreamActive = useMemo(() => {
-    if (
-      payment.scheduleFixedDate &&
-      payment.scheduleFixedDate.endDate.getTime() < new Date().getTime()
-    ) {
-      return false;
-    }
-    return true;
-  }, [payment.scheduleFixedDate]);
-
   const amountPerWeek = useMemo(() => {
-    if (isStreamActive || !payment.amount || !payment.scheduleFixedDate) {
+    if (!payment.amount || !payment.scheduleFixedDate) {
       return;
     }
 
@@ -115,7 +105,7 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
     const roundedWeeks = Math.ceil(totalWeeks);
 
     return totalAmount / roundedWeeks;
-  }, [payment.amount, payment.scheduleFixedDate, isStreamActive]);
+  }, [payment.amount, payment.scheduleFixedDate]);
 
   const streamAmountUSD = useMemo(() => {
     if (!payment.amount) {
@@ -189,13 +179,13 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
               textStyle="label-small"
               color="neutral-7"
             >
-              {streamAmountUSD !== undefined ? formatUSD(streamAmountUSD) : '$ ---'}
+              {streamAmountUSD !== undefined ? formatUSD(streamAmountUSD.toString()) : '$ ---'}
             </Text>
             <Flex
               alignItems="center"
               gap="0.5rem"
             >
-              <GreenActiveDot isActive={isStreamActive} />
+              <GreenActiveDot isActive={payment.isActive} />
               <Text
                 textStyle="label-small"
                 color="white-0"
