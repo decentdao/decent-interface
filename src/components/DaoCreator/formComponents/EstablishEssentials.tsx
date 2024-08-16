@@ -159,7 +159,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
             <Input
               value={values.essentials.snapshotENS}
               onChange={cEvent =>
-                setFieldValue('essentials.snapshotENS', cEvent.target.value, true)
+                setFieldValue('essentials.snapshotENS', cEvent.target.value.toLowerCase(), true)
               }
               isDisabled={snapshotENSDisabled}
               data-testid="essentials-snapshotENS"

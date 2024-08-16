@@ -43,8 +43,9 @@ export function MetadataContainer() {
   }, [daoName, daoSnapshotENS, daoAddress]);
 
   const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
-    setSnapshotENS(e.target.value);
-    if (validateENSName(e.target.value) || (e.target.value === '' && daoSnapshotENS)) {
+    const lowerCasedValue = e.target.value.toLowerCase();
+    setSnapshotENS(lowerCasedValue);
+    if (validateENSName(lowerCasedValue) || (e.target.value === '' && daoSnapshotENS)) {
       setSnapshotENSValid(true);
     } else {
       setSnapshotENSValid(false);
