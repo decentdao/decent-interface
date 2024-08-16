@@ -75,7 +75,7 @@ export const useRolesSchema = () => {
                                 name: 'valid-payment-schedule',
                                 message: t('roleInfoErrorPaymentScheduleInvalid'),
                                 test: _scheduleDuration => {
-                                  if (!_scheduleDuration) return false;
+                                  if (!_scheduleDuration) return true;
 
                                   const { duration } = _scheduleDuration;
 
@@ -83,7 +83,6 @@ export const useRolesSchema = () => {
                                     !!_scheduleDuration &&
                                     (!!_scheduleDuration.duration ||
                                       !!_scheduleDuration.cliffDuration);
-
                                   if (hasDuration) {
                                     return (
                                       duration.years > 0 || duration.days > 0 || duration.hours > 0
