@@ -101,20 +101,20 @@ function Payment({ payment }: { payment: SablierPayment | undefined }) {
   const { t } = useTranslation(['roles']);
   const format = ['years', 'days', 'hours'];
   const endDate =
-    payment?.scheduleFixedDate?.endDate &&
+    payment?.endDate &&
     formatDuration(
       intervalToDuration({
-        start: payment.scheduleFixedDate.startDate,
-        end: payment.scheduleFixedDate.endDate,
+        start: payment.startDate,
+        end: payment.endDate,
       }),
       { format },
     );
   const cliffDate =
-    payment?.scheduleFixedDate?.cliffDate &&
+    payment?.cliffDate &&
     formatDuration(
       intervalToDuration({
-        start: payment.scheduleFixedDate.startDate,
-        end: payment.scheduleFixedDate.cliffDate,
+        start: payment.startDate,
+        end: payment.cliffDate,
       }),
       { format },
     );

@@ -49,89 +49,20 @@ export const useRolesSchema = () => {
                           .shape({
                             asset: assetValidationSchema,
                             amount: bigIntValidationSchema,
-                            scheduleType: Yup.string()
-                              .oneOf(['duration', 'fixedDate'])
-                              .required()
-                              .default('duration'),
-
-                            // If duration tab is selected and its form has a value, then validate it:
-                            // duration and cliff should both have years, days, and hours
-                            scheduleDuration: Yup.object()
-                              .default(undefined)
-                              .nullable()
-                              .shape({
-                                duration: Yup.object().shape({
-                                  years: Yup.number().required().default(0),
-                                  days: Yup.number().required().default(0),
-                                  hours: Yup.number().required().default(0),
-                                }),
-                                cliffDuration: Yup.object().shape({
-                                  years: Yup.number().required().default(0),
-                                  days: Yup.number().required().default(0),
-                                  hours: Yup.number().required().default(0),
-                                }),
-                              })
-                              .test({
-                                name: 'valid-payment-schedule',
-                                message: t('roleInfoErrorPaymentScheduleInvalid'),
-                                test: _scheduleDuration => {
-                                  if (!_scheduleDuration) return true;
-
-                                  const { duration } = _scheduleDuration;
-
-                                  const hasDuration =
-                                    !!_scheduleDuration &&
-                                    (!!_scheduleDuration.duration ||
-                                      !!_scheduleDuration.cliffDuration);
-                                  if (hasDuration) {
-                                    return (
-                                      duration.years > 0 || duration.days > 0 || duration.hours > 0
-                                    );
-                                  }
-                                },
-                              }),
-
-                            // If fixed date tab is selected and its form has a value, then validate it:
-                            // fixed date should have a start date and an end date
-                            scheduleFixedDate: Yup.object()
-                              .default(undefined)
-                              .nullable()
-                              .shape({
-                                startDate: Yup.date().required(
-                                  t('roleInfoErrorPaymentFixedDateStartDateRequired'),
-                                ),
-                                endDate: Yup.date().required(
-                                  t('roleInfoErrorPaymentFixedDateEndDateRequired'),
-                                ),
-                              })
-                              .test({
-                                name: 'end-date-after-start-date',
-                                message: t('roleInfoErrorPaymentFixedDateEndDateAfterStartDate'),
-                                test: _scheduleFixedDate => {
-                                  if (!_scheduleFixedDate) return true;
-
-                                  const { startDate, endDate } = _scheduleFixedDate;
-                                  return endDate > startDate;
-                                },
-                              }),
+                            startDate: Yup.date().required(
+                              t('roleInfoErrorPaymentFixedDateStartDateRequired'),
+                            ),
+                            endDate: Yup.date().required(
+                              t('roleInfoErrorPaymentFixedDateEndDateRequired'),
+                            ),
                           })
                           .test({
-                            name: 'either-duration-or-fixed-date-required',
-                            message: t('roleInfoErrorPaymentScheduleOrFixedDateRequired'),
-                            test: vestingFormValue => {
-                              if (!vestingFormValue) return true;
-
-                              const { scheduleDuration, scheduleFixedDate } = vestingFormValue;
-
-                              const hasDuration =
-                                scheduleDuration &&
-                                (scheduleDuration.duration || scheduleDuration.cliffDuration);
-
-                              const hasFixedDate =
-                                scheduleFixedDate &&
-                                (scheduleFixedDate.startDate || scheduleFixedDate.endDate);
-
-                              return !!hasDuration || !!hasFixedDate;
+                            name: 'end-date-after-start-date',
+                            message: t('roleInfoErrorPaymentFixedDateEndDateAfterStartDate'),
+                            test: _payments => {
+                              if (!_payments) return false;
+                              const { startDate, endDate } = _payments;
+                              return endDate > startDate;
                             },
                           }),
                     }),

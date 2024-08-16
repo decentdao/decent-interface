@@ -6,22 +6,13 @@ import {
   Grid,
   GridItem,
   Icon,
-  IconButton,
   Menu,
   MenuButton,
   MenuList,
-  NumberInput,
-  NumberInputField,
   Show,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
 } from '@chakra-ui/react';
-import { ArrowLeft, ArrowRight, Minus, Plus } from '@phosphor-icons/react';
-import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
+import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
+import { Field, FormikErrors, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -29,142 +20,11 @@ import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
-import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import { DatePickerTrigger } from '../DatePickerTrigger';
 import { RoleFormValues, RoleValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
-
-function DurationTicker({
-  fieldName,
-  fieldType,
-  formIndex,
-}: {
-  fieldType: 'duration' | 'cliffDuration';
-  fieldName: 'years' | 'days' | 'hours';
-  formIndex: number;
-}) {
-  const { t } = useTranslation(['roles']);
-  return (
-    <FormControl>
-      <Field
-        name={`roleEditing.payments[${formIndex}].scheduleDuration.[${fieldType}].[${fieldName}]`}
-      >
-        {({ field, form: { setFieldValue }, meta }: FieldProps<string, RoleFormValues>) => {
-          return (
-            <LabelWrapper
-              label={t(fieldName)}
-              errorMessage={meta.error && meta.touched ? meta.error : undefined}
-            >
-              <Flex gap="0.25rem">
-                <IconButton
-                  aria-label="stepper-minus"
-                  minW="40px"
-                  h="40px"
-                  variant="stepper"
-                  icon={
-                    <Icon
-                      as={Minus}
-                      boxSize="1rem"
-                    />
-                  }
-                  onClick={() => {
-                    if (field.value === undefined || Number(field.value) <= 0) return;
-                    setFieldValue(field.name, Number(field.value) - 1);
-                  }}
-                />
-                <NumberInput
-                  w="full"
-                  value={field.value}
-                  onChange={(value: string) => setFieldValue(field.name, Number(value))}
-                >
-                  <NumberInputField />
-                </NumberInput>
-                <IconButton
-                  aria-label="stepper-plus"
-                  minW="40px"
-                  h="40px"
-                  variant="stepper"
-                  icon={
-                    <Icon
-                      as={Plus}
-                      boxSize="1rem"
-                    />
-                  }
-                  onClick={() => {
-                    if (field.value === undefined) {
-                      setFieldValue(field.name, 1);
-                      return;
-                    }
-                    setFieldValue(field.name, Number(field.value) + 1);
-                  }}
-                />
-              </Flex>
-            </LabelWrapper>
-          );
-        }}
-      </Field>
-    </FormControl>
-  );
-}
-
-function ScheduleDuration({ formIndex }: { formIndex: number }) {
-  return (
-    <Flex
-      flexDir="column"
-      gap="0.5rem"
-    >
-      <DurationTicker
-        fieldName="years"
-        fieldType="duration"
-        formIndex={formIndex}
-      />
-      <DurationTicker
-        fieldName="days"
-        fieldType="duration"
-        formIndex={formIndex}
-      />
-      <DurationTicker
-        fieldName="hours"
-        fieldType="duration"
-        formIndex={formIndex}
-      />
-    </Flex>
-  );
-}
-
-function CliffDuration({ formIndex }: { formIndex: number }) {
-  const { t } = useTranslation(['roles']);
-  return (
-    <Flex
-      flexDir="column"
-      gap="0.5rem"
-    >
-      <SectionTitle
-        title={t('cliff')}
-        subTitle={t('cliffSubTitle')}
-      />
-      <Box mt="1rem">
-        <DurationTicker
-          fieldName="years"
-          fieldType="cliffDuration"
-          formIndex={formIndex}
-        />
-        <DurationTicker
-          fieldName="days"
-          fieldType="cliffDuration"
-          formIndex={formIndex}
-        />
-        <DurationTicker
-          fieldName="hours"
-          fieldType="cliffDuration"
-          formIndex={formIndex}
-        />
-      </Box>
-    </Flex>
-  );
-}
 
 function PaymentDatePicker({
   type,
@@ -175,7 +35,7 @@ function PaymentDatePicker({
 }) {
   const { setFieldValue, values } = useFormikContext<RoleFormValues>();
 
-  const selectedDate = values.roleEditing?.payments?.[formIndex].scheduleFixedDate?.[type];
+  const selectedDate = values.roleEditing?.payments?.[formIndex][type];
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -183,22 +43,19 @@ function PaymentDatePicker({
 
   const onCliffDateChange = isCliffDate
     ? (date: Date) => {
-        setFieldValue(`roleEditing.payments[${formIndex}].scheduleFixedDate.cliffDate`, date);
+        setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, date);
       }
     : undefined;
 
   const onDateRangeChange = !isCliffDate
     ? (dateRange: Date[]) => {
-        setFieldValue(
-          `roleEditing.payments[${formIndex}].scheduleFixedDate.startDate`,
-          dateRange[0],
-        );
-        setFieldValue(`roleEditing.payments[${formIndex}].scheduleFixedDate.endDate`, dateRange[1]);
+        setFieldValue(`roleEditing.payments[${formIndex}].startDate`, dateRange[0]);
+        setFieldValue(`roleEditing.payments[${formIndex}].endDate`, dateRange[1]);
       }
     : undefined;
 
   return (
-    <Field name={`roleEditing.payments[${formIndex}].scheduleFixedDate.${type}`}>
+    <Field name={`roleEditing.payments[${formIndex}].${type}`}>
       {() => (
         <>
           <Show below="md">
@@ -258,7 +115,6 @@ function FixedDate({ formIndex }: { formIndex: number }) {
 
   return (
     <Box>
-      <Text textStyle="label-base"> {t('fixedDates')} </Text>
       <FormControl my="1rem">
         <Grid
           gridTemplateAreas={{
@@ -314,51 +170,6 @@ function FixedDate({ formIndex }: { formIndex: number }) {
         />
       </FormControl>
     </Box>
-  );
-}
-
-function DurationTabs({ formIndex }: { formIndex: number }) {
-  const { t } = useTranslation(['roles']);
-  const { setFieldValue } = useFormikContext<RoleFormValues>();
-
-  return (
-    <Tabs
-      variant={'twoTone'}
-      my="1rem"
-    >
-      <TabList my="1rem">
-        <Tab
-          onClick={() =>
-            setFieldValue(`roleEditing.payments[${formIndex}].scheduleType`, 'duration')
-          }
-        >
-          {t('duration')}
-        </Tab>
-        <Tab
-          onClick={() =>
-            setFieldValue(`roleEditing.payments[${formIndex}].scheduleType`, 'fixedDate')
-          }
-        >
-          {t('fixedDates')}
-        </Tab>
-      </TabList>
-
-      <TabPanels>
-        <TabPanel>
-          <Flex
-            flexDir="column"
-            gap="1rem"
-          >
-            <ScheduleDuration formIndex={formIndex} />
-            <CliffDuration formIndex={formIndex} />
-          </Flex>
-        </TabPanel>
-
-        <TabPanel>
-          <FixedDate formIndex={formIndex} />
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
   );
 }
 
@@ -430,7 +241,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         subTitle={t('scheduleSubTitle')}
         tooltipContent={t('cliffPaymentTooltip')}
       />
-      <DurationTabs formIndex={formIndex} />
+      <FixedDate formIndex={formIndex} />
       <Flex justifyContent="flex-end">
         <Button
           isDisabled={!!roleEditingPaymentsErrors || !values?.roleEditing?.payments || !hatsTree}

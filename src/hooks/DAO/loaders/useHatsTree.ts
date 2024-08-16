@@ -1,6 +1,5 @@
 import { useApolloClient } from '@apollo/client';
 import { Tree, HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
-import { intervalToDuration } from 'date-fns';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { getAddress } from 'viem';
@@ -16,27 +15,6 @@ import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 const hatsSubgraphClient = new HatsSubgraphClient({
   // TODO config for prod
 });
-
-function convertDuration(_duration: number): { years: number; days: number; hours: number } {
-  let duration = (_duration ?? 0) * 1000;
-  const millisecondsInAnHour = 1000 * 60 * 60;
-  const millisecondsInADay = millisecondsInAnHour * 24;
-  const millisecondsInAYear = millisecondsInADay * 365; // Approximation, does not account for leap years
-
-  const years = Math.floor(duration / millisecondsInAYear);
-  duration -= years * millisecondsInAYear;
-
-  const days = Math.floor(duration / millisecondsInADay);
-  duration -= days * millisecondsInADay;
-
-  const hours = Math.floor(duration / millisecondsInAnHour);
-
-  return {
-    years,
-    days,
-    hours,
-  };
-}
 
 const useHatsTree = () => {
   const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, updateRolesWithStreams } =
@@ -203,19 +181,6 @@ const useHatsTree = () => {
                   const parsedAmount =
                     BigInt(lockupLinearStream.depositAmount) /
                     10n ** BigInt(lockupLinearStream.asset.decimals);
-                  const cliffDuration = lockupLinearStream.cliff
-                    ? (() => {
-                        const duration = intervalToDuration({
-                          start: secondsTimestampToDate(lockupLinearStream.startTime),
-                          end: secondsTimestampToDate(lockupLinearStream.cliffTime),
-                        });
-                        return {
-                          years: duration.years || 0,
-                          days: duration.days || 0,
-                          hours: duration.hours || 0,
-                        };
-                      })()
-                    : undefined;
 
                   return {
                     streamId: lockupLinearStream.id,
@@ -234,18 +199,11 @@ const useHatsTree = () => {
                       bigintValue: lockupLinearStream.depositAmount,
                       value: parsedAmount.toString(),
                     },
-                    scheduleFixedDate: {
-                      startDate: secondsTimestampToDate(lockupLinearStream.startTime),
-                      endDate: secondsTimestampToDate(lockupLinearStream.endTime),
-                      cliffDate: lockupLinearStream.cliff
-                        ? secondsTimestampToDate(lockupLinearStream.cliffTime)
-                        : undefined,
-                    },
-                    scheduleDuration: {
-                      duration: convertDuration(lockupLinearStream.duration),
-                      cliffDuration,
-                    },
-                    scheduleType: 'duration',
+                    startDate: secondsTimestampToDate(lockupLinearStream.startTime),
+                    endDate: secondsTimestampToDate(lockupLinearStream.endTime),
+                    cliffDate: lockupLinearStream.cliff
+                      ? secondsTimestampToDate(lockupLinearStream.cliffTime)
+                      : undefined,
                     isActive:
                       secondsTimestampToDate(lockupLinearStream.endTime).getTime() >
                       new Date().getTime(),
