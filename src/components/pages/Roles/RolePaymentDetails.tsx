@@ -145,9 +145,9 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
               textStyle="display-2xl"
               color="white-0"
             >
-              {payment.amount?.bigintValue
+              {payment.amount.bigintValue
                 ? formatCoin(
-                    payment.amount.bigintValue,
+                    payment.amount?.bigintValue,
                     false,
                     payment.asset?.decimals,
                     payment.asset?.symbol,
