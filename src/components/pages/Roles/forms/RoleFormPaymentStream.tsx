@@ -390,16 +390,12 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         onClick={() => {
           if (!values?.roleEditing?.payments || !hatsTree) return;
 
-          let isExistingPayment: boolean = false;
-          if (values?.roleEditing?.payments?.[formIndex].streamId) {
-            const foundPayment = getPayment(
+          const isExistingPayment =
+            values?.roleEditing?.payments?.[formIndex].streamId &&
+            getPayment(
               values.roleEditing.id,
               getAddress(values.roleEditing.payments[formIndex].streamId),
             );
-            if (foundPayment) {
-              isExistingPayment = true;
-            }
-          }
           // if payment is new, and unedited, remove it
           if (
             formIndex === values.roleEditing.payments.length - 1 &&
