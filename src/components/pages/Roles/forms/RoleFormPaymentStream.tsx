@@ -24,7 +24,6 @@ import { ArrowLeft, ArrowRight, Minus, Plus } from '@phosphor-icons/react';
 import { Field, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
@@ -366,7 +365,6 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const { hatsTree, getPayment } = useRolesStore();
-  const navigate = useNavigate();
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
   return (
     <Box
@@ -435,8 +433,6 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         <Button
           isDisabled={!!roleEditingPaymentsErrors || !values?.roleEditing?.payments || !hatsTree}
           onClick={() => {
-            const currentPath = location.pathname + location.search;
-            navigate(`${currentPath}#tab1`);
             setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
           }}
         >
