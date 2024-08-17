@@ -9,7 +9,7 @@ import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
-import { DEFAULT_DATE_TIME_FORMAT } from '../../utils/numberFormats';
+import { DEFAULT_DATE_TIME_FORMAT, formatCoin } from '../../utils/numberFormats';
 import ContentBox from '../ui/containers/ContentBox';
 import DisplayTransaction from '../ui/links/DisplayTransaction';
 import EtherscanLink from '../ui/links/EtherscanLink';
@@ -32,6 +32,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   } = proposal;
   const {
     governance,
+    governanceContracts,
     readOnly: {
       user: { votingWeight, address },
     },
@@ -61,19 +62,32 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
 
   useEffect(() => {
     async function loadProposalVotingWeight() {
-      if (address && baseContracts && votesToken) {
-        const tokenContract = baseContracts.votesTokenMasterCopyContract.asProvider.attach(
-          votesToken.address,
+      if (
+        address &&
+        baseContracts &&
+        governanceContracts.ozLinearVotingContractAddress !== undefined
+      ) {
+        const strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
+          governanceContracts.ozLinearVotingContractAddress,
         );
-        const pastVotingWeight = (await tokenContract.getPastVotes(address, startBlock)).toBigInt();
+        const pastVotingWeight = (
+          await strategyContract.getVotingWeight(address, proposal.proposalId)
+        ).toBigInt();
+
         setProposalsERC20VotingWeight(
-          (pastVotingWeight / votesTokenDecimalsDenominator).toString(),
+          formatCoin(pastVotingWeight, true, votesToken?.decimals, undefined, false),
         );
       }
     }
 
     loadProposalVotingWeight();
-  }, [address, startBlock, votesTokenDecimalsDenominator, baseContracts, votesToken]);
+  }, [
+    address,
+    baseContracts,
+    governanceContracts.ozLinearVotingContractAddress,
+    proposal.proposalId,
+    votesToken?.decimals,
+  ]);
 
   const isERC20 = type === GovernanceType.AZORIUS_ERC20;
   const isERC721 = type === GovernanceType.AZORIUS_ERC721;

@@ -5,8 +5,7 @@ import { ICreationStepProps } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { LabelComponent } from '../../ui/forms/InputComponent';
 
-export function VotesTokenImport(props: ICreationStepProps) {
-  const { values, handleChange } = props;
+export function VotesTokenImport({ values, handleChange }: ICreationStepProps) {
   const { t } = useTranslation('daoCreate');
   return (
     <Flex
@@ -26,6 +25,7 @@ export function VotesTokenImport(props: ICreationStepProps) {
               data-testid="tokenVoting-tokenNameInput"
               minWidth="50%"
               placeholder="Name"
+              disabled
             />
           )}
         </Field>
@@ -41,6 +41,7 @@ export function VotesTokenImport(props: ICreationStepProps) {
           onChange={handleChange}
           data-testid="tokenVoting-tokenSymbolInput"
           placeholder="TKN"
+          disabled
         />
       </LabelComponent>
       <LabelComponent

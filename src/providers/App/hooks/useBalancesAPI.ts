@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
-import { NFTBalance, TokenBalance } from '../../../types';
+import { DefiBalance, NFTBalance, TokenBalance } from '../../../types';
 import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
 export default function useBalancesAPI() {
@@ -17,7 +17,7 @@ export default function useBalancesAPI() {
         const balancesResponseBody = await balancesResponse.json();
         return balancesResponseBody;
       } catch (e) {
-        console.error('Error while fetching treasury balances', e);
+        console.error('Error while fetching treasury token balances', e);
         return { error: t('errorFetchingBalances') };
       }
     },
@@ -33,12 +33,28 @@ export default function useBalancesAPI() {
         const balancesResponseBody = await balancesResponse.json();
         return balancesResponseBody;
       } catch (e) {
-        console.error('Error while fetching treasury balances', e);
+        console.error('Error while fetching treasury NFT balances', e);
         return { error: t('errorFetchingBalances') };
       }
     },
     [chain, t],
   );
 
-  return { getTokenBalances, getNFTBalances };
+  const getDeFiBalances = useCallback(
+    async (address: Address): Promise<{ data?: DefiBalance[]; error?: string }> => {
+      try {
+        const balancesResponse = await fetch(
+          `/.netlify/functions/defiBalances?address=${address}&network=${chain.id}`,
+        );
+        const balancesResponseBody = await balancesResponse.json();
+        return balancesResponseBody;
+      } catch (e) {
+        console.error('Error while fetching treasury DeFi balances', e);
+        return { error: t('errorFetchingBalances') };
+      }
+    },
+    [chain, t],
+  );
+
+  return { getTokenBalances, getNFTBalances, getDeFiBalances };
 }
