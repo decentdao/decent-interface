@@ -9,7 +9,7 @@ import {
 } from '../../../../components/pages/DAOTreasury/components/Transactions';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
-import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
+import { useDecentModal } from '../../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -22,7 +22,7 @@ export default function Treasury() {
   const [shownTransactions, setShownTransactions] = useState(20);
   const { t } = useTranslation('treasury');
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const openSendAsset = useFractalModal(ModalType.SEND_ASSETS);
+  const openSendAsset = useDecentModal(ModalType.SEND_ASSETS);
 
   const hasAnyBalanceOfAnyFungibleTokens =
     assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;

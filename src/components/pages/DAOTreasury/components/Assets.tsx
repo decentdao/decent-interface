@@ -1,13 +1,13 @@
 import {
-  Box,
-  Flex,
-  Text,
-  Show,
-  Hide,
   Accordion,
   AccordionButton,
   AccordionItem,
   AccordionPanel,
+  Box,
+  Flex,
+  Hide,
+  Show,
+  Text,
 } from '@chakra-ui/react';
 import { CaretDown, CaretRight } from '@phosphor-icons/react';
 import { useState } from 'react';

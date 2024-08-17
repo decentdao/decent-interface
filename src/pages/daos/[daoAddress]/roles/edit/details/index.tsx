@@ -187,7 +187,7 @@ export default function RoleEditDetails() {
           </Hide>
           <Hide below="md">
             <ModalBase
-              isOpen={true}
+              isOpen
               title=""
               onClose={() => {}}
               isSearchInputModal={false}

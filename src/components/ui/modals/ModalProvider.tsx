@@ -1,15 +1,17 @@
-import { Portal, useDisclosure } from '@chakra-ui/react';
+import { Portal, Show, useDisclosure } from '@chakra-ui/react';
 import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UnsavedChangesWarningContent } from '../../../pages/daos/[daoAddress]/roles/edit/unsavedChangesWarningContent';
 import AddSignerModal from '../../pages/DaoSettings/components/Signers/modals/AddSignerModal';
 import RemoveSignerModal from '../../pages/DaoSettings/components/Signers/modals/RemoveSignerModal';
+import DraggableDrawer from '../containers/DraggableDrawer';
 import { DAOSearch } from '../menus/DAOSearch';
 import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
 import ForkProposalTemplateModal from './ForkProposalTemplateModal';
 import { ModalBase } from './ModalBase';
+import PaymentWithdrawModal from './PaymentWithdrawModal';
 import ProposalTemplateModal from './ProposalTemplateModal';
 import { SendAssetsModal } from './SendAssetsModal';
 import StakeModal from './Stake';
@@ -31,6 +33,7 @@ export enum ModalType {
   CONFIRM_MODIFY_GOVERNANCE,
   SEARCH_SAFE,
   WARN_UNSAVED_CHANGES,
+  WITHDRAW_PAYMENT,
 }
 
 export interface CurrentModal {
@@ -62,7 +65,7 @@ interface ModalUI {
  *  1. Create the modal content as a component, excluding the title of the modal (see e.g. DelegateModal).
  *  2. Add the modal to the ModalType enum.
  *  3. Handle assigning your new modal component for that ModalType here in the provider switch case.
- *  4. Utilize the useFractalModal hook to get a click listener to open your new modal.
+ *  4. Utilize the useDecentModal hook to get a click listener to open your new modal.
  */
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [current, setCurrent] = useState<CurrentModal>({ type: ModalType.NONE, props: [] });
@@ -178,6 +181,17 @@ export function ModalProvider({ children }: { children: ReactNode }) {
           />
         );
         break;
+      case ModalType.WITHDRAW_PAYMENT:
+        modalContent = (
+          <PaymentWithdrawModal
+            payment={current.props.payment}
+            roleHat={current.props.roleHat}
+            withdrawableAmount={current.props.withdrawableAmount}
+            onSuccess={current.props.onSuccess}
+            onClose={closeModal}
+          />
+        );
+        break;
       case ModalType.NONE:
       default:
         modalTitle = '';
@@ -193,7 +207,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     };
   }, [current, onClose, t]);
 
-  const display = content ? (
+  let display = content ? (
     <ModalBase
       title={title}
       warn={warn}
@@ -204,6 +218,35 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       {content}
     </ModalBase>
   ) : null;
+
+  if (current.type === ModalType.WITHDRAW_PAYMENT) {
+    display = (
+      <>
+        <Show below="md">
+          <DraggableDrawer
+            isOpen={isOpen}
+            onClose={onSetClosed}
+            onOpen={onOpen}
+            closeOnOverlayClick
+            headerContent={null}
+          >
+            {content}
+          </DraggableDrawer>
+        </Show>
+        <Show above="md">
+          <ModalBase
+            title={title}
+            warn={warn}
+            isOpen={isOpen}
+            onClose={onSetClosed}
+            isSearchInputModal={isSearchInputModal}
+          >
+            {content}
+          </ModalBase>
+        </Show>
+      </>
+    );
+  }
 
   return (
     <ModalContext.Provider value={{ current, setCurrent }}>

@@ -1,33 +1,33 @@
 import {
   Box,
   Drawer,
-  DrawerOverlay,
   DrawerContent,
+  DrawerOverlay,
   Flex,
   Hide,
-  IconButton,
   Icon,
+  IconButton,
   Show,
   useDisclosure,
 } from '@chakra-ui/react';
-import { MagnifyingGlass, List } from '@phosphor-icons/react';
-import { useRef, RefObject } from 'react';
+import { List, MagnifyingGlass } from '@phosphor-icons/react';
+import { RefObject, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { DecentLogo } from '../../../../assets/theme/custom/icons/DecentLogo';
 import { DecentSignature } from '../../../../assets/theme/custom/icons/DecentSignature';
 import {
-  useHeaderHeight,
   MOBILE_DRAWER_OVERLAY,
   NEUTRAL_2_82_TRANSPARENT,
   SEXY_BOX_SHADOW_T_T,
+  useHeaderHeight,
 } from '../../../../constants/common';
 import { BASE_ROUTES } from '../../../../constants/routes';
 import { AccountDisplay } from '../../menus/AccountDisplay';
 import { DAOSearch } from '../../menus/DAOSearch';
 import { SafesMenu } from '../../menus/SafesMenu';
 import { ModalType } from '../../modals/ModalProvider';
-import { useFractalModal } from '../../modals/useFractalModal';
+import { useDecentModal } from '../../modals/useDecentModal';
 import { Footer } from '../Footer';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
@@ -123,7 +123,7 @@ function HeaderLogo() {
 }
 
 function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivElement | null> }) {
-  const searchSafe = useFractalModal(ModalType.SEARCH_SAFE);
+  const searchSafe = useDecentModal(ModalType.SEARCH_SAFE);
   const HEADER_HEIGHT = useHeaderHeight();
 
   return (

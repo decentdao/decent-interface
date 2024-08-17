@@ -3,14 +3,20 @@ import { Calendar, Download } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { getAddress, getContract } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { useWalletClient } from 'wagmi';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
 import { DETAILS_SHADOW } from '../../../constants/common';
+import { DAO_ROUTES } from '../../../constants/routes';
 import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablierStream';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { DecentRoleHat } from '../../../store/roles';
 import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
-import { SablierPayment } from './types';
+import { ModalType } from '../../ui/modals/ModalProvider';
+import { useDecentModal } from '../../ui/modals/useDecentModal';
+import { RoleValue, SablierPayment } from './types';
 
 function PaymentDate({ label, date }: { label: string; date?: Date }) {
   const { t } = useTranslation(['roles']);
@@ -57,25 +63,34 @@ function GreenActiveDot({ isActive }: { isActive: boolean }) {
 }
 
 interface RolePaymentDetailsProps {
+  roleHat?: DecentRoleHat | RoleValue;
   payment: SablierPayment;
   onClick?: () => void;
   showWithdraw?: boolean;
 }
-export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePaymentDetailsProps) {
+export function RolePaymentDetails({
+  payment,
+  onClick,
+  showWithdraw,
+  roleHat,
+}: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
+    node: { safe },
     treasury: { assetsFungible },
   } = useFractal();
-  const publicClient = usePublicClient();
+  const { data: walletClient } = useWalletClient();
+  const { addressPrefix } = useNetworkConfig();
+  const navigate = useNavigate();
 
   const [withdrawableAmount, setWithdrawableAmount] = useState(0n);
 
   const loadAmounts = useCallback(async () => {
-    if (publicClient && payment?.streamId && payment?.contractAddress) {
+    if (walletClient && payment?.streamId && payment?.contractAddress) {
       const streamContract = getContract({
         abi: SablierV2LockupLinearAbi,
         address: payment.contractAddress,
-        client: publicClient,
+        client: walletClient,
       });
 
       const bigintStreamId = convertStreamIdToBigInt(payment.streamId);
@@ -85,11 +100,25 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
       ]);
       setWithdrawableAmount(newWithdrawableAmount);
     }
-  }, [publicClient, payment?.streamId, payment?.contractAddress]);
+  }, [walletClient, payment?.streamId, payment?.contractAddress]);
 
   useEffect(() => {
     loadAmounts();
   }, [loadAmounts]);
+
+  const withdraw = useDecentModal(ModalType.WITHDRAW_PAYMENT, {
+    payment,
+    roleHat,
+    onSuccess: loadAmounts,
+    withdrawableAmount,
+  });
+
+  const handleClickWithdraw = useCallback(() => {
+    if (safe?.address) {
+      navigate(DAO_ROUTES.roles.relative(addressPrefix, safe.address));
+      withdraw();
+    }
+  }, [addressPrefix, navigate, safe?.address, withdraw]);
 
   const amountPerWeek = useMemo(() => {
     if (!payment.amount.bigintValue) {
@@ -117,10 +146,6 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
     }
     return Number(payment.amount.value) * foundAsset.usdPrice;
   }, [payment.amount, payment.asset?.address, assetsFungible]);
-
-  const openWithdrawModal = () => {
-    // @todo implement
-  };
 
   return (
     <Box
@@ -213,7 +238,7 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
         >
           <GridItem area="starting">
             <PaymentDate
-              label="Starting"
+              label="starting"
               date={payment.startDate}
             />
           </GridItem>
@@ -228,7 +253,7 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
           </GridItem>
           <GridItem area="cliff">
             <PaymentDate
-              label="Cliff"
+              label="cliff"
               date={payment.cliffDate}
             />
           </GridItem>
@@ -243,12 +268,12 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
           </GridItem>
           <GridItem area="ending">
             <PaymentDate
-              label="Ending"
+              label="ending"
               date={payment.endDate}
             />
           </GridItem>
         </Grid>
-        {!!showWithdraw && !!withdrawableAmount && (
+        {!!showWithdraw && withdrawableAmount > 0n && (
           <Box
             mt={4}
             px={4}
@@ -256,7 +281,7 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
             <Button
               w="full"
               leftIcon={<Download />}
-              onClick={openWithdrawModal}
+              onClick={handleClickWithdraw}
             >
               {t('withdraw')}
             </Button>

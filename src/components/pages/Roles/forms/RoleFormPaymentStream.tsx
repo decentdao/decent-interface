@@ -84,23 +84,21 @@ function PaymentDatePicker({
 
           <Show above="md">
             <Menu placement="top-start">
-              <>
-                <MenuButton
-                  as={Button}
-                  variant="unstyled"
-                  p="0"
-                  w="full"
-                >
-                  <DatePickerTrigger selectedDate={selectedDate} />
-                </MenuButton>
-                <MenuList zIndex={1}>
-                  <DecentDatePicker
-                    isRange={!isCliffDate}
-                    onChange={onCliffDateChange}
-                    onRangeChange={onDateRangeChange}
-                  />
-                </MenuList>
-              </>
+              <MenuButton
+                as={Button}
+                variant="unstyled"
+                p="0"
+                w="full"
+              >
+                <DatePickerTrigger selectedDate={selectedDate} />
+              </MenuButton>
+              <MenuList zIndex={2}>
+                <DecentDatePicker
+                  isRange={!isCliffDate}
+                  onChange={onCliffDateChange}
+                  onRangeChange={onDateRangeChange}
+                />
+              </MenuList>
             </Menu>
           </Show>
         </>
