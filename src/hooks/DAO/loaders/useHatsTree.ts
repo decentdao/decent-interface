@@ -204,9 +204,6 @@ const useHatsTree = () => {
                     cliffDate: lockupLinearStream.cliff
                       ? secondsTimestampToDate(lockupLinearStream.cliffTime)
                       : undefined,
-                    isActive:
-                      secondsTimestampToDate(lockupLinearStream.endTime).getTime() >
-                      new Date().getTime(),
                   };
                 },
               );

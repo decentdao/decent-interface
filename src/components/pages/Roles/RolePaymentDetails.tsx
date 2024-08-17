@@ -41,8 +41,8 @@ function PaymentDate({ label, date }: { label: string; date?: Date }) {
   );
 }
 
-function GreenActiveDot({ isActive }: { isActive: boolean }) {
-  if (!isActive) {
+function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
+  if (!isStreaming) {
     return null;
   }
   return (
@@ -118,6 +118,12 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
     return Number(payment.amount.value) * foundAsset.usdPrice;
   }, [payment.amount, payment.asset?.address, assetsFungible]);
 
+  const start =
+    payment.cliffDate === undefined ? payment.startDate.getTime() : payment.cliffDate.getTime();
+  const end = payment.endDate.getTime();
+  const now = new Date().getTime();
+  const isStreaming = start <= now && end > now;
+
   const openWithdrawModal = () => {
     // @todo implement
   };
@@ -187,7 +193,7 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
                 alignItems="center"
                 gap="0.5rem"
               >
-                <GreenActiveDot isActive={payment.isActive} />
+                <GreenStreamingDot isStreaming={isStreaming} />
                 <Text
                   textStyle="label-small"
                   color="white-0"
