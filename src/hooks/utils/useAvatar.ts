@@ -4,7 +4,7 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 const useAvatar = (name: string) => {
   const { chain } = useNetworkConfig();
   const { data: avatarURL } = useEnsAvatar({
-    name: name,
+    name,
     chainId: chain.id,
   });
 

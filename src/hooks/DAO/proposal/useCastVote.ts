@@ -16,7 +16,6 @@ import {
 import encryptWithShutter from '../../../utils/shutter';
 import useSafeContracts from '../../safe/useSafeContracts';
 import { useTransaction } from '../../utils/useTransaction';
-import useSnapshotSpaceName from '../loaders/snapshot/useSnapshotSpaceName';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';
 
 const useCastVote = ({
@@ -40,7 +39,6 @@ const useCastVote = ({
     },
   } = useFractal();
   const baseContracts = useSafeContracts();
-  const daoSnapshotSpaceName = useSnapshotSpaceName();
   const signer = useEthersSigner();
   const client = useMemo(() => {
     if (daoSnapshotENS) {
@@ -146,7 +144,7 @@ const useCastVote = ({
         signer &&
         signer?.provider &&
         address &&
-        daoSnapshotSpaceName &&
+        daoSnapshotENS &&
         extendedSnapshotProposal &&
         client
       ) {
@@ -177,7 +175,7 @@ const useCastVote = ({
               extendedSnapshotProposal.proposalId,
             );
             await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
-              space: daoSnapshotSpaceName,
+              space: daoSnapshotENS,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
               privacy: extendedSnapshotProposal.privacy,
@@ -186,7 +184,7 @@ const useCastVote = ({
             });
           } else {
             await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
-              space: daoSnapshotSpaceName,
+              space: daoSnapshotENS,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
               choice,
@@ -210,7 +208,7 @@ const useCastVote = ({
     [
       signer,
       address,
-      daoSnapshotSpaceName,
+      daoSnapshotENS,
       extendedSnapshotProposal,
       t,
       selectedChoice,
