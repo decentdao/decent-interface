@@ -11,15 +11,16 @@ import {
 } from '@chakra-ui/react';
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Address, Hex, getAddress } from 'viem';
+import { Hex, getAddress } from 'viem';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { DecentRoleHat } from '../../../store/roles';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
-import { SablierPayment } from './types';
+import { RoleValue, SablierPayment } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -39,13 +40,7 @@ function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.E
 }
 
 interface RoleDetailsDrawerProps {
-  roleHat: {
-    id: Hex;
-    name: string;
-    wearer: string;
-    description: string;
-    smartAddress: Address;
-  };
+  roleHat: DecentRoleHat | RoleValue;
   payments?: SablierPayment[];
   onOpen?: () => void;
   onClose: () => void;
@@ -178,6 +173,7 @@ export default function RolesDetailsDrawer({
                 <RolePaymentDetails
                   key={index}
                   payment={payment}
+                  roleHat={roleHat}
                   showWithdraw
                 />
               ))}

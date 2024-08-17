@@ -4,24 +4,19 @@ import { Address, Hex, encodeFunctionData, erc20Abi, getAddress, zeroAddress } f
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { BaseSablierStream, SablierPayment } from '../../components/pages/Roles/types';
-import { SECONDS_IN_DAY, SECONDS_IN_HOUR } from '../../constants/common';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  StreamAbsoluteSchedule,
-  StreamRelativeSchedule,
-  StreamSchedule,
-} from '../../types/sablier';
 
 type LinearStreamInputs = {
   totalAmount: bigint;
   recipient: Address;
-  schedule: StreamSchedule;
-  cliff: StreamSchedule | undefined;
+  startDate: Date;
+  endDate: Date;
+  cliffDate: Date | undefined;
 };
 
 export function convertStreamIdToBigInt(streamId: string) {
-  // streamId is formatted as ${recipientAddress}-${chainId}-${numericId}
+  // streamId is formatted as ${streamContractAddress}-${chainId}-${numericId}
   const lastDash = streamId.lastIndexOf('-');
   const numericId = streamId.substring(lastDash + 1);
   return BigInt(numericId);
@@ -64,38 +59,33 @@ export default function useCreateSablierStream() {
   );
 
   const prepareLinearStream = useCallback(
-    ({ totalAmount, recipient, schedule, cliff }: LinearStreamInputs) => {
-      const calculateDuration = (abstractSchedule: StreamSchedule) => {
-        let duration = 0;
-        const relativeSchedule = abstractSchedule as StreamRelativeSchedule;
-        const absoluteSchedule = abstractSchedule as StreamAbsoluteSchedule;
-
-        if (
-          relativeSchedule &&
-          (relativeSchedule.years || relativeSchedule.days || relativeSchedule.hours)
-        ) {
-          duration += (relativeSchedule.years ?? 0) * SECONDS_IN_DAY * 365;
-          duration += (relativeSchedule.days ?? 0) * SECONDS_IN_DAY;
-          duration += (relativeSchedule.hours ?? 0) * SECONDS_IN_HOUR;
-        } else if (absoluteSchedule && absoluteSchedule.startDate) {
-          duration = (Date.now() - absoluteSchedule.startDate + absoluteSchedule.endDate) / 1000;
-        }
-
-        return duration;
-      };
-      const streamDuration = calculateDuration(schedule);
-      const cliffDuration = cliff ? calculateDuration(cliff) : 0;
-
-      if (!streamDuration) {
-        throw new Error('Stream duration can not be 0');
+    ({ totalAmount, recipient, startDate, endDate, cliffDate }: LinearStreamInputs) => {
+      const startDateTs = startDate.getTime();
+      const endDateTs = endDate.getTime();
+      if (startDateTs >= endDateTs) {
+        throw new Error('Start date of the stream can not be larger than end date');
       }
-      const basicStreamData = prepareBasicStreamData(recipient, totalAmount);
-      const assembledStream = {
-        ...basicStreamData,
-        durations: { cliff: cliffDuration, total: streamDuration + cliffDuration }, // Total duration has to include cliff duration
-      };
 
-      return assembledStream;
+      const cliffDateTs = cliffDate ? cliffDate.getTime() : 0;
+      let cliffDuration = 0;
+      if (cliffDateTs) {
+        if (cliffDateTs <= startDateTs) {
+          throw new Error('Cliff date can not be less or equal than start date');
+        } else if (cliffDateTs >= endDateTs) {
+          throw new Error('Cliff date can not be larger or equal than end date');
+        }
+        cliffDuration = Math.ceil((cliffDateTs - startDateTs) / 1000);
+      }
+
+      const streamDuration = Math.ceil((endDateTs - startDateTs) / 1000);
+
+      return {
+        ...prepareBasicStreamData(recipient, totalAmount),
+        durations: {
+          cliff: cliffDuration,
+          total: streamDuration + cliffDuration, // Total duration has to include cliff duration
+        },
+      };
     },
     [prepareBasicStreamData],
   );
@@ -163,43 +153,27 @@ export default function useCreateSablierStream() {
           }
           totalStreamsAmount += streamData.amount.bigintValue;
           const recipient = recipients[index];
-          const schedule = {
-            startDate: streamData.startDate.getTime(),
-            endDate: streamData.endDate.getTime(),
-          };
-          const cliff =
-            streamData.cliffDate !== undefined
-              ? {
-                  startDate: streamData.cliffDate.getTime(),
-                  endDate: streamData.cliffDate.getTime(),
-                }
-              : undefined;
 
-          const assembledStream = prepareLinearStream({
-            recipient,
-            ...streamData,
-            totalAmount: streamData.amount.bigintValue,
-            schedule,
-            cliff,
-          });
-          assembledStreams.push(assembledStream);
-        });
-
-        const sablierBatchCalldata = encodeFunctionData({
-          abi: SablierV2BatchAbi,
-          functionName: 'createWithDurationsLL', // @dev Another option would be to use `createWithTimestampsLL`. Essentially they're doing the same, `WithDurations` just simpler for usage
-          args: [sablierV2LockupLinear, tokenAddress, assembledStreams],
+          assembledStreams.push(
+            prepareLinearStream({
+              recipient,
+              ...streamData,
+              totalAmount: streamData.amount.bigintValue,
+            }),
+          );
         });
 
         preparedStreamCreationTransactions.push({
-          calldata: sablierBatchCalldata,
+          calldata: encodeFunctionData({
+            abi: SablierV2BatchAbi,
+            functionName: 'createWithDurationsLL', // @dev @todo Another option would be to use `createWithTimestampsLL`. Probably makes sense to change the logic to `createWithTimestampsLL` since we drifted away from "durations" and actually operating with timestamps always
+            args: [sablierV2LockupLinear, tokenAddress, assembledStreams],
+          }),
           targetAddress: sablierV2Batch,
         });
 
-        const tokenCalldata = prepareStreamTokenCallData(totalStreamsAmount);
-
         preparedTokenApprovalsTransactions.push({
-          calldata: tokenCalldata,
+          calldata: prepareStreamTokenCallData(totalStreamsAmount),
           targetAddress: tokenAddress,
         });
       });

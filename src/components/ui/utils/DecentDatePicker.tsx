@@ -3,9 +3,9 @@ import { ArrowRight, CalendarBlank, CaretLeft, CaretRight } from '@phosphor-icon
 import { format } from 'date-fns';
 import { useState } from 'react';
 import { Calendar } from 'react-calendar';
-import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
-
+import { useTranslation } from 'react-i18next';
 import '../../../assets/css/Calendar.css';
+import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import Divider from './Divider';
 
@@ -20,6 +20,7 @@ type DateOrNull = Date | null;
 type OnDateChangeValue = DateOrNull | [DateOrNull, DateOrNull];
 
 function DateDisplayBox({ date }: { date: DateOrNull }) {
+  const { t } = useTranslation('common');
   return (
     <Flex
       gap="0.5rem"
@@ -35,7 +36,7 @@ function DateDisplayBox({ date }: { date: DateOrNull }) {
         boxSize="24px"
         color="neutral-5"
       />
-      <Box color="neutral-7">{(date && format(date, DEFAULT_DATE_FORMAT)) ?? 'Select'}</Box>
+      <Box color="neutral-7">{(date && format(date, DEFAULT_DATE_FORMAT)) ?? t('select')}</Box>
     </Flex>
   );
 }

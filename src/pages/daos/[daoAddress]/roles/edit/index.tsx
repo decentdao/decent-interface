@@ -125,7 +125,7 @@ function RolesEdit() {
               </Hide>
               <Hide below="md">
                 <ModalBase
-                  isOpen={true}
+                  isOpen
                   title=""
                   onClose={() => {}}
                   isSearchInputModal={false}

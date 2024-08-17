@@ -8,7 +8,7 @@ import { IModalContext, ModalContext, ModalType } from './ModalProvider';
  * @param props optional arbitrary key:value properties to pass to the modal
  * @returns a Function that when called opens the provided ModalType modal.
  */
-export const useFractalModal = (modal: ModalType, props?: Record<string, any>) => {
+export const useDecentModal = (modal: ModalType, props?: Record<string, any>) => {
   const { setCurrent } = useContext<IModalContext>(ModalContext);
   return () => {
     setCurrent({ type: modal, props: props ? props : [] });
