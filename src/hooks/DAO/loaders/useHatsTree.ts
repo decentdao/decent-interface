@@ -190,7 +190,7 @@ const useHatsTree = () => {
                       logo: '', // @todo - how do we get logo?
                     },
                     amount: {
-                      bigintValue: lockupLinearStream.depositAmount,
+                      bigintValue: BigInt(lockupLinearStream.depositAmount),
                       value: parsedAmount,
                     },
                     startDate: secondsTimestampToDate(lockupLinearStream.startTime),
