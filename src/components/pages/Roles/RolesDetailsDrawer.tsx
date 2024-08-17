@@ -20,7 +20,7 @@ import { DecentRoleHat } from '../../../store/roles';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
-import { RoleValue, SablierPayment } from './types';
+import { RoleValue, SablierPayment, SablierPaymentFormValues } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -41,7 +41,7 @@ function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.E
 
 interface RoleDetailsDrawerProps {
   roleHat: DecentRoleHat | RoleValue;
-  payments?: SablierPayment[];
+  payments?: (SablierPayment | SablierPaymentFormValues)[];
   onOpen?: () => void;
   onClose: () => void;
   onEdit: (hatId: Hex) => void;

@@ -44,12 +44,12 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
       const hasCliffChanged =
         !!payment.cliffDate &&
         !!existingPayment.cliffDate &&
-        payment.cliffDate.getTime() !== existingPayment.cliffDate.getTime();
+        payment.cliffDate?.getTime() !== existingPayment.cliffDate.getTime();
       const hasAmountChanged = payment.amount !== existingPayment.amount;
-      const hasAssetChanged = payment.asset.address !== existingPayment.asset.address;
+      const hasAssetChanged = payment.asset?.address !== existingPayment.asset.address;
       const hasStartDateChanged =
-        payment.startDate.getTime() !== existingPayment.startDate.getTime();
-      const hasEndDateChanged = payment.endDate.getTime() !== existingPayment.endDate.getTime();
+        payment.startDate?.getTime() !== existingPayment.startDate.getTime();
+      const hasEndDateChanged = payment.endDate?.getTime() !== existingPayment.endDate.getTime();
 
       return (
         hasAddedCliff ||

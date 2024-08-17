@@ -16,6 +16,8 @@ import {
   RoleValue,
   RoleFormValues,
   BaseSablierStream,
+  SablierPaymentFormValues,
+  SablierPayment,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -34,6 +36,27 @@ const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   });
 };
 
+const normalizePaymentFormData = (payment: SablierPaymentFormValues): SablierPayment => {
+  if (
+    !payment.streamId ||
+    !payment.contractAddress ||
+    !payment.asset ||
+    !payment.amount ||
+    !payment.startDate ||
+    !payment.endDate
+  ) {
+    throw new Error('Form not properly filled out');
+  }
+  return {
+    streamId: payment.streamId,
+    contractAddress: payment.contractAddress,
+    asset: payment.asset,
+    amount: payment.amount,
+    startDate: payment.startDate,
+    endDate: payment.endDate,
+    cliffDate: payment.cliffDate,
+  };
+};
 const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, topHatAccount: Address) => {
   const admins: bigint[] = [];
   const details: string[] = [];
@@ -518,7 +541,7 @@ export default function useCreateRoles() {
 
       if (addedNewPaymentsHats.length) {
         const streamsData = addedNewPaymentsHats.flatMap(role =>
-          (role.payments ?? []).map(payment => payment),
+          (role.payments ?? []).map(payment => normalizePaymentFormData(payment)),
         );
         const recipients = addedNewPaymentsHats.flatMap(role =>
           (role.payments ?? []).map(() => role.smartAddress),
@@ -544,7 +567,7 @@ export default function useCreateRoles() {
           (role.payments ?? []).forEach(payment => {
             if (payment.streamId) {
               const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
-                payment,
+                normalizePaymentFormData(payment),
                 getAddress(role.wearer),
               );
               paymentCancelTxs.push({
@@ -572,7 +595,7 @@ export default function useCreateRoles() {
           }),
         );
         const streamsData = editedPayrollHats.flatMap(role =>
-          (role.payments ?? []).map(payment => payment),
+          (role.payments ?? []).map(payment => normalizePaymentFormData(payment)),
         );
         const recipients = editedPayrollHats.map(role => role.smartAddress);
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(

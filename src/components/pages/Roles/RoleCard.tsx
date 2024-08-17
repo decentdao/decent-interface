@@ -11,7 +11,13 @@ import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { EditBadgeStatus, RoleEditProps, RoleProps, SablierPayment } from './types';
+import {
+  EditBadgeStatus,
+  RoleEditProps,
+  RoleProps,
+  SablierPayment,
+  SablierPaymentFormValues,
+} from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -20,7 +26,7 @@ export function AvatarAndRoleName({
 }: {
   wearerAddress: string | undefined;
   name: string;
-  payments?: SablierPayment[];
+  payments?: (SablierPayment | SablierPaymentFormValues)[];
 }) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
@@ -97,11 +103,12 @@ export function AvatarAndRoleName({
   );
 }
 
-function Payment({ payment }: { payment: SablierPayment | undefined }) {
+function Payment({ payment }: { payment: SablierPayment | SablierPaymentFormValues | undefined }) {
   const { t } = useTranslation(['roles']);
   const format = ['years', 'days', 'hours'];
   const endDate =
     payment?.endDate &&
+    payment?.startDate &&
     formatDuration(
       intervalToDuration({
         start: payment.startDate,
@@ -110,6 +117,7 @@ function Payment({ payment }: { payment: SablierPayment | undefined }) {
       { format },
     );
   const cliffDate =
+    payment?.startDate &&
     payment?.cliffDate &&
     formatDuration(
       intervalToDuration({
@@ -139,24 +147,24 @@ function Payment({ payment }: { payment: SablierPayment | undefined }) {
             my="0.5rem"
           >
             <Image
-              src={payment.asset.logo}
+              src={payment.asset?.logo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={payment.asset.symbol}
+              alt={payment.asset?.symbol}
               w="1.25rem"
               h="1.25rem"
             />
-            {payment.amount.value}
+            {payment.amount?.value}
             <EtherscanLink
               color="white-0"
               _hover={{ bg: 'transparent' }}
               textStyle="body-base"
               padding={0}
               borderWidth={0}
-              value={payment.asset.address}
+              value={payment.asset?.address ?? null}
               type="token"
               wordBreak="break-word"
             >
-              {payment.asset.symbol}
+              {payment.asset?.symbol}
             </EtherscanLink>
             <Flex
               flexDir="column"

@@ -204,7 +204,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
             values.roleEditing.payments[formIndex].streamId &&
             getPayment(
               values.roleEditing.id,
-              getAddress(values.roleEditing.payments[formIndex].streamId),
+              getAddress(values.roleEditing.payments[formIndex].streamId ?? ''),
             );
           // if payment is new, and unedited, remove it
           if (

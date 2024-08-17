@@ -11,7 +11,14 @@ import { getChainIdFromPrefix } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
-import { EditBadgeStatus, RoleEditProps, RoleFormValues, RoleProps, SablierPayment } from './types';
+import {
+  EditBadgeStatus,
+  RoleEditProps,
+  RoleFormValues,
+  RoleProps,
+  SablierPayment,
+  SablierPaymentFormValues,
+} from './types';
 
 function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -128,7 +135,11 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
   );
 }
 
-function PaymentsColumn({ payments }: { payments?: SablierPayment[] }) {
+function PaymentsColumn({
+  payments,
+}: {
+  payments?: (SablierPayment | SablierPaymentFormValues)[];
+}) {
   const { t } = useTranslation('common');
   return (
     <Td

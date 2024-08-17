@@ -24,13 +24,15 @@ export interface SablierPayment extends BaseSablierStream {
   cliffDate: Date | undefined;
 }
 
+export interface SablierPaymentFormValues extends Partial<SablierPayment> {}
+
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
   handleRoleClick: (hatId: Address) => void;
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  payments?: SablierPayment[];
+  payments?: (SablierPayment | SablierPaymentFormValues)[];
 }
 
 export interface RoleEditProps
@@ -78,10 +80,10 @@ export interface DurationBreakdown {
   days: number;
 }
 
-export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
+export interface RoleValue extends Omit<DecentRoleHat, 'wearer' | 'payments'> {
   wearer: string;
   editedRole?: EditedRole;
-  payments?: SablierPayment[];
+  payments?: SablierPaymentFormValues[];
   roleEditingPaymentIndex?: number;
 }
 
