@@ -7,7 +7,7 @@ import { RoleFormValues } from '../types';
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue, validateForm } = useFormikContext<RoleFormValues>();
   const payments = values.roleEditing?.payments;
 
   return (
@@ -18,10 +18,9 @@ export function RoleFormPaymentStreams() {
             variant="secondary"
             size="sm"
             leftIcon={<Plus />}
-            onClick={() => {
-              pushPayment({
-                scheduleType: 'duration',
-              });
+            onClick={async () => {
+              pushPayment({});
+              await validateForm();
               setFieldValue('roleEditing.roleEditingPaymentIndex', (payments ?? []).length);
             }}
           >

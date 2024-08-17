@@ -163,22 +163,17 @@ export default function useCreateSablierStream() {
           }
           totalStreamsAmount += streamData.amount.bigintValue;
           const recipient = recipients[index];
-          const schedule =
-            streamData.scheduleType === 'duration' && streamData.scheduleDuration
-              ? streamData.scheduleDuration.duration
-              : {
-                  startDate: streamData.scheduleFixedDate!.startDate.getTime(),
-                  endDate: streamData.scheduleFixedDate!.endDate.getTime(),
-                };
+          const schedule = {
+            startDate: streamData.startDate.getTime(),
+            endDate: streamData.endDate.getTime(),
+          };
           const cliff =
-            streamData.scheduleType === 'duration'
-              ? streamData.scheduleDuration!.cliffDuration
-              : streamData.scheduleFixedDate?.cliffDate !== undefined
-                ? {
-                    startDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
-                    endDate: streamData.scheduleFixedDate!.cliffDate.getTime(),
-                  }
-                : undefined;
+            streamData.cliffDate !== undefined
+              ? {
+                  startDate: streamData.cliffDate.getTime(),
+                  endDate: streamData.cliffDate.getTime(),
+                }
+              : undefined;
 
           const assembledStream = prepareLinearStream({
             recipient,
