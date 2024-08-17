@@ -1,24 +1,11 @@
 import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
-import {
-  AllTransactionsListResponse,
-  EthereumTxWithTransfersResponse,
-  SafeMultisigTransactionWithTransfersResponse,
-  TransferWithTokenInfoResponse,
-} from '@safe-global/api-kit';
+import { SafeMultisigTransactionListResponse } from '@safe-global/api-kit';
 import { useCallback } from 'react';
-import { zeroAddress } from 'viem';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useEthersProvider } from '../../providers/Ethers/hooks/useEthersProvider';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  AssetTotals,
-  SafeTransferType,
-  ActivityEventType,
-  Activity,
-  FractalProposalState,
-} from '../../types';
-import { formatWeiToValue, isModuleTx, isMultiSigTx, parseDecodedData } from '../../utils';
+import { Activity, FractalProposalState } from '../../types';
+import { parseDecodedData } from '../../utils';
 import { getAverageBlockTime } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
 import useSafeContracts from '../safe/useSafeContracts';
@@ -31,7 +18,6 @@ type FreezeGuardData = {
 };
 
 export const useSafeTransactions = () => {
-  const { chain } = useNetworkConfig();
   const provider = useEthersProvider();
   const { guardContracts } = useFractal();
   const baseContracts = useSafeContracts();
@@ -46,25 +32,16 @@ export const useSafeTransactions = () => {
       if (freezeGuard && freezeGuardData && provider) {
         return Promise.all(
           activities.map(async (activity, _, activityArr) => {
-            if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
+            if (!activity.transaction) {
               return activity;
             }
-            if (isModuleTx(activity.transaction)) {
-              return {
-                ...activity,
-                state: FractalProposalState.MODULE,
-              };
-            }
-
-            const multiSigTransaction =
-              activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
             let state: FractalProposalState;
 
-            if (multiSigTransaction.isExecuted) {
+            if (activity.transaction.isExecuted) {
               // the transaction has already been executed
               state = FractalProposalState.EXECUTED;
-            } else if (isRejected(activityArr, multiSigTransaction)) {
+            } else if (isRejected(activityArr, activity.transaction)) {
               // a different transaction with the same nonce has already
               // been executed, so this is no longer valid
               state = FractalProposalState.REJECTED;
@@ -74,7 +51,7 @@ export const useSafeTransactions = () => {
                 (await getTxTimelockedTimestamp(activity, freezeGuard, provider)) * 1000;
               if (timelockedTimestampMs === 0) {
                 // not yet timelocked
-                if (isApproved(multiSigTransaction)) {
+                if (isApproved(activity.transaction)) {
                   // the proposal has enough signatures, so it can now be timelocked
                   state = FractalProposalState.TIMELOCKABLE;
                 } else {
@@ -109,25 +86,16 @@ export const useSafeTransactions = () => {
         );
       } else {
         return activities.map((activity, _, activityArr) => {
-          if (activity.eventType !== ActivityEventType.Governance || !activity.transaction) {
+          if (!activity.transaction) {
             return activity;
           }
-          if (isModuleTx(activity.transaction)) {
-            return {
-              ...activity,
-              state: FractalProposalState.MODULE,
-            };
-          }
-
-          const multiSigTransaction =
-            activity.transaction as SafeMultisigTransactionWithTransfersResponse;
 
           let state;
-          if (multiSigTransaction.isExecuted) {
+          if (activity.transaction.isExecuted) {
             state = FractalProposalState.EXECUTED;
-          } else if (isRejected(activityArr, multiSigTransaction)) {
+          } else if (isRejected(activityArr, activity.transaction)) {
             state = FractalProposalState.REJECTED;
-          } else if (isApproved(multiSigTransaction)) {
+          } else if (isApproved(activity.transaction)) {
             state = FractalProposalState.EXECUTABLE;
           } else {
             state = FractalProposalState.ACTIVE;
@@ -139,154 +107,44 @@ export const useSafeTransactions = () => {
     [provider],
   );
 
-  const getTransferTotal = useCallback(
-    (transfers: TransferWithTokenInfoResponse[]) => {
-      return transfers.reduce(
-        (prev: Map<string, AssetTotals>, cur: TransferWithTokenInfoResponse) => {
-          if (cur.type === SafeTransferType.ETHER && cur.value) {
-            const prevValue = prev.get(zeroAddress)!;
-            if (prevValue) {
-              prev.set(zeroAddress, {
-                bi: prevValue.bi + BigInt(cur.value),
-                symbol: chain.nativeCurrency.symbol,
-                decimals: 18,
-              });
-            }
-            prev.set(zeroAddress, {
-              bi: BigInt(cur.value),
-              symbol: chain.nativeCurrency.symbol,
-              decimals: 18,
-            });
-          }
-          if (cur.type === SafeTransferType.ERC721 && cur.tokenInfo && cur.tokenId) {
-            prev.set(`${cur.tokenAddress}:${cur.tokenId}`, {
-              bi: 1n,
-              symbol: cur.tokenInfo.symbol,
-              decimals: 0,
-            });
-          }
-          if (cur.type === SafeTransferType.ERC20 && cur.value && cur.tokenInfo) {
-            const prevValue = prev.get(cur.tokenInfo.address);
-            if (prevValue) {
-              prev.set(cur.tokenInfo.address, {
-                ...prevValue,
-                bi: prevValue.bi + BigInt(cur.value),
-              });
-            } else {
-              prev.set(cur.tokenAddress!, {
-                bi: BigInt(cur.value),
-                symbol: cur.tokenInfo.symbol,
-                decimals: cur.tokenInfo.decimals,
-              });
-            }
-          }
-
-          return prev;
-        },
-        new Map(),
-      );
-    },
-    [chain],
-  );
-
   const parseTransactions = useCallback(
-    async (transactions: AllTransactionsListResponse, daoAddress: string) => {
+    async (transactions: SafeMultisigTransactionListResponse) => {
       if (!transactions.results.length || !provider) {
         return [];
       }
 
-      const transactionsWithoutModuleTransactions = transactions.results.filter(
-        transaction => !isModuleTx(transaction),
-      );
-
       const activities = await Promise.all(
-        transactionsWithoutModuleTransactions.map(async (transaction, _, transactionArr) => {
-          const multiSigTransaction = transaction as SafeMultisigTransactionWithTransfersResponse;
-          const ethereumTransaction = transaction as EthereumTxWithTransfersResponse;
+        transactions.results.map(async (transaction, _, transactionArr) => {
+          const eventDate = new Date(transaction.submissionDate);
 
-          const isMultiSigTransaction = isMultiSigTx(transaction);
+          const eventSafeTxHash = transaction.safeTxHash;
 
-          // @note for ethereum transactions event these are the execution date
-          const eventDate = new Date(
-            multiSigTransaction.submissionDate || ethereumTransaction.executionDate,
-          );
-
-          // @note it can be assumed that if there is no transfers it a receiving event
-          const isDeposit: boolean = transaction.transfers.length
-            ? transaction.transfers.every(t => t.to.toLowerCase() === daoAddress.toLowerCase())
-            : false;
-
-          // returns mapping of Asset -> Asset Total Value by getting the total of each asset transfered
-          const transferAmountTotalsMap = getTransferTotal(transaction.transfers);
-
-          // formats totals array into readable string with Symbol ie 1 [NativeSymbol]
-          const transferAmountTotals: string[] = Array.from(transferAmountTotalsMap.values()).map(
-            token => {
-              const totalAmount = formatWeiToValue(token.bi, token.decimals);
-              const symbol = token.symbol;
-              return `${totalAmount} ${symbol}`;
-            },
-          );
-
-          // maps address for each transfer
-          const transferAddresses = transaction.transfers.map(transfer =>
-            transfer.to.toLowerCase() === daoAddress.toLowerCase() ? transfer.from : transfer.to,
-          );
-
-          // @note this indentifies transaction a simple ETH transfer
-          const isEthSend =
-            isMultiSigTransaction &&
-            !multiSigTransaction.data &&
-            !multiSigTransaction.isExecuted &&
-            BigInt(multiSigTransaction.value) !== 0n;
-
-          if (isEthSend) {
-            transferAmountTotals.push(
-              `${formatWeiToValue(multiSigTransaction.value, 18)} ${chain.nativeCurrency.symbol}`,
-            );
-            transferAddresses.push(multiSigTransaction.to);
-          }
-
-          const eventSafeTxHash = multiSigTransaction.safeTxHash;
-
-          const eventType = isMultiSigTransaction
-            ? ActivityEventType.Governance
-            : ActivityEventType.Treasury;
-
-          const eventNonce = multiSigTransaction.nonce;
+          const eventNonce = transaction.nonce;
 
           // @note identifies transactions with same nonce. this can be used to identify rejected transactions
           const noncePair = transactionArr.find(tx => {
-            const multiSigTx = tx as SafeMultisigTransactionWithTransfersResponse;
-            return (
-              multiSigTx.nonce === eventNonce &&
-              multiSigTx.safeTxHash !== multiSigTransaction.safeTxHash
-            );
+            return tx.nonce === eventNonce && tx.safeTxHash !== transaction.safeTxHash;
           });
 
           const isMultisigRejectionTx: boolean | undefined =
-            isMultiSigTransaction &&
-            !multiSigTransaction.data &&
-            multiSigTransaction.to === multiSigTransaction.safe &&
+            !transaction.data &&
+            transaction.to === transaction.safe &&
             noncePair &&
-            BigInt(multiSigTransaction.value) === 0n;
+            BigInt(transaction.value) === 0n;
 
-          const confirmations = multiSigTransaction.confirmations
-            ? multiSigTransaction.confirmations
-            : [];
+          const confirmations = transaction.confirmations ?? [];
 
-          const data =
-            isMultiSigTransaction && multiSigTransaction.dataDecoded
-              ? {
-                  decodedTransactions: parseDecodedData(multiSigTransaction, isMultiSigTransaction),
-                }
-              : {
-                  decodedTransactions: await decode(
-                    multiSigTransaction.value,
-                    multiSigTransaction.to,
-                    multiSigTransaction.data,
-                  ),
-                };
+          const data = transaction.dataDecoded
+            ? {
+                decodedTransactions: parseDecodedData(transaction, true),
+              }
+            : {
+                decodedTransactions: await decode(
+                  transaction.value,
+                  transaction.to,
+                  transaction.data,
+                ),
+              };
 
           const targets = data
             ? [...data.decodedTransactions.map(tx => tx.target)]
@@ -294,23 +152,16 @@ export const useSafeTransactions = () => {
 
           const activity: Activity = {
             transaction,
-            transferAddresses,
-            transferAmountTotals,
-            isDeposit,
             eventDate,
-            eventType,
             confirmations,
-            signersThreshold: multiSigTransaction.confirmationsRequired,
+            signersThreshold: transaction.confirmationsRequired,
             multisigRejectedProposalNumber:
-              isMultisigRejectionTx && !!noncePair
-                ? (noncePair as SafeMultisigTransactionWithTransfersResponse).safeTxHash
-                : undefined,
+              isMultisigRejectionTx && !!noncePair ? noncePair.safeTxHash : undefined,
             proposalId: eventSafeTxHash,
             targets,
             // @todo typing for `multiSigTransaction.transactionHash` is misleading, as ` multiSigTransaction.transactionHash` is not always defined (if ever). Need to tighten up the typing here.
-            transactionHash:
-              multiSigTransaction.transactionHash ||
-              (transaction as SafeMultisigTransactionWithTransfersResponse).safeTxHash,
+            // ! @todo This is why we are showing the two different hashes
+            transactionHash: transaction.transactionHash ?? transaction.safeTxHash,
             data: data,
             state: null,
             nonce: eventNonce,
@@ -342,7 +193,7 @@ export const useSafeTransactions = () => {
       // todo: Some of these activities may be completed and can be cached
       return activitiesWithState;
     },
-    [guardContracts, getState, getTransferTotal, decode, chain, provider, baseContracts],
+    [guardContracts, getState, decode, provider, baseContracts],
   );
   return { parseTransactions };
 };
