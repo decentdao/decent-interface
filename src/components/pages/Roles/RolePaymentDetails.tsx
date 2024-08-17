@@ -92,18 +92,16 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
   }, [loadAmounts]);
 
   const amountPerWeek = useMemo(() => {
-    if (!payment.amount) {
+    if (!payment.amount.bigintValue) {
       return;
     }
 
-    const totalAmount = Number(payment.amount.value);
-    const endDate = payment.endDate.getTime();
-    const startDate = payment.startDate.getTime();
-
-    const totalMilliseconds = endDate - startDate;
-    const totalWeeks = totalMilliseconds / (1000 * 60 * 60 * 24 * 7);
-
-    return totalAmount / totalWeeks;
+    const endTime = payment.endDate.getTime() / 1000;
+    const startTime = payment.startDate.getTime() / 1000;
+    const totalSeconds = endTime - startTime;
+    const amountPerSecond = payment.amount.bigintValue / BigInt(totalSeconds);
+    const secondsInWeek = BigInt(60 * 60 * 24 * 7);
+    return amountPerSecond * secondsInWeek;
   }, [payment]);
 
   const streamAmountUSD = useMemo(() => {
@@ -184,18 +182,20 @@ export function RolePaymentDetails({ payment, onClick, showWithdraw }: RolePayme
             >
               {streamAmountUSD !== undefined ? formatUSD(streamAmountUSD.toString()) : '$ ---'}
             </Text>
-            <Flex
-              alignItems="center"
-              gap="0.5rem"
-            >
-              <GreenActiveDot isActive={payment.isActive} />
-              <Text
-                textStyle="label-small"
-                color="white-0"
+            {amountPerWeek !== undefined && (
+              <Flex
+                alignItems="center"
+                gap="0.5rem"
               >
-                {`${amountPerWeek?.toLocaleString()} ${payment.asset?.symbol} / ${t('week')}`}
-              </Text>
-            </Flex>
+                <GreenActiveDot isActive={payment.isActive} />
+                <Text
+                  textStyle="label-small"
+                  color="white-0"
+                >
+                  {`${formatCoin(amountPerWeek, true, payment.asset?.decimals, payment.asset?.symbol)} / ${t('week')}`}
+                </Text>
+              </Flex>
+            )}
           </Flex>
         </Flex>
       </Box>
