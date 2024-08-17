@@ -16,7 +16,6 @@ export interface BaseSablierStream {
   contractAddress: Address;
   asset: SablierAsset;
   amount: BigIntValuePair;
-  isActive: boolean;
 }
 
 export interface SablierPayment extends BaseSablierStream {

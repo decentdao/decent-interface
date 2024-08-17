@@ -167,13 +167,7 @@ const useHatsTree = () => {
                 return hat;
               }
 
-              const activeStreams = streamQueryResult.data.streams.filter(
-                stream =>
-                  parseInt(stream.endTime) <= Date.now() / 1000 ||
-                  BigInt(stream.withdrawnAmount) !== BigInt(stream.intactAmount),
-              );
-
-              const lockupLinearStreams = activeStreams.filter(
+              const lockupLinearStreams = streamQueryResult.data.streams.filter(
                 stream => stream.category === 'LockupLinear',
               );
               const formattedActiveStreams: SablierPayment[] = lockupLinearStreams.map(
@@ -204,9 +198,6 @@ const useHatsTree = () => {
                     cliffDate: lockupLinearStream.cliff
                       ? secondsTimestampToDate(lockupLinearStream.cliffTime)
                       : undefined,
-                    isActive:
-                      secondsTimestampToDate(lockupLinearStream.endTime).getTime() >
-                      new Date().getTime(),
                   };
                 },
               );
