@@ -121,7 +121,7 @@ export function RolePaymentDetails({
   }, [addressPrefix, navigate, safe?.address, withdraw]);
 
   const amountPerWeek = useMemo(() => {
-    if (!payment.amount.bigintValue) {
+    if (!payment.amount?.bigintValue) {
       return;
     }
 
