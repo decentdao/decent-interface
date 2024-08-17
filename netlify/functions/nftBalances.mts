@@ -15,12 +15,15 @@ export default async function getNftBalances(request: Request) {
   const fetchFromMoralis = async (scope: { chain: string; address: Address }) => {
     const nftsResponse = await Moralis.EvmApi.nft.getWalletNFTs(scope);
 
-    const mappedNftsData = nftsResponse.result.map(
-      nftBalance =>
-        camelCaseKeys<ReturnType<typeof nftBalance.toJSON>>(
-          nftBalance.toJSON(),
-        ) as unknown as NFTBalance,
-    );
+    const mappedNftsData = nftsResponse.result.map(nftBalance => {
+      const balanceJSON = camelCaseKeys<ReturnType<typeof nftBalance.toJSON>>(
+        nftBalance.toJSON(),
+      ) as unknown as NFTBalance;
+      return {
+        ...balanceJSON,
+        metadata: balanceJSON.metadata ? camelCaseKeys(balanceJSON.metadata) : undefined,
+      };
+    });
 
     return mappedNftsData;
   };

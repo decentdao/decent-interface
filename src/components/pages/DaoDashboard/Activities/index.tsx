@@ -2,8 +2,7 @@ import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { ActivityEventType, SortBy, TreasuryActivity, FractalProposal } from '../../../../types';
-import { ActivityTreasury } from '../../../Activity/ActivityTreasury';
+import { SortBy, FractalProposal } from '../../../../types';
 import ProposalCard from '../../../Proposals/ProposalCard/ProposalCard';
 import { EmptyBox } from '../../../ui/containers/EmptyBox';
 import { InfoBoxLoader } from '../../../ui/loaders/InfoBoxLoader';
@@ -49,22 +48,12 @@ export function Activities() {
             flexDirection="column"
             gap="1rem"
           >
-            {sortedActivities.map((activity, i) => {
-              if (activity.eventType === ActivityEventType.Governance) {
-                return (
-                  <ProposalCard
-                    key={i}
-                    proposal={activity as FractalProposal}
-                  />
-                );
-              }
-              return (
-                <ActivityTreasury
-                  key={i}
-                  activity={activity as TreasuryActivity}
-                />
-              );
-            })}
+            {sortedActivities.map((activity, i) => (
+              <ProposalCard
+                key={i}
+                proposal={activity as FractalProposal}
+              />
+            ))}
             {!allProposalsLoaded && <InfoBoxLoader />}
           </Flex>
         ) : (

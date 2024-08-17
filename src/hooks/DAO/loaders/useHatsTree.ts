@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { Tree, HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { getAddress } from 'viem';
+import { formatUnits, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierPayment } from '../../../components/pages/Roles/types';
@@ -178,10 +178,10 @@ const useHatsTree = () => {
               );
               const formattedActiveStreams: SablierPayment[] = lockupLinearStreams.map(
                 lockupLinearStream => {
-                  const parsedAmount =
-                    BigInt(lockupLinearStream.depositAmount) /
-                    10n ** BigInt(lockupLinearStream.asset.decimals);
-
+                  const parsedAmount = formatUnits(
+                    BigInt(lockupLinearStream.depositAmount),
+                    lockupLinearStream.asset.decimals,
+                  );
                   return {
                     streamId: lockupLinearStream.id,
                     contractAddress: lockupLinearStream.contract.address,
@@ -197,15 +197,13 @@ const useHatsTree = () => {
                     },
                     amount: {
                       bigintValue: lockupLinearStream.depositAmount,
-                      value: parsedAmount.toString(),
+                      value: parsedAmount,
                     },
                     startDate: secondsTimestampToDate(lockupLinearStream.startTime),
                     endDate: secondsTimestampToDate(lockupLinearStream.endTime),
                     cliffDate: lockupLinearStream.cliff
                       ? secondsTimestampToDate(lockupLinearStream.cliffTime)
                       : undefined,
-                    // @todo - factor in cliff date.
-                    // @todo - handle cancelled streams
                     isActive:
                       secondsTimestampToDate(lockupLinearStream.endTime).getTime() >
                       new Date().getTime(),
