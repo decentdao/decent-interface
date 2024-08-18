@@ -12,7 +12,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { CaretDown, CheckCircle } from '@phosphor-icons/react';
-import { Field, FieldInputProps, FieldProps, useFormikContext } from 'formik';
+import { Field, FieldInputProps, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -73,12 +73,12 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
             w="full"
             onClick={() => {
               setFieldValue(field.name, {
-                address: fungibleAssetsWithBalance[index].tokenAddress,
-                symbol: fungibleAssetsWithBalance[index].symbol,
-                logo: fungibleAssetsWithBalance[index].logo,
-                balance: fungibleAssetsWithBalance[index].balance,
-                balanceFormatted: fungibleAssetsWithBalance[index].balanceFormatted,
-                decimals: fungibleAssetsWithBalance[index].decimals,
+                address: asset.tokenAddress,
+                symbol: asset.symbol,
+                logo: asset.logo,
+                balance: asset.balance,
+                balanceFormatted: asset.balanceFormatted,
+                decimals: asset.decimals,
               });
             }}
           >
@@ -96,7 +96,7 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
                   textStyle="label-base"
                   color="white-0"
                 >
-                  {asset.symbol}
+                  {asset?.symbol}
                 </Text>
                 <Flex
                   alignItems="center"
@@ -106,9 +106,9 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
                     textStyle="button-base"
                     color="neutral-7"
                   >
-                    {formatCoin(asset.balance, true, asset.decimals, asset.symbol, true)}
+                    {formatCoin(asset?.balance, true, asset?.decimals, asset?.symbol, true)}
                   </Text>
-                  {asset.usdValue && (
+                  {asset?.usdValue && (
                     <>
                       <Text
                         textStyle="button-base"
@@ -120,7 +120,7 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
                         textStyle="button-base"
                         color="neutral-7"
                       >
-                        {formatUSD(asset.usdValue)}
+                        {formatUSD(asset?.usdValue)}
                       </Text>
                     </>
                   )}
@@ -281,10 +281,16 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
             meta,
             form: { setFieldTouched },
           }: FieldProps<BigIntValuePair, RoleFormValues>) => {
+            const paymentAmountBigIntError = meta.error as FormikErrors<BigIntValuePair>;
+            const paymentAmountBigIntTouched = meta.touched;
             return (
               <LabelWrapper
                 label={t('totalAmount')}
-                errorMessage={meta.error}
+                errorMessage={
+                  !!paymentAmountBigIntTouched && paymentAmountBigIntError?.bigintValue
+                    ? paymentAmountBigIntError?.bigintValue
+                    : undefined
+                }
               >
                 <BigIntInput
                   isDisabled={!values?.roleEditing?.payments?.[formIndex]?.asset}
