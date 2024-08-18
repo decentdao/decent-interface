@@ -77,6 +77,8 @@
   "week": "Week",
   "withdrawTo": "Withdraw to",
   "withdrawPaymentTitle": "Does everything look right?",
+  "roleInfoErrorPaymentAmountRequired": "Amount is required.",
+  "roleInfoErrorPaymentInvalidAmount": "Invalid amount.",
   "roleInfoErrorPaymentFixedDateStartDateRequired": "Start date is required.",
   "roleInfoErrorPaymentFixedDateEndDateRequired": "End date is required.",
   "roleInfoErrorPaymentFixedDateEndDateAfterStartDate": "End date must be after start date.",
