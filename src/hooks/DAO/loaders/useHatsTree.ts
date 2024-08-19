@@ -211,10 +211,11 @@ const useHatsTree = () => {
                           : cliffDate !== undefined
                             ? cliffDate.getTime()
                             : undefined;
-
                       const end = endDate ? endDate.getTime() : undefined;
+                      const cancelled = lockupLinearStream.canceled;
                       const now = new Date().getTime();
-                      const isStreaming = !!start && !!end && start <= now && end > now;
+                      const isStreaming =
+                        !cancelled && !!start && !!end && start <= now && end > now;
                       return isStreaming;
                     },
                   };
