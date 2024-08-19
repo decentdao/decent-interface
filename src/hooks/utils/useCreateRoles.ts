@@ -579,7 +579,9 @@ export default function useCreateRoles() {
         const streamsData = editedPayrollHats.flatMap(role =>
           (role.payments ?? []).filter(payment => !payment.streamId),
         );
-        const recipients = editedPayrollHats.map(role => role.smartAddress);
+        const recipients = editedPayrollHats.flatMap(role =>
+          (role.payments ?? []).filter(payment => !payment.streamId).map(() => role.smartAddress),
+        );
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
           streamsData,
           recipients,
