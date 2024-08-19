@@ -65,7 +65,7 @@ import Markdown from '../../../../../../components/ui/proposal/Markdown';
 import CeleryButtonWithIcon from '../../../../../../components/ui/utils/CeleryButtonWithIcon';
 import { CeleryTextLink } from '../../../../../../components/ui/utils/CeleryTextLink';
 import Divider from '../../../../../../components/ui/utils/Divider';
-import { SECONDS_IN_DAY, useHeaderHeight } from '../../../../../../constants/common';
+import { useHeaderHeight } from '../../../../../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../../constants/routes';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../../../hooks/utils/useCanUserSubmitProposal';
@@ -73,6 +73,8 @@ import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { BigIntValuePair, CreateProposalSteps } from '../../../../../../types';
 import { scrollToBottom } from '../../../../../../utils/ui';
+
+const SECONDS_IN_DAY = 60 * 60 * 24;
 
 function StepButtons({
   values: { proposalMetadata },
