@@ -82,7 +82,7 @@ export interface DurationBreakdown {
   days: number;
 }
 
-export interface RoleValue extends Omit<DecentRoleHat, 'wearer' | 'payments'> {
+export interface RoleHatFormValue extends Omit<DecentRoleHat, 'wearer' | 'payments'> {
   wearer: string;
   editedRole?: EditedRole;
   payments?: SablierPaymentFormValues[];
@@ -91,8 +91,8 @@ export interface RoleValue extends Omit<DecentRoleHat, 'wearer' | 'payments'> {
 
 export interface RoleFormValues {
   proposalMetadata: CreateProposalMetadata;
-  hats: RoleValue[];
-  roleEditing?: RoleValue;
+  hats: RoleHatFormValue[];
+  roleEditing?: RoleHatFormValue;
   customNonce?: number;
 }
 

@@ -20,7 +20,7 @@ import { useRolesStore } from '../../../../store/roles';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import { DatePickerTrigger } from '../DatePickerTrigger';
-import { RoleFormValues, RoleValue } from '../types';
+import { RoleFormValues, RoleHatFormValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
@@ -173,7 +173,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const { getPayment } = useRolesStore();
-  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
+  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)?.payments;
   return (
     <Box
       px={{ base: '1rem', md: 0 }}

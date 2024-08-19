@@ -13,17 +13,20 @@ import {
   EditBadgeStatus,
   HatStruct,
   HatWearerChangedParams,
-  RoleValue,
+  RoleHatFormValue,
   RoleFormValues,
   BaseSablierStream,
-  SablierPaymentFormValues,
-  SablierPayment,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { getERC6551RegistrySalt, predictHatId, useRolesStore } from '../../store/roles';
+import {
+  getERC6551RegistrySalt,
+  normalizePaymentFormData,
+  predictHatId,
+  useRolesStore,
+} from '../../store/roles';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
@@ -36,27 +39,6 @@ const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   });
 };
 
-const normalizePaymentFormData = (payment: SablierPaymentFormValues): SablierPayment => {
-  if (
-    !payment.streamId ||
-    !payment.contractAddress ||
-    !payment.asset ||
-    !payment.amount ||
-    !payment.startDate ||
-    !payment.endDate
-  ) {
-    throw new Error('Form not properly filled out');
-  }
-  return {
-    streamId: payment.streamId,
-    contractAddress: payment.contractAddress,
-    asset: payment.asset,
-    amount: payment.amount,
-    startDate: payment.startDate,
-    endDate: payment.endDate,
-    cliffDate: payment.cliffDate,
-  };
-};
 const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, topHatAccount: Address) => {
   const admins: bigint[] = [];
   const details: string[] = [];
@@ -144,7 +126,7 @@ export default function useCreateRoles() {
   );
 
   const parseEditedHatsFormValues = useCallback(
-    async (editedHats: RoleValue[]) => {
+    async (editedHats: RoleHatFormValue[]) => {
       //  Parse added hats
 
       const addedHats: HatStruct[] = await Promise.all(
@@ -216,12 +198,12 @@ export default function useCreateRoles() {
       });
 
       // Parse role with added payroll hats
-      const addedNewPaymentsHats: RoleValue[] = editedHats
+      const addedNewPaymentsHats: RoleHatFormValue[] = editedHats
         .map(hat => {
           const payments = hat.payments?.filter(payment => !payment.streamId);
           return payments?.length ? { ...hat, payments } : null;
         })
-        .filter(hat => !!hat) as RoleValue[];
+        .filter(hat => !!hat) as RoleHatFormValue[];
 
       return {
         addedHats,
@@ -346,8 +328,8 @@ export default function useCreateRoles() {
           id: Address;
           details: string;
         }[];
-        addedNewPaymentsHats: RoleValue[];
-        editedPayrollHats: RoleValue[];
+        addedNewPaymentsHats: RoleHatFormValue[];
+        editedPayrollHats: RoleHatFormValue[];
       },
     ) => {
       if (!hatsTree || !daoAddress) {

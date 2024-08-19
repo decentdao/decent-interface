@@ -11,13 +11,7 @@ import { getChainIdFromPrefix } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
-import {
-  EditBadgeStatus,
-  RoleEditProps,
-  RoleFormValues,
-  RoleProps,
-  SablierPaymentOrPartial,
-} from './types';
+import { EditBadgeStatus, RoleEditProps, RoleFormValues, RoleProps } from './types';
 
 function RolesHeader() {
   const { t } = useTranslation(['roles']);
