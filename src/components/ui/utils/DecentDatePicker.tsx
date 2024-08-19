@@ -243,14 +243,13 @@ export function DecentDatePickerRange({
 }) {
   const { values } = useFormikContext<RoleFormValues>();
 
-  const selectedRange = useMemo(() => {
-    if (values.roleEditing?.roleEditingPaymentIndex === undefined)
-      return [null, null] as [DateOrNull, DateOrNull];
+  const selectedRange: [DateOrNull, DateOrNull] = useMemo(() => {
+    if (values.roleEditing?.roleEditingPaymentIndex === undefined) return [null, null];
     const paymentIndex = values.roleEditing.roleEditingPaymentIndex;
     return [
       values.roleEditing?.payments?.[paymentIndex]?.startDate ?? null,
       values.roleEditing?.payments?.[paymentIndex]?.endDate ?? null,
-    ] as [DateOrNull, DateOrNull];
+    ];
   }, [values.roleEditing?.payments, values.roleEditing?.roleEditingPaymentIndex]);
 
   const isTodaySelected = () => {
