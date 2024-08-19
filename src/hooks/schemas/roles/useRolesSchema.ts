@@ -1,7 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { SablierPayment, RoleValue, RoleFormValues } from '../../../components/pages/Roles/types';
+import {
+  SablierPayment,
+  RoleHatFormValue,
+  RoleFormValues,
+} from '../../../components/pages/Roles/types';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useValidationAddress } from '../common/useValidationAddress';
 
@@ -45,7 +49,7 @@ export const useRolesSchema = () => {
           .default(undefined)
           .nullable()
           .when({
-            is: (roleEditing: RoleValue) => roleEditing !== undefined,
+            is: (roleEditing: RoleHatFormValue) => roleEditing !== undefined,
             then: _roleEditingSchema =>
               _roleEditingSchema.shape({
                 name: Yup.string().required(t('roleInfoErrorNameRequired')),
@@ -67,6 +71,7 @@ export const useRolesSchema = () => {
                             startDate: Yup.date().required(
                               t('roleInfoErrorPaymentFixedDateStartDateRequired'),
                             ),
+                            cliffDate: Yup.date().nullable().default(undefined),
                             endDate: Yup.date().required(
                               t('roleInfoErrorPaymentFixedDateEndDateRequired'),
                             ),
@@ -78,6 +83,16 @@ export const useRolesSchema = () => {
                               if (!_payments) return false;
                               const { startDate, endDate } = _payments;
                               return endDate > startDate;
+                            },
+                          })
+                          .test({
+                            name: 'cliff-date-before-end-date',
+                            message: t('roleInfoErrorPaymentFixedDateCliffDateBeforeEndDate'),
+                            test: _payments => {
+                              if (!_payments) return false;
+                              const { cliffDate, startDate, endDate } = _payments;
+                              if (!cliffDate) return true;
+                              return cliffDate > startDate && cliffDate < endDate;
                             },
                           }),
                     }),

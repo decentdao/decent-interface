@@ -2,11 +2,10 @@ import { Box, Button, Flex, FormControl, Grid, GridItem, Icon } from '@chakra-ui
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import { FormikErrors, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
 import { DecentDatePicker, DecentDatePickerRange } from '../../../ui/utils/DecentDatePicker';
-import { RoleFormValues, RoleValue } from '../types';
+import { RoleFormValues, RoleHatFormValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
@@ -86,7 +85,8 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const { getPayment } = useRolesStore();
-  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleValue>)?.payments;
+  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
+    ?.payments;
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
@@ -111,13 +111,10 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         isDisabled={!values?.roleEditing?.payments?.[formIndex]}
         onClick={() => {
           if (!values?.roleEditing?.payments?.[formIndex]) return;
-
-          const isExistingPayment =
-            values.roleEditing.payments[formIndex].streamId &&
-            getPayment(
-              values.roleEditing.id,
-              getAddress(values.roleEditing.payments[formIndex].streamId ?? ''),
-            );
+          const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
+          const isExistingPayment = !!streamId
+            ? getPayment(values.roleEditing.id, streamId)
+            : undefined;
           // if payment is new, and unedited, remove it
           if (
             formIndex === values.roleEditing.payments.length - 1 &&
