@@ -1,17 +1,18 @@
 import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
 import { Contract } from 'ethers';
 import { useCallback } from 'react';
-import { Address, getAddress, zeroAddress } from 'viem';
+import { Address, zeroAddress } from 'viem';
+// import { Address, getAddress, zeroAddress } from 'viem';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
-import { getValue, setValue } from './cache/useLocalStorage';
+// import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
+// import { getValue, setValue } from './cache/useLocalStorage';
 
 export function useMasterCopy() {
   const { baseContracts } = useFractal();
   const {
-    chain,
+    // chain,
     contracts: { zodiacModuleProxyFactoryOld },
   } = useNetworkConfig();
 
@@ -52,47 +53,47 @@ export function useMasterCopy() {
     [baseContracts],
   );
 
-  const getMasterCopyAddress = useCallback(
-    async function (contract: Contract, proxyAddress: Address): Promise<[Address, string | null]> {
-      const cachedValue = getValue({
-        cacheName: CacheKeys.MASTER_COPY,
-        chainId: chain.id,
-        moduleProxyFactoryAddress: getAddress(contract.address),
-        proxyAddress,
-      });
-      if (cachedValue) return [cachedValue, null] as const;
+  const getMasterCopyAddress = useCallback(async function (
+    contract: Contract,
+    proxyAddress: Address,
+  ): Promise<[Address, string | null]> {
+    // const cachedValue = getValue({
+    //   cacheName: CacheKeys.MASTER_COPY,
+    //   chainId: chain.id,
+    //   moduleProxyFactoryAddress: getAddress(contract.address),
+    //   proxyAddress,
+    // });
+    // if (cachedValue) return [cachedValue, null] as const;
 
-      const filter = contract.filters.ModuleProxyCreation(proxyAddress, null);
-      return contract.queryFilter(filter).then(proxiesCreated => {
-        if (proxiesCreated.length === 0) {
-          // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
-          setValue(
-            {
-              cacheName: CacheKeys.MASTER_COPY,
-              chainId: chain.id,
-              moduleProxyFactoryAddress: getAddress(contract.address),
-              proxyAddress,
-            },
-            zeroAddress,
-            CacheExpiry.ONE_WEEK,
-          );
-          return [zeroAddress, 'No proxies created'] as const;
-        }
-        const masterCopyAddress = proxiesCreated[0].args!.masterCopy;
-        setValue(
-          {
-            cacheName: CacheKeys.MASTER_COPY,
-            chainId: chain.id,
-            moduleProxyFactoryAddress: getAddress(contract.address),
-            proxyAddress,
-          },
-          masterCopyAddress,
-        );
-        return [masterCopyAddress, null] as const;
-      });
-    },
-    [chain.id],
-  );
+    const filter = contract.filters.ModuleProxyCreation(proxyAddress, null);
+    return contract.queryFilter(filter).then(proxiesCreated => {
+      if (proxiesCreated.length === 0) {
+        // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
+        // setValue(
+        //   {
+        //     cacheName: CacheKeys.MASTER_COPY,
+        //     chainId: chain.id,
+        //     moduleProxyFactoryAddress: getAddress(contract.address),
+        //     proxyAddress,
+        //   },
+        //   zeroAddress,
+        //   CacheExpiry.ONE_WEEK,
+        // );
+        return [zeroAddress, 'No proxies created'] as const;
+      }
+      const masterCopyAddress = proxiesCreated[0].args!.masterCopy;
+      // setValue(
+      //   {
+      //     cacheName: CacheKeys.MASTER_COPY,
+      //     chainId: chain.id,
+      //     moduleProxyFactoryAddress: getAddress(contract.address),
+      //     proxyAddress,
+      //   },
+      //   masterCopyAddress,
+      // );
+      return [masterCopyAddress, null] as const;
+    });
+  }, []);
 
   const getZodiacModuleProxyMasterCopyData = useCallback(
     async function (proxyAddress: Address) {
