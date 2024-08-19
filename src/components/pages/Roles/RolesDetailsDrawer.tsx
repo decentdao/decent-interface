@@ -16,7 +16,11 @@ import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { DecentRoleHat } from '../../../store/roles';
 import Avatar from '../../ui/page/Header/Avatar';
+import Divider from '../../ui/utils/Divider';
+import { RolePaymentDetails } from './RolePaymentDetails';
+import { SablierPayment } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -36,12 +40,8 @@ function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.E
 }
 
 interface RoleDetailsDrawerProps {
-  roleHat: {
-    id: Hex;
-    name: string;
-    wearer: string;
-    description: string;
-  };
+  roleHat: DecentRoleHat;
+  payments?: SablierPayment[];
   onOpen?: () => void;
   onClose: () => void;
   onEdit: (hatId: Hex) => void;
@@ -53,6 +53,7 @@ export default function RolesDetailsDrawer({
   onClose,
   isOpen = true,
   onEdit,
+  payments,
 }: RoleDetailsDrawerProps) {
   const {
     node: { daoAddress },
@@ -156,6 +157,28 @@ export default function RolesDetailsDrawer({
               </Text>
             </GridItem>
           </Grid>
+          {payments && (
+            <>
+              <Divider
+                variant="darker"
+                my={4}
+              />
+              <Text
+                textStyle="display-lg"
+                color="white-0"
+              >
+                {t('payments')}
+              </Text>
+              {payments.map((payment, index) => (
+                <RolePaymentDetails
+                  key={index}
+                  payment={payment}
+                  roleHat={roleHat}
+                  showWithdraw
+                />
+              ))}
+            </>
+          )}
         </DrawerBody>
       </DrawerContent>
     </Drawer>

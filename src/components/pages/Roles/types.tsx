@@ -1,51 +1,46 @@
-import { Address, Hex, zeroAddress } from 'viem';
-import { toHex } from 'viem/utils';
-import { getRandomBytes } from '../../../helpers';
-import { DecentRoleHat } from '../../../state/useRolesState';
-import { CreateProposalMetadata } from '../../../types';
+import { Address, Hex } from 'viem';
+import { DecentRoleHat } from '../../../store/roles';
+import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 export type RoleViewMode = 'edit' | 'view';
 
-export interface SablierVesting {
-  vestingSchedule: string;
-  vestingAmount: string;
-  vestingAmountUSD: string;
-  vestingStartDate: string;
-  vestingEndDate: string;
-  asset: {
-    address: Address;
-    symbol: string;
-    name: string;
-    iconUri: string;
-  };
+export interface SablierAsset {
+  address: Address;
+  name: string;
+  symbol: string;
+  decimals: number;
+  logo: string;
 }
 
-export interface SablierPayroll {
-  payrollSchedule: string;
-  payrollAmount: string;
-  payrollAmountUSD: string;
-  payrollStartDate: string;
-  payrollEndDate: string;
-  asset: {
-    address: Address;
-    symbol: string;
-    name: string;
-    iconUri: string;
-  };
+export interface BaseSablierStream {
+  streamId: string;
+  contractAddress: Address;
+  asset: SablierAsset;
+  amount: BigIntValuePair;
 }
+
+export interface SablierPayment extends BaseSablierStream {
+  startDate: Date;
+  endDate: Date;
+  cliffDate: Date | undefined;
+}
+
+export interface SablierPaymentFormValues extends Partial<SablierPayment> {}
+
+export type SablierPaymentOrPartial = SablierPayment | SablierPaymentFormValues;
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
   handleRoleClick: (hatId: Address) => void;
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  vestingData?: SablierVesting;
-  payrollData?: SablierPayroll;
+  paymentsCount?: number;
 }
 
 export interface RoleEditProps
-  extends Omit<RoleProps, 'hatId' | 'wearerAddress' | 'handleRoleClick'> {
+  extends Omit<RoleProps, 'hatId' | 'wearerAddress' | 'handleRoleClick' | 'paymentsCount'> {
   handleRoleClick: () => void;
   wearerAddress: string | undefined;
+  payments?: SablierPaymentFormValues[];
 }
 
 export enum EditBadgeStatus {
@@ -81,28 +76,24 @@ export interface EditedRole {
   status: EditBadgeStatus;
 }
 
-export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
+export interface DurationBreakdown {
+  years: number;
+  hours: number;
+  days: number;
+}
+
+export interface RoleHatFormValue extends Omit<DecentRoleHat, 'wearer' | 'payments'> {
   wearer: string;
   editedRole?: EditedRole;
+  payments?: SablierPaymentFormValues[];
+  roleEditingPaymentIndex?: number;
 }
 
 export interface RoleFormValues {
   proposalMetadata: CreateProposalMetadata;
-  hats: RoleValue[];
-  roleEditing?: RoleValue;
+  hats: RoleHatFormValue[];
+  roleEditing?: RoleHatFormValue;
   customNonce?: number;
-}
-
-export function getNewRole(): RoleValue {
-  // @dev creates a unique id for the hat for new hats for use in form, not stored on chain
-  return {
-    id: toHex(getRandomBytes(), { size: 32 }),
-    wearer: '',
-    name: '',
-    description: '',
-    prettyId: '',
-    smartAddress: zeroAddress,
-  };
 }
 
 export interface HatWearerChangedParams {

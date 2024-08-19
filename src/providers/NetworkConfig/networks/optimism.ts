@@ -15,10 +15,10 @@ import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deploymen
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/optimism/VotesERC20.json' assert { type: 'json' };
 import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/optimism/VotesERC20Wrapper.json' assert { type: 'json' };
 import {
-  getProxyFactoryDeployment,
-  getMultiSendCallOnlyDeployment,
-  getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
+  getMultiSendCallOnlyDeployment,
+  getProxyFactoryDeployment,
+  getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
 import { optimism } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
@@ -79,6 +79,10 @@ const optimismConfig: NetworkConfig = {
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
     erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
     hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
+    sablierV2Batch: '0x6cd7bB0f63aFCc9F6CeDd1Bf1E3Bd4ED078CD019',
+    sablierV2LockupDynamic: '0x4994325F8D4B4A36Bd643128BEb3EC3e582192C0',
+    sablierV2LockupTranched: '0x90952912a50079bef00D5F49c975058d6573aCdC',
+    sablierV2LockupLinear: '0x5C22471A86E9558ed9d22235dD5E0429207ccf4B',
   },
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],

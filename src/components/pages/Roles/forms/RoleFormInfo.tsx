@@ -22,7 +22,7 @@ export default function RoleFormInfo() {
       borderRadius="0.5rem"
     >
       <FormControl>
-        <Field name={`roleEditing.name`}>
+        <Field name="roleEditing.name">
           {({
             field,
             form: { setFieldValue, setFieldTouched },
@@ -55,7 +55,7 @@ export default function RoleFormInfo() {
         </Field>
       </FormControl>
       <FormControl>
-        <Field name={`roleEditing.description`}>
+        <Field name="roleEditing.description">
           {({
             field,
             form: { setFieldValue, setFieldTouched },
@@ -89,7 +89,7 @@ export default function RoleFormInfo() {
         </Field>
       </FormControl>
       <FormControl>
-        <Field name={`roleEditing.wearer`}>
+        <Field name="roleEditing.wearer">
           {({
             field,
             form: { setFieldValue, setFieldTouched },

@@ -1,22 +1,29 @@
-import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
+import { useApolloClient } from '@apollo/client';
+import { Tree, HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { getAddress } from 'viem';
+import { formatUnits, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
+import { StreamsQueryDocument } from '../../../../.graphclient';
+import { SablierPayment } from '../../../components/pages/Roles/types';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentHatsError, useRolesState } from '../../../state/useRolesState';
+import { useRolesStore, DecentHatsError } from '../../../store/roles';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
-import { useHatsSubgraphClient } from './useHatsSubgraphClient';
+
+const hatsSubgraphClient = new HatsSubgraphClient({
+  // TODO config for prod
+});
 
 const useHatsTree = () => {
-  const { hatsTreeId } = useRolesState();
-  const hatsSubgraphClient = useHatsSubgraphClient();
-  const { setHatsTree } = useRolesState();
+  const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, updateRolesWithStreams } =
+    useRolesStore();
+
   const ipfsClient = useIPFSClient();
   const {
     chain,
+    sablierSubgraph,
     contracts: {
       hatsProtocol,
       erc6551Registry,
@@ -25,6 +32,7 @@ const useHatsTree = () => {
     },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
+  const apolloClient = useApolloClient();
 
   useEffect(() => {
     async function getHatsTree() {
@@ -132,12 +140,81 @@ const useHatsTree = () => {
     erc6551Registry,
     hatsAccountImplementation,
     hatsProtocol,
-    hatsSubgraphClient,
     hatsTreeId,
     ipfsClient,
     publicClient,
     setHatsTree,
   ]);
+
+  useEffect(() => {
+    async function getHatsStreams() {
+      if (sablierSubgraph && hatsTree && hatsTree.roleHats.length > 0 && !streamsFetched) {
+        const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
+        const updatedHatsRoles = await Promise.all(
+          hatsTree.roleHats.map(async hat => {
+            // @todo role | check logic
+            if (hat.payments?.length) {
+              return hat;
+            }
+            const streamQueryResult = await apolloClient.query({
+              query: StreamsQueryDocument,
+              variables: { recipientAddress: hat.smartAddress },
+              context: { subgraphSpace: sablierSubgraph.space, subgraphSlug: sablierSubgraph.slug },
+            });
+
+            if (!streamQueryResult.error) {
+              if (!streamQueryResult.data.streams.length) {
+                return hat;
+              }
+
+              const lockupLinearStreams = streamQueryResult.data.streams.filter(
+                stream => stream.category === 'LockupLinear',
+              );
+              const formattedActiveStreams: SablierPayment[] = lockupLinearStreams.map(
+                lockupLinearStream => {
+                  const parsedAmount = formatUnits(
+                    BigInt(lockupLinearStream.depositAmount),
+                    lockupLinearStream.asset.decimals,
+                  );
+                  return {
+                    streamId: lockupLinearStream.id,
+                    contractAddress: lockupLinearStream.contract.address,
+                    asset: {
+                      address: getAddress(
+                        lockupLinearStream.asset.address,
+                        lockupLinearStream.asset.chainId,
+                      ),
+                      name: lockupLinearStream.asset.name,
+                      symbol: lockupLinearStream.asset.symbol,
+                      decimals: lockupLinearStream.asset.decimals,
+                      logo: '', // @todo - how do we get logo?
+                    },
+                    amount: {
+                      bigintValue: BigInt(lockupLinearStream.depositAmount),
+                      value: parsedAmount,
+                    },
+                    startDate: secondsTimestampToDate(lockupLinearStream.startTime),
+                    endDate: secondsTimestampToDate(lockupLinearStream.endTime),
+                    cliffDate: lockupLinearStream.cliff
+                      ? secondsTimestampToDate(lockupLinearStream.cliffTime)
+                      : undefined,
+                  };
+                },
+              );
+
+              return { ...hat, payments: formattedActiveStreams };
+            } else {
+              return hat;
+            }
+          }),
+        );
+
+        updateRolesWithStreams(updatedHatsRoles);
+      }
+    }
+
+    getHatsStreams();
+  }, [apolloClient, hatsTree, sablierSubgraph, updateRolesWithStreams, streamsFetched]);
 };
 
 export { useHatsTree };

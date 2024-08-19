@@ -1,20 +1,18 @@
-import { Flex, IconButton, Icon, Text, Box } from '@chakra-ui/react';
+import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Hex } from 'viem';
-import PayrollAndVesting from '../../../pages/daos/[daoAddress]/roles/details/PayrollAndVesting';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useRolesState } from '../../../state/useRolesState';
+import { DecentRoleHat, useRolesStore } from '../../../store/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
+import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
+import { RolePaymentDetails } from './RolePaymentDetails';
+import { SablierPayment } from './types';
 
 interface RoleDetailsDrawerMobileProps {
-  roleHat: {
-    id: Hex;
-    name: string;
-    wearer: string;
-    description: string;
-  };
+  roleHat: DecentRoleHat;
+  payments?: SablierPayment[];
   onOpen?: () => void;
   onClose?: () => void;
   isOpen?: boolean;
@@ -27,12 +25,13 @@ export default function RolesDetailsDrawerMobile({
   onOpen,
   isOpen = true,
   onEdit,
+  payments,
 }: RoleDetailsDrawerMobileProps) {
   const {
     node: { daoAddress },
   } = useFractal();
   const { t } = useTranslation('roles');
-  const { hatsTree } = useRolesState();
+  const { hatsTree } = useRolesStore();
 
   if (!daoAddress || !hatsTree) return null;
 
@@ -88,7 +87,30 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        <PayrollAndVesting />
+        {payments && (
+          <>
+            <Divider
+              variant="darker"
+              my={4}
+            />
+            <Text
+              textStyle="display-lg"
+              color="white-0"
+              mt="1.5rem"
+              mb="1rem"
+            >
+              {t('payments')}
+            </Text>
+            {payments.map((payment, index) => (
+              <RolePaymentDetails
+                key={index}
+                payment={payment}
+                roleHat={roleHat}
+                showWithdraw
+              />
+            ))}
+          </>
+        )}
       </Box>
     </DraggableDrawer>
   );

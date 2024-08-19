@@ -34,6 +34,7 @@
   "loading": "Loading...",
   "goHome": "Go Home",
   "delegate": "Delegate",
+  "learnMore": "Learn More",
   "home": "Home",
   "labelViewDAO": "View Safe",
   "labelDAOFound": "Safe Found",
@@ -95,7 +96,7 @@
   "etherscanTip": "Open in Etherscan",
   "wrapToken": "Wrap Token",
   "unwrapToken": "Unwrap Token",
-  "max": "max",
+  "max": "Max",
   "favoriteTooltip": "Toggle your favorite Safes. ",
   "isMeSuffix": " (you)",
   "refresh": "Refresh",
@@ -109,5 +110,6 @@
   "show": "Show",
   "hide": "Hide",
   "poweredBy": "Powered by",
-  "goTo": "Go to"
+  "goTo": "Go to",
+  "none": "None"
 }
