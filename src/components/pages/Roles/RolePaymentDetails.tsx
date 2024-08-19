@@ -127,7 +127,7 @@ export function RolePaymentDetails({
 
     const endTime = payment.endDate.getTime() / 1000;
     const startTime = payment.startDate.getTime() / 1000;
-    const totalSeconds = endTime - startTime;
+    const totalSeconds = Math.round(endTime - startTime); // @dev due to milliseconds we need to round it to avoid problems with BigInt
     const amountPerSecond = payment.amount.bigintValue / BigInt(totalSeconds);
     const secondsInWeek = BigInt(60 * 60 * 24 * 7);
     return amountPerSecond * secondsInWeek;
