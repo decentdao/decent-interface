@@ -27,7 +27,7 @@ import {
 import { getAzoriusModuleFromModules } from '../../../../utils';
 import { SENTINEL_MODULE } from '../../../../utils/address';
 import { ModalType } from '../../modals/ModalProvider';
-import { useFractalModal } from '../../modals/useFractalModal';
+import { useDecentModal } from '../../modals/useDecentModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
@@ -120,7 +120,7 @@ export function ManageDAOMenu({
     }
   }, [navigate, addressPrefix, safeAddress]);
 
-  const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
+  const handleModifyGovernance = useDecentModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
   const freezeOption = useMemo(
     () => ({

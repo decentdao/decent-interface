@@ -11,14 +11,16 @@ import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { EditBadgeStatus, RoleEditProps, RoleProps, SablierPayment } from './types';
+import { EditBadgeStatus, RoleEditProps, RoleProps, SablierPaymentFormValues } from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
   name,
+  paymentsCount,
 }: {
   wearerAddress: string | undefined;
   name: string;
+  paymentsCount?: number;
 }) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
@@ -59,82 +61,113 @@ export function AvatarAndRoleName({
         >
           {wearerAddress ? accountDisplayName : t('unassigned')}
         </Text>
+        {paymentsCount !== undefined && (
+          <Flex
+            mt="1rem"
+            gap="0.25rem"
+          >
+            <Text
+              textStyle="button-small"
+              color="neutral-7"
+              alignSelf="center"
+            >
+              {t('activePayments')}
+            </Text>
+            <Box
+              bg="celery--2"
+              color="neutral-3"
+              borderColor="neutral-3"
+              borderWidth="2px"
+              borderRadius="50%"
+              w="1.25rem"
+              h="1.25rem"
+            >
+              <Text
+                textStyle="helper-text-small"
+                lineHeight="1rem"
+                align="center"
+              >
+                {paymentsCount}
+              </Text>
+            </Box>
+          </Flex>
+        )}
       </Flex>
     </Flex>
   );
 }
 
-function Payment({ payment }: { payment: SablierPayment | undefined }) {
+function Payment({ payment }: { payment: SablierPaymentFormValues }) {
   const { t } = useTranslation(['roles']);
   const format = ['years', 'days', 'hours'];
   const endDate =
-    payment?.scheduleFixedDate?.endDate &&
+    payment.endDate &&
+    payment.startDate &&
     formatDuration(
       intervalToDuration({
-        start: payment.scheduleFixedDate.startDate,
-        end: payment.scheduleFixedDate.endDate,
+        start: payment.startDate,
+        end: payment.endDate,
       }),
       { format },
     );
   const cliffDate =
-    payment?.scheduleFixedDate?.cliffDate &&
+    payment.startDate &&
+    payment.cliffDate &&
     formatDuration(
       intervalToDuration({
-        start: payment.scheduleFixedDate.startDate,
-        end: payment.scheduleFixedDate.cliffDate,
+        start: payment.startDate,
+        end: payment.cliffDate,
       }),
       { format },
     );
   return (
     <Flex flexDir="column">
-      {payment && (
-        <Box
-          mt="0.25rem"
-          ml="4rem"
+      <Box
+        mt="0.25rem"
+        ml="4rem"
+      >
+        <Text
+          textStyle="button-small"
+          color="neutral-7"
         >
-          <Text
-            textStyle="button-small"
-            color="neutral-7"
-          >
-            {t('payment')}
-          </Text>
-          <Flex
-            textStyle="body-base"
+          {t('payment')}
+        </Text>
+        <Flex
+          textStyle="body-base"
+          color="white-0"
+          gap="0.25rem"
+          alignItems="center"
+          my="0.5rem"
+        >
+          <Image
+            src={payment.asset?.logo}
+            fallbackSrc="/images/coin-icon-default.svg"
+            alt={payment.asset?.symbol}
+            w="1.25rem"
+            h="1.25rem"
+          />
+          {payment.amount?.value}
+          <EtherscanLink
             color="white-0"
-            gap="0.25rem"
-            alignItems="center"
-            my="0.5rem"
+            _hover={{ bg: 'transparent' }}
+            textStyle="body-base"
+            padding={0}
+            borderWidth={0}
+            value={payment.asset?.address ?? null}
+            type="token"
+            wordBreak="break-word"
           >
-            <Image
-              src={payment.asset.logo}
-              fallbackSrc="/images/coin-icon-default.svg"
-              alt={payment.asset.symbol}
-              w="1.25rem"
-              h="1.25rem"
-            />
-            {payment.amount.value}
-            <EtherscanLink
-              color="white-0"
-              _hover={{ bg: 'transparent' }}
-              textStyle="body-base"
-              padding={0}
-              borderWidth={0}
-              value={payment.asset.address}
-              type="token"
-              wordBreak="break-word"
-            >
-              {payment.asset.symbol}
-            </EtherscanLink>
-            <Flex
-              flexDir="column"
-              gap="0.25rem"
-            >
-              <Text>{endDate && `${t('after')} ${endDate}`}</Text>
-            </Flex>
+            {payment.asset?.symbol}
+          </EtherscanLink>
+          <Flex
+            flexDir="column"
+            gap="0.25rem"
+          >
+            <Text>{endDate && `${t('after')} ${endDate}`}</Text>
           </Flex>
-          <Text>{cliffDate && `${t('cliff')} ${t('after')} ${cliffDate}`}</Text>
-        </Box>
-      )}
+        </Flex>
+        <Text>{cliffDate && `${t('cliff')} ${t('after')} ${cliffDate}`}</Text>
+      </Box>
     </Flex>
   );
 }
@@ -142,7 +175,7 @@ function Payment({ payment }: { payment: SablierPayment | undefined }) {
 export function RoleCard({
   name,
   wearerAddress,
-  payments,
+  paymentsCount,
   editStatus,
   handleRoleClick,
   hatId,
@@ -156,25 +189,15 @@ export function RoleCard({
         <AvatarAndRoleName
           wearerAddress={wearerAddress}
           name={name}
+          paymentsCount={paymentsCount}
         />
         <Flex
           alignItems="center"
           gap="1rem"
         >
           <EditBadge editStatus={editStatus} />
-          <Icon
-            as={CaretRight}
-            color="white-0"
-          />
         </Flex>
       </Flex>
-      {payments &&
-        payments.map((payment, index) => (
-          <Payment
-            key={index}
-            payment={payment}
-          />
-        ))}
     </Card>
   );
 }

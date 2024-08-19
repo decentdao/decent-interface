@@ -7,10 +7,9 @@ import {
   PaginationCount,
   Transactions,
 } from '../../../../components/pages/DAOTreasury/components/Transactions';
-import { useFormatTransfers } from '../../../../components/pages/DAOTreasury/hooks/useFormatTransfers';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
-import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
+import { useDecentModal } from '../../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -18,19 +17,18 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 export default function Treasury() {
   const {
     node: { daoName, daoAddress },
-    treasury: { assetsFungible },
+    treasury: { assetsFungible, transfers },
   } = useFractal();
   const [shownTransactions, setShownTransactions] = useState(20);
   const { t } = useTranslation('treasury');
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const openSendAsset = useFractalModal(ModalType.SEND_ASSETS);
-  const formattedTransfers = useFormatTransfers();
+  const openSendAsset = useDecentModal(ModalType.SEND_ASSETS);
 
   const hasAnyBalanceOfAnyFungibleTokens =
     assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
 
   const showSendButton = canUserCreateProposal && hasAnyBalanceOfAnyFungibleTokens;
-  const totalTransfers = formattedTransfers.length;
+  const totalTransfers = transfers?.length || 0;
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
 
   return (

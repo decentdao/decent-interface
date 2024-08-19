@@ -1,4 +1,4 @@
-import { Box, Flex, Button, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Link } from '@chakra-ui/react';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Shield } from '../../assets/theme/custom/icons/Shield';
@@ -10,7 +10,7 @@ import { ActivityDescription } from '../Activity/ActivityDescription';
 import { Badge } from '../ui/badges/Badge';
 import { SnapshotButton } from '../ui/badges/Snapshot';
 import { ModalType } from '../ui/modals/ModalProvider';
-import { useFractalModal } from '../ui/modals/useFractalModal';
+import { useDecentModal } from '../ui/modals/useDecentModal';
 import { ProposalCountdown } from '../ui/proposal/ProposalCountdown';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
@@ -27,7 +27,7 @@ export function ProposalInfo({
   } = useFractal();
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
 
-  const confirmUrl = useFractalModal(ModalType.CONFIRM_URL, { url: metaData.documentationUrl });
+  const confirmUrl = useDecentModal(ModalType.CONFIRM_URL, { url: metaData.documentationUrl });
 
   return (
     <Box

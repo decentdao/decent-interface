@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Link, Center } from '@chakra-ui/react';
+import { Box, Center, Flex, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
 import useDisplayName from '../../../hooks/utils/useDisplayName';

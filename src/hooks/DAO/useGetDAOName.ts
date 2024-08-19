@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Address, PublicClient, getContract, parseAbi, getAddress } from 'viem';
+import { Address, PublicClient, getAddress, getContract, parseAbi } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../providers/App/AppProvider';
 import { FractalContracts } from '../../types';
@@ -22,7 +22,7 @@ const getDAOName = async ({
     throw new Error('Public client not available');
   }
 
-  const ensName = await publicClient.getEnsName({ address: address }).catch((error: Error) => {
+  const ensName = await publicClient.getEnsName({ address }).catch((error: Error) => {
     if (error.name === 'ChainDoesNotSupportContract') {
       // Sliently fail, this is fine.
       // https://github.com/wevm/viem/discussions/781

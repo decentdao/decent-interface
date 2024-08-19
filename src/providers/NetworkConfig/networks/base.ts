@@ -15,10 +15,10 @@ import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deploymen
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/base/VotesERC20.json' assert { type: 'json' };
 import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/base/VotesERC20Wrapper.json' assert { type: 'json' };
 import {
-  getProxyFactoryDeployment,
-  getMultiSendCallOnlyDeployment,
-  getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
+  getMultiSendCallOnlyDeployment,
+  getProxyFactoryDeployment,
+  getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
 import { base } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
@@ -67,7 +67,8 @@ const baseConfig: NetworkConfig = {
       version: SAFE_VERSION,
       network: base.id.toString(),
     })?.networkAddresses[base.id.toString()]!,
-    zodiacModuleProxyFactory: ModuleProxyFactory.address,
+    zodiacModuleProxyFactory: '0x000000000000aDdB49795b0f9bA5BC298cDda236',
+    zodiacModuleProxyFactoryOld: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,

@@ -19,31 +19,28 @@ export interface BaseSablierStream {
 }
 
 export interface SablierPayment extends BaseSablierStream {
-  scheduleDuration?: {
-    duration: DurationBreakdown;
-    cliffDuration: DurationBreakdown | undefined;
-  };
-  scheduleFixedDate?: {
-    startDate: Date;
-    endDate: Date;
-    cliffDate: Date | undefined;
-  };
-  scheduleType: 'duration' | 'fixedDate';
+  startDate: Date;
+  endDate: Date;
+  cliffDate: Date | undefined;
 }
 
+export interface SablierPaymentFormValues extends Partial<SablierPayment> {}
+
+export type SablierPaymentOrPartial = SablierPayment | SablierPaymentFormValues;
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
   handleRoleClick: (hatId: Address) => void;
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  payments?: SablierPayment[];
+  paymentsCount?: number;
 }
 
 export interface RoleEditProps
-  extends Omit<RoleProps, 'hatId' | 'wearerAddress' | 'handleRoleClick'> {
+  extends Omit<RoleProps, 'hatId' | 'wearerAddress' | 'handleRoleClick' | 'paymentsCount'> {
   handleRoleClick: () => void;
   wearerAddress: string | undefined;
+  payments?: SablierPaymentFormValues[];
 }
 
 export enum EditBadgeStatus {
@@ -85,16 +82,17 @@ export interface DurationBreakdown {
   days: number;
 }
 
-export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
+export interface RoleHatFormValue extends Omit<DecentRoleHat, 'wearer' | 'payments'> {
   wearer: string;
   editedRole?: EditedRole;
-  payments?: SablierPayment[];
+  payments?: SablierPaymentFormValues[];
+  roleEditingPaymentIndex?: number;
 }
 
 export interface RoleFormValues {
   proposalMetadata: CreateProposalMetadata;
-  hats: RoleValue[];
-  roleEditing?: RoleValue;
+  hats: RoleHatFormValue[];
+  roleEditing?: RoleHatFormValue;
   customNonce?: number;
 }
 

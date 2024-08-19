@@ -15,10 +15,10 @@ import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deploymen
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/sepolia/VotesERC20.json' assert { type: 'json' };
 import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/sepolia/VotesERC20Wrapper.json' assert { type: 'json' };
 import {
+  getCompatibilityFallbackHandlerDeployment,
   getMultiSendCallOnlyDeployment,
   getProxyFactoryDeployment,
   getSafeL2SingletonDeployment,
-  getCompatibilityFallbackHandlerDeployment,
 } from '@safe-global/safe-deployments';
 import { sepolia } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
@@ -67,7 +67,8 @@ const sepoliaConfig: NetworkConfig = {
       version: SAFE_VERSION,
       network: sepolia.id.toString(),
     })?.networkAddresses[sepolia.id.toString()]!,
-    zodiacModuleProxyFactory: ModuleProxyFactory.address,
+    zodiacModuleProxyFactory: '0x000000000000aDdB49795b0f9bA5BC298cDda236',
+    zodiacModuleProxyFactoryOld: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
