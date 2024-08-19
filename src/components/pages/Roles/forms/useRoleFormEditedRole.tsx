@@ -2,7 +2,7 @@ import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
 import { zeroAddress } from 'viem';
 import { DecentTree } from '../../../../store/roles';
-import { RoleValue, EditedRole, EditBadgeStatus, RoleFormValues } from '../types';
+import { RoleHatFormValue, EditedRole, EditBadgeStatus, RoleFormValues } from '../types';
 
 const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: boolean) => {
   if (fieldNames.includes(fieldName) && isRemoved) {
@@ -16,7 +16,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
   const existingRoleHat = useMemo(
     () =>
       hatsTree?.roleHats.find(
-        (role: RoleValue) =>
+        (role: RoleHatFormValue) =>
           !!values.roleEditing && role.id === values.roleEditing.id && role.id !== zeroAddress,
       ),
     [values.roleEditing, hatsTree],
@@ -44,12 +44,12 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
       const hasCliffChanged =
         !!payment.cliffDate &&
         !!existingPayment.cliffDate &&
-        payment.cliffDate.getTime() !== existingPayment.cliffDate.getTime();
+        payment.cliffDate?.getTime() !== existingPayment.cliffDate.getTime();
       const hasAmountChanged = payment.amount !== existingPayment.amount;
-      const hasAssetChanged = payment.asset.address !== existingPayment.asset.address;
+      const hasAssetChanged = payment.asset?.address !== existingPayment.asset.address;
       const hasStartDateChanged =
-        payment.startDate.getTime() !== existingPayment.startDate.getTime();
-      const hasEndDateChanged = payment.endDate.getTime() !== existingPayment.endDate.getTime();
+        payment.startDate?.getTime() !== existingPayment.startDate.getTime();
+      const hasEndDateChanged = payment.endDate?.getTime() !== existingPayment.endDate.getTime();
 
       return (
         hasAddedCliff ||

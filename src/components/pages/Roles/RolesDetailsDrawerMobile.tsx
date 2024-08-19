@@ -8,10 +8,10 @@ import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
 import { RolePaymentDetails } from './RolePaymentDetails';
-import { RoleValue, SablierPayment } from './types';
+import { SablierPayment } from './types';
 
 interface RoleDetailsDrawerMobileProps {
-  roleHat: DecentRoleHat | RoleValue;
+  roleHat: DecentRoleHat;
   payments?: SablierPayment[];
   onOpen?: () => void;
   onClose?: () => void;

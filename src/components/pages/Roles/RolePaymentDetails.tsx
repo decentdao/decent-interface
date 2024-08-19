@@ -16,7 +16,7 @@ import { DecentRoleHat } from '../../../store/roles';
 import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
-import { RoleValue, SablierPayment } from './types';
+import { RoleHatFormValue, SablierPaymentOrPartial } from './types';
 
 function PaymentDate({ label, date }: { label: string; date?: Date }) {
   const { t } = useTranslation(['roles']);
@@ -63,8 +63,8 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 }
 
 interface RolePaymentDetailsProps {
-  roleHat?: DecentRoleHat | RoleValue;
-  payment: SablierPayment;
+  roleHat?: DecentRoleHat | RoleHatFormValue;
+  payment: SablierPaymentOrPartial;
   onClick?: () => void;
   showWithdraw?: boolean;
 }
@@ -121,7 +121,7 @@ export function RolePaymentDetails({
   }, [addressPrefix, navigate, safe?.address, withdraw]);
 
   const amountPerWeek = useMemo(() => {
-    if (!payment.amount?.bigintValue) {
+    if (!payment.amount?.bigintValue || !payment.startDate || !payment.endDate) {
       return;
     }
 
@@ -139,7 +139,7 @@ export function RolePaymentDetails({
     }
     // @todo add price support for tokens not found in assetsFungible
     const foundAsset = assetsFungible.find(
-      asset => getAddress(asset.tokenAddress) === payment.asset.address,
+      asset => getAddress(asset.tokenAddress) === payment.asset?.address,
     );
     if (!foundAsset || foundAsset.usdPrice === undefined) {
       return;
