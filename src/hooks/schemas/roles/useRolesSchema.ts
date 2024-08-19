@@ -28,10 +28,12 @@ export const useRolesSchema = () => {
           // @dev finds the parent asset address from the formik context `from` array
           const parentAssetAddress: string | undefined = cxt.from[1].value.asset.address;
           if (!parentAssetAddress) return false;
-          const asset = assetsFungible.find(_asset => _asset.tokenAddress === parentAssetAddress);
+          const asset = assetsFungible.find(_asset => {
+            return _asset.tokenAddress === parentAssetAddress;
+          });
           if (!asset) return false;
 
-          return !isNaN(Number(value)) && value >= 0 && value <= BigInt(asset.balance);
+          return value >= 0 && value <= BigInt(asset.balance);
         },
       }),
   });
