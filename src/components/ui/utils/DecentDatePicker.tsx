@@ -146,7 +146,6 @@ function DecentDatePickerContainer({
                 <DatePickerTrigger selectedDate={selectedDate} />
               </MenuButton>
               <MenuList zIndex={2}>
-                {' '}
                 <Flex
                   flexDir="column"
                   justifySelf="center"
