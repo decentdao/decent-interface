@@ -84,7 +84,6 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   }, [
     address,
     baseContracts,
-    votesToken?.decimals,
     governanceContracts.ozLinearVotingContractAddress,
     proposal.proposalId,
     votesToken?.decimals,
