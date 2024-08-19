@@ -262,7 +262,11 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearer}
                 handleRoleClick={handleRoleClick}
-                paymentsCount={role.payments?.length}
+                paymentsCount={
+                  role.payments === undefined
+                    ? undefined
+                    : role.payments.filter(p => p.isStreaming()).length
+                }
               />
             ))}
           </Tbody>
