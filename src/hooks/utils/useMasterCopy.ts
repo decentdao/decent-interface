@@ -1,7 +1,7 @@
 import { ModuleProxyFactory } from '@fractal-framework/fractal-contracts';
 import { Contract } from 'ethers';
 import { useCallback } from 'react';
-import { Address, zeroAddress } from 'viem';
+import { Address, getAddress, zeroAddress } from 'viem';
 import { getEventRPC } from '../../helpers';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -10,7 +10,10 @@ import { getValue, setValue } from './cache/useLocalStorage';
 
 export function useMasterCopy() {
   const { baseContracts } = useFractal();
-  const { chain } = useNetworkConfig();
+  const {
+    chain,
+    contracts: { zodiacModuleProxyFactoryOld },
+  } = useNetworkConfig();
 
   const isOzLinearVoting = useCallback(
     (masterCopyAddress: Address) =>
@@ -54,18 +57,20 @@ export function useMasterCopy() {
       const cachedValue = getValue({
         cacheName: CacheKeys.MASTER_COPY,
         chainId: chain.id,
+        moduleProxyFactoryAddress: getAddress(contract.address),
         proxyAddress,
       });
       if (cachedValue) return [cachedValue, null] as const;
 
       const filter = contract.filters.ModuleProxyCreation(proxyAddress, null);
       return contract.queryFilter(filter).then(proxiesCreated => {
-        // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
         if (proxiesCreated.length === 0) {
+          // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
           setValue(
             {
               cacheName: CacheKeys.MASTER_COPY,
               chainId: chain.id,
+              moduleProxyFactoryAddress: getAddress(contract.address),
               proxyAddress,
             },
             zeroAddress,
@@ -78,6 +83,7 @@ export function useMasterCopy() {
           {
             cacheName: CacheKeys.MASTER_COPY,
             chainId: chain.id,
+            moduleProxyFactoryAddress: getAddress(contract.address),
             proxyAddress,
           },
           masterCopyAddress,
@@ -91,12 +97,20 @@ export function useMasterCopy() {
   const getZodiacModuleProxyMasterCopyData = useCallback(
     async function (proxyAddress: Address) {
       let masterCopyAddress: Address = zeroAddress;
-      let error;
+      let error: string | null = null;
       if (baseContracts) {
         const contract = getEventRPC<ModuleProxyFactory>(
           baseContracts?.zodiacModuleProxyFactoryContract,
         );
         [masterCopyAddress, error] = await getMasterCopyAddress(contract, proxyAddress);
+        // @dev checks Zodiac's ModuleProxyFactory Contract if the first one fails.
+        if (error) {
+          const moduleProxyFactoryOld = contract.attach(zodiacModuleProxyFactoryOld);
+          [masterCopyAddress, error] = await getMasterCopyAddress(
+            moduleProxyFactoryOld,
+            proxyAddress,
+          );
+        }
         if (error) {
           console.error(error);
         }
@@ -122,6 +136,7 @@ export function useMasterCopy() {
       isOzLinearVoting,
       isOzLinearVotingERC721,
       baseContracts,
+      zodiacModuleProxyFactoryOld,
     ],
   );
 

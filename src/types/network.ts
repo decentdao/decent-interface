@@ -27,6 +27,7 @@ export type NetworkConfig = {
     safeFactory: string;
     fallbackHandler: string;
     zodiacModuleProxyFactory: string;
+    zodiacModuleProxyFactoryOld: string;
     linearVotingMasterCopy: string;
     multisend: string;
     fractalAzoriusMasterCopy: string;
