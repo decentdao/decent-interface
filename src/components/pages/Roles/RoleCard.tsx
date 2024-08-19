@@ -16,11 +16,11 @@ import { EditBadgeStatus, RoleEditProps, RoleProps, SablierPaymentOrPartial } fr
 export function AvatarAndRoleName({
   wearerAddress,
   name,
-  payments,
+  paymentsCount,
 }: {
   wearerAddress: string | undefined;
   name: string;
-  payments?: SablierPaymentOrPartial[];
+  paymentsCount?: number;
 }) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
@@ -61,7 +61,7 @@ export function AvatarAndRoleName({
         >
           {wearerAddress ? accountDisplayName : t('unassigned')}
         </Text>
-        {payments && (
+        {paymentsCount !== undefined && (
           <Flex
             mt="1rem"
             gap="0.25rem"
@@ -87,7 +87,7 @@ export function AvatarAndRoleName({
                 lineHeight="1rem"
                 align="center"
               >
-                {payments.length}
+                {paymentsCount}
               </Text>
             </Box>
           </Flex>
@@ -177,7 +177,7 @@ function Payment({ payment }: { payment: SablierPaymentOrPartial | undefined }) 
 export function RoleCard({
   name,
   wearerAddress,
-  payments,
+  paymentsCount,
   editStatus,
   handleRoleClick,
   hatId,
@@ -191,7 +191,7 @@ export function RoleCard({
         <AvatarAndRoleName
           wearerAddress={wearerAddress}
           name={name}
-          payments={payments}
+          paymentsCount={paymentsCount}
         />
         <Flex
           alignItems="center"

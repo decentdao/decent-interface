@@ -33,13 +33,14 @@ export interface RoleProps {
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  payments?: SablierPaymentOrPartial[];
+  paymentsCount?: number;
 }
 
 export interface RoleEditProps
-  extends Omit<RoleProps, 'hatId' | 'wearerAddress' | 'handleRoleClick'> {
+  extends Omit<RoleProps, 'hatId' | 'wearerAddress' | 'handleRoleClick' | 'paymentsCount'> {
   handleRoleClick: () => void;
   wearerAddress: string | undefined;
+  payments?: SablierPaymentFormValues[];
 }
 
 export enum EditBadgeStatus {
