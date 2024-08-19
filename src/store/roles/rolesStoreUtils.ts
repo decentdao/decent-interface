@@ -1,7 +1,20 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, encodePacked, getContract, keccak256, toHex } from 'viem';
+import {
+  Address,
+  Hex,
+  PublicClient,
+  encodePacked,
+  getContract,
+  keccak256,
+  toHex,
+  getAddress,
+} from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
-import { RoleValue, SablierPayment } from '../../components/pages/Roles/types';
+import {
+  RoleHatFormValue,
+  SablierPayment,
+  SablierPaymentFormValues,
+} from '../../components/pages/Roles/types';
 import { getRandomBytes } from '../../helpers';
 
 export class DecentHatsError extends Error {
@@ -305,7 +318,7 @@ export async function getNewRole({
 }: {
   adminHatId?: Hex;
   hatsCount: number;
-} & Omit<PredictAccountParams, 'tokenId'>): Promise<RoleValue> {
+} & Omit<PredictAccountParams, 'tokenId'>): Promise<RoleHatFormValue> {
   // @dev creates a unique id for the hat for new hats for use in form, not stored on chain
   const id = adminHatId
     ? toHex(predictHatId({ adminHatId, hatsCount }))
@@ -327,3 +340,37 @@ export async function getNewRole({
     }),
   };
 }
+
+export const normalizePaymentFormData = (payment: SablierPaymentFormValues): SablierPayment => {
+  if (
+    !payment.streamId ||
+    !payment.contractAddress ||
+    !payment.asset ||
+    !payment.amount ||
+    !payment.startDate ||
+    !payment.endDate
+  ) {
+    throw new Error('Form not properly filled out');
+  }
+  return {
+    streamId: payment.streamId,
+    contractAddress: payment.contractAddress,
+    asset: payment.asset,
+    amount: payment.amount,
+    startDate: payment.startDate,
+    endDate: payment.endDate,
+    cliffDate: payment.cliffDate,
+  };
+};
+
+export const normalizeRoleFormData = (role: RoleHatFormValue): DecentRoleHat => {
+  return {
+    id: role.id,
+    prettyId: role.prettyId,
+    wearer: getAddress(role.wearer),
+    name: role.name,
+    description: role.description,
+    smartAddress: role.smartAddress,
+    payments: role.payments?.map(payment => normalizePaymentFormData(payment)),
+  };
+};
