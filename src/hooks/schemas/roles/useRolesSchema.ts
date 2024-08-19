@@ -67,6 +67,7 @@ export const useRolesSchema = () => {
                             startDate: Yup.date().required(
                               t('roleInfoErrorPaymentFixedDateStartDateRequired'),
                             ),
+                            cliffDate: Yup.date().nullable().default(undefined),
                             endDate: Yup.date().required(
                               t('roleInfoErrorPaymentFixedDateEndDateRequired'),
                             ),
@@ -78,6 +79,16 @@ export const useRolesSchema = () => {
                               if (!_payments) return false;
                               const { startDate, endDate } = _payments;
                               return endDate > startDate;
+                            },
+                          })
+                          .test({
+                            name: 'cliff-date-before-end-date',
+                            message: t('roleInfoErrorPaymentFixedDateCliffDateBeforeEndDate'),
+                            test: _payments => {
+                              if (!_payments) return false;
+                              const { cliffDate, startDate, endDate } = _payments;
+                              if (!cliffDate) return true;
+                              return cliffDate > startDate && cliffDate < endDate;
                             },
                           }),
                     }),
