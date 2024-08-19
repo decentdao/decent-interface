@@ -15,7 +15,6 @@ import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import { Field, FormikErrors, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
@@ -199,13 +198,10 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         isDisabled={!values?.roleEditing?.payments?.[formIndex]}
         onClick={() => {
           if (!values?.roleEditing?.payments?.[formIndex]) return;
-
-          const isExistingPayment =
-            values.roleEditing.payments[formIndex].streamId &&
-            getPayment(
-              values.roleEditing.id,
-              getAddress(values.roleEditing.payments[formIndex].streamId ?? ''),
-            );
+          const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
+          const isExistingPayment = !!streamId
+            ? getPayment(values.roleEditing.id, streamId)
+            : undefined;
           // if payment is new, and unedited, remove it
           if (
             formIndex === values.roleEditing.payments.length - 1 &&
