@@ -16,8 +16,7 @@ import {
   RoleEditProps,
   RoleFormValues,
   RoleProps,
-  SablierPayment,
-  SablierPaymentFormValues,
+  SablierPaymentOrPartial,
 } from './types';
 
 function RolesHeader() {
@@ -135,11 +134,7 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
   );
 }
 
-function PaymentsColumn({
-  payments,
-}: {
-  payments?: (SablierPayment | SablierPaymentFormValues)[];
-}) {
+function PaymentsColumn({ payments }: { payments?: SablierPaymentOrPartial[] }) {
   const { t } = useTranslation('common');
   return (
     <Td

@@ -26,13 +26,14 @@ export interface SablierPayment extends BaseSablierStream {
 
 export interface SablierPaymentFormValues extends Partial<SablierPayment> {}
 
+export type SablierPaymentOrPartial = SablierPayment | SablierPaymentFormValues;
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
   handleRoleClick: (hatId: Address) => void;
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  payments?: (SablierPayment | SablierPaymentFormValues)[];
+  payments?: SablierPaymentOrPartial[];
 }
 
 export interface RoleEditProps

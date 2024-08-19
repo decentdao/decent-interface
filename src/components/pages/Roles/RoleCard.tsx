@@ -11,13 +11,7 @@ import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import {
-  EditBadgeStatus,
-  RoleEditProps,
-  RoleProps,
-  SablierPayment,
-  SablierPaymentFormValues,
-} from './types';
+import { EditBadgeStatus, RoleEditProps, RoleProps, SablierPaymentOrPartial } from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -26,7 +20,7 @@ export function AvatarAndRoleName({
 }: {
   wearerAddress: string | undefined;
   name: string;
-  payments?: (SablierPayment | SablierPaymentFormValues)[];
+  payments?: SablierPaymentOrPartial[];
 }) {
   const { addressPrefix } = useNetworkConfig();
   const { daoName: accountDisplayName } = useGetDAOName({
@@ -103,7 +97,7 @@ export function AvatarAndRoleName({
   );
 }
 
-function Payment({ payment }: { payment: SablierPayment | SablierPaymentFormValues | undefined }) {
+function Payment({ payment }: { payment: SablierPaymentOrPartial | undefined }) {
   const { t } = useTranslation(['roles']);
   const format = ['years', 'days', 'hours'];
   const endDate =
