@@ -173,7 +173,8 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
   const { getPayment } = useRolesStore();
-  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)?.payments;
+  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
+    ?.payments;
   return (
     <Box
       px={{ base: '1rem', md: 0 }}

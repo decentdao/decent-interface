@@ -1,7 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { SablierPayment, RoleHatFormValue, RoleFormValues } from '../../../components/pages/Roles/types';
+import {
+  SablierPayment,
+  RoleHatFormValue,
+  RoleFormValues,
+} from '../../../components/pages/Roles/types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
