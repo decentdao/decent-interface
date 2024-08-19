@@ -11,14 +11,7 @@ import { getChainIdFromPrefix } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
-import {
-  EditBadgeStatus,
-  RoleEditProps,
-  RoleFormValues,
-  RoleProps,
-  SablierPayment,
-  SablierPaymentFormValues,
-} from './types';
+import { EditBadgeStatus, RoleEditProps, RoleFormValues, RoleProps } from './types';
 
 function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -135,11 +128,7 @@ function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) 
   );
 }
 
-function PaymentsColumn({
-  payments,
-}: {
-  payments?: (SablierPayment | SablierPaymentFormValues)[];
-}) {
+function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
   const { t } = useTranslation('common');
   return (
     <Td
@@ -149,7 +138,7 @@ function PaymentsColumn({
       color="neutral-5"
       textStyle="body-base"
     >
-      {payments ? (
+      {paymentsCount !== undefined ? (
         <Box
           as="span"
           display="inline-block"
@@ -164,7 +153,7 @@ function PaymentsColumn({
           w="1.25rem"
           h="1.25rem"
         >
-          {payments.length}
+          {paymentsCount}
         </Box>
       ) : (
         t('none')
@@ -173,7 +162,13 @@ function PaymentsColumn({
   );
 }
 
-export function RolesRow({ name, wearerAddress, payments, handleRoleClick, hatId }: RoleProps) {
+export function RolesRow({
+  name,
+  wearerAddress,
+  paymentsCount,
+  handleRoleClick,
+  hatId,
+}: RoleProps) {
   return (
     <Tr
       sx={{
@@ -196,7 +191,7 @@ export function RolesRow({ name, wearerAddress, payments, handleRoleClick, hatId
         {name}
       </Td>
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentsColumn payments={payments} />
+      <PaymentsColumn paymentsCount={paymentsCount} />
     </Tr>
   );
 }
@@ -226,7 +221,7 @@ export function RolesRowEdit({
         editStatus={editStatus}
       />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentsColumn payments={payments} />
+      <PaymentsColumn paymentsCount={payments?.length} />
     </Tr>
   );
 }
@@ -267,7 +262,7 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearer}
                 handleRoleClick={handleRoleClick}
-                payments={role.payments}
+                paymentsCount={role.payments?.length}
               />
             ))}
           </Tbody>

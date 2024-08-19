@@ -16,7 +16,7 @@ import { DecentRoleHat } from '../../../store/roles';
 import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
-import { RoleValue, SablierPayment, SablierPaymentFormValues } from './types';
+import { RoleHatFormValue, SablierPaymentOrPartial } from './types';
 
 function PaymentDate({ label, date }: { label: string; date?: Date }) {
   const { t } = useTranslation(['roles']);
@@ -63,8 +63,8 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 }
 
 interface RolePaymentDetailsProps {
-  roleHat?: DecentRoleHat | RoleValue;
-  payment: SablierPayment | SablierPaymentFormValues;
+  roleHat?: DecentRoleHat | RoleHatFormValue;
+  payment: SablierPaymentOrPartial;
   onClick?: () => void;
   showWithdraw?: boolean;
 }

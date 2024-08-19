@@ -1,7 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { SablierPayment, RoleValue, RoleFormValues } from '../../../components/pages/Roles/types';
+import {
+  SablierPayment,
+  RoleHatFormValue,
+  RoleFormValues,
+} from '../../../components/pages/Roles/types';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useValidationAddress } from '../common/useValidationAddress';
 
@@ -45,7 +49,7 @@ export const useRolesSchema = () => {
           .default(undefined)
           .nullable()
           .when({
-            is: (roleEditing: RoleValue) => roleEditing !== undefined,
+            is: (roleEditing: RoleHatFormValue) => roleEditing !== undefined,
             then: _roleEditingSchema =>
               _roleEditingSchema.shape({
                 name: Yup.string().required(t('roleInfoErrorNameRequired')),

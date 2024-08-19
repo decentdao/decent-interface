@@ -8,16 +8,17 @@ import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { DecentRoleHat, normalizeRoleFormData } from '../../../../store/roles';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
-import { RoleFormValues, RoleValue } from '../types';
+import { RoleFormValues } from '../types';
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
-  const [drawerViewingRole, setDrawerViewingRole] = useState<RoleValue>();
+  const [drawerViewingRole, setDrawerViewingRole] = useState<DecentRoleHat>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
   const { values, isSubmitting, submitForm } = useFormikContext<RoleFormValues>();
   const editedRoles = useMemo(() => {
@@ -127,7 +128,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             key={index}
             name={role.name}
             handleRoleClick={() => {
-              setDrawerViewingRole(role);
+              setDrawerViewingRole(normalizeRoleFormData(role));
             }}
             editStatus={role.editedRole?.status}
           />
