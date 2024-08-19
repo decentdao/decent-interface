@@ -147,16 +147,6 @@ export function RolePaymentDetails({
     return Number(payment.amount.value) * foundAsset.usdPrice;
   }, [payment.amount, payment.asset?.address, assetsFungible]);
 
-  const start =
-    payment.cliffDate === undefined && payment.startDate !== undefined
-      ? payment.startDate.getTime()
-      : payment.cliffDate !== undefined
-        ? payment.cliffDate.getTime()
-        : undefined;
-
-  const end = payment.endDate ? payment.endDate.getTime() : undefined;
-  const now = new Date().getTime();
-  const isStreaming = !!start && !!end && start <= now && end > now;
   return (
     <Box
       boxShadow={DETAILS_SHADOW}
@@ -222,7 +212,7 @@ export function RolePaymentDetails({
                 alignItems="center"
                 gap="0.5rem"
               >
-                <GreenStreamingDot isStreaming={isStreaming} />
+                <GreenStreamingDot isStreaming={payment.isStreaming()} />
                 <Text
                   textStyle="label-small"
                   color="white-0"

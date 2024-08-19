@@ -22,9 +22,12 @@ export interface SablierPayment extends BaseSablierStream {
   startDate: Date;
   endDate: Date;
   cliffDate: Date | undefined;
+  isStreaming: () => boolean;
 }
 
-export interface SablierPaymentFormValues extends Partial<SablierPayment> {}
+export interface SablierPaymentFormValues extends Partial<SablierPayment> {
+  isStreaming: () => boolean;
+}
 
 export type SablierPaymentOrPartial = SablierPayment | SablierPaymentFormValues;
 export interface RoleProps {

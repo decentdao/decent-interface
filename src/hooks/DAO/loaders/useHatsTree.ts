@@ -176,6 +176,13 @@ const useHatsTree = () => {
                     BigInt(lockupLinearStream.depositAmount),
                     lockupLinearStream.asset.decimals,
                   );
+
+                  const startDate = secondsTimestampToDate(lockupLinearStream.startTime);
+                  const endDate = secondsTimestampToDate(lockupLinearStream.endTime);
+                  const cliffDate = lockupLinearStream.cliff
+                    ? secondsTimestampToDate(lockupLinearStream.cliffTime)
+                    : undefined;
+
                   return {
                     streamId: lockupLinearStream.id,
                     contractAddress: lockupLinearStream.contract.address,
@@ -193,11 +200,23 @@ const useHatsTree = () => {
                       bigintValue: BigInt(lockupLinearStream.depositAmount),
                       value: parsedAmount,
                     },
-                    startDate: secondsTimestampToDate(lockupLinearStream.startTime),
-                    endDate: secondsTimestampToDate(lockupLinearStream.endTime),
-                    cliffDate: lockupLinearStream.cliff
-                      ? secondsTimestampToDate(lockupLinearStream.cliffTime)
-                      : undefined,
+                    startDate,
+                    endDate,
+                    cliffDate,
+                    isStreaming: () => {
+                      const start =
+                        lockupLinearStream.cliff === undefined &&
+                        lockupLinearStream.startTime !== undefined
+                          ? startDate.getTime()
+                          : cliffDate !== undefined
+                            ? cliffDate.getTime()
+                            : undefined;
+
+                      const end = endDate ? endDate.getTime() : undefined;
+                      const now = new Date().getTime();
+                      const isStreaming = !!start && !!end && start <= now && end > now;
+                      return isStreaming;
+                    },
                   };
                 },
               );
