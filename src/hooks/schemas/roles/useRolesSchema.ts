@@ -6,20 +6,35 @@ import {
   RoleHatFormValue,
   RoleFormValues,
 } from '../../../components/pages/Roles/types';
+import { useFractal } from '../../../providers/App/AppProvider';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
   const { t } = useTranslation(['roles']);
+  const {
+    treasury: { assetsFungible },
+  } = useFractal();
   const { addressValidationTest } = useValidationAddress();
 
-  const bigIntValidationSchema = Yup.object()
-    .shape({
-      value: Yup.string(),
-      bigintValue: Yup.mixed().nullable(),
-      // @todo - add validation for balance bigger than entered amount
-      // It's problematic at the moment due to how streams are passed into Zustand store
-    })
-    .required();
+  const bigIntValidationSchema = Yup.object().shape({
+    value: Yup.string().required(t('roleInfoErrorPaymentAmountRequired')),
+    bigintValue: Yup.mixed<bigint>()
+      .nullable()
+      .test({
+        name: 'bigInt',
+        message: t('roleInfoErrorPaymentInvalidAmount'),
+        test: (value, cxt) => {
+          if (!value || !cxt.from) return false;
+          // @dev finds the parent asset address from the formik context `from` array
+          const parentAssetAddress: string | undefined = cxt.from[1].value.asset.address;
+          if (!parentAssetAddress) return false;
+          const asset = assetsFungible.find(_asset => _asset.tokenAddress === parentAssetAddress);
+          if (!asset) return false;
+
+          return !isNaN(Number(value)) && value >= 0 && value <= BigInt(asset.balance);
+        },
+      }),
+  });
 
   const assetValidationSchema = Yup.object().shape({
     address: Yup.string(),
@@ -56,6 +71,7 @@ export const useRolesSchema = () => {
                             startDate: Yup.date().required(
                               t('roleInfoErrorPaymentFixedDateStartDateRequired'),
                             ),
+                            cliffDate: Yup.date().nullable().default(undefined),
                             endDate: Yup.date().required(
                               t('roleInfoErrorPaymentFixedDateEndDateRequired'),
                             ),
@@ -67,6 +83,16 @@ export const useRolesSchema = () => {
                               if (!_payments) return false;
                               const { startDate, endDate } = _payments;
                               return endDate > startDate;
+                            },
+                          })
+                          .test({
+                            name: 'cliff-date-before-end-date',
+                            message: t('roleInfoErrorPaymentFixedDateCliffDateBeforeEndDate'),
+                            test: _payments => {
+                              if (!_payments) return false;
+                              const { cliffDate, startDate, endDate } = _payments;
+                              if (!cliffDate) return true;
+                              return cliffDate > startDate && cliffDate < endDate;
                             },
                           }),
                     }),
