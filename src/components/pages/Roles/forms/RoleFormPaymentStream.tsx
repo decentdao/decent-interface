@@ -1,115 +1,22 @@
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  Grid,
-  GridItem,
-  Icon,
-  Menu,
-  MenuButton,
-  MenuList,
-  Show,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, Grid, GridItem, Icon } from '@chakra-ui/react';
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
-import { Field, FormikErrors, useFormikContext } from 'formik';
-import { useState } from 'react';
+import { FormikErrors, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
-import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
-import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
-import { DatePickerTrigger } from '../DatePickerTrigger';
+import { DecentDatePicker, DecentDatePickerRange } from '../../../ui/utils/DecentDatePicker';
 import { RoleFormValues, RoleValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
-function PaymentDatePicker({
-  type,
-  formIndex,
-}: {
-  type: 'startDate' | 'endDate' | 'cliffDate';
-  formIndex: number;
-}) {
-  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
-
-  const selectedDate = values.roleEditing?.payments?.[formIndex][type];
-
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const isCliffDate = type === 'cliffDate';
-
-  const onCliffDateChange = isCliffDate
-    ? (date: Date) => {
-        setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, date);
-      }
-    : undefined;
-
-  const onDateRangeChange = !isCliffDate
-    ? (dateRange: Date[]) => {
-        setFieldValue(`roleEditing.payments[${formIndex}].startDate`, dateRange[0]);
-        setFieldValue(`roleEditing.payments[${formIndex}].endDate`, dateRange[1]);
-      }
-    : undefined;
-
-  return (
-    <Field name={`roleEditing.payments[${formIndex}].${type}`}>
-      {() => (
-        <>
-          <Show below="md">
-            <Button
-              onClick={() => setIsDrawerOpen(true)}
-              variant="unstyled"
-              p="0"
-              flex={1}
-              w="full"
-            >
-              <DatePickerTrigger selectedDate={selectedDate} />
-            </Button>
-
-            <DraggableDrawer
-              isOpen={isDrawerOpen}
-              headerContent={undefined}
-              onOpen={() => {}}
-              onClose={() => setIsDrawerOpen(false)}
-            >
-              <DecentDatePicker
-                isRange={!isCliffDate}
-                onChange={onCliffDateChange}
-                onRangeChange={onDateRangeChange}
-              />
-            </DraggableDrawer>
-          </Show>
-
-          <Show above="md">
-            <Menu placement="top-start">
-              <MenuButton
-                as={Button}
-                variant="unstyled"
-                p="0"
-                w="full"
-              >
-                <DatePickerTrigger selectedDate={selectedDate} />
-              </MenuButton>
-              <MenuList zIndex={2}>
-                <DecentDatePicker
-                  isRange={!isCliffDate}
-                  onChange={onCliffDateChange}
-                  onRangeChange={onDateRangeChange}
-                />
-              </MenuList>
-            </Menu>
-          </Show>
-        </>
-      )}
-    </Field>
-  );
-}
-
 function FixedDate({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
-
+  const { setFieldValue } = useFormikContext<RoleFormValues>();
+  const onRangeChange = (dateRange: [Date, Date]) => {
+    setFieldValue(`roleEditing.payments[${formIndex}].startDate`, dateRange[0]);
+    setFieldValue(`roleEditing.payments[${formIndex}].endDate`, dateRange[1]);
+  };
   return (
     <Box>
       <FormControl my="1rem">
@@ -127,9 +34,10 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           alignItems="center"
         >
           <GridItem area="start">
-            <PaymentDatePicker
+            <DecentDatePickerRange
               type="startDate"
               formIndex={formIndex}
+              onChange={onRangeChange}
             />
           </GridItem>
           <GridItem
@@ -144,9 +52,10 @@ function FixedDate({ formIndex }: { formIndex: number }) {
             />
           </GridItem>
           <GridItem area="end">
-            <PaymentDatePicker
+            <DecentDatePickerRange
               type="endDate"
               formIndex={formIndex}
+              onChange={onRangeChange}
             />
           </GridItem>
         </Grid>
@@ -161,9 +70,12 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           title={t('cliff')}
           subTitle={t('cliffSubTitle')}
         />
-        <PaymentDatePicker
+        <DecentDatePicker
           type="cliffDate"
           formIndex={formIndex}
+          onChange={(date: Date) => {
+            setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, date);
+          }}
         />
       </FormControl>
     </Box>
