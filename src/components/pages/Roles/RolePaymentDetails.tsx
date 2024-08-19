@@ -121,7 +121,7 @@ export function RolePaymentDetails({
   }, [addressPrefix, navigate, safe?.address, withdraw]);
 
   const amountPerWeek = useMemo(() => {
-    if (!payment.amount.bigintValue) {
+    if (!payment.amount?.bigintValue) {
       return;
     }
 
@@ -148,10 +148,15 @@ export function RolePaymentDetails({
   }, [payment.amount, payment.asset?.address, assetsFungible]);
 
   const start =
-    payment.cliffDate === undefined ? payment.startDate.getTime() : payment.cliffDate.getTime();
-  const end = payment.endDate.getTime();
+    payment.cliffDate === undefined && payment.startDate !== undefined
+      ? payment.startDate.getTime()
+      : payment.cliffDate !== undefined
+        ? payment.cliffDate.getTime()
+        : undefined;
+
+  const end = payment.endDate ? payment.endDate.getTime() : undefined;
   const now = new Date().getTime();
-  const isStreaming = start <= now && end > now;
+  const isStreaming = !!start && !!end && start <= now && end > now;
   return (
     <Box
       boxShadow={DETAILS_SHADOW}
