@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import * as Yup from 'yup';
 import {
-  SablierPayment,
-  RoleHatFormValue,
   RoleFormValues,
+  RoleHatFormValue,
+  SablierPayment,
 } from '../../../components/pages/Roles/types';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useValidationAddress } from '../common/useValidationAddress';
@@ -28,9 +29,9 @@ export const useRolesSchema = () => {
           // @dev finds the parent asset address from the formik context `from` array
           const parentAssetAddress: string | undefined = cxt.from[1].value.asset.address;
           if (!parentAssetAddress) return false;
-          const asset = assetsFungible.find(_asset => {
-            return _asset.tokenAddress === parentAssetAddress;
-          });
+          const asset = assetsFungible.find(
+            _asset => getAddress(_asset.tokenAddress) === getAddress(parentAssetAddress),
+          );
           if (!asset) return false;
 
           return value >= 0 && value <= BigInt(asset.balance);
