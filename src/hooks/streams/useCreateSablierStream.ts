@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { Address, Hex, encodeFunctionData, erc20Abi, getAddress, zeroAddress } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
-import { BaseSablierStream, SablierPayment } from '../../components/pages/Roles/types';
+import { BaseSablierStream, SablierPaymentFormValues } from '../../components/pages/Roles/types';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 
@@ -126,8 +126,9 @@ export default function useCreateSablierStream() {
   }, []);
 
   const prepareBatchLinearStreamCreation = useCallback(
-    (linearStreams: SablierPayment[], recipients: Address[]) => {
+    (linearStreams: SablierPaymentFormValues[], recipients: Address[]) => {
       if (linearStreams.length !== recipients.length) {
+        console.error('Error batch creating linear streams', { linearStreams, recipients });
         throw new Error(
           'Parameters mismatch. Amount of created streams has to match amount of recipients',
         );
@@ -144,7 +145,12 @@ export default function useCreateSablierStream() {
         let totalStreamsAmount = 0n;
 
         streams.forEach((streamData, index) => {
-          if (!streamData.amount.bigintValue || streamData.amount.bigintValue <= 0n) {
+          if (
+            !streamData?.amount?.bigintValue ||
+            streamData.amount.bigintValue <= 0n ||
+            !streamData.startDate ||
+            !streamData.endDate
+          ) {
             console.error(
               'Error creating linear stream - stream amount must be bigger than 0',
               streamData,
@@ -158,6 +164,9 @@ export default function useCreateSablierStream() {
             prepareLinearStream({
               recipient,
               ...streamData,
+              startDate: streamData.startDate,
+              endDate: streamData.endDate,
+              cliffDate: streamData.cliffDate,
               totalAmount: streamData.amount.bigintValue,
             }),
           );

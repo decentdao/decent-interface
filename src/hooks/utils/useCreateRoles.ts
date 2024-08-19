@@ -3,30 +3,25 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { zeroAddress, Address, encodeFunctionData, getAddress, Hex, Hash } from 'viem';
+import { Address, encodeFunctionData, getAddress, Hash, Hex, zeroAddress } from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats_0_1_0_Abi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import {
+  BaseSablierStream,
   EditBadgeStatus,
   HatStruct,
   HatWearerChangedParams,
-  RoleHatFormValue,
   RoleFormValues,
-  BaseSablierStream,
+  RoleHatFormValue,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import {
-  getERC6551RegistrySalt,
-  normalizePaymentFormData,
-  predictHatId,
-  useRolesStore,
-} from '../../store/roles';
+import { getERC6551RegistrySalt, predictHatId, useRolesStore } from '../../store/roles';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
@@ -523,10 +518,10 @@ export default function useCreateRoles() {
 
       if (addedNewPaymentsHats.length) {
         const streamsData = addedNewPaymentsHats.flatMap(role =>
-          (role.payments ?? []).map(payment => normalizePaymentFormData(payment)),
+          (role.payments ?? []).filter(payment => !payment.streamId),
         );
         const recipients = addedNewPaymentsHats.flatMap(role =>
-          (role.payments ?? []).map(() => role.smartAddress),
+          (role.payments ?? []).filter(payment => !payment.streamId).map(() => role.smartAddress),
         );
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
           streamsData,
@@ -547,9 +542,14 @@ export default function useCreateRoles() {
         const paymentCancelTxs: { calldata: Hex; targetAddress: Address }[] = [];
         editedPayrollHats.forEach(role =>
           (role.payments ?? []).forEach(payment => {
-            if (payment.streamId) {
+            if (payment.streamId && payment.contractAddress && payment.amount && payment.asset) {
               const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
-                normalizePaymentFormData(payment),
+                {
+                  streamId: payment.streamId,
+                  contractAddress: payment.contractAddress,
+                  amount: payment.amount,
+                  asset: payment.asset,
+                },
                 getAddress(role.wearer),
               );
               paymentCancelTxs.push({
@@ -577,7 +577,7 @@ export default function useCreateRoles() {
           }),
         );
         const streamsData = editedPayrollHats.flatMap(role =>
-          (role.payments ?? []).map(payment => normalizePaymentFormData(payment)),
+          (role.payments ?? []).filter(payment => !payment.streamId),
         );
         const recipients = editedPayrollHats.map(role => role.smartAddress);
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
