@@ -67,7 +67,8 @@ const mainnetConfig: NetworkConfig = {
       version: SAFE_VERSION,
       network: mainnet.id.toString(),
     })?.networkAddresses[mainnet.id.toString()]!,
-    zodiacModuleProxyFactory: ModuleProxyFactory.address,
+    zodiacModuleProxyFactory: '0x000000000000aDdB49795b0f9bA5BC298cDda236',
+    zodiacModuleProxyFactoryOld: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,
