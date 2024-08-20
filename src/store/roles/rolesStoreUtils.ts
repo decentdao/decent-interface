@@ -360,6 +360,7 @@ export const normalizePaymentFormData = (payment: SablierPaymentFormValues): Sab
     startDate: payment.startDate,
     endDate: payment.endDate,
     cliffDate: payment.cliffDate,
+    isStreaming: payment.isStreaming,
   };
 };
 

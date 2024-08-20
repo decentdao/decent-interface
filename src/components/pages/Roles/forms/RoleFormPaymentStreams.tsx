@@ -3,7 +3,7 @@ import { Plus } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { RolePaymentDetails } from '../RolePaymentDetails';
-import { RoleFormValues } from '../types';
+import { RoleFormValues, SablierPaymentFormValues } from '../types';
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
@@ -19,7 +19,10 @@ export function RoleFormPaymentStreams() {
             size="sm"
             leftIcon={<Plus />}
             onClick={async () => {
-              pushPayment({});
+              const newPayment: SablierPaymentFormValues = {
+                isStreaming: () => false,
+              };
+              pushPayment(newPayment);
               await validateForm();
               setFieldValue('roleEditing.roleEditingPaymentIndex', (payments ?? []).length);
             }}
