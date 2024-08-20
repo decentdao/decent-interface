@@ -32,6 +32,9 @@ export function RoleFormPaymentStreams() {
             {payments?.map((payment, index) => (
               <Flex key={index}>
                 <RolePaymentDetails
+                  // @dev used for withdraw payments, not needed here
+                  roleHatWearerAddress={'0x'}
+                  roleHatSmartAddress={'0x'}
                   payment={payment}
                   onClick={() => {
                     setFieldValue('roleEditing.roleEditingPaymentIndex', index);

@@ -3,7 +3,7 @@ import { Download } from '@phosphor-icons/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Id, toast } from 'react-toastify';
-import { encodeFunctionData, getAddress, getContract } from 'viem';
+import { Address, encodeFunctionData, getAddress, getContract } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../assets/abi/HatsAccount1ofN';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
@@ -12,28 +12,31 @@ import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablier
 import useAvatar from '../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentRoleHat } from '../../../store/roles';
 import { formatCoin } from '../../../utils';
 import { SablierPayment } from '../../pages/Roles/types';
 import Avatar, { AvatarSize } from '../page/Header/Avatar';
 
 export default function PaymentWithdrawModal({
   payment,
-  roleHat,
+  withdrawInformation,
   onSuccess,
   onClose,
-  withdrawableAmount,
 }: {
   payment: SablierPayment;
-  roleHat: DecentRoleHat;
+  withdrawInformation: {
+    roleHatSmartAddress: Address;
+    roleHatwearerAddress: Address;
+    withdrawableAmount: bigint;
+  };
   onSuccess: () => Promise<void>;
   onClose: () => void;
-  withdrawableAmount: bigint;
 }) {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { t } = useTranslation(['roles', 'menu', 'common', 'modals']);
-  const { displayName: accountDisplayName } = useDisplayName(roleHat.wearer);
+  const { displayName: accountDisplayName } = useDisplayName(
+    withdrawInformation.roleHatwearerAddress,
+  );
   const avatarURL = useAvatar(accountDisplayName);
   const iconSize = useBreakpointValue<AvatarSize>({ base: 'sm', md: 'icon' }) || 'sm';
   const { chain } = useNetworkConfig();
@@ -44,21 +47,21 @@ export default function PaymentWithdrawModal({
       payment?.streamId &&
       walletClient &&
       publicClient &&
-      roleHat.smartAddress &&
-      roleHat.wearer
+      withdrawInformation.roleHatSmartAddress &&
+      withdrawInformation.roleHatwearerAddress
     ) {
       let withdrawToast: Id | undefined = undefined;
       try {
         const hatsAccountContract = getContract({
           abi: HatsAccount1ofNAbi,
-          address: roleHat.smartAddress,
+          address: withdrawInformation.roleHatSmartAddress,
           client: walletClient,
         });
         const bigIntStreamId = convertStreamIdToBigInt(payment.streamId);
         let hatsAccountCalldata = encodeFunctionData({
           abi: SablierV2LockupLinearAbi,
           functionName: 'withdrawMax',
-          args: [bigIntStreamId, getAddress(roleHat.wearer)],
+          args: [bigIntStreamId, getAddress(withdrawInformation.roleHatwearerAddress)],
         });
         withdrawToast = toast(t('withdrawPendingMessage'), {
           autoClose: false,
@@ -95,10 +98,10 @@ export default function PaymentWithdrawModal({
     payment?.streamId,
     publicClient,
     walletClient,
-    roleHat.smartAddress,
-    roleHat.wearer,
     onSuccess,
     onClose,
+    withdrawInformation.roleHatSmartAddress,
+    withdrawInformation.roleHatwearerAddress,
     t,
   ]);
 
@@ -162,7 +165,13 @@ export default function PaymentWithdrawModal({
               textStyle="display-4xl"
               w="full"
             >
-              {formatCoin(withdrawableAmount, true, payment.asset.decimals, undefined, false)}
+              {formatCoin(
+                withdrawInformation.withdrawableAmount,
+                true,
+                payment.asset.decimals,
+                undefined,
+                false,
+              )}
             </Text>
           </Flex>
         </Flex>
@@ -188,7 +197,7 @@ export default function PaymentWithdrawModal({
             >
               <Box>
                 <Avatar
-                  address={roleHat.wearer}
+                  address={withdrawInformation.roleHatwearerAddress}
                   url={avatarURL}
                   size={iconSize}
                 />

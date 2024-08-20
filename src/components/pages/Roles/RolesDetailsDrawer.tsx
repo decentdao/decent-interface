@@ -173,7 +173,8 @@ export default function RolesDetailsDrawer({
                 <RolePaymentDetails
                   key={index}
                   payment={payment}
-                  roleHat={roleHat}
+                  roleHatSmartAddress={roleHat.smartAddress}
+                  roleHatWearerAddress={roleHat.wearer}
                   showWithdraw
                 />
               ))}

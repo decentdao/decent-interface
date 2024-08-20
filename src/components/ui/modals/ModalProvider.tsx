@@ -185,8 +185,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         modalContent = (
           <PaymentWithdrawModal
             payment={current.props.payment}
-            roleHat={current.props.roleHat}
-            withdrawableAmount={current.props.withdrawableAmount}
+            withdrawInformation={current.props.withdrawInformation}
             onSuccess={current.props.onSuccess}
             onClose={closeModal}
           />

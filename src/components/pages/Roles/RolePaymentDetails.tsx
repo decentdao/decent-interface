@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress, getContract } from 'viem';
+import { Address, getAddress, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
 import { DETAILS_SHADOW } from '../../../constants/common';
@@ -12,11 +12,10 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablierStream';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentRoleHat } from '../../../store/roles';
 import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
-import { RoleHatFormValue, SablierPaymentOrPartial } from './types';
+import { SablierPayment, SablierPaymentFormValues } from './types';
 
 function PaymentDate({ label, date }: { label: string; date?: Date }) {
   const { t } = useTranslation(['roles']);
@@ -63,8 +62,9 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 }
 
 interface RolePaymentDetailsProps {
-  roleHat?: DecentRoleHat | RoleHatFormValue;
-  payment: SablierPaymentOrPartial;
+  roleHatWearerAddress: Address;
+  roleHatSmartAddress: Address;
+  payment: SablierPayment | SablierPaymentFormValues;
   onClick?: () => void;
   showWithdraw?: boolean;
 }
@@ -72,7 +72,8 @@ export function RolePaymentDetails({
   payment,
   onClick,
   showWithdraw,
-  roleHat,
+  roleHatWearerAddress,
+  roleHatSmartAddress,
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
@@ -108,9 +109,12 @@ export function RolePaymentDetails({
 
   const withdraw = useDecentModal(ModalType.WITHDRAW_PAYMENT, {
     payment,
-    roleHat,
     onSuccess: loadAmounts,
-    withdrawableAmount,
+    withdrawInformation: {
+      withdrawableAmount,
+      roleHatWearerAddress,
+      roleHatSmartAddress,
+    },
   });
 
   const handleClickWithdraw = useCallback(() => {

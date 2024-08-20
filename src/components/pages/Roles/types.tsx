@@ -28,8 +28,6 @@ export interface SablierPaymentFormValues extends Partial<SablierPayment> {
   isStreaming: () => boolean;
 }
 
-export type SablierPaymentOrPartial = SablierPayment | SablierPaymentFormValues;
-
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
   handleRoleClick: (hatId: Address) => void;
@@ -94,6 +92,7 @@ export interface RoleHatFormValue
   id: Hex;
   wearer?: string;
   payments?: SablierPaymentFormValues[];
+  // form specific state
   editedRole?: EditedRole;
   roleEditingPaymentIndex?: number;
 }
