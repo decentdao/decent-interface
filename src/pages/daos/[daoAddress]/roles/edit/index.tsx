@@ -46,7 +46,7 @@ function RolesEdit() {
   const { hatsTree } = useRolesStore();
 
   const navigate = useNavigate();
-  const { createRolesEditProposal } = useCreateRoles();
+  const { createEditRolesProposal } = useCreateRoles();
 
   function generateRoleProposalTitle({ formValues }: { formValues: RoleFormValues }) {
     const filteredHats = formValues.hats.filter(hat => !!hat.editedRole);
@@ -102,7 +102,7 @@ function RolesEdit() {
       enableReinitialize
       validationSchema={rolesSchema}
       validateOnMount
-      onSubmit={createRolesEditProposal}
+      onSubmit={createEditRolesProposal}
     >
       {({ handleSubmit, values, touched, setFieldValue }) => (
         <form onSubmit={handleSubmit}>
