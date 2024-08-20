@@ -742,7 +742,7 @@ export default function useCreateRoles() {
     ],
   );
 
-  const createRolesEditProposal = useCallback(
+  const createEditRolesProposal = useCallback(
     async (values: RoleFormValues, formikHelpers: FormikHelpers<RoleFormValues>) => {
       const { setSubmitting } = formikHelpers;
       setSubmitting(true);
@@ -803,6 +803,6 @@ export default function useCreateRoles() {
   );
 
   return {
-    createRolesEditProposal,
+    createEditRolesProposal,
   };
 }
