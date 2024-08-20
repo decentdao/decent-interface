@@ -3,19 +3,19 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { zeroAddress, Address, encodeFunctionData, getAddress, Hex, Hash } from 'viem';
+import { Address, encodeFunctionData, getAddress, Hash, Hex, zeroAddress } from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats_0_1_0_Abi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import {
+  BaseSablierStream,
   EditBadgeStatus,
   HatStruct,
   HatWearerChangedParams,
   RoleHatFormValue,
   RoleFormValues,
-  BaseSablierStream,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
