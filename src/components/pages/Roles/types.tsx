@@ -1,7 +1,6 @@
 import { Address, Hex } from 'viem';
 import { DecentRoleHat } from '../../../store/roles';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
-export type RoleViewMode = 'edit' | 'view';
 
 export interface SablierAsset {
   address: Address;
@@ -30,6 +29,7 @@ export interface SablierPaymentFormValues extends Partial<SablierPayment> {
 }
 
 export type SablierPaymentOrPartial = SablierPayment | SablierPaymentFormValues;
+
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
   handleRoleClick: (hatId: Address) => void;
@@ -67,7 +67,7 @@ export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
 };
 
 export interface HatStruct {
-  maxSupply: number; // No more than this number of wearers. Hardcode to 1
+  maxSupply: 1; // No more than this number of wearers. Hardcode to 1
   details: string; // IPFS url/hash to JSON { version: '1.0', data: { name, description, ...arbitraryData } }
   imageURI: string;
   isMutable: boolean; // true
