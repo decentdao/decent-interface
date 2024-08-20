@@ -315,7 +315,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
                   throw new Error('Role ID is missing');
                 }
                 setFieldValue('roleEditing', role);
-                handleRoleClick(getAddress(role.id));
+                handleRoleClick(role.id);
               }}
               editStatus={role.editedRole?.status}
               payments={role.payments}

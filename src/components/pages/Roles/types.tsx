@@ -91,10 +91,10 @@ export interface DurationBreakdown {
 
 export interface RoleHatFormValue
   extends Partial<Omit<DecentRoleHat, 'id' | 'wearer' | 'payments'>> {
-  id?: string;
+  id: Hex;
   wearer?: string;
-  editedRole?: EditedRole;
   payments?: SablierPaymentFormValues[];
+  editedRole?: EditedRole;
   roleEditingPaymentIndex?: number;
 }
 
