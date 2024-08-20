@@ -11,10 +11,16 @@ import { SectionTitle } from './RoleFormSectionTitle';
 
 function FixedDate({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
-  const { setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const onRangeChange = (dateRange: [Date, Date]) => {
-    setFieldValue(`roleEditing.payments[${formIndex}].startDate`, dateRange[0]);
-    setFieldValue(`roleEditing.payments[${formIndex}].endDate`, dateRange[1]);
+    const payment = values?.roleEditing?.payments?.[formIndex];
+    if (!payment) return;
+
+    setFieldValue(`roleEditing.payments[${formIndex}]`, {
+      ...payment,
+      startDate: dateRange[0],
+      endDate: dateRange[1],
+    });
   };
   return (
     <Box>
@@ -87,6 +93,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const { getPayment } = useRolesStore();
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
     ?.payments;
+  console.log('🚀 ~ roleEditingPaymentsErrors:', roleEditingPaymentsErrors);
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
