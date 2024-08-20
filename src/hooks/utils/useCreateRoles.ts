@@ -1,4 +1,5 @@
 import { FormikHelpers } from 'formik';
+import isEqual from 'lodash.isequal';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -85,7 +86,7 @@ export default function useCreateRoles() {
   const {
     node: { safe, daoAddress, daoName },
   } = useFractal();
-  const { hatsTree, hatsTreeId, getHat } = useRolesStore();
+  const { hatsTree, hatsTreeId, getHat, getPayment } = useRolesStore();
   const {
     addressPrefix,
     chain,
@@ -187,10 +188,26 @@ export default function useCreateRoles() {
       );
 
       // Parse role with edited payroll hats
-      const editedPayrollHats = editedHats.filter(hat => {
-        const payments = hat.payments?.filter(payment => !!payment.streamId);
-        return payments?.length ? { ...hat, payments } : null;
-      });
+      const editedPayrollHats = editedHats
+        .filter(hat => {
+          const payments = hat.payments?.filter(payment => !!payment.streamId);
+          if (payments?.length) {
+            const originalHat = getHat(hat.id);
+            if (originalHat) {
+              const editedPayments = payments.filter(payment => {
+                if (payment.streamId) {
+                  const originalPayment = getPayment(hat.id, payment.streamId);
+                  return !isEqual(payment, originalPayment);
+                }
+                return false;
+              });
+
+              return { ...hat, payments: editedPayments };
+            }
+          }
+          return null;
+        })
+        .filter(hat => !!hat);
 
       // Parse role with added payroll hats
       const addedNewPaymentsHats: RoleHatFormValue[] = editedHats
@@ -209,7 +226,7 @@ export default function useCreateRoles() {
         editedPayrollHats,
       };
     },
-    [getHat, hatsTree?.topHat.smartAddress, uploadHatDescription],
+    [getHat, getPayment, hatsTree?.topHat.smartAddress, uploadHatDescription],
   );
 
   const prepareCreateTopHatProposalData = useCallback(
@@ -518,10 +535,10 @@ export default function useCreateRoles() {
 
       if (addedNewPaymentsHats.length) {
         const streamsData = addedNewPaymentsHats.flatMap(role =>
-          (role.payments ?? []).filter(payment => !payment.streamId),
+          (role.payments ?? []).map(payment => payment),
         );
         const recipients = addedNewPaymentsHats.flatMap(role =>
-          (role.payments ?? []).filter(payment => !payment.streamId).map(() => role.smartAddress),
+          (role.payments ?? []).map(() => role.smartAddress),
         );
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
           streamsData,
@@ -577,10 +594,10 @@ export default function useCreateRoles() {
           }),
         );
         const streamsData = editedPayrollHats.flatMap(role =>
-          (role.payments ?? []).filter(payment => !payment.streamId),
+          (role.payments ?? []).map(payment => payment),
         );
         const recipients = editedPayrollHats.flatMap(role =>
-          (role.payments ?? []).filter(payment => !payment.streamId).map(() => role.smartAddress),
+          (role.payments ?? []).map(() => role.smartAddress),
         );
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
           streamsData,
