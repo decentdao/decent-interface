@@ -14,7 +14,7 @@ import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentRoleHat } from '../../../store/roles';
 import { formatCoin } from '../../../utils';
-import { RoleHatFormValue, SablierPayment } from '../../pages/Roles/types';
+import { SablierPayment } from '../../pages/Roles/types';
 import Avatar, { AvatarSize } from '../page/Header/Avatar';
 
 export default function PaymentWithdrawModal({
@@ -25,7 +25,7 @@ export default function PaymentWithdrawModal({
   withdrawableAmount,
 }: {
   payment: SablierPayment;
-  roleHat: DecentRoleHat | RoleHatFormValue;
+  roleHat: DecentRoleHat;
   onSuccess: () => Promise<void>;
   onClose: () => void;
   withdrawableAmount: bigint;

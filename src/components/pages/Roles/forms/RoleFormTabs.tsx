@@ -86,7 +86,12 @@ export default function RoleFormTabs({
             const hatIndex = values.hats.findIndex(h => h.id === hatId);
             if (hatIndex === -1) {
               // @dev new hat
-              pushRole(roleUpdated);
+
+              if (roleUpdated.id === undefined) {
+                throw new Error('New Hat id is undefined. I think this is going to be a problem.');
+              }
+              const roleUpdatedId = roleUpdated.id;
+              pushRole({ ...roleUpdated, id: roleUpdatedId });
             } else {
               setFieldValue(
                 `hats.${hatIndex}`,

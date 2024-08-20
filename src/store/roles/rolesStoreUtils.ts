@@ -10,7 +10,11 @@ import {
   getAddress,
 } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
-import { RoleHatFormValue, SablierPayment } from '../../components/pages/Roles/types';
+import {
+  RoleHatFormValue,
+  SablierPayment,
+  SablierPaymentFormValues,
+} from '../../components/pages/Roles/types';
 import { getRandomBytes } from '../../helpers';
 
 export class DecentHatsError extends Error {
@@ -337,6 +341,29 @@ export async function getNewRole({
   };
 }
 
+export const normalizePaymentFormData = (payment: SablierPaymentFormValues): SablierPayment => {
+  if (
+    !payment.streamId ||
+    !payment.contractAddress ||
+    !payment.asset ||
+    !payment.amount ||
+    !payment.startDate ||
+    !payment.endDate
+  ) {
+    throw new Error('SablierPaymentFormValues not complete enough to create SablierPayment');
+  }
+  return {
+    streamId: payment.streamId,
+    contractAddress: payment.contractAddress,
+    asset: payment.asset,
+    amount: payment.amount,
+    startDate: payment.startDate,
+    endDate: payment.endDate,
+    cliffDate: payment.cliffDate,
+    isStreaming: payment.isStreaming,
+  };
+};
+
 export const normalizeRoleFormData = (role: RoleHatFormValue): DecentRoleHat => {
   if (
     !role.id ||
@@ -346,7 +373,7 @@ export const normalizeRoleFormData = (role: RoleHatFormValue): DecentRoleHat => 
     !role.description ||
     !role.smartAddress
   ) {
-    throw new Error('Form not properly filled out');
+    throw new Error('RoleHatFormValue data not complete enough to create DecentRoleHat');
   }
   return {
     id: getAddress(role.id),
@@ -355,6 +382,6 @@ export const normalizeRoleFormData = (role: RoleHatFormValue): DecentRoleHat => 
     name: role.name,
     description: role.description,
     smartAddress: role.smartAddress,
-    payments: role.payments as SablierPayment[] | undefined,
+    payments: role.payments?.map(payment => normalizePaymentFormData(payment)),
   };
 };

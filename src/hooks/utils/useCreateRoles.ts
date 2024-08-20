@@ -27,6 +27,7 @@ import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
+import { normalizePaymentFormData } from './../../store/roles/rolesStoreUtils';
 
 const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   return JSON.stringify({
@@ -573,7 +574,12 @@ export default function useCreateRoles() {
           (role.payments ?? []).map(payment => payment),
         );
         const recipients = addedNewPaymentsHats.flatMap(role =>
-          (role.payments ?? []).map(() => role.smartAddress),
+          (role.payments ?? []).map(() => {
+            if (role.smartAddress === undefined) {
+              throw new Error('Hat smart address for new payment on role is undefined.');
+            }
+            return role.smartAddress;
+          }),
         );
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
           streamsData,
@@ -595,6 +601,14 @@ export default function useCreateRoles() {
 
         editedPayrollHats.forEach(role =>
           (role.payments ?? []).forEach(payment => {
+            if (role.wearer === undefined) {
+              throw new Error('Hat wearer of edited payroll role is undefined.');
+            }
+
+            if (role.smartAddress === undefined) {
+              throw new Error('Hat smart address of edited payroll role is undefined');
+            }
+
             if (payment.streamId && payment.contractAddress && payment.amount && payment.asset) {
               const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
                 {
@@ -659,7 +673,12 @@ export default function useCreateRoles() {
           (role.payments ?? []).map(payment => payment),
         );
         const recipients = editedPayrollHats.flatMap(role =>
-          (role.payments ?? []).map(() => role.smartAddress),
+          (role.payments ?? []).map(() => {
+            if (role.smartAddress === undefined) {
+              throw new Error('Hat smart address for new payment on role is undefined.');
+            }
+            return role.smartAddress;
+          }),
         );
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
           streamsData,
