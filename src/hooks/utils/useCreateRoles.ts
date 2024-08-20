@@ -215,7 +215,7 @@ export default function useCreateRoles() {
           const payments = hat.payments?.filter(payment => !payment.streamId);
           return payments?.length ? { ...hat, payments } : null;
         })
-        .filter(hat => !!hat) as RoleHatFormValue[];
+        .filter(hat => hat !== null);
 
       return {
         addedHats,
