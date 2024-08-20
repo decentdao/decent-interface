@@ -48,7 +48,7 @@ export function DelegateModal({ close }: { close: Function }) {
       const delegatee = await resolveAddress(values.address, provider);
 
       if (!delegatee) {
-        toast.error(t('unknownENS', { ns: 'common' }));
+        toast.error(t('errorInvalidENSAddress', { ns: 'common' }));
         return;
       }
 
@@ -75,7 +75,7 @@ export function DelegateModal({ close }: { close: Function }) {
       const delegatee = await resolveAddress(values.address, provider);
 
       if (!delegatee) {
-        toast.error(t('unknownENS', { ns: 'common' }));
+        toast.error(t('errorInvalidENSAddress', { ns: 'common' }));
         return;
       }
 

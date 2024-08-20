@@ -47,7 +47,7 @@ function AddSignerModal({
 
         const newSigner = await resolveAddress(addressOrENS, provider);
         if (!newSigner) {
-          toast.error(t('unknownENS', { ns: 'common' }));
+          toast.error(t('errorInvalidENSAddress', { ns: 'common' }));
           return;
         }
 

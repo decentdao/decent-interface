@@ -49,7 +49,6 @@
   "errorInvalidAddress": "Invalid ETH address",
   "errorNotProposer": "You do not have the necessary permissions to create a proposal for this Safe.",
   "errorSentryFallbackTitle": "Oops! Something went wrong",
-  "unknownENS": "The ENS name does not resolve to an address.",
   "errorSentryFallbackMessage": "We apologize for the inconvenience. Please try again later.",
   "errorMySafesNotLoaded": "Safe(s) could not be loaded. Please try again later.",
   "errorGeneral": "An unexpected error occurred. Please try again later.",
