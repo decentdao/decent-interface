@@ -39,7 +39,14 @@ export default function PaymentWithdrawModal({
   const { chain } = useNetworkConfig();
 
   const handleWithdraw = useCallback(async () => {
-    if (payment?.contractAddress && payment?.streamId && walletClient && publicClient) {
+    if (
+      payment?.contractAddress &&
+      payment?.streamId &&
+      walletClient &&
+      publicClient &&
+      roleHat.smartAddress &&
+      roleHat.wearer
+    ) {
       let withdrawToast: Id | undefined = undefined;
       try {
         const hatsAccountContract = getContract({

@@ -123,16 +123,19 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         boxShadow={CARD_SHADOW}
         borderRadius="0.5rem"
       >
-        {editedRoles.map((role, index) => (
-          <RoleCardShort
-            key={index}
-            name={role.name}
-            handleRoleClick={() => {
-              setDrawerViewingRole(normalizeRoleFormData(role));
-            }}
-            editStatus={role.editedRole?.status}
-          />
-        ))}
+        {editedRoles.map((role, index) => {
+          const normalizedRole = normalizeRoleFormData(role);
+          return (
+            <RoleCardShort
+              key={index}
+              name={normalizedRole.name}
+              handleRoleClick={() => {
+                setDrawerViewingRole(normalizedRole);
+              }}
+              editStatus={role.editedRole?.status}
+            />
+          );
+        })}
       </Box>
       <Flex
         gap="1rem"

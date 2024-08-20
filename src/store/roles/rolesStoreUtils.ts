@@ -365,8 +365,18 @@ export const normalizePaymentFormData = (payment: SablierPaymentFormValues): Sab
 };
 
 export const normalizeRoleFormData = (role: RoleHatFormValue): DecentRoleHat => {
+  if (
+    !role.id ||
+    !role.prettyId ||
+    !role.wearer ||
+    !role.name ||
+    !role.description ||
+    !role.smartAddress
+  ) {
+    throw new Error('Form not properly filled out');
+  }
   return {
-    id: role.id,
+    id: getAddress(role.id),
     prettyId: role.prettyId,
     wearer: getAddress(role.wearer),
     name: role.name,

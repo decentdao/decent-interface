@@ -53,7 +53,7 @@ function RoleNameEditColumn({
   roleName,
   editStatus,
 }: {
-  roleName: string;
+  roleName?: string;
   editStatus?: EditBadgeStatus;
 }) {
   return (
@@ -311,8 +311,11 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
               name={role.name}
               wearerAddress={role.wearer}
               handleRoleClick={() => {
+                if (!role.id) {
+                  throw new Error('Role ID is missing');
+                }
                 setFieldValue('roleEditing', role);
-                handleRoleClick(role.id);
+                handleRoleClick(getAddress(role.id));
               }}
               editStatus={role.editedRole?.status}
               payments={role.payments}

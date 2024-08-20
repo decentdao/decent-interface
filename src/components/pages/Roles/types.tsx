@@ -40,7 +40,11 @@ export interface RoleProps {
 }
 
 export interface RoleEditProps
-  extends Omit<RoleProps, 'hatId' | 'wearerAddress' | 'handleRoleClick' | 'paymentsCount'> {
+  extends Omit<
+    RoleProps,
+    'hatId' | 'wearerAddress' | 'handleRoleClick' | 'paymentsCount' | 'name'
+  > {
+  name?: string;
   handleRoleClick: () => void;
   wearerAddress: string | undefined;
   payments?: SablierPaymentFormValues[];
@@ -85,8 +89,10 @@ export interface DurationBreakdown {
   days: number;
 }
 
-export interface RoleHatFormValue extends Omit<DecentRoleHat, 'wearer' | 'payments'> {
-  wearer: string;
+export interface RoleHatFormValue
+  extends Partial<Omit<DecentRoleHat, 'id' | 'wearer' | 'payments'>> {
+  id?: string;
+  wearer?: string;
   editedRole?: EditedRole;
   payments?: SablierPaymentFormValues[];
   roleEditingPaymentIndex?: number;

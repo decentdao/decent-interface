@@ -12,17 +12,16 @@ export function RoleFormPaymentStreams() {
 
   return (
     <FieldArray name="roleEditing.payments">
-      {({ push: pushPayment }) => (
+      {({ push: pushPayment }: { push: (obj: SablierPaymentFormValues) => void }) => (
         <Box>
           <Button
             variant="secondary"
             size="sm"
             leftIcon={<Plus />}
             onClick={async () => {
-              const newPayment: SablierPaymentFormValues = {
+              pushPayment({
                 isStreaming: () => false,
-              };
-              pushPayment(newPayment);
+              });
               await validateForm();
               setFieldValue('roleEditing.roleEditingPaymentIndex', (payments ?? []).length);
             }}

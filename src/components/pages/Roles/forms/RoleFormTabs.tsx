@@ -8,7 +8,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../store/roles';
-import { EditBadgeStatus, RoleFormValues } from '../types';
+import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
@@ -19,7 +19,7 @@ export default function RoleFormTabs({
   pushRole,
 }: {
   hatId: Hex;
-  pushRole: (obj: any) => void;
+  pushRole: (obj: RoleHatFormValue) => void;
 }) {
   const { hatsTree } = useRolesStore();
   const {
