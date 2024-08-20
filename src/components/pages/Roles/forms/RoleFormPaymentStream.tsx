@@ -94,7 +94,6 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const { getPayment } = useRolesStore();
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
     ?.payments;
-  console.log('🚀 ~ roleEditingPaymentsErrors:', roleEditingPaymentsErrors);
   return (
     <Box
       px={{ base: '1rem', md: 0 }}

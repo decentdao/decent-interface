@@ -16,6 +16,7 @@ import CreateProposalTemplatePage from './pages/daos/[daoAddress]/proposal-templ
 import ProposalsPage from './pages/daos/[daoAddress]/proposals';
 import ProposalDetailsPage from './pages/daos/[daoAddress]/proposals/[proposalId]';
 import ProposalCreatePage from './pages/daos/[daoAddress]/proposals/new';
+import SablierProposalCreatePage from './pages/daos/[daoAddress]/proposals/new/sablier';
 import Roles from './pages/daos/[daoAddress]/roles';
 import RoleDetails from './pages/daos/[daoAddress]/roles/details';
 import RolesEdit from './pages/daos/[daoAddress]/roles/edit';
@@ -144,6 +145,20 @@ export const router = (addressPrefix: string) =>
                   // @ts-ignore:next-line
                   loader: ({ params: { daoAddress } }) =>
                     redirect(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)),
+                },
+                {
+                  path: 'new/sablier/*',
+                  element: <SablierProposalCreatePage />,
+                },
+                {
+                  path: 'new/sablier',
+                  // @ts-ignore:next-line
+                  loader: ({ params: { daoAddress } }) =>
+                    redirect(
+                      DAO_ROUTES.proposalNew
+                        .relative(addressPrefix, daoAddress)
+                        .replace('new', 'new/sablier'),
+                    ),
                 },
               ],
             },
