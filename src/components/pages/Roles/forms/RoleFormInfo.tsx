@@ -1,5 +1,5 @@
 import { Box, FormControl } from '@chakra-ui/react';
-import { Field, FieldProps, useFormikContext } from 'formik';
+import { Field, FieldProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
@@ -9,9 +9,6 @@ import { RoleFormValues } from '../types';
 
 export default function RoleFormInfo() {
   const { t } = useTranslation('roles');
-  const { values, errors } = useFormikContext<RoleFormValues>();
-  console.log("🚀 ~ values:", values.roleEditing)
-  console.log("🚀 ~ errors:", errors)
   return (
     <Box
       px={{ base: '1rem', md: 0 }}
