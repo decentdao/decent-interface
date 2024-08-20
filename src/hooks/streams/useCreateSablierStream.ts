@@ -152,10 +152,10 @@ export default function useCreateSablierStream() {
             !streamData.endDate
           ) {
             console.error(
-              'Error creating linear stream - stream amount must be bigger than 0',
+              'Error creating linear stream - stream amount must be bigger than 0, startDate and endDate must be set',
               streamData,
             );
-            throw new Error('Stream total amount must be greater than 0');
+            throw new Error('Stream total amount must be greater than 0, startDate and endDate must be set');
           }
           totalStreamsAmount += streamData.amount.bigintValue;
           const recipient = recipients[index];
