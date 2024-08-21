@@ -16,12 +16,13 @@ const disabled = {
 };
 
 const invalid = {
-  borderColor: 'red-0',
   bg: 'red--3',
   color: 'red-1',
   _placeholder: {
     color: 'red-0',
   },
+  boxShadow:
+    '0px 0px 0px 2px #AF3A48, 0px 1px 0px 0px rgba(242, 161, 171, 0.30), 0px 0px 0px 1px rgba(0, 0, 0, 0.80)',
 };
 
 const loading = {};
