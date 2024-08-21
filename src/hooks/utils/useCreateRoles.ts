@@ -17,6 +17,7 @@ import {
   HatWearerChangedParams,
   RoleFormValues,
   RoleHatFormValue,
+  RoleHatFormValueEdited,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -122,13 +123,13 @@ export default function useCreateRoles() {
     [ipfsClient],
   );
 
-  const parseEditedHatsFormValues = useCallback(
-    async (editedHats: RoleHatFormValue[]) => {
+  const editedHatsGroupedByType = useCallback(
+    async (editedHats: RoleHatFormValueEdited[]) => {
       //  Parse added hats
 
       const addedHats: HatStruct[] = await Promise.all(
         editedHats
-          .filter(hat => hat.editedRole?.status === EditBadgeStatus.New)
+          .filter(hat => hat.editedRole.status === EditBadgeStatus.New)
           .map(async hat => {
             if (hat.name === undefined || hat.description === undefined) {
               throw new Error('Hat name or description of added hat is undefined.');
@@ -159,7 +160,7 @@ export default function useCreateRoles() {
 
       // Parse removed hats
       const removedHatIds = editedHats
-        .filter(hat => hat.editedRole?.status === EditBadgeStatus.Removed)
+        .filter(hat => hat.editedRole.status === EditBadgeStatus.Removed)
         .map(hat => {
           if (hat.id === undefined) {
             throw new Error('Hat ID of removed hat is undefined.');
@@ -172,7 +173,7 @@ export default function useCreateRoles() {
       const memberChangedHats: HatWearerChangedParams[] = editedHats
         .filter(
           hat =>
-            hat.editedRole?.status === EditBadgeStatus.Updated &&
+            hat.editedRole.status === EditBadgeStatus.Updated &&
             hat.editedRole.fieldNames.includes('member'),
         )
         .map(hat => {
@@ -198,7 +199,7 @@ export default function useCreateRoles() {
         editedHats
           .filter(
             hat =>
-              hat.editedRole?.status === EditBadgeStatus.Updated &&
+              hat.editedRole.status === EditBadgeStatus.Updated &&
               (hat.editedRole.fieldNames.includes('roleName') ||
                 hat.editedRole.fieldNames.includes('roleDescription')),
           )
@@ -753,11 +754,15 @@ export default function useCreateRoles() {
 
       try {
         // filter to hats that have been modified (ie includes `editedRole` prop)
-        const modifiedHats = values.hats.filter(hat => !!hat.editedRole);
+        const modifiedHats: RoleHatFormValueEdited[] = values.hats
+          .map(hat =>
+            hat.editedRole !== undefined ? { ...hat, editedRole: hat.editedRole } : null,
+          )
+          .filter(hat => hat !== null);
+
+        const editedHatStructs = await editedHatsGroupedByType(modifiedHats);
+
         let proposalData: ProposalExecuteData;
-
-        const editedHatStructs = await parseEditedHatsFormValues(modifiedHats);
-
         if (!hatsTreeId) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
           // along with any other hats that are added.
@@ -791,7 +796,7 @@ export default function useCreateRoles() {
     },
     [
       safe,
-      parseEditedHatsFormValues,
+      editedHatsGroupedByType,
       hatsTreeId,
       submitProposal,
       t,
