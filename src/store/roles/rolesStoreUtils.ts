@@ -1,21 +1,11 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import {
-  Address,
-  Hex,
-  PublicClient,
-  encodePacked,
-  getContract,
-  keccak256,
-  toHex,
-  getAddress,
-} from 'viem';
+import { Address, Hex, PublicClient, encodePacked, getContract, keccak256, getAddress } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import {
   RoleHatFormValue,
   SablierPayment,
   SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
-import { getRandomBytes } from '../../helpers';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
