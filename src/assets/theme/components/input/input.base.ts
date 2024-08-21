@@ -5,11 +5,14 @@ const { definePartsStyle } = createMultiStyleConfigHelpers(inputAnatomy.keys);
 
 const disabled = {
   cursor: 'default',
-  borderColor: 'white-alpha-08',
+  bg: 'rgba(22, 18, 25, 0.16)',
+  border: '1px solid',
+  borderColor: 'white-alpha-16',
   color: 'neutral-6',
   _placeholder: {
     color: 'neutral-5',
   },
+  boxShadow: 'unset',
 };
 
 const invalid = {
@@ -28,8 +31,7 @@ const baseStyle = definePartsStyle({
     borderRadius: '4px',
     color: 'white-0',
     bg: 'neutral-1',
-    border: '1px solid',
-    borderColor: 'neutral-3',
+    boxShadow: '0px 1px 0px 0px rgba(255, 255, 255, 0.16), 0px 0px 0px 1px rgba(0, 0, 0, 0.68)',
     transitionDuration: 'normal',
     transitionProperty: 'common',
     width: '100%',
@@ -38,15 +40,15 @@ const baseStyle = definePartsStyle({
       color: 'neutral-5',
     },
     _active: {
-      borderColor: 'neutral-4',
-      boxShadow: '0px 0px 0px 3px #534D58',
+      boxShadow:
+        '0px 0px 0px 2px #534D58, 0px 1px 0px 0px rgba(255, 255, 255, 0.20), 0px 0px 0px 1px rgba(0, 0, 0, 0.80)',
       _disabled: {
         ...disabled,
         _loading: loading,
       },
     },
     _hover: {
-      borderColor: 'neutral-4',
+      boxShadow: '0px 1px 0px 0px rgba(255, 255, 255, 0.24), 0px 0px 0px 1px rgba(0, 0, 0, 0.80)',
       _disabled: {
         ...disabled,
         _loading: loading,
@@ -62,8 +64,8 @@ const baseStyle = definePartsStyle({
     },
     _focus: {
       outline: 'none',
-      borderColor: 'neutral-4',
-      boxShadow: '0px 0px 0px 3px #534D58',
+      boxShadow:
+        '0px 0px 0px 2px #534D58, 0px 1px 0px 0px rgba(255, 255, 255, 0.20), 0px 0px 0px 1px rgba(0, 0, 0, 0.80)',
       _invalid: invalid,
       _disabled: {
         ...disabled,
