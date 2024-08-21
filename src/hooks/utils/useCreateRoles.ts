@@ -18,6 +18,8 @@ import {
   RoleFormValues,
   RoleHatFormValue,
   RoleHatFormValueEdited,
+  SablierPayment,
+  SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -28,12 +30,164 @@ import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
-import { mapSablierPaymentFormValuesToSablierPayment } from './../../store/roles/rolesStoreUtils';
+import {
+  DecentRoleHat,
+  mapSablierPaymentFormValuesToSablierPayment,
+} from './../../store/roles/rolesStoreUtils';
 
 const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   return JSON.stringify({
     type: '1.0',
     data,
+  });
+};
+
+const identifyAndPrepareAddedHats = (
+  modifiedHats: RoleHatFormValueEdited[],
+  // hatsTree: DecentTree | null | undefined,
+  uploadHatDescription: (hatDescription: string) => Promise<string>,
+) => {
+  return Promise.all(
+    modifiedHats
+      .filter(hat => hat.editedRole.status === EditBadgeStatus.New)
+      .map(async hat => {
+        if (hat.name === undefined || hat.description === undefined) {
+          throw new Error('Hat name or description of added hat is undefined.');
+        }
+
+        if (hat.wearer === undefined) {
+          throw new Error('Hat wearer of added hat is undefined.');
+        }
+
+        const details = await uploadHatDescription(
+          hatsDetailsBuilder({
+            name: hat.name,
+            description: hat.description,
+          }),
+        );
+
+        const newHat: HatStruct = {
+          // eligibility: hatsTree?.topHat.smartAddress,
+          // toggle: hatsTree?.topHat.smartAddress,
+          maxSupply: 1,
+          details,
+          imageURI: '',
+          isMutable: true,
+          wearer: getAddress(hat.wearer),
+        };
+
+        return newHat;
+      }),
+  );
+};
+
+const identifyAndPrepareRemovedHats = (modifiedHats: RoleHatFormValueEdited[]) => {
+  return modifiedHats
+    .filter(hat => hat.editedRole.status === EditBadgeStatus.Removed)
+    .map(hat => {
+      if (hat.id === undefined) {
+        throw new Error('Hat ID of removed hat is undefined.');
+      }
+
+      return hat.id;
+    });
+};
+
+const identifyAndPrepareMemberChangedHats = (
+  modifiedHats: RoleHatFormValueEdited[],
+  getHat: (hatId: Hex) => DecentRoleHat | null,
+) => {
+  return modifiedHats
+    .filter(
+      hat =>
+        hat.editedRole.status === EditBadgeStatus.Updated &&
+        hat.editedRole.fieldNames.includes('member'),
+    )
+    .map(hat => {
+      if (hat.wearer === undefined || hat.id === undefined) {
+        throw new Error('Hat wearer of member changed Hat is undefined.');
+      }
+
+      const currentHat = getHat(hat.id);
+      if (currentHat === null) {
+        throw new Error("Couldn't find existing Hat for member changed Hat.");
+      }
+
+      const hatWearerChanged: HatWearerChangedParams = {
+        id: hat.id,
+        currentWearer: getAddress(currentHat.wearer),
+        newWearer: getAddress(hat.wearer),
+      };
+
+      return hatWearerChanged;
+    })
+    .filter(hat => hat.currentWearer !== hat.newWearer);
+};
+
+const identifyAndPrepareRoleDetailsChangedHats = (
+  modifiedHats: RoleHatFormValueEdited[],
+  uploadHatDescription: (hatDescription: string) => Promise<string>,
+) => {
+  return Promise.all(
+    modifiedHats
+      .filter(
+        hat =>
+          hat.editedRole.status === EditBadgeStatus.Updated &&
+          (hat.editedRole.fieldNames.includes('roleName') ||
+            hat.editedRole.fieldNames.includes('roleDescription')),
+      )
+      .map(async hat => {
+        if (hat.id === undefined) {
+          throw new Error('Hat ID of existing hat is undefined.');
+        }
+
+        if (hat.name === undefined || hat.description === undefined) {
+          throw new Error('Hat name or description of existing hat is undefined.');
+        }
+
+        return {
+          id: hat.id,
+          details: await uploadHatDescription(
+            hatsDetailsBuilder({
+              name: hat.name,
+              description: hat.description,
+            }),
+          ),
+        };
+      }),
+  );
+};
+
+const identifyAndPrepareEditedPaymentStreams = (
+  modifiedHats: RoleHatFormValueEdited[],
+  getPayment: (hatId: Hex, streamId: string) => SablierPayment | null,
+) => {
+  return modifiedHats.flatMap(hat => {
+    const payments = hat.payments?.filter(payment => !!payment.streamId) || [];
+
+    return payments
+      .filter(payment => {
+        if (payment.streamId === undefined) {
+          return false;
+        }
+        const originalPayment = getPayment(hat.id, payment.streamId);
+        return !isEqual(payment, originalPayment);
+      })
+      .map(payment => ({
+        hatId: hat.id,
+        payment,
+      }));
+  });
+};
+
+const identifyAndPrepareAddedPaymentStreams = (modifiedHats: RoleHatFormValueEdited[]) => {
+  return modifiedHats.flatMap(hat => {
+    const payments = hat.payments?.filter(payment => !payment.streamId) || [];
+
+    return payments.map(payment => ({
+      hatId: hat.id,
+      payment,
+    }));
   });
 };
 
@@ -121,149 +275,6 @@ export default function useCreateRoles() {
       return `ipfs://${response.Hash}`;
     },
     [ipfsClient],
-  );
-
-  const editedHatsGroupedByType = useCallback(
-    async (editedHats: RoleHatFormValueEdited[]) => {
-      //  Parse added hats
-
-      const addedHats: HatStruct[] = await Promise.all(
-        editedHats
-          .filter(hat => hat.editedRole.status === EditBadgeStatus.New)
-          .map(async hat => {
-            if (hat.name === undefined || hat.description === undefined) {
-              throw new Error('Hat name or description of added hat is undefined.');
-            }
-
-            if (hat.wearer === undefined) {
-              throw new Error('Hat wearer of added hat is undefined.');
-            }
-
-            const details = await uploadHatDescription(
-              hatsDetailsBuilder({
-                name: hat.name,
-                description: hat.description,
-              }),
-            );
-
-            return {
-              eligibility: hatsTree?.topHat.smartAddress,
-              toggle: hatsTree?.topHat.smartAddress,
-              maxSupply: 1,
-              details,
-              imageURI: '',
-              isMutable: true,
-              wearer: getAddress(hat.wearer),
-            };
-          }),
-      );
-
-      // Parse removed hats
-      const removedHatIds = editedHats
-        .filter(hat => hat.editedRole.status === EditBadgeStatus.Removed)
-        .map(hat => {
-          if (hat.id === undefined) {
-            throw new Error('Hat ID of removed hat is undefined.');
-          }
-
-          return hat.id;
-        });
-
-      // Parse member changed hats
-      const memberChangedHats: HatWearerChangedParams[] = editedHats
-        .filter(
-          hat =>
-            hat.editedRole.status === EditBadgeStatus.Updated &&
-            hat.editedRole.fieldNames.includes('member'),
-        )
-        .map(hat => {
-          if (hat.wearer === undefined || hat.id === undefined) {
-            throw new Error('Hat wearer of member changed Hat is undefined.');
-          }
-
-          const currentHat = getHat(hat.id);
-          if (currentHat === null) {
-            throw new Error("Couldn't find existing Hat for member changed Hat.");
-          }
-
-          return {
-            id: hat.id,
-            currentWearer: getAddress(currentHat.wearer),
-            newWearer: getAddress(hat.wearer),
-          };
-        })
-        .filter(hat => hat.currentWearer !== hat.newWearer);
-
-      // Parse role details changed hats (name and/or description updated)
-      const roleDetailsChangedHats = await Promise.all(
-        editedHats
-          .filter(
-            hat =>
-              hat.editedRole.status === EditBadgeStatus.Updated &&
-              (hat.editedRole.fieldNames.includes('roleName') ||
-                hat.editedRole.fieldNames.includes('roleDescription')),
-          )
-          .map(async hat => {
-            if (hat.id === undefined) {
-              throw new Error('Hat ID of existing hat is undefined.');
-            }
-
-            if (hat.name === undefined || hat.description === undefined) {
-              throw new Error('Hat name or description of existing hat is undefined.');
-            }
-
-            return {
-              id: hat.id,
-              details: await uploadHatDescription(
-                hatsDetailsBuilder({
-                  name: hat.name,
-                  description: hat.description,
-                }),
-              ),
-            };
-          }),
-      );
-
-      // Parse role with edited payroll hats
-      const editedPayrollHats = editedHats
-        .filter(hat => {
-          const payments = hat.payments?.filter(payment => !!payment.streamId);
-          if (payments?.length) {
-            const originalHat = getHat(hat.id);
-            if (originalHat) {
-              const editedPayments = payments.filter(payment => {
-                if (payment.streamId) {
-                  const originalPayment = getPayment(hat.id, payment.streamId);
-                  return !isEqual(payment, originalPayment);
-                }
-                return false;
-              });
-
-              return { ...hat, payments: editedPayments };
-            }
-          }
-          return null;
-        })
-        .filter(hat => !!hat);
-
-      // Parse role with added payroll hats
-      const addedNewPaymentsHats: RoleHatFormValue[] = editedHats
-        .map(hat => {
-          const payments = hat.payments?.filter(payment => !payment.streamId);
-          return payments?.length ? { ...hat, payments } : null;
-        })
-        .filter(hat => hat !== null);
-
-      return {
-        addedHats,
-        removedHatIds,
-        memberChangedHats,
-        roleDetailsChangedHats,
-        addedNewPaymentsHats,
-        editedPayrollHats,
-      };
-    },
-    [getHat, getPayment, hatsTree?.topHat.smartAddress, uploadHatDescription],
   );
 
   const prepareCreateTopHatProposalData = useCallback(
@@ -369,17 +380,21 @@ export default function useCreateRoles() {
   const prepareEditHatsProposalData = useCallback(
     (
       proposalMetadata: CreateProposalMetadata,
-      edits: {
-        addedHats: HatStruct[];
-        removedHatIds: Hex[];
-        memberChangedHats: HatWearerChangedParams[];
-        roleDetailsChangedHats: {
-          id: Address;
-          details: string;
-        }[];
-        addedNewPaymentsHats: RoleHatFormValue[];
-        editedPayrollHats: RoleHatFormValue[];
-      },
+      addedHats: HatStruct[],
+      removedHatIds: Hex[],
+      memberChangedHats: HatWearerChangedParams[],
+      roleDetailsChangedHats: {
+        id: Hex;
+        details: string;
+      }[],
+      editedPaymentStreams: {
+        hatId: Hex;
+        payment: SablierPaymentFormValues;
+      }[],
+      addedPaymentStreams: {
+        hatId: Hex;
+        payment: SablierPaymentFormValues;
+      }[],
     ) => {
       if (!hatsTree || !daoAddress) {
         throw new Error('Can not edit hats without Hats Tree!');
@@ -387,14 +402,6 @@ export default function useCreateRoles() {
 
       const adminHatId = hatsTree.adminHat.id;
       const topHatAccount = hatsTree.topHat.smartAddress;
-      const {
-        addedHats,
-        removedHatIds,
-        memberChangedHats,
-        roleDetailsChangedHats,
-        addedNewPaymentsHats,
-        editedPayrollHats,
-      } = edits;
 
       const createAndMintHatsTxs: Hex[] = [];
       let removeHatTxs: Hex[] = [];
@@ -570,11 +577,18 @@ export default function useCreateRoles() {
         });
       }
 
-      if (addedNewPaymentsHats.length) {
-        const streamsData = addedNewPaymentsHats.flatMap(role =>
+      // TODO DEV
+      // i've changed the type of `addedPaymentStreams` and
+      // `editedPaymentStreams` and maybe another input type.
+      // We'll need figure out these smart addresses here.
+      // Probably should see if we can grab them from store off the hat if the hat
+      // exists already to save network calls. Cause I think there's a network call
+      // involved with determining the smart address of new hat.
+      if (addedPaymentStreams.length) {
+        const streamsData = addedPaymentStreams.flatMap(role =>
           (role.payments ?? []).map(payment => payment),
         );
-        const recipients = addedNewPaymentsHats.flatMap(role =>
+        const recipients = addedPaymentStreams.flatMap(role =>
           (role.payments ?? []).map(() => {
             if (role.smartAddress === undefined) {
               throw new Error('Hat smart address for new payment on role is undefined.');
@@ -597,10 +611,10 @@ export default function useCreateRoles() {
         });
       }
 
-      if (editedPayrollHats.length) {
+      if (editedPaymentStreams.length) {
         const paymentCancelTxs: { calldata: Hex; targetAddress: Address }[] = [];
 
-        editedPayrollHats.forEach(role =>
+        editedPaymentStreams.forEach(role =>
           (role.payments ?? []).forEach(payment => {
             if (role.wearer === undefined) {
               throw new Error('Hat wearer of edited payroll role is undefined.');
@@ -670,10 +684,10 @@ export default function useCreateRoles() {
             });
           }),
         );
-        const streamsData = editedPayrollHats.flatMap(role =>
+        const streamsData = editedPaymentStreams.flatMap(role =>
           (role.payments ?? []).map(payment => payment),
         );
-        const recipients = editedPayrollHats.flatMap(role =>
+        const recipients = editedPaymentStreams.flatMap(role =>
           (role.payments ?? []).map(() => {
             if (role.smartAddress === undefined) {
               throw new Error('Hat smart address for new payment on role is undefined.');
@@ -752,30 +766,49 @@ export default function useCreateRoles() {
         throw new Error('Cannot create Roles proposal without known Safe');
       }
 
-      try {
-        // filter to hats that have been modified (ie includes `editedRole` prop)
-        const modifiedHats: RoleHatFormValueEdited[] = values.hats
-          .map(hat =>
-            hat.editedRole !== undefined ? { ...hat, editedRole: hat.editedRole } : null,
-          )
-          .filter(hat => hat !== null);
+      // filter to hats that have been modified (ie includes `editedRole` prop)
+      const modifiedHats: RoleHatFormValueEdited[] = values.hats
+        .map(hat => {
+          if (hat.editedRole === undefined) {
+            return null;
+          }
+          return { ...hat, editedRole: hat.editedRole };
+        })
+        .filter(hat => hat !== null);
 
-        const editedHatStructs = await editedHatsGroupedByType(modifiedHats);
+      try {
+        const addedHats = await identifyAndPrepareAddedHats(modifiedHats, uploadHatDescription);
+        const removedHatIds = identifyAndPrepareRemovedHats(modifiedHats);
+        const memberChangedHats = identifyAndPrepareMemberChangedHats(modifiedHats, getHat);
+        const roleDetailsChangedHats = await identifyAndPrepareRoleDetailsChangedHats(
+          modifiedHats,
+          uploadHatDescription,
+        );
+        const editedPaymentStreams = identifyAndPrepareEditedPaymentStreams(
+          modifiedHats,
+          getPayment,
+        );
+        const addedPaymentStreams = identifyAndPrepareAddedPaymentStreams(modifiedHats);
 
         let proposalData: ProposalExecuteData;
         if (!hatsTreeId) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
           // along with any other hats that are added.
-          proposalData = await prepareCreateTopHatProposalData(
-            values.proposalMetadata,
-            editedHatStructs.addedHats,
-          );
+          proposalData = await prepareCreateTopHatProposalData(values.proposalMetadata, addedHats);
         } else {
           if (!hatsTree) {
             throw new Error('Cannot edit Roles without a HatsTree');
           }
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
-          proposalData = prepareEditHatsProposalData(values.proposalMetadata, editedHatStructs);
+          proposalData = prepareEditHatsProposalData(
+            values.proposalMetadata,
+            addedHats,
+            removedHatIds,
+            memberChangedHats,
+            roleDetailsChangedHats,
+            editedPaymentStreams,
+            addedPaymentStreams,
+          );
         }
 
         // All done, submit the proposal!
@@ -795,15 +828,17 @@ export default function useCreateRoles() {
       }
     },
     [
-      safe,
-      editedHatsGroupedByType,
-      hatsTreeId,
-      submitProposal,
-      t,
-      submitProposalSuccessCallback,
-      prepareCreateTopHatProposalData,
+      getHat,
+      getPayment,
       hatsTree,
+      hatsTreeId,
+      prepareCreateTopHatProposalData,
       prepareEditHatsProposalData,
+      safe,
+      submitProposal,
+      submitProposalSuccessCallback,
+      t,
+      uploadHatDescription,
     ],
   );
 
