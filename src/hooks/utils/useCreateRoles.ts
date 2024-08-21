@@ -27,7 +27,7 @@ import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
-import { normalizePaymentFormData } from './../../store/roles/rolesStoreUtils';
+import { mapSablierPaymentFormValuesToSablierPayment } from './../../store/roles/rolesStoreUtils';
 
 const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   return JSON.stringify({
@@ -643,7 +643,7 @@ export default function useCreateRoles() {
             }
 
             const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
-              normalizePaymentFormData(payment),
+              mapSablierPaymentFormValuesToSablierPayment(payment),
               getAddress(role.wearer),
             );
             paymentCancelTxs.push({

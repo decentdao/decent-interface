@@ -341,7 +341,9 @@ export async function getNewRole({
   };
 }
 
-export const normalizePaymentFormData = (payment: SablierPaymentFormValues): SablierPayment => {
+export const mapSablierPaymentFormValuesToSablierPayment = (
+  payment: SablierPaymentFormValues,
+): SablierPayment => {
   if (
     !payment.streamId ||
     !payment.contractAddress ||
@@ -364,7 +366,7 @@ export const normalizePaymentFormData = (payment: SablierPaymentFormValues): Sab
   };
 };
 
-export const normalizeRoleFormData = (role: RoleHatFormValue): DecentRoleHat => {
+export const mapRoleHatFormValueToDecentRoleHat = (role: RoleHatFormValue): DecentRoleHat => {
   if (
     !role.id ||
     !role.prettyId ||
@@ -382,6 +384,6 @@ export const normalizeRoleFormData = (role: RoleHatFormValue): DecentRoleHat => 
     name: role.name,
     description: role.description,
     smartAddress: role.smartAddress,
-    payments: role.payments?.map(payment => normalizePaymentFormData(payment)),
+    payments: role.payments?.map(payment => mapSablierPaymentFormValuesToSablierPayment(payment)),
   };
 };

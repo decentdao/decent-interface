@@ -8,7 +8,7 @@ import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentRoleHat, normalizeRoleFormData } from '../../../../store/roles';
+import { DecentRoleHat, mapRoleHatFormValueToDecentRoleHat } from '../../../../store/roles';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -124,7 +124,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         borderRadius="0.5rem"
       >
         {editedRoles.map((role, index) => {
-          const normalizedRole = normalizeRoleFormData(role);
+          const normalizedRole = mapRoleHatFormValueToDecentRoleHat(role);
           return (
             <RoleCardShort
               key={index}
