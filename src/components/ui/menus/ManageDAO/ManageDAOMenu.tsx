@@ -240,8 +240,6 @@ export function ManageDAOMenu({
     freezeOption,
   ]);
 
-  console.log(freezeGuard, !!freezeGuard.freezeProposalCreatedTime);
-
   return (
     <OptionMenu
       trigger={
