@@ -183,9 +183,9 @@ export function ManageDAOMenu({
     };
 
     if (
-      freezeGuard.freezeProposalCreatedTime &&
-      freezeGuard.freezeProposalPeriod &&
-      freezeGuard.freezePeriod &&
+      freezeGuard.freezeProposalCreatedTime !== null &&
+      freezeGuard.freezeProposalPeriod !== null &&
+      freezeGuard.freezePeriod !== null &&
       !isWithinFreezeProposalPeriod(
         freezeGuard.freezeProposalCreatedTime,
         freezeGuard.freezeProposalPeriod,
@@ -204,8 +204,8 @@ export function ManageDAOMenu({
         return [createSubDAOOption, freezeOption, settingsOption];
       }
     } else if (
-      freezeGuard.freezeProposalCreatedTime &&
-      freezeGuard.freezePeriod &&
+      freezeGuard.freezeProposalCreatedTime !== null &&
+      freezeGuard.freezePeriod !== null &&
       isWithinFreezePeriod(
         freezeGuard.freezeProposalCreatedTime,
         freezeGuard.freezePeriod,
