@@ -14,14 +14,20 @@ import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
   const { addressPrefix } = useNetworkConfig();
-  const { switchChain } = useSwitchChain();
+  const navigate = useNavigate();
+
+  const { switchChain } = useSwitchChain({
+    mutation: {
+      onSuccess: () => {
+        navigate(DAO_ROUTES.dao.relative(network, address));
+      },
+    },
+  });
 
   const { daoName } = useGetDAOName({
     address: getAddress(address),
     chainId: getChainIdFromPrefix(network),
   });
-
-  const navigate = useNavigate();
 
   const { t } = useTranslation('dashboard');
 
@@ -35,12 +41,7 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
   const onClickNav = () => {
     if (onClick) onClick();
     if (addressPrefix !== network) {
-      switchChain(
-        { chainId: getChainIdFromPrefix(network) },
-        {
-          onSuccess: () => navigate(DAO_ROUTES.dao.relative(network, address)),
-        },
-      );
+      switchChain({ chainId: getChainIdFromPrefix(network) });
     } else {
       navigate(DAO_ROUTES.dao.relative(network, address));
     }
