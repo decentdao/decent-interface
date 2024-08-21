@@ -1,4 +1,4 @@
-import { TokenInfoResponse, TransferResponse } from '@safe-global/api-kit';
+import { TokenInfoResponse } from '@safe-global/api-kit';
 import { useEffect, useCallback, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { getAddress } from 'viem';
@@ -106,15 +106,15 @@ export const useDecentTreasury = () => {
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
 
-    type TransferResponse2 = TransferResponse & { tokenAddress: string };
-
     const tokenAddresses = transfers.results
-      // no null or undefined tokenAddresses
-      .filter((transfer): transfer is TransferResponse2 => !!transfer.tokenAddress)
+      // map down to just the addresses, with a type of `string | undefined`
+      .map(transfer => transfer.tokenAddress)
+      // no undefined addresses
+      .filter(address => address !== undefined)
       // make unique
       .filter((value, index, self) => self.indexOf(value) === index)
       // turn them into Address type
-      .map(transfer => getAddress(transfer.tokenAddress));
+      .map(address => getAddress(address));
 
     // Instead of this block of code, check the commented out snippet
     // below this for a half-implemented alternative.

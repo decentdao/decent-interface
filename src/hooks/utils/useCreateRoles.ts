@@ -215,7 +215,7 @@ export default function useCreateRoles() {
           const payments = hat.payments?.filter(payment => !payment.streamId);
           return payments?.length ? { ...hat, payments } : null;
         })
-        .filter(hat => !!hat) as RoleHatFormValue[];
+        .filter(hat => hat !== null);
 
       return {
         addedHats,
@@ -661,7 +661,7 @@ export default function useCreateRoles() {
     ],
   );
 
-  const createRolesEditProposal = useCallback(
+  const createEditRolesProposal = useCallback(
     async (values: RoleFormValues, formikHelpers: FormikHelpers<RoleFormValues>) => {
       const { setSubmitting } = formikHelpers;
       setSubmitting(true);
@@ -722,6 +722,6 @@ export default function useCreateRoles() {
   );
 
   return {
-    createRolesEditProposal,
+    createEditRolesProposal,
   };
 }
