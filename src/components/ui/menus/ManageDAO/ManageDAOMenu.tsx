@@ -184,7 +184,7 @@ export function ManageDAOMenu({
 
     if (
       freezeGuard.freezeProposalCreatedTime !== null &&
-      freezeGuard.freezeProposalPeriod  !== null &&
+      freezeGuard.freezeProposalPeriod !== null &&
       freezeGuard.freezePeriod !== null &&
       !isWithinFreezeProposalPeriod(
         freezeGuard.freezeProposalCreatedTime,
