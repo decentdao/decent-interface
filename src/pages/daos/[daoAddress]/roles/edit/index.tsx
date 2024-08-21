@@ -4,7 +4,7 @@ import { Formik } from 'formik';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Hex } from 'viem';
+import { Hex, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import {
@@ -30,7 +30,16 @@ function RolesEdit() {
   const {
     node: { daoAddress, safe },
   } = useFractal();
-  const { addressPrefix } = useNetworkConfig();
+  const {
+    addressPrefix,
+    chain,
+    contracts: {
+      hatsProtocol,
+      erc6551Registry,
+      decentHatsMasterCopy,
+      hatsAccount1ofNMasterCopy: hatsAccountImplementation,
+    },
+  } = useNetworkConfig();
 
   const publicClient = usePublicClient();
   const { rolesSchema } = useRolesSchema();
@@ -151,7 +160,16 @@ function RolesEdit() {
               buttonClick={async () => {
                 if (!publicClient) return;
 
-                const newRole = await getNewRole();
+                const newRole = await getNewRole({
+                  adminHatId: hatsTree?.adminHat.id,
+                  hatsCount: values.hats.length,
+                  implementation: hatsAccountImplementation,
+                  chainId: BigInt(chain.id),
+                  publicClient,
+                  registryAddress: erc6551Registry,
+                  decentHats: getAddress(decentHatsMasterCopy),
+                  tokenContract: hatsProtocol,
+                });
                 setFieldValue('roleEditing', newRole);
                 showRoleEditDetails(newRole.id);
               }}
