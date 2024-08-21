@@ -35,14 +35,15 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
 
     return matches[0];
   },
-  setHatsTreeId: hatsTreeId =>
+  setHatsTreeId: args =>
     set(() => {
+      const { hatsTreeId, contextChainId } = args;
       // if `hatsTreeId` is null or undefined,
       // set `hatsTree` to that same value
       if (typeof hatsTreeId !== 'number') {
-        return { hatsTreeId, hatsTree: hatsTreeId, streamsFetched: false };
+        return { hatsTreeId, hatsTree: hatsTreeId, streamsFetched: false, contextChainId: null };
       }
-      return { hatsTreeId, streamsFetched: false };
+      return { hatsTreeId, streamsFetched: false, contextChainId };
     }),
   setHatsTree: async params => {
     const hatsTree = await sanitize(
