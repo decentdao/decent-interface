@@ -4,8 +4,7 @@ import { Formik } from 'formik';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Hex, getAddress } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { Hex, toHex } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import {
   RoleCardLoading,
@@ -17,12 +16,13 @@ import DraggableDrawer from '../../../../../components/ui/containers/DraggableDr
 import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
+import { getRandomBytes } from '../../../../../helpers';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import useCreateRoles from '../../../../../hooks/utils/useCreateRoles';
 import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBlocker';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { getNewRole, useRolesStore } from '../../../../../store/roles';
+import { useRolesStore } from '../../../../../store/roles';
 import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
@@ -30,18 +30,8 @@ function RolesEdit() {
   const {
     node: { daoAddress, safe },
   } = useFractal();
-  const {
-    addressPrefix,
-    chain,
-    contracts: {
-      hatsProtocol,
-      erc6551Registry,
-      decentHatsMasterCopy,
-      hatsAccount1ofNMasterCopy: hatsAccountImplementation,
-    },
-  } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfig();
 
-  const publicClient = usePublicClient();
   const { rolesSchema } = useRolesSchema();
   const { hatsTree } = useRolesStore();
 
@@ -89,8 +79,8 @@ function RolesEdit() {
 
   if (daoAddress === null) return null;
 
-  const showRoleEditDetails = (hatId: Hex) => {
-    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, hatId));
+  const showRoleEditDetails = (roleId: Hex) => {
+    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, roleId));
   };
 
   const hatsTreeLoading = hatsTree === undefined;
@@ -158,20 +148,9 @@ function RolesEdit() {
                 leftIcon: <Plus />,
               }}
               buttonClick={async () => {
-                if (!publicClient) return;
-
-                const newRole = await getNewRole({
-                  adminHatId: hatsTree?.adminHat.id,
-                  hatsCount: values.hats.length,
-                  implementation: hatsAccountImplementation,
-                  chainId: BigInt(chain.id),
-                  publicClient,
-                  registryAddress: erc6551Registry,
-                  decentHats: getAddress(decentHatsMasterCopy),
-                  tokenContract: hatsProtocol,
-                });
-                setFieldValue('roleEditing', newRole);
-                showRoleEditDetails(newRole.id);
+                const newId = toHex(getRandomBytes(), { size: 32 });
+                setFieldValue('roleEditing', { id: newId });
+                showRoleEditDetails(newId);
               }}
             />
 

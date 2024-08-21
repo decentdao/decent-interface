@@ -306,41 +306,6 @@ export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsC
   return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
 };
 
-export async function getNewRole({
-  adminHatId,
-  hatsCount,
-  chainId,
-  publicClient,
-  implementation,
-  tokenContract,
-  registryAddress,
-  decentHats,
-}: {
-  adminHatId?: Hex;
-  hatsCount: number;
-} & Omit<PredictAccountParams, 'tokenId'>): Promise<RoleHatFormValue> {
-  // @dev creates a unique id for the hat for new hats for use in form, not stored on chain
-  const id = adminHatId
-    ? toHex(predictHatId({ adminHatId, hatsCount }))
-    : toHex(getRandomBytes(), { size: 32 });
-  return {
-    id,
-    wearer: '',
-    name: '',
-    description: '',
-    prettyId: '',
-    smartAddress: await predictAccountAddress({
-      implementation,
-      chainId: BigInt(chainId),
-      tokenContract,
-      tokenId: BigInt(id),
-      registryAddress,
-      publicClient,
-      decentHats,
-    }),
-  };
-}
-
 export const mapSablierPaymentFormValuesToSablierPayment = (
   payment: SablierPaymentFormValues,
 ): SablierPayment => {
