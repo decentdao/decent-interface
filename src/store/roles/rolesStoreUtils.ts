@@ -1,5 +1,14 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, encodePacked, getContract, keccak256, getAddress } from 'viem';
+import {
+  Address,
+  Hex,
+  PublicClient,
+  encodePacked,
+  getContract,
+  keccak256,
+  getAddress,
+  zeroAddress,
+} from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import {
   RoleHatFormValue,
@@ -169,10 +178,6 @@ export const predictAccountAddress = (params: PredictAccountParams) => {
     client: publicClient,
   });
 
-  if (!publicClient.chain) {
-    throw new Error('Public client needs to be on a chain');
-  }
-
   const salt = getERC6551RegistrySalt(chainId, decentHats);
 
   return erc6551RegistryContract.read.account([
@@ -322,23 +327,16 @@ export const mapSablierPaymentFormValuesToSablierPayment = (
 };
 
 export const mapRoleHatFormValueToDecentRoleHat = (role: RoleHatFormValue): DecentRoleHat => {
-  if (
-    !role.id ||
-    !role.prettyId ||
-    !role.wearer ||
-    !role.name ||
-    !role.description ||
-    !role.smartAddress
-  ) {
+  if (!role.id || !role.prettyId || !role.wearer || !role.name || !role.description) {
     throw new Error('RoleHatFormValue data not complete enough to create DecentRoleHat');
   }
   return {
-    id: getAddress(role.id),
+    id: role.id,
     prettyId: role.prettyId,
     wearer: getAddress(role.wearer),
     name: role.name,
     description: role.description,
-    smartAddress: role.smartAddress,
+    smartAddress: zeroAddress,
     payments: role.payments?.map(payment => mapSablierPaymentFormValuesToSablierPayment(payment)),
   };
 };

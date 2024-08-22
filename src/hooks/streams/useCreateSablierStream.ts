@@ -126,30 +126,28 @@ export default function useCreateSablierStream() {
   }, []);
 
   const prepareBatchLinearStreamCreation = useCallback(
-    (linearStreams: SablierPaymentFormValues[], recipients: Address[]) => {
-      if (linearStreams.length !== recipients.length) {
-        console.error('Error batch creating linear streams', { linearStreams, recipients });
-        throw new Error(
-          'Parameters mismatch. Amount of created streams has to match amount of recipients',
-        );
-      }
-
+    (
+      paymentStreams: {
+        recipient: Address;
+        payment: SablierPaymentFormValues;
+      }[],
+    ) => {
       const preparedStreamCreationTransactions: { calldata: Hex; targetAddress: Address }[] = [];
       const preparedTokenApprovalsTransactions: { calldata: Hex; targetAddress: Address }[] = [];
 
-      const groupedStreams = groupBy(linearStreams, 'asset.address');
+      const groupedStreams = groupBy(paymentStreams, 'payment.asset.address');
       Object.keys(groupedStreams).forEach(assetAddress => {
         const assembledStreams: ReturnType<typeof prepareLinearStream>[] = [];
         const streams = groupedStreams[assetAddress];
         const tokenAddress = getAddress(assetAddress);
         let totalStreamsAmount = 0n;
 
-        streams.forEach((streamData, index) => {
+        streams.forEach(streamData => {
           if (
-            !streamData?.amount?.bigintValue ||
-            streamData.amount.bigintValue <= 0n ||
-            !streamData.startDate ||
-            !streamData.endDate
+            !streamData.payment.amount?.bigintValue ||
+            streamData.payment.amount.bigintValue <= 0n ||
+            !streamData.payment.startDate ||
+            !streamData.payment.endDate
           ) {
             console.error(
               'Error creating linear stream - stream amount must be bigger than 0, startDate and endDate must be set',
@@ -159,17 +157,15 @@ export default function useCreateSablierStream() {
               'Stream total amount must be greater than 0, startDate and endDate must be set',
             );
           }
-          totalStreamsAmount += streamData.amount.bigintValue;
-          const recipient = recipients[index];
+          totalStreamsAmount += streamData.payment.amount.bigintValue;
 
           assembledStreams.push(
             prepareLinearStream({
-              recipient,
-              ...streamData,
-              startDate: streamData.startDate,
-              endDate: streamData.endDate,
-              cliffDate: streamData.cliffDate,
-              totalAmount: streamData.amount.bigintValue,
+              recipient: streamData.recipient,
+              startDate: streamData.payment.startDate,
+              endDate: streamData.payment.endDate,
+              cliffDate: streamData.payment.cliffDate,
+              totalAmount: streamData.payment.amount.bigintValue,
             }),
           );
         });

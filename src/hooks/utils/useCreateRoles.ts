@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Address, encodeFunctionData, getAddress, Hash, Hex, zeroAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import DecentHatsAbi from '../../assets/abi/DecentHats_0_1_0_Abi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
@@ -16,7 +17,6 @@ import {
   HatStruct,
   HatWearerChangedParams,
   RoleFormValues,
-  RoleHatFormValue,
   RoleHatFormValueEdited,
   SablierPayment,
   SablierPaymentFormValues,
@@ -33,6 +33,7 @@ import useCreateSablierStream from '../streams/useCreateSablierStream';
 import {
   DecentRoleHat,
   mapSablierPaymentFormValuesToSablierPayment,
+  predictAccountAddress,
 } from './../../store/roles/rolesStoreUtils';
 
 const hatsDetailsBuilder = (data: { name: string; description: string }) => {
@@ -161,31 +162,45 @@ const identifyAndPrepareRoleDetailsChangedHats = (
 const identifyAndPrepareEditedPaymentStreams = (
   modifiedHats: RoleHatFormValueEdited[],
   getPayment: (hatId: Hex, streamId: string) => SablierPayment | null,
+  getHat: (hatId: Hex) => DecentRoleHat | null,
 ) => {
-  return modifiedHats.flatMap(hat => {
-    const payments = hat.payments?.filter(payment => !!payment.streamId) || [];
+  return modifiedHats.flatMap(formHat => {
+    const currentHat = getHat(formHat.id);
+    if (currentHat === null) {
+      throw new Error("Couldn't find existing Hat for edited payment stream Hat.");
+    }
+
+    const payments = formHat.payments?.filter(payment => !!payment.streamId) || [];
 
     return payments
       .filter(payment => {
         if (payment.streamId === undefined) {
           return false;
         }
-        const originalPayment = getPayment(hat.id, payment.streamId);
+        const originalPayment = getPayment(formHat.id, payment.streamId);
         return !isEqual(payment, originalPayment);
       })
       .map(payment => ({
-        hatId: hat.id,
+        recipient: currentHat.smartAddress,
         payment,
       }));
   });
 };
 
-const identifyAndPrepareAddedPaymentStreams = (modifiedHats: RoleHatFormValueEdited[]) => {
-  return modifiedHats.flatMap(hat => {
-    const payments = hat.payments?.filter(payment => !payment.streamId) || [];
+const identifyAndPrepareAddedPaymentStreams = (
+  modifiedHats: RoleHatFormValueEdited[],
+  getHat: (hatId: Hex) => DecentRoleHat | null,
+) => {
+  return modifiedHats.flatMap(formHat => {
+    const currentHat = getHat(formHat.id);
+    if (currentHat === null) {
+      throw new Error("Couldn't find existing Hat for added payment stream Hat.");
+    }
+
+    const payments = formHat.payments?.filter(payment => !payment.streamId) || [];
 
     return payments.map(payment => ({
-      hatId: hat.id,
+      recipient: currentHat.smartAddress,
       payment,
     }));
   });
@@ -261,7 +276,7 @@ export default function useCreateRoles() {
   const { prepareBatchLinearStreamCreation, prepareFlushStreamTx, prepareCancelStreamTx } =
     useCreateSablierStream();
   const ipfsClient = useIPFSClient();
-
+  const publicClient = usePublicClient();
   const navigate = useNavigate();
   const submitProposalSuccessCallback = useCallback(() => {
     if (daoAddress) {
@@ -380,7 +395,7 @@ export default function useCreateRoles() {
   const prepareEditHatsProposalData = useCallback(
     (
       proposalMetadata: CreateProposalMetadata,
-      addedHats: HatStruct[],
+      addedHats: (HatStruct & { smartAddress: Address; id: bigint })[],
       removedHatIds: Hex[],
       memberChangedHats: HatWearerChangedParams[],
       roleDetailsChangedHats: {
@@ -388,11 +403,11 @@ export default function useCreateRoles() {
         details: string;
       }[],
       editedPaymentStreams: {
-        hatId: Hex;
+        recipient: Address;
         payment: SablierPaymentFormValues;
       }[],
       addedPaymentStreams: {
-        hatId: Hex;
+        recipient: Address;
         payment: SablierPaymentFormValues;
       }[],
     ) => {
@@ -577,39 +592,12 @@ export default function useCreateRoles() {
         });
       }
 
-      // TODO DEV
-      // i've changed the type of `addedPaymentStreams` and
-      // `editedPaymentStreams` and maybe another input type.
-      // We'll need figure out these smart addresses here.
-      // Probably should see if we can grab them from store off the hat if the hat
-      // exists already to save network calls. Cause I think there's a network call
-      // involved with determining the smart address of new hat.
-      if (addedPaymentStreams.length) {
-        const streamsData = addedPaymentStreams.flatMap(role =>
-          (role.payments ?? []).map(payment => payment),
-        );
-        const recipients = addedPaymentStreams.flatMap(role =>
-          (role.payments ?? []).map(() => {
-            if (role.smartAddress === undefined) {
-              throw new Error('Hat smart address for new payment on role is undefined.');
-            }
-            return role.smartAddress;
-          }),
-        );
-        const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
-          streamsData,
-          recipients,
-        );
+      const preparedPaymentTransactions = prepareBatchLinearStreamCreation(addedPaymentStreams);
 
-        streamsData.forEach((_, i) => {
-          hatPaymentAddedTxs.push(
-            preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
-          );
-          hatPaymentAddedTxs.push(
-            preparedPaymentTransactions.preparedStreamCreationTransactions[i],
-          );
-        });
-      }
+      addedPaymentStreams.forEach((_, i) => {
+        hatPaymentAddedTxs.push(preparedPaymentTransactions.preparedTokenApprovalsTransactions[i]);
+        hatPaymentAddedTxs.push(preparedPaymentTransactions.preparedStreamCreationTransactions[i]);
+      });
 
       if (editedPaymentStreams.length) {
         const paymentCancelTxs: { calldata: Hex; targetAddress: Address }[] = [];
@@ -759,6 +747,9 @@ export default function useCreateRoles() {
 
   const createEditRolesProposal = useCallback(
     async (values: RoleFormValues, formikHelpers: FormikHelpers<RoleFormValues>) => {
+      if (!publicClient) {
+        throw new Error('Cannot create Roles proposal without public client');
+      }
       const { setSubmitting } = formikHelpers;
       setSubmitting(true);
       if (!safe) {
@@ -787,8 +778,9 @@ export default function useCreateRoles() {
         const editedPaymentStreams = identifyAndPrepareEditedPaymentStreams(
           modifiedHats,
           getPayment,
+          getHat,
         );
-        const addedPaymentStreams = identifyAndPrepareAddedPaymentStreams(modifiedHats);
+        const addedPaymentStreams = identifyAndPrepareAddedPaymentStreams(modifiedHats, getHat);
 
         let proposalData: ProposalExecuteData;
         if (!hatsTreeId) {
@@ -800,9 +792,34 @@ export default function useCreateRoles() {
             throw new Error('Cannot edit Roles without a HatsTree');
           }
           // This safe has a top hat, so we prepare a proposal to edit the hats that have changed.
+
+          // Convert addedHats to include id and smartAddress
+          const addedHatsWithIds = await Promise.all(
+            addedHats.map(async (hat, index) => {
+              const hatId = predictHatId({
+                adminHatId: hatsTree.adminHat.id,
+                hatsCount: hatsTree.roleHats.length + index,
+              });
+              const smartAddress = await predictAccountAddress({
+                implementation: hatsAccount1ofNMasterCopy,
+                chainId: BigInt(chain.id),
+                tokenContract: hatsProtocol,
+                tokenId: hatId,
+                registryAddress: erc6551Registry,
+                publicClient,
+                decentHats: getAddress(decentHatsMasterCopy),
+              });
+              return {
+                ...hat,
+                id: hatId,
+                smartAddress,
+              };
+            }),
+          );
+
           proposalData = prepareEditHatsProposalData(
             values.proposalMetadata,
-            addedHats,
+            addedHatsWithIds,
             removedHatIds,
             memberChangedHats,
             roleDetailsChangedHats,
@@ -828,12 +845,18 @@ export default function useCreateRoles() {
       }
     },
     [
+      chain.id,
+      decentHatsMasterCopy,
+      erc6551Registry,
       getHat,
       getPayment,
+      hatsAccount1ofNMasterCopy,
+      hatsProtocol,
       hatsTree,
       hatsTreeId,
       prepareCreateTopHatProposalData,
       prepareEditHatsProposalData,
+      publicClient,
       safe,
       submitProposal,
       submitProposalSuccessCallback,
