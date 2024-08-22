@@ -107,9 +107,3 @@ export interface RoleFormValues {
   roleEditing?: RoleHatFormValue; // is this here to "indicate" which role's payments are "currently" being edited?
   customNonce?: number;
 }
-
-export interface HatWearerChangedParams {
-  id: Address;
-  currentWearer: Address;
-  newWearer: Address;
-}
