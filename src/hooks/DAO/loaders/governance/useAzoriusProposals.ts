@@ -222,9 +222,9 @@ export const useAzoriusProposals = () => {
         let proposalData;
 
         if (proposalCreatedEvent.args.metadata) {
-          try {
-            const metadataEvent = parseProposalMetadata(proposalCreatedEvent.args.metadata);
+          const metadataEvent = parseProposalMetadata(proposalCreatedEvent.args.metadata);
 
+          try {
             const decodedTransactions = await decodeTransactions(
               _decode,
               proposalCreatedEvent.args.transactions.map(tx => ({
