@@ -17,12 +17,17 @@ const hatsSubgraphClient = new HatsSubgraphClient({
 });
 
 const useHatsTree = () => {
-  const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, updateRolesWithStreams } =
-    useRolesStore();
+  const {
+    hatsTreeId,
+    contextChainId,
+    hatsTree,
+    streamsFetched,
+    setHatsTree,
+    updateRolesWithStreams,
+  } = useRolesStore();
 
   const ipfsClient = useIPFSClient();
   const {
-    chain,
     sablierSubgraph,
     contracts: {
       hatsProtocol,
@@ -40,14 +45,15 @@ const useHatsTree = () => {
         hatsTreeId === undefined ||
         hatsTreeId === null ||
         publicClient === undefined ||
-        decentHatsMasterCopy === undefined
+        decentHatsMasterCopy === undefined ||
+        contextChainId === null
       ) {
         return;
       }
 
       try {
         const tree = await hatsSubgraphClient.getTree({
-          chainId: chain.id,
+          chainId: contextChainId,
           treeId: hatsTreeId,
           props: {
             hats: {
@@ -75,7 +81,7 @@ const useHatsTree = () => {
             const cacheKey = {
               cacheName: CacheKeys.IPFS_HASH,
               hash,
-              chainId: chain.id,
+              chainId: contextChainId,
             } as const;
 
             const cachedDetails = getValue(cacheKey);
@@ -99,7 +105,7 @@ const useHatsTree = () => {
         try {
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
-            chainId: BigInt(chain.id),
+            chainId: BigInt(contextChainId),
             hatsProtocol: hatsProtocol,
             erc6551Registry,
             hatsAccountImplementation,
@@ -114,7 +120,7 @@ const useHatsTree = () => {
       } catch (e) {
         setHatsTree({
           hatsTree: null,
-          chainId: BigInt(chain.id),
+          chainId: BigInt(contextChainId),
           hatsProtocol: hatsProtocol,
           erc6551Registry,
           hatsAccountImplementation,
@@ -126,7 +132,7 @@ const useHatsTree = () => {
         console.error(e, {
           message,
           args: {
-            network: chain.id,
+            network: contextChainId,
             hatsTreeId,
           },
         });
@@ -135,7 +141,7 @@ const useHatsTree = () => {
 
     getHatsTree();
   }, [
-    chain.id,
+    contextChainId,
     decentHatsMasterCopy,
     erc6551Registry,
     hatsAccountImplementation,
