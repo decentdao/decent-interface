@@ -133,6 +133,7 @@ export function ProposalBuilder({
                 ButtonIcon={Trash}
                 buttonProps={{
                   isDisabled: pendingCreateTx,
+                  variant: 'secondary',
                   onClick: () =>
                     navigate(
                       daoAddress
