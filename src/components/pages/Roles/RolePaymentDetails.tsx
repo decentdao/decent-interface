@@ -92,7 +92,7 @@ export function RolePaymentDetails({
       return true;
     }
     return false;
-  }, [connectedAccount, showWithdraw]);
+  }, [connectedAccount, showWithdraw, roleHatWearerAddress]);
 
   const loadAmounts = useCallback(async () => {
     if (walletClient && payment?.streamId && payment?.contractAddress && canWithdraw) {
