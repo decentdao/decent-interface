@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { getAddress, getContract } from 'viem';
-import { useWalletClient } from 'wagmi';
+import { useAccount, useWalletClient } from 'wagmi';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
 import { DETAILS_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
@@ -79,11 +79,25 @@ export function RolePaymentDetails({
     node: { safe },
     treasury: { assetsFungible },
   } = useFractal();
+  const { address: connectedAccount } = useAccount();
   const { data: walletClient } = useWalletClient();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
 
   const [withdrawableAmount, setWithdrawableAmount] = useState(0n);
+
+  const canWithdraw = useMemo(() => {
+    if (
+      withdrawableAmount > 0n &&
+      connectedAccount &&
+      roleHat?.wearer &&
+      connectedAccount === roleHat.wearer &&
+      !!showWithdraw
+    ) {
+      return true;
+    }
+    return false;
+  }, [connectedAccount, withdrawableAmount, showWithdraw, roleHat?.wearer]);
 
   const loadAmounts = useCallback(async () => {
     if (walletClient && payment?.streamId && payment?.contractAddress) {
@@ -273,7 +287,7 @@ export function RolePaymentDetails({
             />
           </GridItem>
         </Grid>
-        {!!showWithdraw && withdrawableAmount > 0n && (
+        {canWithdraw && (
           <Box
             mt={4}
             px={4}
