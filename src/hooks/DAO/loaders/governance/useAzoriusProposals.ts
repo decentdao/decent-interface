@@ -6,6 +6,7 @@ import {
 import { VotedEvent as ERC20VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC20Voting';
 import { VotedEvent as ERC721VotedEvent } from '@fractal-framework/fractal-contracts/dist/typechain-types/contracts/azorius/LinearERC721Voting';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Hex, getAddress } from 'viem';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -126,6 +127,8 @@ export const useAzoriusProposals = () => {
     }
   }, [azoriusContractAddress]);
 
+  const { t } = useTranslation('proposal');
+
   const loadAzoriusProposals = useCallback(
     async (
       _azoriusContract: Azorius | undefined,
@@ -177,6 +180,19 @@ export const useAzoriusProposals = () => {
         });
       };
 
+      const parseProposalMetadata = (metadata: string): CreateProposalMetadata => {
+        try {
+          const createProposalMetadata: CreateProposalMetadata = JSON.parse(metadata);
+          return createProposalMetadata;
+        } catch {
+          logError('Unable to parse proposal metadata.', 'metadata:', metadata);
+          return {
+            title: t('metadataFailedParsePlaceholder'),
+            description: '',
+          };
+        }
+      };
+
       for (const proposalCreatedEvent of proposalCreatedEvents) {
         if (
           // oops
@@ -207,19 +223,17 @@ export const useAzoriusProposals = () => {
 
         if (proposalCreatedEvent.args.metadata) {
           try {
-            const metadataEvent: CreateProposalMetadata = JSON.parse(
-              proposalCreatedEvent.args.metadata,
-            );
+            const metadataEvent = parseProposalMetadata(proposalCreatedEvent.args.metadata);
 
             const decodedTransactions = await decodeTransactions(
               _decode,
-              proposalCreatedEvent.args.transactions.map(t => ({
-                ...t,
-                to: getAddress(t.to),
+              proposalCreatedEvent.args.transactions.map(tx => ({
+                ...tx,
+                to: getAddress(tx.to),
                 // @dev if decodeTransactions worked - we can be certain that this is Hex so type casting should be save.
                 // Also this will change and this casting won't be needed after migrating to viem's getContract
-                data: t.data as Hex,
-                value: t.value.toBigInt(),
+                data: tx.data as Hex,
+                value: tx.value.toBigInt(),
               })),
             );
             proposalData = {
@@ -228,19 +242,17 @@ export const useAzoriusProposals = () => {
                 description: metadataEvent.description,
                 documentationUrl: metadataEvent.documentationUrl,
               },
-              transactions: proposalCreatedEvent.args.transactions.map(t => ({
-                ...t,
-                to: getAddress(t.to),
-                value: t.value.toBigInt(),
-                data: t.data as Hex, // @dev Same here
+              transactions: proposalCreatedEvent.args.transactions.map(tx => ({
+                ...tx,
+                to: getAddress(tx.to),
+                value: tx.value.toBigInt(),
+                data: tx.data as Hex, // @dev Same here
               })),
               decodedTransactions,
             };
           } catch {
             logError(
-              'Unable to parse proposal metadata or transactions.',
-              'metadata:',
-              proposalCreatedEvent.args.metadata,
+              'Unable to parse proposal transactions.',
               'transactions:',
               proposalCreatedEvent.args.transactions,
             );
@@ -295,7 +307,7 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
     },
-    [action, azoriusContract?.address, azoriusContractAddress, network.chain.id],
+    [action, azoriusContract?.address, azoriusContractAddress, network.chain.id, t],
   );
 
   return (proposalLoaded: OnProposalLoaded) =>
