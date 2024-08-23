@@ -71,7 +71,7 @@ function Roles() {
                 wearerAddress={roleHat.wearer || zeroAddress}
                 hatId={roleHat.id}
                 handleRoleClick={handleNavigateToRole}
-                paymentsCount={roleHat.payments?.length}
+                paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}
               />
             ))}
           </Show>
