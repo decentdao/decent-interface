@@ -54,6 +54,7 @@ interface RolesStoreData {
   hatsTreeId: undefined | null | number;
   hatsTree: undefined | null | DecentTree;
   streamsFetched: boolean;
+  contextChainId: number | null;
 }
 
 export interface DecentRoleHat extends DecentHat {
@@ -70,7 +71,7 @@ export interface DecentTree {
 export interface RolesStore extends RolesStoreData {
   getHat: (hatId: Hex) => DecentRoleHat | null;
   getPayment: (hatId: Hex, streamId: string) => SablierPayment | null;
-  setHatsTreeId: (hatsTreeId: undefined | null | number) => void;
+  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
   setHatsTree: (params: {
     hatsTree: Tree | null | undefined;
     chainId: bigint;
@@ -153,6 +154,7 @@ export const initialHatsStore: RolesStoreData = {
   hatsTreeId: undefined,
   hatsTree: undefined,
   streamsFetched: false,
+  contextChainId: null,
 };
 
 export function getERC6551RegistrySalt(chainId: bigint, decentHats: Address) {

@@ -75,8 +75,14 @@ const useKeyValuePairs = () => {
     });
     keyValuePairsContract.getEvents
       .ValueUpdated({ theAddress: node.daoAddress }, { fromBlock: 0n })
-      .then(safeEvents => setHatsTreeId(getHatsTreeId(safeEvents, chain.id)))
+      .then(safeEvents =>
+        setHatsTreeId({
+          contextChainId: chain.id,
+          hatsTreeId: getHatsTreeId(safeEvents, chain.id),
+        }),
+      )
       .catch(error => {
+        setHatsTreeId({ hatsTreeId: null, contextChainId: chain.id });
         logError(error);
       });
 
@@ -90,7 +96,10 @@ const useKeyValuePairs = () => {
           // time to index, and do that most cleanly by not even telling the rest
           // of our code that we have the hats tree id until some time has passed.
           setTimeout(() => {
-            setHatsTreeId(getHatsTreeId(logs, chain.id));
+            setHatsTreeId({
+              hatsTreeId: getHatsTreeId(logs, chain.id),
+              contextChainId: chain.id,
+            });
           }, 20_000);
         },
       },

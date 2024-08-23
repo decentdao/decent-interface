@@ -192,6 +192,9 @@ const identifyAndPrepareEditedPaymentStreams = (
         }
         // @note remove payments that haven't been edited
         const originalPayment = getPayment(formHat.id, payment.streamId);
+        if (originalPayment === null) {
+          return false;
+        }
         return !isEqual(payment, originalPayment);
       })
       .map(payment => {

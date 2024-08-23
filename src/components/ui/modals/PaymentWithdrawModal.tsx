@@ -202,7 +202,7 @@ export default function PaymentWithdrawModal({
                   size={iconSize}
                 />
               </Box>
-              <Text textStyle="label-base">{accountDisplayName}</Text>
+              <Text textStyle="label-base">{roleHat.wearer}</Text>
             </Flex>
           </Flex>
           <Flex

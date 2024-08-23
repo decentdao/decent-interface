@@ -163,6 +163,10 @@ export function BigIntInput({
         value={inputValue}
         onChange={processValue}
         onBlur={onBlur}
+        onWheel={e => {
+          e.preventDefault();
+          e.currentTarget.blur();
+        }}
         type="number"
         {...rest}
       />
