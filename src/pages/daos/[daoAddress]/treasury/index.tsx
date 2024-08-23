@@ -39,16 +39,21 @@ export default function Treasury() {
           daoName,
           subject: t('treasury', { ns: 'breadcrumbs' }),
         })}
-        address={daoAddress ? daoAddress : undefined}
+        address={daoAddress}
         breadcrumbs={[
           {
             terminus: t('treasury', { ns: 'breadcrumbs' }),
             path: '',
           },
         ]}
-        buttonText={showSendButton ? t('buttonSendAssets') : undefined}
-        buttonClick={showSendButton ? openSendAsset : undefined}
-        buttonTestId="link-send-assets"
+        buttonProps={
+          showSendButton
+            ? {
+                children: t('buttonSendAssets'),
+                onClick: openSendAsset,
+              }
+            : undefined
+        }
       />
       <Grid
         templateAreas={{

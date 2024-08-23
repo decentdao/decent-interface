@@ -11,19 +11,11 @@ import Divider from '../../utils/Divider';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface PageHeaderProps {
   title?: string;
-  address?: string;
+  address?: string | null;
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
-  // @todo remove buttonVariant in favor of using buttonProps
-  buttonVariant?: 'text' | 'secondary';
   ButtonIcon?: PhosphorIcon;
-  buttonText?: string;
-  // @todo remove buttonClick in favor of using buttonProps
-  buttonClick?: () => void;
-  buttonTestId?: string;
   buttonProps?: ButtonProps;
-  // @todo remove isButtonDisabled in favor of using buttonProps
-  isButtonDisabled?: boolean;
   children?: ReactNode;
 }
 /**
@@ -35,12 +27,7 @@ function PageHeader({
   address,
   breadcrumbs,
   hasDAOLink = true,
-  buttonVariant,
   ButtonIcon,
-  buttonText,
-  buttonClick,
-  buttonTestId,
-  isButtonDisabled,
   buttonProps,
   children,
 }: PageHeaderProps) {
@@ -63,7 +50,7 @@ function PageHeader({
     }
   }, [hasDAOLink, daoName, daoAddress, breadcrumbs, addressPrefix]);
 
-  const showAction = !!buttonText || !!ButtonIcon || !!children;
+  const showAction = !!buttonProps || !!ButtonIcon || !!children;
 
   return (
     <Box
@@ -83,19 +70,10 @@ function PageHeader({
         {showAction && (
           <>
             <Spacer />
-            {buttonText && (
-              <Button
-                onClick={buttonClick}
-                data-testid={buttonTestId}
-                variant={buttonVariant}
-                isDisabled={isButtonDisabled}
-                {...buttonProps}
-              >
-                {buttonText}
-              </Button>
-            )}
+            {buttonProps && !ButtonIcon && <Button {...buttonProps} />}
             {ButtonIcon && (
               <IconButton
+                {...buttonProps}
                 aria-label="navigate"
                 icon={
                   <Icon
@@ -103,16 +81,10 @@ function PageHeader({
                     as={ButtonIcon}
                   />
                 }
-                onClick={buttonClick}
                 variant="tertiary"
                 size="icon-sm"
-                data-testid={buttonTestId}
-                isDisabled={isButtonDisabled}
-                {...buttonProps}
                 as={Button}
-              >
-                {buttonText}
-              </IconButton>
+              />
             )}
             {children}
           </>

@@ -12,7 +12,7 @@ import {
   RoleCardNoRoles,
 } from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { RoleFormValues, EditBadgeStatus } from '../../../../../components/pages/Roles/types';
+import { EditBadgeStatus, RoleFormValues } from '../../../../../components/pages/Roles/types';
 import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
 import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
@@ -151,27 +151,33 @@ function RolesEdit() {
                   path: '',
                 },
               ]}
-              buttonVariant="secondary"
-              buttonText={t('addRole')}
               buttonProps={{
+                variant: 'secondary',
+                children: t('addRole'),
                 size: 'sm',
-                leftIcon: <Plus />,
-              }}
-              buttonClick={async () => {
-                if (!publicClient) return;
+                border: '1px solid',
+                gap: 0,
+                leftIcon: (
+                  <Box mr="-0.25rem">
+                    <Plus size="1rem" />
+                  </Box>
+                ),
+                onClick: async () => {
+                  if (!publicClient) return;
 
-                const newRole = await getNewRole({
-                  adminHatId: hatsTree?.adminHat.id,
-                  hatsCount: values.hats.length,
-                  implementation: hatsAccountImplementation,
-                  chainId: BigInt(chain.id),
-                  publicClient,
-                  registryAddress: erc6551Registry,
-                  decentHats: getAddress(decentHatsMasterCopy),
-                  tokenContract: hatsProtocol,
-                });
-                setFieldValue('roleEditing', newRole);
-                showRoleEditDetails(newRole.id);
+                  const newRole = await getNewRole({
+                    adminHatId: hatsTree?.adminHat.id,
+                    hatsCount: values.hats.length,
+                    implementation: hatsAccountImplementation,
+                    chainId: BigInt(chain.id),
+                    publicClient,
+                    registryAddress: erc6551Registry,
+                    decentHats: getAddress(decentHatsMasterCopy),
+                    tokenContract: hatsProtocol,
+                  });
+                  setFieldValue('roleEditing', newRole);
+                  showRoleEditDetails(newRole.id);
+                },
               }}
             />
 
