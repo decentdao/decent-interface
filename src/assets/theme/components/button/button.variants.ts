@@ -26,7 +26,7 @@ const secondaryDisabled = {
   color: 'neutral-5',
 };
 const secondary = defineStyle({
-  border: '2px solid',
+  border: '1px solid',
   borderColor: 'lilac-0',
   color: 'lilac-0',
   _hover: {

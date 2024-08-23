@@ -56,7 +56,7 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
       boxSize="0.75rem"
       borderRadius="100%"
       bg="celery--2"
-      border="2px solid"
+      border="1px solid"
       borderColor="celery--5"
     />
   );

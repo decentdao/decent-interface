@@ -59,7 +59,6 @@ function Roles() {
                 gap: 0,
                 children: t('editRoles'),
                 onClick: () => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress)),
-                border: '1px solid',
               }
             : undefined
         }

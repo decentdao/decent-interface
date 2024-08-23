@@ -155,7 +155,6 @@ function RolesEdit() {
                 variant: 'secondary',
                 children: t('addRole'),
                 size: 'sm',
-                border: '1px solid',
                 gap: 0,
                 leftIcon: (
                   <Box mr="-0.25rem">
