@@ -48,7 +48,7 @@ export const governanceReducer = (state: FractalGovernance, action: FractalGover
   switch (action.type) {
     case FractalGovernanceAction.SET_ALL_PROPOSALS_LOADED:
       return { ...state, allProposalsLoaded: action.payload };
-    case FractalGovernanceAction.SET_LOADING_PROPOSALS:
+    case FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL:
       return { ...state, loadingProposals: action.payload };
     case FractalGovernanceAction.SET_GOVERNANCE_TYPE:
       return { ...state, type: action.payload };

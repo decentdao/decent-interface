@@ -158,13 +158,11 @@ export const useAzoriusProposals = () => {
       });
 
       action.dispatch({
-        type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+        type: FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL,
         payload: true,
       });
 
-      // TODO: `SET_LOADING_PROPOSALS` seems like the kind of action to be called once all proposals are finished loading.
-      // So, it's strange that this function takes a single proposals as an argument.
-      const completeProposalLoad = (proposal: AzoriusProposal) => {
+      const completeOneProposalLoadProcess = (proposal: AzoriusProposal) => {
         if (currentAzoriusAddress.current !== azoriusContractAddress) {
           // The DAO has changed, don't load the just-fetched proposal,
           // into state, and get out of this function completely.
@@ -174,7 +172,7 @@ export const useAzoriusProposals = () => {
         _proposalLoaded(proposal);
 
         action.dispatch({
-          type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+          type: FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL,
           payload: false,
         });
       };
@@ -201,7 +199,7 @@ export const useAzoriusProposals = () => {
         });
 
         if (cachedProposal) {
-          completeProposalLoad(cachedProposal);
+          completeOneProposalLoadProcess(cachedProposal);
           continue;
         }
 
@@ -264,7 +262,7 @@ export const useAzoriusProposals = () => {
           proposalData,
         );
 
-        completeProposalLoad(proposal);
+        completeOneProposalLoadProcess(proposal);
 
         const isProposalFossilized =
           proposal.state === FractalProposalState.CLOSED ||
@@ -288,7 +286,7 @@ export const useAzoriusProposals = () => {
 
       // Just in case there are no `proposalCreatedEvent`s, we still need to set the loading state to false.
       action.dispatch({
-        type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+        type: FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL,
         payload: false,
       });
 
