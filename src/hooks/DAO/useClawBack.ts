@@ -128,7 +128,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         }
       } catch (e) {
         logError('Unexpected error while preparing clawback proposal', e);
-        toast(t('clawBackFailedToastMessage'))
+        toast(t('clawBackFailedToastMessage'));
       }
     }
   }, [

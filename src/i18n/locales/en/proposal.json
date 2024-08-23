@@ -137,6 +137,6 @@
   "shutterVotesHidden": "Results hidden during voting",
   "totalVotes": "Total votes",
   "clawBackBalancesError": "Failed to process clawback due to unexpected error while retrieving child Safe balances.",
-  "clawBackEmptyTreasuryError": "Failed to process clawback - child Safe has no transferrable tokens", 
+  "clawBackEmptyTreasuryError": "Failed to process clawback - child Safe has no transferrable tokens",
   "pendingProposalNotice": "Pending proposal still processing"
 }
