@@ -83,7 +83,7 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
             flexDirection="column"
             justifyContent="center"
           >
-            <InputLeftElement>
+            <InputLeftElement ml="0.5rem">
               <Search
                 boxSize="1.5rem"
                 color="neutral-5"
@@ -93,14 +93,15 @@ export function DAOSearch({ closeDrawer }: { closeDrawer?: () => void }) {
               size="baseAddonLeft"
               w="full"
               placeholder={t('searchDAOPlaceholder')}
-              onChange={e => {
-                setLocalInput(e.target.value.trim());
-              }}
+              onChange={e => setLocalInput(e.target.value.trim())}
               value={localInput}
               spellCheck="false"
               autoCapitalize="none"
               isInvalid={!!errorMessage && !typing}
               data-testid="search-input"
+              sx={{
+                paddingInlineStart: '3rem',
+              }}
             />
           </InputGroup>
         </PopoverTrigger>

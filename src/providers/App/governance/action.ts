@@ -13,7 +13,7 @@ import {
 import { ProposalTemplate } from '../../../types/proposalBuilder';
 
 export enum FractalGovernanceAction {
-  SET_LOADING_PROPOSALS = 'SET_LOADING_PROPOSALS',
+  SET_LOADING_FIRST_PROPOSAL = 'SET_LOADING_FIRST_PROPOSAL',
   SET_ALL_PROPOSALS_LOADED = 'SET_ALL_PROPOSALS_LOADED',
   SET_GOVERNANCE_TYPE = 'SET_GOVERNANCE_TYPE',
   SET_PROPOSALS = 'SET_PROPOSALS',
@@ -59,7 +59,7 @@ export type ERC721VotePayload = {
 
 export type FractalGovernanceActions =
   | { type: FractalGovernanceAction.SET_ALL_PROPOSALS_LOADED; payload: boolean }
-  | { type: FractalGovernanceAction.SET_LOADING_PROPOSALS; payload: boolean }
+  | { type: FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL; payload: boolean }
   | { type: FractalGovernanceAction.SET_GOVERNANCE_TYPE; payload: GovernanceType }
   | { type: FractalGovernanceAction.SET_STRATEGY; payload: VotingStrategy }
   | {

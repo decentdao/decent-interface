@@ -48,7 +48,7 @@ export function SafesMenu() {
       <Show above="md">
         <Menu
           placement="bottom-end"
-          offset={[0, 16]}
+          offset={[0, 4]}
         >
           {({ isOpen }) => (
             <Fragment>
@@ -57,6 +57,16 @@ export function SafesMenu() {
                 variant="tertiary"
                 data-testid="header-favoritesMenuButton"
                 p="0.75rem"
+                color="white-0"
+                border="1px solid transparent"
+                borderRadius="0.5rem"
+                _hover={{ color: 'white-0', bg: 'neutral-3' }}
+                _active={{
+                  color: 'white-0',
+                  border: '1px solid',
+                  borderColor: 'neutral-4',
+                  bg: 'neutral-3',
+                }}
               >
                 <Flex
                   alignItems="center"
