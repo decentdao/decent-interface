@@ -88,7 +88,6 @@ export function RolePaymentDetails({
 
   const canWithdraw = useMemo(() => {
     if (
-      withdrawableAmount > 0n &&
       connectedAccount &&
       roleHat?.wearer &&
       connectedAccount === roleHat.wearer &&
@@ -97,10 +96,10 @@ export function RolePaymentDetails({
       return true;
     }
     return false;
-  }, [connectedAccount, withdrawableAmount, showWithdraw, roleHat?.wearer]);
+  }, [connectedAccount, showWithdraw, roleHat?.wearer]);
 
   const loadAmounts = useCallback(async () => {
-    if (walletClient && payment?.streamId && payment?.contractAddress) {
+    if (walletClient && payment?.streamId && payment?.contractAddress && canWithdraw) {
       const streamContract = getContract({
         abi: SablierV2LockupLinearAbi,
         address: payment.contractAddress,
@@ -114,7 +113,7 @@ export function RolePaymentDetails({
       ]);
       setWithdrawableAmount(newWithdrawableAmount);
     }
-  }, [walletClient, payment?.streamId, payment?.contractAddress]);
+  }, [walletClient, payment?.streamId, payment?.contractAddress, canWithdraw]);
 
   useEffect(() => {
     loadAmounts();
@@ -287,7 +286,7 @@ export function RolePaymentDetails({
             />
           </GridItem>
         </Grid>
-        {canWithdraw && (
+        {canWithdraw && withdrawableAmount > 0n && (
           <Box
             mt={4}
             px={4}
