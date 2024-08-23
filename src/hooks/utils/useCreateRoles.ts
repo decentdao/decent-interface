@@ -662,7 +662,6 @@ export default function useCreateRoles() {
         });
       }
 
-      // @todo start here
       if (editedPaymentStreams.length) {
         const paymentCancelTxs: { calldata: Hex; targetAddress: Address }[] = [];
         editedPaymentStreams.forEach(paymentStream => {
