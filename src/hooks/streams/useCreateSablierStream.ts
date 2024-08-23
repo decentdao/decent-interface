@@ -1,19 +1,11 @@
 import groupBy from 'lodash.groupby';
 import { useCallback } from 'react';
-import { Address, Hex, encodeFunctionData, erc20Abi, getAddress, zeroAddress } from 'viem';
+import { Address, Hex, encodeFunctionData, erc20Abi, zeroAddress, getAddress } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
-import { BaseSablierStream, SablierPaymentFormValues } from '../../components/pages/Roles/types';
+import { PreparedNewStreamData } from '../../components/pages/Roles/types';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-
-type LinearStreamInputs = {
-  totalAmount: bigint;
-  recipient: Address;
-  startDate: Date;
-  endDate: Date;
-  cliffDate: Date | undefined;
-};
 
 export function convertStreamIdToBigInt(streamId: string) {
   // streamId is formatted as ${streamContractAddress}-${chainId}-${numericId}
@@ -59,14 +51,11 @@ export default function useCreateSablierStream() {
   );
 
   const prepareLinearStream = useCallback(
-    ({ totalAmount, recipient, startDate, endDate, cliffDate }: LinearStreamInputs) => {
-      const startDateTs = startDate.getTime();
-      const endDateTs = endDate.getTime();
+    ({ totalAmount, recipient, startDateTs, endDateTs, cliffDateTs }: PreparedNewStreamData) => {
       if (startDateTs >= endDateTs) {
         throw new Error('Start date of the stream can not be larger than end date');
       }
 
-      const cliffDateTs = cliffDate ? cliffDate.getTime() : 0;
       let cliffDuration = 0;
       if (cliffDateTs) {
         if (cliffDateTs <= startDateTs) {
@@ -90,84 +79,52 @@ export default function useCreateSablierStream() {
     [prepareBasicStreamData],
   );
 
-  const prepareFlushStreamTx = useCallback((stream: BaseSablierStream, to: Address) => {
-    if (!stream.streamId || !stream.contractAddress) {
-      throw new Error('Can not flush stream without streamId or contract address');
-    }
+  const prepareFlushStreamTx = useCallback(
+    (streamId: string, contractAddress: Address, to: Address) => {
+      // @dev This function comes from "basic" SablierV2
+      // all the types of streams are inheriting from that
+      // so it's safe to rely on any stream ABI
 
-    // @dev This function comes from "basic" SablierV2
-    // all the types of streams are inheriting from that
-    // so it's safe to rely on any stream ABI
+      const flushCalldata = encodeFunctionData({
+        abi: SablierV2LockupLinearAbi,
+        functionName: 'withdrawMax',
+        args: [convertStreamIdToBigInt(streamId), to],
+      });
 
-    const flushCalldata = encodeFunctionData({
-      abi: SablierV2LockupLinearAbi,
-      functionName: 'withdrawMax',
-      args: [convertStreamIdToBigInt(stream.streamId), to],
-    });
+      return { calldata: flushCalldata, targetAddress: contractAddress };
+    },
+    [],
+  );
 
-    return { calldata: flushCalldata, targetAddress: stream.contractAddress };
-  }, []);
-
-  const prepareCancelStreamTx = useCallback((stream: BaseSablierStream) => {
-    if (!stream.streamId || !stream.contractAddress) {
-      throw new Error('Can not flush stream without streamId or contract address');
-    }
-
+  const prepareCancelStreamTx = useCallback((streamId: string, targetAddress: Address) => {
     // @dev This function comes from "basic" SablierV2
     // all the types of streams are inheriting from that
     // so it's safe to rely on any stream ABI
     const flushCalldata = encodeFunctionData({
       abi: SablierV2LockupLinearAbi,
       functionName: 'cancel',
-      args: [convertStreamIdToBigInt(stream.streamId)],
+      args: [convertStreamIdToBigInt(streamId)],
     });
 
-    return { calldata: flushCalldata, targetAddress: stream.contractAddress };
+    return { calldata: flushCalldata, targetAddress };
   }, []);
 
   const prepareBatchLinearStreamCreation = useCallback(
-    (
-      paymentStreams: {
-        recipient: Address;
-        payment: SablierPaymentFormValues;
-      }[],
-    ) => {
+    (paymentStreams: PreparedNewStreamData[]) => {
       const preparedStreamCreationTransactions: { calldata: Hex; targetAddress: Address }[] = [];
       const preparedTokenApprovalsTransactions: { calldata: Hex; targetAddress: Address }[] = [];
 
-      const groupedStreams = groupBy(paymentStreams, 'payment.asset.address');
+      // @todo SablierV2Batch contract groups streams by asset address
+      const groupedStreams = groupBy(paymentStreams, 'assetAddress');
       Object.keys(groupedStreams).forEach(assetAddress => {
         const assembledStreams: ReturnType<typeof prepareLinearStream>[] = [];
         const streams = groupedStreams[assetAddress];
-        const tokenAddress = getAddress(assetAddress);
         let totalStreamsAmount = 0n;
-
+        const tokenAddress = getAddress(assetAddress);
         streams.forEach(streamData => {
-          if (
-            !streamData.payment.amount?.bigintValue ||
-            streamData.payment.amount.bigintValue <= 0n ||
-            !streamData.payment.startDate ||
-            !streamData.payment.endDate
-          ) {
-            console.error(
-              'Error creating linear stream - stream amount must be bigger than 0, startDate and endDate must be set',
-              streamData,
-            );
-            throw new Error(
-              'Stream total amount must be greater than 0, startDate and endDate must be set',
-            );
-          }
-          totalStreamsAmount += streamData.payment.amount.bigintValue;
+          totalStreamsAmount += streamData.totalAmount;
 
-          assembledStreams.push(
-            prepareLinearStream({
-              recipient: streamData.recipient,
-              startDate: streamData.payment.startDate,
-              endDate: streamData.payment.endDate,
-              cliffDate: streamData.payment.cliffDate,
-              totalAmount: streamData.payment.amount.bigintValue,
-            }),
-          );
+          assembledStreams.push(prepareLinearStream(streamData));
         });
 
         preparedStreamCreationTransactions.push({

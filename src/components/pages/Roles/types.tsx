@@ -107,3 +107,48 @@ export interface RoleFormValues {
   roleEditing?: RoleHatFormValue; // is this here to "indicate" which role's payments are "currently" being edited?
   customNonce?: number;
 }
+
+export type PreparedAddedHatsData = HatStruct & { id: bigint };
+
+export type PreparedMemberChangeData = {
+  id: Address;
+  currentWearer: Address;
+  newWearer: Address;
+};
+
+export type PreparedChangedRoleDetailsData = {
+  id: Hex;
+  details: string;
+};
+
+export type AddedHatsWithIds = {
+  id: bigint;
+  editedRole: EditedRole;
+  wearer: `0x${string}`;
+  payments?: SablierPaymentFormValues[];
+  roleEditingPaymentIndex?: number;
+  prettyId?: string | undefined;
+  name?: string | undefined;
+  description?: string | undefined;
+  details: string;
+  formId: `0x${string}`;
+};
+
+export type PreparedNewStreamData = {
+  recipient: Address;
+  startDateTs: number;
+  endDateTs: number;
+  cliffDateTs: number;
+  totalAmount: bigint;
+  assetAddress: Address;
+};
+
+/**
+ * Prepared Stream data with streamId
+ */
+export type PreparedEditedStreamData = PreparedNewStreamData & {
+  streamId: string;
+  roleHatId: bigint;
+  roleHatWearer: Address;
+  roleHatSmartAddress: Address;
+};

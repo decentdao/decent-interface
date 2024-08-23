@@ -1,5 +1,5 @@
 import { FormikHelpers } from 'formik';
-import isEqual from 'lodash.isequal';
+import { isEqual } from 'lodash';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -12,14 +12,17 @@ import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import {
-  BaseSablierStream,
+  AddedHatsWithIds,
   EditBadgeStatus,
-  EditedRole,
   HatStruct,
+  PreparedAddedHatsData,
+  PreparedChangedRoleDetailsData,
+  PreparedMemberChangeData,
+  PreparedNewStreamData,
+  PreparedEditedStreamData,
   RoleFormValues,
   RoleHatFormValueEdited,
   SablierPayment,
-  SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -170,7 +173,8 @@ const identifyAndPrepareRoleDetailsChangedHats = (
 const identifyAndPrepareEditedPaymentStreams = (
   modifiedHats: RoleHatFormValueEdited[],
   getHat: (hatId: Hex) => DecentRoleHat | null,
-) => {
+  getPayment: (hatId: Hex, streamId: string) => SablierPayment | null,
+): PreparedEditedStreamData[] => {
   return modifiedHats.flatMap(formHat => {
     const currentHat = getHat(formHat.id);
     if (currentHat === null) {
@@ -181,78 +185,80 @@ const identifyAndPrepareEditedPaymentStreams = (
       return [];
     }
 
-    const payments = formHat.payments
-      .filter(payment => !!payment.streamId)
-      .map(payment => ({
-        recipient: currentHat.smartAddress,
-        payment,
-      }));
+    return formHat.payments
+      .filter(payment => {
+        if (payment.streamId === undefined) {
+          return false;
+        }
+        // @note remove payments that haven't been edited
+        const originalPayment = getPayment(formHat.id, payment.streamId);
+        return !isEqual(payment, originalPayment);
+      })
+      .map(payment => {
+        const sablierPayment = mapSablierPaymentFormValuesToSablierPayment(payment);
+        // @note payment amount should not be 0 or undefined
+        if (!sablierPayment.amount?.bigintValue || sablierPayment.amount.bigintValue > 0n) {
+          throw new Error('Payment amount required.');
+        }
 
-    return payments;
+        return {
+          streamId: sablierPayment.streamId,
+          recipient: currentHat.smartAddress,
+          startDateTs: sablierPayment.startDate.getTime(),
+          endDateTs: sablierPayment.endDate.getTime(),
+          cliffDateTs: sablierPayment.cliffDate?.getTime() ?? 0,
+          totalAmount: sablierPayment.amount.bigintValue,
+          assetAddress: sablierPayment.asset.address,
+          roleHatId: BigInt(currentHat.id),
+          roleHatWearer: currentHat.wearer,
+          roleHatSmartAddress: currentHat.smartAddress,
+        };
+      });
   });
 };
 
-const identifyAndPrepareAddedPaymentStreamsOnNewHats = (
+const identifyAndPrepareAddedPaymentStreams = async (
   modifiedHats: RoleHatFormValueEdited[],
-  addedHatsWithIds: {
-    id: bigint;
-    smartAddress: `0x${string}`;
-    editedRole: EditedRole;
-    wearer: `0x${string}`;
-    payments?: SablierPaymentFormValues[];
-    roleEditingPaymentIndex?: number;
-    prettyId?: string | undefined;
-    name?: string | undefined;
-    description?: string | undefined;
-    details: string;
-  }[],
-) => {
-  return modifiedHats.flatMap(formHat => {
-    if (formHat.payments === undefined || formHat.editedRole.status !== EditBadgeStatus.New) {
-      return [];
-    }
-
-    const payments = formHat.payments.filter(payment => !payment.streamId);
-
-    const matchingAddedHat = addedHatsWithIds.find(addedHat => addedHat.id === formHat.id);
-
-    return {
-      ...modifiedHat,
-      smartAddress: matchingAddedHat ? matchingAddedHat.smartAddress : undefined,
-    };
-
-    return payments.map(payment => ({
-      recipient: formHat.smartAddress,
-      payment,
-    }));
-  });
-};
-
-const identifyAndPrepareAddedPaymentStreamsOnExistingHats = (
-  modifiedHats: RoleHatFormValueEdited[],
+  addedHatsWithIds: AddedHatsWithIds[],
   getHat: (hatId: Hex) => DecentRoleHat | null,
-) => {
-  return modifiedHats.flatMap(formHat => {
-    if (formHat.payments === undefined) {
-      return [];
-    }
+  predictSmartAccount: (hatId: bigint) => Promise<Address>,
+): Promise<PreparedNewStreamData[]> => {
+  const preparedStreamDataMapped = await Promise.all(
+    modifiedHats.map(async formHat => {
+      if (formHat.payments === undefined || formHat.editedRole.status !== EditBadgeStatus.New) {
+        return [];
+      }
 
-    const payments = formHat.payments.filter(payment => !payment.streamId);
-
-    if (payments.length === 0) {
-      return [];
-    }
-
-    const currentHat = getHat(formHat.id);
-    if (currentHat === null) {
-      throw new Error("Couldn't find existing Hat for added payment stream on existing Hat.");
-    }
-
-    return payments.map(payment => ({
-      recipient: currentHat.smartAddress,
-      payment,
-    }));
-  });
+      const payments = formHat.payments.filter(payment => !payment.streamId);
+      let recipientAddress: Address;
+      const existingRoleHat = getHat(formHat.id);
+      if (!!existingRoleHat) {
+        recipientAddress = existingRoleHat.smartAddress;
+      } else {
+        const addedRoleHat = addedHatsWithIds.find(addedHat => addedHat.formId === formHat.id);
+        if (!addedRoleHat) {
+          throw new Error('Could not find added role hat for added payment stream.');
+        }
+        recipientAddress = await predictSmartAccount(addedRoleHat.id);
+      }
+      return payments.map(payment => {
+        const sablierPayment = mapSablierPaymentFormValuesToSablierPayment(payment);
+        // @note payment amount should not be 0 or undefined
+        if (!sablierPayment.amount?.bigintValue || sablierPayment.amount.bigintValue > 0n) {
+          throw new Error('Payment amount required.');
+        }
+        return {
+          recipient: recipientAddress,
+          startDateTs: sablierPayment.startDate.getTime(),
+          endDateTs: sablierPayment.endDate.getTime(),
+          cliffDateTs: sablierPayment.cliffDate?.getTime() ?? 0,
+          totalAmount: sablierPayment.amount.bigintValue,
+          assetAddress: sablierPayment.asset.address,
+        };
+      });
+    }),
+  );
+  return preparedStreamDataMapped.flat();
 };
 
 const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, topHatAccount: Address) => {
@@ -285,28 +291,11 @@ const prepareAddHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, topHatAcc
   ] as const;
 };
 
-const prepareMintHatsTxArgs = (addedHats: HatStruct[], adminHatId: Hex, hatsCount: number) => {
-  const hatIds: bigint[] = [];
-  const wearers: Address[] = [];
-
-  addedHats.forEach((hat, i) => {
-    const predictedHatId = predictHatId({
-      adminHatId,
-      // Each predicted hat id is based on the current hat count, plus however many hat id have been predicted so far
-      hatsCount: hatsCount + i,
-    });
-    hatIds.push(predictedHatId);
-    wearers.push(hat.wearer);
-  });
-
-  return [hatIds, wearers] as const;
-};
-
 export default function useCreateRoles() {
   const {
     node: { safe, daoAddress, daoName },
   } = useFractal();
-  const { hatsTree, hatsTreeId, getHat } = useRolesStore();
+  const { hatsTree, hatsTreeId, getHat, getPayment } = useRolesStore();
   const {
     addressPrefix,
     chain,
@@ -339,6 +328,31 @@ export default function useCreateRoles() {
       return `ipfs://${response.Hash}`;
     },
     [ipfsClient],
+  );
+
+  const predictSmartAccount = useCallback(
+    async (hatId: bigint) => {
+      if (!publicClient) {
+        throw new Error('Public client is not set');
+      }
+      return predictAccountAddress({
+        implementation: hatsAccount1ofNMasterCopy,
+        chainId: BigInt(chain.id),
+        tokenContract: hatsProtocol,
+        tokenId: hatId,
+        registryAddress: erc6551Registry,
+        publicClient,
+        decentHats: getAddress(decentHatsMasterCopy),
+      });
+    },
+    [
+      publicClient,
+      hatsAccount1ofNMasterCopy,
+      chain.id,
+      hatsProtocol,
+      erc6551Registry,
+      decentHatsMasterCopy,
+    ],
   );
 
   const prepareCreateTopHatProposalData = useCallback(
@@ -418,8 +432,8 @@ export default function useCreateRoles() {
   );
 
   const prepareHatsAccountFlushExecData = useCallback(
-    (stream: BaseSablierStream, wearer: Address) => {
-      const flushStreamTx = prepareFlushStreamTx(stream, wearer);
+    (streamId: string, contractAddress: Address, wearer: Address) => {
+      const flushStreamTx = prepareFlushStreamTx(streamId, contractAddress, wearer);
       const wrappedFlushStreamTx = encodeFunctionData({
         abi: HatsAccount1ofNAbi,
         functionName: 'execute',
@@ -432,9 +446,13 @@ export default function useCreateRoles() {
   );
 
   const prepareHatFlushAndCancelPayment = useCallback(
-    (stream: BaseSablierStream, wearer: Address) => {
-      const cancelStreamTx = prepareCancelStreamTx(stream);
-      const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(stream, wearer);
+    (streamId: string, contractAddress: Address, wearer: Address) => {
+      const cancelStreamTx = prepareCancelStreamTx(streamId, contractAddress);
+      const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
+        streamId,
+        contractAddress,
+        wearer,
+      );
 
       return { wrappedFlushStreamTx, cancelStreamTx };
     },
@@ -444,32 +462,19 @@ export default function useCreateRoles() {
   const prepareEditHatsProposalData = useCallback(
     (
       proposalMetadata: CreateProposalMetadata,
-      addedHats: (HatStruct & { smartAddress: Address; id: bigint })[],
+      addedHats: PreparedAddedHatsData[],
       removedHatIds: Hex[],
-      memberChangedHats: {
-        id: Address;
-        currentWearer: Address;
-        newWearer: Address;
-      }[],
-      roleDetailsChangedHats: {
-        id: Hex;
-        details: string;
-      }[],
-      editedPaymentStreams: {
-        recipient: Address;
-        payment: SablierPaymentFormValues;
-      }[],
-      addedPaymentStreams: {
-        recipient: Address;
-        payment: SablierPaymentFormValues;
-      }[],
+      memberChangedHats: PreparedMemberChangeData[],
+      roleDetailsChangedHats: PreparedChangedRoleDetailsData[],
+      editedPaymentStreams: PreparedEditedStreamData[],
+      addedPaymentStreams: PreparedNewStreamData[],
     ) => {
       if (!hatsTree || !daoAddress) {
         throw new Error('Can not edit hats without Hats Tree!');
       }
 
-      const adminHatId = hatsTree.adminHat.id;
       const topHatAccount = hatsTree.topHat.smartAddress;
+      const adminHatId = hatsTree.adminHat.id;
 
       const createAndMintHatsTxs: Hex[] = [];
       let removeHatTxs: Hex[] = [];
@@ -491,20 +496,15 @@ export default function useCreateRoles() {
           args: prepareAddHatsTxArgs(addedHats, adminHatId, topHatAccount),
         });
 
-        // Finally, prepare a single tx to mint all the hats to the wearers
-        const [hatIds, wearers] = prepareMintHatsTxArgs(
-          addedHats,
-          adminHatId,
-          hatsTree.roleHatsTotalCount,
-        );
         const mintHatsTx = encodeFunctionData({
           abi: HatsAbi,
           functionName: 'batchMintHats',
-          args: [hatIds, wearers],
+          // @note hatIds[], wearers[]
+          args: [addedHats.map(h => h.id), addedHats.map(h => h.wearer)],
         });
 
         // finally, finally create smart account for hats.
-        const createSmartAccountCallDatas = addedHats.map((_, i) => {
+        const createSmartAccountCallDatas = addedHats.map(hat => {
           return encodeFunctionData({
             abi: ERC6551RegistryAbi,
             functionName: 'createAccount',
@@ -513,7 +513,7 @@ export default function useCreateRoles() {
               getERC6551RegistrySalt(BigInt(chain.id), getAddress(decentHatsMasterCopy)),
               BigInt(chain.id),
               hatsProtocol,
-              hatIds[i],
+              hat.id,
             ],
           });
         });
@@ -539,7 +539,8 @@ export default function useCreateRoles() {
               roleHat.payments.forEach(payment => {
                 if (payment?.streamId) {
                   const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
-                    payment,
+                    payment.streamId,
+                    payment.asset.address,
                     roleHat.wearer,
                   );
                   wrappedFlushStreamTxs.push(wrappedFlushStreamTx);
@@ -600,7 +601,8 @@ export default function useCreateRoles() {
               const payment = roleHat.payments[0];
               if (payment?.streamId) {
                 const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
-                  payment,
+                  payment.streamId,
+                  payment.asset.address,
                   roleHat.wearer,
                 );
                 hatPaymentWearerChangedTxs.push({
@@ -645,103 +647,80 @@ export default function useCreateRoles() {
         });
       }
 
-      const preparedPaymentTransactions = prepareBatchLinearStreamCreation(addedPaymentStreams);
+      if (addedPaymentStreams.length) {
+        const preparedPaymentTransactions = prepareBatchLinearStreamCreation(addedPaymentStreams);
+        addedPaymentStreams.forEach((_, i) => {
+          hatPaymentAddedTxs.push(
+            preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
+          );
+          hatPaymentAddedTxs.push(
+            preparedPaymentTransactions.preparedStreamCreationTransactions[i],
+          );
+        });
+      }
 
-      addedPaymentStreams.forEach((_, i) => {
-        hatPaymentAddedTxs.push(preparedPaymentTransactions.preparedTokenApprovalsTransactions[i]);
-        hatPaymentAddedTxs.push(preparedPaymentTransactions.preparedStreamCreationTransactions[i]);
-      });
-
+      // @todo start here
       if (editedPaymentStreams.length) {
         const paymentCancelTxs: { calldata: Hex; targetAddress: Address }[] = [];
+        editedPaymentStreams.forEach(paymentStream => {
+          const preparedHatFlushAndCancelTxs = prepareHatFlushAndCancelPayment(
+            paymentStream.streamId,
+            paymentStream.assetAddress,
+            paymentStream.roleHatWearer,
+          );
+          paymentCancelTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [BigInt(paymentStream.roleHatId), paymentStream.roleHatWearer, daoAddress],
+            }),
+            targetAddress: hatsProtocol,
+          });
+          paymentCancelTxs.push({
+            calldata: preparedHatFlushAndCancelTxs.wrappedFlushStreamTx,
+            targetAddress: paymentStream.roleHatSmartAddress,
+          });
+          paymentCancelTxs.push(preparedHatFlushAndCancelTxs.cancelStreamTx);
+          paymentCancelTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [BigInt(paymentStream.roleHatId), daoAddress, paymentStream.roleHatWearer],
+            }),
+            targetAddress: hatsProtocol,
+          });
 
-        editedPaymentStreams.forEach(role =>
-          (role.payments ?? []).forEach(payment => {
-            if (role.wearer === undefined) {
-              throw new Error('Hat wearer of edited payroll role is undefined.');
-            }
+          const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
+            paymentStream.streamId,
+            paymentStream.assetAddress,
+            paymentStream.roleHatWearer,
+          );
+          paymentCancelTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [paymentStream.roleHatId, paymentStream.roleHatWearer, daoAddress],
+            }),
+            targetAddress: hatsProtocol,
+          });
+          paymentCancelTxs.push({
+            calldata: wrappedFlushStreamTx,
+            targetAddress: paymentStream.roleHatSmartAddress,
+          });
+          paymentCancelTxs.push(cancelStreamTx);
+          paymentCancelTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [paymentStream.roleHatId, daoAddress, paymentStream.roleHatWearer],
+            }),
+            targetAddress: hatsProtocol,
+          });
+        });
 
-            if (role.smartAddress === undefined) {
-              throw new Error('Hat smart address of edited payroll role is undefined');
-            }
-
-            if (payment.streamId && payment.contractAddress && payment.amount && payment.asset) {
-              const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
-                {
-                  streamId: payment.streamId,
-                  contractAddress: payment.contractAddress,
-                  amount: payment.amount,
-                  asset: payment.asset,
-                },
-                getAddress(role.wearer),
-              );
-              paymentCancelTxs.push({
-                calldata: encodeFunctionData({
-                  abi: HatsAbi,
-                  functionName: 'transferHat',
-                  args: [BigInt(role.id), getAddress(role.wearer), daoAddress],
-                }),
-                targetAddress: hatsProtocol,
-              });
-              paymentCancelTxs.push({
-                calldata: wrappedFlushStreamTx,
-                targetAddress: role.smartAddress,
-              });
-              paymentCancelTxs.push(cancelStreamTx);
-              paymentCancelTxs.push({
-                calldata: encodeFunctionData({
-                  abi: HatsAbi,
-                  functionName: 'transferHat',
-                  args: [BigInt(role.id), daoAddress, getAddress(role.wearer)],
-                }),
-                targetAddress: hatsProtocol,
-              });
-            }
-
-            const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
-              mapSablierPaymentFormValuesToSablierPayment(payment),
-              getAddress(role.wearer),
-            );
-            paymentCancelTxs.push({
-              calldata: encodeFunctionData({
-                abi: HatsAbi,
-                functionName: 'transferHat',
-                args: [BigInt(role.id), getAddress(role.wearer), daoAddress],
-              }),
-              targetAddress: hatsProtocol,
-            });
-            paymentCancelTxs.push({
-              calldata: wrappedFlushStreamTx,
-              targetAddress: role.smartAddress,
-            });
-            paymentCancelTxs.push(cancelStreamTx);
-            paymentCancelTxs.push({
-              calldata: encodeFunctionData({
-                abi: HatsAbi,
-                functionName: 'transferHat',
-                args: [BigInt(role.id), daoAddress, getAddress(role.wearer)],
-              }),
-              targetAddress: hatsProtocol,
-            });
-          }),
-        );
-        const streamsData = editedPaymentStreams.flatMap(role =>
-          (role.payments ?? []).map(payment => payment),
-        );
-        const recipients = editedPaymentStreams.flatMap(role =>
-          (role.payments ?? []).map(() => {
-            if (role.smartAddress === undefined) {
-              throw new Error('Hat smart address for new payment on role is undefined.');
-            }
-            return role.smartAddress;
-          }),
-        );
-        const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
-          streamsData,
-          recipients,
-        );
-
-        streamsData.forEach((_, i) => {
+        const preparedPaymentTransactions = prepareBatchLinearStreamCreation(editedPaymentStreams);
+        hatPaymentEditedTxs.push(...paymentCancelTxs);
+        editedPaymentStreams.forEach((_, i) => {
           hatPaymentEditedTxs.push(
             preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
           );
@@ -820,6 +799,7 @@ export default function useCreateRoles() {
         })
         .filter(hat => hat !== null);
 
+      // find all new hats and prepare them for creation
       try {
         const [addedHats, addedHatsRolesValues] = await identifyAndPrepareAddedHats(
           modifiedHats,
@@ -836,27 +816,18 @@ export default function useCreateRoles() {
           if (!hatsTree) {
             throw new Error('Cannot edit Roles without a HatsTree');
           }
-          // Convert addedHats to include predicted id and smartAddress
+          // Convert addedHats to include predicted id
           const addedHatsWithIds = await Promise.all(
             addedHatsRolesValues.map(async (hat, index) => {
               const hatId = predictHatId({
                 adminHatId: hatsTree.adminHat.id,
                 hatsCount: hatsTree.roleHats.length + index,
               });
-              const smartAddress = await predictAccountAddress({
-                implementation: hatsAccount1ofNMasterCopy,
-                chainId: BigInt(chain.id),
-                tokenContract: hatsProtocol,
-                tokenId: hatId,
-                registryAddress: erc6551Registry,
-                publicClient,
-                decentHats: getAddress(decentHatsMasterCopy),
-              });
               return {
                 ...hat,
-                // formId: hat.formId,
                 id: hatId,
-                smartAddress,
+                // @note For new hats, a randomId is created for temporary indentification
+                formId: hat.id,
               };
             }),
           );
@@ -868,24 +839,27 @@ export default function useCreateRoles() {
             uploadHatDescription,
             getHat,
           );
-          const editedPaymentStreams = identifyAndPrepareEditedPaymentStreams(modifiedHats, getHat);
-
-          const addedPaymentStreamsOnNewHats = identifyAndPrepareAddedPaymentStreamsOnNewHats(
+          const editedPaymentStreams = identifyAndPrepareEditedPaymentStreams(
             modifiedHats,
-            addedHatsWithIds,
+            getHat,
+            getPayment,
           );
 
-          const addedPaymentStreamsOnExistingHats =
-            identifyAndPrepareAddedPaymentStreamsOnExistingHats(modifiedHats, getHat);
+          const addedPaymentStreamsOnNewHats = await identifyAndPrepareAddedPaymentStreams(
+            modifiedHats,
+            addedHatsWithIds,
+            getHat,
+            predictSmartAccount,
+          );
 
           proposalData = prepareEditHatsProposalData(
             values.proposalMetadata,
-            addedHatsWithIds,
+            addedHats.map((hat, index) => ({ ...hat, id: addedHatsWithIds[index].id })),
             removedHatIds,
             memberChangedHats,
             roleDetailsChangedHats,
             editedPaymentStreams,
-            addedPaymentStreams,
+            addedPaymentStreamsOnNewHats,
           );
         }
 
@@ -906,22 +880,19 @@ export default function useCreateRoles() {
       }
     },
     [
-      chain.id,
-      decentHatsMasterCopy,
-      erc6551Registry,
-      getHat,
-      hatsAccount1ofNMasterCopy,
-      hatsProtocol,
-      hatsTree,
+      safe,
       hatsTreeId,
+      hatsTree,
+      uploadHatDescription,
+      predictSmartAccount,
+      getHat,
+      getPayment,
+      submitProposal,
+      submitProposalSuccessCallback,
       prepareCreateTopHatProposalData,
       prepareEditHatsProposalData,
       publicClient,
-      safe,
-      submitProposal,
-      submitProposalSuccessCallback,
       t,
-      uploadHatDescription,
     ],
   );
 
