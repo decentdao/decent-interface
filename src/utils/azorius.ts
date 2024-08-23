@@ -221,10 +221,10 @@ export const mapProposalCreatedEventToProposal = async (
   if (state === FractalProposalState.EXECUTED) {
     const events = await executedEvents;
     const executedEvent = events?.find(event => BigInt(event.args[0]) === proposalId);
-
     if (executedEvent) {
       transactionHash = executedEvent?.transactionHash;
     } else {
+      // @dev Proposal with 0 transactions goes straight into EXECUTED state, but since executeProposal event wasn't fired - it can't be found
       logError('Proposal state is EXECUTED, but no execution event found', events, executedEvent);
       transactionHash = createdEvent.transactionHash;
     }
