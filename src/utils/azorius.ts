@@ -13,19 +13,19 @@ import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-type
 import { strategyFractalProposalStates } from '../constants/strategy';
 import { logError } from '../helpers/errorLogging';
 import {
-  FractalProposalState,
-  ProposalVotesSummary,
-  ProposalVote,
-  ProposalData,
   AzoriusProposal,
-  Parameter,
   DataDecoded,
+  DecodedTransaction,
+  ERC721ProposalVote,
   FractalModuleData,
   FractalModuleType,
-  DecodedTransaction,
-  VotingStrategyType,
-  ERC721ProposalVote,
+  FractalProposalState,
   MetaTransaction,
+  Parameter,
+  ProposalData,
+  ProposalVote,
+  ProposalVotesSummary,
+  VotingStrategyType,
   getVoteChoice,
 } from '../types';
 import { Providers } from '../types/network';
@@ -163,8 +163,9 @@ export const mapProposalCreatedEventToProposal = async (
   data?: ProposalData,
 ) => {
   if (erc20StrategyContract !== undefined && erc721StrategyContract !== undefined) {
-    logError("we don't support multiple strategy contracts");
-    throw new Error("we don't support multiple strategy contracts");
+    logError(
+      'Multiple strategy contracts are passed into Azorius proposal mapping, which is not supported at the moment!',
+    );
   }
 
   let proposalVotes = {
@@ -180,16 +181,19 @@ export const mapProposalCreatedEventToProposal = async (
     stratProposalVotes = await erc20StrategyContract.getProposalVotes(proposalId);
   } else if (erc721StrategyContract !== undefined) {
     stratProposalVotes = await erc721StrategyContract.getProposalVotes(proposalId);
-  } else {
-    logError('we need a strat!');
-    throw new Error('we need a strategy!');
   }
 
-  proposalVotes.startBlock = stratProposalVotes.startBlock;
-  proposalVotes.endBlock = stratProposalVotes.endBlock;
-  proposalVotes.noVotes = stratProposalVotes.noVotes.toBigInt();
-  proposalVotes.yesVotes = stratProposalVotes.yesVotes.toBigInt();
-  proposalVotes.abstainVotes = stratProposalVotes.abstainVotes.toBigInt();
+  if (stratProposalVotes) {
+    proposalVotes.startBlock = stratProposalVotes.startBlock;
+    proposalVotes.endBlock = stratProposalVotes.endBlock;
+    proposalVotes.noVotes = stratProposalVotes.noVotes.toBigInt();
+    proposalVotes.yesVotes = stratProposalVotes.yesVotes.toBigInt();
+    proposalVotes.abstainVotes = stratProposalVotes.abstainVotes.toBigInt();
+  } else {
+    logError(
+      'Proposal votes breakdown is missing from strategy contract. Seems like strategy contract is not supplied',
+    );
+  }
 
   const quorum = await getQuorum(
     erc20StrategyContract,
@@ -215,15 +219,15 @@ export const mapProposalCreatedEventToProposal = async (
 
   let transactionHash: string | undefined;
   if (state === FractalProposalState.EXECUTED) {
-    const executedEvent = (await executedEvents)?.find(
-      event => BigInt(event.args[0]) === proposalId,
-    );
+    const events = await executedEvents;
+    const executedEvent = events?.find(event => BigInt(event.args[0]) === proposalId);
 
-    if (!executedEvent) {
-      throw new Error('Proposal state is EXECUTED, but no event found');
+    if (executedEvent) {
+      transactionHash = executedEvent?.transactionHash;
+    } else {
+      logError('Proposal state is EXECUTED, but no execution event found', events, executedEvent);
+      transactionHash = createdEvent.transactionHash;
     }
-
-    transactionHash = executedEvent.transactionHash;
   } else {
     transactionHash = createdEvent.transactionHash;
   }
