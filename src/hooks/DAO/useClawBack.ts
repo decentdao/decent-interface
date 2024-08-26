@@ -41,6 +41,11 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
           return;
         }
 
+        if (childSafeTokenBalance.data.length === 0) {
+          toast(t('clawBackEmptyTreasuryError', { autoClose: false }));
+          return;
+        }
+
         const santitizedParentAddress = getAddress(parentAddress);
         const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
         const canUserCreateProposal = await getCanUserCreateProposal(parentAddress);
@@ -50,10 +55,6 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
           );
           const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
           if (fractalModule) {
-            if (childSafeTokenBalance.data.length === 0) {
-              toast(t('clawBackEmptyTreasuryError', { autoClose: false }));
-              return;
-            }
             const transactions = childSafeTokenBalance.data
               .filter(tokenBalance => !tokenBalance.possibleSpam)
               .map(asset => {
@@ -124,7 +125,17 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               successToastMessage: t('clawBackSuccessToastMessage'),
               safeAddress: parentAddress,
             });
+          } else {
+            // @dev - User shouldn't get into this case, but better safe than sorry. We're enforcing types here
+            throw new Error(
+              'Could not find FractalModule on child Safe - clawback is not possible without FractalModule',
+            );
           }
+        } else {
+          // @dev - Either error on fetching parent safe info or user is not eligible for creating proposals on parent safe
+          throw new Error(
+            'Parent safe info is missing or user can not create proposals on parent safe',
+          );
         }
       } catch (e) {
         logError('Unexpected error while preparing clawback proposal', e);
