@@ -16,7 +16,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function Treasury() {
   const {
-    node: { daoName, daoAddress },
+    node: { daoName },
     treasury: { assetsFungible, transfers },
   } = useFractal();
   const [shownTransactions, setShownTransactions] = useState(20);
@@ -39,7 +39,7 @@ export default function Treasury() {
           daoName,
           subject: t('treasury', { ns: 'breadcrumbs' }),
         })}
-        address={daoAddress}
+        showSafeAddress
         breadcrumbs={[
           {
             terminus: t('treasury', { ns: 'breadcrumbs' }),
@@ -73,11 +73,7 @@ export default function Treasury() {
             subTitle={
               <Show below="lg">
                 <Box px="1rem">
-                  <PaginationCount
-                    totalTransfers={totalTransfers}
-                    shownTransactions={shownTransactions}
-                    daoAddress={daoAddress}
-                  />
+                  <PaginationCount shownTransactions={shownTransactions} />
                 </Box>
               </Show>
             }
@@ -90,11 +86,7 @@ export default function Treasury() {
                   my="1rem"
                 />
                 <Box px={{ base: '1rem', lg: '1.5rem' }}>
-                  <PaginationCount
-                    totalTransfers={totalTransfers}
-                    shownTransactions={shownTransactions}
-                    daoAddress={daoAddress}
-                  />
+                  <PaginationCount shownTransactions={shownTransactions} />
                 </Box>
               </Show>
             </Flex>

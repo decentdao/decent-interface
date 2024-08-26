@@ -11,7 +11,7 @@ import Divider from '../../utils/Divider';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface PageHeaderProps {
   title?: string;
-  address?: string | null;
+  showSafeAddress?: boolean;
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
   ButtonIcon?: PhosphorIcon;
@@ -24,31 +24,31 @@ interface PageHeaderProps {
  */
 function PageHeader({
   title,
-  address,
   breadcrumbs,
   hasDAOLink = true,
   ButtonIcon,
   buttonProps,
   children,
+  showSafeAddress,
 }: PageHeaderProps) {
   const {
-    node: { daoAddress, daoName },
+    node: { daoName, safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
   const [links, setLinks] = useState([...breadcrumbs]);
 
   useEffect(() => {
-    if (hasDAOLink && daoAddress) {
+    if (hasDAOLink && safe?.address) {
       setLinks([
         {
-          terminus: daoName || (daoAddress && createAccountSubstring(daoAddress)) || '',
-          path: DAO_ROUTES.dao.relative(addressPrefix, daoAddress),
+          terminus: daoName || (safe.address && createAccountSubstring(safe.address)) || '',
+          path: DAO_ROUTES.dao.relative(addressPrefix, safe.address),
         },
         ...breadcrumbs,
       ]);
     }
-  }, [hasDAOLink, daoName, daoAddress, breadcrumbs, addressPrefix]);
+  }, [hasDAOLink, daoName, safe?.address, breadcrumbs, addressPrefix]);
 
   const showAction = !!buttonProps || !!ButtonIcon || !!children;
 
@@ -103,10 +103,10 @@ function PageHeader({
           {title}
         </Text>
       )}
-      {address && (
+      {safe?.address && showSafeAddress && (
         <AddressCopier
           marginTop="0.5rem"
-          address={address}
+          address={safe?.address}
           display="inline-flex"
         />
       )}
