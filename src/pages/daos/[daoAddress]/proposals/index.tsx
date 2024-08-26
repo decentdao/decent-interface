@@ -55,10 +55,11 @@ export default function ProposalsPage() {
             path: '',
           },
         ]}
-        buttonVariant="secondary"
-        buttonText={canDelegate ? t('delegate') : undefined}
-        buttonClick={canDelegate ? delegate : undefined}
-        buttonTestId="link-delegate"
+        buttonProps={
+          canDelegate
+            ? { children: t('delegate'), onClick: delegate, variant: 'secondary' }
+            : undefined
+        }
       >
         {showWrapTokenButton && (
           <Button

@@ -869,15 +869,16 @@ export default function SablierProposalCreatePage() {
             },
           ]}
           ButtonIcon={Trash}
-          buttonVariant="secondary"
-          buttonClick={() =>
-            navigate(
-              daoAddress
-                ? DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)
-                : BASE_ROUTES.landing,
-            )
-          }
-          isButtonDisabled={pendingCreateTx}
+          buttonProps={{
+            variant: 'secondary',
+            onClick: () =>
+              navigate(
+                daoAddress
+                  ? DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)
+                  : BASE_ROUTES.landing,
+              ),
+            isDisabled: pendingCreateTx,
+          }}
         />
         <Grid
           gap={4}

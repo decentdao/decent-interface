@@ -11,19 +11,11 @@ import Divider from '../../utils/Divider';
 import Breadcrumbs, { Crumb } from './Breadcrumbs';
 interface PageHeaderProps {
   title?: string;
-  address?: string;
+  showSafeAddress?: boolean;
   breadcrumbs: Crumb[];
   hasDAOLink?: boolean;
-  // @todo remove buttonVariant in favor of using buttonProps
-  buttonVariant?: 'text' | 'secondary';
   ButtonIcon?: PhosphorIcon;
-  buttonText?: string;
-  // @todo remove buttonClick in favor of using buttonProps
-  buttonClick?: () => void;
-  buttonTestId?: string;
   buttonProps?: ButtonProps;
-  // @todo remove isButtonDisabled in favor of using buttonProps
-  isButtonDisabled?: boolean;
   children?: ReactNode;
 }
 /**
@@ -32,38 +24,33 @@ interface PageHeaderProps {
  */
 function PageHeader({
   title,
-  address,
   breadcrumbs,
   hasDAOLink = true,
-  buttonVariant,
   ButtonIcon,
-  buttonText,
-  buttonClick,
-  buttonTestId,
-  isButtonDisabled,
   buttonProps,
   children,
+  showSafeAddress,
 }: PageHeaderProps) {
   const {
-    node: { daoAddress, daoName },
+    node: { daoName, safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
   const [links, setLinks] = useState([...breadcrumbs]);
 
   useEffect(() => {
-    if (hasDAOLink && daoAddress) {
+    if (hasDAOLink && safe?.address) {
       setLinks([
         {
-          terminus: daoName || (daoAddress && createAccountSubstring(daoAddress)) || '',
-          path: DAO_ROUTES.dao.relative(addressPrefix, daoAddress),
+          terminus: daoName || (safe.address && createAccountSubstring(safe.address)) || '',
+          path: DAO_ROUTES.dao.relative(addressPrefix, safe.address),
         },
         ...breadcrumbs,
       ]);
     }
-  }, [hasDAOLink, daoName, daoAddress, breadcrumbs, addressPrefix]);
+  }, [hasDAOLink, daoName, safe?.address, breadcrumbs, addressPrefix]);
 
-  const showAction = !!buttonText || !!ButtonIcon || !!children;
+  const showAction = !!buttonProps || !!ButtonIcon || !!children;
 
   return (
     <Box
@@ -83,19 +70,10 @@ function PageHeader({
         {showAction && (
           <>
             <Spacer />
-            {buttonText && (
-              <Button
-                onClick={buttonClick}
-                data-testid={buttonTestId}
-                variant={buttonVariant}
-                isDisabled={isButtonDisabled}
-                {...buttonProps}
-              >
-                {buttonText}
-              </Button>
-            )}
+            {buttonProps && !ButtonIcon && <Button {...buttonProps} />}
             {ButtonIcon && (
               <IconButton
+                {...buttonProps}
                 aria-label="navigate"
                 icon={
                   <Icon
@@ -103,16 +81,10 @@ function PageHeader({
                     as={ButtonIcon}
                   />
                 }
-                onClick={buttonClick}
                 variant="tertiary"
                 size="icon-sm"
-                data-testid={buttonTestId}
-                isDisabled={isButtonDisabled}
-                {...buttonProps}
                 as={Button}
-              >
-                {buttonText}
-              </IconButton>
+              />
             )}
             {children}
           </>
@@ -131,10 +103,10 @@ function PageHeader({
           {title}
         </Text>
       )}
-      {address && (
+      {safe?.address && showSafeAddress && (
         <AddressCopier
           marginTop="0.5rem"
-          address={address}
+          address={safe?.address}
           display="inline-flex"
         />
       )}
