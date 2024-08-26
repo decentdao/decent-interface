@@ -138,6 +138,7 @@
   "totalVotes": "Total votes",
   "clawBackBalancesError": "Failed to process clawback due to unexpected error while retrieving child Safe balances.",
   "clawBackEmptyTreasuryError": "Failed to process clawback - child Safe has no transferrable tokens",
+  "clawBackEmptyTransactionsError": "Failed to process clawback - child Safe has no safely transferrable tokens",
   "pendingProposalNotice": "Pending proposal still processing",
   "metadataFailedParsePlaceholder": "Unknown - Failed to parse metadata"
 }

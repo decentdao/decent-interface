@@ -106,6 +106,11 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                 }
               });
 
+            if (transactions.length === 0) {
+              toast(t('clawBackEmptyTransactionsError', { autoClose: false }));
+              return;
+            }
+            
             await submitProposal({
               proposalData: {
                 metaData: {
