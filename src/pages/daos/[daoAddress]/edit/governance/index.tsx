@@ -49,9 +49,10 @@ export default function ModifyGovernancePage() {
       <PageHeader
         hasDAOLink
         ButtonIcon={X}
-        buttonVariant="secondary"
-        buttonClick={() => navigate(DAO_ROUTES.dao.relative(addressPrefix, daoAddress))}
-        isButtonDisabled={false}
+        buttonProps={{
+          variant: 'secondary',
+          onClick: () => navigate(DAO_ROUTES.dao.relative(addressPrefix, daoAddress)),
+        }}
         breadcrumbs={[
           {
             terminus: t('modifyGovernance', { ns: 'breadcrumbs' }),
