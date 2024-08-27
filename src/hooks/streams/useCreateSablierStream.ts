@@ -80,7 +80,7 @@ export default function useCreateSablierStream() {
   );
 
   const prepareFlushStreamTx = useCallback(
-    (streamId: string, contractAddress: Address, to: Address) => {
+    (streamId: string, to: Address) => {
       // @dev This function comes from "basic" SablierV2
       // all the types of streams are inheriting from that
       // so it's safe to rely on any stream ABI
@@ -91,7 +91,7 @@ export default function useCreateSablierStream() {
         args: [convertStreamIdToBigInt(streamId), to],
       });
 
-      return { calldata: flushCalldata, targetAddress: contractAddress };
+      return flushCalldata;
     },
     [],
   );

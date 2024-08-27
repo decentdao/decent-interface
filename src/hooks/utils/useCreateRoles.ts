@@ -436,11 +436,11 @@ export default function useCreateRoles() {
 
   const prepareHatsAccountFlushExecData = useCallback(
     (streamId: string, contractAddress: Address, wearer: Address) => {
-      const flushStreamTx = prepareFlushStreamTx(streamId, contractAddress, wearer);
+      const flushStreamTxCalldata = prepareFlushStreamTx(streamId, wearer);
       const wrappedFlushStreamTx = encodeFunctionData({
         abi: HatsAccount1ofNAbi,
         functionName: 'execute',
-        args: [flushStreamTx.targetAddress, 0n, flushStreamTx.calldata, 0],
+        args: [contractAddress, 0n, flushStreamTxCalldata, 0],
       });
 
       return wrappedFlushStreamTx;
