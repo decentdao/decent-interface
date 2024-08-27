@@ -19,6 +19,9 @@ interface ImportMetaEnv {
 
   readonly VITE_APP_SENTRY_DSN_URL: string;
 
+  readonly VITE_APP_HOTJAR_SITE_ID: number;
+  readonly VITE_APP_HOTJAR_VERSION: number;
+
   readonly VITE_APP_SHUTTER_EON_PUBKEY: string;
 
   readonly VITE_APP_SITE_URL: string;
