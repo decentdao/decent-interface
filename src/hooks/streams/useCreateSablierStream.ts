@@ -79,22 +79,19 @@ export default function useCreateSablierStream() {
     [prepareBasicStreamData],
   );
 
-  const prepareFlushStreamTx = useCallback(
-    (streamId: string, to: Address) => {
-      // @dev This function comes from "basic" SablierV2
-      // all the types of streams are inheriting from that
-      // so it's safe to rely on any stream ABI
+  const prepareFlushStreamTx = useCallback((streamId: string, to: Address) => {
+    // @dev This function comes from "basic" SablierV2
+    // all the types of streams are inheriting from that
+    // so it's safe to rely on any stream ABI
 
-      const flushCalldata = encodeFunctionData({
-        abi: SablierV2LockupLinearAbi,
-        functionName: 'withdrawMax',
-        args: [convertStreamIdToBigInt(streamId), to],
-      });
+    const flushCalldata = encodeFunctionData({
+      abi: SablierV2LockupLinearAbi,
+      functionName: 'withdrawMax',
+      args: [convertStreamIdToBigInt(streamId), to],
+    });
 
-      return flushCalldata;
-    },
-    [],
-  );
+    return flushCalldata;
+  }, []);
 
   const prepareCancelStreamTx = useCallback((streamId: string, targetAddress: Address) => {
     // @dev This function comes from "basic" SablierV2
