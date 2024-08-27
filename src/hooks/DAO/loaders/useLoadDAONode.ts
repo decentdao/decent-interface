@@ -56,7 +56,7 @@ export const useLoadDAONode = () => {
       if (isAddress(safeAddress) && safeAPI) {
         try {
           const graphNodeInfo = formatDAOQuery(
-            await getDAOInfo({ variables: { safeAddress } }),
+            await getDAOInfo({ variables: { daoAddress: safeAddress } }),
             safeAddress,
           );
           if (!graphNodeInfo) {

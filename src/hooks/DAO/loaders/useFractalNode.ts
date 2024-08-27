@@ -69,7 +69,7 @@ export const useFractalNode = (
   const { subgraph } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
-    variables: { safeAddress },
+    variables: { daoAddress: safeAddress },
     onCompleted: async data => {
       if (!safeAddress) return;
       const graphNodeInfo = formatDAOQuery({ data });
