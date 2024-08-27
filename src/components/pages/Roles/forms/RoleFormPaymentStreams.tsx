@@ -29,19 +29,25 @@ export function RoleFormPaymentStreams() {
             {t('addPayment')}
           </Button>
           <Box mt="0.5rem">
-            {payments?.map((payment, index) => (
-              <Flex key={index}>
-                <RolePaymentDetails
-                  // @dev used for withdraw payments, not needed here
-                  roleHatWearerAddress={'0x'}
-                  roleHatSmartAddress={'0x'}
-                  payment={payment}
-                  onClick={() => {
-                    setFieldValue('roleEditing.roleEditingPaymentIndex', index);
-                  }}
-                />
-              </Flex>
-            ))}
+            {payments?.map((payment, index) => {
+              // @note don't render if form isn't valid
+              if (!payment.amount || !payment.asset || !payment.startDate || !payment.endDate)
+                return null;
+              return (
+                <Flex key={index}>
+                  <RolePaymentDetails
+                    paymentAmount={payment.amount}
+                    paymentAsset={payment.asset}
+                    paymentEndDate={payment.endDate}
+                    paymentStartDate={payment.startDate}
+                    isStreaming={() => false}
+                    onClick={() => {
+                      setFieldValue('roleEditing.roleEditingPaymentIndex', index);
+                    }}
+                  />
+                </Flex>
+              );
+            })}
           </Box>
         </Box>
       )}
