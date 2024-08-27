@@ -124,14 +124,14 @@ export type PreparedChangedRoleDetailsData = {
 export type AddedHatsWithIds = {
   id: bigint;
   editedRole: EditedRole;
-  wearer: `0x${string}`;
+  wearer: Address;
   payments?: SablierPaymentFormValues[];
   roleEditingPaymentIndex?: number;
   prettyId?: string | undefined;
   name?: string | undefined;
   description?: string | undefined;
   details: string;
-  formId: `0x${string}`;
+  formId: Hex;
 };
 
 export type PreparedNewStreamData = {
