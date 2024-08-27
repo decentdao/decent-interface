@@ -28,9 +28,11 @@ export function NFTHeader() {
 }
 
 export function NFTRow({ asset, isLast }: { asset: NFTBalance; isLast: boolean }) {
-  const image = asset.media?.mediaCollection
-    ? asset.media?.mediaCollection.medium.url
-    : asset.media?.originalMediaUrl;
+  const image = asset.metadata
+    ? asset.metadata.imageUrl || asset.metadata.image || asset.metadata.backgroundImage
+    : asset.media?.mediaCollection
+      ? asset.media?.mediaCollection.medium.url
+      : asset.media?.originalMediaUrl;
   const name = asset.name;
   const id = asset.tokenId.toString();
 

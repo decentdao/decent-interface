@@ -1,7 +1,16 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, encodePacked, getContract, keccak256, toHex } from 'viem';
+import {
+  Address,
+  Hex,
+  PublicClient,
+  encodePacked,
+  getContract,
+  keccak256,
+  toHex,
+  getAddress,
+} from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
-import { RoleValue, SablierPayment } from '../../components/pages/Roles/types';
+import { RoleHatFormValue, SablierPayment } from '../../components/pages/Roles/types';
 import { getRandomBytes } from '../../helpers';
 
 export class DecentHatsError extends Error {
@@ -42,6 +51,7 @@ interface RolesStoreData {
   hatsTreeId: undefined | null | number;
   hatsTree: undefined | null | DecentTree;
   streamsFetched: boolean;
+  contextChainId: number | null;
 }
 
 export interface DecentRoleHat extends DecentHat {
@@ -57,7 +67,8 @@ export interface DecentTree {
 
 export interface RolesStore extends RolesStoreData {
   getHat: (hatId: Hex) => DecentRoleHat | null;
-  setHatsTreeId: (hatsTreeId: undefined | null | number) => void;
+  getPayment: (hatId: Hex, streamId: string) => SablierPayment | null;
+  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
   setHatsTree: (params: {
     hatsTree: Tree | null | undefined;
     chainId: bigint;
@@ -140,6 +151,7 @@ export const initialHatsStore: RolesStoreData = {
   hatsTreeId: undefined,
   hatsTree: undefined,
   streamsFetched: false,
+  contextChainId: null,
 };
 
 export function getERC6551RegistrySalt(chainId: bigint, decentHats: Address) {
@@ -304,7 +316,7 @@ export async function getNewRole({
 }: {
   adminHatId?: Hex;
   hatsCount: number;
-} & Omit<PredictAccountParams, 'tokenId'>): Promise<RoleValue> {
+} & Omit<PredictAccountParams, 'tokenId'>): Promise<RoleHatFormValue> {
   // @dev creates a unique id for the hat for new hats for use in form, not stored on chain
   const id = adminHatId
     ? toHex(predictHatId({ adminHatId, hatsCount }))
@@ -326,3 +338,15 @@ export async function getNewRole({
     }),
   };
 }
+
+export const normalizeRoleFormData = (role: RoleHatFormValue): DecentRoleHat => {
+  return {
+    id: role.id,
+    prettyId: role.prettyId,
+    wearer: getAddress(role.wearer),
+    name: role.name,
+    description: role.description,
+    smartAddress: role.smartAddress,
+    payments: role.payments as SablierPayment[] | undefined,
+  };
+};

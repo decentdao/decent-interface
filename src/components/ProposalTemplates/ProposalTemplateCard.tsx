@@ -1,6 +1,6 @@
-import { Avatar, Flex, Text, Icon } from '@chakra-ui/react';
+import { Avatar, Flex, Icon, Text } from '@chakra-ui/react';
 import { GearFine } from '@phosphor-icons/react';
-import { useMemo, useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -13,7 +13,7 @@ import { ProposalTemplate } from '../../types/proposalBuilder';
 import ContentBox from '../ui/containers/ContentBox';
 import { OptionMenu } from '../ui/menus/OptionMenu';
 import { ModalType } from '../ui/modals/ModalProvider';
-import { useFractalModal } from '../ui/modals/useFractalModal';
+import { useDecentModal } from '../ui/modals/useDecentModal';
 import Markdown from '../ui/proposal/Markdown';
 
 type ProposalTemplateCardProps = {
@@ -38,10 +38,10 @@ export default function ProposalTemplateCard({
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { title, description } = proposalTemplate;
 
-  const openProposalForm = useFractalModal(ModalType.CREATE_PROPOSAL_FROM_TEMPLATE, {
+  const openProposalForm = useDecentModal(ModalType.CREATE_PROPOSAL_FROM_TEMPLATE, {
     proposalTemplate,
   });
-  const openForkTemplateForm = useFractalModal(ModalType.COPY_PROPOSAL_TEMPLATE, {
+  const openForkTemplateForm = useDecentModal(ModalType.COPY_PROPOSAL_TEMPLATE, {
     proposalTemplate,
     templateIndex,
   });

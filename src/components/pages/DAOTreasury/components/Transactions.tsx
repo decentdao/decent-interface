@@ -1,17 +1,12 @@
-import { Box, Button, HStack, Image, Text, Tooltip, Icon, Flex } from '@chakra-ui/react';
-import { ArrowUp, ArrowDown } from '@phosphor-icons/react';
+import { Box, Button, Flex, HStack, Icon, Image, Text, Tooltip } from '@chakra-ui/react';
+import { ArrowDown, ArrowUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { TransferType } from '../../../../types';
+import { TokenEventType, TransferDisplayData, TransferType } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
-import {
-  TokenEventType,
-  TransferDisplayData,
-  useFormatTransfers,
-} from '../hooks/useFormatTransfers';
 
 function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
   const { t } = useTranslation(['treasury', 'common']);
@@ -116,24 +111,25 @@ function EmptyTransactions() {
 
 export function Transactions({ shownTransactions }: { shownTransactions: number }) {
   const {
-    treasury: { transfers },
+    treasury: { transfers, transfersLoaded },
   } = useFractal();
 
-  const displayData = useFormatTransfers();
-
-  if (!transfers || displayData.length === 0) return <EmptyTransactions />;
-
+  if (!transfers) {
+    return null;
+  }
+  if (transfers.length === 0 && transfersLoaded) return <EmptyTransactions />;
   return (
     <Box
       overflowX="auto"
       className="scroll-dark"
     >
-      {displayData.slice(0, shownTransactions - 1).map((transfer, i) => (
+      {transfers.slice(0, shownTransactions - 1).map((transfer, i) => (
         <TransferRow
           key={i}
           displayData={transfer}
         />
       ))}
+      {(transfers === null || !transfersLoaded) && <Box>{/* @todo add Wave Loader */}</Box>}
     </Box>
   );
 }
@@ -162,17 +158,14 @@ export function PaginationButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-export function PaginationCount({
-  totalTransfers,
-  shownTransactions,
-  safeAddress,
-}: {
-  totalTransfers: number;
-  shownTransactions: number;
-  safeAddress: string | null;
-}) {
+export function PaginationCount({ shownTransactions }: { shownTransactions: number }) {
   const { t } = useTranslation('treasury');
-  if (!totalTransfers || !safeAddress) {
+  const {
+    node: { safe },
+    treasury: { transfers },
+  } = useFractal();
+  const totalTransfers = transfers?.length;
+  if (!totalTransfers || !safe?.address) {
     return null;
   }
   return (
@@ -187,7 +180,7 @@ export function PaginationCount({
       </Text>
       <EtherscanLink
         type="address"
-        value={safeAddress}
+        value={safe.address}
         p={0}
         textStyle="helper-text-base"
         outline="unset"

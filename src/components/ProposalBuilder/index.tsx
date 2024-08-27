@@ -133,17 +133,18 @@ export function ProposalBuilder({
                       ]
                 }
                 ButtonIcon={Trash}
-                buttonVariant="secondary"
-                buttonClick={() =>
-                  navigate(
-                    safeAddress
-                      ? isProposalMode
-                        ? DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)
-                        : DAO_ROUTES.proposalTemplates.relative(addressPrefix, safeAddress)
-                      : BASE_ROUTES.landing,
-                  )
-                }
-                isButtonDisabled={pendingCreateTx}
+                buttonProps={{
+                  isDisabled: pendingCreateTx,
+                  variant: 'secondary',
+                  onClick: () =>
+                    navigate(
+                      safeAddress
+                        ? isProposalMode
+                          ? DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)
+                          : DAO_ROUTES.proposalTemplates.relative(addressPrefix, safeAddress)
+                        : BASE_ROUTES.landing,
+                    ),
+                }}
               />
               <Grid
                 gap={4}

@@ -1,4 +1,4 @@
-import { Box, Flex } from '@chakra-ui/react';
+import { Box, ComponentWithAs, Flex, IconProps } from '@chakra-ui/react';
 import { Icon } from '@phosphor-icons/react';
 import { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,7 @@ function LinkContent({
   scope,
 }: {
   labelKey: string;
-  NavigationIcon: Icon;
+  NavigationIcon: Icon | ComponentWithAs<'svg', IconProps>;
   t: TFunction;
   isActive: boolean;
   scope: 'internal' | 'external';
@@ -26,11 +26,16 @@ function LinkContent({
         borderRadius={{ md: 4 }}
         transition="all ease-out 300ms"
         _hover={{ bgColor: 'neutral-3' }}
-        borderWidth={shouldApplyBorder ? '1px' : 0}
-        borderColor={shouldApplyBorder ? 'neutral-4' : undefined}
-        bgColor={shouldApplyBorder ? 'neutral-3' : undefined}
+        border={shouldApplyBorder ? `1px solid var(--colors-neutral-4)` : 'transparent'}
+        bgColor={shouldApplyBorder ? 'neutral-3' : 'transparent'}
       >
-        <Box w={6}>{<NavigationIcon size={24} />}</Box>
+        <Box w={6}>
+          <NavigationIcon
+            size={24}
+            w="1.5rem"
+            h="1.5rem"
+          />
+        </Box>
         <Box
           mx={3}
           whiteSpace="nowrap"
@@ -54,7 +59,7 @@ export function NavigationLink({
   href: string;
   labelKey: string;
   testId: string;
-  NavigationIcon: Icon;
+  NavigationIcon: Icon | ComponentWithAs<'svg', IconProps>;
   scope: 'internal' | 'external';
   closeDrawer?: () => void;
 }) {

@@ -4,6 +4,7 @@ import SafeApiKit, {
   SafeCreationInfoResponse,
   SafeInfoResponse,
   SafeApiKitConfig,
+  TokenInfoResponse,
 } from '@safe-global/api-kit';
 import { useMemo } from 'react';
 import { getAddress } from 'viem';
@@ -90,6 +91,13 @@ class EnhancedSafeApiKit extends SafeApiKit {
       address: getAddress(safeInfoResponse.address), // TODO: remove this line when typechain PR is merged
       nextNonce,
     };
+  }
+
+  override async getToken(tokenAddress: string): Promise<TokenInfoResponse> {
+    const value = await this.request('getTokenData' + tokenAddress, CacheExpiry.NEVER, () => {
+      return super.getToken(tokenAddress);
+    });
+    return value;
   }
 }
 

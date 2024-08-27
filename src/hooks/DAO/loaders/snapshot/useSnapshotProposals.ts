@@ -2,14 +2,15 @@ import { gql } from '@apollo/client';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { ActivityEventType, FractalProposalState } from '../../../../types';
+import { FractalProposalState } from '../../../../types';
 import { SnapshotProposal } from '../../../../types/daoProposal';
-import useSnapshotSpaceName from './useSnapshotSpaceName';
 import { createSnapshotGraphQlClient } from './';
 
 export const useSnapshotProposals = () => {
-  const { action } = useFractal();
-  const daoSnapshotSpaceName = useSnapshotSpaceName();
+  const {
+    node: { daoSnapshotENS },
+    action,
+  } = useFractal();
   const currentSnapshotENS = useRef<string | undefined>();
   const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphQlClient(), []);
 
@@ -22,7 +23,7 @@ export const useSnapshotProposals = () => {
         proposals(
           first: 50,
           where: {
-            space_in: ["${daoSnapshotSpaceName}"]
+            space_in: ["${daoSnapshotENS}"]
           },
           orderBy: "created",
           orderDirection: desc
@@ -48,7 +49,6 @@ export const useSnapshotProposals = () => {
           const proposals: SnapshotProposal[] = result.data.proposals.map((proposal: any) => {
             return {
               eventDate: new Date(proposal.start * 1000),
-              eventType: ActivityEventType.Governance,
               state:
                 proposal.state === 'active'
                   ? FractalProposalState.ACTIVE
@@ -73,11 +73,11 @@ export const useSnapshotProposals = () => {
           });
         });
     }
-  }, [action, daoSnapshotSpaceName, snaphshotGraphQlClient]);
+  }, [action, daoSnapshotENS, snaphshotGraphQlClient]);
 
   useEffect(() => {
-    if (!daoSnapshotSpaceName || daoSnapshotSpaceName === currentSnapshotENS.current) return;
-    currentSnapshotENS.current = daoSnapshotSpaceName;
+    if (!daoSnapshotENS || daoSnapshotENS === currentSnapshotENS.current) return;
+    currentSnapshotENS.current = daoSnapshotENS;
     loadSnapshotProposals();
-  }, [daoSnapshotSpaceName, loadSnapshotProposals]);
+  }, [daoSnapshotENS, loadSnapshotProposals]);
 };

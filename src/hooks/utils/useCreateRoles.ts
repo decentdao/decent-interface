@@ -1,21 +1,22 @@
 import { FormikHelpers } from 'formik';
+import isEqual from 'lodash.isequal';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { zeroAddress, Address, encodeFunctionData, getAddress, Hex, Hash } from 'viem';
+import { Address, encodeFunctionData, getAddress, Hash, Hex, zeroAddress } from 'viem';
 import DecentHatsAbi from '../../assets/abi/DecentHats_0_1_0_Abi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import {
+  BaseSablierStream,
   EditBadgeStatus,
   HatStruct,
   HatWearerChangedParams,
-  RoleValue,
   RoleFormValues,
-  BaseSablierStream,
+  RoleHatFormValue,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -85,7 +86,7 @@ export default function useCreateRoles() {
   const {
     node: { safe, daoName },
   } = useFractal();
-  const { hatsTree, hatsTreeId, getHat } = useRolesStore();
+  const { hatsTree, hatsTreeId, getHat, getPayment } = useRolesStore();
   const {
     addressPrefix,
     chain,
@@ -123,7 +124,7 @@ export default function useCreateRoles() {
   );
 
   const parseEditedHatsFormValues = useCallback(
-    async (editedHats: RoleValue[]) => {
+    async (editedHats: RoleHatFormValue[]) => {
       //  Parse added hats
 
       const addedHats: HatStruct[] = await Promise.all(
@@ -189,18 +190,34 @@ export default function useCreateRoles() {
       );
 
       // Parse role with edited payroll hats
-      const editedPayrollHats = editedHats.filter(hat => {
-        const payments = hat.payments?.filter(payment => !!payment.streamId);
-        return payments?.length ? { ...hat, payments } : null;
-      });
+      const editedPayrollHats = editedHats
+        .filter(hat => {
+          const payments = hat.payments?.filter(payment => !!payment.streamId);
+          if (payments?.length) {
+            const originalHat = getHat(hat.id);
+            if (originalHat) {
+              const editedPayments = payments.filter(payment => {
+                if (payment.streamId) {
+                  const originalPayment = getPayment(hat.id, payment.streamId);
+                  return !isEqual(payment, originalPayment);
+                }
+                return false;
+              });
+
+              return { ...hat, payments: editedPayments };
+            }
+          }
+          return null;
+        })
+        .filter(hat => !!hat);
 
       // Parse role with added payroll hats
-      const addedNewPaymentsHats: RoleValue[] = editedHats
+      const addedNewPaymentsHats: RoleHatFormValue[] = editedHats
         .map(hat => {
           const payments = hat.payments?.filter(payment => !payment.streamId);
           return payments?.length ? { ...hat, payments } : null;
         })
-        .filter(hat => !!hat) as RoleValue[];
+        .filter(hat => hat !== null);
 
       return {
         addedHats,
@@ -211,7 +228,7 @@ export default function useCreateRoles() {
         editedPayrollHats,
       };
     },
-    [getHat, hatsTree?.topHat.smartAddress, uploadHatDescription],
+    [getHat, getPayment, hatsTree?.topHat.smartAddress, uploadHatDescription],
   );
 
   const prepareCreateTopHatProposalData = useCallback(
@@ -325,8 +342,8 @@ export default function useCreateRoles() {
           id: Address;
           details: string;
         }[];
-        addedNewPaymentsHats: RoleValue[];
-        editedPayrollHats: RoleValue[];
+        addedNewPaymentsHats: RoleHatFormValue[];
+        editedPayrollHats: RoleHatFormValue[];
       },
     ) => {
       if (!hatsTree || !safeAddress) {
@@ -544,9 +561,14 @@ export default function useCreateRoles() {
         const paymentCancelTxs: { calldata: Hex; targetAddress: Address }[] = [];
         editedPayrollHats.forEach(role =>
           (role.payments ?? []).forEach(payment => {
-            if (payment.streamId) {
+            if (payment.streamId && payment.contractAddress && payment.amount && payment.asset) {
               const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
-                payment,
+                {
+                  streamId: payment.streamId,
+                  contractAddress: payment.contractAddress,
+                  amount: payment.amount,
+                  asset: payment.asset,
+                },
                 getAddress(role.wearer),
               );
               paymentCancelTxs.push({
@@ -576,7 +598,9 @@ export default function useCreateRoles() {
         const streamsData = editedPayrollHats.flatMap(role =>
           (role.payments ?? []).map(payment => payment),
         );
-        const recipients = editedPayrollHats.map(role => role.smartAddress);
+        const recipients = editedPayrollHats.flatMap(role =>
+          (role.payments ?? []).map(() => role.smartAddress),
+        );
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(
           streamsData,
           recipients,
@@ -639,7 +663,7 @@ export default function useCreateRoles() {
     ],
   );
 
-  const createRolesEditProposal = useCallback(
+  const createEditRolesProposal = useCallback(
     async (values: RoleFormValues, formikHelpers: FormikHelpers<RoleFormValues>) => {
       const { setSubmitting } = formikHelpers;
       setSubmitting(true);
@@ -700,6 +724,6 @@ export default function useCreateRoles() {
   );
 
   return {
-    createRolesEditProposal,
+    createEditRolesProposal,
   };
 }

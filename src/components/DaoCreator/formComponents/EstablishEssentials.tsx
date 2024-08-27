@@ -5,7 +5,7 @@ import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { ICreationStepProps, VotingStrategyType, GovernanceType } from '../../../types';
+import { GovernanceType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import { InputComponent, LabelComponent } from '../../ui/forms/InputComponent';
 import LabelWrapper from '../../ui/forms/LabelWrapper';
 import { RadioWithText } from '../../ui/forms/Radio/RadioWithText';
@@ -72,7 +72,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
           helper={t('helperDAOName')}
           isRequired
           value={values.essentials.daoName}
-          id="searchEssentials-daoName"
+          id="essentials-daoName"
           onChange={cEvent => setFieldValue('essentials.daoName', cEvent.target.value, true)}
           onBlur={cEvent => setFieldValue('essentials.daoName', cEvent.target.value.trim(), true)}
           disabled={daoNameDisabled}
@@ -161,7 +161,7 @@ export function EstablishEssentials(props: ICreationStepProps) {
             <Input
               value={values.essentials.snapshotENS}
               onChange={cEvent =>
-                setFieldValue('essentials.snapshotENS', cEvent.target.value, true)
+                setFieldValue('essentials.snapshotENS', cEvent.target.value.toLowerCase(), true)
               }
               isDisabled={snapshotENSDisabled}
               data-testid="essentials-snapshotENS"

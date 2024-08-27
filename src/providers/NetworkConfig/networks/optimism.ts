@@ -15,10 +15,10 @@ import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deploymen
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/optimism/VotesERC20.json' assert { type: 'json' };
 import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/optimism/VotesERC20Wrapper.json' assert { type: 'json' };
 import {
-  getProxyFactoryDeployment,
-  getMultiSendCallOnlyDeployment,
-  getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
+  getMultiSendCallOnlyDeployment,
+  getProxyFactoryDeployment,
+  getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
 import { optimism } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
@@ -30,10 +30,10 @@ const optimismConfig: NetworkConfig = {
   order: 15,
   chain: optimism,
   moralisSupported: true,
-  rpcEndpoint: `https://opt-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_API_KEY}`,
+  rpcEndpoint: `https://opt-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-optimism.safe.global',
   etherscanBaseURL: 'https://optimistic.etherscan.io/',
-  etherscanAPIUrl: `https://api-optimistic.etherscan.io/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_OPTIMISM_API_KEY}`,
+  etherscanAPIUrl: `https://api-optimistic.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_OPTIMISM_API_KEY}`,
   addressPrefix: 'oeth',
   nativeTokenIcon: '/images/coin-icon-op.svg',
   subgraph: {
@@ -67,7 +67,8 @@ const optimismConfig: NetworkConfig = {
       version: SAFE_VERSION,
       network: optimism.id.toString(),
     })?.networkAddresses[optimism.id.toString()]!,
-    zodiacModuleProxyFactory: ModuleProxyFactory.address,
+    zodiacModuleProxyFactory: '0x000000000000aDdB49795b0f9bA5BC298cDda236',
+    zodiacModuleProxyFactoryOld: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,

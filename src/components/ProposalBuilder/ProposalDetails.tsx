@@ -2,11 +2,11 @@ import { Avatar, Box, HStack, Text, VStack } from '@chakra-ui/react';
 import { FormikProps } from 'formik';
 import { Fragment, PropsWithChildren, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import '../../assets/css/Markdown.css';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import Markdown from '../ui/proposal/Markdown';
 import { CeleryTextLink } from '../ui/utils/CeleryTextLink';
 import Divider from '../ui/utils/Divider';
-import '../../assets/css/Markdown.css';
 
 export function TransactionValueContainer({ children }: PropsWithChildren<{}>) {
   return (

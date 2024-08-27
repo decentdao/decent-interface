@@ -1,10 +1,9 @@
 import { useApolloClient } from '@apollo/client';
 import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { Tree, HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
-import { intervalToDuration } from 'date-fns';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { getAddress, hexToBigInt } from 'viem';
+import { formatUnits, getAddress, hexToBigInt } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierPayment } from '../../../components/pages/Roles/types';
@@ -18,30 +17,15 @@ const hatsSubgraphClient = new HatsSubgraphClient({
   // TODO config for prod
 });
 
-function convertDuration(_duration: number): { years: number; days: number; hours: number } {
-  let duration = (_duration ?? 0) * 1000;
-  const millisecondsInAnHour = 1000 * 60 * 60;
-  const millisecondsInADay = millisecondsInAnHour * 24;
-  const millisecondsInAYear = millisecondsInADay * 365; // Approximation, does not account for leap years
-
-  const years = Math.floor(duration / millisecondsInAYear);
-  duration -= years * millisecondsInAYear;
-
-  const days = Math.floor(duration / millisecondsInADay);
-  duration -= days * millisecondsInADay;
-
-  const hours = Math.floor(duration / millisecondsInAnHour);
-
-  return {
-    years,
-    days,
-    hours,
-  };
-}
-
 const useHatsTree = () => {
-  const { hatsTreeId, hatsTree, streamsFetched, setHatsTree, updateRolesWithStreams } =
-    useRolesStore();
+  const {
+    hatsTreeId,
+    contextChainId,
+    hatsTree,
+    streamsFetched,
+    setHatsTree,
+    updateRolesWithStreams,
+  } = useRolesStore();
 
   console.log({
     hatsTreeId,
@@ -51,7 +35,6 @@ const useHatsTree = () => {
 
   const ipfsClient = useIPFSClient();
   const {
-    chain,
     sablierSubgraph,
     contracts: {
       hatsProtocol,
@@ -69,14 +52,15 @@ const useHatsTree = () => {
         hatsTreeId === undefined ||
         hatsTreeId === null ||
         publicClient === undefined ||
-        decentHatsMasterCopy === undefined
+        decentHatsMasterCopy === undefined ||
+        contextChainId === null
       ) {
         return;
       }
 
       try {
         const tree = await hatsSubgraphClient.getTree({
-          chainId: chain.id,
+          chainId: contextChainId,
           treeId: hatsTreeId,
           props: {
             hats: {
@@ -104,7 +88,7 @@ const useHatsTree = () => {
             const cacheKey = {
               cacheName: CacheKeys.IPFS_HASH,
               hash,
-              chainId: chain.id,
+              chainId: contextChainId,
             } as const;
 
             const cachedDetails = getValue(cacheKey);
@@ -142,7 +126,7 @@ const useHatsTree = () => {
           // console.log('treeWithFetchedDetails', treeWithFetchedDetails.hats);
           await setHatsTree({
             hatsTree: treeWithFetchedDetails,
-            chainId: BigInt(chain.id),
+            chainId: BigInt(contextChainId),
             hatsProtocol: hatsProtocol,
             erc6551Registry,
             hatsAccountImplementation,
@@ -158,7 +142,7 @@ const useHatsTree = () => {
       } catch (e) {
         setHatsTree({
           hatsTree: null,
-          chainId: BigInt(chain.id),
+          chainId: BigInt(contextChainId),
           hatsProtocol: hatsProtocol,
           erc6551Registry,
           hatsAccountImplementation,
@@ -170,7 +154,7 @@ const useHatsTree = () => {
         console.error(e, {
           message,
           args: {
-            network: chain.id,
+            network: contextChainId,
             hatsTreeId,
           },
         });
@@ -179,7 +163,7 @@ const useHatsTree = () => {
 
     getHatsTree();
   }, [
-    chain.id,
+    contextChainId,
     decentHatsMasterCopy,
     erc6551Registry,
     hatsAccountImplementation,
@@ -226,32 +210,20 @@ const useHatsTree = () => {
                 return hat;
               }
 
-              const activeStreams = streamQueryResult.data.streams.filter(
-                stream =>
-                  parseInt(stream.endTime) <= Date.now() / 1000 ||
-                  BigInt(stream.withdrawnAmount) !== BigInt(stream.intactAmount),
-              );
-
-              const lockupLinearStreams = activeStreams.filter(
+              const lockupLinearStreams = streamQueryResult.data.streams.filter(
                 stream => stream.category === 'LockupLinear',
               );
               const formattedActiveStreams: SablierPayment[] = lockupLinearStreams.map(
                 lockupLinearStream => {
-                  const parsedAmount =
-                    BigInt(lockupLinearStream.depositAmount) /
-                    10n ** BigInt(lockupLinearStream.asset.decimals);
-                  const cliffDuration = lockupLinearStream.cliff
-                    ? (() => {
-                        const duration = intervalToDuration({
-                          start: secondsTimestampToDate(lockupLinearStream.startTime),
-                          end: secondsTimestampToDate(lockupLinearStream.cliffTime),
-                        });
-                        return {
-                          years: duration.years || 0,
-                          days: duration.days || 0,
-                          hours: duration.hours || 0,
-                        };
-                      })()
+                  const parsedAmount = formatUnits(
+                    BigInt(lockupLinearStream.depositAmount),
+                    lockupLinearStream.asset.decimals,
+                  );
+
+                  const startDate = secondsTimestampToDate(lockupLinearStream.startTime);
+                  const endDate = secondsTimestampToDate(lockupLinearStream.endTime);
+                  const cliffDate = lockupLinearStream.cliff
+                    ? secondsTimestampToDate(lockupLinearStream.cliffTime)
                     : undefined;
 
                   return {
@@ -268,21 +240,27 @@ const useHatsTree = () => {
                       logo: '', // @todo - how do we get logo?
                     },
                     amount: {
-                      bigintValue: lockupLinearStream.depositAmount,
-                      value: parsedAmount.toString(),
+                      bigintValue: BigInt(lockupLinearStream.depositAmount),
+                      value: parsedAmount,
                     },
-                    scheduleFixedDate: {
-                      startDate: secondsTimestampToDate(lockupLinearStream.startTime),
-                      endDate: secondsTimestampToDate(lockupLinearStream.endTime),
-                      cliffDate: lockupLinearStream.cliff
-                        ? secondsTimestampToDate(lockupLinearStream.cliffTime)
-                        : undefined,
+                    startDate,
+                    endDate,
+                    cliffDate,
+                    isStreaming: () => {
+                      const start =
+                        lockupLinearStream.cliff === undefined &&
+                        lockupLinearStream.startTime !== undefined
+                          ? startDate.getTime()
+                          : cliffDate !== undefined
+                            ? cliffDate.getTime()
+                            : undefined;
+                      const end = endDate ? endDate.getTime() : undefined;
+                      const cancelled = lockupLinearStream.canceled;
+                      const now = new Date().getTime();
+                      const isStreaming =
+                        !cancelled && !!start && !!end && start <= now && end > now;
+                      return isStreaming;
                     },
-                    scheduleDuration: {
-                      duration: convertDuration(lockupLinearStream.duration),
-                      cliffDuration,
-                    },
-                    scheduleType: 'duration',
                   };
                 },
               );

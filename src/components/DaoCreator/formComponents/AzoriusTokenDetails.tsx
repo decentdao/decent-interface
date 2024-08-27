@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract, isAddress, zeroAddress } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import { TokenCreationType, ICreationStepProps } from '../../../types';
+import { ICreationStepProps, TokenCreationType } from '../../../types';
 import SupportTooltip from '../../ui/badges/SupportTooltip';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { LabelComponent } from '../../ui/forms/InputComponent';
@@ -47,7 +47,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
   const publicClient = usePublicClient();
 
   const { checkVotesToken } = usePrepareFormData();
-  const [isImportedVotesToken, setIsImportedVotesToken] = useState(false);
+  const [isImportedVotesToken, setIsImportedVotesToken] = useState<boolean>();
 
   useStepRedirect({ values });
   const updateImportFields = useCallback(async () => {
@@ -92,7 +92,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
         setFieldValue('erc20Token.tokenSymbol', symbol, true);
       }
     } else {
-      setIsImportedVotesToken(false);
+      setIsImportedVotesToken(undefined);
     }
   }, [
     checkVotesToken,
@@ -177,7 +177,7 @@ export function AzoriusTokenDetails(props: ICreationStepProps) {
                       isRequired
                     />
                   </LabelWrapper>
-                  {!isImportedVotesToken && !errors.erc20Token?.tokenImportAddress && (
+                  {isImportedVotesToken === false && !errors.erc20Token?.tokenImportAddress && (
                     <Flex
                       gap={4}
                       alignItems="center"

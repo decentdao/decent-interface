@@ -15,10 +15,10 @@ import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deploymen
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/polygon/VotesERC20.json' assert { type: 'json' };
 import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/polygon/VotesERC20Wrapper.json' assert { type: 'json' };
 import {
-  getProxyFactoryDeployment,
-  getMultiSendCallOnlyDeployment,
-  getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
+  getMultiSendCallOnlyDeployment,
+  getProxyFactoryDeployment,
+  getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
 import { polygon } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
@@ -30,10 +30,10 @@ const polygonConfig: NetworkConfig = {
   order: 20,
   chain: polygon,
   moralisSupported: true,
-  rpcEndpoint: `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env.VITE_APP_ALCHEMY_API_KEY}`,
+  rpcEndpoint: `https://polygon-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-polygon.safe.global',
   etherscanBaseURL: 'https://polygonscan.com',
-  etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
+  etherscanAPIUrl: `https://api.polygonscan.com/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_POLYGON_API_KEY}`,
   addressPrefix: 'matic',
   nativeTokenIcon: '/images/coin-icon-pol.svg',
   subgraph: {
@@ -67,7 +67,8 @@ const polygonConfig: NetworkConfig = {
       version: SAFE_VERSION,
       network: polygon.id.toString(),
     })?.networkAddresses[polygon.id.toString()]!,
-    zodiacModuleProxyFactory: ModuleProxyFactory.address,
+    zodiacModuleProxyFactory: '0x000000000000aDdB49795b0f9bA5BC298cDda236',
+    zodiacModuleProxyFactoryOld: ModuleProxyFactory.address,
     linearVotingMasterCopy: LinearERC20Voting.address,
     multisend: getMultiSendCallOnlyDeployment({
       version: SAFE_VERSION,

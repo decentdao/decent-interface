@@ -61,15 +61,16 @@ export function StepWrapper({
             },
           ]}
           ButtonIcon={Trash}
-          buttonVariant="secondary"
-          isButtonDisabled={isFormSubmitting}
-          buttonClick={() =>
-            navigate(
-              !isSubDAO || !safe?.address
-                ? BASE_ROUTES.landing
-                : DAO_ROUTES.dao.relative(addressPrefix, safe.address),
-            )
-          }
+          buttonProps={{
+            variant: 'secondary',
+            isDisabled: isFormSubmitting,
+            onClick: () =>
+              navigate(
+                !isSubDAO || !safe?.address
+                  ? BASE_ROUTES.landing
+                  : DAO_ROUTES.dao.relative(addressPrefix, safe.address),
+              ),
+          }}
         />
       )}
       {shouldWrapChildren ? (

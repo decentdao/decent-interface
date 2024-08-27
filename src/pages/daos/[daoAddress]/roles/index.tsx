@@ -1,11 +1,11 @@
 import { Box, Show } from '@chakra-ui/react';
-import { Pencil } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, zeroAddress } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
 import { RoleCardLoading, RoleCardNoRoles } from '../../../../components/pages/Roles/RolePageCard';
 import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
+import PencilWithLineIcon from '../../../../components/ui/icons/PencilWithLineIcon';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
@@ -44,13 +44,25 @@ function Roles() {
             path: '',
           },
         ]}
-        buttonVariant="secondary"
-        buttonText={canUserCreateProposal ? t('editRoles') : undefined}
-        buttonProps={{
-          size: 'sm',
-          leftIcon: <Pencil />,
-        }}
-        buttonClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress))}
+        buttonProps={
+          canUserCreateProposal
+            ? {
+                variant: 'secondary',
+                size: 'sm',
+                leftIcon: (
+                  <Box mr="-0.25rem">
+                    <PencilWithLineIcon
+                      w="1rem"
+                      h="1rem"
+                    />
+                  </Box>
+                ),
+                gap: 0,
+                children: t('editRoles'),
+                onClick: () => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress)),
+              }
+            : undefined
+        }
       />
       {hatsTreeLoading && <RoleCardLoading />}
       {showNoRolesCard && <RoleCardNoRoles />}
@@ -72,7 +84,7 @@ function Roles() {
                 wearerAddress={roleHat.wearer || zeroAddress}
                 hatId={roleHat.id}
                 handleRoleClick={handleNavigateToRole}
-                payments={roleHat.payments}
+                paymentsCount={roleHat.payments?.length}
               />
             ))}
           </Show>

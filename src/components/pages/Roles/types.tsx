@@ -1,7 +1,6 @@
 import { Address, Hex } from 'viem';
 import { DecentRoleHat } from '../../../store/roles';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
-export type RoleViewMode = 'edit' | 'view';
 
 export interface SablierAsset {
   address: Address;
@@ -19,17 +18,17 @@ export interface BaseSablierStream {
 }
 
 export interface SablierPayment extends BaseSablierStream {
-  scheduleDuration?: {
-    duration: DurationBreakdown;
-    cliffDuration: DurationBreakdown | undefined;
-  };
-  scheduleFixedDate?: {
-    startDate: Date;
-    endDate: Date;
-    cliffDate: Date | undefined;
-  };
-  scheduleType: 'duration' | 'fixedDate';
+  startDate: Date;
+  endDate: Date;
+  cliffDate: Date | undefined;
+  isStreaming: () => boolean;
 }
+
+export interface SablierPaymentFormValues extends Partial<SablierPayment> {
+  isStreaming: () => boolean;
+}
+
+export type SablierPaymentOrPartial = SablierPayment | SablierPaymentFormValues;
 
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
@@ -37,13 +36,14 @@ export interface RoleProps {
   hatId: Address;
   name: string;
   wearerAddress: Address | undefined;
-  payments?: SablierPayment[];
+  paymentsCount?: number;
 }
 
 export interface RoleEditProps
-  extends Omit<RoleProps, 'hatId' | 'wearerAddress' | 'handleRoleClick'> {
+  extends Omit<RoleProps, 'hatId' | 'wearerAddress' | 'handleRoleClick' | 'paymentsCount'> {
   handleRoleClick: () => void;
   wearerAddress: string | undefined;
+  payments?: SablierPaymentFormValues[];
 }
 
 export enum EditBadgeStatus {
@@ -63,7 +63,7 @@ export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
 };
 
 export interface HatStruct {
-  maxSupply: number; // No more than this number of wearers. Hardcode to 1
+  maxSupply: 1; // No more than this number of wearers. Hardcode to 1
   details: string; // IPFS url/hash to JSON { version: '1.0', data: { name, description, ...arbitraryData } }
   imageURI: string;
   isMutable: boolean; // true
@@ -85,16 +85,17 @@ export interface DurationBreakdown {
   days: number;
 }
 
-export interface RoleValue extends Omit<DecentRoleHat, 'wearer'> {
+export interface RoleHatFormValue extends Omit<DecentRoleHat, 'wearer' | 'payments'> {
   wearer: string;
   editedRole?: EditedRole;
-  payments?: SablierPayment[];
+  payments?: SablierPaymentFormValues[];
+  roleEditingPaymentIndex?: number;
 }
 
 export interface RoleFormValues {
   proposalMetadata: CreateProposalMetadata;
-  hats: RoleValue[];
-  roleEditing?: RoleValue;
+  hats: RoleHatFormValue[];
+  roleEditing?: RoleHatFormValue;
   customNonce?: number;
 }
 

@@ -7,10 +7,9 @@ import {
   PaginationCount,
   Transactions,
 } from '../../../../components/pages/DAOTreasury/components/Transactions';
-import { useFormatTransfers } from '../../../../components/pages/DAOTreasury/hooks/useFormatTransfers';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
-import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
+import { useDecentModal } from '../../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -18,19 +17,18 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 export default function Treasury() {
   const {
     node: { daoName, safe },
-    treasury: { assetsFungible },
+    treasury: { assetsFungible, transfers },
   } = useFractal();
   const [shownTransactions, setShownTransactions] = useState(20);
   const { t } = useTranslation('treasury');
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const openSendAsset = useFractalModal(ModalType.SEND_ASSETS);
-  const formattedTransfers = useFormatTransfers();
+  const openSendAsset = useDecentModal(ModalType.SEND_ASSETS);
 
   const hasAnyBalanceOfAnyFungibleTokens =
     assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
 
   const showSendButton = canUserCreateProposal && hasAnyBalanceOfAnyFungibleTokens;
-  const totalTransfers = formattedTransfers.length;
+  const totalTransfers = transfers?.length || 0;
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
 
   const safeAddress = safe?.address;
@@ -43,16 +41,21 @@ export default function Treasury() {
           daoName,
           subject: t('treasury', { ns: 'breadcrumbs' }),
         })}
-        address={safeAddress}
+        showSafeAddress
         breadcrumbs={[
           {
             terminus: t('treasury', { ns: 'breadcrumbs' }),
             path: '',
           },
         ]}
-        buttonText={showSendButton ? t('buttonSendAssets') : undefined}
-        buttonClick={showSendButton ? openSendAsset : undefined}
-        buttonTestId="link-send-assets"
+        buttonProps={
+          showSendButton
+            ? {
+                children: t('buttonSendAssets'),
+                onClick: openSendAsset,
+              }
+            : undefined
+        }
       />
       <Grid
         templateAreas={{
@@ -72,11 +75,7 @@ export default function Treasury() {
             subTitle={
               <Show below="lg">
                 <Box px="1rem">
-                  <PaginationCount
-                    totalTransfers={totalTransfers}
-                    shownTransactions={shownTransactions}
-                    safeAddress={safeAddress ?? null}
-                  />
+                  <PaginationCount shownTransactions={shownTransactions} />
                 </Box>
               </Show>
             }
@@ -89,11 +88,7 @@ export default function Treasury() {
                   my="1rem"
                 />
                 <Box px={{ base: '1rem', lg: '1.5rem' }}>
-                  <PaginationCount
-                    totalTransfers={totalTransfers}
-                    shownTransactions={shownTransactions}
-                    safeAddress={safeAddress ?? null}
-                  />
+                  <PaginationCount shownTransactions={shownTransactions} />
                 </Box>
               </Show>
             </Flex>

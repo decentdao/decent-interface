@@ -3,7 +3,6 @@ import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
 import { useSafeAPI } from '../../../../providers/App/hooks/useSafeAPI';
-import { ActivityEventType, MultisigProposal } from '../../../../types';
 import { useSafeTransactions } from '../../../utils/useSafeTransactions';
 
 export const useSafeMultisigProposals = () => {
@@ -21,19 +20,16 @@ export const useSafeMultisigProposals = () => {
       return;
     }
     try {
-      const transactions = await safeAPI.getAllTransactions(safeAddress);
-      const activities = await parseTransactions(transactions, safeAddress);
-      const multisendProposals = activities.filter(
-        activity => activity.eventType !== ActivityEventType.Treasury,
-      ) as MultisigProposal[];
+      const multisigTransactions = await safeAPI.getMultisigTransactions(safeAddress);
+      const activities = await parseTransactions(multisigTransactions);
 
       action.dispatch({
         type: FractalGovernanceAction.SET_PROPOSALS,
-        payload: multisendProposals,
+        payload: activities,
       });
 
       action.dispatch({
-        type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+        type: FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL,
         payload: false,
       });
       action.dispatch({

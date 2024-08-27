@@ -26,6 +26,7 @@ export default function EtherscanLink({
   if (!value) {
     return null;
   }
+
   const href = `${etherscanBaseURL}/${type}/${value}${secondaryValue ? `?a=${secondaryValue}` : ''}`;
 
   return (
