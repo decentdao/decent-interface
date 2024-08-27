@@ -1,16 +1,20 @@
-import { Button, Box, Flex, Text, Image, Hide, Show } from '@chakra-ui/react';
+import { Box, Button, Flex, Hide, Image, Show, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useHeaderHeight } from '../../../constants/common';
 import { BASE_ROUTES } from '../../../constants/routes';
 
 export function TopErrorFallback() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const HEADER_HEIGHT = useHeaderHeight();
 
   return (
     <Flex
       alignItems="center"
       justifyContent="center"
+      minHeight={`calc(100vh - ${HEADER_HEIGHT} - 15rem)`}
+      mt="6rem"
     >
       <Box
         borderRadius="0.5rem"
