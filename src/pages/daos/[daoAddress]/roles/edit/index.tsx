@@ -11,7 +11,7 @@ import {
   RoleCardNoRoles,
 } from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { RoleFormValues, EditBadgeStatus } from '../../../../../components/pages/Roles/types';
+import { EditBadgeStatus, RoleFormValues } from '../../../../../components/pages/Roles/types';
 import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
 import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
@@ -141,16 +141,21 @@ function RolesEdit() {
                   path: '',
                 },
               ]}
-              buttonVariant="secondary"
-              buttonText={t('addRole')}
               buttonProps={{
+                variant: 'secondary',
+                children: t('addRole'),
                 size: 'sm',
-                leftIcon: <Plus />,
-              }}
-              buttonClick={async () => {
-                const newId = toHex(getRandomBytes(), { size: 32 });
-                setFieldValue('roleEditing', { id: newId });
-                showRoleEditDetails(newId);
+                gap: 0,
+                leftIcon: (
+                  <Box mr="-0.25rem">
+                    <Plus size="1rem" />
+                  </Box>
+                ),
+                onClick: async () => {
+                  const newId = toHex(getRandomBytes(), { size: 32 });
+                  setFieldValue('roleEditing', { id: newId });
+                  showRoleEditDetails(newId);
+                },
               }}
             />
 
