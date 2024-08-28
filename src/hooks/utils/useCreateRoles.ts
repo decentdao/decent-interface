@@ -545,12 +545,14 @@ export default function useCreateRoles() {
           recipients,
         );
 
-        preparedPaymentTransactions.preparedTokenApprovalsTransactions.forEach(tx =>
-          hatPaymentAddedTxs.push(tx),
-        );
-        preparedPaymentTransactions.preparedStreamCreationTransactions.forEach(tx =>
-          hatPaymentAddedTxs.push(tx),
-        );
+        streamsData.forEach((_, i) => {
+          hatPaymentAddedTxs.push(
+            preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
+          );
+          hatPaymentAddedTxs.push(
+            preparedPaymentTransactions.preparedStreamCreationTransactions[i],
+          );
+        });
       }
 
       if (editedPayrollHats.length) {
@@ -602,12 +604,14 @@ export default function useCreateRoles() {
           recipients,
         );
 
-        preparedPaymentTransactions.preparedTokenApprovalsTransactions.forEach(tx =>
-          hatPaymentEditedTxs.push(tx),
-        );
-        preparedPaymentTransactions.preparedStreamCreationTransactions.forEach(tx =>
-          hatPaymentEditedTxs.push(tx),
-        );
+        streamsData.forEach((_, i) => {
+          hatPaymentEditedTxs.push(
+            preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
+          );
+          hatPaymentEditedTxs.push(
+            preparedPaymentTransactions.preparedStreamCreationTransactions[i],
+          );
+        });
       }
 
       const proposalTransactions = {
