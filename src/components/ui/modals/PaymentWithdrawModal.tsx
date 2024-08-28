@@ -13,29 +13,37 @@ import useAvatar from '../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatCoin } from '../../../utils';
-import { SablierPayment } from '../../pages/Roles/types';
 import Avatar, { AvatarSize } from '../page/Header/Avatar';
 
 export default function PaymentWithdrawModal({
-  payment,
+  paymentAssetLogo,
+  paymentAssetSymbol,
+  paymentAssetDecimals,
+  paymentStreamId,
+  paymentContractAddress,
   withdrawInformation,
   onSuccess,
   onClose,
 }: {
-  payment: SablierPayment;
+  paymentAssetLogo?: string;
+  paymentAssetSymbol: string;
+  paymentStreamId?: string;
+  paymentAssetDecimals: number;
+  paymentContractAddress?: Address;
   withdrawInformation: {
     roleHatSmartAddress: Address;
-    roleHatwearerAddress: Address;
+    roleHatWearerAddress: Address;
     withdrawableAmount: bigint;
   };
   onSuccess: () => Promise<void>;
   onClose: () => void;
 }) {
+  console.log('🚀 ~ withdrawInformation:', withdrawInformation);
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { t } = useTranslation(['roles', 'menu', 'common', 'modals']);
   const { displayName: accountDisplayName } = useDisplayName(
-    withdrawInformation.roleHatwearerAddress,
+    withdrawInformation.roleHatWearerAddress,
   );
   const avatarURL = useAvatar(accountDisplayName);
   const iconSize = useBreakpointValue<AvatarSize>({ base: 'sm', md: 'icon' }) || 'sm';
@@ -43,12 +51,12 @@ export default function PaymentWithdrawModal({
 
   const handleWithdraw = useCallback(async () => {
     if (
-      payment?.contractAddress &&
-      payment?.streamId &&
+      paymentContractAddress &&
+      paymentStreamId &&
       walletClient &&
       publicClient &&
       withdrawInformation.roleHatSmartAddress &&
-      withdrawInformation.roleHatwearerAddress
+      withdrawInformation.roleHatWearerAddress
     ) {
       let withdrawToast: Id | undefined = undefined;
       try {
@@ -57,11 +65,11 @@ export default function PaymentWithdrawModal({
           address: withdrawInformation.roleHatSmartAddress,
           client: walletClient,
         });
-        const bigIntStreamId = convertStreamIdToBigInt(payment.streamId);
+        const bigIntStreamId = convertStreamIdToBigInt(paymentStreamId);
         let hatsAccountCalldata = encodeFunctionData({
           abi: SablierV2LockupLinearAbi,
           functionName: 'withdrawMax',
-          args: [bigIntStreamId, getAddress(withdrawInformation.roleHatwearerAddress)],
+          args: [bigIntStreamId, getAddress(withdrawInformation.roleHatWearerAddress)],
         });
         withdrawToast = toast(t('withdrawPendingMessage'), {
           autoClose: false,
@@ -71,7 +79,7 @@ export default function PaymentWithdrawModal({
           progress: 1,
         });
         const txHash = await hatsAccountContract.write.execute([
-          payment.contractAddress,
+          paymentContractAddress,
           0n,
           hatsAccountCalldata,
           0,
@@ -94,16 +102,20 @@ export default function PaymentWithdrawModal({
       }
     }
   }, [
-    payment?.contractAddress,
-    payment?.streamId,
+    paymentContractAddress,
+    paymentStreamId,
     publicClient,
     walletClient,
     onSuccess,
     onClose,
     withdrawInformation.roleHatSmartAddress,
-    withdrawInformation.roleHatwearerAddress,
+    withdrawInformation.roleHatWearerAddress,
     t,
   ]);
+  console.log(
+    '🚀 ~ withdrawInformation.roleHatWearerAddress:',
+    withdrawInformation.roleHatWearerAddress,
+  );
 
   return (
     <Flex
@@ -140,13 +152,13 @@ export default function PaymentWithdrawModal({
             justifyContent="center"
           >
             <Image
-              src={payment.asset.logo}
+              src={paymentAssetLogo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={payment.asset.symbol}
+              alt={paymentAssetSymbol}
               w="2rem"
               h="2rem"
             />
-            <Text textStyle="label-large">{payment.asset.symbol}</Text>
+            <Text textStyle="label-large">{paymentAssetSymbol}</Text>
           </Flex>
           <Flex
             px="1rem"
@@ -168,7 +180,7 @@ export default function PaymentWithdrawModal({
               {formatCoin(
                 withdrawInformation.withdrawableAmount,
                 true,
-                payment.asset.decimals,
+                paymentAssetDecimals,
                 undefined,
                 false,
               )}
@@ -197,12 +209,12 @@ export default function PaymentWithdrawModal({
             >
               <Box>
                 <Avatar
-                  address={withdrawInformation.roleHatwearerAddress}
+                  address={withdrawInformation.roleHatWearerAddress}
                   url={avatarURL}
                   size={iconSize}
                 />
               </Box>
-              <Text textStyle="label-base">{withdrawInformation.roleHatwearerAddress}</Text>
+              <Text textStyle="label-base">{withdrawInformation.roleHatWearerAddress}</Text>
             </Flex>
           </Flex>
           <Flex

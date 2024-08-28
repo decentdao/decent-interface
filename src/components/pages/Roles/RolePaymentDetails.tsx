@@ -62,8 +62,8 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 }
 
 interface RolePaymentDetailsProps {
-  roleHatWearerAddress: Address;
-  roleHatSmartAddress: Address;
+  roleHatWearerAddress?: Address;
+  roleHatSmartAddress?: Address;
   payment: SablierPayment | SablierPaymentFormValues;
   onClick?: () => void;
   showWithdraw?: boolean;
@@ -115,15 +115,43 @@ export function RolePaymentDetails({
     loadAmounts();
   }, [loadAmounts]);
 
-  const withdraw = useDecentModal(ModalType.WITHDRAW_PAYMENT, {
-    payment,
-    onSuccess: loadAmounts,
-    withdrawInformation: {
-      withdrawableAmount,
-      roleHatWearerAddress,
-      roleHatSmartAddress,
-    },
-  });
+  const [modalType, props] = useMemo(() => {
+    if (
+      !payment.asset ||
+      !payment.streamId ||
+      !payment.contractAddress ||
+      !roleHatWearerAddress ||
+      !roleHatSmartAddress
+    ) {
+      return [ModalType.NONE] as const;
+    }
+    return [
+      ModalType.WITHDRAW_PAYMENT,
+      {
+        paymentAssetLogo: payment.asset.logo,
+        paymentAssetSymbol: payment.asset.symbol,
+        paymentAssetDecimals: payment.asset.decimals,
+        paymentStreamId: payment.streamId,
+        paymentContractAddress: payment.contractAddress,
+        onSuccess: loadAmounts,
+        withdrawInformation: {
+          withdrawableAmount,
+          roleHatWearerAddress,
+          roleHatSmartAddress,
+        },
+      },
+    ] as const;
+  }, [
+    payment.asset,
+    payment.contractAddress,
+    payment.streamId,
+    roleHatSmartAddress,
+    roleHatWearerAddress,
+    loadAmounts,
+    withdrawableAmount,
+  ]);
+
+  const withdraw = useDecentModal(modalType, props);
 
   const handleClickWithdraw = useCallback(() => {
     if (safe?.address) {
