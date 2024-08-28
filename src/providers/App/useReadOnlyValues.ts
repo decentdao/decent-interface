@@ -62,8 +62,11 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: stri
 
     const address = _account ? getAddress(_account) : undefined;
     Sentry.setUser(address ? { id: address } : null);
+
     if (address) {
       amplitude.setUserId(address);
+    } else {
+      amplitude.reset();
     }
 
     const newReadOnlyValues = {
