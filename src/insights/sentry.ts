@@ -11,7 +11,6 @@ import {
  * Initializes error logging.
  */
 export const initSentry = () => {
-  console.count("initSentry");
   Sentry.init({
     dsn: import.meta.env.VITE_APP_SENTRY_DSN_URL,
     integrations: [
