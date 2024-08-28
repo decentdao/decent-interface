@@ -731,13 +731,6 @@ export default function useCreateRoles() {
         hatPaymentEditedTxs.push(...preparedPaymentTransactions.preparedStreamCreationTransactions);
       }
 
-      console.log('🚀 ~ createAndMintHatsTxs:', createAndMintHatsTxs);
-      console.log('🚀 ~ transferHatTxs:', transferHatTxs);
-      console.log('🚀 ~ hatDetailsChangedTxs:', hatDetailsChangedTxs);
-      console.log('🚀 ~ hatPaymentAddedTxs:', hatPaymentAddedTxs);
-      console.log('🚀 ~ hatPaymentEditedTxs:', hatPaymentEditedTxs);
-      console.log('🚀 ~ smartAccountTxs:', smartAccountTxs);
-      console.log('🚀 ~ removeHatTxs:', removeHatTxs);
       const proposalTransactions = {
         targets: [
           ...createAndMintHatsTxs.map(() => hatsProtocol),

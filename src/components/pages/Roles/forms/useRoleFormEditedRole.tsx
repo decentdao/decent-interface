@@ -74,7 +74,6 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
     fieldNames = addRemoveField(fieldNames, 'payments', isPaymentsUpdated);
 
-    console.log('🚀 ~ fieldNames:', fieldNames);
     return {
       fieldNames,
       status: EditBadgeStatus.Updated,
