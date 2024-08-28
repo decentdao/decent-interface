@@ -12,7 +12,7 @@ export function RoleFormPaymentStreams() {
 
   return (
     <FieldArray name="roleEditing.payments">
-      {({ push: pushPayment }: { push: (obj: SablierPaymentFormValues) => void }) => (
+      {({ push: pushPayment }: { push: (streamFormValue: SablierPaymentFormValues) => void }) => (
         <Box>
           <Button
             variant="secondary"

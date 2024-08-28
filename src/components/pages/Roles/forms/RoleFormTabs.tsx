@@ -19,7 +19,7 @@ export default function RoleFormTabs({
   pushRole,
 }: {
   hatId: Hex;
-  pushRole: (obj: RoleHatFormValue) => void;
+  pushRole: (roleHatFormValue: RoleHatFormValue) => void;
 }) {
   const { hatsTree } = useRolesStore();
   const {
