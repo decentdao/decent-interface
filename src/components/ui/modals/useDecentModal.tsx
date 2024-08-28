@@ -1,5 +1,11 @@
 import { useContext } from 'react';
-import { IModalContext, ModalContext, ModalType } from './ModalProvider';
+import {
+  CurrentModal,
+  IModalContext,
+  ModalContext,
+  ModalPropsTypes,
+  ModalType,
+} from './ModalProvider';
 
 /**
  * Returns a Function intended to be used in a click listener to open the provided ModalType.
@@ -8,9 +14,11 @@ import { IModalContext, ModalContext, ModalType } from './ModalProvider';
  * @param props optional arbitrary key:value properties to pass to the modal
  * @returns a Function that when called opens the provided ModalType modal.
  */
-export const useDecentModal = (modal: ModalType, props?: Record<string, any>) => {
+export const useDecentModal = <T extends ModalType>(modal: T, props?: ModalPropsTypes[T]) => {
   const { setCurrent } = useContext<IModalContext>(ModalContext);
   return () => {
-    setCurrent({ type: modal, props: props ? props : [] });
+    const modalObject = { type: modal, props: props ?? {} } as CurrentModal;
+
+    setCurrent(modalObject);
   };
 };

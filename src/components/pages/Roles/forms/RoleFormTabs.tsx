@@ -8,7 +8,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../store/roles';
-import { EditBadgeStatus, RoleFormValues } from '../types';
+import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
@@ -19,7 +19,7 @@ export default function RoleFormTabs({
   pushRole,
 }: {
   hatId: Hex;
-  pushRole: (obj: any) => void;
+  pushRole: (roleHatFormValue: RoleHatFormValue) => void;
 }) {
   const { hatsTree } = useRolesStore();
   const {
@@ -82,11 +82,11 @@ export default function RoleFormTabs({
         <Button
           isDisabled={!!errors.roleEditing}
           onClick={() => {
+            if (!values.roleEditing) return;
             const roleUpdated = { ...values.roleEditing, editedRole: editedRoleData };
             const hatIndex = values.hats.findIndex(h => h.id === hatId);
             if (hatIndex === -1) {
-              // @dev new hat
-              pushRole(roleUpdated);
+              pushRole({ ...roleUpdated });
             } else {
               setFieldValue(
                 `hats.${hatIndex}`,

@@ -3,26 +3,62 @@ import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Hex } from 'viem';
+import { getAddress, Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentRoleHat, normalizeRoleFormData } from '../../../../store/roles';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
-import { RoleFormValues } from '../types';
+import { EditedRole, RoleDetailsDrawerRoleHatProp, RoleFormValues } from '../types';
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
-  const [drawerViewingRole, setDrawerViewingRole] = useState<DecentRoleHat>();
+  const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerRoleHatProp>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
   const { values, isSubmitting, submitForm } = useFormikContext<RoleFormValues>();
-  const editedRoles = useMemo(() => {
-    return values.hats.filter(hat => !!hat.editedRole);
+  const editedRoles = useMemo<
+    (RoleDetailsDrawerRoleHatProp & {
+      editedRole: EditedRole;
+    })[]
+  >(() => {
+    return values.hats
+      .filter(hat => !!hat.editedRole)
+      .map(roleHat => {
+        if (!roleHat.wearer || !roleHat.name || !roleHat.description || !roleHat.editedRole) {
+          throw new Error('Role missing data', {
+            cause: roleHat,
+          });
+        }
+        return {
+          ...roleHat,
+          editedRole: roleHat.editedRole,
+          prettyId: roleHat.id,
+          name: roleHat.name,
+          description: roleHat.description,
+          wearer: getAddress(roleHat.wearer),
+          payments: roleHat.payments
+            ? roleHat.payments.map(payment => {
+                if (!payment.startDate || !payment.endDate || !payment.amount || !payment.asset) {
+                  throw new Error('Payment missing data', {
+                    cause: payment,
+                  });
+                }
+                return {
+                  ...payment,
+                  startDate: payment.startDate,
+                  endDate: payment.endDate,
+                  amount: payment.amount,
+                  asset: payment.asset,
+                  cliffDate: payment.cliffDate,
+                };
+              })
+            : [],
+        };
+      });
   }, [values.hats]);
 
   const {
@@ -123,16 +159,18 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         boxShadow={CARD_SHADOW}
         borderRadius="0.5rem"
       >
-        {editedRoles.map((role, index) => (
-          <RoleCardShort
-            key={index}
-            name={role.name}
-            handleRoleClick={() => {
-              setDrawerViewingRole(normalizeRoleFormData(role));
-            }}
-            editStatus={role.editedRole?.status}
-          />
-        ))}
+        {editedRoles.map((role, index) => {
+          return (
+            <RoleCardShort
+              key={index}
+              name={role.name}
+              handleRoleClick={() => {
+                setDrawerViewingRole(role);
+              }}
+              editStatus={role.editedRole?.status}
+            />
+          );
+        })}
       </Box>
       <Flex
         gap="1rem"
@@ -160,7 +198,6 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               isOpen={drawerViewingRole !== undefined}
               onClose={handleCloseDrawer}
               onEdit={handleEditRoleClick}
-              payments={drawerViewingRole.payments}
             />
           </Show>
           <Show above="md">
@@ -169,7 +206,6 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               isOpen={drawerViewingRole !== undefined}
               onClose={handleCloseDrawer}
               onEdit={handleEditRoleClick}
-              payments={drawerViewingRole.payments}
             />
           </Show>
         </>

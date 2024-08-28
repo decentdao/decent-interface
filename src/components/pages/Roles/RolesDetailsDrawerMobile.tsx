@@ -1,18 +1,17 @@
 import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Hex } from 'viem';
+import { getAddress, Hex } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { DecentRoleHat, useRolesStore } from '../../../store/roles';
+import { useRolesStore } from '../../../store/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
 import { RolePaymentDetails } from './RolePaymentDetails';
-import { SablierPayment } from './types';
+import { RoleDetailsDrawerRoleHatProp } from './types';
 
 interface RoleDetailsDrawerMobileProps {
-  roleHat: DecentRoleHat;
-  payments?: SablierPayment[];
+  roleHat: RoleDetailsDrawerRoleHatProp;
   onOpen?: () => void;
   onClose?: () => void;
   isOpen?: boolean;
@@ -25,7 +24,6 @@ export default function RolesDetailsDrawerMobile({
   onOpen,
   isOpen = true,
   onEdit,
-  payments,
 }: RoleDetailsDrawerMobileProps) {
   const {
     node: { daoAddress },
@@ -87,7 +85,7 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        {payments && (
+        {roleHat.payments && (
           <>
             <Divider
               variant="darker"
@@ -101,11 +99,12 @@ export default function RolesDetailsDrawerMobile({
             >
               {t('payments')}
             </Text>
-            {payments.map((payment, index) => (
+            {roleHat.payments.map((payment, index) => (
               <RolePaymentDetails
                 key={index}
                 payment={payment}
-                roleHat={roleHat}
+                roleHatSmartAddress={roleHat.smartAddress}
+                roleHatWearerAddress={getAddress(roleHat.wearer)}
                 showWithdraw
               />
             ))}
