@@ -32,17 +32,18 @@ export default function PaymentWithdrawModal({
   paymentContractAddress?: Address;
   withdrawInformation: {
     roleHatSmartAddress: Address;
-    roleHatwearerAddress: Address;
+    roleHatWearerAddress: Address;
     withdrawableAmount: bigint;
   };
   onSuccess: () => Promise<void>;
   onClose: () => void;
 }) {
+  console.log('🚀 ~ withdrawInformation:', withdrawInformation);
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { t } = useTranslation(['roles', 'menu', 'common', 'modals']);
   const { displayName: accountDisplayName } = useDisplayName(
-    withdrawInformation.roleHatwearerAddress,
+    withdrawInformation.roleHatWearerAddress,
   );
   const avatarURL = useAvatar(accountDisplayName);
   const iconSize = useBreakpointValue<AvatarSize>({ base: 'sm', md: 'icon' }) || 'sm';
@@ -55,7 +56,7 @@ export default function PaymentWithdrawModal({
       walletClient &&
       publicClient &&
       withdrawInformation.roleHatSmartAddress &&
-      withdrawInformation.roleHatwearerAddress
+      withdrawInformation.roleHatWearerAddress
     ) {
       let withdrawToast: Id | undefined = undefined;
       try {
@@ -68,7 +69,7 @@ export default function PaymentWithdrawModal({
         let hatsAccountCalldata = encodeFunctionData({
           abi: SablierV2LockupLinearAbi,
           functionName: 'withdrawMax',
-          args: [bigIntStreamId, getAddress(withdrawInformation.roleHatwearerAddress)],
+          args: [bigIntStreamId, getAddress(withdrawInformation.roleHatWearerAddress)],
         });
         withdrawToast = toast(t('withdrawPendingMessage'), {
           autoClose: false,
@@ -108,9 +109,13 @@ export default function PaymentWithdrawModal({
     onSuccess,
     onClose,
     withdrawInformation.roleHatSmartAddress,
-    withdrawInformation.roleHatwearerAddress,
+    withdrawInformation.roleHatWearerAddress,
     t,
   ]);
+  console.log(
+    '🚀 ~ withdrawInformation.roleHatWearerAddress:',
+    withdrawInformation.roleHatWearerAddress,
+  );
 
   return (
     <Flex
@@ -204,12 +209,12 @@ export default function PaymentWithdrawModal({
             >
               <Box>
                 <Avatar
-                  address={withdrawInformation.roleHatwearerAddress}
+                  address={withdrawInformation.roleHatWearerAddress}
                   url={avatarURL}
                   size={iconSize}
                 />
               </Box>
-              <Text textStyle="label-base">{withdrawInformation.roleHatwearerAddress}</Text>
+              <Text textStyle="label-base">{withdrawInformation.roleHatWearerAddress}</Text>
             </Flex>
           </Flex>
           <Flex

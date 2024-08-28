@@ -97,7 +97,7 @@ export type ModalPropsTypes = {
     paymentContractAddress: Address;
     withdrawInformation: {
       roleHatSmartAddress: Address;
-      roleHatwearerAddress: Address;
+      roleHatWearerAddress: Address;
       withdrawableAmount: bigint;
     };
     onSuccess: () => Promise<void>;
@@ -248,7 +248,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
           />
         );
         break;
-      case ModalType.WITHDRAW_PAYMENT:
+      case ModalType.WITHDRAW_PAYMENT: {
         modalContent = (
           <PaymentWithdrawModal
             paymentAssetLogo={current.props.paymentAssetLogo}
@@ -262,6 +262,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
           />
         );
         break;
+      }
       case ModalType.NONE:
       default:
         modalTitle = '';
