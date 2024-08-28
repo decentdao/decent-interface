@@ -113,7 +113,7 @@ export interface RoleHatFormValueEdited extends RoleHatFormValue {
 export interface RoleFormValues {
   proposalMetadata: CreateProposalMetadata;
   hats: RoleHatFormValue[];
-  roleEditing?: RoleHatFormValue; // is this here to "indicate" which role's payments are "currently" being edited?
+  roleEditing?: RoleHatFormValue;
   customNonce?: number;
 }
 
