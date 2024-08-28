@@ -311,9 +311,6 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
               name={role.name}
               wearerAddress={role.wearer}
               handleRoleClick={() => {
-                if (!role.id) {
-                  throw new Error('Role ID is missing');
-                }
                 setFieldValue('roleEditing', role);
                 handleRoleClick(role.id);
               }}
