@@ -663,14 +663,8 @@ export default function useCreateRoles() {
 
       if (addedPaymentStreams.length) {
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(addedPaymentStreams);
-        addedPaymentStreams.forEach((_, i) => {
-          hatPaymentAddedTxs.push(
-            preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
-          );
-          hatPaymentAddedTxs.push(
-            preparedPaymentTransactions.preparedStreamCreationTransactions[i],
-          );
-        });
+        hatPaymentAddedTxs.push(...preparedPaymentTransactions.preparedTokenApprovalsTransactions);
+        hatPaymentAddedTxs.push(...preparedPaymentTransactions.preparedTokenApprovalsTransactions);
       }
 
       if (editedPaymentStreams.length) {
@@ -733,14 +727,8 @@ export default function useCreateRoles() {
 
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(editedPaymentStreams);
         hatPaymentEditedTxs.push(...paymentCancelTxs);
-        editedPaymentStreams.forEach((_, i) => {
-          hatPaymentEditedTxs.push(
-            preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
-          );
-          hatPaymentEditedTxs.push(
-            preparedPaymentTransactions.preparedStreamCreationTransactions[i],
-          );
-        });
+        hatPaymentEditedTxs.push(...preparedPaymentTransactions.preparedTokenApprovalsTransactions);
+        hatPaymentEditedTxs.push(...preparedPaymentTransactions.preparedStreamCreationTransactions);
       }
 
       const proposalTransactions = {
