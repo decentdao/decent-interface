@@ -664,7 +664,7 @@ export default function useCreateRoles() {
       if (addedPaymentStreams.length) {
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(addedPaymentStreams);
         hatPaymentAddedTxs.push(...preparedPaymentTransactions.preparedTokenApprovalsTransactions);
-        hatPaymentAddedTxs.push(...preparedPaymentTransactions.preparedTokenApprovalsTransactions);
+        hatPaymentAddedTxs.push(...preparedPaymentTransactions.preparedStreamCreationTransactions);
       }
 
       if (editedPaymentStreams.length) {
