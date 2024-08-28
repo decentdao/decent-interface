@@ -1,13 +1,17 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { useEffect, useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ProposalBuilder } from '../../../../../components/ProposalBuilder';
 import { DEFAULT_PROPOSAL } from '../../../../../components/ProposalBuilder/constants';
 import { logError } from '../../../../../helpers/errorLogging';
 import useCreateProposalTemplate from '../../../../../hooks/DAO/proposal/useCreateProposalTemplate';
+import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import useIPFSClient from '../../../../../providers/App/hooks/useIPFSClient';
 import { ProposalBuilderMode, ProposalTemplate } from '../../../../../types/proposalBuilder';
 
 export default function CreateProposalTemplatePage() {
+  amplitude.track(analyticsEvents.CreateProposalTemplatePageOpened);
+
   const ipfsClient = useIPFSClient();
   const [initialProposalTemplate, setInitialProposalTemplate] = useState(DEFAULT_PROPOSAL);
   const { prepareProposalTemplateProposal } = useCreateProposalTemplate();

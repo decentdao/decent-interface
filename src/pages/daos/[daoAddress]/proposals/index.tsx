@@ -1,3 +1,4 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { Button, Flex, Show, Text } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -10,11 +11,13 @@ import { useDecentModal } from '../../../../components/ui/modals/useDecentModal'
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
+import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AzoriusGovernance, DecentGovernance, GovernanceType } from '../../../../types';
 
 export default function ProposalsPage() {
+  amplitude.track(analyticsEvents.ProposalsPageOpened);
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
   const {
     governance,

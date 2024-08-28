@@ -1,13 +1,17 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../../../components/DaoCreator';
 import { DAOCreateMode } from '../../../../components/DaoCreator/formComponents/EstablishEssentials';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCreateSubDAOProposal } from '../../../../hooks/DAO/useCreateSubDAOProposal';
+import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { SafeMultisigDAO, AzoriusGovernanceDAO, SubDAO } from '../../../../types';
 
 export default function SubDaoCreate() {
+  amplitude.track(analyticsEvents.SubDaoCreatePageOpened);
+
   const navigate = useNavigate();
   const [redirectPending, setRedirectPending] = useState(false);
   const {

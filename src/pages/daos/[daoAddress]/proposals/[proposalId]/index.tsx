@@ -1,3 +1,4 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,11 +12,13 @@ import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useSnapshotProposal from '../../../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useGetMetadata } from '../../../../../hooks/DAO/proposal/useGetMetadata';
+import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalProposal, AzoriusProposal, SnapshotProposal } from '../../../../../types';
 
 export default function ProposalDetailsPage() {
+  amplitude.track(analyticsEvents.ProposalDetailsPageOpened);
   const {
     node: { daoAddress },
     governance: { proposals },

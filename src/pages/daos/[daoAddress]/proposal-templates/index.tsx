@@ -1,3 +1,4 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { Button, Show } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -6,10 +7,13 @@ import ProposalTemplates from '../../../../components/ProposalTemplates';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
+import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function ProposalTemplatesPage() {
+  amplitude.track(analyticsEvents.ProposalTemplatesPageOpened);
+
   const { t } = useTranslation();
   const {
     node: { daoAddress },
