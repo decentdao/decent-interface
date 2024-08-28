@@ -97,13 +97,13 @@ export default function useCreateSablierStream() {
     // @dev This function comes from "basic" SablierV2
     // all the types of streams are inheriting from that
     // so it's safe to rely on any stream ABI
-    const flushCalldata = encodeFunctionData({
+    const cancelCallData = encodeFunctionData({
       abi: SablierV2LockupLinearAbi,
       functionName: 'cancel',
       args: [convertStreamIdToBigInt(streamId)],
     });
 
-    return { calldata: flushCalldata, targetAddress };
+    return { calldata: cancelCallData, targetAddress };
   }, []);
 
   const prepareBatchLinearStreamCreation = useCallback(
