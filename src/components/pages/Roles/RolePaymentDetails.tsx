@@ -64,31 +64,26 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 interface RolePaymentDetailsProps {
   roleHatWearerAddress?: Address;
   roleHatSmartAddress?: Address;
-  paymentStreamId?: string;
-  paymentContractAddress?: Address;
-  paymentAsset: {
-    logo: string;
-    symbol: string;
-    decimals: number;
-    address: Address;
+  payment: {
+    streamId?: string;
+    contractAddress?: Address;
+    asset: {
+      logo: string;
+      symbol: string;
+      decimals: number;
+      address: Address;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate?: Date;
+    isStreaming: () => boolean;
   };
-  paymentAmount: BigIntValuePair;
-  paymentStartDate: Date;
-  paymentEndDate: Date;
-  paymentCliffDate?: Date;
-  isStreaming: () => boolean;
   onClick?: () => void;
   showWithdraw?: boolean;
 }
 export function RolePaymentDetails({
-  paymentStreamId,
-  paymentContractAddress,
-  paymentAsset,
-  paymentAmount,
-  paymentStartDate,
-  paymentEndDate,
-  paymentCliffDate,
-  isStreaming,
+  payment,
   onClick,
   showWithdraw,
   roleHatWearerAddress,
@@ -114,21 +109,21 @@ export function RolePaymentDetails({
   }, [connectedAccount, showWithdraw, roleHatWearerAddress]);
 
   const loadAmounts = useCallback(async () => {
-    if (walletClient && paymentStreamId && paymentContractAddress && canWithdraw) {
+    if (walletClient && payment.streamId && payment.contractAddress && canWithdraw) {
       const streamContract = getContract({
         abi: SablierV2LockupLinearAbi,
-        address: paymentContractAddress,
+        address: payment.contractAddress,
         client: walletClient,
       });
 
-      const bigintStreamId = convertStreamIdToBigInt(paymentStreamId);
+      const bigintStreamId = convertStreamIdToBigInt(payment.streamId);
 
       const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
         bigintStreamId,
       ]);
       setWithdrawableAmount(newWithdrawableAmount);
     }
-  }, [walletClient, paymentStreamId, paymentContractAddress, canWithdraw]);
+  }, [walletClient, payment, canWithdraw]);
 
   useEffect(() => {
     loadAmounts();
@@ -136,8 +131,8 @@ export function RolePaymentDetails({
 
   const [modalType, props] = useMemo(() => {
     if (
-      !paymentStreamId ||
-      !paymentContractAddress ||
+      !payment.streamId ||
+      !payment.contractAddress ||
       !roleHatWearerAddress ||
       !roleHatSmartAddress
     ) {
@@ -146,11 +141,11 @@ export function RolePaymentDetails({
     return [
       ModalType.WITHDRAW_PAYMENT,
       {
-        paymentAssetLogo: paymentAsset.logo,
-        paymentAssetSymbol: paymentAsset.symbol,
-        paymentAssetDecimals: paymentAsset.decimals,
-        paymentStreamId: paymentStreamId,
-        paymentContractAddress: paymentContractAddress,
+        paymentAssetLogo: payment.asset.logo,
+        paymentAssetSymbol: payment.asset.symbol,
+        paymentAssetDecimals: payment.asset.decimals,
+        paymentStreamId: payment.streamId,
+        paymentContractAddress: payment.contractAddress,
         onSuccess: loadAmounts,
         withdrawInformation: {
           withdrawableAmount,
@@ -159,15 +154,7 @@ export function RolePaymentDetails({
         },
       },
     ] as const;
-  }, [
-    paymentAsset,
-    paymentContractAddress,
-    paymentStreamId,
-    roleHatSmartAddress,
-    roleHatWearerAddress,
-    loadAmounts,
-    withdrawableAmount,
-  ]);
+  }, [payment, roleHatSmartAddress, roleHatWearerAddress, loadAmounts, withdrawableAmount]);
 
   const withdraw = useDecentModal(modalType, props);
 
@@ -179,28 +166,28 @@ export function RolePaymentDetails({
   }, [addressPrefix, navigate, safe?.address, withdraw]);
 
   const amountPerWeek = useMemo(() => {
-    if (!paymentAmount?.bigintValue) {
+    if (!payment.amount?.bigintValue) {
       return;
     }
 
-    const endTime = paymentEndDate.getTime() / 1000;
-    const startTime = paymentStartDate.getTime() / 1000;
+    const endTime = payment.endDate.getTime() / 1000;
+    const startTime = payment.startDate.getTime() / 1000;
     const totalSeconds = Math.round(endTime - startTime); // @dev due to milliseconds we need to round it to avoid problems with BigInt
-    const amountPerSecond = paymentAmount.bigintValue / BigInt(totalSeconds);
+    const amountPerSecond = payment.amount.bigintValue / BigInt(totalSeconds);
     const secondsInWeek = BigInt(60 * 60 * 24 * 7);
     return amountPerSecond * secondsInWeek;
-  }, [paymentAmount, paymentStartDate, paymentEndDate]);
+  }, [payment]);
 
   const streamAmountUSD = useMemo(() => {
     // @todo add price support for tokens not found in assetsFungible
     const foundAsset = assetsFungible.find(
-      asset => getAddress(asset.tokenAddress) === paymentAsset.address,
+      asset => getAddress(asset.tokenAddress) === payment.asset.address,
     );
     if (!foundAsset || foundAsset.usdPrice === undefined) {
       return;
     }
-    return Number(paymentAmount.value) * foundAsset.usdPrice;
-  }, [paymentAmount, paymentAsset, assetsFungible]);
+    return Number(payment.amount.value) * foundAsset.usdPrice;
+  }, [payment, assetsFungible]);
 
   return (
     <Box
@@ -223,12 +210,12 @@ export function RolePaymentDetails({
               textStyle="display-2xl"
               color="white-0"
             >
-              {paymentAmount?.bigintValue
+              {payment.amount?.bigintValue
                 ? formatCoin(
-                    paymentAmount.bigintValue,
+                    payment.amount.bigintValue,
                     false,
-                    paymentAsset.decimals,
-                    paymentAsset.symbol,
+                    payment.asset.decimals,
+                    payment.asset.symbol,
                   )
                 : undefined}
             </Text>
@@ -243,7 +230,7 @@ export function RolePaymentDetails({
               p="0.5rem"
             >
               <Image
-                src={paymentAsset.logo}
+                src={payment.asset.logo}
                 fallbackSrc="/images/coin-icon-default.svg"
                 boxSize="1.5rem"
               />
@@ -251,7 +238,7 @@ export function RolePaymentDetails({
                 textStyle="label-base"
                 color="white-0"
               >
-                {paymentAsset.symbol ?? t('selectLabel', { ns: 'modals' })}
+                {payment.asset.symbol ?? t('selectLabel', { ns: 'modals' })}
               </Text>
             </Flex>
           </Flex>
@@ -267,12 +254,12 @@ export function RolePaymentDetails({
                 alignItems="center"
                 gap="0.5rem"
               >
-                <GreenStreamingDot isStreaming={isStreaming()} />
+                <GreenStreamingDot isStreaming={payment.isStreaming()} />
                 <Text
                   textStyle="label-small"
                   color="white-0"
                 >
-                  {`${formatCoin(amountPerWeek, true, paymentAsset.decimals, paymentAsset.symbol)} / ${t('week')}`}
+                  {`${formatCoin(amountPerWeek, true, payment.asset.decimals, payment.asset.symbol)} / ${t('week')}`}
                 </Text>
               </Flex>
             )}
@@ -294,7 +281,7 @@ export function RolePaymentDetails({
           <GridItem area="starting">
             <PaymentDate
               label="starting"
-              date={paymentStartDate}
+              date={payment.startDate}
             />
           </GridItem>
           <GridItem area="dividerOne">
@@ -309,7 +296,7 @@ export function RolePaymentDetails({
           <GridItem area="cliff">
             <PaymentDate
               label="cliff"
-              date={paymentCliffDate}
+              date={payment.cliffDate}
             />
           </GridItem>
           <GridItem area="dividerTwo">
@@ -324,7 +311,7 @@ export function RolePaymentDetails({
           <GridItem area="ending">
             <PaymentDate
               label="ending"
-              date={paymentEndDate}
+              date={payment.endDate}
             />
           </GridItem>
         </Grid>

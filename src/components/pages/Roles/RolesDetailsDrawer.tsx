@@ -16,11 +16,10 @@ import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentRoleHat } from '../../../store/roles';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
-import { SablierPayment } from './types';
+import { RoleDetailsDrawerRoleHatProp, SablierPayment } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -40,7 +39,7 @@ function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.E
 }
 
 interface RoleDetailsDrawerProps {
-  roleHat: DecentRoleHat;
+  roleHat: RoleDetailsDrawerRoleHatProp;
   payments?: SablierPayment[];
   onOpen?: () => void;
   onClose: () => void;
@@ -172,13 +171,13 @@ export default function RolesDetailsDrawer({
               {payments.map((payment, index) => (
                 <RolePaymentDetails
                   key={index}
-                  paymentAmount={payment.amount}
-                  paymentAsset={payment.asset}
-                  paymentContractAddress={payment.contractAddress}
-                  paymentStreamId={payment.streamId}
-                  paymentEndDate={payment.endDate}
-                  paymentStartDate={payment.startDate}
-                  isStreaming={payment.isStreaming}
+                  payment={{
+                    amount: payment.amount,
+                    asset: payment.asset,
+                    endDate: payment.endDate,
+                    startDate: payment.startDate,
+                    isStreaming: payment.isStreaming,
+                  }}
                   roleHatSmartAddress={roleHat.smartAddress}
                   roleHatWearerAddress={roleHat.wearer}
                   showWithdraw

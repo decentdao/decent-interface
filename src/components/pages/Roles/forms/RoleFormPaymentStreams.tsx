@@ -36,11 +36,15 @@ export function RoleFormPaymentStreams() {
               return (
                 <Flex key={index}>
                   <RolePaymentDetails
-                    paymentAmount={payment.amount}
-                    paymentAsset={payment.asset}
-                    paymentEndDate={payment.endDate}
-                    paymentStartDate={payment.startDate}
-                    isStreaming={() => false}
+                    payment={{
+                      amount: payment.amount,
+                      asset: payment.asset,
+                      contractAddress: payment.contractAddress,
+                      streamId: payment.streamId,
+                      endDate: payment.endDate,
+                      startDate: payment.startDate,
+                      isStreaming: () => false,
+                    }}
                     onClick={() => {
                       setFieldValue('roleEditing.roleEditingPaymentIndex', index);
                     }}

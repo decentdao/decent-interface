@@ -33,11 +33,7 @@ import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
-import {
-  DecentRoleHat,
-  mapSablierPaymentFormValuesToSablierPayment,
-  predictAccountAddress,
-} from './../../store/roles/rolesStoreUtils';
+import { DecentRoleHat, predictAccountAddress } from './../../store/roles/rolesStoreUtils';
 
 const hatsDetailsBuilder = (data: { name: string; description: string }) => {
   return JSON.stringify({
@@ -198,20 +194,28 @@ const identifyAndPrepareEditedPaymentStreams = (
         return !isEqual(payment, originalPayment);
       })
       .map(payment => {
-        const sablierPayment = mapSablierPaymentFormValuesToSablierPayment(payment);
-        // @note payment amount should not be 0 or undefined
-        if (!sablierPayment.amount?.bigintValue || sablierPayment.amount.bigintValue > 0n) {
-          throw new Error('Payment amount required.');
+        if (
+          !payment.streamId ||
+          !payment.contractAddress ||
+          !payment.asset ||
+          !payment.startDate ||
+          !payment.endDate ||
+          !payment.amount?.bigintValue ||
+          payment.amount.bigintValue > 0n
+        ) {
+          throw new Error('Form Values inValid', {
+            cause: payment,
+          });
         }
 
         return {
-          streamId: sablierPayment.streamId,
+          streamId: payment.streamId,
           recipient: currentHat.smartAddress,
-          startDateTs: sablierPayment.startDate.getTime(),
-          endDateTs: sablierPayment.endDate.getTime(),
-          cliffDateTs: sablierPayment.cliffDate?.getTime() ?? 0,
-          totalAmount: sablierPayment.amount.bigintValue,
-          assetAddress: sablierPayment.asset.address,
+          startDateTs: payment.startDate.getTime(),
+          endDateTs: payment.endDate.getTime(),
+          cliffDateTs: payment.cliffDate?.getTime() ?? 0,
+          totalAmount: payment.amount.bigintValue,
+          assetAddress: payment.asset.address,
           roleHatId: BigInt(currentHat.id),
           roleHatWearer: currentHat.wearer,
           roleHatSmartAddress: currentHat.smartAddress,
@@ -245,18 +249,25 @@ const identifyAndPrepareAddedPaymentStreams = async (
         recipientAddress = await predictSmartAccount(addedRoleHat.id);
       }
       return payments.map(payment => {
-        const sablierPayment = mapSablierPaymentFormValuesToSablierPayment(payment);
-        // @note payment amount should not be 0 or undefined
-        if (!sablierPayment.amount?.bigintValue || sablierPayment.amount.bigintValue > 0n) {
-          throw new Error('Payment amount required.');
+        if (
+          !payment.asset ||
+          !payment.startDate ||
+          !payment.endDate ||
+          !payment.amount?.bigintValue ||
+          payment.amount.bigintValue > 0n
+        ) {
+          throw new Error('Form Values inValid', {
+            cause: payment,
+          });
         }
+
         return {
           recipient: recipientAddress,
-          startDateTs: sablierPayment.startDate.getTime(),
-          endDateTs: sablierPayment.endDate.getTime(),
-          cliffDateTs: sablierPayment.cliffDate?.getTime() ?? 0,
-          totalAmount: sablierPayment.amount.bigintValue,
-          assetAddress: sablierPayment.asset.address,
+          startDateTs: payment.startDate.getTime(),
+          endDateTs: payment.endDate.getTime(),
+          cliffDateTs: payment.cliffDate?.getTime() ?? 0,
+          totalAmount: payment.amount.bigintValue,
+          assetAddress: payment.asset.address,
         };
       });
     }),
