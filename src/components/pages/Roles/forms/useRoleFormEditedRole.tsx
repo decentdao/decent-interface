@@ -3,9 +3,11 @@ import { useMemo } from 'react';
 import { DecentTree } from '../../../../store/roles';
 import { EditedRole, EditBadgeStatus, RoleFormValues } from '../types';
 
-const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: boolean) => {
-  if (fieldNames.includes(fieldName) && isRemoved) {
+const addRemoveField = (fieldNames: string[], fieldName: string, hasChanges: boolean) => {
+  if (fieldNames.includes(fieldName) && !hasChanges) {
     return fieldNames.filter(field => field !== fieldName);
+  } else if (!fieldNames.includes(fieldName) && !hasChanges) {
+    return fieldNames;
   }
   return [...fieldNames, fieldName];
 };
@@ -72,6 +74,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     fieldNames = addRemoveField(fieldNames, 'member', isMemberUpdated);
     fieldNames = addRemoveField(fieldNames, 'payments', isPaymentsUpdated);
 
+    console.log('🚀 ~ fieldNames:', fieldNames);
     return {
       fieldNames,
       status: EditBadgeStatus.Updated,
