@@ -38,7 +38,6 @@ export default function PaymentWithdrawModal({
   onSuccess: () => Promise<void>;
   onClose: () => void;
 }) {
-  console.log('🚀 ~ withdrawInformation:', withdrawInformation);
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { t } = useTranslation(['roles', 'menu', 'common', 'modals']);
