@@ -38,31 +38,9 @@ export enum ModalType {
   WITHDRAW_PAYMENT,
 }
 
-export type CurrentModal =
-  | { type: ModalType.DELEGATE; props: ModalPropsTypes[ModalType.DELEGATE] }
-  | { type: ModalType.SEND_ASSETS; props: ModalPropsTypes[ModalType.SEND_ASSETS] }
-  | { type: ModalType.STAKE; props: ModalPropsTypes[ModalType.STAKE] }
-  | { type: ModalType.WRAP_TOKEN; props: ModalPropsTypes[ModalType.WRAP_TOKEN] }
-  | { type: ModalType.UNWRAP_TOKEN; props: ModalPropsTypes[ModalType.UNWRAP_TOKEN] }
-  | { type: ModalType.CONFIRM_URL; props: ModalPropsTypes[ModalType.CONFIRM_URL] }
-  | { type: ModalType.REMOVE_SIGNER; props: ModalPropsTypes[ModalType.REMOVE_SIGNER] }
-  | { type: ModalType.ADD_SIGNER; props: ModalPropsTypes[ModalType.ADD_SIGNER] }
-  | {
-      type: ModalType.CREATE_PROPOSAL_FROM_TEMPLATE;
-      props: ModalPropsTypes[ModalType.CREATE_PROPOSAL_FROM_TEMPLATE];
-    }
-  | {
-      type: ModalType.COPY_PROPOSAL_TEMPLATE;
-      props: ModalPropsTypes[ModalType.COPY_PROPOSAL_TEMPLATE];
-    }
-  | {
-      type: ModalType.CONFIRM_MODIFY_GOVERNANCE;
-      props: ModalPropsTypes[ModalType.CONFIRM_MODIFY_GOVERNANCE];
-    }
-  | { type: ModalType.SEARCH_SAFE; props: ModalPropsTypes[ModalType.SEARCH_SAFE] }
-  | { type: ModalType.WARN_UNSAVED_CHANGES; props: ModalPropsTypes[ModalType.WARN_UNSAVED_CHANGES] }
-  | { type: ModalType.WITHDRAW_PAYMENT; props: ModalPropsTypes[ModalType.WITHDRAW_PAYMENT] }
-  | { type: ModalType.NONE; props: ModalPropsTypes[ModalType.NONE] };
+export type CurrentModal = {
+  [K in ModalType]: { type: K; props: ModalPropsTypes[K] }
+}[ModalType];
 
 export type ModalPropsTypes = {
   [ModalType.NONE]: {};
