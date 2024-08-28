@@ -1,20 +1,7 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import {
-  Address,
-  Hex,
-  PublicClient,
-  encodePacked,
-  getContract,
-  keccak256,
-  getAddress,
-  zeroAddress,
-} from 'viem';
+import { Address, Hex, PublicClient, encodePacked, getContract, keccak256 } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
-import {
-  RoleHatFormValue,
-  SablierPayment,
-  SablierPaymentFormValues,
-} from '../../components/pages/Roles/types';
+import { SablierPayment } from '../../components/pages/Roles/types';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -301,44 +288,4 @@ export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsC
 
   // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
   return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
-};
-
-export const mapSablierPaymentFormValuesToSablierPayment = (
-  payment: SablierPaymentFormValues,
-): SablierPayment => {
-  if (
-    !payment.streamId ||
-    !payment.contractAddress ||
-    !payment.asset ||
-    !payment.amount ||
-    !payment.startDate ||
-    !payment.endDate
-  ) {
-    throw new Error('SablierPaymentFormValues not complete enough to create SablierPayment');
-  }
-  return {
-    streamId: payment.streamId,
-    contractAddress: payment.contractAddress,
-    asset: payment.asset,
-    amount: payment.amount,
-    startDate: payment.startDate,
-    endDate: payment.endDate,
-    cliffDate: payment.cliffDate,
-    isStreaming: payment.isStreaming,
-  };
-};
-
-export const mapRoleHatFormValueToDecentRoleHat = (role: RoleHatFormValue): DecentRoleHat => {
-  if (!role.id || !role.prettyId || !role.wearer || !role.name || !role.description) {
-    throw new Error('RoleHatFormValue data not complete enough to create DecentRoleHat');
-  }
-  return {
-    id: role.id,
-    prettyId: role.prettyId,
-    wearer: getAddress(role.wearer),
-    name: role.name,
-    description: role.description,
-    smartAddress: zeroAddress,
-    payments: role.payments?.map(payment => mapSablierPaymentFormValuesToSablierPayment(payment)),
-  };
 };

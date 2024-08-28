@@ -12,10 +12,10 @@ import { DAO_ROUTES } from '../../../constants/routes';
 import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablierStream';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { BigIntValuePair } from '../../../types';
 import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
-import { SablierPayment, SablierPaymentFormValues } from './types';
 
 function PaymentDate({ label, date }: { label: string; date?: Date }) {
   const { t } = useTranslation(['roles']);
@@ -64,7 +64,21 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 interface RolePaymentDetailsProps {
   roleHatWearerAddress?: Address;
   roleHatSmartAddress?: Address;
-  payment: SablierPayment | SablierPaymentFormValues;
+  payment: {
+    streamId?: string;
+    contractAddress?: Address;
+    asset: {
+      logo: string;
+      symbol: string;
+      decimals: number;
+      address: Address;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate?: Date;
+    isStreaming: () => boolean;
+  };
   onClick?: () => void;
   showWithdraw?: boolean;
 }
@@ -95,7 +109,7 @@ export function RolePaymentDetails({
   }, [connectedAccount, showWithdraw, roleHatWearerAddress]);
 
   const loadAmounts = useCallback(async () => {
-    if (walletClient && payment?.streamId && payment?.contractAddress && canWithdraw) {
+    if (walletClient && payment.streamId && payment.contractAddress && canWithdraw) {
       const streamContract = getContract({
         abi: SablierV2LockupLinearAbi,
         address: payment.contractAddress,
@@ -109,7 +123,7 @@ export function RolePaymentDetails({
       ]);
       setWithdrawableAmount(newWithdrawableAmount);
     }
-  }, [walletClient, payment?.streamId, payment?.contractAddress, canWithdraw]);
+  }, [walletClient, payment, canWithdraw]);
 
   useEffect(() => {
     loadAmounts();
@@ -117,7 +131,6 @@ export function RolePaymentDetails({
 
   const [modalType, props] = useMemo(() => {
     if (
-      !payment.asset ||
       !payment.streamId ||
       !payment.contractAddress ||
       !roleHatWearerAddress ||
@@ -141,15 +154,7 @@ export function RolePaymentDetails({
         },
       },
     ] as const;
-  }, [
-    payment.asset,
-    payment.contractAddress,
-    payment.streamId,
-    roleHatSmartAddress,
-    roleHatWearerAddress,
-    loadAmounts,
-    withdrawableAmount,
-  ]);
+  }, [payment, roleHatSmartAddress, roleHatWearerAddress, loadAmounts, withdrawableAmount]);
 
   const withdraw = useDecentModal(modalType, props);
 
@@ -161,7 +166,7 @@ export function RolePaymentDetails({
   }, [addressPrefix, navigate, safe?.address, withdraw]);
 
   const amountPerWeek = useMemo(() => {
-    if (!payment.amount?.bigintValue || !payment.startDate || !payment.endDate) {
+    if (!payment.amount?.bigintValue) {
       return;
     }
 
@@ -174,18 +179,15 @@ export function RolePaymentDetails({
   }, [payment]);
 
   const streamAmountUSD = useMemo(() => {
-    if (!payment.amount) {
-      return;
-    }
     // @todo add price support for tokens not found in assetsFungible
     const foundAsset = assetsFungible.find(
-      asset => getAddress(asset.tokenAddress) === payment.asset?.address,
+      asset => getAddress(asset.tokenAddress) === payment.asset.address,
     );
     if (!foundAsset || foundAsset.usdPrice === undefined) {
       return;
     }
     return Number(payment.amount.value) * foundAsset.usdPrice;
-  }, [payment.amount, payment.asset?.address, assetsFungible]);
+  }, [payment, assetsFungible]);
 
   return (
     <Box
@@ -212,8 +214,8 @@ export function RolePaymentDetails({
                 ? formatCoin(
                     payment.amount.bigintValue,
                     false,
-                    payment.asset?.decimals,
-                    payment.asset?.symbol,
+                    payment.asset.decimals,
+                    payment.asset.symbol,
                   )
                 : undefined}
             </Text>
@@ -228,7 +230,7 @@ export function RolePaymentDetails({
               p="0.5rem"
             >
               <Image
-                src={payment.asset?.logo}
+                src={payment.asset.logo}
                 fallbackSrc="/images/coin-icon-default.svg"
                 boxSize="1.5rem"
               />
@@ -236,7 +238,7 @@ export function RolePaymentDetails({
                 textStyle="label-base"
                 color="white-0"
               >
-                {payment.asset?.symbol ?? t('selectLabel', { ns: 'modals' })}
+                {payment.asset.symbol ?? t('selectLabel', { ns: 'modals' })}
               </Text>
             </Flex>
           </Flex>
@@ -257,7 +259,7 @@ export function RolePaymentDetails({
                   textStyle="label-small"
                   color="white-0"
                 >
-                  {`${formatCoin(amountPerWeek, true, payment.asset?.decimals, payment.asset?.symbol)} / ${t('week')}`}
+                  {`${formatCoin(amountPerWeek, true, payment.asset.decimals, payment.asset.symbol)} / ${t('week')}`}
                 </Text>
               </Flex>
             )}

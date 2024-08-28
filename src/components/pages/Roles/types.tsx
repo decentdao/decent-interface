@@ -48,6 +48,15 @@ export interface RoleEditProps
   payments?: SablierPaymentFormValues[];
 }
 
+export interface RoleDetailsDrawerRoleHatProp
+  extends Omit<DecentRoleHat, 'payments' | 'smartAddress'> {
+  smartAddress?: Address;
+  payments?: (Omit<SablierPayment, 'contractAddress' | 'streamId'> & {
+    contractAddress?: Address;
+    streamId?: string;
+  })[];
+}
+
 export enum EditBadgeStatus {
   Updated,
   New,
@@ -88,7 +97,7 @@ export interface DurationBreakdown {
 }
 
 export interface RoleHatFormValue
-  extends Partial<Omit<DecentRoleHat, 'id' | 'wearer' | 'payments' | 'smartAddress'>> {
+  extends Partial<Omit<DecentRoleHat, 'id' | 'wearer' | 'payments'>> {
   id: Hex;
   wearer?: string;
   payments?: SablierPaymentFormValues[];
