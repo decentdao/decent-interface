@@ -82,16 +82,11 @@ export default function RoleFormTabs({
         <Button
           isDisabled={!!errors.roleEditing}
           onClick={() => {
+            if (!values.roleEditing) return;
             const roleUpdated = { ...values.roleEditing, editedRole: editedRoleData };
             const hatIndex = values.hats.findIndex(h => h.id === hatId);
             if (hatIndex === -1) {
-              // @dev new hat
-
-              if (roleUpdated.id === undefined) {
-                throw new Error('New Hat id is undefined. I think this is going to be a problem.');
-              }
-              const roleUpdatedId = roleUpdated.id;
-              pushRole({ ...roleUpdated, id: roleUpdatedId });
+              pushRole({ ...roleUpdated });
             } else {
               setFieldValue(
                 `hats.${hatIndex}`,
