@@ -111,10 +111,6 @@ export default function PaymentWithdrawModal({
     withdrawInformation.roleHatWearerAddress,
     t,
   ]);
-  console.log(
-    '🚀 ~ withdrawInformation.roleHatWearerAddress:',
-    withdrawInformation.roleHatWearerAddress,
-  );
 
   return (
     <Flex
