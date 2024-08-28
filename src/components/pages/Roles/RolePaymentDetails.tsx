@@ -151,7 +151,7 @@ export function RolePaymentDetails({
     withdrawableAmount,
   ]);
 
-  const withdraw = useDecentModal(modalType ?? ModalType.NONE, props);
+  const withdraw = useDecentModal(modalType, props);
 
   const handleClickWithdraw = useCallback(() => {
     if (safe?.address) {
