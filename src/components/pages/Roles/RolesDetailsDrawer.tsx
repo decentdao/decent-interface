@@ -169,15 +169,9 @@ export default function RolesDetailsDrawer({
               {roleHat.payments.map((payment, index) => (
                 <RolePaymentDetails
                   key={index}
-                  payment={{
-                    amount: payment.amount,
-                    asset: payment.asset,
-                    endDate: payment.endDate,
-                    startDate: payment.startDate,
-                    isStreaming: payment.isStreaming,
-                  }}
+                  payment={payment}
                   roleHatSmartAddress={roleHat.smartAddress}
-                  roleHatWearerAddress={roleHat.wearer}
+                  roleHatWearerAddress={getAddress(roleHat.wearer)}
                   showWithdraw
                 />
               ))}

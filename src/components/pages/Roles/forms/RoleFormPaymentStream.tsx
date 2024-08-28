@@ -2,7 +2,6 @@ import { Box, Button, Flex, FormControl, Grid, GridItem, Icon } from '@chakra-ui
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import { FormikErrors, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { getAddress } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
 import { DecentDatePicker, DecentDatePickerRange } from '../../../ui/utils/DecentDatePicker';
@@ -120,9 +119,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
           const hatId = values.roleEditing?.id;
           if (!values?.roleEditing?.payments?.[formIndex] || !hatId) return;
           const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
-          const isExistingPayment = !!streamId
-            ? getPayment(getAddress(hatId), streamId)
-            : undefined;
+          const isExistingPayment = !!streamId ? getPayment(hatId, streamId) : undefined;
           // if payment is new, and unedited, remove it
           if (
             formIndex === values.roleEditing.payments.length - 1 &&

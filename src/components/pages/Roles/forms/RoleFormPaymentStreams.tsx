@@ -39,8 +39,6 @@ export function RoleFormPaymentStreams() {
                     payment={{
                       amount: payment.amount,
                       asset: payment.asset,
-                      contractAddress: payment.contractAddress,
-                      streamId: payment.streamId,
                       endDate: payment.endDate,
                       startDate: payment.startDate,
                       isStreaming: () => false,

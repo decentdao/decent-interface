@@ -1,7 +1,7 @@
 import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Hex } from 'viem';
+import { getAddress, Hex } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useRolesStore } from '../../../store/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
@@ -102,17 +102,9 @@ export default function RolesDetailsDrawerMobile({
             {roleHat.payments.map((payment, index) => (
               <RolePaymentDetails
                 key={index}
-                payment={{
-                  amount: payment.amount,
-                  asset: payment.asset,
-                  contractAddress: payment.contractAddress,
-                  streamId: payment.streamId,
-                  endDate: payment.endDate,
-                  startDate: payment.startDate,
-                  isStreaming: payment.isStreaming,
-                }}
+                payment={payment}
                 roleHatSmartAddress={roleHat.smartAddress}
-                roleHatWearerAddress={roleHat.wearer}
+                roleHatWearerAddress={getAddress(roleHat.wearer)}
                 showWithdraw
               />
             ))}
