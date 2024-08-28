@@ -111,7 +111,6 @@ export default function useCreateSablierStream() {
       const preparedStreamCreationTransactions: { calldata: Hex; targetAddress: Address }[] = [];
       const preparedTokenApprovalsTransactions: { calldata: Hex; targetAddress: Address }[] = [];
 
-      // @todo SablierV2Batch contract groups streams by asset address
       const groupedStreams = groupBy(paymentStreams, 'assetAddress');
       Object.keys(groupedStreams).forEach(assetAddress => {
         const assembledStreams: ReturnType<typeof prepareLinearStream>[] = [];

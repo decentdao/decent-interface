@@ -201,7 +201,7 @@ const identifyAndPrepareEditedPaymentStreams = (
           !payment.startDate ||
           !payment.endDate ||
           !payment.amount?.bigintValue ||
-          payment.amount.bigintValue > 0n
+          payment.amount.bigintValue <= 0n
         ) {
           throw new Error('Form Values inValid', {
             cause: payment,
@@ -232,7 +232,7 @@ const identifyAndPrepareAddedPaymentStreams = async (
 ): Promise<PreparedNewStreamData[]> => {
   const preparedStreamDataMapped = await Promise.all(
     modifiedHats.map(async formHat => {
-      if (formHat.payments === undefined || formHat.editedRole.status !== EditBadgeStatus.New) {
+      if (formHat.payments === undefined || formHat.editedRole.status !== EditBadgeStatus.Updated) {
         return [];
       }
 
@@ -254,7 +254,7 @@ const identifyAndPrepareAddedPaymentStreams = async (
           !payment.startDate ||
           !payment.endDate ||
           !payment.amount?.bigintValue ||
-          payment.amount.bigintValue > 0n
+          payment.amount.bigintValue <= 0n
         ) {
           throw new Error('Form Values inValid', {
             cause: payment,

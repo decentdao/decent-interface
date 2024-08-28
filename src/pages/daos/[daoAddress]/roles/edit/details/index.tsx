@@ -206,7 +206,7 @@ export default function RoleEditDetails() {
         </>
       )}
       <FieldArray name="hats">
-        {({ push }: { push: (obj: RoleHatFormValue) => void }) => (
+        {({ push }: { push: (roleHatFormValue: RoleHatFormValue) => void }) => (
           <>
             <Show below="md">
               <Portal>
