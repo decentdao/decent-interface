@@ -19,7 +19,7 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
-import { RoleDetailsDrawerRoleHatProp, SablierPayment } from './types';
+import { RoleDetailsDrawerRoleHatProp } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -40,7 +40,6 @@ function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.E
 
 interface RoleDetailsDrawerProps {
   roleHat: RoleDetailsDrawerRoleHatProp;
-  payments?: SablierPayment[];
   onOpen?: () => void;
   onClose: () => void;
   onEdit: (hatId: Hex) => void;
@@ -52,7 +51,6 @@ export default function RolesDetailsDrawer({
   onClose,
   isOpen = true,
   onEdit,
-  payments,
 }: RoleDetailsDrawerProps) {
   const {
     node: { daoAddress },
@@ -156,7 +154,7 @@ export default function RolesDetailsDrawer({
               </Text>
             </GridItem>
           </Grid>
-          {payments && (
+          {roleHat.payments && (
             <>
               <Divider
                 variant="darker"
@@ -168,7 +166,7 @@ export default function RolesDetailsDrawer({
               >
                 {t('payments')}
               </Text>
-              {payments.map((payment, index) => (
+              {roleHat.payments.map((payment, index) => (
                 <RolePaymentDetails
                   key={index}
                   payment={{
