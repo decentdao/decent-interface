@@ -56,23 +56,20 @@ export default function useCreateSablierStream() {
         throw new Error('Start date of the stream can not be larger than end date');
       }
 
-      let cliffDuration = 0;
       if (cliffDateTs) {
         if (cliffDateTs <= startDateTs) {
           throw new Error('Cliff date can not be less or equal than start date');
         } else if (cliffDateTs >= endDateTs) {
           throw new Error('Cliff date can not be larger or equal than end date');
         }
-        cliffDuration = Math.ceil((cliffDateTs - startDateTs) / 1000);
       }
-
-      const streamDuration = Math.ceil((endDateTs - startDateTs) / 1000);
 
       return {
         ...prepareBasicStreamData(recipient, totalAmount),
-        durations: {
-          cliff: cliffDuration,
-          total: streamDuration + cliffDuration, // Total duration has to include cliff duration
+        timestamps: {
+          start: startDateTs,
+          end: endDateTs,
+          cliff: cliffDateTs,
         },
       };
     },
@@ -126,7 +123,7 @@ export default function useCreateSablierStream() {
         preparedStreamCreationTransactions.push({
           calldata: encodeFunctionData({
             abi: SablierV2BatchAbi,
-            functionName: 'createWithDurationsLL', // @dev @todo Another option would be to use `createWithTimestampsLL`. Probably makes sense to change the logic to `createWithTimestampsLL` since we drifted away from "durations" and actually operating with timestamps always
+            functionName: 'createWithTimestampsLL',
             args: [sablierV2LockupLinear, tokenAddress, assembledStreams],
           }),
           targetAddress: sablierV2Batch,

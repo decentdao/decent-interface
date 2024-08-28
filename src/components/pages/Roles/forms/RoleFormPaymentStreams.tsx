@@ -41,6 +41,7 @@ export function RoleFormPaymentStreams() {
                       asset: payment.asset,
                       endDate: payment.endDate,
                       startDate: payment.startDate,
+                      cliffDate: payment.cliffDate,
                       isStreaming: () => false,
                     }}
                     onClick={() => {

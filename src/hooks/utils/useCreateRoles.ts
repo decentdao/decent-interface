@@ -174,7 +174,7 @@ const identifyAndPrepareEditedPaymentStreams = (
   return modifiedHats.flatMap(formHat => {
     const currentHat = getHat(formHat.id);
     if (currentHat === null) {
-      throw new Error("Couldn't find existing Hat for edited payment stream Hat.");
+      return [];
     }
 
     if (formHat.payments === undefined) {
@@ -211,9 +211,9 @@ const identifyAndPrepareEditedPaymentStreams = (
         return {
           streamId: payment.streamId,
           recipient: currentHat.smartAddress,
-          startDateTs: payment.startDate.getTime(),
-          endDateTs: payment.endDate.getTime(),
-          cliffDateTs: payment.cliffDate?.getTime() ?? 0,
+          startDateTs: Math.floor(payment.startDate.getTime() / 1000),
+          endDateTs: Math.ceil(payment.endDate.getTime() / 1000),
+          cliffDateTs: Math.floor((payment.cliffDate?.getTime() ?? 0) / 1000),
           totalAmount: payment.amount.bigintValue,
           assetAddress: payment.asset.address,
           roleHatId: BigInt(currentHat.id),
@@ -232,7 +232,7 @@ const identifyAndPrepareAddedPaymentStreams = async (
 ): Promise<PreparedNewStreamData[]> => {
   const preparedStreamDataMapped = await Promise.all(
     modifiedHats.map(async formHat => {
-      if (formHat.payments === undefined || formHat.editedRole.status !== EditBadgeStatus.Updated) {
+      if (formHat.payments === undefined) {
         return [];
       }
 
@@ -263,9 +263,9 @@ const identifyAndPrepareAddedPaymentStreams = async (
 
         return {
           recipient: recipientAddress,
-          startDateTs: payment.startDate.getTime(),
-          endDateTs: payment.endDate.getTime(),
-          cliffDateTs: payment.cliffDate?.getTime() ?? 0,
+          startDateTs: Math.floor(payment.startDate.getTime() / 1000),
+          endDateTs: Math.ceil(payment.endDate.getTime() / 1000),
+          cliffDateTs: Math.floor((payment.cliffDate?.getTime() ?? 0) / 1000),
           totalAmount: payment.amount.bigintValue,
           assetAddress: payment.asset.address,
         };
@@ -663,14 +663,8 @@ export default function useCreateRoles() {
 
       if (addedPaymentStreams.length) {
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(addedPaymentStreams);
-        addedPaymentStreams.forEach((_, i) => {
-          hatPaymentAddedTxs.push(
-            preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
-          );
-          hatPaymentAddedTxs.push(
-            preparedPaymentTransactions.preparedStreamCreationTransactions[i],
-          );
-        });
+        hatPaymentAddedTxs.push(...preparedPaymentTransactions.preparedTokenApprovalsTransactions);
+        hatPaymentAddedTxs.push(...preparedPaymentTransactions.preparedStreamCreationTransactions);
       }
 
       if (editedPaymentStreams.length) {
@@ -733,14 +727,8 @@ export default function useCreateRoles() {
 
         const preparedPaymentTransactions = prepareBatchLinearStreamCreation(editedPaymentStreams);
         hatPaymentEditedTxs.push(...paymentCancelTxs);
-        editedPaymentStreams.forEach((_, i) => {
-          hatPaymentEditedTxs.push(
-            preparedPaymentTransactions.preparedTokenApprovalsTransactions[i],
-          );
-          hatPaymentEditedTxs.push(
-            preparedPaymentTransactions.preparedStreamCreationTransactions[i],
-          );
-        });
+        hatPaymentEditedTxs.push(...preparedPaymentTransactions.preparedTokenApprovalsTransactions);
+        hatPaymentEditedTxs.push(...preparedPaymentTransactions.preparedStreamCreationTransactions);
       }
 
       const proposalTransactions = {
