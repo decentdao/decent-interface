@@ -39,7 +39,7 @@ export enum ModalType {
 }
 
 export type CurrentModal = {
-  [K in ModalType]: { type: K; props: ModalPropsTypes[K] }
+  [K in ModalType]: { type: K; props: ModalPropsTypes[K] };
 }[ModalType];
 
 export type ModalPropsTypes = {
