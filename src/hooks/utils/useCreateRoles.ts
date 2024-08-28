@@ -213,7 +213,7 @@ const identifyAndPrepareEditedPaymentStreams = (
           recipient: currentHat.smartAddress,
           startDateTs: Math.floor(payment.startDate.getTime() / 1000),
           endDateTs: Math.ceil(payment.endDate.getTime() / 1000),
-          cliffDateTs:  Math.floor((payment.cliffDate?.getTime() ?? 0) / 1000),
+          cliffDateTs: Math.floor((payment.cliffDate?.getTime() ?? 0) / 1000),
           totalAmount: payment.amount.bigintValue,
           assetAddress: payment.asset.address,
           roleHatId: BigInt(currentHat.id),
@@ -265,7 +265,7 @@ const identifyAndPrepareAddedPaymentStreams = async (
           recipient: recipientAddress,
           startDateTs: Math.floor(payment.startDate.getTime() / 1000),
           endDateTs: Math.ceil(payment.endDate.getTime() / 1000),
-          cliffDateTs:  Math.floor((payment.cliffDate?.getTime() ?? 0) / 1000),
+          cliffDateTs: Math.floor((payment.cliffDate?.getTime() ?? 0) / 1000),
           totalAmount: payment.amount.bigintValue,
           assetAddress: payment.asset.address,
         };
@@ -732,12 +732,12 @@ export default function useCreateRoles() {
       }
 
       console.log('🚀 ~ createAndMintHatsTxs:', createAndMintHatsTxs);
-      console.log("🚀 ~ transferHatTxs:", transferHatTxs)
-      console.log("🚀 ~ hatDetailsChangedTxs:", hatDetailsChangedTxs)
-      console.log("🚀 ~ hatPaymentAddedTxs:", hatPaymentAddedTxs)
-      console.log("🚀 ~ hatPaymentEditedTxs:", hatPaymentEditedTxs)
-      console.log("🚀 ~ smartAccountTxs:", smartAccountTxs)
-      console.log("🚀 ~ removeHatTxs:", removeHatTxs)
+      console.log('🚀 ~ transferHatTxs:', transferHatTxs);
+      console.log('🚀 ~ hatDetailsChangedTxs:', hatDetailsChangedTxs);
+      console.log('🚀 ~ hatPaymentAddedTxs:', hatPaymentAddedTxs);
+      console.log('🚀 ~ hatPaymentEditedTxs:', hatPaymentEditedTxs);
+      console.log('🚀 ~ smartAccountTxs:', smartAccountTxs);
+      console.log('🚀 ~ removeHatTxs:', removeHatTxs);
       const proposalTransactions = {
         targets: [
           ...createAndMintHatsTxs.map(() => hatsProtocol),

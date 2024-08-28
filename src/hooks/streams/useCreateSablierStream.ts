@@ -113,7 +113,7 @@ export default function useCreateSablierStream() {
         const assembledStreams: ReturnType<typeof prepareLinearStream>[] = [];
         const streams = groupedStreams[assetAddress];
         let totalStreamsAmount = 0n;
-        console.log("🚀 ~ assetAddress:", assetAddress)
+        console.log('🚀 ~ assetAddress:', assetAddress);
         const tokenAddress = getAddress(assetAddress);
         streams.forEach(streamData => {
           totalStreamsAmount += streamData.totalAmount;
