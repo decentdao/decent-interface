@@ -201,7 +201,7 @@ const identifyAndPrepareEditedPaymentStreams = (
           !payment.startDate ||
           !payment.endDate ||
           !payment.amount?.bigintValue ||
-          payment.amount.bigintValue < 0n
+          payment.amount.bigintValue <= 0n
         ) {
           throw new Error('Form Values inValid', {
             cause: payment,
@@ -254,7 +254,7 @@ const identifyAndPrepareAddedPaymentStreams = async (
           !payment.startDate ||
           !payment.endDate ||
           !payment.amount?.bigintValue ||
-          payment.amount.bigintValue < 0n
+          payment.amount.bigintValue <= 0n
         ) {
           throw new Error('Form Values inValid', {
             cause: payment,
