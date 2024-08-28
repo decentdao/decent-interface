@@ -3,6 +3,7 @@
   "version": "0.2.13",
   "private": true,
   "dependencies": {
+    "@amplitude/analytics-browser": "^2.11.1",
     "@apollo/client": "^3.7.10",
     "@chakra-ui/anatomy": "^2.2.2",
     "@chakra-ui/react": "^2.8.2",

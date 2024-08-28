@@ -24,6 +24,8 @@ interface ImportMetaEnv {
   readonly VITE_APP_HOTJAR_SITE_ID: string;
   readonly VITE_APP_HOTJAR_VERSION: string;
 
+  readonly VITE_APP_AMPLITUDE_API_KEY: string;
+
   readonly VITE_APP_SHUTTER_EON_PUBKEY: string;
 
   readonly VITE_APP_SITE_URL: string;
