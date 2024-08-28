@@ -1,7 +1,9 @@
 import { Portal, Show, useDisclosure } from '@chakra-ui/react';
 import { createContext, ReactNode, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address } from 'viem';
 import { UnsavedChangesWarningContent } from '../../../pages/daos/[daoAddress]/roles/edit/unsavedChangesWarningContent';
+import { ProposalTemplate } from '../../../types';
 import AddSignerModal from '../../pages/DaoSettings/components/Signers/modals/AddSignerModal';
 import RemoveSignerModal from '../../pages/DaoSettings/components/Signers/modals/RemoveSignerModal';
 import DraggableDrawer from '../containers/DraggableDrawer';
@@ -36,18 +38,57 @@ export enum ModalType {
   WITHDRAW_PAYMENT,
 }
 
-export interface CurrentModal {
-  type: ModalType;
-  props: Record<string, any>;
-}
+export type CurrentModal = {
+  [K in ModalType]: { type: K; props: ModalPropsTypes[K] };
+}[ModalType];
+
+export type ModalPropsTypes = {
+  [ModalType.NONE]: {};
+  [ModalType.DELEGATE]: {};
+  [ModalType.SEND_ASSETS]: {};
+  [ModalType.STAKE]: {};
+  [ModalType.WRAP_TOKEN]: {};
+  [ModalType.UNWRAP_TOKEN]: {};
+  [ModalType.CONFIRM_URL]: { url: string };
+  [ModalType.REMOVE_SIGNER]: {
+    selectedSigner: string;
+    signers: string[];
+    currentThreshold: number;
+  };
+  [ModalType.ADD_SIGNER]: { signers: string[]; currentThreshold: number };
+  [ModalType.CREATE_PROPOSAL_FROM_TEMPLATE]: { proposalTemplate: ProposalTemplate };
+  [ModalType.COPY_PROPOSAL_TEMPLATE]: {
+    proposalTemplate: ProposalTemplate;
+    templateIndex: number;
+  };
+  [ModalType.CONFIRM_MODIFY_GOVERNANCE]: {};
+  [ModalType.SEARCH_SAFE]: {};
+  [ModalType.WARN_UNSAVED_CHANGES]: {
+    discardChanges: () => void;
+    keepEditing: () => void;
+  };
+  [ModalType.WITHDRAW_PAYMENT]: {
+    paymentAssetLogo?: string;
+    paymentAssetSymbol: string;
+    paymentAssetDecimals: number;
+    paymentStreamId?: string;
+    paymentContractAddress: Address;
+    withdrawInformation: {
+      roleHatSmartAddress: Address;
+      roleHatWearerAddress: Address;
+      withdrawableAmount: bigint;
+    };
+    onSuccess: () => Promise<void>;
+  };
+};
 
 export interface IModalContext {
   current: CurrentModal;
-  setCurrent: Function;
+  setCurrent: (modal: CurrentModal) => void;
 }
 
 export const ModalContext = createContext<IModalContext>({
-  current: { type: ModalType.NONE, props: [] },
+  current: { type: ModalType.NONE, props: {} },
   setCurrent: () => {},
 });
 
@@ -58,6 +99,7 @@ interface ModalUI {
   isSearchInputModal: boolean;
   onSetClosed: () => void;
 }
+
 /**
  * A provider that handles displaying modals in the app.
  *
@@ -68,24 +110,27 @@ interface ModalUI {
  *  4. Utilize the useDecentModal hook to get a click listener to open your new modal.
  */
 export function ModalProvider({ children }: { children: ReactNode }) {
-  const [current, setCurrent] = useState<CurrentModal>({ type: ModalType.NONE, props: [] });
+  const [current, setCurrent] = useState<CurrentModal>({
+    type: ModalType.NONE,
+    props: {},
+  });
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { t } = useTranslation('modals');
 
   useEffect(() => {
     if (current.type != ModalType.NONE) onOpen();
-  });
+  }, [current.type, onOpen]);
 
   const { title, warn, content, onSetClosed, isSearchInputModal } = useMemo<ModalUI>(() => {
     const closeModal = () => {
-      setCurrent({ type: ModalType.NONE, props: [] });
+      setCurrent({ type: ModalType.NONE, props: {} });
       onClose();
     };
 
-    let modalTitle;
+    let modalTitle: string | undefined;
     let hasWarning = false;
     let isSearchInput = false;
-    let modalContent;
+    let modalContent: ReactNode | null = null;
 
     switch (current.type) {
       case ModalType.DELEGATE:
@@ -181,17 +226,21 @@ export function ModalProvider({ children }: { children: ReactNode }) {
           />
         );
         break;
-      case ModalType.WITHDRAW_PAYMENT:
+      case ModalType.WITHDRAW_PAYMENT: {
         modalContent = (
           <PaymentWithdrawModal
-            payment={current.props.payment}
-            roleHat={current.props.roleHat}
-            withdrawableAmount={current.props.withdrawableAmount}
+            paymentAssetLogo={current.props.paymentAssetLogo}
+            paymentAssetSymbol={current.props.paymentAssetSymbol}
+            paymentAssetDecimals={current.props.paymentAssetDecimals}
+            paymentStreamId={current.props.paymentStreamId}
+            paymentContractAddress={current.props.paymentContractAddress}
+            withdrawInformation={current.props.withdrawInformation}
             onSuccess={current.props.onSuccess}
             onClose={closeModal}
           />
         );
         break;
+      }
       case ModalType.NONE:
       default:
         modalTitle = '';
@@ -200,7 +249,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
 
     return {
       isSearchInputModal: isSearchInput,
-      title: modalTitle,
+      title: modalTitle || '',
       warn: hasWarning,
       content: modalContent,
       onSetClosed: closeModal,

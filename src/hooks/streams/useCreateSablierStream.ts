@@ -1,19 +1,11 @@
 import groupBy from 'lodash.groupby';
 import { useCallback } from 'react';
-import { Address, Hex, encodeFunctionData, erc20Abi, getAddress, zeroAddress } from 'viem';
+import { Address, Hex, encodeFunctionData, erc20Abi, zeroAddress, getAddress } from 'viem';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
-import { BaseSablierStream, SablierPaymentFormValues } from '../../components/pages/Roles/types';
+import { PreparedNewStreamData } from '../../components/pages/Roles/types';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-
-type LinearStreamInputs = {
-  totalAmount: bigint;
-  recipient: Address;
-  startDate: Date;
-  endDate: Date;
-  cliffDate: Date | undefined;
-};
 
 export function convertStreamIdToBigInt(streamId: string) {
   // streamId is formatted as ${streamContractAddress}-${chainId}-${numericId}
@@ -59,14 +51,11 @@ export default function useCreateSablierStream() {
   );
 
   const prepareLinearStream = useCallback(
-    ({ totalAmount, recipient, startDate, endDate, cliffDate }: LinearStreamInputs) => {
-      const startDateTs = startDate.getTime();
-      const endDateTs = endDate.getTime();
+    ({ totalAmount, recipient, startDateTs, endDateTs, cliffDateTs }: PreparedNewStreamData) => {
       if (startDateTs >= endDateTs) {
         throw new Error('Start date of the stream can not be larger than end date');
       }
 
-      const cliffDateTs = cliffDate ? cliffDate.getTime() : 0;
       let cliffDuration = 0;
       if (cliffDateTs) {
         if (cliffDateTs <= startDateTs) {
@@ -90,11 +79,7 @@ export default function useCreateSablierStream() {
     [prepareBasicStreamData],
   );
 
-  const prepareFlushStreamTx = useCallback((stream: BaseSablierStream, to: Address) => {
-    if (!stream.streamId || !stream.contractAddress) {
-      throw new Error('Can not flush stream without streamId or contract address');
-    }
-
+  const prepareFlushStreamTx = useCallback((streamId: string, to: Address) => {
     // @dev This function comes from "basic" SablierV2
     // all the types of streams are inheriting from that
     // so it's safe to rely on any stream ABI
@@ -102,76 +87,40 @@ export default function useCreateSablierStream() {
     const flushCalldata = encodeFunctionData({
       abi: SablierV2LockupLinearAbi,
       functionName: 'withdrawMax',
-      args: [convertStreamIdToBigInt(stream.streamId), to],
+      args: [convertStreamIdToBigInt(streamId), to],
     });
 
-    return { calldata: flushCalldata, targetAddress: stream.contractAddress };
+    return flushCalldata;
   }, []);
 
-  const prepareCancelStreamTx = useCallback((stream: BaseSablierStream) => {
-    if (!stream.streamId || !stream.contractAddress) {
-      throw new Error('Can not flush stream without streamId or contract address');
-    }
-
+  const prepareCancelStreamTx = useCallback((streamId: string, targetAddress: Address) => {
     // @dev This function comes from "basic" SablierV2
     // all the types of streams are inheriting from that
     // so it's safe to rely on any stream ABI
-    const flushCalldata = encodeFunctionData({
+    const cancelCallData = encodeFunctionData({
       abi: SablierV2LockupLinearAbi,
       functionName: 'cancel',
-      args: [convertStreamIdToBigInt(stream.streamId)],
+      args: [convertStreamIdToBigInt(streamId)],
     });
 
-    return { calldata: flushCalldata, targetAddress: stream.contractAddress };
+    return { calldata: cancelCallData, targetAddress };
   }, []);
 
   const prepareBatchLinearStreamCreation = useCallback(
-    (linearStreams: SablierPaymentFormValues[], recipients: Address[]) => {
-      if (linearStreams.length !== recipients.length) {
-        console.error('Error batch creating linear streams', { linearStreams, recipients });
-        throw new Error(
-          'Parameters mismatch. Amount of created streams has to match amount of recipients',
-        );
-      }
-
+    (paymentStreams: PreparedNewStreamData[]) => {
       const preparedStreamCreationTransactions: { calldata: Hex; targetAddress: Address }[] = [];
       const preparedTokenApprovalsTransactions: { calldata: Hex; targetAddress: Address }[] = [];
 
-      const groupedStreams = groupBy(linearStreams, 'asset.address');
+      const groupedStreams = groupBy(paymentStreams, 'assetAddress');
       Object.keys(groupedStreams).forEach(assetAddress => {
         const assembledStreams: ReturnType<typeof prepareLinearStream>[] = [];
         const streams = groupedStreams[assetAddress];
-        const tokenAddress = getAddress(assetAddress);
         let totalStreamsAmount = 0n;
+        const tokenAddress = getAddress(assetAddress);
+        streams.forEach(streamData => {
+          totalStreamsAmount += streamData.totalAmount;
 
-        streams.forEach((streamData, index) => {
-          if (
-            !streamData?.amount?.bigintValue ||
-            streamData.amount.bigintValue <= 0n ||
-            !streamData.startDate ||
-            !streamData.endDate
-          ) {
-            console.error(
-              'Error creating linear stream - stream amount must be bigger than 0, startDate and endDate must be set',
-              streamData,
-            );
-            throw new Error(
-              'Stream total amount must be greater than 0, startDate and endDate must be set',
-            );
-          }
-          totalStreamsAmount += streamData.amount.bigintValue;
-          const recipient = recipients[index];
-
-          assembledStreams.push(
-            prepareLinearStream({
-              recipient,
-              ...streamData,
-              startDate: streamData.startDate,
-              endDate: streamData.endDate,
-              cliffDate: streamData.cliffDate,
-              totalAmount: streamData.amount.bigintValue,
-            }),
-          );
+          assembledStreams.push(prepareLinearStream(streamData));
         });
 
         preparedStreamCreationTransactions.push({

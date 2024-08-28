@@ -116,11 +116,10 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         leftIcon={<ArrowLeft size="1.5rem" />}
         isDisabled={!values?.roleEditing?.payments?.[formIndex]}
         onClick={() => {
-          if (!values?.roleEditing?.payments?.[formIndex]) return;
+          const hatId = values.roleEditing?.id;
+          if (!values?.roleEditing?.payments?.[formIndex] || !hatId) return;
           const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
-          const isExistingPayment = !!streamId
-            ? getPayment(values.roleEditing.id, streamId)
-            : undefined;
+          const isExistingPayment = !!streamId ? getPayment(hatId, streamId) : undefined;
           // if payment is new, and unedited, remove it
           if (
             formIndex === values.roleEditing.payments.length - 1 &&
