@@ -3,7 +3,7 @@ import { Download } from '@phosphor-icons/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Id, toast } from 'react-toastify';
-import { encodeFunctionData, getAddress, getContract } from 'viem';
+import { Address, encodeFunctionData, getAddress, getContract } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../assets/abi/HatsAccount1ofN';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
@@ -12,46 +12,63 @@ import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablier
 import useAvatar from '../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentRoleHat } from '../../../store/roles';
 import { formatCoin } from '../../../utils';
-import { RoleHatFormValue, SablierPayment } from '../../pages/Roles/types';
 import Avatar, { AvatarSize } from '../page/Header/Avatar';
 
 export default function PaymentWithdrawModal({
-  payment,
-  roleHat,
+  paymentAssetLogo,
+  paymentAssetSymbol,
+  paymentAssetDecimals,
+  paymentStreamId,
+  paymentContractAddress,
+  withdrawInformation,
   onSuccess,
   onClose,
-  withdrawableAmount,
 }: {
-  payment: SablierPayment;
-  roleHat: DecentRoleHat | RoleHatFormValue;
+  paymentAssetLogo?: string;
+  paymentAssetSymbol: string;
+  paymentStreamId?: string;
+  paymentAssetDecimals: number;
+  paymentContractAddress?: Address;
+  withdrawInformation: {
+    roleHatSmartAddress: Address;
+    roleHatWearerAddress: Address;
+    withdrawableAmount: bigint;
+  };
   onSuccess: () => Promise<void>;
   onClose: () => void;
-  withdrawableAmount: bigint;
 }) {
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { t } = useTranslation(['roles', 'menu', 'common', 'modals']);
-  const { displayName: accountDisplayName } = useDisplayName(roleHat.wearer);
+  const { displayName: accountDisplayName } = useDisplayName(
+    withdrawInformation.roleHatWearerAddress,
+  );
   const avatarURL = useAvatar(accountDisplayName);
   const iconSize = useBreakpointValue<AvatarSize>({ base: 'sm', md: 'icon' }) || 'sm';
   const { chain } = useNetworkConfig();
 
   const handleWithdraw = useCallback(async () => {
-    if (payment?.contractAddress && payment?.streamId && walletClient && publicClient) {
+    if (
+      paymentContractAddress &&
+      paymentStreamId &&
+      walletClient &&
+      publicClient &&
+      withdrawInformation.roleHatSmartAddress &&
+      withdrawInformation.roleHatWearerAddress
+    ) {
       let withdrawToast: Id | undefined = undefined;
       try {
         const hatsAccountContract = getContract({
           abi: HatsAccount1ofNAbi,
-          address: roleHat.smartAddress,
+          address: withdrawInformation.roleHatSmartAddress,
           client: walletClient,
         });
-        const bigIntStreamId = convertStreamIdToBigInt(payment.streamId);
+        const bigIntStreamId = convertStreamIdToBigInt(paymentStreamId);
         let hatsAccountCalldata = encodeFunctionData({
           abi: SablierV2LockupLinearAbi,
           functionName: 'withdrawMax',
-          args: [bigIntStreamId, getAddress(roleHat.wearer)],
+          args: [bigIntStreamId, getAddress(withdrawInformation.roleHatWearerAddress)],
         });
         withdrawToast = toast(t('withdrawPendingMessage'), {
           autoClose: false,
@@ -61,7 +78,7 @@ export default function PaymentWithdrawModal({
           progress: 1,
         });
         const txHash = await hatsAccountContract.write.execute([
-          payment.contractAddress,
+          paymentContractAddress,
           0n,
           hatsAccountCalldata,
           0,
@@ -84,14 +101,14 @@ export default function PaymentWithdrawModal({
       }
     }
   }, [
-    payment?.contractAddress,
-    payment?.streamId,
+    paymentContractAddress,
+    paymentStreamId,
     publicClient,
     walletClient,
-    roleHat.smartAddress,
-    roleHat.wearer,
     onSuccess,
     onClose,
+    withdrawInformation.roleHatSmartAddress,
+    withdrawInformation.roleHatWearerAddress,
     t,
   ]);
 
@@ -130,13 +147,13 @@ export default function PaymentWithdrawModal({
             justifyContent="center"
           >
             <Image
-              src={payment.asset.logo}
+              src={paymentAssetLogo}
               fallbackSrc="/images/coin-icon-default.svg"
-              alt={payment.asset.symbol}
+              alt={paymentAssetSymbol}
               w="2rem"
               h="2rem"
             />
-            <Text textStyle="label-large">{payment.asset.symbol}</Text>
+            <Text textStyle="label-large">{paymentAssetSymbol}</Text>
           </Flex>
           <Flex
             px="1rem"
@@ -155,7 +172,13 @@ export default function PaymentWithdrawModal({
               textStyle="display-4xl"
               w="full"
             >
-              {formatCoin(withdrawableAmount, true, payment.asset.decimals, undefined, false)}
+              {formatCoin(
+                withdrawInformation.withdrawableAmount,
+                true,
+                paymentAssetDecimals,
+                undefined,
+                false,
+              )}
             </Text>
           </Flex>
         </Flex>
@@ -181,12 +204,12 @@ export default function PaymentWithdrawModal({
             >
               <Box>
                 <Avatar
-                  address={roleHat.wearer}
+                  address={withdrawInformation.roleHatWearerAddress}
                   url={avatarURL}
                   size={iconSize}
                 />
               </Box>
-              <Text textStyle="label-base">{roleHat.wearer}</Text>
+              <Text textStyle="label-base">{withdrawInformation.roleHatWearerAddress}</Text>
             </Flex>
           </Flex>
           <Flex
