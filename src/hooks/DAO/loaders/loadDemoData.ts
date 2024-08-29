@@ -10,7 +10,6 @@ type DemoData = {
   [networkId: number]: NetworkData;
 };
 
-const decentDAOAddress = '0xB98d45F9021D71E6Fc30b43FD37FB3b1Bf12c064';
 const theCoDAOAddress = '0xd2786bEc22F4F2500E0dd4E42cE7c9dceBB5Ff93';
 const coordinapeDAOAddress = '0x15B513F658f7390D8720dCE321f50974B28672EF';
 
@@ -34,19 +33,8 @@ const theCoDAO = {
   hierarchy: [coordinapeDAO],
 };
 
-const decentDAO = {
-  id: decentDAOAddress,
-  address: decentDAOAddress,
-  parentAddress: '',
-  name: 'Decent DAO',
-  snapshotENS: 'decentdao.eth',
-  proposalTemplatesHash: '',
-  hierarchy: [],
-};
-
 export const demoData: DemoData = {
   [mainnet.id]: {
-    [decentDAOAddress]: decentDAO,
     [theCoDAOAddress]: theCoDAO,
     [coordinapeDAOAddress]: coordinapeDAO,
   },
