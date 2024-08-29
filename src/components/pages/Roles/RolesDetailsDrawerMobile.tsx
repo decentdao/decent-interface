@@ -2,6 +2,7 @@ import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { getAddress, Hex } from 'viem';
+import { isFeatureEnabled } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useRolesStore } from '../../../store/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
@@ -85,7 +86,7 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        {roleHat.payments && (
+        {isFeatureEnabled('STREAMS') && roleHat.payments && (
           <>
             <Divider
               variant="darker"
