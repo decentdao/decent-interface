@@ -2,7 +2,7 @@ import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Button, Flex, Hide, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik } from 'formik';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, getAddress } from 'viem';
@@ -28,7 +28,9 @@ import { getNewRole, useRolesStore } from '../../../../../store/roles';
 import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
-  amplitude.track(analyticsEvents.RolesEditPageOpened);
+  useEffect(() => {
+    amplitude.track(analyticsEvents.RolesEditPageOpened);
+  }, []);
 
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
   const {

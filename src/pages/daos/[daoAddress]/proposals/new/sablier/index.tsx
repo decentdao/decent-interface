@@ -731,7 +731,9 @@ function StreamsBuilder({
 }
 
 export default function SablierProposalCreatePage() {
-  amplitude.track(analyticsEvents.SablierProposalCreatePageOpened);
+  useEffect(() => {
+    amplitude.track(analyticsEvents.SablierProposalCreatePageOpened);
+  }, []);
 
   const {
     node: { daoAddress, safe },

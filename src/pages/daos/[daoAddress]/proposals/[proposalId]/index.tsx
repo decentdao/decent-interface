@@ -18,7 +18,9 @@ import { useNetworkConfig } from '../../../../../providers/NetworkConfig/Network
 import { FractalProposal, AzoriusProposal, SnapshotProposal } from '../../../../../types';
 
 export default function ProposalDetailsPage() {
-  amplitude.track(analyticsEvents.ProposalDetailsPageOpened);
+  useEffect(() => {
+    amplitude.track(analyticsEvents.ProposalDetailsPageOpened);
+  }, []);
   const {
     node: { daoAddress },
     governance: { proposals },

@@ -25,7 +25,9 @@ export default function DaoCreatePage() {
 
   const { isConnected } = useAccount();
 
-  amplitude.track(analyticsEvents.DaoCreatePageOpened);
+  useEffect(() => {
+    amplitude.track(analyticsEvents.DaoCreatePageOpened);
+  }, []);
 
   useEffect(() => {
     if (isConnected) {

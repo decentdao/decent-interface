@@ -1,6 +1,7 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Box } from '@chakra-ui/react';
 import { X } from '@phosphor-icons/react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../../../../components/DaoCreator';
@@ -21,7 +22,9 @@ import {
 } from '../../../../../types';
 
 export default function ModifyGovernancePage() {
-  amplitude.track(analyticsEvents.ModifyGovernancePageOpened);
+  useEffect(() => {
+    amplitude.track(analyticsEvents.ModifyGovernancePageOpened);
+  }, []);
 
   const {
     node: { daoAddress, safe, daoName, daoSnapshotENS },

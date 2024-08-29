@@ -1,6 +1,6 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Button, Flex, Show, Text } from '@chakra-ui/react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { AddPlus } from '../../../../assets/theme/custom/icons/AddPlus';
@@ -17,7 +17,9 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { AzoriusGovernance, DecentGovernance, GovernanceType } from '../../../../types';
 
 export default function ProposalsPage() {
-  amplitude.track(analyticsEvents.ProposalsPageOpened);
+  useEffect(() => {
+    amplitude.track(analyticsEvents.ProposalsPageOpened);
+  }, []);
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
   const {
     governance,

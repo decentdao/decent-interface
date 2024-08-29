@@ -10,7 +10,9 @@ import useIPFSClient from '../../../../../providers/App/hooks/useIPFSClient';
 import { ProposalBuilderMode, ProposalTemplate } from '../../../../../types/proposalBuilder';
 
 export default function CreateProposalTemplatePage() {
-  amplitude.track(analyticsEvents.CreateProposalTemplatePageOpened);
+  useEffect(() => {
+    amplitude.track(analyticsEvents.CreateProposalTemplatePageOpened);
+  }, []);
 
   const ipfsClient = useIPFSClient();
   const [initialProposalTemplate, setInitialProposalTemplate] = useState(DEFAULT_PROPOSAL);

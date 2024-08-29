@@ -1,5 +1,6 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Button, Show } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { AddPlus } from '../../../../assets/theme/custom/icons/AddPlus';
@@ -12,7 +13,9 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 
 export default function ProposalTemplatesPage() {
-  amplitude.track(analyticsEvents.ProposalTemplatesPageOpened);
+  useEffect(() => {
+    amplitude.track(analyticsEvents.ProposalTemplatesPageOpened);
+  }, []);
 
   const { t } = useTranslation();
   const {

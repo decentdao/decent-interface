@@ -1,6 +1,6 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Divider, Flex, Grid, GridItem, Show } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Assets } from '../../../../components/pages/DAOTreasury/components/Assets';
 import {
@@ -17,7 +17,9 @@ import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function Treasury() {
-  amplitude.track(analyticsEvents.TreasuryPageOpened);
+  useEffect(() => {
+    amplitude.track(analyticsEvents.TreasuryPageOpened);
+  }, []);
   const {
     node: { daoName },
     treasury: { assetsFungible, transfers },

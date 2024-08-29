@@ -1,5 +1,6 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Show } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, zeroAddress } from 'viem';
@@ -16,7 +17,9 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { useRolesStore } from '../../../../store/roles';
 
 function Roles() {
-  amplitude.track(analyticsEvents.RolesPageOpened);
+  useEffect(() => {
+    amplitude.track(analyticsEvents.RolesPageOpened);
+  }, []);
 
   const { hatsTree } = useRolesStore();
   const { addressPrefix } = useNetworkConfig();
