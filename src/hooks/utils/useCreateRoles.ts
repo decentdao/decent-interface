@@ -682,7 +682,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(paymentStream.roleHatId), paymentStream.roleHatWearer, daoAddress],
+              args: [BigInt(paymentStream.roleHatId), paymentStream.roleHatWearer, safeAddress],
             }),
             targetAddress: hatsProtocol,
           });
@@ -695,7 +695,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(paymentStream.roleHatId), daoAddress, paymentStream.roleHatWearer],
+              args: [BigInt(paymentStream.roleHatId), safeAddress, paymentStream.roleHatWearer],
             }),
             targetAddress: hatsProtocol,
           });
@@ -709,7 +709,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [paymentStream.roleHatId, paymentStream.roleHatWearer, daoAddress],
+              args: [paymentStream.roleHatId, paymentStream.roleHatWearer, safeAddress],
             }),
             targetAddress: hatsProtocol,
           });
@@ -722,7 +722,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [paymentStream.roleHatId, daoAddress, paymentStream.roleHatWearer],
+              args: [paymentStream.roleHatId, safeAddress, paymentStream.roleHatWearer],
             }),
             targetAddress: hatsProtocol,
           });

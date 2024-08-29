@@ -91,7 +91,7 @@ export function DeFiRow({ asset }: { asset: DefiBalance }) {
           textStyle="body-base"
           padding={0}
           borderWidth={0}
-          value={isNativePosition ? safe?.address ?? null : asset.position?.address || null}
+          value={isNativePosition ? (safe?.address ?? null) : asset.position?.address || null}
           type={isNativePosition ? 'address' : 'token'}
           wordBreak="break-word"
         >
