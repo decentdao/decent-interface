@@ -4,6 +4,7 @@ import { TreasuryActions, TreasuryAction } from './action';
 export const initialTreasuryState: DecentTreasury = {
   assetsFungible: [],
   assetsNonFungible: [],
+  assetsDeFi: [],
   transfers: null,
   totalUsdValue: 0,
   transfersLoaded: false,

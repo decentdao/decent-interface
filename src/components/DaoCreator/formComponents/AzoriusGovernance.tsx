@@ -1,6 +1,6 @@
 import { Alert, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ICreationStepProps, VotingStrategyType } from '../../../types';
@@ -24,8 +24,8 @@ export function AzoriusGovernance(props: ICreationStepProps) {
   const minutes = t('minutes', { ns: 'common' });
 
   const handleNonceChange = useCallback(
-    (nonce?: number) => {
-      setFieldValue('multisig.customNonce', nonce ? parseInt(nonce.toString(), 10) : undefined);
+    (nonce?: string) => {
+      setFieldValue('multisig.customNonce', nonce);
     },
     [setFieldValue],
   );

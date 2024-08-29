@@ -1,20 +1,25 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { Button, Flex, Show, Text } from '@chakra-ui/react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { AddPlus } from '../../../../assets/theme/custom/icons/AddPlus';
 import { TokenPlaceholder } from '../../../../assets/theme/custom/icons/TokenPlaceholder';
 import Proposals from '../../../../components/Proposals';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
-import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
+import { useDecentModal } from '../../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
+import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AzoriusGovernance, DecentGovernance, GovernanceType } from '../../../../types';
 
 export default function ProposalsPage() {
+  useEffect(() => {
+    amplitude.track(analyticsEvents.ProposalsPageOpened);
+  }, []);
   const { t } = useTranslation(['common', 'proposal', 'breadcrumbs']);
   const {
     governance,
@@ -22,9 +27,9 @@ export default function ProposalsPage() {
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const azoriusGovernance = governance as AzoriusGovernance;
-  const delegate = useFractalModal(ModalType.DELEGATE);
-  const wrapTokenOpen = useFractalModal(ModalType.WRAP_TOKEN);
-  const unwrapTokenOpen = useFractalModal(ModalType.UNWRAP_TOKEN);
+  const delegate = useDecentModal(ModalType.DELEGATE);
+  const wrapTokenOpen = useDecentModal(ModalType.WRAP_TOKEN);
+  const unwrapTokenOpen = useDecentModal(ModalType.UNWRAP_TOKEN);
   const canDelegate = useMemo(() => {
     if (azoriusGovernance.type === GovernanceType.AZORIUS_ERC20) {
       const decentGovernance = azoriusGovernance as DecentGovernance;
@@ -55,10 +60,11 @@ export default function ProposalsPage() {
             path: '',
           },
         ]}
-        buttonVariant="secondary"
-        buttonText={canDelegate ? t('delegate') : undefined}
-        buttonClick={canDelegate ? delegate : undefined}
-        buttonTestId="link-delegate"
+        buttonProps={
+          canDelegate
+            ? { children: t('delegate'), onClick: delegate, variant: 'secondary' }
+            : undefined
+        }
       >
         {showWrapTokenButton && (
           <Button

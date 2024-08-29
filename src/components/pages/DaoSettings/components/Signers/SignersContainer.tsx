@@ -1,12 +1,12 @@
-import { Button, Flex, HStack, Show, Text, Hide, Icon } from '@chakra-ui/react';
-import { PlusCircle, MinusCircle } from '@phosphor-icons/react';
-import { useEffect, useState } from 'react';
+import { Button, Flex, Hide, HStack, Icon, Show, Text } from '@chakra-ui/react';
+import { MinusCircle, PlusCircle } from '@phosphor-icons/react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { DisplayAddress } from '../../../../ui/links/DisplayAddress';
 import { ModalType } from '../../../../ui/modals/ModalProvider';
-import { useFractalModal } from '../../../../ui/modals/useFractalModal';
+import { useDecentModal } from '../../../../ui/modals/useDecentModal';
 import { SettingsSection } from '../SettingsSection';
 
 function Signer({
@@ -20,11 +20,21 @@ function Signer({
   threshold: number | undefined;
   disabled: boolean;
 }) {
-  const removeSigner = useFractalModal(ModalType.REMOVE_SIGNER, {
-    selectedSigner: signer,
-    signers: signers,
-    currentThreshold: threshold,
-  });
+  const [modalType, props] = useMemo(() => {
+    if (!signers || !threshold) {
+      return [ModalType.NONE] as const;
+    }
+    return [
+      ModalType.REMOVE_SIGNER,
+      {
+        selectedSigner: signer,
+        signers: signers,
+        currentThreshold: threshold,
+      },
+    ] as const;
+  }, [signer, signers, threshold]);
+
+  const removeSigner = useDecentModal(modalType, props);
   return (
     <HStack
       key={signer}
@@ -68,10 +78,14 @@ export function SignersContainer() {
   const [signers, setSigners] = useState<string[]>();
   const [userIsSigner, setUserIsSigner] = useState<boolean>();
 
-  const addSigner = useFractalModal(ModalType.ADD_SIGNER, {
-    signers: signers,
-    currentThreshold: safe?.threshold,
-  });
+  const [modalType, props] = useMemo(() => {
+    if (!signers) {
+      return [ModalType.NONE] as const;
+    }
+    return [ModalType.ADD_SIGNER, { signers, currentThreshold: safe?.threshold }] as const;
+  }, [signers, safe?.threshold]);
+
+  const addSigner = useDecentModal(modalType, props);
   const { t } = useTranslation(['common', 'breadcrumbs']);
   const { address: account } = useAccount();
   const enableRemove = userIsSigner && signers && signers?.length > 1;

@@ -1,5 +1,6 @@
 import Azorius from '@fractal-framework/fractal-contracts/deployments/sepolia/Azorius.json' assert { type: 'json' };
 import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/sepolia/AzoriusFreezeGuard.json' assert { type: 'json' };
+import DecentHats from '@fractal-framework/fractal-contracts/deployments/sepolia/DecentHats_0_1_0.json' assert { type: 'json' };
 import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC20Claim.json' assert { type: 'json' };
 import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC20FreezeVoting.json' assert { type: 'json' };
 import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/sepolia/ERC721FreezeVoting.json' assert { type: 'json' };
@@ -14,10 +15,10 @@ import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deploymen
 import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/sepolia/VotesERC20.json' assert { type: 'json' };
 import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/sepolia/VotesERC20Wrapper.json' assert { type: 'json' };
 import {
+  getCompatibilityFallbackHandlerDeployment,
   getMultiSendCallOnlyDeployment,
   getProxyFactoryDeployment,
   getSafeL2SingletonDeployment,
-  getCompatibilityFallbackHandlerDeployment,
 } from '@safe-global/safe-deployments';
 import { sepolia } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
@@ -25,11 +26,11 @@ import { NetworkConfig } from '../../../types/network';
 
 const SAFE_VERSION = '1.3.0';
 
-export const sepoliaConfig: NetworkConfig = {
+const sepoliaConfig: NetworkConfig = {
   order: 30,
   chain: sepolia,
   moralisSupported: true,
-  rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_SEPOLIA_API_KEY}`,
+  rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.etherscan.io',
   etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
@@ -39,6 +40,10 @@ export const sepoliaConfig: NetworkConfig = {
     space: 71032,
     slug: 'fractal-sepolia',
     version: 'v0.1.1',
+  },
+  sablierSubgraph: {
+    space: 57079,
+    slug: 'sablier-v2-sepolia',
   },
   contracts: {
     fractalAzoriusMasterCopy: Azorius.address,
@@ -71,6 +76,14 @@ export const sepoliaConfig: NetworkConfig = {
     })?.networkAddresses[sepolia.id.toString()]!,
     votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
     keyValuePairs: KeyValuePairs.address,
+    decentHatsMasterCopy: DecentHats.address,
+    hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
+    erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
+    hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
+    sablierV2Batch: '0x04A9c14b7a000640419aD5515Db4eF4172C00E31',
+    sablierV2LockupDynamic: '0x73BB6dD3f5828d60F8b3dBc8798EB10fbA2c5636',
+    sablierV2LockupTranched: '0x3a1beA13A8C24c0EA2b8fAE91E4b2762A59D7aF5',
+    sablierV2LockupLinear: '0x3E435560fd0a03ddF70694b35b673C25c65aBB6C',
   },
   staking: {},
   createOptions: [
@@ -79,3 +92,5 @@ export const sepoliaConfig: NetworkConfig = {
     GovernanceType.AZORIUS_ERC721,
   ],
 };
+
+export default sepoliaConfig;

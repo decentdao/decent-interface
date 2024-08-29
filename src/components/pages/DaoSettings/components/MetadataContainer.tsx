@@ -1,8 +1,8 @@
 import { Button } from '@chakra-ui/react';
-import { useState, useEffect, ChangeEventHandler } from 'react';
+import { ChangeEventHandler, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { isHex, getAddress } from 'viem';
+import { getAddress, isHex } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
@@ -43,8 +43,9 @@ export function MetadataContainer() {
   }, [daoName, daoSnapshotENS, daoAddress]);
 
   const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
-    setSnapshotENS(e.target.value);
-    if (validateENSName(e.target.value)) {
+    const lowerCasedValue = e.target.value.toLowerCase();
+    setSnapshotENS(lowerCasedValue);
+    if (validateENSName(lowerCasedValue) || (e.target.value === '' && daoSnapshotENS)) {
       setSnapshotENSValid(true);
     } else {
       setSnapshotENSValid(false);

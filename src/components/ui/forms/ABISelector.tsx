@@ -1,7 +1,7 @@
 import { Select, Text } from '@chakra-ui/react';
 import axios from 'axios';
 import detectProxyTarget from 'evm-proxy-detection';
-import { useMemo, useState, useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isAddress } from 'viem';
 import { useEnsAddress, usePublicClient } from 'wagmi';
@@ -28,7 +28,7 @@ export default function ABISelector({ target, onChange }: IABISelector) {
   const [abi, setABI] = useState<ABIElement[]>([]);
   const { etherscanAPIUrl } = useNetworkConfig();
   const { t } = useTranslation('common');
-  const { data: ensAddress } = useEnsAddress({ name: target });
+  const { data: ensAddress } = useEnsAddress({ name: target?.toLowerCase() });
   const client = usePublicClient();
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { Icon, IconButton } from '@chakra-ui/react';
 import { ERC20FreezeVoting, MultisigFreezeVoting } from '@fractal-framework/fractal-contracts';
 import { GearFine } from '@phosphor-icons/react';
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -21,12 +21,13 @@ import {
   FractalGuardContracts,
   FractalNode,
   FreezeGuard,
-  GovernanceType,
   FreezeVotingType,
+  GovernanceType,
 } from '../../../../types';
 import { getAzoriusModuleFromModules } from '../../../../utils';
+import { SENTINEL_MODULE } from '../../../../utils/address';
 import { ModalType } from '../../modals/ModalProvider';
-import { useFractalModal } from '../../modals/useFractalModal';
+import { useDecentModal } from '../../modals/useDecentModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
@@ -91,10 +92,7 @@ export function ManageDAOMenu({
 
             // @dev assumes the first strategy is the voting contract
             const votingContractAddress = (
-              await azoriusContract.asProvider.getStrategies(
-                '0x0000000000000000000000000000000000000001',
-                0,
-              )
+              await azoriusContract.asProvider.getStrategies(SENTINEL_MODULE, 0)
             )[1];
             const masterCopyData = await getZodiacModuleProxyMasterCopyData(
               getAddress(votingContractAddress),
@@ -122,7 +120,7 @@ export function ManageDAOMenu({
     }
   }, [navigate, addressPrefix, safeAddress]);
 
-  const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
+  const handleModifyGovernance = useDecentModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
   const freezeOption = useMemo(
     () => ({
@@ -185,9 +183,9 @@ export function ManageDAOMenu({
     };
 
     if (
-      freezeGuard.freezeProposalCreatedTime &&
-      freezeGuard.freezeProposalPeriod &&
-      freezeGuard.freezePeriod &&
+      freezeGuard.freezeProposalCreatedTime !== null &&
+      freezeGuard.freezeProposalPeriod !== null &&
+      freezeGuard.freezePeriod !== null &&
       !isWithinFreezeProposalPeriod(
         freezeGuard.freezeProposalCreatedTime,
         freezeGuard.freezeProposalPeriod,
@@ -206,8 +204,8 @@ export function ManageDAOMenu({
         return [createSubDAOOption, freezeOption, settingsOption];
       }
     } else if (
-      freezeGuard.freezeProposalCreatedTime &&
-      freezeGuard.freezePeriod &&
+      freezeGuard.freezeProposalCreatedTime !== null &&
+      freezeGuard.freezePeriod !== null &&
       isWithinFreezePeriod(
         freezeGuard.freezeProposalCreatedTime,
         freezeGuard.freezePeriod,

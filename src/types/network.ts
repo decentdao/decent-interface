@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import { Chain } from 'viem';
+import { Chain, Address } from 'viem';
 import { GovernanceType } from './fractal';
 
 export type Providers =
@@ -22,6 +22,11 @@ export type NetworkConfig = {
     slug: string;
     version: string;
   };
+  // @dev - might be not supported on some chains
+  sablierSubgraph?: {
+    space: number;
+    slug: string;
+  };
   contracts: {
     safe: string;
     safeFactory: string;
@@ -43,6 +48,14 @@ export type NetworkConfig = {
     erc721FreezeVotingMasterCopy: string;
     votesERC20WrapperMasterCopy: string;
     keyValuePairs: string;
+    decentHatsMasterCopy: string;
+    hatsProtocol: Address;
+    erc6551Registry: Address;
+    hatsAccount1ofNMasterCopy: Address;
+    sablierV2Batch: Address;
+    sablierV2LockupDynamic: Address;
+    sablierV2LockupTranched: Address;
+    sablierV2LockupLinear: Address;
   };
   staking: {
     lido?: {

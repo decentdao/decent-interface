@@ -8,7 +8,7 @@ import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { BigIntValuePair, TokenBalance } from '../../../types';
-import { formatCoinFromAsset, formatCoinUnitsFromAsset } from '../../../utils/numberFormats';
+import { formatCoinFromAsset, formatCoinUnits } from '../../../utils/numberFormats';
 import { sendAssets } from '../../pages/DAOTreasury/sendAssets';
 import { BigIntInput } from '../forms/BigIntInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
@@ -22,7 +22,6 @@ interface SendAssetsFormValues {
   inputAmount?: BigIntValuePair;
 }
 
-// @todo add Yup and Formik to this modal
 export function SendAssetsModal({ close }: { close: () => void }) {
   const {
     node: { safe },
@@ -84,7 +83,11 @@ export function SendAssetsModal({ close }: { close: () => void }) {
         {({ errors, values, setFieldValue, handleSubmit }) => {
           const overDraft =
             Number(values.inputAmount?.value || '0') >
-            formatCoinUnitsFromAsset(values.selectedAsset);
+            formatCoinUnits(
+              values.selectedAsset.balance,
+              values.selectedAsset.decimals,
+              values.selectedAsset.symbol,
+            );
 
           // @dev next couple of lines are written like this, to keep typing equivalent during the conversion from BN to bigint
           const inputBigint = values.inputAmount?.bigintValue;
@@ -198,7 +201,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
               <CustomNonceInput
                 nonce={nonceInput}
-                onChange={nonce => setNonceInput(nonce ? nonce : undefined)}
+                onChange={nonce => setNonceInput(nonce ? parseInt(nonce) : undefined)}
               />
 
               <Button
@@ -213,7 +216,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                   isSubmitDisabled
                 }
               >
-                {t('sendAssetsSubmit')}
+                {t('submitProposal')}
               </Button>
             </Form>
           );

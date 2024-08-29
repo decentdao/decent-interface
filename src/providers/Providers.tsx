@@ -16,6 +16,7 @@ import { wagmiConfig, queryClient } from './NetworkConfig/web3-modal.config';
 
 export default function Providers({ children }: { children: ReactNode }) {
   useMigrate();
+
   return (
     <ChakraProvider
       theme={theme}

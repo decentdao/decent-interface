@@ -8,6 +8,7 @@ import {
   GridProps,
   GridItemProps,
   ResponsiveValue,
+  TextareaProps as ChakraTextareaProps,
 } from '@chakra-ui/react';
 import { BigIntInput, BigIntInputProps } from './BigIntInput';
 import LabelWrapper from './LabelWrapper';
@@ -41,6 +42,7 @@ interface TextareaProps extends Omit<BaseProps, 'children'> {
   placeholder?: string;
   rows?: number;
   resize?: ResponsiveValue<'vertical' | 'horizontal' | 'both' | 'none'>;
+  textAreaProps?: ChakraTextareaProps;
 }
 interface BigIntProps
   extends Omit<BaseProps, 'children' | 'value'>,
@@ -135,6 +137,7 @@ export function TextareaComponent(props: TextareaProps) {
     placeholder,
     maxLength,
     resize = 'vertical',
+    textAreaProps,
   } = props;
   return (
     <LabelComponent
@@ -152,6 +155,7 @@ export function TextareaComponent(props: TextareaProps) {
         size="base"
         p="0.5rem 1rem"
         maxLength={maxLength}
+        {...textAreaProps}
       />
     </LabelComponent>
   );

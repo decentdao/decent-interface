@@ -61,7 +61,7 @@ const toastStyles = (props: any) => ({
   },
   '.Toastify__toast--rtl::@': {},
   '.Toastify__toast-body': {
-    fontFamily: 'TT Firs Neue Variable',
+    fontFamily: 'DM Sans Variable',
     fontWeight: 450,
     fontSize: '1rem',
     color: 'lilac-0',

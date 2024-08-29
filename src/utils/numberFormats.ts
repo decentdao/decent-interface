@@ -29,7 +29,7 @@ export const formatUSD = (rawUSD: number | string) => {
   return decimalIndex != -1 && formatted.length - decimalIndex !== 3 ? formatted + '0' : formatted;
 };
 
-const formatCoinUnits = (
+export const formatCoinUnits = (
   rawBalance: bigint | string,
   decimals?: number,
   symbol?: string,
@@ -38,10 +38,6 @@ const formatCoinUnits = (
   return symbol && decimals
     ? parseFloat(formatUnits(BigInt(rawBalance), decimals))
     : parseFloat(formatEther(BigInt(rawBalance)));
-};
-
-export const formatCoinUnitsFromAsset = (asset: TokenBalance): number => {
-  return formatCoinUnits(asset.balance, asset?.decimals, asset?.symbol);
 };
 
 export const formatCoin = (
@@ -54,7 +50,7 @@ export const formatCoin = (
   const amount = formatCoinUnits(rawBalance, decimals, symbol);
 
   const coinFormatter = new Intl.NumberFormat(undefined, {
-    maximumFractionDigits: !truncate ? 18 : amount > 1 ? 2 : 8,
+    maximumFractionDigits: !truncate ? decimals : amount > 1 ? 2 : 8,
   });
 
   if (showSymbol) {

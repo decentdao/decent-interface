@@ -94,7 +94,7 @@ export function QuorumProgressBar({
                   as={Check}
                 />
               )}
-              {reachedQuorum} / {totalQuorum}
+              {reachedQuorum.toLocaleString()} / {totalQuorum.toLocaleString()}
             </Text>
           ) : undefined
         }

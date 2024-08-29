@@ -243,6 +243,10 @@
     "0": {
       "$type": "color",
       "$value": "#f8f4fc"
+    },
+    "1": {
+      "$type": "color",
+      "$value": "#D9D9D9"
     }
   },
   "White Alpha": {

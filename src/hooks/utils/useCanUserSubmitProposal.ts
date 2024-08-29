@@ -5,6 +5,7 @@ import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { GovernanceType } from '../../types';
 import { getAzoriusModuleFromModules } from '../../utils';
+import { SENTINEL_MODULE } from '../../utils/address';
 import { useFractalModules } from '../DAO/loaders/useFractalModules';
 import useSafeContracts from '../safe/useSafeContracts';
 
@@ -19,6 +20,7 @@ export function useCanUserCreateProposal() {
   const baseContracts = useSafeContracts();
   const lookupModules = useFractalModules();
   const [canUserCreateProposal, setCanUserCreateProposal] = useState<boolean>();
+
   /**
    * Performs a check whether user has access rights to create proposal for DAO
    * @param {string} safeAddress - parameter to verify that user can create proposal for this specific DAO.
@@ -44,7 +46,7 @@ export function useCanUserCreateProposal() {
           const azoriusContract = azoriusModule.moduleContract as Azorius;
           // @dev assumes the first strategy is the voting contract
           const votingContractAddress = (
-            await azoriusContract.getStrategies('0x0000000000000000000000000000000000000001', 0)
+            await azoriusContract.getStrategies(SENTINEL_MODULE, 0)
           )[1];
           const votingContract =
             baseContracts.linearVotingMasterCopyContract.asProvider.attach(votingContractAddress);
@@ -92,6 +94,7 @@ export function useCanUserCreateProposal() {
       baseContracts,
     ],
   );
+
   useEffect(() => {
     const loadCanUserCreateProposal = async () => {
       const newCanCreateProposal = await getCanUserCreateProposal();

@@ -6,6 +6,7 @@ import { Address } from 'viem';
 import { useEnsName } from 'wagmi';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { SENTINEL_MODULE } from '../../../../../../utils/address';
 import SupportTooltip from '../../../../../ui/badges/SupportTooltip';
 import { CustomNonceInput } from '../../../../../ui/forms/CustomNonceInput';
 import Divider from '../../../../../ui/utils/Divider';
@@ -56,9 +57,7 @@ function RemoveSignerModal({
 
   useEffect(() => {
     const signerIndex = signers.findIndex(signer => signer === selectedSigner);
-    setPrevSigner(
-      signerIndex > 0 ? signers[signerIndex - 1] : '0x0000000000000000000000000000000000000001',
-    );
+    setPrevSigner(signerIndex > 0 ? signers[signerIndex - 1] : SENTINEL_MODULE);
   }, [selectedSigner, signers]);
 
   return (
@@ -159,7 +158,7 @@ function RemoveSignerModal({
       />
       <CustomNonceInput
         nonce={nonce}
-        onChange={newNonce => setNonce(newNonce ? newNonce : undefined)}
+        onChange={newNonce => setNonce(newNonce !== undefined ? parseInt(newNonce) : undefined)}
       />
       <Button
         isDisabled={!threshold || !nonce || !safe || nonce < safe.nonce}

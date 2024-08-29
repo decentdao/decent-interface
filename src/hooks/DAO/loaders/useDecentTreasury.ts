@@ -1,4 +1,4 @@
-import { TokenInfoResponse, TransferResponse } from '@safe-global/api-kit';
+import { TokenInfoResponse } from '@safe-global/api-kit';
 import { useEffect, useCallback, useRef } from 'react';
 import { toast } from 'react-toastify';
 import { getAddress } from 'viem';
@@ -15,7 +15,6 @@ import {
 } from '../../../types';
 import { formatCoin } from '../../../utils';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
-import { useUpdateTimer } from '../../utils/useUpdateTimer';
 
 export const useDecentTreasury = () => {
   // tracks the current valid DAO address / chain; helps prevent unnecessary calls
@@ -25,11 +24,9 @@ export const useDecentTreasury = () => {
     action,
   } = useFractal();
   const safeAPI = useSafeAPI();
-  const { getTokenBalances, getNFTBalances } = useBalancesAPI();
+  const { getTokenBalances, getNFTBalances, getDeFiBalances } = useBalancesAPI();
 
   const { chain, nativeTokenIcon } = useNetworkConfig();
-
-  const { setMethodOnInterval, clearIntervals } = useUpdateTimer(daoAddress);
 
   const formatTransfer = useCallback(
     ({ transfer, isLast }: { transfer: TransferWithTokenInfo; isLast: boolean }) => {
@@ -68,10 +65,12 @@ export const useDecentTreasury = () => {
       transfers,
       { data: tokenBalances, error: tokenBalancesError },
       { data: nftBalances, error: nftBalancesError },
+      { data: defiBalances, error: defiBalancesError },
     ] = await Promise.all([
       safeAPI.getIncomingTransactions(daoAddress),
       getTokenBalances(daoAddress),
       getNFTBalances(daoAddress),
+      getDeFiBalances(daoAddress),
     ]);
 
     if (tokenBalancesError) {
@@ -80,28 +79,42 @@ export const useDecentTreasury = () => {
     if (nftBalancesError) {
       toast(nftBalancesError, { autoClose: 2000 });
     }
+    if (defiBalancesError) {
+      toast(defiBalancesError, { autoClose: 2000 });
+    }
     const assetsFungible = tokenBalances || [];
     const assetsNonFungible = nftBalances || [];
+    const assetsDeFi = defiBalances || [];
 
-    const totalUsdValue = assetsFungible.reduce((prev, curr) => prev + (curr.usdValue || 0), 0);
+    const totalAssetsFungibleUsd = assetsFungible.reduce(
+      (prev, curr) => prev + (curr.usdValue || 0),
+      0,
+    );
+    const totalAssetsDeFiUsd = assetsDeFi.reduce(
+      (prev, curr) => prev + (curr.position?.balanceUsd || 0),
+      0,
+    );
+
+    const totalUsdValue = totalAssetsFungibleUsd + totalAssetsDeFiUsd;
 
     const treasuryData = {
       assetsFungible,
+      assetsDeFi,
       assetsNonFungible,
       totalUsdValue,
     };
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
 
-    type TransferResponse2 = TransferResponse & { tokenAddress: string };
-
     const tokenAddresses = transfers.results
-      // no null or undefined tokenAddresses
-      .filter((transfer): transfer is TransferResponse2 => !!transfer.tokenAddress)
+      // map down to just the addresses, with a type of `string | undefined`
+      .map(transfer => transfer.tokenAddress)
+      // no undefined addresses
+      .filter(address => address !== undefined)
       // make unique
       .filter((value, index, self) => self.indexOf(value) === index)
       // turn them into Address type
-      .map(transfer => getAddress(transfer.tokenAddress));
+      .map(address => getAddress(address));
 
     // Instead of this block of code, check the commented out snippet
     // below this for a half-implemented alternative.
@@ -120,6 +133,7 @@ export const useDecentTreasury = () => {
       }),
     );
 
+    // ajg 8/14/24
     // For all of these Token Addresses
     // 1. give me all of the data that lives in the cache
     //   (can "getValue" from local storage to grab these token datas)
@@ -171,14 +185,17 @@ export const useDecentTreasury = () => {
         }
       });
   }, [
-    daoAddress,
-    safeAPI,
     action,
-    getTokenBalances,
-    getNFTBalances,
+    chain.nativeCurrency.decimals,
+    chain.nativeCurrency.name,
+    chain.nativeCurrency.symbol,
+    daoAddress,
     formatTransfer,
-    chain,
+    getDeFiBalances,
+    getNFTBalances,
+    getTokenBalances,
     nativeTokenIcon,
+    safeAPI,
   ]);
 
   useEffect(() => {
@@ -188,9 +205,8 @@ export const useDecentTreasury = () => {
     }
     if (!daoAddress) {
       loadKey.current = null;
-      clearIntervals();
     }
-  }, [chain, daoAddress, loadTreasury, setMethodOnInterval, clearIntervals]);
+  }, [chain, daoAddress, loadTreasury]);
 
   return;
 };

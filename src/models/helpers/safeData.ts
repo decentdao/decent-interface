@@ -32,13 +32,13 @@ export const safeData = async (
   const createSafeCalldata = encodeFunctionData({
     functionName: 'setup',
     args: [
-      signers,
-      1, // Threshold
+      signers.map(signer => getAddress(signer)),
+      1n, // Threshold
       zeroAddress,
       zeroHash,
-      fallbackHandler,
+      getAddress(fallbackHandler),
       zeroAddress,
-      0,
+      0n,
       zeroAddress,
     ],
     abi: GnosisSafeL2ABI,
