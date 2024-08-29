@@ -617,7 +617,7 @@ export default function useCreateRoles() {
               if (payment?.streamId) {
                 const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
                   payment.streamId,
-                  payment.asset.address,
+                  payment.contractAddress,
                   roleHat.wearer,
                 );
                 hatPaymentWearerChangedTxs.push({
