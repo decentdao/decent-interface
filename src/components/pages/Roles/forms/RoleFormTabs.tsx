@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
-import { TOOLTIP_MAXW } from '../../../../constants/common';
+import { isFeatureEnabled, TOOLTIP_MAXW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -67,30 +67,32 @@ export default function RoleFormTabs({
       <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
-          <Tab
-            isDisabled={!hatsTree}
-            cursor={!hatsTree ? 'not-allowed' : 'pointer'}
-            ref={paymentsTooltipRef}
-          >
-            {!hatsTree ? (
-              <ModalTooltip
-                containerRef={paymentsTooltipRef}
-                label={t('tipPaymentsDisabled')}
-                placement="right"
-                maxW={TOOLTIP_MAXW}
-              >
-                {t('payments')}
-              </ModalTooltip>
-            ) : (
-              t('payments')
-            )}
-          </Tab>
+          {isFeatureEnabled('STREAMS') && (
+            <Tab
+              isDisabled={!hatsTree}
+              cursor={!hatsTree ? 'not-allowed' : 'pointer'}
+              ref={paymentsTooltipRef}
+            >
+              {!hatsTree ? (
+                <ModalTooltip
+                  containerRef={paymentsTooltipRef}
+                  label={t('tipPaymentsDisabled')}
+                  placement="right"
+                  maxW={TOOLTIP_MAXW}
+                >
+                  {t('payments')}
+                </ModalTooltip>
+              ) : (
+                t('payments')
+              )}
+            </Tab>
+          )}
         </TabList>
         <TabPanels my="1.75rem">
           <TabPanel>
             <RoleFormInfo />
           </TabPanel>
-          {!!hatsTree && (
+          {isFeatureEnabled('STREAMS') && !!hatsTree && (
             <TabPanel>
               <RoleFormPaymentStreams />
             </TabPanel>
