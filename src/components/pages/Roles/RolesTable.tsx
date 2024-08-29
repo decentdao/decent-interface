@@ -53,7 +53,7 @@ function RoleNameEditColumn({
   roleName,
   editStatus,
 }: {
-  roleName: string;
+  roleName?: string;
   editStatus?: EditBadgeStatus;
 }) {
   return (
