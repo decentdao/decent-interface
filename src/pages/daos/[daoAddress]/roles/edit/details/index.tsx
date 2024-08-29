@@ -23,6 +23,7 @@ import {
   EditBadgeStatus,
   EditedRole,
   RoleFormValues,
+  RoleHatFormValue,
 } from '../../../../../../components/pages/Roles/types';
 import DraggableDrawer from '../../../../../../components/ui/containers/DraggableDrawer';
 import { ModalBase } from '../../../../../../components/ui/modals/ModalBase';
@@ -205,7 +206,7 @@ export default function RoleEditDetails() {
         </>
       )}
       <FieldArray name="hats">
-        {({ push }) => (
+        {({ push }: { push: (roleHatFormValue: RoleHatFormValue) => void }) => (
           <>
             <Show below="md">
               <Portal>

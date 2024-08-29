@@ -9,7 +9,7 @@ import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierPayment } from '../../../components/pages/Roles/types';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore, DecentHatsError } from '../../../store/roles';
+import { DecentHatsError, useRolesStore } from '../../../store/roles';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
@@ -247,19 +247,16 @@ const useHatsTree = () => {
                     endDate,
                     cliffDate,
                     isStreaming: () => {
-                      const start =
-                        lockupLinearStream.cliff === undefined &&
-                        lockupLinearStream.startTime !== undefined
-                          ? startDate.getTime()
-                          : cliffDate !== undefined
-                            ? cliffDate.getTime()
-                            : undefined;
+                      const start = !lockupLinearStream.cliff
+                        ? startDate.getTime()
+                        : cliffDate !== undefined
+                          ? cliffDate.getTime()
+                          : undefined;
                       const end = endDate ? endDate.getTime() : undefined;
                       const cancelled = lockupLinearStream.canceled;
                       const now = new Date().getTime();
-                      const isStreaming =
-                        !cancelled && !!start && !!end && start <= now && end > now;
-                      return isStreaming;
+
+                      return !cancelled && !!start && !!end && start <= now && end > now;
                     },
                   };
                 },

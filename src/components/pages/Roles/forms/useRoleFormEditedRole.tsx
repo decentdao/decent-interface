@@ -1,12 +1,13 @@
 import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
-import { zeroAddress } from 'viem';
 import { DecentTree } from '../../../../store/roles';
-import { RoleHatFormValue, EditedRole, EditBadgeStatus, RoleFormValues } from '../types';
+import { EditedRole, EditBadgeStatus, RoleFormValues } from '../types';
 
-const addRemoveField = (fieldNames: string[], fieldName: string, isRemoved: boolean) => {
-  if (fieldNames.includes(fieldName) && isRemoved) {
+const addRemoveField = (fieldNames: string[], fieldName: string, hasChanges: boolean) => {
+  if (fieldNames.includes(fieldName) && !hasChanges) {
     return fieldNames.filter(field => field !== fieldName);
+  } else if (!fieldNames.includes(fieldName) && !hasChanges) {
+    return fieldNames;
   }
   return [...fieldNames, fieldName];
 };
@@ -15,10 +16,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
   const { values } = useFormikContext<RoleFormValues>();
   const existingRoleHat = useMemo(
     () =>
-      hatsTree?.roleHats.find(
-        (role: RoleHatFormValue) =>
-          !!values.roleEditing && role.id === values.roleEditing.id && role.id !== zeroAddress,
-      ),
+      hatsTree?.roleHats.find(role => !!values.roleEditing && role.id === values.roleEditing.id),
     [values.roleEditing, hatsTree],
   );
   const isRoleNameUpdated = !!existingRoleHat && values.roleEditing?.name !== existingRoleHat.name;

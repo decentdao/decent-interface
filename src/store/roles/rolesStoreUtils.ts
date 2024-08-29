@@ -1,17 +1,7 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import {
-  Address,
-  Hex,
-  PublicClient,
-  encodePacked,
-  getContract,
-  keccak256,
-  toHex,
-  getAddress,
-} from 'viem';
+import { Address, Hex, PublicClient, encodePacked, getContract, keccak256 } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
-import { RoleHatFormValue, SablierPayment } from '../../components/pages/Roles/types';
-import { getRandomBytes } from '../../helpers';
+import { SablierPayment } from '../../components/pages/Roles/types';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -177,10 +167,6 @@ export const predictAccountAddress = (params: PredictAccountParams) => {
     client: publicClient,
   });
 
-  if (!publicClient.chain) {
-    throw new Error('Public client needs to be on a chain');
-  }
-
   const salt = getERC6551RegistrySalt(chainId, decentHats);
 
   return erc6551RegistryContract.read.account([
@@ -302,51 +288,4 @@ export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsC
 
   // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
   return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
-};
-
-export async function getNewRole({
-  adminHatId,
-  hatsCount,
-  chainId,
-  publicClient,
-  implementation,
-  tokenContract,
-  registryAddress,
-  decentHats,
-}: {
-  adminHatId?: Hex;
-  hatsCount: number;
-} & Omit<PredictAccountParams, 'tokenId'>): Promise<RoleHatFormValue> {
-  // @dev creates a unique id for the hat for new hats for use in form, not stored on chain
-  const id = adminHatId
-    ? toHex(predictHatId({ adminHatId, hatsCount }))
-    : toHex(getRandomBytes(), { size: 32 });
-  return {
-    id,
-    wearer: '',
-    name: '',
-    description: '',
-    prettyId: '',
-    smartAddress: await predictAccountAddress({
-      implementation,
-      chainId: BigInt(chainId),
-      tokenContract,
-      tokenId: BigInt(id),
-      registryAddress,
-      publicClient,
-      decentHats,
-    }),
-  };
-}
-
-export const normalizeRoleFormData = (role: RoleHatFormValue): DecentRoleHat => {
-  return {
-    id: role.id,
-    prettyId: role.prettyId,
-    wearer: getAddress(role.wearer),
-    name: role.name,
-    description: role.description,
-    smartAddress: role.smartAddress,
-    payments: role.payments as SablierPayment[] | undefined,
-  };
 };

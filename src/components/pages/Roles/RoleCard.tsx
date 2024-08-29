@@ -19,7 +19,7 @@ export function AvatarAndRoleName({
   paymentsCount,
 }: {
   wearerAddress: string | undefined;
-  name: string;
+  name?: string;
   paymentsCount?: number;
 }) {
   const { addressPrefix } = useNetworkConfig();

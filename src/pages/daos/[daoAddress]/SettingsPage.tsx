@@ -1,12 +1,19 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Center } from '@chakra-ui/react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DAOSettingsContent } from '../../../components/pages/DaoSettings/DAOSettingsContent';
 import { BarLoader } from '../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../components/ui/page/Header/PageHeader';
 import { useHeaderHeight } from '../../../constants/common';
+import { analyticsEvents } from '../../../insights/analyticsEvents';
 import { useFractal } from '../../../providers/App/AppProvider';
 
 export function SettingsPage() {
+  useEffect(() => {
+    amplitude.track(analyticsEvents.SafeSettingsPageOpened);
+  }, []);
+
   const { t } = useTranslation('breadcrumbs');
   const {
     node: { safe, daoName },

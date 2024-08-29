@@ -53,7 +53,7 @@ function RoleNameEditColumn({
   roleName,
   editStatus,
 }: {
-  roleName: string;
+  roleName?: string;
   editStatus?: EditBadgeStatus;
 }) {
   return (
@@ -221,7 +221,7 @@ export function RolesRowEdit({
         editStatus={editStatus}
       />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentsColumn paymentsCount={payments?.length} />
+      <PaymentsColumn paymentsCount={payments?.filter(p => p.isStreaming()).length || undefined} />
     </Tr>
   );
 }
@@ -265,7 +265,7 @@ export function RolesTable({
                 paymentsCount={
                   role.payments === undefined
                     ? undefined
-                    : role.payments.filter(p => p.isStreaming()).length
+                    : role.payments.filter(p => p.isStreaming()).length || undefined
                 }
               />
             ))}
