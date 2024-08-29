@@ -7,7 +7,7 @@ import {
   Question,
   Scroll,
   SquaresFour,
-  UsersThree,
+  // UsersThree,
 } from '@phosphor-icons/react';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { URL_CHAT, URL_DOCS, URL_FAQ } from '../../../../constants/url';
@@ -97,14 +97,14 @@ function InternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
           scope="internal"
           closeDrawer={closeDrawer}
         />
-        <NavigationLink
+        {/* <NavigationLink
           href={DAO_ROUTES.roles.relative(addressPrefix, daoAddress)}
           labelKey="roles"
           testId="navigation-rolesLink"
           NavigationIcon={UsersThree}
           scope="internal"
           closeDrawer={closeDrawer}
-        />
+        /> */}
         <NavigationLink
           href={DAO_ROUTES.hierarchy.relative(addressPrefix, daoAddress)}
           labelKey="nodes"
