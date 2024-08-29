@@ -1,5 +1,7 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { Box } from '@chakra-ui/react';
 import { X } from '@phosphor-icons/react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../../../../components/DaoCreator';
@@ -9,6 +11,7 @@ import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useDeployAzorius from '../../../../../hooks/DAO/useDeployAzorius';
 import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayName';
+import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
@@ -19,6 +22,10 @@ import {
 } from '../../../../../types';
 
 export default function ModifyGovernancePage() {
+  useEffect(() => {
+    amplitude.track(analyticsEvents.ModifyGovernancePageOpened);
+  }, []);
+
   const {
     node: { daoAddress, safe, daoName, daoSnapshotENS },
     governance: { type },
