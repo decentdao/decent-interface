@@ -160,4 +160,5 @@ export type PreparedEditedStreamData = PreparedNewStreamData & {
   roleHatId: bigint;
   roleHatWearer: Address;
   roleHatSmartAddress: Address;
+  streamContractAddress: Address;
 };

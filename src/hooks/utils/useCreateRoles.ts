@@ -219,6 +219,7 @@ const identifyAndPrepareEditedPaymentStreams = (
           roleHatId: BigInt(currentHat.id),
           roleHatWearer: currentHat.wearer,
           roleHatSmartAddress: currentHat.smartAddress,
+          streamContractAddress: payment.contractAddress,
         };
       });
   });
@@ -554,7 +555,7 @@ export default function useCreateRoles() {
                 if (payment?.streamId) {
                   const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
                     payment.streamId,
-                    payment.asset.address,
+                    payment.contractAddress,
                     roleHat.wearer,
                   );
                   wrappedFlushStreamTxs.push(wrappedFlushStreamTx);
@@ -670,36 +671,9 @@ export default function useCreateRoles() {
       if (editedPaymentStreams.length) {
         const paymentCancelTxs: { calldata: Hex; targetAddress: Address }[] = [];
         editedPaymentStreams.forEach(paymentStream => {
-          const preparedHatFlushAndCancelTxs = prepareHatFlushAndCancelPayment(
-            paymentStream.streamId,
-            paymentStream.assetAddress,
-            paymentStream.roleHatWearer,
-          );
-          paymentCancelTxs.push({
-            calldata: encodeFunctionData({
-              abi: HatsAbi,
-              functionName: 'transferHat',
-              args: [BigInt(paymentStream.roleHatId), paymentStream.roleHatWearer, daoAddress],
-            }),
-            targetAddress: hatsProtocol,
-          });
-          paymentCancelTxs.push({
-            calldata: preparedHatFlushAndCancelTxs.wrappedFlushStreamTx,
-            targetAddress: paymentStream.roleHatSmartAddress,
-          });
-          paymentCancelTxs.push(preparedHatFlushAndCancelTxs.cancelStreamTx);
-          paymentCancelTxs.push({
-            calldata: encodeFunctionData({
-              abi: HatsAbi,
-              functionName: 'transferHat',
-              args: [BigInt(paymentStream.roleHatId), daoAddress, paymentStream.roleHatWearer],
-            }),
-            targetAddress: hatsProtocol,
-          });
-
           const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
             paymentStream.streamId,
-            paymentStream.assetAddress,
+            paymentStream.streamContractAddress,
             paymentStream.roleHatWearer,
           );
           paymentCancelTxs.push({
