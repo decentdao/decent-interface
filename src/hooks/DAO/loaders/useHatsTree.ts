@@ -213,6 +213,7 @@ const useHatsTree = () => {
                     bigintValue: BigInt(lockupLinearStream.depositAmount),
                     value: parsedAmount,
                   },
+                  isCancelled: lockupLinearStream.canceled,
                   startDate,
                   endDate,
                   cliffDate,

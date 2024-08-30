@@ -545,23 +545,19 @@ export default function useCreateRoles() {
       }
 
       if (removedHatIds.length) {
-        removeHatTxs = removedHatIds.map(hatId => {
+        removedHatIds.forEach(hatId => {
           const roleHat = hatsTree.roleHats.find(hat => hat.id === hatId);
-          if (roleHat) {
-            if (roleHat.payments?.length) {
-              const wrappedFlushStreamTxs: Hex[] = [];
-              const cancelStreamTxs: { calldata: Hex; targetAddress: Address }[] = [];
-              roleHat.payments.forEach(payment => {
-                if (payment?.streamId) {
-                  const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
-                    payment.streamId,
-                    payment.contractAddress,
-                    roleHat.wearer,
-                  );
-                  wrappedFlushStreamTxs.push(wrappedFlushStreamTx);
-                  cancelStreamTxs.push(cancelStreamTx);
-                }
-              });
+          if (roleHat && roleHat.payments?.length) {
+            /**
+             * Assumption: current state of blockchain
+             * Fact: does the hat currently have funds to withdraw
+             * Do: if yes, then flush the stream
+             */
+
+            const fundsToClaimStreams = roleHat.payments.filter(
+              payment => payment.withdrawableAmount > 0n,
+            );
+            if (fundsToClaimStreams.length) {
               hatPaymentHatRemovedTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -570,15 +566,32 @@ export default function useCreateRoles() {
                 }),
                 targetAddress: hatsProtocol,
               });
-              wrappedFlushStreamTxs.forEach(wrappedFlushStreamTx => {
+              fundsToClaimStreams.forEach(payment => {
+                const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
+                  payment.streamId,
+                  payment.contractAddress,
+                  roleHat.wearer,
+                );
                 hatPaymentHatRemovedTxs.push({
                   calldata: wrappedFlushStreamTx,
                   targetAddress: roleHat.smartAddress,
                 });
               });
-              cancelStreamTxs.forEach(cancelStreamTx => {
-                hatPaymentHatRemovedTxs.push(cancelStreamTx);
-              });
+            }
+            /**
+             * Assumption: current state of blockchain
+             * Fact: does the hat currently have funds that are not active or have not ended
+             * Do: if yes, then cancel the stream
+             */
+            const streamsToCancel = roleHat.payments.filter(
+              payment => !payment.isCancelled && payment.endDate > new Date(),
+            );
+            streamsToCancel.forEach(payment => {
+              hatPaymentHatRemovedTxs.push(
+                prepareCancelStreamTx(payment.streamId, payment.contractAddress),
+              );
+            });
+            if (streamsToCancel.length || fundsToClaimStreams.length) {
               hatPaymentHatRemovedTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -591,20 +604,22 @@ export default function useCreateRoles() {
           }
 
           // make transaction proxy through erc6551 contract
-          return encodeFunctionData({
-            abi: HatsAccount1ofNAbi,
-            functionName: 'execute',
-            args: [
-              hatsProtocol,
-              0n,
-              encodeFunctionData({
-                abi: HatsAbi,
-                functionName: 'setHatStatus',
-                args: [BigInt(hatId), false],
-              }),
-              0,
-            ],
-          });
+          removeHatTxs.push(
+            encodeFunctionData({
+              abi: HatsAccount1ofNAbi,
+              functionName: 'execute',
+              args: [
+                hatsProtocol,
+                0n,
+                encodeFunctionData({
+                  abi: HatsAbi,
+                  functionName: 'setHatStatus',
+                  args: [BigInt(hatId), false],
+                }),
+                0,
+              ],
+            }),
+          );
         });
       }
 
@@ -718,6 +733,7 @@ export default function useCreateRoles() {
         targets: [
           ...createAndMintHatsTxs.map(() => hatsProtocol),
           ...smartAccountTxs.map(({ targetAddress }) => targetAddress),
+          ...hatPaymentHatRemovedTxs.map(({ targetAddress }) => targetAddress),
           ...removeHatTxs.map(() => topHatAccount),
           ...hatPaymentWearerChangedTxs.map(({ targetAddress }) => targetAddress),
           ...transferHatTxs.map(() => hatsProtocol),
@@ -728,6 +744,7 @@ export default function useCreateRoles() {
         calldatas: [
           ...createAndMintHatsTxs,
           ...smartAccountTxs.map(({ calldata }) => calldata),
+          ...hatPaymentHatRemovedTxs.map(({ calldata }) => calldata),
           ...removeHatTxs,
           ...hatPaymentWearerChangedTxs.map(({ calldata }) => calldata),
           ...transferHatTxs,
@@ -739,6 +756,7 @@ export default function useCreateRoles() {
         values: [
           ...createAndMintHatsTxs.map(() => 0n),
           ...smartAccountTxs.map(() => 0n),
+          ...hatPaymentHatRemovedTxs.map(() => 0n),
           ...removeHatTxs.map(() => 0n),
           ...hatPaymentWearerChangedTxs.map(() => 0n),
           ...transferHatTxs.map(() => 0n),

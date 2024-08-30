@@ -23,6 +23,7 @@ export interface SablierPayment extends BaseSablierStream {
   cliffDate: Date | undefined;
   isStreaming: () => boolean;
   withdrawableAmount: bigint;
+  isCancelled: boolean;
 }
 
 export interface SablierPaymentFormValues extends Partial<SablierPayment> {

@@ -55,6 +55,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                   asset: payment.asset,
                   cliffDate: payment.cliffDate,
                   withdrawableAmount: 0n,
+                  isCancelled: false,
                 };
               })
             : [],
