@@ -693,6 +693,11 @@ export default function useCreateRoles() {
       }
 
       if (editedPaymentStreams.length) {
+        /**
+         * Assumption: current state of blockchain
+         * Fact: does the hat currently have funds to withdraw
+         * Do: if yes, then flush the stream
+         */
         const paymentCancelTxs: { calldata: Hex; targetAddress: Address }[] = [];
         editedPaymentStreams.forEach(paymentStream => {
           const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
@@ -708,6 +713,11 @@ export default function useCreateRoles() {
             }),
             targetAddress: hatsProtocol,
           });
+          const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
+            paymentStream.streamId,
+            paymentStream.streamContractAddress,
+            paymentStream.roleHatWearer,
+          );
           paymentCancelTxs.push({
             calldata: wrappedFlushStreamTx,
             targetAddress: paymentStream.roleHatSmartAddress,
@@ -771,6 +781,7 @@ export default function useCreateRoles() {
     [
       hatsProtocol,
       hatsTree,
+      prepareCancelStreamTx,
       prepareHatFlushAndCancelPayment,
       prepareHatsAccountFlushExecData,
       daoAddress,
