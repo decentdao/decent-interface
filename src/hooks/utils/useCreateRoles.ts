@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { Address, encodeFunctionData, getAddress, Hash, Hex, zeroAddress } from 'viem';
+import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import DecentHatsAbi from '../../assets/abi/DecentHats_0_1_0_Abi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
@@ -609,47 +609,56 @@ export default function useCreateRoles() {
       }
 
       if (memberChangedHats.length) {
-        transferHatTxs = memberChangedHats
-          .map(({ id, currentWearer, newWearer }) => {
-            const roleHat = hatsTree.roleHats.find(hat => hat.id === id);
-            if (roleHat && roleHat.payments?.length) {
-              const payment = roleHat.payments[0];
-              if (payment?.streamId) {
+        memberChangedHats.map(({ id, currentWearer, newWearer }) => {
+          const roleHat = hatsTree.roleHats.find(hat => hat.id === id);
+          if (roleHat && roleHat.payments?.length) {
+            /**
+             * Assumption: current state of blockchain
+             * Fact: does the hat currently have funds to withdraw
+             * Do: if yes, then flush the stream
+             */
+            const fundsToClaimStreams = roleHat.payments.filter(
+              payment => payment.withdrawableAmount > 0n,
+            );
+            if (fundsToClaimStreams.length) {
+              hatPaymentWearerChangedTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsAbi,
+                  functionName: 'transferHat',
+                  args: [BigInt(id), currentWearer, daoAddress],
+                }),
+                targetAddress: hatsProtocol,
+              });
+              fundsToClaimStreams.forEach(payment => {
                 const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
                   payment.streamId,
                   payment.contractAddress,
                   roleHat.wearer,
                 );
                 hatPaymentWearerChangedTxs.push({
-                  calldata: encodeFunctionData({
-                    abi: HatsAbi,
-                    functionName: 'transferHat',
-                    args: [BigInt(id), currentWearer, daoAddress],
-                  }),
-                  targetAddress: hatsProtocol,
-                });
-                hatPaymentWearerChangedTxs.push({
                   calldata: wrappedFlushStreamTx,
                   targetAddress: roleHat.smartAddress,
                 });
-                hatPaymentWearerChangedTxs.push({
-                  calldata: encodeFunctionData({
-                    abi: HatsAbi,
-                    functionName: 'transferHat',
-                    args: [BigInt(id), daoAddress, newWearer],
-                  }),
-                  targetAddress: hatsProtocol,
-                });
-              }
-            } else {
-              return encodeFunctionData({
-                abi: HatsAbi,
-                functionName: 'transferHat',
-                args: [BigInt(id), currentWearer, newWearer],
+              });
+              hatPaymentWearerChangedTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsAbi,
+                  functionName: 'transferHat',
+                  args: [BigInt(id), daoAddress, newWearer],
+                }),
+                targetAddress: hatsProtocol,
               });
             }
-          })
-          .filter(data => !!data) as Hash[];
+          } else {
+            transferHatTxs.push(
+              encodeFunctionData({
+                abi: HatsAbi,
+                functionName: 'transferHat',
+                args: [BigInt(id), daoAddress, newWearer],
+              }),
+            );
+          }
+        });
       }
 
       if (roleDetailsChangedHats.length) {
@@ -710,6 +719,7 @@ export default function useCreateRoles() {
           ...createAndMintHatsTxs.map(() => hatsProtocol),
           ...smartAccountTxs.map(({ targetAddress }) => targetAddress),
           ...removeHatTxs.map(() => topHatAccount),
+          ...hatPaymentWearerChangedTxs.map(({ targetAddress }) => targetAddress),
           ...transferHatTxs.map(() => hatsProtocol),
           ...hatDetailsChangedTxs.map(() => hatsProtocol),
           ...hatPaymentAddedTxs.map(({ targetAddress }) => targetAddress),
@@ -719,6 +729,7 @@ export default function useCreateRoles() {
           ...createAndMintHatsTxs,
           ...smartAccountTxs.map(({ calldata }) => calldata),
           ...removeHatTxs,
+          ...hatPaymentWearerChangedTxs.map(({ calldata }) => calldata),
           ...transferHatTxs,
           ...hatDetailsChangedTxs,
           ...hatPaymentAddedTxs.map(({ calldata }) => calldata),
@@ -729,6 +740,7 @@ export default function useCreateRoles() {
           ...createAndMintHatsTxs.map(() => 0n),
           ...smartAccountTxs.map(() => 0n),
           ...removeHatTxs.map(() => 0n),
+          ...hatPaymentWearerChangedTxs.map(() => 0n),
           ...transferHatTxs.map(() => 0n),
           ...hatDetailsChangedTxs.map(() => 0n),
           ...hatPaymentAddedTxs.map(() => 0n),

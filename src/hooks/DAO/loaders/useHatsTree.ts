@@ -2,13 +2,15 @@ import { useApolloClient } from '@apollo/client';
 import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { formatUnits, getAddress } from 'viem';
+import { formatUnits, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
+import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
 import { SablierPayment } from '../../../components/pages/Roles/types';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentHatsError, useRolesStore } from '../../../store/roles';
+import { convertStreamIdToBigInt } from '../../streams/useCreateSablierStream';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
@@ -154,7 +156,13 @@ const useHatsTree = () => {
 
   useEffect(() => {
     async function getHatsStreams() {
-      if (sablierSubgraph && hatsTree && hatsTree.roleHats.length > 0 && !streamsFetched) {
+      if (
+        sablierSubgraph &&
+        hatsTree &&
+        hatsTree.roleHats.length > 0 &&
+        !streamsFetched &&
+        publicClient
+      ) {
         const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
         const updatedHatsRoles = await Promise.all(
           hatsTree.roleHats.map(async hat => {
@@ -176,56 +184,70 @@ const useHatsTree = () => {
               const lockupLinearStreams = streamQueryResult.data.streams.filter(
                 stream => stream.category === 'LockupLinear',
               );
-              const formattedActiveStreams: SablierPayment[] = lockupLinearStreams.map(
-                lockupLinearStream => {
-                  const parsedAmount = formatUnits(
-                    BigInt(lockupLinearStream.depositAmount),
-                    lockupLinearStream.asset.decimals,
-                  );
+              const formattedLinearStreams = lockupLinearStreams.map(lockupLinearStream => {
+                const parsedAmount = formatUnits(
+                  BigInt(lockupLinearStream.depositAmount),
+                  lockupLinearStream.asset.decimals,
+                );
 
-                  const startDate = secondsTimestampToDate(lockupLinearStream.startTime);
-                  const endDate = secondsTimestampToDate(lockupLinearStream.endTime);
-                  const cliffDate = lockupLinearStream.cliff
-                    ? secondsTimestampToDate(lockupLinearStream.cliffTime)
-                    : undefined;
+                const startDate = secondsTimestampToDate(lockupLinearStream.startTime);
+                const endDate = secondsTimestampToDate(lockupLinearStream.endTime);
+                const cliffDate = lockupLinearStream.cliff
+                  ? secondsTimestampToDate(lockupLinearStream.cliffTime)
+                  : undefined;
 
-                  return {
-                    streamId: lockupLinearStream.id,
-                    contractAddress: lockupLinearStream.contract.address,
-                    asset: {
-                      address: getAddress(
-                        lockupLinearStream.asset.address,
-                        lockupLinearStream.asset.chainId,
-                      ),
-                      name: lockupLinearStream.asset.name,
-                      symbol: lockupLinearStream.asset.symbol,
-                      decimals: lockupLinearStream.asset.decimals,
-                      logo: '', // @todo - how do we get logo?
-                    },
-                    amount: {
-                      bigintValue: BigInt(lockupLinearStream.depositAmount),
-                      value: parsedAmount,
-                    },
-                    startDate,
-                    endDate,
-                    cliffDate,
-                    isStreaming: () => {
-                      const start = !lockupLinearStream.cliff
-                        ? startDate.getTime()
-                        : cliffDate !== undefined
-                          ? cliffDate.getTime()
-                          : undefined;
-                      const end = endDate ? endDate.getTime() : undefined;
-                      const cancelled = lockupLinearStream.canceled;
-                      const now = new Date().getTime();
+                return {
+                  streamId: lockupLinearStream.id,
+                  contractAddress: lockupLinearStream.contract.address,
+                  asset: {
+                    address: getAddress(
+                      lockupLinearStream.asset.address,
+                      lockupLinearStream.asset.chainId,
+                    ),
+                    name: lockupLinearStream.asset.name,
+                    symbol: lockupLinearStream.asset.symbol,
+                    decimals: lockupLinearStream.asset.decimals,
+                    logo: '', // @todo - how do we get logo?
+                  },
+                  amount: {
+                    bigintValue: BigInt(lockupLinearStream.depositAmount),
+                    value: parsedAmount,
+                  },
+                  startDate,
+                  endDate,
+                  cliffDate,
+                  isStreaming: () => {
+                    const start = !lockupLinearStream.cliff
+                      ? startDate.getTime()
+                      : cliffDate !== undefined
+                        ? cliffDate.getTime()
+                        : undefined;
+                    const end = endDate ? endDate.getTime() : undefined;
+                    const cancelled = lockupLinearStream.canceled;
+                    const now = new Date().getTime();
 
-                      return !cancelled && !!start && !!end && start <= now && end > now;
-                    },
-                  };
-                },
+                    return !cancelled && !!start && !!end && start <= now && end > now;
+                  },
+                };
+              });
+
+              const streamsWithCurrentWithdrawableAmounts: SablierPayment[] = await Promise.all(
+                formattedLinearStreams.map(async stream => {
+                  const streamContract = getContract({
+                    abi: SablierV2LockupLinearAbi,
+                    address: stream.contractAddress,
+                    client: publicClient,
+                  });
+                  const bigintStreamId = convertStreamIdToBigInt(stream.streamId);
+
+                  const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
+                    bigintStreamId,
+                  ]);
+                  return { ...stream, withdrawableAmount: newWithdrawableAmount };
+                }),
               );
 
-              return { ...hat, payments: formattedActiveStreams };
+              return { ...hat, payments: streamsWithCurrentWithdrawableAmounts };
             } else {
               return hat;
             }
@@ -237,7 +259,14 @@ const useHatsTree = () => {
     }
 
     getHatsStreams();
-  }, [apolloClient, hatsTree, sablierSubgraph, updateRolesWithStreams, streamsFetched]);
+  }, [
+    apolloClient,
+    hatsTree,
+    sablierSubgraph,
+    updateRolesWithStreams,
+    streamsFetched,
+    publicClient,
+  ]);
 };
 
 export { useHatsTree };

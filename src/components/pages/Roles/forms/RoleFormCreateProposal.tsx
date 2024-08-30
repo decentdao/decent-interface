@@ -54,10 +54,11 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                   amount: payment.amount,
                   asset: payment.asset,
                   cliffDate: payment.cliffDate,
+                  withdrawableAmount: 0n,
                 };
               })
             : [],
-        };
+          };
       });
   }, [values.hats]);
 
