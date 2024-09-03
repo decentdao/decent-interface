@@ -339,8 +339,7 @@ export default function useCreateRoles() {
 
   const { submitProposal } = useSubmitProposal();
   const {
-    prepareLinearStream,
-    // prepareBatchLinearStreamCreation,
+    prepareBatchLinearStreamCreation,
     // prepareFlushStreamTx,
     // prepareCancelStreamTx,
   } = useCreateSablierStream();
@@ -929,13 +928,37 @@ export default function useCreateRoles() {
         allTxs.push(createSmartAccountTx(BigInt(newHatId)));
 
         //     - does it have any streams?
-        if (formHat.payments !== undefined && formHat.payments.length > 0) {
-          //       - allTxs.push(create new streams transactions datas)
-          // allTxs.push(...prepareBatchLinearStreamCreation(formHat.payments));
+        const newStreams =
+          !!formHat?.payments && formHat.payments.filter(payment => !payment.streamId);
+        if (!!newStreams && newStreams.length > 0) {
+          const newPredictedHatSmartAccount = await predictSmartAccount(newHatId);
+          const preparedNewStreams = newStreams.map(stream => {
+            if (
+              !stream.asset ||
+              !stream.startDate ||
+              !stream.endDate ||
+              !stream.amount?.bigintValue ||
+              stream.amount.bigintValue <= 0n
+            ) {
+              throw new Error('Form Values inValid', {
+                cause: stream,
+              });
+            }
 
-          // @david i'm here
-          const foo = prepareLinearStream(formHat.payments[0]);
-          allTxs.push();
+            return {
+              recipient: newPredictedHatSmartAccount,
+              startDateTs: Math.floor(stream.startDate.getTime() / 1000),
+              endDateTs: Math.ceil(stream.endDate.getTime() / 1000),
+              cliffDateTs: Math.floor((stream.cliffDate?.getTime() ?? 0) / 1000),
+              totalAmount: stream.amount.bigintValue,
+              assetAddress: stream.asset.address,
+            };
+          });
+
+          //       - allTxs.push(create new streams transactions datas)
+          const newStreamTxData = prepareBatchLinearStreamCreation(preparedNewStreams);
+          allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
+          allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
         }
       } else if (formHat.editedRole.status === EditBadgeStatus.Removed) {
         // Deleted Role
@@ -945,7 +968,7 @@ export default function useCreateRoles() {
         //       - allTxs.push(flush and cancel stream transactions data)
         //     - allTxs.push(deactivate role transaction data)
       } else {
-        // Edited Role
+        // Edited Role (existing role)
         //   - else
         //     - is the name or description changed?
         //       - allTxs.push(edit details data)
@@ -961,6 +984,8 @@ export default function useCreateRoles() {
         //       - if stream was edited
         //         - allTxs.push(flush and cancel stream transaction data)
         //         - allTxs.push(create new stream transaction data)
+        //     - for each new streams
+        //       - allTxs.push(create new stream transaction data)
       }
     }
 
@@ -1017,6 +1042,7 @@ export default function useCreateRoles() {
           }
 
           const allTxs = await prepareAllTxs(modifiedHats);
+          console.log("🚀 ~ allTxs:", allTxs)
 
           // Convert addedHats to include predicted id
           // const addedHatsWithIds = await Promise.all(
@@ -1072,15 +1098,15 @@ export default function useCreateRoles() {
           };
         }
 
-        // All done, submit the proposal!
-        await submitProposal({
-          proposalData,
-          nonce: values.customNonce ?? safe.nextNonce,
-          pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
-          successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
-          failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-          successCallback: submitProposalSuccessCallback,
-        });
+        // // All done, submit the proposal!
+        // await submitProposal({
+        //   proposalData,
+        //   nonce: values.customNonce ?? safe.nextNonce,
+        //   pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+        //   successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+        //   failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+        //   successCallback: submitProposalSuccessCallback,
+        // });
       } catch (e) {
         console.error(e);
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
