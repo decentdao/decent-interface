@@ -713,11 +713,6 @@ export default function useCreateRoles() {
             }),
             targetAddress: hatsProtocol,
           });
-          const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
-            paymentStream.streamId,
-            paymentStream.streamContractAddress,
-            paymentStream.roleHatWearer,
-          );
           paymentCancelTxs.push({
             calldata: wrappedFlushStreamTx,
             targetAddress: paymentStream.roleHatSmartAddress,
