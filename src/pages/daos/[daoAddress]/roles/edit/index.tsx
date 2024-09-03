@@ -1,7 +1,8 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Button, Flex, Hide, Show } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Formik } from 'formik';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, toHex } from 'viem';
@@ -20,12 +21,17 @@ import { getRandomBytes } from '../../../../../helpers';
 import { useRolesSchema } from '../../../../../hooks/schemas/roles/useRolesSchema';
 import useCreateRoles from '../../../../../hooks/utils/useCreateRoles';
 import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBlocker';
+import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../store/roles';
 import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
+  useEffect(() => {
+    amplitude.track(analyticsEvents.RolesEditPageOpened);
+  }, []);
+
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
   const {
     node: { daoAddress, safe },

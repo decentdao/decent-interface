@@ -1,5 +1,6 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Divider, Flex, Grid, GridItem, Show } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Assets } from '../../../../components/pages/DAOTreasury/components/Assets';
 import {
@@ -12,9 +13,13 @@ import { ModalType } from '../../../../components/ui/modals/ModalProvider';
 import { useDecentModal } from '../../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
+import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function Treasury() {
+  useEffect(() => {
+    amplitude.track(analyticsEvents.TreasuryPageOpened);
+  }, []);
   const {
     node: { daoName },
     treasury: { assetsFungible, transfers },

@@ -3,6 +3,7 @@ import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex, getAddress, zeroAddress } from 'viem';
+import { isFeatureEnabled } from '../../../constants/common';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -37,13 +38,15 @@ function RolesHeader() {
           {t('role')}
         </Th>
         <Th width="60%">{t('member')}</Th>
-        <Th
-          width="15%"
-          minWidth="140px"
-          textAlign="center"
-        >
-          {t('activePayments')}
-        </Th>
+        {isFeatureEnabled('STREAMS') && (
+          <Th
+            width="15%"
+            minWidth="140px"
+            textAlign="center"
+          >
+            {t('activePayments')}
+          </Th>
+        )}
       </Tr>
     </Thead>
   );
@@ -191,7 +194,7 @@ export function RolesRow({
         {name}
       </Td>
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentsColumn paymentsCount={paymentsCount} />
+      {isFeatureEnabled('STREAMS') && <PaymentsColumn paymentsCount={paymentsCount} />}
     </Tr>
   );
 }
@@ -221,7 +224,11 @@ export function RolesRowEdit({
         editStatus={editStatus}
       />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentsColumn paymentsCount={payments?.filter(p => p.isStreaming()).length || undefined} />
+      {isFeatureEnabled('STREAMS') && (
+        <PaymentsColumn
+          paymentsCount={payments?.filter(p => p.isStreaming()).length || undefined}
+        />
+      )}
     </Tr>
   );
 }

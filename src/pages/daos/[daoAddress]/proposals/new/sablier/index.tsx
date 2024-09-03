@@ -1,3 +1,4 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import {
   Accordion,
   AccordionButton,
@@ -69,6 +70,7 @@ import { useHeaderHeight } from '../../../../../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../../constants/routes';
 import useSubmitProposal from '../../../../../../hooks/DAO/proposal/useSubmitProposal';
 import { useCanUserCreateProposal } from '../../../../../../hooks/utils/useCanUserSubmitProposal';
+import { analyticsEvents } from '../../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { BigIntValuePair, CreateProposalSteps } from '../../../../../../types';
@@ -729,6 +731,10 @@ function StreamsBuilder({
 }
 
 export default function SablierProposalCreatePage() {
+  useEffect(() => {
+    amplitude.track(analyticsEvents.SablierProposalCreatePageOpened);
+  }, []);
+
   const {
     node: { daoAddress, safe },
     governance: { type },
