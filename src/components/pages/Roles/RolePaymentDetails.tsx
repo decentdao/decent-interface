@@ -1,17 +1,16 @@
 import { Box, Button, Flex, Grid, GridItem, Icon, Image, Text } from '@chakra-ui/react';
 import { Calendar, Download } from '@phosphor-icons/react';
 import { format } from 'date-fns';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Address, getAddress, getContract } from 'viem';
-import { useWalletClient, useAccount } from 'wagmi';
-import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
+import { Address, getAddress } from 'viem';
+import { useAccount, usePublicClient } from 'wagmi';
 import { DETAILS_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
-import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablierStream';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useRolesStore } from '../../../store/roles';
 import { BigIntValuePair } from '../../../types';
 import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
@@ -78,6 +77,7 @@ interface RolePaymentDetailsProps {
     endDate: Date;
     cliffDate?: Date;
     isStreaming: () => boolean;
+    withdrawableAmount?: bigint;
   };
   onClick?: () => void;
   showWithdraw?: boolean;
@@ -95,12 +95,10 @@ export function RolePaymentDetails({
     treasury: { assetsFungible },
   } = useFractal();
   const { address: connectedAccount } = useAccount();
-  const { data: walletClient } = useWalletClient();
   const { addressPrefix } = useNetworkConfig();
+  const { refreshWithdrawableAmount } = useRolesStore();
   const navigate = useNavigate();
-
-  const [withdrawableAmount, setWithdrawableAmount] = useState(0n);
-
+  const publicClient = usePublicClient();
   const canWithdraw = useMemo(() => {
     if (connectedAccount && connectedAccount === roleHatWearerAddress && !!showWithdraw) {
       return true;
@@ -108,33 +106,13 @@ export function RolePaymentDetails({
     return false;
   }, [connectedAccount, showWithdraw, roleHatWearerAddress]);
 
-  const loadAmounts = useCallback(async () => {
-    if (walletClient && payment.streamId && payment.contractAddress && canWithdraw) {
-      const streamContract = getContract({
-        abi: SablierV2LockupLinearAbi,
-        address: payment.contractAddress,
-        client: walletClient,
-      });
-
-      const bigintStreamId = convertStreamIdToBigInt(payment.streamId);
-
-      const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
-        bigintStreamId,
-      ]);
-      setWithdrawableAmount(newWithdrawableAmount);
-    }
-  }, [walletClient, payment, canWithdraw]);
-
-  useEffect(() => {
-    loadAmounts();
-  }, [loadAmounts]);
-
   const [modalType, props] = useMemo(() => {
     if (
       !payment.streamId ||
       !payment.contractAddress ||
       !roleHatWearerAddress ||
-      !roleHatSmartAddress
+      !roleHatSmartAddress ||
+      !publicClient
     ) {
       return [ModalType.NONE] as const;
     }
@@ -146,15 +124,16 @@ export function RolePaymentDetails({
         paymentAssetDecimals: payment.asset.decimals,
         paymentStreamId: payment.streamId,
         paymentContractAddress: payment.contractAddress,
-        onSuccess: loadAmounts,
+        onSuccess: () =>
+          refreshWithdrawableAmount(roleHatSmartAddress, payment.streamId!, publicClient),
         withdrawInformation: {
-          withdrawableAmount,
+          withdrawableAmount: payment.withdrawableAmount,
           roleHatWearerAddress,
           roleHatSmartAddress,
         },
       },
     ] as const;
-  }, [payment, roleHatSmartAddress, roleHatWearerAddress, loadAmounts, withdrawableAmount]);
+  }, [payment, roleHatSmartAddress, roleHatWearerAddress, refreshWithdrawableAmount, publicClient]);
 
   const withdraw = useDecentModal(modalType, props);
 
@@ -315,7 +294,7 @@ export function RolePaymentDetails({
             />
           </GridItem>
         </Grid>
-        {canWithdraw && withdrawableAmount > 0n && (
+        {canWithdraw && !!payment?.withdrawableAmount && payment.withdrawableAmount > 0n && (
           <Box
             mt={4}
             px={4}

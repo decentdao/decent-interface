@@ -68,6 +68,7 @@ export interface RolesStore extends RolesStoreData {
     publicClient: PublicClient;
     decentHats: Address;
   }) => Promise<void>;
+  refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
   updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
   resetHatsStore: () => void;
 }

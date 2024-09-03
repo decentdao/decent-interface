@@ -22,6 +22,8 @@ export interface SablierPayment extends BaseSablierStream {
   endDate: Date;
   cliffDate: Date | undefined;
   isStreaming: () => boolean;
+  withdrawableAmount: bigint;
+  isCancelled: boolean;
 }
 
 export interface SablierPaymentFormValues extends Partial<SablierPayment> {
@@ -160,4 +162,5 @@ export type PreparedEditedStreamData = PreparedNewStreamData & {
   roleHatId: bigint;
   roleHatWearer: Address;
   roleHatSmartAddress: Address;
+  streamContractAddress: Address;
 };
