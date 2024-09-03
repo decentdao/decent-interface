@@ -338,11 +338,8 @@ export default function useCreateRoles() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
 
   const { submitProposal } = useSubmitProposal();
-  const {
-    prepareBatchLinearStreamCreation,
-    // prepareFlushStreamTx,
-    // prepareCancelStreamTx,
-  } = useCreateSablierStream();
+  const { prepareBatchLinearStreamCreation, prepareFlushStreamTx, prepareCancelStreamTx } =
+    useCreateSablierStream();
   const ipfsClient = useIPFSClient();
   const publicClient = usePublicClient();
   const navigate = useNavigate();
@@ -461,33 +458,33 @@ export default function useCreateRoles() {
     ],
   );
 
-  // const prepareHatsAccountFlushExecData = useCallback(
-  //   (streamId: string, contractAddress: Address, wearer: Address) => {
-  //     const flushStreamTxCalldata = prepareFlushStreamTx(streamId, wearer);
-  //     const wrappedFlushStreamTx = encodeFunctionData({
-  //       abi: HatsAccount1ofNAbi,
-  //       functionName: 'execute',
-  //       args: [contractAddress, 0n, flushStreamTxCalldata, 0],
-  //     });
+  const prepareHatsAccountFlushExecData = useCallback(
+    (streamId: string, contractAddress: Address, wearer: Address) => {
+      const flushStreamTxCalldata = prepareFlushStreamTx(streamId, wearer);
+      const wrappedFlushStreamTx = encodeFunctionData({
+        abi: HatsAccount1ofNAbi,
+        functionName: 'execute',
+        args: [contractAddress, 0n, flushStreamTxCalldata, 0],
+      });
 
-  //     return wrappedFlushStreamTx;
-  //   },
-  //   [prepareFlushStreamTx],
-  // );
+      return wrappedFlushStreamTx;
+    },
+    [prepareFlushStreamTx],
+  );
 
-  // const prepareHatFlushAndCancelPayment = useCallback(
-  //   (streamId: string, contractAddress: Address, wearer: Address) => {
-  //     const cancelStreamTx = prepareCancelStreamTx(streamId, contractAddress);
-  //     const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
-  //       streamId,
-  //       contractAddress,
-  //       wearer,
-  //     );
+  const prepareHatFlushAndCancelPayment = useCallback(
+    (streamId: string, contractAddress: Address, wearer: Address) => {
+      const cancelStreamTx = prepareCancelStreamTx(streamId, contractAddress);
+      const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
+        streamId,
+        contractAddress,
+        wearer,
+      );
 
-  //     return { wrappedFlushStreamTx, cancelStreamTx };
-  //   },
-  //   [prepareCancelStreamTx, prepareHatsAccountFlushExecData],
-  // );
+      return { wrappedFlushStreamTx, cancelStreamTx };
+    },
+    [prepareCancelStreamTx, prepareHatsAccountFlushExecData],
+  );
 
   // const prepareEditHatsProposalData = useCallback(
   //   (
@@ -892,7 +889,7 @@ export default function useCreateRoles() {
   );
 
   const prepareAllTxs = useCallback(async (modifiedHats: RoleHatFormValueEdited[]) => {
-    if (!hatsTree) {
+    if (!hatsTree || !daoAddress) {
       throw new Error('Cannot prepare transactions');
     }
 
@@ -962,11 +959,89 @@ export default function useCreateRoles() {
         }
       } else if (formHat.editedRole.status === EditBadgeStatus.Removed) {
         // Deleted Role
+        if (formHat.wearer === undefined || formHat.smartAddress === undefined) {
+          throw new Error('Cannot prepare transactions for removed role without wearer');
+        }
+
         //     - does it have any inactive streams which have funds to claim?
-        //       - allTxs.push(flush stream transaction data)
+        const fundsToClaimStreams = formHat?.payments?.filter(
+          payment => (payment?.withdrawableAmount ?? 0n) > 0n,
+        );
+        if (fundsToClaimStreams && fundsToClaimStreams.length) {
+          //       - allTxs.push(flush stream transaction data)
+          allTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
+            }),
+            targetAddress: hatsProtocol,
+          });
+          for (const stream of fundsToClaimStreams) {
+            if (!stream.streamId || !stream.contractAddress) {
+              throw new Error(
+                'Stream ID and Stream ContractAddress is required for flush stream transaction',
+              );
+            }
+            const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
+              stream.streamId,
+              stream.contractAddress,
+              getAddress(formHat.wearer),
+            );
+            allTxs.push({
+              calldata: wrappedFlushStreamTx,
+              targetAddress: formHat.smartAddress,
+            });
+          }
+        }
+
         //     - does it have any active streams?
-        //       - allTxs.push(flush and cancel stream transactions data)
+        const streamsToCancel = formHat?.payments?.filter(
+          payment => !!payment.endDate && !payment.isCancelled && payment.endDate > new Date(),
+        );
+        if (!!streamsToCancel && streamsToCancel.length) {
+          //       - allTxs.push(cancel stream transactions data)
+          for (const stream of streamsToCancel) {
+            if (!stream.streamId || !stream.contractAddress) {
+              throw new Error(
+                'Stream ID and Stream ContractAddress is required for cancel stream transaction',
+              );
+            }
+            allTxs.push(prepareCancelStreamTx(stream.streamId, stream.contractAddress));
+          }
+        }
+        if (
+          (streamsToCancel && streamsToCancel.length) ||
+          (fundsToClaimStreams && fundsToClaimStreams.length)
+        ) {
+          allTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+            }),
+            targetAddress: hatsProtocol,
+          });
+        }
+
         //     - allTxs.push(deactivate role transaction data)
+        allTxs.push({
+          calldata: encodeFunctionData({
+            abi: HatsAccount1ofNAbi,
+            functionName: 'execute',
+            args: [
+              hatsProtocol,
+              0n,
+              encodeFunctionData({
+                abi: HatsAbi,
+                functionName: 'setHatStatus',
+                args: [BigInt(formHat.id), false],
+              }),
+              0,
+            ],
+          }),
+          targetAddress: topHatAccount,
+        });
       } else {
         // Edited Role (existing role)
         //   - else
@@ -1042,7 +1117,7 @@ export default function useCreateRoles() {
           }
 
           const allTxs = await prepareAllTxs(modifiedHats);
-          console.log("🚀 ~ allTxs:", allTxs)
+          console.log('🚀 ~ allTxs:', allTxs);
 
           // Convert addedHats to include predicted id
           // const addedHatsWithIds = await Promise.all(
