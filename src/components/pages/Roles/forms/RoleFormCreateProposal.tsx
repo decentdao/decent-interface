@@ -59,7 +59,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                 };
               })
             : [],
-          };
+        };
       });
   }, [values.hats]);
 

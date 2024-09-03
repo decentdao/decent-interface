@@ -60,11 +60,7 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
     );
     set(() => ({ hatsTree }));
   },
-  refreshWithdrawableAmount: async (
-    hatId: Hex,
-    streamId: string,
-    publicClient: PublicClient,
-  ) => {
+  refreshWithdrawableAmount: async (hatId: Hex, streamId: string, publicClient: PublicClient) => {
     const payment = get().getPayment(hatId, streamId);
     if (!payment) return;
 
