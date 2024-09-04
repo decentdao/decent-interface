@@ -29,6 +29,7 @@ export type NetworkConfig = {
     multiSendCallOnly: Address;
 
     zodiacModuleProxyFactory: Address;
+    zodiacModuleProxyFactoryOld: Address;
 
     linearVotingErc20MasterCopy: Address;
     linearVotingErc721MasterCopy: Address;
@@ -52,9 +53,14 @@ export type NetworkConfig = {
     keyValuePairs: Address;
 
     decentHatsMasterCopy: Address;
+
     hatsProtocol: Address;
     erc6551Registry: Address;
     hatsAccount1ofNMasterCopy: Address;
+    sablierV2Batch: Address;
+    sablierV2LockupDynamic: Address;
+    sablierV2LockupTranched: Address;
+    sablierV2LockupLinear: Address;
   };
   staking: {
     lido?: {

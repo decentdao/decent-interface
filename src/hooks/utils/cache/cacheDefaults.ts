@@ -51,6 +51,7 @@ export interface MasterCacheKey extends CacheKey {
   cacheName: CacheKeys.MASTER_COPY;
   chainId: number;
   proxyAddress: Address;
+  moduleProxyFactoryAddress: Address;
 }
 
 export interface ProposalCacheKey extends CacheKey {

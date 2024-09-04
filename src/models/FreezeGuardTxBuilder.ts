@@ -118,7 +118,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
     const parentStrategyAddress =
       this.parentStrategyType === VotingStrategyType.LINEAR_ERC721
         ? this.parentStrategyAddress
-        : this.parentTokenAddress ?? this.parentAddress;
+        : (this.parentTokenAddress ?? this.parentAddress);
     if (!this.parentAddress || !parentStrategyAddress || !this.freezeVotingAddress) {
       throw new Error(
         'Error building contract call for setting up freeze voting - required addresses were not provided.',

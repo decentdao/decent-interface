@@ -1,5 +1,6 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Divider, Flex, Grid, GridItem, Show } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Assets } from '../../../../components/pages/DAOTreasury/components/Assets';
 import {
@@ -9,20 +10,24 @@ import {
 } from '../../../../components/pages/DAOTreasury/components/Transactions';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalType } from '../../../../components/ui/modals/ModalProvider';
-import { useFractalModal } from '../../../../components/ui/modals/useFractalModal';
+import { useDecentModal } from '../../../../components/ui/modals/useDecentModal';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
+import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 
 export default function Treasury() {
+  useEffect(() => {
+    amplitude.track(analyticsEvents.TreasuryPageOpened);
+  }, []);
   const {
-    node: { daoName, daoAddress },
+    node: { daoName },
     treasury: { assetsFungible, transfers },
   } = useFractal();
   const [shownTransactions, setShownTransactions] = useState(20);
   const { t } = useTranslation('treasury');
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const openSendAsset = useFractalModal(ModalType.SEND_ASSETS);
+  const openSendAsset = useDecentModal(ModalType.SEND_ASSETS);
 
   const hasAnyBalanceOfAnyFungibleTokens =
     assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
@@ -39,16 +44,21 @@ export default function Treasury() {
           daoName,
           subject: t('treasury', { ns: 'breadcrumbs' }),
         })}
-        address={daoAddress ? daoAddress : undefined}
+        showSafeAddress
         breadcrumbs={[
           {
             terminus: t('treasury', { ns: 'breadcrumbs' }),
             path: '',
           },
         ]}
-        buttonText={showSendButton ? t('buttonSendAssets') : undefined}
-        buttonClick={showSendButton ? openSendAsset : undefined}
-        buttonTestId="link-send-assets"
+        buttonProps={
+          showSendButton
+            ? {
+                children: t('buttonSendAssets'),
+                onClick: openSendAsset,
+              }
+            : undefined
+        }
       />
       <Grid
         templateAreas={{
@@ -68,11 +78,7 @@ export default function Treasury() {
             subTitle={
               <Show below="lg">
                 <Box px="1rem">
-                  <PaginationCount
-                    totalTransfers={totalTransfers}
-                    shownTransactions={shownTransactions}
-                    daoAddress={daoAddress}
-                  />
+                  <PaginationCount shownTransactions={shownTransactions} />
                 </Box>
               </Show>
             }
@@ -85,11 +91,7 @@ export default function Treasury() {
                   my="1rem"
                 />
                 <Box px={{ base: '1rem', lg: '1.5rem' }}>
-                  <PaginationCount
-                    totalTransfers={totalTransfers}
-                    shownTransactions={shownTransactions}
-                    daoAddress={daoAddress}
-                  />
+                  <PaginationCount shownTransactions={shownTransactions} />
                 </Box>
               </Show>
             </Flex>

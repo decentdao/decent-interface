@@ -28,7 +28,7 @@ export const useSafeMultisigProposals = () => {
       });
 
       action.dispatch({
-        type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+        type: FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL,
         payload: false,
       });
       action.dispatch({

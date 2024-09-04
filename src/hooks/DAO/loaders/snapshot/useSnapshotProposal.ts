@@ -10,18 +10,17 @@ import {
   SnapshotVote,
   SnapshotWeightedVotingChoice,
 } from '../../../../types';
-import useSnapshotSpaceName from './useSnapshotSpaceName';
 import { createSnapshotGraphQlClient } from './';
 
 export default function useSnapshotProposal(proposal: FractalProposal | null | undefined) {
   const [extendedSnapshotProposal, setExtendedSnapshotProposal] =
     useState<ExtendedSnapshotProposal>();
   const {
+    node: { daoSnapshotENS },
     readOnly: {
       user: { address },
     },
   } = useFractal();
-  const daoSnapshotSpaceName = useSnapshotSpaceName();
   const snaphshotGraphQlClient = useMemo(() => createSnapshotGraphQlClient(), []);
 
   const snapshotProposal = proposal as SnapshotProposal;
@@ -108,7 +107,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       const { choices, type, privacy } = proposalQueryResult;
 
       if (type === 'weighted') {
-        Object.keys(choices).forEach((choice: string, choiceIndex) => {
+        Object.keys(choices).forEach((_choice: string, choiceIndex) => {
           votesBreakdown[choiceIndex + 1] = {
             votes: [],
             total: 0,
@@ -214,7 +213,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       query UserVotingWeight {
           vp(
               voter: "${address}"
-              space: "${daoSnapshotSpaceName}"
+              space: "${daoSnapshotENS}"
               proposal: "${snapshotProposal.snapshotProposalId}"
           ) {
               vp
@@ -239,7 +238,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     }
 
     return emptyVotingWeight;
-  }, [address, snapshotProposal?.snapshotProposalId, snaphshotGraphQlClient, daoSnapshotSpaceName]);
+  }, [address, snapshotProposal?.snapshotProposalId, snaphshotGraphQlClient, daoSnapshotENS]);
 
   return {
     loadVotingWeight,

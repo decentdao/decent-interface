@@ -1,20 +1,18 @@
-import { Flex, IconButton, Icon, Text, Box } from '@chakra-ui/react';
+import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
-import { Hex } from 'viem';
-import PayrollAndVesting from '../../../pages/daos/[daoAddress]/roles/details/PayrollAndVesting';
+import { getAddress, Hex } from 'viem';
+import { isFeatureEnabled } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useRolesState } from '../../../state/useRolesState';
+import { useRolesStore } from '../../../store/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
+import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
+import { RolePaymentDetails } from './RolePaymentDetails';
+import { RoleDetailsDrawerRoleHatProp } from './types';
 
 interface RoleDetailsDrawerMobileProps {
-  roleHat: {
-    id: Hex;
-    name: string;
-    wearer: string;
-    description: string;
-  };
+  roleHat: RoleDetailsDrawerRoleHatProp;
   onOpen?: () => void;
   onClose?: () => void;
   isOpen?: boolean;
@@ -32,7 +30,7 @@ export default function RolesDetailsDrawerMobile({
     node: { daoAddress },
   } = useFractal();
   const { t } = useTranslation('roles');
-  const { hatsTree } = useRolesState();
+  const { hatsTree } = useRolesStore();
 
   if (!daoAddress || !hatsTree) return null;
 
@@ -88,7 +86,31 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        <PayrollAndVesting />
+        {isFeatureEnabled('STREAMS') && roleHat.payments && (
+          <>
+            <Divider
+              variant="darker"
+              my={4}
+            />
+            <Text
+              textStyle="display-lg"
+              color="white-0"
+              mt="1.5rem"
+              mb="1rem"
+            >
+              {t('payments')}
+            </Text>
+            {roleHat.payments.map((payment, index) => (
+              <RolePaymentDetails
+                key={index}
+                payment={payment}
+                roleHatSmartAddress={roleHat.smartAddress}
+                roleHatWearerAddress={getAddress(roleHat.wearer)}
+                showWithdraw
+              />
+            ))}
+          </>
+        )}
       </Box>
     </DraggableDrawer>
   );

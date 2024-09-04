@@ -1,6 +1,6 @@
 import { Button } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useState, useEffect, ChangeEventHandler } from 'react';
+import { ChangeEventHandler, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { encodeFunctionData } from 'viem';
@@ -46,8 +46,9 @@ export function MetadataContainer() {
   }, [daoName, daoSnapshotENS, daoAddress]);
 
   const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
-    setSnapshotENS(e.target.value);
-    if (validateENSName(e.target.value) || (e.target.value === '' && daoSnapshotENS)) {
+    const lowerCasedValue = e.target.value.toLowerCase();
+    setSnapshotENS(lowerCasedValue);
+    if (validateENSName(lowerCasedValue) || (e.target.value === '' && daoSnapshotENS)) {
       setSnapshotENSValid(true);
     } else {
       setSnapshotENSValid(false);

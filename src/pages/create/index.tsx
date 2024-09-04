@@ -1,3 +1,4 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +11,7 @@ import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
 import { useAccountFavorites } from '../../hooks/DAO/loaders/useFavorites';
 import useDeployDAO from '../../hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../../hooks/utils/useAsyncRetry';
+import { analyticsEvents } from '../../insights/analyticsEvents';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
 
@@ -22,6 +24,10 @@ export default function DaoCreatePage() {
   const safeAPI = useSafeAPI();
 
   const { isConnected } = useAccount();
+
+  useEffect(() => {
+    amplitude.track(analyticsEvents.DaoCreatePageOpened);
+  }, []);
 
   useEffect(() => {
     if (isConnected) {
