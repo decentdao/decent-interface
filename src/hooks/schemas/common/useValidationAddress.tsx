@@ -42,7 +42,6 @@ export async function validateAddress({
     }
   }
   const isValidAddress = isAddress(address);
-  console.log('🚀 ~ isValidAddress:', isValidAddress);
   if (isValidAddress) {
     return {
       validation: {

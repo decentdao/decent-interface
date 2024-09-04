@@ -53,26 +53,21 @@ export function TxActions({ proposal }: { proposal: MultisigProposal }) {
   if (!proposal.transaction) return null;
 
   const signTransaction = async () => {
-    if (
-      !walletClient ||
-      !safe?.address ||
-      !proposal.transaction ||
-      !isHex(proposal.transaction.data) ||
-      !safeAPI
-    ) {
+    const proposalTx = proposal.transaction;
+    if (!walletClient || !safe?.address || !proposalTx || !isHex(proposalTx.data) || !safeAPI) {
       return;
     }
     try {
       const safeTx = buildSafeTransaction({
-        ...proposal.transaction,
-        gasToken: getAddress(proposal.transaction.gasToken),
-        refundReceiver: proposal.transaction.refundReceiver
-          ? getAddress(proposal.transaction.refundReceiver)
+        ...proposalTx,
+        gasToken: getAddress(proposalTx.gasToken),
+        refundReceiver: proposalTx.refundReceiver
+          ? getAddress(proposalTx.refundReceiver)
           : undefined,
-        to: getAddress(proposal.transaction.to),
-        value: BigInt(proposal.transaction.value),
-        data: proposal.transaction.data,
-        operation: proposal.transaction.operation as 0 | 1,
+        to: getAddress(proposalTx.to),
+        value: BigInt(proposalTx.value),
+        data: proposalTx.data,
+        operation: proposalTx.operation as 0 | 1,
       });
 
       asyncRequest({
