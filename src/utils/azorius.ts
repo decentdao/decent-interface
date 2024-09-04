@@ -11,19 +11,19 @@ import {
 import { strategyFractalProposalStates } from '../constants/strategy';
 
 import {
-  FractalProposalState,
-  ProposalVotesSummary,
-  ProposalVote,
-  ProposalData,
   AzoriusProposal,
-  Parameter,
   DataDecoded,
+  DecodedTransaction,
+  ERC721ProposalVote,
   FractalModuleData,
   FractalModuleType,
-  DecodedTransaction,
-  VotingStrategyType,
-  ERC721ProposalVote,
+  FractalProposalState,
   MetaTransaction,
+  Parameter,
+  ProposalData,
+  ProposalVote,
+  ProposalVotesSummary,
+  VotingStrategyType,
   getVoteChoice,
 } from '../types';
 import { getTimeStamp } from './contract';
@@ -187,7 +187,9 @@ export const mapProposalCreatedEventToProposal = async (
   data?: ProposalData,
 ) => {
   if (erc20StrategyContract !== undefined && erc721StrategyContract !== undefined) {
-    throw new Error("we don't support multiple strategy contracts");
+    throw new Error(
+      'Multiple strategy contracts are passed into Azorius proposal mapping, which is not supported at the moment!',
+    );
   }
 
   let proposalVotes = {
@@ -213,7 +215,9 @@ export const mapProposalCreatedEventToProposal = async (
     proposalVotes.startBlock = stratProposalVotes[3];
     proposalVotes.endBlock = stratProposalVotes[4];
   } else {
-    throw new Error('we need a strategy!');
+    throw new Error(
+      'Proposal votes breakdown is missing from strategy contract. Seems like strategy contract is not supplied',
+    );
   }
 
   const quorum = await getQuorum(
@@ -227,7 +231,7 @@ export const mapProposalCreatedEventToProposal = async (
   const block = await publicClient.getBlock({ blockNumber: BigInt(proposalVotes.startBlock) });
 
   const state = await getAzoriusProposalState(azoriusContract, proposalId);
-  const votes = getProposalVotes(await erc20VotedEvents, await erc721VotedEvents, proposalId);
+  const votes = getProposalVotes(erc20VotedEvents, erc721VotedEvents, proposalId);
 
   const votesSummary = {
     yes: proposalVotes.yesVotes,
@@ -241,12 +245,12 @@ export const mapProposalCreatedEventToProposal = async (
   let transactionHash: string | undefined;
   if (state === FractalProposalState.EXECUTED) {
     const executedEvent = executedEvents?.find(event => event.args.proposalId === proposalId);
-
-    if (!executedEvent) {
-      throw new Error('Proposal state is EXECUTED, but no event found');
+    if (executedEvent) {
+      transactionHash = executedEvent?.transactionHash;
+    } else {
+      // @dev Proposal with 0 transactions goes straight into EXECUTED state, but since executeProposal event wasn't fired - it can't be found
+      throw new Error('Proposal state is EXECUTED, but no execution event found');
     }
-
-    transactionHash = executedEvent.transactionHash;
   } else {
     transactionHash = createdEventTransactionHash;
   }

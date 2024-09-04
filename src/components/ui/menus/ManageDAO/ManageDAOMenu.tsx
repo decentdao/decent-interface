@@ -1,7 +1,7 @@
 import { Icon, IconButton } from '@chakra-ui/react';
 import { abis } from '@fractal-framework/fractal-contracts';
 import { GearFine } from '@phosphor-icons/react';
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Address, getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
@@ -21,11 +21,11 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import {
   FractalGuardContracts,
   FreezeGuard,
-  GovernanceType,
   FreezeVotingType,
+  GovernanceType,
 } from '../../../../types';
 import { ModalType } from '../../modals/ModalProvider';
-import { useFractalModal } from '../../modals/useFractalModal';
+import { useDecentModal } from '../../modals/useDecentModal';
 import { OptionMenu } from '../OptionMenu';
 
 interface IManageDAOMenu {
@@ -103,7 +103,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
     }
   }, [navigate, addressPrefix, safeAddress]);
 
-  const handleModifyGovernance = useFractalModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
+  const handleModifyGovernance = useDecentModal(ModalType.CONFIRM_MODIFY_GOVERNANCE);
 
   const { data: walletClient } = useWalletClient();
 
@@ -190,9 +190,9 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
     };
 
     if (
-      freezeGuard.freezeProposalCreatedTime &&
-      freezeGuard.freezeProposalPeriod &&
-      freezeGuard.freezePeriod &&
+      freezeGuard.freezeProposalCreatedTime !== null &&
+      freezeGuard.freezeProposalPeriod !== null &&
+      freezeGuard.freezePeriod !== null &&
       !isWithinFreezeProposalPeriod(
         freezeGuard.freezeProposalCreatedTime,
         freezeGuard.freezeProposalPeriod,
@@ -211,8 +211,8 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
         return [createSubDAOOption, freezeOption, settingsOption];
       }
     } else if (
-      freezeGuard.freezeProposalCreatedTime &&
-      freezeGuard.freezePeriod &&
+      freezeGuard.freezeProposalCreatedTime !== null &&
+      freezeGuard.freezePeriod !== null &&
       isWithinFreezePeriod(
         freezeGuard.freezeProposalCreatedTime,
         freezeGuard.freezePeriod,

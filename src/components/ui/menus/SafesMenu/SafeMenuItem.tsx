@@ -19,15 +19,21 @@ export interface SafeMenuItemProps {
 }
 
 export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
+  const navigate = useNavigate();
+
   const { addressPrefix } = useNetworkConfig();
-  const { switchChain } = useSwitchChain();
+  const { switchChain } = useSwitchChain({
+    mutation: {
+      onSuccess: () => {
+        navigate(DAO_ROUTES.dao.relative(network, address));
+      },
+    },
+  });
 
   const { daoName } = useGetDAOName({
     address: address,
     chainId: getChainIdFromPrefix(network),
   });
-
-  const navigate = useNavigate();
 
   const { displayName: accountDisplayName } = useDisplayName(
     address,
@@ -40,12 +46,7 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
 
   const onClickNav = () => {
     if (addressPrefix !== network) {
-      switchChain(
-        { chainId: getChainIdFromPrefix(network) },
-        {
-          onSuccess: () => navigate(DAO_ROUTES.dao.relative(network, address)),
-        },
-      );
+      switchChain({ chainId: getChainIdFromPrefix(network) });
     } else {
       navigate(DAO_ROUTES.dao.relative(network, address));
     }

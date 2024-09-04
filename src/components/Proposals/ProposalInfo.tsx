@@ -1,5 +1,6 @@
-import { Box, Flex, Button, Link } from '@chakra-ui/react';
+import { Box, Button, Flex, Link } from '@chakra-ui/react';
 import { ArrowUpRight } from '@phosphor-icons/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shield } from '../../assets/theme/custom/icons/Shield';
 import useSnapshotProposal from '../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
@@ -10,7 +11,7 @@ import { ActivityDescription } from '../Activity/ActivityDescription';
 import { Badge } from '../ui/badges/Badge';
 import { SnapshotButton } from '../ui/badges/Snapshot';
 import { ModalType } from '../ui/modals/ModalProvider';
-import { useFractalModal } from '../ui/modals/useFractalModal';
+import { useDecentModal } from '../ui/modals/useDecentModal';
 import { ProposalCountdown } from '../ui/proposal/ProposalCountdown';
 import ProposalExecutableCode from '../ui/proposal/ProposalExecutableCode';
 import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
@@ -27,7 +28,19 @@ export function ProposalInfo({
   } = useFractal();
   const { isSnapshotProposal } = useSnapshotProposal(proposal);
 
-  const confirmUrl = useFractalModal(ModalType.CONFIRM_URL, { url: metaData.documentationUrl });
+  const [modalType, props] = useMemo(() => {
+    if (!metaData.documentationUrl) {
+      return [ModalType.NONE] as const;
+    }
+    return [
+      ModalType.CONFIRM_URL,
+      {
+        url: metaData.documentationUrl,
+      },
+    ] as const;
+  }, [metaData.documentationUrl]);
+
+  const confirmUrl = useDecentModal(modalType, props);
 
   return (
     <Box

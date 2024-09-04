@@ -1,5 +1,5 @@
-import { Box, Button, HStack, Image, Text, Tooltip, Icon, Flex } from '@chakra-ui/react';
-import { ArrowUp, ArrowDown } from '@phosphor-icons/react';
+import { Box, Button, Flex, HStack, Icon, Image, Text, Tooltip } from '@chakra-ui/react';
+import { ArrowDown, ArrowUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
@@ -159,17 +159,14 @@ export function PaginationButton({ onClick }: { onClick: () => void }) {
   );
 }
 
-export function PaginationCount({
-  totalTransfers,
-  shownTransactions,
-  daoAddress,
-}: {
-  totalTransfers: number;
-  shownTransactions: number;
-  daoAddress: string | null;
-}) {
+export function PaginationCount({ shownTransactions }: { shownTransactions: number }) {
   const { t } = useTranslation('treasury');
-  if (!totalTransfers || !daoAddress) {
+  const {
+    node: { safe },
+    treasury: { transfers },
+  } = useFractal();
+  const totalTransfers = transfers?.length;
+  if (!totalTransfers || !safe?.address) {
     return null;
   }
   return (
@@ -184,7 +181,7 @@ export function PaginationCount({
       </Text>
       <EtherscanLink
         type="address"
-        value={daoAddress}
+        value={safe.address}
         p={0}
         textStyle="helper-text-base"
         outline="unset"

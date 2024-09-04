@@ -1,19 +1,19 @@
 import { Box, Flex, Hide } from '@chakra-ui/react';
 import {
-  House,
-  GitFork,
-  Scroll,
-  Coins,
-  SquaresFour,
-  Question,
-  DiscordLogo,
   BookOpen,
+  Coins,
+  GitFork,
+  House,
+  Question,
+  Scroll,
+  SquaresFour,
   UsersThree,
 } from '@phosphor-icons/react';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { URL_FAQ, URL_DISCORD, URL_DOCS } from '../../../../constants/url';
+import { URL_CHAT, URL_DOCS, URL_FAQ } from '../../../../constants/url';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { WarpcastIcon } from '../../icons/Icons';
 import Divider from '../../utils/Divider';
 import { NavigationLink } from './NavigationLink';
 
@@ -41,10 +41,10 @@ function ExternalLinks({ closeDrawer }: { closeDrawer?: () => void }) {
         closeDrawer={closeDrawer}
       />
       <NavigationLink
-        href={URL_DISCORD}
-        labelKey="discord"
-        testId="navigationExternal-discord"
-        NavigationIcon={DiscordLogo}
+        href={URL_CHAT}
+        labelKey="chat"
+        testId="navigationExternal-chat"
+        NavigationIcon={WarpcastIcon}
         scope="external"
         closeDrawer={closeDrawer}
       />

@@ -6,7 +6,7 @@ import useSignerOrProvider from '../../../../hooks/utils/useSignerOrProvider';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ModalType } from '../../../ui/modals/ModalProvider';
-import { useFractalModal } from '../../../ui/modals/useFractalModal';
+import { useDecentModal } from '../../../ui/modals/useDecentModal';
 
 export default function useTreasuryLidoInteractions() {
   const {
@@ -22,7 +22,7 @@ export default function useTreasuryLidoInteractions() {
     Object.keys(staking).length > 0 &&
     ethAsset &&
     BigInt(ethAsset.balance) > 0n;
-  const openStakingModal = useFractalModal(ModalType.STAKE);
+  const openStakingModal = useDecentModal(ModalType.STAKE);
 
   // --- Lido Unstake button setup ---
   const stETHAsset = assetsFungible.find(

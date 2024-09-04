@@ -1,11 +1,8 @@
 query StreamsQuery($recipientAddress: Bytes) {
   streams(where: { recipient: $recipientAddress }) {
     id
-    sender
     startTime
     endTime
-    transferable
-    cancelable
     canceled
     duration
     category
@@ -15,34 +12,13 @@ query StreamsQuery($recipientAddress: Bytes) {
     depositAmount
     withdrawnAmount
     intactAmount
-    alias
-    subgraphId
-    tokenId
-    version
     chainId
-    funder
     recipient
     parties
-    proxied
-    brokerFeeAmount
-    protocolFeeAmount
-    position
-    actions {
-      id
-      timestamp
-      amountA
-      amountB
-    }
     contract {
       address
-      category
       id
     }
-    batch {
-      id
-      timestamp
-    }
-    hash
     timestamp
     segments {
       id
@@ -68,9 +44,6 @@ query StreamsQuery($recipientAddress: Bytes) {
       id
       chainId
       decimals
-      streams {
-        id
-      }
     }
   }
 }

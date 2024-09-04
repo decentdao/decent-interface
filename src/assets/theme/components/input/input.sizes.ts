@@ -4,7 +4,7 @@ import { createMultiStyleConfigHelpers, defineStyle } from '@chakra-ui/react';
 const { definePartsStyle } = createMultiStyleConfigHelpers(inputAnatomy.keys);
 
 const paddingBase = { px: '1rem' };
-const paddingAddonLeft = { pl: '2rem', pr: '1rem' };
+const paddingAddonLeft = { pl: '3rem', pr: '1rem' };
 const paddingAddonRight = { pl: '1rem', pr: '4rem' };
 
 const baseStyle = {

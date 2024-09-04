@@ -4,10 +4,10 @@ import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
 import { buildContractCall, encodeMultiSend } from '../helpers';
 import {
-  SafeMultisigDAO,
-  SafeTransaction,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
+  SafeMultisigDAO,
+  SafeTransaction,
   VotingStrategyType,
 } from '../types';
 import { BaseTxBuilder } from './BaseTxBuilder';

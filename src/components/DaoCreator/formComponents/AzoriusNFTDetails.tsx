@@ -1,11 +1,11 @@
-import { Box, Flex, Grid, GridItem, Input, IconButton } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, IconButton, Input } from '@chakra-ui/react';
 import { MinusCircle, Plus } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FormikErrors } from 'formik';
 import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
 import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
-import { ICreationStepProps, ERC721TokenConfig, BigIntValuePair } from '../../../types';
+import { BigIntValuePair, ERC721TokenConfig, ICreationStepProps } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';

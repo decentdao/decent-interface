@@ -1,10 +1,10 @@
 import { addresses } from '@fractal-framework/fractal-contracts';
 
 import {
-  getProxyFactoryDeployment,
-  getMultiSendCallOnlyDeployment,
-  getSafeL2SingletonDeployment,
   getCompatibilityFallbackHandlerDeployment,
+  getMultiSendCallOnlyDeployment,
+  getProxyFactoryDeployment,
+  getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
 import { getAddress } from 'viem';
 import { base } from 'wagmi/chains';
@@ -58,7 +58,8 @@ export const baseConfig: NetworkConfig = {
       chain.id.toString(),
     ),
 
-    zodiacModuleProxyFactory: getAddress(a.ModuleProxyFactory),
+    zodiacModuleProxyFactory: '0x000000000000aDdB49795b0f9bA5BC298cDda236',
+    zodiacModuleProxyFactoryOld: getAddress(a.ModuleProxyFactory),
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
     linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
@@ -83,6 +84,10 @@ export const baseConfig: NetworkConfig = {
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
     erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
     hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
+    sablierV2Batch: '0xc1c548F980669615772dadcBfEBC29937c29481A',
+    sablierV2LockupDynamic: '0xF9E9eD67DD2Fab3b3ca024A2d66Fcf0764d36742',
+    sablierV2LockupTranched: '0xf4937657Ed8B3f3cB379Eed47b8818eE947BEb1e',
+    sablierV2LockupLinear: '0x4CB16D4153123A74Bc724d161050959754f378D8',
   },
   staking: {},
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],

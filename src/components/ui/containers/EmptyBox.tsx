@@ -2,14 +2,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { ActivityBox } from './ActivityBox';
 
-export function EmptyBox({
-  emptyText,
-  children,
-}: {
-  emptyText: string;
-  children?: ReactNode;
-  m?: string | number;
-}) {
+export function EmptyBox({ emptyText, children }: { emptyText: string; children?: ReactNode }) {
   return (
     <ActivityBox>
       <Flex

@@ -1,5 +1,6 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Address,
   GetContractEventsReturnType,
@@ -16,7 +17,6 @@ import {
   CreateProposalMetadata,
   VotingStrategyType,
   DecodedTransaction,
-  MetaTransaction,
   FractalProposalState,
 } from '../../../../types';
 import { AzoriusProposal } from '../../../../types/daoProposal';
@@ -125,6 +125,8 @@ export const useAzoriusProposals = () => {
     }
   }, [moduleAzoriusAddress]);
 
+  const { t } = useTranslation('proposal');
+
   const loadAzoriusProposals = useCallback(
     async (
       _azoriusContract: GetContractReturnType<typeof abis.Azorius, PublicClient> | undefined,
@@ -165,13 +167,11 @@ export const useAzoriusProposals = () => {
       });
 
       action.dispatch({
-        type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+        type: FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL,
         payload: true,
       });
 
-      // TODO: `SET_LOADING_PROPOSALS` seems like the kind of action to be called once all proposals are finished loading.
-      // So, it's strange that this function takes a single proposals as an argument.
-      const completeProposalLoad = (proposal: AzoriusProposal) => {
+      const completeOneProposalLoadProcess = (proposal: AzoriusProposal) => {
         if (currentAzoriusAddress.current !== moduleAzoriusAddress) {
           // The DAO has changed, don't load the just-fetched proposal,
           // into state, and get out of this function completely.
@@ -181,9 +181,22 @@ export const useAzoriusProposals = () => {
         _proposalLoaded(proposal);
 
         action.dispatch({
-          type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+          type: FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL,
           payload: false,
         });
+      };
+
+      const parseProposalMetadata = (metadata: string): CreateProposalMetadata => {
+        try {
+          const createProposalMetadata: CreateProposalMetadata = JSON.parse(metadata);
+          return createProposalMetadata;
+        } catch {
+          logError('Unable to parse proposal metadata.', 'metadata:', metadata);
+          return {
+            title: t('metadataFailedParsePlaceholder'),
+            description: '',
+          };
+        }
       };
 
       for (const proposalCreatedEvent of proposalCreatedEvents) {
@@ -212,31 +225,25 @@ export const useAzoriusProposals = () => {
         });
 
         if (cachedProposal) {
-          completeProposalLoad(cachedProposal);
+          completeOneProposalLoadProcess(cachedProposal);
           continue;
         }
 
         let proposalData;
 
-        if (proposalCreatedEvent.args.metadata) {
+        if (proposalCreatedEvent.args.metadata && proposalCreatedEvent.args.transactions) {
+          const metadataEvent = parseProposalMetadata(proposalCreatedEvent.args.metadata);
+
           try {
-            const metadataEvent: CreateProposalMetadata = JSON.parse(
-              proposalCreatedEvent.args.metadata,
+            const decodedTransactions = await decodeTransactions(
+              _decode,
+              proposalCreatedEvent.args.transactions.map(tx => ({
+                ...tx,
+                to: tx.to,
+                data: tx.data,
+                value: tx.value,
+              })),
             );
-
-            let transactions: MetaTransaction[] = [];
-            let decodedTransactions: DecodedTransaction[] = [];
-
-            if (proposalCreatedEvent.args.transactions) {
-              transactions = proposalCreatedEvent.args.transactions.map(t => ({
-                to: t.to,
-                data: t.data,
-                value: t.value,
-                operation: t.operation,
-              }));
-
-              decodedTransactions = await decodeTransactions(_decode, transactions);
-            }
 
             proposalData = {
               metaData: {
@@ -244,7 +251,12 @@ export const useAzoriusProposals = () => {
                 description: metadataEvent.description,
                 documentationUrl: metadataEvent.documentationUrl,
               },
-              transactions,
+              transactions: proposalCreatedEvent.args.transactions.map(tx => ({
+                ...tx,
+                to: tx.to,
+                value: tx.value,
+                data: tx.data,
+              })),
               decodedTransactions,
             };
           } catch {
@@ -277,7 +289,7 @@ export const useAzoriusProposals = () => {
           proposalData,
         );
 
-        completeProposalLoad(proposal);
+        completeOneProposalLoadProcess(proposal);
 
         const isProposalFossilized =
           proposal.state === FractalProposalState.CLOSED ||
@@ -301,7 +313,7 @@ export const useAzoriusProposals = () => {
 
       // Just in case there are no `proposalCreatedEvent`s, we still need to set the loading state to false.
       action.dispatch({
-        type: FractalGovernanceAction.SET_LOADING_PROPOSALS,
+        type: FractalGovernanceAction.SET_LOADING_FIRST_PROPOSAL,
         payload: false,
       });
 
@@ -310,7 +322,7 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
     },
-    [action, moduleAzoriusAddress, azoriusContract?.address, network.chain.id],
+    [action, azoriusContract?.address, moduleAzoriusAddress, network.chain.id, t],
   );
 
   return async (proposalLoaded: OnProposalLoaded) =>

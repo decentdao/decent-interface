@@ -1,3 +1,4 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import * as Sentry from '@sentry/react';
 import isEqual from 'lodash.isequal';
 import { useEffect, useState, useCallback } from 'react';
@@ -64,6 +65,12 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: Addr
 
     const address = _account;
     Sentry.setUser(address ? { id: address } : null);
+
+    if (address) {
+      amplitude.setUserId(address);
+    } else {
+      amplitude.reset();
+    }
 
     const newReadOnlyValues = {
       user: {

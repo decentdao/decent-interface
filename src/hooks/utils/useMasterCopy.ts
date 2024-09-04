@@ -3,14 +3,15 @@ import { useCallback } from 'react';
 import { Address, getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
-import { getValue, setValue } from './cache/useLocalStorage';
+// import { CacheExpiry, CacheKeys } from './cache/cacheDefaults';
+// import { getValue, setValue } from './cache/useLocalStorage';
 
 export function useMasterCopy() {
   const {
-    chain,
+    // chain,
     contracts: {
       zodiacModuleProxyFactory,
+      zodiacModuleProxyFactoryOld,
       linearVotingErc20MasterCopy,
       linearVotingErc721MasterCopy,
       moduleFractalMasterCopy,
@@ -52,21 +53,24 @@ export function useMasterCopy() {
   );
 
   const getMasterCopyAddress = useCallback(
-    async function (proxyAddress: Address): Promise<readonly [Address, string | null]> {
+    async function (
+      proxyAddress: Address,
+      moduleProxyFactoryContractAddress: Address,
+    ): Promise<readonly [Address, string | null]> {
       if (!publicClient) {
         return [zeroAddress, null] as const;
       }
 
-      const cachedValue = getValue({
-        cacheName: CacheKeys.MASTER_COPY,
-        chainId: chain.id,
-        proxyAddress,
-      });
-      if (cachedValue) return [cachedValue, null] as const;
+      // const cachedValue = getValue({
+      //   cacheName: CacheKeys.MASTER_COPY,
+      //   chainId: chain.id,
+      //   proxyAddress,
+      // });
+      // if (cachedValue) return [cachedValue, null] as const;
 
       const moduleProxyFactoryContract = getContract({
         abi: abis.ModuleProxyFactory,
-        address: zodiacModuleProxyFactory,
+        address: moduleProxyFactoryContractAddress,
         client: publicClient,
       });
 
@@ -75,15 +79,15 @@ export function useMasterCopy() {
         .then(proxiesCreated => {
           // @dev to prevent redundant queries, cache the master copy address as AddressZero if no proxies were created
           if (proxiesCreated.length === 0) {
-            setValue(
-              {
-                cacheName: CacheKeys.MASTER_COPY,
-                chainId: chain.id,
-                proxyAddress,
-              },
-              zeroAddress,
-              CacheExpiry.ONE_WEEK,
-            );
+            // setValue(
+            //   {
+            //     cacheName: CacheKeys.MASTER_COPY,
+            //     chainId: chain.id,
+            //     proxyAddress,
+            //   },
+            //   zeroAddress,
+            //   CacheExpiry.ONE_WEEK,
+            // );
             return [zeroAddress, 'No proxies created'] as const;
           }
 
@@ -92,29 +96,38 @@ export function useMasterCopy() {
             return [zeroAddress, 'No master copy address'] as const;
           }
 
-          setValue(
-            {
-              cacheName: CacheKeys.MASTER_COPY,
-              chainId: chain.id,
-              proxyAddress,
-            },
-            masterCopyAddress,
-          );
+          // setValue(
+          //   {
+          //     cacheName: CacheKeys.MASTER_COPY,
+          //     chainId: chain.id,
+          //     proxyAddress,
+          //   },
+          //   masterCopyAddress,
+          // );
           return [masterCopyAddress, null] as const;
         })
         .catch(() => {
           return [zeroAddress, 'error'] as const;
         });
     },
-    [chain.id, publicClient, zodiacModuleProxyFactory],
+    [publicClient],
   );
 
   const getZodiacModuleProxyMasterCopyData = useCallback(
     async function (proxyAddress: Address) {
       let masterCopyAddress: Address = zeroAddress;
-      let error;
-
-      [masterCopyAddress, error] = await getMasterCopyAddress(proxyAddress);
+      let error: string | null = null;
+      [masterCopyAddress, error] = await getMasterCopyAddress(
+        proxyAddress,
+        zodiacModuleProxyFactory,
+      );
+      // @dev checks Zodiac's ModuleProxyFactory Contract if the first one fails.
+      if (error) {
+        [masterCopyAddress, error] = await getMasterCopyAddress(
+          proxyAddress,
+          zodiacModuleProxyFactoryOld,
+        );
+      }
       if (error) {
         console.error(error);
       }
@@ -132,13 +145,15 @@ export function useMasterCopy() {
     },
     [
       getMasterCopyAddress,
-      isModuleAzorius,
-      isFreezeVotingErc721,
-      isModuleFractal,
       isFreezeGuardMultisig,
+      isFreezeVotingErc721,
       isFreezeVotingMultisig,
       isLinearVotingErc20,
       isLinearVotingErc721,
+      isModuleAzorius,
+      isModuleFractal,
+      zodiacModuleProxyFactory,
+      zodiacModuleProxyFactoryOld,
     ],
   );
 

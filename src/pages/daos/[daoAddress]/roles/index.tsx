@@ -1,20 +1,27 @@
+import * as amplitude from '@amplitude/analytics-browser';
 import { Box, Show } from '@chakra-ui/react';
-import { Pencil } from '@phosphor-icons/react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, zeroAddress } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
 import { RoleCardLoading, RoleCardNoRoles } from '../../../../components/pages/Roles/RolePageCard';
 import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
+import PencilWithLineIcon from '../../../../components/ui/icons/PencilWithLineIcon';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
+import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesState } from '../../../../state/useRolesState';
+import { useRolesStore } from '../../../../store/roles';
 
 function Roles() {
-  const { hatsTree } = useRolesState();
+  useEffect(() => {
+    amplitude.track(analyticsEvents.RolesPageOpened);
+  }, []);
+
+  const { hatsTree } = useRolesStore();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
   const {
@@ -43,13 +50,25 @@ function Roles() {
             path: '',
           },
         ]}
-        buttonVariant="secondary"
-        buttonText={canUserCreateProposal ? t('editRoles') : undefined}
-        buttonProps={{
-          size: 'sm',
-          leftIcon: <Pencil />,
-        }}
-        buttonClick={() => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress))}
+        buttonProps={
+          canUserCreateProposal
+            ? {
+                variant: 'secondary',
+                size: 'sm',
+                leftIcon: (
+                  <Box mr="-0.25rem">
+                    <PencilWithLineIcon
+                      w="1rem"
+                      h="1rem"
+                    />
+                  </Box>
+                ),
+                gap: 0,
+                children: t('editRoles'),
+                onClick: () => navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress)),
+              }
+            : undefined
+        }
       />
       {hatsTreeLoading && <RoleCardLoading />}
       {showNoRolesCard && <RoleCardNoRoles />}
@@ -71,6 +90,7 @@ function Roles() {
                 wearerAddress={roleHat.wearer || zeroAddress}
                 hatId={roleHat.id}
                 handleRoleClick={handleNavigateToRole}
+                paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}
               />
             ))}
           </Show>

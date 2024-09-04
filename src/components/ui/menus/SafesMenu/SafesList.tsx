@@ -15,7 +15,7 @@ export function SafesList() {
   return (
     <MenuList>
       <ErrorBoundary fallback={MySafesErrorFallback}>
-        <Box py="0.25rem">
+        <Box>
           {favoritesList.length === 0 ? (
             <Box p="1rem 1rem">{t('emptyFavorites')}</Box>
           ) : (
@@ -29,6 +29,7 @@ export function SafesList() {
               maxHeight="20rem"
               overflowY="auto"
               rounded="0.5rem"
+              py="0.25rem"
             >
               {favoritesList.map((favorite, i) => (
                 <Box key={favorite}>
