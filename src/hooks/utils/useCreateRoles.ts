@@ -1083,21 +1083,20 @@ export default function useCreateRoles() {
               throw new Error('Cannot find original hat');
             }
             //     - is the member changed?
-            //       - does it have any inactive streams which have funds to claim?
-            //       - allTxs.push(flush stream transaction data)
+            //       - for each inactive streams which have funds to claim?
+            //          - allTxs.push(flush stream transaction data)
             //       - for each active stream
             //         - if stream was edited, too
             //           - skip
             //         - else
             //           - allTxs.push(flush stream transaction data)
-            const fundsToClaimStreams = formHat?.payments?.filter(
+            const inactiveFundsToClaimStream = formHat?.payments?.filter(
               payment =>
                 (payment?.withdrawableAmount ?? 0n) > 0n &&
-                !!payment.endDate &&
-                payment.endDate > new Date(),
+                ((!!payment.endDate && payment.endDate > new Date()) || !!payment.isCancelled),
             );
 
-            if (fundsToClaimStreams && fundsToClaimStreams.length) {
+            if (inactiveFundsToClaimStream && inactiveFundsToClaimStream.length) {
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -1106,7 +1105,7 @@ export default function useCreateRoles() {
                 }),
                 targetAddress: hatsProtocol,
               });
-              for (const stream of fundsToClaimStreams) {
+              for (const stream of inactiveFundsToClaimStream) {
                 if (!stream.streamId || !stream.contractAddress) {
                   throw new Error(
                     'Stream ID and Stream ContractAddress is required for flush stream transaction',
@@ -1123,23 +1122,9 @@ export default function useCreateRoles() {
                 });
               }
             }
-            // transfer hat to new wearer
-            allTxs.push({
-              calldata: encodeFunctionData({
-                abi: HatsAbi,
-                functionName: 'transferHat',
-                args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
-              }),
-              targetAddress: hatsProtocol,
-            });
-          }
-          if (
-            formHat.editedRole.status === EditBadgeStatus.Updated &&
-            formHat.editedRole.fieldNames.includes('payments')
-          ) {
-            //     - for each edited active streams
-            const editedStreams = formHat?.payments?.filter(payment => {
-              if (payment.streamId === undefined) {
+
+            const unEditedActiveStreams = formHat?.payments?.filter(payment => {
+              if (payment.streamId === undefined || payment.endDate === undefined) {
                 return false;
               }
               // @note remove payments that haven't been edited
@@ -1147,15 +1132,81 @@ export default function useCreateRoles() {
               if (originalPayment === null) {
                 return false;
               }
-              return !isEqual(payment, originalPayment);
+              return (
+                isEqual(payment, originalPayment) &&
+                !payment.isCancelled &&
+                payment.endDate < new Date()
+              );
             });
-            if (editedStreams && editedStreams.length) {
-              if (!formHat.smartAddress || !formHat.wearer) {
-                throw new Error('Cannot prepare transactions for edited role without wearer');
+
+            if (unEditedActiveStreams && unEditedActiveStreams.length) {
+              for (const stream of unEditedActiveStreams) {
+                if (!stream.streamId || !stream.contractAddress) {
+                  throw new Error(
+                    'Stream ID and Stream ContractAddress is required for flush stream transaction',
+                  );
+                }
+                const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
+                  stream.streamId,
+                  stream.contractAddress,
+                  originalHat.wearer,
+                );
+                allTxs.push({
+                  calldata: wrappedFlushStreamTx,
+                  targetAddress: formHat.smartAddress,
+                });
               }
-              //       - if stream was edited
-              //         - allTxs.push(flush and cancel stream transaction data)
-              //         - allTxs.push(create new stream transaction data)
+            }
+            // transfer hat to new wearer after flushing streams
+            if ((inactiveFundsToClaimStream && inactiveFundsToClaimStream.length) || (unEditedActiveStreams && unEditedActiveStreams.length)) {
+              allTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsAbi,
+                  functionName: 'transferHat',
+                  args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+                }),
+                targetAddress: hatsProtocol,
+              });
+            } else {
+              // transfer hat to new wearer without flushing streams
+              allTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsAbi,
+                  functionName: 'transferHat',
+                  args: [BigInt(formHat.id), originalHat.wearer, getAddress(formHat.wearer)],
+                }),
+                targetAddress: hatsProtocol,
+              });
+            }
+          }
+
+          if (
+            formHat.editedRole.status === EditBadgeStatus.Updated &&
+            formHat.editedRole.fieldNames.includes('payments')
+          ) {
+            if (!formHat.wearer || !formHat.smartAddress) {
+              throw new Error('Cannot prepare transactions');
+            }
+            //     - for each edited active streams
+            const editedStreams = formHat?.payments?.filter(payment => {
+              if (payment.streamId === undefined) {
+                return false;
+              }
+              const originalPayment = getPayment(formHat.id, payment.streamId);
+              if (originalPayment === null) {
+                return false;
+              }
+              return (
+                !isEqual(payment, originalPayment) &&
+                !payment.isCancelled &&
+                payment.endDate &&
+                payment.endDate > new Date()
+              );
+            });
+            const editedStreamsWithFundsToClaim = editedStreams?.filter(
+              stream => (stream?.withdrawableAmount ?? 0n) > 0n,
+            );
+            if (editedStreamsWithFundsToClaim && editedStreamsWithFundsToClaim.length) {
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -1164,6 +1215,64 @@ export default function useCreateRoles() {
                 }),
                 targetAddress: hatsProtocol,
               });
+              for (const stream of editedStreamsWithFundsToClaim) {
+                if (!stream.streamId || !stream.contractAddress) {
+                  throw new Error(
+                    'Stream ID and Stream ContractAddress is required for flush stream transaction',
+                  );
+                }
+                const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
+                  stream.streamId,
+                  stream.contractAddress,
+                  getAddress(formHat.wearer),
+                );
+                allTxs.push({
+                  calldata: wrappedFlushStreamTx,
+                  targetAddress: formHat.smartAddress,
+                });
+              }
+              allTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsAbi,
+                  functionName: 'transferHat',
+                  args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+                }),
+                targetAddress: hatsProtocol,
+              });
+            }
+            if (editedStreams && editedStreams.length) {
+              allTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsAbi,
+                  functionName: 'transferHat',
+                  args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
+                }),
+                targetAddress: hatsProtocol,
+              });
+              for (const stream of editedStreams) {
+                if (!stream.streamId || !stream.contractAddress) {
+                  throw new Error(
+                    'Stream ID and Stream ContractAddress is required for flush stream transaction',
+                  );
+                }
+                const cancelStreamTx = prepareCancelStreamTx(
+                  stream.streamId,
+                  stream.contractAddress,
+                );
+                allTxs.push(cancelStreamTx);
+              }
+              allTxs.push({
+                calldata: encodeFunctionData({
+                  abi: HatsAbi,
+                  functionName: 'transferHat',
+                  args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+                }),
+                targetAddress: hatsProtocol,
+              });
+              //       - if stream was edited
+              //         - allTxs.push(flush and cancel stream transaction data)
+              //         - allTxs.push(create new stream transaction data)
+
               for (const stream of editedStreams) {
                 if (
                   !stream.streamId ||
@@ -1176,16 +1285,7 @@ export default function useCreateRoles() {
                 ) {
                   throw new Error('Cannot prepare transaction; stream data is missing');
                 }
-                const { wrappedFlushStreamTx, cancelStreamTx } = prepareHatFlushAndCancelPayment(
-                  stream.streamId,
-                  stream.contractAddress,
-                  getAddress(formHat.wearer),
-                );
-                allTxs.push({
-                  calldata: wrappedFlushStreamTx,
-                  targetAddress: formHat.smartAddress,
-                });
-                allTxs.push(cancelStreamTx);
+
                 const preparedNewStream = {
                   recipient: formHat.smartAddress,
                   startDateTs: Math.floor(stream.startDate.getTime() / 1000),
@@ -1198,14 +1298,6 @@ export default function useCreateRoles() {
                 allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
                 allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
               }
-              allTxs.push({
-                calldata: encodeFunctionData({
-                  abi: HatsAbi,
-                  functionName: 'transferHat',
-                  args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
-                }),
-                targetAddress: hatsProtocol,
-              });
             }
             //     - for each new streams
             const newStreams = formHat?.payments?.filter(payment => !payment.streamId);
@@ -1254,7 +1346,6 @@ export default function useCreateRoles() {
       predictSmartAccount,
       prepareBatchLinearStreamCreation,
       prepareCancelStreamTx,
-      prepareHatFlushAndCancelPayment,
       uploadHatDescription,
       createHatTx,
       createSmartAccountTx,
@@ -1373,14 +1464,14 @@ export default function useCreateRoles() {
         }
 
         // // All done, submit the proposal!
-        // await submitProposal({
-        //   proposalData,
-        //   nonce: values.customNonce ?? safe.nextNonce,
-        //   pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
-        //   successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
-        //   failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-        //   successCallback: submitProposalSuccessCallback,
-        // });
+        await submitProposal({
+          proposalData,
+          nonce: values.customNonce ?? safe.nextNonce,
+          pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
+          successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
+          failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
+          successCallback: submitProposalSuccessCallback,
+        });
       } catch (e) {
         console.error(e);
         toast(t('encodingFailedMessage', { ns: 'proposal' }));
