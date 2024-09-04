@@ -1,6 +1,6 @@
 import { useMemo, useRef, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PublicClient, isAddress } from 'viem';
+import { Address, PublicClient, getAddress, isAddress } from 'viem';
 import { normalize } from 'viem/ens';
 import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
@@ -143,12 +143,22 @@ export const useValidationAddress = () => {
     return {
       name: 'New Signer Validation',
       message: t('alreadySigner', { ns: 'modals' }),
-      test: async function (address: string | undefined) {
-        if (!address || !safe || !publicClient) return false;
-        const check = await publicClient.getEnsAddress({ name: normalize(address) });
-        address = check ? check : undefined;
-        if (!address) return false;
-        return !safe.owners.includes(address);
+      test: async function (addressOrENS: string | undefined) {
+        if (!addressOrENS || !safe || !publicClient) return false;
+
+        let resolvedAddress: Address | null;
+
+        if (validateENSName(addressOrENS)) {
+          resolvedAddress = await publicClient.getEnsAddress({
+            name: normalize(addressOrENS),
+          });
+
+          if (!resolvedAddress) return false;
+          return !safe.owners.includes(resolvedAddress);
+        }
+
+        resolvedAddress = getAddress(addressOrENS);
+        return !safe.owners.includes(resolvedAddress);
       },
     };
   }, [safe, publicClient, t]);
