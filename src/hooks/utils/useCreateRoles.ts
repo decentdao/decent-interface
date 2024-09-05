@@ -29,66 +29,6 @@ import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
 import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
 
-const hatsDetailsBuilder = (data: { name: string; description: string }) => {
-  return JSON.stringify({
-    type: '1.0',
-    data,
-  });
-};
-
-const createHatStruct = async (
-  name: string,
-  description: string,
-  wearer: Address,
-  uploadHatDescription: (hatDescription: string) => Promise<string>,
-) => {
-  const details = await uploadHatDescription(
-    hatsDetailsBuilder({
-      name: name,
-      description: description,
-    }),
-  );
-
-  const newHat: HatStruct = {
-    maxSupply: 1,
-    details,
-    imageURI: '',
-    isMutable: true,
-    wearer: wearer,
-  };
-
-  return newHat;
-};
-
-const createHatStructFromRoleFormValues = async (
-  role: RoleHatFormValueEdited,
-  uploadHatDescription: (hatDescription: string) => Promise<string>,
-) => {
-  if (role.name === undefined || role.description === undefined) {
-    throw new Error('Hat name or description of added hat is undefined.');
-  }
-
-  if (role.wearer === undefined) {
-    throw new Error('Hat wearer of added hat is undefined.');
-  }
-
-  return createHatStruct(
-    role.name,
-    role.description,
-    getAddress(role.wearer),
-    uploadHatDescription,
-  );
-};
-
-const createHatStructsFromRolesFormValues = async (
-  modifiedRoles: RoleHatFormValueEdited[],
-  uploadHatDescription: (hatDescription: string) => Promise<string>,
-) => {
-  return Promise.all(
-    modifiedRoles.map(role => createHatStructFromRoleFormValues(role, uploadHatDescription)),
-  );
-};
-
 export default function useCreateRoles() {
   const {
     node: { safe, daoAddress, daoName },
@@ -115,11 +55,12 @@ export default function useCreateRoles() {
   const publicClient = usePublicClient();
   const navigate = useNavigate();
 
-  const submitProposalSuccessCallback = useCallback(() => {
-    if (daoAddress) {
-      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
-    }
-  }, [daoAddress, addressPrefix, navigate]);
+  const hatsDetailsBuilder = useCallback((data: { name: string; description: string }) => {
+    return JSON.stringify({
+      type: '1.0',
+      data,
+    });
+  }, []);
 
   const uploadHatDescription = useCallback(
     async (hatDescription: string) => {
@@ -127,6 +68,50 @@ export default function useCreateRoles() {
       return `ipfs://${response.Hash}`;
     },
     [ipfsClient],
+  );
+
+  const createHatStruct = useCallback(
+    async (name: string, description: string, wearer: Address) => {
+      const details = await uploadHatDescription(
+        hatsDetailsBuilder({
+          name: name,
+          description: description,
+        }),
+      );
+
+      const newHat: HatStruct = {
+        maxSupply: 1,
+        details,
+        imageURI: '',
+        isMutable: true,
+        wearer: wearer,
+      };
+
+      return newHat;
+    },
+    [hatsDetailsBuilder, uploadHatDescription],
+  );
+
+  const createHatStructFromRoleFormValues = useCallback(
+    async (role: RoleHatFormValueEdited) => {
+      if (role.name === undefined || role.description === undefined) {
+        throw new Error('Hat name or description of added hat is undefined.');
+      }
+
+      if (role.wearer === undefined) {
+        throw new Error('Hat wearer of added hat is undefined.');
+      }
+
+      return createHatStruct(role.name, role.description, getAddress(role.wearer));
+    },
+    [createHatStruct],
+  );
+
+  const createHatStructsFromRolesFormValues = useCallback(
+    async (modifiedRoles: RoleHatFormValueEdited[]) => {
+      return Promise.all(modifiedRoles.map(role => createHatStructFromRoleFormValues(role)));
+    },
+    [createHatStructFromRoleFormValues],
   );
 
   const predictSmartAccount = useCallback(
@@ -220,13 +205,14 @@ export default function useCreateRoles() {
     },
     [
       daoAddress,
-      decentHatsMasterCopy,
-      uploadHatDescription,
       daoName,
-      hatsProtocol,
-      hatsAccount1ofNMasterCopy,
+      decentHatsMasterCopy,
       erc6551Registry,
+      hatsAccount1ofNMasterCopy,
+      hatsDetailsBuilder,
+      hatsProtocol,
       keyValuePairs,
+      uploadHatDescription,
     ],
   );
 
@@ -258,7 +244,6 @@ export default function useCreateRoles() {
         formRole.name,
         formRole.description,
         getAddress(formRole.wearer),
-        uploadHatDescription,
       );
 
       return {
@@ -278,7 +263,7 @@ export default function useCreateRoles() {
         targetAddress: hatsProtocol,
       };
     },
-    [uploadHatDescription, hatsProtocol],
+    [createHatStruct, hatsProtocol],
   );
 
   const mintHatTx = useCallback(
@@ -731,19 +716,20 @@ export default function useCreateRoles() {
       return allTxs;
     },
     [
-      daoAddress,
-      hatsProtocol,
-      predictSmartAccount,
-      prepareCancelStreamTx,
-      uploadHatDescription,
+      createBatchLinearStreamCreationTx,
       createHatTx,
       createSmartAccountTx,
+      daoAddress,
       getHat,
       getPayment,
+      hatsDetailsBuilder,
+      hatsProtocol,
       hatsTree,
       mintHatTx,
+      predictSmartAccount,
+      prepareCancelStreamTx,
       prepareHatsAccountFlushExecData,
-      createBatchLinearStreamCreationTx,
+      uploadHatDescription,
     ],
   );
 
@@ -783,10 +769,7 @@ export default function useCreateRoles() {
             );
           }
 
-          const newHatStructs = await createHatStructsFromRolesFormValues(
-            modifiedHats,
-            uploadHatDescription,
-          );
+          const newHatStructs = await createHatStructsFromRolesFormValues(modifiedHats);
           proposalData = await prepareCreateTopHatProposalData(
             values.proposalMetadata,
             newHatStructs,
@@ -813,7 +796,11 @@ export default function useCreateRoles() {
           pendingToastMessage: t('proposalCreatePendingToastMessage', { ns: 'proposal' }),
           successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-          successCallback: submitProposalSuccessCallback,
+          successCallback: () => {
+            if (daoAddress) {
+              navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+            }
+          },
         });
       } catch (e) {
         console.error(e);
@@ -823,16 +810,18 @@ export default function useCreateRoles() {
       }
     },
     [
-      safe,
-      hatsTreeId,
+      createHatStructsFromRolesFormValues,
       hatsTree,
-      submitProposal,
-      prepareCreateTopHatProposalData,
+      hatsTreeId,
       prepareCreateRolesModificationsProposalData,
-      t,
-      submitProposalSuccessCallback,
-      uploadHatDescription,
+      prepareCreateTopHatProposalData,
       publicClient,
+      safe,
+      submitProposal,
+      t,
+      navigate,
+      addressPrefix,
+      daoAddress,
     ],
   );
 
