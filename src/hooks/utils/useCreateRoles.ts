@@ -620,7 +620,7 @@ export default function useCreateRoles() {
           ) {
             /**
              * Updated Role Payments
-             * Transfer hat to DAO, flush edited active streams, cancel streams, transfer hat to back to wearer, create new streams
+             * Transfer hat to DAO, flush edited active streams, cancel edited streams, transfer hat to back to wearer, create new streams
              */
 
             if (!formHat.wearer || !formHat.smartAddress) {
