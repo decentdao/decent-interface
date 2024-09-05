@@ -153,10 +153,10 @@ export const useValidationAddress = () => {
           });
 
           if (!resolvedAddress) return false;
-          return !safe.owners.includes(resolvedAddress);
+        } else {
+          resolvedAddress = getAddress(addressOrENS);
         }
 
-        resolvedAddress = getAddress(addressOrENS);
         return !safe.owners.includes(resolvedAddress);
       },
     };
