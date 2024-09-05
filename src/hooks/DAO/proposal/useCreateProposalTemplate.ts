@@ -1,5 +1,6 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { encodeFunctionData } from 'viem';
 import { normalize } from 'viem/ens';
 import { usePublicClient } from 'wagmi';
@@ -21,12 +22,14 @@ export default function useCreateProposalTemplate() {
     contracts: { keyValuePairs },
   } = useNetworkConfig();
 
+  const { t } = useTranslation('proposalMetadata');
+
   const prepareProposalTemplateProposal = useCallback(
     async (values: CreateProposalForm) => {
       if (proposalTemplates && publicClient) {
         const proposalMetadata = {
-          title: 'createProposalTemplateTitle',
-          description: 'createProposalTemplateDescription',
+          title: t('createProposalTemplateTitle'),
+          description: t('createProposalTemplateDescription'),
           documentationUrl: '',
         };
 
@@ -73,7 +76,7 @@ export default function useCreateProposalTemplate() {
         return proposal;
       }
     },
-    [client, keyValuePairs, proposalTemplates, publicClient],
+    [client, keyValuePairs, proposalTemplates, publicClient, t],
   );
 
   return { prepareProposalTemplateProposal };
