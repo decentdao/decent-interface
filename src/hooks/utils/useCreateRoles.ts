@@ -805,7 +805,6 @@ export default function useCreateRoles() {
           }
 
           const allTxs = await prepareAllTxs(modifiedHats);
-          console.log('🚀 ~ allTxs:', allTxs);
 
           proposalData = {
             targets: allTxs.map(({ targetAddress }) => targetAddress),
