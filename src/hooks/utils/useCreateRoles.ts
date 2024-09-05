@@ -16,6 +16,7 @@ import {
   HatStruct,
   RoleFormValues,
   RoleHatFormValueEdited,
+  SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -317,6 +318,36 @@ export default function useCreateRoles() {
     [chain.id, decentHatsMasterCopy, erc6551Registry, hatsAccount1ofNMasterCopy, hatsProtocol],
   );
 
+  const createBatchLinearStreamCreationTx = useCallback(
+    (formStreams: SablierPaymentFormValues[], roleSmartAccountAddress: Address) => {
+      const preparedStreams = formStreams.map(stream => {
+        if (
+          !stream.asset ||
+          !stream.startDate ||
+          !stream.endDate ||
+          !stream.amount?.bigintValue ||
+          stream.amount.bigintValue <= 0n
+        ) {
+          throw new Error('Form Values inValid', {
+            cause: stream,
+          });
+        }
+
+        return {
+          recipient: roleSmartAccountAddress,
+          startDateTs: Math.floor(stream.startDate.getTime() / 1000),
+          endDateTs: Math.ceil(stream.endDate.getTime() / 1000),
+          cliffDateTs: Math.floor((stream.cliffDate?.getTime() ?? 0) / 1000),
+          totalAmount: stream.amount.bigintValue,
+          assetAddress: stream.asset.address,
+        };
+      });
+
+      return prepareBatchLinearStreamCreation(preparedStreams);
+    },
+    [prepareBatchLinearStreamCreation],
+  );
+
   const prepareAllTxs = useCallback(
     async (modifiedHats: RoleHatFormValueEdited[]) => {
       if (!hatsTree || !daoAddress) {
@@ -357,30 +388,10 @@ export default function useCreateRoles() {
             !!formHat?.payments && formHat.payments.filter(payment => !payment.streamId);
           if (!!newStreams && newStreams.length > 0) {
             const newPredictedHatSmartAccount = await predictSmartAccount(newHatId);
-            const preparedNewStreams = newStreams.map(stream => {
-              if (
-                !stream.asset ||
-                !stream.startDate ||
-                !stream.endDate ||
-                !stream.amount?.bigintValue ||
-                stream.amount.bigintValue <= 0n
-              ) {
-                throw new Error('Form Values inValid', {
-                  cause: stream,
-                });
-              }
-
-              return {
-                recipient: newPredictedHatSmartAccount,
-                startDateTs: Math.floor(stream.startDate.getTime() / 1000),
-                endDateTs: Math.ceil(stream.endDate.getTime() / 1000),
-                cliffDateTs: Math.floor((stream.cliffDate?.getTime() ?? 0) / 1000),
-                totalAmount: stream.amount.bigintValue,
-                assetAddress: stream.asset.address,
-              };
-            });
-
-            const newStreamTxData = prepareBatchLinearStreamCreation(preparedNewStreams);
+            const newStreamTxData = createBatchLinearStreamCreationTx(
+              newStreams,
+              newPredictedHatSmartAccount,
+            );
             allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
             allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
           }
@@ -697,62 +708,27 @@ export default function useCreateRoles() {
                 targetAddress: hatsProtocol,
               });
 
-              for (const stream of editedStreams) {
-                if (
-                  !stream.streamId ||
-                  !stream.contractAddress ||
-                  !stream.amount ||
-                  !stream.asset ||
-                  !stream.startDate ||
-                  !stream.endDate ||
-                  !stream.amount.bigintValue
-                ) {
-                  throw new Error('Cannot prepare transaction; stream data is missing');
-                }
-
-                const preparedNewStream = {
-                  recipient: formHat.smartAddress,
-                  startDateTs: Math.floor(stream.startDate.getTime() / 1000),
-                  endDateTs: Math.ceil(stream.endDate.getTime() / 1000),
-                  cliffDateTs: Math.floor((stream.cliffDate?.getTime() ?? 0) / 1000),
-                  totalAmount: stream.amount.bigintValue,
-                  assetAddress: stream.asset.address,
-                };
-                const newStreamTxData = prepareBatchLinearStreamCreation([preparedNewStream]);
-                allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
-                allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
-              }
+              const newStreamTxData = createBatchLinearStreamCreationTx(
+                editedStreams,
+                formHat.smartAddress,
+              );
+              allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
+              allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
             }
+            /**
+             * New Streams
+             * Create new streams
+             */
             const newStreams = formHat?.payments?.filter(payment => !payment.streamId);
             if (newStreams && newStreams.length) {
               if (!formHat.smartAddress || !formHat.wearer) {
                 throw new Error('Cannot prepare transactions, missing data for new streams');
               }
               const newPredictedHatSmartAccount = await predictSmartAccount(BigInt(formHat.id));
-              const preparedNewStreams = newStreams.map(stream => {
-                if (
-                  !stream.asset ||
-                  !stream.startDate ||
-                  !stream.endDate ||
-                  !stream.amount?.bigintValue ||
-                  stream.amount.bigintValue <= 0n
-                ) {
-                  throw new Error('Form Values inValid', {
-                    cause: stream,
-                  });
-                }
-
-                return {
-                  recipient: newPredictedHatSmartAccount,
-                  startDateTs: Math.floor(stream.startDate.getTime() / 1000),
-                  endDateTs: Math.ceil(stream.endDate.getTime() / 1000),
-                  cliffDateTs: Math.floor((stream.cliffDate?.getTime() ?? 0) / 1000),
-                  totalAmount: stream.amount.bigintValue,
-                  assetAddress: stream.asset.address,
-                };
-              });
-
-              const newStreamTxData = prepareBatchLinearStreamCreation(preparedNewStreams);
+              const newStreamTxData = createBatchLinearStreamCreationTx(
+                newStreams,
+                newPredictedHatSmartAccount,
+              );
               allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
               allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
             }
@@ -766,7 +742,6 @@ export default function useCreateRoles() {
       daoAddress,
       hatsProtocol,
       predictSmartAccount,
-      prepareBatchLinearStreamCreation,
       prepareCancelStreamTx,
       uploadHatDescription,
       createHatTx,
@@ -776,6 +751,7 @@ export default function useCreateRoles() {
       hatsTree,
       mintHatTx,
       prepareHatsAccountFlushExecData,
+      createBatchLinearStreamCreationTx,
     ],
   );
 
