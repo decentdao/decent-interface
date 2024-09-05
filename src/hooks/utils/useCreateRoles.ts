@@ -478,7 +478,7 @@ export default function useCreateRoles() {
             }),
             targetAddress: topHatAccount,
           });
-        } else {
+        } else if (formHat.editedRole.status === EditBadgeStatus.Updated) {
           if (
             formHat.editedRole.status === EditBadgeStatus.Updated &&
             (formHat.editedRole.fieldNames.includes('roleName') ||
@@ -614,11 +614,7 @@ export default function useCreateRoles() {
               });
             }
           }
-
-          if (
-            formHat.editedRole.status === EditBadgeStatus.Updated &&
-            formHat.editedRole.fieldNames.includes('payments')
-          ) {
+          if (formHat.editedRole.fieldNames.includes('payments')) {
             /**
              * Updated Role Payments
              * Transfer hat to DAO, flush edited active streams, cancel edited streams, transfer hat to back to wearer, create new streams
@@ -734,6 +730,8 @@ export default function useCreateRoles() {
               allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
             }
           }
+        } else {
+          throw new Error('Invalid Edited Status');
         }
       }
 
