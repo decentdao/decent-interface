@@ -335,15 +335,14 @@ export default function useCreateRoles() {
       // "active stream" = not cancelled and not past end date
       // "inactive stream" = cancelled or past end date
 
-      // for each modified role
       for (let index = 0; index < modifiedHats.length; index++) {
         const formHat = modifiedHats[index];
 
         if (formHat.editedRole.status === EditBadgeStatus.New) {
-          // New Role
-          // - "create new role" transaction data
-          //   - includes create hat, mint hat, create smart account
-
+          /**
+           * New Role
+           * Create new hat, mint it, create smart account, and create new streams
+           */
           const newHatId = predictHatId({
             adminHatId: hatsTree.adminHat.id,
             hatsCount: hatsTree.roleHatsTotalCount + newHatCount,
@@ -354,7 +353,6 @@ export default function useCreateRoles() {
           allTxs.push(mintHatTx(newHatId, formHat));
           allTxs.push(createSmartAccountTx(BigInt(newHatId)));
 
-          //     - does it have any streams?
           const newStreams =
             !!formHat?.payments && formHat.payments.filter(payment => !payment.streamId);
           if (!!newStreams && newStreams.length > 0) {
@@ -382,23 +380,23 @@ export default function useCreateRoles() {
               };
             });
 
-            //       - allTxs.push(create new streams transactions datas)
             const newStreamTxData = prepareBatchLinearStreamCreation(preparedNewStreams);
             allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
             allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
           }
         } else if (formHat.editedRole.status === EditBadgeStatus.Removed) {
-          // Deleted Role
+          /**
+           * Removed Role
+           * Transfer hat to DAO, flush streams, cancel streams, transfer hat to back to wearer, set hat status to false
+           */
           if (formHat.wearer === undefined || formHat.smartAddress === undefined) {
             throw new Error('Cannot prepare transactions for removed role without wearer');
           }
 
-          //     - does it have any inactive streams which have funds to claim?
           const fundsToClaimStreams = formHat?.payments?.filter(
             payment => (payment?.withdrawableAmount ?? 0n) > 0n,
           );
           if (fundsToClaimStreams && fundsToClaimStreams.length) {
-            //       - allTxs.push(flush stream transaction data)
             allTxs.push({
               calldata: encodeFunctionData({
                 abi: HatsAbi,
@@ -425,12 +423,10 @@ export default function useCreateRoles() {
             }
           }
 
-          //     - does it have any active streams?
           const streamsToCancel = formHat?.payments?.filter(
             payment => !!payment.endDate && !payment.isCancelled && payment.endDate > new Date(),
           );
           if (!!streamsToCancel && streamsToCancel.length) {
-            //       - allTxs.push(cancel stream transactions data)
             for (const stream of streamsToCancel) {
               if (!stream.streamId || !stream.contractAddress) {
                 throw new Error(
@@ -454,7 +450,6 @@ export default function useCreateRoles() {
             });
           }
 
-          //     - allTxs.push(deactivate role transaction data)
           allTxs.push({
             calldata: encodeFunctionData({
               abi: HatsAccount1ofNAbi,
@@ -473,13 +468,15 @@ export default function useCreateRoles() {
             targetAddress: topHatAccount,
           });
         } else {
-          // Edited Role (existing role) - includes status === Updated
-          //   - else
           if (
             formHat.editedRole.status === EditBadgeStatus.Updated &&
             (formHat.editedRole.fieldNames.includes('roleName') ||
               formHat.editedRole.fieldNames.includes('roleDescription'))
           ) {
+            /**
+             * Updated Role Name or Description Transaction
+             * Upload the new details to IPFS, Change hat details
+             */
             if (formHat.name === undefined || formHat.description === undefined) {
               throw new Error('Hat name or description of existing hat is undefined.');
             }
@@ -489,8 +486,6 @@ export default function useCreateRoles() {
                 description: formHat.description,
               }),
             );
-            //     - is the name or description changed?
-            //       - allTxs.push(edit details data)
             allTxs.push({
               calldata: encodeFunctionData({
                 abi: HatsAbi,
@@ -504,6 +499,11 @@ export default function useCreateRoles() {
             formHat.editedRole.status === EditBadgeStatus.Updated &&
             formHat.editedRole.fieldNames.includes('member')
           ) {
+            /**
+             * Updated Role Member
+             * Transfer hat to DAO, flush inactive and unedited streams, transfer hat to new wearer
+             */
+
             if (formHat.wearer === undefined || formHat.smartAddress === undefined) {
               throw new Error('Cannot prepare transactions for edited role without wearer');
             }
@@ -511,14 +511,6 @@ export default function useCreateRoles() {
             if (!originalHat) {
               throw new Error('Cannot find original hat');
             }
-            //     - is the member changed?
-            //       - for each inactive streams which have funds to claim?
-            //          - allTxs.push(flush stream transaction data)
-            //       - for each active stream
-            //         - if stream was edited, too
-            //           - skip
-            //         - else
-            //           - allTxs.push(flush stream transaction data)
             const inactiveFundsToClaimStream = formHat?.payments?.filter(
               payment =>
                 (payment?.withdrawableAmount ?? 0n) > 0n &&
@@ -585,7 +577,7 @@ export default function useCreateRoles() {
                 });
               }
             }
-            // transfer hat to new wearer after flushing streams
+            // transfer hat from DAO to new wearer if there are any funds to claim
             if (
               (inactiveFundsToClaimStream && inactiveFundsToClaimStream.length) ||
               (unEditedActiveStreams && unEditedActiveStreams.length)
@@ -599,7 +591,7 @@ export default function useCreateRoles() {
                 targetAddress: hatsProtocol,
               });
             } else {
-              // transfer hat to new wearer without flushing streams
+              // transfer hat from original wearer to new wearer if there are no funds to claim
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -615,10 +607,14 @@ export default function useCreateRoles() {
             formHat.editedRole.status === EditBadgeStatus.Updated &&
             formHat.editedRole.fieldNames.includes('payments')
           ) {
+            /**
+             * Updated Role Payments
+             * Transfer hat to DAO, flush edited active streams, cancel streams, transfer hat to back to wearer, create new streams
+             */
+
             if (!formHat.wearer || !formHat.smartAddress) {
               throw new Error('Cannot prepare transactions');
             }
-            //     - for each edited active streams
             const editedStreams = formHat?.payments?.filter(payment => {
               if (payment.streamId === undefined) {
                 return false;
@@ -700,9 +696,6 @@ export default function useCreateRoles() {
                 }),
                 targetAddress: hatsProtocol,
               });
-              //       - if stream was edited
-              //         - allTxs.push(flush and cancel stream transaction data)
-              //         - allTxs.push(create new stream transaction data)
 
               for (const stream of editedStreams) {
                 if (
@@ -730,7 +723,6 @@ export default function useCreateRoles() {
                 allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
               }
             }
-            //     - for each new streams
             const newStreams = formHat?.payments?.filter(payment => !payment.streamId);
             if (newStreams && newStreams.length) {
               if (!formHat.smartAddress || !formHat.wearer) {
@@ -760,7 +752,6 @@ export default function useCreateRoles() {
                 };
               });
 
-              //       - allTxs.push(create new streams transactions datas)
               const newStreamTxData = prepareBatchLinearStreamCreation(preparedNewStreams);
               allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
               allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
