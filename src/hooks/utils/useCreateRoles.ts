@@ -114,6 +114,7 @@ export default function useCreateRoles() {
   const ipfsClient = useIPFSClient();
   const publicClient = usePublicClient();
   const navigate = useNavigate();
+
   const submitProposalSuccessCallback = useCallback(() => {
     if (daoAddress) {
       navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
