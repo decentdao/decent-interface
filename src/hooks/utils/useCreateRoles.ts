@@ -349,7 +349,7 @@ export default function useCreateRoles() {
     [prepareBatchLinearStreamCreation],
   );
 
-  const prepareAllTxs = useCallback(
+  const prepareCreateRolesModificationsProposalData = useCallback(
     async (modifiedHats: RoleHatFormValueEdited[]) => {
       if (!hatsTree || !daoAddress) {
         throw new Error('Cannot prepare transactions');
@@ -796,7 +796,7 @@ export default function useCreateRoles() {
             throw new Error('Cannot edit Roles without a HatsTree');
           }
 
-          const allTxs = await prepareAllTxs(modifiedHats);
+          const allTxs = await prepareCreateRolesModificationsProposalData(modifiedHats);
 
           proposalData = {
             targets: allTxs.map(({ targetAddress }) => targetAddress),
@@ -828,7 +828,7 @@ export default function useCreateRoles() {
       hatsTree,
       submitProposal,
       prepareCreateTopHatProposalData,
-      prepareAllTxs,
+      prepareCreateRolesModificationsProposalData,
       t,
       submitProposalSuccessCallback,
       uploadHatDescription,
