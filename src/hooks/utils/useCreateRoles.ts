@@ -384,9 +384,8 @@ export default function useCreateRoles() {
           allTxs.push(mintHatTx(newHatId, formHat));
           allTxs.push(createSmartAccountTx(BigInt(newHatId)));
 
-          const newStreams =
-            !!formHat?.payments && formHat.payments.filter(payment => !payment.streamId);
-          if (!!newStreams && newStreams.length > 0) {
+          const newStreams = (formHat.payments ?? []).filter(payment => !payment.streamId);
+          if (newStreams.length > 0) {
             const newPredictedHatSmartAccount = await predictSmartAccount(newHatId);
             const newStreamTxData = createBatchLinearStreamCreationTx(
               newStreams,
@@ -404,10 +403,10 @@ export default function useCreateRoles() {
             throw new Error('Cannot prepare transactions for removed role without wearer');
           }
 
-          const fundsToClaimStreams = formHat?.payments?.filter(
+          const fundsToClaimStreams = (formHat.payments ?? []).filter(
             payment => (payment?.withdrawableAmount ?? 0n) > 0n,
           );
-          if (fundsToClaimStreams && fundsToClaimStreams.length) {
+          if (fundsToClaimStreams.length) {
             allTxs.push({
               calldata: encodeFunctionData({
                 abi: HatsAbi,
@@ -434,10 +433,10 @@ export default function useCreateRoles() {
             }
           }
 
-          const streamsToCancel = formHat?.payments?.filter(
+          const streamsToCancel = (formHat.payments ?? []).filter(
             payment => !!payment.endDate && !payment.isCancelled && payment.endDate > new Date(),
           );
-          if (!!streamsToCancel && streamsToCancel.length) {
+          if (streamsToCancel.length) {
             for (const stream of streamsToCancel) {
               if (!stream.streamId || !stream.contractAddress) {
                 throw new Error(
@@ -447,10 +446,7 @@ export default function useCreateRoles() {
               allTxs.push(prepareCancelStreamTx(stream.streamId, stream.contractAddress));
             }
           }
-          if (
-            (streamsToCancel && streamsToCancel.length) ||
-            (fundsToClaimStreams && fundsToClaimStreams.length)
-          ) {
+          if (streamsToCancel.length || fundsToClaimStreams.length) {
             allTxs.push({
               calldata: encodeFunctionData({
                 abi: HatsAbi,
@@ -480,9 +476,8 @@ export default function useCreateRoles() {
           });
         } else if (formHat.editedRole.status === EditBadgeStatus.Updated) {
           if (
-            formHat.editedRole.status === EditBadgeStatus.Updated &&
-            (formHat.editedRole.fieldNames.includes('roleName') ||
-              formHat.editedRole.fieldNames.includes('roleDescription'))
+            formHat.editedRole.fieldNames.includes('roleName') ||
+            formHat.editedRole.fieldNames.includes('roleDescription')
           ) {
             /**
              * Updated Role Name or Description Transaction
@@ -506,10 +501,7 @@ export default function useCreateRoles() {
               targetAddress: hatsProtocol,
             });
           }
-          if (
-            formHat.editedRole.status === EditBadgeStatus.Updated &&
-            formHat.editedRole.fieldNames.includes('member')
-          ) {
+          if (formHat.editedRole.fieldNames.includes('member')) {
             /**
              * Updated Role Member
              * Transfer hat to DAO, flush inactive and unedited streams, transfer hat to new wearer
@@ -522,13 +514,13 @@ export default function useCreateRoles() {
             if (!originalHat) {
               throw new Error('Cannot find original hat');
             }
-            const inactiveFundsToClaimStream = formHat?.payments?.filter(
+            const inactiveFundsToClaimStream = (formHat.payments ?? []).filter(
               payment =>
                 (payment?.withdrawableAmount ?? 0n) > 0n &&
                 ((!!payment.endDate && payment.endDate > new Date()) || !!payment.isCancelled),
             );
 
-            if (inactiveFundsToClaimStream && inactiveFundsToClaimStream.length) {
+            if (inactiveFundsToClaimStream.length) {
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -555,7 +547,7 @@ export default function useCreateRoles() {
               }
             }
 
-            const unEditedActiveStreams = formHat?.payments?.filter(payment => {
+            const unEditedActiveStreams = (formHat.payments ?? []).filter(payment => {
               if (payment.streamId === undefined || payment.endDate === undefined) {
                 return false;
               }
@@ -571,7 +563,7 @@ export default function useCreateRoles() {
               );
             });
 
-            if (unEditedActiveStreams && unEditedActiveStreams.length) {
+            if (unEditedActiveStreams.length) {
               for (const stream of unEditedActiveStreams) {
                 if (!stream.streamId || !stream.contractAddress) {
                   throw new Error(
@@ -623,7 +615,7 @@ export default function useCreateRoles() {
             if (!formHat.wearer || !formHat.smartAddress) {
               throw new Error('Cannot prepare transactions');
             }
-            const editedStreams = formHat?.payments?.filter(payment => {
+            const editedStreams = (formHat.payments ?? []).filter(payment => {
               if (payment.streamId === undefined) {
                 return false;
               }
@@ -638,10 +630,10 @@ export default function useCreateRoles() {
                 payment.endDate > new Date()
               );
             });
-            const editedStreamsWithFundsToClaim = editedStreams?.filter(
+            const editedStreamsWithFundsToClaim = editedStreams.filter(
               stream => (stream?.withdrawableAmount ?? 0n) > 0n,
             );
-            if (editedStreamsWithFundsToClaim && editedStreamsWithFundsToClaim.length) {
+            if (editedStreamsWithFundsToClaim.length) {
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -675,7 +667,7 @@ export default function useCreateRoles() {
                 targetAddress: hatsProtocol,
               });
             }
-            if (editedStreams && editedStreams.length) {
+            if (editedStreams.length) {
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -716,8 +708,8 @@ export default function useCreateRoles() {
              * New Streams
              * Create new streams
              */
-            const newStreams = formHat?.payments?.filter(payment => !payment.streamId);
-            if (newStreams && newStreams.length) {
+            const newStreams = (formHat.payments ?? []).filter(payment => !payment.streamId);
+            if (newStreams.length) {
               if (!formHat.smartAddress || !formHat.wearer) {
                 throw new Error('Cannot prepare transactions, missing data for new streams');
               }
