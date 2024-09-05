@@ -140,7 +140,7 @@ export default function useCreateRoles() {
   );
 
   const prepareCreateTopHatProposalData = useCallback(
-    async (proposalMetadata: CreateProposalMetadata, addedHats: HatStruct[]) => {
+    async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
       if (!daoAddress) {
         throw new Error('Can not create top hat without DAO Address');
       }
@@ -179,6 +179,8 @@ export default function useCreateRoles() {
         wearer: zeroAddress,
       };
 
+      const addedHats = await createHatStructsFromRolesFormValues(modifiedHats);
+
       const createAndDeclareTreeData = encodeFunctionData({
         abi: DecentHatsAbi,
         functionName: 'createAndDeclareTree',
@@ -213,6 +215,7 @@ export default function useCreateRoles() {
       hatsProtocol,
       keyValuePairs,
       uploadHatDescription,
+      createHatStructsFromRolesFormValues,
     ],
   );
 
@@ -335,7 +338,7 @@ export default function useCreateRoles() {
   );
 
   const prepareCreateRolesModificationsProposalData = useCallback(
-    async (modifiedHats: RoleHatFormValueEdited[]) => {
+    async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
       if (!hatsTree || !daoAddress) {
         throw new Error('Cannot prepare transactions');
       }
@@ -713,7 +716,12 @@ export default function useCreateRoles() {
         }
       }
 
-      return allTxs;
+      return {
+        targets: allTxs.map(({ targetAddress }) => targetAddress),
+        calldatas: allTxs.map(({ calldata }) => calldata),
+        values: allTxs.map(() => 0n),
+        metaData: proposalMetadata,
+      };
     },
     [
       createBatchLinearStreamCreationTx,
@@ -769,24 +777,19 @@ export default function useCreateRoles() {
             );
           }
 
-          const newHatStructs = await createHatStructsFromRolesFormValues(modifiedHats);
           proposalData = await prepareCreateTopHatProposalData(
             values.proposalMetadata,
-            newHatStructs,
+            modifiedHats,
           );
         } else {
           if (!hatsTree) {
             throw new Error('Cannot edit Roles without a HatsTree');
           }
 
-          const allTxs = await prepareCreateRolesModificationsProposalData(modifiedHats);
-
-          proposalData = {
-            targets: allTxs.map(({ targetAddress }) => targetAddress),
-            calldatas: allTxs.map(({ calldata }) => calldata),
-            values: allTxs.map(() => 0n),
-            metaData: values.proposalMetadata,
-          };
+          proposalData = await prepareCreateRolesModificationsProposalData(
+            values.proposalMetadata,
+            modifiedHats,
+          );
         }
 
         // // All done, submit the proposal!
@@ -810,18 +813,17 @@ export default function useCreateRoles() {
       }
     },
     [
-      createHatStructsFromRolesFormValues,
+      addressPrefix,
+      daoAddress,
       hatsTree,
       hatsTreeId,
+      navigate,
       prepareCreateRolesModificationsProposalData,
       prepareCreateTopHatProposalData,
       publicClient,
       safe,
       submitProposal,
       t,
-      navigate,
-      addressPrefix,
-      daoAddress,
     ],
   );
 
