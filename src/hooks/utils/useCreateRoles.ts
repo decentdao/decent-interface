@@ -598,7 +598,7 @@ export default function useCreateRoles() {
           if (formHat.editedRole.fieldNames.includes('payments')) {
             /**
              * Updated Role Payments
-             * Transfer hat to DAO, flush edited active streams, cancel edited streams, transfer hat to back to wearer, create new streams
+             * Transfer hat to DAO if there are funds to claim, flush edited active streams with funds to claim, cancel edited streams, transfer hat back to wearer if necessary
              */
 
             if (!formHat.wearer || !formHat.smartAddress) {
