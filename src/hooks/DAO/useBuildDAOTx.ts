@@ -112,11 +112,9 @@ const useBuildDAOTx = () => {
       );
 
       // Build Tx bundle based on governance type (Azorius or Multisig)
-      const safeTx =
-        daoData.governance === GovernanceType.AZORIUS_ERC20 ||
-        daoData.governance === GovernanceType.AZORIUS_ERC721
-          ? await daoTxBuilder.buildAzoriusTx()
-          : await daoTxBuilder.buildMultisigTx();
+      const safeTx = isAzorius
+        ? await daoTxBuilder.buildAzoriusTx()
+        : await daoTxBuilder.buildMultisigTx();
 
       return {
         predictedSafeAddress: txBuilderFactory.predictedSafeAddress!,

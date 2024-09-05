@@ -40,7 +40,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   private predictedAzoriusAddress: Address | undefined;
   private predictedTokenClaimAddress: Address | undefined;
 
-  public azoriusAddress: Address | undefined;
   public linearERC20VotingAddress: Address | undefined;
   public linearERC721VotingAddress: Address | undefined;
   public votesTokenAddress: Address | undefined;
@@ -110,6 +109,14 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     }
   }
 
+  public get azoriusAddress(): Address {
+    if (!this.predictedAzoriusAddress) {
+      throw new Error('Azorius address not set');
+    }
+
+    return this.predictedAzoriusAddress;
+  }
+
   public async init() {
     await this.setPredictedStrategyAddress();
     this.setPredictedAzoriusAddress();
@@ -153,7 +160,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         abis.LinearERC20Voting,
         this.linearERC20VotingAddress!,
         'setAzorius', // contract function name
-        [this.azoriusAddress],
+        [this.predictedAzoriusAddress],
         0,
         false,
       );
@@ -162,7 +169,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
         abis.LinearERC721Voting,
         this.linearERC721VotingAddress!,
         'setAzorius', // contract function name
-        [this.azoriusAddress],
+        [this.predictedAzoriusAddress],
         0,
         false,
       );
@@ -176,7 +183,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'enableModule',
-      [this.azoriusAddress],
+      [this.predictedAzoriusAddress],
       0,
       false,
     );
@@ -187,7 +194,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'addOwnerWithThreshold',
-      [this.azoriusAddress, 1],
+      [this.predictedAzoriusAddress, 1],
       0,
       false,
     );
@@ -198,7 +205,7 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
       GnosisSafeL2Abi,
       this.safeContractAddress,
       'removeOwner',
-      [this.azoriusAddress, this.multiSendCallOnly, 1],
+      [this.predictedAzoriusAddress, this.multiSendCallOnly, 1],
       0,
       false,
     );
@@ -556,7 +563,6 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
     }
 
     const daoData = this.daoData as AzoriusGovernanceDAO;
-    this.azoriusAddress = this.predictedAzoriusAddress;
     if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
       this.votesTokenAddress = this.predictedTokenAddress;
       this.linearERC20VotingAddress = this.predictedStrategyAddress;
