@@ -51,10 +51,13 @@ const useDeployAzorius = () => {
   const deployAzorius = useCallback(
     async (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO,
-      shouldSetName?: boolean,
-      shouldSetSnapshot?: boolean,
-      customNonce?: number,
+      customNonce: number | undefined,
+      opts: {
+        shouldSetName: boolean;
+        shouldSetSnapshot: boolean;
+      },
     ) => {
+      const { shouldSetName, shouldSetSnapshot } = opts;
       if (!daoAddress || !canUserCreateProposal || !safe || !publicClient) {
         return;
       }
@@ -89,8 +92,10 @@ const useDeployAzorius = () => {
       txBuilderFactory.setSafeContract(daoAddress);
 
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
-      const safeTx = await daoTxBuilder.buildAzoriusTx(shouldSetName, shouldSetSnapshot, {
-        owners: safe.owners,
+      const safeTx = await daoTxBuilder.buildAzoriusTx({
+        shouldSetName,
+        shouldSetSnapshot,
+        existingSafeOwners: safe.owners,
       });
 
       if (!isHex(safeTx)) {

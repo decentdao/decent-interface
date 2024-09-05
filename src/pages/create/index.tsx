@@ -73,14 +73,12 @@ export default function DaoCreatePage() {
 
   const [deploy, pending] = useDeployDAO();
 
-  const deployDAO = (daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO) => {
-    deploy(daoData, successCallback);
-  };
-
   return (
     <DaoCreator
       pending={pending || redirectPending}
-      deployDAO={deployDAO}
+      deployDAO={(daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO) => {
+        deploy(daoData, successCallback);
+      }}
       mode={DAOCreateMode.ROOTDAO}
     />
   );

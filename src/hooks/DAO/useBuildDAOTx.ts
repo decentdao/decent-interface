@@ -111,10 +111,15 @@ const useBuildDAOTx = () => {
         parentVotingStrategyAddress,
       );
 
+      const buildSafeTxParams = {
+        shouldSetName: true, // We KNOW this will always be true because the Decent UI doesn't allow creating a safe without a name
+        shouldSetSnapshot: daoData.snapshotENS !== '',
+      };
+
       // Build Tx bundle based on governance type (Azorius or Multisig)
       const safeTx = isAzorius
-        ? await daoTxBuilder.buildAzoriusTx()
-        : await daoTxBuilder.buildMultisigTx();
+        ? await daoTxBuilder.buildAzoriusTx(buildSafeTxParams)
+        : await daoTxBuilder.buildMultisigTx(buildSafeTxParams);
 
       return {
         predictedSafeAddress: txBuilderFactory.predictedSafeAddress!,

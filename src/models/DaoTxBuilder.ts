@@ -79,16 +79,17 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.setFractalModuleTxs();
   }
 
-  public async buildAzoriusTx(
-    shouldSetName: boolean = true,
-    shouldSetSnapshot: boolean = true,
-    existingSafe?: { owners: string[] },
-  ): Promise<string> {
+  public async buildAzoriusTx(params: {
+    shouldSetName: boolean;
+    shouldSetSnapshot: boolean;
+    existingSafeOwners?: string[];
+  }): Promise<string> {
+    const { shouldSetName, shouldSetSnapshot, existingSafeOwners } = params;
     const azoriusTxBuilder = await this.txBuilderFactory.createAzoriusTxBuilder();
 
     // transactions that must be called by safe
     this.internalTxs = [];
-    const txs: SafeTransaction[] = !!existingSafe ? [] : [this.createSafeTx!];
+    const txs: SafeTransaction[] = !!existingSafeOwners ? [] : [this.createSafeTx];
 
     if (shouldSetName) {
       this.internalTxs = this.internalTxs.concat(this.buildUpdateDAONameTx());
@@ -124,7 +125,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
 
     this.internalTxs = this.internalTxs.concat([
       azoriusTxBuilder.buildAddAzoriusContractAsOwnerTx(),
-      ...(!!existingSafe ? azoriusTxBuilder.buildRemoveOwners(existingSafe.owners) : []),
+      ...(!!existingSafeOwners ? azoriusTxBuilder.buildRemoveOwners(existingSafeOwners) : []),
       azoriusTxBuilder.buildRemoveMultiSendOwnerTx(),
     ]);
 
@@ -168,11 +169,20 @@ export class DaoTxBuilder extends BaseTxBuilder {
     return encodeMultiSend(txs);
   }
 
-  public async buildMultisigTx(): Promise<string> {
+  public async buildMultisigTx(params: {
+    shouldSetName: boolean;
+    shouldSetSnapshot: boolean;
+  }): Promise<string> {
+    const { shouldSetName, shouldSetSnapshot } = params;
     const multisigTxBuilder = this.txBuilderFactory.createMultiSigTxBuilder();
 
-    this.internalTxs.push(this.buildUpdateDAONameTx());
-    this.internalTxs.push(this.buildUpdateDAOSnapshotENSTx());
+    if (shouldSetName) {
+      this.internalTxs.push(this.buildUpdateDAONameTx());
+    }
+
+    if (shouldSetSnapshot) {
+      this.internalTxs.push(this.buildUpdateDAOSnapshotENSTx());
+    }
 
     // subDAO case, add freeze guard
     if (this.parentAddress) {
@@ -196,7 +206,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.internalTxs.push(multisigTxBuilder.buildRemoveMultiSendOwnerTx());
 
     const txs: SafeTransaction[] = [
-      this.createSafeTx!,
+      this.createSafeTx,
       this.buildExecInternalSafeTx(multisigTxBuilder.signatures()),
     ];
 
