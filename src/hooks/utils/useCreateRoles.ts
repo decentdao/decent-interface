@@ -566,7 +566,8 @@ export default function useCreateRoles() {
               return (
                 isEqual(payment, originalPayment) &&
                 !payment.isCancelled &&
-                payment.endDate < new Date()
+                payment.endDate < new Date() &&
+                (payment?.withdrawableAmount ?? 0n) > 0n
               );
             });
 
