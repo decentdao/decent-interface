@@ -388,22 +388,19 @@ export default function useCreateRoles() {
            * Removed Role
            * Transfer hat to DAO, flush streams, cancel streams, transfer hat to back to wearer, set hat status to false
            */
-          if (formHat.wearer === undefined || formHat.smartAddress === undefined) {
-            throw new Error('Cannot prepare transactions for removed role without wearer');
-          }
+          allTxs.push({
+            calldata: encodeFunctionData({
+              abi: HatsAbi,
+              functionName: 'transferHat',
+              args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
+            }),
+            targetAddress: hatsProtocol,
+          });
 
           const fundsToClaimStreams = (formHat.payments ?? []).filter(
             payment => (payment?.withdrawableAmount ?? 0n) > 0n,
           );
           if (fundsToClaimStreams.length) {
-            allTxs.push({
-              calldata: encodeFunctionData({
-                abi: HatsAbi,
-                functionName: 'transferHat',
-                args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
-              }),
-              targetAddress: hatsProtocol,
-            });
             for (const stream of fundsToClaimStreams) {
               if (!stream.streamId || !stream.contractAddress) {
                 throw new Error(
@@ -434,16 +431,6 @@ export default function useCreateRoles() {
               }
               allTxs.push(prepareCancelStreamTx(stream.streamId, stream.contractAddress));
             }
-          }
-          if (streamsToCancel.length || fundsToClaimStreams.length) {
-            allTxs.push({
-              calldata: encodeFunctionData({
-                abi: HatsAbi,
-                functionName: 'transferHat',
-                args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
-              }),
-              targetAddress: hatsProtocol,
-            });
           }
 
           allTxs.push({
