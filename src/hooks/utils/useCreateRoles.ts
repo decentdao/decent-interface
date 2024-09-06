@@ -569,10 +569,7 @@ export default function useCreateRoles() {
               }
             }
             // transfer hat from DAO to new wearer if there are any funds to claim
-            if (
-              (inactiveFundsToClaimStream && inactiveFundsToClaimStream.length) ||
-              (unEditedActiveStreams && unEditedActiveStreams.length)
-            ) {
+            if (inactiveFundsToClaimStream.length || unEditedActiveStreams.length) {
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
