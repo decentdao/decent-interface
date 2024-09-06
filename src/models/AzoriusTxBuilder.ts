@@ -558,12 +558,15 @@ export class AzoriusTxBuilder extends BaseTxBuilder {
   }
 
   private setContracts() {
-    if (!this.predictedTokenAddress || !this.predictedStrategyAddress) {
+    if (!this.predictedStrategyAddress) {
       return;
     }
 
     const daoData = this.daoData as AzoriusGovernanceDAO;
-    if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20) {
+    if (
+      !!this.predictedTokenAddress &&
+      daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC20
+    ) {
       this.votesTokenAddress = this.predictedTokenAddress;
       this.linearERC20VotingAddress = this.predictedStrategyAddress;
     } else if (daoData.votingStrategyType === VotingStrategyType.LINEAR_ERC721) {
