@@ -75,6 +75,7 @@ interface RolePaymentDetailsProps {
     startDate: Date;
     endDate: Date;
     cliffDate?: Date;
+    isCancelled: boolean;
     isStreaming: () => boolean;
     withdrawableAmount?: bigint;
   };
@@ -167,16 +168,34 @@ export function RolePaymentDetails({
     return Number(payment.amount.value) * foundAsset.usdPrice;
   }, [payment, assetsFungible]);
 
+  const activeStreamProps = useMemo(() => {
+    if (!payment.isCancelled && Date.now() < payment.endDate.getTime()) {
+      return {
+        bg: '#221D25',
+        sx: undefined,
+      };
+    } else {
+      return {
+        sx: {
+          p: {
+            color: 'neutral-6',
+          },
+        },
+        bg: 'none',
+      };
+    }
+  }, [payment]);
+
   return (
     <Box
       boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset"
-      bg="#221D25"
       borderRadius="0.5rem"
       pt="1rem"
       my="0.75rem"
       w="full"
       onClick={onClick}
       cursor={!!onClick ? 'pointer' : 'default'}
+      {...activeStreamProps}
     >
       <Box>
         <Flex
@@ -293,13 +312,14 @@ export function RolePaymentDetails({
             />
           </GridItem>
         </Grid>
-        {canWithdraw && !!payment?.withdrawableAmount && payment.withdrawableAmount > 0n && (
+        {canWithdraw && (
           <Box
             mt={4}
             px={4}
           >
             <Button
               w="full"
+              isDisabled={!!payment?.withdrawableAmount && payment.withdrawableAmount > 0n}
               leftIcon={<Download />}
               onClick={handleClickWithdraw}
             >
