@@ -421,10 +421,6 @@ export default function useCreateRoles() {
 
       const allTxs: { calldata: Hex; targetAddress: Address }[] = [];
 
-      // we need to keep track of how many new hats there are,
-      // so that we can correctly predict the hatId for the "create new role" transaction
-      let newHatCount = 0;
-
       // The Algorithm
       //
       // for each modified role
@@ -451,13 +447,17 @@ export default function useCreateRoles() {
       //     - for each active stream
       //       - if stream was not edited
       //         - allTxs.push(flush stream transaction data)
-      //   - for each edited active streams
+      //   - for each active stream
       //     - if stream was edited
       //       - allTxs.push(flush stream transaction data)
       //       - allTxs.push(cancel stream transaction data)
       //       - allTxs.push(create new stream transaction data)
       //   - for each new stream
       //     - allTxs.push(create new stream transactions datas)
+
+      // we need to keep track of how many new hats there are,
+      // so that we can correctly predict the hatId for the "create new role" transaction
+      let newHatCount = 0;
 
       for (let index = 0; index < modifiedHats.length; index++) {
         const formHat = modifiedHats[index];
