@@ -319,7 +319,7 @@ export function RolePaymentDetails({
           >
             <Button
               w="full"
-              isDisabled={!!payment?.withdrawableAmount && payment.withdrawableAmount > 0n}
+              isDisabled={!((payment?.withdrawableAmount ?? 0n) > 0n)}
               leftIcon={<Download />}
               onClick={handleClickWithdraw}
             >
