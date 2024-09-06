@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { DETAILS_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -170,11 +169,11 @@ export function RolePaymentDetails({
 
   return (
     <Box
-      boxShadow={DETAILS_SHADOW}
-      bg="neutral-2"
+      boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset"
+      bg="#221D25"
       borderRadius="0.5rem"
       pt="1rem"
-      my="0.5rem"
+      my="0.75rem"
       w="full"
       onClick={onClick}
       cursor={!!onClick ? 'pointer' : 'default'}
@@ -247,7 +246,7 @@ export function RolePaymentDetails({
       </Box>
 
       <Box
-        boxShadow={DETAILS_SHADOW}
+        boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset"
         borderBottomRadius="0.5rem"
         py="1rem"
         mt="1rem"
@@ -268,7 +267,7 @@ export function RolePaymentDetails({
               borderLeft="1px solid"
               borderColor="white-alpha-08"
               h="full"
-              boxShadow={DETAILS_SHADOW}
+              boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset"
               w="0"
             />
           </GridItem>
@@ -283,7 +282,7 @@ export function RolePaymentDetails({
               borderLeft="1px solid"
               borderColor="white-alpha-08"
               h="full"
-              boxShadow={DETAILS_SHADOW}
+              boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset"
               w="0"
             />
           </GridItem>
