@@ -395,7 +395,7 @@ export default function useCreateRoles() {
         } else if (formHat.editedRole.status === EditBadgeStatus.Removed) {
           /**
            * Removed Role
-           * Transfer hat to DAO, flush streams, cancel streams, transfer hat to back to wearer, set hat status to false
+           * Transfer hat to DAO, flush streams, cancel streams, set hat status to false
            */
           if (formHat.smartAddress === undefined) {
             throw new Error(
