@@ -2,6 +2,11 @@ import { Box, Button, Flex } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import {
+  paymentSorterByWithdrawAmount,
+  paymentSorterByStartDate,
+  paymentSorterByActiveStatus,
+} from '../../../../store/roles';
 import { RolePaymentDetails } from '../RolePaymentDetails';
 import { RoleFormValues, SablierPaymentFormValues } from '../types';
 
@@ -29,29 +34,33 @@ export function RoleFormPaymentStreams() {
             {t('addPayment')}
           </Button>
           <Box mt="0.5rem">
-            {payments?.map((payment, index) => {
-              // @note don't render if form isn't valid
-              if (!payment.amount || !payment.asset || !payment.startDate || !payment.endDate)
-                return null;
-              return (
-                <Flex key={index}>
-                  <RolePaymentDetails
-                    payment={{
-                      amount: payment.amount,
-                      asset: payment.asset,
-                      endDate: payment.endDate,
-                      startDate: payment.startDate,
-                      cliffDate: payment.cliffDate,
-                      isCancelled: payment.isCancelled ?? false,
-                      isStreaming: () => false,
-                    }}
-                    onClick={() => {
-                      setFieldValue('roleEditing.roleEditingPaymentIndex', index);
-                    }}
-                  />
-                </Flex>
-              );
-            })}
+            {payments
+              ?.sort(paymentSorterByWithdrawAmount)
+              .sort(paymentSorterByStartDate)
+              .sort(paymentSorterByActiveStatus)
+              .map((payment, index) => {
+                // @note don't render if form isn't valid
+                if (!payment.amount || !payment.asset || !payment.startDate || !payment.endDate)
+                  return null;
+                return (
+                  <Flex key={index}>
+                    <RolePaymentDetails
+                      payment={{
+                        amount: payment.amount,
+                        asset: payment.asset,
+                        endDate: payment.endDate,
+                        startDate: payment.startDate,
+                        cliffDate: payment.cliffDate,
+                        isCancelled: payment.isCancelled ?? false,
+                        isStreaming: () => false,
+                      }}
+                      onClick={() => {
+                        setFieldValue('roleEditing.roleEditingPaymentIndex', index);
+                      }}
+                    />
+                  </Flex>
+                );
+              })}
           </Box>
         </Box>
       )}

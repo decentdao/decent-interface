@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { getAddress, Hex } from 'viem';
 import { isFeatureEnabled } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useRolesStore } from '../../../store/roles';
+import { paymentSorterByActiveStatus, paymentSorterByStartDate, paymentSorterByWithdrawAmount, useRolesStore } from '../../../store/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
@@ -100,15 +100,19 @@ export default function RolesDetailsDrawerMobile({
             >
               {t('payments')}
             </Text>
-            {roleHat.payments.map((payment, index) => (
-              <RolePaymentDetails
-                key={index}
-                payment={payment}
-                roleHatSmartAddress={roleHat.smartAddress}
-                roleHatWearerAddress={getAddress(roleHat.wearer)}
-                showWithdraw
-              />
-            ))}
+            {roleHat.payments
+              .sort(paymentSorterByWithdrawAmount)
+              .sort(paymentSorterByStartDate)
+              .sort(paymentSorterByActiveStatus)
+              .map((payment, index) => (
+                <RolePaymentDetails
+                  key={index}
+                  payment={payment}
+                  roleHatSmartAddress={roleHat.smartAddress}
+                  roleHatWearerAddress={getAddress(roleHat.wearer)}
+                  showWithdraw
+                />
+              ))}
           </>
         )}
       </Box>

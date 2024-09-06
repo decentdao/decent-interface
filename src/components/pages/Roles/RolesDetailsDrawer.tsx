@@ -17,6 +17,11 @@ import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import {
+  paymentSorterByActiveStatus,
+  paymentSorterByStartDate,
+  paymentSorterByWithdrawAmount,
+} from '../../../store/roles';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
@@ -167,15 +172,19 @@ export default function RolesDetailsDrawer({
               >
                 {t('payments')}
               </Text>
-              {roleHat.payments.map((payment, index) => (
-                <RolePaymentDetails
-                  key={index}
-                  payment={payment}
-                  roleHatSmartAddress={roleHat.smartAddress}
-                  roleHatWearerAddress={getAddress(roleHat.wearer)}
-                  showWithdraw
-                />
-              ))}
+              {roleHat.payments
+                .sort(paymentSorterByWithdrawAmount)
+                .sort(paymentSorterByStartDate)
+                .sort(paymentSorterByActiveStatus)
+                .map((payment, index) => (
+                  <RolePaymentDetails
+                    key={index}
+                    payment={payment}
+                    roleHatSmartAddress={roleHat.smartAddress}
+                    roleHatWearerAddress={getAddress(roleHat.wearer)}
+                    showWithdraw
+                  />
+                ))}
             </>
           )}
         </DrawerBody>
