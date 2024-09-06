@@ -340,7 +340,7 @@ export default function useCreateRoles() {
   const prepareCreateRolesModificationsProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
       if (!hatsTree || !daoAddress) {
-        throw new Error('Cannot prepare transactions');
+        throw new Error('Cannot prepare transactions without hats tree or DAO address');
       }
 
       const topHatAccount = hatsTree.topHat.smartAddress;
@@ -357,6 +357,15 @@ export default function useCreateRoles() {
 
       for (let index = 0; index < modifiedHats.length; index++) {
         const formHat = modifiedHats[index];
+        if (
+          formHat.name === undefined ||
+          formHat.description === undefined ||
+          formHat.wearer === undefined
+        ) {
+          throw new Error('Role details are missing', {
+            cause: formHat,
+          });
+        }
 
         if (formHat.editedRole.status === EditBadgeStatus.New) {
           /**
@@ -388,6 +397,11 @@ export default function useCreateRoles() {
            * Removed Role
            * Transfer hat to DAO, flush streams, cancel streams, transfer hat to back to wearer, set hat status to false
            */
+          if (formHat.smartAddress === undefined) {
+            throw new Error(
+              'Cannot prepare transactions for removed role without smart account address',
+            );
+          }
           allTxs.push({
             calldata: encodeFunctionData({
               abi: HatsAbi,
@@ -459,9 +473,6 @@ export default function useCreateRoles() {
              * Updated Role Name or Description Transaction
              * Upload the new details to IPFS, Change hat details
              */
-            if (formHat.name === undefined || formHat.description === undefined) {
-              throw new Error('Hat name or description of existing hat is undefined.');
-            }
             const details = await uploadHatDescription(
               hatsDetailsBuilder({
                 name: formHat.name,
@@ -483,8 +494,8 @@ export default function useCreateRoles() {
              * Transfer hat to DAO, flush inactive and unedited streams, transfer hat to new wearer
              */
 
-            if (formHat.wearer === undefined || formHat.smartAddress === undefined) {
-              throw new Error('Cannot prepare transactions for edited role without wearer');
+            if (formHat.smartAddress === undefined) {
+              throw new Error('Cannot prepare transactions for edited role without smart address');
             }
             const originalHat = getHat(formHat.id);
             if (!originalHat) {
@@ -588,8 +599,8 @@ export default function useCreateRoles() {
              * Transfer hat to DAO if there are funds to claim, flush edited active streams with funds to claim, cancel edited streams, transfer hat back to wearer if necessary
              */
 
-            if (!formHat.wearer || !formHat.smartAddress) {
-              throw new Error('Cannot prepare transactions');
+            if (!formHat.smartAddress) {
+              throw new Error('Cannot prepare transactions for edited role without smart address');
             }
             const editedStreams = (formHat.payments ?? []).filter(payment => {
               if (payment.streamId === undefined) {
@@ -686,8 +697,10 @@ export default function useCreateRoles() {
              */
             const newStreams = (formHat.payments ?? []).filter(payment => !payment.streamId);
             if (newStreams.length) {
-              if (!formHat.smartAddress || !formHat.wearer) {
-                throw new Error('Cannot prepare transactions, missing data for new streams');
+              if (!formHat.smartAddress) {
+                throw new Error(
+                  'Cannot prepare transactions for edited role without smart address',
+                );
               }
               const newPredictedHatSmartAccount = await predictSmartAccount(BigInt(formHat.id));
               const newStreamTxData = createBatchLinearStreamCreationTx(
