@@ -845,7 +845,7 @@ export default function useCreateRoles() {
           );
         }
 
-        // // All done, submit the proposal!
+        // All done, submit the proposal!
         await submitProposal({
           proposalData,
           nonce: values.customNonce ?? safe.nextNonce,
