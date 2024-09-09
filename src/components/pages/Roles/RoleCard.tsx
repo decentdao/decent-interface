@@ -215,7 +215,7 @@ export function RoleCardEdit({
     <Card
       mb="1rem"
       onClick={!isRemovedRole ? handleRoleClick : undefined}
-      cursor={isRemovedRole ? 'not-allowed' : 'pointer'}
+      cursor={!isRemovedRole ? 'pointer' : 'not-allowed'}
     >
       <Flex justifyContent="space-between">
         <AvatarAndRoleName

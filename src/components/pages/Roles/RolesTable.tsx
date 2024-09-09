@@ -219,7 +219,7 @@ export function RolesRowEdit({
       _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
       onClick={!isRemovedRole ? handleRoleClick : undefined}
-      cursor={isRemovedRole ? 'not-allowed' : 'pointer'}
+      cursor={!isRemovedRole ? 'pointer' : 'not-allowed'}
     >
       <RoleNameEditColumn
         roleName={name}
