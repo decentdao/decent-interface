@@ -66,9 +66,6 @@ export function RoleFormPaymentStreams() {
                         isCancelled: payment.isCancelled ?? false,
                         isStreaming: payment.isStreaming ?? (() => false),
                       }}
-                      onClick={() => {
-                        setFieldValue('roleEditing.roleEditingPaymentIndex', index);
-                      }}
                     />
                   </Flex>
                 );
