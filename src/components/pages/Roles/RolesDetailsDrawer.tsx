@@ -172,7 +172,7 @@ export default function RolesDetailsDrawer({
               >
                 {t('payments')}
               </Text>
-              {roleHat.payments
+              {[...roleHat.payments]
                 .sort(paymentSorterByWithdrawAmount)
                 .sort(paymentSorterByStartDate)
                 .sort(paymentSorterByActiveStatus)

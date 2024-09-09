@@ -105,7 +105,7 @@ export default function RolesDetailsDrawerMobile({
             >
               {t('payments')}
             </Text>
-            {roleHat.payments
+            {[...roleHat.payments]
               .sort(paymentSorterByWithdrawAmount)
               .sort(paymentSorterByStartDate)
               .sort(paymentSorterByActiveStatus)
