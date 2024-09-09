@@ -37,10 +37,10 @@ export const getTimeStamp = async (blockNumber: number | 'latest', publicClient:
   }
 
   try {
-    const block = await publicClient.getBlock({ blockNumber: BigInt(blockNumber) });
     const latestBlock = await publicClient.getBlock();
 
     if (blockNumber < latestBlock.number) {
+      const block = await publicClient.getBlock({ blockNumber: BigInt(blockNumber) });
       return Number(block.timestamp);
     } else {
       const averageBlockTime = await getAverageBlockTime(publicClient);
