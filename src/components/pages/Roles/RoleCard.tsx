@@ -210,10 +210,12 @@ export function RoleCardEdit({
   editStatus,
   handleRoleClick,
 }: RoleEditProps) {
+  const isRemovedRole = editStatus === EditBadgeStatus.Removed;
   return (
     <Card
       mb="1rem"
-      onClick={handleRoleClick}
+      onClick={!isRemovedRole ? handleRoleClick : undefined}
+      cursor={!isRemovedRole ? 'pointer' : 'not-allowed'}
     >
       <Flex justifyContent="space-between">
         <AvatarAndRoleName
