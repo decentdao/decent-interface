@@ -55,7 +55,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
 
     // if the timer has run out, update proposals on a ten second interval
     // until we need another one
-    if (secondsLeft && secondsLeft < 0 && !updateStateInterval.current) {
+    if (secondsLeft !== undefined && secondsLeft < 0 && !updateStateInterval.current) {
       updateStateInterval.current = setInterval(() => {
         // Wrap the updateProposalState call in an async IIFE
         (async () => {
@@ -91,9 +91,10 @@ export function useProposalCountdown(proposal: FractalProposal) {
   }, []);
 
   const getCountdown = useCallback(async () => {
-    if (!publicClient || !freezeGuardContractAddress) return;
+    if (!publicClient) return;
+
     const freezeGuard =
-      freezeGuardType === FreezeGuardType.MULTISIG
+      freezeGuardContractAddress !== undefined && freezeGuardType === FreezeGuardType.MULTISIG
         ? getContract({
             abi: abis.MultisigFreezeGuard,
             address: freezeGuardContractAddress,
