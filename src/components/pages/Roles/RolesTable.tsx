@@ -206,18 +206,20 @@ export function RolesRowEdit({
   payments,
   handleRoleClick,
 }: RoleEditProps) {
+  const isRemovedRole = editStatus === EditBadgeStatus.Removed;
   return (
     <Tr
       sx={{
         td: { padding: '0.75rem', height: '4rem' },
         '&:hover': {
-          '.edit-role-icon': { opacity: 1 },
+          '.edit-role-icon': { opacity: isRemovedRole ? 0 : 1 },
         },
       }}
       _hover={{ bg: 'neutral-3' }}
       _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
-      onClick={handleRoleClick}
+      onClick={!isRemovedRole ? handleRoleClick : undefined}
+      cursor={isRemovedRole ? 'not-allowed' : 'pointer'}
     >
       <RoleNameEditColumn
         roleName={name}
