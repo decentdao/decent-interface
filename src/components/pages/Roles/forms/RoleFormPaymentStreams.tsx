@@ -45,7 +45,19 @@ export function RoleFormPaymentStreams() {
                 return (
                   <Flex key={index}>
                     <RolePaymentDetails
+                      roleHatId={values.roleEditing?.id}
+                      showCancel={
+                        // @note can not cancel a new role
+                        values.roleEditing?.id !== undefined &&
+                        // @note can not cancel a pending creation
+                        payment.streamId !== undefined &&
+                        // @note can not cancel a stream that is already cancelled or ended
+                        !payment.isCancelled &&
+                        !!payment.endDate &&
+                        payment.endDate.getTime() > Date.now()
+                      }
                       payment={{
+                        streamId: payment.streamId,
                         amount: payment.amount,
                         asset: payment.asset,
                         endDate: payment.endDate,

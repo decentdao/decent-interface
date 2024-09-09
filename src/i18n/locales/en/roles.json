@@ -83,5 +83,6 @@
   "roleInfoErrorPaymentFixedDateEndDateRequired": "End date is required.",
   "roleInfoErrorPaymentFixedDateEndDateAfterStartDate": "End date must be after start date.",
   "roleInfoErrorPaymentScheduleOrFixedDateRequired": "Payment schedule or fixed dates are required.",
-  "roleInfoErrorPaymentScheduleInvalid": "Invalid payment schedule."
+  "roleInfoErrorPaymentScheduleInvalid": "Invalid payment schedule.",
+  "cancelPayment": "Cancel Payment"
 }
