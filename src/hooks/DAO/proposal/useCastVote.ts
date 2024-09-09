@@ -22,11 +22,9 @@ import useUserERC721VotingTokens from './useUserERC721VotingTokens';
 
 const useCastVote = ({
   proposal,
-  setPending,
   extendedSnapshotProposal,
 }: {
   proposal: FractalProposal;
-  setPending?: React.Dispatch<React.SetStateAction<boolean>>;
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
 }) => {
   const [selectedChoice, setSelectedChoice] = useState<number>();
@@ -40,7 +38,9 @@ const useCastVote = ({
       user: { address },
     },
   } = useFractal();
+
   const signer = useEthersSigner();
+
   const client = useMemo(() => {
     if (daoSnapshotENS) {
       return new snapshot.Client712('https://hub.snapshot.org');
@@ -57,12 +57,9 @@ const useCastVote = ({
     null,
     proposal.proposalId,
   );
+
   const { getCanVote, getHasVoted } = useVoteContext();
   const { data: walletClient } = useWalletClient();
-
-  if (setPending) {
-    setPending(pending);
-  }
 
   useEffect(() => {
     if (extendedSnapshotProposal) {
@@ -233,6 +230,7 @@ const useCastVote = ({
     snapshotWeightedChoice,
     handleSelectSnapshotChoice,
     handleChangeSnapshotWeightedChoice,
+    castVotePending: pending,
   };
 };
 

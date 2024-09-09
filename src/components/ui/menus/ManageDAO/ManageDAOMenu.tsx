@@ -54,7 +54,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
   const safeAddress = node.daoAddress;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, undefined, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, null, false);
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeInfo: node,
@@ -141,7 +141,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
           });
           return contract.write.castFreezeVote();
         } else if (freezeVotingType === FreezeVotingType.ERC721) {
-          getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
+          getUserERC721VotingTokens(parentAddress, null).then(tokensInfo => {
             if (!guardContracts.freezeVotingContractAddress) {
               throw new Error('freeze voting contract address not set');
             }

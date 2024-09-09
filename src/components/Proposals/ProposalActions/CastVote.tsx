@@ -25,7 +25,6 @@ function Vote({
   extendedSnapshotProposal?: ExtendedSnapshotProposal;
   onCastSnapshotVote?: () => Promise<void>;
 }) {
-  const [pending, setPending] = useState<boolean>(false);
   const [selectedVoteChoice, setVoiceChoice] = useState<number>();
   const { t } = useTranslation(['common', 'proposal', 'transaction']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
@@ -39,9 +38,9 @@ function Vote({
     handleSelectSnapshotChoice,
     selectedChoice,
     snapshotWeightedChoice,
+    castVotePending,
   } = useCastVote({
     proposal,
-    setPending,
     extendedSnapshotProposal,
   });
 
@@ -65,7 +64,7 @@ function Vote({
   );
 
   const disabled =
-    pending ||
+    castVotePending ||
     proposal.state !== FractalProposalState.ACTIVE ||
     proposalStartBlockNotFinalized ||
     canVoteLoading ||

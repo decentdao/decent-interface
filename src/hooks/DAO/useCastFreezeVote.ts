@@ -20,7 +20,7 @@ const useCastFreezeVote = ({
       nodeHierarchy: { parentAddress },
     },
   } = useFractal();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(null, undefined, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(null, null, false);
 
   setPending(pending);
 
@@ -40,7 +40,7 @@ const useCastFreezeVote = ({
             address: freezeVotingContractAddress,
             client: walletClient,
           });
-          return getUserERC721VotingTokens(parentAddress, undefined).then(tokensInfo => {
+          return getUserERC721VotingTokens(parentAddress, null).then(tokensInfo => {
             return freezeERC721VotingContract.write.castFreezeVote([
               tokensInfo.totalVotingTokenAddresses,
               tokensInfo.totalVotingTokenIds.map(i => BigInt(i)),

@@ -29,7 +29,7 @@ export const useFractalFreeze = ({
   const { address: account } = useAccount();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(
     parentSafeAddress,
-    undefined,
+    null,
     loadOnMount,
   );
 
@@ -167,7 +167,7 @@ export const useFractalFreeze = ({
       } else if (freezeVotingType === FreezeVotingType.ERC721) {
         const { totalVotingTokenAddresses } = await getUserERC721VotingTokens(
           parentSafeAddress,
-          undefined,
+          null,
         );
         userHasVotes = totalVotingTokenAddresses.length > 0;
       }

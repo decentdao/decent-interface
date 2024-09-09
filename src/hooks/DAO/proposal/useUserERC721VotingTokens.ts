@@ -9,7 +9,7 @@ import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 
 /**
  * Retrieves list of ERC-721 voting tokens for the supplied `address`(aka `user.address`) param
- * @param {string} [proposalId] - Proposal ID. When it's provided - calculates `remainingTokenIds` and `remainingTokenAddresses` that user can use for voting on speicific proposal.
+ * @param {string|null} [proposalId] - Proposal ID. When it's provided - calculates `remainingTokenIds` and `remainingTokenAddresses` that user can use for voting on specific proposal.
  * @param {Address|null} [safeAddress] - address of Safe{Wallet}, for which voting tokens should be retrieved. If not provided - these are used from global context.
  * @param {boolean} [loadOnMount] - whether to fetch voting tokens on component mount or not. Leaves the space to fetch those tokens via getUserERC721VotingTokens
  * @returns {string[]} `totalVotingTokenIds` - list of all ERC-721 tokens that are held by `address`.
@@ -19,7 +19,7 @@ import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
  */
 export default function useUserERC721VotingTokens(
   safeAddress: Address | null,
-  proposalId?: string,
+  proposalId: string | null,
   loadOnMount: boolean = true,
 ) {
   const [totalVotingTokenIds, setTotalVotingTokenIds] = useState<string[]>([]);
@@ -42,7 +42,7 @@ export default function useUserERC721VotingTokens(
   const { erc721Tokens } = azoriusGovernance;
 
   const getUserERC721VotingTokens = useCallback(
-    async (_safeAddress: Address | null, _proposalId?: number) => {
+    async (_safeAddress: Address | null, _proposalId: number | null) => {
       const totalTokenAddresses: Address[] = [];
       const totalTokenIds: string[] = [];
       const tokenAddresses: Address[] = [];
@@ -178,7 +178,8 @@ export default function useUserERC721VotingTokens(
 
               totalTokenAddresses.push(tokenAddress);
               totalTokenIds.push(tokenId);
-              if (_proposalId) {
+
+              if (_proposalId !== null) {
                 const tokenVoted = await votingContract.read.hasVoted([
                   _proposalId,
                   tokenAddress,
@@ -213,7 +214,9 @@ export default function useUserERC721VotingTokens(
   );
 
   const loadUserERC721VotingTokens = useCallback(async () => {
-    const tokensInfo = await getUserERC721VotingTokens(safeAddress, Number(proposalId));
+    const proposalIdNum = proposalId === null ? null : Number(proposalId);
+    const tokensInfo = await getUserERC721VotingTokens(safeAddress, proposalIdNum);
+
     if (tokensInfo) {
       setTotalVotingTokenAddresses(tokensInfo.totalVotingTokenAddresses);
       setTotalVotingTokenIds(tokensInfo.totalVotingTokenIds);
