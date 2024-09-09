@@ -52,7 +52,7 @@ export function RoleFormPaymentStreams() {
                         startDate: payment.startDate,
                         cliffDate: payment.cliffDate,
                         isCancelled: payment.isCancelled ?? false,
-                        isStreaming: () => false,
+                        isStreaming: payment.isStreaming ?? (() => false),
                       }}
                       onClick={() => {
                         setFieldValue('roleEditing.roleEditingPaymentIndex', index);
