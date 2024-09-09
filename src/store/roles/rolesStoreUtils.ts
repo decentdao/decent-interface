@@ -299,7 +299,7 @@ export const isActive = (payment: { isCancelled?: boolean; endDate?: Date }) => 
 
 export const paymentSorterByActiveStatus = (
   a: { isCancelled?: boolean; endDate?: Date },
-  b: { isCancelled?: boolean; endDate?: Date }
+  b: { isCancelled?: boolean; endDate?: Date },
 ) => {
   const aIsActive = isActive(a);
   const bIsActive = isActive(b);

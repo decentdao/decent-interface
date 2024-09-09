@@ -4,7 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { getAddress, Hex } from 'viem';
 import { isFeatureEnabled } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { paymentSorterByActiveStatus, paymentSorterByStartDate, paymentSorterByWithdrawAmount, useRolesStore } from '../../../store/roles';
+import {
+  paymentSorterByActiveStatus,
+  paymentSorterByStartDate,
+  paymentSorterByWithdrawAmount,
+  useRolesStore,
+} from '../../../store/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
