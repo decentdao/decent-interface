@@ -46,7 +46,8 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   const startBlockTimeStamp = useBlockTimestamp(Number(startBlock));
   const [proposalsERC20VotingWeight, setProposalsERC20VotingWeight] = useState('0');
   const totalVotesCasted = useMemo(() => yes + no + abstain, [yes, no, abstain]);
-  const totalVotingWeight = useMemo(
+
+  const totalERC721VotingWeight = useMemo(
     () =>
       erc721Tokens?.reduce(
         (prev, curr) => prev + (curr.totalSupply ? curr.totalSupply * curr.votingWeight : 0n),
@@ -272,7 +273,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
             {
               quorum: strategyQuorum,
               total: isERC721
-                ? totalVotingWeight?.toLocaleString()
+                ? totalERC721VotingWeight?.toLocaleString()
                 : votesToken
                   ? (votesToken.totalSupply / votesTokenDecimalsDenominator).toLocaleString()
                   : undefined,

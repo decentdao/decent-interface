@@ -89,9 +89,7 @@ export const useValidationAddress = () => {
         if (!address || !publicClient) return false;
         setIsValidating(true);
         try {
-          console.log('🚀 ~ address:', address);
           const { validation } = await validateAddress({ publicClient, address });
-          console.log('🚀 ~ validation:', validation);
           if (validation.isValidAddress) {
             addressValidationMap.current.set(address, validation);
           }

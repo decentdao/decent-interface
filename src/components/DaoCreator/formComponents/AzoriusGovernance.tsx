@@ -78,7 +78,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           {values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20 ? (
             <LabelComponent
               label={t('quorum', { ns: 'common' })}
-              helper={t('helperQuorum')}
+              helper={t('helperQuorumERC20')}
               isRequired
             >
               <InputGroup>
@@ -95,7 +95,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           ) : (
             <LabelComponent
               label={t('quorum', { ns: 'common' })}
-              helper={t('helperQuorumThreshold')}
+              helper={t('helperQuorumERC721')}
               isRequired
             >
               <BigIntInput

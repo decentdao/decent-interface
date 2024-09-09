@@ -33,8 +33,6 @@ export default function ProposalDetailsPage() {
   const metaData = useGetMetadata(proposal);
   const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
-  const azoriusProposal = proposal as AzoriusProposal;
-
   useEffect(() => {
     if (!proposals || !proposals.length || !proposalId) {
       setProposal(undefined);
@@ -87,7 +85,7 @@ export default function ProposalDetailsPage() {
       ) : isSnapshotProposal ? (
         <SnapshotProposalDetails proposal={proposal as SnapshotProposal} />
       ) : dao?.isAzorius ? (
-        <AzoriusProposalDetails proposal={azoriusProposal} />
+        <AzoriusProposalDetails proposal={proposal as AzoriusProposal} />
       ) : (
         <MultisigProposalDetails proposal={proposal} />
       )}
