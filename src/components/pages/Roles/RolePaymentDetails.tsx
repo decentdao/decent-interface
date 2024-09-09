@@ -15,6 +15,9 @@ import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 
+const PAYMENT_DETAILS_BOX_SHADOW =
+  '0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset';
+
 function PaymentDate({ label, date }: { label: string; date?: Date }) {
   const { t } = useTranslation(['roles']);
   return (
@@ -188,7 +191,7 @@ export function RolePaymentDetails({
 
   return (
     <Box
-      boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset"
+      boxShadow={PAYMENT_DETAILS_BOX_SHADOW}
       borderRadius="0.5rem"
       pt="1rem"
       my="0.75rem"
@@ -265,7 +268,7 @@ export function RolePaymentDetails({
       </Box>
 
       <Box
-        boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset"
+        boxShadow={PAYMENT_DETAILS_BOX_SHADOW}
         borderBottomRadius="0.5rem"
         py="1rem"
         mt="1rem"
@@ -286,7 +289,7 @@ export function RolePaymentDetails({
               borderLeft="1px solid"
               borderColor="white-alpha-08"
               h="full"
-              boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset"
+              boxShadow={PAYMENT_DETAILS_BOX_SHADOW}
               w="0"
             />
           </GridItem>
@@ -301,7 +304,7 @@ export function RolePaymentDetails({
               borderLeft="1px solid"
               borderColor="white-alpha-08"
               h="full"
-              boxShadow="0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset"
+              boxShadow={PAYMENT_DETAILS_BOX_SHADOW}
               w="0"
             />
           </GridItem>
