@@ -34,8 +34,8 @@ export function RoleFormPaymentStreams() {
             {t('addPayment')}
           </Button>
           <Box mt="0.5rem">
-            {payments
-              ?.sort(paymentSorterByWithdrawAmount)
+            {[...(payments ?? [])]
+              .sort(paymentSorterByWithdrawAmount)
               .sort(paymentSorterByStartDate)
               .sort(paymentSorterByActiveStatus)
               .map((payment, index) => {
