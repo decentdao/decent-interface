@@ -298,7 +298,7 @@ export function RolePaymentDetails({
         />
       )}
       <Box
-        borderTopRadius="0.5rem"
+        borderTopRadius={showCancel ? 'none' : '0.5rem'}
         py="1rem"
         onClick={onClick}
         cursor={!!onClick ? 'pointer' : 'default'}
