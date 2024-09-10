@@ -171,34 +171,42 @@ export function RolePaymentDetails({
     return Number(payment.amount.value) * foundAsset.usdPrice;
   }, [payment, assetsFungible]);
 
-  const activeStreamProps = useMemo(() => {
-    if (!payment.isCancelled && Date.now() < payment.endDate.getTime()) {
-      return {
-        bg: '#221D25',
-        sx: undefined,
-      };
-    } else {
-      return {
-        sx: {
-          p: {
-            color: 'neutral-6',
+  const isActiveStream = !payment.isCancelled && Date.now() < payment.endDate.getTime();
+
+  const activeStreamProps = useCallback(
+    (isTop: boolean) =>
+      isActiveStream
+        ? {
+            bg: '#221D25',
+            sx: undefined,
+            boxShadow: PAYMENT_DETAILS_BOX_SHADOW,
+          }
+        : {
+            sx: {
+              p: {
+                color: 'neutral-6',
+              },
+            },
+            bg: 'none',
+            boxShadow: 'none',
+            borderTop: '1px solid',
+            borderBottom: isTop ? 'none' : '1px solid',
+            borderLeft: '1px solid',
+            borderRight: '1px solid',
+            borderColor: 'neutral-4',
           },
-        },
-        bg: 'none',
-      };
-    }
-  }, [payment]);
+    [isActiveStream],
+  );
 
   return (
     <Box
-      boxShadow={PAYMENT_DETAILS_BOX_SHADOW}
       borderRadius="0.5rem"
       pt="1rem"
       my="0.75rem"
       w="full"
       onClick={onClick}
       cursor={!!onClick ? 'pointer' : 'default'}
-      {...activeStreamProps}
+      {...activeStreamProps(true)}
     >
       <Box>
         <Flex
@@ -268,7 +276,7 @@ export function RolePaymentDetails({
       </Box>
 
       <Box
-        boxShadow={PAYMENT_DETAILS_BOX_SHADOW}
+        {...activeStreamProps(false)}
         borderBottomRadius="0.5rem"
         py="1rem"
         mt="1rem"
