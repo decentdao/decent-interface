@@ -32,36 +32,11 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
       return false;
     }
     return values.roleEditing.payments.some(payment => {
-      const existingPayment = existingRoleHat?.payments?.find(p => p.streamId === payment.streamId);
-      if (!existingPayment) {
-        return true;
-      }
-
-      const hasAddedCliff = !!payment.cliffDate || !existingPayment.cliffDate;
-      const hasRemovedCliff = !payment.cliffDate || !!existingPayment.cliffDate;
-      const hasCliffChanged =
-        !!payment.cliffDate &&
-        !!existingPayment.cliffDate &&
-        payment.cliffDate?.getTime() !== existingPayment.cliffDate.getTime();
-      const hasAmountChanged = payment.amount !== existingPayment.amount;
-      const hasAssetChanged = payment.asset?.address !== existingPayment.asset.address;
-      const hasStartDateChanged =
-        payment.startDate?.getTime() !== existingPayment.startDate.getTime();
-      const hasEndDateChanged = payment.endDate?.getTime() !== existingPayment.endDate.getTime();
-      const hasBeenSetToCancel = payment.isCancelling
-
-      return (
-        hasAddedCliff ||
-        hasRemovedCliff ||
-        hasCliffChanged ||
-        hasAmountChanged ||
-        hasAssetChanged ||
-        hasStartDateChanged ||
-        hasEndDateChanged ||
-        hasBeenSetToCancel
-      );
+      const hasBeenSetToCancel = payment.isCancelling;
+      const isNewPayment = !payment.streamId;
+      return hasBeenSetToCancel || isNewPayment;
     });
-  }, [existingRoleHat, values.roleEditing]);
+  }, [values.roleEditing]);
 
   const editedRoleData = useMemo<EditedRole>(() => {
     if (!existingRoleHat) {
