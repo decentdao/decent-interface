@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useMemo, useCallback } from 'react';
+import { toast } from 'react-toastify';
 
 const INFURA_AUTH =
   'Basic ' +
@@ -12,15 +13,26 @@ const axiosClient = axios.create({ baseURL: BASE_URL, headers: { Authorization: 
 
 export default function useIPFSClient() {
   const cat = useCallback(async (hash: string) => {
-    const response = await axiosClient.post(`${BASE_URL}/cat?arg=${hash}`);
-    return response.data;
+    return axiosClient
+      .post(`${BASE_URL}/cat?arg=${hash}`)
+      .then(response => response.data)
+      .catch(error => {
+        console.error(error);
+        toast('Error fetching data from IPFS, please try again later.');
+      });
   }, []);
 
   const add = useCallback(async (data: string) => {
     const formData = new FormData();
     formData.append('file', data);
-    const response = await axiosClient.post(`${BASE_URL}/add`, formData);
-    return response.data;
+
+    return axiosClient
+      .post(`${BASE_URL}/add`, formData)
+      .then(response => response.data)
+      .catch(error => {
+        console.error(error);
+        toast('Error saving data to IPFS, please try again later.');
+      });
   }, []);
 
   const client = useMemo(
