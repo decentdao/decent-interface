@@ -1,5 +1,4 @@
 import { FormikHelpers } from 'formik';
-import { isEqual } from 'lodash';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -33,7 +32,7 @@ export default function useCreateRoles() {
   const {
     node: { safe, daoAddress, daoName },
   } = useFractal();
-  const { hatsTree, hatsTreeId, getHat, getPayment } = useRolesStore();
+  const { hatsTree, hatsTreeId, getHat } = useRolesStore();
   const {
     addressPrefix,
     chain,
@@ -491,7 +490,7 @@ export default function useCreateRoles() {
           if (formHat.editedRole.fieldNames.includes('member')) {
             /**
              * Updated Role Member
-             * Transfer hat to DAO, flush inactive and unedited streams, transfer hat to new wearer
+             * Transfer hat to DAO, flush withdrawable streams, transfer hat to new wearer
              */
 
             if (formHat.smartAddress === undefined) {
@@ -501,13 +500,11 @@ export default function useCreateRoles() {
             if (!originalHat) {
               throw new Error('Cannot find original hat');
             }
-            const inactiveFundsToClaimStream = (formHat.payments ?? []).filter(
-              payment =>
-                (payment?.withdrawableAmount ?? 0n) > 0n &&
-                ((!!payment.endDate && payment.endDate > new Date()) || !!payment.isCancelled),
+            const fundsToClaimStreams = (formHat.payments ?? []).filter(
+              payment => (payment?.withdrawableAmount ?? 0n) > 0n && !payment.isCancelling,
             );
 
-            if (inactiveFundsToClaimStream.length) {
+            if (fundsToClaimStreams.length) {
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -516,7 +513,7 @@ export default function useCreateRoles() {
                 }),
                 targetAddress: hatsProtocol,
               });
-              for (const stream of inactiveFundsToClaimStream) {
+              for (const stream of fundsToClaimStreams) {
                 if (!stream.streamId || !stream.contractAddress) {
                   throw new Error(
                     'Stream ID and Stream ContractAddress is required for flush stream transaction',
@@ -532,47 +529,7 @@ export default function useCreateRoles() {
                   targetAddress: formHat.smartAddress,
                 });
               }
-            }
-
-            const unEditedActiveStreams = (formHat.payments ?? []).filter(payment => {
-              if (payment.streamId === undefined || payment.endDate === undefined) {
-                return false;
-              }
-              const originalPayment = getPayment(formHat.id, payment.streamId);
-              if (originalPayment === null) {
-                return false;
-              }
-              return (
-                isEqual(payment, originalPayment) &&
-                !payment.isCancelled &&
-                payment.endDate < new Date() &&
-                (payment?.withdrawableAmount ?? 0n) > 0n
-              );
-            });
-
-            if (unEditedActiveStreams.length) {
-              for (const stream of unEditedActiveStreams) {
-                if (!stream.streamId || !stream.contractAddress) {
-                  throw new Error(
-                    'Stream ID and Stream ContractAddress is required for flush stream transaction',
-                  );
-                }
-                const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
-                  stream.streamId,
-                  stream.contractAddress,
-                  originalHat.wearer,
-                );
-                allTxs.push({
-                  calldata: wrappedFlushStreamTx,
-                  targetAddress: formHat.smartAddress,
-                });
-              }
-            }
-            // transfer hat from DAO to new wearer if there are any funds to claim
-            if (
-              (inactiveFundsToClaimStream && inactiveFundsToClaimStream.length) ||
-              (unEditedActiveStreams && unEditedActiveStreams.length)
-            ) {
+              // transfer hat from DAO to new wearer if there are any funds to claim
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -595,103 +552,6 @@ export default function useCreateRoles() {
           }
           if (formHat.editedRole.fieldNames.includes('payments')) {
             /**
-             * Updated Role Payments
-             * Transfer hat to DAO if there are funds to claim, flush edited active streams with funds to claim, cancel edited streams, transfer hat back to wearer if necessary
-             */
-
-            if (!formHat.smartAddress) {
-              throw new Error('Cannot prepare transactions for edited role without smart address');
-            }
-            const editedStreams = (formHat.payments ?? []).filter(payment => {
-              if (payment.streamId === undefined) {
-                return false;
-              }
-              const originalPayment = getPayment(formHat.id, payment.streamId);
-              if (originalPayment === null) {
-                return false;
-              }
-              return (
-                !isEqual(payment, originalPayment) &&
-                !payment.isCancelled &&
-                payment.endDate &&
-                payment.endDate > new Date()
-              );
-            });
-            const editedStreamsWithFundsToClaim = editedStreams.filter(
-              stream => (stream?.withdrawableAmount ?? 0n) > 0n,
-            );
-            if (editedStreamsWithFundsToClaim.length) {
-              allTxs.push({
-                calldata: encodeFunctionData({
-                  abi: HatsAbi,
-                  functionName: 'transferHat',
-                  args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
-                }),
-                targetAddress: hatsProtocol,
-              });
-              for (const stream of editedStreamsWithFundsToClaim) {
-                if (!stream.streamId || !stream.contractAddress) {
-                  throw new Error(
-                    'Stream ID and Stream ContractAddress is required for flush stream transaction',
-                  );
-                }
-                const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
-                  stream.streamId,
-                  stream.contractAddress,
-                  getAddress(formHat.wearer),
-                );
-                allTxs.push({
-                  calldata: wrappedFlushStreamTx,
-                  targetAddress: formHat.smartAddress,
-                });
-              }
-              allTxs.push({
-                calldata: encodeFunctionData({
-                  abi: HatsAbi,
-                  functionName: 'transferHat',
-                  args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
-                }),
-                targetAddress: hatsProtocol,
-              });
-            }
-            if (editedStreams.length) {
-              allTxs.push({
-                calldata: encodeFunctionData({
-                  abi: HatsAbi,
-                  functionName: 'transferHat',
-                  args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
-                }),
-                targetAddress: hatsProtocol,
-              });
-              for (const stream of editedStreams) {
-                if (!stream.streamId || !stream.contractAddress) {
-                  throw new Error(
-                    'Stream ID and Stream ContractAddress is required for flush stream transaction',
-                  );
-                }
-                const cancelStreamTx = prepareCancelStreamTx(
-                  stream.streamId,
-                  stream.contractAddress,
-                );
-                allTxs.push(cancelStreamTx);
-              }
-              allTxs.push({
-                calldata: encodeFunctionData({
-                  abi: HatsAbi,
-                  functionName: 'transferHat',
-                  args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
-                }),
-                targetAddress: hatsProtocol,
-              });
-
-              const newStreamTxData = createBatchLinearStreamCreationTx(
-                editedStreams,
-                formHat.smartAddress,
-              );
-              allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
-              allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
-            }
-            /**
              * New Streams
              * Create new streams
              */
@@ -709,6 +569,44 @@ export default function useCreateRoles() {
               );
               allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
               allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
+            }
+
+            /**
+             * Cancelled Streams
+             * Transfer hat to DAO, flush withdrawable streams, cancel streams
+             */
+            const cancelledStreams = (formHat.payments ?? []).filter(
+              payment => payment.isCancelling && !!payment.streamId,
+            );
+            if (cancelledStreams.length) {
+              for (const stream of cancelledStreams) {
+                if (!stream.streamId || !stream.contractAddress || !formHat.smartAddress) {
+                  throw new Error('Stream data is missing for cancel stream transaction');
+                }
+                // transfer hat to DAO
+                allTxs.push({
+                  calldata: encodeFunctionData({
+                    abi: HatsAbi,
+                    functionName: 'transferHat',
+                    args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
+                  }),
+                  targetAddress: hatsProtocol,
+                });
+                // flush withdrawable streams
+                if (stream.withdrawableAmount && stream.withdrawableAmount > 0n) {
+                  const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
+                    stream.streamId,
+                    stream.contractAddress,
+                    getAddress(formHat.wearer),
+                  );
+                  allTxs.push({
+                    calldata: wrappedFlushStreamTx,
+                    targetAddress: formHat.smartAddress,
+                  });
+                }
+                // cancel stream
+                allTxs.push(prepareCancelStreamTx(stream.streamId, stream.contractAddress));
+              }
             }
           }
         } else {
@@ -729,7 +627,6 @@ export default function useCreateRoles() {
       createSmartAccountTx,
       daoAddress,
       getHat,
-      getPayment,
       hatsDetailsBuilder,
       hatsProtocol,
       hatsTree,

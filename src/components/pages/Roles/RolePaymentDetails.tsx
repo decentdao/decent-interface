@@ -1,11 +1,13 @@
-import { Box, Button, Flex, Grid, GridItem, Icon, Image, Text } from '@chakra-ui/react';
-import { Calendar, Download } from '@phosphor-icons/react';
+import { Box, Button, Flex, Grid, GridItem, Icon, IconButton, Image, Text } from '@chakra-ui/react';
+import { Calendar, DotsThree, Download, Trash } from '@phosphor-icons/react';
 import { format } from 'date-fns';
-import { useCallback, useMemo } from 'react';
+import { useFormikContext } from 'formik';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Address, getAddress } from 'viem';
+import { Address, getAddress, Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
+import { NEUTRAL_2_82_TRANSPARENT, CARD_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -14,9 +16,114 @@ import { BigIntValuePair } from '../../../types';
 import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
+import { RoleFormValues } from './types';
 
 const PAYMENT_DETAILS_BOX_SHADOW =
   '0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset';
+
+function CancelStreamMenu({
+  streamId,
+  paymentIsCancelling,
+  onSuccess,
+}: {
+  streamId: any;
+  paymentIsCancelling?: boolean;
+  onSuccess: () => void;
+}) {
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { t } = useTranslation(['roles']);
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const handleCancelPayment = () => {
+    const paymentIndex = values.roleEditing?.payments?.findIndex(
+      stream => stream.streamId === streamId,
+    );
+    if (paymentIndex === undefined) {
+      throw new Error('Payment index not found');
+    }
+    const payment = values.roleEditing?.payments?.[paymentIndex];
+    if (payment === undefined) {
+      throw new Error('Payment not found');
+    }
+    if (!payment) {
+      throw new Error('Payment not found');
+    }
+    setFieldValue(`roleEditing.payments.${paymentIndex}`, {
+      ...payment,
+      isCancelling: true,
+    });
+    setTimeout(() => onSuccess(), 50);
+    setShowMenu(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  if (paymentIsCancelling) {
+    return null;
+  }
+
+  return (
+    <Flex
+      justifyContent="flex-end"
+      boxShadow={PAYMENT_DETAILS_BOX_SHADOW}
+      borderTopRadius="0.5rem"
+      w="full"
+      py="0.25rem"
+      px="1rem"
+    >
+      <IconButton
+        aria-label="edit role menu"
+        variant="tertiary"
+        h="fit-content"
+        size="lg"
+        as={DotsThree}
+        onClick={() => setShowMenu(show => !show)}
+      />
+      {showMenu && (
+        <Box
+          position="absolute"
+          ref={menuRef}
+          minW="15.25rem"
+          rounded="0.5rem"
+          bg={NEUTRAL_2_82_TRANSPARENT}
+          border="1px solid"
+          borderColor="neutral-3"
+          backdropFilter="blur(6px)"
+          boxShadow={CARD_SHADOW}
+          zIndex={10000}
+        >
+          <Button
+            variant="unstyled"
+            color="red-1"
+            _hover={{ bg: 'neutral-2' }}
+            onClick={handleCancelPayment}
+            rightIcon={
+              <Icon
+                as={Trash}
+                boxSize="1.5rem"
+              />
+            }
+            minW="full"
+            justifyContent="space-between"
+          >
+            {t('cancelPayment')}
+          </Button>
+        </Box>
+      )}
+    </Flex>
+  );
+}
 
 function PaymentDate({ label, date }: { label: string; date?: Date }) {
   const { t } = useTranslation(['roles']);
@@ -63,6 +170,7 @@ function GreenStreamingDot({ isStreaming }: { isStreaming: boolean }) {
 }
 
 interface RolePaymentDetailsProps {
+  roleHatId?: Hex;
   roleHatWearerAddress?: Address;
   roleHatSmartAddress?: Address;
   payment: {
@@ -79,11 +187,13 @@ interface RolePaymentDetailsProps {
     endDate: Date;
     cliffDate?: Date;
     isCancelled: boolean;
+    isCancelling?: boolean;
     isStreaming: () => boolean;
     withdrawableAmount?: bigint;
   };
   onClick?: () => void;
   showWithdraw?: boolean;
+  showCancel?: boolean;
 }
 export function RolePaymentDetails({
   payment,
@@ -91,6 +201,8 @@ export function RolePaymentDetails({
   showWithdraw,
   roleHatWearerAddress,
   roleHatSmartAddress,
+  roleHatId,
+  showCancel,
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
@@ -171,7 +283,8 @@ export function RolePaymentDetails({
     return Number(payment.amount.value) * foundAsset.usdPrice;
   }, [payment, assetsFungible]);
 
-  const isActiveStream = !payment.isCancelled && Date.now() < payment.endDate.getTime();
+  const isActiveStream =
+    !payment.isCancelled && Date.now() < payment.endDate.getTime() && !payment.isCancelling;
 
   const activeStreamProps = useCallback(
     (isTop: boolean) =>
@@ -200,15 +313,23 @@ export function RolePaymentDetails({
 
   return (
     <Box
-      borderRadius="0.5rem"
-      pt="1rem"
       my="0.75rem"
       w="full"
-      onClick={onClick}
-      cursor={!!onClick ? 'pointer' : 'default'}
-      {...activeStreamProps(true)}
     >
-      <Box>
+      {showCancel && !!roleHatId && !!payment.streamId && (
+        <CancelStreamMenu
+          streamId={payment.streamId}
+          paymentIsCancelling={payment.isCancelling}
+          onSuccess={() => {}}
+        />
+      )}
+      <Box
+        borderTopRadius={showCancel ? 'none' : '0.5rem'}
+        py="1rem"
+        onClick={onClick}
+        cursor={!!onClick ? 'pointer' : 'default'}
+        {...activeStreamProps(true)}
+      >
         <Flex
           flexDir="column"
           mx={4}
@@ -279,7 +400,6 @@ export function RolePaymentDetails({
         {...activeStreamProps(false)}
         borderBottomRadius="0.5rem"
         py="1rem"
-        mt="1rem"
       >
         <Grid
           mx={4}
