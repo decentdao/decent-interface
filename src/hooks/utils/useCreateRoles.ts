@@ -570,6 +570,44 @@ export default function useCreateRoles() {
               allTxs.push(...newStreamTxData.preparedTokenApprovalsTransactions);
               allTxs.push(...newStreamTxData.preparedStreamCreationTransactions);
             }
+
+            /**
+             * Cancelled Streams
+             * Transfer hat to DAO, flush withdrawable streams, cancel streams
+             */
+            const cancelledStreams = (formHat.payments ?? []).filter(
+              payment => payment.isCancelling && !!payment.streamId,
+            );
+            if (cancelledStreams.length) {
+              for (const stream of cancelledStreams) {
+                if (!stream.streamId || !stream.contractAddress || !formHat.smartAddress) {
+                  throw new Error('Stream data is missing for cancel stream transaction');
+                }
+                // transfer hat to DAO
+                allTxs.push({
+                  calldata: encodeFunctionData({
+                    abi: HatsAbi,
+                    functionName: 'transferHat',
+                    args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
+                  }),
+                  targetAddress: hatsProtocol,
+                });
+                // flush withdrawable streams
+                if (stream.withdrawableAmount && stream.withdrawableAmount > 0n) {
+                  const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
+                    stream.streamId,
+                    stream.contractAddress,
+                    getAddress(formHat.wearer),
+                  );
+                  allTxs.push({
+                    calldata: wrappedFlushStreamTx,
+                    targetAddress: formHat.smartAddress,
+                  });
+                }
+                // cancel stream
+                allTxs.push(prepareCancelStreamTx(stream.streamId, stream.contractAddress));
+              }
+            }
           }
         } else {
           throw new Error('Invalid Edited Status');
