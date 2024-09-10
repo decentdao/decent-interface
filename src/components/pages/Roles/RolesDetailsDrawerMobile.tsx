@@ -112,6 +112,7 @@ export default function RolesDetailsDrawerMobile({
               .map((payment, index) => (
                 <RolePaymentDetails
                   key={index}
+                  paymentIndex={index}
                   payment={payment}
                   roleHatSmartAddress={roleHat.smartAddress}
                   roleHatWearerAddress={getAddress(roleHat.wearer)}

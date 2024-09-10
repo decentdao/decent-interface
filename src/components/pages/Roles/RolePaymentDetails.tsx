@@ -1,6 +1,7 @@
 import { Box, Button, Flex, Grid, GridItem, Icon, IconButton, Image, Text } from '@chakra-ui/react';
 import { Calendar, DotsThree, Download, Trash } from '@phosphor-icons/react';
 import { format } from 'date-fns';
+import { useFormikContext } from 'formik';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
@@ -15,25 +16,36 @@ import { BigIntValuePair } from '../../../types';
 import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
+import { RoleFormValues } from './types';
 
 const PAYMENT_DETAILS_BOX_SHADOW =
   '0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset';
 
 function CancelStreamMenu({
+  paymentIndex,
+  paymentIsCancelling,
   onSuccess,
-  // hatId,
-  // streamId,
 }: {
-  hatId: Hex;
-  streamId: string;
+  paymentIndex: number;
+  paymentIsCancelling?: boolean;
   onSuccess: () => void;
 }) {
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const { t } = useTranslation(['roles']);
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
   const handleCancelPayment = () => {
+    const payment = values.roleEditing?.payments?.[paymentIndex];
+    if (!payment) {
+      throw new Error('Payment not found');
+    }
+    setFieldValue(`roleEditing.payments.${paymentIndex}`, {
+      ...payment,
+      isCancelling: true,
+    });
     setTimeout(() => onSuccess(), 50);
+    setShowMenu(false);
   };
 
   useEffect(() => {
@@ -47,6 +59,10 @@ function CancelStreamMenu({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  if (paymentIsCancelling) {
+    return null;
+  }
 
   return (
     <Flex
@@ -149,6 +165,7 @@ interface RolePaymentDetailsProps {
   roleHatId?: Hex;
   roleHatWearerAddress?: Address;
   roleHatSmartAddress?: Address;
+  paymentIndex: number;
   payment: {
     streamId?: string;
     contractAddress?: Address;
@@ -163,6 +180,7 @@ interface RolePaymentDetailsProps {
     endDate: Date;
     cliffDate?: Date;
     isCancelled: boolean;
+    isCancelling?: boolean;
     isStreaming: () => boolean;
     withdrawableAmount?: bigint;
   };
@@ -178,6 +196,7 @@ export function RolePaymentDetails({
   roleHatSmartAddress,
   roleHatId,
   showCancel,
+  paymentIndex,
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
@@ -258,7 +277,8 @@ export function RolePaymentDetails({
     return Number(payment.amount.value) * foundAsset.usdPrice;
   }, [payment, assetsFungible]);
 
-  const isActiveStream = !payment.isCancelled && Date.now() < payment.endDate.getTime();
+  const isActiveStream =
+    !payment.isCancelled && Date.now() < payment.endDate.getTime() && !payment.isCancelling;
 
   const activeStreamProps = useCallback(
     (isTop: boolean) =>
@@ -292,8 +312,8 @@ export function RolePaymentDetails({
     >
       {showCancel && !!roleHatId && !!payment.streamId && (
         <CancelStreamMenu
-          hatId={roleHatId}
-          streamId={payment.streamId}
+          paymentIndex={paymentIndex}
+          paymentIsCancelling={payment.isCancelling}
           onSuccess={() => {}}
         />
       )}

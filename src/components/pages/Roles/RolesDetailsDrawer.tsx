@@ -178,6 +178,7 @@ export default function RolesDetailsDrawer({
                 .sort(paymentSorterByActiveStatus)
                 .map((payment, index) => (
                   <RolePaymentDetails
+                    paymentIndex={index}
                     key={index}
                     payment={payment}
                     roleHatSmartAddress={roleHat.smartAddress}

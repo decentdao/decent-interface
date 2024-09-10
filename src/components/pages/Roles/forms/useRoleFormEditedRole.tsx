@@ -48,6 +48,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
       const hasStartDateChanged =
         payment.startDate?.getTime() !== existingPayment.startDate.getTime();
       const hasEndDateChanged = payment.endDate?.getTime() !== existingPayment.endDate.getTime();
+      const hasBeenSetToCancel = payment.isCancelling
 
       return (
         hasAddedCliff ||
@@ -56,7 +57,8 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
         hasAmountChanged ||
         hasAssetChanged ||
         hasStartDateChanged ||
-        hasEndDateChanged
+        hasEndDateChanged ||
+        hasBeenSetToCancel
       );
     });
   }, [existingRoleHat, values.roleEditing]);

@@ -28,6 +28,7 @@ export interface SablierPayment extends BaseSablierStream {
 
 export interface SablierPaymentFormValues extends Partial<SablierPayment> {
   isStreaming: () => boolean;
+  isCancelling?: boolean;
 }
 
 export interface RoleProps {
