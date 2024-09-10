@@ -22,11 +22,11 @@ const PAYMENT_DETAILS_BOX_SHADOW =
   '0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset';
 
 function CancelStreamMenu({
-  paymentIndex,
+  streamId,
   paymentIsCancelling,
   onSuccess,
 }: {
-  paymentIndex: number;
+  streamId: any;
   paymentIsCancelling?: boolean;
   onSuccess: () => void;
 }) {
@@ -36,7 +36,16 @@ function CancelStreamMenu({
   const menuRef = useRef<HTMLDivElement>(null);
 
   const handleCancelPayment = () => {
+    const paymentIndex = values.roleEditing?.payments?.findIndex(
+      stream => stream.streamId === streamId,
+    );
+    if (paymentIndex === undefined) {
+      throw new Error('Payment index not found');
+    }
     const payment = values.roleEditing?.payments?.[paymentIndex];
+    if (payment === undefined) {
+      throw new Error('Payment not found');
+    }
     if (!payment) {
       throw new Error('Payment not found');
     }
@@ -86,7 +95,6 @@ function CancelStreamMenu({
           position="absolute"
           ref={menuRef}
           minW="15.25rem"
-          top="45%"
           rounded="0.5rem"
           bg={NEUTRAL_2_82_TRANSPARENT}
           border="1px solid"
@@ -165,7 +173,6 @@ interface RolePaymentDetailsProps {
   roleHatId?: Hex;
   roleHatWearerAddress?: Address;
   roleHatSmartAddress?: Address;
-  paymentIndex: number;
   payment: {
     streamId?: string;
     contractAddress?: Address;
@@ -196,7 +203,6 @@ export function RolePaymentDetails({
   roleHatSmartAddress,
   roleHatId,
   showCancel,
-  paymentIndex,
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
@@ -312,7 +318,7 @@ export function RolePaymentDetails({
     >
       {showCancel && !!roleHatId && !!payment.streamId && (
         <CancelStreamMenu
-          paymentIndex={paymentIndex}
+          streamId={payment.streamId}
           paymentIsCancelling={payment.isCancelling}
           onSuccess={() => {}}
         />

@@ -45,7 +45,6 @@ export function RoleFormPaymentStreams() {
                   return null;
                 return (
                   <RolePaymentDetails
-                    paymentIndex={index}
                     key={index}
                     roleHatId={values.roleEditing?.id}
                     showCancel={
