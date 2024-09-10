@@ -96,6 +96,7 @@ function CancelStreamMenu({
           ref={menuRef}
           minW="15.25rem"
           rounded="0.5rem"
+          mt="2rem"
           bg={NEUTRAL_2_82_TRANSPARENT}
           border="1px solid"
           borderColor="neutral-3"
