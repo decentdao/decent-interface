@@ -31,26 +31,26 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
     <ProposalDetailsGrid>
       <GridItem colSpan={2}>
         <ProposalInfo proposal={extendedSnapshotProposal || proposal} />
-        {!!extendedSnapshotProposal && (
-          <SnapshotProposalVotes proposal={extendedSnapshotProposal} />
-        )}
+        {extendedSnapshotProposal && <SnapshotProposalVotes proposal={extendedSnapshotProposal} />}
       </GridItem>
-      <GridItem>
-        <SnapshotProposalSummary proposal={extendedSnapshotProposal} />
-        {user.address && (
-          <VoteContextProvider
-            proposal={proposal}
-            extendedSnapshotProposal={extendedSnapshotProposal}
-          >
-            <AzoriusOrSnapshotProposalAction
+      {extendedSnapshotProposal && (
+        <GridItem>
+          <SnapshotProposalSummary proposal={extendedSnapshotProposal} />
+          {user.address && (
+            <VoteContextProvider
               proposal={proposal}
               extendedSnapshotProposal={extendedSnapshotProposal}
-              onCastSnapshotVote={loadProposal}
-              expandedView
-            />
-          </VoteContextProvider>
-        )}
-      </GridItem>
+            >
+              <AzoriusOrSnapshotProposalAction
+                proposal={proposal}
+                extendedSnapshotProposal={extendedSnapshotProposal}
+                onCastSnapshotVote={loadProposal}
+                expandedView
+              />
+            </VoteContextProvider>
+          )}
+        </GridItem>
+      )}
     </ProposalDetailsGrid>
   );
 }

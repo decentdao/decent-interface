@@ -44,7 +44,7 @@ function Vote({
     extendedSnapshotProposal,
   });
 
-  const { isSnapshotProposal } = useSnapshotProposal(proposal);
+  const { snapshotProposal } = useSnapshotProposal(proposal);
   const { canVote, canVoteLoading, hasVoted, hasVotedLoading } = useVoteContext();
 
   // if the user is not a signer or has no delegated tokens, don't show anything
@@ -57,7 +57,7 @@ function Vote({
   // This gives a weird behavior when casting vote fails due to requirement under LinearERC20Voting contract that current block number
   // shouldn't be equal to proposal's start block number. Which is dictated by the need to have voting tokens delegation being "finalized" to prevent proposal hijacking.
   const proposalStartBlockNotFinalized = Boolean(
-    !isSnapshotProposal &&
+    !snapshotProposal &&
       isCurrentBlockLoaded &&
       currentBlockNumber &&
       azoriusProposal.startBlock >= currentBlockNumber,
@@ -70,7 +70,7 @@ function Vote({
     canVoteLoading ||
     hasVotedLoading;
 
-  if (isSnapshotProposal && extendedSnapshotProposal) {
+  if (snapshotProposal && extendedSnapshotProposal) {
     const isWeighted = extendedSnapshotProposal.type === 'weighted';
     const weightedTotalValue = snapshotWeightedChoice.reduce((prev, curr) => prev + curr, 0);
     const voteDisabled =

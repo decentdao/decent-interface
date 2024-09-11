@@ -123,6 +123,7 @@ export interface GovernanceActivity extends ActivityBase {
   proposalId: string;
   targets: Address[];
   data?: ProposalData;
+  title?: string;
 }
 
 export interface ActivityBase {
@@ -130,8 +131,6 @@ export interface ActivityBase {
   transaction?: ActivityTransactionType;
   transactionHash: string;
 }
-
-export type Activity = MultisigProposal | AzoriusProposal | SnapshotProposal;
 
 export type ActivityTransactionType = SafeMultisigTransactionResponse;
 
@@ -295,6 +294,7 @@ export interface NodeHierarchy {
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;
+export type Activity = FractalProposal;
 
 /**
  * Immutable state generally calculated from other stateful objects.

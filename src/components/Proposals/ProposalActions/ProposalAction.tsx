@@ -56,7 +56,7 @@ export function AzoriusOrSnapshotProposalAction({
     readOnly: { dao },
   } = useFractal();
   const { t } = useTranslation();
-  const { isSnapshotProposal } = useSnapshotProposal(proposal);
+  const { snapshotProposal } = useSnapshotProposal(proposal);
   const { canVote } = useVoteContext();
 
   const isActiveProposal = useMemo(
@@ -65,14 +65,14 @@ export function AzoriusOrSnapshotProposalAction({
   );
 
   const showActionButton =
-    (isSnapshotProposal && canVote && isActiveProposal) ||
+    (snapshotProposal && canVote && isActiveProposal) ||
     isActiveProposal ||
     proposal.state === FractalProposalState.EXECUTABLE ||
     proposal.state === FractalProposalState.TIMELOCKABLE ||
     proposal.state === FractalProposalState.TIMELOCKED;
 
   const label = useMemo(() => {
-    if (isSnapshotProposal) {
+    if (snapshotProposal) {
       return t('details');
     }
 
@@ -83,7 +83,7 @@ export function AzoriusOrSnapshotProposalAction({
       return t(dao?.isAzorius ? 'vote' : 'sign');
     }
     return t('details');
-  }, [isSnapshotProposal, t, canVote, dao, isActiveProposal]);
+  }, [snapshotProposal, t, canVote, dao, isActiveProposal]);
 
   if (!showActionButton) {
     if (!expandedView) {
@@ -94,7 +94,7 @@ export function AzoriusOrSnapshotProposalAction({
   }
 
   if (expandedView) {
-    if (!isSnapshotProposal && isActiveProposal && !canVote) return null;
+    if (!snapshotProposal && isActiveProposal && !canVote) return null;
 
     return (
       <ProposalActions

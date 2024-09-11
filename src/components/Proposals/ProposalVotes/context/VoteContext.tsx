@@ -64,12 +64,12 @@ export function VoteContextProvider({
     proposal.proposalId,
     true,
   );
-  const { isSnapshotProposal } = useSnapshotProposal(proposal);
+  const { snapshotProposal } = useSnapshotProposal(proposal);
   const publicClient = usePublicClient();
 
   const getHasVoted = useCallback(() => {
     setHasVotedLoading(true);
-    if (isSnapshotProposal) {
+    if (snapshotProposal) {
       setHasVoted(
         !!extendedSnapshotProposal &&
           !!extendedSnapshotProposal.votes.find(vote => vote.voter === user.address),
@@ -86,14 +86,14 @@ export function VoteContextProvider({
       );
     }
     setHasVotedLoading(false);
-  }, [dao, isSnapshotProposal, proposal, user.address, extendedSnapshotProposal]);
+  }, [dao, snapshotProposal, proposal, user.address, extendedSnapshotProposal]);
 
   const getCanVote = useCallback(
     async (refetchUserTokens?: boolean) => {
       setCanVoteLoading(true);
       let newCanVote = false;
       if (user.address && publicClient) {
-        if (isSnapshotProposal) {
+        if (snapshotProposal) {
           const votingWeightData = await loadVotingWeight();
           newCanVote = votingWeightData.votingWeight >= 1;
         } else if (type === GovernanceType.AZORIUS_ERC20 && linearVotingErc20Address) {
@@ -125,19 +125,19 @@ export function VoteContextProvider({
       setCanVoteLoading(false);
     },
     [
-      canVote,
-      getUserERC721VotingTokens,
-      hasVoted,
-      isSnapshotProposal,
-      loadVotingWeight,
-      linearVotingErc20Address,
-      proposal.proposalId,
-      publicClient,
-      remainingTokenIds.length,
-      safe?.owners,
-      type,
       user.address,
       user.votingWeight,
+      publicClient,
+      canVote,
+      snapshotProposal,
+      type,
+      linearVotingErc20Address,
+      loadVotingWeight,
+      proposal.proposalId,
+      hasVoted,
+      remainingTokenIds.length,
+      getUserERC721VotingTokens,
+      safe?.owners,
     ],
   );
   useEffect(() => {
