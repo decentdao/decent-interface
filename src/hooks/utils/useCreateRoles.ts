@@ -14,6 +14,7 @@ import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
 import {
   EditBadgeStatus,
   HatStruct,
+  HatStructWithPayments,
   RoleFormValues,
   RoleHatFormValueEdited,
   SablierPaymentFormValues,
@@ -43,6 +44,7 @@ export default function useCreateRoles() {
       hatsAccount1ofNMasterCopy,
       erc6551Registry,
       keyValuePairs,
+      sablierV2LockupLinear,
     },
   } = useNetworkConfig();
 
@@ -92,26 +94,96 @@ export default function useCreateRoles() {
     [hatsDetailsBuilder, uploadHatDescription],
   );
 
-  const createHatStructFromRoleFormValues = useCallback(
-    async (role: RoleHatFormValueEdited) => {
-      if (role.name === undefined || role.description === undefined) {
-        throw new Error('Hat name or description of added hat is undefined.');
+  const createHatStructWithPayments = useCallback(
+    async (
+      name: string,
+      description: string,
+      wearer: Address,
+      payments: {
+        totalAmount: bigint;
+        asset: Address;
+        startTimestamp: number;
+        cliffTimestamp: number;
+        endTimestamp: number;
+      }[],
+    ) => {
+      const newHat = await createHatStruct(name, description, wearer);
+
+      if (daoAddress === null) {
+        throw new Error('Can not create Hat Struct (with payments) without DAO Address');
       }
 
-      if (role.wearer === undefined) {
-        throw new Error('Hat wearer of added hat is undefined.');
-      }
+      const newHatWithPayments: HatStructWithPayments = {
+        ...newHat,
+        sablierParams: payments.map(payment => ({
+          sablier: sablierV2LockupLinear,
+          sender: daoAddress,
+          totalAmount: payment.totalAmount,
+          asset: payment.asset,
+          cancelable: true,
+          transferable: true,
+          timestamps: {
+            start: payment.startTimestamp,
+            cliff: payment.cliffTimestamp,
+            end: payment.endTimestamp,
+          },
+          broker: { account: zeroAddress, fee: 0n },
+        })),
+      };
 
-      return createHatStruct(role.name, role.description, getAddress(role.wearer));
+      return newHatWithPayments;
     },
-    [createHatStruct],
+    [createHatStruct, daoAddress, sablierV2LockupLinear],
   );
 
-  const createHatStructsFromRolesFormValues = useCallback(
-    async (modifiedRoles: RoleHatFormValueEdited[]) => {
-      return Promise.all(modifiedRoles.map(role => createHatStructFromRoleFormValues(role)));
+  const parseSablierPaymentsFromFormRolePayments = useCallback(
+    (payments: SablierPaymentFormValues[]) => {
+      return payments.map(payment => {
+        if (
+          !payment.amount?.bigintValue ||
+          !payment.asset ||
+          !payment.startDate ||
+          !payment.endDate
+        ) {
+          throw new Error('Missing required payment information');
+        }
+
+        return {
+          totalAmount: payment.amount.bigintValue,
+          asset: payment.asset.address,
+          startTimestamp: Math.floor(payment.startDate.getTime() / 1000),
+          cliffTimestamp: payment.cliffDate ? Math.floor(payment.cliffDate.getTime() / 1000) : 0,
+          endTimestamp: Math.floor(payment.endDate.getTime() / 1000),
+        };
+      });
     },
-    [createHatStructFromRoleFormValues],
+    [],
+  );
+
+  const createHatStructsForNewTreeFromRolesFormValues = useCallback(
+    async (modifiedRoles: RoleHatFormValueEdited[]) => {
+      return Promise.all(
+        modifiedRoles.map(role => {
+          if (role.name === undefined || role.description === undefined) {
+            throw new Error('Hat name or description of added hat is undefined.');
+          }
+
+          if (role.wearer === undefined) {
+            throw new Error('Hat wearer of added hat is undefined.');
+          }
+
+          const sablierPayments = parseSablierPaymentsFromFormRolePayments(role.payments ?? []);
+
+          return createHatStructWithPayments(
+            role.name,
+            role.description,
+            getAddress(role.wearer),
+            sablierPayments,
+          );
+        }),
+      );
+    },
+    [createHatStructWithPayments, parseSablierPaymentsFromFormRolePayments],
   );
 
   const predictSmartAccount = useCallback(
@@ -171,15 +243,16 @@ export default function useCreateRoles() {
         }),
       );
 
-      const adminHat: HatStruct = {
+      const adminHat: HatStructWithPayments = {
         maxSupply: 1,
         details: adminHatDetails,
         imageURI: '',
         isMutable: true,
         wearer: zeroAddress,
+        sablierParams: [],
       };
 
-      const addedHats = await createHatStructsFromRolesFormValues(modifiedHats);
+      const addedHats = await createHatStructsForNewTreeFromRolesFormValues(modifiedHats);
 
       const createAndDeclareTreeData = encodeFunctionData({
         abi: DecentHatsAbi,
@@ -215,7 +288,7 @@ export default function useCreateRoles() {
       hatsProtocol,
       keyValuePairs,
       uploadHatDescription,
-      createHatStructsFromRolesFormValues,
+      createHatStructsForNewTreeFromRolesFormValues,
     ],
   );
 
@@ -233,7 +306,7 @@ export default function useCreateRoles() {
     [prepareFlushStreamTx],
   );
 
-  const createHatTx = useCallback(
+  const createNewHatTx = useCallback(
     async (formRole: RoleHatFormValueEdited, adminHatId: bigint, topHatSmartAccount: Address) => {
       if (formRole.name === undefined || formRole.description === undefined) {
         throw new Error('Name or description of added Role is undefined.');
@@ -257,6 +330,7 @@ export default function useCreateRoles() {
             adminHatId, // adminHatId
             hatStruct.details, // details
             hatStruct.maxSupply, // maxSupply
+            // methinks these next two properties can/should be a "dead" (0x0000...4a75) address
             topHatSmartAccount, // eligibilityModule
             topHatSmartAccount, // toggleModule
             hatStruct.isMutable, // isMutable
@@ -478,7 +552,7 @@ export default function useCreateRoles() {
           });
           newHatCount++;
 
-          allTxs.push(await createHatTx(formHat, adminHatId, topHatAccount));
+          allTxs.push(await createNewHatTx(formHat, adminHatId, topHatAccount));
           allTxs.push(mintHatTx(newHatId, formHat));
           allTxs.push(createSmartAccountTx(BigInt(newHatId)));
 
@@ -772,7 +846,7 @@ export default function useCreateRoles() {
     },
     [
       createBatchLinearStreamCreationTx,
-      createHatTx,
+      createNewHatTx,
       createSmartAccountTx,
       daoAddress,
       getActiveStreamsFromFormHat,
