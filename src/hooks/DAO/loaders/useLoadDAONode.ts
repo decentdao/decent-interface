@@ -52,24 +52,23 @@ export const useLoadDAONode = () => {
   );
 
   const loadDao = useCallback(
-    async (_daoAddress: string): Promise<FractalNode | WithError> => {
-      if (isAddress(_daoAddress) && safeAPI) {
+    async (daoAddress: string): Promise<FractalNode | WithError> => {
+      if (isAddress(daoAddress) && safeAPI) {
         try {
           const graphNodeInfo = formatDAOQuery(
-            await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-            _daoAddress,
+            await getDAOInfo({ variables: { daoAddress } }),
+            daoAddress,
           );
           if (!graphNodeInfo) {
             logError('graphQL query failed');
             return { error: 'errorFailedSearch' };
           }
 
-          const sanitizedDaoAddress = _daoAddress;
-          const safeInfoWithGuard = await safeAPI.getSafeData(sanitizedDaoAddress);
+          const safeInfoWithGuard = await safeAPI.getSafeData(daoAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName: await getDAOName({
-              address: sanitizedDaoAddress,
+              address: daoAddress,
               registryName: graphNodeInfo.daoName,
             }),
             safe: safeInfoWithGuard,
