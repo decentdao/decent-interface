@@ -150,14 +150,21 @@ const getProposalVotes = (
 
     const events = [];
     for (const event of erc721ProposalVoteEvents) {
-      if (!event.args.voteType || !event.args.voter || !event.args.tokenIds) {
+      if (
+        !event.args.voteType ||
+        !event.args.voter ||
+        !event.args.tokenIds ||
+        !event.args.tokenAddresses
+      ) {
         continue;
       }
+
       events.push({
         voter: event.args.voter,
         choice: getVoteChoice(event.args.voteType),
         weight: 1n,
         tokenIds: event.args.tokenIds.map(id => id.toString()),
+        tokenAddresses: event.args.tokenAddresses,
       });
     }
     return events;

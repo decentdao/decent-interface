@@ -49,7 +49,7 @@ export default function useUserERC721VotingTokens(
       const tokenIds: string[] = [];
       const userERC721Tokens = new Map<Address, Set<string>>();
 
-      let govTokens = erc721Tokens;
+      let governanceTokens = erc721Tokens;
       let votingContract:
         | GetContractReturnType<typeof abis.LinearERC721Voting, PublicClient>
         | undefined;
@@ -73,7 +73,7 @@ export default function useUserERC721VotingTokens(
             client: publicClient,
           });
           const addresses = await votingContract.read.getAllTokenAddresses();
-          govTokens = await Promise.all(
+          governanceTokens = await Promise.all(
             addresses.map(async tokenAddress => {
               if (!votingContract) {
                 throw new Error('voting contract is undefined');
@@ -105,7 +105,7 @@ export default function useUserERC721VotingTokens(
         });
       }
 
-      if (!govTokens || !votingContract || !user.address) {
+      if (!governanceTokens || !votingContract || !user.address) {
         return {
           totalVotingTokenAddresses: totalTokenAddresses,
           totalVotingTokenIds: totalTokenIds,
@@ -118,7 +118,7 @@ export default function useUserERC721VotingTokens(
       await Promise.all(
         // Using `map` instead of `forEach` to simplify usage of `Promise.all`
         // and guarantee syncronous contractFn assignment
-        govTokens.map(async token => {
+        governanceTokens.map(async token => {
           const tokenContract = getContract({
             abi: erc721Abi,
             address: token.address,
@@ -134,7 +134,7 @@ export default function useUserERC721VotingTokens(
               { fromBlock: 0n },
             );
 
-            const allEvents = tokenSentEvents
+            const allTokenTransferEvents = tokenSentEvents
               .concat(tokenReceivedEvents)
               .sort(
                 (a, b) =>
@@ -142,7 +142,7 @@ export default function useUserERC721VotingTokens(
               );
 
             const ownedTokenIds = new Set<string>();
-            allEvents.forEach(({ args: { to, from, tokenId } }) => {
+            allTokenTransferEvents.forEach(({ args: { to, from, tokenId } }) => {
               if (!to || !from || !tokenId) {
                 throw new Error('An ERC721 event has undefiend data');
               }
