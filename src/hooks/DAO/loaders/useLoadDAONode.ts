@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
 import { useCallback } from 'react';
-import { isAddress, Address } from 'viem';
+import { isAddress, Address, getAddress } from 'viem';
 import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -64,7 +64,9 @@ export const useLoadDAONode = () => {
             return { error: 'errorFailedSearch' };
           }
 
-          const safeInfoWithGuard = await safeAPI.getSafeData(daoAddress);
+          // safeAPI.getSafeData expects a checksummed address here, so we gotta do getAddress,
+          // even if `daoAddress` passes the isAddress check above
+          const safeInfoWithGuard = await safeAPI.getSafeData(getAddress(daoAddress));
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName: await getDAOName({
