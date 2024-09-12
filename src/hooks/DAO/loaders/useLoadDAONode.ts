@@ -66,7 +66,8 @@ export const useLoadDAONode = () => {
 
           // safeAPI.getSafeData expects a checksummed address here, so we gotta do getAddress,
           // even if `daoAddress` passes the isAddress check above
-          const safeInfoWithGuard = await safeAPI.getSafeData(getAddress(daoAddress));
+          const checksummedAddress = getAddress(daoAddress);
+          const safeInfoWithGuard = await safeAPI.getSafeData(checksummedAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName: await getDAOName({
