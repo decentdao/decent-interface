@@ -189,14 +189,14 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
         });
       }
 
-      if (snapshotProposal !== null) {
-        setExtendedSnapshotProposal({
-          ...snapshotProposal,
-          ...proposalQueryResult,
-          votesBreakdown,
-          votes: votesQueryResult,
-        } as ExtendedSnapshotProposal);
-      }
+      const extendedProposal: ExtendedSnapshotProposal = {
+        ...snapshotProposal,
+        ...proposalQueryResult,
+        votesBreakdown,
+        votes: votesQueryResult,
+      };
+
+      setExtendedSnapshotProposal(extendedProposal);
     }
   }, [snapshotProposal, snaphshotGraphQlClient]);
 

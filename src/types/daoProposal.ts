@@ -97,7 +97,6 @@ export type SnapshotProposalType =
  */
 export interface ExtendedSnapshotProposal extends SnapshotProposal {
   snapshot: number; // Number of block
-  snapshotState: string; // State retrieved from Snapshot
   type: SnapshotProposalType;
   quorum?: number;
   privacy?: string;
