@@ -109,8 +109,8 @@ export const useDecentTreasury = () => {
     const tokenAddresses = transfers.results
       // map down to just the addresses, with a type of `string | undefined`
       .map(transfer => transfer.tokenAddress)
-      // no undefined addresses
-      .filter(address => address !== undefined)
+      // no undefined or null addresses
+      .filter(address => address !== undefined && address !== null)
       // make unique
       .filter((value, index, self) => self.indexOf(value) === index)
       // turn them into Address type
