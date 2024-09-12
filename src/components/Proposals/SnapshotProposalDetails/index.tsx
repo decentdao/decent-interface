@@ -25,7 +25,7 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
 
   useEffect(() => {
     loadSnapshotProposal();
-  }, [loadSnapshotProposal, proposal]);
+  }, [loadSnapshotProposal]);
 
   return (
     <ProposalDetailsGrid>
