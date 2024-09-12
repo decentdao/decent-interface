@@ -1,5 +1,6 @@
 import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress, Hex } from 'viem';
 import { isFeatureEnabled } from '../../../constants/common';
@@ -36,6 +37,17 @@ export default function RolesDetailsDrawerMobile({
   } = useFractal();
   const { t } = useTranslation('roles');
   const { hatsTree } = useRolesStore();
+
+  const sortedPayments = useMemo(
+    () =>
+      roleHat.payments
+        ? [...roleHat.payments]
+            .sort(paymentSorterByWithdrawAmount)
+            .sort(paymentSorterByStartDate)
+            .sort(paymentSorterByActiveStatus)
+        : [],
+    [roleHat.payments],
+  );
 
   if (!daoAddress || !hatsTree) return null;
 
@@ -105,19 +117,15 @@ export default function RolesDetailsDrawerMobile({
             >
               {t('payments')}
             </Text>
-            {[...roleHat.payments]
-              .sort(paymentSorterByWithdrawAmount)
-              .sort(paymentSorterByStartDate)
-              .sort(paymentSorterByActiveStatus)
-              .map((payment, index) => (
-                <RolePaymentDetails
-                  key={index}
-                  payment={payment}
-                  roleHatSmartAddress={roleHat.smartAddress}
-                  roleHatWearerAddress={getAddress(roleHat.wearer)}
-                  showWithdraw
-                />
-              ))}
+            {sortedPayments.map((payment, index) => (
+              <RolePaymentDetails
+                key={index}
+                payment={payment}
+                roleHatSmartAddress={roleHat.smartAddress}
+                roleHatWearerAddress={getAddress(roleHat.wearer)}
+                showWithdraw
+              />
+            ))}
           </>
         )}
       </Box>

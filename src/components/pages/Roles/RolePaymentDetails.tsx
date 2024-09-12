@@ -291,7 +291,7 @@ export function RolePaymentDetails({
     (isTop: boolean) =>
       isActiveStream
         ? {
-            bg: '#221D25',
+            bg: 'neutral-2',
             sx: undefined,
             boxShadow: PAYMENT_DETAILS_BOX_SHADOW,
           }
@@ -303,10 +303,8 @@ export function RolePaymentDetails({
             },
             bg: 'none',
             boxShadow: 'none',
-            borderTop: '1px solid',
+            border: '1px solid',
             borderBottom: isTop ? 'none' : '1px solid',
-            borderLeft: '1px solid',
-            borderRight: '1px solid',
             borderColor: 'neutral-4',
           },
     [isActiveStream],
