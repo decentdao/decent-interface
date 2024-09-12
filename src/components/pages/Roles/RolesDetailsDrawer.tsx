@@ -10,6 +10,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Hex, getAddress } from 'viem';
 import { isFeatureEnabled } from '../../../constants/common';
@@ -17,6 +18,11 @@ import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import {
+  paymentSorterByActiveStatus,
+  paymentSorterByStartDate,
+  paymentSorterByWithdrawAmount,
+} from '../../../store/roles';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
@@ -63,6 +69,17 @@ export default function RolesDetailsDrawer({
     chainId: chain.id,
   });
   const avatarURL = useAvatar(roleHat.wearer);
+
+  const sortedPayments = useMemo(
+    () =>
+      roleHat.payments
+        ? [...roleHat.payments]
+            .sort(paymentSorterByWithdrawAmount)
+            .sort(paymentSorterByStartDate)
+            .sort(paymentSorterByActiveStatus)
+        : [],
+    [roleHat.payments],
+  );
 
   if (!daoAddress) return null;
 
@@ -167,7 +184,7 @@ export default function RolesDetailsDrawer({
               >
                 {t('payments')}
               </Text>
-              {roleHat.payments.map((payment, index) => (
+              {sortedPayments.map((payment, index) => (
                 <RolePaymentDetails
                   key={index}
                   payment={payment}
