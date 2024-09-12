@@ -3,36 +3,15 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import { useFractal } from '../../../providers/App/AppProvider';
-import {
-  AzoriusProposal,
-  ExtendedSnapshotProposal,
-  FractalProposal,
-  FractalProposalState,
-  SnapshotProposal,
-} from '../../../types';
+import { AzoriusProposal, FractalProposalState, SnapshotProposal } from '../../../types';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
-import CastVote from './CastVote';
+import { CastVote } from './CastVote';
 import { Execute } from './Execute';
 
-// TODO: Refactor extendedSnapshotProposal and onCastSnapshotVote to the context
-function ProposalActions({
-  proposal,
-  extendedSnapshotProposal,
-  onCastSnapshotVote,
-}: {
-  proposal: FractalProposal;
-  extendedSnapshotProposal?: ExtendedSnapshotProposal;
-  onCastSnapshotVote?: () => Promise<void>;
-}) {
+function ProposalActions({ proposal }: { proposal: AzoriusProposal | SnapshotProposal }) {
   switch (proposal.state) {
     case FractalProposalState.ACTIVE:
-      return (
-        <CastVote
-          proposal={proposal}
-          extendedSnapshotProposal={extendedSnapshotProposal}
-          onCastSnapshotVote={onCastSnapshotVote}
-        />
-      );
+      return <CastVote proposal={proposal} />;
     case FractalProposalState.EXECUTABLE:
     case FractalProposalState.TIMELOCKED:
       return <Execute proposal={proposal} />;
@@ -44,19 +23,15 @@ function ProposalActions({
 export function AzoriusOrSnapshotProposalAction({
   proposal,
   expandedView,
-  extendedSnapshotProposal,
-  onCastSnapshotVote,
 }: {
   proposal: AzoriusProposal | SnapshotProposal;
   expandedView?: boolean;
-  extendedSnapshotProposal?: ExtendedSnapshotProposal;
-  onCastSnapshotVote?: () => Promise<void>;
 }) {
   const {
     readOnly: { dao },
   } = useFractal();
   const { t } = useTranslation();
-  const { isSnapshotProposal } = useSnapshotProposal(proposal);
+  const { snapshotProposal } = useSnapshotProposal(proposal);
   const { canVote } = useVoteContext();
 
   const isActiveProposal = useMemo(
@@ -65,14 +40,14 @@ export function AzoriusOrSnapshotProposalAction({
   );
 
   const showActionButton =
-    (isSnapshotProposal && canVote && isActiveProposal) ||
+    (snapshotProposal && canVote && isActiveProposal) ||
     isActiveProposal ||
     proposal.state === FractalProposalState.EXECUTABLE ||
     proposal.state === FractalProposalState.TIMELOCKABLE ||
     proposal.state === FractalProposalState.TIMELOCKED;
 
   const label = useMemo(() => {
-    if (isSnapshotProposal) {
+    if (snapshotProposal) {
       return t('details');
     }
 
@@ -83,7 +58,7 @@ export function AzoriusOrSnapshotProposalAction({
       return t(dao?.isAzorius ? 'vote' : 'sign');
     }
     return t('details');
-  }, [isSnapshotProposal, t, canVote, dao, isActiveProposal]);
+  }, [snapshotProposal, t, canVote, dao, isActiveProposal]);
 
   if (!showActionButton) {
     if (!expandedView) {
@@ -94,15 +69,9 @@ export function AzoriusOrSnapshotProposalAction({
   }
 
   if (expandedView) {
-    if (!isSnapshotProposal && isActiveProposal && !canVote) return null;
+    if (!snapshotProposal && isActiveProposal && !canVote) return null;
 
-    return (
-      <ProposalActions
-        proposal={proposal}
-        extendedSnapshotProposal={extendedSnapshotProposal}
-        onCastSnapshotVote={onCastSnapshotVote}
-      />
-    );
+    return <ProposalActions proposal={proposal} />;
   }
 
   return <Button variant={showActionButton && canVote ? 'primary' : 'secondary'}>{label}</Button>;

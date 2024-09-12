@@ -28,7 +28,7 @@ export function useProposalCountdown(proposal: FractalProposal) {
   const publicClient = usePublicClient();
 
   const [secondsLeft, setSecondsLeft] = useState<number>();
-  const { snapshotProposal, isSnapshotProposal } = useSnapshotProposal(proposal);
+  const { snapshotProposal } = useSnapshotProposal(proposal);
 
   const azoriusGovernance = governance as AzoriusGovernance;
 
@@ -153,10 +153,10 @@ export function useProposalCountdown(proposal: FractalProposal) {
       }
       startCountdown(guardTimelockPeriod);
       return;
-    } else if (isSnapshotProposal && proposal.state === FractalProposalState.PENDING) {
+    } else if (snapshotProposal !== null && proposal.state === FractalProposalState.PENDING) {
       startCountdown(snapshotProposal.startTime * 1000);
       return;
-    } else if (isSnapshotProposal) {
+    } else if (snapshotProposal !== null) {
       startCountdown(snapshotProposal.endTime * 1000);
       return;
     }
@@ -164,11 +164,9 @@ export function useProposalCountdown(proposal: FractalProposal) {
     azoriusGovernance.votingStrategy?.timeLockPeriod,
     freezeGuardContractAddress,
     freezeGuardType,
-    isSnapshotProposal,
     proposal,
     publicClient,
-    snapshotProposal.endTime,
-    snapshotProposal.startTime,
+    snapshotProposal,
     startCountdown,
   ]);
 
