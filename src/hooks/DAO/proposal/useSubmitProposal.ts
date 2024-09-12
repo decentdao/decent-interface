@@ -198,8 +198,14 @@ export default function useSubmitProposal() {
           successCallback(addressPrefix, safeAddress);
         }
         toast(successToastMessage);
-      } catch (e) {
+      } catch (e: any) {
         toast(failedToastMessage);
+
+        e.response?.data?.nonFieldErrors?.forEach((error: string) => {
+          if (error.includes('Tx with nonce') && error.includes('already executed')) {
+            toast.error('Transaction with the same nonce already exists');
+          }
+        });
         logError(e, 'Error during Multi-sig proposal creation');
       } finally {
         toast.dismiss(toastId);
