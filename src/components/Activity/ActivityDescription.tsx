@@ -1,11 +1,11 @@
 import { Box } from '@chakra-ui/react';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
-import { Activity, FractalProposal, SnapshotProposal } from '../../types';
+import { FractalProposal, SnapshotProposal } from '../../types';
 import Markdown from '../ui/proposal/Markdown';
 import { ProposalTitle } from './ActivityDescriptionGovernance';
 
 interface IActivityDescription {
-  activity: Activity;
+  activity: FractalProposal;
   showFullDescription?: boolean;
   showAuthor?: boolean;
 }
@@ -15,7 +15,7 @@ export function ActivityDescription({
   showFullDescription,
   showAuthor = true,
 }: IActivityDescription) {
-  const metaData = useGetMetadata(activity as FractalProposal);
+  const metaData = useGetMetadata(activity);
 
   const snapshotProposal = activity as SnapshotProposal;
 

@@ -5,7 +5,6 @@ import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName from '../../hooks/utils/useDisplayName';
 import {
-  Activity,
   GovernanceActivity,
   MultisigProposal,
   SnapshotProposal,
@@ -24,7 +23,7 @@ const formatId = (proposalId: string) => {
   }
 };
 
-function OnChainRejectionMessage({ activity }: { activity: Activity }) {
+function OnChainRejectionMessage({ activity }: { activity: FractalProposal }) {
   const { t } = useTranslation('dashboard');
   const governanceActivity = activity as MultisigProposal;
   if (!governanceActivity.multisigRejectedProposalNumber) {
@@ -39,7 +38,7 @@ function OnChainRejectionMessage({ activity }: { activity: Activity }) {
   );
 }
 
-function ProposalAuthor({ activity }: { activity: Activity }) {
+function ProposalAuthor({ activity }: { activity: FractalProposal }) {
   const snapshotProposal = activity as SnapshotProposal;
   const azoriusProposal = activity as AzoriusProposal;
   const multisigProposal = activity as MultisigProposal;
@@ -82,10 +81,10 @@ export function ProposalTitle({
   activity,
   showAuthor = false,
 }: {
-  activity: Activity;
+  activity: FractalProposal;
   showAuthor?: boolean;
 }) {
-  const metaData = useGetMetadata(activity as FractalProposal);
+  const metaData = useGetMetadata(activity);
 
   // Check if it's a SnapshotProposal and set variables accordingly
   const isSnapshotProposal = (activity as SnapshotProposal).snapshotProposalId !== undefined;

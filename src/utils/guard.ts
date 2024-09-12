@@ -1,11 +1,11 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { keccak256, encodePacked, isHex, Address, getContract, PublicClient } from 'viem';
 import { buildSignatureBytes } from '../helpers/crypto';
-import { Activity } from '../types';
+import { FractalProposal } from '../types';
 import { getTimeStamp } from './contract';
 
 export async function getTxTimelockedTimestamp(
-  activity: Activity,
+  activity: FractalProposal,
   freezeGuardAddress: Address,
   publicClient: PublicClient,
 ) {

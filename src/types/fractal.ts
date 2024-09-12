@@ -294,7 +294,6 @@ export interface NodeHierarchy {
 }
 
 export type FractalProposal = AzoriusProposal | MultisigProposal | SnapshotProposal;
-export type Activity = FractalProposal;
 
 /**
  * Immutable state generally calculated from other stateful objects.

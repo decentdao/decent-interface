@@ -5,7 +5,7 @@ import { Address, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { isApproved, isRejected } from '../../helpers/activity';
 import { useFractal } from '../../providers/App/AppProvider';
-import { Activity, FractalProposalState } from '../../types';
+import { FractalProposal, FractalProposalState } from '../../types';
 import { parseDecodedData } from '../../utils';
 import { getAverageBlockTime } from '../../utils/contract';
 import { getTxTimelockedTimestamp } from '../../utils/guard';
@@ -24,7 +24,7 @@ export const useSafeTransactions = () => {
 
   const getState = useCallback(
     async (
-      activities: Activity[],
+      activities: FractalProposal[],
       freezeGuardAddress?: Address,
       freezeGuardData?: FreezeGuardData,
     ) => {
@@ -149,7 +149,7 @@ export const useSafeTransactions = () => {
             ? [...data.decodedTransactions.map(tx => tx.target)]
             : [getAddress(transaction.to)];
 
-          const activity: Activity = {
+          const activity: FractalProposal = {
             transaction,
             eventDate,
             confirmations,
