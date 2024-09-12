@@ -44,7 +44,7 @@ export default function CreateProposalTemplatePage() {
                 ...tx,
                 ethValue: {
                   value: tx.ethValue.value,
-                  bigintValue: BigInt(tx.ethValue.value || 0),
+                  bigintValue: tx.ethValue.value !== '' ? BigInt(tx.ethValue.value) : undefined,
                 },
               })),
             };
