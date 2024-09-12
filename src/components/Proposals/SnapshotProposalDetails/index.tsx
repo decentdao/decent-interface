@@ -21,11 +21,11 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
   } = useFractal();
   useProposalCountdown(proposal);
 
-  const { loadProposal, extendedSnapshotProposal } = useSnapshotProposal(proposal);
+  const { loadSnapshotProposal, extendedSnapshotProposal } = useSnapshotProposal(proposal);
 
   useEffect(() => {
-    loadProposal();
-  }, [loadProposal, proposal]);
+    loadSnapshotProposal();
+  }, [loadSnapshotProposal, proposal]);
 
   return (
     <ProposalDetailsGrid>

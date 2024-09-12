@@ -32,7 +32,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
     return null;
   }, [proposal]);
 
-  const loadProposal = useCallback(async () => {
+  const loadSnapshotProposal = useCallback(async () => {
     if (!!snapshotProposal && snaphshotGraphQlClient) {
       const proposalQueryResult = await snaphshotGraphQlClient
         .query({
@@ -242,7 +242,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
 
   return {
     loadVotingWeight,
-    loadProposal,
+    loadSnapshotProposal,
     snapshotProposal,
     extendedSnapshotProposal,
   };
