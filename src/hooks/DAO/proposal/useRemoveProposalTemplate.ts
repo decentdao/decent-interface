@@ -1,5 +1,6 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { encodeFunctionData } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
@@ -16,12 +17,14 @@ export default function useRemoveProposalTemplate() {
     contracts: { keyValuePairs },
   } = useNetworkConfig();
 
+  const { t } = useTranslation('proposalMetadata');
+
   const prepareRemoveProposalTemplateProposal = useCallback(
     async (templateIndex: number) => {
       if (proposalTemplates) {
         const proposalMetadata = {
-          title: 'removeProposalTemplateTitle',
-          description: 'removeProposalTemplateDescription',
+          title: t('removeProposalTemplateTitle'),
+          description: t('removeProposalTemplateDescription'),
           documentationUrl: '',
         };
 
@@ -47,7 +50,7 @@ export default function useRemoveProposalTemplate() {
         return proposal;
       }
     },
-    [client, keyValuePairs, proposalTemplates],
+    [client, keyValuePairs, proposalTemplates, t],
   );
 
   return { prepareRemoveProposalTemplateProposal };
