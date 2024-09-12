@@ -20,7 +20,7 @@ import InfoRow from '../ui/proposal/InfoRow';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import Divider from '../ui/utils/Divider';
 import { QuorumProgressBar } from '../ui/utils/ProgressBar';
-import { AzoriusOrSnapshotProposalAction } from './ProposalActions/ProposalAction';
+import { AzoriusOrSnapshotProposalAction } from './ProposalActions/AzoriusOrSnapshotProposalAction';
 import { VoteContextProvider } from './ProposalVotes/context/VoteContext';
 
 export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal }) {

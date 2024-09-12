@@ -7,27 +7,21 @@ import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshot
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 import {
-  FractalProposal,
   AzoriusProposal,
+  FractalProposal,
   FractalProposalState,
-  ExtendedSnapshotProposal,
   VOTE_CHOICES,
 } from '../../../types';
 import WeightedInput from '../../ui/forms/WeightedInput';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 
-function Vote({
-  proposal,
-  extendedSnapshotProposal,
-  onCastSnapshotVote,
-}: {
-  proposal: FractalProposal;
-  extendedSnapshotProposal?: ExtendedSnapshotProposal;
-  onCastSnapshotVote?: () => Promise<void>;
-}) {
+export function CastVote({ proposal }: { proposal: FractalProposal }) {
   const [selectedVoteChoice, setVoiceChoice] = useState<number>();
   const { t } = useTranslation(['common', 'proposal', 'transaction']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
+
+  const { snapshotProposal, extendedSnapshotProposal, loadSnapshotProposal } =
+    useSnapshotProposal(proposal);
 
   const azoriusProposal = proposal as AzoriusProposal;
 
@@ -39,12 +33,8 @@ function Vote({
     selectedChoice,
     snapshotWeightedChoice,
     castVotePending,
-  } = useCastVote({
-    proposal,
-    extendedSnapshotProposal,
-  });
+  } = useCastVote(proposal.proposalId, extendedSnapshotProposal);
 
-  const { snapshotProposal } = useSnapshotProposal(proposal);
   const { canVote, canVoteLoading, hasVoted, hasVotedLoading } = useVoteContext();
 
   // if the user is not a signer or has no delegated tokens, don't show anything
@@ -65,7 +55,7 @@ function Vote({
 
   const disabled =
     castVotePending ||
-    proposal.state !== FractalProposalState.ACTIVE ||
+    azoriusProposal.state !== FractalProposalState.ACTIVE ||
     proposalStartBlockNotFinalized ||
     canVoteLoading ||
     hasVotedLoading;
@@ -108,7 +98,7 @@ function Vote({
         <Button
           width="full"
           isDisabled={voteDisabled}
-          onClick={() => castSnapshotVote(onCastSnapshotVote)}
+          onClick={() => castSnapshotVote(loadSnapshotProposal)}
           marginTop={5}
           padding="1.5rem 6rem"
           height="auto"
@@ -216,5 +206,3 @@ function Vote({
     </Tooltip>
   );
 }
-
-export default Vote;

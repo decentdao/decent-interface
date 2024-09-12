@@ -5,7 +5,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { SnapshotProposal } from '../../../types';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { useProposalCountdown } from '../../ui/proposal/useProposalCountdown';
-import { AzoriusOrSnapshotProposalAction } from '../ProposalActions/ProposalAction';
+import { AzoriusOrSnapshotProposalAction } from '../ProposalActions/AzoriusOrSnapshotProposalAction';
 import { ProposalInfo } from '../ProposalInfo';
 import { VoteContextProvider } from '../ProposalVotes/context/VoteContext';
 import SnapshotProposalSummary from './SnapshotProposalSummary';
@@ -43,8 +43,6 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
             >
               <AzoriusOrSnapshotProposalAction
                 proposal={proposal}
-                extendedSnapshotProposal={extendedSnapshotProposal}
-                onCastSnapshotVote={loadProposal}
                 expandedView
               />
             </VoteContextProvider>

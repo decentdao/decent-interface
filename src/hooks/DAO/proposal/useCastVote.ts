@@ -10,23 +10,15 @@ import { useVoteContext } from '../../../components/Proposals/ProposalVotes/cont
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
-import {
-  AzoriusGovernance,
-  GovernanceType,
-  FractalProposal,
-  ExtendedSnapshotProposal,
-} from '../../../types';
+import { AzoriusGovernance, ExtendedSnapshotProposal, GovernanceType } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
 import { useTransaction } from '../../utils/useTransaction';
 import useUserERC721VotingTokens from './useUserERC721VotingTokens';
 
-const useCastVote = ({
-  proposal,
-  extendedSnapshotProposal,
-}: {
-  proposal: FractalProposal;
-  extendedSnapshotProposal?: ExtendedSnapshotProposal;
-}) => {
+const useCastVote = (
+  proposalId: string,
+  extendedSnapshotProposal: ExtendedSnapshotProposal | null,
+) => {
   const [selectedChoice, setSelectedChoice] = useState<number>();
   const [snapshotWeightedChoice, setSnapshotWeightedChoice] = useState<number[]>([]);
 
@@ -55,7 +47,7 @@ const useCastVote = ({
 
   const { remainingTokenIds, remainingTokenAddresses } = useUserERC721VotingTokens(
     null,
-    proposal.proposalId,
+    proposalId,
   );
 
   const { getCanVote, getHasVoted } = useVoteContext();
@@ -88,7 +80,7 @@ const useCastVote = ({
           client: walletClient,
         });
         contractCall({
-          contractFn: () => ozLinearVotingContract.write.vote([Number(proposal.proposalId), vote]),
+          contractFn: () => ozLinearVotingContract.write.vote([Number(proposalId), vote]),
           pendingMessage: t('pendingCastVote'),
           failedMessage: t('failedCastVote'),
           successMessage: t('successCastVote'),
@@ -112,7 +104,7 @@ const useCastVote = ({
         contractCall({
           contractFn: () =>
             erc721LinearVotingContract.write.vote([
-              Number(proposal.proposalId),
+              Number(proposalId),
               vote,
               remainingTokenAddresses,
               remainingTokenIds.map(i => BigInt(i)),
@@ -135,7 +127,7 @@ const useCastVote = ({
       getCanVote,
       getHasVoted,
       linearVotingErc20Address,
-      proposal.proposalId,
+      proposalId,
       remainingTokenAddresses,
       remainingTokenIds,
       t,
@@ -216,10 +208,10 @@ const useCastVote = ({
       address,
       daoSnapshotENS,
       extendedSnapshotProposal,
-      t,
+      client,
       selectedChoice,
       snapshotWeightedChoice,
-      client,
+      t,
     ],
   );
 
