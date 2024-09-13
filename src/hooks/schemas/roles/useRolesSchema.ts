@@ -35,7 +35,7 @@ export const useRolesSchema = () => {
           const currentPaymentIndex = currentRoleHat.roleEditingPaymentIndex;
           // get all current role's payments excluding this one.
           const allCurrentRolePayments: SablierPaymentFormValues[] = (
-            cxt.from[2].value.payments ?? []
+            currentRoleHat.payments ?? []
           ).filter(
             (_payment: SablierPaymentFormValues, index: number) =>
               index !== currentPaymentIndex && !_payment.streamId,
