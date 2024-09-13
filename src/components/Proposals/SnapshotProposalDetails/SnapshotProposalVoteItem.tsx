@@ -25,8 +25,8 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
   const isWeighted = proposal.type === 'weighted';
   const voteSymbol = useMemo(() => {
     return proposal.strategies
-      .filter((strategy, index) =>
-        !!strategy.params.symbol &&  vote.votingWeightByStrategy[index] > 0,
+      .filter(
+        (strategy, index) => !!strategy.params.symbol && vote.votingWeightByStrategy[index] > 0,
       )
       .map(strategy => strategy.params.symbol)
       .join();
