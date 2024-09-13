@@ -1,4 +1,5 @@
-import { GridItem, Text, Flex } from '@chakra-ui/react';
+import { Flex, GridItem, Text } from '@chakra-ui/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -22,6 +23,18 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
   } = useFractal();
 
   const isWeighted = proposal.type === 'weighted';
+  const voteSymbol = useMemo(() => {
+    return proposal.strategies
+      .filter((strategy, index) =>
+        !!strategy.params.symbol &&  vote.votingWeightByStrategy[index] > 0,
+      )
+      .map(strategy => strategy.params.symbol)
+      .join();
+  }, [proposal.strategies, vote.votingWeightByStrategy]);
+
+  const totalVoteWeightedWeight = useMemo(() => {
+    return vote.votingWeightByStrategy.reduce((prev, curr) => prev + curr, 0);
+  }, [vote.votingWeightByStrategy]);
 
   return (
     <>
@@ -68,12 +81,38 @@ export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotPr
         )}
       </GridItem>
       <GridItem>
-        <Text
-          textStyle="body-base"
-          color="neutral-7"
-        >
-          {vote.votingWeight} {proposal.strategies[0].params.symbol}
-        </Text>
+        {isWeighted ? (
+          <Flex
+            gap={1}
+            flexWrap="wrap"
+          >
+            {proposal.strategies.map((strategy, strategyIdx) => {
+              const choiceWeight =
+                (vote.votingWeightByStrategy[strategyIdx] / totalVoteWeightedWeight) *
+                vote.votingWeight;
+              if (!choiceWeight) {
+                return null;
+              }
+              return (
+                <StatusBox key={strategyIdx}>
+                  <Text
+                    textStyle="body-base"
+                    color="neutral-7"
+                  >
+                    {choiceWeight} {strategy.params.symbol}
+                  </Text>
+                </StatusBox>
+              );
+            })}
+          </Flex>
+        ) : (
+          <Text
+            textStyle="body-base"
+            color="neutral-7"
+          >
+            {vote.votingWeight} {voteSymbol}
+          </Text>
+        )}
       </GridItem>
     </>
   );

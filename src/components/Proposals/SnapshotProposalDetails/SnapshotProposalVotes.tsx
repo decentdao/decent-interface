@@ -1,6 +1,7 @@
-import { Flex, Grid, GridItem, Text } from '@chakra-ui/react';
+import { Box, Flex, Grid, GridItem, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { ExtendedSnapshotProposal, FractalProposalState } from '../../../types';
+import StatusBox from '../../ui/badges/StatusBox';
 import ContentBox from '../../ui/containers/ContentBox';
 import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 import Divider from '../../ui/utils/Divider';
@@ -16,7 +17,6 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
   const { t } = useTranslation('proposal');
   const { totalVotesCasted } = useTotalVotes({ proposal });
   const { votes, votesBreakdown, choices, strategies, privacy, state, type } = proposal;
-  const strategySymbol = strategies[0].params.symbol;
 
   return (
     <>
@@ -41,7 +41,19 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
               ml={1}
               textStyle="display-lg"
             >
-              {totalVotesCasted} {strategySymbol}
+              {totalVotesCasted}
+              {strategies.map((strategy, index) =>
+                strategy.params.symbol ? (
+                  <Box
+                    mx={1}
+                    key={index}
+                    display="inline-block"
+                    as="span"
+                  >
+                    <StatusBox>{strategy.params.symbol}</StatusBox>
+                  </Box>
+                ) : null,
+              )}
             </Text>
           </Flex>
         </Flex>
@@ -58,7 +70,7 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
                   ? votesBreakdownChoice?.total
                   : 0;
               const choicePercentageFromTotal =
-                (votesBreakdownChoiceTotal * 100) / totalVotesCasted;
+                totalVotesCasted > 0 ? (votesBreakdownChoiceTotal * 100) / totalVotesCasted : 0;
 
               return (
                 <VotesPercentage
