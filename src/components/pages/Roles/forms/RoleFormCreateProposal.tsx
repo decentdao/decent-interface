@@ -3,7 +3,7 @@ import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress, Hex } from 'viem';
+import { formatUnits, getAddress, Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -12,7 +12,7 @@ import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { ModalBase } from '../../../ui/modals/ModalBase';
-import { SendAssetsModal } from '../../../ui/modals/SendAssetsModal';
+import { SendAssetsData, SendAssetsModal } from '../../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
@@ -84,6 +84,12 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
 
   const { isOpen: isOpenAction, onOpen: onOpenAction, onClose: onCloseAction } = useDisclosure();
   const { isOpen: isOpenAssets, onOpen: onOpenAssets, onClose: onCloseAssets } = useDisclosure();
+
+  const [sendAssetsActions, setSendAssetsActions] = useState<SendAssetsData[]>([]);
+
+  const addSendAssetsAction = (sendAssetsAction: SendAssetsData) => {
+    setSendAssetsActions([...sendAssetsActions, sendAssetsAction]);
+  };
 
   return (
     <Box maxW="736px">
@@ -173,6 +179,18 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           />
         );
       })}
+      {sendAssetsActions.map((action, index) => {
+        return (
+          <Box
+            key={index}
+            mb="1rem"
+          >
+            <div>asset: {action.asset.symbol}</div>
+            <div>amount: {formatUnits(action.transferAmount, action.asset.decimals)}</div>
+            <div>to: {action.destinationAddress}</div>
+          </Box>
+        );
+      })}
       <Button onClick={onOpenAction}>Add action</Button>
       <ModalBase
         isOpen={isOpenAction}
@@ -208,7 +226,10 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         title="Transfer Assets"
         isSearchInputModal={false}
       >
-        <SendAssetsModal close={onCloseAssets} />
+        <SendAssetsModal
+          close={onCloseAssets}
+          sendAssetsData={addSendAssetsAction}
+        />
       </ModalBase>
       <Flex
         gap="1rem"
