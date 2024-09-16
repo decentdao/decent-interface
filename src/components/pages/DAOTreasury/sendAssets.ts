@@ -1,4 +1,4 @@
-import { isAddress, getAddress, Hex, encodeFunctionData, erc20Abi } from 'viem';
+import { getAddress, Hex, encodeFunctionData, erc20Abi, Address } from 'viem';
 import { ProposalExecuteData, TokenBalance } from '../../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import { formatCoin } from '../../../utils/numberFormats';
@@ -11,7 +11,7 @@ export const sendAssets = ({
 }: {
   transferAmount: bigint;
   asset: TokenBalance;
-  destinationAddress: string | undefined;
+  destinationAddress: Address;
   t: any;
 }) => {
   const isEth =
@@ -20,10 +20,9 @@ export const sendAssets = ({
     asset.tokenAddress.toLowerCase() === MOCK_MORALIS_ETH_ADDRESS.toLowerCase();
   const description = formatCoin(transferAmount, false, asset.decimals, asset.symbol);
 
-  let calldatas = ['0x' as Hex];
-  let target =
-    isEth && destinationAddress ? getAddress(destinationAddress) : getAddress(asset.tokenAddress);
-  if (!isEth && destinationAddress && isAddress(destinationAddress)) {
+  let calldatas: Hex[] = ['0x'];
+  let target = isEth ? destinationAddress : getAddress(asset.tokenAddress);
+  if (!isEth) {
     calldatas = [
       encodeFunctionData({
         abi: erc20Abi,
