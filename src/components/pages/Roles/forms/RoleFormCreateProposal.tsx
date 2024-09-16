@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormControl, Show } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, Show, useDisclosure, VStack } from '@chakra-ui/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +11,8 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
+import { ModalBase } from '../../../ui/modals/ModalBase';
+import { SendAssetsModal } from '../../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
@@ -79,6 +81,9 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   );
 
   const handleCloseDrawer = () => setDrawerViewingRole(undefined);
+
+  const { isOpen: isOpenAction, onOpen: onOpenAction, onClose: onCloseAction } = useDisclosure();
+  const { isOpen: isOpenAssets, onOpen: onOpenAssets, onClose: onCloseAssets } = useDisclosure();
 
   return (
     <Box maxW="736px">
@@ -155,25 +160,56 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           </Field>
         </FormControl>
       </Flex>
-      <Box
-        p="1rem"
-        bg="neutral-2"
-        boxShadow={CARD_SHADOW}
-        borderRadius="0.5rem"
+      Actions
+      {editedRoles.map((role, index) => {
+        return (
+          <RoleCardShort
+            key={index}
+            name={role.name}
+            handleRoleClick={() => {
+              setDrawerViewingRole(role);
+            }}
+            editStatus={role.editedRole?.status}
+          />
+        );
+      })}
+      <Button onClick={onOpenAction}>Add action</Button>
+      <ModalBase
+        isOpen={isOpenAction}
+        onClose={onCloseAction}
+        title="Add Action"
+        isSearchInputModal={false}
       >
-        {editedRoles.map((role, index) => {
-          return (
-            <RoleCardShort
-              key={index}
-              name={role.name}
-              handleRoleClick={() => {
-                setDrawerViewingRole(role);
-              }}
-              editStatus={role.editedRole?.status}
-            />
-          );
-        })}
-      </Box>
+        <VStack
+          spacing={4}
+          align="stretch"
+          p={4}
+        >
+          <Button
+            size="lg"
+            onClick={() => {
+              onCloseAction();
+              onOpenAssets();
+            }}
+          >
+            Transfer assets
+          </Button>
+          <Button
+            size="lg"
+            isDisabled
+          >
+            Coming soon
+          </Button>
+        </VStack>
+      </ModalBase>
+      <ModalBase
+        isOpen={isOpenAssets}
+        onClose={onCloseAssets}
+        title="Transfer Assets"
+        isSearchInputModal={false}
+      >
+        <SendAssetsModal close={onCloseAssets} />
+      </ModalBase>
       <Flex
         gap="1rem"
         mt="1rem"
