@@ -28,7 +28,11 @@ function RemoveSignerModal({
   } = useFractal();
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
   const [prevSigner, setPrevSigner] = useState<Address>();
-  const [threshold, setThreshold] = useState<number>(currentThreshold);
+
+  const defaultNewThreshold =
+    currentThreshold > signers.length - 1 ? signers.length - 1 : currentThreshold;
+  const [threshold, setThreshold] = useState<number>(defaultNewThreshold);
+
   const [nonce, setNonce] = useState<number | undefined>(safe!.nextNonce);
   const { chain } = useNetworkConfig();
   const { data: ensName } = useEnsName({
