@@ -1,15 +1,18 @@
-import { Text, InputGroup, InputRightElement, Flex, Alert } from '@chakra-ui/react';
+import {
+  Text,
+  InputGroup,
+  InputRightElement,
+  Flex,
+  Alert,
+  NumberInput,
+  NumberInputField,
+} from '@chakra-ui/react';
 import { Info } from '@phosphor-icons/react';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatUnits } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
-import {
-  ICreationStepProps,
-  BigIntValuePair,
-  GovernanceType,
-  AzoriusGovernance,
-} from '../../../types';
+import { ICreationStepProps, GovernanceType, AzoriusGovernance } from '../../../types';
 import { formatBigIntDisplay } from '../../../utils/numberFormats';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
@@ -87,22 +90,24 @@ function GuardDetails(props: ICreationStepProps) {
           parentVotes = BigInt(safe.owners.length);
       }
 
-      let thresholdDefault: BigIntValuePair;
+      // let thresholdDefault: BigIntValuePair;
 
-      if (parentVotes === 1n) {
-        thresholdDefault = {
-          value: '1',
-          bigintValue: parentVotes,
-        };
-      } else {
-        thresholdDefault = {
-          value: parentVotes.toString(),
-          bigintValue: parentVotes / 2n,
-        };
-      }
+      // if (parentVotes === 1n) {
+      //   thresholdDefault = {
+      //     value: '1',
+      //     bigintValue: parentVotes,
+      //   };
+      // } else {
+      //   // wtf ???
+      //   thresholdDefault = {
+      //     value: parentVotes.toString(),
+      //     bigintValue: parentVotes / 2n,
+      //   };
+      // }
 
       setTotalParentVotes(parentVotes);
-      setFieldValue('freeze.freezeVotesThreshold', thresholdDefault);
+      setFieldValue('freeze.totalParentVotes', Number(parentVotes));
+      setFieldValue('freeze.freezeVotesThreshold', 1);
     }
   }, [
     azoriusGovernance.votesToken,
@@ -188,12 +193,19 @@ function GuardDetails(props: ICreationStepProps) {
             helper={freezeHelper || ''}
             isRequired
           >
-            <BigIntInput
-              value={values.freeze.freezeVotesThreshold.bigintValue}
-              onChange={valuePair => setFieldValue('freeze.freezeVotesThreshold', valuePair)}
-              decimalPlaces={0}
+            <NumberInput
+              value={values.freeze.freezeVotesThreshold}
+              onChange={value => setFieldValue('freeze.freezeVotesThreshold', Number(value))}
+              isInvalid={
+                totalParentVotes === undefined ||
+                totalParentVotes === 0n ||
+                values.freeze.freezeVotesThreshold === 0 ||
+                values.freeze.freezeVotesThreshold > totalParentVotes
+              }
               data-testid="guardConfig-freezeVotesThreshold"
-            />
+            >
+              <NumberInputField data-testid="safeConfig-numberOfSignerInput" />
+            </NumberInput>
           </LabelComponent>
           <LabelComponent
             label={t('labelFreezeProposalPeriod')}

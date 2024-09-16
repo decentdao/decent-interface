@@ -102,7 +102,7 @@ export type DAOGovernorModuleConfig<T = bigint> = {
 export type DAOFreezeGuardConfig<T = bigint> = {
   executionPeriod: T;
   timelockPeriod: T;
-  freezeVotesThreshold: T;
+  freezeVotesThreshold: number;
   freezeProposalPeriod: T;
   freezePeriod: T;
 };
