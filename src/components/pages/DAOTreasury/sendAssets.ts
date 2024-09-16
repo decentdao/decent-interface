@@ -1,22 +1,17 @@
 import { isAddress, getAddress, Hex, encodeFunctionData, erc20Abi } from 'viem';
-import { SubmitProposalFunction } from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { ProposalExecuteData, TokenBalance } from '../../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import { formatCoin } from '../../../utils/numberFormats';
 
-export const sendAssets = async ({
+export const sendAssets = ({
   transferAmount,
   asset,
   destinationAddress,
-  nonce,
-  submitProposal,
   t,
 }: {
   transferAmount: bigint;
   asset: TokenBalance;
   destinationAddress: string | undefined;
-  nonce: number | undefined;
-  submitProposal: SubmitProposalFunction;
   t: any;
 }) => {
   const isEth =
@@ -49,11 +44,5 @@ export const sendAssets = async ({
     },
   };
 
-  await submitProposal({
-    proposalData,
-    nonce,
-    pendingToastMessage: t('sendAssetsPendingToastMessage'),
-    successToastMessage: t('sendAssetsSuccessToastMessage'),
-    failedToastMessage: t('sendAssetsFailureToastMessage'),
-  });
+  return proposalData;
 };

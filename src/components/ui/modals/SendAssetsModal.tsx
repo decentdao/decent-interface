@@ -57,13 +57,19 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   const handleSendAssetsSubmit = async (values: SendAssetsFormValues) => {
     const { destinationAddress, selectedAsset, inputAmount } = values;
 
-    await sendAssets({
+    const proposalData = sendAssets({
       transferAmount: inputAmount?.bigintValue || 0n,
       asset: selectedAsset,
       destinationAddress,
-      nonce: nonceInput,
-      submitProposal,
       t,
+    });
+
+    await submitProposal({
+      proposalData,
+      nonce: nonceInput,
+      pendingToastMessage: t('sendAssetsPendingToastMessage'),
+      successToastMessage: t('sendAssetsSuccessToastMessage'),
+      failedToastMessage: t('sendAssetsFailureToastMessage'),
     });
 
     if (close) close();
