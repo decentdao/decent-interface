@@ -73,6 +73,82 @@ const DecentHats010Abi = [
                 name: 'wearer',
                 type: 'address',
               },
+              {
+                components: [
+                  {
+                    internalType: 'contract ISablierV2LockupLinear',
+                    name: 'sablier',
+                    type: 'address',
+                  },
+                  {
+                    internalType: 'address',
+                    name: 'sender',
+                    type: 'address',
+                  },
+                  {
+                    internalType: 'uint128',
+                    name: 'totalAmount',
+                    type: 'uint128',
+                  },
+                  {
+                    internalType: 'address',
+                    name: 'asset',
+                    type: 'address',
+                  },
+                  {
+                    internalType: 'bool',
+                    name: 'cancelable',
+                    type: 'bool',
+                  },
+                  {
+                    internalType: 'bool',
+                    name: 'transferable',
+                    type: 'bool',
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: 'uint40',
+                        name: 'start',
+                        type: 'uint40',
+                      },
+                      {
+                        internalType: 'uint40',
+                        name: 'cliff',
+                        type: 'uint40',
+                      },
+                      {
+                        internalType: 'uint40',
+                        name: 'end',
+                        type: 'uint40',
+                      },
+                    ],
+                    internalType: 'struct LockupLinear.Timestamps',
+                    name: 'timestamps',
+                    type: 'tuple',
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: 'address',
+                        name: 'account',
+                        type: 'address',
+                      },
+                      {
+                        internalType: 'uint256',
+                        name: 'fee',
+                        type: 'uint256',
+                      },
+                    ],
+                    internalType: 'struct LockupLinear.Broker',
+                    name: 'broker',
+                    type: 'tuple',
+                  },
+                ],
+                internalType: 'struct DecentHats_0_1_0.SablierStreamParams[]',
+                name: 'sablierParams',
+                type: 'tuple[]',
+              },
             ],
             internalType: 'struct DecentHats_0_1_0.Hat',
             name: 'adminHat',
@@ -104,6 +180,82 @@ const DecentHats010Abi = [
                 internalType: 'address',
                 name: 'wearer',
                 type: 'address',
+              },
+              {
+                components: [
+                  {
+                    internalType: 'contract ISablierV2LockupLinear',
+                    name: 'sablier',
+                    type: 'address',
+                  },
+                  {
+                    internalType: 'address',
+                    name: 'sender',
+                    type: 'address',
+                  },
+                  {
+                    internalType: 'uint128',
+                    name: 'totalAmount',
+                    type: 'uint128',
+                  },
+                  {
+                    internalType: 'address',
+                    name: 'asset',
+                    type: 'address',
+                  },
+                  {
+                    internalType: 'bool',
+                    name: 'cancelable',
+                    type: 'bool',
+                  },
+                  {
+                    internalType: 'bool',
+                    name: 'transferable',
+                    type: 'bool',
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: 'uint40',
+                        name: 'start',
+                        type: 'uint40',
+                      },
+                      {
+                        internalType: 'uint40',
+                        name: 'cliff',
+                        type: 'uint40',
+                      },
+                      {
+                        internalType: 'uint40',
+                        name: 'end',
+                        type: 'uint40',
+                      },
+                    ],
+                    internalType: 'struct LockupLinear.Timestamps',
+                    name: 'timestamps',
+                    type: 'tuple',
+                  },
+                  {
+                    components: [
+                      {
+                        internalType: 'address',
+                        name: 'account',
+                        type: 'address',
+                      },
+                      {
+                        internalType: 'uint256',
+                        name: 'fee',
+                        type: 'uint256',
+                      },
+                    ],
+                    internalType: 'struct LockupLinear.Broker',
+                    name: 'broker',
+                    type: 'tuple',
+                  },
+                ],
+                internalType: 'struct DecentHats_0_1_0.SablierStreamParams[]',
+                name: 'sablierParams',
+                type: 'tuple[]',
               },
             ],
             internalType: 'struct DecentHats_0_1_0.Hat[]',

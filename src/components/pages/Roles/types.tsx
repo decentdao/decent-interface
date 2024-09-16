@@ -84,6 +84,19 @@ export interface HatStruct {
   wearer: Address;
 }
 
+export interface HatStructWithPayments extends HatStruct {
+  sablierParams: {
+    sablier: Address;
+    sender: Address;
+    totalAmount: bigint;
+    asset: Address;
+    cancelable: boolean;
+    transferable: boolean;
+    timestamps: { start: number; cliff: number; end: number };
+    broker: { account: Address; fee: bigint };
+  }[];
+}
+
 export interface HatStructWithId extends HatStruct {
   id: Hex; // uint256 with padded zeros for the tree ID
 }
