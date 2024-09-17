@@ -40,7 +40,7 @@ function GuardDetails(props: ICreationStepProps) {
 
   const handleNonceChange = useCallback(
     (nonce?: string) => {
-      setFieldValue('multisig.customNonce', nonce);
+      setFieldValue('multisig.customNonce', Number(nonce));
     },
     [setFieldValue],
   );

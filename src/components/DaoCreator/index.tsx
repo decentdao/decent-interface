@@ -39,7 +39,10 @@ function DaoCreator({
           const freezeGuard = isSubDAO ? values.freeze : undefined;
 
           let daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | undefined;
-          let customNonce = mode === DAOCreateMode.EDIT ? values.multisig.customNonce : undefined;
+          let customNonce =
+            mode === DAOCreateMode.EDIT || freezeGuard !== undefined
+              ? values.multisig.customNonce
+              : undefined;
 
           switch (choosenGovernance) {
             case GovernanceType.MULTISIG:
