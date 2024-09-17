@@ -270,7 +270,7 @@ export function RoleCardShort({
           <EditBadge editStatus={editStatus} />
           <Icon
             as={CaretCircleRight}
-            color="white-0"
+            color="lilac-0"
             boxSize="1.5rem"
           />
         </Flex>
