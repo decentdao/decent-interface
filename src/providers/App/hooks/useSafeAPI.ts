@@ -57,8 +57,9 @@ class EnhancedSafeApiKit extends SafeApiKit {
     return value;
   }
   override async getSafeInfo(safeAddress: Address): Promise<SafeInfoResponse> {
-    const value = await this.request('getSafeInfo' + safeAddress, 5, () => {
-      return super.getSafeInfo(safeAddress);
+    const checksummedSafeAddress = getAddress(safeAddress);
+    const value = await this.request('getSafeInfo' + checksummedSafeAddress, 5, () => {
+      return super.getSafeInfo(checksummedSafeAddress);
     });
     return value;
   }
