@@ -1,4 +1,15 @@
-import { Box, Button, Flex, FormControl, Show, useDisclosure, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  Show,
+  useDisclosure,
+  VStack,
+  Text,
+  Icon,
+} from '@chakra-ui/react';
+import { SquaresFour, ArrowsDownUp } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,8 +17,10 @@ import { useNavigate } from 'react-router-dom';
 import { formatUnits, getAddress, Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
+import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { Card } from '../../../ui/cards/Card';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -17,6 +30,50 @@ import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
 import { EditedRole, RoleDetailsDrawerRoleHatProp, RoleFormValues } from '../types';
+
+function SendAssetsAction({
+  index,
+  action,
+  onRemove,
+}: {
+  index: number;
+  action: SendAssetsData;
+  onRemove: (index: number) => void;
+}) {
+  const { displayName } = useDisplayName(action.destinationAddress);
+
+  return (
+    <Card my="1rem">
+      <Flex justifyContent="space-between">
+        <Flex
+          alignItems="center"
+          gap="0.5rem"
+        >
+          <Icon
+            as={ArrowsDownUp}
+            w="1.5rem"
+            h="1.5rem"
+            color="lilac-0"
+          />
+          <Text>Transfer</Text>
+          <Text color="lilac-0">
+            {formatUnits(action.transferAmount, action.asset.decimals)} {action.asset.symbol}
+          </Text>
+          <Text>to</Text>
+          <Text color="lilac-0">{displayName}</Text>
+        </Flex>
+        <Button
+          size="sm"
+          onClick={() => {
+            onRemove(index);
+          }}
+        >
+          Remove
+        </Button>
+      </Flex>
+    </Card>
+  );
+}
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerRoleHatProp>();
@@ -173,7 +230,24 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           </Field>
         </FormControl>
       </Flex>
-      Actions
+
+      <Flex
+        mt={4}
+        mb={2}
+        alignItems="center"
+      >
+        <Icon
+          as={SquaresFour}
+          w="1.5rem"
+          h="1.5rem"
+        />
+        <Text
+          textStyle="display-lg"
+          ml={2}
+        >
+          Actions
+        </Text>
+      </Flex>
       {editedRoles.map((role, index) => {
         return (
           <RoleCardShort
@@ -186,19 +260,26 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           />
         );
       })}
-      {values.actions.map((action, index) => {
-        return (
-          <Box
-            key={index}
-            mb="1rem"
-          >
-            <div>asset: {action.asset.symbol}</div>
-            <div>amount: {formatUnits(action.transferAmount, action.asset.decimals)}</div>
-            <div>to: {action.destinationAddress}</div>
-          </Box>
-        );
-      })}
-      <Button onClick={onOpenAction}>Add action</Button>
+      {values.actions.map((action, index) => (
+        <SendAssetsAction
+          action={action}
+          key={index}
+          index={index}
+          onRemove={idx => {
+            setFieldValueTopLevel(
+              'actions',
+              values.actions.filter((_, i) => i !== idx),
+            );
+          }}
+        />
+      ))}
+      <Button
+        mt="1rem"
+        size="sm"
+        onClick={onOpenAction}
+      >
+        Add action
+      </Button>
       <ModalBase
         isOpen={isOpenAction}
         onClose={onCloseAction}
