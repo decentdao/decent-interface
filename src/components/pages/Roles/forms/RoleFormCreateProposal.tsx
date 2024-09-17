@@ -9,7 +9,7 @@ import {
   Text,
   Icon,
 } from '@chakra-ui/react';
-import { SquaresFour, ArrowsDownUp } from '@phosphor-icons/react';
+import { SquaresFour, ArrowsDownUp, Plus, Trash } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -63,12 +63,14 @@ function SendAssetsAction({
           <Text color="lilac-0">{displayName}</Text>
         </Flex>
         <Button
+          color="red-0"
+          variant="tertiary"
           size="sm"
           onClick={() => {
             onRemove(index);
           }}
         >
-          Remove
+          <Icon as={Trash} />
         </Button>
       </Flex>
     </Card>
@@ -274,11 +276,13 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         />
       ))}
       <Button
+        variant="secondary"
         mt="1rem"
         size="sm"
         onClick={onOpenAction}
       >
-        Add action
+        <Icon as={Plus} />
+        Add Action
       </Button>
       <ModalBase
         isOpen={isOpenAction}
