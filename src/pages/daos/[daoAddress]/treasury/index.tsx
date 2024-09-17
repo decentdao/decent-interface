@@ -139,6 +139,7 @@ export default function Treasury() {
         isSearchInputModal={false}
       >
         <SendAssetsModal
+          submitButtonText={t('submitProposal', { ns: 'modals' })}
           close={onClose}
           sendAssetsData={sendAssetsAction}
         />

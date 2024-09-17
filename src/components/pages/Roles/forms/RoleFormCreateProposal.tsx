@@ -227,6 +227,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         isSearchInputModal={false}
       >
         <SendAssetsModal
+          submitButtonText={t('add')}
           close={onCloseAssets}
           sendAssetsData={addSendAssetsAction}
         />

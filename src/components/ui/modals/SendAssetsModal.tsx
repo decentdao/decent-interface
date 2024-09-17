@@ -31,9 +31,11 @@ export interface SendAssetsData {
 }
 
 export function SendAssetsModal({
+  submitButtonText,
   close,
   sendAssetsData,
 }: {
+  submitButtonText: string;
   close: () => void;
   sendAssetsData: (sendAssetData: SendAssetsData) => void;
 }) {
@@ -230,7 +232,7 @@ export function SendAssetsModal({
                   isSubmitDisabled
                 }
               >
-                {t('submitProposal')}
+                {submitButtonText}
               </Button>
             </Form>
           );
