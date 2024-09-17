@@ -10,6 +10,7 @@ import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
+import { prepareSendAssetsActionData } from '../../components/pages/DAOTreasury/prepareSendAssetsProposalData';
 import {
   EditBadgeStatus,
   HatStruct,
@@ -786,6 +787,18 @@ export default function useCreateRoles() {
             modifiedHats,
           );
         }
+
+        // Add "send assets" actions to the proposal data
+        values.actions.forEach(action => {
+          const actionData = prepareSendAssetsActionData({
+            transferAmount: action.transferAmount,
+            asset: action.asset,
+            destinationAddress: action.destinationAddress,
+          });
+          proposalData.targets.push(actionData.target);
+          proposalData.values.push(actionData.value);
+          proposalData.calldatas.push(actionData.calldata);
+        });
 
         // All done, submit the proposal!
         await submitProposal({
