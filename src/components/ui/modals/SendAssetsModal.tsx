@@ -27,7 +27,7 @@ export interface SendAssetsData {
   destinationAddress: Address;
   transferAmount: bigint;
   asset: TokenBalance;
-  nonceInput: number | undefined;
+  nonceInput: number | undefined; // this is only releveant when the caller action results in a proposal
 }
 
 export function SendAssetsModal({
@@ -82,7 +82,7 @@ export function SendAssetsModal({
       nonceInput,
     });
 
-    if (close) close();
+    close();
   };
 
   return (
