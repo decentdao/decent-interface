@@ -21,7 +21,12 @@ import { EditedRole, RoleDetailsDrawerRoleHatProp, RoleFormValues } from '../typ
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerRoleHatProp>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
-  const { values, isSubmitting, submitForm } = useFormikContext<RoleFormValues>();
+  const {
+    values,
+    setFieldValue: setFieldValueTopLevel,
+    isSubmitting,
+    submitForm,
+  } = useFormikContext<RoleFormValues>();
   const editedRoles = useMemo<
     (RoleDetailsDrawerRoleHatProp & {
       editedRole: EditedRole;
@@ -85,10 +90,8 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   const { isOpen: isOpenAction, onOpen: onOpenAction, onClose: onCloseAction } = useDisclosure();
   const { isOpen: isOpenAssets, onOpen: onOpenAssets, onClose: onCloseAssets } = useDisclosure();
 
-  const [sendAssetsActions, setSendAssetsActions] = useState<SendAssetsData[]>([]);
-
   const addSendAssetsAction = (sendAssetsAction: SendAssetsData) => {
-    setSendAssetsActions([...sendAssetsActions, sendAssetsAction]);
+    setFieldValueTopLevel('actions', [...values.actions, sendAssetsAction]);
   };
 
   return (
@@ -179,7 +182,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           />
         );
       })}
-      {sendAssetsActions.map((action, index) => {
+      {values.actions.map((action, index) => {
         return (
           <Box
             key={index}
