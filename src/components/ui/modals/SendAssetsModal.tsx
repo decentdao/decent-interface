@@ -32,10 +32,12 @@ export interface SendAssetsData {
 
 export function SendAssetsModal({
   submitButtonText,
+  showNonceInput,
   close,
   sendAssetsData,
 }: {
   submitButtonText: string;
+  showNonceInput: boolean;
   close: () => void;
   sendAssetsData: (sendAssetData: SendAssetsData) => void;
 }) {
@@ -215,10 +217,12 @@ export function SendAssetsModal({
 
               <Divider my="1.5rem" />
 
-              <CustomNonceInput
-                nonce={nonceInput}
-                onChange={nonce => setNonceInput(nonce ? parseInt(nonce) : undefined)}
-              />
+              {showNonceInput && (
+                <CustomNonceInput
+                  nonce={nonceInput}
+                  onChange={nonce => setNonceInput(nonce ? parseInt(nonce) : undefined)}
+                />
+              )}
 
               <Button
                 marginTop="2rem"

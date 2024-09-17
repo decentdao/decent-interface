@@ -140,6 +140,7 @@ export default function Treasury() {
       >
         <SendAssetsModal
           submitButtonText={t('submitProposal', { ns: 'modals' })}
+          showNonceInput={true}
           close={onClose}
           sendAssetsData={sendAssetsAction}
         />
