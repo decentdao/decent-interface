@@ -8,7 +8,7 @@ import {
   PaginationCount,
   Transactions,
 } from '../../../../components/pages/DAOTreasury/components/Transactions';
-import { sendAssets } from '../../../../components/pages/DAOTreasury/sendAssets';
+import { prepareSendAssetsProposalData } from '../../../../components/pages/DAOTreasury/prepareSendAssetsProposalData';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalBase } from '../../../../components/ui/modals/ModalBase';
 import { SendAssetsData, SendAssetsModal } from '../../../../components/ui/modals/SendAssetsModal';
@@ -40,7 +40,7 @@ export default function Treasury() {
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
 
   const sendAssetsAction = async (sendAssetsData: SendAssetsData) => {
-    const proposalData = sendAssets({
+    const proposalData = prepareSendAssetsProposalData({
       transferAmount: sendAssetsData.transferAmount,
       asset: sendAssetsData.asset,
       destinationAddress: sendAssetsData.destinationAddress,

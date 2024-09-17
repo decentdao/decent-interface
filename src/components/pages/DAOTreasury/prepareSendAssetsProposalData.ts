@@ -1,9 +1,10 @@
+import { TFunction } from 'i18next';
 import { getAddress, Hex, encodeFunctionData, erc20Abi, Address } from 'viem';
 import { ProposalExecuteData, TokenBalance } from '../../../types';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
 import { formatCoin } from '../../../utils/numberFormats';
 
-export const sendAssets = ({
+export const prepareSendAssetsProposalData = ({
   transferAmount,
   asset,
   destinationAddress,
@@ -12,7 +13,7 @@ export const sendAssets = ({
   transferAmount: bigint;
   asset: TokenBalance;
   destinationAddress: Address;
-  t: any;
+  t: TFunction<[string, string], undefined>;
 }) => {
   const isEth =
     !asset.tokenAddress ||
