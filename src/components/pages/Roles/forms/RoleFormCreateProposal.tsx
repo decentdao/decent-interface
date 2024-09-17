@@ -223,7 +223,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
       <ModalBase
         isOpen={isOpenAssets}
         onClose={onCloseAssets}
-        title="Transfer Assets"
+        title={t('sendAssetsTitle')}
         isSearchInputModal={false}
       >
         <SendAssetsModal

@@ -135,7 +135,7 @@ export default function Treasury() {
       <ModalBase
         isOpen={isOpen}
         onClose={onClose}
-        title="Transfer Assets"
+        title={t('sendAssetsTitle', { ns: 'modals' })}
         isSearchInputModal={false}
       >
         <SendAssetsModal
