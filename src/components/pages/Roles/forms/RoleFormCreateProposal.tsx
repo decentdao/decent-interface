@@ -72,6 +72,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
 
   const {
     node: { daoAddress },
+    treasury: { assetsFungible },
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
@@ -93,6 +94,9 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   const addSendAssetsAction = (sendAssetsAction: SendAssetsData) => {
     setFieldValueTopLevel('actions', [...values.actions, sendAssetsAction]);
   };
+
+  const hasAnyBalanceOfAnyFungibleTokens =
+    assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
 
   return (
     <Box maxW="736px">
@@ -212,9 +216,11 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
               onCloseAction();
               onOpenAssets();
             }}
+            isDisabled={!hasAnyBalanceOfAnyFungibleTokens}
           >
             Transfer assets
           </Button>
+
           <Button
             size="lg"
             isDisabled
