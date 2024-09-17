@@ -84,8 +84,9 @@ class EnhancedSafeApiKit extends SafeApiKit {
   }
 
   async getSafeData(safeAddress: Address): Promise<SafeWithNextNonce> {
-    const safeInfoResponse = await this.getSafeInfo(safeAddress);
-    const nextNonce = await this.getNextNonce(safeAddress);
+    const checksummedSafeAddress = getAddress(safeAddress);
+    const safeInfoResponse = await this.getSafeInfo(checksummedSafeAddress);
+    const nextNonce = await this.getNextNonce(checksummedSafeAddress);
     const safeInfo = {
       ...safeInfoResponse,
       nextNonce,
