@@ -1,14 +1,4 @@
-import {
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  Show,
-  useDisclosure,
-  VStack,
-  Text,
-  Icon,
-} from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, Show, useDisclosure, Text, Icon } from '@chakra-ui/react';
 import { SquaresFour, ArrowsDownUp, Plus, Trash } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
@@ -40,6 +30,7 @@ function SendAssetsAction({
   action: SendAssetsData;
   onRemove: (index: number) => void;
 }) {
+  const { t } = useTranslation('common');
   const { displayName } = useDisplayName(action.destinationAddress);
 
   return (
@@ -55,11 +46,11 @@ function SendAssetsAction({
             h="1.5rem"
             color="lilac-0"
           />
-          <Text>Transfer</Text>
+          <Text>{t('transfer')}</Text>
           <Text color="lilac-0">
             {formatUnits(action.transferAmount, action.asset.decimals)} {action.asset.symbol}
           </Text>
-          <Text>to</Text>
+          <Text>{t('to').toLowerCase()}</Text>
           <Text color="lilac-0">{displayName}</Text>
         </Flex>
         <Button
@@ -77,6 +68,40 @@ function SendAssetsAction({
   );
 }
 
+function ActionCard({
+  title,
+  subtitle,
+  icon,
+  onClick,
+  isDisabled,
+}: {
+  title: string;
+  subtitle: string;
+  icon: React.ElementType;
+  onClick: () => void;
+  isDisabled: boolean;
+}) {
+  return (
+    <Button
+      variant="unstyled"
+      height="auto"
+      padding="0"
+      onClick={onClick}
+      isDisabled={isDisabled}
+    >
+      <Card>
+        <Icon
+          as={icon}
+          w="2rem"
+          h="2rem"
+          color="lilac-0"
+        />
+        <Text textStyle="display-lg">{title}</Text>
+        <Text color="neutral-7">{subtitle}</Text>
+      </Card>
+    </Button>
+  );
+}
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerRoleHatProp>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
@@ -247,7 +272,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           textStyle="display-lg"
           ml={2}
         >
-          Actions
+          {t('actions', { ns: 'actions' })}
         </Text>
       </Flex>
       {editedRoles.map((role, index) => {
@@ -282,42 +307,39 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         onClick={onOpenAction}
       >
         <Icon as={Plus} />
-        Add Action
+        {t('addAction', { ns: 'actions' })}
       </Button>
       <ModalBase
         isOpen={isOpenAction}
         onClose={onCloseAction}
-        title="Add Action"
+        title={t('addAction', { ns: 'actions' })}
         isSearchInputModal={false}
       >
-        <VStack
-          spacing={4}
-          align="stretch"
-          p={4}
-        >
-          <Button
-            size="lg"
+        <Flex>
+          <ActionCard
+            title={t('transferAssets', { ns: 'actions' })}
+            subtitle={t('transferAssetsSub', { ns: 'actions' })}
+            icon={ArrowsDownUp}
             onClick={() => {
               onCloseAction();
               onOpenAssets();
             }}
             isDisabled={!hasAnyBalanceOfAnyFungibleTokens}
-          >
-            Transfer assets
-          </Button>
+          />
 
-          <Button
-            size="lg"
+          <ActionCard
+            title={t('comingSoon', { ns: 'actions' })}
+            subtitle={t('comingSoonSub', { ns: 'actions' })}
+            icon={SquaresFour}
+            onClick={() => {}}
             isDisabled
-          >
-            Coming soon
-          </Button>
-        </VStack>
+          />
+        </Flex>
       </ModalBase>
       <ModalBase
         isOpen={isOpenAssets}
         onClose={onCloseAssets}
-        title={t('sendAssetsTitle')}
+        title={t('transferAssets', { ns: 'actions' })}
         isSearchInputModal={false}
       >
         <SendAssetsModal
