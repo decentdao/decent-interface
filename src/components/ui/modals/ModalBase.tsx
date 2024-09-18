@@ -16,7 +16,6 @@ interface ModuleBaseProps {
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
-  showTitleDivide?: boolean;
 }
 /**
  * The base wrapper component for a modal.  This displays the Chakra components necessary to open a modal,
@@ -30,7 +29,6 @@ export function ModalBase({
   title,
   warn,
   size = 'lg',
-  showTitleDivide = true,
 }: ModuleBaseProps) {
   return (
     <Modal
@@ -82,7 +80,7 @@ export function ModalBase({
                   onClick={onClose}
                 />
               </Flex>
-              {showTitleDivide && <Divider marginBottom="1rem" />}
+              <Divider marginBottom="1rem" />
             </>
           )}
           {children}

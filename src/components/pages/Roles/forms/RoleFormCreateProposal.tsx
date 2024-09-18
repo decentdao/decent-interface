@@ -331,7 +331,6 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         onClose={onCloseAction}
         title={t('actions', { ns: 'actions' })}
         isSearchInputModal={false}
-        showTitleDivide={false}
       >
         <Flex
           gap="2"
