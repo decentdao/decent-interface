@@ -881,8 +881,6 @@ export default function SablierProposalCreatePage() {
     [streams],
   );
 
-  console.log(streams);
-
   if (!type || !daoAddress || !safe) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
