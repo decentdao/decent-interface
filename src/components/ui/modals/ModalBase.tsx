@@ -12,6 +12,7 @@ interface ModuleBaseProps {
   isSearchInputModal: boolean;
   title: string;
   warn?: boolean;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'full';
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
@@ -27,11 +28,12 @@ export function ModalBase({
   children,
   title,
   warn,
+  size = 'lg',
 }: ModuleBaseProps) {
   return (
     <Modal
       isCentered
-      size="lg"
+      size={size}
       isOpen={isOpen}
       onClose={onClose}
     >

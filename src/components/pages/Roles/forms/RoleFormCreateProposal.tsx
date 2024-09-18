@@ -5,7 +5,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { formatUnits, getAddress, Hex } from 'viem';
-import { CARD_SHADOW } from '../../../../constants/common';
+import { CARD_SHADOW, DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -85,11 +85,19 @@ function ActionCard({
     <Button
       variant="unstyled"
       height="auto"
-      padding="0"
       onClick={onClick}
       isDisabled={isDisabled}
+      padding={0}
+      w="full"
     >
-      <Card>
+      <Box
+        boxShadow={DETAILS_BOX_SHADOW}
+        _hover={{ bg: 'neutral-3' }}
+        _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
+        transition="all ease-out 300ms"
+        p="1.5rem"
+        borderRadius="0.5rem"
+      >
         <Icon
           as={icon}
           w="2rem"
@@ -98,7 +106,7 @@ function ActionCard({
         />
         <Text textStyle="display-lg">{title}</Text>
         <Text color="neutral-7">{subtitle}</Text>
-      </Card>
+      </Box>
     </Button>
   );
 }
@@ -310,12 +318,16 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
         {t('addAction', { ns: 'actions' })}
       </Button>
       <ModalBase
+        size="xl"
         isOpen={isOpenAction}
         onClose={onCloseAction}
         title={t('addAction', { ns: 'actions' })}
         isSearchInputModal={false}
       >
-        <Flex>
+        <Flex
+          gap="2"
+          justifyContent="space-between"
+        >
           <ActionCard
             title={t('transferAssets', { ns: 'actions' })}
             subtitle={t('transferAssetsSub', { ns: 'actions' })}
