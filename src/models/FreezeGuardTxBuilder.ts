@@ -130,7 +130,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
       [
         encodeAbiParameters(parseAbiParameters('address, uint256, uint32, uint32, address'), [
           this.parentAddress, // Owner -- Parent DAO
-          BigInt(subDaoData.freezeVotesThreshold), // FreezeVotesThreshold
+          subDaoData.freezeVotesThreshold, // FreezeVotesThreshold
           Number(subDaoData.freezeProposalPeriod), // FreezeProposalPeriod
           Number(subDaoData.freezePeriod), // FreezePeriod
           parentStrategyAddress, // Parent Votes Token or Parent Safe Address

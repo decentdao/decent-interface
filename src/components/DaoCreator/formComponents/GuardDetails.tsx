@@ -1,12 +1,4 @@
-import {
-  Text,
-  InputGroup,
-  InputRightElement,
-  Flex,
-  Alert,
-  NumberInput,
-  NumberInputField,
-} from '@chakra-ui/react';
+import { Text, InputGroup, InputRightElement, Flex, Alert } from '@chakra-ui/react';
 import { Info } from '@phosphor-icons/react';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +16,8 @@ import { StepWrapper } from '../StepWrapper';
 import useStepRedirect from '../hooks/useStepRedirect';
 
 function GuardDetails(props: ICreationStepProps) {
-  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode } = props;
+  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode, errors } = props;
+
   const {
     node: { safe },
     governance,
@@ -53,62 +46,44 @@ function GuardDetails(props: ICreationStepProps) {
   }, [isSubDAO, type, setFieldValue, safe, dao, showCustomNonce]);
 
   useEffect(() => {
+    if (totalParentVotes === undefined || type === undefined) {
+      return;
+    }
+
     // set the initial value for freezeGuard.freezeVotesThreshold
     // and display helperFreezeVotesThreshold
-    if (!totalParentVotes) {
-      if (!type) return;
+    let parentVotes: bigint;
 
-      let parentVotes: bigint;
+    switch (type) {
+      case GovernanceType.AZORIUS_ERC20:
+      case GovernanceType.AZORIUS_ERC721:
+        // @todo: is this line below necessary? Why?
+        if (!azoriusGovernance.votesToken && !azoriusGovernance.erc721Tokens) return;
 
-      switch (type) {
-        case GovernanceType.AZORIUS_ERC20:
-        case GovernanceType.AZORIUS_ERC721:
-          if (
-            !azoriusGovernance ||
-            (!azoriusGovernance.votesToken && !azoriusGovernance.erc721Tokens)
-          )
-            return;
-          if (azoriusGovernance.votesToken) {
-            const normalized = formatUnits(
-              azoriusGovernance.votesToken.totalSupply,
-              azoriusGovernance.votesToken.decimals,
-            );
+        if (azoriusGovernance.votesToken) {
+          const normalized = formatUnits(
+            azoriusGovernance.votesToken.totalSupply,
+            azoriusGovernance.votesToken.decimals,
+          );
 
-            parentVotes = BigInt(normalized.substring(0, normalized.indexOf('.')));
-          } else if (azoriusGovernance.erc721Tokens) {
-            parentVotes = azoriusGovernance.erc721Tokens!.reduce(
-              (prev, curr) => curr.votingWeight * (curr.totalSupply || 1n) + prev,
-              0n,
-            );
-          } else {
-            parentVotes = 1n;
-          }
-          break;
-        case GovernanceType.MULTISIG:
-        default:
-          if (!safe) return;
-          parentVotes = BigInt(safe.owners.length);
-      }
-
-      // let thresholdDefault: BigIntValuePair;
-
-      // if (parentVotes === 1n) {
-      //   thresholdDefault = {
-      //     value: '1',
-      //     bigintValue: parentVotes,
-      //   };
-      // } else {
-      //   // wtf ???
-      //   thresholdDefault = {
-      //     value: parentVotes.toString(),
-      //     bigintValue: parentVotes / 2n,
-      //   };
-      // }
-
-      setTotalParentVotes(parentVotes);
-      setFieldValue('freeze.totalParentVotes', Number(parentVotes));
-      setFieldValue('freeze.freezeVotesThreshold', 1);
+          parentVotes = BigInt(normalized.substring(0, normalized.indexOf('.')));
+        } else if (azoriusGovernance.erc721Tokens) {
+          parentVotes = azoriusGovernance.erc721Tokens!.reduce(
+            (prev, curr) => curr.votingWeight * (curr.totalSupply || 1n) + prev,
+            0n,
+          );
+        } else {
+          parentVotes = 1n;
+        }
+        break;
+      case GovernanceType.MULTISIG:
+      default:
+        if (!safe) return;
+        parentVotes = BigInt(safe.owners.length);
     }
+
+    setTotalParentVotes(parentVotes);
+    setFieldValue('freeze.freezeVotesThreshold', 1n);
   }, [
     azoriusGovernance.votesToken,
     safe,
@@ -192,20 +167,17 @@ function GuardDetails(props: ICreationStepProps) {
             label={t('labelFreezeVotesThreshold')}
             helper={freezeHelper || ''}
             isRequired
+            errorMessage={errors?.freeze?.freezeVotesThreshold?.bigintValue}
           >
-            <NumberInput
-              value={values.freeze.freezeVotesThreshold}
-              onChange={value => setFieldValue('freeze.freezeVotesThreshold', Number(value))}
-              isInvalid={
-                totalParentVotes === undefined ||
-                totalParentVotes === 0n ||
-                values.freeze.freezeVotesThreshold === 0 ||
-                values.freeze.freezeVotesThreshold > totalParentVotes
-              }
+            <BigIntInput
+              isInvalid={!!errors?.freeze?.freezeVotesThreshold?.bigintValue}
+              value={values.freeze.freezeVotesThreshold.bigintValue}
+              onChange={valuePair => {
+                setFieldValue('freeze.freezeVotesThreshold', valuePair);
+              }}
+              decimalPlaces={0}
               data-testid="guardConfig-freezeVotesThreshold"
-            >
-              <NumberInputField data-testid="safeConfig-numberOfSignerInput" />
-            </NumberInput>
+            />
           </LabelComponent>
           <LabelComponent
             label={t('labelFreezeProposalPeriod')}

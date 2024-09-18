@@ -84,7 +84,10 @@ export const initialState: CreatorFormState = {
       value: '1440',
       bigintValue: 1440n,
     },
-    freezeVotesThreshold: 1,
+    freezeVotesThreshold: {
+      value: '1',
+      bigintValue: 1n,
+    },
     freezeProposalPeriod: {
       value: '10080',
       bigintValue: 10080n,

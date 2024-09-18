@@ -1,6 +1,7 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
+import { useFractal } from '../../providers/App/AppProvider';
 import {
   DAOTrigger,
   CreatorFormState,
@@ -25,7 +26,15 @@ function DaoCreator({
   isSubDAO?: boolean;
   mode: DAOCreateMode;
 }) {
-  const { createDAOValidation } = useDAOCreateSchema({ isSubDAO });
+  const {
+    node: { safe },
+  } = useFractal();
+
+  const { createDAOValidation } = useDAOCreateSchema({
+    isSubDAO,
+    parentNumSigners: safe?.owners.length,
+  });
+
   const { prepareMultisigFormData, prepareAzoriusERC20FormData, prepareAzoriusERC721FormData } =
     usePrepareFormData();
 

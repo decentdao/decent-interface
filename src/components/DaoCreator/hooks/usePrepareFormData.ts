@@ -34,7 +34,7 @@ export function usePrepareFormData() {
             freezeGuard.timelockPeriod.bigintValue!,
             publicClient,
           ),
-          freezeVotesThreshold: freezeGuard.freezeVotesThreshold,
+          freezeVotesThreshold: freezeGuard.freezeVotesThreshold.bigintValue!,
           freezeProposalPeriod: await getEstimatedNumberOfBlocks(
             freezeGuard.freezeProposalPeriod.bigintValue!,
             publicClient,
