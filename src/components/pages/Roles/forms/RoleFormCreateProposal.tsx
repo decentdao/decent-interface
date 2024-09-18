@@ -107,7 +107,12 @@ function ActionCard({
           mb="1rem"
           color="lilac-0"
         />
-        <Text textStyle="display-lg" mb="0.25rem">{title}</Text>
+        <Text
+          textStyle="display-lg"
+          mb="0.25rem"
+        >
+          {title}
+        </Text>
         <Text color="neutral-7">{subtitle}</Text>
       </Flex>
     </Button>

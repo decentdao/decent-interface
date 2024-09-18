@@ -7,7 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress, Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { NEUTRAL_2_82_TRANSPARENT, CARD_SHADOW, DETAILS_BOX_SHADOW } from '../../../constants/common';
+import {
+  NEUTRAL_2_82_TRANSPARENT,
+  CARD_SHADOW,
+  DETAILS_BOX_SHADOW,
+} from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -17,7 +21,6 @@ import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 import { RoleFormValues } from './types';
-
 
 function CancelStreamMenu({
   streamId,
