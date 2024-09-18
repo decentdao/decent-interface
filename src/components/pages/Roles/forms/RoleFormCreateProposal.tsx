@@ -90,23 +90,26 @@ function ActionCard({
       padding={0}
       w="full"
     >
-      <Box
+      <Flex
         boxShadow={DETAILS_BOX_SHADOW}
         _hover={{ bg: 'neutral-3' }}
         _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
         transition="all ease-out 300ms"
         p="1.5rem"
         borderRadius="0.5rem"
+        flexDirection="column"
+        alignItems="flex-start"
       >
         <Icon
           as={icon}
           w="2rem"
           h="2rem"
+          mb="1rem"
           color="lilac-0"
         />
-        <Text textStyle="display-lg">{title}</Text>
+        <Text textStyle="display-lg" mb="0.25rem">{title}</Text>
         <Text color="neutral-7">{subtitle}</Text>
-      </Box>
+      </Flex>
     </Button>
   );
 }
