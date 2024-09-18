@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress, Hex } from 'viem';
 import { useAccount, usePublicClient } from 'wagmi';
-import { NEUTRAL_2_82_TRANSPARENT, CARD_SHADOW } from '../../../constants/common';
+import { NEUTRAL_2_82_TRANSPARENT, CARD_SHADOW, DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -18,8 +18,6 @@ import { ModalType } from '../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../ui/modals/useDecentModal';
 import { RoleFormValues } from './types';
 
-const PAYMENT_DETAILS_BOX_SHADOW =
-  '0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset';
 
 function CancelStreamMenu({
   streamId,
@@ -76,7 +74,7 @@ function CancelStreamMenu({
   return (
     <Flex
       justifyContent="flex-end"
-      boxShadow={PAYMENT_DETAILS_BOX_SHADOW}
+      boxShadow={DETAILS_BOX_SHADOW}
       borderTopRadius="0.5rem"
       w="full"
       py="0.25rem"
@@ -293,7 +291,7 @@ export function RolePaymentDetails({
         ? {
             bg: 'neutral-2',
             sx: undefined,
-            boxShadow: PAYMENT_DETAILS_BOX_SHADOW,
+            boxShadow: DETAILS_BOX_SHADOW,
           }
         : {
             sx: {
@@ -416,7 +414,7 @@ export function RolePaymentDetails({
               borderLeft="1px solid"
               borderColor="white-alpha-08"
               h="full"
-              boxShadow={PAYMENT_DETAILS_BOX_SHADOW}
+              boxShadow={DETAILS_BOX_SHADOW}
               w="0"
             />
           </GridItem>
@@ -431,7 +429,7 @@ export function RolePaymentDetails({
               borderLeft="1px solid"
               borderColor="white-alpha-08"
               h="full"
-              boxShadow={PAYMENT_DETAILS_BOX_SHADOW}
+              boxShadow={DETAILS_BOX_SHADOW}
               w="0"
             />
           </GridItem>
