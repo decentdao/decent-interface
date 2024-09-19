@@ -8,7 +8,6 @@ import {
   PaginationCount,
   Transactions,
 } from '../../../../components/pages/DAOTreasury/components/Transactions';
-import { prepareSendAssetsProposalData } from '../../../../components/pages/DAOTreasury/prepareSendAssetsProposalData';
 import { TitledInfoBox } from '../../../../components/ui/containers/TitledInfoBox';
 import { ModalBase } from '../../../../components/ui/modals/ModalBase';
 import { SendAssetsData, SendAssetsModal } from '../../../../components/ui/modals/SendAssetsModal';
@@ -17,6 +16,7 @@ import useSubmitProposal from '../../../../hooks/DAO/proposal/useSubmitProposal'
 import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubmitProposal';
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
+import { prepareSendAssetsProposalData } from '../../../../utils/dao/prepareSendAssetsProposalData';
 
 export default function Treasury() {
   useEffect(() => {

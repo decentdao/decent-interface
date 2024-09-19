@@ -1,8 +1,8 @@
 import { TFunction } from 'i18next';
 import { getAddress, Hex, encodeFunctionData, erc20Abi, Address } from 'viem';
-import { ProposalExecuteData, TokenBalance } from '../../../types';
-import { MOCK_MORALIS_ETH_ADDRESS } from '../../../utils/address';
-import { formatCoin } from '../../../utils/numberFormats';
+import { ProposalExecuteData, TokenBalance } from '../../types';
+import { MOCK_MORALIS_ETH_ADDRESS } from '../address';
+import { formatCoin } from '../numberFormats';
 
 const isNativeAsset = (asset: TokenBalance) => {
   return (

@@ -10,7 +10,6 @@ import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
 import HatsAccount1ofNAbi from '../../assets/abi/HatsAccount1ofN';
-import { prepareSendAssetsActionData } from '../../components/pages/DAOTreasury/prepareSendAssetsProposalData';
 import {
   EditBadgeStatus,
   HatStruct,
@@ -26,6 +25,7 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 import { getERC6551RegistrySalt, predictHatId, useRolesStore } from '../../store/roles';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
+import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
 import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
