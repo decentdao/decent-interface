@@ -1,17 +1,4 @@
-import { InputElementProps, FormControlOptions, Input, InputProps } from '@chakra-ui/react';
-import { Dispatch, SetStateAction } from 'react';
-
-/**
- * @deprecated we've replaced this component with validation via Yup
- * in {@link useValidationAddress}.
- */
-export interface EthAddressInputProps
-  extends Omit<InputElementProps, 'onChange' | 'placeholder' | 'type'>,
-    FormControlOptions {
-  value?: string;
-  setValue?: Dispatch<SetStateAction<string>>;
-  onAddressChange: (address: string | undefined, isValid: boolean) => void;
-}
+import { Input, InputProps } from '@chakra-ui/react';
 
 /**
  * A simple Input for Ethereum addresses. Input validation is provided via Yup
