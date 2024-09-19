@@ -1,11 +1,11 @@
-import { Box, Button, Flex, FormControl, Show, useDisclosure, Text, Icon } from '@chakra-ui/react';
-import { SquaresFour, ArrowsDownUp, Plus, Trash } from '@phosphor-icons/react';
+import { Box, Button, Flex, FormControl, Show, Text, Icon } from '@chakra-ui/react';
+import { SquaresFour, ArrowsDownUp, Trash } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { formatUnits, getAddress, Hex } from 'viem';
-import { CARD_SHADOW, DETAILS_BOX_SHADOW } from '../../../../constants/common';
+import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -14,8 +14,8 @@ import { Card } from '../../../ui/cards/Card';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import { ModalBase } from '../../../ui/modals/ModalBase';
-import { SendAssetsData, SendAssetsModal } from '../../../ui/modals/SendAssetsModal';
+import { AddActions } from '../../../ui/modals/AddActions';
+import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
@@ -68,56 +68,6 @@ function SendAssetsAction({
   );
 }
 
-function ActionCard({
-  title,
-  subtitle,
-  icon,
-  onClick,
-  isDisabled,
-}: {
-  title: string;
-  subtitle: string;
-  icon: React.ElementType;
-  onClick: () => void;
-  isDisabled: boolean;
-}) {
-  return (
-    <Button
-      variant="unstyled"
-      height="auto"
-      onClick={onClick}
-      isDisabled={isDisabled}
-      padding={0}
-      w="full"
-    >
-      <Flex
-        boxShadow={DETAILS_BOX_SHADOW}
-        _hover={{ bg: 'neutral-3' }}
-        _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
-        transition="all ease-out 300ms"
-        p="1.5rem"
-        borderRadius="0.5rem"
-        flexDirection="column"
-        alignItems="flex-start"
-      >
-        <Icon
-          as={icon}
-          w="2rem"
-          h="2rem"
-          mb="1rem"
-          color="lilac-0"
-        />
-        <Text
-          textStyle="display-lg"
-          mb="0.25rem"
-        >
-          {title}
-        </Text>
-        <Text color="neutral-7">{subtitle}</Text>
-      </Flex>
-    </Button>
-  );
-}
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerRoleHatProp>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
@@ -127,6 +77,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
     isSubmitting,
     submitForm,
   } = useFormikContext<RoleFormValues>();
+
   const editedRoles = useMemo<
     (RoleDetailsDrawerRoleHatProp & {
       editedRole: EditedRole;
@@ -172,7 +123,6 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
 
   const {
     node: { daoAddress },
-    treasury: { assetsFungible },
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
@@ -188,15 +138,9 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
 
   const handleCloseDrawer = () => setDrawerViewingRole(undefined);
 
-  const { isOpen: isOpenAction, onOpen: onOpenAction, onClose: onCloseAction } = useDisclosure();
-  const { isOpen: isOpenAssets, onOpen: onOpenAssets, onClose: onCloseAssets } = useDisclosure();
-
   const addSendAssetsAction = (sendAssetsAction: SendAssetsData) => {
     setFieldValueTopLevel('actions', [...values.actions, sendAssetsAction]);
   };
-
-  const hasAnyBalanceOfAnyFungibleTokens =
-    assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
 
   return (
     <Box maxW="736px">
@@ -316,59 +260,9 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           }}
         />
       ))}
-      <Button
-        variant="secondary"
-        mt="1rem"
-        size="sm"
-        onClick={onOpenAction}
-      >
-        <Icon as={Plus} />
-        {t('addAction', { ns: 'actions' })}
-      </Button>
-      <ModalBase
-        size="xl"
-        isOpen={isOpenAction}
-        onClose={onCloseAction}
-        title={t('actions', { ns: 'actions' })}
-        isSearchInputModal={false}
-      >
-        <Flex
-          gap="2"
-          justifyContent="space-between"
-        >
-          <ActionCard
-            title={t('transferAssets', { ns: 'actions' })}
-            subtitle={t('transferAssetsSub', { ns: 'actions' })}
-            icon={ArrowsDownUp}
-            onClick={() => {
-              onCloseAction();
-              onOpenAssets();
-            }}
-            isDisabled={!hasAnyBalanceOfAnyFungibleTokens}
-          />
 
-          <ActionCard
-            title={t('comingSoon', { ns: 'actions' })}
-            subtitle={t('comingSoonSub', { ns: 'actions' })}
-            icon={SquaresFour}
-            onClick={() => {}}
-            isDisabled
-          />
-        </Flex>
-      </ModalBase>
-      <ModalBase
-        isOpen={isOpenAssets}
-        onClose={onCloseAssets}
-        title={t('transferAssets', { ns: 'actions' })}
-        isSearchInputModal={false}
-      >
-        <SendAssetsModal
-          submitButtonText={t('add')}
-          showNonceInput={false}
-          close={onCloseAssets}
-          sendAssetsData={addSendAssetsAction}
-        />
-      </ModalBase>
+      <AddActions addSendAssetsAction={addSendAssetsAction} />
+
       <Flex
         gap="1rem"
         mt="1rem"
