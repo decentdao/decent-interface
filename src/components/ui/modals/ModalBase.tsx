@@ -12,7 +12,7 @@ interface ModuleBaseProps {
   isSearchInputModal: boolean;
   title: string;
   warn?: boolean;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'full';
+  size?: 'lg' | 'xl';
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
