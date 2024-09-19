@@ -30,8 +30,8 @@ function ActionCard({
     >
       <Flex
         boxShadow={DETAILS_BOX_SHADOW}
-        _hover={{ bg: 'neutral-3' }}
-        _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
+        _hover={!isDisabled ? { bg: 'neutral-3' } : undefined}
+        _active={!isDisabled ? { bg: 'neutral-2' } : undefined}
         transition="all ease-out 300ms"
         p="1.5rem"
         borderRadius="0.5rem"
@@ -43,15 +43,16 @@ function ActionCard({
           w="2rem"
           h="2rem"
           mb="1rem"
-          color="lilac-0"
+          color={isDisabled ? 'neutral-6' : 'lilac-0'}
         />
         <Text
           textStyle="display-lg"
           mb="0.25rem"
+          color={isDisabled ? 'neutral-6' : 'neutral-0'}
         >
           {title}
         </Text>
-        <Text color="neutral-7">{subtitle}</Text>
+        <Text color={isDisabled ? 'neutral-6' : 'neutral-7'}>{subtitle}</Text>
       </Flex>
     </Button>
   );
@@ -121,11 +122,11 @@ export function AddActions({
       <ModalBase
         isOpen={isOpenAssets}
         onClose={onCloseAssets}
-        title={t('transferAssets', { ns: 'actions' })}
+        title={t('transferAssets')}
         isSearchInputModal={false}
       >
         <SendAssetsModal
-          submitButtonText={t('add')}
+          submitButtonText={t('add', { ns: 'modals' })}
           showNonceInput={false}
           close={onCloseAssets}
           sendAssetsData={addSendAssetsAction}
