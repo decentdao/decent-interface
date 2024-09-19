@@ -63,7 +63,7 @@
     "viem": "^2.13.1",
     "vite": "^5.1.0",
     "vite-plugin-checker": "^0.6.4",
-    "wagmi": "^2.9.7",
+    "wagmi": "^2.12.12",
     "yup": "^1",
     "zustand": "^4.5.2"
   },
