@@ -54,14 +54,8 @@ export default function SnapshotProposalVotes({ proposal }: ISnapshotProposalVot
               const votesBreakdownChoice =
                 type === 'weighted' ? votesBreakdown[i + 1] : votesBreakdown[choice];
 
-              const votesBreakdownChoiceTotal =
-                votesBreakdownChoice && votesBreakdownChoice?.total
-                  ? votesBreakdownChoice?.total
-                  : 0;
-
-              const choicePercentageFromTotal = totalVotesCasted
-                ? (votesBreakdownChoiceTotal * 100) / totalVotesCasted
-                : 0;
+              const choicePercentageFromTotal =
+                totalVotesCasted > 0 ? (votesBreakdownChoice.total * 100) / totalVotesCasted : 0;
 
               return (
                 <VotesPercentage
