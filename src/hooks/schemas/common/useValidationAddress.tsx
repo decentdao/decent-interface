@@ -1,6 +1,5 @@
 import { Signer } from 'ethers';
-import debounce from 'lodash.debounce';
-import { useMemo, useRef, useCallback, useState, useEffect } from 'react';
+import { useMemo, useRef, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isAddress } from 'viem';
 import { normalize } from 'viem/ens';
@@ -80,21 +79,6 @@ export const useValidationAddress = () => {
   const { chain } = useNetworkConfig();
 
   const [isValidating, setIsValidating] = useState(false);
-  const [debouncedAddress, setDebouncedAddress] = useState<string | undefined>();
-
-  const debouncedSetAddress = useMemo(
-    () =>
-      debounce((address: string | undefined) => {
-        setDebouncedAddress(address);
-      }, 500),
-    [],
-  );
-
-  useEffect(() => {
-    return () => {
-      debouncedSetAddress.cancel();
-    };
-  }, [debouncedSetAddress]);
 
   const addressValidationTest = useMemo(() => {
     return {
@@ -103,25 +87,21 @@ export const useValidationAddress = () => {
       test: async function (address: string | undefined) {
         if (!address) return false;
         setIsValidating(true);
-        debouncedSetAddress(address);
 
         try {
-          if (debouncedAddress === address) {
-            const { validation } = await validateAddress({ signerOrProvider, address });
-            if (validation.isValidAddress) {
-              addressValidationMap.current.set(address, validation);
-            }
-            setIsValidating(false);
-            return validation.isValidAddress;
+          const { validation } = await validateAddress({ signerOrProvider, address });
+          if (validation.isValidAddress) {
+            addressValidationMap.current.set(address, validation);
           }
-          return true; // Return true while debouncing to avoid showing error messages
+          setIsValidating(false);
+          return validation.isValidAddress;
         } catch (error) {
           setIsValidating(false);
           return false;
         }
       },
     };
-  }, [chain.name, debouncedAddress, debouncedSetAddress, signerOrProvider, t]);
+  }, [chain.name, signerOrProvider, t]);
 
   const ensNameValidationTest = useMemo(() => {
     return {
