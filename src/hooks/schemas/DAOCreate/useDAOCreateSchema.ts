@@ -12,11 +12,10 @@ import { useDAOCreateTests } from './useDAOCreateTests';
  */
 export const useDAOCreateSchema = ({
   isSubDAO,
-  parentNumSigners,
+  totalParentVotingWeight,
 }: {
-  isSubDAO?: boolean;
-  // @todo: `parentNumSigners` should probably be a bigint
-  parentNumSigners?: number;
+  isSubDAO: boolean;
+  totalParentVotingWeight: bigint | undefined;
 }) => {
   const {
     addressValidationTestSimple,
@@ -168,12 +167,12 @@ export const useDAOCreateSchema = ({
                     .test({
                       message: t('errorMaximumValue', {
                         ns: 'common',
-                        maxValue: parentNumSigners,
+                        maxValue: totalParentVotingWeight?.toString(),
                       }),
                       test: value => {
                         if (
                           value === undefined ||
-                          (parentNumSigners !== undefined && value <= parentNumSigners)
+                          (totalParentVotingWeight !== undefined && value <= totalParentVotingWeight)
                         ) {
                           return true;
                         }
@@ -202,7 +201,7 @@ export const useDAOCreateSchema = ({
       validERC721Address,
       isBigIntValidation,
       minValueValidation,
-      parentNumSigners,
+      totalParentVotingWeight,
     ],
   );
   return { createDAOValidation };

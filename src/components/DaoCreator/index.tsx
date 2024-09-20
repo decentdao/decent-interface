@@ -1,7 +1,6 @@
 import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
-import { useFractal } from '../../providers/App/AppProvider';
 import {
   DAOTrigger,
   CreatorFormState,
@@ -13,6 +12,7 @@ import {
 import StepController from './StepController';
 import { initialState } from './constants';
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
+import { useParentSafeVotingWeight } from './hooks/useParentSafeVotingWeight';
 import { usePrepareFormData } from './hooks/usePrepareFormData';
 
 function DaoCreator({
@@ -26,13 +26,11 @@ function DaoCreator({
   isSubDAO?: boolean;
   mode: DAOCreateMode;
 }) {
-  const {
-    node: { safe },
-  } = useFractal();
+  const { totalParentVotingWeight } = useParentSafeVotingWeight();
 
   const { createDAOValidation } = useDAOCreateSchema({
-    isSubDAO,
-    parentNumSigners: safe?.owners.length,
+    isSubDAO: !!isSubDAO,
+    totalParentVotingWeight,
   });
 
   const { prepareMultisigFormData, prepareAzoriusERC20FormData, prepareAzoriusERC721FormData } =

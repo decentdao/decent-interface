@@ -2,9 +2,8 @@ import { Text, InputGroup, InputRightElement, Flex, Alert } from '@chakra-ui/rea
 import { Info } from '@phosphor-icons/react';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatUnits } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { ICreationStepProps, GovernanceType, AzoriusGovernance } from '../../../types';
+import { ICreationStepProps, GovernanceType } from '../../../types';
 import { formatBigIntDisplay } from '../../../utils/numberFormats';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
@@ -13,6 +12,7 @@ import { LabelComponent } from '../../ui/forms/InputComponent';
 import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import { useParentSafeVotingWeight } from '../hooks/useParentSafeVotingWeight';
 import useStepRedirect from '../hooks/useStepRedirect';
 
 function GuardDetails(props: ICreationStepProps) {
@@ -25,10 +25,8 @@ function GuardDetails(props: ICreationStepProps) {
   } = useFractal();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
-  const [totalParentVotes, setTotalParentVotes] = useState<bigint>();
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
-  const azoriusGovernance = governance as AzoriusGovernance;
   const governanceFormType = values.essentials.governance;
 
   const handleNonceChange = useCallback(
@@ -45,58 +43,21 @@ function GuardDetails(props: ICreationStepProps) {
     }
   }, [isSubDAO, type, setFieldValue, safe, dao, showCustomNonce]);
 
+  const { totalParentVotingWeight, parentVotingQuorum } = useParentSafeVotingWeight();
+
   useEffect(() => {
-    if (totalParentVotes === undefined || type === undefined) {
-      return;
+    if (parentVotingQuorum) {
+      setFieldValue('freeze.freezeVotesThreshold', {
+        bigintValue: parentVotingQuorum,
+        value: formatBigIntDisplay(parentVotingQuorum),
+      });
     }
-
-    // set the initial value for freezeGuard.freezeVotesThreshold
-    // and display helperFreezeVotesThreshold
-    let parentVotes: bigint;
-
-    switch (type) {
-      case GovernanceType.AZORIUS_ERC20:
-      case GovernanceType.AZORIUS_ERC721:
-        // @todo: is this line below necessary? Why?
-        if (!azoriusGovernance.votesToken && !azoriusGovernance.erc721Tokens) return;
-
-        if (azoriusGovernance.votesToken) {
-          const normalized = formatUnits(
-            azoriusGovernance.votesToken.totalSupply,
-            azoriusGovernance.votesToken.decimals,
-          );
-
-          parentVotes = BigInt(normalized.substring(0, normalized.indexOf('.')));
-        } else if (azoriusGovernance.erc721Tokens) {
-          parentVotes = azoriusGovernance.erc721Tokens!.reduce(
-            (prev, curr) => curr.votingWeight * (curr.totalSupply || 1n) + prev,
-            0n,
-          );
-        } else {
-          parentVotes = 1n;
-        }
-        break;
-      case GovernanceType.MULTISIG:
-      default:
-        if (!safe) return;
-        parentVotes = BigInt(safe.owners.length);
-    }
-
-    setTotalParentVotes(parentVotes);
-    setFieldValue('freeze.freezeVotesThreshold', 1n);
-  }, [
-    azoriusGovernance.votesToken,
-    safe,
-    totalParentVotes,
-    type,
-    setFieldValue,
-    azoriusGovernance,
-  ]);
+  }, [parentVotingQuorum, setFieldValue]);
 
   useStepRedirect({ values });
 
-  const freezeHelper = totalParentVotes
-    ? t('helperFreezeVotesThreshold', { totalVotes: formatBigIntDisplay(totalParentVotes) })
+  const freezeHelper = totalParentVotingWeight
+    ? t('helperFreezeVotesThreshold', { totalVotes: formatBigIntDisplay(totalParentVotingWeight) })
     : null;
 
   return (
