@@ -290,3 +290,43 @@ export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsC
   // Total length of Hat ID is **32 bytes** + 2 bytes for 0x
   return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
 };
+
+export const isActive = (payment: { isCancelled?: boolean; endDate?: Date }) => {
+  const now = new Date();
+  // A payment is active if it's not cancelled and its end date is in the future (or it doesn't have an end date yet)
+  return !payment.isCancelled && (payment.endDate === undefined || payment.endDate > now);
+};
+
+export const paymentSorterByActiveStatus = (
+  a: { isCancelled?: boolean; endDate?: Date },
+  b: { isCancelled?: boolean; endDate?: Date },
+) => {
+  const aIsActive = isActive(a);
+  const bIsActive = isActive(b);
+
+  if (aIsActive && !bIsActive) {
+    return -1; // 'a' is active and should come first
+  }
+  if (!aIsActive && bIsActive) {
+    return 1; // 'b' is active and should come first
+  }
+
+  // If both are active or both inactive, maintain the current order
+  return 0;
+};
+export const paymentSorterByStartDate = (a: { startDate?: Date }, b: { startDate?: Date }) => {
+  if (!a?.startDate) return 1; // No start date, move this payment last
+  if (!b?.startDate) return -1; // No start date, move b last
+
+  return a.startDate.getTime() - b.startDate.getTime(); // Sort by earliest start date
+};
+
+export const paymentSorterByWithdrawAmount = (
+  a: { withdrawableAmount?: bigint },
+  b: { withdrawableAmount?: bigint },
+) => {
+  if (!a?.withdrawableAmount) return 1; // No withdrawable amount, move this payment last
+  if (!b?.withdrawableAmount) return -1;
+
+  return Number(a.withdrawableAmount - b.withdrawableAmount); // Sort by amount
+};
