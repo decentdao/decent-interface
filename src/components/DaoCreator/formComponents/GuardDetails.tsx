@@ -72,7 +72,9 @@ function GuardDetails(props: ICreationStepProps) {
   useStepRedirect({ values });
 
   const freezeHelper = totalParentVotingWeight
-    ? t('helperFreezeVotesThreshold', { totalVotes: formatBigIntToHumanReadableString(totalParentVotingWeight) })
+    ? t('helperFreezeVotesThreshold', {
+        totalVotes: formatBigIntToHumanReadableString(totalParentVotingWeight),
+      })
     : null;
 
   return (

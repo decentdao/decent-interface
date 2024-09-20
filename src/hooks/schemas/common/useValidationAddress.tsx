@@ -68,6 +68,7 @@ export const useValidationAddress = () => {
    * @dev updated via the `addressValidation`
    * @dev this is used for any other functions contained within this hook, to lookup resolved addresses in this session without requesting again.
    */
+
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
   // const signer = useEthersSigner();
   // const signerOrProvider = useSignerOrProvider();
@@ -88,20 +89,21 @@ export const useValidationAddress = () => {
       test: async function (address: string | undefined) {
         if (!address || !publicClient) return false;
         setIsValidating(true);
+
         try {
           const { validation } = await validateAddress({ publicClient, address });
           if (validation.isValidAddress) {
             addressValidationMap.current.set(address, validation);
           }
+          setIsValidating(false);
           return validation.isValidAddress;
         } catch (error) {
-          return false;
-        } finally {
           setIsValidating(false);
+          return false;
         }
       },
     };
-  }, [publicClient, addressValidationMap, t, chain.name]);
+  }, [chain.name, publicClient, t]);
 
   const ensNameValidationTest = useMemo(() => {
     return {
