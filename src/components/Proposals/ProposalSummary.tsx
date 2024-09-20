@@ -105,7 +105,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   // We need to figure out a more type-safe way to handle all of this.
   if (
     (isERC20 && (!votesToken || !votesToken.totalSupply || !votingStrategy?.quorumPercentage)) ||
-    (isERC721 && (!erc721Tokens || !votingStrategy.quorumThreshold))
+    (isERC721 && (!erc721Tokens || !votingStrategy?.quorumThreshold))
   ) {
     return (
       <Box mt={4}>
@@ -115,9 +115,9 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   }
 
   const strategyQuorum =
-    votesToken && isERC20
+    isERC20 && votesToken && votingStrategy
       ? votingStrategy.quorumPercentage!.value
-      : isERC721
+      : isERC721 && votingStrategy
         ? votingStrategy.quorumThreshold!.value
         : 1n;
 
