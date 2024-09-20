@@ -6,6 +6,7 @@ import {
   RoleFormValues,
   RoleHatFormValue,
   SablierPayment,
+  SablierPaymentFormValues,
 } from '../../../components/pages/Roles/types';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useValidationAddress } from '../common/useValidationAddress';
@@ -22,19 +23,40 @@ export const useRolesSchema = () => {
     bigintValue: Yup.mixed<bigint>()
       .nullable()
       .test({
-        name: 'bigInt',
+        name: 'Invalid amount',
         message: t('roleInfoErrorPaymentInvalidAmount'),
         test: (value, cxt) => {
           if (!value || !cxt.from) return false;
           // @dev finds the parent asset address from the formik context `from` array
-          const parentAssetAddress: string | undefined = cxt.from[1].value.asset.address;
+          const [, { value: currentPayment }, { value: currentRoleHat }, { value: formContext }] =
+            cxt.from;
+          const parentAssetAddress = currentPayment.asset?.address;
+
+          const currentPaymentIndex = currentRoleHat.roleEditingPaymentIndex;
+          // get all current role's payments excluding this one.
+          const allCurrentRolePayments: SablierPaymentFormValues[] = (
+            currentRoleHat.payments ?? []
+          ).filter(
+            (_payment: SablierPaymentFormValues, index: number) =>
+              index !== currentPaymentIndex && !_payment.streamId,
+          );
+          const allHatPayments: SablierPaymentFormValues[] = formContext.hats
+            .filter((hat: RoleHatFormValue) => hat.id === currentRoleHat.id)
+            .map((hat: RoleHatFormValue) => hat.payments ?? [])
+            .flat();
+
+          const totalPendingAmounts = [
+            ...allHatPayments.filter(payment => !payment.streamId),
+            ...allCurrentRolePayments,
+          ].reduce((prev, curr) => (curr.amount?.bigintValue ?? 0n) + prev, 0n);
+
           if (!parentAssetAddress) return false;
           const asset = assetsFungible.find(
             _asset => getAddress(_asset.tokenAddress) === getAddress(parentAssetAddress),
           );
           if (!asset) return false;
 
-          return value >= 0 && value <= BigInt(asset.balance);
+          return value >= 0n && value <= BigInt(asset.balance) - totalPendingAmounts;
         },
       }),
   });

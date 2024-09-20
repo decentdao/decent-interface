@@ -3,13 +3,14 @@ import { CaretDown } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, getAddress } from 'viem';
 import * as Yup from 'yup';
-import useSubmitProposal from '../../../hooks/DAO/proposal/useSubmitProposal';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { BigIntValuePair, TokenBalance } from '../../../types';
 import { formatCoinFromAsset, formatCoinUnits } from '../../../utils/numberFormats';
-import { sendAssets } from '../../pages/DAOTreasury/sendAssets';
+import { validateENSName } from '../../../utils/url';
 import { BigIntInput } from '../forms/BigIntInput';
 import { CustomNonceInput } from '../forms/CustomNonceInput';
 import { AddressInput } from '../forms/EthAddressInput';
@@ -22,17 +23,33 @@ interface SendAssetsFormValues {
   inputAmount?: BigIntValuePair;
 }
 
-export function SendAssetsModal({ close }: { close: () => void }) {
+export interface SendAssetsData {
+  destinationAddress: Address;
+  transferAmount: bigint;
+  asset: TokenBalance;
+  nonceInput: number | undefined; // this is only releveant when the caller action results in a proposal
+}
+
+export function SendAssetsModal({
+  submitButtonText,
+  showNonceInput,
+  close,
+  sendAssetsData,
+}: {
+  submitButtonText: string;
+  showNonceInput: boolean;
+  close: () => void;
+  sendAssetsData: (sendAssetData: SendAssetsData) => void;
+}) {
   const {
     node: { safe },
     treasury: { assetsFungible },
   } = useFractal();
+  const signer = useEthersSigner();
   const { t } = useTranslation(['modals', 'common']);
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
   const [nonceInput, setNonceInput] = useState<number | undefined>(safe!.nextNonce);
-
-  const { submitProposal } = useSubmitProposal();
 
   const { addressValidationTest, isValidating } = useValidationAddress();
 
@@ -55,18 +72,19 @@ export function SendAssetsModal({ close }: { close: () => void }) {
   });
 
   const handleSendAssetsSubmit = async (values: SendAssetsFormValues) => {
-    const { destinationAddress, selectedAsset, inputAmount } = values;
+    let destAddress = values.destinationAddress;
+    if (validateENSName(values.destinationAddress) && signer) {
+      destAddress = await signer.resolveName(values.destinationAddress);
+    }
 
-    await sendAssets({
-      transferAmount: inputAmount?.bigintValue || 0n,
-      asset: selectedAsset,
-      destinationAddress,
-      nonce: nonceInput,
-      submitProposal,
-      t,
+    sendAssetsData({
+      transferAmount: values.inputAmount?.bigintValue || 0n,
+      asset: values.selectedAsset,
+      destinationAddress: getAddress(destAddress),
+      nonceInput,
     });
 
-    if (close) close();
+    close();
   };
 
   return (
@@ -199,10 +217,12 @@ export function SendAssetsModal({ close }: { close: () => void }) {
 
               <Divider my="1.5rem" />
 
-              <CustomNonceInput
-                nonce={nonceInput}
-                onChange={nonce => setNonceInput(nonce ? parseInt(nonce) : undefined)}
-              />
+              {showNonceInput && (
+                <CustomNonceInput
+                  nonce={nonceInput}
+                  onChange={nonce => setNonceInput(nonce ? parseInt(nonce) : undefined)}
+                />
+              )}
 
               <Button
                 marginTop="2rem"
@@ -216,7 +236,7 @@ export function SendAssetsModal({ close }: { close: () => void }) {
                   isSubmitDisabled
                 }
               >
-                {t('submitProposal')}
+                {submitButtonText}
               </Button>
             </Form>
           );
