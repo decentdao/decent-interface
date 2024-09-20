@@ -64,5 +64,6 @@
   "confirmModifyGovernanceTitle": "Heads up, this is a big deal!",
   "confirmModifyGovernanceDescription": "Modifying your Safe's governance will have significant implications. Please be sure before proceeding.",
   "stakeTitle": "Stake",
-  "removeSignerWarning": "The signer will be removed from the organization."
+  "removeSignerWarning": "The signer will be removed from the organization.",
+  "add": "Add"
 }

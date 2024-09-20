@@ -1,6 +1,7 @@
 import { Address, Hex } from 'viem';
 import { DecentRoleHat } from '../../../store/roles';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
+import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 
 export interface SablierAsset {
   address: Address;
@@ -131,6 +132,7 @@ export interface RoleFormValues {
   hats: RoleHatFormValue[];
   roleEditing?: RoleHatFormValue;
   customNonce?: number;
+  actions: SendAssetsData[];
 }
 
 export type PreparedAddedHatsData = HatStruct & { id: bigint };
