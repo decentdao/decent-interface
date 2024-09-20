@@ -1,30 +1,45 @@
-import { InputElementProps, FormControlOptions, Input, InputProps } from '@chakra-ui/react';
-import { Dispatch, SetStateAction } from 'react';
-
-/**
- * @deprecated we've replaced this component with validation via Yup
- * in {@link useValidationAddress}.
- */
-export interface EthAddressInputProps
-  extends Omit<InputElementProps, 'onChange' | 'placeholder' | 'type'>,
-    FormControlOptions {
-  value?: string;
-  setValue?: Dispatch<SetStateAction<string>>;
-  onAddressChange: (address: string | undefined, isValid: boolean) => void;
-}
+import { Input, InputProps } from '@chakra-ui/react';
+import debounce from 'lodash.debounce';
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
 
 /**
  * A simple Input for Ethereum addresses. Input validation is provided via Yup
  * in {@link useValidationAddress}
  */
-export function AddressInput({ ...rest }: InputProps) {
+export function AddressInput({ value, onChange, ...rest }: InputProps) {
+  const [localValue, setLocalValue] = useState<string | number | readonly string[] | undefined>(
+    value,
+  );
+  const debounceValue = useMemo(
+    () =>
+      debounce((event: ChangeEvent<HTMLInputElement>) => {
+        if (onChange) onChange(event);
+      }, 500),
+    [onChange],
+  );
+
+  useEffect(() => {
+    return () => {
+      debounceValue.cancel();
+    };
+  }, [debounceValue]);
+
+  const handleChange = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      debounceValue(event);
+      setLocalValue(event.target.value);
+    },
+    [debounceValue],
+  );
   return (
     <Input
       // preface id with "search" to prevent showing 1password
       // https://1password.community/discussion/comment/606453/#Comment_606453
+      onChange={e => handleChange(e)}
       id="searchButActuallyEthAddress"
       autoComplete="off"
       placeholder="0x0000...0000"
+      value={localValue}
       {...rest}
     />
   );
