@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ICreationStepProps, GovernanceType, BigIntValuePair } from '../../../types';
-import { formatBigIntDisplay } from '../../../utils/numberFormats';
+import { formatBigIntToHumanReadableString } from '../../../utils/numberFormats';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
@@ -47,19 +47,32 @@ function GuardDetails(props: ICreationStepProps) {
   const { totalParentVotingWeight, parentVotingQuorum } = useParentSafeVotingWeight();
 
   useEffect(() => {
-    if (parentVotingQuorum) {
-      const bigIntValueStr = formatBigIntDisplay(parentVotingQuorum);
-      setFieldValue('freeze.freezeVotesThreshold', {
-        bigintValue: parentVotingQuorum,
-        value: bigIntValueStr,
-      });
+    if (!parentVotingQuorum || !totalParentVotingWeight) {
+      return;
     }
-  }, [parentVotingQuorum, setFieldValue]);
+
+    let initialVotesThresholdBigIntValuePair: BigIntValuePair;
+
+    if (governance.type === GovernanceType.AZORIUS_ERC20) {
+      const actualTokenQuorum = (parentVotingQuorum * totalParentVotingWeight) / 100n;
+      initialVotesThresholdBigIntValuePair = {
+        bigintValue: actualTokenQuorum,
+        value: actualTokenQuorum.toString(),
+      };
+    } else {
+      initialVotesThresholdBigIntValuePair = {
+        bigintValue: parentVotingQuorum,
+        value: parentVotingQuorum.toString(),
+      };
+    }
+
+    setFieldValue('freeze.freezeVotesThreshold', initialVotesThresholdBigIntValuePair);
+  }, [governance.type, parentVotingQuorum, setFieldValue, totalParentVotingWeight]);
 
   useStepRedirect({ values });
 
   const freezeHelper = totalParentVotingWeight
-    ? t('helperFreezeVotesThreshold', { totalVotes: formatBigIntDisplay(totalParentVotingWeight) })
+    ? t('helperFreezeVotesThreshold', { totalVotes: formatBigIntToHumanReadableString(totalParentVotingWeight) })
     : null;
 
   return (
