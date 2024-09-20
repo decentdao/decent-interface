@@ -30,6 +30,7 @@ export interface BigIntInputProps
  * @param min Setting a minimum value will reset the Input value to min when the component's focus is lost. Can set decimal number for minimum, but must respect the decimalPlaces value.
  * @param max Setting this will cause the value of the Input control to be reset to the maximum when a number larger than it is inputted.
  * @param maxValue The maximum value that can be inputted. This is used to set the max value of the Input control.
+ * @param currentValue This needs to be set if the value of the Input control is changed outside of the component. This will update the value of the Input control.
  * @parma ...rest component accepts all properties for Input and FormControl
  * @returns
  */
@@ -148,6 +149,7 @@ export function BigIntInput({
   useEffect(() => {
     if (!inputValue || inputValue === currentValue?.value) return;
     if (currentValue?.bigintValue === 0n) setInputValue('');
+    if (currentValue?.value !== inputValue) setInputValue(currentValue?.value || '');
   }, [currentValue, inputValue]);
 
   // if the decimalPlaces change, need to update the value

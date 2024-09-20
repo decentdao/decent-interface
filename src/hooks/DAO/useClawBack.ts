@@ -123,7 +123,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               pendingToastMessage: t('clawBackPendingToastMessage'),
               failedToastMessage: t('clawBackFailedToastMessage'),
               successToastMessage: t('clawBackSuccessToastMessage'),
-              safeAddress: parentAddress,
+              safeAddress: getAddress(parentAddress),
             });
           } else {
             // @dev - User shouldn't get into this case, but better safe than sorry. We're enforcing types here

@@ -23,6 +23,9 @@ export function InfoGovernance() {
   const { getTimeDuration } = useTimeHelpers();
   const [timelockPeriod, setTimelockPeriod] = useState<string>();
   const [executionPeriod, setExecutionPeriod] = useState<string>();
+
+  const governanceAzorius = dao?.isAzorius ? (governance as AzoriusGovernance) : null;
+
   useEffect(() => {
     const setTimelockInfo = async () => {
       const formatBlocks = async (blocks: number): Promise<string | undefined> => {
@@ -48,9 +51,8 @@ export function InfoGovernance() {
           setTimelockPeriod(timelockSeconds);
           setExecutionPeriod(executionPeriodSeconds);
         }
-      } else if (dao?.isAzorius) {
-        const azoriusGovernance = governance as AzoriusGovernance;
-        const timelock = azoriusGovernance.votingStrategy?.timeLockPeriod;
+      } else if (governanceAzorius !== null) {
+        const timelock = governanceAzorius.votingStrategy?.timeLockPeriod;
         if (timelock?.formatted) {
           setTimelockPeriod(timelock.formatted);
         }
@@ -73,8 +75,8 @@ export function InfoGovernance() {
     freezeGuardContractAddress,
     freezeGuardType,
     timelockPeriod,
-    dao,
     publicClient,
+    governanceAzorius,
   ]);
 
   if (!daoAddress || !governance.type) {
@@ -89,8 +91,6 @@ export function InfoGovernance() {
       </Flex>
     );
   }
-
-  const governanceAzorius = dao?.isAzorius ? (governance as AzoriusGovernance) : undefined;
 
   return (
     <Box data-testid="dashboard-daoGovernance">

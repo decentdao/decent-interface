@@ -12,6 +12,7 @@ import {
 import StepController from './StepController';
 import { initialState } from './constants';
 import { DAOCreateMode } from './formComponents/EstablishEssentials';
+import { useParentSafeVotingWeight } from './hooks/useParentSafeVotingWeight';
 import { usePrepareFormData } from './hooks/usePrepareFormData';
 
 function DaoCreator({
@@ -25,7 +26,13 @@ function DaoCreator({
   isSubDAO?: boolean;
   mode: DAOCreateMode;
 }) {
-  const { createDAOValidation } = useDAOCreateSchema({ isSubDAO });
+  const { totalParentVotingWeight } = useParentSafeVotingWeight();
+
+  const { createDAOValidation } = useDAOCreateSchema({
+    isSubDAO: !!isSubDAO,
+    totalParentVotingWeight,
+  });
+
   const { prepareMultisigFormData, prepareAzoriusERC20FormData, prepareAzoriusERC721FormData } =
     usePrepareFormData();
 
@@ -39,7 +46,10 @@ function DaoCreator({
           const freezeGuard = isSubDAO ? values.freeze : undefined;
 
           let daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | undefined;
-          let customNonce = mode === DAOCreateMode.EDIT ? values.multisig.customNonce : undefined;
+          let customNonce =
+            mode === DAOCreateMode.EDIT || freezeGuard !== undefined
+              ? values.multisig.customNonce
+              : undefined;
 
           switch (choosenGovernance) {
             case GovernanceType.MULTISIG:

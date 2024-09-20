@@ -57,8 +57,9 @@ class EnhancedSafeApiKit extends SafeApiKit {
     return value;
   }
   override async getSafeInfo(safeAddress: Address): Promise<SafeInfoResponse> {
-    const value = await this.request('getSafeInfo' + safeAddress, 5, () => {
-      return super.getSafeInfo(safeAddress);
+    const checksummedSafeAddress = getAddress(safeAddress);
+    const value = await this.request('getSafeInfo' + checksummedSafeAddress, 5, () => {
+      return super.getSafeInfo(checksummedSafeAddress);
     });
     return value;
   }
@@ -83,8 +84,9 @@ class EnhancedSafeApiKit extends SafeApiKit {
   }
 
   async getSafeData(safeAddress: Address): Promise<SafeWithNextNonce> {
-    const safeInfoResponse = await this.getSafeInfo(safeAddress);
-    const nextNonce = await this.getNextNonce(safeAddress);
+    const checksummedSafeAddress = getAddress(safeAddress);
+    const safeInfoResponse = await this.getSafeInfo(checksummedSafeAddress);
+    const nextNonce = await this.getNextNonce(checksummedSafeAddress);
     const safeInfo = {
       ...safeInfoResponse,
       nextNonce,

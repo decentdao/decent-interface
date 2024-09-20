@@ -17,8 +17,6 @@ import { validateENSName } from '../../../utils/url';
 type FreezeGuardConfigParam = { freezeGuard?: DAOFreezeGuardConfig<BigIntValuePair> };
 
 export function usePrepareFormData() {
-  // const signer = useEthersSigner();
-
   const publicClient = usePublicClient();
 
   // Helper function to prepare freezeGuard data

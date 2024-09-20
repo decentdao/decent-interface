@@ -8,11 +8,7 @@ import { FreezeVotingType } from '../../types';
 import { useTransaction } from '../utils/useTransaction';
 import useUserERC721VotingTokens from './proposal/useUserERC721VotingTokens';
 
-const useCastFreezeVote = ({
-  setPending,
-}: {
-  setPending: React.Dispatch<React.SetStateAction<boolean>>;
-}) => {
+export const useCastFreezeVote = () => {
   const [contractCall, pending] = useTransaction();
   const {
     guardContracts: { freezeVotingContractAddress, freezeVotingType },
@@ -21,8 +17,6 @@ const useCastFreezeVote = ({
     },
   } = useFractal();
   const { getUserERC721VotingTokens } = useUserERC721VotingTokens(null, null, false);
-
-  setPending(pending);
 
   const { t } = useTranslation('transaction');
   const { data: walletClient } = useWalletClient();
@@ -95,7 +89,5 @@ const useCastFreezeVote = ({
     t,
     walletClient,
   ]);
-  return castFreezeVote;
+  return { castFreezeVote, pending };
 };
-
-export default useCastFreezeVote;

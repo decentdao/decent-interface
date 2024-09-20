@@ -95,8 +95,8 @@ const useBuildDAOTx = () => {
       let parentVotingStrategyType: VotingStrategyType | undefined;
       let parentVotingStrategyAddress: Address | undefined;
 
-      if (dao && dao.isAzorius) {
-        const azoriusGovernance = governance as AzoriusGovernance;
+      const azoriusGovernance = governance as AzoriusGovernance;
+      if (dao && dao.isAzorius && azoriusGovernance.votingStrategy) {
         parentVotingStrategyType = azoriusGovernance.votingStrategy.strategyType;
         if (
           parentVotingStrategyType === VotingStrategyType.LINEAR_ERC721 &&

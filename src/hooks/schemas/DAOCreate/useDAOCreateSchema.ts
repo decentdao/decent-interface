@@ -10,7 +10,13 @@ import { useDAOCreateTests } from './useDAOCreateTests';
  * validation schema for DAO Create workflow
  * @dev https://www.npmjs.com/package/yup
  */
-export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
+export const useDAOCreateSchema = ({
+  isSubDAO,
+  totalParentVotingWeight,
+}: {
+  isSubDAO: boolean;
+  totalParentVotingWeight: bigint | undefined;
+}) => {
   const {
     addressValidationTestSimple,
     addressValidationTest,
@@ -143,32 +149,60 @@ export const useDAOCreateSchema = ({ isSubDAO }: { isSubDAO?: boolean }) => {
             }),
         }),
         freeze: Yup.object().when({
-          is: isSubDAO,
+          is: () => isSubDAO,
           then: _schema =>
             _schema.shape({
               executionPeriod: Yup.object().shape({ value: Yup.string().required() }),
               timelockPeriod: Yup.object().shape({ value: Yup.string().required() }),
-              freezeVotesThreshold: Yup.object().shape({ value: Yup.string().required() }),
+              freezeVotesThreshold: Yup.object()
+                .shape({
+                  value: Yup.string().required(),
+                  bigintValue: Yup.mixed<bigint>()
+                    .test({
+                      message: t('errorMinimumValue', { ns: 'common', minValue: 0 }),
+                      test: value => {
+                        return value !== undefined ? value > 0 : true;
+                      },
+                    })
+                    .test({
+                      message: t('errorMaximumValue', {
+                        ns: 'common',
+                        maxValue: totalParentVotingWeight?.toString(),
+                      }),
+                      test: value => {
+                        if (
+                          value === undefined ||
+                          (totalParentVotingWeight !== undefined &&
+                            value <= totalParentVotingWeight)
+                        ) {
+                          return true;
+                        }
+                        return false;
+                      },
+                    }),
+                })
+                .required(),
               freezeProposalPeriod: Yup.object().shape({ value: Yup.string().required() }),
               freezePeriod: Yup.object().shape({ value: Yup.string().required() }),
             }),
         }),
       }),
     [
+      ensNameValidationTest,
       isSubDAO,
       t,
       addressValidationTest,
       uniqueAddressValidationTest,
       addressValidationTestSimple,
       validERC20Address,
-      validERC721Address,
       maxAllocationValidation,
       allocationValidationTest,
       uniqueAllocationValidationTest,
       uniqueNFTAddressValidationTest,
-      minValueValidation,
+      validERC721Address,
       isBigIntValidation,
-      ensNameValidationTest,
+      minValueValidation,
+      totalParentVotingWeight,
     ],
   );
   return { createDAOValidation };

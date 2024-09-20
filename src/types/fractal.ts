@@ -245,7 +245,7 @@ export interface DecentTreasury {
 export type FractalGovernance = AzoriusGovernance | DecentGovernance | SafeMultisigGovernance;
 
 export interface AzoriusGovernance extends Governance {
-  votingStrategy: VotingStrategyAzorius;
+  votingStrategy: VotingStrategyAzorius | undefined;
   votesToken: VotesTokenData | undefined;
   erc721Tokens?: ERC721TokenData[];
 }

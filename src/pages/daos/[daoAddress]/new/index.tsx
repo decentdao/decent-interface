@@ -27,16 +27,23 @@ export default function SubDaoCreate() {
 
   const { proposeDao, pendingCreateTx } = useCreateSubDAOProposal();
 
-  const proposeSubDAO = (daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO) => {
+  const proposeSubDAO = (
+    daoData: SafeMultisigDAO | AzoriusGovernanceDAO | SubDAO,
+    customNonce?: number,
+  ) => {
     const subDAOData = daoData as SubDAO;
-    proposeDao(subDAOData, subDAOData.customNonce || safe?.nextNonce, successCallback);
+    proposeDao(
+      subDAOData,
+      subDAOData.customNonce || customNonce || safe?.nextNonce,
+      successCallback,
+    );
   };
 
   return (
     <DaoCreator
+      isSubDAO
       pending={pendingCreateTx || redirectPending}
       deployDAO={proposeSubDAO}
-      isSubDAO={true}
       mode={DAOCreateMode.SUBDAO}
     />
   );

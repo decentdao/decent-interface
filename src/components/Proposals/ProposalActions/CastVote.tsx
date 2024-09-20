@@ -1,6 +1,6 @@
 import { Button, Tooltip, Box, Text, Image, Flex, Radio, RadioGroup, Icon } from '@chakra-ui/react';
 import { Check, CheckCircle } from '@phosphor-icons/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
@@ -22,6 +22,10 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
 
   const { snapshotProposal, extendedSnapshotProposal, loadSnapshotProposal } =
     useSnapshotProposal(proposal);
+
+  useEffect(() => {
+    loadSnapshotProposal();
+  }, [loadSnapshotProposal]);
 
   const azoriusProposal = proposal as AzoriusProposal;
 
@@ -66,6 +70,7 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
     const voteDisabled =
       (!isWeighted && typeof selectedChoice === 'undefined') ||
       (isWeighted && weightedTotalValue === 0);
+
     return (
       <>
         {isWeighted && snapshotWeightedChoice.length > 0
