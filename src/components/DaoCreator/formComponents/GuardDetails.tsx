@@ -1,9 +1,10 @@
 import { Text, InputGroup, InputRightElement, Flex, Alert } from '@chakra-ui/react';
 import { Info } from '@phosphor-icons/react';
+import { Field, FieldAttributes, FieldProps } from 'formik';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { ICreationStepProps, GovernanceType } from '../../../types';
+import { ICreationStepProps, GovernanceType, BigIntValuePair } from '../../../types';
 import { formatBigIntDisplay } from '../../../utils/numberFormats';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
@@ -47,9 +48,10 @@ function GuardDetails(props: ICreationStepProps) {
 
   useEffect(() => {
     if (parentVotingQuorum) {
+      const bigIntValueStr = formatBigIntDisplay(parentVotingQuorum);
       setFieldValue('freeze.freezeVotesThreshold', {
         bigintValue: parentVotingQuorum,
-        value: formatBigIntDisplay(parentVotingQuorum),
+        value: bigIntValueStr,
       });
     }
   }, [parentVotingQuorum, setFieldValue]);
@@ -124,22 +126,29 @@ function GuardDetails(props: ICreationStepProps) {
             </>
           )}
           <ContentBoxTitle>{t('titleFreezeParams')}</ContentBoxTitle>
-          <LabelComponent
-            label={t('labelFreezeVotesThreshold')}
-            helper={freezeHelper || ''}
-            isRequired
-            errorMessage={errors?.freeze?.freezeVotesThreshold?.bigintValue}
-          >
-            <BigIntInput
-              isInvalid={!!errors?.freeze?.freezeVotesThreshold?.bigintValue}
-              value={values.freeze.freezeVotesThreshold.bigintValue}
-              onChange={valuePair => {
-                setFieldValue('freeze.freezeVotesThreshold', valuePair);
-              }}
-              decimalPlaces={0}
-              data-testid="guardConfig-freezeVotesThreshold"
-            />
-          </LabelComponent>
+
+          <Field name="freeze.freezeVotesThreshold">
+            {({ field }: FieldAttributes<FieldProps<BigIntValuePair | undefined>>) => (
+              <LabelComponent
+                label={t('labelFreezeVotesThreshold')}
+                helper={freezeHelper || ''}
+                isRequired
+                errorMessage={errors?.freeze?.freezeVotesThreshold?.bigintValue}
+              >
+                <BigIntInput
+                  isInvalid={!!errors?.freeze?.freezeVotesThreshold?.bigintValue}
+                  value={field.value?.bigintValue}
+                  currentValue={values.freeze.freezeVotesThreshold}
+                  onChange={valuePair => {
+                    setFieldValue('freeze.freezeVotesThreshold', valuePair);
+                  }}
+                  decimalPlaces={0}
+                  data-testid="guardConfig-freezeVotesThreshold"
+                />
+              </LabelComponent>
+            )}
+          </Field>
+
           <LabelComponent
             label={t('labelFreezeProposalPeriod')}
             helper={t('helperFreezeProposalPeriod')}

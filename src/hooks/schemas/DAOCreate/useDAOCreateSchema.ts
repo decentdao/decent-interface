@@ -172,7 +172,8 @@ export const useDAOCreateSchema = ({
                       test: value => {
                         if (
                           value === undefined ||
-                          (totalParentVotingWeight !== undefined && value <= totalParentVotingWeight)
+                          (totalParentVotingWeight !== undefined &&
+                            value <= totalParentVotingWeight)
                         ) {
                           return true;
                         }

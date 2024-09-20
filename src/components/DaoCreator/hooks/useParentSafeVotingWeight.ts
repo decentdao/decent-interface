@@ -15,57 +15,59 @@ export const useParentSafeVotingWeight = () => {
 
   useEffect(() => {
     if (!safe) {
-      return
+      return;
     }
 
-  switch (governance.type) {
-    case GovernanceType.AZORIUS_ERC20:
-    case GovernanceType.AZORIUS_ERC721:
+    switch (governance.type) {
+      case GovernanceType.AZORIUS_ERC20:
+      case GovernanceType.AZORIUS_ERC721:
+        const governanceAzorius = governance as AzoriusGovernance;
 
-      const governanceAzorius = governance as AzoriusGovernance;
-
-      if (dao?.isAzorius === false || !governanceAzorius.votingStrategy) {
-        console.log('Parent DAO is not Azorius');
-        return;
-      }
-
-      // Setup Azorius parent total voting weight
-      if (governanceAzorius.votesToken) {
-        const totalSupplyFormatted = formatUnits(
-          governanceAzorius.votesToken.totalSupply,
-          governanceAzorius.votesToken.decimals,
-        );
-
-        if (totalSupplyFormatted.indexOf('.') === -1) {
-          setTotalParentVotingWeight(BigInt(totalSupplyFormatted));
-        } else {
-          const supplyWithoutDecimals = totalSupplyFormatted.substring(0, totalSupplyFormatted.indexOf('.'));
-          setTotalParentVotingWeight(BigInt(supplyWithoutDecimals));
+        if (dao?.isAzorius === false || !governanceAzorius.votingStrategy) {
+          console.log('Parent DAO is not Azorius');
+          return;
         }
-      } else if (governanceAzorius.erc721Tokens) {
-        const totalVotingWeight = governanceAzorius.erc721Tokens.reduce(
-          (prev, curr) => curr.votingWeight * (curr.totalSupply || 1n) + prev,
-          0n,
-        );
 
-        setTotalParentVotingWeight(totalVotingWeight);
-      }
+        // Setup Azorius parent total voting weight
+        if (governanceAzorius.votesToken) {
+          const totalSupplyFormatted = formatUnits(
+            governanceAzorius.votesToken.totalSupply,
+            governanceAzorius.votesToken.decimals,
+          );
 
-      // Setup Azorius parent voting quorum
-      const quorumThreshold =
-        governanceAzorius.votingStrategy.quorumThreshold?.value ||
-        governanceAzorius.votingStrategy.quorumPercentage?.value;
-      if (!quorumThreshold) {
-        throw new Error('Parent voting quorum is undefined');
-      }
-      setParentVotingQuorum(quorumThreshold);
+          if (totalSupplyFormatted.indexOf('.') === -1) {
+            setTotalParentVotingWeight(BigInt(totalSupplyFormatted));
+          } else {
+            const supplyWithoutDecimals = totalSupplyFormatted.substring(
+              0,
+              totalSupplyFormatted.indexOf('.'),
+            );
+            setTotalParentVotingWeight(BigInt(supplyWithoutDecimals));
+          }
+        } else if (governanceAzorius.erc721Tokens) {
+          const totalVotingWeight = governanceAzorius.erc721Tokens.reduce(
+            (prev, curr) => curr.votingWeight * (curr.totalSupply || 1n) + prev,
+            0n,
+          );
 
-      break;
+          setTotalParentVotingWeight(totalVotingWeight);
+        }
 
-    case GovernanceType.MULTISIG:
-      setTotalParentVotingWeight(BigInt(safe.owners.length));
-      setParentVotingQuorum(BigInt(safe.threshold));
-  }
+        // Setup Azorius parent voting quorum
+        const quorumThreshold =
+          governanceAzorius.votingStrategy.quorumThreshold?.value ||
+          governanceAzorius.votingStrategy.quorumPercentage?.value;
+        if (!quorumThreshold) {
+          throw new Error('Parent voting quorum is undefined');
+        }
+        setParentVotingQuorum(quorumThreshold);
+
+        break;
+
+      case GovernanceType.MULTISIG:
+        setTotalParentVotingWeight(BigInt(safe.owners.length));
+        setParentVotingQuorum(BigInt(safe.threshold));
+    }
   }, [safe, governance, dao]);
 
   return {
