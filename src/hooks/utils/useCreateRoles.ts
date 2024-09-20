@@ -25,6 +25,7 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 import { getERC6551RegistrySalt, predictHatId, useRolesStore } from '../../store/roles';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
+import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
 import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
@@ -786,6 +787,18 @@ export default function useCreateRoles() {
             modifiedHats,
           );
         }
+
+        // Add "send assets" actions to the proposal data
+        values.actions.forEach(action => {
+          const actionData = prepareSendAssetsActionData({
+            transferAmount: action.transferAmount,
+            asset: action.asset,
+            destinationAddress: action.destinationAddress,
+          });
+          proposalData.targets.push(actionData.target);
+          proposalData.values.push(actionData.value);
+          proposalData.calldatas.push(actionData.calldata);
+        });
 
         // All done, submit the proposal!
         await submitProposal({

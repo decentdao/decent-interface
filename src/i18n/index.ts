@@ -2,6 +2,7 @@ import { enUS } from 'date-fns/locale';
 import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
+import ACTIONS_EN from './locales/en/actions.json';
 import BREADCRUMBS_EN from './locales/en/breadcrumbs.json';
 import COMMON_EN from './locales/en/common.json';
 import DAOCREATE_EN from './locales/en/daoCreate.json';
@@ -44,6 +45,7 @@ import TREASURY_EN from './locales/en/treasury.json';
 
 export const supportedLanguages = {
   en: {
+    actions: ACTIONS_EN,
     breadcrumbs: BREADCRUMBS_EN,
     common: COMMON_EN,
     daoCreate: DAOCREATE_EN,

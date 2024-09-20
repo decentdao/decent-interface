@@ -255,7 +255,10 @@ export function RoleCardShort({
   handleRoleClick: () => void;
 }) {
   return (
-    <Card onClick={handleRoleClick}>
+    <Card
+      cursor={'pointer'}
+      onClick={handleRoleClick}
+    >
       <Flex justifyContent="space-between">
         <Text
           textStyle="display-lg"
@@ -270,7 +273,7 @@ export function RoleCardShort({
           <EditBadge editStatus={editStatus} />
           <Icon
             as={CaretCircleRight}
-            color="white-0"
+            color="lilac-0"
             boxSize="1.5rem"
           />
         </Flex>
