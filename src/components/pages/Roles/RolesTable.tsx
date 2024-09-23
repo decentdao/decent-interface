@@ -2,13 +2,13 @@ import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-
 import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Address, Hex, getAddress, zeroAddress } from 'viem';
+import { Address, Hex, zeroAddress } from 'viem';
 import { isFeatureEnabled } from '../../../constants/common';
-import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
+import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentTree, useRolesStore } from '../../../store/roles';
-import { getChainIdFromPrefix } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
@@ -96,20 +96,19 @@ function RoleNameEditColumn({
 }
 
 function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) {
-  const { addressPrefix } = useNetworkConfig();
-  const { daoName: accountDisplayName } = useGetDAOName({
-    address: getAddress(wearerAddress || zeroAddress),
-    chainId: getChainIdFromPrefix(addressPrefix),
-  });
-  const avatarURL = useAvatar(wearerAddress || zeroAddress);
+  const { chain } = useNetworkConfig();
+  const a = useAddress(wearerAddress || zeroAddress);
+  const { displayName: accountDisplayName } = useDisplayName(a.address || null, true, chain.id);
+  const avatarURL = useAvatar(accountDisplayName);
+
   const { t } = useTranslation('roles');
   return (
     <Td width="60%">
       <Flex>
-        {wearerAddress ? (
+        {a.address ? (
           <Avatar
             size="icon"
-            address={wearerAddress}
+            address={a.address}
             url={avatarURL}
           />
         ) : (
