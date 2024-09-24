@@ -61,6 +61,9 @@ export const useDecentTreasury = () => {
     if (!daoAddress || !safeAPI) {
       return;
     }
+
+    console.log('loading treasury data for', daoAddress, 'on load key', loadKey.current);
+
     const [
       allTransactions,
       { data: tokenBalances, error: tokenBalancesError },
@@ -218,6 +221,8 @@ export const useDecentTreasury = () => {
   ]);
 
   useEffect(() => {
+    console.log({ action, chainId: chain.id, daoAddress, loadTreasury });
+
     if (!daoAddress) {
       loadKey.current = null;
       return;
@@ -225,10 +230,11 @@ export const useDecentTreasury = () => {
 
     const newLoadKey = `${chain.id}${daoAddress}`;
     if (newLoadKey !== loadKey.current) {
+      // action.dispatch({ type: TreasuryAction.RESET });
       loadKey.current = newLoadKey;
       loadTreasury();
     }
-  }, [action, chain, daoAddress, loadTreasury]);
+  }, [action, chain.id, daoAddress, loadTreasury]);
 
   return;
 };
