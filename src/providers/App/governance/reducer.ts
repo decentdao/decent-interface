@@ -29,7 +29,6 @@ export const initialVotesTokenAccountData = {
   balance: null,
   delegatee: null,
   votingWeight: null,
-  isDelegatesSet: null,
 };
 
 const createPendingProposals = (

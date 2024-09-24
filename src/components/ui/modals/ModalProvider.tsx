@@ -48,11 +48,11 @@ export type ModalPropsTypes = {
   [ModalType.UNWRAP_TOKEN]: {};
   [ModalType.CONFIRM_URL]: { url: string };
   [ModalType.REMOVE_SIGNER]: {
-    selectedSigner: string;
-    signers: string[];
+    selectedSigner: Address;
+    signers: Address[];
     currentThreshold: number;
   };
-  [ModalType.ADD_SIGNER]: { signers: string[]; currentThreshold: number };
+  [ModalType.ADD_SIGNER]: { signers: Address[]; currentThreshold: number };
   [ModalType.CREATE_PROPOSAL_FROM_TEMPLATE]: { proposalTemplate: ProposalTemplate };
   [ModalType.COPY_PROPOSAL_TEMPLATE]: {
     proposalTemplate: ProposalTemplate;

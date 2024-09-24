@@ -1,8 +1,8 @@
 import { SafeMultisigTransactionResponse } from '@safe-global/safe-core-sdk-types';
-import { Activity } from '../types';
+import { FractalProposal } from '../types';
 
 export const isRejected = (
-  activityArr: Activity[],
+  activityArr: FractalProposal[],
   multiSigTransaction: SafeMultisigTransactionResponse,
 ) => {
   return activityArr.find(_activity => {

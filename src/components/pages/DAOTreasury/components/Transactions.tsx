@@ -1,6 +1,7 @@
 import { Box, Button, Flex, HStack, Icon, Image, Text, Tooltip } from '@chakra-ui/react';
 import { ArrowDown, ArrowUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -83,7 +84,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
         >
           <DisplayAddress
             data-testid="link-transfer-address"
-            address={displayData.transferAddress}
+            address={getAddress(displayData.transferAddress)}
             textAlign="end"
             onClick={e => e.stopPropagation()}
           />

@@ -13,7 +13,7 @@
     "@ethersproject/abstract-signer": "^5.7.0",
     "@ethersproject/providers": "^5.7.2",
     "@fontsource/space-mono": "^5.0.19",
-    "@fractal-framework/fractal-contracts": "^0.8.2",
+    "@fractal-framework/fractal-contracts": "^1.2.14",
     "@graphprotocol/client-apollo": "^1.0.16",
     "@hatsprotocol/sdk-v1-core": "^0.9.0",
     "@hatsprotocol/sdk-v1-subgraph": "^1.0.0",
@@ -61,10 +61,10 @@
     "react-toastify": "^9.0.8",
     "remark-gfm": "^4.0.0",
     "viem": "^2.13.1",
-    "vite": "^5.1.0",
+    "vite": "^5.3.4",
     "vite-plugin-checker": "^0.6.4",
     "wagmi": "^2.12.12",
-    "yup": "^1",
+    "yup": "^1.4.0",
     "zustand": "^4.5.2"
   },
   "scripts": {

@@ -1,3 +1,4 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { FormikHelpers } from 'formik';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -5,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
-import DecentHatsAbi from '../../assets/abi/DecentHats_0_1_0_Abi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import { HatsAbi } from '../../assets/abi/HatsAbi';
@@ -255,7 +255,7 @@ export default function useCreateRoles() {
       const addedHats = await createHatStructsForNewTreeFromRolesFormValues(modifiedHats);
 
       const createAndDeclareTreeData = encodeFunctionData({
-        abi: DecentHatsAbi,
+        abi: abis.DecentHats_0_1_0,
         functionName: 'createAndDeclareTree',
         args: [
           {

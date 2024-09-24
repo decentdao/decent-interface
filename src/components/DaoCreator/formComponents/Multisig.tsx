@@ -14,7 +14,6 @@ import { DAOCreateMode } from './EstablishEssentials';
 export function Multisig(props: ICreationStepProps) {
   const { values, errors, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
   const { t } = useTranslation('daoCreate');
-
   useStepRedirect({ values });
 
   const truncateSignersList = (safeAddresses: string[], numOfSigners: number) => {

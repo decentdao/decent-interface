@@ -10,7 +10,6 @@ import { EmptyBox } from '../../../../../components/ui/containers/EmptyBox';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useDeployAzorius from '../../../../../hooks/DAO/useDeployAzorius';
-import { createAccountSubstring } from '../../../../../hooks/utils/useDisplayName';
 import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -38,18 +37,26 @@ export default function ModifyGovernancePage() {
   const isSigner = user.address && safe?.owners.includes(user.address);
   const deployAzorius = useDeployAzorius();
 
-  const handleDeployAzorius: DAOTrigger = (daoData, customNonce) => {
-    deployAzorius(
-      daoData as AzoriusERC20DAO | AzoriusERC721DAO,
-      !daoName || createAccountSubstring(daoAddress!) === daoName,
-      !daoSnapshotENS && !!daoData.snapshotENS,
-      customNonce,
-    );
-  };
-
   if (!daoAddress) {
     return null;
   }
+
+  const handleDeployAzorius: DAOTrigger = (daoData, customNonce) => {
+    const shouldSetName = daoData.daoName !== daoName;
+
+    // We will add a set snapshot tx, if the current safe's snapshot is different from the new one, AND
+    //   EITHER:
+    //      - the current snapshot is not null, OR
+    //      - the current snapshot WAS indeed null (for a safe that does not already have an ENS set), but the new snapshot is not empty
+    const shouldSetSnapshot =
+      daoSnapshotENS !== daoData.snapshotENS &&
+      (daoSnapshotENS !== null || daoData.snapshotENS !== '');
+
+    deployAzorius(daoData as AzoriusERC20DAO | AzoriusERC721DAO, customNonce, {
+      shouldSetName,
+      shouldSetSnapshot,
+    });
+  };
 
   return (
     <Box>
