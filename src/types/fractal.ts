@@ -238,8 +238,7 @@ export interface DecentTreasury {
   assetsFungible: TokenBalance[];
   assetsNonFungible: NFTBalance[];
   assetsDeFi: DefiBalance[];
-  transfers?: TransferDisplayData[] | null;
-  transfersLoaded?: boolean;
+  transfers: TransferDisplayData[] | null;
 }
 
 export type FractalGovernance = AzoriusGovernance | DecentGovernance | SafeMultisigGovernance;

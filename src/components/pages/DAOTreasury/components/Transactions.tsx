@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, Icon, Image, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, HStack, Icon, Image, Text, Tooltip } from '@chakra-ui/react';
 import { ArrowDown, ArrowUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
@@ -8,6 +8,7 @@ import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkCon
 import { TokenEventType, TransferDisplayData, TransferType } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
+import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
   const { t } = useTranslation(['treasury', 'common']);
@@ -112,13 +113,17 @@ function EmptyTransactions() {
 
 export function Transactions({ shownTransactions }: { shownTransactions: number }) {
   const {
-    treasury: { transfers, transfersLoaded },
+    treasury: { transfers },
   } = useFractal();
 
-  if (!transfers) {
-    return null;
+  if (transfers === null) {
+    return (
+      <Center w="100%">
+        <BarLoader />
+      </Center>
+    );
   }
-  if (transfers.length === 0 && transfersLoaded) return <EmptyTransactions />;
+  if (transfers.length === 0) return <EmptyTransactions />;
   return (
     <Box
       overflowX="auto"
@@ -130,7 +135,6 @@ export function Transactions({ shownTransactions }: { shownTransactions: number 
           displayData={transfer}
         />
       ))}
-      {(transfers === null || !transfersLoaded) && <Box>{/* @todo add Wave Loader */}</Box>}
     </Box>
   );
 }

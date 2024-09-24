@@ -114,6 +114,7 @@ export const useDecentTreasury = () => {
       assetsDeFi,
       assetsNonFungible,
       totalUsdValue,
+      transfers: null, // transfers not yet loaded. these are setup hereafter
     };
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
@@ -166,6 +167,10 @@ export const useDecentTreasury = () => {
     //   }
     // }
 
+    if (flattenedTransfers.length === 0) {
+      action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED });
+    }
+
     flattenedTransfers
       .sort((a, b) => b.blockNumber - a.blockNumber)
       .forEach(async (transfer, index, _transfers) => {
@@ -191,9 +196,11 @@ export const useDecentTreasury = () => {
           transfer: { ...transfer, tokenInfo },
           isLast: _transfers.length - 1 === index,
         });
+
         action.dispatch({ type: TreasuryAction.ADD_TRANSFER, payload: formattedTransfer });
+
         if (_transfers.length - 1 === index) {
-          action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED, payload: true });
+          action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED });
         }
       });
   }, [
@@ -211,14 +218,17 @@ export const useDecentTreasury = () => {
   ]);
 
   useEffect(() => {
-    if (daoAddress && chain.id + daoAddress !== loadKey.current) {
-      loadKey.current = chain.id + daoAddress;
-      loadTreasury();
-    }
     if (!daoAddress) {
       loadKey.current = null;
+      return;
     }
-  }, [chain, daoAddress, loadTreasury]);
+
+    const newLoadKey = `${chain.id}${daoAddress}`;
+    if (newLoadKey !== loadKey.current) {
+      loadKey.current = newLoadKey;
+      loadTreasury();
+    }
+  }, [action, chain, daoAddress, loadTreasury]);
 
   return;
 };
