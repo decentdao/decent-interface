@@ -97,18 +97,18 @@ function RoleNameEditColumn({
 
 function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) {
   const { chain } = useNetworkConfig();
-  const a = useAddress(wearerAddress || zeroAddress);
-  const { displayName: accountDisplayName } = useDisplayName(a.address || null, true, chain.id);
+  const { address } = useAddress(wearerAddress || zeroAddress);
+  const { displayName: accountDisplayName } = useDisplayName(address || null, true, chain.id);
   const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('roles');
   return (
     <Td width="60%">
       <Flex>
-        {a.address ? (
+        {address ? (
           <Avatar
             size="icon"
-            address={a.address}
+            address={address}
             url={avatarURL}
           />
         ) : (
