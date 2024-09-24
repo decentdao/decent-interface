@@ -62,16 +62,28 @@ export const useDecentTreasury = () => {
       return;
     }
     const [
-      transfers,
+      allTransactions,
       { data: tokenBalances, error: tokenBalancesError },
       { data: nftBalances, error: nftBalancesError },
       { data: defiBalances, error: defiBalancesError },
     ] = await Promise.all([
-      safeAPI.getIncomingTransactions(daoAddress),
+      safeAPI.getAllTransactions(daoAddress),
       getTokenBalances(daoAddress),
       getNFTBalances(daoAddress),
       getDeFiBalances(daoAddress),
     ]);
+
+    const txsWithTransfers = allTransactions.results.filter(tx => tx.transfers.length > 0);
+    const flattenedTransfersSet = new Map();
+
+    txsWithTransfers
+      .flatMap(tx => tx.transfers)
+      .forEach(t => {
+        const txKey = `${t.transactionHash}-${t.tokenAddress}`;
+        flattenedTransfersSet.set(txKey, t);
+      });
+
+    const flattenedTransfers = Array.from(flattenedTransfersSet.values());
 
     if (tokenBalancesError) {
       toast(tokenBalancesError, { autoClose: 2000 });
@@ -106,7 +118,7 @@ export const useDecentTreasury = () => {
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
 
-    const tokenAddresses = transfers.results
+    const tokenAddresses = flattenedTransfers
       // map down to just the addresses, with a type of `string | undefined`
       .map(transfer => transfer.tokenAddress)
       // no undefined or null addresses
@@ -154,7 +166,7 @@ export const useDecentTreasury = () => {
     //   }
     // }
 
-    transfers.results
+    flattenedTransfers
       .sort((a, b) => b.blockNumber - a.blockNumber)
       .forEach(async (transfer, index, _transfers) => {
         // @note assume native token if no token address
