@@ -23,7 +23,6 @@ export default function useDAOController() {
   const addressPrefix = prefixAndAddress?.[0];
   const daoAddressStr = prefixAndAddress?.[1];
   const daoAddress = daoAddressStr ? getAddress(daoAddressStr) : undefined;
-  // console.log('daoAddress from q string', daoAddress);
 
   const invalidQuery =
     addressWithPrefix === null ||

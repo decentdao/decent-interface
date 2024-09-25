@@ -19,21 +19,10 @@ export const useUpdateSafeData = (daoAddress?: Address) => {
       return;
     }
 
-    console.log(
-      'useUpdateSafeData:',
-      'prevPathname.current',
-      prevPathname.current,
-      'location.pathname',
-      location.pathname,
-      'daoAddress',
-      daoAddress,
-    );
-
-    // Retrieve lastest info on page/url change
+    // Retrieve lastest safe info on page/url change
     if (prevPathname.current !== location.pathname) {
       (async () => {
         const safeInfo = await safeAPI.getSafeData(daoAddress);
-        console.log('set safe info from useUpdateSafeData', safeInfo);
 
         action.dispatch({
           type: NodeAction.SET_SAFE_INFO,

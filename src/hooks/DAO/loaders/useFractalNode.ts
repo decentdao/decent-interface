@@ -121,8 +121,6 @@ export const useFractalNode = (
         payload: await lookupModules(safeInfo.modules),
       });
 
-      console.log('set safe info from useFractalNode', safeInfo);
-
       action.dispatch({
         type: NodeAction.SET_SAFE_INFO,
         payload: safeInfo,
@@ -132,8 +130,6 @@ export const useFractalNode = (
   );
 
   useEffect(() => {
-    console.log('in useFractalNode useEffect');
-    console.log({ daoAddress, currentValidSafe: currentValidSafe.current });
     if (
       skip ||
       addressPrefix === undefined ||

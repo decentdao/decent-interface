@@ -62,8 +62,6 @@ export const useDecentTreasury = () => {
       return;
     }
 
-    console.log('loading treasury data for', daoAddress, 'on load key', loadKey.current);
-
     const [
       allTransactions,
       { data: tokenBalances, error: tokenBalancesError },
@@ -221,8 +219,6 @@ export const useDecentTreasury = () => {
   ]);
 
   useEffect(() => {
-    console.log({ action, chainId: chain.id, daoAddress, loadTreasury });
-
     if (!daoAddress) {
       loadKey.current = null;
       return;
