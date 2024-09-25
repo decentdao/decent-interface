@@ -62,16 +62,28 @@ export const useDecentTreasury = () => {
       return;
     }
     const [
-      transfers,
+      allTransactions,
       { data: tokenBalances, error: tokenBalancesError },
       { data: nftBalances, error: nftBalancesError },
       { data: defiBalances, error: defiBalancesError },
     ] = await Promise.all([
-      safeAPI.getIncomingTransactions(daoAddress),
+      safeAPI.getAllTransactions(daoAddress),
       getTokenBalances(daoAddress),
       getNFTBalances(daoAddress),
       getDeFiBalances(daoAddress),
     ]);
+
+    const txsWithTransfers = allTransactions.results.filter(tx => tx.transfers.length > 0);
+    const flattenedTransfersSet = new Map();
+
+    txsWithTransfers
+      .flatMap(tx => tx.transfers)
+      .forEach(t => {
+        const txKey = `${t.transactionHash}-${t.tokenAddress}`;
+        flattenedTransfersSet.set(txKey, t);
+      });
+
+    const flattenedTransfers = Array.from(flattenedTransfersSet.values());
 
     if (tokenBalancesError) {
       toast(tokenBalancesError, { autoClose: 2000 });
@@ -102,11 +114,12 @@ export const useDecentTreasury = () => {
       assetsDeFi,
       assetsNonFungible,
       totalUsdValue,
+      transfers: null, // transfers not yet loaded. these are setup hereafter
     };
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
 
-    const tokenAddresses = transfers.results
+    const tokenAddresses = flattenedTransfers
       // map down to just the addresses, with a type of `string | undefined`
       .map(transfer => transfer.tokenAddress)
       // no undefined or null addresses
@@ -154,7 +167,11 @@ export const useDecentTreasury = () => {
     //   }
     // }
 
-    transfers.results
+    if (flattenedTransfers.length === 0) {
+      action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED });
+    }
+
+    flattenedTransfers
       .sort((a, b) => b.blockNumber - a.blockNumber)
       .forEach(async (transfer, index, _transfers) => {
         // @note assume native token if no token address
@@ -179,9 +196,11 @@ export const useDecentTreasury = () => {
           transfer: { ...transfer, tokenInfo },
           isLast: _transfers.length - 1 === index,
         });
+
         action.dispatch({ type: TreasuryAction.ADD_TRANSFER, payload: formattedTransfer });
+
         if (_transfers.length - 1 === index) {
-          action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED, payload: true });
+          action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED });
         }
       });
   }, [
@@ -199,14 +218,17 @@ export const useDecentTreasury = () => {
   ]);
 
   useEffect(() => {
-    if (daoAddress && chain.id + daoAddress !== loadKey.current) {
-      loadKey.current = chain.id + daoAddress;
-      loadTreasury();
-    }
     if (!daoAddress) {
       loadKey.current = null;
+      return;
     }
-  }, [chain, daoAddress, loadTreasury]);
+
+    const newLoadKey = `${chain.id}${daoAddress}`;
+    if (newLoadKey !== loadKey.current) {
+      loadKey.current = newLoadKey;
+      loadTreasury();
+    }
+  }, [action, chain, daoAddress, loadTreasury]);
 
   return;
 };
