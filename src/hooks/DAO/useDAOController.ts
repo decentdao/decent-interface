@@ -22,12 +22,14 @@ export default function useDAOController() {
   const prefixAndAddress = addressWithPrefix?.split(':');
   const addressPrefix = prefixAndAddress?.[0];
   const daoAddressStr = prefixAndAddress?.[1];
-  const daoAddress = daoAddressStr ? getAddress(daoAddressStr) : undefined;
 
   const invalidQuery =
+    !daoAddressStr ||
     addressWithPrefix === null ||
     !validDaoQueryString.test(addressWithPrefix) ||
-    !isAddress(daoAddress || '');
+    !isAddress(daoAddressStr);
+
+  const daoAddress = !invalidQuery ? getAddress(daoAddressStr) : undefined;
 
   const { addressPrefix: connectedAddressPrefix } = useNetworkConfig();
   const wrongNetwork = addressPrefix !== connectedAddressPrefix;
