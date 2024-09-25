@@ -36,7 +36,6 @@ export default function Treasury() {
     assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
 
   const showSendButton = canUserCreateProposal && hasAnyBalanceOfAnyFungibleTokens;
-  console.log({ transfers });
 
   const totalTransfers = transfers?.length || 0;
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;

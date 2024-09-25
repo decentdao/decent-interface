@@ -21,7 +21,8 @@ export default function useDAOController() {
 
   const prefixAndAddress = addressWithPrefix?.split(':');
   const addressPrefix = prefixAndAddress?.[0];
-  const daoAddress = prefixAndAddress?.[1];
+  const daoAddressStr = prefixAndAddress?.[1];
+  const daoAddress = daoAddressStr ? getAddress(daoAddressStr) : undefined;
   // console.log('daoAddress from q string', daoAddress);
 
   const invalidQuery =
@@ -42,7 +43,7 @@ export default function useDAOController() {
 
   const { errorLoading } = useFractalNode(skip, {
     addressPrefix,
-    daoAddress: daoAddress ? getAddress(daoAddress) : undefined,
+    daoAddress,
   });
 
   useGovernanceContracts();
@@ -57,5 +58,5 @@ export default function useDAOController() {
   useKeyValuePairs();
   useHatsTree();
 
-  return { invalidQuery, wrongNetwork, errorLoading };
+  return { invalidQuery, wrongNetwork, errorLoading, daoAddress };
 }
