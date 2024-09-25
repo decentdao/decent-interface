@@ -61,6 +61,7 @@ export const useDecentTreasury = () => {
     if (!daoAddress || !safeAPI) {
       return;
     }
+
     const [
       allTransactions,
       { data: tokenBalances, error: tokenBalancesError },
@@ -228,7 +229,7 @@ export const useDecentTreasury = () => {
       loadKey.current = newLoadKey;
       loadTreasury();
     }
-  }, [action, chain, daoAddress, loadTreasury]);
+  }, [action, chain.id, daoAddress, loadTreasury]);
 
   return;
 };

@@ -21,12 +21,15 @@ export default function useDAOController() {
 
   const prefixAndAddress = addressWithPrefix?.split(':');
   const addressPrefix = prefixAndAddress?.[0];
-  const daoAddress = prefixAndAddress?.[1];
+  const daoAddressStr = prefixAndAddress?.[1];
 
   const invalidQuery =
+    !daoAddressStr ||
     addressWithPrefix === null ||
     !validDaoQueryString.test(addressWithPrefix) ||
-    !isAddress(daoAddress || '');
+    !isAddress(daoAddressStr);
+
+  const daoAddress = !invalidQuery ? getAddress(daoAddressStr) : undefined;
 
   const { addressPrefix: connectedAddressPrefix } = useNetworkConfig();
   const wrongNetwork = addressPrefix !== connectedAddressPrefix;
@@ -41,7 +44,7 @@ export default function useDAOController() {
 
   const { errorLoading } = useFractalNode(skip, {
     addressPrefix,
-    daoAddress: daoAddress ? getAddress(daoAddress) : undefined,
+    daoAddress,
   });
 
   useGovernanceContracts();
@@ -56,5 +59,5 @@ export default function useDAOController() {
   useKeyValuePairs();
   useHatsTree();
 
-  return { invalidQuery, wrongNetwork, errorLoading };
+  return { invalidQuery, wrongNetwork, errorLoading, daoAddress };
 }

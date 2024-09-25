@@ -24,7 +24,6 @@ export const useParentSafeVotingWeight = () => {
         const governanceAzorius = governance as AzoriusGovernance;
 
         if (dao?.isAzorius === false || !governanceAzorius.votingStrategy) {
-          console.log('Parent DAO is not Azorius');
           return;
         }
 

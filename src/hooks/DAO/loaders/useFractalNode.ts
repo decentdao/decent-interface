@@ -134,9 +134,10 @@ export const useFractalNode = (
       skip ||
       addressPrefix === undefined ||
       daoAddress === undefined ||
-      addressPrefix + daoAddress !== currentValidSafe.current
+      `${addressPrefix}${daoAddress}` !== currentValidSafe.current
     ) {
       reset({ error: false });
+
       if (addressPrefix && daoAddress) {
         setDAO(addressPrefix, daoAddress);
       }
