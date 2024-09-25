@@ -134,7 +134,7 @@ export const useFractalNode = (
       skip ||
       addressPrefix === undefined ||
       daoAddress === undefined ||
-      `${addressPrefix}${daoAddress}`.toLowerCase() !== currentValidSafe.current?.toLowerCase()
+      `${addressPrefix}${daoAddress}` !== currentValidSafe.current
     ) {
       reset({ error: false });
 

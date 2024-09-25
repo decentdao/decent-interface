@@ -226,7 +226,6 @@ export const useDecentTreasury = () => {
 
     const newLoadKey = `${chain.id}${daoAddress}`;
     if (newLoadKey !== loadKey.current) {
-      // action.dispatch({ type: TreasuryAction.RESET });
       loadKey.current = newLoadKey;
       loadTreasury();
     }

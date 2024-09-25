@@ -6,10 +6,7 @@ import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { NodeAction } from '../../providers/App/node/action';
 
 export const useUpdateSafeData = (daoAddress?: Address) => {
-  const {
-    action,
-    // node: { daoAddress },
-  } = useFractal();
+  const { action } = useFractal();
   const safeAPI = useSafeAPI();
   const location = useLocation();
   const prevPathname = useRef(location.pathname);
