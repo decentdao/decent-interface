@@ -146,5 +146,6 @@ export default function useCreateSablierStream() {
     prepareBatchLinearStreamCreation,
     prepareFlushStreamTx,
     prepareCancelStreamTx,
+    prepareLinearStream,
   };
 }

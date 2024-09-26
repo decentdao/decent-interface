@@ -36,7 +36,7 @@ export function AvatarAndRoleName({
       {wearerAddress ? (
         <Avatar
           size="xl"
-          address={wearerAddress}
+          address={getAddress(wearerAddress)}
           url={avatarURL}
         />
       ) : (
@@ -210,10 +210,12 @@ export function RoleCardEdit({
   editStatus,
   handleRoleClick,
 }: RoleEditProps) {
+  const isRemovedRole = editStatus === EditBadgeStatus.Removed;
   return (
     <Card
       mb="1rem"
-      onClick={handleRoleClick}
+      onClick={!isRemovedRole ? handleRoleClick : undefined}
+      cursor={!isRemovedRole ? 'pointer' : 'not-allowed'}
     >
       <Flex justifyContent="space-between">
         <AvatarAndRoleName
@@ -253,7 +255,10 @@ export function RoleCardShort({
   handleRoleClick: () => void;
 }) {
   return (
-    <Card onClick={handleRoleClick}>
+    <Card
+      cursor={'pointer'}
+      onClick={handleRoleClick}
+    >
       <Flex justifyContent="space-between">
         <Text
           textStyle="display-lg"
@@ -268,7 +273,7 @@ export function RoleCardShort({
           <EditBadge editStatus={editStatus} />
           <Icon
             as={CaretCircleRight}
-            color="white-0"
+            color="lilac-0"
             boxSize="1.5rem"
           />
         </Flex>

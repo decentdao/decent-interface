@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useFractal } from '../../../../../providers/App/AppProvider';
-import { Activity, SortBy } from '../../../../../types';
+import { FractalProposal, SortBy } from '../../../../../types';
 
 export const useActivities = (sortBy: SortBy) => {
   const {
@@ -11,7 +11,7 @@ export const useActivities = (sortBy: SortBy) => {
    * After data is parsed it is sorted based on execution data
    * updates when a different sort is selected
    */
-  const sortedActivities: Activity[] = useMemo(() => {
+  const sortedActivities: FractalProposal[] = useMemo(() => {
     return (proposals || []).sort((a, b) => {
       const dataA = new Date(a.eventDate).getTime();
       const dataB = new Date(b.eventDate).getTime();

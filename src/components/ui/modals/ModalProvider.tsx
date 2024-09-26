@@ -15,7 +15,6 @@ import ForkProposalTemplateModal from './ForkProposalTemplateModal';
 import { ModalBase } from './ModalBase';
 import PaymentWithdrawModal from './PaymentWithdrawModal';
 import ProposalTemplateModal from './ProposalTemplateModal';
-import { SendAssetsModal } from './SendAssetsModal';
 import StakeModal from './Stake';
 import { UnwrapToken } from './UnwrapToken';
 import { WrapToken } from './WrapToken';
@@ -23,7 +22,6 @@ import { WrapToken } from './WrapToken';
 export enum ModalType {
   NONE,
   DELEGATE,
-  SEND_ASSETS,
   STAKE,
   WRAP_TOKEN,
   UNWRAP_TOKEN,
@@ -45,17 +43,16 @@ export type CurrentModal = {
 export type ModalPropsTypes = {
   [ModalType.NONE]: {};
   [ModalType.DELEGATE]: {};
-  [ModalType.SEND_ASSETS]: {};
   [ModalType.STAKE]: {};
   [ModalType.WRAP_TOKEN]: {};
   [ModalType.UNWRAP_TOKEN]: {};
   [ModalType.CONFIRM_URL]: { url: string };
   [ModalType.REMOVE_SIGNER]: {
-    selectedSigner: string;
-    signers: string[];
+    selectedSigner: Address;
+    signers: Address[];
     currentThreshold: number;
   };
-  [ModalType.ADD_SIGNER]: { signers: string[]; currentThreshold: number };
+  [ModalType.ADD_SIGNER]: { signers: Address[]; currentThreshold: number };
   [ModalType.CREATE_PROPOSAL_FROM_TEMPLATE]: { proposalTemplate: ProposalTemplate };
   [ModalType.COPY_PROPOSAL_TEMPLATE]: {
     proposalTemplate: ProposalTemplate;
@@ -136,10 +133,6 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       case ModalType.DELEGATE:
         modalTitle = t('delegateTitle');
         modalContent = <DelegateModal close={closeModal} />;
-        break;
-      case ModalType.SEND_ASSETS:
-        modalTitle = t('sendAssetsTitle');
-        modalContent = <SendAssetsModal close={closeModal} />;
         break;
       case ModalType.STAKE:
         modalTitle = t('stakeTitle');

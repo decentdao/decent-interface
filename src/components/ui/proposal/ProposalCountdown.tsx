@@ -35,14 +35,14 @@ export function ProposalCountdown({
 
   const state: FractalProposalState | null = useMemo(() => proposal.state, [proposal]);
 
-  const { isSnapshotProposal } = useSnapshotProposal(proposal);
+  const { snapshotProposal } = useSnapshotProposal(proposal);
   const showCountdown =
     !!totalSecondsLeft &&
     totalSecondsLeft > 0 &&
     (state === FractalProposalState.ACTIVE ||
       state === FractalProposalState.TIMELOCKED ||
       state === FractalProposalState.EXECUTABLE ||
-      isSnapshotProposal);
+      !!snapshotProposal);
 
   if (!showCountdown) return null;
 
@@ -57,7 +57,7 @@ export function ProposalCountdown({
   );
 
   const Icon: ComponentWithAs<'svg', IconProps> | null =
-    state === FractalProposalState.ACTIVE || isSnapshotProposal
+    state === FractalProposalState.ACTIVE || !!snapshotProposal
       ? Vote
       : state === FractalProposalState.TIMELOCKED
         ? Lock

@@ -1,10 +1,10 @@
 import { Box, Flex, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { useGetMetadata } from '../../hooks/DAO/proposal/useGetMetadata';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName from '../../hooks/utils/useDisplayName';
 import {
-  Activity,
   GovernanceActivity,
   MultisigProposal,
   SnapshotProposal,
@@ -23,7 +23,7 @@ const formatId = (proposalId: string) => {
   }
 };
 
-function OnChainRejectionMessage({ activity }: { activity: Activity }) {
+function OnChainRejectionMessage({ activity }: { activity: FractalProposal }) {
   const { t } = useTranslation('dashboard');
   const governanceActivity = activity as MultisigProposal;
   if (!governanceActivity.multisigRejectedProposalNumber) {
@@ -38,7 +38,7 @@ function OnChainRejectionMessage({ activity }: { activity: Activity }) {
   );
 }
 
-function ProposalAuthor({ activity }: { activity: Activity }) {
+function ProposalAuthor({ activity }: { activity: FractalProposal }) {
   const snapshotProposal = activity as SnapshotProposal;
   const azoriusProposal = activity as AzoriusProposal;
   const multisigProposal = activity as MultisigProposal;
@@ -49,7 +49,9 @@ function ProposalAuthor({ activity }: { activity: Activity }) {
     ? azoriusProposal.proposer
     : isSnapshotProposal
       ? snapshotProposal.author
-      : multisigProposal?.confirmations?.[0]?.owner;
+      : multisigProposal?.confirmations?.[0]?.owner
+        ? getAddress(multisigProposal.confirmations[0].owner)
+        : undefined;
 
   const { displayName: author } = useDisplayName(proposer);
   const avatarURL = useAvatar(author);
@@ -79,10 +81,10 @@ export function ProposalTitle({
   activity,
   showAuthor = false,
 }: {
-  activity: Activity;
+  activity: FractalProposal;
   showAuthor?: boolean;
 }) {
-  const metaData = useGetMetadata(activity as FractalProposal);
+  const metaData = useGetMetadata(activity);
 
   // Check if it's a SnapshotProposal and set variables accordingly
   const isSnapshotProposal = (activity as SnapshotProposal).snapshotProposalId !== undefined;

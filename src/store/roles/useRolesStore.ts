@@ -1,4 +1,7 @@
+import { getContract, Hex, PublicClient } from 'viem';
 import { create } from 'zustand';
+import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
+import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStream';
 import { DecentRoleHat, initialHatsStore, RolesStore, sanitize } from './rolesStoreUtils';
 
 const useRolesStore = create<RolesStore>()((set, get) => ({
@@ -56,6 +59,37 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
       params.decentHats,
     );
     set(() => ({ hatsTree }));
+  },
+  refreshWithdrawableAmount: async (hatId: Hex, streamId: string, publicClient: PublicClient) => {
+    const payment = get().getPayment(hatId, streamId);
+    if (!payment) return;
+
+    const streamContract = getContract({
+      abi: SablierV2LockupLinearAbi,
+      address: payment.contractAddress,
+      client: publicClient,
+    });
+
+    const bigintStreamId = convertStreamIdToBigInt(streamId);
+
+    const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([bigintStreamId]);
+    const currentHatsTree = get().hatsTree;
+
+    if (!currentHatsTree) return;
+    set(() => ({
+      hatsTree: {
+        ...currentHatsTree,
+        roleHats: currentHatsTree.roleHats.map(roleHat => {
+          if (roleHat.id !== hatId) return roleHat;
+          return {
+            ...roleHat,
+            payments: roleHat.payments?.map(p =>
+              p.streamId === streamId ? { ...p, withdrawableAmount: newWithdrawableAmount } : p,
+            ),
+          };
+        }),
+      },
+    }));
   },
   updateRolesWithStreams: (updatedRoles: DecentRoleHat[]) => {
     const existingHatsTree = get().hatsTree;

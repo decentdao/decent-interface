@@ -32,9 +32,9 @@ const useTemporaryProposals = () => {
 };
 
 export default function DAOController() {
-  const { errorLoading, wrongNetwork, invalidQuery } = useDAOController();
+  const { errorLoading, wrongNetwork, invalidQuery, safeAddress } = useDAOController();
 
-  useUpdateSafeData();
+  useUpdateSafeData(safeAddress);
 
   const {
     node: { daoName },

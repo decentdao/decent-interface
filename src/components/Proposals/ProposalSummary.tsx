@@ -1,11 +1,13 @@
 import { Text, Box, Button, Flex, Tooltip, Icon } from '@chakra-ui/react';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { ArrowUpRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useMemo, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getContract } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { TOOLTIP_MAXW } from '../../constants/common';
-import useSafeContracts from '../../hooks/safe/useSafeContracts';
 import useBlockTimestamp from '../../hooks/utils/useBlockTimestamp';
 import { useFractal } from '../../providers/App/AppProvider';
 import { AzoriusGovernance, AzoriusProposal, GovernanceType } from '../../types';
@@ -18,7 +20,7 @@ import InfoRow from '../ui/proposal/InfoRow';
 import ProposalCreatedBy from '../ui/proposal/ProposalCreatedBy';
 import Divider from '../ui/utils/Divider';
 import { QuorumProgressBar } from '../ui/utils/ProgressBar';
-import { AzoriusOrSnapshotProposalAction } from './ProposalActions/ProposalAction';
+import { AzoriusOrSnapshotProposalAction } from './ProposalActions/AzoriusOrSnapshotProposalAction';
 import { VoteContextProvider } from './ProposalVotes/context/VoteContext';
 
 export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal }) {
@@ -37,14 +39,15 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
       user: { votingWeight, address },
     },
   } = useFractal();
-  const baseContracts = useSafeContracts();
+
   const azoriusGovernance = governance as AzoriusGovernance;
   const { votesToken, type, erc721Tokens, votingStrategy } = azoriusGovernance;
   const { t } = useTranslation(['proposal', 'common', 'navigation']);
   const startBlockTimeStamp = useBlockTimestamp(Number(startBlock));
   const [proposalsERC20VotingWeight, setProposalsERC20VotingWeight] = useState('0');
   const totalVotesCasted = useMemo(() => yes + no + abstain, [yes, no, abstain]);
-  const totalVotingWeight = useMemo(
+
+  const totalERC721VotingWeight = useMemo(
     () =>
       erc721Tokens?.reduce(
         (prev, curr) => prev + (curr.totalSupply ? curr.totalSupply * curr.votingWeight : 0n),
@@ -60,19 +63,21 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
 
   const toggleShowVotingPower = () => setShowVotingPower(prevState => !prevState);
 
+  const publicClient = usePublicClient();
+
   useEffect(() => {
     async function loadProposalVotingWeight() {
-      if (
-        address &&
-        baseContracts &&
-        governanceContracts.ozLinearVotingContractAddress !== undefined
-      ) {
-        const strategyContract = baseContracts.linearVotingMasterCopyContract.asProvider.attach(
-          governanceContracts.ozLinearVotingContractAddress,
-        );
-        const pastVotingWeight = (
-          await strategyContract.getVotingWeight(address, proposal.proposalId)
-        ).toBigInt();
+      if (address && publicClient && governanceContracts.linearVotingErc20Address) {
+        const strategyContract = getContract({
+          abi: abis.LinearERC20Voting,
+          address: governanceContracts.linearVotingErc20Address,
+          client: publicClient,
+        });
+
+        const pastVotingWeight = await strategyContract.read.getVotingWeight([
+          address,
+          Number(proposal.proposalId),
+        ]);
 
         setProposalsERC20VotingWeight(
           formatCoin(pastVotingWeight, true, votesToken?.decimals, undefined, false),
@@ -83,9 +88,9 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
     loadProposalVotingWeight();
   }, [
     address,
-    baseContracts,
-    governanceContracts.ozLinearVotingContractAddress,
+    governanceContracts.linearVotingErc20Address,
     proposal.proposalId,
+    publicClient,
     votesToken?.decimals,
   ]);
 
@@ -100,7 +105,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   // We need to figure out a more type-safe way to handle all of this.
   if (
     (isERC20 && (!votesToken || !votesToken.totalSupply || !votingStrategy?.quorumPercentage)) ||
-    (isERC721 && (!erc721Tokens || !votingStrategy.quorumThreshold))
+    (isERC721 && (!erc721Tokens || !votingStrategy?.quorumThreshold))
   ) {
     return (
       <Box mt={4}>
@@ -110,9 +115,9 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
   }
 
   const strategyQuorum =
-    votesToken && isERC20
+    isERC20 && votesToken && votingStrategy
       ? votingStrategy.quorumPercentage!.value
-      : isERC721
+      : isERC721 && votingStrategy
         ? votingStrategy.quorumThreshold!.value
         : 1n;
 
@@ -268,7 +273,7 @@ export function AzoriusProposalSummary({ proposal }: { proposal: AzoriusProposal
             {
               quorum: strategyQuorum,
               total: isERC721
-                ? totalVotingWeight?.toLocaleString()
+                ? totalERC721VotingWeight?.toLocaleString()
                 : votesToken
                   ? (votesToken.totalSupply / votesTokenDecimalsDenominator).toLocaleString()
                   : undefined,

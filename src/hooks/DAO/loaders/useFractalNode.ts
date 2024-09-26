@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { getAddress } from 'viem';
+import { Address } from 'viem';
 import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -22,7 +22,7 @@ export const useFractalNode = (
     safeAddress,
   }: {
     addressPrefix?: string;
-    safeAddress?: string;
+    safeAddress?: Address;
   },
 ) => {
   // tracks the current valid Safe address and chain id; helps prevent unnecessary calls
@@ -41,7 +41,7 @@ export const useFractalNode = (
   const formatDAOQuery = useCallback(
     (result: { data?: DAOQueryQuery }) => {
       if (!safeAddress) return;
-      const demo = loadDemoData(networkConfig.chain, getAddress(safeAddress), result);
+      const demo = loadDemoData(networkConfig.chain, safeAddress, result);
       if (!demo.data) {
         return;
       }
@@ -49,13 +49,14 @@ export const useFractalNode = (
       const dao = daos[0];
       if (dao) {
         const { parentAddress, name, snapshotENS, proposalTemplatesHash } = dao;
+
         const currentNode: Node = {
           nodeHierarchy: {
             parentAddress,
             childNodes: mapChildNodes(dao as DAO),
           },
           daoName: name as string,
-          address: getAddress(safeAddress),
+          address: safeAddress,
           daoSnapshotENS: snapshotENS as string,
           proposalTemplatesHash: proposalTemplatesHash as string,
         };
@@ -69,12 +70,12 @@ export const useFractalNode = (
   const { subgraph } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
-    variables: { safeAddress },
+    variables: { daoAddress: safeAddress },
     onCompleted: async data => {
       if (!safeAddress) return;
       const graphNodeInfo = formatDAOQuery({ data });
       const daoName = await getDAOName({
-        address: getAddress(safeAddress),
+        address: safeAddress,
         registryName: graphNodeInfo?.daoName,
       });
 
@@ -103,17 +104,14 @@ export const useFractalNode = (
 
   const setDAO = useCallback(async () => {
     if (addressPrefix && safeAddress) {
-      console.log('setDAO', safeAddress);
-
-      currentValidSafe.current = addressPrefix + safeAddress;
+      currentValidSafe.current = `${addressPrefix}${safeAddress}`;
       setErrorLoading(false);
 
       let safeInfo;
 
       try {
         if (!safeAPI) throw new Error('SafeAPI not set');
-        const address = getAddress(safeAddress);
-        safeInfo = await safeAPI.getSafeData(address);
+        safeInfo = await safeAPI.getSafeData(safeAddress);
       } catch (e) {
         reset({ error: true });
         return;
@@ -138,7 +136,7 @@ export const useFractalNode = (
       skip ||
       addressPrefix === undefined ||
       safeAddress === undefined ||
-      addressPrefix + safeAddress !== currentValidSafe.current
+      `${addressPrefix}${safeAddress}` !== currentValidSafe.current
     ) {
       console.count('reset hats store from useFractalNode because:');
       console.log({ skip, currentValidSafe: currentValidSafe.current, safeAddress });

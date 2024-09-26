@@ -1,34 +1,31 @@
 import { Button, Tooltip, Box, Text, Image, Flex, Radio, RadioGroup, Icon } from '@chakra-ui/react';
 import { Check, CheckCircle } from '@phosphor-icons/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 import {
-  FractalProposal,
   AzoriusProposal,
+  FractalProposal,
   FractalProposalState,
-  ExtendedSnapshotProposal,
   VOTE_CHOICES,
 } from '../../../types';
 import WeightedInput from '../../ui/forms/WeightedInput';
 import { useVoteContext } from '../ProposalVotes/context/VoteContext';
 
-function Vote({
-  proposal,
-  extendedSnapshotProposal,
-  onCastSnapshotVote,
-}: {
-  proposal: FractalProposal;
-  extendedSnapshotProposal?: ExtendedSnapshotProposal;
-  onCastSnapshotVote?: () => Promise<void>;
-}) {
-  const [pending, setPending] = useState<boolean>(false);
+export function CastVote({ proposal }: { proposal: FractalProposal }) {
   const [selectedVoteChoice, setVoiceChoice] = useState<number>();
   const { t } = useTranslation(['common', 'proposal', 'transaction']);
   const { isLoaded: isCurrentBlockLoaded, currentBlockNumber } = useCurrentBlockNumber();
+
+  const { snapshotProposal, extendedSnapshotProposal, loadSnapshotProposal } =
+    useSnapshotProposal(proposal);
+
+  useEffect(() => {
+    loadSnapshotProposal();
+  }, [loadSnapshotProposal]);
 
   const azoriusProposal = proposal as AzoriusProposal;
 
@@ -39,13 +36,9 @@ function Vote({
     handleSelectSnapshotChoice,
     selectedChoice,
     snapshotWeightedChoice,
-  } = useCastVote({
-    proposal,
-    setPending,
-    extendedSnapshotProposal,
-  });
+    castVotePending,
+  } = useCastVote(proposal.proposalId, extendedSnapshotProposal);
 
-  const { isSnapshotProposal } = useSnapshotProposal(proposal);
   const { canVote, canVoteLoading, hasVoted, hasVotedLoading } = useVoteContext();
 
   // if the user is not a signer or has no delegated tokens, don't show anything
@@ -58,25 +51,26 @@ function Vote({
   // This gives a weird behavior when casting vote fails due to requirement under LinearERC20Voting contract that current block number
   // shouldn't be equal to proposal's start block number. Which is dictated by the need to have voting tokens delegation being "finalized" to prevent proposal hijacking.
   const proposalStartBlockNotFinalized = Boolean(
-    !isSnapshotProposal &&
+    !snapshotProposal &&
       isCurrentBlockLoaded &&
       currentBlockNumber &&
       azoriusProposal.startBlock >= currentBlockNumber,
   );
 
   const disabled =
-    pending ||
-    proposal.state !== FractalProposalState.ACTIVE ||
+    castVotePending ||
+    azoriusProposal.state !== FractalProposalState.ACTIVE ||
     proposalStartBlockNotFinalized ||
     canVoteLoading ||
     hasVotedLoading;
 
-  if (isSnapshotProposal && extendedSnapshotProposal) {
+  if (snapshotProposal && extendedSnapshotProposal) {
     const isWeighted = extendedSnapshotProposal.type === 'weighted';
     const weightedTotalValue = snapshotWeightedChoice.reduce((prev, curr) => prev + curr, 0);
     const voteDisabled =
       (!isWeighted && typeof selectedChoice === 'undefined') ||
       (isWeighted && weightedTotalValue === 0);
+
     return (
       <>
         {isWeighted && snapshotWeightedChoice.length > 0
@@ -109,7 +103,7 @@ function Vote({
         <Button
           width="full"
           isDisabled={voteDisabled}
-          onClick={() => castSnapshotVote(onCastSnapshotVote)}
+          onClick={() => castSnapshotVote(loadSnapshotProposal)}
           marginTop={5}
           padding="1.5rem 6rem"
           height="auto"
@@ -217,5 +211,3 @@ function Vote({
     </Tooltip>
   );
 }
-
-export default Vote;

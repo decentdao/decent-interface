@@ -80,15 +80,15 @@ export const useFractalGovernance = () => {
   useEffect(() => {
     const {
       isLoaded,
-      azoriusContractAddress,
-      lockReleaseContractAddress,
-      erc721LinearVotingContractAddress,
-      ozLinearVotingContractAddress,
+      moduleAzoriusAddress,
+      lockReleaseAddress,
+      linearVotingErc721Address,
+      linearVotingErc20Address,
     } = governanceContracts;
 
     if (isLoaded && !type) {
-      if (azoriusContractAddress) {
-        if (ozLinearVotingContractAddress) {
+      if (moduleAzoriusAddress) {
+        if (linearVotingErc20Address) {
           action.dispatch({
             type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
             payload: GovernanceType.AZORIUS_ERC20,
@@ -96,10 +96,10 @@ export const useFractalGovernance = () => {
           loadERC20Strategy();
           loadERC20Token();
           loadUnderlyingERC20Token();
-          if (lockReleaseContractAddress) {
+          if (lockReleaseAddress) {
             loadLockedVotesToken();
           }
-        } else if (erc721LinearVotingContractAddress) {
+        } else if (linearVotingErc721Address) {
           action.dispatch({
             type: FractalGovernanceAction.SET_GOVERNANCE_TYPE,
             payload: GovernanceType.AZORIUS_ERC721,

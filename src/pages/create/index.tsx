@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { getAddress } from 'viem';
+import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import DaoCreator from '../../components/DaoCreator';
 import { DAOCreateMode } from '../../components/DaoCreator/formComponents/EstablishEssentials';
@@ -48,10 +48,10 @@ export default function DaoCreatePage() {
   }, [isConnected, t]);
 
   const successCallback = useCallback(
-    async (addressPrefix: string, safeAddress: string) => {
+    async (addressPrefix: string, safeAddress: Address) => {
       setRedirectPending(true);
       const daoFound = await requestWithRetries(
-        async () => (safeAPI ? safeAPI.getSafeCreationInfo(getAddress(safeAddress)) : undefined),
+        async () => (safeAPI ? safeAPI.getSafeCreationInfo(safeAddress) : undefined),
         8,
       );
       toggleFavorite(safeAddress);
@@ -73,14 +73,12 @@ export default function DaoCreatePage() {
 
   const [deploy, pending] = useDeployDAO();
 
-  const deployDAO = (daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO) => {
-    deploy(daoData, successCallback);
-  };
-
   return (
     <DaoCreator
       pending={pending || redirectPending}
-      deployDAO={deployDAO}
+      deployDAO={(daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO) => {
+        deploy(daoData, successCallback);
+      }}
       mode={DAOCreateMode.ROOTDAO}
     />
   );

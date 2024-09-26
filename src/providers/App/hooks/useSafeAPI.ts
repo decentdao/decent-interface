@@ -7,7 +7,7 @@ import SafeApiKit, {
   TokenInfoResponse,
 } from '@safe-global/api-kit';
 import { useMemo } from 'react';
-import { getAddress } from 'viem';
+import { Address, getAddress } from 'viem';
 import { CacheExpiry } from '../../../hooks/utils/cache/cacheDefaults';
 import {
   DBObjectKeys,
@@ -56,20 +56,21 @@ class EnhancedSafeApiKit extends SafeApiKit {
     }
     return value;
   }
-  override async getSafeInfo(safeAddress: string): Promise<SafeInfoResponse> {
-    const value = await this.request('getSafeInfo' + safeAddress, 5, () => {
-      return super.getSafeInfo(safeAddress);
+  override async getSafeInfo(safeAddress: Address): Promise<SafeInfoResponse> {
+    const checksummedSafeAddress = getAddress(safeAddress);
+    const value = await this.request('getSafeInfo' + checksummedSafeAddress, 5, () => {
+      return super.getSafeInfo(checksummedSafeAddress);
     });
     return value;
   }
-  override async getSafeCreationInfo(safeAddress: string): Promise<SafeCreationInfoResponse> {
+  override async getSafeCreationInfo(safeAddress: Address): Promise<SafeCreationInfoResponse> {
     const value = await this.request('getSafeCreationInfo' + safeAddress, CacheExpiry.NEVER, () => {
       return super.getSafeCreationInfo(safeAddress);
     });
     return value;
   }
   override async getAllTransactions(
-    safeAddress: string,
+    safeAddress: Address,
     options?: AllTransactionsOptions,
   ): Promise<AllTransactionsListResponse> {
     const value = await this.request(
@@ -82,15 +83,17 @@ class EnhancedSafeApiKit extends SafeApiKit {
     return value;
   }
 
-  async getSafeData(safeAddress: string): Promise<SafeWithNextNonce> {
-    const safeInfoResponse = await this.getSafeInfo(safeAddress);
-    const nextNonce = await this.getNextNonce(safeAddress);
-
-    return {
+  async getSafeData(safeAddress: Address): Promise<SafeWithNextNonce> {
+    const checksummedSafeAddress = getAddress(safeAddress);
+    const safeInfoResponse = await this.getSafeInfo(checksummedSafeAddress);
+    const nextNonce = await this.getNextNonce(checksummedSafeAddress);
+    const safeInfo = {
       ...safeInfoResponse,
-      address: getAddress(safeInfoResponse.address), // TODO: remove this line when typechain PR is merged
       nextNonce,
+      address: getAddress(safeInfoResponse.address),
+      guard: getAddress(safeInfoResponse.guard),
     };
+    return safeInfo;
   }
 
   override async getToken(tokenAddress: string): Promise<TokenInfoResponse> {

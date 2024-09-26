@@ -26,7 +26,7 @@ export function ProposalInfo({
   const {
     node: { daoSnapshotENS },
   } = useFractal();
-  const { isSnapshotProposal } = useSnapshotProposal(proposal);
+  const { snapshotProposal } = useSnapshotProposal(proposal);
 
   const [modalType, props] = useMemo(() => {
     if (!metaData.documentationUrl) {
@@ -64,9 +64,11 @@ export function ProposalInfo({
           showIcon={false}
           textColor="neutral-7"
         />
-        {isSnapshotProposal && (
+        {snapshotProposal && (
           <>
-            <SnapshotButton snapshotENS={`${daoSnapshotENS}/proposal/${proposal.proposalId}`} />
+            <SnapshotButton
+              snapshotENS={`${daoSnapshotENS}/proposal/${snapshotProposal.proposalId}`}
+            />
             {(proposal as ExtendedSnapshotProposal).privacy === 'shutter' && (
               <Button
                 as={Link}

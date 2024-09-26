@@ -21,7 +21,7 @@ function AddSignerModal({
   currentThreshold,
 }: {
   close: () => void;
-  signers: string[];
+  signers: Address[];
   currentThreshold: number;
 }) {
   const {
@@ -64,7 +64,7 @@ function AddSignerModal({
       }
 
       await addSigner({
-        newSigner: validAddress,
+        newSigner: getAddress(validAddress),
         threshold: threshold,
         nonce: nonce,
         safeAddress: safe.address,
@@ -101,7 +101,6 @@ function AddSignerModal({
               <Text>{t('addSignerLabel', { ns: 'modals' })}</Text>
               <Field name={'address'}>
                 {({ field }: FieldAttributes<any>) => (
-                  // LabelWrapper title styling needs to updated on @decent-org/fractal-ui, it seems
                   <LabelWrapper
                     subLabel={t('addSignerSublabel', { ns: 'modals' })}
                     errorMessage={field.value && errors.addressOrENS}

@@ -1,28 +1,28 @@
-import { Signer } from 'ethers';
 import { useMemo, useRef, useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isAddress } from 'viem';
+import { Address, PublicClient, getAddress, isAddress } from 'viem';
 import { normalize } from 'viem/ens';
+import { usePublicClient } from 'wagmi';
 import { AnyObject } from 'yup';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AddressValidationMap, ERC721TokenConfig } from '../../../types';
-import { Providers } from '../../../types/network';
 import { validateENSName } from '../../../utils/url';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export async function validateAddress({
-  signerOrProvider,
+  publicClient,
   address,
   checkENS = true,
 }: {
-  signerOrProvider?: Signer | Providers;
+  publicClient: PublicClient;
   address: string;
   checkENS?: boolean;
-}) {
-  if (normalize(address) && checkENS && signerOrProvider) {
-    const resolvedAddress = await signerOrProvider.resolveName(address).catch();
+}): Promise<{
+  validation: { address: string; isValidAddress: boolean };
+  isValid: boolean;
+}> {
+  if (checkENS && !isAddress(address)) {
+    const resolvedAddress = await publicClient.getEnsAddress({ name: normalize(address) });
     if (resolvedAddress) {
       return {
         validation: {
@@ -68,14 +68,17 @@ export const useValidationAddress = () => {
    * @dev updated via the `addressValidation`
    * @dev this is used for any other functions contained within this hook, to lookup resolved addresses in this session without requesting again.
    */
+
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
-  const signer = useEthersSigner();
-  const signerOrProvider = useSignerOrProvider();
+  // const signer = useEthersSigner();
+  // const signerOrProvider = useSignerOrProvider();
   const { t } = useTranslation(['daoCreate', 'common', 'modals']);
   const {
     node: { safe },
   } = useFractal();
   const { chain } = useNetworkConfig();
+
+  const publicClient = usePublicClient();
 
   const [isValidating, setIsValidating] = useState(false);
 
@@ -84,22 +87,23 @@ export const useValidationAddress = () => {
       name: 'Address Validation',
       message: t('errorInvalidENSAddress', { ns: 'common', chain: chain.name }),
       test: async function (address: string | undefined) {
-        if (!address) return false;
+        if (!address || !publicClient) return false;
         setIsValidating(true);
+
         try {
-          const { validation } = await validateAddress({ signerOrProvider, address });
+          const { validation } = await validateAddress({ publicClient, address });
           if (validation.isValidAddress) {
             addressValidationMap.current.set(address, validation);
           }
+          setIsValidating(false);
           return validation.isValidAddress;
         } catch (error) {
-          return false;
-        } finally {
           setIsValidating(false);
+          return false;
         }
       },
     };
-  }, [signerOrProvider, addressValidationMap, t, chain.name]);
+  }, [chain.name, publicClient, t]);
 
   const ensNameValidationTest = useMemo(() => {
     return {
@@ -118,10 +122,10 @@ export const useValidationAddress = () => {
       name: 'Address Validation',
       message: t('errorInvalidAddress', { ns: 'common' }),
       test: async function (address: string | undefined) {
-        if (!address) return false;
+        if (!address || !publicClient) return false;
         setIsValidating(true);
         const { validation } = await validateAddress({
-          signerOrProvider,
+          publicClient,
           address,
           checkENS: false,
         });
@@ -132,28 +136,38 @@ export const useValidationAddress = () => {
         return validation.isValidAddress;
       },
     };
-  }, [signerOrProvider, addressValidationMap, t]);
+  }, [publicClient, addressValidationMap, t]);
 
   const newSignerValidationTest = useMemo(() => {
     return {
       name: 'New Signer Validation',
       message: t('alreadySigner', { ns: 'modals' }),
-      test: async function (address: string | undefined) {
-        if (!address || !safe || !signer) return false;
-        if (normalize(address)) {
-          address = await signer.resolveName(address);
+      test: async function (addressOrENS: string | undefined) {
+        if (!addressOrENS || !safe || !publicClient) return false;
+
+        let resolvedAddress: Address | null;
+
+        if (validateENSName(addressOrENS)) {
+          resolvedAddress = await publicClient.getEnsAddress({
+            name: normalize(addressOrENS),
+          });
+
+          if (!resolvedAddress) return false;
+        } else {
+          resolvedAddress = getAddress(addressOrENS);
         }
-        return !safe.owners.includes(address);
+
+        return !safe.owners.includes(resolvedAddress);
       },
     };
-  }, [safe, signer, t]);
+  }, [safe, publicClient, t]);
 
   const testUniqueAddressArray = useCallback(
     async (value: string, addressArray: string[]) => {
       // looks up tested value
       let inputValidation = addressValidationMap.current.get(value);
-      if (!!value && !inputValidation) {
-        inputValidation = (await validateAddress({ signerOrProvider, address: value })).validation;
+      if (!!value && !inputValidation && publicClient) {
+        inputValidation = (await validateAddress({ publicClient, address: value })).validation;
       }
       // converts all inputs to addresses to compare
       // uses addressValidationMap to save on requests
@@ -165,8 +179,8 @@ export const useValidationAddress = () => {
             return addressValidation.address;
           }
           // because mapping is not 'state', this catches values that may not be resolved yet
-          if (normalize(address)) {
-            const { validation } = await validateAddress({ signerOrProvider, address });
+          if (normalize(address) && publicClient) {
+            const { validation } = await validateAddress({ publicClient, address });
             return validation.address;
           }
           return address;
@@ -179,7 +193,7 @@ export const useValidationAddress = () => {
 
       return uniqueFilter.length === 1;
     },
-    [signerOrProvider],
+    [publicClient],
   );
 
   const uniqueAddressValidationTest = useMemo(() => {

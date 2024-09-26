@@ -7,7 +7,6 @@ import { logError } from '../../../helpers/errorLogging';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { AddressValidationMap, CreatorFormState, TokenAllocation } from '../../../types';
 import { validateENSName } from '../../../utils/url';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
 import { validateAddress } from '../common/useValidationAddress';
 
 /**
@@ -21,7 +20,6 @@ export function useDAOCreateTests() {
    * @dev this is used for any other functions contained within this hook, to lookup resolved addresses in this session without requesting again.
    */
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
-  const signerOrProvider = useSignerOrProvider();
   const { t } = useTranslation(['daoCreate', 'common']);
   const publicClient = usePublicClient();
   const { chain } = useNetworkConfig();
@@ -47,22 +45,22 @@ export function useDAOCreateTests() {
       name: 'Address Validation',
       message: t('errorInvalidENSAddress', { ns: 'common', chain: chain.name }),
       test: async function (address: string | undefined) {
-        if (!address) return false;
-        const { validation } = await validateAddress({ signerOrProvider, address });
+        if (!address || !publicClient) return false;
+        const { validation } = await validateAddress({ publicClient, address });
         if (validation.isValidAddress) {
           addressValidationMap.current.set(address, validation);
         }
         return validation.isValidAddress;
       },
     };
-  }, [signerOrProvider, addressValidationMap, t, chain.name]);
+  }, [publicClient, addressValidationMap, t, chain.name]);
 
   const uniqueAllocationValidationTest = useMemo(() => {
     return {
       name: 'Unique Addresses',
       message: t('errorDuplicateAddress'),
       test: async function (value: string | undefined, context: AnyObject) {
-        if (!value) return false;
+        if (!value || !publicClient) return false;
         // retreive parent array
         const parentAddressArray = context.from[1].value.tokenAllocations;
         if (parentAddressArray.length === 1) {
@@ -71,8 +69,7 @@ export function useDAOCreateTests() {
         // looks up tested value
         let inputValidation = addressValidationMap.current.get(value);
         if (!!value && !inputValidation) {
-          inputValidation = (await validateAddress({ signerOrProvider, address: value }))
-            .validation;
+          inputValidation = (await validateAddress({ publicClient, address: value })).validation;
         }
         // converts all inputs to addresses to compare
         // uses addressValidationMap to save on requests
@@ -84,8 +81,8 @@ export function useDAOCreateTests() {
               return addressValidation.address;
             }
             // because mapping is not 'state', this catches values that may not be resolved yet
-            if (validateENSName(address)) {
-              const { validation } = await validateAddress({ signerOrProvider, address });
+            if (validateENSName(address) && publicClient) {
+              const { validation } = await validateAddress({ publicClient, address });
               return validation.address;
             }
             return address;
@@ -98,7 +95,7 @@ export function useDAOCreateTests() {
         return uniqueFilter.length === 1;
       },
     };
-  }, [signerOrProvider, t]);
+  }, [publicClient, t]);
   const maxAllocationValidation = useMemo(() => {
     return {
       name: 'Token Supply validation',

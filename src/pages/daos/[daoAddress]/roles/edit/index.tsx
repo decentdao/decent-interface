@@ -76,6 +76,7 @@ function RolesEdit() {
       },
       hats,
       customNonce: safe?.nextNonce || 0,
+      actions: [],
     };
   }, [hatsTree?.roleHats, safe?.nextNonce]);
 

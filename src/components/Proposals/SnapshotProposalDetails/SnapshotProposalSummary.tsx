@@ -16,7 +16,7 @@ import useSnapshotUserVotingWeight from './hooks/useSnapshotUserVotingWeight';
 import useTotalVotes from './hooks/useTotalVotes';
 
 interface ISnapshotProposalSummary {
-  proposal?: ExtendedSnapshotProposal;
+  proposal: ExtendedSnapshotProposal;
 }
 
 export default function SnapshotProposalSummary({ proposal }: ISnapshotProposalSummary) {

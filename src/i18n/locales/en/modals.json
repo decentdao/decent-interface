@@ -8,6 +8,9 @@
   "sublabelDelegateInput": "Delegate your tokens to yourself or to a representative who can vote on your behalf. This does not transfer ownership of the tokens.",
   "buttonDelegate": "Delegate Voting Tokens",
   "buttonLockedDelegate": "Delegate Locked Voting Tokens",
+  "pendingDelegateVote": "Delegating vote",
+  "failedDelegateVote": "Delegation failed",
+  "successDelegateVote": "Delegation successful",
   "sendAssetsTitle": "Send Assets",
   "selectLabel": "Select Asset",
   "selectSublabel": "Available balance {{balance}}",
@@ -64,5 +67,6 @@
   "confirmModifyGovernanceTitle": "Heads up, this is a big deal!",
   "confirmModifyGovernanceDescription": "Modifying your Safe's governance will have significant implications. Please be sure before proceeding.",
   "stakeTitle": "Stake",
-  "removeSignerWarning": "The signer will be removed from the organization."
+  "removeSignerWarning": "The signer will be removed from the organization.",
+  "add": "Add"
 }

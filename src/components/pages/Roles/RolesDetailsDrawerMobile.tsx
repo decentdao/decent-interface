@@ -1,10 +1,16 @@
 import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress, Hex } from 'viem';
 import { isFeatureEnabled } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useRolesStore } from '../../../store/roles';
+import {
+  paymentSorterByActiveStatus,
+  paymentSorterByStartDate,
+  paymentSorterByWithdrawAmount,
+  useRolesStore,
+} from '../../../store/roles';
 import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
@@ -31,6 +37,17 @@ export default function RolesDetailsDrawerMobile({
   } = useFractal();
   const { t } = useTranslation('roles');
   const { hatsTree } = useRolesStore();
+
+  const sortedPayments = useMemo(
+    () =>
+      roleHat.payments
+        ? [...roleHat.payments]
+            .sort(paymentSorterByWithdrawAmount)
+            .sort(paymentSorterByStartDate)
+            .sort(paymentSorterByActiveStatus)
+        : [],
+    [roleHat.payments],
+  );
 
   if (!safe?.address || !hatsTree) return null;
 
@@ -100,7 +117,7 @@ export default function RolesDetailsDrawerMobile({
             >
               {t('payments')}
             </Text>
-            {roleHat.payments.map((payment, index) => (
+            {sortedPayments.map((payment, index) => (
               <RolePaymentDetails
                 key={index}
                 payment={payment}

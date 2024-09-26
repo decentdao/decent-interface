@@ -81,9 +81,11 @@ const SECONDS_IN_DAY = 60 * 60 * 24;
 function StepButtons({
   values: { proposalMetadata },
   pendingTransaction,
+  isSubmitDisabled,
 }: {
   values: { proposalMetadata: { title: string; description?: string } };
   pendingTransaction: boolean;
+  isSubmitDisabled: boolean;
 }) {
   const {
     node: { safe },
@@ -144,7 +146,7 @@ function StepButtons({
               <Button
                 px="2rem"
                 type="submit"
-                isDisabled={!canUserCreateProposal || pendingTransaction}
+                isDisabled={!canUserCreateProposal || pendingTransaction || isSubmitDisabled}
               >
                 {t('createProposal', { ns: 'proposal' })}
               </Button>
@@ -553,7 +555,10 @@ function StreamBuilder({
                                 label="Tranche duration"
                                 subLabel={
                                   <VStack wordBreak="break-all">
-                                    <Text>Duration in seconds</Text>
+                                    <Text>
+                                      Duration in seconds
+                                      {index === 0 && '. At least 1 second for the first trance.'}
+                                    </Text>
                                     <Text>
                                       {t('example', { ns: 'common' })}:{' '}
                                       <ExampleLabel bg="neutral-4">
@@ -567,7 +572,9 @@ function StreamBuilder({
                                   isRequired
                                   value={tranche.duration.bigintValue}
                                   placeholder={(SECONDS_IN_DAY * 365).toString()}
-                                  decimalPlaces={1}
+                                  decimalPlaces={0}
+                                  min={index === 0 ? '1' : undefined}
+                                  step={1}
                                   onChange={value =>
                                     handleUpdateStream(index, {
                                       tranches: stream.tranches.map((item, updatedTrancheIndex) =>
@@ -655,6 +662,7 @@ function StreamsBuilder({
                   px="1.5rem"
                   textStyle="display-lg"
                   color="lilac-0"
+                  justifyContent="space-between"
                 >
                   <Flex
                     alignItems="center"
@@ -668,26 +676,25 @@ function StreamsBuilder({
                       Stream {index + 1} ({stream.type})
                     </Text>
                   </Flex>
+                  {index !== 0 ||
+                    (streams.length !== 1 && (
+                      <IconButton
+                        icon={<MinusCircle />}
+                        aria-label="Remove stream"
+                        variant="unstyled"
+                        onClick={() =>
+                          setStreams(prevState =>
+                            prevState.filter((_, filteredIndex) => filteredIndex !== index),
+                          )
+                        }
+                        minWidth="auto"
+                        color="lilac-0"
+                        _disabled={{ opacity: 0.4, cursor: 'default' }}
+                        sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
+                        isDisabled={pendingTransaction}
+                      />
+                    ))}
                 </AccordionButton>
-                {index !== 0 || streams.length !== 1 ? (
-                  <IconButton
-                    icon={<MinusCircle />}
-                    aria-label="Remove stream"
-                    variant="unstyled"
-                    onClick={() =>
-                      setStreams(prevState =>
-                        prevState.filter((_, filteredIndex) => filteredIndex !== index),
-                      )
-                    }
-                    minWidth="auto"
-                    color="lilac-0"
-                    _disabled={{ opacity: 0.4, cursor: 'default' }}
-                    sx={{ '&:disabled:hover': { color: 'inherit', opacity: 0.4 } }}
-                    isDisabled={pendingTransaction}
-                  />
-                ) : (
-                  <Box h="2.25rem" />
-                )}
                 <StreamBuilder
                   stream={stream}
                   handleUpdateStream={handleUpdateStream}
@@ -854,6 +861,30 @@ export default function SablierProposalCreatePage() {
       toast(t('encodingFailedMessage', { ns: 'proposal' }));
     }
   };
+
+  const invalidStreams = useMemo(
+    () =>
+      streams.filter(stream => {
+        if (!stream.recipientAddress || !stream.tokenAddress || !stream.totalAmount) {
+          return true;
+        }
+        const invalidTranches = stream.tranches.filter((tranche, index) => {
+          if (
+            index === 0 &&
+            (!tranche.duration.bigintValue || !(tranche.duration.bigintValue > 0n))
+          ) {
+            return true;
+          }
+        });
+        if (invalidTranches.length > 0) {
+          return true;
+        }
+        return false;
+      }),
+    [streams],
+  );
+
+  if (!type || !daoAddress || !safe) {
   if (!type || !safeAddress || !safe) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
@@ -943,6 +974,7 @@ export default function SablierProposalCreatePage() {
               <StepButtons
                 pendingTransaction={pendingCreateTx}
                 values={values}
+                isSubmitDisabled={invalidStreams.length > 0}
               />
             </Flex>
           </GridItem>

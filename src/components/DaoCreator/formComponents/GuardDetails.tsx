@@ -1,16 +1,11 @@
 import { Text, InputGroup, InputRightElement, Flex, Alert } from '@chakra-ui/react';
 import { Info } from '@phosphor-icons/react';
+import { Field, FieldAttributes, FieldProps } from 'formik';
 import { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { formatUnits } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
-import {
-  ICreationStepProps,
-  BigIntValuePair,
-  GovernanceType,
-  AzoriusGovernance,
-} from '../../../types';
-import { formatBigIntDisplay } from '../../../utils/numberFormats';
+import { ICreationStepProps, GovernanceType, BigIntValuePair } from '../../../types';
+import { formatBigIntToHumanReadableString } from '../../../utils/numberFormats';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
@@ -18,27 +13,26 @@ import { LabelComponent } from '../../ui/forms/InputComponent';
 import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
+import { useParentSafeVotingWeight } from '../hooks/useParentSafeVotingWeight';
 import useStepRedirect from '../hooks/useStepRedirect';
 
 function GuardDetails(props: ICreationStepProps) {
-  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode } = props;
+  const { values, isSubmitting, transactionPending, isSubDAO, setFieldValue, mode, errors } = props;
+
   const {
     node: { safe },
     governance,
-    governanceContracts: { azoriusContractAddress },
     readOnly: { dao },
   } = useFractal();
   const { type } = governance;
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
-  const [totalParentVotes, setTotalParentVotes] = useState<bigint>();
   const { t } = useTranslation(['daoCreate', 'common', 'proposal']);
   const minutes = t('minutes', { ns: 'common' });
-  const azoriusGovernance = governance as AzoriusGovernance;
   const governanceFormType = values.essentials.governance;
 
   const handleNonceChange = useCallback(
     (nonce?: string) => {
-      setFieldValue('multisig.customNonce', nonce);
+      setFieldValue('multisig.customNonce', Number(nonce));
     },
     [setFieldValue],
   );
@@ -48,76 +42,39 @@ function GuardDetails(props: ICreationStepProps) {
       setFieldValue('multisig.customNonce', safe.nextNonce);
       setShowCustomNonce(true);
     }
-  }, [isSubDAO, azoriusContractAddress, type, setFieldValue, safe, dao, showCustomNonce]);
+  }, [isSubDAO, type, setFieldValue, safe, dao, showCustomNonce]);
+
+  const { totalParentVotingWeight, parentVotingQuorum } = useParentSafeVotingWeight();
 
   useEffect(() => {
-    // set the initial value for freezeGuard.freezeVotesThreshold
-    // and display helperFreezeVotesThreshold
-    if (!totalParentVotes) {
-      if (!type) return;
-
-      let parentVotes: bigint;
-
-      switch (type) {
-        case GovernanceType.AZORIUS_ERC20:
-        case GovernanceType.AZORIUS_ERC721:
-          if (
-            !azoriusGovernance ||
-            (!azoriusGovernance.votesToken && !azoriusGovernance.erc721Tokens)
-          )
-            return;
-          if (azoriusGovernance.votesToken) {
-            const normalized = formatUnits(
-              azoriusGovernance.votesToken.totalSupply,
-              azoriusGovernance.votesToken.decimals,
-            );
-
-            parentVotes = BigInt(normalized.substring(0, normalized.indexOf('.')));
-          } else if (azoriusGovernance.erc721Tokens) {
-            parentVotes = azoriusGovernance.erc721Tokens!.reduce(
-              (prev, curr) => curr.votingWeight * (curr.totalSupply || 1n) + prev,
-              0n,
-            );
-          } else {
-            parentVotes = 1n;
-          }
-          break;
-        case GovernanceType.MULTISIG:
-        default:
-          if (!safe) return;
-          parentVotes = BigInt(safe.owners.length);
-      }
-
-      let thresholdDefault: BigIntValuePair;
-
-      if (parentVotes === 1n) {
-        thresholdDefault = {
-          value: '1',
-          bigintValue: parentVotes,
-        };
-      } else {
-        thresholdDefault = {
-          value: parentVotes.toString(),
-          bigintValue: parentVotes / 2n,
-        };
-      }
-
-      setTotalParentVotes(parentVotes);
-      setFieldValue('freeze.freezeVotesThreshold', thresholdDefault);
+    if (!parentVotingQuorum || !totalParentVotingWeight) {
+      return;
     }
-  }, [
-    azoriusGovernance.votesToken,
-    safe,
-    totalParentVotes,
-    type,
-    setFieldValue,
-    azoriusGovernance,
-  ]);
+
+    let initialVotesThresholdBigIntValuePair: BigIntValuePair;
+
+    if (governance.type === GovernanceType.AZORIUS_ERC20) {
+      const actualTokenQuorum = (parentVotingQuorum * totalParentVotingWeight) / 100n;
+      initialVotesThresholdBigIntValuePair = {
+        bigintValue: actualTokenQuorum,
+        value: actualTokenQuorum.toString(),
+      };
+    } else {
+      initialVotesThresholdBigIntValuePair = {
+        bigintValue: parentVotingQuorum,
+        value: parentVotingQuorum.toString(),
+      };
+    }
+
+    setFieldValue('freeze.freezeVotesThreshold', initialVotesThresholdBigIntValuePair);
+  }, [governance.type, parentVotingQuorum, setFieldValue, totalParentVotingWeight]);
 
   useStepRedirect({ values });
 
-  const freezeHelper = totalParentVotes
-    ? t('helperFreezeVotesThreshold', { totalVotes: formatBigIntDisplay(totalParentVotes) })
+  const freezeHelper = totalParentVotingWeight
+    ? t('helperFreezeVotesThreshold', {
+        totalVotes: formatBigIntToHumanReadableString(totalParentVotingWeight),
+      })
     : null;
 
   return (
@@ -184,18 +141,29 @@ function GuardDetails(props: ICreationStepProps) {
             </>
           )}
           <ContentBoxTitle>{t('titleFreezeParams')}</ContentBoxTitle>
-          <LabelComponent
-            label={t('labelFreezeVotesThreshold')}
-            helper={freezeHelper || ''}
-            isRequired
-          >
-            <BigIntInput
-              value={values.freeze.freezeVotesThreshold.bigintValue}
-              onChange={valuePair => setFieldValue('freeze.freezeVotesThreshold', valuePair)}
-              decimalPlaces={0}
-              data-testid="guardConfig-freezeVotesThreshold"
-            />
-          </LabelComponent>
+
+          <Field name="freeze.freezeVotesThreshold">
+            {({ field }: FieldAttributes<FieldProps<BigIntValuePair | undefined>>) => (
+              <LabelComponent
+                label={t('labelFreezeVotesThreshold')}
+                helper={freezeHelper || ''}
+                isRequired
+                errorMessage={errors?.freeze?.freezeVotesThreshold?.bigintValue}
+              >
+                <BigIntInput
+                  isInvalid={!!errors?.freeze?.freezeVotesThreshold?.bigintValue}
+                  value={field.value?.bigintValue}
+                  currentValue={values.freeze.freezeVotesThreshold}
+                  onChange={valuePair => {
+                    setFieldValue('freeze.freezeVotesThreshold', valuePair);
+                  }}
+                  decimalPlaces={0}
+                  data-testid="guardConfig-freezeVotesThreshold"
+                />
+              </LabelComponent>
+            )}
+          </Field>
+
           <LabelComponent
             label={t('labelFreezeProposalPeriod')}
             helper={t('helperFreezeProposalPeriod')}

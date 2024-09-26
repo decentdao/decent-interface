@@ -35,6 +35,8 @@ export const DETAILS_SHADOW =
   '0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 0px 0px 1px rgba(16, 4, 20, 1)';
 
 export const TAB_SHADOW = '0 -1px 0 0 rgba(0, 0, 0, 0.24), 0 1px 0 0 rgba(255, 255, 255, 0.12)';
+export const DETAILS_BOX_SHADOW =
+  '0px 0px 0px 1px #100414, 0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset';
 /**
  * Max width for most informational Tooltips. However we don't add max width
  * to some Tooltips that shouldn't wrap no matter how long, such as token amounts.
@@ -42,6 +44,7 @@ export const TAB_SHADOW = '0 -1px 0 0 rgba(0, 0, 0, 0.24), 0 1px 0 0 rgba(255, 2
 export const TOOLTIP_MAXW = '18rem';
 export const CONTENT_MAXW = 'calc(100vw - 3rem)';
 export const ADDRESS_MULTISIG_METADATA = '0xdA00000000000000000000000000000000000Da0';
+export const SENTINEL_ADDRESS = '0x0000000000000000000000000000000000000001';
 
 export const SIDEBAR_WIDTH = '4.25rem';
 

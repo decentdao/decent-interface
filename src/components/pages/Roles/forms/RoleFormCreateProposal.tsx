@@ -1,25 +1,83 @@
-import { Box, Button, Flex, FormControl, Show } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, Show, Text, Icon } from '@chakra-ui/react';
+import { SquaresFour, ArrowsDownUp, Trash } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress, Hex } from 'viem';
+import { formatUnits, getAddress, Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
+import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { Card } from '../../../ui/cards/Card';
 import { CustomNonceInput } from '../../../ui/forms/CustomNonceInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
+import { AddActions } from '../../../ui/modals/AddActions';
+import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
 import { EditedRole, RoleDetailsDrawerRoleHatProp, RoleFormValues } from '../types';
 
+function SendAssetsAction({
+  index,
+  action,
+  onRemove,
+}: {
+  index: number;
+  action: SendAssetsData;
+  onRemove: (index: number) => void;
+}) {
+  const { t } = useTranslation('common');
+  const { displayName } = useDisplayName(action.destinationAddress);
+
+  return (
+    <Card my="1rem">
+      <Flex justifyContent="space-between">
+        <Flex
+          alignItems="center"
+          gap="0.5rem"
+        >
+          <Icon
+            as={ArrowsDownUp}
+            w="1.5rem"
+            h="1.5rem"
+            color="lilac-0"
+          />
+          <Text>{t('transfer')}</Text>
+          <Text color="lilac-0">
+            {formatUnits(action.transferAmount, action.asset.decimals)} {action.asset.symbol}
+          </Text>
+          <Text>{t('to').toLowerCase()}</Text>
+          <Text color="lilac-0">{displayName}</Text>
+        </Flex>
+        <Button
+          color="red-0"
+          variant="tertiary"
+          size="sm"
+          onClick={() => {
+            onRemove(index);
+          }}
+        >
+          <Icon as={Trash} />
+        </Button>
+      </Flex>
+    </Card>
+  );
+}
+
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
   const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerRoleHatProp>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
-  const { values, isSubmitting, submitForm } = useFormikContext<RoleFormValues>();
+  const {
+    values,
+    setFieldValue: setFieldValueTopLevel,
+    isSubmitting,
+    submitForm,
+  } = useFormikContext<RoleFormValues>();
+
   const editedRoles = useMemo<
     (RoleDetailsDrawerRoleHatProp & {
       editedRole: EditedRole;
@@ -54,6 +112,8 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
                   amount: payment.amount,
                   asset: payment.asset,
                   cliffDate: payment.cliffDate,
+                  withdrawableAmount: 0n,
+                  isCancelled: false,
                 };
               })
             : [],
@@ -79,6 +139,10 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   );
 
   const handleCloseDrawer = () => setDrawerViewingRole(undefined);
+
+  const addSendAssetsAction = (sendAssetsAction: SendAssetsData) => {
+    setFieldValueTopLevel('actions', [...values.actions, sendAssetsAction]);
+  };
 
   return (
     <Box maxW="736px">
@@ -155,25 +219,52 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           </Field>
         </FormControl>
       </Flex>
-      <Box
-        p="1rem"
-        bg="neutral-2"
-        boxShadow={CARD_SHADOW}
-        borderRadius="0.5rem"
+
+      <Flex
+        mt={4}
+        mb={2}
+        alignItems="center"
       >
-        {editedRoles.map((role, index) => {
-          return (
-            <RoleCardShort
-              key={index}
-              name={role.name}
-              handleRoleClick={() => {
-                setDrawerViewingRole(role);
-              }}
-              editStatus={role.editedRole?.status}
-            />
-          );
-        })}
-      </Box>
+        <Icon
+          as={SquaresFour}
+          w="1.5rem"
+          h="1.5rem"
+        />
+        <Text
+          textStyle="display-lg"
+          ml={2}
+        >
+          {t('actions', { ns: 'actions' })}
+        </Text>
+      </Flex>
+      {editedRoles.map((role, index) => {
+        return (
+          <RoleCardShort
+            key={index}
+            name={role.name}
+            handleRoleClick={() => {
+              setDrawerViewingRole(role);
+            }}
+            editStatus={role.editedRole?.status}
+          />
+        );
+      })}
+      {values.actions.map((action, index) => (
+        <SendAssetsAction
+          action={action}
+          key={index}
+          index={index}
+          onRemove={idx => {
+            setFieldValueTopLevel(
+              'actions',
+              values.actions.filter((_, i) => i !== idx),
+            );
+          }}
+        />
+      ))}
+
+      <AddActions addSendAssetsAction={addSendAssetsAction} />
+
       <Flex
         gap="1rem"
         mt="1rem"

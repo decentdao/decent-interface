@@ -1,4 +1,3 @@
-import { ContractEvent } from './contract';
 import { EthAddress } from './utils';
 
 export enum TokenEventType {
@@ -6,10 +5,11 @@ export enum TokenEventType {
   WITHDRAW = 'WITHDRAW',
 }
 
-export interface TokenEvent extends ContractEvent {
+export interface TokenEvent {
   transactionHash: string;
   blockNumber: number; // TODO: PROBABLY not being used. Remove?
   eventType: TokenEventType;
+  blockTimestamp: number;
 }
 
 export type TokenBalance = {
@@ -147,15 +147,4 @@ export enum TransferType {
 export enum TokenType {
   ERC20,
   ERC721,
-}
-
-export type AssetTotals = {
-  bi: bigint;
-  symbol: string;
-  decimals: number;
-};
-
-export enum TreasuryActivityTypes {
-  DEPOSIT,
-  WITHDRAW,
 }
