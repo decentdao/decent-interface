@@ -28,8 +28,8 @@ function FixedDate({ formIndex }: { formIndex: number }) {
     });
   };
 
-  const setStartDate = values?.roleEditing?.payments?.[formIndex]?.startDate;
-  const setEndDate = values?.roleEditing?.payments?.[formIndex]?.endDate;
+  const selectedStartDate = values?.roleEditing?.payments?.[formIndex]?.startDate;
+  const selectedEndDate = values?.roleEditing?.payments?.[formIndex]?.endDate;
 
   return (
     <Box>
@@ -50,7 +50,7 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           <GridItem area="start">
             <DecentDatePicker
               type="startDate"
-              maxDate={values?.roleEditing?.payments?.[formIndex]?.endDate}
+              maxDate={selectedEndDate ? addDays(selectedEndDate, -2) : undefined}
               formIndex={formIndex}
               onChange={date => onDateChange(date, 'startDate')}
             />
@@ -69,7 +69,7 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           <GridItem area="end">
             <DecentDatePicker
               type="endDate"
-              minDate={values?.roleEditing?.payments?.[formIndex]?.startDate}
+              minDate={selectedStartDate ? addDays(selectedStartDate, 2) : undefined}
               formIndex={formIndex}
               onChange={date => onDateChange(date, 'endDate')}
             />
@@ -89,8 +89,8 @@ function FixedDate({ formIndex }: { formIndex: number }) {
         <DecentDatePicker
           type="cliffDate"
           formIndex={formIndex}
-          minDate={setStartDate ? addDays(setStartDate, 1) : undefined}
-          maxDate={setEndDate ? addDays(setEndDate, -1) : undefined}
+          minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
+          maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
           onChange={(date: Date) => {
             setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, date);
           }}
