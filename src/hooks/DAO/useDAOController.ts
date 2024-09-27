@@ -56,5 +56,5 @@ export default function useDAOController() {
   useKeyValuePairs();
   useHatsTree();
 
-  return { invalidQuery, wrongNetwork, errorLoading };
+  return { invalidQuery, wrongNetwork, errorLoading, urlAddressPrefix: addressPrefix };
 }
