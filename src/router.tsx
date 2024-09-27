@@ -67,6 +67,7 @@ export const router = (addressPrefix: string) =>
               // @ts-ignore:next-line
               loader: ({ params: { daoAddress } }) =>
                 redirect(DAO_ROUTES.modifyGovernance.relative(addressPrefix, daoAddress)),
+              // @todo - this redirect doesn't work anymore for some reason
             },
             {
               path: DAO_ROUTES.hierarchy.path,
@@ -105,6 +106,7 @@ export const router = (addressPrefix: string) =>
               // @ts-ignore:next-line
               loader: ({ params: { daoAddress } }) =>
                 redirect(DAO_ROUTES.newSubDao.relative(addressPrefix, daoAddress)),
+              // @todo - this redirect doesn't work anymore for some reason
             },
             {
               path: 'proposal-templates',
@@ -122,6 +124,7 @@ export const router = (addressPrefix: string) =>
                   // @ts-ignore:next-line
                   loader: ({ params: { daoAddress } }) =>
                     redirect(DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)),
+                  // @todo - this redirect doesn't work anymore for some reason
                 },
               ],
             },
@@ -145,6 +148,7 @@ export const router = (addressPrefix: string) =>
                   // @ts-ignore:next-line
                   loader: ({ params: { daoAddress } }) =>
                     redirect(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)),
+                  // @todo - this redirect doesn't work anymore for some reason
                 },
                 {
                   path: 'new/sablier/*',
@@ -158,6 +162,7 @@ export const router = (addressPrefix: string) =>
                       DAO_ROUTES.proposalNew
                         .relative(addressPrefix, daoAddress)
                         .replace('new', 'new/sablier'),
+                      // @todo - this redirect doesn't work anymore for some reason
                     ),
                 },
               ],
@@ -179,6 +184,7 @@ export const router = (addressPrefix: string) =>
           // @ts-ignore:next-line
           loader: ({ params: { daoAddress } }) =>
             redirect(DAO_ROUTES.dao.relative(addressPrefix, daoAddress)),
+          // @todo - this redirect doesn't work anymore for some reason
         },
         {
           path: '*', // 404
