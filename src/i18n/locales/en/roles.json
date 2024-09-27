@@ -81,6 +81,7 @@
   "roleInfoErrorPaymentFixedDateStartDateRequired": "Start date is required.",
   "roleInfoErrorPaymentFixedDateEndDateRequired": "End date is required.",
   "roleInfoErrorPaymentFixedDateEndDateAfterStartDate": "End date must be after start date.",
+  "roleInfoErrorPaymentFixedDateCliffDateBetweenStartAndEndDate": "Cliff date must be between start and end date.",
   "roleInfoErrorPaymentScheduleOrFixedDateRequired": "Payment schedule or fixed dates are required.",
   "roleInfoErrorPaymentScheduleInvalid": "Invalid payment schedule.",
   "cancelPayment": "Cancel Payment"

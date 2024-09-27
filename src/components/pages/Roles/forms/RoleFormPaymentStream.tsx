@@ -1,10 +1,11 @@
 import { Box, Button, Flex, FormControl, Grid, GridItem, Icon } from '@chakra-ui/react';
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
+import { addDays } from 'date-fns';
 import { FormikErrors, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
-import { DecentDatePicker, DecentDatePickerRange } from '../../../ui/utils/DecentDatePicker';
+import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import { RoleFormValues, RoleHatFormValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
@@ -26,6 +27,10 @@ function FixedDate({ formIndex }: { formIndex: number }) {
       endDate,
     });
   };
+
+  const setStartDate = values?.roleEditing?.payments?.[formIndex]?.startDate;
+  const setEndDate = values?.roleEditing?.payments?.[formIndex]?.endDate;
+
   return (
     <Box>
       <FormControl my="1rem">
@@ -45,6 +50,7 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           <GridItem area="start">
             <DecentDatePicker
               type="startDate"
+              maxDate={values?.roleEditing?.payments?.[formIndex]?.endDate}
               formIndex={formIndex}
               onChange={date => onDateChange(date, 'startDate')}
             />
@@ -63,6 +69,7 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           <GridItem area="end">
             <DecentDatePicker
               type="endDate"
+              minDate={values?.roleEditing?.payments?.[formIndex]?.startDate}
               formIndex={formIndex}
               onChange={date => onDateChange(date, 'endDate')}
             />
@@ -82,6 +89,8 @@ function FixedDate({ formIndex }: { formIndex: number }) {
         <DecentDatePicker
           type="cliffDate"
           formIndex={formIndex}
+          minDate={setStartDate ? addDays(setStartDate, 1) : undefined}
+          maxDate={setEndDate ? addDays(setEndDate, -1) : undefined}
           onChange={(date: Date) => {
             setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, date);
           }}

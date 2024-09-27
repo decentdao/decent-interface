@@ -112,7 +112,9 @@ export const useRolesSchema = () => {
                           })
                           .test({
                             name: 'cliff-date-before-end-date',
-                            message: t('roleInfoErrorPaymentFixedDateCliffDateBeforeEndDate'),
+                            message: t(
+                              'roleInfoErrorPaymentFixedDateCliffDateBetweenStartAndEndDate',
+                            ),
                             test: _payments => {
                               if (!_payments) return false;
                               const { cliffDate, startDate, endDate } = _payments;
