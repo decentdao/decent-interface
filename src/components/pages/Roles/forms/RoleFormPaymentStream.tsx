@@ -2,6 +2,7 @@ import { Box, Button, Flex, FormControl, Grid, GridItem, Icon } from '@chakra-ui
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import { addDays } from 'date-fns';
 import { FormikErrors, useFormikContext } from 'formik';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
@@ -13,6 +14,7 @@ import { SectionTitle } from './RoleFormSectionTitle';
 function FixedDate({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const [showCliffDatePicker, setShowCliffDatePicker] = useState(false);
 
   const onDateChange = (date: Date, type: 'startDate' | 'endDate') => {
     const payment = values?.roleEditing?.payments?.[formIndex];
@@ -32,6 +34,9 @@ function FixedDate({ formIndex }: { formIndex: number }) {
     if (cliffDate && ((startDate && startDate >= cliffDate) || (endDate && endDate <= cliffDate))) {
       setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, undefined);
     }
+
+    // Show cliff date picker if both start and end dates are set and if there is at least a day between them
+    setShowCliffDatePicker(!!startDate && !!endDate && addDays(startDate, 1) < endDate);
   };
 
   const selectedStartDate = values?.roleEditing?.payments?.[formIndex]?.startDate;
@@ -82,26 +87,28 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           </GridItem>
         </Grid>
       </FormControl>
-      <FormControl
-        my="1rem"
-        display="flex"
-        flexDir="column"
-        gap="1rem"
-      >
-        <SectionTitle
-          title={t('cliff')}
-          subTitle={t('cliffSubTitle')}
-        />
-        <DecentDatePicker
-          type="cliffDate"
-          formIndex={formIndex}
-          minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
-          maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
-          onChange={(date: Date) => {
-            setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, date);
-          }}
-        />
-      </FormControl>
+      {showCliffDatePicker && (
+        <FormControl
+          my="1rem"
+          display="flex"
+          flexDir="column"
+          gap="1rem"
+        >
+          <SectionTitle
+            title={t('cliff')}
+            subTitle={t('cliffSubTitle')}
+          />
+          <DecentDatePicker
+            type="cliffDate"
+            formIndex={formIndex}
+            minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
+            maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
+            onChange={(date: Date) => {
+              setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, date);
+            }}
+          />
+        </FormControl>
+      )}
     </Box>
   );
 }
