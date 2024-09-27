@@ -115,12 +115,12 @@ export const useDecentTreasury = () => {
       assetsDeFi,
       assetsNonFungible,
       totalUsdValue,
-      transfers: null, // transfers not yet loaded. these are setup hereafter
+      transfers: null, // transfers not yet loaded. these are setup below
     };
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
 
-    const tokenAddresses = flattenedTransfers
+    const tokenAddressesOfTransfers = flattenedTransfers
       // map down to just the addresses, with a type of `string | undefined`
       .map(transfer => transfer.tokenAddress)
       // no undefined or null addresses
@@ -132,17 +132,30 @@ export const useDecentTreasury = () => {
 
     // Instead of this block of code, check the commented out snippet
     // below this for a half-implemented alternative.
-    const tokenData = await Promise.all(
-      tokenAddresses.map(async addr => {
+    const transfersTokenInfo = await Promise.all(
+      tokenAddressesOfTransfers.map(async addr => {
         try {
           return await safeAPI.getToken(addr);
         } catch (e) {
-          setTimeout(async () => {
-            // @note retry fetching token data in case of rate limit
-            if (addr) {
-              return safeAPI.getToken(addr);
-            }
-          }, 300);
+          const fallbackTokenData = tokenBalances?.find(
+            tokenBalanceData => getAddress(tokenBalanceData.tokenAddress) === addr,
+          );
+          if (!fallbackTokenData) {
+            return {
+              address: addr,
+              name: 'Unknown',
+              symbol: '???',
+              decimals: 18,
+            };
+          }
+
+          return {
+            address: addr,
+            name: fallbackTokenData?.name,
+            symbol: fallbackTokenData?.symbol,
+            decimals: fallbackTokenData?.decimals,
+            logoUri: fallbackTokenData?.logo,
+          };
         }
       }),
     );
@@ -185,11 +198,11 @@ export const useDecentTreasury = () => {
         };
         const transferTokenAddress = transfer.tokenAddress;
         if (transferTokenAddress) {
-          const token = tokenData.find(
+          const tokenData = transfersTokenInfo.find(
             _token => _token && getAddress(_token.address) === getAddress(transferTokenAddress),
           );
-          if (token) {
-            tokenInfo = token;
+          if (tokenData) {
+            tokenInfo = tokenData;
           }
         }
 
