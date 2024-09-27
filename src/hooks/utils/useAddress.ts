@@ -34,8 +34,18 @@ const useAddress = (addressInput: string) => {
       return;
     }
 
+    let normalizedAddress: string;
+    try {
+      normalizedAddress = normalize(addressInput);
+    } catch (error) {
+      setAddress(undefined);
+      setIsValid(false);
+      setIsLoading(false);
+      return;
+    }
+
     publicClient
-      .getEnsAddress({ name: normalize(addressInput) })
+      .getEnsAddress({ name: normalizedAddress })
       .then(resolvedAddress => {
         if (resolvedAddress) {
           setAddress(resolvedAddress);
