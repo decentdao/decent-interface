@@ -12,14 +12,18 @@ import { SectionTitle } from './RoleFormSectionTitle';
 function FixedDate({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const onRangeChange = (dateRange: [Date, Date]) => {
+
+  const onDateChange = (date: Date, type: 'startDate' | 'endDate') => {
     const payment = values?.roleEditing?.payments?.[formIndex];
     if (!payment) return;
 
+    const startDate = type === 'startDate' ? date : payment.startDate;
+    const endDate = type === 'endDate' ? date : payment.endDate;
+
     setFieldValue(`roleEditing.payments[${formIndex}]`, {
       ...payment,
-      startDate: dateRange[0],
-      endDate: dateRange[1],
+      startDate,
+      endDate,
     });
   };
   return (
@@ -39,10 +43,10 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           alignItems="center"
         >
           <GridItem area="start">
-            <DecentDatePickerRange
+            <DecentDatePicker
               type="startDate"
               formIndex={formIndex}
-              onChange={onRangeChange}
+              onChange={date => onDateChange(date, 'startDate')}
             />
           </GridItem>
           <GridItem
@@ -57,10 +61,10 @@ function FixedDate({ formIndex }: { formIndex: number }) {
             />
           </GridItem>
           <GridItem area="end">
-            <DecentDatePickerRange
+            <DecentDatePicker
               type="endDate"
               formIndex={formIndex}
-              onChange={onRangeChange}
+              onChange={date => onDateChange(date, 'endDate')}
             />
           </GridItem>
         </Grid>
