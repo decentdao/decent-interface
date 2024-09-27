@@ -12,7 +12,6 @@ import { usePublicClient } from 'wagmi';
 import { logError } from '../../../../helpers/errorLogging';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   CreateProposalMetadata,
   VotingStrategyType,
@@ -29,7 +28,6 @@ type OnProposalLoaded = (proposal: AzoriusProposal) => void;
 
 export const useAzoriusProposals = () => {
   const currentAzoriusAddress = useRef<string>();
-  const network = useNetworkConfig();
 
   const {
     governanceContracts: {
@@ -200,20 +198,6 @@ export const useAzoriusProposals = () => {
       };
 
       for (const proposalCreatedEvent of proposalCreatedEvents) {
-        if (
-          // oops
-          network.chain.id === 1 && // mainnet
-          azoriusContract?.address === '0x61BC890acf131f8dbd9C1DF8638b3c333dc1c6eC' && // decent dao's azorius
-          proposalCreatedEvent.args.proposalId // proposal id 0
-        ) {
-          // skip
-          action.dispatch({
-            type: FractalGovernanceAction.SKIPPED_A_PROPOSAL,
-            payload: null,
-          });
-
-          continue;
-        }
         if (proposalCreatedEvent.args.proposalId === undefined) {
           continue;
         }
@@ -322,7 +306,7 @@ export const useAzoriusProposals = () => {
         payload: true,
       });
     },
-    [action, azoriusContract?.address, moduleAzoriusAddress, network.chain.id, t],
+    [action, moduleAzoriusAddress, t],
   );
 
   return async (proposalLoaded: OnProposalLoaded) =>
