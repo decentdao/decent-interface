@@ -26,6 +26,12 @@ function FixedDate({ formIndex }: { formIndex: number }) {
       startDate,
       endDate,
     });
+
+    // If this date change interferes with the cliff date, reset the cliff date
+    const cliffDate = payment.cliffDate;
+    if (cliffDate && ((startDate && startDate >= cliffDate) || (endDate && endDate <= cliffDate))) {
+      setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, undefined);
+    }
   };
 
   const selectedStartDate = values?.roleEditing?.payments?.[formIndex]?.startDate;
@@ -50,7 +56,7 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           <GridItem area="start">
             <DecentDatePicker
               type="startDate"
-              maxDate={selectedEndDate ? addDays(selectedEndDate, -2) : undefined}
+              maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
               formIndex={formIndex}
               onChange={date => onDateChange(date, 'startDate')}
             />
@@ -69,7 +75,7 @@ function FixedDate({ formIndex }: { formIndex: number }) {
           <GridItem area="end">
             <DecentDatePicker
               type="endDate"
-              minDate={selectedStartDate ? addDays(selectedStartDate, 2) : undefined}
+              minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
               formIndex={formIndex}
               onChange={date => onDateChange(date, 'endDate')}
             />
