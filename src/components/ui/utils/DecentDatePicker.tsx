@@ -184,9 +184,13 @@ export function DecentDatePicker({
   onChange,
   type,
   formIndex,
+  minDate,
+  maxDate,
 }: {
   onChange: (date: Date) => void;
   type: 'startDate' | 'endDate' | 'cliffDate';
+  minDate?: Date;
+  maxDate?: Date;
   formIndex: number;
 }) {
   const { values } = useFormikContext<RoleFormValues>();
@@ -213,6 +217,8 @@ export function DecentDatePicker({
       />
       <Divider my="1.5rem" />
       <Calendar
+        minDate={minDate}
+        maxDate={maxDate}
         formatShortWeekday={(_, date) => date.toString().slice(0, 2)}
         prevLabel={<Icon as={CaretLeft} />}
         nextLabel={<Icon as={CaretRight} />}
