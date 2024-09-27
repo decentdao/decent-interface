@@ -2,7 +2,6 @@ import { Box, Button, Flex, FormControl, Grid, GridItem, Icon } from '@chakra-ui
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
 import { addDays } from 'date-fns';
 import { FormikErrors, useFormikContext } from 'formik';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
@@ -14,10 +13,13 @@ import { SectionTitle } from './RoleFormSectionTitle';
 function FixedDate({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const [showCliffDatePicker, setShowCliffDatePicker] = useState(false);
+  const payment = values?.roleEditing?.payments?.[formIndex];
+
+  // Show cliff date picker if both start and end dates are set and if there is at least a day between them
+  const showCliffDatePicker =
+    !!payment?.startDate && !!payment?.endDate && addDays(payment.startDate, 1) < payment.endDate;
 
   const onDateChange = (date: Date, type: 'startDate' | 'endDate') => {
-    const payment = values?.roleEditing?.payments?.[formIndex];
     if (!payment) return;
 
     const startDate = type === 'startDate' ? date : payment.startDate;
@@ -34,9 +36,6 @@ function FixedDate({ formIndex }: { formIndex: number }) {
     if (cliffDate && ((startDate && startDate >= cliffDate) || (endDate && endDate <= cliffDate))) {
       setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, undefined);
     }
-
-    // Show cliff date picker if both start and end dates are set and if there is at least a day between them
-    setShowCliffDatePicker(!!startDate && !!endDate && addDays(startDate, 1) < endDate);
   };
 
   const selectedStartDate = values?.roleEditing?.payments?.[formIndex]?.startDate;
