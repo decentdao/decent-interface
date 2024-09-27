@@ -2,9 +2,12 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useSwitchChain } from 'wagmi';
+import { logError } from '../helpers/errorLogging';
 import useDAOController from '../hooks/DAO/useDAOController';
 import { useUpdateSafeData } from '../hooks/utils/useUpdateSafeData';
 import { useFractal } from '../providers/App/AppProvider';
+import { getChainIdFromPrefix } from '../utils/url';
 import LoadingProblem from './LoadingProblem';
 
 const useTemporaryProposals = () => {
@@ -32,13 +35,25 @@ const useTemporaryProposals = () => {
 };
 
 export default function DAOController() {
-  const { errorLoading, wrongNetwork, invalidQuery } = useDAOController();
+  const { switchChain } = useSwitchChain();
+  const { errorLoading, wrongNetwork, invalidQuery, urlAddressPrefix } = useDAOController();
   useUpdateSafeData();
   const {
     node: { daoName },
   } = useFractal();
 
   useTemporaryProposals();
+
+  useEffect(() => {
+    if (urlAddressPrefix && wrongNetwork) {
+      try {
+        switchChain({ chainId: getChainIdFromPrefix(urlAddressPrefix) });
+        window.location.reload();
+      } catch (e) {
+        logError(e);
+      }
+    }
+  }, [wrongNetwork, switchChain, urlAddressPrefix]);
 
   useEffect(() => {
     if (daoName) {
