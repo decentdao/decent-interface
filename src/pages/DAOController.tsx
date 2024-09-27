@@ -48,6 +48,7 @@ export default function DAOController() {
     if (urlAddressPrefix && wrongNetwork) {
       try {
         switchChain({ chainId: getChainIdFromPrefix(urlAddressPrefix) });
+        window.location.reload();
       } catch (e) {
         logError(e);
       }
