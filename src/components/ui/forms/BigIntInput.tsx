@@ -149,7 +149,7 @@ export function BigIntInput({
   useEffect(() => {
     if (!inputValue || inputValue === currentValue?.value) return;
     if (currentValue?.bigintValue === 0n) setInputValue('');
-    if (currentValue?.value !== inputValue) setInputValue(currentValue?.value || '');
+    if (currentValue?.value !== inputValue) setInputValue(currentValue?.value || inputValue);
   }, [currentValue, inputValue]);
 
   // if the decimalPlaces change, need to update the value
