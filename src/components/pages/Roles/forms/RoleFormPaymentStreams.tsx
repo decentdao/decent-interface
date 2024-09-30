@@ -51,19 +51,24 @@ export function RoleFormPaymentStreams() {
               // @note don't render if form isn't valid
               if (!payment.amount || !payment.asset || !payment.startDate || !payment.endDate)
                 return null;
+
+              const canBeCancelled =
+                // @note can not cancel a payment on a new role
+                values.roleEditing?.id !== undefined &&
+                // @note can not cancel a pending creation
+                payment.streamId !== undefined &&
+                // @note can not cancel a stream that is already cancelled or ended
+                !payment.isCancelled &&
+                !!payment.endDate &&
+                payment.endDate.getTime() > Date.now();
               return (
                 <RolePaymentDetails
                   key={index}
-                  roleHatId={values.roleEditing?.id}
-                  showCancel={
-                    // @note can not cancel a new role
-                    values.roleEditing?.id !== undefined &&
-                    // @note can not cancel a pending creation
-                    payment.streamId !== undefined &&
-                    // @note can not cancel a stream that is already cancelled or ended
-                    !payment.isCancelled &&
-                    !!payment.endDate &&
-                    payment.endDate.getTime() > Date.now()
+                  showCancel={canBeCancelled}
+                  onClick={
+                    canBeCancelled
+                      ? () => setFieldValue('roleEditing.roleEditingPaymentIndex', index)
+                      : undefined
                   }
                   payment={{
                     streamId: payment.streamId,

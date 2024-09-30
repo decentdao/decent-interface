@@ -1,0 +1,56 @@
+import { Box, Button, Flex, Text } from '@chakra-ui/react';
+import { WarningCircle, Trash } from '@phosphor-icons/react';
+import { useTranslation } from 'react-i18next';
+
+export default function PaymentCancelConfirmModal({
+  onSubmit,
+  onClose,
+}: {
+  onSubmit: () => void;
+  onClose: () => void;
+}) {
+  const { t } = useTranslation(['roles', 'common']);
+
+  return (
+    <Flex
+      gap="1rem"
+      flexDirection="column"
+    >
+      <Flex
+        justifyContent="center"
+        alignItems="center"
+      >
+        <WarningCircle size="40" />
+      </Flex>
+      <Box
+        px={4}
+        textAlign="center"
+      >
+        <Text textStyle="display-xl">{t('confirmCancelPaymentTitle')}</Text>
+        <Text>{t('confirmCancelPaymentBody')}</Text>
+      </Box>
+      <Flex
+        gap="1rem"
+        justifyContent="space-between"
+        mt="0.5rem"
+      >
+        <Button
+          color="red-1"
+          borderColor="red-1"
+          _hover={{ color: 'red-0', borderColor: 'red-0' }}
+          variant="secondary"
+          leftIcon={<Trash />}
+          onClick={onSubmit}
+        >
+          {t('cancelPayment')}
+        </Button>
+        <Button
+          onClick={onClose}
+          width="100%"
+        >
+          {t('cancel', { ns: 'common' })}
+        </Button>
+      </Flex>
+    </Flex>
+  );
+}

@@ -84,5 +84,9 @@
   "roleInfoErrorPaymentFixedDateCliffDateBetweenStartAndEndDate": "Cliff date must be between start and end date.",
   "roleInfoErrorPaymentScheduleOrFixedDateRequired": "Payment schedule or fixed dates are required.",
   "roleInfoErrorPaymentScheduleInvalid": "Invalid payment schedule.",
-  "cancelPayment": "Cancel Payment"
+  "cancelPayment": "Cancel Payment",
+  "cancelled": "Canceled",
+  "cancelPaymentInfoMessage": "These values can’t be edited. To update them, please cancel this payment and create a new one.",
+  "confirmCancelPaymentTitle": "Are you sure you want to cancel this payment?",
+  "confirmCancelPaymentBody": "This action cannot be undone."
 }
