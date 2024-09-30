@@ -8,12 +8,15 @@ import {
   paymentSorterByStartDate,
   paymentSorterByActiveStatus,
 } from '../../../../store/roles';
+import { ModalType } from '../../../ui/modals/ModalProvider';
+import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { RolePaymentDetails } from '../RolePaymentDetails';
 import { RoleFormValues, SablierPaymentFormValues } from '../types';
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue, validateForm } = useFormikContext<RoleFormValues>();
+  const cancelModal = useDecentModal(ModalType.NONE);
   const payments = values.roleEditing?.payments;
 
   const sortedPayments = useMemo(
@@ -70,6 +73,14 @@ export function RoleFormPaymentStreams() {
                       ? () => setFieldValue('roleEditing.roleEditingPaymentIndex', index)
                       : undefined
                   }
+                  onCancel={() => {
+                    setFieldValue(`roleEditing.payments.${index}`, {
+                      ...payment,
+                      isCancelling: true,
+                    });
+                    cancelModal();
+                    setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+                  }}
                   payment={{
                     streamId: payment.streamId,
                     amount: payment.amount,

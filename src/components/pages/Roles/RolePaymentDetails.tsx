@@ -82,6 +82,7 @@ interface RolePaymentDetailsProps {
     withdrawableAmount?: bigint;
   };
   onClick?: () => void;
+  onCancel?: () => void;
   showWithdraw?: boolean;
   showCancel?: boolean;
 }
@@ -92,6 +93,7 @@ export function RolePaymentDetails({
   roleHatWearerAddress,
   roleHatSmartAddress,
   showCancel,
+  onCancel,
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
@@ -203,7 +205,7 @@ export function RolePaymentDetails({
   const [touchEnd, setTouchEnd] = useState<number>();
 
   // the required distance between touchStart and touchEnd to be detected as a swipe
-  const minSwipeDistance = 50;
+  const minSwipeDistance = 30;
 
   const onTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     setTouchEnd(undefined); // otherwise the swipe is fired even with usual touch events
@@ -223,6 +225,16 @@ export function RolePaymentDetails({
       setShowInlineDelete(true);
     }
   };
+
+  const handleConfirmCancelPayment = useCallback(() => {
+    if (onCancel) {
+      onCancel();
+    }
+  }, [onCancel]);
+
+  const confirmCancelPayment = useDecentModal(ModalType.CONFIRM_CANCEL_PAYMENT, {
+    onSubmit: handleConfirmCancelPayment,
+  });
 
   return (
     <Flex
@@ -397,7 +409,7 @@ export function RolePaymentDetails({
         </Box>
       </Box>
       <Show below="md">
-        <Flex
+        <Button
           backgroundColor="red-0"
           height="100%"
           zIndex={1}
@@ -416,9 +428,11 @@ export function RolePaymentDetails({
           justifyContent="center"
           py="1rem"
           opacity={showInlineDelete ? '1' : '0'}
+          variant="unstyled"
+          onClick={confirmCancelPayment}
         >
           <Trash size="24" />
-        </Flex>
+        </Button>
       </Show>
     </Flex>
   );
