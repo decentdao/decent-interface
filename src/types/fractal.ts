@@ -261,7 +261,6 @@ export interface Governance {
   allProposalsLoaded: boolean;
   proposals: FractalProposal[] | null;
   pendingProposals: string[] | null;
-  skippedProposalCount: number;
   proposalTemplates?: ProposalTemplate[] | null;
   tokenClaimContractAddress?: Address;
 }
