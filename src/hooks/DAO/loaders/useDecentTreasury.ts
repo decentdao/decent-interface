@@ -144,17 +144,17 @@ export const useDecentTreasury = () => {
             return {
               address: addr,
               name: 'Unknown',
-              symbol: '???',
+              symbol: '---',
               decimals: 18,
             };
           }
 
           return {
             address: addr,
-            name: fallbackTokenData?.name,
-            symbol: fallbackTokenData?.symbol,
-            decimals: fallbackTokenData?.decimals,
-            logoUri: fallbackTokenData?.logo,
+            name: fallbackTokenData.name,
+            symbol: fallbackTokenData.symbol,
+            decimals: fallbackTokenData.decimals,
+            logoUri: fallbackTokenData.logo,
           };
         }
       }),
