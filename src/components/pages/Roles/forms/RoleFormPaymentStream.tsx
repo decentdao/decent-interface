@@ -174,138 +174,138 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   });
 
   return (
-    <><Box
-      px={{ base: '1rem', md: 0 }}
-      pb="1rem"
-      bg="neutral-2"
-      boxShadow={{
-        base: CARD_SHADOW,
-        md: 'unset',
-      }}
-      mt="-3.5rem"
-      borderRadius="0.5rem"
-      position="relative"
-    >
-      <Button
-        variant="tertiary"
-        p="0"
-        _hover={{
-          bg: 'transparent',
+    <>
+      <Box
+        px={{ base: '1rem', md: 0 }}
+        pb="1rem"
+        bg="neutral-2"
+        boxShadow={{
+          base: CARD_SHADOW,
+          md: 'unset',
         }}
-        mb="1rem"
-        leftIcon={<ArrowLeft size="1.5rem" />}
-        isDisabled={!values?.roleEditing?.payments?.[formIndex]}
-        onClick={() => {
-          if (!values?.roleEditing?.payments?.[formIndex] || !hatId) return;
-          const isExistingPayment = !!streamId ? getPayment(hatId, streamId) : undefined;
-          // if payment is new, and unedited, remove it
-          if (
-            formIndex === values.roleEditing.payments.length - 1 &&
-            !values.roleEditing.editedRole &&
-            !isExistingPayment
-          ) {
-            setFieldValue(
-              'roleEditing.payments',
-              values.roleEditing.payments.filter((_, index) => index !== formIndex),
-            );
-          }
-          setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
-        }}
+        mt="-3.5rem"
+        borderRadius="0.5rem"
+        position="relative"
       >
-        {t('payments')}
-      </Button>
-      <SectionTitle
-        title={t('addPayment')}
-        subTitle={t('addPaymentStreamSubTitle')}
-        externalLink="https://docs.decentdao.org/app/user-guide/roles-and-streaming/streaming-payroll-and-vesting"
-      />
-      <AssetSelector
-        formIndex={formIndex}
-        disabled={!!streamId}
-      />
-      <SectionTitle
-        title={t('schedule')}
-        subTitle={t('scheduleSubTitle')}
-        tooltipContent={t('cliffPaymentTooltip')}
-      />
-      <FixedDate
-        formIndex={formIndex}
-        disabled={!!streamId}
-      />
-      {canBeCancelled && (
-        <Show above="md">
-          <Alert
-            status="info"
-            mt="2rem"
-            mb="2.5rem"
-            gap="1rem"
-          >
-            <Info size="24" />
-            <Text
-              textStyle="body-base-strong"
-              whiteSpace="pre-wrap"
+        <Button
+          variant="tertiary"
+          p="0"
+          _hover={{
+            bg: 'transparent',
+          }}
+          mb="1rem"
+          leftIcon={<ArrowLeft size="1.5rem" />}
+          isDisabled={!values?.roleEditing?.payments?.[formIndex]}
+          onClick={() => {
+            if (!values?.roleEditing?.payments?.[formIndex] || !hatId) return;
+            const isExistingPayment = !!streamId ? getPayment(hatId, streamId) : undefined;
+            // if payment is new, and unedited, remove it
+            if (
+              formIndex === values.roleEditing.payments.length - 1 &&
+              !values.roleEditing.editedRole &&
+              !isExistingPayment
+            ) {
+              setFieldValue(
+                'roleEditing.payments',
+                values.roleEditing.payments.filter((_, index) => index !== formIndex),
+              );
+            }
+            setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+          }}
+        >
+          {t('payments')}
+        </Button>
+        <SectionTitle
+          title={t('addPayment')}
+          subTitle={t('addPaymentStreamSubTitle')}
+          externalLink="https://docs.decentdao.org/app/user-guide/roles-and-streaming/streaming-payroll-and-vesting"
+        />
+        <AssetSelector
+          formIndex={formIndex}
+          disabled={!!streamId}
+        />
+        <SectionTitle
+          title={t('schedule')}
+          subTitle={t('scheduleSubTitle')}
+          tooltipContent={t('cliffPaymentTooltip')}
+        />
+        <FixedDate
+          formIndex={formIndex}
+          disabled={!!streamId}
+        />
+        {canBeCancelled && (
+          <Show above="md">
+            <Alert
+              status="info"
+              mt="2rem"
+              mb="2.5rem"
+              gap="1rem"
             >
-              {t('cancelPaymentInfoMessage')}
-            </Text>
-          </Alert>
-        </Show>
-      )}
-      {(canBeCancelled || !streamId) && (
-        <Flex justifyContent="flex-end">
-          {!streamId && (
-            <Button
-              isDisabled={!!roleEditingPaymentsErrors}
-              onClick={() => {
-                setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
-              }}
-            >
-              {t('save')}
-            </Button>
-          )}
-          {canBeCancelled && (
-            <Show above="md">
+              <Info size="24" />
+              <Text
+                textStyle="body-base-strong"
+                whiteSpace="pre-wrap"
+              >
+                {t('cancelPaymentInfoMessage')}
+              </Text>
+            </Alert>
+          </Show>
+        )}
+        {(canBeCancelled || !streamId) && (
+          <Flex justifyContent="flex-end">
+            {!streamId && (
               <Button
-                color="red-1"
-                borderColor="red-1"
-                _hover={{ color: 'red-0', borderColor: 'red-0' }}
-                variant="secondary"
-                leftIcon={<Trash />}
-                onClick={confirmCancelPayment}
+                isDisabled={!!roleEditingPaymentsErrors}
+                onClick={() => {
+                  setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+                }}
               >
-                {t('cancelPayment')}
+                {t('save')}
               </Button>
-            </Show>
-          )}
-        </Flex>
-      )}
-    </Box>
-    <Show below="md">
-    <Alert
-            status="info"
-            mt="2rem"
-            mb="2.5rem"
-            gap="1rem"
+            )}
+            {canBeCancelled && (
+              <Show above="md">
+                <Button
+                  color="red-1"
+                  borderColor="red-1"
+                  _hover={{ color: 'red-0', borderColor: 'red-0' }}
+                  variant="secondary"
+                  leftIcon={<Trash />}
+                  onClick={confirmCancelPayment}
+                >
+                  {t('cancelPayment')}
+                </Button>
+              </Show>
+            )}
+          </Flex>
+        )}
+      </Box>
+      <Show below="md">
+        <Alert
+          status="info"
+          my="1.5rem"
+          gap="1rem"
+        >
+          <Info size="24" />
+          <Text
+            textStyle="body-base-strong"
+            whiteSpace="pre-wrap"
           >
-            <Info size="24" />
-            <Text
-              textStyle="body-base-strong"
-              whiteSpace="pre-wrap"
-            >
-              {t('cancelPaymentInfoMessage')}
-            </Text>
-          </Alert>
-          <Button
-                color="red-1"
-                borderColor="red-1"
-                _hover={{ color: 'red-0', borderColor: 'red-0' }}
-                variant="secondary"
-                leftIcon={<Trash />}
-                onClick={confirmCancelPayment}
-                ml="auto"
-              >
-                {t('cancelPayment')}
-              </Button>
-    </Show>
+            {t('cancelPaymentInfoMessage')}
+          </Text>
+        </Alert>
+        <Button
+          color="red-1"
+          borderColor="red-1"
+          _hover={{ color: 'red-0', borderColor: 'red-0' }}
+          variant="secondary"
+          leftIcon={<Trash />}
+          onClick={confirmCancelPayment}
+          ml="auto"
+        >
+          {t('cancelPayment')}
+        </Button>
+      </Show>
     </>
   );
 }

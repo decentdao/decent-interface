@@ -1,7 +1,7 @@
-import { Box, Button, Flex, Grid, GridItem, Icon, Image, Text, Tag } from '@chakra-ui/react';
-import { Calendar, Download } from '@phosphor-icons/react';
+import { Box, Button, Flex, Grid, GridItem, Icon, Image, Text, Tag, Show } from '@chakra-ui/react';
+import { Calendar, Download, Trash } from '@phosphor-icons/react';
 import { format } from 'date-fns';
-import { useCallback, useMemo } from 'react';
+import { TouchEvent, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress } from 'viem';
@@ -91,6 +91,7 @@ export function RolePaymentDetails({
   showWithdraw,
   roleHatWearerAddress,
   roleHatSmartAddress,
+  showCancel,
 }: RolePaymentDetailsProps) {
   const { t } = useTranslation(['roles']);
   const {
@@ -197,166 +198,228 @@ export function RolePaymentDetails({
     [isActiveStream],
   );
 
+  const [showInlineDelete, setShowInlineDelete] = useState(false);
+  const [touchStart, setTouchStart] = useState<number>();
+  const [touchEnd, setTouchEnd] = useState<number>();
+
+  // the required distance between touchStart and touchEnd to be detected as a swipe
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    setTouchEnd(undefined); // otherwise the swipe is fired even with usual touch events
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: TouchEvent<HTMLDivElement>) => setTouchEnd(e.targetTouches[0].clientX);
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isRightSwipe && showInlineDelete) {
+      setShowInlineDelete(false);
+    } else if (isLeftSwipe && !showInlineDelete) {
+      setShowInlineDelete(true);
+    }
+  };
+
   return (
-    <Box
+    <Flex
+      position="relative"
       my="0.75rem"
       w="full"
+      onTouchStart={showCancel ? onTouchStart : undefined}
+      onTouchMove={showCancel ? onTouchMove : undefined}
+      onTouchEnd={showCancel ? onTouchEnd : undefined}
     >
       <Box
-        borderTopRadius="0.5rem"
-        py="1rem"
-        onClick={onClick}
-        cursor={!!onClick ? 'pointer' : 'default'}
-        {...activeStreamProps(true)}
+        w={showInlineDelete ? 'calc(100% - 56px)' : 'full'}
+        zIndex={2}
+        transitionDuration="300ms"
+        transitionProperty="all"
+        transitionTimingFunction="ease-out"
       >
-        <Flex
-          flexDir="column"
-          mx={4}
+        <Box
+          borderTopRadius="0.5rem"
+          py="1rem"
+          onClick={onClick}
+          cursor={!!onClick ? 'pointer' : 'default'}
+          {...activeStreamProps(true)}
         >
-          <Flex justifyContent="space-between">
-            <Text
-              textStyle="display-2xl"
-              color="white-0"
-            >
-              {payment.amount?.bigintValue
-                ? formatCoin(
-                    payment.amount.bigintValue,
-                    false,
-                    payment.asset.decimals,
-                    payment.asset.symbol,
-                  )
-                : undefined}
-            </Text>
-            <Flex
-              gap={6}
-              alignItems="center"
-            >
-              {payment.isCancelled && (
-                <Tag
-                  variant="outlined"
-                  color="red-1"
-                  outline="unset"
-                  border="1px solid"
-                  py={0}
-                  px={2}
-                  height={6}
-                  borderRadius="lg"
-                >
-                  {t('cancelled')}
-                </Tag>
-              )}
-              <Flex
-                gap={2}
-                alignItems="center"
-                border="1px solid"
-                borderColor="neutral-4"
-                borderRadius="9999px"
-                w="fit-content"
-                className="payment-menu-asset"
-                p="0.5rem"
+          <Flex
+            flexDir="column"
+            mx={4}
+          >
+            <Flex justifyContent="space-between">
+              <Text
+                textStyle="display-2xl"
+                color="white-0"
               >
-                <Image
-                  src={payment.asset.logo}
-                  fallbackSrc="/images/coin-icon-default.svg"
-                  boxSize="1.5rem"
-                />
-                <Text
-                  textStyle="label-base"
-                  color="white-0"
+                {payment.amount?.bigintValue
+                  ? formatCoin(
+                      payment.amount.bigintValue,
+                      false,
+                      payment.asset.decimals,
+                      payment.asset.symbol,
+                    )
+                  : undefined}
+              </Text>
+              <Flex
+                gap={6}
+                alignItems="center"
+              >
+                {payment.isCancelled && (
+                  <Tag
+                    variant="outlined"
+                    color="red-1"
+                    outline="unset"
+                    border="1px solid"
+                    py={0}
+                    px={2}
+                    height={6}
+                    borderRadius="lg"
+                  >
+                    {t('cancelled')}
+                  </Tag>
+                )}
+                <Flex
+                  gap={2}
+                  alignItems="center"
+                  border="1px solid"
+                  borderColor="neutral-4"
+                  borderRadius="9999px"
+                  w="fit-content"
+                  className="payment-menu-asset"
+                  p="0.5rem"
                 >
-                  {payment.asset.symbol ?? t('selectLabel', { ns: 'modals' })}
-                </Text>
+                  <Image
+                    src={payment.asset.logo}
+                    fallbackSrc="/images/coin-icon-default.svg"
+                    boxSize="1.5rem"
+                  />
+                  <Text
+                    textStyle="label-base"
+                    color="white-0"
+                  >
+                    {payment.asset.symbol ?? t('selectLabel', { ns: 'modals' })}
+                  </Text>
+                </Flex>
               </Flex>
             </Flex>
-          </Flex>
-          <Flex justifyContent="space-between">
-            <Text
-              textStyle="label-small"
-              color="neutral-7"
-            >
-              {streamAmountUSD !== undefined ? formatUSD(streamAmountUSD.toString()) : '$ ---'}
-            </Text>
-            {amountPerWeek !== undefined && (
-              <Flex
-                alignItems="center"
-                gap="0.5rem"
+            <Flex justifyContent="space-between">
+              <Text
+                textStyle="label-small"
+                color="neutral-7"
               >
-                <GreenStreamingDot isStreaming={payment.isStreaming()} />
-                <Text
-                  textStyle="label-small"
-                  color="white-0"
+                {streamAmountUSD !== undefined ? formatUSD(streamAmountUSD.toString()) : '$ ---'}
+              </Text>
+              {amountPerWeek !== undefined && (
+                <Flex
+                  alignItems="center"
+                  gap="0.5rem"
                 >
-                  {`${formatCoin(amountPerWeek, true, payment.asset.decimals, payment.asset.symbol)} / ${t('week')}`}
-                </Text>
-              </Flex>
-            )}
+                  <GreenStreamingDot isStreaming={payment.isStreaming()} />
+                  <Text
+                    textStyle="label-small"
+                    color="white-0"
+                  >
+                    {`${formatCoin(amountPerWeek, true, payment.asset.decimals, payment.asset.symbol)} / ${t('week')}`}
+                  </Text>
+                </Flex>
+              )}
+            </Flex>
           </Flex>
-        </Flex>
-      </Box>
+        </Box>
 
-      <Box
-        {...activeStreamProps(false)}
-        borderBottomRadius="0.5rem"
-        py="1rem"
-      >
-        <Grid
-          mx={4}
-          templateAreas='"starting dividerOne cliff dividerTwo ending"'
-          templateColumns="1fr 24px 1fr 24px 1fr"
+        <Box
+          {...activeStreamProps(false)}
+          borderBottomRadius="0.5rem"
+          py="1rem"
         >
-          <GridItem area="starting">
-            <PaymentDate
-              label="starting"
-              date={payment.startDate}
-            />
-          </GridItem>
-          <GridItem area="dividerOne">
-            <Box
-              borderLeft="1px solid"
-              borderColor="white-alpha-08"
-              h="full"
-              boxShadow={DETAILS_BOX_SHADOW}
-              w="0"
-            />
-          </GridItem>
-          <GridItem area="cliff">
-            <PaymentDate
-              label="cliff"
-              date={payment.cliffDate}
-            />
-          </GridItem>
-          <GridItem area="dividerTwo">
-            <Box
-              borderLeft="1px solid"
-              borderColor="white-alpha-08"
-              h="full"
-              boxShadow={DETAILS_BOX_SHADOW}
-              w="0"
-            />
-          </GridItem>
-          <GridItem area="ending">
-            <PaymentDate
-              label="ending"
-              date={payment.endDate}
-            />
-          </GridItem>
-        </Grid>
-        {canWithdraw && (
-          <Box
-            mt={4}
-            px={4}
+          <Grid
+            mx={4}
+            templateAreas='"starting dividerOne cliff dividerTwo ending"'
+            templateColumns="1fr 24px 1fr 24px 1fr"
           >
-            <Button
-              w="full"
-              isDisabled={!((payment?.withdrawableAmount ?? 0n) > 0n)}
-              leftIcon={<Download />}
-              onClick={handleClickWithdraw}
+            <GridItem area="starting">
+              <PaymentDate
+                label="starting"
+                date={payment.startDate}
+              />
+            </GridItem>
+            <GridItem area="dividerOne">
+              <Box
+                borderLeft="1px solid"
+                borderColor="white-alpha-08"
+                h="full"
+                boxShadow={DETAILS_BOX_SHADOW}
+                w="0"
+              />
+            </GridItem>
+            <GridItem area="cliff">
+              <PaymentDate
+                label="cliff"
+                date={payment.cliffDate}
+              />
+            </GridItem>
+            <GridItem area="dividerTwo">
+              <Box
+                borderLeft="1px solid"
+                borderColor="white-alpha-08"
+                h="full"
+                boxShadow={DETAILS_BOX_SHADOW}
+                w="0"
+              />
+            </GridItem>
+            <GridItem area="ending">
+              <PaymentDate
+                label="ending"
+                date={payment.endDate}
+              />
+            </GridItem>
+          </Grid>
+          {canWithdraw && (
+            <Box
+              mt={4}
+              px={4}
             >
-              {t('withdraw')}
-            </Button>
-          </Box>
-        )}
+              <Button
+                w="full"
+                isDisabled={!((payment?.withdrawableAmount ?? 0n) > 0n)}
+                leftIcon={<Download />}
+                onClick={handleClickWithdraw}
+              >
+                {t('withdraw')}
+              </Button>
+            </Box>
+          )}
+        </Box>
       </Box>
-    </Box>
+      <Show below="md">
+        <Flex
+          backgroundColor="red-0"
+          height="100%"
+          zIndex={1}
+          position="absolute"
+          top={0}
+          right={showInlineDelete ? '0.5rem' : 0}
+          transitionDuration="300ms"
+          transitionProperty="all"
+          transitionTimingFunction="ease-out"
+          width={showInlineDelete ? '56px' : '0px'}
+          borderTopRightRadius="0.5rem"
+          borderBottomRightRadius="0.5rem"
+          boxShadow={DETAILS_BOX_SHADOW}
+          overflow="hidden"
+          alignItems="center"
+          justifyContent="center"
+          py="1rem"
+          opacity={showInlineDelete ? '1' : '0'}
+        >
+          <Trash size="24" />
+        </Flex>
+      </Show>
+    </Flex>
   );
 }
