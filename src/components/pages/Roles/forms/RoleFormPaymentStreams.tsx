@@ -41,6 +41,7 @@ export function RoleFormPaymentStreams() {
             onClick={async () => {
               pushPayment({
                 isStreaming: () => false,
+                isCancellable: () => false,
                 isCancelling: false,
               });
               await validateForm();
@@ -55,15 +56,7 @@ export function RoleFormPaymentStreams() {
               if (!payment.amount || !payment.asset || !payment.startDate || !payment.endDate)
                 return null;
 
-              const canBeCancelled =
-                // @note can not cancel a payment on a new role
-                values.roleEditing?.id !== undefined &&
-                // @note can not cancel a pending creation
-                payment.streamId !== undefined &&
-                // @note can not cancel a stream that is already cancelled or ended
-                !payment.isCancelled &&
-                !!payment.endDate &&
-                payment.endDate.getTime() > Date.now();
+              const canBeCancelled = payment.isCancellable();
               return (
                 <RolePaymentDetails
                   key={index}
@@ -90,6 +83,7 @@ export function RoleFormPaymentStreams() {
                     cliffDate: payment.cliffDate,
                     isCancelled: payment.isCancelled ?? false,
                     isStreaming: payment.isStreaming ?? (() => false),
+                    isCancellable: payment.isCancellable ?? (() => false),
                     isCancelling: payment.isCancelling,
                   }}
                 />

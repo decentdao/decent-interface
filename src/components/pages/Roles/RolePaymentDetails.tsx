@@ -79,6 +79,7 @@ interface RolePaymentDetailsProps {
     isCancelled: boolean;
     isCancelling?: boolean;
     isStreaming: () => boolean;
+    isCancellable: () => boolean;
     withdrawableAmount?: bigint;
   };
   onClick?: () => void;

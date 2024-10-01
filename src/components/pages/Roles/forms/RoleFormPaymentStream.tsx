@@ -7,8 +7,8 @@ import {
   Grid,
   GridItem,
   Icon,
-  Text,
   Show,
+  Text,
 } from '@chakra-ui/react';
 import { ArrowLeft, ArrowRight, Info, Trash } from '@phosphor-icons/react';
 import { addDays } from 'date-fns';
@@ -143,15 +143,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
     [hatId, streamId, getPayment],
   );
 
-  const canBeCancelled =
-    // @note can not cancel a payment on a new role
-    values.roleEditing?.id !== undefined &&
-    // @note can not cancel a pending creation
-    existingPayment?.streamId !== undefined &&
-    // @note can not cancel a stream that is already cancelled or ended
-    !existingPayment.isCancelled &&
-    !!existingPayment.endDate &&
-    existingPayment.endDate.getTime() > Date.now();
+  const canBeCancelled = existingPayment ? existingPayment.isCancellable() : false;
 
   const cancelModal = useDecentModal(ModalType.NONE);
   const handleConfirmCancelPayment = useCallback(() => {
