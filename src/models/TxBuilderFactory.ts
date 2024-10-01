@@ -98,7 +98,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.safeContractAddress = safeAddress;
   }
 
-  public async setupSafeData(): Promise<void> {
+  public async setupSafeData() {
     const safeProxyFactoryContract = getContract({
       abi: GnosisSafeProxyFactoryAbi,
       address: this.gnosisSafeProxyFactory,
@@ -133,7 +133,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     attachFractalModule: boolean;
     parentStrategyType?: VotingStrategyType;
     parentStrategyAddress?: Address;
-  }): DaoTxBuilder {
+  }) {
     return new DaoTxBuilder(
       this.publicClient,
       this.isAzorius,
@@ -160,7 +160,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     strategyAddress?: Address,
     parentStrategyType?: VotingStrategyType,
     parentStrategyAddress?: Address, // User only with ERC-721 parent
-  ): FreezeGuardTxBuilder {
+  ) {
     return new FreezeGuardTxBuilder(
       this.publicClient,
       this.daoData as SubDAO,
@@ -182,7 +182,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     );
   }
 
-  public createMultiSigTxBuilder(): MultisigTxBuilder {
+  public createMultiSigTxBuilder() {
     return new MultisigTxBuilder(
       this.multiSendCallOnly,
       this.daoData as SafeMultisigDAO,
@@ -190,7 +190,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     );
   }
 
-  public async createAzoriusTxBuilder(): Promise<AzoriusTxBuilder> {
+  public async createAzoriusTxBuilder() {
     const azoriusTxBuilder = new AzoriusTxBuilder(
       this.publicClient,
       this.daoData as AzoriusERC20DAO,
