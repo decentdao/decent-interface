@@ -130,7 +130,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     parentStrategyType,
     parentStrategyAddress,
   }: {
-    attachFractalModule: boolean;
+    attachFractalModule?: boolean;
     parentStrategyType?: VotingStrategyType;
     parentStrategyAddress?: Address;
   }) {

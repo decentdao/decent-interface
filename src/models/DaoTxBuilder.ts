@@ -53,7 +53,7 @@ export class DaoTxBuilder extends BaseTxBuilder {
     multiSendCallOnly: Address,
     moduleFractalMasterCopy: Address,
 
-    attachFractalModule: boolean,
+    attachFractalModule?: boolean,
 
     parentAddress?: Address,
     parentTokenAddress?: Address,
