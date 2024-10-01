@@ -221,7 +221,7 @@ function GuardDetails(props: ICreationStepProps) {
             </Text>
           </Alert>
           <Divider mb={4} />
-          <Box my={4}>
+          <Box my={2}>
             <Flex gap="0.5rem">
               <Checkbox
                 isChecked={values.freeze.attachFractalModule}
