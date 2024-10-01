@@ -116,9 +116,14 @@ export class DaoTxBuilder extends BaseTxBuilder {
         this.parentStrategyAddress,
       );
 
+      if (this.enableFractalModuleTx) {
+        this.internalTxs = this.internalTxs.concat([
+          // Enable Fractal Module b/c this a subDAO
+          this.enableFractalModuleTx,
+        ]);
+      }
+
       this.internalTxs = this.internalTxs.concat([
-        // Enable Fractal Module b/c this a subDAO
-        this.enableFractalModuleTx!,
         freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
         freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
         freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
@@ -159,8 +164,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
     }
 
     // If subDAO, deploy Fractal Module
-    if (this.parentAddress) {
-      txs.push(this.deployFractalModuleTx!);
+    if (this.parentAddress && this.deployFractalModuleTx) {
+      txs.push(this.deployFractalModuleTx);
     }
 
     txs.push(this.buildExecInternalSafeTx(azoriusTxBuilder.signatures()));
@@ -197,9 +202,14 @@ export class DaoTxBuilder extends BaseTxBuilder {
         this.parentStrategyAddress,
       );
 
+      if (this.enableFractalModuleTx) {
+        this.internalTxs = this.internalTxs.concat([
+          // Enable Fractal Module b/c this a subDAO
+          this.enableFractalModuleTx,
+        ]);
+      }
+
       this.internalTxs = this.internalTxs.concat([
-        // Enable Fractal Module b/c this a subDAO
-        this.enableFractalModuleTx!,
         freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
         freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
         freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
@@ -215,8 +225,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
     ];
 
     // If subDAO, deploy Fractal Module.
-    if (this.parentAddress) {
-      txs.splice(1, 0, this.deployFractalModuleTx!);
+    if (this.parentAddress && this.deployFractalModuleTx) {
+      txs.splice(1, 0, this.deployFractalModuleTx);
     }
 
     return encodeMultiSend(txs);
