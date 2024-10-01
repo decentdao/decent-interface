@@ -5,11 +5,12 @@ import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
-  SafeMultisigDAO,
-  GovernanceType,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
   AzoriusGovernance,
+  GovernanceType,
+  SafeMultisigDAO,
+  SubDAO,
   VotingStrategyType,
 } from '../../types';
 
@@ -47,7 +48,7 @@ const useBuildDAOTx = () => {
 
   const buildDao = useCallback(
     async (
-      daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
+      daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO | SubDAO,
       parentAddress?: Address,
       parentTokenAddress?: Address,
     ) => {
@@ -107,6 +108,7 @@ const useBuildDAOTx = () => {
       }
 
       const daoTxBuilder = txBuilderFactory.createDaoTxBuilder(
+        (daoData as SubDAO).attachFractalModule,
         parentVotingStrategyType,
         parentVotingStrategyAddress,
       );

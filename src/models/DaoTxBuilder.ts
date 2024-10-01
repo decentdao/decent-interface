@@ -1,5 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
+import { Address, encodeFunctionData, PublicClient, zeroAddress } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
 import { buildContractCall, encodeMultiSend } from '../helpers';
@@ -53,6 +53,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
     multiSendCallOnly: Address,
     moduleFractalMasterCopy: Address,
 
+    attachFractalModule: boolean,
+
     parentAddress?: Address,
     parentTokenAddress?: Address,
 
@@ -75,8 +77,10 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.parentStrategyType = parentStrategyType;
     this.parentStrategyAddress = parentStrategyAddress;
 
-    // Prep fractal module txs for setting up subDAOs
-    this.setFractalModuleTxs();
+    if (attachFractalModule) {
+      // Prep fractal module txs for setting up subDAOs
+      this.setFractalModuleTxs();
+    }
   }
 
   public async buildAzoriusTx(params: {

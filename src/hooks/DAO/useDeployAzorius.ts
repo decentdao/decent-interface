@@ -9,7 +9,7 @@ import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { ProposalExecuteData, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
+import { AzoriusERC20DAO, AzoriusERC721DAO, ProposalExecuteData } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
@@ -91,7 +91,7 @@ const useDeployAzorius = () => {
 
       txBuilderFactory.setSafeContract(daoAddress);
 
-      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
+      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder(false);
       const safeTx = await daoTxBuilder.buildAzoriusTx({
         shouldSetName,
         shouldSetSnapshot,

@@ -3,11 +3,11 @@ import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../assets/abi/GnosisSafeProxyFactory';
 import { getRandomBytes } from '../helpers';
 import {
+  AzoriusERC20DAO,
+  AzoriusERC721DAO,
   SafeMultisigDAO,
   SafeTransaction,
   SubDAO,
-  AzoriusERC721DAO,
-  AzoriusERC20DAO,
   VotingStrategyType,
 } from '../types';
 import { AzoriusTxBuilder } from './AzoriusTxBuilder';
@@ -126,6 +126,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
   }
 
   public createDaoTxBuilder(
+    attachFractalModule: boolean,
     parentStrategyType?: VotingStrategyType,
     parentStrategyAddress?: Address,
   ): DaoTxBuilder {
@@ -142,6 +143,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.zodiacModuleProxyFactory,
       this.multiSendCallOnly,
       this.moduleFractalMasterCopy,
+      attachFractalModule,
       this.parentAddress,
       this.parentTokenAddress,
       parentStrategyType,

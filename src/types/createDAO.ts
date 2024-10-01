@@ -105,6 +105,7 @@ export type DAOFreezeGuardConfig<T = bigint> = {
   freezeVotesThreshold: T;
   freezeProposalPeriod: T;
   freezePeriod: T;
+  attachFractalModule: boolean;
 };
 
 export interface SafeConfiguration {

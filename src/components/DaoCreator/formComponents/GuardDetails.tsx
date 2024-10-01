@@ -1,10 +1,10 @@
-import { Text, InputGroup, InputRightElement, Flex, Alert } from '@chakra-ui/react';
+import { Alert, Box, Checkbox, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import { Info } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FieldProps } from 'formik';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { ICreationStepProps, GovernanceType, BigIntValuePair } from '../../../types';
+import { BigIntValuePair, GovernanceType, ICreationStepProps } from '../../../types';
 import { formatBigIntToHumanReadableString } from '../../../utils/numberFormats';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
@@ -220,6 +220,19 @@ function GuardDetails(props: ICreationStepProps) {
               {t('freezeGuardDescription')}
             </Text>
           </Alert>
+          <Divider mb={4} />
+          <Box my={4}>
+            <Flex gap="0.5rem">
+              <Checkbox
+                isChecked={values.freeze.attachFractalModule}
+                onChange={() =>
+                  setFieldValue('freeze.attachFractalModule', !values.freeze.attachFractalModule)
+                }
+              />
+              <Text>{t('attachFractalModuleLabel')}</Text>
+            </Flex>
+            <Text color="neutral-7">{t('attachFractalModuleDescription')}</Text>
+          </Box>
           <Divider mb={4} />
           {showCustomNonce && (
             <CustomNonceInput
