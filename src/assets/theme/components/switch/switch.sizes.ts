@@ -24,8 +24,21 @@ export default {
     thumb: {
       width: '24px',
       height: '24px',
+      position: 'relative',
       _checked: {
         marginLeft: '24px',
+      },
+      _before: {
+        content: '""',
+        display: 'block',
+        width: '20px',
+        height: '20px',
+        position: 'absolute',
+        top: '1px',
+        right: '1px',
+        border: '1px solid',
+        borderRadius: '50%',
+        borderColor: 'neutral-7',
       },
     },
   },
