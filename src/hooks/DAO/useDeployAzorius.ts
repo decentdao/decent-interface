@@ -93,7 +93,7 @@ const useDeployAzorius = () => {
 
       // @todo - useDeployAzorius wasn't ever/enough tested for subDAO creation thus deploying Azorius for subDAO won't work as expected
       // Need to test and adjust implementation - pass parent address, parent voting strategy and whether we should attach FractalModule
-      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder({ });
+      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder({});
       const safeTx = await daoTxBuilder.buildAzoriusTx({
         shouldSetName,
         shouldSetSnapshot,
