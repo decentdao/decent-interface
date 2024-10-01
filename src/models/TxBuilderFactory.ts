@@ -125,11 +125,15 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.setSafeContract(predictedSafeAddress);
   }
 
-  public createDaoTxBuilder(
-    attachFractalModule: boolean,
-    parentStrategyType?: VotingStrategyType,
-    parentStrategyAddress?: Address,
-  ): DaoTxBuilder {
+  public createDaoTxBuilder({
+    attachFractalModule,
+    parentStrategyType,
+    parentStrategyAddress,
+  }: {
+    attachFractalModule: boolean;
+    parentStrategyType?: VotingStrategyType;
+    parentStrategyAddress?: Address;
+  }): DaoTxBuilder {
     return new DaoTxBuilder(
       this.publicClient,
       this.isAzorius,

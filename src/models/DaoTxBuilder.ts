@@ -117,18 +117,18 @@ export class DaoTxBuilder extends BaseTxBuilder {
       );
 
       if (this.enableFractalModuleTx) {
-        this.internalTxs = this.internalTxs.concat([
+        this.internalTxs = this.internalTxs.concat(
           // Enable Fractal Module b/c this a subDAO
           this.enableFractalModuleTx,
-        ]);
+        );
       }
 
-      this.internalTxs = this.internalTxs.concat([
+      this.internalTxs = this.internalTxs.concat(
         freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
         freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
         freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
         freezeGuardTxBuilder.buildSetGuardTx(abis.Azorius, azoriusTxBuilder.azoriusAddress!),
-      ]);
+      );
     }
     const data = this.daoData as AzoriusERC20DAO;
 
@@ -203,18 +203,18 @@ export class DaoTxBuilder extends BaseTxBuilder {
       );
 
       if (this.enableFractalModuleTx) {
-        this.internalTxs = this.internalTxs.concat([
+        this.internalTxs = this.internalTxs.concat(
           // Enable Fractal Module b/c this a subDAO
           this.enableFractalModuleTx,
-        ]);
+        );
       }
 
-      this.internalTxs = this.internalTxs.concat([
+      this.internalTxs = this.internalTxs.concat(
         freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
         freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
         freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
         freezeGuardTxBuilder.buildSetGuardTxSafe(this.safeContractAddress),
-      ]);
+      );
     }
 
     this.internalTxs.push(multisigTxBuilder.buildRemoveMultiSendOwnerTx());

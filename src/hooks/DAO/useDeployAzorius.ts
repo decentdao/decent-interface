@@ -91,7 +91,7 @@ const useDeployAzorius = () => {
 
       txBuilderFactory.setSafeContract(daoAddress);
 
-      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder(false);
+      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder({ attachFractalModule: false });
       const safeTx = await daoTxBuilder.buildAzoriusTx({
         shouldSetName,
         shouldSetSnapshot,
