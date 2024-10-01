@@ -136,6 +136,10 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
     ?.payments;
   const hatId = values.roleEditing?.id;
+  const payment = useMemo(
+    () => values.roleEditing?.payments?.[formIndex],
+    [formIndex, values.roleEditing?.payments],
+  );
   const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
 
   const existingPayment = useMemo(
@@ -143,15 +147,12 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
     [hatId, streamId, getPayment],
   );
 
-  const canBeCancelled = existingPayment ? existingPayment.isCancellable() : false;
+  const canBeCancelled = existingPayment
+    ? existingPayment.isCancellable() && !payment?.isCancelling
+    : false;
 
   const cancelModal = useDecentModal(ModalType.NONE);
   const handleConfirmCancelPayment = useCallback(() => {
-    if (!formIndex) {
-      return;
-    }
-
-    const payment = values.roleEditing?.payments?.[formIndex];
     if (!payment) {
       return;
     }
@@ -159,7 +160,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
     setFieldValue(`roleEditing.payments.${formIndex}`, { ...payment, isCancelling: true });
     cancelModal();
     setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
-  }, [setFieldValue, formIndex, values, cancelModal]);
+  }, [setFieldValue, formIndex, cancelModal, payment]);
 
   const confirmCancelPayment = useDecentModal(ModalType.CONFIRM_CANCEL_PAYMENT, {
     onSubmit: handleConfirmCancelPayment,
@@ -283,20 +284,22 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
             textStyle="body-base-strong"
             whiteSpace="pre-wrap"
           >
-            {t('cancelPaymentInfoMessage')}
+            {t(payment?.isCancelling ? 'cancellingPaymentInfoMessage' : 'cancelPaymentInfoMessage')}
           </Text>
         </Alert>
-        <Button
-          color="red-1"
-          borderColor="red-1"
-          _hover={{ color: 'red-0', borderColor: 'red-0' }}
-          variant="secondary"
-          leftIcon={<Trash />}
-          onClick={confirmCancelPayment}
-          ml="auto"
-        >
-          {t('cancelPayment')}
-        </Button>
+        {canBeCancelled && (
+          <Button
+            color="red-1"
+            borderColor="red-1"
+            _hover={{ color: 'red-0', borderColor: 'red-0' }}
+            variant="secondary"
+            leftIcon={<Trash />}
+            onClick={confirmCancelPayment}
+            ml="auto"
+          >
+            {t('cancelPayment')}
+          </Button>
+        )}
       </Show>
     </>
   );

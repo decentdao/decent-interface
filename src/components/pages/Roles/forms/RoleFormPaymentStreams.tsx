@@ -60,7 +60,7 @@ export function RoleFormPaymentStreams() {
               return (
                 <RolePaymentDetails
                   key={index}
-                  showCancel={canBeCancelled}
+                  showCancel={canBeCancelled || !payment.isCancelling}
                   onClick={
                     canBeCancelled
                       ? () => setFieldValue('roleEditing.roleEditingPaymentIndex', index)

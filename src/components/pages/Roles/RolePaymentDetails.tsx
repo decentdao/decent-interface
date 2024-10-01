@@ -1,7 +1,7 @@
-import { Box, Button, Flex, Grid, GridItem, Icon, Image, Text, Tag, Show } from '@chakra-ui/react';
+import { Box, Button, Flex, Grid, GridItem, Icon, Image, Show, Tag, Text } from '@chakra-ui/react';
 import { Calendar, Download, Trash } from '@phosphor-icons/react';
 import { format } from 'date-fns';
-import { TouchEvent, useCallback, useMemo, useState } from 'react';
+import { TouchEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address, getAddress } from 'viem';
@@ -237,14 +237,22 @@ export function RolePaymentDetails({
     onSubmit: handleConfirmCancelPayment,
   });
 
+  useEffect(() => {
+    if (payment.isCancelling && showInlineDelete) {
+      setTouchEnd(undefined);
+      setTouchStart(undefined);
+      setShowInlineDelete(false);
+    }
+  }, [payment.isCancelling, showInlineDelete]);
+
   return (
     <Flex
-      position="relative"
       my="0.75rem"
       w="full"
       onTouchStart={showCancel ? onTouchStart : undefined}
       onTouchMove={showCancel ? onTouchMove : undefined}
       onTouchEnd={showCancel ? onTouchEnd : undefined}
+      position="relative"
     >
       <Box
         w={showInlineDelete ? 'calc(100% - 56px)' : 'full'}
@@ -279,10 +287,12 @@ export function RolePaymentDetails({
                   : undefined}
               </Text>
               <Flex
-                gap={6}
+                gap={[2, 2, 6]}
                 alignItems="center"
+                justifyContent={['flex-end', 'flex-end', 'flex-end', 'unset']}
+                flexWrap="wrap"
               >
-                {payment.isCancelled && (
+                {(payment.isCancelled || payment.isCancelling) && (
                   <Tag
                     variant="outlined"
                     color="red-1"
@@ -293,7 +303,7 @@ export function RolePaymentDetails({
                     height={6}
                     borderRadius="lg"
                   >
-                    {t('cancelled')}
+                    {t(payment.isCancelling ? 'cancelling' : 'cancelled')}
                   </Tag>
                 )}
                 <Flex

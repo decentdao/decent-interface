@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Text } from '@chakra-ui/react';
-import { WarningCircle, Trash } from '@phosphor-icons/react';
+import { Trash, WarningCircle } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 
 export default function PaymentCancelConfirmModal({
@@ -15,6 +15,8 @@ export default function PaymentCancelConfirmModal({
     <Flex
       gap="1rem"
       flexDirection="column"
+      maxWidth="320px"
+      mx="auto"
     >
       <Flex
         justifyContent="center"
