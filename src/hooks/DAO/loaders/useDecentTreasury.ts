@@ -133,16 +133,16 @@ export const useDecentTreasury = () => {
     // Instead of this block of code, check the commented out snippet
     // below this for a half-implemented alternative.
     const transfersTokenInfo = await Promise.all(
-      tokenAddressesOfTransfers.map(async addr => {
+      tokenAddressesOfTransfers.map(async address => {
         try {
-          return await safeAPI.getToken(addr);
+          return await safeAPI.getToken(address);
         } catch (e) {
           const fallbackTokenData = tokenBalances?.find(
-            tokenBalanceData => getAddress(tokenBalanceData.tokenAddress) === addr,
+            tokenBalanceData => getAddress(tokenBalanceData.tokenAddress) === address,
           );
           if (!fallbackTokenData) {
             return {
-              address: addr,
+              address,
               name: 'Unknown',
               symbol: '---',
               decimals: 18,
@@ -150,7 +150,7 @@ export const useDecentTreasury = () => {
           }
 
           return {
-            address: addr,
+            address,
             name: fallbackTokenData.name,
             symbol: fallbackTokenData.symbol,
             decimals: fallbackTokenData.decimals,
