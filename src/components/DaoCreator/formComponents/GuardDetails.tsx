@@ -1,4 +1,13 @@
-import { Alert, Box, Checkbox, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  Box,
+  Flex,
+  FormControl,
+  InputGroup,
+  InputRightElement,
+  Switch,
+  Text,
+} from '@chakra-ui/react';
 import { Info } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FieldProps } from 'formik';
 import { useCallback, useEffect, useState } from 'react';
@@ -10,7 +19,6 @@ import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
-import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { useParentSafeVotingWeight } from '../hooks/useParentSafeVotingWeight';
@@ -220,29 +228,50 @@ function GuardDetails(props: ICreationStepProps) {
               {t('freezeGuardDescription')}
             </Text>
           </Alert>
-          <Divider mb={4} />
-          <Box my={2}>
-            <Flex gap="0.5rem">
-              <Checkbox
-                isChecked={values.freeze.attachFractalModule}
-                onChange={() =>
-                  setFieldValue('freeze.attachFractalModule', !values.freeze.attachFractalModule)
-                }
-              />
-              <Text>{t('attachFractalModuleLabel')}</Text>
-            </Flex>
-            <Text color="neutral-7">{t('attachFractalModuleDescription')}</Text>
-          </Box>
-          <Divider mb={4} />
-          {showCustomNonce && (
-            <CustomNonceInput
-              nonce={values.multisig.customNonce}
-              onChange={handleNonceChange}
-              renderTrimmed={false}
-            />
-          )}
         </Flex>
       </StepWrapper>
+      {showCustomNonce && (
+        <Box
+          padding="1.5rem"
+          bg="neutral-2"
+          borderRadius="0.25rem"
+          my="1.5rem"
+        >
+          <CustomNonceInput
+            nonce={values.multisig.customNonce}
+            onChange={handleNonceChange}
+            renderTrimmed={false}
+          />
+        </Box>
+      )}
+      <Box
+        padding="1.5rem"
+        bg="neutral-2"
+        borderRadius="0.25rem"
+      >
+        <FormControl
+          gap="0.5rem"
+          width="100%"
+          justifyContent="space-between"
+          display="flex"
+        >
+          <Text>{t('attachFractalModuleLabel')}</Text>
+          <Switch
+            size="md"
+            variant="secondary"
+            onChange={() =>
+              setFieldValue('freeze.attachFractalModule', !values.freeze.attachFractalModule)
+            }
+            isChecked={values.freeze.attachFractalModule}
+          />
+        </FormControl>
+        <Text
+          color="neutral-7"
+          width="50%"
+        >
+          {t('attachFractalModuleDescription')}
+        </Text>
+      </Box>
       <StepButtons {...props} />
     </>
   );
