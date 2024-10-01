@@ -163,8 +163,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.internalTxs.push(tokenApprovalTx);
     }
 
-    // If subDAO, deploy Fractal Module
     if (this.parentAddress && this.deployFractalModuleTx) {
+      // If subDAO, and `deployFractalModuleTx` created (which might not be the case depending on user input) - deploy Fractal Module.
       txs.push(this.deployFractalModuleTx);
     }
 
@@ -224,8 +224,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.buildExecInternalSafeTx(multisigTxBuilder.signatures()),
     ];
 
-    // If subDAO, deploy Fractal Module.
     if (this.parentAddress && this.deployFractalModuleTx) {
+      // If subDAO, and `deployFractalModuleTx` created (which might not be the case depending on user input) - deploy Fractal Module.
       txs.splice(1, 0, this.deployFractalModuleTx);
     }
 
