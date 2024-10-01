@@ -21,14 +21,14 @@ const primary = defineStyle({
     _checked: {
       backgroundColor: 'lilac--3',
     },
-    _disabled: primaryDisabled.track
+    _disabled: primaryDisabled.track,
   },
   thumb: {
     backgroundColor: 'lilac--2',
     _disabled: primaryDisabled.thumb,
     _hover: {
-        backgroundColor: 'lilac--1'
-    }
+      backgroundColor: 'lilac--1',
+    },
   },
 });
 
@@ -54,17 +54,17 @@ const secondary = defineStyle({
       backgroundColor: 'celery--3',
     },
     _hover: {
-        _disabled: secondaryDisabled.track
-      },
-      _disabled: secondaryDisabled.track
+      _disabled: secondaryDisabled.track,
+    },
+    _disabled: secondaryDisabled.track,
   },
   thumb: {
     backgroundColor: 'neutral-10',
     _hover: {
-        backgroundColor: 'white-0',
-        _disabled: secondaryDisabled.thumb
+      backgroundColor: 'white-0',
+      _disabled: secondaryDisabled.thumb,
     },
-    _disabled: secondaryDisabled.thumb
+    _disabled: secondaryDisabled.thumb,
   },
 });
 
