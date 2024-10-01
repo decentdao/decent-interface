@@ -96,7 +96,7 @@ export const initialState: CreatorFormState = {
       value: '10080',
       bigintValue: 10080n,
     },
-    attachFractalModule: true
+    attachFractalModule: true,
   },
   multisig: {
     trustedAddresses: [''],
