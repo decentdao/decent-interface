@@ -1,4 +1,4 @@
-import { Alert, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
+import { Alert, Box, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -152,13 +152,6 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               {t('exampleExecutionPeriod')}
             </Text>
           </LabelComponent>
-          {showCustomNonce && (
-            <CustomNonceInput
-              nonce={values.multisig.customNonce}
-              onChange={handleNonceChange}
-              align="end"
-            />
-          )}
           <Alert status="info">
             <WarningCircle size="24" />
             <Text
@@ -171,6 +164,20 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           </Alert>
         </Flex>
       </StepWrapper>
+      {showCustomNonce && (
+        <Box
+          padding="1.5rem"
+          bg="neutral-2"
+          borderRadius="0.25rem"
+          my="1.5rem"
+        >
+          <CustomNonceInput
+            nonce={values.multisig.customNonce}
+            onChange={handleNonceChange}
+            renderTrimmed={false}
+          />
+        </Box>
+      )}
       <StepButtons
         {...props}
         isEdit={mode === DAOCreateMode.EDIT}
