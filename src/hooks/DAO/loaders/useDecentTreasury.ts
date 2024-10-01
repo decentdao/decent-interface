@@ -1,7 +1,13 @@
-import { TokenInfoResponse } from '@safe-global/api-kit';
+import {
+  EthereumTxWithTransfersResponse,
+  SafeModuleTransactionWithTransfersResponse,
+  SafeMultisigTransactionWithTransfersResponse,
+  TokenInfoResponse,
+} from '@safe-global/api-kit';
 import { useEffect, useCallback, useRef } from 'react';
 import { toast } from 'react-toastify';
-import { getAddress } from 'viem';
+import { erc20Abi, getAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -27,6 +33,8 @@ export const useDecentTreasury = () => {
   const { getTokenBalances, getNFTBalances, getDeFiBalances } = useBalancesAPI();
 
   const { chain, nativeTokenIcon } = useNetworkConfig();
+
+  const publicClient = usePublicClient();
 
   const formatTransfer = useCallback(
     ({ transfer, isLast }: { transfer: TransferWithTokenInfo; isLast: boolean }) => {
@@ -74,17 +82,49 @@ export const useDecentTreasury = () => {
       getDeFiBalances(daoAddress),
     ]);
 
-    const txsWithTransfers = allTransactions.results.filter(tx => tx.transfers.length > 0);
-    const flattenedTransfersSet = new Map();
+    const groupedTransactions = allTransactions.results.reduce(
+      (acc, tx) => {
+        const txType = tx.txType || 'UNKNOWN';
+        if (!acc[txType]) {
+          acc[txType] = [];
+        }
+        acc[txType].push(tx);
+        return acc;
+      },
+      {} as Record<
+        string,
+        Array<
+          | SafeModuleTransactionWithTransfersResponse
+          | SafeMultisigTransactionWithTransfersResponse
+          | EthereumTxWithTransfersResponse
+        >
+      >,
+    );
 
-    txsWithTransfers
-      .flatMap(tx => tx.transfers)
-      .forEach(t => {
-        const txKey = `${t.transactionHash}-${t.tokenAddress}`;
-        flattenedTransfersSet.set(txKey, t);
-      });
+    const moduleTransactions = (groupedTransactions.MODULE_TRANSACTION ||
+      []) as SafeModuleTransactionWithTransfersResponse[];
+    const multisigTransactions = (groupedTransactions.MULTISIG_TRANSACTION ||
+      []) as SafeMultisigTransactionWithTransfersResponse[];
+    const ethereumTransactions = (groupedTransactions.ETHEREUM_TRANSACTION ||
+      []) as EthereumTxWithTransfersResponse[];
 
-    const flattenedTransfers = Array.from(flattenedTransfersSet.values());
+    const uniqueModuleTransactions = Array.from(
+      new Map(moduleTransactions.map(tx => [tx.transactionHash, tx])).values(),
+    );
+
+    const uniqueMultisigTransactions = Array.from(
+      new Map(multisigTransactions.map(tx => [tx.transactionHash, tx])).values(),
+    );
+
+    const uniqueEthereumTransactions = Array.from(
+      new Map(ethereumTransactions.map(tx => [tx.txHash, tx])).values(),
+    );
+
+    const flattenedTransfers = [
+      ...uniqueModuleTransactions.flatMap(tx => tx.transfers || []),
+      ...uniqueMultisigTransactions.flatMap(tx => tx.transfers || []),
+      ...uniqueEthereumTransactions.flatMap(tx => tx.transfers || []),
+    ];
 
     if (tokenBalancesError) {
       toast(tokenBalancesError, { autoClose: 2000 });
@@ -141,11 +181,22 @@ export const useDecentTreasury = () => {
             tokenBalanceData => getAddress(tokenBalanceData.tokenAddress) === address,
           );
           if (!fallbackTokenData) {
+            // Fallback to blockchain call if token info not available
+
+            if (!publicClient) {
+              throw new Error('No public client');
+            }
+            const [name, symbol, decimals] = await Promise.all([
+              publicClient.readContract({ address, abi: erc20Abi, functionName: 'name' }),
+              publicClient.readContract({ address, abi: erc20Abi, functionName: 'symbol' }),
+              publicClient.readContract({ address, abi: erc20Abi, functionName: 'decimals' }),
+            ]);
+
             return {
               address,
-              name: 'Unknown',
-              symbol: '---',
-              decimals: 18,
+              name,
+              symbol,
+              decimals,
             };
           }
 
@@ -228,6 +279,7 @@ export const useDecentTreasury = () => {
     getNFTBalances,
     getTokenBalances,
     nativeTokenIcon,
+    publicClient,
     safeAPI,
   ]);
 
