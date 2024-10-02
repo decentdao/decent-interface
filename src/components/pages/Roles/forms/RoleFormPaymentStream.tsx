@@ -1,10 +1,11 @@
 import { Box, Button, Flex, FormControl, Grid, GridItem, Icon } from '@chakra-ui/react';
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
-import { addDays } from 'date-fns';
+import { addDays, addMinutes } from 'date-fns';
 import { FormikErrors, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
+import { BigIntValuePair } from '../../../../types';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import { RoleFormValues, RoleHatFormValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
@@ -181,6 +182,29 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
           }}
         >
           {t('save')}
+        </Button>
+      </Flex>
+
+      {/* 10-MIN STREAM BUTTON */}
+      <Flex justifyContent="flex-end">
+        <Button
+          onClick={() => {
+            const payment = values?.roleEditing?.payments?.[formIndex];
+            const nowDate = new Date();
+
+            setFieldValue(`roleEditing.payments[${formIndex}]`, {
+              ...payment,
+              amount: {
+                value: '100',
+                bigintValue: 100000000000000000000n,
+              } as BigIntValuePair,
+              decimals: 18,
+              startDate: addMinutes(nowDate, 1),
+              endDate: addMinutes(nowDate, 10),
+            });
+          }}
+        >
+          Ze stream ends in 10!
         </Button>
       </Flex>
     </Box>
