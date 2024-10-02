@@ -91,10 +91,12 @@ function DecentDatePickerContainer({
   children,
   type,
   formIndex,
+  disabled,
 }: {
   children: ReactNode[];
   type: 'startDate' | 'endDate' | 'cliffDate';
   formIndex: number;
+  disabled: boolean;
 }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { values } = useFormikContext<RoleFormValues>();
@@ -112,8 +114,13 @@ function DecentDatePickerContainer({
               p="0"
               flex={1}
               w="full"
+              isDisabled={disabled}
+              cursor={disabled ? 'not-allowed' : 'pointer'}
             >
-              <DatePickerTrigger selectedDate={selectedDate} />
+              <DatePickerTrigger
+                selectedDate={selectedDate}
+                disabled={disabled}
+              />
             </Button>
 
             <DraggableDrawer
@@ -142,8 +149,13 @@ function DecentDatePickerContainer({
                 variant="unstyled"
                 p="0"
                 w="full"
+                isDisabled={disabled}
+                cursor={disabled ? 'not-allowed' : 'pointer'}
               >
-                <DatePickerTrigger selectedDate={selectedDate} />
+                <DatePickerTrigger
+                  selectedDate={selectedDate}
+                  disabled={disabled}
+                />
               </MenuButton>
               <MenuList zIndex={2}>
                 <Flex
@@ -186,12 +198,14 @@ export function DecentDatePicker({
   formIndex,
   minDate,
   maxDate,
+  disabled,
 }: {
   onChange: (date: Date) => void;
   type: 'startDate' | 'endDate' | 'cliffDate';
   minDate?: Date;
   maxDate?: Date;
   formIndex: number;
+  disabled: boolean;
 }) {
   const { values } = useFormikContext<RoleFormValues>();
 
@@ -209,6 +223,7 @@ export function DecentDatePicker({
     <DecentDatePickerContainer
       type={type}
       formIndex={formIndex}
+      disabled={disabled}
     >
       <SelectedDateDisplay
         selectedDate={selectedDate}
@@ -216,23 +231,25 @@ export function DecentDatePicker({
         isRange={false}
       />
       <Divider my="1.5rem" />
-      <Calendar
-        minDate={minDate}
-        maxDate={maxDate}
-        formatShortWeekday={(_, date) => date.toString().slice(0, 2)}
-        prevLabel={<Icon as={CaretLeft} />}
-        nextLabel={<Icon as={CaretRight} />}
-        next2Label={null}
-        prev2Label={null}
-        tileContent={({ date }) =>
-          isToday(date) ? <TodayBox isTodaySelected={isTodaySelected} /> : null
-        }
-        onChange={(e: OnDateChangeValue) => {
-          if (e instanceof Date) {
-            onChange?.(e);
+      {!disabled && (
+        <Calendar
+          minDate={minDate}
+          maxDate={maxDate}
+          formatShortWeekday={(_, date) => date.toString().slice(0, 2)}
+          prevLabel={<Icon as={CaretLeft} />}
+          nextLabel={<Icon as={CaretRight} />}
+          next2Label={null}
+          prev2Label={null}
+          tileContent={({ date }) =>
+            isToday(date) ? <TodayBox isTodaySelected={isTodaySelected} /> : null
           }
-        }}
-      />
+          onChange={(e: OnDateChangeValue) => {
+            if (e instanceof Date) {
+              onChange?.(e);
+            }
+          }}
+        />
+      )}
     </DecentDatePickerContainer>
   );
 }
@@ -241,10 +258,12 @@ export function DecentDatePickerRange({
   onChange,
   type,
   formIndex,
+  disabled,
 }: {
   onChange: (dateRange: [Date, Date]) => void;
   type: 'startDate' | 'endDate' | 'cliffDate';
   formIndex: number;
+  disabled: boolean;
 }) {
   const { values } = useFormikContext<RoleFormValues>();
 
@@ -267,6 +286,7 @@ export function DecentDatePickerRange({
     <DecentDatePickerContainer
       type={type}
       formIndex={formIndex}
+      disabled={disabled}
     >
       <SelectedDateDisplay
         selectedDate={null}
@@ -274,23 +294,25 @@ export function DecentDatePickerRange({
         isRange={true}
       />
       <Divider my="1.5rem" />
-      <Calendar
-        formatShortWeekday={(_, date) => date.toString().slice(0, 2)}
-        prevLabel={<Icon as={CaretLeft} />}
-        nextLabel={<Icon as={CaretRight} />}
-        next2Label={null}
-        prev2Label={null}
-        tileContent={({ date }) =>
-          isToday(date) ? <TodayBox isTodaySelected={isTodaySelected} /> : null
-        }
-        onChange={(e: OnDateChangeValue) => {
-          if (Array.isArray(e) && e.length === 2 && e.every(d => d instanceof Date)) {
-            const dateRange = e as [Date, Date];
-            onChange?.(dateRange);
+      {!disabled && (
+        <Calendar
+          formatShortWeekday={(_, date) => date.toString().slice(0, 2)}
+          prevLabel={<Icon as={CaretLeft} />}
+          nextLabel={<Icon as={CaretRight} />}
+          next2Label={null}
+          prev2Label={null}
+          tileContent={({ date }) =>
+            isToday(date) ? <TodayBox isTodaySelected={isTodaySelected} /> : null
           }
-        }}
-        selectRange
-      />
+          onChange={(e: OnDateChangeValue) => {
+            if (Array.isArray(e) && e.length === 2 && e.every(d => d instanceof Date)) {
+              const dateRange = e as [Date, Date];
+              onChange?.(dateRange);
+            }
+          }}
+          selectRange
+        />
+      )}
     </DecentDatePickerContainer>
   );
 }

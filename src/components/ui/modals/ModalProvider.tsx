@@ -12,7 +12,8 @@ import { ConfirmModifyGovernanceModal } from './ConfirmModifyGovernanceModal';
 import { ConfirmUrlModal } from './ConfirmUrlModal';
 import { DelegateModal } from './DelegateModal';
 import ForkProposalTemplateModal from './ForkProposalTemplateModal';
-import { ModalBase } from './ModalBase';
+import { ModalBase, ModalBaseSize } from './ModalBase';
+import PaymentCancelConfirmModal from './PaymentCancelConfirmModal';
 import PaymentWithdrawModal from './PaymentWithdrawModal';
 import ProposalTemplateModal from './ProposalTemplateModal';
 import StakeModal from './Stake';
@@ -34,6 +35,7 @@ export enum ModalType {
   SEARCH_SAFE,
   WARN_UNSAVED_CHANGES,
   WITHDRAW_PAYMENT,
+  CONFIRM_CANCEL_PAYMENT,
 }
 
 export type CurrentModal = {
@@ -77,6 +79,9 @@ export type ModalPropsTypes = {
     };
     onSuccess: () => Promise<void>;
   };
+  [ModalType.CONFIRM_CANCEL_PAYMENT]: {
+    onSubmit: () => void;
+  };
 };
 
 export interface IModalContext {
@@ -95,6 +100,7 @@ interface ModalUI {
   content: ReactNode | null;
   isSearchInputModal: boolean;
   onSetClosed: () => void;
+  size: ModalBaseSize;
 }
 
 /**
@@ -118,12 +124,13 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     if (current.type != ModalType.NONE) onOpen();
   }, [current.type, onOpen]);
 
-  const { title, warn, content, onSetClosed, isSearchInputModal } = useMemo<ModalUI>(() => {
+  const { title, warn, content, onSetClosed, isSearchInputModal, size } = useMemo<ModalUI>(() => {
     const closeModal = () => {
       setCurrent({ type: ModalType.NONE, props: {} });
       onClose();
     };
 
+    let modalSize: ModalBaseSize = 'lg';
     let modalTitle: string | undefined;
     let hasWarning = false;
     let isSearchInput = false;
@@ -234,6 +241,16 @@ export function ModalProvider({ children }: { children: ReactNode }) {
         );
         break;
       }
+      case ModalType.CONFIRM_CANCEL_PAYMENT: {
+        modalContent = (
+          <PaymentCancelConfirmModal
+            onClose={closeModal}
+            onSubmit={current.props.onSubmit}
+          />
+        );
+        modalSize = 'sm';
+        break;
+      }
       case ModalType.NONE:
       default:
         modalTitle = '';
@@ -246,6 +263,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       warn: hasWarning,
       content: modalContent,
       onSetClosed: closeModal,
+      size: modalSize,
     };
   }, [current, onClose, t]);
 
@@ -256,12 +274,16 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       isOpen={isOpen}
       onClose={onSetClosed}
       isSearchInputModal={isSearchInputModal}
+      size={size}
     >
       {content}
     </ModalBase>
   ) : null;
 
-  if (current.type === ModalType.WITHDRAW_PAYMENT) {
+  if (
+    current.type === ModalType.WITHDRAW_PAYMENT ||
+    current.type === ModalType.CONFIRM_CANCEL_PAYMENT
+  ) {
     display = (
       <>
         <Show below="md">
@@ -282,6 +304,8 @@ export function ModalProvider({ children }: { children: ReactNode }) {
             isOpen={isOpen}
             onClose={onSetClosed}
             isSearchInputModal={isSearchInputModal}
+            zIndex={1401} // @dev - Modal zIndex is 1400, but since these modals are might be shown alongside drawer - we need to make it larger
+            size={size}
           >
             {content}
           </ModalBase>

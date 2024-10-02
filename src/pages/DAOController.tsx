@@ -39,7 +39,7 @@ export default function DAOController() {
     useDAOController();
   useUpdateSafeData(daoAddress);
 
-  const { switchChain } = useSwitchChain();
+  const { switchChainAsync } = useSwitchChain();
 
   const {
     node: { daoName },
@@ -48,15 +48,18 @@ export default function DAOController() {
   useTemporaryProposals();
 
   useEffect(() => {
-    if (urlAddressPrefix && wrongNetwork) {
-      try {
-        switchChain({ chainId: getChainIdFromPrefix(urlAddressPrefix) });
-        window.location.reload();
-      } catch (e) {
-        logError(e);
+    async function switchChainToSafeChain() {
+      if (urlAddressPrefix && wrongNetwork) {
+        try {
+          await switchChainAsync({ chainId: getChainIdFromPrefix(urlAddressPrefix) });
+          window.location.reload();
+        } catch (e) {
+          logError(e);
+        }
       }
     }
-  }, [wrongNetwork, switchChain, urlAddressPrefix]);
+    switchChainToSafeChain();
+  }, [wrongNetwork, switchChainAsync, urlAddressPrefix]);
 
   useEffect(() => {
     if (daoName) {

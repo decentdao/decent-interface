@@ -141,14 +141,17 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
   );
 }
 
-export function AssetSelector({ formIndex }: { formIndex: number }) {
+export function AssetSelector({ formIndex, disabled }: { formIndex: number; disabled?: boolean }) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
   return (
     <>
-      <FormControl my="0.5rem">
+      <FormControl
+        my="0.5rem"
+        isDisabled={disabled}
+      >
         <Field name={`roleEditing.payments[${formIndex}].asset`}>
           {({ field }: FieldProps<string, RoleFormValues>) => (
             <Menu
@@ -161,6 +164,8 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
                     as={Button}
                     variant="unstyled"
                     bgColor="transparent"
+                    isDisabled={disabled}
+                    cursor={disabled ? 'not-allowed' : 'pointer'}
                     p={0}
                     sx={{
                       '&:hover': {
@@ -274,7 +279,10 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
           )}
         </Field>
       </FormControl>
-      <FormControl my="1rem">
+      <FormControl
+        my="1rem"
+        isDisabled={disabled}
+      >
         <Field name={`roleEditing.payments[${formIndex}].amount`}>
           {({
             field,
@@ -283,6 +291,7 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
           }: FieldProps<BigIntValuePair, RoleFormValues>) => {
             const paymentAmountBigIntError = meta.error as FormikErrors<BigIntValuePair>;
             const paymentAmountBigIntTouched = meta.touched;
+            const inputDisabled = !values?.roleEditing?.payments?.[formIndex]?.asset || disabled;
             return (
               <LabelWrapper
                 label={t('totalAmount')}
@@ -291,9 +300,10 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
                     ? paymentAmountBigIntError?.bigintValue
                     : undefined
                 }
+                isDisabled={inputDisabled}
               >
                 <BigIntInput
-                  isDisabled={!values?.roleEditing?.payments?.[formIndex]?.asset}
+                  isDisabled={inputDisabled}
                   value={field.value?.bigintValue}
                   onChange={valuePair => {
                     setFieldValue(field.name, valuePair, true);
@@ -302,6 +312,7 @@ export function AssetSelector({ formIndex }: { formIndex: number }) {
                   onBlur={() => {
                     setFieldTouched(field.name, true);
                   }}
+                  cursor={disabled ? 'not-allowed' : 'pointer'}
                 />
               </LabelWrapper>
             );
