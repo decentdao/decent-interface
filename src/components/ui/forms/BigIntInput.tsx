@@ -19,29 +19,30 @@ export interface BigIntInputProps
   min?: string;
   max?: string;
   maxValue?: bigint;
-  currentValue?: BigIntValuePair;
+  parentFormikValue?: BigIntValuePair;
 }
 /**
  * This component will add a chakra Input component that accepts and sets a bigint
  *
  * @param value input value to the control as a bigint. If undefined is set then the component will be blank.
- * @param onChange event is raised whenever the component changes. Sends back a value / bigint pair. The value sent back is a string representation of the bigint as a decimal number.
+ * @param onChange event is raised whenever the component changes. Sends back a resulting `BigIntValuePair` from the new input.
  * @param decimalPlaces number of decimal places to be used to parse the value to set the bigint
  * @param min Setting a minimum value will reset the Input value to min when the component's focus is lost. Can set decimal number for minimum, but must respect the decimalPlaces value.
  * @param max Setting this will cause the value of the Input control to be reset to the maximum when a number larger than it is inputted.
  * @param maxValue The maximum value that can be inputted. This is used to set the max value of the Input control.
- * @param currentValue This needs to be set to `values.yourFormValue` if the value of the Input control is changed outside of the component, for example via `setFieldValue`. This will update the value of the underlying Input control.
+ * @param parentFormikValue This needs to be set to `values.yourFormValue` if the value of the Input control is changed outside of the component, for example via `setFieldValue`. This will update the value of the underlying Input control.
  * @param ...rest component accepts all properties for Input and FormControl
  * @returns
  */
 export function BigIntInput({
+  // @todo `value` can most likely either be removed, or be used for what `parentFormikValue` is currently being used for. Currently it works as nothing more than an initial value.
   value,
   onChange,
   decimalPlaces = 18,
   min,
   max,
   maxValue,
-  currentValue,
+  parentFormikValue = { value: '', bigintValue: undefined },
   ...rest
 }: BigIntInputProps) {
   const { t } = useTranslation('common');
@@ -147,10 +148,23 @@ export function BigIntInput({
 
   // if the parent Formik value prop changes, need to update the value
   useEffect(() => {
-    if (!inputValue || inputValue === currentValue?.value) return;
-    if (currentValue?.bigintValue === 0n) setInputValue('');
-    if (currentValue?.value !== inputValue) setInputValue(currentValue?.value || inputValue);
-  }, [currentValue, inputValue]);
+
+    // If parentFormikValue is set to undefined, then the input should be blank
+    if (parentFormikValue === undefined) {
+      setInputValue('');
+      return;
+    }
+
+    // If parentFormikValue is the same as the input value, nothing needs to happen.
+    if (inputValue === parentFormikValue.value) return;
+
+    // If parentFormikValue does not match the input value (likely because it was set outside of the input's onChange handler),
+    // then update the underlying input value so that the change is visible on the UI.
+    // But if parentFormikValue.value is false-y, default to whatever is in the input.
+    if (parentFormikValue.value !== inputValue) {
+      setInputValue(parentFormikValue?.value || inputValue);
+    }
+  }, [parentFormikValue, inputValue]);
 
   // if the decimalPlaces change, need to update the value
   useEffect(() => {
