@@ -219,7 +219,10 @@ function GuardDetails(props: ICreationStepProps) {
               {t('exampleFreezePeriod')}
             </Text>
           </LabelComponent>
-          <Alert status="info">
+          <Alert
+            status="info"
+            gap={4}
+          >
             <Info size="24" />
             <Text
               textStyle="body-base-strong"
@@ -230,24 +233,12 @@ function GuardDetails(props: ICreationStepProps) {
           </Alert>
         </Flex>
       </StepWrapper>
-      {showCustomNonce && (
-        <Box
-          padding="1.5rem"
-          bg="neutral-2"
-          borderRadius="0.25rem"
-          my="1.5rem"
-        >
-          <CustomNonceInput
-            nonce={values.multisig.customNonce}
-            onChange={handleNonceChange}
-            renderTrimmed={false}
-          />
-        </Box>
-      )}
       <Box
         padding="1.5rem"
         bg="neutral-2"
         borderRadius="0.25rem"
+        mt="1.5rem"
+        mb={showCustomNonce ? '1.5rem' : 0}
       >
         <FormControl
           gap="0.5rem"
@@ -272,6 +263,20 @@ function GuardDetails(props: ICreationStepProps) {
           {t('attachFractalModuleDescription')}
         </Text>
       </Box>
+      {showCustomNonce && (
+        <Box
+          padding="1.5rem"
+          bg="neutral-2"
+          borderRadius="0.25rem"
+          my="1.5rem"
+        >
+          <CustomNonceInput
+            nonce={values.multisig.customNonce}
+            onChange={handleNonceChange}
+            renderTrimmed={false}
+          />
+        </Box>
+      )}
       <StepButtons {...props} />
     </>
   );

@@ -26,9 +26,6 @@ const primary = defineStyle({
   thumb: {
     backgroundColor: 'lilac--2',
     _disabled: primaryDisabled.thumb,
-    _hover: {
-      backgroundColor: 'lilac--1',
-    },
   },
 });
 
@@ -60,8 +57,8 @@ const secondary = defineStyle({
   },
   thumb: {
     backgroundColor: 'neutral-10',
+    borderColor: 'white-0',
     _hover: {
-      backgroundColor: 'white-0',
       _disabled: secondaryDisabled.thumb,
     },
     _disabled: secondaryDisabled.thumb,

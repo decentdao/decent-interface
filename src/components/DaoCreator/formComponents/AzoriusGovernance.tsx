@@ -152,7 +152,10 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               {t('exampleExecutionPeriod')}
             </Text>
           </LabelComponent>
-          <Alert status="info">
+          <Alert
+            status="info"
+            gap={4}
+          >
             <WarningCircle size="24" />
             <Text
               textStyle="body-base-strong"
