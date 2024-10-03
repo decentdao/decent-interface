@@ -1,22 +1,13 @@
-import { Flex, Box, Button } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { DAO_ROUTES } from '../../constants/routes';
-import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
+import { Box, Flex } from '@chakra-ui/react';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { EmptyBox } from '../ui/containers/EmptyBox';
+import NoDataCard from '../ui/containers/NoDataCard';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import ProposalTemplateCard from './ProposalTemplateCard';
 
 export default function ProposalTemplates() {
-  const { t } = useTranslation('proposalTemplate');
   const {
-    node: { daoAddress },
     governance: { proposalTemplates },
   } = useFractal();
-  const { addressPrefix } = useNetworkConfig();
-  const { canUserCreateProposal } = useCanUserCreateProposal();
 
   return (
     <Flex
@@ -37,18 +28,11 @@ export default function ProposalTemplates() {
           />
         ))
       ) : (
-        <EmptyBox emptyText={t('emptyProposalTemplates')}>
-          {canUserCreateProposal && daoAddress && (
-            <Link to={DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)}>
-              <Button
-                variant="text"
-                textStyle="display-xl"
-              >
-                {t('emptyProposalTemplatesCreateMessage')}
-              </Button>
-            </Link>
-          )}
-        </EmptyBox>
+        <NoDataCard
+          translationNameSpace="proposalTemplate"
+          emptyText="emptyProposalTemplates"
+          emptyTextNotProposer="empyProposalTemplatesNotProposer"
+        />
       )}
     </Flex>
   );

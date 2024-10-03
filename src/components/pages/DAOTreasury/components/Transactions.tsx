@@ -102,7 +102,6 @@ function EmptyTransactions() {
       textStyle="body-base-strong"
       color="neutral-7"
       data-testid="text-empty-transactions"
-      marginTop="1rem"
       align="center"
       px={{ base: '1rem', lg: '1.5rem' }}
     >
