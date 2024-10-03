@@ -105,7 +105,7 @@ export default function Treasury() {
                     <PaginationCount shownTransactions={shownTransactions} />
                   </Box>
                 </Show>
-              ) : undefined
+              ) : null
             }
           >
             <Flex flexDir={{ base: 'column-reverse', lg: 'column' }}>
