@@ -90,6 +90,9 @@ export const baseConfig: NetworkConfig = {
     sablierV2LockupLinear: '0x4CB16D4153123A74Bc724d161050959754f378D8',
   },
   staking: {},
+  moralis: {
+    deFiSupported: true
+  },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
 

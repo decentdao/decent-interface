@@ -5,7 +5,10 @@ import { DefiBalance, NFTBalance, TokenBalance } from '../../../types';
 import { useNetworkConfig } from '../../NetworkConfig/NetworkConfigProvider';
 
 export default function useBalancesAPI() {
-  const { chain } = useNetworkConfig();
+  const {
+    chain,
+    moralis: { deFiSupported },
+  } = useNetworkConfig();
   const { t } = useTranslation('treasury');
 
   const getTokenBalances = useCallback(
@@ -42,6 +45,9 @@ export default function useBalancesAPI() {
 
   const getDeFiBalances = useCallback(
     async (address: Address): Promise<{ data?: DefiBalance[]; error?: string }> => {
+      if (!deFiSupported) {
+        return { data: [] };
+      }
       try {
         const balancesResponse = await fetch(
           `/.netlify/functions/defiBalances?address=${address}&network=${chain.id}`,
@@ -53,7 +59,7 @@ export default function useBalancesAPI() {
         return { error: t('errorFetchingBalances') };
       }
     },
-    [chain, t],
+    [chain, t, deFiSupported],
   );
 
   return { getTokenBalances, getNFTBalances, getDeFiBalances };

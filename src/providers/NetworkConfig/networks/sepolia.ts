@@ -91,6 +91,9 @@ export const sepoliaConfig: NetworkConfig = {
     sablierV2LockupLinear: '0x3E435560fd0a03ddF70694b35b673C25c65aBB6C',
   },
   staking: {},
+  moralis: {
+    deFiSupported: false
+  },
   createOptions: [
     GovernanceType.MULTISIG,
     GovernanceType.AZORIUS_ERC20,
