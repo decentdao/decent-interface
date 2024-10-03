@@ -22,8 +22,8 @@ export type NetworkConfig = {
     slug: string;
   };
   moralis: {
-    deFiSupported: boolean
-  },
+    deFiSupported: boolean;
+  };
   contracts: {
     gnosisSafeL2Singleton: Address;
     gnosisSafeProxyFactory: Address;

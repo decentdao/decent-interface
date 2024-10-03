@@ -91,7 +91,7 @@ export const optimismConfig: NetworkConfig = {
   },
   staking: {},
   moralis: {
-    deFiSupported: true
+    deFiSupported: true,
   },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };

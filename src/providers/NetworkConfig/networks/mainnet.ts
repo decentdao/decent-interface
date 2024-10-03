@@ -97,7 +97,7 @@ export const mainnetConfig: NetworkConfig = {
     },
   },
   moralis: {
-    deFiSupported: true
+    deFiSupported: true,
   },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };

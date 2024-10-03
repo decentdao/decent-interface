@@ -91,7 +91,7 @@ export const baseConfig: NetworkConfig = {
   },
   staking: {},
   moralis: {
-    deFiSupported: true
+    deFiSupported: true,
   },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };

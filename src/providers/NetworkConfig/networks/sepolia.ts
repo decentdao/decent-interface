@@ -92,7 +92,7 @@ export const sepoliaConfig: NetworkConfig = {
   },
   staking: {},
   moralis: {
-    deFiSupported: false
+    deFiSupported: false,
   },
   createOptions: [
     GovernanceType.MULTISIG,
