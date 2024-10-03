@@ -19,7 +19,7 @@ export default function NoDataCard({
       <Text
         textStyle="body-base"
         textAlign="center"
-        color="white-alpha-16"
+        color="neutral-6"
       >
         {t(
           emptyTextNotProposer

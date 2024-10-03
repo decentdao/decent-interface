@@ -99,8 +99,8 @@ function EmptyTransactions() {
   const { t } = useTranslation('treasury');
   return (
     <Text
-      textStyle="body-base-strong"
-      color="neutral-7"
+      textStyle="body-base"
+      color="neutral-6"
       data-testid="text-empty-transactions"
       align="center"
       px={{ base: '1rem', lg: '1.5rem' }}
