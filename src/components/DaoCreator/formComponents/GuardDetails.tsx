@@ -1,16 +1,24 @@
-import { Text, InputGroup, InputRightElement, Flex, Alert } from '@chakra-ui/react';
+import {
+  Alert,
+  Box,
+  Flex,
+  FormControl,
+  InputGroup,
+  InputRightElement,
+  Switch,
+  Text,
+} from '@chakra-ui/react';
 import { Info } from '@phosphor-icons/react';
 import { Field, FieldAttributes, FieldProps } from 'formik';
-import { useEffect, useState, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { ICreationStepProps, GovernanceType, BigIntValuePair } from '../../../types';
+import { BigIntValuePair, GovernanceType, ICreationStepProps } from '../../../types';
 import { formatBigIntToHumanReadableString } from '../../../utils/numberFormats';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
 import { LabelComponent } from '../../ui/forms/InputComponent';
-import Divider from '../../ui/utils/Divider';
 import { StepButtons } from '../StepButtons';
 import { StepWrapper } from '../StepWrapper';
 import { useParentSafeVotingWeight } from '../hooks/useParentSafeVotingWeight';
@@ -211,7 +219,10 @@ function GuardDetails(props: ICreationStepProps) {
               {t('exampleFreezePeriod')}
             </Text>
           </LabelComponent>
-          <Alert status="info">
+          <Alert
+            status="info"
+            gap={4}
+          >
             <Info size="24" />
             <Text
               textStyle="body-base-strong"
@@ -220,16 +231,52 @@ function GuardDetails(props: ICreationStepProps) {
               {t('freezeGuardDescription')}
             </Text>
           </Alert>
-          <Divider mb={4} />
-          {showCustomNonce && (
-            <CustomNonceInput
-              nonce={values.multisig.customNonce}
-              onChange={handleNonceChange}
-              renderTrimmed={false}
-            />
-          )}
         </Flex>
       </StepWrapper>
+      <Box
+        padding="1.5rem"
+        bg="neutral-2"
+        borderRadius="0.25rem"
+        mt="1.5rem"
+        mb={showCustomNonce ? '1.5rem' : 0}
+      >
+        <FormControl
+          gap="0.5rem"
+          width="100%"
+          justifyContent="space-between"
+          display="flex"
+        >
+          <Text>{t('attachFractalModuleLabel')}</Text>
+          <Switch
+            size="md"
+            variant="secondary"
+            onChange={() =>
+              setFieldValue('freeze.attachFractalModule', !values.freeze.attachFractalModule)
+            }
+            isChecked={values.freeze.attachFractalModule}
+          />
+        </FormControl>
+        <Text
+          color="neutral-7"
+          width="50%"
+        >
+          {t('attachFractalModuleDescription')}
+        </Text>
+      </Box>
+      {showCustomNonce && (
+        <Box
+          padding="1.5rem"
+          bg="neutral-2"
+          borderRadius="0.25rem"
+          my="1.5rem"
+        >
+          <CustomNonceInput
+            nonce={values.multisig.customNonce}
+            onChange={handleNonceChange}
+            renderTrimmed={false}
+          />
+        </Box>
+      )}
       <StepButtons {...props} />
     </>
   );

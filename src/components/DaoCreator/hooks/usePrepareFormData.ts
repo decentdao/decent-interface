@@ -3,12 +3,12 @@ import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import IVotesAbi from '../../../assets/abi/IVotes';
 import {
-  SafeMultisigDAO,
-  DAOFreezeGuardConfig,
-  BigIntValuePair,
-  TokenCreationType,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
+  BigIntValuePair,
+  DAOFreezeGuardConfig,
+  SafeMultisigDAO,
+  TokenCreationType,
 } from '../../../types';
 import { SENTINEL_MODULE } from '../../../utils/address';
 import { getEstimatedNumberOfBlocks } from '../../../utils/contract';
@@ -43,6 +43,7 @@ export function usePrepareFormData() {
             freezeGuard.freezePeriod.bigintValue!,
             publicClient,
           ),
+          attachFractalModule: freezeGuard.attachFractalModule,
         };
       }
     },
