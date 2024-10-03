@@ -313,6 +313,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                     setFieldTouched(field.name, true);
                   }}
                   cursor={disabled ? 'not-allowed' : 'pointer'}
+                  placeholder='0'
                 />
               </LabelWrapper>
             );
