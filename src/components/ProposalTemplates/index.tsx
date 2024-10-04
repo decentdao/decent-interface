@@ -31,7 +31,7 @@ export default function ProposalTemplates() {
         <NoDataCard
           translationNameSpace="proposalTemplate"
           emptyText="emptyProposalTemplates"
-          emptyTextNotProposer="empyProposalTemplatesNotProposer"
+          emptyTextNotProposer="emptyProposalTemplatesNotProposer"
         />
       )}
     </Flex>

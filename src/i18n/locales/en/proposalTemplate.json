@@ -24,7 +24,7 @@
   "eth": "ETH",
   "ethParemeterHelper": "Leave empty for a blank input",
   "emptyProposalTemplates": "You haven't added any Proposal Templates yet. Create one above.",
-  "empyProposalTemplatesNotProposer": "This Safe doesn't have any Proposal Templates yet.",
+  "emptyProposalTemplatesNotProposer": "This Safe doesn't have any Proposal Templates yet.",
   "removeTemplatePendingToastMessage": "Creating proposal to remove proposal template",
   "removeTemplateSuccessToastMessage": "Proposal to remove template created. Vote and execute to apply changes.",
   "removeTemplateFailureToastMessage": "Creating proposal for removing proposal template failed.",
