@@ -11,6 +11,7 @@ export function Card({ children, ...rest }: BoxProps) {
       borderRadius="0.5rem"
       border="1px solid"
       borderColor="neutral-3"
+      cursor={rest.onClick ? 'pointer' : 'default'}
       {...rest}
     >
       {children}

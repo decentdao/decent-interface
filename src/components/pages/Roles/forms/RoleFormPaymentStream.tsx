@@ -174,7 +174,12 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
               mb="2.5rem"
               gap="1rem"
             >
-              <Info size="24" />
+              <Box
+                width="1.5rem"
+                height="1.5rem"
+              >
+                <Info size="24" />
+              </Box>
               <Text
                 textStyle="body-base-strong"
                 whiteSpace="pre-wrap"
@@ -219,7 +224,12 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
           my="1.5rem"
           gap="1rem"
         >
-          <Info size="24" />
+          <Box
+            width="1.5rem"
+            height="1.5rem"
+          >
+            <Info size="24" />
+          </Box>
           <Text
             textStyle="body-base-strong"
             whiteSpace="pre-wrap"

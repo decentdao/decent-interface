@@ -255,10 +255,7 @@ export function RoleCardShort({
   handleRoleClick: () => void;
 }) {
   return (
-    <Card
-      cursor={'pointer'}
-      onClick={handleRoleClick}
-    >
+    <Card onClick={handleRoleClick}>
       <Flex justifyContent="space-between">
         <Text
           textStyle="display-lg"
