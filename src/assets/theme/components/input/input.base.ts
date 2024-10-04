@@ -1,11 +1,12 @@
 import { inputAnatomy } from '@chakra-ui/anatomy';
 import { createMultiStyleConfigHelpers } from '@chakra-ui/react';
+import { DISABLED_INPUT } from '../../../../constants/common';
 
 const { definePartsStyle } = createMultiStyleConfigHelpers(inputAnatomy.keys);
 
 const disabled = {
   cursor: 'default',
-  bg: 'rgba(22, 18, 25, 0.16)',
+  bg: DISABLED_INPUT,
   border: '1px solid',
   borderColor: 'white-alpha-16',
   color: 'neutral-6',

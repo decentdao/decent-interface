@@ -24,6 +24,7 @@ export const useContentHeight = () => {
 };
 
 // TODO get these into the theme
+export const DISABLED_INPUT = '#16121929';
 export const MOBILE_DRAWER_OVERLAY = '#161219D6';
 export const BACKGROUND_SEMI_TRANSPARENT = '#16121980';
 export const NEUTRAL_2_82_TRANSPARENT = '#221D25D6';

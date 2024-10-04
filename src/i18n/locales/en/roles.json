@@ -3,6 +3,7 @@
   "role": "Role",
   "member": "Member",
   "noRoles": "You haven't added any Roles yet. Create one above.",
+  "noRolesNotProposer": "This Safe doesn't have any Roles yet.",
   "description": "Description",
   "unassigned": "Unassigned",
   "after": "after",
@@ -84,5 +85,11 @@
   "roleInfoErrorPaymentFixedDateCliffDateBetweenStartAndEndDate": "Cliff date must be between start and end date.",
   "roleInfoErrorPaymentScheduleOrFixedDateRequired": "Payment schedule or fixed dates are required.",
   "roleInfoErrorPaymentScheduleInvalid": "Invalid payment schedule.",
-  "cancelPayment": "Cancel Payment"
+  "cancelPayment": "Cancel Payment",
+  "cancelled": "Canceled",
+  "cancelling": "Cancelling",
+  "cancelPaymentInfoMessage": "These values can’t be edited. To update them, please cancel this payment and create a new one.",
+  "cancellingPaymentInfoMessage": "This payment is marked for cancelling and thus can not be edited.",
+  "confirmCancelPaymentTitle": "Are you sure you want to cancel this payment?",
+  "confirmCancelPaymentBody": "This action cannot be undone."
 }

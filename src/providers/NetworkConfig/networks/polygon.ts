@@ -92,6 +92,9 @@ export const polygonConfig: NetworkConfig = {
     sablierV2LockupLinear: '0x8D4dDc187a73017a5d7Cef733841f55115B13762',
   },
   staking: {},
+  moralis: {
+    deFiSupported: true,
+  },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
 

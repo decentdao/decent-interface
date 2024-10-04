@@ -3,11 +3,11 @@ import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import GnosisSafeProxyFactoryAbi from '../assets/abi/GnosisSafeProxyFactory';
 import { getRandomBytes } from '../helpers';
 import {
+  AzoriusERC20DAO,
+  AzoriusERC721DAO,
   SafeMultisigDAO,
   SafeTransaction,
   SubDAO,
-  AzoriusERC721DAO,
-  AzoriusERC20DAO,
   VotingStrategyType,
 } from '../types';
 import { AzoriusTxBuilder } from './AzoriusTxBuilder';
@@ -98,7 +98,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.safeContractAddress = safeAddress;
   }
 
-  public async setupSafeData(): Promise<void> {
+  public async setupSafeData() {
     const safeProxyFactoryContract = getContract({
       abi: GnosisSafeProxyFactoryAbi,
       address: this.gnosisSafeProxyFactory,
@@ -125,10 +125,15 @@ export class TxBuilderFactory extends BaseTxBuilder {
     this.setSafeContract(predictedSafeAddress);
   }
 
-  public createDaoTxBuilder(
-    parentStrategyType?: VotingStrategyType,
-    parentStrategyAddress?: Address,
-  ): DaoTxBuilder {
+  public createDaoTxBuilder({
+    attachFractalModule,
+    parentStrategyType,
+    parentStrategyAddress,
+  }: {
+    attachFractalModule?: boolean;
+    parentStrategyType?: VotingStrategyType;
+    parentStrategyAddress?: Address;
+  }) {
     return new DaoTxBuilder(
       this.publicClient,
       this.isAzorius,
@@ -142,6 +147,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
       this.zodiacModuleProxyFactory,
       this.multiSendCallOnly,
       this.moduleFractalMasterCopy,
+      attachFractalModule,
       this.parentAddress,
       this.parentTokenAddress,
       parentStrategyType,
@@ -154,7 +160,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     strategyAddress?: Address,
     parentStrategyType?: VotingStrategyType,
     parentStrategyAddress?: Address, // User only with ERC-721 parent
-  ): FreezeGuardTxBuilder {
+  ) {
     return new FreezeGuardTxBuilder(
       this.publicClient,
       this.daoData as SubDAO,
@@ -176,7 +182,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     );
   }
 
-  public createMultiSigTxBuilder(): MultisigTxBuilder {
+  public createMultiSigTxBuilder() {
     return new MultisigTxBuilder(
       this.multiSendCallOnly,
       this.daoData as SafeMultisigDAO,
@@ -184,7 +190,7 @@ export class TxBuilderFactory extends BaseTxBuilder {
     );
   }
 
-  public async createAzoriusTxBuilder(): Promise<AzoriusTxBuilder> {
+  public async createAzoriusTxBuilder() {
     const azoriusTxBuilder = new AzoriusTxBuilder(
       this.publicClient,
       this.daoData as AzoriusERC20DAO,

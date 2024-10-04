@@ -92,6 +92,9 @@ export const optimismConfig: NetworkConfig = {
     sablierV2LockupLinear: '0x5C22471A86E9558ed9d22235dD5E0429207ccf4B',
   },
   staking: {},
+  moralis: {
+    deFiSupported: true,
+  },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
 

@@ -5,11 +5,12 @@ import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
-  SafeMultisigDAO,
-  GovernanceType,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
   AzoriusGovernance,
+  GovernanceType,
+  SafeMultisigDAO,
+  SubDAO,
   VotingStrategyType,
 } from '../../types';
 
@@ -47,7 +48,7 @@ const useBuildDAOTx = () => {
 
   const buildDao = useCallback(
     async (
-      daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
+      daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO | SubDAO,
       parentAddress?: Address,
       parentTokenAddress?: Address,
     ) => {
@@ -92,24 +93,22 @@ const useBuildDAOTx = () => {
       );
 
       await txBuilderFactory.setupSafeData();
-      let parentVotingStrategyType: VotingStrategyType | undefined;
-      let parentVotingStrategyAddress: Address | undefined;
+      let parentStrategyType: VotingStrategyType | undefined;
+      let parentStrategyAddress: Address | undefined;
 
       const azoriusGovernance = governance as AzoriusGovernance;
       if (dao && dao.isAzorius && azoriusGovernance.votingStrategy) {
-        parentVotingStrategyType = azoriusGovernance.votingStrategy.strategyType;
-        if (
-          parentVotingStrategyType === VotingStrategyType.LINEAR_ERC721 &&
-          linearVotingErc721Address
-        ) {
-          parentVotingStrategyAddress = linearVotingErc721Address;
+        parentStrategyType = azoriusGovernance.votingStrategy.strategyType;
+        if (parentStrategyType === VotingStrategyType.LINEAR_ERC721 && linearVotingErc721Address) {
+          parentStrategyAddress = linearVotingErc721Address;
         }
       }
 
-      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder(
-        parentVotingStrategyType,
-        parentVotingStrategyAddress,
-      );
+      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder({
+        attachFractalModule: (daoData as SubDAO).attachFractalModule,
+        parentStrategyType,
+        parentStrategyAddress,
+      });
 
       const buildSafeTxParams = {
         shouldSetName: true, // We KNOW this will always be true because the Decent UI doesn't allow creating a safe without a name

@@ -229,6 +229,8 @@ const useHatsTree = () => {
 
                     return !cancelled && !!start && !!end && start <= now && end > now;
                   },
+                  isCancellable: () =>
+                    !lockupLinearStream.canceled && !!endDate && endDate.getTime() > Date.now(),
                 };
               });
 

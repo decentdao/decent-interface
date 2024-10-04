@@ -1,5 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { Address, PublicClient, encodeFunctionData, zeroAddress } from 'viem';
+import { Address, encodeFunctionData, PublicClient, zeroAddress } from 'viem';
 import GnosisSafeL2Abi from '../assets/abi/GnosisSafeL2';
 import MultiSendCallOnlyAbi from '../assets/abi/MultiSendCallOnly';
 import { buildContractCall, encodeMultiSend } from '../helpers';
@@ -53,6 +53,8 @@ export class DaoTxBuilder extends BaseTxBuilder {
     multiSendCallOnly: Address,
     moduleFractalMasterCopy: Address,
 
+    attachFractalModule?: boolean,
+
     parentAddress?: Address,
     parentTokenAddress?: Address,
 
@@ -75,8 +77,10 @@ export class DaoTxBuilder extends BaseTxBuilder {
     this.parentStrategyType = parentStrategyType;
     this.parentStrategyAddress = parentStrategyAddress;
 
-    // Prep fractal module txs for setting up subDAOs
-    this.setFractalModuleTxs();
+    if (attachFractalModule) {
+      // Prep fractal module txs for setting up subDAOs
+      this.setFractalModuleTxs();
+    }
   }
 
   public async buildAzoriusTx(params: {
@@ -112,14 +116,19 @@ export class DaoTxBuilder extends BaseTxBuilder {
         this.parentStrategyAddress,
       );
 
-      this.internalTxs = this.internalTxs.concat([
-        // Enable Fractal Module b/c this a subDAO
-        this.enableFractalModuleTx!,
+      if (this.enableFractalModuleTx) {
+        this.internalTxs = this.internalTxs.concat(
+          // Enable Fractal Module b/c this a subDAO
+          this.enableFractalModuleTx,
+        );
+      }
+
+      this.internalTxs = this.internalTxs.concat(
         freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
         freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
         freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
         freezeGuardTxBuilder.buildSetGuardTx(abis.Azorius, azoriusTxBuilder.azoriusAddress!),
-      ]);
+      );
     }
     const data = this.daoData as AzoriusERC20DAO;
 
@@ -154,9 +163,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.internalTxs.push(tokenApprovalTx);
     }
 
-    // If subDAO, deploy Fractal Module
-    if (this.parentAddress) {
-      txs.push(this.deployFractalModuleTx!);
+    if (this.parentAddress && this.deployFractalModuleTx) {
+      // If subDAO, and `deployFractalModuleTx` created (which might not be the case depending on user input) - deploy Fractal Module.
+      txs.push(this.deployFractalModuleTx);
     }
 
     txs.push(this.buildExecInternalSafeTx(azoriusTxBuilder.signatures()));
@@ -193,14 +202,19 @@ export class DaoTxBuilder extends BaseTxBuilder {
         this.parentStrategyAddress,
       );
 
-      this.internalTxs = this.internalTxs.concat([
-        // Enable Fractal Module b/c this a subDAO
-        this.enableFractalModuleTx!,
+      if (this.enableFractalModuleTx) {
+        this.internalTxs = this.internalTxs.concat(
+          // Enable Fractal Module b/c this a subDAO
+          this.enableFractalModuleTx,
+        );
+      }
+
+      this.internalTxs = this.internalTxs.concat(
         freezeGuardTxBuilder.buildDeployZodiacModuleTx(),
         freezeGuardTxBuilder.buildFreezeVotingSetupTx(),
         freezeGuardTxBuilder.buildDeployFreezeGuardTx(),
         freezeGuardTxBuilder.buildSetGuardTxSafe(this.safeContractAddress),
-      ]);
+      );
     }
 
     this.internalTxs.push(multisigTxBuilder.buildRemoveMultiSendOwnerTx());
@@ -210,9 +224,9 @@ export class DaoTxBuilder extends BaseTxBuilder {
       this.buildExecInternalSafeTx(multisigTxBuilder.signatures()),
     ];
 
-    // If subDAO, deploy Fractal Module.
-    if (this.parentAddress) {
-      txs.splice(1, 0, this.deployFractalModuleTx!);
+    if (this.parentAddress && this.deployFractalModuleTx) {
+      // If subDAO, and `deployFractalModuleTx` created (which might not be the case depending on user input) - deploy Fractal Module.
+      txs.splice(1, 0, this.deployFractalModuleTx);
     }
 
     return encodeMultiSend(txs);
