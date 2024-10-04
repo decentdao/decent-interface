@@ -537,7 +537,8 @@ export default function useCreateRoles() {
           const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFormHat(formHat);
 
           if (streamsWithFundsToClaim.length) {
-            // This role is being removed. We need to flush out any unclaimed funds from streams on this role.
+            // This role is being removed.
+            // We need to flush out any unclaimed funds from streams on this role to the original wearer.
             for (const stream of streamsWithFundsToClaim) {
               if (!stream.streamId || !stream.contractAddress) {
                 throw new Error(
@@ -547,7 +548,7 @@ export default function useCreateRoles() {
               const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
                 stream.streamId,
                 stream.contractAddress,
-                getAddress(formHat.wearer),
+                originalHat.wearer,
               );
               allTxs.push({
                 calldata: wrappedFlushStreamTx,
@@ -607,6 +608,7 @@ export default function useCreateRoles() {
             });
           }
           if (formHat.editedRole.fieldNames.includes('member')) {
+            const newWearer = getAddress(formHat.wearer);
             if (formHat.smartAddress === undefined) {
               throw new Error('Cannot prepare transactions for edited role without smart address');
             }
@@ -652,7 +654,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), daoAddress, getAddress(originalHat.wearer)],
+                  args: [BigInt(formHat.id), daoAddress, newWearer],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -662,7 +664,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), originalHat.wearer, getAddress(formHat.wearer)],
+                  args: [BigInt(formHat.id), originalHat.wearer, newWearer],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -699,7 +701,7 @@ export default function useCreateRoles() {
                   const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
                     stream.streamId,
                     stream.contractAddress,
-                    getAddress(originalHat.wearer),
+                    originalHat.wearer,
                   );
 
                   allTxs.push({
