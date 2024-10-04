@@ -36,12 +36,12 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         const childSafeTokenBalance = await getTokenBalances(childSafeInfo.daoAddress);
 
         if (childSafeTokenBalance.error || !childSafeTokenBalance.data) {
-          toast.error(t('clawBackBalancesError', { autoClose: false }));
+          toast.error(t('clawBackBalancesError', { duration: Infinity }));
           return;
         }
 
         if (childSafeTokenBalance.data.length === 0) {
-          toast.error(t('clawBackEmptyTreasuryError', { autoClose: false }));
+          toast.error(t('clawBackEmptyTreasuryError', { duration: Infinity }));
           return;
         }
 
@@ -104,7 +104,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               });
 
             if (transactions.length === 0) {
-              toast.error(t('clawBackEmptyTransactionsError', { autoClose: false }));
+              toast.error(t('clawBackEmptyTransactionsError', { duration: Infinity }));
               return;
             }
 
