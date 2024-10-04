@@ -1,10 +1,9 @@
 import { Box, Flex } from '@chakra-ui/react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { SortBy } from '../../../../types';
 import ProposalCard from '../../../Proposals/ProposalCard/ProposalCard';
-import { EmptyBox } from '../../../ui/containers/EmptyBox';
+import NoDataCard from '../../../ui/containers/NoDataCard';
 import { InfoBoxLoader } from '../../../ui/loaders/InfoBoxLoader';
 import { Sort } from '../../../ui/utils/Sort';
 import { ActivityFreeze } from './ActivityFreeze';
@@ -18,8 +17,6 @@ export function Activities() {
   } = useFractal();
   const [sortBy, setSortBy] = useState<SortBy>(SortBy.Newest);
   const { sortedActivities } = useActivities(sortBy);
-
-  const { t } = useTranslation('dashboard');
 
   return (
     <Box>
@@ -57,7 +54,10 @@ export function Activities() {
             {!allProposalsLoaded && <InfoBoxLoader />}
           </Flex>
         ) : (
-          <EmptyBox emptyText={t('noActivity')} />
+          <NoDataCard
+            translationNameSpace="dashboard"
+            emptyText="noActivity"
+          />
         )}
       </Flex>
     </Box>

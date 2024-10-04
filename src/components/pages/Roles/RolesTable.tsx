@@ -9,9 +9,10 @@ import useAvatar from '../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentTree, useRolesStore } from '../../../store/roles';
+import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
+import { RoleCardLoading } from './RolePageCard';
 import { EditBadgeStatus, RoleEditProps, RoleFormValues, RoleProps } from './types';
 
 function RolesHeader() {
@@ -290,7 +291,13 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
     return <RoleCardLoading />;
   }
   if (hatsTree === null && !values.hats.length) {
-    return <RoleCardNoRoles />;
+    return (
+      <NoDataCard
+        translationNameSpace="roles"
+        emptyText="noRoles"
+        emptyTextNotProposer="noRolesNotProposer"
+      />
+    );
   }
   return (
     <Box
