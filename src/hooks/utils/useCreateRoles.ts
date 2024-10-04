@@ -519,11 +519,17 @@ export default function useCreateRoles() {
               'Cannot prepare transactions for removed role without smart account address',
             );
           }
+
+          const originalHat = getHat(formHat.id);
+          if (!originalHat) {
+            throw new Error('Cannot find original hat');
+          }
+
           allTxs.push({
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
+              args: [BigInt(formHat.id), getAddress(originalHat.wearer), daoAddress],
             }),
             targetAddress: hatsProtocol,
           });
@@ -531,6 +537,7 @@ export default function useCreateRoles() {
           const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFormHat(formHat);
 
           if (streamsWithFundsToClaim.length) {
+            // This role is being removed. We need to flush out any unclaimed funds from streams on this role.
             for (const stream of streamsWithFundsToClaim) {
               if (!stream.streamId || !stream.contractAddress) {
                 throw new Error(
@@ -603,13 +610,20 @@ export default function useCreateRoles() {
             if (formHat.smartAddress === undefined) {
               throw new Error('Cannot prepare transactions for edited role without smart address');
             }
+
+            // formHat's `wearer` is the new wearer. We grab the original wearer (before this member change attempt)
+            // on the hat, because we need that address to transfer to the new wearer.
             const originalHat = getHat(formHat.id);
             if (!originalHat) {
               throw new Error('Cannot find original hat');
             }
+
             const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFromHat(formHat);
 
             if (streamsWithFundsToClaim.length) {
+              // If there are unclaimed funds on any streams on the hat, we need to flush them to the original wearer.
+              // First, we transfer the hat to the Safe, which will then be able to withdraw the funds on behalf of the original wearer.
+              // Finally, we transfer the hat from the Safe to the new wearer.
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -638,12 +652,12 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+                  args: [BigInt(formHat.id), daoAddress, getAddress(originalHat.wearer)],
                 }),
                 targetAddress: hatsProtocol,
               });
             } else {
-              // because the original wearer currently owns the Hat
+              // Since there are no streams with funds to claim, we can just transfer the hat directly to the new wearer.
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -657,33 +671,55 @@ export default function useCreateRoles() {
           if (formHat.editedRole.fieldNames.includes('payments')) {
             const cancelledStreamsOnHat = getCancelledStreamsFromFormHat(formHat);
             if (cancelledStreamsOnHat.length) {
+              // This role edit includes stream cancels. In case there are any unclaimed funds on these streams,
+              // we need to flush them out to the original wearer.
+
+              const originalHat = getHat(formHat.id);
+              if (!originalHat) {
+                throw new Error('Cannot find original hat');
+              }
+
               for (const stream of cancelledStreamsOnHat) {
                 if (!stream.streamId || !stream.contractAddress || !formHat.smartAddress) {
                   throw new Error('Stream data is missing for cancel stream transaction');
                 }
-                // transfer hat to DAO
+
+                // First transfer hat from the original wearer to the Safe
                 allTxs.push({
                   calldata: encodeFunctionData({
                     abi: HatsAbi,
                     functionName: 'transferHat',
-                    args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
+                    args: [BigInt(formHat.id), originalHat.wearer, daoAddress],
                   }),
                   targetAddress: hatsProtocol,
                 });
-                // flush withdrawable streams
+
+                // flush withdrawable streams to the original wearer
                 if (stream.withdrawableAmount && stream.withdrawableAmount > 0n) {
                   const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
                     stream.streamId,
                     stream.contractAddress,
-                    getAddress(formHat.wearer),
+                    getAddress(originalHat.wearer),
                   );
+
                   allTxs.push({
                     calldata: wrappedFlushStreamTx,
                     targetAddress: formHat.smartAddress,
                   });
                 }
-                // cancel stream
+
+                // Cancel the stream
                 allTxs.push(prepareCancelStreamTx(stream.streamId, stream.contractAddress));
+
+                // Finally, transfer the hat back to the original wearer
+                allTxs.push({
+                  calldata: encodeFunctionData({
+                    abi: HatsAbi,
+                    functionName: 'transferHat',
+                    args: [BigInt(formHat.id), daoAddress, getAddress(originalHat.wearer)],
+                  }),
+                  targetAddress: hatsProtocol,
+                });
               }
             }
 
