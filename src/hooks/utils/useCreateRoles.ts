@@ -51,7 +51,7 @@ export default function useCreateRoles() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
 
   const { submitProposal } = useSubmitProposal();
-  const { prepareBatchLinearStreamCreation, prepareFlushStreamTxs, prepareCancelStreamTx } =
+  const { prepareBatchLinearStreamCreation, prepareFlushStreamTxs, prepareCancelStreamTxs } =
     useCreateSablierStream();
   const ipfsClient = useIPFSClient();
   const publicClient = usePublicClient();
@@ -507,11 +507,16 @@ export default function useCreateRoles() {
           }
 
           // @todo: For all instances of `getAddress(formHat.wearer)` we should confirm that at this point, `formHat.wearer` is definitely an `Address` type.
+          const originalHat = getHat(formHat.id);
+          if (!originalHat) {
+            throw new Error('Cannot find original hat');
+          }
+
           allTxs.push({
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), getAddress(formHat.wearer), daoAddress],
+              args: [BigInt(formHat.id), getAddress(originalHat.wearer), daoAddress],
             }),
             targetAddress: hatsProtocol,
           });
@@ -519,6 +524,7 @@ export default function useCreateRoles() {
           const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFormHat(formHat);
 
           if (streamsWithFundsToClaim.length) {
+            // This role is being removed. We need to flush out any unclaimed funds from streams on this role.
             for (const stream of streamsWithFundsToClaim) {
               if (!stream.streamId || !stream.contractAddress) {
                 throw new Error(
@@ -545,7 +551,7 @@ export default function useCreateRoles() {
                   'Stream ID and Stream ContractAddress is required for cancel stream transaction',
                 );
               }
-              allTxs.push(prepareCancelStreamTx(stream.streamId, stream.contractAddress));
+              allTxs.push(...prepareCancelStreamTxs(stream.streamId));
             }
           }
 
@@ -688,8 +694,7 @@ export default function useCreateRoles() {
                 }
 
                 // Cancel the stream
-                // @todo: Update to use DecentSablierStreamManagement instead
-                allTxs.push(prepareCancelStreamTx(stream.streamId, stream.contractAddress));
+                allTxs.push(...prepareCancelStreamTxs(stream.streamId));
 
                 // Finally, transfer the hat back to the original wearer
                 allTxs.push({
@@ -747,7 +752,7 @@ export default function useCreateRoles() {
       hatsTree,
       mintHatTx,
       predictSmartAccount,
-      prepareCancelStreamTx,
+      prepareCancelStreamTxs,
       prepareFlushStreamTxs,
       uploadHatDescription,
     ],

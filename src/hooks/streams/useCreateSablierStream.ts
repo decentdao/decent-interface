@@ -131,18 +131,48 @@ export default function useCreateSablierStream() {
     [daoAddress, decentSablierMasterCopy, sablierV2LockupLinear],
   );
 
-  const prepareCancelStreamTx = useCallback((streamId: string, targetAddress: Address) => {
-    // @dev This function comes from "basic" SablierV2
-    // all the types of streams are inheriting from that
-    // so it's safe to rely on any stream ABI
-    const cancelCallData = encodeFunctionData({
-      abi: SablierV2LockupLinearAbi,
-      functionName: 'cancel',
-      args: [convertStreamIdToBigInt(streamId)],
-    });
+  const prepareCancelStreamTxs = useCallback(
+    (streamId: string) => {
+      if (!daoAddress) {
+        throw new Error('Can not flush stream without DAO Address');
+      }
 
-    return { calldata: cancelCallData, targetAddress };
-  }, []);
+      const decentSablierManagementAddress = getAddress(decentSablierMasterCopy);
+      const enableModuleData = encodeFunctionData({
+        abi: GnosisSafeL2,
+        functionName: 'enableModule',
+        args: [decentSablierManagementAddress],
+      });
+
+      const disableModuleData = encodeFunctionData({
+        abi: GnosisSafeL2,
+        functionName: 'disableModule',
+        args: [SENTINEL_MODULE, decentSablierManagementAddress],
+      });
+
+      const cancelStreamData = encodeFunctionData({
+        abi: `abis.DecentSablierStreamManagement`,
+        functionName: 'cancelStream',
+        args: [sablierV2LockupLinear, convertStreamIdToBigInt(streamId)],
+      });
+
+      return [
+        {
+          targetAddress: daoAddress,
+          calldata: enableModuleData,
+        },
+        {
+          targetAddress: decentSablierManagementAddress,
+          calldata: cancelStreamData,
+        },
+        {
+          targetAddress: daoAddress,
+          calldata: disableModuleData,
+        },
+      ];
+    },
+    [daoAddress, decentSablierMasterCopy, sablierV2LockupLinear],
+  );
 
   const prepareBatchLinearStreamCreation = useCallback(
     (paymentStreams: PreparedNewStreamData[]) => {
@@ -184,7 +214,7 @@ export default function useCreateSablierStream() {
   return {
     prepareBatchLinearStreamCreation,
     prepareFlushStreamTxs,
-    prepareCancelStreamTx,
+    prepareCancelStreamTxs,
     prepareLinearStream,
   };
 }
