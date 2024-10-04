@@ -1,14 +1,17 @@
-import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
+import { Box, Container, Flex, Grid, GridItem, Show, Text } from '@chakra-ui/react';
 import { useRef } from 'react';
-import { Outlet } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { Outlet, useLocation } from 'react-router-dom';
 import {
-  useContentHeight,
-  useHeaderHeight,
-  SIDEBAR_WIDTH,
   MAX_CONTENT_WIDTH,
+  SIDEBAR_WIDTH,
+  useContentHeight,
   useFooterHeight,
+  useHeaderHeight,
 } from '../../../../constants/common';
+import { DAO_ROUTES } from '../../../../constants/routes';
 import useNavigationScrollReset from '../../../../hooks/utils/useNavigationScrollReset';
+import { HatsLogoIcon, SablierLogoIcon, VectorLogoIcon } from '../../icons/Icons';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';
 import { TopErrorFallback } from '../../utils/TopErrorFallback';
 import { Footer } from '../Footer';
@@ -16,18 +19,26 @@ import Header from '../Header';
 import { NavigationLinks } from '../Navigation/NavigationLinks';
 
 export default function Layout() {
+  const { t } = useTranslation('common');
+  const { pathname } = useLocation();
   const headerContainerRef = useRef<HTMLDivElement>(null);
 
   const HEADER_HEIGHT = useHeaderHeight();
   const CONTENT_HEIGHT = useContentHeight();
   const FOOTER_HEIGHT = useFooterHeight();
 
+  const isRolesPage = pathname === `/${DAO_ROUTES.roles.path}`;
+
   useNavigationScrollReset();
 
   return (
     <Grid
       templateAreas={{
-        base: `"header header"
+        base: isRolesPage
+          ? `"header header"
+              "main main"
+              "footer footer"`
+          : `"header header"
                "main main"`,
         md: `"header header"
              "nav main"
@@ -93,6 +104,43 @@ export default function Layout() {
           <Footer />
         </GridItem>
       </Show>
+      {isRolesPage && (
+        <Show below="md">
+          <GridItem
+            area="footer"
+            pt="1rem"
+            pb="2rem"
+            px="1rem"
+          >
+            <Flex
+              gap="1rem"
+              color="neutral-6"
+              alignItems="center"
+            >
+              <Text
+                fontSize="18px"
+                lineHeight="20px"
+                fontWeight={450}
+                letterSpacing="-0.54px"
+              >
+                {t('poweredBy', { ns: 'common' })}
+              </Text>
+              <HatsLogoIcon
+                width="36.201px"
+                height="13.107px"
+              />
+              <VectorLogoIcon
+                width="12.953px"
+                height="12.953px"
+              />
+              <SablierLogoIcon
+                width="50.741px"
+                height="13px"
+              />
+            </Flex>
+          </GridItem>
+        </Show>
+      )}
     </Grid>
   );
 }
