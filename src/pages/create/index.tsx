@@ -13,7 +13,7 @@ import useDeployDAO from '../../hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../../hooks/utils/useAsyncRetry';
 import { analyticsEvents } from '../../insights/analyticsEvents';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
+import { AzoriusERC20DAO, AzoriusERC721DAO, SafeMultisigDAO } from '../../types';
 
 export default function DaoCreatePage() {
   const navigate = useNavigate();
@@ -33,9 +33,12 @@ export default function DaoCreatePage() {
 
   useEffect(() => {
     if (!isConnected) {
-      disconnectedToast.current = toast.info(t('toastDisconnectedPersistent', { ns: 'daoCreate' }), {
-        duration: Infinity,
-      });
+      disconnectedToast.current = toast.info(
+        t('toastDisconnectedPersistent', { ns: 'daoCreate' }),
+        {
+          duration: Infinity,
+        },
+      );
     }
 
     return () => {
