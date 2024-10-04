@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { useSwitchChain } from 'wagmi';
 import { logError } from '../helpers/errorLogging';
 import useDAOController from '../hooks/DAO/useDAOController';
@@ -22,10 +22,7 @@ const useTemporaryProposals = () => {
     }
 
     const toastId = toast.info(t('pendingProposalNotice'), {
-      autoClose: false,
-      closeOnClick: false,
-      draggable: false,
-      closeButton: false,
+      duration: Infinity,
     });
 
     return () => {

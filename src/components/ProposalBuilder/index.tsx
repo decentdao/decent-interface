@@ -3,9 +3,10 @@ import { Trash } from '@phosphor-icons/react';
 import { Formik, FormikProps } from 'formik';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { DAO_ROUTES, BASE_ROUTES } from '../../constants/routes';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { BASE_ROUTES, DAO_ROUTES } from '../../constants/routes';
+import { logError } from '../../helpers/errorLogging';
 import useSubmitProposal from '../../hooks/DAO/proposal/useSubmitProposal';
 import useCreateProposalSchema from '../../hooks/schemas/proposalBuilder/useCreateProposalSchema';
 import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
@@ -70,7 +71,7 @@ export function ProposalBuilder({
       enableReinitialize
       onSubmit={async values => {
         if (!canUserCreateProposal) {
-          toast(t('errorNotProposer', { ns: 'common' }));
+          toast.error(t('errorNotProposer', { ns: 'common' }));
         }
 
         try {
@@ -86,8 +87,8 @@ export function ProposalBuilder({
             });
           }
         } catch (e) {
-          console.error(e);
-          toast(t('encodingFailedMessage', { ns: 'proposal' }));
+          logError(e);
+          toast.error(t('encodingFailedMessage', { ns: 'proposal' }));
         }
       }}
     >

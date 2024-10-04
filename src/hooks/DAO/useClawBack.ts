@@ -1,7 +1,7 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import {
   Address,
   encodeAbiParameters,
@@ -36,12 +36,12 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         const childSafeTokenBalance = await getTokenBalances(childSafeInfo.daoAddress);
 
         if (childSafeTokenBalance.error || !childSafeTokenBalance.data) {
-          toast(t('clawBackBalancesError', { autoClose: false }));
+          toast.error(t('clawBackBalancesError', { autoClose: false }));
           return;
         }
 
         if (childSafeTokenBalance.data.length === 0) {
-          toast(t('clawBackEmptyTreasuryError', { autoClose: false }));
+          toast.error(t('clawBackEmptyTreasuryError', { autoClose: false }));
           return;
         }
 
@@ -59,15 +59,17 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               .map(asset => {
                 if (!asset.tokenAddress || asset.tokenAddress === MOCK_MORALIS_ETH_ADDRESS) {
                   // Seems like we're operating with native coin i.e ETH
-                  const txData = encodeAbiParameters(
-                    parseAbiParameters('address, uint256, bytes, uint8'),
-                    [parentAddress, BigInt(asset.balance), '0x', 0],
-                  );
-
                   const fractalModuleCalldata = encodeFunctionData({
                     abi: abis.FractalModule,
                     functionName: 'execTx',
-                    args: [txData],
+                    args: [
+                      encodeAbiParameters(parseAbiParameters('address, uint256, bytes, uint8'), [
+                        parentAddress,
+                        BigInt(asset.balance),
+                        '0x',
+                        0,
+                      ]),
+                    ],
                   });
 
                   return {
@@ -102,7 +104,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               });
 
             if (transactions.length === 0) {
-              toast(t('clawBackEmptyTransactionsError', { autoClose: false }));
+              toast.error(t('clawBackEmptyTransactionsError', { autoClose: false }));
               return;
             }
 
@@ -139,7 +141,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         }
       } catch (e) {
         logError('Unexpected error while preparing clawback proposal', e);
-        toast(t('clawBackFailedToastMessage'));
+        toast.error(t('clawBackFailedToastMessage'));
       }
     }
   }, [

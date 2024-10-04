@@ -1,15 +1,16 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import axios from 'axios';
 import { useCallback, useMemo, useState } from 'react';
-import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import {
-  isAddress,
+  Address,
   encodeAbiParameters,
-  parseAbiParameters,
-  isHex,
   encodeFunctionData,
   getContract,
-  Address,
+  isAddress,
+  isHex,
+  parseAbiParameters,
 } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import MultiSendCallOnlyAbi from '../../../assets/abi/MultiSendCallOnly';
@@ -21,7 +22,7 @@ import { FractalGovernanceAction } from '../../../providers/App/governance/actio
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { MetaTransaction, ProposalExecuteData, CreateProposalMetadata } from '../../../types';
+import { CreateProposalMetadata, MetaTransaction, ProposalExecuteData } from '../../../types';
 import { buildSafeApiUrl, getAzoriusModuleFromModules } from '../../../utils';
 import useVotingStrategyAddress from '../../utils/useVotingStrategyAddress';
 import { useFractalModules } from '../loaders/useFractalModules';
@@ -53,6 +54,7 @@ interface ISubmitAzoriusProposal extends ISubmitProposal {
 }
 
 export default function useSubmitProposal() {
+  const { t } = useTranslation('proposal');
   const [pendingCreateTx, setPendingCreateTx] = useState(false);
   const loadDAOProposals = useLoadDAOProposals();
   const { data: walletClient } = useWalletClient();
@@ -114,18 +116,13 @@ export default function useSubmitProposal() {
         return;
       }
 
-      const toastId = toast(pendingToastMessage, {
-        autoClose: false,
-        closeOnClick: false,
-        draggable: false,
-        closeButton: false,
-        progress: 1,
-      });
-
       if (!safeAddress || nonce === undefined) {
-        toast.dismiss(toastId);
         return;
       }
+
+      const toastId = toast.loading(pendingToastMessage, {
+        duration: Infinity,
+      });
 
       setPendingCreateTx(true);
       try {
@@ -197,18 +194,17 @@ export default function useSubmitProposal() {
         if (successCallback) {
           successCallback(addressPrefix, safeAddress);
         }
-        toast(successToastMessage);
+        toast.success(successToastMessage, { id: toastId });
       } catch (e: any) {
-        toast(failedToastMessage);
+        toast.error(failedToastMessage, { id: toastId });
 
         e.response?.data?.nonFieldErrors?.forEach((error: string) => {
           if (error.includes('Tx with nonce') && error.includes('already executed')) {
-            toast.error('Transaction with the same nonce already exists');
+            toast.error(t('multisigNonceDuplicateErrorMessage'));
           }
         });
         logError(e, 'Error during Multi-sig proposal creation');
       } finally {
-        toast.dismiss(toastId);
         setPendingCreateTx(false);
         return;
       }
@@ -222,6 +218,7 @@ export default function useSubmitProposal() {
       pendingProposalAdd,
       safeBaseURL,
       walletClient,
+      t,
     ],
   );
 
@@ -239,12 +236,8 @@ export default function useSubmitProposal() {
       if (!proposalData || !walletClient || !publicClient) {
         return;
       }
-      const toastId = toast(pendingToastMessage, {
-        autoClose: false,
-        closeOnClick: false,
-        draggable: false,
-        closeButton: false,
-        progress: 1,
+      const toastId = toast.loading(pendingToastMessage, {
+        duration: Infinity,
       });
 
       setPendingCreateTx(true);
@@ -275,9 +268,7 @@ export default function useSubmitProposal() {
         ]);
 
         await publicClient.waitForTransactionReceipt({ hash: txHash });
-
-        toast.dismiss(toastId);
-        toast(successToastMessage);
+        toast.success(successToastMessage, { id: toastId });
 
         pendingProposalAdd(txHash);
 
@@ -285,8 +276,7 @@ export default function useSubmitProposal() {
           successCallback(addressPrefix, safeAddress!);
         }
       } catch (e) {
-        toast.dismiss(toastId);
-        toast(failedToastMessage);
+        toast.error(failedToastMessage, { id: toastId });
         logError(e, 'Error during Azorius proposal creation');
       } finally {
         setPendingCreateTx(false);
