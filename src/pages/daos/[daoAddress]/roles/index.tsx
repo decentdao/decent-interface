@@ -42,8 +42,7 @@ function Roles() {
   const showRolesTable = !hatsTreeLoading && hatsTree !== null && hatsTree.roleHats.length > 0;
 
   return (
-    <Box
-    >
+    <Box>
       <PageHeader
         title={t('roles')}
         breadcrumbs={[
