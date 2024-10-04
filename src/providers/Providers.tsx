@@ -12,7 +12,7 @@ import { useMigrate } from '../hooks/utils/cache/useMigrate';
 import { AppProvider } from './App/AppProvider';
 import EthersContextProvider from './Ethers';
 import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
-import { wagmiConfig, queryClient } from './NetworkConfig/web3-modal.config';
+import { queryClient, wagmiConfig } from './NetworkConfig/web3-modal.config';
 
 export default function Providers({ children }: { children: ReactNode }) {
   useMigrate();
@@ -32,7 +32,14 @@ export default function Providers({ children }: { children: ReactNode }) {
               <NetworkConfigProvider>
                 <EthersContextProvider>
                   <AppProvider>
-                    <Toaster />
+                    <Toaster
+                      position="bottom-center"
+                      richColors
+                      pauseWhenPageIsHidden
+                      theme="dark"
+                      closeButton
+                      toastOptions={{ className: 'sonner-toast' }}
+                    />
                     {children}
                   </AppProvider>
                 </EthersContextProvider>

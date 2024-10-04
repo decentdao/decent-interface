@@ -1,0 +1,12 @@
+.sonner-toast {
+  border-radius: 0.25rem;
+  min-height: 64px;
+  max-height: 800px;
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+}
+
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='info'] {
+  background-color: var(--colors-neutral-3);
+  border: 1px solid var(--colors-neutral-4);
+  color: var(--colors-lilac-0);
+}

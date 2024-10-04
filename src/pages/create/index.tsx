@@ -1,5 +1,5 @@
 import * as amplitude from '@amplitude/analytics-browser';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -23,6 +23,8 @@ export default function DaoCreatePage() {
   const { t } = useTranslation('transaction');
   const safeAPI = useSafeAPI();
 
+  const disconnectedToast = useRef<string | number>();
+
   const { isConnected } = useAccount();
 
   useEffect(() => {
@@ -30,16 +32,14 @@ export default function DaoCreatePage() {
   }, []);
 
   useEffect(() => {
-    if (isConnected) {
-      return;
+    if (!isConnected) {
+      disconnectedToast.current = toast.info(t('toastDisconnectedPersistent', { ns: 'daoCreate' }), {
+        duration: Infinity,
+      });
     }
 
-    const theToast = toast(t('toastDisconnectedPersistent', { ns: 'daoCreate' }), {
-      duration: Infinity,
-    });
-
     return () => {
-      toast.dismiss(theToast);
+      toast.dismiss();
     };
   }, [isConnected, t]);
 

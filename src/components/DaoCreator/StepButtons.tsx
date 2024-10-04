@@ -73,7 +73,7 @@ export function StepButtons({
           if (!isLastStep && nextStep) {
             navigate(nextStepUrl);
           } else if (isLastStep && !user.address) {
-            toast(t('toastDisconnected'));
+            toast.info(t('toastDisconnected'));
           }
         }}
         data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}
