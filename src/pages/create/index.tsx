@@ -1,8 +1,8 @@
 import * as amplitude from '@amplitude/analytics-browser';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { Address } from 'viem';
 import { useAccount } from 'wagmi';
 import DaoCreator from '../../components/DaoCreator';
@@ -13,7 +13,7 @@ import useDeployDAO from '../../hooks/DAO/useDeployDAO';
 import { useAsyncRetry } from '../../hooks/utils/useAsyncRetry';
 import { analyticsEvents } from '../../insights/analyticsEvents';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
-import { SafeMultisigDAO, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
+import { AzoriusERC20DAO, AzoriusERC721DAO, SafeMultisigDAO } from '../../types';
 
 export default function DaoCreatePage() {
   const navigate = useNavigate();
@@ -23,6 +23,8 @@ export default function DaoCreatePage() {
   const { t } = useTranslation('transaction');
   const safeAPI = useSafeAPI();
 
+  const disconnectedToast = useRef<string | number>();
+
   const { isConnected } = useAccount();
 
   useEffect(() => {
@@ -30,20 +32,17 @@ export default function DaoCreatePage() {
   }, []);
 
   useEffect(() => {
-    if (isConnected) {
-      return;
+    if (!isConnected) {
+      disconnectedToast.current = toast.info(
+        t('toastDisconnectedPersistent', { ns: 'daoCreate' }),
+        {
+          duration: Infinity,
+        },
+      );
     }
 
-    const theToast = toast(t('toastDisconnectedPersistent', { ns: 'daoCreate' }), {
-      autoClose: false,
-      closeOnClick: false,
-      draggable: false,
-      closeButton: false,
-      progress: 1,
-    });
-
     return () => {
-      toast.dismiss(theToast);
+      toast.dismiss();
     };
   }, [isConnected, t]);
 
@@ -58,12 +57,8 @@ export default function DaoCreatePage() {
       if (daoFound) {
         navigate(DAO_ROUTES.dao.relative(addressPrefix, daoAddress));
       } else {
-        toast(t('failedIndexSafe'), {
-          autoClose: false,
-          closeOnClick: true,
-          draggable: false,
-          closeButton: false,
-          progress: 1,
+        toast.loading(t('failedIndexSafe'), {
+          duration: Infinity,
         });
         navigate(BASE_ROUTES.landing);
       }

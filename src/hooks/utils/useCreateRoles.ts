@@ -3,7 +3,7 @@ import { FormikHelpers } from 'formik';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
@@ -815,7 +815,7 @@ export default function useCreateRoles() {
         });
       } catch (e) {
         console.error(e);
-        toast(t('encodingFailedMessage', { ns: 'proposal' }));
+        toast.error(t('encodingFailedMessage', { ns: 'proposal' }));
       } finally {
         formikHelpers.setSubmitting(false);
       }

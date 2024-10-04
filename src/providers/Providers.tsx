@@ -2,7 +2,7 @@ import { ApolloProvider } from '@apollo/client';
 import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
-import { ToastContainer } from 'react-toastify';
+import { Toaster } from 'sonner';
 import { WagmiProvider } from 'wagmi';
 import { theme } from '../assets/theme';
 import { ErrorBoundary } from '../components/ui/utils/ErrorBoundary';
@@ -12,7 +12,7 @@ import { useMigrate } from '../hooks/utils/cache/useMigrate';
 import { AppProvider } from './App/AppProvider';
 import EthersContextProvider from './Ethers';
 import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
-import { wagmiConfig, queryClient } from './NetworkConfig/web3-modal.config';
+import { queryClient, wagmiConfig } from './NetworkConfig/web3-modal.config';
 
 export default function Providers({ children }: { children: ReactNode }) {
   useMigrate();
@@ -32,11 +32,13 @@ export default function Providers({ children }: { children: ReactNode }) {
               <NetworkConfigProvider>
                 <EthersContextProvider>
                   <AppProvider>
-                    <ToastContainer
+                    <Toaster
                       position="bottom-center"
-                      closeButton={false}
-                      newestOnTop={false}
-                      pauseOnFocusLoss={false}
+                      richColors
+                      pauseWhenPageIsHidden
+                      theme="dark"
+                      closeButton
+                      toastOptions={{ className: 'sonner-toast' }}
                     />
                     {children}
                   </AppProvider>
