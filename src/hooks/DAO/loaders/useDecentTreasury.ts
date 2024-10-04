@@ -5,7 +5,7 @@ import {
   TokenInfoResponse,
 } from '@safe-global/api-kit';
 import { useEffect, useCallback, useRef } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { erc20Abi, getAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -127,13 +127,13 @@ export const useDecentTreasury = () => {
     ];
 
     if (tokenBalancesError) {
-      toast(tokenBalancesError, { autoClose: 2000 });
+      toast.warning(tokenBalancesError, { duration: 2000 });
     }
     if (nftBalancesError) {
-      toast(nftBalancesError, { autoClose: 2000 });
+      toast.warning(nftBalancesError, { duration: 2000 });
     }
     if (defiBalancesError) {
-      toast(defiBalancesError, { autoClose: 2000 });
+      toast.warning(defiBalancesError, { duration: 2000 });
     }
     const assetsFungible = tokenBalances || [];
     const assetsNonFungible = nftBalances || [];
@@ -170,8 +170,6 @@ export const useDecentTreasury = () => {
       // turn them into Address type
       .map(address => getAddress(address));
 
-    // Instead of this block of code, check the commented out snippet
-    // below this for a half-implemented alternative.
     const transfersTokenInfo = await Promise.all(
       tokenAddressesOfTransfers.map(async address => {
         try {
@@ -210,27 +208,6 @@ export const useDecentTreasury = () => {
         }
       }),
     );
-
-    // ajg 8/14/24
-    // For all of these Token Addresses
-    // 1. give me all of the data that lives in the cache
-    //   (can "getValue" from local storage to grab these token datas)
-    // 2. if there are any addresses remaining
-    //   get them from the API and store the results in the cache
-    //   in a delayed loop
-
-    // The code below this doesn't implement "1.", but does implement "2."
-
-    // const tokenData: TokenInfoResponse[] = [];
-    // const batchSize = 5;
-    // for (let i = 0; i < tokenAddresses.length; i += batchSize) {
-    //   const batch = tokenAddresses.slice(i, i + batchSize);
-    //   const batchResults = await Promise.all(batch.map(a => safeAPI.getToken(a)));
-    //   tokenData.push(...batchResults);
-    //   if (i + batch.length < tokenAddresses.length) {
-    //     await new Promise(resolve => setTimeout(resolve, 1000));
-    //   }
-    // }
 
     if (flattenedTransfers.length === 0) {
       action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED });

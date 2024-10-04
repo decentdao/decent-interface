@@ -3,7 +3,7 @@ import snapshot from '@snapshot-labs/snapshot.js';
 import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { getContract } from 'viem';
 import { useWalletClient } from 'wagmi';
 import { useVoteContext } from '../../../components/Proposals/ProposalVotes/context/VoteContext';
@@ -160,12 +160,8 @@ const useCastVote = (
             ? mappedSnapshotWeightedChoice
             : (selectedChoice as number) + 1;
         try {
-          toastId = toast(t('pendingCastVote'), {
-            autoClose: false,
-            closeOnClick: false,
-            draggable: false,
-            closeButton: false,
-            progress: 1,
+          toastId = toast.loading(t('pendingCastVote'), {
+            duration: Infinity,
           });
           if (extendedSnapshotProposal.privacy === 'shutter') {
             const encryptedChoice = await encryptWithShutter(
@@ -189,16 +185,16 @@ const useCastVote = (
               app: 'decent',
             });
           }
-          toast.dismiss(toastId);
-          toast.success(`${t('successCastVote')}. ${t('snapshotRecastVoteHelper')}`);
+          toast.success(`${t('successCastVote')}. ${t('snapshotRecastVoteHelper')}`, {
+            id: toastId,
+          });
           setSelectedChoice(undefined);
           if (onSuccess) {
             // Need to refetch votes after timeout so that Snapshot API has enough time to record the vote
             setTimeout(() => onSuccess(), 3000);
           }
         } catch (e) {
-          toast.dismiss(toastId);
-          toast.error(t('failedCastVote'));
+          toast.error(t('failedCastVote'), { id: toastId });
           logError('Error while casting Snapshot vote', e);
         }
       }
