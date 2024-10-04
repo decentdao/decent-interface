@@ -10,9 +10,15 @@ import { useNetworkConfig } from './providers/NetworkConfig/NetworkConfigProvide
 import Providers from './providers/Providers';
 import { router } from './router';
 
-function FractalRouterProvider() {
+function DecentRouterProvider() {
   const { addressPrefix } = useNetworkConfig();
-  return <RouterProvider router={router(addressPrefix)} />;
+  const urlParams = new URLSearchParams(window.location.search);
+  const addressWithPrefix = urlParams.get('dao');
+
+  const prefixAndAddress = addressWithPrefix?.split(':');
+  const daoAddressStr = prefixAndAddress?.[1];
+
+  return <RouterProvider router={router(addressPrefix, daoAddressStr)} />;
 }
 
 const root = document.getElementById('root');
@@ -20,7 +26,7 @@ if (root !== null) {
   ReactDOM.createRoot(root).render(
     <React.StrictMode>
       <Providers>
-        <FractalRouterProvider />
+        <DecentRouterProvider />
       </Providers>
     </React.StrictMode>,
   );

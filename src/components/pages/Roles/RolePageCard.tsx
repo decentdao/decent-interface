@@ -1,5 +1,3 @@
-import { Text } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
 import { Card } from '../../ui/cards/Card';
 import { BarLoader } from '../../ui/loaders/BarLoader';
 
@@ -12,21 +10,6 @@ export function RoleCardLoading() {
       minH="6rem"
     >
       <BarLoader />
-    </Card>
-  );
-}
-
-export function RoleCardNoRoles() {
-  const { t } = useTranslation('roles');
-  return (
-    <Card my="0.5rem">
-      <Text
-        textStyle="body-base"
-        textAlign="center"
-        color="white-alpha-16"
-      >
-        {t('noRoles')}
-      </Text>
     </Card>
   );
 }

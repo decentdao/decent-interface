@@ -33,13 +33,13 @@ export function SafesMenu() {
           variant="tertiary"
           aria-label="Search Safe"
           onClick={onSafesDrawerOpen}
-          size="icon-sm"
+          size="icon-lg"
           icon={
             <Icon
               as={Star}
-              color="lilac-0"
+              color="white-0"
+              boxSize="1.75rem"
               aria-hidden
-              weight="fill"
             />
           }
         />

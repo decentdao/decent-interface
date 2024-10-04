@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 import { AzoriusProposalDetails } from '../../../../../components/Proposals/AzoriusDetails';
 import { MultisigProposalDetails } from '../../../../../components/Proposals/MultisigProposalDetails';
 import SnapshotProposalDetails from '../../../../../components/Proposals/SnapshotProposalDetails';
-import { EmptyBox } from '../../../../../components/ui/containers/EmptyBox';
+import NoDataCard from '../../../../../components/ui/containers/NoDataCard';
 import { InfoBoxLoader } from '../../../../../components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
@@ -86,7 +86,10 @@ export default function ProposalDetailsPage() {
           <InfoBoxLoader />
         </Box>
       ) : contextProposal === null ? (
-        <EmptyBox emptyText={t('noProposal')} />
+        <NoDataCard
+          translationNameSpace="proposal"
+          emptyText="noProposal"
+        />
       ) : snapshotProposal !== null ? (
         <SnapshotProposalDetails proposal={snapshotProposal} />
       ) : dao?.isAzorius ? (

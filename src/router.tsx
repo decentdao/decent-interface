@@ -25,7 +25,7 @@ import EditProposalSummary from './pages/daos/[daoAddress]/roles/edit/summary';
 import Treasury from './pages/daos/[daoAddress]/treasury';
 import HomePage from './pages/home/HomePage';
 
-export const router = (addressPrefix: string) =>
+export const router = (addressPrefix: string, daoAddress: string | undefined) =>
   wrapCreateBrowserRouter(createBrowserRouter)([
     {
       path: '/',
@@ -64,10 +64,12 @@ export const router = (addressPrefix: string) =>
             },
             {
               path: 'edit/governance',
-              // @ts-ignore:next-line
-              loader: ({ params: { daoAddress } }) =>
-                redirect(DAO_ROUTES.modifyGovernance.relative(addressPrefix, daoAddress)),
-              // @todo - this redirect doesn't work anymore for some reason
+              loader: () =>
+                redirect(
+                  daoAddress
+                    ? DAO_ROUTES.modifyGovernance.relative(addressPrefix, daoAddress)
+                    : BASE_ROUTES.landing,
+                ),
             },
             {
               path: DAO_ROUTES.hierarchy.path,
@@ -103,10 +105,12 @@ export const router = (addressPrefix: string) =>
             },
             {
               path: 'new',
-              // @ts-ignore:next-line
-              loader: ({ params: { daoAddress } }) =>
-                redirect(DAO_ROUTES.newSubDao.relative(addressPrefix, daoAddress)),
-              // @todo - this redirect doesn't work anymore for some reason
+              loader: () =>
+                redirect(
+                  daoAddress
+                    ? DAO_ROUTES.newSubDao.relative(addressPrefix, daoAddress)
+                    : BASE_ROUTES.landing,
+                ),
             },
             {
               path: 'proposal-templates',
@@ -121,10 +125,12 @@ export const router = (addressPrefix: string) =>
                 },
                 {
                   path: 'new',
-                  // @ts-ignore:next-line
-                  loader: ({ params: { daoAddress } }) =>
-                    redirect(DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)),
-                  // @todo - this redirect doesn't work anymore for some reason
+                  loader: () =>
+                    redirect(
+                      daoAddress
+                        ? DAO_ROUTES.proposalTemplateNew.relative(addressPrefix, daoAddress)
+                        : BASE_ROUTES.landing,
+                    ),
                 },
               ],
             },
@@ -145,10 +151,12 @@ export const router = (addressPrefix: string) =>
                 },
                 {
                   path: 'new',
-                  // @ts-ignore:next-line
-                  loader: ({ params: { daoAddress } }) =>
-                    redirect(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)),
-                  // @todo - this redirect doesn't work anymore for some reason
+                  loader: () =>
+                    redirect(
+                      daoAddress
+                        ? DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress)
+                        : BASE_ROUTES.landing,
+                    ),
                 },
                 {
                   path: 'new/sablier/*',
@@ -156,13 +164,13 @@ export const router = (addressPrefix: string) =>
                 },
                 {
                   path: 'new/sablier',
-                  // @ts-ignore:next-line
-                  loader: ({ params: { daoAddress } }) =>
+                  loader: () =>
                     redirect(
-                      DAO_ROUTES.proposalNew
-                        .relative(addressPrefix, daoAddress)
-                        .replace('new', 'new/sablier'),
-                      // @todo - this redirect doesn't work anymore for some reason
+                      daoAddress
+                        ? DAO_ROUTES.proposalNew
+                            .relative(addressPrefix, daoAddress)
+                            .replace('new', 'new/sablier')
+                        : BASE_ROUTES.landing,
                     ),
                 },
               ],
@@ -180,11 +188,9 @@ export const router = (addressPrefix: string) =>
         {
           // this exists to keep old links working
           // /daos/0x0123/* will redirect to /home?dao=0x0123
-          path: 'daos/:daoAddress/*',
-          // @ts-ignore:next-line
-          loader: ({ params: { daoAddress } }) =>
-            redirect(DAO_ROUTES.dao.relative(addressPrefix, daoAddress)),
-          // @todo - this redirect doesn't work anymore for some reason
+          path: 'daos/:legacyDaoAddress/*',
+          loader: ({ params: { legacyDaoAddress } }: { params: { legacyDaoAddress: string } }) =>
+            redirect(DAO_ROUTES.dao.relative(addressPrefix, legacyDaoAddress)),
         },
         {
           path: '*', // 404
