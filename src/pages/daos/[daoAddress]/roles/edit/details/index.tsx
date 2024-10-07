@@ -200,7 +200,7 @@ export default function RoleEditDetails() {
                 onKeepEditing={() => {
                   setFieldValue('roleEditing', backupRoleEditing.current);
                   setTouched({ roleEditing: backupTouched.current });
-                  setTimeout(() => blocker.reset(), 50);
+                  blocker.reset();
                 }}
               />
             </ModalBase>
