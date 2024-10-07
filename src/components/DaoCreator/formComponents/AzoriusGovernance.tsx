@@ -9,10 +9,10 @@ import {
   Switch,
 } from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { ICreationStepProps, VotingStrategyType } from '../../../types';
+import { FractalModuleType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
@@ -28,8 +28,14 @@ export function AzoriusGovernance(props: ICreationStepProps) {
     node: {
       safe,
       nodeHierarchy: { parentAddress },
+      fractalModules,
     },
   } = useFractal();
+
+  const fractalModule = useMemo(
+    () => fractalModules.find(_module => _module.moduleType === FractalModuleType.FRACTAL),
+    [fractalModules],
+  );
 
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
   const { t } = useTranslation(['daoCreate', 'common']);
@@ -192,6 +198,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             width="100%"
             justifyContent="space-between"
             display="flex"
+            isDisabled={!!fractalModule}
           >
             <Text>{t('attachFractalModuleLabel')}</Text>
             <Switch
@@ -200,14 +207,17 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               onChange={() =>
                 setFieldValue('freeze.attachFractalModule', !values.freeze.attachFractalModule)
               }
-              isChecked={values.freeze.attachFractalModule}
+              isChecked={!!fractalModule || values.freeze.attachFractalModule}
+              isDisabled={!!fractalModule}
             />
           </FormControl>
           <Text
             color="neutral-7"
             width="50%"
           >
-            {t('attachFractalModuleDescription')}
+            {t(
+              fractalModule ? 'fractalModuleAttachedDescription' : 'attachFractalModuleDescription',
+            )}
           </Text>
         </Box>
       )}
