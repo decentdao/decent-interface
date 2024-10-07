@@ -200,7 +200,7 @@ export default function RoleEditDetails() {
                 onKeepEditing={() => {
                   setFieldValue('roleEditing', backupRoleEditing.current);
                   setTouched({ roleEditing: backupTouched.current });
-                  blocker.reset();
+                  setTimeout(() => blocker.reset(), 50);
                 }}
               />
             </ModalBase>
@@ -251,6 +251,7 @@ export default function RoleEditDetails() {
                     <RoleFormTabs
                       hatId={hatEditingId}
                       pushRole={push}
+                      blocker={blocker}
                     />
                   </Box>
                 </Box>
@@ -300,6 +301,7 @@ export default function RoleEditDetails() {
                     <RoleFormTabs
                       hatId={hatEditingId}
                       pushRole={push}
+                      blocker={blocker}
                     />
                   </DrawerBody>
                 </DrawerContent>
