@@ -8,20 +8,23 @@ import {
 } from '../../../constants/common';
 import Divider from '../utils/Divider';
 
+export type ModalBaseSize = 'sm' | 'md' | 'lg' | 'xl';
 interface ModuleBaseProps {
   isSearchInputModal: boolean;
   title: string;
   warn?: boolean;
-  size?: 'lg' | 'xl';
+  size?: ModalBaseSize;
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
+  zIndex?: number;
 }
 /**
  * The base wrapper component for a modal.  This displays the Chakra components necessary to open a modal,
  * as well as the title of the modal.  The child component provided is displayed as the modal content.
  */
 export function ModalBase({
+  zIndex,
   isOpen,
   onClose,
   isSearchInputModal,
@@ -40,7 +43,8 @@ export function ModalBase({
       <ModalOverlay
         backgroundColor={BACKGROUND_SEMI_TRANSPARENT}
         backdropFilter="auto"
-        backdropBlur={'10px'}
+        backdropBlur="10px"
+        zIndex={zIndex}
       />
       {isSearchInputModal ? (
         <ModalContent
@@ -48,6 +52,7 @@ export function ModalBase({
           mt={{ base: '9.5rem' }}
           pl={{ base: '0', md: SIDEBAR_WIDTH }}
           maxW={`calc(${MAX_CONTENT_WIDTH} + ${SIDEBAR_WIDTH})`}
+          zIndex={zIndex ? zIndex + 1 : undefined}
         >
           {children}
         </ModalContent>
@@ -58,6 +63,13 @@ export function ModalBase({
           borderRadius="0.5rem"
           borderColor="neutral-4"
           padding="1.5rem"
+          containerProps={
+            zIndex
+              ? {
+                  zIndex: zIndex + 1,
+                }
+              : undefined
+          }
         >
           {title && (
             <>

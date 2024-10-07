@@ -5,7 +5,13 @@ import { encodeFunctionData, isHex } from 'viem';
 import MultiSendCallOnlyAbi from '../../assets/abi/MultiSendCallOnly';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { AzoriusERC20DAO, AzoriusERC721DAO, AzoriusGovernance, SafeMultisigDAO } from '../../types';
+import {
+  AzoriusERC20DAO,
+  AzoriusERC721DAO,
+  AzoriusGovernance,
+  SafeMultisigDAO,
+  SubDAO,
+} from '../../types';
 import { ProposalExecuteData } from '../../types/daoProposal';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
@@ -30,7 +36,7 @@ export const useCreateSubDAOProposal = () => {
 
   const proposeDao = useCallback(
     (
-      daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO,
+      daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO | SubDAO,
       nonce: number | undefined,
       successCallback: (addressPrefix: string, safeAddress: string) => void,
     ) => {

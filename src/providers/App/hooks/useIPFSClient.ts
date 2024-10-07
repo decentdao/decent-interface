@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useMemo, useCallback } from 'react';
-import { toast } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 const INFURA_AUTH =
   'Basic ' +
@@ -12,15 +13,20 @@ const BASE_URL = 'https://ipfs.infura.io:5001/api/v0';
 const axiosClient = axios.create({ baseURL: BASE_URL, headers: { Authorization: INFURA_AUTH } });
 
 export default function useIPFSClient() {
-  const cat = useCallback(async (hash: string) => {
-    return axiosClient
-      .post(`${BASE_URL}/cat?arg=${hash}`)
-      .then(response => response.data)
-      .catch(error => {
-        console.error(error);
-        toast('Error fetching data from IPFS, please try again later.');
-      });
-  }, []);
+  const { t } = useTranslation('common');
+
+  const cat = useCallback(
+    async (hash: string) => {
+      return axiosClient
+        .post(`${BASE_URL}/cat?arg=${hash}`)
+        .then(response => response.data)
+        .catch(error => {
+          console.error(error);
+          toast.error(t('ipfsLoadingErrorMessage'));
+        });
+    },
+    [t],
+  );
 
   const add = useCallback(async (data: string) => {
     const formData = new FormData();
@@ -31,7 +37,7 @@ export default function useIPFSClient() {
       .then(response => response.data)
       .catch(error => {
         console.error(error);
-        toast('Error saving data to IPFS, please try again later.');
+        toast.error('ipfsSavingErrorMessage');
       });
   }, []);
 

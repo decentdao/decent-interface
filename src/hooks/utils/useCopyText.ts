@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { logError } from '../../helpers/errorLogging';
 
 /**
@@ -26,10 +26,10 @@ export function useCopyText() {
         document.execCommand('copy');
         document.body.removeChild(textArea);
       }
-      toast(t('toastClipboardCopy'), { autoClose: 1000 });
+      toast.success(t('toastClipboardCopy'), { duration: 1000 });
     } catch (error) {
       logError(`unable to copy text to clipboard: ${error}`);
-      toast(t('errorCopyToClipboard'), { autoClose: 1000 });
+      toast.warning(t('errorCopyToClipboard'), { duration: 1000 });
     }
   };
 

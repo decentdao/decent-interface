@@ -2,7 +2,7 @@ import { useApolloClient } from '@apollo/client';
 import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { Tree, HatsSubgraphClient } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { formatUnits, getAddress, getContract, hexToBigInt } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
@@ -15,9 +15,7 @@ import { convertStreamIdToBigInt } from '../../streams/useCreateSablierStream';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 
-const hatsSubgraphClient = new HatsSubgraphClient({
-  // TODO config for prod
-});
+const hatsSubgraphClient = new HatsSubgraphClient({});
 
 const useHatsTree = () => {
   const {
@@ -138,7 +136,7 @@ const useHatsTree = () => {
         } catch (e) {
           console.log('error in tree load', e);
           if (e instanceof DecentHatsError) {
-            toast(e.message);
+            toast.error(e.message);
           }
         }
       } catch (e) {
@@ -152,7 +150,7 @@ const useHatsTree = () => {
           decentHats: getAddress(decentHatsMasterCopy),
         });
         const message = 'Hats Tree ID is not valid';
-        toast(message);
+        toast.error(message);
         console.error(e, {
           message,
           args: {
@@ -251,6 +249,8 @@ const useHatsTree = () => {
 
                     return !cancelled && !!start && !!end && start <= now && end > now;
                   },
+                  isCancellable: () =>
+                    !lockupLinearStream.canceled && !!endDate && endDate.getTime() > Date.now(),
                 };
               });
 

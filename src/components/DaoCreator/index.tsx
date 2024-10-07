@@ -2,12 +2,13 @@ import { Box } from '@chakra-ui/react';
 import { Formik } from 'formik';
 import { useDAOCreateSchema } from '../../hooks/schemas/DAOCreate/useDAOCreateSchema';
 import {
-  DAOTrigger,
-  CreatorFormState,
-  GovernanceType,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
+  CreatorFormState,
+  DAOTrigger,
+  GovernanceType,
   SafeMultisigDAO,
+  SubDAO,
 } from '../../types';
 import StepController from './StepController';
 import { initialState } from './constants';
@@ -45,7 +46,7 @@ function DaoCreator({
           const choosenGovernance = values.essentials.governance;
           const freezeGuard = isSubDAO ? values.freeze : undefined;
 
-          let daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | undefined;
+          let daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO | undefined;
           let customNonce =
             mode === DAOCreateMode.EDIT || freezeGuard !== undefined
               ? values.multisig.customNonce

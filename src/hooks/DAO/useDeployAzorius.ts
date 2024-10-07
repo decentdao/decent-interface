@@ -9,7 +9,7 @@ import { DAO_ROUTES } from '../../constants/routes';
 import { TxBuilderFactory } from '../../models/TxBuilderFactory';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { ProposalExecuteData, AzoriusERC20DAO, AzoriusERC721DAO } from '../../types';
+import { AzoriusERC20DAO, AzoriusERC721DAO, ProposalExecuteData } from '../../types';
 import { useCanUserCreateProposal } from '../utils/useCanUserSubmitProposal';
 import useSubmitProposal from './proposal/useSubmitProposal';
 
@@ -93,7 +93,9 @@ const useDeployAzorius = () => {
 
       txBuilderFactory.setSafeContract(safeAddress);
 
-      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder();
+      // @todo - useDeployAzorius wasn't ever/enough tested for subDAO creation thus deploying Azorius for subDAO won't work as expected
+      // Need to test and adjust implementation - pass parent address, parent voting strategy and whether we should attach FractalModule
+      const daoTxBuilder = txBuilderFactory.createDaoTxBuilder({});
       const safeTx = await daoTxBuilder.buildAzoriusTx({
         shouldSetName,
         shouldSetSnapshot,

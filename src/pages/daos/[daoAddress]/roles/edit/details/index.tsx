@@ -4,6 +4,7 @@ import {
   Drawer,
   DrawerBody,
   DrawerContent,
+  DrawerOverlay,
   Flex,
   Hide,
   Icon,
@@ -28,6 +29,7 @@ import {
 import DraggableDrawer from '../../../../../../components/ui/containers/DraggableDrawer';
 import { ModalBase } from '../../../../../../components/ui/modals/ModalBase';
 import {
+  BACKGROUND_SEMI_TRANSPARENT,
   CARD_SHADOW,
   NEUTRAL_2_82_TRANSPARENT,
   useHeaderHeight,
@@ -260,6 +262,11 @@ export default function RoleEditDetails() {
                 placement="right"
                 onClose={goBackToRolesEdit}
               >
+                <DrawerOverlay
+                  bg={BACKGROUND_SEMI_TRANSPARENT}
+                  backdropFilter="auto"
+                  backdropBlur="10px"
+                />
                 <DrawerContent
                   minW="50%"
                   bg="neutral-2"

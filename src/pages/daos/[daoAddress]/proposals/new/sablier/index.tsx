@@ -39,7 +39,7 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import {
   Address,
   encodeFunctionData,
@@ -841,7 +841,7 @@ export default function SablierProposalCreatePage() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (!canUserCreateProposal) {
-      toast(t('errorNotProposer', { ns: 'common' }));
+      toast.error(t('errorNotProposer', { ns: 'common' }));
     }
 
     try {
@@ -858,7 +858,7 @@ export default function SablierProposalCreatePage() {
       }
     } catch (e) {
       console.error(e);
-      toast(t('encodingFailedMessage', { ns: 'proposal' }));
+      toast.error(t('encodingFailedMessage', { ns: 'proposal' }));
     }
   };
 

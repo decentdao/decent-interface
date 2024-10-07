@@ -2,7 +2,7 @@ import { Box, Button, Flex, Image, Text, useBreakpointValue } from '@chakra-ui/r
 import { Download } from '@phosphor-icons/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Id, toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { Address, encodeFunctionData, getAddress, getContract } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../assets/abi/HatsAccount1ofN';
@@ -57,7 +57,7 @@ export default function PaymentWithdrawModal({
       withdrawInformation.roleHatSmartAddress &&
       withdrawInformation.roleHatWearerAddress
     ) {
-      let withdrawToast: Id | undefined = undefined;
+      let withdrawToast: string | number | undefined = undefined;
       try {
         const hatsAccountContract = getContract({
           abi: HatsAccount1ofNAbi,
@@ -70,13 +70,7 @@ export default function PaymentWithdrawModal({
           functionName: 'withdrawMax',
           args: [bigIntStreamId, getAddress(withdrawInformation.roleHatWearerAddress)],
         });
-        withdrawToast = toast(t('withdrawPendingMessage'), {
-          autoClose: false,
-          closeOnClick: false,
-          draggable: false,
-          closeButton: false,
-          progress: 1,
-        });
+        withdrawToast = toast.loading(t('withdrawPendingMessage'));
         const txHash = await hatsAccountContract.write.execute([
           paymentContractAddress,
           0n,
@@ -84,20 +78,16 @@ export default function PaymentWithdrawModal({
           0,
         ]);
         const transaction = await publicClient.waitForTransactionReceipt({ hash: txHash });
-        toast.dismiss(withdrawToast);
         if (transaction.status === 'success') {
           await onSuccess();
-          toast(t('withdrawSuccessMessage'));
+          toast.success(t('withdrawSuccessMessage'), { id: withdrawToast });
           onClose();
         } else {
-          toast(t('withdrawRevertedMessage'));
+          toast.error(t('withdrawRevertedMessage'), { id: withdrawToast });
         }
       } catch (e) {
-        if (withdrawToast !== undefined) {
-          toast.dismiss(withdrawToast);
-        }
         console.error('Error withdrawing from stream', e);
-        toast(t('withdrawErrorMessage'));
+        toast.error(t('withdrawErrorMessage'), { id: withdrawToast });
       }
     }
   }, [

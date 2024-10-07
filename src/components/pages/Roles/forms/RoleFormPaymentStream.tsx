@@ -1,16 +1,30 @@
-import { Box, Button, Flex, FormControl, Grid, GridItem, Icon } from '@chakra-ui/react';
-import { ArrowLeft, ArrowRight } from '@phosphor-icons/react';
+import {
+  Alert,
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  Grid,
+  GridItem,
+  Icon,
+  Show,
+  Text,
+} from '@chakra-ui/react';
+import { ArrowLeft, ArrowRight, Info, Trash } from '@phosphor-icons/react';
 import { addDays } from 'date-fns';
 import { FormikErrors, useFormikContext } from 'formik';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
+import { ModalType } from '../../../ui/modals/ModalProvider';
+import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import { RoleFormValues, RoleHatFormValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
-function FixedDate({ formIndex }: { formIndex: number }) {
+function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boolean }) {
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   const payment = values?.roleEditing?.payments?.[formIndex];
@@ -63,6 +77,7 @@ function FixedDate({ formIndex }: { formIndex: number }) {
               maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
               formIndex={formIndex}
               onChange={date => onDateChange(date, 'startDate')}
+              disabled={disabled}
             />
           </GridItem>
           <GridItem
@@ -82,6 +97,7 @@ function FixedDate({ formIndex }: { formIndex: number }) {
               minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
               formIndex={formIndex}
               onChange={date => onDateChange(date, 'endDate')}
+              disabled={disabled}
             />
           </GridItem>
         </Grid>
@@ -105,6 +121,7 @@ function FixedDate({ formIndex }: { formIndex: number }) {
             onChange={(date: Date) => {
               setFieldValue(`roleEditing.payments[${formIndex}].cliffDate`, date);
             }}
+            disabled={disabled}
           />
         </FormControl>
       )}
@@ -118,71 +135,172 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   const { getPayment } = useRolesStore();
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
     ?.payments;
+  const hatId = values.roleEditing?.id;
+  const payment = useMemo(
+    () => values.roleEditing?.payments?.[formIndex],
+    [formIndex, values.roleEditing?.payments],
+  );
+  const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
+
+  const existingPayment = useMemo(
+    () => (!!streamId && !!hatId ? getPayment(hatId, streamId) : undefined),
+    [hatId, streamId, getPayment],
+  );
+
+  const canBeCancelled = existingPayment
+    ? existingPayment.isCancellable() && !payment?.isCancelling
+    : false;
+
+  const cancelModal = useDecentModal(ModalType.NONE);
+  const handleConfirmCancelPayment = useCallback(() => {
+    if (!payment) {
+      return;
+    }
+
+    setFieldValue(`roleEditing.payments.${formIndex}`, { ...payment, isCancelling: true });
+    cancelModal();
+    setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+  }, [setFieldValue, formIndex, cancelModal, payment]);
+
+  const confirmCancelPayment = useDecentModal(ModalType.CONFIRM_CANCEL_PAYMENT, {
+    onSubmit: handleConfirmCancelPayment,
+  });
+
   return (
-    <Box
-      px={{ base: '1rem', md: 0 }}
-      pb="1rem"
-      bg="neutral-2"
-      boxShadow={{
-        base: CARD_SHADOW,
-        md: 'unset',
-      }}
-      mt="-3.5rem"
-      borderRadius="0.5rem"
-      position="relative"
-    >
-      <Button
-        variant="tertiary"
-        p="0"
-        _hover={{
-          bg: 'transparent',
+    <>
+      <Box
+        px={{ base: '1rem', md: 0 }}
+        pb="1rem"
+        bg="neutral-2"
+        boxShadow={{
+          base: CARD_SHADOW,
+          md: 'unset',
         }}
-        mb="1rem"
-        leftIcon={<ArrowLeft size="1.5rem" />}
-        isDisabled={!values?.roleEditing?.payments?.[formIndex]}
-        onClick={() => {
-          const hatId = values.roleEditing?.id;
-          if (!values?.roleEditing?.payments?.[formIndex] || !hatId) return;
-          const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
-          const isExistingPayment = !!streamId ? getPayment(hatId, streamId) : undefined;
-          // if payment is new, and unedited, remove it
-          if (
-            formIndex === values.roleEditing.payments.length - 1 &&
-            !values.roleEditing.editedRole &&
-            !isExistingPayment
-          ) {
-            setFieldValue(
-              'roleEditing.payments',
-              values.roleEditing.payments.filter((_, index) => index !== formIndex),
-            );
-          }
-          setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
-        }}
+        mt="-3.5rem"
+        borderRadius="0.5rem"
+        position="relative"
       >
-        {t('addPayment')}
-      </Button>
-      <SectionTitle
-        title={t('addPayment')}
-        subTitle={t('addPaymentStreamSubTitle')}
-        externalLink="https://docs.decentdao.org/app/user-guide/roles-and-streaming/streaming-payroll-and-vesting"
-      />
-      <AssetSelector formIndex={formIndex} />
-      <SectionTitle
-        title={t('schedule')}
-        subTitle={t('scheduleSubTitle')}
-        tooltipContent={t('cliffPaymentTooltip')}
-      />
-      <FixedDate formIndex={formIndex} />
-      <Flex justifyContent="flex-end">
         <Button
-          isDisabled={!!roleEditingPaymentsErrors}
+          variant="tertiary"
+          p="0"
+          _hover={{
+            bg: 'transparent',
+          }}
+          mb="1rem"
+          leftIcon={<ArrowLeft size="1.5rem" />}
+          isDisabled={!values?.roleEditing?.payments?.[formIndex]}
           onClick={() => {
+            if (!values?.roleEditing?.payments?.[formIndex] || !hatId) return;
+            const isExistingPayment = !!streamId ? getPayment(hatId, streamId) : undefined;
+            // if payment is new, and unedited, remove it
+            if (
+              formIndex === values.roleEditing.payments.length - 1 &&
+              !values.roleEditing.editedRole &&
+              !isExistingPayment
+            ) {
+              setFieldValue(
+                'roleEditing.payments',
+                values.roleEditing.payments.filter((_, index) => index !== formIndex),
+              );
+            }
             setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
           }}
         >
-          {t('save')}
+          {t('payments')}
         </Button>
-      </Flex>
-    </Box>
+        <SectionTitle
+          title={t('addPayment')}
+          subTitle={t('addPaymentStreamSubTitle')}
+          externalLink="https://docs.decentdao.org/app/user-guide/roles-and-streaming/streaming-payroll-and-vesting"
+        />
+        <AssetSelector
+          formIndex={formIndex}
+          disabled={!!streamId}
+        />
+        <SectionTitle
+          title={t('schedule')}
+          subTitle={t('scheduleSubTitle')}
+          tooltipContent={t('cliffPaymentTooltip')}
+        />
+        <FixedDate
+          formIndex={formIndex}
+          disabled={!!streamId}
+        />
+        {canBeCancelled && (
+          <Show above="md">
+            <Alert
+              status="info"
+              mt="2rem"
+              mb="2.5rem"
+              gap="1rem"
+            >
+              <Info size="24" />
+              <Text
+                textStyle="body-base-strong"
+                whiteSpace="pre-wrap"
+              >
+                {t('cancelPaymentInfoMessage')}
+              </Text>
+            </Alert>
+          </Show>
+        )}
+        {(canBeCancelled || !streamId) && (
+          <Flex justifyContent="flex-end">
+            {!streamId && (
+              <Button
+                isDisabled={!!roleEditingPaymentsErrors}
+                onClick={() => {
+                  setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+                }}
+              >
+                {t('save')}
+              </Button>
+            )}
+            {canBeCancelled && (
+              <Show above="md">
+                <Button
+                  color="red-1"
+                  borderColor="red-1"
+                  _hover={{ color: 'red-0', borderColor: 'red-0' }}
+                  variant="secondary"
+                  leftIcon={<Trash />}
+                  onClick={confirmCancelPayment}
+                >
+                  {t('cancelPayment')}
+                </Button>
+              </Show>
+            )}
+          </Flex>
+        )}
+      </Box>
+      <Show below="md">
+        <Alert
+          status="info"
+          my="1.5rem"
+          gap="1rem"
+        >
+          <Info size="24" />
+          <Text
+            textStyle="body-base-strong"
+            whiteSpace="pre-wrap"
+          >
+            {t(payment?.isCancelling ? 'cancellingPaymentInfoMessage' : 'cancelPaymentInfoMessage')}
+          </Text>
+        </Alert>
+        {canBeCancelled && (
+          <Button
+            color="red-1"
+            borderColor="red-1"
+            _hover={{ color: 'red-0', borderColor: 'red-0' }}
+            variant="secondary"
+            leftIcon={<Trash />}
+            onClick={confirmCancelPayment}
+            ml="auto"
+          >
+            {t('cancelPayment')}
+          </Button>
+        )}
+      </Show>
+    </>
   );
 }

@@ -2,7 +2,7 @@ import { Flex, Button, Icon } from '@chakra-ui/react';
 import { CaretRight, CaretLeft } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { useFractal } from '../../providers/App/AppProvider';
 import { ICreationStepProps, CreatorSteps } from '../../types';
 interface IStepButtons extends ICreationStepProps {
@@ -73,9 +73,7 @@ export function StepButtons({
           if (!isLastStep && nextStep) {
             navigate(nextStepUrl);
           } else if (isLastStep && !user.address) {
-            toast(t('toastDisconnected'), {
-              closeOnClick: true,
-            });
+            toast.info(t('toastDisconnected'));
           }
         }}
         data-testid={!isLastStep ? 'create-skipNextButton' : 'create-deployDAO'}

@@ -43,7 +43,8 @@
   "showExecutableCode": "Show Executable Code",
   "hideExecutableCode": "Hide Executable Code",
   "noProposal": "No proposal found",
-  "emptyProposals": "No proposals found",
+  "emptyProposals": "You haven't added any Proposals yet. Create one above.",
+  "emptyProposalsNotProposer": "This Safe doesn't have any Proposals yet.",
   "createProposal": "Create Proposal",
   "labelAddTransaction": "Add another transaction",
   "errorInvalidFragments": "Invalid combination of function signature and parameters",
@@ -140,5 +141,6 @@
   "clawBackEmptyTreasuryError": "Failed to process clawback - child Safe has no transferrable tokens",
   "clawBackEmptyTransactionsError": "Failed to process clawback - child Safe has no safely transferrable tokens",
   "pendingProposalNotice": "Pending proposal still processing",
-  "metadataFailedParsePlaceholder": "Unknown - Failed to parse metadata"
+  "metadataFailedParsePlaceholder": "Unknown - Failed to parse metadata",
+  "multisigNonceDuplicateErrorMessage": "Transaction with the same nonce already exists"
 }

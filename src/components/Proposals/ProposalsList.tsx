@@ -1,13 +1,8 @@
-import { Button, Box, Flex } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Box, Flex } from '@chakra-ui/react';
 import { CONTENT_MAXW } from '../../constants/common';
-import { DAO_ROUTES } from '../../constants/routes';
-import { useCanUserCreateProposal } from '../../hooks/utils/useCanUserSubmitProposal';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalProposal } from '../../types';
-import { EmptyBox } from '../ui/containers/EmptyBox';
+import NoDataCard from '../ui/containers/NoDataCard';
 import { InfoBoxLoader } from '../ui/loaders/InfoBoxLoader';
 import ProposalCard from './ProposalCard/ProposalCard';
 
@@ -41,13 +36,11 @@ export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
           !allProposalsLoaded && <InfoBoxLoader />,
         ]
       ) : (
-        <EmptyBox emptyText={t('emptyProposals')}>
-          {canUserCreateProposal && safe?.address && (
-            <Link to={DAO_ROUTES.proposalNew.relative(addressPrefix, safe.address)}>
-              <Button variant="text">{t('createProposal')}</Button>
-            </Link>
-          )}
-        </EmptyBox>
+        <NoDataCard
+          emptyText="emptyProposals"
+          emptyTextNotProposer="emptyProposalsNotProposer"
+          translationNameSpace="proposal"
+        />
       )}
     </Flex>
   );

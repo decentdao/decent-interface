@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import DaoCreator from '../../../../../components/DaoCreator';
 import { DAOCreateMode } from '../../../../../components/DaoCreator/formComponents/EstablishEssentials';
-import { EmptyBox } from '../../../../../components/ui/containers/EmptyBox';
+import NoDataCard from '../../../../../components/ui/containers/NoDataCard';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import useDeployAzorius from '../../../../../hooks/DAO/useDeployAzorius';
@@ -14,9 +14,9 @@ import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
-  DAOTrigger,
   AzoriusERC20DAO,
   AzoriusERC721DAO,
+  DAOTrigger,
   GovernanceType,
 } from '../../../../../types';
 
@@ -83,7 +83,10 @@ export default function ModifyGovernancePage() {
           deployDAO={handleDeployAzorius}
         />
       ) : (
-        <EmptyBox emptyText={t('cannotModifyGovernance')} />
+        <NoDataCard
+          translationNameSpace="daoEdit"
+          emptyText="cannotModifyGovernance"
+        />
       )}
     </Box>
   );

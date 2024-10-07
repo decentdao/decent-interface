@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { Hash, TransactionReceipt } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
@@ -30,33 +30,22 @@ const useTransaction = () => {
     (params: ContractCallParams) => {
       if (!publicClient) return;
 
-      let toastId: React.ReactText;
-      toastId = toast(params.pendingMessage, {
-        autoClose: false,
-        closeOnClick: false,
-        draggable: false,
-        closeButton: false,
-        progress: 1,
+      let toastId = toast.loading(params.pendingMessage, {
+        duration: Infinity,
       });
       setPending(true);
       params
         .contractFn()
+        .then(txReceipt => publicClient.waitForTransactionReceipt({ hash: txReceipt }))
         .then(txReceipt => {
-          return Promise.all([
-            publicClient.waitForTransactionReceipt({ hash: txReceipt }),
-            toastId,
-          ]);
-        })
-        .then(([txReceipt, toastID]) => {
-          toast.dismiss(toastID);
           if (txReceipt.status === 'reverted') {
-            toast.error(params.failedMessage);
+            toast.error(params.failedMessage, { id: toastId });
             if (params.failedCallback) params.failedCallback();
           } else if (txReceipt.status === 'success') {
-            toast(params.successMessage);
+            toast.success(params.successMessage, { id: toastId });
             if (params.successCallback) params.successCallback(txReceipt);
           } else {
-            toast.error(t('errorTransactionUnknown'));
+            toast.error(t('errorTransactionUnknown'), { id: toastId });
             if (params.failedCallback) params.failedCallback();
           }
           if (params.completedCallback) params.completedCallback();
@@ -70,15 +59,14 @@ const useTransaction = () => {
         })
         .catch((error: ProviderRpcError) => {
           logError(error);
-          toast.dismiss(toastId);
           setPending(false);
 
           if (error.code === 4001) {
-            toast.error(t('errorUserDeniedTransaction'));
+            toast.info(t('errorUserDeniedTransaction', { id: toastId }));
             return;
           }
 
-          toast.error(t('errorGeneral', { ns: 'common' }));
+          toast.error(t('errorGeneral', { ns: 'common' }), { id: toastId });
         });
     },
     [t, publicClient],

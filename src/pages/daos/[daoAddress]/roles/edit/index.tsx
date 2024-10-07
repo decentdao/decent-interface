@@ -7,13 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, toHex } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
-import {
-  RoleCardLoading,
-  RoleCardNoRoles,
-} from '../../../../../components/pages/Roles/RolePageCard';
+import { RoleCardLoading } from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
 import { EditBadgeStatus, RoleFormValues } from '../../../../../components/pages/Roles/types';
 import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
+import NoDataCard from '../../../../../components/ui/containers/NoDataCard';
 import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
@@ -172,7 +170,13 @@ function RolesEdit() {
             </Show>
             <Show below="md">
               {hatsTree === undefined && <RoleCardLoading />}
-              {showNoRolesCard && values.hats.length === 0 && <RoleCardNoRoles />}
+              {showNoRolesCard && values.hats.length === 0 && (
+                <NoDataCard
+                  translationNameSpace="roles"
+                  emptyText="noRoles"
+                  emptyTextNotProposer="noRolesNotProposer"
+                />
+              )}
               {values.hats.map(hat => (
                 <RoleCardEdit
                   key={hat.id}

@@ -20,6 +20,7 @@ import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   FractalGuardContracts,
+  FractalModuleType,
   FreezeGuard,
   FreezeVotingType,
   GovernanceType,
@@ -221,7 +222,14 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
       freezeGuard.isFrozen &&
       freezeGuard.userHasVotes
     ) {
-      return [clawBackOption, settingsOption];
+      const fractalModule = node.fractalModules.find(
+        module => module.moduleType === FractalModuleType.FRACTAL,
+      );
+      if (fractalModule) {
+        return [clawBackOption, settingsOption];
+      } else {
+        return [settingsOption];
+      }
     } else {
       const optionsArr = [];
       if (canUserCreateProposal) {
@@ -245,6 +253,7 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
     handleNavigateToSettings,
     addressPrefix,
     freezeOption,
+    node.fractalModules,
   ]);
 
   return (

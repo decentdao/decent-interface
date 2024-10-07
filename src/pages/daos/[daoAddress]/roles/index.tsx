@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Hex, zeroAddress } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
-import { RoleCardLoading, RoleCardNoRoles } from '../../../../components/pages/Roles/RolePageCard';
+import { RoleCardLoading } from '../../../../components/pages/Roles/RolePageCard';
 import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
+import NoDataCard from '../../../../components/ui/containers/NoDataCard';
 import PencilWithLineIcon from '../../../../components/ui/icons/PencilWithLineIcon';
 import PageHeader from '../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../constants/routes';
@@ -72,7 +73,13 @@ function Roles() {
         }
       />
       {hatsTreeLoading && <RoleCardLoading />}
-      {showNoRolesCard && <RoleCardNoRoles />}
+      {showNoRolesCard && (
+        <NoDataCard
+          translationNameSpace="roles"
+          emptyText="noRoles"
+          emptyTextNotProposer="noRolesNotProposer"
+        />
+      )}
 
       {showRolesTable && (
         <>
