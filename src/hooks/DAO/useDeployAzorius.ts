@@ -40,13 +40,15 @@ const useDeployAzorius = () => {
     addressPrefix,
   } = useNetworkConfig();
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
 
   const { t } = useTranslation(['transaction', 'proposalMetadata']);
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
+
   const publicClient = usePublicClient();
+  const safeAddress = safe?.address;
 
   const deployAzorius = useCallback(
     async (
@@ -58,7 +60,7 @@ const useDeployAzorius = () => {
       },
     ) => {
       const { shouldSetName, shouldSetSnapshot } = opts;
-      if (!daoAddress || !canUserCreateProposal || !safe || !publicClient) {
+      if (!safeAddress || !canUserCreateProposal || !safe || !publicClient) {
         return;
       }
 
@@ -89,7 +91,7 @@ const useDeployAzorius = () => {
         undefined,
       );
 
-      txBuilderFactory.setSafeContract(daoAddress);
+      txBuilderFactory.setSafeContract(safeAddress);
 
       // @todo - useDeployAzorius wasn't ever/enough tested for subDAO creation thus deploying Azorius for subDAO won't work as expected
       // Need to test and adjust implementation - pass parent address, parent voting strategy and whether we should attach FractalModule
@@ -117,7 +119,7 @@ const useDeployAzorius = () => {
       });
 
       const proposalData: ProposalExecuteData = {
-        targets: [daoAddress, multiSendCallOnly],
+        targets: [safeAddress, multiSendCallOnly],
         values: [0n, 0n],
         calldatas: [encodedAddOwnerWithThreshold, encodedMultisend],
         metaData: {
@@ -133,14 +135,13 @@ const useDeployAzorius = () => {
         pendingToastMessage: t('modifyGovernanceSetAzoriusProposalPendingMessage'),
         successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
         failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
-        successCallback: () => navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)),
+        successCallback: () => navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)),
       });
     },
     [
-      daoAddress,
+      safeAddress,
       canUserCreateProposal,
       safe,
-      publicClient,
       compatibilityFallbackHandler,
       votesErc20WrapperMasterCopy,
       votesErc20MasterCopy,

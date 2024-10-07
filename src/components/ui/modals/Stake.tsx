@@ -11,7 +11,7 @@ import { BigIntInput } from '../forms/BigIntInput';
 
 export default function StakeModal({ close }: { close: () => void }) {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { assetsFungible },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
@@ -31,8 +31,8 @@ export default function StakeModal({ close }: { close: () => void }) {
     if (inputAmount?.bigintValue) {
       await handleStake(inputAmount?.bigintValue);
       close();
-      if (daoAddress) {
-        navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+      if (safe?.address) {
+        navigate(DAO_ROUTES.proposals.relative(addressPrefix, safe.address));
       }
     }
   };

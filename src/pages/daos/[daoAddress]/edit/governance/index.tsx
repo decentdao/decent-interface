@@ -26,7 +26,7 @@ export default function ModifyGovernancePage() {
   }, []);
 
   const {
-    node: { daoAddress, safe, daoName, daoSnapshotENS },
+    node: { safe, daoName, daoSnapshotENS },
     governance: { type },
     readOnly: { user },
   } = useFractal();
@@ -37,7 +37,9 @@ export default function ModifyGovernancePage() {
   const isSigner = user.address && safe?.owners.includes(user.address);
   const deployAzorius = useDeployAzorius();
 
-  if (!daoAddress) {
+  const safeAddress = safe?.address;
+
+  if (!safeAddress) {
     return null;
   }
 
@@ -65,7 +67,7 @@ export default function ModifyGovernancePage() {
         ButtonIcon={X}
         buttonProps={{
           variant: 'secondary',
-          onClick: () => navigate(DAO_ROUTES.dao.relative(addressPrefix, daoAddress)),
+          onClick: () => navigate(DAO_ROUTES.dao.relative(addressPrefix, safeAddress)),
         }}
         breadcrumbs={[
           {

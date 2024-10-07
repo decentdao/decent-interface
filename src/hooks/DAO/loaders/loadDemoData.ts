@@ -42,14 +42,14 @@ export const demoData: DemoData = {
 
 export const loadDemoData = (
   chain: Chain,
-  daoAddress: Address,
+  safeAddress: Address,
   result: { data?: DAOQueryQuery },
 ) => {
   if (demoData[chain.id] === undefined) {
     return result;
   }
 
-  const demo = demoData[chain.id][daoAddress];
+  const demo = demoData[chain.id][safeAddress];
 
   if (demo === undefined) {
     return result;
@@ -65,8 +65,8 @@ export const loadDemoData = (
     data: {
       daos: [
         {
-          id: daoAddress,
-          address: daoAddress,
+          id: safeAddress,
+          address: safeAddress,
           parentAddress: onchain.parentAddress ?? demo.parentAddress,
           name: onchain.name ?? demo.name,
           snapshotENS: onchain.snapshotENS ?? demo.snapshotENS,

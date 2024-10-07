@@ -33,7 +33,7 @@ export default function RolesDetailsDrawerMobile({
   onEdit,
 }: RoleDetailsDrawerMobileProps) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { t } = useTranslation('roles');
   const { hatsTree } = useRolesStore();
@@ -49,7 +49,7 @@ export default function RolesDetailsDrawerMobile({
     [roleHat.payments],
   );
 
-  if (!daoAddress || !hatsTree) return null;
+  if (!safe?.address || !hatsTree) return null;
 
   return (
     <DraggableDrawer

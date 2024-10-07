@@ -1,5 +1,5 @@
-query DAOQuery($daoAddress: Bytes) {
-  daos(where: { id: $daoAddress }) {
+query DAOQuery($safeAddress: Bytes) {
+  daos(where: { id: $safeAddress }) {
     id
     address
     parentAddress

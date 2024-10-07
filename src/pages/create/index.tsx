@@ -47,15 +47,15 @@ export default function DaoCreatePage() {
   }, [isConnected, t]);
 
   const successCallback = useCallback(
-    async (addressPrefix: string, daoAddress: Address) => {
+    async (addressPrefix: string, safeAddress: Address) => {
       setRedirectPending(true);
       const daoFound = await requestWithRetries(
-        async () => (safeAPI ? safeAPI.getSafeCreationInfo(daoAddress) : undefined),
+        async () => (safeAPI ? safeAPI.getSafeCreationInfo(safeAddress) : undefined),
         8,
       );
-      toggleFavorite(daoAddress);
+      toggleFavorite(safeAddress);
       if (daoFound) {
-        navigate(DAO_ROUTES.dao.relative(addressPrefix, daoAddress));
+        navigate(DAO_ROUTES.dao.relative(addressPrefix, safeAddress));
       } else {
         toast.loading(t('failedIndexSafe'), {
           duration: Infinity,

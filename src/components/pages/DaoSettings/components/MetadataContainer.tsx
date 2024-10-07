@@ -25,7 +25,7 @@ export function MetadataContainer() {
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
-    node: { daoName, daoSnapshotENS, daoAddress, safe },
+    node: { daoName, daoSnapshotENS, safe },
     readOnly: {
       user: { votingWeight },
     },
@@ -35,15 +35,17 @@ export function MetadataContainer() {
     contracts: { keyValuePairs, fractalRegistry },
   } = useNetworkConfig();
 
+  const safeAddress = safe?.address;
+
   useEffect(() => {
-    if (daoName && daoAddress && createAccountSubstring(daoAddress) !== daoName) {
+    if (daoName && safeAddress && createAccountSubstring(safeAddress) !== daoName) {
       setName(daoName);
     }
 
     if (daoSnapshotENS) {
       setSnapshotENS(daoSnapshotENS);
     }
-  }, [daoName, daoSnapshotENS, daoAddress]);
+  }, [daoName, daoSnapshotENS, safeAddress]);
 
   const handleSnapshotENSChange: ChangeEventHandler<HTMLInputElement> = e => {
     const lowerCasedValue = e.target.value.toLowerCase();
@@ -58,8 +60,8 @@ export function MetadataContainer() {
   const userHasVotingWeight = votingWeight > 0n;
 
   const submitProposalSuccessCallback = () => {
-    if (daoAddress) {
-      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+    if (safeAddress) {
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress));
     }
   };
 

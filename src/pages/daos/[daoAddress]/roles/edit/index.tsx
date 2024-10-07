@@ -32,7 +32,7 @@ function RolesEdit() {
 
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
 
@@ -82,10 +82,11 @@ function RolesEdit() {
 
   const blocker = useNavigationBlocker({ roleEditPageNavigationBlockerParams: { hasEditedRoles } });
 
-  if (daoAddress === null) return null;
+  const safeAddress = safe?.address;
+  if (!safeAddress) return null;
 
   const showRoleEditDetails = (roleId: Hex) => {
-    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, daoAddress, roleId));
+    navigate(DAO_ROUTES.rolesEditDetails.relative(addressPrefix, safeAddress, roleId));
   };
 
   const hatsTreeLoading = hatsTree === undefined;
@@ -139,7 +140,7 @@ function RolesEdit() {
               breadcrumbs={[
                 {
                   terminus: t('roles'),
-                  path: DAO_ROUTES.roles.relative(addressPrefix, daoAddress),
+                  path: DAO_ROUTES.roles.relative(addressPrefix, safeAddress),
                 },
                 {
                   terminus: t('editRoles'),
@@ -202,7 +203,7 @@ function RolesEdit() {
                 setHasEditedRoles(values.hats.some(hat => !!hat.editedRole));
                 setTimeout(
                   () =>
-                    navigate(DAO_ROUTES.roles.relative(addressPrefix, daoAddress), {
+                    navigate(DAO_ROUTES.roles.relative(addressPrefix, safeAddress), {
                       replace: true,
                     }),
                   50,
@@ -220,7 +221,7 @@ function RolesEdit() {
                   );
                 }
                 navigate(
-                  DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, daoAddress),
+                  DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, safeAddress),
                 );
               }}
               isDisabled={!values.hats.some(hat => hat.editedRole)}

@@ -22,7 +22,7 @@ import LidoButtons from './LidoButtons';
 
 export function Assets() {
   const {
-    node: { daoAddress },
+    node: { safe },
     treasury: { assetsFungible, assetsNonFungible, assetsDeFi, totalUsdValue },
   } = useFractal();
   const { t } = useTranslation('treasury');
@@ -69,7 +69,7 @@ export function Assets() {
         />
       </Hide>
       <LidoButtons />
-      {hasAssets && daoAddress && (
+      {hasAssets && safe?.address && (
         <>
           <Show below="lg">
             <Accordion

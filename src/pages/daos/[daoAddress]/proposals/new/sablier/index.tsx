@@ -88,14 +88,14 @@ function StepButtons({
   isSubmitDisabled: boolean;
 }) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useTranslation(['common', 'proposal']);
 
-  if (!daoAddress) {
+  if (!safe?.address) {
     return null;
   }
 
@@ -309,20 +309,22 @@ function StreamBuilder({
   const [tokenBalanceFormatted, setTokenBalanceFormatted] = useState('');
   const [expandedIndecies, setExpandedIndecies] = useState<number[]>([0]);
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { t } = useTranslation(['common']);
 
+  const safeAddress = safe?.address;
+
   useEffect(() => {
     const fetchFormattedTokenBalance = async () => {
-      if (publicClient && daoAddress && stream.tokenAddress && isAddress(stream.tokenAddress)) {
+      if (publicClient && safeAddress && stream.tokenAddress && isAddress(stream.tokenAddress)) {
         const tokenContract = getContract({
           abi: erc20Abi,
           client: publicClient,
           address: stream.tokenAddress,
         });
         const [tokenBalance, decimals, symbol, name] = await Promise.all([
-          tokenContract.read.balanceOf([daoAddress]),
+          tokenContract.read.balanceOf([safeAddress]),
           tokenContract.read.decimals(),
           tokenContract.read.symbol(),
           tokenContract.read.name(),
@@ -337,7 +339,7 @@ function StreamBuilder({
     };
 
     fetchFormattedTokenBalance();
-  }, [daoAddress, publicClient, stream.tokenAddress]);
+  }, [safeAddress, publicClient, stream.tokenAddress]);
   return (
     <AccordionPanel p={0}>
       <VStack
@@ -743,7 +745,7 @@ export default function SablierProposalCreatePage() {
   }, []);
 
   const {
-    node: { daoAddress, safe },
+    node: { safe },
     governance: { type },
   } = useFractal();
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
@@ -759,10 +761,11 @@ export default function SablierProposalCreatePage() {
   const [streams, setStreams] = useState<Stream[]>([DEFAULT_STREAM]);
   const HEADER_HEIGHT = useHeaderHeight();
 
+  const safeAddress = safe?.address;
   const successCallback = () => {
-    if (daoAddress) {
+    if (safeAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress));
     }
   };
 
@@ -772,7 +775,7 @@ export default function SablierProposalCreatePage() {
   );
 
   const prepareProposalData = useCallback(async () => {
-    if (!daoAddress) {
+    if (!safeAddress) {
       throw new Error('Can not create stream without DAO address set');
     }
     const targets: Address[] = [];
@@ -805,7 +808,7 @@ export default function SablierProposalCreatePage() {
           sablierV2LockupTranched,
           tokenAddress,
           tokenStreams.map(stream => ({
-            sender: daoAddress,
+            sender: safeAddress,
             recipient: getAddress(stream.recipientAddress),
             totalAmount: stream.totalAmount.bigintValue!,
             broker: {
@@ -833,7 +836,7 @@ export default function SablierProposalCreatePage() {
       calldatas,
       metaData: values.proposalMetadata,
     };
-  }, [values, streams, sablierV2Batch, sablierV2LockupTranched, daoAddress]);
+  }, [values, streams, sablierV2Batch, sablierV2LockupTranched, safeAddress]);
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -881,7 +884,7 @@ export default function SablierProposalCreatePage() {
     [streams],
   );
 
-  if (!type || !daoAddress || !safe) {
+  if (!type || !safeAddress || !safe) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />
@@ -897,7 +900,7 @@ export default function SablierProposalCreatePage() {
           breadcrumbs={[
             {
               terminus: t('proposals', { ns: 'breadcrumbs' }),
-              path: DAO_ROUTES.proposals.relative(addressPrefix, daoAddress),
+              path: DAO_ROUTES.proposals.relative(addressPrefix, safeAddress),
             },
             {
               terminus: t('proposalNew', { ns: 'breadcrumbs' }),
@@ -909,8 +912,8 @@ export default function SablierProposalCreatePage() {
             variant: 'secondary',
             onClick: () =>
               navigate(
-                daoAddress
-                  ? DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)
+                safeAddress
+                  ? DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)
                   : BASE_ROUTES.landing,
               ),
             isDisabled: pendingCreateTx,
