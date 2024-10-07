@@ -1,4 +1,13 @@
-import { Alert, Box, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  Box,
+  Flex,
+  InputGroup,
+  InputRightElement,
+  Text,
+  FormControl,
+  Switch,
+} from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,7 +25,10 @@ import { DAOCreateMode } from './EstablishEssentials';
 export function AzoriusGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
   const {
-    node: { safe },
+    node: {
+      safe,
+      nodeHierarchy: { parentAddress },
+    },
   } = useFractal();
 
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
@@ -167,6 +179,38 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           </Alert>
         </Flex>
       </StepWrapper>
+      {!!parentAddress && (
+        <Box
+          padding="1.5rem"
+          bg="neutral-2"
+          borderRadius="0.25rem"
+          mt="1.5rem"
+          mb={showCustomNonce ? '1.5rem' : 0}
+        >
+          <FormControl
+            gap="0.5rem"
+            width="100%"
+            justifyContent="space-between"
+            display="flex"
+          >
+            <Text>{t('attachFractalModuleLabel')}</Text>
+            <Switch
+              size="md"
+              variant="secondary"
+              onChange={() =>
+                setFieldValue('freeze.attachFractalModule', !values.freeze.attachFractalModule)
+              }
+              isChecked={values.freeze.attachFractalModule}
+            />
+          </FormControl>
+          <Text
+            color="neutral-7"
+            width="50%"
+          >
+            {t('attachFractalModuleDescription')}
+          </Text>
+        </Box>
+      )}
       {showCustomNonce && (
         <Box
           padding="1.5rem"
