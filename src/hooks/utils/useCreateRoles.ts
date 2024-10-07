@@ -3,7 +3,7 @@ import { FormikHelpers } from 'formik';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
@@ -524,7 +524,8 @@ export default function useCreateRoles() {
           const streamsWithFundsToClaim = getStreamsWithFundsToClaimFromFormHat(formHat);
 
           if (streamsWithFundsToClaim.length) {
-            // This role is being removed. We need to flush out any unclaimed funds from streams on this role.
+            // This role is being removed.
+            // We need to flush out any unclaimed funds from streams on this role to the original wearer.
             for (const stream of streamsWithFundsToClaim) {
               if (!stream.streamId || !stream.contractAddress) {
                 throw new Error(
@@ -534,7 +535,7 @@ export default function useCreateRoles() {
 
               const flushStreamTxCalldata = prepareFlushStreamTxs({
                 streamId: stream.streamId,
-                to: getAddress(formHat.wearer),
+                to: getAddress(originalHat.wearer),
                 smartAccount: formHat.smartAddress,
               });
 
@@ -593,6 +594,7 @@ export default function useCreateRoles() {
             });
           }
           if (formHat.editedRole.fieldNames.includes('member')) {
+            const newWearer = getAddress(formHat.wearer);
             if (formHat.smartAddress === undefined) {
               throw new Error('Cannot prepare transactions for edited role without smart address');
             }
@@ -639,7 +641,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+                  args: [BigInt(formHat.id), daoAddress, newWearer],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -649,7 +651,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), originalHat.wearer, getAddress(formHat.wearer)],
+                  args: [BigInt(formHat.id), originalHat.wearer, newWearer],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -696,7 +698,11 @@ export default function useCreateRoles() {
                 // Cancel the stream
                 allTxs.push(...prepareCancelStreamTxs(stream.streamId));
 
-                // Finally, transfer the hat back to the original wearer
+                // Finally, transfer the hat back to the correct wearer.
+                // Because a payment cancel can occur in the same role edit as a member change, we need to ensure hat is
+                // finally transferred to the correct wearer. Instead of transferring to `originalHat.wearer` here,
+                // `formHat.wearer` will represent the new wearer if the role member was changed, but will otherwise remain
+                // the original wearer since the member form field was untouched.
                 allTxs.push({
                   calldata: encodeFunctionData({
                     abi: HatsAbi,
@@ -835,7 +841,7 @@ export default function useCreateRoles() {
         });
       } catch (e) {
         console.error(e);
-        toast(t('encodingFailedMessage', { ns: 'proposal' }));
+        toast.error(t('encodingFailedMessage', { ns: 'proposal' }));
       } finally {
         formikHelpers.setSubmitting(false);
       }

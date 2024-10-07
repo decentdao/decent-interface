@@ -113,5 +113,7 @@
   "hide": "Hide",
   "poweredBy": "Powered by",
   "goTo": "Go to",
-  "none": "None"
+  "none": "None",
+  "ipfsLoadingErrorMessage": "Error fetching data from IPFS, please try again later.",
+  "ipfsSavingErrorMessage": "Error saving data to IPFS, please try again later."
 }

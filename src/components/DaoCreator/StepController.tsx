@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   ICreationStepProps,
@@ -60,7 +60,7 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
     if (!createOptions.includes(values.essentials.governance)) {
       setFieldValue('essentials.governance', GovernanceType.MULTISIG);
       redirectToInitialStep();
-      toast(t('errorUnsupportedCreateOption'));
+      toast.error(t('errorUnsupportedCreateOption'));
     }
   }, [createOptions, setFieldValue, values.essentials.governance, t, redirectToInitialStep]);
 
