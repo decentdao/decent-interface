@@ -8,12 +8,8 @@ import ProposalCard from './ProposalCard/ProposalCard';
 
 export function ProposalsList({ proposals }: { proposals: FractalProposal[] }) {
   const {
-    node: { safe },
     governance: { loadingProposals, allProposalsLoaded },
   } = useFractal();
-  const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { addressPrefix } = useNetworkConfig();
-  const { t } = useTranslation(['proposal']);
 
   return (
     <Flex

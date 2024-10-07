@@ -1,6 +1,6 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback, useEffect, useRef } from 'react';
-import { Address, getContract, zeroAddress } from 'viem';
+import { getContract, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { GuardContractAction } from '../../../providers/App/guardContracts/action';
@@ -16,7 +16,6 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
     node: { safe, fractalModules, isHierarchyLoaded },
     action,
   } = useFractal();
-  const baseContracts = useSafeContracts();
 
   const safeAddress = safe?.address;
 
@@ -27,11 +26,7 @@ export const useFractalGuardContracts = ({ loadOnMount = true }: { loadOnMount?:
   const publicClient = usePublicClient();
 
   const loadFractalGuardContracts = useCallback(
-    async (
-      _daoAddress: Address,
-      _safe: SafeInfoResponseWithGuard,
-      _fractalModules: FractalModuleData[],
-    ) => {
+    async (_safe: SafeInfoResponseWithGuard, _fractalModules: FractalModuleData[]) => {
       if (!publicClient) {
         return;
       }

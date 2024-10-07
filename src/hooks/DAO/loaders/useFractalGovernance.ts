@@ -40,7 +40,7 @@ export const useFractalGovernance = () => {
   const { subgraph } = useNetworkConfig();
 
   useQuery(DAOQueryDocument, {
-    variables: { safeAddress },
+    variables: { daoAddress: safeAddress },
     onCompleted: async data => {
       if (!safeAddress) return;
       const { daos } = data;

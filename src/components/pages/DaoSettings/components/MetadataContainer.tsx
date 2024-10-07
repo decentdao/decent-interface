@@ -25,7 +25,6 @@ export function MetadataContainer() {
   const { submitProposal } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const {
-    baseContracts,
     node: { daoName, daoSnapshotENS, safe },
     readOnly: {
       user: { votingWeight },
