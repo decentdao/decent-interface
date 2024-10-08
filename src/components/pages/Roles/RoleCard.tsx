@@ -184,6 +184,7 @@ export function RoleCard({
   return (
     <Card
       mb="1rem"
+      cursor="pointer"
       onClick={() => handleRoleClick(hatId)}
     >
       <Flex justifyContent="space-between">
@@ -255,7 +256,10 @@ export function RoleCardShort({
   handleRoleClick: () => void;
 }) {
   return (
-    <Card onClick={handleRoleClick}>
+    <Card
+      onClick={handleRoleClick}
+      cursor="pointer"
+    >
       <Flex justifyContent="space-between">
         <Text
           textStyle="display-lg"
