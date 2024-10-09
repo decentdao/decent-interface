@@ -19,7 +19,7 @@ export function AccountDisplay({ containerRef }: AccountDisplayProps) {
         variant="tertiary"
         data-testid="header-accountMenu"
         padding="0.25rem"
-        size="icon-lg"
+        size={{ base: 'icon-lg', md: 'base' }}
         color="white-0"
         border="1px solid transparent"
         borderRadius="0.5rem"

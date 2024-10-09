@@ -29,7 +29,8 @@ export const MOBILE_DRAWER_OVERLAY = '#161219D6';
 export const BACKGROUND_SEMI_TRANSPARENT = '#16121980';
 export const NEUTRAL_2_82_TRANSPARENT = '#221D25D6';
 export const SEXY_BOX_SHADOW_T_T =
-  '0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset, 0px 0px 0px 1px #100414;';
+  '0px 0px 0px 1px rgba(248, 244, 252, 0.04) inset, 0px 1px 0px 0px rgba(248, 244, 252, 0.04) inset, 0px 0px 0px 1px #100414';
+
 export const CARD_SHADOW =
   '0 1px 0 0 rgba(248, 244, 252, 0.04), 0 1px 1px 0 rgba(248, 244, 252, 0.04), 0 0 1px 1px rgba(16, 4, 20, 1)';
 export const DETAILS_SHADOW =

@@ -300,7 +300,6 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                     ? paymentAmountBigIntError?.bigintValue
                     : undefined
                 }
-                isDisabled={inputDisabled}
               >
                 <BigIntInput
                   isDisabled={inputDisabled}
