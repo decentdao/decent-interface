@@ -105,5 +105,6 @@
   "tooltipNftVoting": "NFT Voting allows a group of ERC-721 (NFT) holders to propose and vote on transactions. Multiple NFT addresses can be used. <1>Learn more</1>",
   "errorUnsupportedCreateOption": "Previously selected Governance option is not supported on this network.",
   "attachFractalModuleLabel": "Enable Clawback",
-  "attachFractalModuleDescription": "This setting controls whether Parent Safe will be able to execute arbitrary transactions on Child Safe bypassing voting process on Child Safe."
+  "attachFractalModuleDescription": "This setting controls whether Parent Safe will be able to execute arbitrary transactions on Child Safe bypassing voting process on Child Safe.",
+  "fractalModuleAttachedDescription": "This setting can not be modified as Fractal Module already attached to the Safe."
 }

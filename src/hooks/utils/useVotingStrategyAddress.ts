@@ -30,14 +30,6 @@ const useVotingStrategyAddress = () => {
         azoriusModule = getAzoriusModuleFromModules(node.fractalModules);
       }
 
-      // if (!azoriusModule) {
-      //   throw new Error('Azorius module not found');
-      // }
-
-      // if (!publicClient) {
-      //   throw new Error('Public client undefined');
-      // }
-
       if (!azoriusModule || !publicClient) {
         return;
       }
