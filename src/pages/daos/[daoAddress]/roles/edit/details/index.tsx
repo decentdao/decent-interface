@@ -251,6 +251,7 @@ export default function RoleEditDetails() {
                     <RoleFormTabs
                       hatId={hatEditingId}
                       pushRole={push}
+                      blocker={blocker}
                     />
                   </Box>
                 </Box>
@@ -300,6 +301,7 @@ export default function RoleEditDetails() {
                     <RoleFormTabs
                       hatId={hatEditingId}
                       pushRole={push}
+                      blocker={blocker}
                     />
                   </DrawerBody>
                 </DrawerContent>
