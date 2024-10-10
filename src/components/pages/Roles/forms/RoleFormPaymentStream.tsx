@@ -1,16 +1,5 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Flex,
-  FormControl,
-  Grid,
-  GridItem,
-  Icon,
-  Show,
-  Text,
-} from '@chakra-ui/react';
-import { ArrowLeft, ArrowRight, Info, Trash } from '@phosphor-icons/react';
+import { Alert, Box, Button, Flex, FormControl, Icon, Show, Text } from '@chakra-ui/react';
+import { ArrowRight, Info, Trash } from '@phosphor-icons/react';
 import { addDays } from 'date-fns';
 import { FormikErrors, useFormikContext } from 'formik';
 import { useCallback, useMemo } from 'react';
@@ -58,49 +47,30 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
   return (
     <Box>
       <FormControl my="1rem">
-        <Grid
-          gridTemplateAreas={{
-            base: `"start arrow"
-          "end blank"`,
-            sm: `"start arrow end"`,
-          }}
+        <Flex
           gap="0.5rem"
-          gridTemplateColumns={{
-            base: '1fr max-content',
-            sm: '1fr 1.5rem 1fr',
-          }}
           alignItems="center"
         >
-          <GridItem area="start">
-            <DecentDatePicker
-              type="startDate"
-              maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
-              formIndex={formIndex}
-              onChange={date => onDateChange(date, 'startDate')}
-              disabled={disabled}
-            />
-          </GridItem>
-          <GridItem
-            area="arrow"
-            display="flex"
-            alignItems="center"
-          >
-            <Icon
-              as={ArrowRight}
-              boxSize="1.5rem"
-              color="lilac-0"
-            />
-          </GridItem>
-          <GridItem area="end">
-            <DecentDatePicker
-              type="endDate"
-              minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
-              formIndex={formIndex}
-              onChange={date => onDateChange(date, 'endDate')}
-              disabled={disabled}
-            />
-          </GridItem>
-        </Grid>
+          <DecentDatePicker
+            type="startDate"
+            maxDate={selectedEndDate ? addDays(selectedEndDate, -1) : undefined}
+            formIndex={formIndex}
+            onChange={date => onDateChange(date, 'startDate')}
+            disabled={disabled}
+          />
+          <Icon
+            as={ArrowRight}
+            boxSize="1.5rem"
+            color="lilac-0"
+          />
+          <DecentDatePicker
+            type="endDate"
+            minDate={selectedStartDate ? addDays(selectedStartDate, 1) : undefined}
+            formIndex={formIndex}
+            onChange={date => onDateChange(date, 'endDate')}
+            disabled={disabled}
+          />
+        </Flex>
       </FormControl>
       {showCliffDatePicker && (
         <FormControl
@@ -111,7 +81,7 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
         >
           <SectionTitle
             title={t('cliff')}
-            subTitle={t('cliffSubTitle')}
+            tooltipContent={t('cliffSubTitle')}
           />
           <DecentDatePicker
             type="cliffDate"
@@ -170,47 +140,18 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
     <>
       <Box
         px={{ base: '1rem', md: 0 }}
-        pb="1rem"
+        py="1rem"
         bg="neutral-2"
         boxShadow={{
           base: CARD_SHADOW,
           md: 'unset',
         }}
-        mt="-3.5rem"
         borderRadius="0.5rem"
         position="relative"
       >
-        <Button
-          variant="tertiary"
-          p="0"
-          _hover={{
-            bg: 'transparent',
-          }}
-          mb="1rem"
-          leftIcon={<ArrowLeft size="1.5rem" />}
-          isDisabled={!values?.roleEditing?.payments?.[formIndex]}
-          onClick={() => {
-            if (!values?.roleEditing?.payments?.[formIndex] || !hatId) return;
-            const isExistingPayment = !!streamId ? getPayment(hatId, streamId) : undefined;
-            // if payment is new, and unedited, remove it
-            if (
-              formIndex === values.roleEditing.payments.length - 1 &&
-              !values.roleEditing.editedRole &&
-              !isExistingPayment
-            ) {
-              setFieldValue(
-                'roleEditing.payments',
-                values.roleEditing.payments.filter((_, index) => index !== formIndex),
-              );
-            }
-            setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
-          }}
-        >
-          {t('payments')}
-        </Button>
         <SectionTitle
-          title={t('addPayment')}
-          subTitle={t('addPaymentStreamSubTitle')}
+          title={t('asset')}
+          tooltipContent={t('addPaymentStreamSubTitle')}
           externalLink="https://docs.decentdao.org/app/user-guide/roles-and-streaming/streaming-payroll-and-vesting"
         />
         <AssetSelector
@@ -219,8 +160,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
         />
         <SectionTitle
           title={t('schedule')}
-          subTitle={t('scheduleSubTitle')}
-          tooltipContent={t('cliffPaymentTooltip')}
+          tooltipContent={t('scheduleSubTitle')}
         />
         <FixedDate
           formIndex={formIndex}
@@ -234,7 +174,12 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
               mb="2.5rem"
               gap="1rem"
             >
-              <Info size="24" />
+              <Box
+                width="1.5rem"
+                height="1.5rem"
+              >
+                <Info size="24" />
+              </Box>
               <Text
                 textStyle="body-base-strong"
                 whiteSpace="pre-wrap"
@@ -279,7 +224,12 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
           my="1.5rem"
           gap="1rem"
         >
-          <Info size="24" />
+          <Box
+            width="1.5rem"
+            height="1.5rem"
+          >
+            <Info size="24" />
+          </Box>
           <Text
             textStyle="body-base-strong"
             whiteSpace="pre-wrap"

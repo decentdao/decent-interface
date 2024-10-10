@@ -2,11 +2,11 @@ import { Box, Container, Grid, GridItem, Show } from '@chakra-ui/react';
 import { useRef } from 'react';
 import { Outlet } from 'react-router-dom';
 import {
-  useContentHeight,
-  useHeaderHeight,
-  SIDEBAR_WIDTH,
   MAX_CONTENT_WIDTH,
+  SIDEBAR_WIDTH,
+  useContentHeight,
   useFooterHeight,
+  useHeaderHeight,
 } from '../../../../constants/common';
 import useNavigationScrollReset from '../../../../hooks/utils/useNavigationScrollReset';
 import { ErrorBoundary } from '../../utils/ErrorBoundary';

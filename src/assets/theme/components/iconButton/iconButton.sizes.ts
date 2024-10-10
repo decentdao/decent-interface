@@ -22,9 +22,8 @@ export default {
   },
   'icon-lg': {
     apply: 'textStyles.button-large',
-    height: '2rem',
-    width: '2rem',
-    padding: '0.5rem',
+    height: '2.25rem',
+    width: '2.25rem',
     borderRadius: '0.5rem',
   },
   'icon-md': {

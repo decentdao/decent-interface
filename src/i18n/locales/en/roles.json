@@ -45,7 +45,7 @@
   "weeks": "Weeks",
   "addPayment": "Add Payment",
   "addPaymentStreamSubTitle": "Define a payment schedule to unlock a predefined amount of an asset after a specific time.",
-  "schedule": "Schedule",
+  "schedule": "Payment Schedule",
   "scheduleSubTitle": "Define the overall length of the payment schedule.",
   "duration": "Duration",
   "fixedDates": "Fixed Dates",

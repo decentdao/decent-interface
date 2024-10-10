@@ -57,13 +57,14 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
       gap="0.75rem"
       alignItems="center"
       onClick={onClickNav}
-      bg="neutral-2"
+      backgroundColor="neutral-2"
       cursor="pointer"
       _hover={{
-        bg: 'neutral-3',
+        backgroundColor: 'neutral-3',
         border: '1px solid',
         borderColor: 'neutral-4',
       }}
+      transition="all ease-out 300ms"
       borderRadius="0.5rem"
       border="1px solid"
       borderColor="transparent"

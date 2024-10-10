@@ -183,6 +183,7 @@ export function RolesRow({
       _hover={{ bg: 'neutral-3' }}
       _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
+      cursor="pointer"
       onClick={() => handleRoleClick(hatId)}
     >
       <Td

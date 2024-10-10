@@ -1,10 +1,10 @@
-import { Box, Flex, Icon, Show, Text, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Flex, Icon, Show, Text } from '@chakra-ui/react';
 import { CaretDown } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import Avatar, { AvatarSize } from '../../page/Header/Avatar';
+import Avatar from '../../page/Header/Avatar';
 
 function ConnectWalletButton() {
   const { t } = useTranslation('menu');
@@ -32,8 +32,6 @@ function WalletMenuButton() {
   const { displayName: accountDisplayName } = useDisplayName(account);
   const avatarURL = useAvatar(accountDisplayName);
 
-  const iconSize = useBreakpointValue<AvatarSize>({ base: 'md', md: 'icon' }) || 'md';
-
   if (!account) {
     return null;
   }
@@ -47,7 +45,7 @@ function WalletMenuButton() {
         <Avatar
           address={account}
           url={avatarURL}
-          size={iconSize}
+          size="md"
         />
       </Box>
       <Show above="md">
