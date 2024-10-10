@@ -62,7 +62,7 @@ export function AvatarAndRoleName({
         >
           {wearerAddress ? accountDisplayName : t('unassigned')}
         </Text>
-        {isFeatureEnabled('STREAMS') && paymentsCount !== undefined && (
+        {paymentsCount !== undefined && (
           <Flex
             mt="1rem"
             gap="0.25rem"

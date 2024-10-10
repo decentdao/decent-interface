@@ -52,7 +52,6 @@ export const SIDEBAR_WIDTH = '4.25rem';
 export const MAX_CONTENT_WIDTH = '80rem';
 
 const features = {
-  streams: 'STREAMS',
   developmentMode: 'DEVELOPMENT_MODE',
 } as const;
 
