@@ -1,5 +1,6 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, encodePacked, getContract, keccak256 } from 'viem';
+import { Address, Hex, PublicClient, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { SablierPayment } from '../../components/pages/Roles/types';
 
@@ -145,13 +146,7 @@ export const initialHatsStore: RolesStoreData = {
   contextChainId: null,
 };
 
-export function getERC6551RegistrySalt(chainId: bigint, decentHats: Address) {
-  return keccak256(
-    encodePacked(['string', 'uint256', 'address'], ['DecentHats_0_1_0', chainId, decentHats]),
-  );
-}
-
-export const predictAccountAddress = (params: PredictAccountParams) => {
+export const predictAccountAddress = async (params: PredictAccountParams) => {
   const {
     implementation,
     chainId,
@@ -162,13 +157,19 @@ export const predictAccountAddress = (params: PredictAccountParams) => {
     decentHats,
   } = params;
 
+  const decentHatsContract = getContract({
+    abi: abis.DecentHats_0_1_0,
+    address: decentHats,
+    client: publicClient,
+  });
+
+  const salt = await decentHatsContract.read.getSalt();
+
   const erc6551RegistryContract = getContract({
     abi: ERC6551RegistryAbi,
     address: registryAddress,
     client: publicClient,
   });
-
-  const salt = getERC6551RegistrySalt(chainId, decentHats);
 
   return erc6551RegistryContract.read.account([
     implementation,
