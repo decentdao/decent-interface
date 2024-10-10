@@ -10,6 +10,7 @@ export function AddressInput({ value, onChange, ...rest }: InputProps) {
   const [localValue, setLocalValue] = useState<string | number | readonly string[] | undefined>(
     value,
   );
+
   const debounceValue = useMemo(
     () =>
       debounce((event: ChangeEvent<HTMLInputElement>) => {
@@ -24,6 +25,10 @@ export function AddressInput({ value, onChange, ...rest }: InputProps) {
     };
   }, [debounceValue]);
 
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
   const handleChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       debounceValue(event);
@@ -31,6 +36,7 @@ export function AddressInput({ value, onChange, ...rest }: InputProps) {
     },
     [debounceValue],
   );
+
   return (
     <Input
       // preface id with "search" to prevent showing 1password

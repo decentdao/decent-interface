@@ -3,7 +3,6 @@ import { PencilLine } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress, Hex } from 'viem';
-import { isFeatureEnabled } from '../../../constants/common';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   paymentSorterByActiveStatus,
@@ -103,7 +102,7 @@ export default function RolesDetailsDrawerMobile({
         px="1rem"
         mb="1.5rem"
       >
-        {isFeatureEnabled('STREAMS') && roleHat.payments && (
+        {roleHat.payments && (
           <>
             <Divider
               variant="darker"
