@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
+import { Address, encodeFunctionData, getAddress, getContract, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
@@ -22,7 +22,7 @@ import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { getERC6551RegistrySalt, predictHatId, useRolesStore } from '../../store/roles';
+import { predictHatId, useRolesStore } from '../../store/roles';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
@@ -362,23 +362,36 @@ export default function useCreateRoles() {
   );
 
   const createSmartAccountTx = useCallback(
-    (newHatId: bigint) => {
+    async (newHatId: bigint) => {
+      if (!publicClient) {
+        throw new Error('Public client is not set');
+      }
+
+      const decentHatsContract = getContract({
+        abi: abis.DecentHats_0_1_0,
+        address: decentHatsMasterCopy,
+        client: publicClient,
+      });
+
+      const salt = await decentHatsContract.read.getSalt();
+
       return {
         calldata: encodeFunctionData({
           abi: ERC6551RegistryAbi,
           functionName: 'createAccount',
-          args: [
-            hatsAccount1ofNMasterCopy,
-            getERC6551RegistrySalt(BigInt(chain.id), getAddress(decentHatsMasterCopy)),
-            BigInt(chain.id),
-            hatsProtocol,
-            newHatId,
-          ],
+          args: [hatsAccount1ofNMasterCopy, salt, BigInt(chain.id), hatsProtocol, newHatId],
         }),
         targetAddress: erc6551Registry,
       };
     },
-    [chain.id, decentHatsMasterCopy, erc6551Registry, hatsAccount1ofNMasterCopy, hatsProtocol],
+    [
+      chain.id,
+      decentHatsMasterCopy,
+      erc6551Registry,
+      hatsAccount1ofNMasterCopy,
+      hatsProtocol,
+      publicClient,
+    ],
   );
 
   const createBatchLinearStreamCreationTx = useCallback(
@@ -500,7 +513,7 @@ export default function useCreateRoles() {
 
           allTxs.push(await createNewHatTx(formHat, adminHatId, topHatAccount));
           allTxs.push(mintHatTx(newHatId, formHat));
-          allTxs.push(createSmartAccountTx(BigInt(newHatId)));
+          allTxs.push(await createSmartAccountTx(BigInt(newHatId)));
 
           const newStreams = getNewStreamsFromFormHat(formHat);
 
