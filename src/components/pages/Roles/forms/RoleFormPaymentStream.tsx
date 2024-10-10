@@ -17,13 +17,13 @@ import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW, isDevMode } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles';
+import { BigIntValuePair } from '../../../../types';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
 import { RoleFormValues, RoleHatFormValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
-import { BigIntValuePair } from '../../../../types';
 
 function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boolean }) {
   const { t } = useTranslation(['roles']);

@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 import { Address, Hex, encodeFunctionData, erc20Abi, zeroAddress, getAddress } from 'viem';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
-import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { PreparedNewStreamData } from '../../components/pages/Roles/types';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
@@ -101,16 +100,9 @@ export default function useCreateSablierStream() {
       });
 
       const withdrawMaxFromStreamData = encodeFunctionData({
-        abi: `abis.DecentSablierStreamManagement`,
+        abi: abis.DecentSablierStreamManagement,
         functionName: 'withdrawMaxFromStream',
-        args: [
-          {
-            sablier: sablierV2LockupLinear,
-            smartAccount,
-            streamId,
-            to,
-          },
-        ],
+        args: [sablierV2LockupLinear, smartAccount, convertStreamIdToBigInt(streamId), to],
       });
 
       return [
@@ -151,7 +143,7 @@ export default function useCreateSablierStream() {
       });
 
       const cancelStreamData = encodeFunctionData({
-        abi: `abis.DecentSablierStreamManagement`,
+        abi: abis.DecentSablierStreamManagement,
         functionName: 'cancelStream',
         args: [sablierV2LockupLinear, convertStreamIdToBigInt(streamId)],
       });
