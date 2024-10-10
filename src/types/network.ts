@@ -55,8 +55,9 @@ export type NetworkConfig = {
     fractalRegistry: Address;
     keyValuePairs: Address;
 
-    decentHatsMasterCopy: Address;
-
+    decentHatsV1MasterCopy: Address;
+    decentHatsV2MasterCopy?: Address;
+    
     hatsProtocol: Address;
     erc6551Registry: Address;
     hatsAccount1ofNMasterCopy: Address;
@@ -64,6 +65,7 @@ export type NetworkConfig = {
     sablierV2LockupDynamic: Address;
     sablierV2LockupTranched: Address;
     sablierV2LockupLinear: Address;
+    decentAutonomousAdminMasterCopy: Address;
   };
   staking: {
     lido?: {
