@@ -2,6 +2,7 @@ import {
   Drawer,
   DrawerBody,
   DrawerContent,
+  DrawerOverlay,
   Flex,
   Grid,
   GridItem,
@@ -13,7 +14,7 @@ import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Hex, getAddress } from 'viem';
-import { isFeatureEnabled } from '../../../constants/common';
+import { BACKGROUND_SEMI_TRANSPARENT, isFeatureEnabled } from '../../../constants/common';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -89,6 +90,11 @@ export default function RolesDetailsDrawer({
       onClose={onClose ?? (() => {})}
       isOpen={isOpen}
     >
+      <DrawerOverlay
+        bg={BACKGROUND_SEMI_TRANSPARENT}
+        backdropFilter="auto"
+        backdropBlur="10px"
+      />
       <DrawerContent
         minW="50%"
         bg="neutral-2"
@@ -152,7 +158,7 @@ export default function RolesDetailsDrawer({
               >
                 <Avatar
                   size="icon"
-                  address={roleHat.wearer}
+                  address={getAddress(roleHat.wearer)}
                   url={avatarURL}
                 />
                 <Text

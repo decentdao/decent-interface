@@ -36,6 +36,7 @@ export default function Treasury() {
     assetsFungible.reduce((p, c) => p + BigInt(c.balance), 0n) > 0n;
 
   const showSendButton = canUserCreateProposal && hasAnyBalanceOfAnyFungibleTokens;
+
   const totalTransfers = transfers?.length || 0;
   const showLoadMoreTransactions = totalTransfers > shownTransactions && shownTransactions < 100;
 
@@ -98,24 +99,28 @@ export default function Treasury() {
             bg="neutral-2"
             w="100%"
             subTitle={
-              <Show below="lg">
-                <Box px="1rem">
-                  <PaginationCount shownTransactions={shownTransactions} />
-                </Box>
-              </Show>
+              totalTransfers ? (
+                <Show below="lg">
+                  <Box px="1rem">
+                    <PaginationCount shownTransactions={shownTransactions} />
+                  </Box>
+                </Show>
+              ) : null
             }
           >
             <Flex flexDir={{ base: 'column-reverse', lg: 'column' }}>
               <Transactions shownTransactions={shownTransactions} />
-              <Show above="lg">
-                <Divider
-                  variant="darker"
-                  my="1rem"
-                />
-                <Box px={{ base: '1rem', lg: '1.5rem' }}>
-                  <PaginationCount shownTransactions={shownTransactions} />
-                </Box>
-              </Show>
+              {totalTransfers ? (
+                <Show above="lg">
+                  <Divider
+                    variant="darker"
+                    my="1rem"
+                  />
+                  <Box px={{ base: '1rem', lg: '1.5rem' }}>
+                    <PaginationCount shownTransactions={shownTransactions} />
+                  </Box>
+                </Show>
+              ) : null}
             </Flex>
           </TitledInfoBox>
           {showLoadMoreTransactions && (

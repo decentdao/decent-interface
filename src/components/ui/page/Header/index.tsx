@@ -53,9 +53,9 @@ function HeaderLogo() {
             variant="tertiary"
             icon={
               <Icon
-                boxSize="2rem"
+                boxSize="1.5rem"
                 as={List}
-                color="lilac-0"
+                color="white-0"
                 aria-hidden
               />
             }
@@ -157,18 +157,19 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
         h={HEADER_HEIGHT}
         justifyContent="flex-end"
         alignItems="center"
-        gap={{ base: '0.5rem', md: '1rem' }}
+        gap={{ base: '2rem', md: '1rem' }}
       >
         <Hide above="md">
           <IconButton
             variant="tertiary"
             aria-label="Search Safe"
             onClick={searchSafe}
-            size="icon-sm"
+            size="icon-lg"
             icon={
               <Icon
                 as={MagnifyingGlass}
-                color="lilac-0"
+                boxSize="1.5rem"
+                color="white-0"
                 aria-hidden
               />
             }

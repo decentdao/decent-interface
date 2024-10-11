@@ -1,7 +1,8 @@
-import { ContractReceipt, ethers } from 'ethers';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
+import { Hash, TransactionReceipt } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
 
 interface ProviderRpcError extends Error {
@@ -11,44 +12,40 @@ interface ProviderRpcError extends Error {
 }
 
 interface ContractCallParams {
-  contractFn: () => Promise<ethers.ContractTransaction>;
+  contractFn: () => Promise<Hash>;
   pendingMessage: string;
   failedMessage: string;
   successMessage: string;
   failedCallback?: () => void;
-  successCallback?: (txReceipt: ContractReceipt) => void;
+  successCallback?: (txReceipt: TransactionReceipt) => void;
   completedCallback?: () => void;
 }
 
 const useTransaction = () => {
   const [pending, setPending] = useState(false);
   const { t } = useTranslation(['transaction', 'common']);
+  const publicClient = usePublicClient();
+
   const contractCall = useCallback(
     (params: ContractCallParams) => {
-      let toastId: React.ReactText;
-      toastId = toast(params.pendingMessage, {
-        autoClose: false,
-        closeOnClick: false,
-        draggable: false,
-        closeButton: false,
-        progress: 1,
+      if (!publicClient) return;
+
+      let toastId = toast.loading(params.pendingMessage, {
+        duration: Infinity,
       });
       setPending(true);
       params
         .contractFn()
-        .then((txResponse: ethers.ContractTransaction) => {
-          return Promise.all([txResponse.wait(), toastId]);
-        })
-        .then(([txReceipt, toastID]) => {
-          toast.dismiss(toastID);
-          if (txReceipt.status === 0) {
-            toast.error(params.failedMessage);
+        .then(txReceipt => publicClient.waitForTransactionReceipt({ hash: txReceipt }))
+        .then(txReceipt => {
+          if (txReceipt.status === 'reverted') {
+            toast.error(params.failedMessage, { id: toastId });
             if (params.failedCallback) params.failedCallback();
-          } else if (txReceipt.status === 1) {
-            toast(params.successMessage);
+          } else if (txReceipt.status === 'success') {
+            toast.success(params.successMessage, { id: toastId });
             if (params.successCallback) params.successCallback(txReceipt);
           } else {
-            toast.error(t('errorTransactionUnknown'));
+            toast.error(t('errorTransactionUnknown'), { id: toastId });
             if (params.failedCallback) params.failedCallback();
           }
           if (params.completedCallback) params.completedCallback();
@@ -62,21 +59,17 @@ const useTransaction = () => {
         })
         .catch((error: ProviderRpcError) => {
           logError(error);
-          toast.dismiss(toastId);
           setPending(false);
-          if (error.code === 'INSUFFICIENT_FUNDS' || error.code === 32000) {
-            toast.error(t('errorInsufficientFunds'));
-            return;
-          }
-          if (error.code === 'ACTION_REJECTED' || error.code === 4001) {
-            toast.error(t('errorUserDeniedTransaction'));
+
+          if (error.code === 4001) {
+            toast.info(t('errorUserDeniedTransaction', { id: toastId }));
             return;
           }
 
-          toast.error(t('errorGeneral', { ns: 'common' }));
+          toast.error(t('errorGeneral', { ns: 'common' }), { id: toastId });
         });
     },
-    [t],
+    [t, publicClient],
   );
 
   return [contractCall, pending] as const;

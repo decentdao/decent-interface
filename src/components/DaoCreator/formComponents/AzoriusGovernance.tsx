@@ -1,9 +1,18 @@
-import { Alert, Flex, InputGroup, InputRightElement, Text } from '@chakra-ui/react';
+import {
+  Alert,
+  Box,
+  Flex,
+  InputGroup,
+  InputRightElement,
+  Text,
+  FormControl,
+  Switch,
+} from '@chakra-ui/react';
 import { WarningCircle } from '@phosphor-icons/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { ICreationStepProps, VotingStrategyType } from '../../../types';
+import { FractalModuleType, ICreationStepProps, VotingStrategyType } from '../../../types';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
 import { BigIntInput } from '../../ui/forms/BigIntInput';
 import { CustomNonceInput } from '../../ui/forms/CustomNonceInput';
@@ -16,8 +25,17 @@ import { DAOCreateMode } from './EstablishEssentials';
 export function AzoriusGovernance(props: ICreationStepProps) {
   const { values, setFieldValue, isSubmitting, transactionPending, isSubDAO, mode } = props;
   const {
-    node: { safe },
+    node: {
+      safe,
+      nodeHierarchy: { parentAddress },
+      fractalModules,
+    },
   } = useFractal();
+
+  const fractalModule = useMemo(
+    () => fractalModules.find(_module => _module.moduleType === FractalModuleType.FRACTAL),
+    [fractalModules],
+  );
 
   const [showCustomNonce, setShowCustomNonce] = useState<boolean>();
   const { t } = useTranslation(['daoCreate', 'common']);
@@ -25,7 +43,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
 
   const handleNonceChange = useCallback(
     (nonce?: string) => {
-      setFieldValue('multisig.customNonce', nonce);
+      setFieldValue('multisig.customNonce', Number(nonce));
     },
     [setFieldValue],
   );
@@ -78,7 +96,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           {values.azorius.votingStrategyType === VotingStrategyType.LINEAR_ERC20 ? (
             <LabelComponent
               label={t('quorum', { ns: 'common' })}
-              helper={t('helperQuorum')}
+              helper={t('helperQuorumERC20')}
               isRequired
             >
               <InputGroup>
@@ -95,7 +113,7 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           ) : (
             <LabelComponent
               label={t('quorum', { ns: 'common' })}
-              helper={t('helperQuorumThreshold')}
+              helper={t('helperQuorumERC721')}
               isRequired
             >
               <BigIntInput
@@ -152,15 +170,16 @@ export function AzoriusGovernance(props: ICreationStepProps) {
               {t('exampleExecutionPeriod')}
             </Text>
           </LabelComponent>
-          {showCustomNonce && (
-            <CustomNonceInput
-              nonce={values.multisig.customNonce}
-              onChange={handleNonceChange}
-              align="end"
-            />
-          )}
-          <Alert status="info">
-            <WarningCircle size="24" />
+          <Alert
+            status="info"
+            gap={4}
+          >
+            <Box
+              width="1.5rem"
+              height="1.5rem"
+            >
+              <WarningCircle size="24" />
+            </Box>
             <Text
               textStyle="body-base-strong"
               whiteSpace="pre-wrap"
@@ -171,6 +190,56 @@ export function AzoriusGovernance(props: ICreationStepProps) {
           </Alert>
         </Flex>
       </StepWrapper>
+      {!!parentAddress && (
+        <Box
+          padding="1.5rem"
+          bg="neutral-2"
+          borderRadius="0.25rem"
+          mt="1.5rem"
+          mb={showCustomNonce ? '1.5rem' : 0}
+        >
+          <FormControl
+            gap="0.5rem"
+            width="100%"
+            justifyContent="space-between"
+            display="flex"
+            isDisabled={!!fractalModule}
+          >
+            <Text>{t('attachFractalModuleLabel')}</Text>
+            <Switch
+              size="md"
+              variant="secondary"
+              onChange={() =>
+                setFieldValue('freeze.attachFractalModule', !values.freeze.attachFractalModule)
+              }
+              isChecked={!!fractalModule || values.freeze.attachFractalModule}
+              isDisabled={!!fractalModule}
+            />
+          </FormControl>
+          <Text
+            color="neutral-7"
+            width="50%"
+          >
+            {t(
+              fractalModule ? 'fractalModuleAttachedDescription' : 'attachFractalModuleDescription',
+            )}
+          </Text>
+        </Box>
+      )}
+      {showCustomNonce && (
+        <Box
+          padding="1.5rem"
+          bg="neutral-2"
+          borderRadius="0.25rem"
+          my="1.5rem"
+        >
+          <CustomNonceInput
+            nonce={values.multisig.customNonce}
+            onChange={handleNonceChange}
+            renderTrimmed={false}
+          />
+        </Box>
+      )}
       <StepButtons
         {...props}
         isEdit={mode === DAOCreateMode.EDIT}

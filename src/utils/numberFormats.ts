@@ -74,6 +74,6 @@ function getNumberSeparator(type: 'group' | 'decimal'): string {
   );
 }
 
-export function formatBigIntDisplay(num: bigint | string | number): string {
+export function formatBigIntToHumanReadableString(num: bigint | string | number): string {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, getNumberSeparator('group'));
 }

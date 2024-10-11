@@ -19,6 +19,5 @@ export type TreasuryActions =
     }
   | {
       type: TreasuryAction.SET_TRANSFERS_LOADED;
-      payload: boolean;
     }
   | { type: TreasuryAction.RESET };

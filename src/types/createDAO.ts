@@ -73,11 +73,11 @@ export type DAOEssentials = {
 
 export type DAOGovernorERC20Token<T = bigint> = {
   tokenCreationType: TokenCreationType;
-  tokenImportAddress?: string;
+  tokenImportAddress?: Address;
   tokenName: string;
   tokenSymbol: string;
   tokenSupply: T;
-  tokenAllocations: TokenAllocation<T>[];
+  tokenAllocations: { amount: T; address: string }[];
   parentAllocationAmount: T;
 };
 
@@ -105,6 +105,7 @@ export type DAOFreezeGuardConfig<T = bigint> = {
   freezeVotesThreshold: T;
   freezeProposalPeriod: T;
   freezePeriod: T;
+  attachFractalModule: boolean;
 };
 
 export interface SafeConfiguration {
@@ -137,7 +138,7 @@ export interface AzoriusERC721DAO<T = bigint>
 export interface SafeMultisigDAO extends DAOEssentials, SafeConfiguration {}
 
 export type DAOTrigger = (
-  daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO,
+  daoData: SafeMultisigDAO | AzoriusERC20DAO | AzoriusERC721DAO | SubDAO,
   customNonce?: number,
 ) => void;
 

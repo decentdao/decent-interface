@@ -1,14 +1,12 @@
 import { useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { Address } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useSafeAPI } from '../../providers/App/hooks/useSafeAPI';
 import { NodeAction } from '../../providers/App/node/action';
 
-export const useUpdateSafeData = () => {
-  const {
-    action,
-    node: { daoAddress },
-  } = useFractal();
+export const useUpdateSafeData = (daoAddress?: Address) => {
+  const { action } = useFractal();
   const safeAPI = useSafeAPI();
   const location = useLocation();
   const prevPathname = useRef(location.pathname);
@@ -18,9 +16,11 @@ export const useUpdateSafeData = () => {
       return;
     }
 
+    // Retrieve lastest safe info on page/url change
     if (prevPathname.current !== location.pathname) {
       (async () => {
         const safeInfo = await safeAPI.getSafeData(daoAddress);
+
         action.dispatch({
           type: NodeAction.SET_SAFE_INFO,
           payload: safeInfo,

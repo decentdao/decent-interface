@@ -1,4 +1,4 @@
-import { ERC20Claim } from '@fractal-framework/fractal-contracts';
+import { Address } from 'viem';
 import {
   FractalProposal,
   ProposalVotesSummary,
@@ -18,7 +18,6 @@ export enum FractalGovernanceAction {
   SET_GOVERNANCE_TYPE = 'SET_GOVERNANCE_TYPE',
   SET_PROPOSALS = 'SET_PROPOSALS',
   SET_AZORIUS_PROPOSAL = 'SET_AZORIUS_PROPOSAL',
-  SKIPPED_A_PROPOSAL = 'SKIPPED_A_PROPOSAL',
   SET_SNAPSHOT_PROPOSALS = 'SET_SNAPSHOT_PROPOSALS',
   SET_PROPOSAL_TEMPLATES = 'SET_PROPOSAL_TEMPLATES',
   SET_STRATEGY = 'SET_STRATEGY',
@@ -46,14 +45,14 @@ export enum DecentGovernanceAction {
 
 type AzoriusVotePayload = {
   proposalId: string;
-  voter: string;
+  voter: Address;
   support: number;
   votesSummary: ProposalVotesSummary;
 };
 
 export type ERC20VotePayload = { weight: bigint } & AzoriusVotePayload;
 export type ERC721VotePayload = {
-  tokenAddresses: string[];
+  tokenAddresses: Address[];
   tokenIds: string[];
 } & AzoriusVotePayload;
 
@@ -69,10 +68,6 @@ export type FractalGovernanceActions =
   | {
       type: FractalGovernanceAction.SET_AZORIUS_PROPOSAL;
       payload: FractalProposal;
-    }
-  | {
-      type: FractalGovernanceAction.SKIPPED_A_PROPOSAL;
-      payload: null;
     }
   | {
       type: FractalGovernanceAction.SET_SNAPSHOT_PROPOSALS;
@@ -121,7 +116,10 @@ export type FractalGovernanceActions =
       type: FractalGovernanceAction.SET_TOKEN_ACCOUNT_DATA;
       payload: VotesData;
     }
-  | { type: FractalGovernanceAction.SET_CLAIMING_CONTRACT; payload: ERC20Claim }
+  | {
+      type: FractalGovernanceAction.SET_CLAIMING_CONTRACT;
+      payload: Address;
+    }
   | {
       type: FractalGovernanceAction.RESET_TOKEN_ACCOUNT_DATA;
     }

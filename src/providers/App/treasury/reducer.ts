@@ -7,7 +7,6 @@ export const initialTreasuryState: DecentTreasury = {
   assetsDeFi: [],
   transfers: null,
   totalUsdValue: 0,
-  transfersLoaded: false,
 };
 
 export const treasuryReducer = (state: DecentTreasury, action: TreasuryActions): DecentTreasury => {
@@ -19,6 +18,8 @@ export const treasuryReducer = (state: DecentTreasury, action: TreasuryActions):
       return { ...state, transfers: [...transfers, action.payload] };
     case TreasuryAction.RESET:
       return initialTreasuryState;
+    case TreasuryAction.SET_TRANSFERS_LOADED:
+      return { ...state, transfers: state.transfers ?? [] };
     default:
       return state;
   }

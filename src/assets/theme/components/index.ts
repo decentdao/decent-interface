@@ -4,9 +4,11 @@ import IconButton from './iconButton';
 import Input from './input';
 import NumberInput from './numberInput';
 import Progress from './progress';
+import Switch from './switch';
 import Tabs from './tabs';
 import Textarea from './textarea';
 import Tooltip from './tooltip';
+
 export default {
   Alert,
   Button,
@@ -15,6 +17,7 @@ export default {
   Textarea,
   NumberInput,
   Progress,
+  Switch,
   Tabs,
   Tooltip,
 };

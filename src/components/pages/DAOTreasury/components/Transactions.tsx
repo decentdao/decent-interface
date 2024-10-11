@@ -1,12 +1,14 @@
-import { Box, Button, Flex, HStack, Icon, Image, Text, Tooltip } from '@chakra-ui/react';
+import { Box, Button, Center, Flex, HStack, Icon, Image, Text, Tooltip } from '@chakra-ui/react';
 import { ArrowDown, ArrowUp } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
+import { getAddress } from 'viem';
 import { useDateTimeDisplay } from '../../../../helpers/dateTime';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { TokenEventType, TransferDisplayData, TransferType } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';
 import EtherscanLink from '../../../ui/links/EtherscanLink';
+import { BarLoader } from '../../../ui/loaders/BarLoader';
 
 function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
   const { t } = useTranslation(['treasury', 'common']);
@@ -83,7 +85,7 @@ function TransferRow({ displayData }: { displayData: TransferDisplayData }) {
         >
           <DisplayAddress
             data-testid="link-transfer-address"
-            address={displayData.transferAddress}
+            address={getAddress(displayData.transferAddress)}
             textAlign="end"
             onClick={e => e.stopPropagation()}
           />
@@ -97,10 +99,9 @@ function EmptyTransactions() {
   const { t } = useTranslation('treasury');
   return (
     <Text
-      textStyle="body-base-strong"
-      color="neutral-7"
+      textStyle="body-base"
+      color="neutral-6"
       data-testid="text-empty-transactions"
-      marginTop="1rem"
       align="center"
       px={{ base: '1rem', lg: '1.5rem' }}
     >
@@ -111,13 +112,17 @@ function EmptyTransactions() {
 
 export function Transactions({ shownTransactions }: { shownTransactions: number }) {
   const {
-    treasury: { transfers, transfersLoaded },
+    treasury: { transfers },
   } = useFractal();
 
-  if (!transfers) {
-    return null;
+  if (transfers === null) {
+    return (
+      <Center w="100%">
+        <BarLoader />
+      </Center>
+    );
   }
-  if (transfers.length === 0 && transfersLoaded) return <EmptyTransactions />;
+  if (transfers.length === 0) return <EmptyTransactions />;
   return (
     <Box
       overflowX="auto"
@@ -129,7 +134,6 @@ export function Transactions({ shownTransactions }: { shownTransactions: number 
           displayData={transfer}
         />
       ))}
-      {(transfers === null || !transfersLoaded) && <Box>{/* @todo add Wave Loader */}</Box>}
     </Box>
   );
 }

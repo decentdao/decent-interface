@@ -1,5 +1,5 @@
 import { useSearchParams } from 'react-router-dom';
-import { isAddress } from 'viem';
+import { isAddress, getAddress } from 'viem';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { useAzoriusListeners } from './loaders/governance/useAzoriusListeners';
@@ -21,12 +21,15 @@ export default function useDAOController() {
 
   const prefixAndAddress = addressWithPrefix?.split(':');
   const addressPrefix = prefixAndAddress?.[0];
-  const daoAddress = prefixAndAddress?.[1];
+  const daoAddressStr = prefixAndAddress?.[1];
 
   const invalidQuery =
+    !daoAddressStr ||
     addressWithPrefix === null ||
     !validDaoQueryString.test(addressWithPrefix) ||
-    !isAddress(daoAddress || '');
+    !isAddress(daoAddressStr);
+
+  const daoAddress = !invalidQuery ? getAddress(daoAddressStr) : undefined;
 
   const { addressPrefix: connectedAddressPrefix } = useNetworkConfig();
   const wrongNetwork = addressPrefix !== connectedAddressPrefix;
@@ -56,5 +59,5 @@ export default function useDAOController() {
   useKeyValuePairs();
   useHatsTree();
 
-  return { invalidQuery, wrongNetwork, errorLoading, urlAddressPrefix: addressPrefix };
+  return { invalidQuery, wrongNetwork, errorLoading, daoAddress, urlAddressPrefix: addressPrefix };
 }

@@ -43,7 +43,8 @@
   "showExecutableCode": "Show Executable Code",
   "hideExecutableCode": "Hide Executable Code",
   "noProposal": "No proposal found",
-  "emptyProposals": "No proposals found",
+  "emptyProposals": "You haven't added any Proposals yet. Create one above.",
+  "emptyProposalsNotProposer": "This Safe doesn't have any Proposals yet.",
   "createProposal": "Create Proposal",
   "labelAddTransaction": "Add another transaction",
   "errorInvalidFragments": "Invalid combination of function signature and parameters",
@@ -111,7 +112,7 @@
   "customNonce": "Custom Nonce (advanced)",
   "customNonceTrimmed": "Custom Nonce",
   "customNonceTooltip": "Optionally set a custom proposal nonce to avoid collisions.",
-  "notActiveNonceTooltip": "There is a proposal with a lower nonce that must be executed first.",
+  "notActiveNonceTooltip": "There is a proposal with a lower nonce that must be executed first. If you have recently executed all lower nonce proposals, please reload in a few minutes.",
   "nonce": "Nonce",
   "votingTooltip": "Time remaining to cast your vote.",
   "timeLockedTooltip": "This proposal can be executed once its timelock period has passed.",
@@ -140,5 +141,6 @@
   "clawBackEmptyTreasuryError": "Failed to process clawback - child Safe has no transferrable tokens",
   "clawBackEmptyTransactionsError": "Failed to process clawback - child Safe has no safely transferrable tokens",
   "pendingProposalNotice": "Pending proposal still processing",
-  "metadataFailedParsePlaceholder": "Unknown - Failed to parse metadata"
+  "metadataFailedParsePlaceholder": "Unknown - Failed to parse metadata",
+  "multisigNonceDuplicateErrorMessage": "Transaction with the same nonce already exists"
 }

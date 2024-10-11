@@ -1,36 +1,27 @@
-import Azorius from '@fractal-framework/fractal-contracts/deployments/base/Azorius.json' assert { type: 'json' };
-import AzoriusFreezeGuard from '@fractal-framework/fractal-contracts/deployments/base/AzoriusFreezeGuard.json' assert { type: 'json' };
-import DecentHats from '@fractal-framework/fractal-contracts/deployments/base/DecentHats_0_1_0.json' assert { type: 'json' };
-import ERC20Claim from '@fractal-framework/fractal-contracts/deployments/base/ERC20Claim.json' assert { type: 'json' };
-import ERC20FreezeVoting from '@fractal-framework/fractal-contracts/deployments/base/ERC20FreezeVoting.json' assert { type: 'json' };
-import ERC721FreezeVoting from '@fractal-framework/fractal-contracts/deployments/base/ERC721FreezeVoting.json' assert { type: 'json' };
-import FractalModule from '@fractal-framework/fractal-contracts/deployments/base/FractalModule.json' assert { type: 'json' };
-import FractalRegistry from '@fractal-framework/fractal-contracts/deployments/base/FractalRegistry.json' assert { type: 'json' };
-import KeyValuePairs from '@fractal-framework/fractal-contracts/deployments/base/KeyValuePairs.json' assert { type: 'json' };
-import LinearERC20Voting from '@fractal-framework/fractal-contracts/deployments/base/LinearERC20Voting.json' assert { type: 'json' };
-import LinearVotingERC721 from '@fractal-framework/fractal-contracts/deployments/base/LinearERC721Voting.json' assert { type: 'json' };
-import ModuleProxyFactory from '@fractal-framework/fractal-contracts/deployments/base/ModuleProxyFactory.json' assert { type: 'json' };
-import MultisigFreezeGuard from '@fractal-framework/fractal-contracts/deployments/base/MultisigFreezeGuard.json' assert { type: 'json' };
-import MultisigFreezeVoting from '@fractal-framework/fractal-contracts/deployments/base/MultisigFreezeVoting.json' assert { type: 'json' };
-import VotesERC20 from '@fractal-framework/fractal-contracts/deployments/base/VotesERC20.json' assert { type: 'json' };
-import VotesERC20Wrapper from '@fractal-framework/fractal-contracts/deployments/base/VotesERC20Wrapper.json' assert { type: 'json' };
+import { addresses } from '@fractal-framework/fractal-contracts';
+
 import {
   getCompatibilityFallbackHandlerDeployment,
   getMultiSendCallOnlyDeployment,
   getProxyFactoryDeployment,
   getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
+import { getAddress } from 'viem';
 import { base } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
+import { getSafeContractDeploymentAddress } from './utils';
 
 const SAFE_VERSION = '1.3.0';
 
-const baseConfig: NetworkConfig = {
+const chain = base;
+const a = addresses[chain.id];
+
+export const baseConfig: NetworkConfig = {
   order: 10,
-  chain: base,
-  moralisSupported: true,
+  chain,
   rpcEndpoint: `https://base-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
+  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-base.safe.global',
   etherscanBaseURL: 'https://basescan.org/',
   etherscanAPIUrl: `https://api.basescan.com/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_BASE_API_KEY}`,
@@ -46,37 +37,50 @@ const baseConfig: NetworkConfig = {
     slug: 'sablier-v2-base',
   },
   contracts: {
-    fractalAzoriusMasterCopy: Azorius.address,
-    fractalModuleMasterCopy: FractalModule.address,
-    fractalRegistry: FractalRegistry.address,
-    votesERC20MasterCopy: VotesERC20.address,
-    linearVotingERC721MasterCopy: LinearVotingERC721.address,
-    claimingMasterCopy: ERC20Claim.address,
-    azoriusFreezeGuardMasterCopy: AzoriusFreezeGuard.address,
-    multisigFreezeVotingMasterCopy: MultisigFreezeVoting.address,
-    erc20FreezeVotingMasterCopy: ERC20FreezeVoting.address,
-    erc721FreezeVotingMasterCopy: ERC721FreezeVoting.address,
-    multisigFreezeGuardMasterCopy: MultisigFreezeGuard.address,
-    fallbackHandler: getCompatibilityFallbackHandlerDeployment({
-      version: SAFE_VERSION,
-      network: base.id.toString(),
-    })?.networkAddresses[base.id.toString()]!,
-    safe: getSafeL2SingletonDeployment({ version: SAFE_VERSION, network: base.id.toString() })
-      ?.networkAddresses[base.id.toString()]!,
-    safeFactory: getProxyFactoryDeployment({
-      version: SAFE_VERSION,
-      network: base.id.toString(),
-    })?.networkAddresses[base.id.toString()]!,
+    gnosisSafeL2Singleton: getSafeContractDeploymentAddress(
+      getSafeL2SingletonDeployment,
+      SAFE_VERSION,
+      chain.id.toString(),
+    ),
+    gnosisSafeProxyFactory: getSafeContractDeploymentAddress(
+      getProxyFactoryDeployment,
+      SAFE_VERSION,
+      chain.id.toString(),
+    ),
+    compatibilityFallbackHandler: getSafeContractDeploymentAddress(
+      getCompatibilityFallbackHandlerDeployment,
+      SAFE_VERSION,
+      chain.id.toString(),
+    ),
+    multiSendCallOnly: getSafeContractDeploymentAddress(
+      getMultiSendCallOnlyDeployment,
+      SAFE_VERSION,
+      chain.id.toString(),
+    ),
+
     zodiacModuleProxyFactory: '0x000000000000aDdB49795b0f9bA5BC298cDda236',
-    zodiacModuleProxyFactoryOld: ModuleProxyFactory.address,
-    linearVotingMasterCopy: LinearERC20Voting.address,
-    multisend: getMultiSendCallOnlyDeployment({
-      version: SAFE_VERSION,
-      network: base.id.toString(),
-    })?.networkAddresses[base.id.toString()]!,
-    votesERC20WrapperMasterCopy: VotesERC20Wrapper.address,
-    keyValuePairs: KeyValuePairs.address,
-    decentHatsMasterCopy: DecentHats.address,
+    zodiacModuleProxyFactoryOld: getAddress(a.ModuleProxyFactory),
+
+    linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
+    linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
+
+    moduleAzoriusMasterCopy: getAddress(a.Azorius),
+    moduleFractalMasterCopy: getAddress(a.FractalModule),
+
+    freezeGuardAzoriusMasterCopy: getAddress(a.AzoriusFreezeGuard),
+    freezeGuardMultisigMasterCopy: getAddress(a.MultisigFreezeGuard),
+
+    freezeVotingErc20MasterCopy: getAddress(a.ERC20FreezeVoting),
+    freezeVotingErc721MasterCopy: getAddress(a.ERC721FreezeVoting),
+    freezeVotingMultisigMasterCopy: getAddress(a.MultisigFreezeVoting),
+
+    votesErc20MasterCopy: getAddress(a.VotesERC20),
+    votesErc20WrapperMasterCopy: getAddress(a.VotesERC20Wrapper),
+    claimErc20MasterCopy: getAddress(a.ERC20Claim),
+
+    fractalRegistry: getAddress(a.FractalRegistry),
+    keyValuePairs: getAddress(a.KeyValuePairs),
+    decentHatsMasterCopy: getAddress(a.DecentHats_0_1_0),
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
     erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
     hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
@@ -86,6 +90,9 @@ const baseConfig: NetworkConfig = {
     sablierV2LockupLinear: '0x4CB16D4153123A74Bc724d161050959754f378D8',
   },
   staking: {},
+  moralis: {
+    deFiSupported: true,
+  },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
 };
 

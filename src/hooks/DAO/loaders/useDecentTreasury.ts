@@ -1,7 +1,13 @@
-import { TokenInfoResponse } from '@safe-global/api-kit';
+import {
+  EthereumTxWithTransfersResponse,
+  SafeModuleTransactionWithTransfersResponse,
+  SafeMultisigTransactionWithTransfersResponse,
+  TokenInfoResponse,
+} from '@safe-global/api-kit';
 import { useEffect, useCallback, useRef } from 'react';
-import { toast } from 'react-toastify';
-import { getAddress } from 'viem';
+import { toast } from 'sonner';
+import { erc20Abi, getAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import useBalancesAPI from '../../../providers/App/hooks/useBalancesAPI';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -27,6 +33,8 @@ export const useDecentTreasury = () => {
   const { getTokenBalances, getNFTBalances, getDeFiBalances } = useBalancesAPI();
 
   const { chain, nativeTokenIcon } = useNetworkConfig();
+
+  const publicClient = usePublicClient();
 
   const formatTransfer = useCallback(
     ({ transfer, isLast }: { transfer: TransferWithTokenInfo; isLast: boolean }) => {
@@ -61,26 +69,71 @@ export const useDecentTreasury = () => {
     if (!daoAddress || !safeAPI) {
       return;
     }
+
     const [
-      transfers,
+      allTransactions,
       { data: tokenBalances, error: tokenBalancesError },
       { data: nftBalances, error: nftBalancesError },
       { data: defiBalances, error: defiBalancesError },
     ] = await Promise.all([
-      safeAPI.getIncomingTransactions(daoAddress),
+      safeAPI.getAllTransactions(daoAddress),
       getTokenBalances(daoAddress),
       getNFTBalances(daoAddress),
       getDeFiBalances(daoAddress),
     ]);
 
+    const groupedTransactions = allTransactions.results.reduce(
+      (acc, tx) => {
+        const txType = tx.txType || 'UNKNOWN';
+        if (!acc[txType]) {
+          acc[txType] = [];
+        }
+        acc[txType].push(tx);
+        return acc;
+      },
+      {} as Record<
+        string,
+        Array<
+          | SafeModuleTransactionWithTransfersResponse
+          | SafeMultisigTransactionWithTransfersResponse
+          | EthereumTxWithTransfersResponse
+        >
+      >,
+    );
+
+    const moduleTransactions = (groupedTransactions.MODULE_TRANSACTION ||
+      []) as SafeModuleTransactionWithTransfersResponse[];
+    const multisigTransactions = (groupedTransactions.MULTISIG_TRANSACTION ||
+      []) as SafeMultisigTransactionWithTransfersResponse[];
+    const ethereumTransactions = (groupedTransactions.ETHEREUM_TRANSACTION ||
+      []) as EthereumTxWithTransfersResponse[];
+
+    const uniqueModuleTransactions = Array.from(
+      new Map(moduleTransactions.map(tx => [tx.transactionHash, tx])).values(),
+    );
+
+    const uniqueMultisigTransactions = Array.from(
+      new Map(multisigTransactions.map(tx => [tx.transactionHash, tx])).values(),
+    );
+
+    const uniqueEthereumTransactions = Array.from(
+      new Map(ethereumTransactions.map(tx => [tx.txHash, tx])).values(),
+    );
+
+    const flattenedTransfers = [
+      ...uniqueModuleTransactions.flatMap(tx => tx.transfers || []),
+      ...uniqueMultisigTransactions.flatMap(tx => tx.transfers || []),
+      ...uniqueEthereumTransactions.flatMap(tx => tx.transfers || []),
+    ];
+
     if (tokenBalancesError) {
-      toast(tokenBalancesError, { autoClose: 2000 });
+      toast.warning(tokenBalancesError, { duration: 2000 });
     }
     if (nftBalancesError) {
-      toast(nftBalancesError, { autoClose: 2000 });
+      toast.warning(nftBalancesError, { duration: 2000 });
     }
     if (defiBalancesError) {
-      toast(defiBalancesError, { autoClose: 2000 });
+      toast.warning(defiBalancesError, { duration: 2000 });
     }
     const assetsFungible = tokenBalances || [];
     const assetsNonFungible = nftBalances || [];
@@ -102,11 +155,12 @@ export const useDecentTreasury = () => {
       assetsDeFi,
       assetsNonFungible,
       totalUsdValue,
+      transfers: null, // transfers not yet loaded. these are setup below
     };
 
     action.dispatch({ type: TreasuryAction.UPDATE_TREASURY, payload: treasuryData });
 
-    const tokenAddresses = transfers.results
+    const tokenAddressesOfTransfers = flattenedTransfers
       // map down to just the addresses, with a type of `string | undefined`
       .map(transfer => transfer.tokenAddress)
       // no undefined or null addresses
@@ -116,45 +170,50 @@ export const useDecentTreasury = () => {
       // turn them into Address type
       .map(address => getAddress(address));
 
-    // Instead of this block of code, check the commented out snippet
-    // below this for a half-implemented alternative.
-    const tokenData = await Promise.all(
-      tokenAddresses.map(async addr => {
+    const transfersTokenInfo = await Promise.all(
+      tokenAddressesOfTransfers.map(async address => {
         try {
-          return await safeAPI.getToken(addr);
+          return await safeAPI.getToken(address);
         } catch (e) {
-          setTimeout(async () => {
-            // @note retry fetching token data in case of rate limit
-            if (addr) {
-              return safeAPI.getToken(addr);
+          const fallbackTokenData = tokenBalances?.find(
+            tokenBalanceData => getAddress(tokenBalanceData.tokenAddress) === address,
+          );
+          if (!fallbackTokenData) {
+            // Fallback to blockchain call if token info not available
+
+            if (!publicClient) {
+              throw new Error('No public client');
             }
-          }, 300);
+            const [name, symbol, decimals] = await Promise.all([
+              publicClient.readContract({ address, abi: erc20Abi, functionName: 'name' }),
+              publicClient.readContract({ address, abi: erc20Abi, functionName: 'symbol' }),
+              publicClient.readContract({ address, abi: erc20Abi, functionName: 'decimals' }),
+            ]);
+
+            return {
+              address,
+              name,
+              symbol,
+              decimals,
+            };
+          }
+
+          return {
+            address,
+            name: fallbackTokenData.name,
+            symbol: fallbackTokenData.symbol,
+            decimals: fallbackTokenData.decimals,
+            logoUri: fallbackTokenData.logo,
+          };
         }
       }),
     );
 
-    // ajg 8/14/24
-    // For all of these Token Addresses
-    // 1. give me all of the data that lives in the cache
-    //   (can "getValue" from local storage to grab these token datas)
-    // 2. if there are any addresses remaining
-    //   get them from the API and store the results in the cache
-    //   in a delayed loop
+    if (flattenedTransfers.length === 0) {
+      action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED });
+    }
 
-    // The code below this doesn't implement "1.", but does implement "2."
-
-    // const tokenData: TokenInfoResponse[] = [];
-    // const batchSize = 5;
-    // for (let i = 0; i < tokenAddresses.length; i += batchSize) {
-    //   const batch = tokenAddresses.slice(i, i + batchSize);
-    //   const batchResults = await Promise.all(batch.map(a => safeAPI.getToken(a)));
-    //   tokenData.push(...batchResults);
-    //   if (i + batch.length < tokenAddresses.length) {
-    //     await new Promise(resolve => setTimeout(resolve, 1000));
-    //   }
-    // }
-
-    transfers.results
+    flattenedTransfers
       .sort((a, b) => b.blockNumber - a.blockNumber)
       .forEach(async (transfer, index, _transfers) => {
         // @note assume native token if no token address
@@ -167,11 +226,11 @@ export const useDecentTreasury = () => {
         };
         const transferTokenAddress = transfer.tokenAddress;
         if (transferTokenAddress) {
-          const token = tokenData.find(
+          const tokenData = transfersTokenInfo.find(
             _token => _token && getAddress(_token.address) === getAddress(transferTokenAddress),
           );
-          if (token) {
-            tokenInfo = token;
+          if (tokenData) {
+            tokenInfo = tokenData;
           }
         }
 
@@ -179,9 +238,11 @@ export const useDecentTreasury = () => {
           transfer: { ...transfer, tokenInfo },
           isLast: _transfers.length - 1 === index,
         });
+
         action.dispatch({ type: TreasuryAction.ADD_TRANSFER, payload: formattedTransfer });
+
         if (_transfers.length - 1 === index) {
-          action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED, payload: true });
+          action.dispatch({ type: TreasuryAction.SET_TRANSFERS_LOADED });
         }
       });
   }, [
@@ -195,18 +256,22 @@ export const useDecentTreasury = () => {
     getNFTBalances,
     getTokenBalances,
     nativeTokenIcon,
+    publicClient,
     safeAPI,
   ]);
 
   useEffect(() => {
-    if (daoAddress && chain.id + daoAddress !== loadKey.current) {
-      loadKey.current = chain.id + daoAddress;
-      loadTreasury();
-    }
     if (!daoAddress) {
       loadKey.current = null;
+      return;
     }
-  }, [chain, daoAddress, loadTreasury]);
+
+    const newLoadKey = `${chain.id}${daoAddress}`;
+    if (newLoadKey !== loadKey.current) {
+      loadKey.current = newLoadKey;
+      loadTreasury();
+    }
+  }, [action, chain.id, daoAddress, loadTreasury]);
 
   return;
 };

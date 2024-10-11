@@ -8,12 +8,15 @@ import {
   paymentSorterByStartDate,
   paymentSorterByActiveStatus,
 } from '../../../../store/roles';
+import { ModalType } from '../../../ui/modals/ModalProvider';
+import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { RolePaymentDetails } from '../RolePaymentDetails';
 import { RoleFormValues, SablierPaymentFormValues } from '../types';
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
   const { values, setFieldValue, validateForm } = useFormikContext<RoleFormValues>();
+  const cancelModal = useDecentModal(ModalType.NONE);
   const payments = values.roleEditing?.payments;
 
   const sortedPayments = useMemo(
@@ -34,10 +37,12 @@ export function RoleFormPaymentStreams() {
           <Button
             variant="secondary"
             size="sm"
-            leftIcon={<Plus />}
+            leftIcon={<Plus size="1rem" />}
+            iconSpacing={0}
             onClick={async () => {
               pushPayment({
                 isStreaming: () => false,
+                isCancellable: () => false,
                 isCancelling: false,
               });
               await validateForm();
@@ -51,20 +56,25 @@ export function RoleFormPaymentStreams() {
               // @note don't render if form isn't valid
               if (!payment.amount || !payment.asset || !payment.startDate || !payment.endDate)
                 return null;
+
+              const canBeCancelled = payment.isCancellable();
               return (
                 <RolePaymentDetails
                   key={index}
-                  roleHatId={values.roleEditing?.id}
-                  showCancel={
-                    // @note can not cancel a new role
-                    values.roleEditing?.id !== undefined &&
-                    // @note can not cancel a pending creation
-                    payment.streamId !== undefined &&
-                    // @note can not cancel a stream that is already cancelled or ended
-                    !payment.isCancelled &&
-                    !!payment.endDate &&
-                    payment.endDate.getTime() > Date.now()
+                  showCancel={canBeCancelled || !payment.isCancelling}
+                  onClick={
+                    canBeCancelled
+                      ? () => setFieldValue('roleEditing.roleEditingPaymentIndex', index)
+                      : undefined
                   }
+                  onCancel={() => {
+                    setFieldValue(`roleEditing.payments.${index}`, {
+                      ...payment,
+                      isCancelling: true,
+                    });
+                    cancelModal();
+                    setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+                  }}
                   payment={{
                     streamId: payment.streamId,
                     amount: payment.amount,
@@ -74,6 +84,7 @@ export function RoleFormPaymentStreams() {
                     cliffDate: payment.cliffDate,
                     isCancelled: payment.isCancelled ?? false,
                     isStreaming: payment.isStreaming ?? (() => false),
+                    isCancellable: payment.isCancellable ?? (() => false),
                     isCancelling: payment.isCancelling,
                   }}
                 />

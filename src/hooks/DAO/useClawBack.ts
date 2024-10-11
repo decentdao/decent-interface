@@ -1,14 +1,13 @@
-import { FractalModule } from '@fractal-framework/fractal-contracts';
+import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import {
   Address,
   encodeAbiParameters,
   encodeFunctionData,
   erc20Abi,
   getAddress,
-  isHex,
   parseAbiParameters,
 } from 'viem';
 import { logError } from '../../helpers/errorLogging';
@@ -37,43 +36,44 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         const childSafeTokenBalance = await getTokenBalances(childSafeInfo.daoAddress);
 
         if (childSafeTokenBalance.error || !childSafeTokenBalance.data) {
-          toast(t('clawBackBalancesError', { autoClose: false }));
+          toast.error(t('clawBackBalancesError', { duration: Infinity }));
           return;
         }
 
         if (childSafeTokenBalance.data.length === 0) {
-          toast(t('clawBackEmptyTreasuryError', { autoClose: false }));
+          toast.error(t('clawBackEmptyTreasuryError', { duration: Infinity }));
           return;
         }
 
-        const santitizedParentAddress = getAddress(parentAddress);
-        const parentSafeInfo = await safeAPI.getSafeData(santitizedParentAddress);
+        const parentSafeInfo = await safeAPI.getSafeData(parentAddress);
         const canUserCreateProposal = await getCanUserCreateProposal(parentAddress);
-        if (canUserCreateProposal && parentSafeInfo) {
+
+        if (canUserCreateProposal && parentAddress && parentSafeInfo) {
           const fractalModule = childSafeInfo.fractalModules!.find(
             module => module.moduleType === FractalModuleType.FRACTAL,
           );
-          const fractalModuleContract = fractalModule?.moduleContract as FractalModule;
+
           if (fractalModule) {
             const transactions = childSafeTokenBalance.data
               .filter(tokenBalance => !tokenBalance.possibleSpam)
               .map(asset => {
                 if (!asset.tokenAddress || asset.tokenAddress === MOCK_MORALIS_ETH_ADDRESS) {
-                  // Seems like we're operating with native coin i.e ETH / MATIC
-                  const txData = encodeAbiParameters(
-                    parseAbiParameters('address, uint256, bytes, uint8'),
-                    [parentAddress, BigInt(asset.balance), '0x', 0],
-                  );
+                  // Seems like we're operating with native coin i.e ETH
+                  const fractalModuleCalldata = encodeFunctionData({
+                    abi: abis.FractalModule,
+                    functionName: 'execTx',
+                    args: [
+                      encodeAbiParameters(parseAbiParameters('address, uint256, bytes, uint8'), [
+                        parentAddress,
+                        BigInt(asset.balance),
+                        '0x',
+                        0,
+                      ]),
+                    ],
+                  });
 
-                  const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
-                    'execTx',
-                    [txData],
-                  );
-                  if (!isHex(fractalModuleCalldata)) {
-                    throw new Error('Error encoding clawback call data');
-                  }
                   return {
-                    target: getAddress(fractalModuleContract.address),
+                    target: fractalModule.moduleAddress,
                     value: 0n,
                     calldata: fractalModuleCalldata,
                   };
@@ -81,7 +81,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                   const clawBackCalldata = encodeFunctionData({
                     abi: erc20Abi,
                     functionName: 'transfer',
-                    args: [parentAddress, BigInt(asset.balance)],
+                    args: [parentAddress, BigInt(asset.balance)] as const,
                   });
 
                   const txData = encodeAbiParameters(
@@ -89,17 +89,14 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
                     [getAddress(asset.tokenAddress), 0n, clawBackCalldata, 0],
                   );
 
-                  const fractalModuleCalldata = fractalModuleContract.interface.encodeFunctionData(
-                    'execTx',
-                    [txData],
-                  );
-
-                  if (!isHex(fractalModuleCalldata)) {
-                    throw new Error('Error encoding clawback call data');
-                  }
+                  const fractalModuleCalldata = encodeFunctionData({
+                    abi: abis.FractalModule,
+                    functionName: 'execTx',
+                    args: [txData],
+                  });
 
                   return {
-                    target: getAddress(fractalModuleContract.address),
+                    target: fractalModule.moduleAddress,
                     value: 0n,
                     calldata: fractalModuleCalldata,
                   };
@@ -107,7 +104,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               });
 
             if (transactions.length === 0) {
-              toast(t('clawBackEmptyTransactionsError', { autoClose: false }));
+              toast.error(t('clawBackEmptyTransactionsError', { duration: Infinity }));
               return;
             }
 
@@ -128,7 +125,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
               pendingToastMessage: t('clawBackPendingToastMessage'),
               failedToastMessage: t('clawBackFailedToastMessage'),
               successToastMessage: t('clawBackSuccessToastMessage'),
-              safeAddress: parentAddress,
+              safeAddress: getAddress(parentAddress),
             });
           } else {
             // @dev - User shouldn't get into this case, but better safe than sorry. We're enforcing types here
@@ -144,7 +141,7 @@ export default function useClawBack({ childSafeInfo, parentAddress }: IUseClawBa
         }
       } catch (e) {
         logError('Unexpected error while preparing clawback proposal', e);
-        toast(t('clawBackFailedToastMessage'));
+        toast.error(t('clawBackFailedToastMessage'));
       }
     }
   }, [

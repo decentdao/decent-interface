@@ -18,7 +18,8 @@ export function AccountDisplay({ containerRef }: AccountDisplayProps) {
         as={MenuButton}
         variant="tertiary"
         data-testid="header-accountMenu"
-        px="0.5rem"
+        padding="0.25rem"
+        size={{ base: 'icon-lg', md: 'base' }}
         color="white-0"
         border="1px solid transparent"
         borderRadius="0.5rem"

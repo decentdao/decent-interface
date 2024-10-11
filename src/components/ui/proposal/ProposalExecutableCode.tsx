@@ -1,11 +1,11 @@
 import {
-  Alert,
-  AlertTitle,
   Accordion,
   AccordionButton,
   AccordionIcon,
   AccordionItem,
   AccordionPanel,
+  Alert,
+  AlertTitle,
   Box,
   Flex,
   Text,
@@ -129,7 +129,12 @@ function TransactionBlock({ transaction }: { transaction: DecodedTransaction }) 
           status="info"
           mt={2}
         >
-          <Info boxSize="24px" />
+          <Box
+            width="1.5rem"
+            height="1.5rem"
+          >
+            <Info boxSize="24px" />
+          </Box>
           <AlertTitle>{t('decodingFailedMessage')}</AlertTitle>
         </Alert>
       )}

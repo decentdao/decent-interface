@@ -1,14 +1,13 @@
-import { MultisigFreezeGuard } from '@fractal-framework/fractal-contracts';
-import { keccak256, encodePacked, isHex } from 'viem';
+import { abis } from '@fractal-framework/fractal-contracts';
+import { keccak256, encodePacked, isHex, Address, getContract, PublicClient } from 'viem';
 import { buildSignatureBytes } from '../helpers/crypto';
-import { Activity } from '../types';
-import { Providers } from '../types/network';
+import { FractalProposal } from '../types';
 import { getTimeStamp } from './contract';
 
 export async function getTxTimelockedTimestamp(
-  activity: Activity,
-  freezeGuard: MultisigFreezeGuard,
-  provider: Providers,
+  activity: FractalProposal,
+  freezeGuardAddress: Address,
+  publicClient: PublicClient,
 ) {
   if (!activity.transaction?.confirmations) {
     throw new Error(
@@ -28,9 +27,15 @@ export async function getTxTimelockedTimestamp(
   );
   const signaturesHash = keccak256(encodePacked(['bytes'], [signatures]));
 
+  const freezeGuard = getContract({
+    address: freezeGuardAddress,
+    abi: abis.MultisigFreezeGuard,
+    client: publicClient,
+  });
+
   const timelockedTimestamp = await getTimeStamp(
-    await freezeGuard.getTransactionTimelockedBlock(signaturesHash),
-    provider,
+    await freezeGuard.read.getTransactionTimelockedBlock([signaturesHash]),
+    publicClient,
   );
   return timelockedTimestamp;
 }

@@ -30,7 +30,7 @@ export const initialState: CreatorFormState = {
         },
       },
     ],
-    tokenImportAddress: '',
+    tokenImportAddress: undefined,
     parentAllocationAmount: {
       value: '',
     },
@@ -96,6 +96,7 @@ export const initialState: CreatorFormState = {
       value: '10080',
       bigintValue: 10080n,
     },
+    attachFractalModule: true,
   },
   multisig: {
     trustedAddresses: [''],

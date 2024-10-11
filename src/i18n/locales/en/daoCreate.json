@@ -35,8 +35,8 @@
   "helperChooseGovernance": "Please select a framework to add governance to your Safe.",
   "exampleVotingPeriod": "10,080 minutes = 1 week",
   "helperVotingPeriod": "The length of time (in minutes) where voting is enabled after a proposal is created.",
-  "helperQuorum": "The minimum percentage of total possible token votes required for a proposal's results to be considered official.",
-  "helperQuorumThreshold": "The minimum percentage of total available voting weight required for a proposal's results to be considered official.",
+  "helperQuorumERC20": "The minimum percentage of total possible token votes required for a proposal's results to be considered official.",
+  "helperQuorumERC721": "The minimum weight of total available token voting weight required for a proposal's results to be considered official.",
   "governanceDescription": "These values can be modified later through a proposal.",
   "titleGuardConfig": "Configure Parent Controls",
   "titleFreezeParams": "Freeze Parameters",
@@ -103,5 +103,8 @@
   "toastDisconnected": "Connect an account to proceed!",
   "toastDisconnectedPersistent": "You'll need to connect an account to deploy this Safe.",
   "tooltipNftVoting": "NFT Voting allows a group of ERC-721 (NFT) holders to propose and vote on transactions. Multiple NFT addresses can be used. <1>Learn more</1>",
-  "errorUnsupportedCreateOption": "Previously selected Governance option is not supported on this network."
+  "errorUnsupportedCreateOption": "Previously selected Governance option is not supported on this network.",
+  "attachFractalModuleLabel": "Enable Clawback",
+  "attachFractalModuleDescription": "This setting controls whether Parent Safe will be able to execute arbitrary transactions on Child Safe bypassing voting process on Child Safe.",
+  "fractalModuleAttachedDescription": "This setting can not be modified as Fractal Module already attached to the Safe."
 }

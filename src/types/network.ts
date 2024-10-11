@@ -1,11 +1,5 @@
-import { ethers } from 'ethers';
-import { Chain, Address } from 'viem';
+import { Address, Chain } from 'viem';
 import { GovernanceType } from './fractal';
-
-export type Providers =
-  | ethers.providers.Web3Provider
-  | ethers.providers.JsonRpcProvider
-  | ethers.providers.BaseProvider;
 
 export type NetworkConfig = {
   order: number; // any arbitrary integer, used to "order" the networks in the dropdown
@@ -27,28 +21,42 @@ export type NetworkConfig = {
     space: number;
     slug: string;
   };
+  moralis: {
+    deFiSupported: boolean;
+  };
   contracts: {
-    safe: string;
-    safeFactory: string;
-    fallbackHandler: string;
-    zodiacModuleProxyFactory: string;
-    zodiacModuleProxyFactoryOld: string;
-    linearVotingMasterCopy: string;
-    multisend: string;
-    fractalAzoriusMasterCopy: string;
-    fractalModuleMasterCopy: string;
-    fractalRegistry: string;
-    votesERC20MasterCopy: string;
-    linearVotingERC721MasterCopy: string;
-    claimingMasterCopy: string;
-    multisigFreezeGuardMasterCopy: string;
-    azoriusFreezeGuardMasterCopy: string;
-    multisigFreezeVotingMasterCopy: string;
-    erc20FreezeVotingMasterCopy: string;
-    erc721FreezeVotingMasterCopy: string;
-    votesERC20WrapperMasterCopy: string;
-    keyValuePairs: string;
-    decentHatsMasterCopy: string;
+    gnosisSafeL2Singleton: Address;
+    gnosisSafeProxyFactory: Address;
+    compatibilityFallbackHandler: Address;
+
+    multiSendCallOnly: Address;
+
+    zodiacModuleProxyFactory: Address;
+    zodiacModuleProxyFactoryOld: Address;
+
+    linearVotingErc20MasterCopy: Address;
+    linearVotingErc721MasterCopy: Address;
+
+    moduleAzoriusMasterCopy: Address;
+    moduleFractalMasterCopy: Address;
+
+    freezeGuardAzoriusMasterCopy: Address;
+    freezeGuardMultisigMasterCopy: Address;
+
+    freezeVotingErc20MasterCopy: Address;
+    freezeVotingErc721MasterCopy: Address;
+    freezeVotingMultisigMasterCopy: Address;
+
+    votesErc20MasterCopy: Address;
+    votesErc20WrapperMasterCopy: Address;
+
+    claimErc20MasterCopy: Address;
+
+    fractalRegistry: Address;
+    keyValuePairs: Address;
+
+    decentHatsMasterCopy: Address;
+
     hatsProtocol: Address;
     erc6551Registry: Address;
     hatsAccount1ofNMasterCopy: Address;
@@ -59,9 +67,9 @@ export type NetworkConfig = {
   };
   staking: {
     lido?: {
-      stETHContractAddress: string;
-      rewardsAddress: string;
-      withdrawalQueueContractAddress: string;
+      stETHContractAddress: Address;
+      rewardsAddress: Address;
+      withdrawalQueueContractAddress: Address;
     };
   };
   createOptions: GovernanceType[];

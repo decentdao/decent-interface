@@ -1,0 +1,96 @@
+.sonner-toast:where([data-sonner-toast][data-styled='true']) {
+  border-radius: 0.25rem;
+  min-height: 64px;
+  max-height: 800px;
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  gap: var(--space-2, 8px);
+}
+
+.sonner-toast[data-rich-colors='true'][data-sonner-toast] button[data-close-button] {
+  right: var(--space-3, 12px);
+  top: var(--space-2, 8px);
+  left: unset;
+  background: unset;
+  border: unset;
+  border-radius: 0;
+  transform: unset;
+  width: 28px;
+  height: 28px;
+  padding: var(--space-1, 4px);
+}
+
+.sonner-toast button[data-close-button] svg {
+  width: 20px;
+  height: 20px;
+}
+
+.sonner-toast [data-icon] {
+  width: 24px;
+  height: 24px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.sonner-toast [data-icon] svg {
+  width: 24px;
+  height: 24px;
+}
+
+.sonner-toast [data-content] {
+  /* 
+    max-width is set from container max-width - icon width - gap. 
+    Sonner doesn't wrap icon and content together, so we need to set max-width this way 
+    */
+  max-width: 218px;
+  font-size: 14px;
+  letter-spacing: 0.14px;
+  line-height: 20px;
+  font-family: 'DM Sans Variable';
+}
+
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='info'],
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='loading'] {
+  background-color: var(--colors-neutral-3);
+  border: 1px solid var(--colors-neutral-4);
+  color: var(--colors-lilac-0);
+}
+
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='info']
+  button[data-close-button],
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='loading']
+  button[data-close-button] {
+  color: var(--colors-lilac-0);
+}
+
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='error'] {
+  background-color: var(--colors-red--2);
+  border: 1px solid var(--colors-red--1);
+  color: var(--colors-red-1);
+}
+
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='error']
+  button[data-close-button] {
+  color: var(--colors-red-1);
+}
+
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='warning'] {
+  background-color: var(--colors-yellow--2);
+  border: 1px solid var(--colors-yellow--1);
+  color: var(--colors-yellow-0);
+}
+
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='warning']
+  button[data-close-button] {
+  color: var(--colors-yellow-0);
+}
+
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='success'] {
+  background-color: var(--colors-celery--6);
+  border: 1px solid var(--colors-celery--5);
+  color: var(--colors-celery-0);
+}
+
+.sonner-toast[data-rich-colors='true'][data-sonner-toast][data-type='success']
+  button[data-close-button] {
+  color: var(--colors-celery-0);
+}

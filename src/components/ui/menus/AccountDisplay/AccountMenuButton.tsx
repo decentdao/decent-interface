@@ -1,10 +1,10 @@
-import { Box, Flex, Icon, useBreakpointValue, Text } from '@chakra-ui/react';
+import { Box, Flex, Icon, Show, Text } from '@chakra-ui/react';
 import { CaretDown } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import Avatar, { AvatarSize } from '../../page/Header/Avatar';
+import Avatar from '../../page/Header/Avatar';
 
 function ConnectWalletButton() {
   const { t } = useTranslation('menu');
@@ -14,10 +14,12 @@ function ConnectWalletButton() {
       gap="1"
     >
       {t('connectWallet')}
-      <Icon
-        as={CaretDown}
-        boxSize="1.5rem"
-      />
+      <Show above="md">
+        <Icon
+          as={CaretDown}
+          boxSize="1.5rem"
+        />
+      </Show>
     </Flex>
   );
 }
@@ -29,8 +31,6 @@ function WalletMenuButton() {
   const account = user.address;
   const { displayName: accountDisplayName } = useDisplayName(account);
   const avatarURL = useAvatar(accountDisplayName);
-
-  const iconSize = useBreakpointValue<AvatarSize>({ base: 'sm', md: 'icon' }) || 'sm';
 
   if (!account) {
     return null;
@@ -45,19 +45,21 @@ function WalletMenuButton() {
         <Avatar
           address={account}
           url={avatarURL}
-          size={iconSize}
+          size="md"
         />
       </Box>
-      <Text
-        textStyle={{ base: 'label-small', md: 'button-base' }}
-        mb="1px"
-      >
-        {accountDisplayName}
-      </Text>
-      <Icon
-        as={CaretDown}
-        boxSize={{ base: '1rem', md: '1.5rem' }}
-      />
+      <Show above="md">
+        <Text
+          textStyle={{ base: 'label-small', md: 'button-base' }}
+          mb="1px"
+        >
+          {accountDisplayName}
+        </Text>
+        <Icon
+          as={CaretDown}
+          boxSize={{ base: '1rem', md: '1.5rem' }}
+        />
+      </Show>
     </Flex>
   );
 }

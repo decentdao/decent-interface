@@ -29,7 +29,7 @@ export default function DraggableDrawer({
   initialHeight,
   closeOnOverlayClick,
 }: DraggableDrawerProps) {
-  const [drawerHeight, setDrawerHeight] = useState(initialHeight || '50%');
+  const [drawerHeight, setDrawerHeight] = useState(initialHeight || '40%');
   const [isDragging, setIsDragging] = useState(false);
   const startY = useRef(0);
   const startHeight = useRef(0);
@@ -96,7 +96,7 @@ export default function DraggableDrawer({
       isOpen={isOpen}
       placement="bottom"
       onClose={() => {
-        setDrawerHeight('50%');
+        setDrawerHeight('40%');
         onClose();
       }}
       size="md"

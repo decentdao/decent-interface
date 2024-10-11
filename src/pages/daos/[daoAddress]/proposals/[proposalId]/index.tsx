@@ -1,12 +1,12 @@
 import * as amplitude from '@amplitude/analytics-browser';
 import { Box } from '@chakra-ui/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { AzoriusProposalDetails } from '../../../../../components/Proposals/AzoriusDetails';
 import { MultisigProposalDetails } from '../../../../../components/Proposals/MultisigProposalDetails';
 import SnapshotProposalDetails from '../../../../../components/Proposals/SnapshotProposalDetails';
-import { EmptyBox } from '../../../../../components/ui/containers/EmptyBox';
+import NoDataCard from '../../../../../components/ui/containers/NoDataCard';
 import { InfoBoxLoader } from '../../../../../components/ui/loaders/InfoBoxLoader';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
@@ -15,45 +15,48 @@ import { useGetMetadata } from '../../../../../hooks/DAO/proposal/useGetMetadata
 import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { FractalProposal, AzoriusProposal, SnapshotProposal } from '../../../../../types';
+import { AzoriusProposal, SnapshotProposal } from '../../../../../types';
 
 export default function ProposalDetailsPage() {
   useEffect(() => {
     amplitude.track(analyticsEvents.ProposalDetailsPageOpened);
   }, []);
+
+  const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
+
   const {
     node: { daoAddress },
-    governance: { proposals },
+    governance: { proposals, loadingProposals, allProposalsLoaded },
     readOnly: { dao },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { proposalId } = useParams();
-  const [proposal, setProposal] = useState<FractalProposal | null>();
-  const { isSnapshotProposal, snapshotProposal } = useSnapshotProposal(proposal);
-  const metaData = useGetMetadata(proposal);
-  const { t } = useTranslation(['proposal', 'navigation', 'breadcrumbs', 'dashboard']);
 
-  const azoriusProposal = proposal as AzoriusProposal;
+  // Either the proposals have not even started loading yet, or not all proposals have been loaded, so this could be one of them
+  const couldStillBeLoadingTheProposal = loadingProposals || !allProposalsLoaded;
 
-  useEffect(() => {
+  const contextProposal = useMemo(() => {
     if (!proposals || !proposals.length || !proposalId) {
-      setProposal(undefined);
-      return;
+      return couldStillBeLoadingTheProposal ? undefined : null;
     }
 
     const foundProposal = proposals.find(p => {
-      const currentSnapshotProposal = p as SnapshotProposal;
-      if (!!currentSnapshotProposal.snapshotProposalId) {
-        return currentSnapshotProposal.snapshotProposalId === proposalId;
-      }
-      return p.proposalId === proposalId;
+      return (
+        (p as SnapshotProposal).snapshotProposalId === proposalId || p.proposalId === proposalId
+      );
     });
+
+    // If the proposal is not found in the current list of loaded proposals in state, it could still be loading
     if (!foundProposal) {
-      setProposal(null);
-      return;
+      return couldStillBeLoadingTheProposal ? undefined : null;
     }
-    setProposal(foundProposal);
-  }, [proposals, proposalId, isSnapshotProposal]);
+
+    return foundProposal;
+  }, [couldStillBeLoadingTheProposal, proposalId, proposals]);
+
+  const metaData = useGetMetadata(contextProposal);
+
+  const { snapshotProposal } = useSnapshotProposal(contextProposal);
 
   if (!daoAddress) {
     return null;
@@ -72,24 +75,27 @@ export default function ProposalDetailsPage() {
             terminus: t('proposal', {
               ns: 'breadcrumbs',
               proposalId,
-              proposalTitle: metaData.title || snapshotProposal?.title,
+              proposalTitle: metaData.title || contextProposal?.title,
             }),
             path: '',
           },
         ]}
       />
-      {proposal === undefined ? (
+      {contextProposal === undefined ? (
         <Box>
           <InfoBoxLoader />
         </Box>
-      ) : proposal === null ? (
-        <EmptyBox emptyText={t('noProposal')} />
-      ) : isSnapshotProposal ? (
-        <SnapshotProposalDetails proposal={proposal as SnapshotProposal} />
+      ) : contextProposal === null ? (
+        <NoDataCard
+          translationNameSpace="proposal"
+          emptyText="noProposal"
+        />
+      ) : snapshotProposal !== null ? (
+        <SnapshotProposalDetails proposal={snapshotProposal} />
       ) : dao?.isAzorius ? (
-        <AzoriusProposalDetails proposal={azoriusProposal} />
+        <AzoriusProposalDetails proposal={contextProposal as AzoriusProposal} />
       ) : (
-        <MultisigProposalDetails proposal={proposal} />
+        <MultisigProposalDetails proposal={contextProposal} />
       )}
     </div>
   );

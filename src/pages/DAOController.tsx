@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { useSwitchChain } from 'wagmi';
 import { logError } from '../helpers/errorLogging';
 import useDAOController from '../hooks/DAO/useDAOController';
@@ -22,10 +22,7 @@ const useTemporaryProposals = () => {
     }
 
     const toastId = toast.info(t('pendingProposalNotice'), {
-      autoClose: false,
-      closeOnClick: false,
-      draggable: false,
-      closeButton: false,
+      duration: Infinity,
     });
 
     return () => {
@@ -35,9 +32,12 @@ const useTemporaryProposals = () => {
 };
 
 export default function DAOController() {
-  const { switchChain } = useSwitchChain();
-  const { errorLoading, wrongNetwork, invalidQuery, urlAddressPrefix } = useDAOController();
-  useUpdateSafeData();
+  const { errorLoading, wrongNetwork, invalidQuery, daoAddress, urlAddressPrefix } =
+    useDAOController();
+  useUpdateSafeData(daoAddress);
+
+  const { switchChainAsync } = useSwitchChain();
+
   const {
     node: { daoName },
   } = useFractal();
@@ -45,15 +45,18 @@ export default function DAOController() {
   useTemporaryProposals();
 
   useEffect(() => {
-    if (urlAddressPrefix && wrongNetwork) {
-      try {
-        switchChain({ chainId: getChainIdFromPrefix(urlAddressPrefix) });
-        window.location.reload();
-      } catch (e) {
-        logError(e);
+    async function switchChainToSafeChain() {
+      if (urlAddressPrefix && wrongNetwork) {
+        try {
+          await switchChainAsync({ chainId: getChainIdFromPrefix(urlAddressPrefix) });
+          window.location.reload();
+        } catch (e) {
+          logError(e);
+        }
       }
     }
-  }, [wrongNetwork, switchChain, urlAddressPrefix]);
+    switchChainToSafeChain();
+  }, [wrongNetwork, switchChainAsync, urlAddressPrefix]);
 
   useEffect(() => {
     if (daoName) {

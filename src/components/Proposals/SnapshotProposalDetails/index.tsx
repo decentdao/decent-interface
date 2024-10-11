@@ -5,7 +5,7 @@ import { useFractal } from '../../../providers/App/AppProvider';
 import { SnapshotProposal } from '../../../types';
 import { ProposalDetailsGrid } from '../../ui/containers/ProposalDetailsGrid';
 import { useProposalCountdown } from '../../ui/proposal/useProposalCountdown';
-import { AzoriusOrSnapshotProposalAction } from '../ProposalActions/ProposalAction';
+import { AzoriusOrSnapshotProposalAction } from '../ProposalActions/AzoriusOrSnapshotProposalAction';
 import { ProposalInfo } from '../ProposalInfo';
 import { VoteContextProvider } from '../ProposalVotes/context/VoteContext';
 import SnapshotProposalSummary from './SnapshotProposalSummary';
@@ -21,36 +21,34 @@ export default function SnapshotProposalDetails({ proposal }: ISnapshotProposalD
   } = useFractal();
   useProposalCountdown(proposal);
 
-  const { loadProposal, extendedSnapshotProposal } = useSnapshotProposal(proposal);
+  const { loadSnapshotProposal, extendedSnapshotProposal } = useSnapshotProposal(proposal);
 
   useEffect(() => {
-    loadProposal();
-  }, [loadProposal, proposal]);
+    loadSnapshotProposal();
+  }, [loadSnapshotProposal]);
 
   return (
     <ProposalDetailsGrid>
       <GridItem colSpan={2}>
         <ProposalInfo proposal={extendedSnapshotProposal || proposal} />
-        {!!extendedSnapshotProposal && (
-          <SnapshotProposalVotes proposal={extendedSnapshotProposal} />
-        )}
+        {extendedSnapshotProposal && <SnapshotProposalVotes proposal={extendedSnapshotProposal} />}
       </GridItem>
-      <GridItem>
-        <SnapshotProposalSummary proposal={extendedSnapshotProposal} />
-        {user.address && (
-          <VoteContextProvider
-            proposal={proposal}
-            extendedSnapshotProposal={extendedSnapshotProposal}
-          >
-            <AzoriusOrSnapshotProposalAction
+      {extendedSnapshotProposal && (
+        <GridItem>
+          <SnapshotProposalSummary proposal={extendedSnapshotProposal} />
+          {user.address && (
+            <VoteContextProvider
               proposal={proposal}
               extendedSnapshotProposal={extendedSnapshotProposal}
-              onCastSnapshotVote={loadProposal}
-              expandedView
-            />
-          </VoteContextProvider>
-        )}
-      </GridItem>
+            >
+              <AzoriusOrSnapshotProposalAction
+                proposal={proposal}
+                expandedView
+              />
+            </VoteContextProvider>
+          )}
+        </GridItem>
+      )}
     </ProposalDetailsGrid>
   );
 }

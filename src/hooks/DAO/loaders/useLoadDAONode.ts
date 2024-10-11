@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
 import { useCallback } from 'react';
-import { getAddress, isAddress } from 'viem';
+import { isAddress, Address, getAddress } from 'viem';
 import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -25,8 +25,8 @@ export const useLoadDAONode = () => {
   });
 
   const formatDAOQuery = useCallback(
-    (result: { data?: DAOQueryQuery }, _daoAddress: string) => {
-      const demo = loadDemoData(chain, getAddress(_daoAddress), result);
+    (result: { data?: DAOQueryQuery }, _daoAddress: Address) => {
+      const demo = loadDemoData(chain, _daoAddress, result);
       if (!demo.data) {
         return;
       }
@@ -41,7 +41,7 @@ export const useLoadDAONode = () => {
             childNodes: mapChildNodes(dao as DAO),
           },
           daoName: name as string,
-          daoAddress: getAddress(_daoAddress),
+          daoAddress: _daoAddress,
           daoSnapshotENS: snapshotENS as string,
         };
         return currentNode;
@@ -52,24 +52,26 @@ export const useLoadDAONode = () => {
   );
 
   const loadDao = useCallback(
-    async (_daoAddress: string): Promise<FractalNode | WithError> => {
-      if (isAddress(_daoAddress) && safeAPI) {
+    async (daoAddress: string): Promise<FractalNode | WithError> => {
+      if (isAddress(daoAddress) && safeAPI) {
         try {
           const graphNodeInfo = formatDAOQuery(
-            await getDAOInfo({ variables: { daoAddress: _daoAddress } }),
-            _daoAddress,
+            await getDAOInfo({ variables: { daoAddress } }),
+            daoAddress,
           );
           if (!graphNodeInfo) {
             logError('graphQL query failed');
             return { error: 'errorFailedSearch' };
           }
 
-          const sanitizedDaoAddress = getAddress(_daoAddress);
-          const safeInfoWithGuard = await safeAPI.getSafeData(sanitizedDaoAddress);
+          // safeAPI.getSafeData expects a checksummed address here, so we gotta do getAddress,
+          // even if `daoAddress` passes the isAddress check above
+          const checksummedAddress = getAddress(daoAddress);
+          const safeInfoWithGuard = await safeAPI.getSafeData(checksummedAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName: await getDAOName({
-              address: sanitizedDaoAddress,
+              address: daoAddress,
               registryName: graphNodeInfo.daoName,
             }),
             safe: safeInfoWithGuard,

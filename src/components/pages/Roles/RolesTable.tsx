@@ -2,16 +2,17 @@ import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-
 import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Address, Hex, getAddress, zeroAddress } from 'viem';
+import { Address, Hex, zeroAddress } from 'viem';
 import { isFeatureEnabled } from '../../../constants/common';
-import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
+import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentTree, useRolesStore } from '../../../store/roles';
-import { getChainIdFromPrefix } from '../../../utils/url';
+import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { RoleCardLoading, RoleCardNoRoles } from './RolePageCard';
+import { RoleCardLoading } from './RolePageCard';
 import { EditBadgeStatus, RoleEditProps, RoleFormValues, RoleProps } from './types';
 
 function RolesHeader() {
@@ -96,20 +97,19 @@ function RoleNameEditColumn({
 }
 
 function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) {
-  const { addressPrefix } = useNetworkConfig();
-  const { daoName: accountDisplayName } = useGetDAOName({
-    address: getAddress(wearerAddress || zeroAddress),
-    chainId: getChainIdFromPrefix(addressPrefix),
-  });
-  const avatarURL = useAvatar(wearerAddress || zeroAddress);
+  const { chain } = useNetworkConfig();
+  const { address } = useAddress(wearerAddress || zeroAddress);
+  const { displayName: accountDisplayName } = useDisplayName(address || null, true, chain.id);
+  const avatarURL = useAvatar(accountDisplayName);
+
   const { t } = useTranslation('roles');
   return (
     <Td width="60%">
       <Flex>
-        {wearerAddress ? (
+        {address ? (
           <Avatar
             size="icon"
-            address={wearerAddress}
+            address={address}
             url={avatarURL}
           />
         ) : (
@@ -183,6 +183,7 @@ export function RolesRow({
       _hover={{ bg: 'neutral-3' }}
       _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
+      cursor="pointer"
       onClick={() => handleRoleClick(hatId)}
     >
       <Td
@@ -291,7 +292,13 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
     return <RoleCardLoading />;
   }
   if (hatsTree === null && !values.hats.length) {
-    return <RoleCardNoRoles />;
+    return (
+      <NoDataCard
+        translationNameSpace="roles"
+        emptyText="noRoles"
+        emptyTextNotProposer="noRolesNotProposer"
+      />
+    );
   }
   return (
     <Box
