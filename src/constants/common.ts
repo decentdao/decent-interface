@@ -53,7 +53,13 @@ export const SIDEBAR_WIDTH = '4.25rem';
 
 export const MAX_CONTENT_WIDTH = '80rem';
 
-export const isFeatureEnabled = (feature: string) => {
+const features = {
+  developmentMode: 'DEVELOPMENT_MODE',
+} as const;
+
+type FeatureFlag = (typeof features)[keyof typeof features];
+
+export const isFeatureEnabled = (feature: FeatureFlag) => {
   const featureStatus = import.meta.env[`VITE_APP_FLAG_${feature}`];
   if (featureStatus === 'ON') {
     return true;
@@ -61,6 +67,8 @@ export const isFeatureEnabled = (feature: string) => {
     return false;
   }
 };
+
+export const isDevMode = () => isFeatureEnabled(features.developmentMode);
 
 /**
  * @dev DO NOT CHANGE THE SALT

@@ -136,7 +136,8 @@ export function SendAssetsModal({
                           iconSize="1.5rem"
                           icon={<CaretDown />}
                           onChange={e => {
-                            setFieldValue('inputAmount', { value: '0', bigintValue: 0n });
+                            // New asset selected. First reset the form input amount
+                            setFieldValue('inputAmount', undefined);
                             setFieldValue(
                               'selectedAsset',
                               fungibleAssetsWithBalance[Number(e.target.value)],
@@ -169,7 +170,7 @@ export function SendAssetsModal({
                           onChange={value => {
                             setFieldValue('inputAmount', value);
                           }}
-                          currentValue={values.inputAmount}
+                          parentFormikValue={values.inputAmount}
                           decimalPlaces={values.selectedAsset.decimals}
                           placeholder="0"
                           maxValue={BigInt(values.selectedAsset.balance)}
