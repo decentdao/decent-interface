@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Address, encodeFunctionData, getAddress, getContract, Hex, zeroAddress } from 'viem';
+import { Address, encodeFunctionData, getAddress, Hex, zeroAddress } from 'viem';
 import { usePublicClient } from 'wagmi';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
@@ -18,6 +18,7 @@ import {
   RoleHatFormValueEdited,
   SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
+import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
@@ -198,17 +199,9 @@ export default function useCreateRoles() {
         tokenId: hatId,
         registryAddress: erc6551Registry,
         publicClient,
-        decentHats: getAddress(decentHatsMasterCopy),
       });
     },
-    [
-      publicClient,
-      hatsAccount1ofNMasterCopy,
-      chain.id,
-      hatsProtocol,
-      erc6551Registry,
-      decentHatsMasterCopy,
-    ],
+    [publicClient, hatsAccount1ofNMasterCopy, chain.id, hatsProtocol, erc6551Registry],
   );
 
   const prepareCreateTopHatProposalData = useCallback(
@@ -362,36 +355,23 @@ export default function useCreateRoles() {
   );
 
   const createSmartAccountTx = useCallback(
-    async (newHatId: bigint) => {
-      if (!publicClient) {
-        throw new Error('Public client is not set');
-      }
-
-      const decentHatsContract = getContract({
-        abi: abis.DecentHats_0_1_0,
-        address: decentHatsMasterCopy,
-        client: publicClient,
-      });
-
-      const salt = await decentHatsContract.read.getSalt();
-
+    (newHatId: bigint) => {
       return {
         calldata: encodeFunctionData({
           abi: ERC6551RegistryAbi,
           functionName: 'createAccount',
-          args: [hatsAccount1ofNMasterCopy, salt, BigInt(chain.id), hatsProtocol, newHatId],
+          args: [
+            hatsAccount1ofNMasterCopy,
+            ERC6551_REGISTRY_SALT,
+            BigInt(chain.id),
+            hatsProtocol,
+            newHatId,
+          ],
         }),
         targetAddress: erc6551Registry,
       };
     },
-    [
-      chain.id,
-      decentHatsMasterCopy,
-      erc6551Registry,
-      hatsAccount1ofNMasterCopy,
-      hatsProtocol,
-      publicClient,
-    ],
+    [chain.id, erc6551Registry, hatsAccount1ofNMasterCopy, hatsProtocol],
   );
 
   const createBatchLinearStreamCreationTx = useCallback(
@@ -513,7 +493,7 @@ export default function useCreateRoles() {
 
           allTxs.push(await createNewHatTx(formHat, adminHatId, topHatAccount));
           allTxs.push(mintHatTx(newHatId, formHat));
-          allTxs.push(await createSmartAccountTx(BigInt(newHatId)));
+          allTxs.push(createSmartAccountTx(BigInt(newHatId)));
 
           const newStreams = getNewStreamsFromFormHat(formHat);
 
