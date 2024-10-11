@@ -110,7 +110,6 @@ const useHatsTree = () => {
             erc6551Registry,
             hatsAccountImplementation,
             publicClient,
-            decentHats: getAddress(decentHatsMasterCopy),
           });
         } catch (e) {
           if (e instanceof DecentHatsError) {
@@ -125,7 +124,6 @@ const useHatsTree = () => {
           erc6551Registry,
           hatsAccountImplementation,
           publicClient,
-          decentHats: getAddress(decentHatsMasterCopy),
         });
         const message = 'Hats Tree ID is not valid';
         toast.error(message);

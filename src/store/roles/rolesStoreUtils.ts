@@ -1,7 +1,8 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, encodePacked, getContract, keccak256 } from 'viem';
+import { Address, Hex, PublicClient, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { SablierPayment } from '../../components/pages/Roles/types';
+import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -21,7 +22,6 @@ export interface PredictAccountParams {
   tokenId: bigint;
   registryAddress: Address;
   publicClient: PublicClient;
-  decentHats: Address;
 }
 
 interface DecentHat {
@@ -66,7 +66,6 @@ export interface RolesStore extends RolesStoreData {
     erc6551Registry: Address;
     hatsAccountImplementation: Address;
     publicClient: PublicClient;
-    decentHats: Address;
   }) => Promise<void>;
   refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
   updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
@@ -145,22 +144,8 @@ export const initialHatsStore: RolesStoreData = {
   contextChainId: null,
 };
 
-export function getERC6551RegistrySalt(chainId: bigint, decentHats: Address) {
-  return keccak256(
-    encodePacked(['string', 'uint256', 'address'], ['DecentHats_0_1_0', chainId, decentHats]),
-  );
-}
-
-export const predictAccountAddress = (params: PredictAccountParams) => {
-  const {
-    implementation,
-    chainId,
-    tokenContract,
-    tokenId,
-    registryAddress,
-    publicClient,
-    decentHats,
-  } = params;
+export const predictAccountAddress = async (params: PredictAccountParams) => {
+  const { implementation, chainId, tokenContract, tokenId, registryAddress, publicClient } = params;
 
   const erc6551RegistryContract = getContract({
     abi: ERC6551RegistryAbi,
@@ -168,11 +153,9 @@ export const predictAccountAddress = (params: PredictAccountParams) => {
     client: publicClient,
   });
 
-  const salt = getERC6551RegistrySalt(chainId, decentHats);
-
   return erc6551RegistryContract.read.account([
     implementation,
-    salt,
+    ERC6551_REGISTRY_SALT,
     chainId,
     tokenContract,
     tokenId,
@@ -186,7 +169,6 @@ export const sanitize = async (
   hats: Address,
   chainId: bigint,
   publicClient: PublicClient,
-  decentHats: Address,
 ): Promise<undefined | null | DecentTree> => {
   if (hatsTree === undefined || hatsTree === null) {
     return hatsTree;
@@ -206,7 +188,6 @@ export const sanitize = async (
     chainId,
     tokenId: BigInt(rawTopHat.id),
     publicClient,
-    decentHats,
   });
 
   const topHat: DecentHat = {
@@ -227,7 +208,6 @@ export const sanitize = async (
     chainId,
     tokenId: BigInt(rawAdminHat.id),
     publicClient,
-    decentHats,
   });
 
   const adminHat: DecentHat = {
@@ -255,7 +235,6 @@ export const sanitize = async (
       chainId,
       tokenId: BigInt(rawHat.id),
       publicClient,
-      decentHats,
     });
 
     roleHats.push({
