@@ -300,7 +300,6 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                     ? paymentAmountBigIntError?.bigintValue
                     : undefined
                 }
-                isDisabled={inputDisabled}
               >
                 <BigIntInput
                   isDisabled={inputDisabled}
@@ -315,6 +314,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                     setFieldTouched(field.name, true);
                   }}
                   cursor={disabled ? 'not-allowed' : 'pointer'}
+                  placeholder="0"
                 />
               </LabelWrapper>
             );

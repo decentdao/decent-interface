@@ -1,5 +1,5 @@
-import { Flex, Icon, Box, Text } from '@chakra-ui/react';
-import { Info, ArrowUpRight } from '@phosphor-icons/react';
+import { Box, Flex, Icon, Text } from '@chakra-ui/react';
+import { ArrowUpRight, Info } from '@phosphor-icons/react';
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../../constants/common';
@@ -8,14 +8,12 @@ import ModalTooltip from '../../../ui/modals/ModalTooltip';
 
 export function SectionTitle({
   title,
-  subTitle,
   externalLink,
   tooltipContent,
 }: {
   title: string;
-  subTitle: string;
   externalLink?: string;
-  tooltipContent?: string;
+  tooltipContent: string;
 }) {
   const { t } = useTranslation(['common']);
   const titleRef = useRef<HTMLDivElement>(null);
@@ -55,7 +53,7 @@ export function SectionTitle({
               alignItems="center"
               gap="0.25rem"
             >
-              {t('learnMore')}
+              <Text textStyle="label-small">{t('learnMore')}</Text>
               <Icon
                 as={ArrowUpRight}
                 boxSize="1rem"
@@ -64,12 +62,6 @@ export function SectionTitle({
           </ExternalLink>
         )}
       </Flex>
-      <Text
-        textStyle="label-base"
-        color="neutral-7"
-      >
-        {subTitle}
-      </Text>
     </Flex>
   );
 }

@@ -2,7 +2,7 @@ import { Button, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-u
 import { useFormikContext } from 'formik';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { Blocker, useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
@@ -17,9 +17,11 @@ import { useRoleFormEditedRole } from './useRoleFormEditedRole';
 export default function RoleFormTabs({
   hatId,
   pushRole,
+  blocker,
 }: {
   hatId: Hex;
   pushRole: (roleHatFormValue: RoleHatFormValue) => void;
+  blocker: Blocker;
 }) {
   const { hatsTree } = useRolesStore();
   const {
@@ -96,8 +98,11 @@ export default function RoleFormTabs({
               );
             }
             setFieldValue('roleEditing', undefined);
+            setTouched({});
+            if (blocker.reset) {
+              blocker.reset();
+            }
             setTimeout(() => {
-              setTouched({});
               navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
             }, 50);
           }}

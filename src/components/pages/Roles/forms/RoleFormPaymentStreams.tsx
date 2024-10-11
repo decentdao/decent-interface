@@ -37,7 +37,8 @@ export function RoleFormPaymentStreams() {
           <Button
             variant="secondary"
             size="sm"
-            leftIcon={<Plus />}
+            leftIcon={<Plus size="1rem" />}
+            iconSpacing={0}
             onClick={async () => {
               pushPayment({
                 isStreaming: () => false,
