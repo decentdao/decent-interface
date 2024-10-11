@@ -196,10 +196,7 @@ const useHatsTree = () => {
                   streamId: lockupLinearStream.id,
                   contractAddress: lockupLinearStream.contract.address,
                   asset: {
-                    address: getAddress(
-                      lockupLinearStream.asset.address,
-                      lockupLinearStream.asset.chainId,
-                    ),
+                    address: getAddress(lockupLinearStream.asset.address),
                     name: lockupLinearStream.asset.name,
                     symbol: lockupLinearStream.asset.symbol,
                     decimals: lockupLinearStream.asset.decimals,
