@@ -86,17 +86,16 @@ export default function useCreateSablierStream() {
 
       const { streamId, to, smartAccount } = args;
 
-      const decentSablierManagementAddress = getAddress(decentSablierMasterCopy);
       const enableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'enableModule',
-        args: [decentSablierManagementAddress],
+        args: [decentSablierMasterCopy],
       });
 
       const disableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'disableModule',
-        args: [SENTINEL_MODULE, decentSablierManagementAddress],
+        args: [SENTINEL_MODULE, decentSablierMasterCopy],
       });
 
       const withdrawMaxFromStreamData = encodeFunctionData({
@@ -111,7 +110,7 @@ export default function useCreateSablierStream() {
           calldata: enableModuleData,
         },
         {
-          targetAddress: decentSablierManagementAddress,
+          targetAddress: decentSablierMasterCopy,
           calldata: withdrawMaxFromStreamData,
         },
         {
@@ -129,17 +128,16 @@ export default function useCreateSablierStream() {
         throw new Error('Can not flush stream without DAO Address');
       }
 
-      const decentSablierManagementAddress = getAddress(decentSablierMasterCopy);
       const enableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'enableModule',
-        args: [decentSablierManagementAddress],
+        args: [decentSablierMasterCopy],
       });
 
       const disableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'disableModule',
-        args: [SENTINEL_MODULE, decentSablierManagementAddress],
+        args: [SENTINEL_MODULE, decentSablierMasterCopy],
       });
 
       const cancelStreamData = encodeFunctionData({
@@ -154,7 +152,7 @@ export default function useCreateSablierStream() {
           calldata: enableModuleData,
         },
         {
-          targetAddress: decentSablierManagementAddress,
+          targetAddress: decentSablierMasterCopy,
           calldata: cancelStreamData,
         },
         {
