@@ -13,7 +13,7 @@ import {
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Hex, getAddress } from 'viem';
+import { Hex } from 'viem';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
@@ -66,7 +66,7 @@ export default function RolesDetailsDrawer({
   const { chain } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
   const { daoName: accountDisplayName } = useGetDAOName({
-    address: getAddress(roleHat.wearer),
+    address: roleHat.wearer,
     chainId: chain.id,
   });
   const avatarURL = useAvatar(roleHat.wearer);
@@ -158,7 +158,7 @@ export default function RolesDetailsDrawer({
               >
                 <Avatar
                   size="icon"
-                  address={getAddress(roleHat.wearer)}
+                  address={roleHat.wearer}
                   url={avatarURL}
                 />
                 <Text
@@ -195,7 +195,7 @@ export default function RolesDetailsDrawer({
                   key={index}
                   payment={payment}
                   roleHatSmartAddress={roleHat.smartAddress}
-                  roleHatWearerAddress={getAddress(roleHat.wearer)}
+                  roleHatWearerAddress={roleHat.wearer}
                   showWithdraw
                 />
               ))}
