@@ -1,5 +1,5 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, encodePacked, getContract, keccak256 } from 'viem';
+import { Address, Hex, PublicClient, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { SablierPayment } from '../../components/pages/Roles/types';
 
@@ -21,7 +21,6 @@ export interface PredictAccountParams {
   tokenId: bigint;
   registryAddress: Address;
   publicClient: PublicClient;
-  decentHats: Address;
 }
 
 interface DecentHat {
@@ -30,15 +29,19 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
+  eligibility?: `0x${string}`;
   payments?: SablierPayment[];
 }
 
 interface DecentTopHat extends DecentHat {}
 
-interface DecentAdminHat extends DecentHat {}
+interface DecentAdminHat extends DecentHat {
+  wearer?: Address;
+}
 
 interface RolesStoreData {
   hatsTreeId: undefined | null | number;
+  decentHatsAddress: Address | null | undefined;
   hatsTree: undefined | null | DecentTree;
   streamsFetched: boolean;
   contextChainId: number | null;
@@ -46,6 +49,7 @@ interface RolesStoreData {
 
 export interface DecentRoleHat extends DecentHat {
   wearer: Address;
+  eligibility?: `0x${string}`;
 }
 
 export interface DecentTree {
@@ -66,7 +70,6 @@ export interface RolesStore extends RolesStoreData {
     erc6551Registry: Address;
     hatsAccountImplementation: Address;
     publicClient: PublicClient;
-    decentHats: Address;
   }) => Promise<void>;
   refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
   updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
@@ -141,26 +144,13 @@ const getHatMetadata = (hat: Hat) => {
 export const initialHatsStore: RolesStoreData = {
   hatsTreeId: undefined,
   hatsTree: undefined,
+  decentHatsAddress: undefined,
   streamsFetched: false,
   contextChainId: null,
 };
 
-export function getERC6551RegistrySalt(chainId: bigint, decentHats: Address) {
-  return keccak256(
-    encodePacked(['string', 'uint256', 'address'], ['DecentHats_0_1_0', chainId, decentHats]),
-  );
-}
-
 export const predictAccountAddress = (params: PredictAccountParams) => {
-  const {
-    implementation,
-    chainId,
-    tokenContract,
-    tokenId,
-    registryAddress,
-    publicClient,
-    decentHats,
-  } = params;
+  const { implementation, chainId, tokenContract, tokenId, registryAddress, publicClient } = params;
 
   const erc6551RegistryContract = getContract({
     abi: ERC6551RegistryAbi,
@@ -168,11 +158,17 @@ export const predictAccountAddress = (params: PredictAccountParams) => {
     client: publicClient,
   });
 
-  const salt = getERC6551RegistrySalt(chainId, decentHats);
+  /**
+   * @dev DO NOT CHANGE THE SALT
+   * @note This SALT is used to generate the account address for the Hats Smart Account
+   * @note This has been used in production and changing it will break the predictability of the smart account addresses
+   *
+   */
+  const SALT = '0x5d0e6ce4fd951366cc55da93f6e79d8b81483109d79676a04bcc2bed6a4b5072';
 
   return erc6551RegistryContract.read.account([
     implementation,
-    salt,
+    SALT,
     chainId,
     tokenContract,
     tokenId,
@@ -186,7 +182,6 @@ export const sanitize = async (
   hats: Address,
   chainId: bigint,
   publicClient: PublicClient,
-  decentHats: Address,
 ): Promise<undefined | null | DecentTree> => {
   if (hatsTree === undefined || hatsTree === null) {
     return hatsTree;
@@ -206,7 +201,6 @@ export const sanitize = async (
     chainId,
     tokenId: BigInt(rawTopHat.id),
     publicClient,
-    decentHats,
   });
 
   const topHat: DecentHat = {
@@ -227,15 +221,15 @@ export const sanitize = async (
     chainId,
     tokenId: BigInt(rawAdminHat.id),
     publicClient,
-    decentHats,
   });
 
-  const adminHat: DecentHat = {
+  const adminHat: DecentAdminHat = {
     id: rawAdminHat.id,
     prettyId: rawAdminHat.prettyId ?? '',
     name: adminHatMetadata.name,
     description: adminHatMetadata.description,
     smartAddress: adminHatSmartAddress,
+    wearer: rawAdminHat.wearers?.length ? rawAdminHat.wearers[0].id : undefined,
   };
 
   const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
@@ -255,7 +249,6 @@ export const sanitize = async (
       chainId,
       tokenId: BigInt(rawHat.id),
       publicClient,
-      decentHats,
     });
 
     roleHats.push({
@@ -265,6 +258,7 @@ export const sanitize = async (
       description: hatMetadata.description,
       wearer: rawHat.wearers![0].id,
       smartAddress: roleHatSmartAddress,
+      eligibility: rawHat.eligibility,
     });
   }
 
