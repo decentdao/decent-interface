@@ -5,7 +5,7 @@ import {
   getProxyFactoryDeployment,
   getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
-import { getAddress } from 'viem';
+import { getAddress, zeroAddress } from 'viem';
 import { polygon } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
@@ -82,8 +82,8 @@ export const polygonConfig: NetworkConfig = {
     keyValuePairs: getAddress(a.KeyValuePairs),
     decentHatsV1MasterCopy: getAddress(a.DecentHats_0_1_0),
     // @todo update addresses when contracts are deployed
-    decentHatsV2MasterCopy: getAddress('0x0'),
-    decentAutonomousAdminMasterCopy: getAddress('0x0'),
+    decentHatsV2MasterCopy: zeroAddress,
+    decentAutonomousAdminMasterCopy: zeroAddress,
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
     erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
     hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
