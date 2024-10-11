@@ -148,7 +148,6 @@ export function BigIntInput({
 
   // if the parent Formik value prop changes, need to update the value
   useEffect(() => {
-
     // If parentFormikValue is set to undefined, then the input should be blank
     if (parentFormikValue === undefined) {
       setInputValue('');
