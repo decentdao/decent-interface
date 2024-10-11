@@ -220,6 +220,9 @@ function RolesEdit() {
                     generateRoleProposalTitle({ formValues: values }),
                   );
                 }
+                if (blocker.reset) {
+                  blocker.reset();
+                }
                 navigate(
                   DAO_ROUTES.rolesEditCreateProposalSummary.relative(addressPrefix, safeAddress),
                 );

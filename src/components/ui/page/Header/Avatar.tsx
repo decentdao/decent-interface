@@ -8,7 +8,7 @@ export type AvatarSize = 'icon' | 'lg' | 'sm' | 'xl' | 'md';
 const avatarSizes: { [size: string]: string } = {
   sm: '1rem',
   icon: '1.5rem',
-  md: '1.75rem',
+  md: '1.6875rem',
   lg: '2rem',
   xl: '3rem',
 };

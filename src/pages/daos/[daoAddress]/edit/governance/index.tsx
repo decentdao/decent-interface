@@ -18,6 +18,7 @@ import {
   AzoriusERC721DAO,
   DAOTrigger,
   GovernanceType,
+  SubDAO,
 } from '../../../../../types';
 
 export default function ModifyGovernancePage() {
@@ -54,7 +55,7 @@ export default function ModifyGovernancePage() {
       daoSnapshotENS !== daoData.snapshotENS &&
       (daoSnapshotENS !== null || daoData.snapshotENS !== '');
 
-    deployAzorius(daoData as AzoriusERC20DAO | AzoriusERC721DAO, customNonce, {
+    deployAzorius(daoData as AzoriusERC20DAO | AzoriusERC721DAO | SubDAO, customNonce, {
       shouldSetName,
       shouldSetSnapshot,
     });
