@@ -1,11 +1,13 @@
+import { abis } from '@fractal-framework/fractal-contracts';
 import groupBy from 'lodash.groupby';
 import { useCallback } from 'react';
 import { Address, Hex, encodeFunctionData, erc20Abi, zeroAddress, getAddress } from 'viem';
+import GnosisSafeL2 from '../../assets/abi/GnosisSafeL2';
 import SablierV2BatchAbi from '../../assets/abi/SablierV2Batch';
-import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { PreparedNewStreamData } from '../../components/pages/Roles/types';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
+import { SENTINEL_MODULE } from '../../utils/address';
 
 export function convertStreamIdToBigInt(streamId: string) {
   // streamId is formatted as ${streamContractAddress}-${chainId}-${numericId}
@@ -16,7 +18,7 @@ export function convertStreamIdToBigInt(streamId: string) {
 
 export default function useCreateSablierStream() {
   const {
-    contracts: { sablierV2LockupLinear, sablierV2Batch },
+    contracts: { sablierV2LockupLinear, sablierV2Batch, decentSablierMasterCopy },
   } = useNetworkConfig();
   const {
     node: { daoAddress },
@@ -76,32 +78,91 @@ export default function useCreateSablierStream() {
     [prepareBasicStreamData],
   );
 
-  const prepareFlushStreamTx = useCallback((streamId: string, to: Address) => {
-    // @dev This function comes from "basic" SablierV2
-    // all the types of streams are inheriting from that
-    // so it's safe to rely on any stream ABI
+  const prepareFlushStreamTxs = useCallback(
+    (args: { streamId: string; to: Address; smartAccount: Address }) => {
+      if (!daoAddress) {
+        throw new Error('Can not flush stream without DAO Address');
+      }
 
-    const flushCalldata = encodeFunctionData({
-      abi: SablierV2LockupLinearAbi,
-      functionName: 'withdrawMax',
-      args: [convertStreamIdToBigInt(streamId), to],
-    });
+      const { streamId, to, smartAccount } = args;
 
-    return flushCalldata;
-  }, []);
+      const enableModuleData = encodeFunctionData({
+        abi: GnosisSafeL2,
+        functionName: 'enableModule',
+        args: [decentSablierMasterCopy],
+      });
 
-  const prepareCancelStreamTx = useCallback((streamId: string, targetAddress: Address) => {
-    // @dev This function comes from "basic" SablierV2
-    // all the types of streams are inheriting from that
-    // so it's safe to rely on any stream ABI
-    const cancelCallData = encodeFunctionData({
-      abi: SablierV2LockupLinearAbi,
-      functionName: 'cancel',
-      args: [convertStreamIdToBigInt(streamId)],
-    });
+      const disableModuleData = encodeFunctionData({
+        abi: GnosisSafeL2,
+        functionName: 'disableModule',
+        args: [SENTINEL_MODULE, decentSablierMasterCopy],
+      });
 
-    return { calldata: cancelCallData, targetAddress };
-  }, []);
+      const withdrawMaxFromStreamData = encodeFunctionData({
+        abi: abis.DecentSablierStreamManagement,
+        functionName: 'withdrawMaxFromStream',
+        args: [sablierV2LockupLinear, smartAccount, convertStreamIdToBigInt(streamId), to],
+      });
+
+      return [
+        {
+          targetAddress: daoAddress,
+          calldata: enableModuleData,
+        },
+        {
+          targetAddress: decentSablierMasterCopy,
+          calldata: withdrawMaxFromStreamData,
+        },
+        {
+          targetAddress: daoAddress,
+          calldata: disableModuleData,
+        },
+      ];
+    },
+    [daoAddress, decentSablierMasterCopy, sablierV2LockupLinear],
+  );
+
+  const prepareCancelStreamTxs = useCallback(
+    (streamId: string) => {
+      if (!daoAddress) {
+        throw new Error('Can not flush stream without DAO Address');
+      }
+
+      const enableModuleData = encodeFunctionData({
+        abi: GnosisSafeL2,
+        functionName: 'enableModule',
+        args: [decentSablierMasterCopy],
+      });
+
+      const disableModuleData = encodeFunctionData({
+        abi: GnosisSafeL2,
+        functionName: 'disableModule',
+        args: [SENTINEL_MODULE, decentSablierMasterCopy],
+      });
+
+      const cancelStreamData = encodeFunctionData({
+        abi: abis.DecentSablierStreamManagement,
+        functionName: 'cancelStream',
+        args: [sablierV2LockupLinear, convertStreamIdToBigInt(streamId)],
+      });
+
+      return [
+        {
+          targetAddress: daoAddress,
+          calldata: enableModuleData,
+        },
+        {
+          targetAddress: decentSablierMasterCopy,
+          calldata: cancelStreamData,
+        },
+        {
+          targetAddress: daoAddress,
+          calldata: disableModuleData,
+        },
+      ];
+    },
+    [daoAddress, decentSablierMasterCopy, sablierV2LockupLinear],
+  );
 
   const prepareBatchLinearStreamCreation = useCallback(
     (paymentStreams: PreparedNewStreamData[]) => {
@@ -142,8 +203,8 @@ export default function useCreateSablierStream() {
 
   return {
     prepareBatchLinearStreamCreation,
-    prepareFlushStreamTx,
-    prepareCancelStreamTx,
+    prepareFlushStreamTxs,
+    prepareCancelStreamTxs,
     prepareLinearStream,
   };
 }

@@ -3,7 +3,6 @@ import { CaretCircleRight, CaretRight } from '@phosphor-icons/react';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { getAddress, zeroAddress } from 'viem';
-import { isFeatureEnabled } from '../../../constants/common';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -62,7 +61,7 @@ export function AvatarAndRoleName({
         >
           {wearerAddress ? accountDisplayName : t('unassigned')}
         </Text>
-        {isFeatureEnabled('STREAMS') && paymentsCount !== undefined && (
+        {paymentsCount !== undefined && (
           <Flex
             mt="1rem"
             gap="0.25rem"
@@ -234,8 +233,7 @@ export function RoleCardEdit({
           />
         </Flex>
       </Flex>
-      {isFeatureEnabled('STREAMS') &&
-        payments &&
+      {payments &&
         payments.map((payment, index) => (
           <Payment
             key={index}

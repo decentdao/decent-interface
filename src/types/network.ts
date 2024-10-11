@@ -56,6 +56,7 @@ export type NetworkConfig = {
     keyValuePairs: Address;
 
     decentHatsMasterCopy: Address;
+    decentSablierMasterCopy: Address;
 
     hatsProtocol: Address;
     erc6551Registry: Address;
