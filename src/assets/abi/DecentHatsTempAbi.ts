@@ -89,8 +89,8 @@ export const DecentHatsTempAbi = [
               {
                 "components": [
                   {
-                    "internalType": "address",
-                    "name": "sablierV2LockupLinear",
+                    "internalType": "contract ISablierV2LockupLinear",
+                    "name": "sablier",
                     "type": "address"
                   },
                   {
@@ -219,8 +219,8 @@ export const DecentHatsTempAbi = [
               {
                 "components": [
                   {
-                    "internalType": "address",
-                    "name": "sablierV2LockupLinear",
+                    "internalType": "contract ISablierV2LockupLinear",
+                    "name": "sablier",
                     "type": "address"
                   },
                   {
