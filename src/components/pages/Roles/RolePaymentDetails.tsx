@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Grid, GridItem, Icon, Image, Show, Tag, Text } from '@chakra-ui/react';
-import { Calendar, Download, Trash } from '@phosphor-icons/react';
+import { CalendarBlank, Download, Trash } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { TouchEvent, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,14 +29,18 @@ function PaymentDate({ label, date }: { label: string; date?: Date }) {
       >
         {t(label)}
       </Text>
-      <Flex gap="0.25rem">
+      <Flex
+        gap="0.25rem"
+        alignItems="center"
+      >
         <Icon
           boxSize="1rem"
-          as={Calendar}
+          as={CalendarBlank}
+          color={date ? 'lilac-0' : 'neutral-6'}
         />
         <Text
           textStyle="label-small"
-          color="neutral-7"
+          color={date ? 'white-0' : 'neutral-6'}
         >
           {date ? format(date, DEFAULT_DATE_FORMAT) : '---'}
         </Text>

@@ -53,7 +53,7 @@ function HeaderLogo() {
             variant="tertiary"
             icon={
               <Icon
-                boxSize="1.75rem"
+                boxSize="1.5rem"
                 as={List}
                 color="white-0"
                 aria-hidden
@@ -157,7 +157,7 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
         h={HEADER_HEIGHT}
         justifyContent="flex-end"
         alignItems="center"
-        gap={{ base: '0.5rem', md: '1rem' }}
+        gap={{ base: '2rem', md: '1rem' }}
       >
         <Hide above="md">
           <IconButton
@@ -168,7 +168,7 @@ function Header({ headerContainerRef }: { headerContainerRef: RefObject<HTMLDivE
             icon={
               <Icon
                 as={MagnifyingGlass}
-                boxSize="1.75rem"
+                boxSize="1.5rem"
                 color="white-0"
                 aria-hidden
               />

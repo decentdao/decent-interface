@@ -38,7 +38,7 @@ export function SafesMenu() {
             <Icon
               as={Star}
               color="white-0"
-              boxSize="1.75rem"
+              boxSize="1.5rem"
               aria-hidden
             />
           }

@@ -5,11 +5,12 @@ import { Info } from '@phosphor-icons/react';
 export interface LabelWrapperProps {
   label?: string;
   subLabel?: JSX.Element | string | null;
-  isDisabled?: boolean;
+  isRequired?: boolean;
   errorMessage?: string | null;
   tooltipContent?: JSX.Element;
   htmlFor?: string;
   children: JSX.Element | JSX.Element[];
+  labelColor?: string;
 }
 
 function LabelWrapper({
@@ -18,6 +19,8 @@ function LabelWrapper({
   errorMessage,
   tooltipContent,
   children,
+  isRequired,
+  labelColor = 'white-0',
 }: LabelWrapperProps) {
   return (
     <Box position="relative">
@@ -26,11 +29,12 @@ function LabelWrapper({
           gap="2"
           alignItems="center"
           h="fit-content"
-          color="white-0"
+          color={labelColor}
           mb="2"
           textStyle="label-base"
         >
           <Text>{label}</Text>
+          {isRequired && <Text color="lilac-0">*</Text>}
           {!!tooltipContent && (
             <Tooltip
               hasArrow

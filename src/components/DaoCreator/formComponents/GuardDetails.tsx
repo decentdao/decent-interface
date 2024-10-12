@@ -161,7 +161,7 @@ function GuardDetails(props: ICreationStepProps) {
                 <BigIntInput
                   isInvalid={!!errors?.freeze?.freezeVotesThreshold?.bigintValue}
                   value={field.value?.bigintValue}
-                  currentValue={values.freeze.freezeVotesThreshold}
+                  parentFormikValue={values.freeze.freezeVotesThreshold}
                   onChange={valuePair => {
                     setFieldValue('freeze.freezeVotesThreshold', valuePair);
                   }}
@@ -223,7 +223,12 @@ function GuardDetails(props: ICreationStepProps) {
             status="info"
             gap={4}
           >
-            <Info size="24" />
+            <Box
+              width="1.5rem"
+              height="1.5rem"
+            >
+              <Info size="24" />
+            </Box>
             <Text
               textStyle="body-base-strong"
               whiteSpace="pre-wrap"

@@ -18,11 +18,12 @@ import {
   RoleHatFormValueEdited,
   SablierPaymentFormValues,
 } from '../../components/pages/Roles/types';
+import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { getERC6551RegistrySalt, predictHatId, useRolesStore } from '../../store/roles';
+import { predictHatId, useRolesStore } from '../../store/roles';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
@@ -51,7 +52,7 @@ export default function useCreateRoles() {
   const { t } = useTranslation(['roles', 'navigation', 'modals', 'common']);
 
   const { submitProposal } = useSubmitProposal();
-  const { prepareBatchLinearStreamCreation, prepareFlushStreamTx, prepareCancelStreamTx } =
+  const { prepareBatchLinearStreamCreation, prepareFlushStreamTxs, prepareCancelStreamTxs } =
     useCreateSablierStream();
   const ipfsClient = useIPFSClient();
   const publicClient = usePublicClient();
@@ -198,17 +199,9 @@ export default function useCreateRoles() {
         tokenId: hatId,
         registryAddress: erc6551Registry,
         publicClient,
-        decentHats: getAddress(decentHatsMasterCopy),
       });
     },
-    [
-      publicClient,
-      hatsAccount1ofNMasterCopy,
-      chain.id,
-      hatsProtocol,
-      erc6551Registry,
-      decentHatsMasterCopy,
-    ],
+    [publicClient, hatsAccount1ofNMasterCopy, chain.id, hatsProtocol, erc6551Registry],
   );
 
   const prepareCreateTopHatProposalData = useCallback(
@@ -292,20 +285,6 @@ export default function useCreateRoles() {
     ],
   );
 
-  const prepareHatsAccountFlushExecData = useCallback(
-    (streamId: string, contractAddress: Address, wearer: Address) => {
-      const flushStreamTxCalldata = prepareFlushStreamTx(streamId, wearer);
-      const wrappedFlushStreamTx = encodeFunctionData({
-        abi: HatsAccount1ofNAbi,
-        functionName: 'execute',
-        args: [contractAddress, 0n, flushStreamTxCalldata, 0],
-      });
-
-      return wrappedFlushStreamTx;
-    },
-    [prepareFlushStreamTx],
-  );
-
   const createNewHatTx = useCallback(
     async (formRole: RoleHatFormValueEdited, adminHatId: bigint, topHatSmartAccount: Address) => {
       if (formRole.name === undefined || formRole.description === undefined) {
@@ -369,7 +348,7 @@ export default function useCreateRoles() {
           functionName: 'createAccount',
           args: [
             hatsAccount1ofNMasterCopy,
-            getERC6551RegistrySalt(BigInt(chain.id), getAddress(decentHatsMasterCopy)),
+            ERC6551_REGISTRY_SALT,
             BigInt(chain.id),
             hatsProtocol,
             newHatId,
@@ -378,7 +357,7 @@ export default function useCreateRoles() {
         targetAddress: erc6551Registry,
       };
     },
-    [chain.id, decentHatsMasterCopy, erc6551Registry, hatsAccount1ofNMasterCopy, hatsProtocol],
+    [chain.id, erc6551Registry, hatsAccount1ofNMasterCopy, hatsProtocol],
   );
 
   const createBatchLinearStreamCreationTx = useCallback(
@@ -520,6 +499,7 @@ export default function useCreateRoles() {
             );
           }
 
+          // @todo: For all instances of `getAddress(formHat.wearer)` we should confirm that at this point, `formHat.wearer` is definitely an `Address` type.
           const originalHat = getHat(formHat.id);
           if (!originalHat) {
             throw new Error('Cannot find original hat');
@@ -545,15 +525,14 @@ export default function useCreateRoles() {
                   'Stream ID and Stream ContractAddress is required for flush stream transaction',
                 );
               }
-              const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
-                stream.streamId,
-                stream.contractAddress,
-                originalHat.wearer,
-              );
-              allTxs.push({
-                calldata: wrappedFlushStreamTx,
-                targetAddress: formHat.smartAddress,
+
+              const flushStreamTxCalldata = prepareFlushStreamTxs({
+                streamId: stream.streamId,
+                to: getAddress(originalHat.wearer),
+                smartAccount: formHat.smartAddress,
               });
+
+              allTxs.push(...flushStreamTxCalldata);
             }
           }
 
@@ -566,7 +545,7 @@ export default function useCreateRoles() {
                   'Stream ID and Stream ContractAddress is required for cancel stream transaction',
                 );
               }
-              allTxs.push(prepareCancelStreamTx(stream.streamId, stream.contractAddress));
+              allTxs.push(...prepareCancelStreamTxs(stream.streamId));
             }
           }
 
@@ -634,22 +613,23 @@ export default function useCreateRoles() {
                 }),
                 targetAddress: hatsProtocol,
               });
+
               for (const stream of streamsWithFundsToClaim) {
                 if (!stream.streamId || !stream.contractAddress) {
                   throw new Error(
                     'Stream ID and Stream ContractAddress is required for flush stream transaction',
                   );
                 }
-                const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
-                  stream.streamId,
-                  stream.contractAddress,
-                  originalHat.wearer,
-                );
-                allTxs.push({
-                  calldata: wrappedFlushStreamTx,
-                  targetAddress: formHat.smartAddress,
+
+                const flushStreamTxCalldata = prepareFlushStreamTxs({
+                  streamId: stream.streamId,
+                  to: originalHat.wearer,
+                  smartAccount: formHat.smartAddress,
                 });
+
+                allTxs.push(...flushStreamTxCalldata);
               }
+
               allTxs.push({
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
@@ -670,6 +650,7 @@ export default function useCreateRoles() {
               });
             }
           }
+
           if (formHat.editedRole.fieldNames.includes('payments')) {
             const cancelledStreamsOnHat = getCancelledStreamsFromFormHat(formHat);
             if (cancelledStreamsOnHat.length) {
@@ -698,20 +679,17 @@ export default function useCreateRoles() {
 
                 // flush withdrawable streams to the original wearer
                 if (stream.withdrawableAmount && stream.withdrawableAmount > 0n) {
-                  const wrappedFlushStreamTx = prepareHatsAccountFlushExecData(
-                    stream.streamId,
-                    stream.contractAddress,
-                    originalHat.wearer,
-                  );
-
-                  allTxs.push({
-                    calldata: wrappedFlushStreamTx,
-                    targetAddress: formHat.smartAddress,
+                  const flushStreamTxCalldata = prepareFlushStreamTxs({
+                    streamId: stream.streamId,
+                    to: originalHat.wearer,
+                    smartAccount: formHat.smartAddress,
                   });
+
+                  allTxs.push(...flushStreamTxCalldata);
                 }
 
                 // Cancel the stream
-                allTxs.push(prepareCancelStreamTx(stream.streamId, stream.contractAddress));
+                allTxs.push(...prepareCancelStreamTxs(stream.streamId));
 
                 // Finally, transfer the hat back to the correct wearer.
                 // Because a payment cancel can occur in the same role edit as a member change, we need to ensure hat is
@@ -773,8 +751,8 @@ export default function useCreateRoles() {
       hatsTree,
       mintHatTx,
       predictSmartAccount,
-      prepareCancelStreamTx,
-      prepareHatsAccountFlushExecData,
+      prepareCancelStreamTxs,
+      prepareFlushStreamTxs,
       uploadHatDescription,
     ],
   );
@@ -785,13 +763,12 @@ export default function useCreateRoles() {
         throw new Error('Cannot create Roles proposal without public client');
       }
 
-      const { setSubmitting } = formikHelpers;
-      setSubmitting(true);
-
       if (!safe) {
-        setSubmitting(false);
         throw new Error('Cannot create Roles proposal without known Safe');
       }
+
+      const { setSubmitting } = formikHelpers;
+      setSubmitting(true);
 
       // filter to hats that have been modified, or whose payments have been modified (ie includes `editedRole` prop)
       const modifiedHats: RoleHatFormValueEdited[] = values.hats

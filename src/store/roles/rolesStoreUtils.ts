@@ -2,6 +2,7 @@ import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
 import { SablierPayment } from '../../components/pages/Roles/types';
+import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -149,7 +150,7 @@ export const initialHatsStore: RolesStoreData = {
   contextChainId: null,
 };
 
-export const predictAccountAddress = (params: PredictAccountParams) => {
+export const predictAccountAddress = async (params: PredictAccountParams) => {
   const { implementation, chainId, tokenContract, tokenId, registryAddress, publicClient } = params;
 
   const erc6551RegistryContract = getContract({
@@ -158,17 +159,9 @@ export const predictAccountAddress = (params: PredictAccountParams) => {
     client: publicClient,
   });
 
-  /**
-   * @dev DO NOT CHANGE THE SALT
-   * @note This SALT is used to generate the account address for the Hats Smart Account
-   * @note This has been used in production and changing it will break the predictability of the smart account addresses
-   *
-   */
-  const SALT = '0x5d0e6ce4fd951366cc55da93f6e79d8b81483109d79676a04bcc2bed6a4b5072';
-
   return erc6551RegistryContract.read.account([
     implementation,
-    SALT,
+    ERC6551_REGISTRY_SALT,
     chainId,
     tokenContract,
     tokenId,

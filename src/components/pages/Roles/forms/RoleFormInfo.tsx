@@ -1,7 +1,7 @@
 import { Box, FormControl } from '@chakra-ui/react';
 import { Field, FieldProps } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { CARD_SHADOW } from '../../../../constants/common';
+import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -15,10 +15,13 @@ export default function RoleFormInfo() {
       py="1rem"
       bg="neutral-2"
       boxShadow={{
-        base: CARD_SHADOW,
+        base: DETAILS_BOX_SHADOW,
         md: 'unset',
       }}
       borderRadius="0.5rem"
+      display="flex"
+      flexDirection="column"
+      gap="1rem"
     >
       <FormControl>
         <Field name="roleEditing.name">
@@ -27,29 +30,26 @@ export default function RoleFormInfo() {
             form: { setFieldValue, setFieldTouched },
             meta,
           }: FieldProps<string, RoleFormValues>) => (
-            <LabelWrapper
+            <InputComponent
+              value={field.value}
+              onChange={e => {
+                setFieldValue(field.name, e.target.value);
+              }}
+              onBlur={() => {
+                setFieldTouched(field.name, true);
+              }}
+              testId="role-name"
+              placeholder={t('roleName')}
+              isRequired
+              gridContainerProps={{
+                gridTemplateColumns: { base: '1fr', md: '1fr' },
+              }}
+              inputContainerProps={{
+                p: 0,
+              }}
               label={t('roleName')}
               errorMessage={meta.touched && meta.error ? meta.error : undefined}
-            >
-              <InputComponent
-                value={field.value}
-                onChange={e => {
-                  setFieldValue(field.name, e.target.value);
-                }}
-                onBlur={() => {
-                  setFieldTouched(field.name, true);
-                }}
-                testId="role-name"
-                placeholder={t('roleName')}
-                isRequired
-                gridContainerProps={{
-                  gridTemplateColumns: { base: '1fr', md: '1fr' },
-                }}
-                inputContainerProps={{
-                  p: 0,
-                }}
-              />
-            </LabelWrapper>
+            />
           )}
         </Field>
       </FormControl>
@@ -60,30 +60,27 @@ export default function RoleFormInfo() {
             form: { setFieldValue, setFieldTouched },
             meta,
           }: FieldProps<string, RoleFormValues>) => (
-            <LabelWrapper
-              label={t('description')}
+            <TextareaComponent
+              value={field.value}
+              onChange={e => {
+                setFieldValue(field.name, e.target.value);
+              }}
+              isRequired
+              gridContainerProps={{
+                gridTemplateColumns: { base: '1fr', md: '1fr' },
+              }}
+              inputContainerProps={{
+                p: 0,
+              }}
+              textAreaProps={{
+                h: '12rem',
+                onBlur: () => {
+                  setFieldTouched(field.name, true);
+                },
+              }}
+              label={t('roleDescription')}
               errorMessage={meta.touched && meta.error ? meta.error : undefined}
-            >
-              <TextareaComponent
-                value={field.value}
-                onChange={e => {
-                  setFieldValue(field.name, e.target.value);
-                }}
-                isRequired
-                gridContainerProps={{
-                  gridTemplateColumns: { base: '1fr', md: '1fr' },
-                }}
-                inputContainerProps={{
-                  p: 0,
-                }}
-                textAreaProps={{
-                  h: '12rem',
-                  onBlur: () => {
-                    setFieldTouched(field.name, true);
-                  },
-                }}
-              />
-            </LabelWrapper>
+            />
           )}
         </Field>
       </FormControl>
@@ -97,6 +94,8 @@ export default function RoleFormInfo() {
             <LabelWrapper
               label={t('member')}
               errorMessage={meta.touched && meta.error ? meta.error : undefined}
+              isRequired
+              labelColor="neutral-7"
             >
               <AddressInput
                 value={field.value}

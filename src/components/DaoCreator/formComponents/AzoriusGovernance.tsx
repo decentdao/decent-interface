@@ -174,7 +174,12 @@ export function AzoriusGovernance(props: ICreationStepProps) {
             status="info"
             gap={4}
           >
-            <WarningCircle size="24" />
+            <Box
+              width="1.5rem"
+              height="1.5rem"
+            >
+              <WarningCircle size="24" />
+            </Box>
             <Text
               textStyle="body-base-strong"
               whiteSpace="pre-wrap"

@@ -3,7 +3,6 @@ import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex, zeroAddress } from 'viem';
-import { isFeatureEnabled } from '../../../constants/common';
 import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
@@ -39,15 +38,13 @@ function RolesHeader() {
           {t('role')}
         </Th>
         <Th width="60%">{t('member')}</Th>
-        {isFeatureEnabled('STREAMS') && (
-          <Th
-            width="15%"
-            minWidth="140px"
-            textAlign="center"
-          >
-            {t('activePayments')}
-          </Th>
-        )}
+        <Th
+          width="15%"
+          minWidth="140px"
+          textAlign="center"
+        >
+          {t('activePayments')}
+        </Th>
       </Tr>
     </Thead>
   );
@@ -183,6 +180,7 @@ export function RolesRow({
       _hover={{ bg: 'neutral-3' }}
       _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
+      cursor="pointer"
       onClick={() => handleRoleClick(hatId)}
     >
       <Td
@@ -194,7 +192,7 @@ export function RolesRow({
         {name}
       </Td>
       <MemberColumn wearerAddress={wearerAddress} />
-      {isFeatureEnabled('STREAMS') && <PaymentsColumn paymentsCount={paymentsCount} />}
+      <PaymentsColumn paymentsCount={paymentsCount} />
     </Tr>
   );
 }
@@ -226,11 +224,7 @@ export function RolesRowEdit({
         editStatus={editStatus}
       />
       <MemberColumn wearerAddress={wearerAddress} />
-      {isFeatureEnabled('STREAMS') && (
-        <PaymentsColumn
-          paymentsCount={payments?.filter(p => p.isStreaming()).length || undefined}
-        />
-      )}
+      <PaymentsColumn paymentsCount={payments?.filter(p => p.isStreaming()).length || undefined} />
     </Tr>
   );
 }

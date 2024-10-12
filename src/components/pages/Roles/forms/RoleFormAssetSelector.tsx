@@ -300,11 +300,11 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                     ? paymentAmountBigIntError?.bigintValue
                     : undefined
                 }
-                isDisabled={inputDisabled}
               >
                 <BigIntInput
                   isDisabled={inputDisabled}
                   value={field.value?.bigintValue}
+                  parentFormikValue={values?.roleEditing?.payments?.[formIndex]?.amount}
                   onChange={valuePair => {
                     setFieldValue(field.name, valuePair, true);
                   }}
@@ -313,6 +313,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                     setFieldTouched(field.name, true);
                   }}
                   cursor={disabled ? 'not-allowed' : 'pointer'}
+                  placeholder="0"
                 />
               </LabelWrapper>
             );

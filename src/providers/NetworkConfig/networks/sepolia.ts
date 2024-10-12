@@ -80,8 +80,10 @@ export const sepoliaConfig: NetworkConfig = {
 
     fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
-    decentHatsV1MasterCopy: getAddress(a.DecentHats_0_1_0),
-    decentHatsV2MasterCopy: getAddress('0xaFdD339cE4Ed6638a5fba3147a2F0e4EF6d5f67a'),
+    decentHatsMasterCopy: getAddress('0xaFdD339cE4Ed6638a5fba3147a2F0e4EF6d5f67a'),
+    decentAutonomousAdminMasterCopy: getAddress('0xd8784CEeC9cbA6c7eF31849Dd2c708c2AFc37b36'),    
+    decentSablierMasterCopy: getAddress(a.DecentSablierStreamManagement),
+
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
     erc6551Registry: '0x000000006551c19487814612e58FE06813775758',
     hatsAccount1ofNMasterCopy: '0xfEf83A660b7C10a3EdaFdCF62DEee1fD8a875D29',
@@ -89,7 +91,6 @@ export const sepoliaConfig: NetworkConfig = {
     sablierV2LockupDynamic: '0x73BB6dD3f5828d60F8b3dBc8798EB10fbA2c5636',
     sablierV2LockupTranched: '0x3a1beA13A8C24c0EA2b8fAE91E4b2762A59D7aF5',
     sablierV2LockupLinear: '0x3E435560fd0a03ddF70694b35b673C25c65aBB6C',
-    decentAutonomousAdminMasterCopy: getAddress('0xd8784CEeC9cbA6c7eF31849Dd2c708c2AFc37b36'),
   },
   staking: {},
   moralis: {

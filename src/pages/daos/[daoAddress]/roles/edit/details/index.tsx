@@ -13,7 +13,7 @@ import {
   Show,
   Text,
 } from '@chakra-ui/react';
-import { ArrowLeft, DotsThree, Trash, X } from '@phosphor-icons/react';
+import { ArrowLeft, DotsThree, Trash } from '@phosphor-icons/react';
 import { FieldArray, useFormikContext } from 'formik';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +38,7 @@ import { DAO_ROUTES } from '../../../../../../constants/routes';
 import { useNavigationBlocker } from '../../../../../../hooks/utils/useNavigationBlocker';
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useRolesStore } from '../../../../../../store/roles';
 import { UnsavedChangesWarningContent } from '../unsavedChangesWarningContent';
 
 function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void }) {
@@ -132,6 +133,7 @@ export default function RoleEditDetails() {
   const {
     node: { daoAddress },
   } = useFractal();
+  const { getPayment } = useRolesStore();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
   const { values, setFieldValue, touched, setTouched } = useFormikContext<RoleFormValues>();
@@ -164,6 +166,31 @@ export default function RoleEditDetails() {
       navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress), { replace: true });
     }, 50);
   };
+
+  const paymentIndex = values.roleEditing?.roleEditingPaymentIndex;
+  const streamId =
+    paymentIndex !== undefined ? values.roleEditing?.payments?.[paymentIndex]?.streamId : undefined;
+
+  const goBackToRoleEdit = () => {
+    if (!values.roleEditing?.payments || paymentIndex === undefined || !hatEditingId) return;
+    const isExistingPayment = !!streamId ? getPayment(hatEditingId, streamId) : undefined;
+    // if payment is new, and unedited, remove it
+    if (
+      paymentIndex === values.roleEditing.payments.length - 1 &&
+      !values.roleEditing.editedRole &&
+      !isExistingPayment
+    ) {
+      setFieldValue(
+        'roleEditing.payments',
+        values.roleEditing.payments.filter((_, index) => index !== paymentIndex),
+      );
+    }
+    setFieldValue('roleEditing.roleEditingPaymentIndex', undefined);
+  };
+
+  const goBackText = t(
+    paymentIndex === undefined ? 'editRole' : streamId ? 'payments' : 'addPayment',
+  );
 
   return (
     <>
@@ -231,21 +258,24 @@ export default function RoleEditDetails() {
                       variant="tertiary"
                       gap="0.5rem"
                       alignItems="center"
-                      aria-label={t('editRoles')}
-                      onClick={goBackToRolesEdit}
+                      aria-label={goBackText}
+                      onClick={paymentIndex === undefined ? goBackToRolesEdit : goBackToRoleEdit}
+                      color="neutral-8"
                     >
                       <Icon
                         as={ArrowLeft}
                         boxSize="1.5rem"
                       />
-                      <Text textStyle="display-lg">{t('editRoles')}</Text>
+                      <Text textStyle="display-lg">{goBackText}</Text>
                     </Button>
-                    <Box position="relative">
-                      <EditRoleMenu
-                        onRemove={goBackToRolesEdit}
-                        hatId={hatEditingId}
-                      />
-                    </Box>
+                    {paymentIndex === undefined && (
+                      <Box position="relative">
+                        <EditRoleMenu
+                          hatId={hatEditingId}
+                          onRemove={goBackToRolesEdit}
+                        />
+                      </Box>
+                    )}
                   </Flex>
                   <Box pb="5rem">
                     <RoleFormTabs
@@ -285,18 +315,27 @@ export default function RoleEditDetails() {
                         <IconButton
                           variant="tertiary"
                           size="icon-sm"
-                          aria-label="Close Drawer"
-                          icon={<X size="1.5rem" />}
-                          onClick={goBackToRolesEdit}
+                          aria-label={goBackText}
+                          icon={<ArrowLeft size="1.5rem" />}
+                          onClick={
+                            paymentIndex === undefined ? goBackToRolesEdit : goBackToRoleEdit
+                          }
                         />
-                        <Text textStyle="body-base">{t('editRole')}</Text>
+                        <Text
+                          textStyle="body-base"
+                          color="neutral-8"
+                        >
+                          {goBackText}
+                        </Text>
                       </Flex>
-                      <Box position="relative">
-                        <EditRoleMenu
-                          hatId={hatEditingId}
-                          onRemove={goBackToRolesEdit}
-                        />
-                      </Box>
+                      {paymentIndex === undefined && (
+                        <Box position="relative">
+                          <EditRoleMenu
+                            hatId={hatEditingId}
+                            onRemove={goBackToRolesEdit}
+                          />
+                        </Box>
+                      )}
                     </Flex>
                     <RoleFormTabs
                       hatId={hatEditingId}
