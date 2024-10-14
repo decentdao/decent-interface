@@ -52,10 +52,10 @@ export function ManageDAOMenu({ parentAddress, freezeGuard, guardContracts }: IM
   } = useFractal();
   const currentTime = BigInt(useBlockTimestamp());
   const navigate = useNavigate();
-  const safeAddress = node.daoAddress;
+  const safeAddress = node.safe?.address;
   const { getZodiacModuleProxyMasterCopyData } = useMasterCopy();
   const { canUserCreateProposal } = useCanUserCreateProposal();
-  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress, null, false);
+  const { getUserERC721VotingTokens } = useUserERC721VotingTokens(safeAddress ?? null, null, false);
   const { handleClawBack } = useClawBack({
     parentAddress,
     childSafeInfo: node,

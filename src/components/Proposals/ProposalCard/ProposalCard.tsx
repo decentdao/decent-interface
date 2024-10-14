@@ -15,20 +15,20 @@ import { ProposalCountdown } from '../../ui/proposal/ProposalCountdown';
 
 function ProposalCard({ proposal }: { proposal: FractalProposal }) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const { addressPrefix } = useNetworkConfig();
   const { t } = useTranslation('common');
 
-  const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
-  const isAzoriusProposal = !!(proposal as AzoriusProposal).votesSummary;
-
-  if (!daoAddress) {
+  if (!safe?.address) {
     return null;
   }
 
+  const isSnapshotProposal = !!(proposal as SnapshotProposal).snapshotProposalId;
+  const isAzoriusProposal = !!(proposal as AzoriusProposal).votesSummary;
+
   return (
-    <Link to={DAO_ROUTES.proposal.relative(addressPrefix, daoAddress, proposal.proposalId)}>
+    <Link to={DAO_ROUTES.proposal.relative(addressPrefix, safe.address, proposal.proposalId)}>
       <Box
         minHeight="6.25rem"
         bg="neutral-2"

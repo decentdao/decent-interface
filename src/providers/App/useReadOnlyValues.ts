@@ -77,7 +77,7 @@ export const useReadOnlyValues = ({ node, governance }: Fractal, _account?: Addr
         address,
         votingWeight: await getVotingWeight(),
       },
-      dao: !node.daoAddress
+      dao: !node.safe?.address
         ? null // if there is no DAO connected, we return null for this
         : {
             isAzorius:

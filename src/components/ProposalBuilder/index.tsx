@@ -43,26 +43,28 @@ export function ProposalBuilder({
   const isProposalMode = mode === ProposalBuilderMode.PROPOSAL;
 
   const {
-    node: { daoAddress, safe },
+    node: { safe },
     readOnly: { dao },
   } = useFractal();
+  const safeAddress = safe?.address;
+
   const { addressPrefix } = useNetworkConfig();
   const { submitProposal, pendingCreateTx } = useSubmitProposal();
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const { createProposalValidation } = useCreateProposalSchema();
 
   const successCallback = () => {
-    if (daoAddress) {
+    if (safeAddress) {
       // Redirecting to proposals page so that user will see Proposal for Proposal Template creation
-      navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+      navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress));
     }
   };
 
   useEffect(() => {
-    if (daoAddress && (!step || !Object.values(CreateProposalSteps).includes(step))) {
-      navigate(DAO_ROUTES.proposalNew.relative(addressPrefix, daoAddress), { replace: true });
+    if (safeAddress && (!step || !Object.values(CreateProposalSteps).includes(step))) {
+      navigate(DAO_ROUTES.proposalNew.relative(addressPrefix, safeAddress), { replace: true });
     }
-  }, [daoAddress, step, navigate, addressPrefix]);
+  }, [safeAddress, step, navigate, addressPrefix]);
 
   return (
     <Formik<CreateProposalForm>
@@ -95,7 +97,7 @@ export function ProposalBuilder({
       {(formikProps: FormikProps<CreateProposalForm>) => {
         const { handleSubmit } = formikProps;
 
-        if (!daoAddress) {
+        if (!safeAddress) {
           return;
         }
 
@@ -113,7 +115,7 @@ export function ProposalBuilder({
                     ? [
                         {
                           terminus: t('proposals', { ns: 'breadcrumbs' }),
-                          path: DAO_ROUTES.proposals.relative(addressPrefix, daoAddress),
+                          path: DAO_ROUTES.proposals.relative(addressPrefix, safeAddress),
                         },
                         {
                           terminus: t('proposalNew', { ns: 'breadcrumbs' }),
@@ -123,7 +125,7 @@ export function ProposalBuilder({
                     : [
                         {
                           terminus: t('proposalTemplates', { ns: 'breadcrumbs' }),
-                          path: DAO_ROUTES.proposalTemplates.relative(addressPrefix, daoAddress),
+                          path: DAO_ROUTES.proposalTemplates.relative(addressPrefix, safeAddress),
                         },
                         {
                           terminus: t('proposalTemplateNew', { ns: 'breadcrumbs' }),
@@ -137,10 +139,10 @@ export function ProposalBuilder({
                   variant: 'secondary',
                   onClick: () =>
                     navigate(
-                      daoAddress
+                      safeAddress
                         ? isProposalMode
-                          ? DAO_ROUTES.proposals.relative(addressPrefix, daoAddress)
-                          : DAO_ROUTES.proposalTemplates.relative(addressPrefix, daoAddress)
+                          ? DAO_ROUTES.proposals.relative(addressPrefix, safeAddress)
+                          : DAO_ROUTES.proposalTemplates.relative(addressPrefix, safeAddress)
                         : BASE_ROUTES.landing,
                     ),
                 }}

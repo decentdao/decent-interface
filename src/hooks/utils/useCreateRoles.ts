@@ -33,7 +33,7 @@ import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
 
 export default function useCreateRoles() {
   const {
-    node: { safe, daoAddress, daoName },
+    node: { safe, daoName },
   } = useFractal();
   const { hatsTree, hatsTreeId, getHat } = useRolesStore();
   const {
@@ -57,6 +57,8 @@ export default function useCreateRoles() {
   const ipfsClient = useIPFSClient();
   const publicClient = usePublicClient();
   const navigate = useNavigate();
+
+  const safeAddress = safe?.address;
 
   const hatsDetailsBuilder = useCallback((data: { name: string; description: string }) => {
     return JSON.stringify({
@@ -110,7 +112,7 @@ export default function useCreateRoles() {
     ) => {
       const newHat = await createHatStruct(name, description, wearer);
 
-      if (daoAddress === null) {
+      if (safeAddress === undefined) {
         throw new Error('Can not create Hat Struct (with payments) without DAO Address');
       }
 
@@ -118,7 +120,7 @@ export default function useCreateRoles() {
         ...newHat,
         sablierParams: payments.map(payment => ({
           sablier: sablierV2LockupLinear,
-          sender: daoAddress,
+          sender: safeAddress,
           totalAmount: payment.totalAmount,
           asset: payment.asset,
           cancelable: true,
@@ -134,7 +136,7 @@ export default function useCreateRoles() {
 
       return newHatWithPayments;
     },
-    [createHatStruct, daoAddress, sablierV2LockupLinear],
+    [createHatStruct, safeAddress, sablierV2LockupLinear],
   );
 
   const parseSablierPaymentsFromFormRolePayments = useCallback(
@@ -206,7 +208,7 @@ export default function useCreateRoles() {
 
   const prepareCreateTopHatProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Can not create top hat without DAO Address');
       }
 
@@ -225,7 +227,7 @@ export default function useCreateRoles() {
 
       const topHatDetails = await uploadHatDescription(
         hatsDetailsBuilder({
-          name: daoName || daoAddress,
+          name: daoName || safeAddress,
           description: '',
         }),
       );
@@ -265,14 +267,14 @@ export default function useCreateRoles() {
       });
 
       return {
-        targets: [daoAddress, decentHatsAddress, daoAddress],
+        targets: [safeAddress, decentHatsAddress, safeAddress],
         calldatas: [enableModuleData, createAndDeclareTreeData, disableModuleData],
         metaData: proposalMetadata,
         values: [0n, 0n, 0n],
       };
     },
     [
-      daoAddress,
+      safeAddress,
       daoName,
       decentHatsMasterCopy,
       erc6551Registry,
@@ -416,7 +418,7 @@ export default function useCreateRoles() {
 
   const prepareCreateRolesModificationsProposalData = useCallback(
     async (proposalMetadata: CreateProposalMetadata, modifiedHats: RoleHatFormValueEdited[]) => {
-      if (!hatsTree || !daoAddress) {
+      if (!hatsTree || !safeAddress) {
         throw new Error('Cannot prepare transactions without hats tree or DAO address');
       }
 
@@ -509,7 +511,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), getAddress(originalHat.wearer), daoAddress],
+              args: [BigInt(formHat.id), getAddress(originalHat.wearer), safeAddress],
             }),
             targetAddress: hatsProtocol,
           });
@@ -609,7 +611,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), originalHat.wearer, daoAddress],
+                  args: [BigInt(formHat.id), originalHat.wearer, safeAddress],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -634,7 +636,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), daoAddress, newWearer],
+                  args: [BigInt(formHat.id), safeAddress, newWearer],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -672,7 +674,7 @@ export default function useCreateRoles() {
                   calldata: encodeFunctionData({
                     abi: HatsAbi,
                     functionName: 'transferHat',
-                    args: [BigInt(formHat.id), originalHat.wearer, daoAddress],
+                    args: [BigInt(formHat.id), originalHat.wearer, safeAddress],
                   }),
                   targetAddress: hatsProtocol,
                 });
@@ -700,7 +702,7 @@ export default function useCreateRoles() {
                   calldata: encodeFunctionData({
                     abi: HatsAbi,
                     functionName: 'transferHat',
-                    args: [BigInt(formHat.id), daoAddress, getAddress(formHat.wearer)],
+                    args: [BigInt(formHat.id), safeAddress, getAddress(formHat.wearer)],
                   }),
                   targetAddress: hatsProtocol,
                 });
@@ -739,7 +741,7 @@ export default function useCreateRoles() {
       createBatchLinearStreamCreationTx,
       createNewHatTx,
       createSmartAccountTx,
-      daoAddress,
+      safeAddress,
       getActiveStreamsFromFormHat,
       getCancelledStreamsFromFormHat,
       getHat,
@@ -827,8 +829,8 @@ export default function useCreateRoles() {
           successToastMessage: t('proposalCreateSuccessToastMessage', { ns: 'proposal' }),
           failedToastMessage: t('proposalCreateFailureToastMessage', { ns: 'proposal' }),
           successCallback: () => {
-            if (daoAddress) {
-              navigate(DAO_ROUTES.proposals.relative(addressPrefix, daoAddress));
+            if (safeAddress) {
+              navigate(DAO_ROUTES.proposals.relative(addressPrefix, safeAddress));
             }
           },
         });
@@ -841,7 +843,7 @@ export default function useCreateRoles() {
     },
     [
       addressPrefix,
-      daoAddress,
+      safeAddress,
       hatsTree,
       hatsTreeId,
       navigate,
