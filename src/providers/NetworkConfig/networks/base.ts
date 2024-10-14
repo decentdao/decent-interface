@@ -6,7 +6,7 @@ import {
   getProxyFactoryDeployment,
   getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
-import { getAddress } from 'viem';
+import { getAddress, zeroAddress } from 'viem';
 import { base } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
@@ -80,6 +80,8 @@ export const baseConfig: NetworkConfig = {
 
     fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
+    // @todo update addresses when contracts are deployed
+    decentAutonomousAdminMasterCopy: zeroAddress,
     decentHatsMasterCopy: getAddress(a.DecentHats_0_1_0),
     decentSablierMasterCopy: getAddress(a.DecentSablierStreamManagement),
 

@@ -33,7 +33,6 @@ const useHatsTree = () => {
       hatsProtocol,
       erc6551Registry,
       hatsAccount1ofNMasterCopy: hatsAccountImplementation,
-      decentHatsMasterCopy,
     },
   } = useNetworkConfig();
   const publicClient = usePublicClient();
@@ -45,7 +44,6 @@ const useHatsTree = () => {
         hatsTreeId === undefined ||
         hatsTreeId === null ||
         publicClient === undefined ||
-        decentHatsMasterCopy === undefined ||
         contextChainId === null
       ) {
         return;
@@ -61,6 +59,7 @@ const useHatsTree = () => {
                 prettyId: true,
                 status: true,
                 details: true,
+                eligibility: true,
                 wearers: {
                   props: {},
                 },
@@ -140,7 +139,6 @@ const useHatsTree = () => {
     getHatsTree();
   }, [
     contextChainId,
-    decentHatsMasterCopy,
     erc6551Registry,
     hatsAccountImplementation,
     hatsProtocol,

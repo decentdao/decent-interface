@@ -30,15 +30,19 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
+  eligibility?: `0x${string}`;
   payments?: SablierPayment[];
 }
 
 interface DecentTopHat extends DecentHat {}
 
-interface DecentAdminHat extends DecentHat {}
+interface DecentAdminHat extends DecentHat {
+  wearer?: Address;
+}
 
 interface RolesStoreData {
   hatsTreeId: undefined | null | number;
+  decentHatsAddress: Address | null | undefined;
   hatsTree: undefined | null | DecentTree;
   streamsFetched: boolean;
   contextChainId: number | null;
@@ -46,6 +50,7 @@ interface RolesStoreData {
 
 export interface DecentRoleHat extends DecentHat {
   wearer: Address;
+  eligibility?: `0x${string}`;
 }
 
 export interface DecentTree {
@@ -140,6 +145,7 @@ const getHatMetadata = (hat: Hat) => {
 export const initialHatsStore: RolesStoreData = {
   hatsTreeId: undefined,
   hatsTree: undefined,
+  decentHatsAddress: undefined,
   streamsFetched: false,
   contextChainId: null,
 };
@@ -210,12 +216,13 @@ export const sanitize = async (
     publicClient,
   });
 
-  const adminHat: DecentHat = {
+  const adminHat: DecentAdminHat = {
     id: rawAdminHat.id,
     prettyId: rawAdminHat.prettyId ?? '',
     name: adminHatMetadata.name,
     description: adminHatMetadata.description,
     smartAddress: adminHatSmartAddress,
+    wearer: rawAdminHat.wearers?.length ? rawAdminHat.wearers[0].id : undefined,
   };
 
   const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
@@ -244,6 +251,7 @@ export const sanitize = async (
       description: hatMetadata.description,
       wearer: rawHat.wearers![0].id,
       smartAddress: roleHatSmartAddress,
+      eligibility: rawHat.eligibility,
     });
   }
 
