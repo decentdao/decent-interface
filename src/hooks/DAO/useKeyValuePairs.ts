@@ -2,7 +2,7 @@ import { abis } from '@fractal-framework/fractal-contracts';
 import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { GetContractEventsReturnType, getAddress, getContract } from 'viem';
+import { GetContractEventsReturnType, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/App/AppProvider';
@@ -78,7 +78,7 @@ const useKeyValuePairs = () => {
 
     const keyValuePairsContract = getContract({
       abi: abis.KeyValuePairs,
-      address: getAddress(keyValuePairs),
+      address: keyValuePairs,
       client: publicClient,
     });
     keyValuePairsContract.getEvents

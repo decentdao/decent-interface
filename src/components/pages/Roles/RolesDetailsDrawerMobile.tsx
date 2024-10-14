@@ -2,7 +2,7 @@ import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, Hex } from 'viem';
+import { Hex } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   paymentSorterByActiveStatus,
@@ -121,7 +121,7 @@ export default function RolesDetailsDrawerMobile({
                 key={index}
                 payment={payment}
                 roleHatSmartAddress={roleHat.smartAddress}
-                roleHatWearerAddress={getAddress(roleHat.wearer)}
+                roleHatWearerAddress={roleHat.wearer}
                 showWithdraw
               />
             ))}
