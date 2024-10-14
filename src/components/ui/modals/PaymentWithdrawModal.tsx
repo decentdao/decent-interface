@@ -3,7 +3,7 @@ import { Download } from '@phosphor-icons/react';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Address, encodeFunctionData, getAddress, getContract } from 'viem';
+import { Address, encodeFunctionData, getContract } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
 import HatsAccount1ofNAbi from '../../../assets/abi/HatsAccount1ofN';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
@@ -68,7 +68,7 @@ export default function PaymentWithdrawModal({
         let hatsAccountCalldata = encodeFunctionData({
           abi: SablierV2LockupLinearAbi,
           functionName: 'withdrawMax',
-          args: [bigIntStreamId, getAddress(withdrawInformation.roleHatWearerAddress)],
+          args: [bigIntStreamId, withdrawInformation.roleHatWearerAddress],
         });
         withdrawToast = toast.loading(t('withdrawPendingMessage'));
         const txHash = await hatsAccountContract.write.execute([
