@@ -304,6 +304,7 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                 <BigIntInput
                   isDisabled={inputDisabled}
                   value={field.value?.bigintValue}
+                  parentFormikValue={values?.roleEditing?.payments?.[formIndex]?.amount}
                   onChange={valuePair => {
                     setFieldValue(field.name, valuePair, true);
                   }}

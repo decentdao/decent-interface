@@ -14,7 +14,7 @@ import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Hex, getAddress } from 'viem';
-import { BACKGROUND_SEMI_TRANSPARENT, isFeatureEnabled } from '../../../constants/common';
+import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
@@ -180,7 +180,7 @@ export default function RolesDetailsDrawer({
               </Text>
             </GridItem>
           </Grid>
-          {isFeatureEnabled('STREAMS') && roleHat.payments && (
+          {roleHat.payments && (
             <>
               <Divider
                 variant="darker"

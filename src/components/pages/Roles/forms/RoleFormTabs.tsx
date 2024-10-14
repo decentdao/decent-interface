@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Blocker, useNavigate } from 'react-router-dom';
 import { Hex } from 'viem';
-import { isFeatureEnabled } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -68,17 +67,15 @@ export default function RoleFormTabs({
       <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
-          {isFeatureEnabled('STREAMS') && <Tab>{t('payments')}</Tab>}
+          <Tab>{t('payments')}</Tab>
         </TabList>
         <TabPanels my="1.75rem">
           <TabPanel>
             <RoleFormInfo />
           </TabPanel>
-          {isFeatureEnabled('STREAMS') && (
-            <TabPanel>
-              <RoleFormPaymentStreams />
-            </TabPanel>
-          )}
+          <TabPanel>
+            <RoleFormPaymentStreams />
+          </TabPanel>
         </TabPanels>
       </Tabs>
       <Flex

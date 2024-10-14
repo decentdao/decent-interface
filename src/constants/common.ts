@@ -1,4 +1,5 @@
 import { useBreakpointValue } from '@chakra-ui/react';
+import { Hex } from 'viem';
 
 const HEADER_HEIGHT = '4.5rem';
 const HEADER_HEIGHT_MOBILE = '3.75rem';
@@ -52,7 +53,13 @@ export const SIDEBAR_WIDTH = '4.25rem';
 
 export const MAX_CONTENT_WIDTH = '80rem';
 
-export const isFeatureEnabled = (feature: string) => {
+const features = {
+  developmentMode: 'DEVELOPMENT_MODE',
+} as const;
+
+type FeatureFlag = (typeof features)[keyof typeof features];
+
+export const isFeatureEnabled = (feature: FeatureFlag) => {
   const featureStatus = import.meta.env[`VITE_APP_FLAG_${feature}`];
   if (featureStatus === 'ON') {
     return true;
@@ -60,3 +67,13 @@ export const isFeatureEnabled = (feature: string) => {
     return false;
   }
 };
+
+export const isDevMode = () => isFeatureEnabled(features.developmentMode);
+
+/**
+ * @dev DO NOT CHANGE THE SALT
+ * @note This SALT is used to generate the account address for the Hats Smart Account
+ * @note This has been used in production and changing it will break the predictability of the smart account addresses
+ */
+export const ERC6551_REGISTRY_SALT: Hex =
+  '0x5d0e6ce4fd951366cc55da93f6e79d8b81483109d79676a04bcc2bed6a4b5072';

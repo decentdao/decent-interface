@@ -48,11 +48,14 @@ export function useERC20Claim() {
       .ERC20ClaimCreated({ fromBlock: 0n })
       .catch(() => []);
 
+    if (!tokenClaimArray.length) return;
+
     const childToken = tokenClaimArray[0].args.childToken;
 
-    if (!tokenClaimArray.length || !childToken || childToken === votesTokenAddress) {
+    if (!childToken || childToken === votesTokenAddress) {
       return;
     }
+
     // action to governance
     action.dispatch({
       type: FractalGovernanceAction.SET_CLAIMING_CONTRACT,
