@@ -82,7 +82,7 @@ export default function useCreateSablierStream() {
 
   const prepareFlushStreamTxs = useCallback(
     (args: { streamId: string; to: Address; smartAccount: Address }) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Can not flush stream without DAO Address');
       }
 
@@ -108,7 +108,7 @@ export default function useCreateSablierStream() {
 
       return [
         {
-          targetAddress: daoAddress,
+          targetAddress: safeAddress,
           calldata: enableModuleData,
         },
         {
@@ -116,17 +116,17 @@ export default function useCreateSablierStream() {
           calldata: withdrawMaxFromStreamData,
         },
         {
-          targetAddress: daoAddress,
+          targetAddress: safeAddress,
           calldata: disableModuleData,
         },
       ];
     },
-    [daoAddress, decentSablierMasterCopy, sablierV2LockupLinear],
+    [safeAddress, decentSablierMasterCopy, sablierV2LockupLinear],
   );
 
   const prepareCancelStreamTxs = useCallback(
     (streamId: string) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         throw new Error('Can not flush stream without DAO Address');
       }
 
@@ -150,7 +150,7 @@ export default function useCreateSablierStream() {
 
       return [
         {
-          targetAddress: daoAddress,
+          targetAddress: safeAddress,
           calldata: enableModuleData,
         },
         {
@@ -158,12 +158,12 @@ export default function useCreateSablierStream() {
           calldata: cancelStreamData,
         },
         {
-          targetAddress: daoAddress,
+          targetAddress: safeAddress,
           calldata: disableModuleData,
         },
       ];
     },
-    [daoAddress, decentSablierMasterCopy, sablierV2LockupLinear],
+    [safeAddress, decentSablierMasterCopy, sablierV2LockupLinear],
   );
 
   const prepareBatchLinearStreamCreation = useCallback(
