@@ -2,9 +2,7 @@ import { Box, FormControl } from '@chakra-ui/react';
 import { Field, FieldProps } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
-import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
-import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { RoleFormValues } from '../types';
 
 export default function RoleFormInfo() {
@@ -81,32 +79,6 @@ export default function RoleFormInfo() {
               label={t('roleDescription')}
               errorMessage={meta.touched && meta.error ? meta.error : undefined}
             />
-          )}
-        </Field>
-      </FormControl>
-      <FormControl>
-        <Field name="roleEditing.wearer">
-          {({
-            field,
-            form: { setFieldValue, setFieldTouched },
-            meta,
-          }: FieldProps<string, RoleFormValues>) => (
-            <LabelWrapper
-              label={t('member')}
-              errorMessage={meta.touched && meta.error ? meta.error : undefined}
-              isRequired
-              labelColor="neutral-7"
-            >
-              <AddressInput
-                value={field.value}
-                onBlur={() => {
-                  setFieldTouched(field.name, true);
-                }}
-                onChange={e => {
-                  setFieldValue(field.name, e.target.value);
-                }}
-              />
-            </LabelWrapper>
           )}
         </Field>
       </FormControl>
