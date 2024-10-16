@@ -3,9 +3,9 @@ import { ethers } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { useWalletClient } from 'wagmi';
 import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { ExtendedSnapshotProposal } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
 
@@ -20,7 +20,17 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
     },
   } = useFractal();
 
-  const signer = useEthersSigner();
+  const { data: walletClient } = useWalletClient();
+
+  const signer = useMemo(() => {
+    if (!walletClient) {
+      return undefined;
+    }
+
+    const web3Provider = new ethers.providers.Web3Provider(walletClient.transport);
+    const jsonRpcSigner = web3Provider.getSigner(walletClient.account.address);
+    return jsonRpcSigner;
+  }, [walletClient]);
 
   const client = useMemo(() => {
     if (daoSnapshotENS) {
