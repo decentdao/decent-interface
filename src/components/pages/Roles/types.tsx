@@ -50,13 +50,14 @@ export interface RoleEditProps
   > {
   name?: string;
   handleRoleClick: () => void;
-  wearerAddress: string | undefined;
+  wearer: string | undefined;
   payments?: SablierPaymentFormValues[];
 }
 
 export interface RoleDetailsDrawerRoleHatProp
-  extends Omit<DecentRoleHat, 'payments' | 'smartAddress'> {
+  extends Omit<DecentRoleHat, 'payments' | 'smartAddress' | 'wearer'> {
   smartAddress?: Address;
+  wearer: string;
   payments?: (Omit<SablierPayment, 'contractAddress' | 'streamId'> & {
     contractAddress?: Address;
     streamId?: string;

@@ -2,7 +2,7 @@ import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Hex } from 'viem';
+import { Address, getAddress, Hex } from 'viem';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   paymentSorterByActiveStatus,
@@ -49,6 +49,13 @@ export default function RolesDetailsDrawerMobile({
   );
 
   if (!daoAddress || !hatsTree) return null;
+
+  let roleHatWearerAddress: Address;
+  try {
+    roleHatWearerAddress = getAddress(roleHat.wearer);
+  } catch (error) {
+    throw new Error('Invalid wearer address');
+  }
 
   return (
     <DraggableDrawer
@@ -121,7 +128,7 @@ export default function RolesDetailsDrawerMobile({
                 key={index}
                 payment={payment}
                 roleHatSmartAddress={roleHat.smartAddress}
-                roleHatWearerAddress={roleHat.wearer}
+                roleHatWearerAddress={roleHatWearerAddress}
                 showWithdraw
               />
             ))}

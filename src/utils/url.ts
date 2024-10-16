@@ -1,4 +1,6 @@
+import { Address, getAddress } from 'viem';
 import { normalize } from 'viem/ens';
+import { UsePublicClientReturnType } from 'wagmi';
 import { supportedNetworks } from '../providers/NetworkConfig/NetworkConfigProvider';
 export const isValidUrl = (urlString: string) => {
   try {
@@ -26,6 +28,26 @@ export const validateENSName = (ensAddress?: string): boolean => {
     return true;
   } catch (e) {
     return false;
+  }
+};
+
+export const getAddressFromString = async (
+  addressOrEns: string,
+  publicClient: UsePublicClientReturnType,
+): Promise<Address | undefined> => {
+  try {
+    return getAddress(addressOrEns);
+  } catch (e) {
+    if (!validateENSName(addressOrEns) || !publicClient) {
+      return;
+    }
+
+    try {
+      const maybeEnsAddress = await publicClient.getEnsAddress({ name: addressOrEns });
+      return maybeEnsAddress ?? undefined;
+    } catch (_) {
+      return;
+    }
   }
 };
 

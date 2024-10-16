@@ -11,9 +11,10 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Hex } from 'viem';
+import { Address, Hex } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
@@ -24,6 +25,7 @@ import {
   paymentSorterByStartDate,
   paymentSorterByWithdrawAmount,
 } from '../../../store/roles';
+import { getAddressFromString } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
@@ -63,10 +65,22 @@ export default function RolesDetailsDrawer({
   const {
     node: { daoAddress },
   } = useFractal();
+
+  const publicClient = usePublicClient();
+
+  const [roleHatWearer, setRoleHatWearer] = useState<Address>('0x0');
+
+  useEffect(() => {
+    getAddressFromString(roleHat.wearer, publicClient).then(address => {
+      if (!address) return;
+      setRoleHatWearer(address);
+    });
+  }, [publicClient, roleHat]);
+
   const { chain } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
   const { daoName: accountDisplayName } = useGetDAOName({
-    address: roleHat.wearer,
+    address: roleHatWearer,
     chainId: chain.id,
   });
   const avatarURL = useAvatar(roleHat.wearer);
@@ -158,7 +172,7 @@ export default function RolesDetailsDrawer({
               >
                 <Avatar
                   size="icon"
-                  address={roleHat.wearer}
+                  address={roleHatWearer}
                   url={avatarURL}
                 />
                 <Text
@@ -195,7 +209,7 @@ export default function RolesDetailsDrawer({
                   key={index}
                   payment={payment}
                   roleHatSmartAddress={roleHat.smartAddress}
-                  roleHatWearerAddress={roleHat.wearer}
+                  roleHatWearerAddress={roleHatWearer}
                   showWithdraw
                 />
               ))}

@@ -27,6 +27,7 @@ import { predictHatId, useRolesStore } from '../../store/roles';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
+import { getAddressFromString } from '../../utils/url';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
 import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
@@ -771,14 +772,20 @@ export default function useCreateRoles() {
       setSubmitting(true);
 
       // filter to hats that have been modified, or whose payments have been modified (ie includes `editedRole` prop)
-      const modifiedHats: RoleHatFormValueEdited[] = values.hats
-        .map(hat => {
-          if (hat.editedRole === undefined) {
-            return null;
-          }
-          return { ...hat, editedRole: hat.editedRole };
-        })
-        .filter(hat => hat !== null);
+      const modifiedHats: RoleHatFormValueEdited[] = (
+        await Promise.all(
+          values.hats.map(async hat => {
+            if (hat.editedRole === undefined) {
+              return null;
+            }
+            return {
+              ...hat,
+              editedRole: hat.editedRole,
+              wearer: hat.wearer && (await getAddressFromString(hat.wearer, publicClient)),
+            };
+          }),
+        )
+      ).filter(hat => hat !== null);
 
       let proposalData: ProposalExecuteData;
       try {
