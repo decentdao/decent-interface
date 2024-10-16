@@ -41,13 +41,14 @@ export default function useTreasuryLidoInteractions() {
   // --- Lido Claim ETH button setup ---
 
   const [isLidoClaimable, setIsLidoClaimable] = useState(false);
-  const lidoWithdrawelNFT = assetsNonFungible.find(
+  const lidoWithdrawalNFT = assetsNonFungible.find(
     asset => asset.tokenAddress === staking.lido?.withdrawalQueueContractAddress,
   );
-  const showClaimETHButton = canUserCreateProposal && staking.lido && lidoWithdrawelNFT;
+  const showClaimETHButton = canUserCreateProposal && staking.lido && lidoWithdrawalNFT;
+
   useEffect(() => {
     const getLidoClaimableStatus = async () => {
-      if (!staking.lido?.withdrawalQueueContractAddress || !lidoWithdrawelNFT || !publicClient) {
+      if (!staking.lido?.withdrawalQueueContractAddress || !lidoWithdrawalNFT || !publicClient) {
         return;
       }
 
@@ -60,7 +61,7 @@ export default function useTreasuryLidoInteractions() {
       // Since we're checking for the single NFT - we can grab first array element
       const claimableStatus = (
         await withdrawalQueueContract.read.getWithdrawalStatus([
-          [BigInt(lidoWithdrawelNFT!.tokenId)],
+          [BigInt(lidoWithdrawalNFT.tokenId)],
         ])
       )[0];
 
@@ -70,9 +71,10 @@ export default function useTreasuryLidoInteractions() {
     };
 
     getLidoClaimableStatus();
-  }, [staking, isLidoClaimable, publicClient, lidoWithdrawelNFT]);
+  }, [staking, isLidoClaimable, publicClient, lidoWithdrawalNFT]);
+
   const handleClickClaimButton = () => {
-    handleClaimUnstakedETH(BigInt(lidoWithdrawelNFT!.tokenId));
+    handleClaimUnstakedETH(BigInt(lidoWithdrawalNFT!.tokenId));
   };
 
   return {
