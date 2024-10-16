@@ -13,19 +13,17 @@ import {
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Address, Hex } from 'viem';
-import { usePublicClient } from 'wagmi';
+import { Hex, zeroAddress } from 'viem';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
+import { useGetDAONameDeferred } from '../../../hooks/DAO/useGetDAOName';
+import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import {
   paymentSorterByActiveStatus,
   paymentSorterByStartDate,
   paymentSorterByWithdrawAmount,
 } from '../../../store/roles';
-import { getAddressFromString } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
@@ -66,23 +64,21 @@ export default function RolesDetailsDrawer({
     node: { daoAddress },
   } = useFractal();
 
-  const publicClient = usePublicClient();
+  const { address: roleHatWearer } = useAddress(roleHat.wearer);
 
-  const [roleHatWearer, setRoleHatWearer] = useState<Address>('0x0');
+  const roleHatWearerAddress = useMemo(() => roleHatWearer ?? zeroAddress, [roleHatWearer]);
 
+  const { getDAOName } = useGetDAONameDeferred();
+  const [accountDisplayName, setAccountDisplayName] = useState(roleHat.wearer);
   useEffect(() => {
-    getAddressFromString(roleHat.wearer, publicClient).then(address => {
-      if (!address) return;
-      setRoleHatWearer(address);
-    });
-  }, [publicClient, roleHat]);
+    if (!!roleHatWearer) {
+      getDAOName({ address: roleHatWearer }).then(displayName =>
+        setAccountDisplayName(displayName),
+      );
+    }
+  }, [getDAOName, roleHatWearer]);
 
-  const { chain } = useNetworkConfig();
   const { t } = useTranslation(['roles']);
-  const { daoName: accountDisplayName } = useGetDAOName({
-    address: roleHatWearer,
-    chainId: chain.id,
-  });
   const avatarURL = useAvatar(roleHat.wearer);
 
   const sortedPayments = useMemo(
@@ -172,7 +168,7 @@ export default function RolesDetailsDrawer({
               >
                 <Avatar
                   size="icon"
-                  address={roleHatWearer}
+                  address={roleHatWearerAddress}
                   url={avatarURL}
                 />
                 <Text
@@ -209,7 +205,7 @@ export default function RolesDetailsDrawer({
                   key={index}
                   payment={payment}
                   roleHatSmartAddress={roleHat.smartAddress}
-                  roleHatWearerAddress={roleHatWearer}
+                  roleHatWearerAddress={roleHatWearerAddress}
                   showWithdraw
                 />
               ))}

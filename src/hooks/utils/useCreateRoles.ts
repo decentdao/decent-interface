@@ -27,7 +27,6 @@ import { predictHatId, useRolesStore } from '../../store/roles';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
-import { getAddressFromString } from '../../utils/url';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
 import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
@@ -781,7 +780,7 @@ export default function useCreateRoles() {
             return {
               ...hat,
               editedRole: hat.editedRole,
-              wearer: hat.wearer && (await getAddressFromString(hat.wearer, publicClient)),
+              wearer: hat.resolvedWearer,
             };
           }),
         )
