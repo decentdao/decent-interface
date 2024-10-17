@@ -10,15 +10,17 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import {
-  ArrowLineLeft,
-  CalendarX,
   ClockCountdown,
-  FileX,
+  HandCoins,
+  ListPlus,
+  ReceiptX,
+  Warning,
   WarningDiamond,
 } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DecentHourGlass } from '../../../../assets/theme/custom/icons/DecentHourGlass';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
@@ -74,13 +76,11 @@ function RoleMemberConfirmationScreen({
         alignItems="center"
         gap={4}
         px={8}
-        maxW="24rem"
+        maxW="28 rem"
       >
-        <Icon
-          as={ClockCountdown}
-          boxSize="2.5rem"
-          weight="fill"
-          color="lilac-0"
+        <DecentHourGlass
+          h="4.2112rem"
+          w="auto"
         />
         <Text
           textStyle="display-2xl"
@@ -93,43 +93,78 @@ function RoleMemberConfirmationScreen({
           gap={4}
           mt="1.5rem"
         >
-          <Flex
-            gap={2}
-            color="neutral-7"
-          >
+          <Flex gap={4}>
             <Icon
-              as={CalendarX}
+              color="lilac-0"
               boxSize="1.5rem"
+              as={ClockCountdown}
               weight="fill"
             />
-            <Text textStyle="body-base">{t('addTermConfirmationStatementDate')}</Text>
+            <Text
+              textStyle="body-base"
+              color="neutral-7"
+            >
+              {t('termedRoleConfirmation-1')}
+            </Text>
           </Flex>
-          <Flex
-            gap={2}
-            color="neutral-7"
-          >
+          <Flex gap={4}>
             <Icon
-              as={FileX}
+              color="lilac-0"
               boxSize="1.5rem"
+              as={ListPlus}
               weight="fill"
             />
-            <Text>{t('addTermConfirmationStatementPayment')}</Text>
+
+            <Text
+              textStyle="body-base"
+              color="neutral-7"
+            >
+              {t('termedRoleConfirmation-2')}
+            </Text>
           </Flex>
-          <Flex
-            gap={2}
-            color="neutral-7"
-          >
+          <Flex gap={4}>
             <Icon
-              as={ArrowLineLeft}
-              weight="fill"
+              color="lilac-0"
               boxSize="1.5rem"
+              as={ReceiptX}
+              weight="fill"
             />
-            <Text>{t('addTermConfirmationStatementImmutable')}</Text>
+            <Text
+              textStyle="body-base"
+              color="neutral-7"
+            >
+              {t('termedRoleConfirmation-3')}
+            </Text>
+          </Flex>
+          <Flex gap={4}>
+            <Icon
+              color="lilac-0"
+              boxSize="1.5rem"
+              as={HandCoins}
+              weight="fill"
+            />
+            <Text
+              textStyle="body-base"
+              color="neutral-7"
+            >
+              {t('termedRoleConfirmation-4')}
+            </Text>
           </Flex>
         </Flex>
         <Flex
           gap={4}
-          mt="4rem"
+          mt={8}
+          color="yellow-0"
+        >
+          <Icon
+            boxSize="1.5rem"
+            as={Warning}
+            weight="fill"
+          />
+          <Text textStyle="helper=text=base">{t('termedRoleConfirmation-warning')}</Text>
+        </Flex>
+        <Flex
+          gap={4}
           flexDir="column"
           w="full"
         >
@@ -140,7 +175,7 @@ function RoleMemberConfirmationScreen({
             {t('confirm', { ns: 'common' })}
           </Button>
           <Button
-            variant="secondaryRed"
+            variant="secondary"
             w="full"
             onClick={onCancelClick}
           >

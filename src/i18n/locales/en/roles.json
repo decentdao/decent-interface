@@ -95,13 +95,15 @@
   "addTermLengths": "Add Term Lengths",
   "addTermLengthSubTitle": "This action will permanently add term elections to this role.",
   "addTermLengthTitle": "Add a term length to this role?",
-  "addTermConfirmationStatementDate": "Term role has a set expiration date.",
-  "addTermConfirmationStatementPayment": "Current Payments tied to the role will be deleted.",
-  "addTermConfirmationStatementImmutable": "Once set, the role cannot be converted back to unlimited.",
   "termNumber": "Term {{number}}",
   "currentTerm": "Current Term",
   "nextTerm": "Next Term",
   "expired": "Expired",
   "inQueue": "In Queue",
-  "showExpiredTerms": "Show expired Terms"
+  "showExpiredTerms": "Show expired Terms",
+  "termedRoleConfirmation-1": "Define the length of time a member can hold this role.",
+  "termedRoleConfirmation-2": "Queue up the next term at any time during the current term.",
+  "termedRoleConfirmation-3": "Active payments will be cancelled. Any unclaimed funds will be refunded.",
+  "termedRoleConfirmation-4": "New payment streams must be assigned to an active term.",
+  "termedRoleConfirmation-warning": "Please note: Terms are permanently applied to a role and cannot be removed."
 }
