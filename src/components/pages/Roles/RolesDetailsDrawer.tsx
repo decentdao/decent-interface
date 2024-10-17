@@ -70,11 +70,10 @@ export default function RolesDetailsDrawer({
 
   const { getDAOName } = useGetDAONameDeferred();
   const [accountDisplayName, setAccountDisplayName] = useState(roleHat.wearer);
+
   useEffect(() => {
     if (!!roleHatWearer) {
-      getDAOName({ address: roleHatWearer }).then(displayName =>
-        setAccountDisplayName(displayName),
-      );
+      getDAOName(roleHatWearer).then(displayName => setAccountDisplayName(displayName));
     }
   }, [getDAOName, roleHatWearer]);
 

@@ -70,10 +70,7 @@ export const useLoadDAONode = () => {
           const safeInfoWithGuard = await safeAPI.getSafeData(checksummedAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
-            daoName: await getDAOName({
-              address: daoAddress,
-              registryName: graphNodeInfo.daoName,
-            }),
+            daoName: graphNodeInfo.daoName ?? (await getDAOName(daoAddress)),
             safe: safeInfoWithGuard,
             fractalModules: await lookupModules(safeInfoWithGuard.modules),
           });

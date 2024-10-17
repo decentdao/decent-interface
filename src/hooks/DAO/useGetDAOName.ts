@@ -8,12 +8,10 @@ import { demoData } from './loaders/loadDemoData';
 
 const getDAOName = async ({
   address,
-  registryName,
   publicClient,
   fractalRegistry,
 }: {
   address: Address;
-  registryName?: string | null;
   publicClient: PublicClient | undefined;
   fractalRegistry: Address;
 }) => {
@@ -32,10 +30,6 @@ const getDAOName = async ({
 
   if (ensName) {
     return ensName;
-  }
-
-  if (registryName) {
-    return registryName;
   }
 
   const fractalRegistryContract = getContract({
@@ -65,15 +59,7 @@ const getDAOName = async ({
   return createAccountSubstring(address);
 };
 
-const useGetDAOName = ({
-  address,
-  registryName,
-  chainId,
-}: {
-  address: Address;
-  registryName?: string | null;
-  chainId?: number;
-}) => {
+const useGetDAOName = ({ address, chainId }: { address: Address; chainId?: number }) => {
   const publicClient = usePublicClient({ chainId });
 
   const {
@@ -82,10 +68,10 @@ const useGetDAOName = ({
 
   const [daoName, setDaoName] = useState<string>();
   useEffect(() => {
-    getDAOName({ address, registryName, publicClient, fractalRegistry }).then(name => {
+    getDAOName({ address, publicClient, fractalRegistry }).then(name => {
       setDaoName(name);
     });
-  }, [address, publicClient, registryName, fractalRegistry]);
+  }, [address, publicClient, fractalRegistry]);
 
   return { daoName };
 };
@@ -98,8 +84,7 @@ const useGetDAONameDeferred = () => {
 
   return {
     getDAOName: useCallback(
-      ({ address, registryName }: { address: Address; registryName?: string | null }) =>
-        getDAOName({ address, registryName, publicClient, fractalRegistry }),
+      (address: Address) => getDAOName({ address, publicClient, fractalRegistry }),
       [publicClient, fractalRegistry],
     ),
   };
