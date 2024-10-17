@@ -7,10 +7,7 @@ import { usePublicClient, useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import {
-  getSafeNameFallback,
-  useGetAccountNameDeferred,
-} from '../../../../hooks/utils/useGetAccountName';
+import { getSafeNameFallback, useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
 import Avatar from '../../page/Header/Avatar';
@@ -38,7 +35,7 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
     },
   });
 
-  const { getAccountName } = useGetAccountNameDeferred();
+  const { getAccountName } = useGetAccountName();
   const [safeName, setSafeName] = useState<string>();
 
   useEffect(() => {

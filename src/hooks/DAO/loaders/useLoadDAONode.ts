@@ -8,13 +8,13 @@ import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { getSafeNameFallback, useGetAccountNameDeferred } from '../../utils/useGetAccountName';
+import { getSafeNameFallback, useGetAccountName } from '../../utils/useGetAccountName';
 import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
 export const useLoadDAONode = () => {
   const safeAPI = useSafeAPI();
-  const { getAccountName } = useGetAccountNameDeferred();
+  const { getAccountName } = useGetAccountName();
   const lookupModules = useFractalModules();
   const {
     chain,

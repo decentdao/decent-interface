@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import { useGetAccountNameDeferred } from '../../../hooks/utils/useGetAccountName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import { Card } from '../../ui/cards/Card';
@@ -25,7 +25,7 @@ export function AvatarAndRoleName({
 }) {
   const { addressPrefix } = useNetworkConfig();
 
-  const { getAccountName } = useGetAccountNameDeferred(getChainIdFromPrefix(addressPrefix));
+  const { getAccountName } = useGetAccountName(getChainIdFromPrefix(addressPrefix));
   const [accountName, setAccountName] = useState<string>();
 
   useEffect(() => {

@@ -72,7 +72,7 @@ const getAccountName = async ({
   return createAccountSubstring(address);
 };
 
-const useGetAccountNameDeferred = (chainId?: number) => {
+const useGetAccountName = (chainId?: number) => {
   const publicClient = usePublicClient({ chainId });
 
   const getAccountNameDeferred = useCallback(
@@ -85,4 +85,4 @@ const useGetAccountNameDeferred = (chainId?: number) => {
   return { getAccountName: getAccountNameDeferred };
 };
 
-export { useGetAccountNameDeferred };
+export { useGetAccountName };

@@ -8,10 +8,7 @@ import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
-import {
-  getSafeNameFallback,
-  useGetAccountNameDeferred,
-} from '../../hooks/utils/useGetAccountName';
+import { getSafeNameFallback, useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
@@ -32,7 +29,7 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
 
   const publicClient = usePublicClient();
 
-  const { getAccountName } = useGetAccountNameDeferred(getChainIdFromPrefix(network));
+  const { getAccountName } = useGetAccountName(getChainIdFromPrefix(network));
   const [safeName, setSafeName] = useState<string>();
 
   useEffect(() => {
