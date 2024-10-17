@@ -3,14 +3,17 @@ import { Calendar, ClockCountdown } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress } from 'viem';
+import { Address } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
+import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
+
+export type RoleTermStatus = 'current' | 'queued' | 'expired';
 
 function Container({ children, isTop = false }: { isTop?: boolean; children: React.ReactNode }) {
   return (
@@ -29,17 +32,27 @@ function Container({ children, isTop = false }: { isTop?: boolean; children: Rea
   );
 }
 
-function RoleTermHeaderTitle() {
+function RoleTermHeaderTitle({
+  termNumber,
+  termStatus,
+}: {
+  termNumber: number;
+  termStatus: RoleTermStatus;
+}) {
   const { t } = useTranslation(['roles']);
-  const isCurrentTerm = true;
-  const termIndicatorText =
-    isCurrentTerm === undefined ? undefined : isCurrentTerm ? t('Current Term') : t('Next Term');
+  const isCurrentTerm = termStatus === 'current';
+  const isNextTerm = termStatus === 'queued';
+  const termIndicatorText = isCurrentTerm
+    ? t('currentTerm')
+    : isNextTerm
+      ? t('nextTerm')
+      : undefined;
   return (
     <Flex
       gap={2}
       alignItems="center"
     >
-      <Text textStyle="display-lg">{t('Term 1')}</Text>
+      <Text textStyle="display-lg">{t('termNumber', { number: termNumber })}</Text>
       <Text
         textStyle="label-small"
         color="neutral-5"
@@ -50,34 +63,35 @@ function RoleTermHeaderTitle() {
   );
 }
 
-function RoleTermHeaderStatus() {
-  const endDateTs = 0n;
-  const isCurrentTerm = false;
+function RoleTermHeaderStatus({
+  termEndDate,
+  termStatus,
+}: {
+  termEndDate: Date;
+  termStatus: RoleTermStatus;
+}) {
   const isReadyToStart = false;
-  const isQueued = false;
+  const { t } = useTranslation(['roles']);
+  const dateDisplay = useDateTimeDisplay(termEndDate);
 
   const statusText = useMemo(() => {
-    // is ready to start (show ready to start)
-    // is Queued (next term, show In Queue)
-    // is Active (show till end date)
-    // is Expired (show Expired)
     if (isReadyToStart) {
-      return 'Ready to start';
+      return t('Ready to start');
     }
-    if (endDateTs < BigInt(Date.now())) {
-      return 'Expired';
+    if (termStatus === 'expired') {
+      return t('expired');
     }
-    if (isQueued) {
+    if (termStatus === 'queued') {
       // Next term
-      return 'In Queue';
+      return t('inQueue');
     }
-    if (isCurrentTerm) {
+    if (termStatus === 'current') {
       // time left
-      return '30 d';
+      return dateDisplay;
     }
 
     return;
-  }, [endDateTs, isCurrentTerm, isReadyToStart, isQueued]);
+  }, [isReadyToStart, dateDisplay, termStatus, t]);
   return (
     <Flex
       gap={1}
@@ -99,19 +113,32 @@ function RoleTermHeaderStatus() {
   );
 }
 
-function RoleTermHeader() {
+function RoleTermHeader({
+  termNumber,
+  termEndDate,
+  termStatus,
+}: {
+  termNumber: number;
+  termEndDate: Date;
+  termStatus: RoleTermStatus;
+}) {
   return (
     <Container isTop>
       <Flex justifyContent="space-between">
-        <RoleTermHeaderTitle />
-        <RoleTermHeaderStatus />
+        <RoleTermHeaderTitle
+          termNumber={termNumber}
+          termStatus={termStatus}
+        />
+        <RoleTermHeaderStatus
+          termEndDate={termEndDate}
+          termStatus={termStatus}
+        />
       </Flex>
     </Container>
   );
 }
 
-function RoleTermMemberAddress() {
-  const memberAddress = zeroAddress;
+function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
   const { t } = useTranslation(['roles']);
 
   const { addressPrefix } = useNetworkConfig();
@@ -148,15 +175,15 @@ function RoleTermMemberAddress() {
   );
 }
 
-function RoleTermEndDate() {
-  const endDateTs = Date.now() / 1000;
+function RoleTermEndDate({ termEndDate }: { termEndDate: Date }) {
+  const { t } = useTranslation(['roles']);
   return (
     <Flex flexDir="column">
       <Text
         textStyle="label-small"
         color="neutral-7"
       >
-        {'Ending'}
+        {t('ending')}
       </Text>
       <Flex
         gap={1}
@@ -167,21 +194,35 @@ function RoleTermEndDate() {
           textStyle="label-base"
           color="white"
         >
-          {format(new Date(endDateTs * 1000), DEFAULT_DATE_FORMAT)}
+          {format(termEndDate, DEFAULT_DATE_FORMAT)}
         </Text>
       </Flex>
     </Flex>
   );
 }
 
-export default function RoleTerm() {
+export default function RoleTerm({
+  memberAddress,
+  termEndDate,
+  termStatus,
+  termNumber,
+}: {
+  memberAddress: Address;
+  termEndDate: Date;
+  termNumber: number;
+  termStatus: RoleTermStatus;
+}) {
   return (
     <Box>
-      <RoleTermHeader />
+      <RoleTermHeader
+        termNumber={termNumber}
+        termEndDate={termEndDate}
+        termStatus={termStatus}
+      />
       <Container>
         <Flex justifyContent="space-between">
-          <RoleTermMemberAddress />
-          <RoleTermEndDate />
+          <RoleTermMemberAddress memberAddress={memberAddress} />
+          <RoleTermEndDate termEndDate={termEndDate} />
         </Flex>
       </Container>
     </Box>

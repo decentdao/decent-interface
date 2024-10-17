@@ -97,5 +97,10 @@
   "addTermLengthTitle": "Add a term length to this role?",
   "addTermConfirmationStatementDate": "Term role has a set expiration date.",
   "addTermConfirmationStatementPayment": "Current Payments tied to the role will be deleted.",
-  "addTermConfirmationStatementImmutable": "Once set, the role cannot be converted back to unlimited."
+  "addTermConfirmationStatementImmutable": "Once set, the role cannot be converted back to unlimited.",
+  "termNumber": "Term {{number}}",
+  "currentTerm": "Current Term",
+  "nextTerm": "Next Term",
+  "expired": "Expired",
+  "inQueue": "In Queue"
 }

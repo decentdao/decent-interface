@@ -1,12 +1,13 @@
-import { Box, Button, FormControl, Icon, Text } from '@chakra-ui/react';
+import { Box, Button, Flex, FormControl, Icon, Text } from '@chakra-ui/react';
 import { Plus } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { getAddress, zeroAddress } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import RoleTerm from '../RoleTerm';
+import RoleTerm, { RoleTermStatus } from '../RoleTerm';
 import { RoleFormValues } from '../types';
 import { RoleTermEndDatePicker } from './RoleTermEndDatePicker';
 
@@ -107,11 +108,99 @@ function RoleTermCreate({ termIndex }: { termIndex: number }) {
   );
 }
 
+function RoleTermRenderer({
+  roleTerm,
+  termStatus,
+}: {
+  roleTerm?: {
+    nominee?: string;
+    termEndDate?: Date;
+    termNumber: number;
+  };
+  termStatus: RoleTermStatus;
+}) {
+  if (!roleTerm?.nominee || !roleTerm?.termEndDate) {
+    return null;
+  }
+  return (
+    <Box>
+      <RoleTerm
+        memberAddress={getAddress(roleTerm.nominee)}
+        termEndDate={roleTerm.termEndDate}
+        termStatus={termStatus}
+        termNumber={roleTerm.termNumber}
+      />
+    </Box>
+  );
+}
+
+function RoleTermExpiredTerms({
+  roleTerms,
+}: {
+  roleTerms?: {
+    nominee?: string;
+    termEndDate?: Date;
+    termNumber: number;
+  }[];
+}) {
+  if (!roleTerms) {
+    return null;
+  }
+  return (
+    <Box>
+      {roleTerms.map((term, index) => {
+        return (
+          <RoleTermRenderer
+            key={index}
+            roleTerm={term}
+            termStatus="expired"
+          />
+        );
+      })}
+    </Box>
+  );
+}
+
 export default function RoleFormTerms() {
   const [showAddTerm, setShowAddTerm] = useState(false);
   const { t } = useTranslation('roles');
   const { values } = useFormikContext<RoleFormValues>();
-  const roleTerms = values.roleEditing?.roleTerms || [{}];
+  const roleFormTerms =
+    values.roleEditing?.roleTerms
+      ?.sort(
+        (a, b) => (a.termEndDate ?? new Date()).getTime() - (b.termEndDate ?? new Date()).getTime(),
+      )
+      .map((term, index) => ({ ...term, termNumber: index + 1 })) ||
+    [
+      {
+        nominee: zeroAddress,
+        termEndDate: new Date('2024-10-10'),
+      },
+      {
+        nominee: zeroAddress,
+        termEndDate: new Date('2025-10-22'),
+      },
+      {
+        nominee: zeroAddress,
+        termEndDate: new Date('2026-10-27'),
+      },
+      {
+        nominee: zeroAddress,
+        termEndDate: new Date('2024-10-9'),
+      },
+    ]
+      .sort(
+        (a, b) => (a.termEndDate ?? new Date()).getTime() - (b.termEndDate ?? new Date()).getTime(),
+      )
+      .map((term, index) => ({ ...term, termNumber: index + 1 }));
+
+  const expiredTerms = roleFormTerms.filter(
+    term => !!term.termEndDate && term.termEndDate < new Date(),
+  );
+  // {assumption}: only 2 terms should be unexpired at a time
+  const terms = roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());
+  const currentTerm = terms[0];
+  const nextTerm = terms[1];
   return (
     <Box>
       <Button
@@ -129,11 +218,21 @@ export default function RoleFormTerms() {
         />
         {t('Add term')}
       </Button>
-      {/* @todo Hide when not creating terms */}
-      {(showAddTerm || !roleTerms.length) && <RoleTermCreate termIndex={0} />}
-      {roleTerms.map((term, index) => (
-        <RoleTerm key={index} />
-      ))}
+      <Flex
+        flexDir="column"
+        gap={4}
+      >
+        {(showAddTerm || !roleFormTerms.length) && <RoleTermCreate termIndex={0} />}
+        <RoleTermRenderer
+          roleTerm={nextTerm}
+          termStatus="queued"
+        />
+        <RoleTermRenderer
+          roleTerm={currentTerm}
+          termStatus="current"
+        />
+        <RoleTermExpiredTerms roleTerms={expiredTerms} />
+      </Flex>
     </Box>
   );
 }
