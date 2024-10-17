@@ -146,6 +146,13 @@ type SignMessageStringChoice = SignMessageBase & {
 
 type SignMessage = SignMessageSingleChoice | SignMessageArrayChoice | SignMessageStringChoice;
 
+const customSerializer = (_: string, value: any) => {
+  if (typeof value === 'bigint') {
+    return value.toString();
+  }
+  return value;
+};
+
 const parseMessage = (message: Vote): { message: VoteForSigning; types: VoteTypes } => {
   const isShutter = message?.privacy === 'shutter';
   const type2 = message.proposal.startsWith('0x');
@@ -223,17 +230,16 @@ const send = async (
     data: { domain: typeof domain; types: VoteTypes; message: VoteForSigning };
   },
 ) => {
-  let address = url;
   const init = {
     method: 'POST',
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(envelop),
+    body: JSON.stringify(envelop, customSerializer),
   };
 
-  await fetch(address, init).then(async res => {
+  await fetch(url, init).then(async res => {
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(JSON.stringify(errorData));
