@@ -136,7 +136,7 @@ export interface RoleHatFormValue
   isTermed?: boolean;
   roleTerms?: {
     nominee?: string;
-    termEndDateTs?: number;
+    termEndDate?: Date;
   }[];
 }
 

@@ -16,7 +16,7 @@ import {
   FileX,
   WarningDiamond,
 } from '@phosphor-icons/react';
-import { Field, FieldProps } from 'formik';
+import { Field, FieldProps, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
@@ -25,6 +25,7 @@ import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import { ModalBase } from '../../../ui/modals/ModalBase';
 import { RoleFormValues } from '../types';
+import RoleFormTerms from './RoleFormTerms';
 
 function RoleMemberWearerInput() {
   const { t } = useTranslation('roles');
@@ -183,9 +184,9 @@ function RoleMemberConfirmationPortal({
       </Hide>
       <Hide below="md">
         <ModalBase
-          isOpen
+          isOpen={isOpen}
           title=""
-          onClose={() => {}}
+          onClose={onClose}
           isSearchInputModal={false}
         >
           <RoleMemberConfirmationScreen
@@ -201,7 +202,7 @@ function RoleMemberConfirmationPortal({
 function RoleFormMemberTermToggle() {
   const { t } = useTranslation('roles');
   const [seenConfirmation, setSeenConfirmation] = useState(false);
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen, onOpen, onClose } = useDisclosure({});
 
   return (
     <Box
@@ -275,8 +276,12 @@ function RoleFormMemberTermToggle() {
 }
 
 export default function RoleFormMember() {
+  const { values } = useFormikContext<RoleFormValues>();
+  if (!!values.roleEditing?.isTermed) {
+    return <RoleFormTerms />;
+  }
   return (
-    <>
+    <Box>
       <Box
         px={{ base: '1rem', md: 0 }}
         py="1rem"
@@ -293,6 +298,6 @@ export default function RoleFormMember() {
         <RoleMemberWearerInput />
       </Box>
       <RoleFormMemberTermToggle />
-    </>
+    </Box>
   );
 }
