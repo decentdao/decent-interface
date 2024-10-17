@@ -50,18 +50,22 @@ export interface RoleEditProps
   > {
   name?: string;
   handleRoleClick: () => void;
-  wearer: string | undefined;
+  wearer: Address | undefined;
   payments?: SablierPaymentFormValues[];
 }
 
 export interface RoleDetailsDrawerRoleHatProp
-  extends Omit<DecentRoleHat, 'payments' | 'smartAddress' | 'wearer'> {
+  extends Omit<DecentRoleHat, 'payments' | 'smartAddress'> {
   smartAddress?: Address;
-  wearer: string;
   payments?: (Omit<SablierPayment, 'contractAddress' | 'streamId'> & {
     contractAddress?: Address;
     streamId?: string;
   })[];
+}
+
+export interface RoleDetailsDrawerEditingRoleHatProp
+  extends Omit<RoleDetailsDrawerRoleHatProp, 'wearerAddress'> {
+  wearer: string;
 }
 
 export enum EditBadgeStatus {
@@ -117,7 +121,7 @@ export interface DurationBreakdown {
 }
 
 export interface RoleHatFormValue
-  extends Partial<Omit<DecentRoleHat, 'id' | 'wearer' | 'payments'>> {
+  extends Partial<Omit<DecentRoleHat, 'id' | 'wearerAddress' | 'payments'>> {
   id: Hex;
   wearer?: string;
   // Not a user-input field.
@@ -186,3 +190,11 @@ export type PreparedEditedStreamData = PreparedNewStreamData & {
   roleHatSmartAddress: Address;
   streamContractAddress: Address;
 };
+
+export interface RoleDetailsDrawerProps {
+  roleHat: RoleDetailsDrawerRoleHatProp | RoleDetailsDrawerEditingRoleHatProp;
+  onOpen?: () => void;
+  onClose: () => void;
+  onEdit: (hatId: Hex) => void;
+  isOpen?: boolean;
+}

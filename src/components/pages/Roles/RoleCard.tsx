@@ -2,7 +2,7 @@ import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
 import { CaretCircleRight, CaretRight } from '@phosphor-icons/react';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { getAddress, zeroAddress } from 'viem';
+import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
@@ -18,7 +18,7 @@ export function AvatarAndRoleName({
   name,
   paymentsCount,
 }: {
-  wearerAddress: string | undefined;
+  wearerAddress: Address | undefined;
   name?: string;
   paymentsCount?: number;
 }) {

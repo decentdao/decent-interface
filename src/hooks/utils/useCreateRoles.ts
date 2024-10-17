@@ -509,7 +509,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), getAddress(originalHat.wearer), daoAddress],
+              args: [BigInt(formHat.id), getAddress(originalHat.wearerAddress), daoAddress],
             }),
             targetAddress: hatsProtocol,
           });
@@ -528,7 +528,7 @@ export default function useCreateRoles() {
 
               const flushStreamTxCalldata = prepareFlushStreamTxs({
                 streamId: stream.streamId,
-                to: getAddress(originalHat.wearer),
+                to: getAddress(originalHat.wearerAddress),
                 smartAccount: formHat.smartAddress,
               });
 
@@ -609,7 +609,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), originalHat.wearer, daoAddress],
+                  args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -623,7 +623,7 @@ export default function useCreateRoles() {
 
                 const flushStreamTxCalldata = prepareFlushStreamTxs({
                   streamId: stream.streamId,
-                  to: originalHat.wearer,
+                  to: originalHat.wearerAddress,
                   smartAccount: formHat.smartAddress,
                 });
 
@@ -644,7 +644,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), originalHat.wearer, newWearer],
+                  args: [BigInt(formHat.id), originalHat.wearerAddress, newWearer],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -672,7 +672,7 @@ export default function useCreateRoles() {
                   calldata: encodeFunctionData({
                     abi: HatsAbi,
                     functionName: 'transferHat',
-                    args: [BigInt(formHat.id), originalHat.wearer, daoAddress],
+                    args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
                   }),
                   targetAddress: hatsProtocol,
                 });
@@ -681,7 +681,7 @@ export default function useCreateRoles() {
                 if (stream.withdrawableAmount && stream.withdrawableAmount > 0n) {
                   const flushStreamTxCalldata = prepareFlushStreamTxs({
                     streamId: stream.streamId,
-                    to: originalHat.wearer,
+                    to: originalHat.wearerAddress,
                     smartAccount: formHat.smartAddress,
                   });
 

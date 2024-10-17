@@ -13,7 +13,7 @@ import {
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Hex, zeroAddress } from 'viem';
+import { zeroAddress } from 'viem';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
@@ -27,7 +27,7 @@ import {
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
-import { RoleDetailsDrawerRoleHatProp } from './types';
+import { RoleDetailsDrawerProps } from './types';
 
 function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.ElementType }) {
   return (
@@ -46,14 +46,6 @@ function RoleAndDescriptionLabel({ label, icon }: { label: string; icon: React.E
   );
 }
 
-interface RoleDetailsDrawerProps {
-  roleHat: RoleDetailsDrawerRoleHatProp;
-  onOpen?: () => void;
-  onClose: () => void;
-  onEdit: (hatId: Hex) => void;
-  isOpen?: boolean;
-}
-
 export default function RolesDetailsDrawer({
   roleHat,
   onClose,
@@ -64,21 +56,25 @@ export default function RolesDetailsDrawer({
     node: { daoAddress },
   } = useFractal();
 
-  const { address: roleHatWearer } = useAddress(roleHat.wearer);
+  const roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
 
-  const roleHatWearerAddress = useMemo(() => roleHatWearer ?? zeroAddress, [roleHatWearer]);
+  const { address: roleHatWearerAddress } = useAddress(roleHatWearer);
+
+  const resolvedRoleHatWearerAddress = useMemo(
+    () => roleHatWearerAddress ?? zeroAddress,
+    [roleHatWearerAddress],
+  );
 
   const { getAccountName } = useGetAccountNameDeferred();
-  const [accountDisplayName, setAccountDisplayName] = useState(roleHat.wearer);
-
+  const [accountDisplayName, setAccountDisplayName] = useState(roleHatWearer);
   useEffect(() => {
-    if (!!roleHatWearer) {
-      getAccountName(roleHatWearer).then(setAccountDisplayName);
+    if (!!roleHatWearerAddress) {
+      getAccountName(roleHatWearerAddress).then(setAccountDisplayName);
     }
-  }, [getAccountName, roleHatWearer]);
+  }, [getAccountName, roleHatWearerAddress]);
 
   const { t } = useTranslation(['roles']);
-  const avatarURL = useAvatar(roleHat.wearer);
+  const avatarURL = useAvatar(roleHatWearer);
 
   const sortedPayments = useMemo(
     () =>
@@ -167,7 +163,7 @@ export default function RolesDetailsDrawer({
               >
                 <Avatar
                   size="icon"
-                  address={roleHatWearerAddress}
+                  address={resolvedRoleHatWearerAddress}
                   url={avatarURL}
                 />
                 <Text

@@ -25,7 +25,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     !!existingRoleHat && values.roleEditing?.description !== existingRoleHat.description;
 
   const isMemberUpdated =
-    !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
+    !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearerAddress;
 
   const isPaymentsUpdated = useMemo(() => {
     if (!values.roleEditing || !values.roleEditing.payments) {

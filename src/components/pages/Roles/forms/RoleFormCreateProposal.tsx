@@ -19,7 +19,7 @@ import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
-import { EditedRole, RoleDetailsDrawerRoleHatProp, RoleFormValues } from '../types';
+import { EditedRole, RoleDetailsDrawerEditingRoleHatProp, RoleFormValues } from '../types';
 
 function SendAssetsAction({
   index,
@@ -69,7 +69,7 @@ function SendAssetsAction({
 }
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
-  const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerRoleHatProp>();
+  const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerEditingRoleHatProp>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
   const {
     values,
@@ -79,7 +79,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   } = useFormikContext<RoleFormValues>();
 
   const editedRoles = useMemo<
-    (RoleDetailsDrawerRoleHatProp & {
+    (RoleDetailsDrawerEditingRoleHatProp & {
       editedRole: EditedRole;
     })[]
   >(() => {

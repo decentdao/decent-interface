@@ -45,7 +45,7 @@ interface RolesStoreData {
 }
 
 export interface DecentRoleHat extends DecentHat {
-  wearer: Address;
+  wearerAddress: Address;
 }
 
 export interface DecentTree {
@@ -242,7 +242,7 @@ export const sanitize = async (
       prettyId: rawHat.prettyId ?? '',
       name: hatMetadata.name,
       description: hatMetadata.description,
-      wearer: rawHat.wearers![0].id,
+      wearerAddress: rawHat.wearers![0].id,
       smartAddress: roleHatSmartAddress,
     });
   }

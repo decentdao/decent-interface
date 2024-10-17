@@ -99,7 +99,7 @@ function Roles() {
               <RoleCard
                 key={roleHat.id}
                 name={roleHat.name}
-                wearerAddress={roleHat.wearer || zeroAddress}
+                wearerAddress={roleHat.wearerAddress || zeroAddress}
                 hatId={roleHat.id}
                 handleRoleClick={handleNavigateToRole}
                 paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}

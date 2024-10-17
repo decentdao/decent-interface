@@ -263,7 +263,7 @@ export function RolesTable({
                 key={role.id.toString()}
                 hatId={role.id}
                 name={role.name}
-                wearerAddress={role.wearer}
+                wearerAddress={role.wearerAddress}
                 handleRoleClick={handleRoleClick}
                 paymentsCount={
                   role.payments === undefined
@@ -318,7 +318,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
             <RolesRowEdit
               key={role.id}
               name={role.name}
-              wearer={role.wearer}
+              wearer={role.resolvedWearer}
               handleRoleClick={() => {
                 setFieldValue('roleEditing', role);
                 handleRoleClick(role.id);
