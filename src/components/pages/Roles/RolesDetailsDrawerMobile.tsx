@@ -40,7 +40,7 @@ export default function RolesDetailsDrawerMobile({
     [roleHat.payments],
   );
 
-  let roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
+  const roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
 
   const { address: roleHatWearerAddress } = useAddress(roleHatWearer);
 
