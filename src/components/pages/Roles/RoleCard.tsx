@@ -4,9 +4,7 @@ import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { getChainIdFromPrefix } from '../../../utils/url';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
@@ -22,11 +20,8 @@ export function AvatarAndRoleName({
   name?: string;
   paymentsCount?: number;
 }) {
-  const { addressPrefix } = useNetworkConfig();
-  const { accountName } = useGetAccountName({
-    address: getAddress(wearerAddress || zeroAddress),
-    chainId: getChainIdFromPrefix(addressPrefix),
-  });
+  const { displayName } = useDisplayName(wearerAddress);
+
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles']);
 
@@ -59,7 +54,7 @@ export function AvatarAndRoleName({
           textStyle="button-small"
           color="neutral-7"
         >
-          {wearerAddress ? accountName : t('unassigned')}
+          {displayName ?? t('unassigned')}
         </Text>
         {paymentsCount !== undefined && (
           <Flex

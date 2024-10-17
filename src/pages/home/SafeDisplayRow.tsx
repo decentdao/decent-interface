@@ -1,21 +1,19 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { usePublicClient, useSwitchChain } from 'wagmi';
+import { useSwitchChain } from 'wagmi';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
-import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
-import { getSafeNameFallback, useGetAccountName } from '../../hooks/utils/useGetAccountName';
+import { createAccountSubstring } from '../../hooks/utils/useDisplayName';
+import { useGetSafeName } from '../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
-  const {
-    addressPrefix,
-    contracts: { fractalRegistry },
-  } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
 
   const { switchChain } = useSwitchChain({
@@ -26,22 +24,17 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
     },
   });
 
-  const publicClient = usePublicClient();
+  const { getSafeName } = useGetSafeName(getChainIdFromPrefix(network));
+  const [safeName, setSafeName] = useState<string>();
 
-  const { accountName: safeName } = useGetAccountName({
-    address,
-    chainId: getChainIdFromPrefix(network),
-    getAccountNameFallback: () => getSafeNameFallback(address, fractalRegistry, publicClient),
-  });
+  useEffect(() => {
+    getSafeName(address).then(setSafeName);
+  }, [address, getSafeName]);
 
   const { t } = useTranslation('dashboard');
 
-  const { displayName: accountDisplayName } = useDisplayName(
-    address,
-    false,
-    getChainIdFromPrefix(network),
-  );
-  const avatarURL = useAvatar(accountDisplayName);
+  // if the safe name is an ENS name, let's attempt to get the avatar for that
+  const avatarURL = useAvatar(safeName ?? '');
 
   const onClickNav = () => {
     if (onClick) onClick();

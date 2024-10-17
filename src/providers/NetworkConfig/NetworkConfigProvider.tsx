@@ -4,16 +4,29 @@ import { NetworkConfig } from '../../types/network';
 
 import { networks } from './networks';
 
-export const NetworkConfigContext = createContext<NetworkConfig>({} as NetworkConfig);
+type NetworkConfigContextType = {
+  currentConfig: NetworkConfig;
+  getConfigByChainId: (chainId: number) => NetworkConfig;
+};
 
-export const useNetworkConfig = () => useContext(NetworkConfigContext);
+export const NetworkConfigContext = createContext<NetworkConfigContextType>(
+  {} as NetworkConfigContextType,
+);
+
+export const useNetworkConfig = (chainId?: number) => {
+  const context = useContext(NetworkConfigContext);
+  if (chainId) {
+    return context.getConfigByChainId(chainId);
+  }
+  return context.currentConfig;
+};
 
 export const supportedNetworks = Object.values(networks).sort((a, b) => a.order - b.order);
 export const moralisSupportedChainIds = supportedNetworks
   .filter(network => network.moralisSupported)
   .map(network => network.chain.id);
 
-export const getNetworkConfig = (chainId: number) => {
+const getNetworkConfig = (chainId: number) => {
   const foundChain = supportedNetworks.find(network => network.chain.id === chainId);
   if (foundChain) {
     return foundChain;
@@ -24,11 +37,18 @@ export const getNetworkConfig = (chainId: number) => {
 
 export function NetworkConfigProvider({ children }: { children: ReactNode }) {
   const chainId = useChainId();
-  const [config, setConfig] = useState<NetworkConfig>(getNetworkConfig(chainId));
+  const [currentConfig, setCurrentConfig] = useState<NetworkConfig>(getNetworkConfig(chainId));
 
   useEffect(() => {
-    setConfig(getNetworkConfig(chainId));
+    setCurrentConfig(getNetworkConfig(chainId));
   }, [chainId]);
 
-  return <NetworkConfigContext.Provider value={config}>{children}</NetworkConfigContext.Provider>;
+  const contextValue: NetworkConfigContextType = {
+    currentConfig,
+    getConfigByChainId: getNetworkConfig,
+  };
+
+  return (
+    <NetworkConfigContext.Provider value={contextValue}>{children}</NetworkConfigContext.Provider>
+  );
 }
