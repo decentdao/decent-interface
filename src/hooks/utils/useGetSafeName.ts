@@ -10,7 +10,7 @@ export const useGetSafeName = (chainId?: number) => {
   const publicClient = usePublicClient({ chainId });
   const {
     contracts: { fractalRegistry },
-  } = useNetworkConfig();
+  } = useNetworkConfig(chainId);
 
   const getSafeName = useCallback(
     async (address: Address) => {
