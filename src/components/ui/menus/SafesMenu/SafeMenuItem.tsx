@@ -1,4 +1,5 @@
 import { Box, Button, Flex, Image, MenuItem, Spacer, Text } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
@@ -6,7 +7,10 @@ import { usePublicClient, useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import { getSafeNameFallback, useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
+import {
+  getSafeNameFallback,
+  useGetAccountNameDeferred,
+} from '../../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
 import Avatar from '../../page/Header/Avatar';
@@ -34,11 +38,16 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
     },
   });
 
-  const { accountName: safeName } = useGetAccountName({
-    address: address,
-    chainId: getChainIdFromPrefix(network),
-    getAccountNameFallback: () => getSafeNameFallback(address, fractalRegistry, publicClient),
-  });
+  const { getAccountName } = useGetAccountNameDeferred();
+  const [safeName, setSafeName] = useState<string>();
+
+  useEffect(() => {
+    if (!safeName) {
+      getAccountName(address, () =>
+        getSafeNameFallback(address, fractalRegistry, publicClient),
+      ).then(setSafeName);
+    }
+  }, [address, fractalRegistry, getAccountName, publicClient, safeName]);
 
   const { displayName: accountDisplayName } = useDisplayName(
     address,
