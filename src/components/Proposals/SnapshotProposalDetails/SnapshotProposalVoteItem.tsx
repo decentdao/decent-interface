@@ -5,14 +5,14 @@ import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ExtendedSnapshotProposal,
-  SnapshotVote,
+  InternalSnapshotVote,
   SnapshotWeightedVotingChoice,
 } from '../../../types';
 import StatusBox from '../../ui/badges/StatusBox';
 
 interface ISnapshotProposalVoteItem {
   proposal: ExtendedSnapshotProposal;
-  vote: SnapshotVote;
+  vote: InternalSnapshotVote;
 }
 
 export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotProposalVoteItem) {

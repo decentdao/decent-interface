@@ -10,11 +10,18 @@ import { TreasuryActions } from '../providers/App/treasury/action';
 import { NodeActions } from './../providers/App/node/action';
 import { ERC721TokenData, VotesTokenData } from './account';
 import { FreezeGuardType, FreezeVotingType } from './daoGovernance';
-import { ProposalData, MultisigProposal, AzoriusProposal, SnapshotProposal } from './daoProposal';
-import { DefiBalance, NFTBalance, TokenBalance, TokenEventType, TransferType } from './daoTreasury';
+import { ProposalData, MultisigProposal, AzoriusProposal } from './daoProposal';
 import { ProposalTemplate } from './proposalBuilder';
 import { SafeInfoResponseWithGuard } from './safeGlobal';
 import { BIFormattedPair } from './votingFungibleToken';
+import {
+  DefiBalance,
+  NFTBalance,
+  TokenBalance,
+  TokenEventType,
+  TransferType,
+  SnapshotProposal,
+} from '.';
 /**
  * The possible states of a DAO proposal, for both Token Voting (Azorius) and Multisignature
  * (Safe) governance, as well as Snapshot specific states.

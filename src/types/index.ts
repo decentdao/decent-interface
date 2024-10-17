@@ -8,6 +8,7 @@ export * from './daoProposal';
 export * from './daoTreasury';
 export * from './fractal';
 export * from './safeGlobal';
+export * from './snapshot';
 export * from './transaction';
 export * from './utils';
 export * from './votingFungibleToken';

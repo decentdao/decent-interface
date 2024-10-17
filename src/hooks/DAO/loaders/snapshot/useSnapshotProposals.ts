@@ -2,8 +2,7 @@ import { gql } from '@apollo/client';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalGovernanceAction } from '../../../../providers/App/governance/action';
-import { FractalProposalState } from '../../../../types';
-import { SnapshotProposal } from '../../../../types/daoProposal';
+import { FractalProposalState, SnapshotProposal } from '../../../../types';
 import { createSnapshotGraphQlClient } from './';
 
 export const useSnapshotProposals = () => {
