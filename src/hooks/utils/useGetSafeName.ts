@@ -37,10 +37,10 @@ export const getSafeNameFallback = async (
   }
 };
 
-export const useGetAccountName = (chainId?: number) => {
+export const useGetSafeName = (chainId?: number) => {
   const publicClient = usePublicClient({ chainId });
 
-  const getAccountName = useCallback(
+  const getSafeName = useCallback(
     async (address: Address, getAccountNameFallback?: () => Promise<string | undefined>) => {
       if (!publicClient || !publicClient.chain) {
         throw new Error('Public client not available');
@@ -68,5 +68,5 @@ export const useGetAccountName = (chainId?: number) => {
     [publicClient],
   );
 
-  return { getAccountName };
+  return { getSafeName };
 };

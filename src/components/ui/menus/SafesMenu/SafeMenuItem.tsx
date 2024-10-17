@@ -7,7 +7,7 @@ import { usePublicClient, useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
-import { getSafeNameFallback, useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
+import { getSafeNameFallback, useGetSafeName } from '../../../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
 import Avatar from '../../page/Header/Avatar';
@@ -35,16 +35,16 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
     },
   });
 
-  const { getAccountName } = useGetAccountName();
+  const { getSafeName } = useGetSafeName();
   const [safeName, setSafeName] = useState<string>();
 
   useEffect(() => {
     if (!safeName) {
-      getAccountName(address, () =>
-        getSafeNameFallback(address, fractalRegistry, publicClient),
-      ).then(setSafeName);
+      getSafeName(address, () => getSafeNameFallback(address, fractalRegistry, publicClient)).then(
+        setSafeName,
+      );
     }
-  }, [address, fractalRegistry, getAccountName, publicClient, safeName]);
+  }, [address, fractalRegistry, getSafeName, publicClient, safeName]);
 
   const { displayName: accountDisplayName } = useDisplayName(
     address,

@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
+import { useGetSafeName } from '../../../hooks/utils/useGetSafeName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   paymentSorterByActiveStatus,
@@ -61,13 +61,13 @@ export default function RolesDetailsDrawer({
   const { address: roleHatWearerAddress, isLoading: loadingRoleHatWearerAddress } =
     useAddress(roleHatWearer);
 
-  const { getAccountName } = useGetAccountName();
+  const { getSafeName } = useGetSafeName();
   const [accountDisplayName, setAccountDisplayName] = useState(roleHatWearer);
   useEffect(() => {
     if (!!roleHatWearerAddress) {
-      getAccountName(roleHatWearerAddress).then(setAccountDisplayName);
+      getSafeName(roleHatWearerAddress).then(setAccountDisplayName);
     }
-  }, [getAccountName, roleHatWearerAddress]);
+  }, [getSafeName, roleHatWearerAddress]);
 
   const { t } = useTranslation(['roles']);
   const avatarURL = useAvatar(roleHatWearer);

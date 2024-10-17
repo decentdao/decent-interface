@@ -9,7 +9,7 @@ import { NodeAction } from '../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { getSafeNameFallback, useGetAccountName } from '../../utils/useGetAccountName';
+import { getSafeNameFallback, useGetSafeName } from '../../utils/useGetSafeName';
 import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
@@ -31,7 +31,7 @@ export const useFractalNode = (
 
   const { action } = useFractal();
   const safeAPI = useSafeAPI();
-  const { getAccountName } = useGetAccountName();
+  const { getSafeName } = useGetSafeName();
 
   const lookupModules = useFractalModules();
 
@@ -79,7 +79,7 @@ export const useFractalNode = (
       const graphNodeInfo = formatDAOQuery({ data }, daoAddress);
       const daoName =
         graphNodeInfo?.daoName ??
-        (await getAccountName(daoAddress, () =>
+        (await getSafeName(daoAddress, () =>
           getSafeNameFallback(daoAddress, fractalRegistry, publicClient),
         ));
 

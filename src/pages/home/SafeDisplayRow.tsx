@@ -8,7 +8,7 @@ import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
-import { getSafeNameFallback, useGetAccountName } from '../../hooks/utils/useGetAccountName';
+import { getSafeNameFallback, useGetSafeName } from '../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
@@ -29,20 +29,20 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
 
   const publicClient = usePublicClient();
 
-  const { getAccountName } = useGetAccountName(getChainIdFromPrefix(network));
+  const { getSafeName } = useGetSafeName(getChainIdFromPrefix(network));
   const [safeName, setSafeName] = useState<string>();
 
   useEffect(() => {
     const fetchSafeName = async () => {
       setSafeName(
-        await getAccountName(address, () =>
+        await getSafeName(address, () =>
           getSafeNameFallback(address, fractalRegistry, publicClient),
         ),
       );
     };
 
     fetchSafeName();
-  }, [address, getAccountName, fractalRegistry, publicClient]);
+  }, [address, getSafeName, fractalRegistry, publicClient]);
 
   const { t } = useTranslation('dashboard');
 

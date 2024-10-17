@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
+import { useGetSafeName } from '../../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import { Card } from '../../ui/cards/Card';
@@ -25,7 +25,7 @@ export function AvatarAndRoleName({
 }) {
   const { addressPrefix } = useNetworkConfig();
 
-  const { getAccountName } = useGetAccountName(getChainIdFromPrefix(addressPrefix));
+  const { getSafeName } = useGetSafeName(getChainIdFromPrefix(addressPrefix));
   const [accountName, setAccountName] = useState<string>();
 
   useEffect(() => {
@@ -34,12 +34,12 @@ export function AvatarAndRoleName({
       return;
     }
 
-    const fetchAccountName = async () => {
-      setAccountName(await getAccountName(wearerAddress));
+    const fetchSafeName = async () => {
+      setAccountName(await getSafeName(wearerAddress));
     };
 
-    fetchAccountName();
-  }, [wearerAddress, getAccountName]);
+    fetchSafeName();
+  }, [wearerAddress, getSafeName]);
 
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles']);

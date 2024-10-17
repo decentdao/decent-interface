@@ -8,13 +8,13 @@ import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { getSafeNameFallback, useGetAccountName } from '../../utils/useGetAccountName';
+import { getSafeNameFallback, useGetSafeName } from '../../utils/useGetSafeName';
 import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
 export const useLoadDAONode = () => {
   const safeAPI = useSafeAPI();
-  const { getAccountName } = useGetAccountName();
+  const { getSafeName } = useGetSafeName();
   const lookupModules = useFractalModules();
   const {
     chain,
@@ -79,7 +79,7 @@ export const useLoadDAONode = () => {
           const node: FractalNode = Object.assign(graphNodeInfo, {
             daoName:
               graphNodeInfo.daoName ??
-              (await getAccountName(daoAddress, () =>
+              (await getSafeName(daoAddress, () =>
                 getSafeNameFallback(daoAddress, fractalRegistry, publicClient),
               )),
             safe: safeInfoWithGuard,
@@ -103,7 +103,7 @@ export const useLoadDAONode = () => {
       safeAPI,
       formatDAOQuery,
       getDAOInfo,
-      getAccountName,
+      getSafeName,
       lookupModules,
       fractalRegistry,
       publicClient,
