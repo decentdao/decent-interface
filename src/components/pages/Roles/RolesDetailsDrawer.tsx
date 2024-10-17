@@ -13,7 +13,6 @@ import {
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { zeroAddress } from 'viem';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
@@ -24,6 +23,7 @@ import {
   paymentSorterByStartDate,
   paymentSorterByWithdrawAmount,
 } from '../../../store/roles';
+import { BarLoader } from '../../ui/loaders/BarLoader';
 import Avatar from '../../ui/page/Header/Avatar';
 import Divider from '../../ui/utils/Divider';
 import { RolePaymentDetails } from './RolePaymentDetails';
@@ -58,12 +58,8 @@ export default function RolesDetailsDrawer({
 
   const roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
 
-  const { address: roleHatWearerAddress } = useAddress(roleHatWearer);
-
-  const resolvedRoleHatWearerAddress = useMemo(
-    () => roleHatWearerAddress ?? zeroAddress,
-    [roleHatWearerAddress],
-  );
+  const { address: roleHatWearerAddress, isLoading: loadingRoleHatWearerAddress } =
+    useAddress(roleHatWearer);
 
   const { getAccountName } = useGetAccountNameDeferred();
   const [accountDisplayName, setAccountDisplayName] = useState(roleHatWearer);
@@ -161,11 +157,15 @@ export default function RolesDetailsDrawer({
                 alignItems="center"
                 gap="0.5rem"
               >
-                <Avatar
-                  size="icon"
-                  address={resolvedRoleHatWearerAddress}
-                  url={avatarURL}
-                />
+                {loadingRoleHatWearerAddress || !roleHatWearerAddress ? (
+                  <BarLoader />
+                ) : (
+                  <Avatar
+                    size="icon"
+                    address={roleHatWearerAddress}
+                    url={avatarURL}
+                  />
+                )}
                 <Text
                   textStyle="body-base"
                   color="white-0"
