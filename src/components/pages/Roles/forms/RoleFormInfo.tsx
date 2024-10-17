@@ -108,7 +108,7 @@ export default function RoleFormInfo() {
                 onChange={e => {
                   const inputWearer = e.target.value;
                   setRoleWearerString(inputWearer);
-                  setFieldValue(field.name, e.target.value);
+                  setFieldValue(field.name, inputWearer);
                 }}
               />
             </LabelWrapper>
