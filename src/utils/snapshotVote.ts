@@ -32,6 +32,7 @@ const customSerializer = (_: string, value: any) => {
 };
 
 const parseMessage = (
+  from: Address,
   message: SnapshotVote,
 ): { message: SnapshotVoteForSigning; types: SnapshotVoteTypes } => {
   const isShutter = message?.privacy === 'shutter';
@@ -53,7 +54,7 @@ const parseMessage = (
   }
 
   const messageForSigning: SnapshotVoteForSigning = {
-    from: message.from || '',
+    from,
     space: message.space,
     timestamp: BigInt(Math.floor(Date.now() / 1000)),
     proposal: message.proposal,
@@ -130,7 +131,10 @@ export const submitSnapshotVote = async (
   walletClient: WalletClient<Transport, Chain, Account>,
   message: SnapshotVote,
 ) => {
-  const { message: messageForSigning, types: typesForSigning } = parseMessage(message);
+  const { message: messageForSigning, types: typesForSigning } = parseMessage(
+    walletClient.account.address,
+    message,
+  );
   const { address, sig, data } = await sign(walletClient, messageForSigning, typesForSigning);
   await send(URL, { address, sig, data });
 };

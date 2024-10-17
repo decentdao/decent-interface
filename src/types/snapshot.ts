@@ -155,7 +155,6 @@ export type SnapshotVoteTypes =
   | typeof snapshotVoteString2Types;
 
 export interface SnapshotVote {
-  from: Address;
   space: string;
   proposal: string;
   type: SnapshotProposalType;
@@ -173,6 +172,7 @@ export interface SnapshotVote {
 }
 
 export interface SnapshotVoteForSigning extends Omit<SnapshotVote, 'type' | 'privacy'> {
+  from: Address;
   timestamp: bigint;
   reason: string;
   app: string;

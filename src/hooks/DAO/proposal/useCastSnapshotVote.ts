@@ -14,9 +14,6 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
 
   const {
     node: { daoSnapshotENS },
-    readOnly: {
-      user: { address },
-    },
   } = useFractal();
 
   const { data: walletClient } = useWalletClient();
@@ -41,7 +38,7 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
 
   const castSnapshotVote = useCallback(
     async (onSuccess?: () => Promise<void>) => {
-      if (address && daoSnapshotENS && extendedSnapshotProposal && walletClient) {
+      if (daoSnapshotENS && extendedSnapshotProposal && walletClient) {
         let toastId;
         const mappedSnapshotWeightedChoice: { [choiceKey: number]: number } = {};
         if (extendedSnapshotProposal.type === 'weighted') {
@@ -65,7 +62,6 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
               extendedSnapshotProposal.proposalId,
             );
             await submitSnapshotVote(walletClient, {
-              from: address,
               space: daoSnapshotENS,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
@@ -75,7 +71,6 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
             });
           } else {
             await submitSnapshotVote(walletClient, {
-              from: address,
               space: daoSnapshotENS,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
@@ -99,7 +94,6 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
     },
     [
       walletClient,
-      address,
       daoSnapshotENS,
       extendedSnapshotProposal,
       selectedChoice,
