@@ -40,10 +40,9 @@ export default function RolesDetailsDrawerMobile({
     [roleHat.payments],
   );
 
-  let roleHatWearerENSOrAddress: string =
-    'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
+  let roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
 
-  const { address: roleHatWearerAddress } = useAddress(roleHatWearerENSOrAddress);
+  const { address: roleHatWearerAddress } = useAddress(roleHatWearer);
 
   if (!daoAddress || !hatsTree) return null;
 

@@ -499,7 +499,6 @@ export default function useCreateRoles() {
             );
           }
 
-          // @todo: For all instances of `getAddress(formHat.wearer)` we should confirm that at this point, `formHat.wearer` is definitely an `Address` type.
           const originalHat = getHat(formHat.id);
           if (!originalHat) {
             throw new Error('Cannot find original hat');
@@ -509,7 +508,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), getAddress(originalHat.wearerAddress), daoAddress],
+              args: [BigInt(formHat.id), originalHat.wearerAddress, daoAddress],
             }),
             targetAddress: hatsProtocol,
           });
