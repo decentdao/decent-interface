@@ -4,7 +4,7 @@ import { Field, FieldProps, useFormikContext } from 'formik';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { formatUnits, getAddress, Hex } from 'viem';
+import { formatUnits, Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
@@ -19,7 +19,7 @@ import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import { RoleCardShort } from '../RoleCard';
 import RolesDetailsDrawer from '../RolesDetailsDrawer';
 import RolesDetailsDrawerMobile from '../RolesDetailsDrawerMobile';
-import { EditedRole, RoleDetailsDrawerRoleHatProp, RoleFormValues } from '../types';
+import { EditedRole, RoleDetailsDrawerEditingRoleHatProp, RoleFormValues } from '../types';
 
 function SendAssetsAction({
   index,
@@ -69,7 +69,7 @@ function SendAssetsAction({
 }
 
 export default function RoleFormCreateProposal({ close }: { close: () => void }) {
-  const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerRoleHatProp>();
+  const [drawerViewingRole, setDrawerViewingRole] = useState<RoleDetailsDrawerEditingRoleHatProp>();
   const { t } = useTranslation(['modals', 'common', 'proposal']);
   const {
     values,
@@ -79,7 +79,7 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
   } = useFormikContext<RoleFormValues>();
 
   const editedRoles = useMemo<
-    (RoleDetailsDrawerRoleHatProp & {
+    (RoleDetailsDrawerEditingRoleHatProp & {
       editedRole: EditedRole;
     })[]
   >(() => {
@@ -91,13 +91,14 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             cause: roleHat,
           });
         }
+
         return {
           ...roleHat,
           editedRole: roleHat.editedRole,
           prettyId: roleHat.id,
           name: roleHat.name,
           description: roleHat.description,
-          wearer: getAddress(roleHat.wearer),
+          wearer: roleHat.wearer,
           payments: roleHat.payments
             ? roleHat.payments.map(payment => {
                 if (!payment.startDate || !payment.endDate || !payment.amount || !payment.asset) {

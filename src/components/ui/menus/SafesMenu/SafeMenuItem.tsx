@@ -1,12 +1,16 @@
 import { Box, Button, Flex, Image, MenuItem, Spacer, Text } from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
-import { useSwitchChain } from 'wagmi';
+import { usePublicClient, useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { useGetDAOName } from '../../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import {
+  getSafeNameFallback,
+  useGetAccountNameDeferred,
+} from '../../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
 import Avatar from '../../page/Header/Avatar';
@@ -20,8 +24,12 @@ export interface SafeMenuItemProps {
 
 export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
   const navigate = useNavigate();
+  const publicClient = usePublicClient();
 
-  const { addressPrefix } = useNetworkConfig();
+  const {
+    addressPrefix,
+    contracts: { fractalRegistry },
+  } = useNetworkConfig();
   const { switchChain } = useSwitchChain({
     mutation: {
       onSuccess: () => {
@@ -30,10 +38,16 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
     },
   });
 
-  const { daoName } = useGetDAOName({
-    address: address,
-    chainId: getChainIdFromPrefix(network),
-  });
+  const { getAccountName } = useGetAccountNameDeferred();
+  const [safeName, setSafeName] = useState<string>();
+
+  useEffect(() => {
+    if (!safeName) {
+      getAccountName(address, () =>
+        getSafeNameFallback(address, fractalRegistry, publicClient),
+      ).then(setSafeName);
+    }
+  }, [address, fractalRegistry, getAccountName, publicClient, safeName]);
 
   const { displayName: accountDisplayName } = useDisplayName(
     address,
@@ -75,7 +89,7 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
             color="white-0"
             textStyle="button-base"
           >
-            {daoName ?? t('loadingFavorite')}
+            {safeName ?? t('loadingFavorite')}
           </Text>
         </Flex>
 

@@ -1,19 +1,21 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress } from 'viem';
-import { useSwitchChain } from 'wagmi';
+import { usePublicClient, useSwitchChain } from 'wagmi';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
-import { useGetDAOName } from '../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../hooks/utils/useAvatar';
 import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
+import { getSafeNameFallback, useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
-  const { addressPrefix } = useNetworkConfig();
+  const {
+    addressPrefix,
+    contracts: { fractalRegistry },
+  } = useNetworkConfig();
   const navigate = useNavigate();
 
   const { switchChain } = useSwitchChain({
@@ -24,9 +26,12 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
     },
   });
 
-  const { daoName } = useGetDAOName({
-    address: getAddress(address),
+  const publicClient = usePublicClient();
+
+  const { accountName: safeName } = useGetAccountName({
+    address,
     chainId: getChainIdFromPrefix(network),
+    getAccountNameFallback: () => getSafeNameFallback(address, fractalRegistry, publicClient),
   });
 
   const { t } = useTranslation('dashboard');
@@ -77,10 +82,10 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
       />
       <Flex flexDir="column">
         <Text
-          color={daoName ? nameColor : 'neutral-6'}
+          color={safeName ? nameColor : 'neutral-6'}
           textStyle={showAddress ? 'label-base' : 'button-base'}
         >
-          {daoName ?? t('loadingFavorite')}
+          {safeName ?? t('loadingFavorite')}
         </Text>
         {showAddress && <Text textStyle="button-base">{createAccountSubstring(address)}</Text>}
       </Flex>

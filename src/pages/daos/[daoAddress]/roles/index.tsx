@@ -3,7 +3,7 @@ import { Box, Flex, Show, Text } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Hex, zeroAddress } from 'viem';
+import { Hex } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
 import { RoleCardLoading } from '../../../../components/pages/Roles/RolePageCard';
 import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
@@ -99,7 +99,7 @@ function Roles() {
               <RoleCard
                 key={roleHat.id}
                 name={roleHat.name}
-                wearerAddress={roleHat.wearer || zeroAddress}
+                wearerAddress={roleHat.wearerAddress}
                 hatId={roleHat.id}
                 handleRoleClick={handleNavigateToRole}
                 paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}

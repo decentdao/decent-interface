@@ -2,9 +2,9 @@ import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
 import { CaretCircleRight, CaretRight } from '@phosphor-icons/react';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
-import { getAddress, zeroAddress } from 'viem';
-import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
+import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import { Card } from '../../ui/cards/Card';
@@ -18,12 +18,12 @@ export function AvatarAndRoleName({
   name,
   paymentsCount,
 }: {
-  wearerAddress: string | undefined;
+  wearerAddress: Address | undefined;
   name?: string;
   paymentsCount?: number;
 }) {
   const { addressPrefix } = useNetworkConfig();
-  const { daoName: accountDisplayName } = useGetDAOName({
+  const { accountName } = useGetAccountName({
     address: getAddress(wearerAddress || zeroAddress),
     chainId: getChainIdFromPrefix(addressPrefix),
   });
@@ -59,7 +59,7 @@ export function AvatarAndRoleName({
           textStyle="button-small"
           color="neutral-7"
         >
-          {wearerAddress ? accountDisplayName : t('unassigned')}
+          {wearerAddress ? accountName : t('unassigned')}
         </Text>
         {paymentsCount !== undefined && (
           <Flex
@@ -205,7 +205,7 @@ export function RoleCard({
 
 export function RoleCardEdit({
   name,
-  wearerAddress,
+  wearer,
   payments,
   editStatus,
   handleRoleClick,
@@ -219,7 +219,7 @@ export function RoleCardEdit({
     >
       <Flex justifyContent="space-between">
         <AvatarAndRoleName
-          wearerAddress={wearerAddress}
+          wearerAddress={wearer}
           name={name}
         />
         <Flex

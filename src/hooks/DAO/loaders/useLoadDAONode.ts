@@ -1,21 +1,26 @@
 import { useLazyQuery } from '@apollo/client';
 import { useCallback } from 'react';
 import { isAddress, Address, getAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalNode, Node, WithError } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { useGetDAONameDeferred } from '../useGetDAOName';
+import { getSafeNameFallback, useGetAccountNameDeferred } from '../../utils/useGetAccountName';
 import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
 export const useLoadDAONode = () => {
   const safeAPI = useSafeAPI();
-  const { getDAOName } = useGetDAONameDeferred();
+  const { getAccountName } = useGetAccountNameDeferred();
   const lookupModules = useFractalModules();
-  const { chain, subgraph } = useNetworkConfig();
+  const {
+    chain,
+    subgraph,
+    contracts: { fractalRegistry },
+  } = useNetworkConfig();
   const [getDAOInfo] = useLazyQuery(DAOQueryDocument, {
     context: {
       subgraphSpace: subgraph.space,
@@ -23,6 +28,8 @@ export const useLoadDAONode = () => {
       subgraphVersion: subgraph.version,
     },
   });
+
+  const publicClient = usePublicClient();
 
   const formatDAOQuery = useCallback(
     (result: { data?: DAOQueryQuery }, _daoAddress: Address) => {
@@ -70,10 +77,11 @@ export const useLoadDAONode = () => {
           const safeInfoWithGuard = await safeAPI.getSafeData(checksummedAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
-            daoName: await getDAOName({
-              address: daoAddress,
-              registryName: graphNodeInfo.daoName,
-            }),
+            daoName:
+              graphNodeInfo.daoName ??
+              (await getAccountName(daoAddress, () =>
+                getSafeNameFallback(daoAddress, fractalRegistry, publicClient),
+              )),
             safe: safeInfoWithGuard,
             fractalModules: await lookupModules(safeInfoWithGuard.modules),
           });
@@ -91,7 +99,15 @@ export const useLoadDAONode = () => {
         return { error: 'errorFailedSearch' };
       }
     },
-    [formatDAOQuery, getDAOInfo, lookupModules, safeAPI, getDAOName],
+    [
+      safeAPI,
+      formatDAOQuery,
+      getDAOInfo,
+      getAccountName,
+      lookupModules,
+      fractalRegistry,
+      publicClient,
+    ],
   );
 
   return { loadDao };
