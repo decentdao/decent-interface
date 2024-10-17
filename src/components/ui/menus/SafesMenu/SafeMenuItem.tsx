@@ -6,7 +6,6 @@ import { Address } from 'viem';
 import { usePublicClient, useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useAvatar from '../../../../hooks/utils/useAvatar';
-import useDisplayName from '../../../../hooks/utils/useDisplayName';
 import { getSafeNameFallback, useGetSafeName } from '../../../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
@@ -46,12 +45,8 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
     }
   }, [address, fractalRegistry, getSafeName, publicClient, safeName]);
 
-  const { displayName: accountDisplayName } = useDisplayName(
-    address,
-    false,
-    getChainIdFromPrefix(network),
-  );
-  const avatarURL = useAvatar(accountDisplayName);
+  // if by chance the safe name is an ENS name, let's attempt to get the avatar for that
+  const avatarURL = useAvatar(safeName ?? '');
 
   const { t } = useTranslation('dashboard');
 

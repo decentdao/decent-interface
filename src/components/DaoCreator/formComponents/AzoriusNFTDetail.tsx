@@ -27,7 +27,7 @@ export default function AzoriusNFTDetail({
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
-  const { displayName } = useDisplayName(tokenDetails?.address, true);
+  const { displayName } = useDisplayName(tokenDetails?.address);
 
   useEffect(() => {
     const loadNFTDetails = async () => {

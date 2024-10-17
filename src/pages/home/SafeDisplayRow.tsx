@@ -7,7 +7,7 @@ import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuI
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
-import useDisplayName, { createAccountSubstring } from '../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../hooks/utils/useDisplayName';
 import { getSafeNameFallback, useGetSafeName } from '../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
@@ -46,12 +46,8 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
 
   const { t } = useTranslation('dashboard');
 
-  const { displayName: accountDisplayName } = useDisplayName(
-    address,
-    false,
-    getChainIdFromPrefix(network),
-  );
-  const avatarURL = useAvatar(accountDisplayName);
+  // if the safe name is an ENS name, let's attempt to get the avatar for that
+  const avatarURL = useAvatar(safeName ?? '');
 
   const onClickNav = () => {
     if (onClick) onClick();

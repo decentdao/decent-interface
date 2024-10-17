@@ -6,7 +6,6 @@ import { Address, Hex, zeroAddress } from 'viem';
 import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentTree, useRolesStore } from '../../../store/roles';
 import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
@@ -94,9 +93,8 @@ function RoleNameEditColumn({
 }
 
 function MemberColumn({ wearer }: { wearer: string | undefined }) {
-  const { chain } = useNetworkConfig();
   const { address } = useAddress(wearer || zeroAddress);
-  const { displayName: accountDisplayName } = useDisplayName(address || null, true, chain.id);
+  const { displayName: accountDisplayName } = useDisplayName(address);
   const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('roles');
