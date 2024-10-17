@@ -1,5 +1,16 @@
-import { Box, Button, Flex, FormControl, Icon, Text } from '@chakra-ui/react';
-import { Plus } from '@phosphor-icons/react';
+import {
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Button,
+  Flex,
+  FormControl,
+  Icon,
+  Text,
+} from '@chakra-ui/react';
+import { CaretDown, CaretRight, Plus } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -143,20 +154,68 @@ function RoleTermExpiredTerms({
     termNumber: number;
   }[];
 }) {
+  const { t } = useTranslation('roles');
   if (!roleTerms) {
     return null;
   }
   return (
     <Box>
-      {roleTerms.map((term, index) => {
-        return (
-          <RoleTermRenderer
-            key={index}
-            roleTerm={term}
-            termStatus="expired"
-          />
-        );
-      })}
+      <Accordion allowToggle>
+        <AccordionItem
+          bg="neutral-2"
+          borderTop="none"
+          borderBottom="none"
+          borderTopRadius="0.5rem"
+          borderBottomRadius="0.5rem"
+        >
+          {({ isExpanded }) => (
+            <>
+              <AccordionButton
+                bg="neutral-2"
+                borderTopRadius="0.5rem"
+                borderBottomRadius="0.5rem"
+                p="1rem"
+              >
+                <Flex
+                  alignItems="center"
+                  gap={2}
+                >
+                  <Icon
+                    as={!isExpanded ? CaretDown : CaretRight}
+                    boxSize="1.25rem"
+                    color="lilac-0"
+                  />
+                  <Text
+                    textStyle="button-base"
+                    color="lilac-0"
+                  >
+                    {t('showExpiredTerms')}
+                  </Text>
+                </Flex>
+              </AccordionButton>
+              <Flex
+                flexDir="column"
+                gap={4}
+              >
+                {roleTerms.map((term, index) => {
+                  return (
+                    <AccordionPanel
+                      key={index}
+                      px="1rem"
+                    >
+                      <RoleTermRenderer
+                        key={index}
+                        roleTerm={term}
+                        termStatus="expired"
+                      />
+                    </AccordionPanel>
+                  );
+                })}
+              </Flex>
+            </>
+          )}
+        </AccordionItem>
+      </Accordion>
     </Box>
   );
 }

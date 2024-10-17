@@ -102,5 +102,6 @@
   "currentTerm": "Current Term",
   "nextTerm": "Next Term",
   "expired": "Expired",
-  "inQueue": "In Queue"
+  "inQueue": "In Queue",
+  "showExpiredTerms": "Show expired Terms"
 }
