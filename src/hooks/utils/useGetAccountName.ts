@@ -37,52 +37,36 @@ export const getSafeNameFallback = async (
   }
 };
 
-type GetAccountNameFallback = () => Promise<string | undefined>;
-
-const getAccountName = async ({
-  address,
-  publicClient,
-  getAccountNameFallback,
-}: {
-  address: Address;
-  publicClient: PublicClient | undefined;
-  getAccountNameFallback?: GetAccountNameFallback;
-}) => {
-  if (!publicClient || !publicClient.chain) {
-    throw new Error('Public client not available');
-  }
-
-  const ensName = await publicClient.getEnsName({ address }).catch((error: Error) => {
-    if (error.name === 'ChainDoesNotSupportContract') {
-      // Sliently fail, this is fine.
-      // https://github.com/wevm/viem/discussions/781
-    } else {
-      throw error;
-    }
-  });
-
-  if (ensName) {
-    return ensName;
-  }
-
-  if (getAccountNameFallback) {
-    return (await getAccountNameFallback()) ?? createAccountSubstring(address);
-  }
-
-  return createAccountSubstring(address);
-};
-
-const useGetAccountName = (chainId?: number) => {
+export const useGetAccountName = (chainId?: number) => {
   const publicClient = usePublicClient({ chainId });
 
-  const getAccountNameDeferred = useCallback(
-    (address: Address, getAccountNameFallback?: GetAccountNameFallback) => {
-      return getAccountName({ address, publicClient, getAccountNameFallback });
+  const getAccountName = useCallback(
+    async (address: Address, getAccountNameFallback?: () => Promise<string | undefined>) => {
+      if (!publicClient || !publicClient.chain) {
+        throw new Error('Public client not available');
+      }
+
+      const ensName = await publicClient.getEnsName({ address }).catch((error: Error) => {
+        if (error.name === 'ChainDoesNotSupportContract') {
+          // Sliently fail, this is fine.
+          // https://github.com/wevm/viem/discussions/781
+        } else {
+          throw error;
+        }
+      });
+
+      if (ensName) {
+        return ensName;
+      }
+
+      if (getAccountNameFallback) {
+        return (await getAccountNameFallback()) ?? createAccountSubstring(address);
+      }
+
+      return createAccountSubstring(address);
     },
     [publicClient],
   );
 
-  return { getAccountName: getAccountNameDeferred };
+  return { getAccountName };
 };
-
-export { useGetAccountName };
