@@ -14,7 +14,7 @@ import { CaretDown, CaretRight, Plus } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getAddress, zeroAddress } from 'viem';
+import { getAddress } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -155,7 +155,7 @@ function RoleTermExpiredTerms({
   }[];
 }) {
   const { t } = useTranslation('roles');
-  if (!roleTerms) {
+  if (!roleTerms?.length) {
     return null;
   }
   return (
@@ -231,27 +231,27 @@ export default function RoleFormTerms() {
       )
       .map((term, index) => ({ ...term, termNumber: index + 1 })) ||
     [
-      {
-        nominee: zeroAddress,
-        termEndDate: new Date('2024-10-10'),
-      },
-      {
-        nominee: zeroAddress,
-        termEndDate: new Date('2025-10-22'),
-      },
-      {
-        nominee: zeroAddress,
-        termEndDate: new Date('2026-10-27'),
-      },
-      {
-        nominee: zeroAddress,
-        termEndDate: new Date('2024-10-9'),
-      },
-    ]
-      .sort(
-        (a, b) => (a.termEndDate ?? new Date()).getTime() - (b.termEndDate ?? new Date()).getTime(),
-      )
-      .map((term, index) => ({ ...term, termNumber: index + 1 }));
+      // {
+      //   nominee: zeroAddress,
+      //   termEndDate: new Date('2024-10-10'),
+      // },
+      // {
+      //   nominee: zeroAddress,
+      //   termEndDate: new Date('2025-10-22'),
+      // },
+      // {
+      //   nominee: zeroAddress,
+      //   termEndDate: new Date('2026-10-27'),
+      // },
+      // {
+      //   nominee: zeroAddress,
+      //   termEndDate: new Date('2024-10-9'),
+      // },
+    ];
+  // .sort(
+  //   (a, b) => (a.termEndDate ?? new Date()).getTime() - (b.termEndDate ?? new Date()).getTime(),
+  // )
+  // .map((term, index) => ({ ...term, termNumber: index + 1 }));
 
   const expiredTerms = roleFormTerms.filter(
     term => !!term.termEndDate && term.termEndDate < new Date(),
