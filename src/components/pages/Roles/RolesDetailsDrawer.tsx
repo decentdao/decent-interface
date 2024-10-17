@@ -15,9 +15,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Hex, zeroAddress } from 'viem';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
-import { useGetDAONameDeferred } from '../../../hooks/DAO/useGetDAOName';
 import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
+import { useGetAccountNameDeferred } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   paymentSorterByActiveStatus,
@@ -68,14 +68,14 @@ export default function RolesDetailsDrawer({
 
   const roleHatWearerAddress = useMemo(() => roleHatWearer ?? zeroAddress, [roleHatWearer]);
 
-  const { getDAOName } = useGetDAONameDeferred();
+  const { getAccountName } = useGetAccountNameDeferred();
   const [accountDisplayName, setAccountDisplayName] = useState(roleHat.wearer);
 
   useEffect(() => {
     if (!!roleHatWearer) {
-      getDAOName(roleHatWearer).then(displayName => setAccountDisplayName(displayName));
+      getAccountName(roleHatWearer).then(setAccountDisplayName);
     }
-  }, [getDAOName, roleHatWearer]);
+  }, [getAccountName, roleHatWearer]);
 
   const { t } = useTranslation(['roles']);
   const avatarURL = useAvatar(roleHat.wearer);

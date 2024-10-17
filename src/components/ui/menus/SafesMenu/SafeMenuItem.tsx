@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
 import { useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import { useGetDAOName } from '../../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { getSafeNameFallback, useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
 import Avatar from '../../page/Header/Avatar';
@@ -30,9 +30,10 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
     },
   });
 
-  const { daoName } = useGetDAOName({
+  const { accountName: safeName } = useGetAccountName({
     address: address,
     chainId: getChainIdFromPrefix(network),
+    getAccountNameFallback: getSafeNameFallback,
   });
 
   const { displayName: accountDisplayName } = useDisplayName(
@@ -75,7 +76,7 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
             color="white-0"
             textStyle="button-base"
           >
-            {daoName ?? t('loadingFavorite')}
+            {safeName ?? t('loadingFavorite')}
           </Text>
         </Flex>
 

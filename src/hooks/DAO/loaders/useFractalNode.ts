@@ -8,7 +8,7 @@ import { NodeAction } from '../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { useGetDAONameDeferred } from '../useGetDAOName';
+import { getSafeNameFallback, useGetAccountNameDeferred } from '../../utils/useGetAccountName';
 import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
@@ -30,7 +30,7 @@ export const useFractalNode = (
 
   const { action } = useFractal();
   const safeAPI = useSafeAPI();
-  const { getDAOName } = useGetDAONameDeferred();
+  const { getAccountName } = useGetAccountNameDeferred();
 
   const lookupModules = useFractalModules();
 
@@ -71,7 +71,8 @@ export const useFractalNode = (
     onCompleted: async data => {
       if (!daoAddress) return;
       const graphNodeInfo = formatDAOQuery({ data }, daoAddress);
-      const daoName = graphNodeInfo?.daoName ?? (await getDAOName(daoAddress));
+      const daoName =
+        graphNodeInfo?.daoName ?? (await getAccountName(daoAddress, getSafeNameFallback));
 
       action.dispatch({
         type: NodeAction.SET_DAO_INFO,
