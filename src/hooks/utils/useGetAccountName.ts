@@ -11,7 +11,7 @@ export const getSafeNameFallback = async (
   publicClient: PublicClient | undefined,
 ) => {
   if (!publicClient || !publicClient.chain) {
-    throw new Error('Public client not available');
+    return;
   }
 
   const fractalRegistryContract = getContract({
@@ -37,9 +37,9 @@ export const getSafeNameFallback = async (
   }
 };
 
-type GetAccountNameFallback = (...args: any) => Promise<string | undefined>;
+type GetAccountNameFallback = () => Promise<string | undefined>;
 
-export const getAccountName = async ({
+const getAccountName = async ({
   address,
   publicClient,
   getAccountNameFallback,
@@ -66,7 +66,7 @@ export const getAccountName = async ({
   }
 
   if (getAccountNameFallback) {
-    return (await getAccountNameFallback(address, publicClient)) ?? createAccountSubstring(address);
+    return (await getAccountNameFallback()) ?? createAccountSubstring(address);
   }
 
   return createAccountSubstring(address);

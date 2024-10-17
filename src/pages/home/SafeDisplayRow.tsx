@@ -1,8 +1,7 @@
 import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { getAddress } from 'viem';
-import { useSwitchChain } from 'wagmi';
+import { usePublicClient, useSwitchChain } from 'wagmi';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
@@ -13,7 +12,10 @@ import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigPro
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
-  const { addressPrefix } = useNetworkConfig();
+  const {
+    addressPrefix,
+    contracts: { fractalRegistry },
+  } = useNetworkConfig();
   const navigate = useNavigate();
 
   const { switchChain } = useSwitchChain({
@@ -24,10 +26,12 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
     },
   });
 
+  const publicClient = usePublicClient();
+
   const { accountName: safeName } = useGetAccountName({
-    address: getAddress(address),
+    address,
     chainId: getChainIdFromPrefix(network),
-    getAccountNameFallback: getSafeNameFallback,
+    getAccountNameFallback: () => getSafeNameFallback(address, fractalRegistry, publicClient),
   });
 
   const { t } = useTranslation('dashboard');

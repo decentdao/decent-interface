@@ -2,7 +2,7 @@ import { Box, Button, Flex, Image, MenuItem, Spacer, Text } from '@chakra-ui/rea
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
-import { useSwitchChain } from 'wagmi';
+import { usePublicClient, useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../../hooks/utils/useDisplayName';
@@ -20,8 +20,12 @@ export interface SafeMenuItemProps {
 
 export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
   const navigate = useNavigate();
+  const publicClient = usePublicClient();
 
-  const { addressPrefix } = useNetworkConfig();
+  const {
+    addressPrefix,
+    contracts: { fractalRegistry },
+  } = useNetworkConfig();
   const { switchChain } = useSwitchChain({
     mutation: {
       onSuccess: () => {
@@ -33,7 +37,7 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
   const { accountName: safeName } = useGetAccountName({
     address: address,
     chainId: getChainIdFromPrefix(network),
-    getAccountNameFallback: getSafeNameFallback,
+    getAccountNameFallback: () => getSafeNameFallback(address, fractalRegistry, publicClient),
   });
 
   const { displayName: accountDisplayName } = useDisplayName(
