@@ -1,6 +1,4 @@
-import snapshot from '@snapshot-labs/snapshot.js';
-import { ethers } from 'ethers';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useWalletClient } from 'wagmi';
@@ -8,6 +6,7 @@ import { logError } from '../../../helpers/errorLogging';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ExtendedSnapshotProposal } from '../../../types';
 import encryptWithShutter from '../../../utils/shutter';
+import { submitSnapshotVote } from '../../../utils/snapshotVote';
 
 const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal | null) => {
   const [selectedChoice, setSelectedChoice] = useState<number>();
@@ -21,23 +20,6 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
   } = useFractal();
 
   const { data: walletClient } = useWalletClient();
-
-  const signer = useMemo(() => {
-    if (!walletClient) {
-      return undefined;
-    }
-
-    const web3Provider = new ethers.providers.Web3Provider(walletClient.transport);
-    const jsonRpcSigner = web3Provider.getSigner(walletClient.account.address);
-    return jsonRpcSigner;
-  }, [walletClient]);
-
-  const client = useMemo(() => {
-    if (daoSnapshotENS) {
-      return new snapshot.Client712('https://hub.snapshot.org');
-    }
-    return undefined;
-  }, [daoSnapshotENS]);
 
   useEffect(() => {
     if (extendedSnapshotProposal) {
@@ -59,14 +41,7 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
 
   const castSnapshotVote = useCallback(
     async (onSuccess?: () => Promise<void>) => {
-      if (
-        signer &&
-        signer?.provider &&
-        address &&
-        daoSnapshotENS &&
-        extendedSnapshotProposal &&
-        client
-      ) {
+      if (address && daoSnapshotENS && extendedSnapshotProposal && walletClient) {
         let toastId;
         const mappedSnapshotWeightedChoice: { [choiceKey: number]: number } = {};
         if (extendedSnapshotProposal.type === 'weighted') {
@@ -89,7 +64,8 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
               JSON.stringify(choice),
               extendedSnapshotProposal.proposalId,
             );
-            await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
+            await submitSnapshotVote(walletClient, {
+              from: address,
               space: daoSnapshotENS,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
@@ -98,7 +74,8 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
               app: 'decent',
             });
           } else {
-            await client.vote(signer.provider as ethers.providers.Web3Provider, address, {
+            await submitSnapshotVote(walletClient, {
+              from: address,
               space: daoSnapshotENS,
               proposal: extendedSnapshotProposal.proposalId,
               type: extendedSnapshotProposal.type,
@@ -121,11 +98,10 @@ const useCastSnapshotVote = (extendedSnapshotProposal: ExtendedSnapshotProposal 
       }
     },
     [
-      signer,
+      walletClient,
       address,
       daoSnapshotENS,
       extendedSnapshotProposal,
-      client,
       selectedChoice,
       snapshotWeightedChoice,
       t,
