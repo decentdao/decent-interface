@@ -70,8 +70,7 @@ export const useValidationAddress = () => {
    */
 
   const addressValidationMap = useRef<AddressValidationMap>(new Map());
-  // const signer = useEthersSigner();
-  // const signerOrProvider = useSignerOrProvider();
+
   const { t } = useTranslation(['daoCreate', 'common', 'modals']);
   const {
     node: { safe },
