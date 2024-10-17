@@ -213,9 +213,10 @@ export default function useCreateRoles() {
             getAddress(role.wearer),
             sablierPayments,
             role.isTermed ?? false,
+            // @todo fix this
             role.roleTerms?.map(term => ({
-              termEndDateTs: term.termEndDateTs ? BigInt(term.termEndDateTs) : 0n,
-              nominatedWearers: term.nominee ? [getAddress(term.nominee)] : [zeroAddress],
+              termEndDateTs: 0n,
+              nominatedWearers: [zeroAddress],
             })) ?? [],
           );
         }),
@@ -445,7 +446,7 @@ export default function useCreateRoles() {
       if (formRole.wearer === undefined) {
         throw new Error('Member of added Role is undefined.');
       }
-      if (formRole.roleTerms?.[0].termEndDateTs === undefined) {
+      if (formRole.roleTerms?.[0].termEndDate === undefined) {
         throw new Error('Term end date of added Role is undefined.');
       }
       if (formRole.roleTerms?.[0].nominee === undefined) {
@@ -459,7 +460,8 @@ export default function useCreateRoles() {
       const { electionDeployModuleTx, predictedElectionEligibilityInstance } =
         await createEligibilityModuleTx(
           BigInt(formRole.id),
-          BigInt(formRole.roleTerms[0].termEndDateTs),
+          // @todo fix this to be the correct term end date
+          BigInt(Date.now()),
           adminHatId,
         );
       txData.push(electionDeployModuleTx);
@@ -473,7 +475,8 @@ export default function useCreateRoles() {
         true,
         [
           {
-            termEndDateTs: BigInt(formRole.roleTerms[0].termEndDateTs),
+            // @todo fix this to be the correct term end date
+            termEndDateTs: BigInt(Date.now()),
             nominatedWearers: [getAddress(formRole.roleTerms[0].nominee)],
           },
         ],
@@ -496,7 +499,7 @@ export default function useCreateRoles() {
         targetAddress: hatsProtocol,
       });
       if (eligibilityModule !== HATS_ADDRESS) {
-        if (formRole.roleTerms?.[0].termEndDateTs === undefined) {
+        if (formRole.roleTerms?.[0].termEndDate === undefined) {
           throw new Error('Term end date of added Role is undefined.');
         }
         // create transactions to start first term right away
@@ -504,7 +507,8 @@ export default function useCreateRoles() {
           calldata: encodeFunctionData({
             abi: HatsElectionsEligibilityAbi,
             functionName: 'elect',
-            args: [BigInt(formRole.roleTerms[0].termEndDateTs), [hatStruct.wearer]],
+            // @todo fix this to be the correct term end date
+            args: [BigInt(Date.now()), [hatStruct.wearer]],
           }),
           targetAddress: eligibilityModule,
         });
@@ -939,7 +943,7 @@ export default function useCreateRoles() {
               if (!latestTerm) {
                 throw new Error('No term data found');
               }
-              if (latestTerm.termEndDateTs === undefined) {
+              if (latestTerm.termEndDate === undefined) {
                 throw new Error('Term end date of added Role is undefined.');
               }
               if (latestTerm.nominee === undefined) {
@@ -966,7 +970,8 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsElectionsEligibilityAbi,
                   functionName: 'setNextTerm',
-                  args: [BigInt(latestTerm.termEndDateTs)],
+                  // @todo fix this to be the latest term end date
+                  args: [BigInt(Date.now())],
                 }),
                 targetAddress: formHat.eligibility,
               });
@@ -974,14 +979,16 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsElectionsEligibilityAbi,
                   functionName: 'elect',
-                  args: [BigInt(latestTerm.termEndDateTs), [getAddress(latestTerm.nominee)]],
+                  // @todo fix this to be the latest term end date
+                  args: [BigInt(Date.now()), [getAddress(latestTerm.nominee)]],
                 }),
                 targetAddress: formHat.eligibility,
               });
 
               // @note {assumption at proposal creation}: previous term is on going
-              const previousTerm = formHat.roleTerms?.[formHat.roleTerms.length - 2];
-              if (previousTerm?.termEndDateTs ?? 0 < Date.now()) {
+              // const previousTerm = formHat.roleTerms?.[formHat.roleTerms.length - 2];
+              // @todo fix this to be the previous term end date
+              if (Date.now() ?? 0 < Date.now()) {
                 allTxs.push({
                   calldata: encodeFunctionData({
                     abi: HatsElectionsEligibilityAbi,
