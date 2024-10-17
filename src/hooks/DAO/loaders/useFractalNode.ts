@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Address } from 'viem';
-import { usePublicClient } from 'wagmi';
 import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -9,7 +8,7 @@ import { NodeAction } from '../../../providers/App/node/action';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { getSafeNameFallback, useGetSafeName } from '../../utils/useGetSafeName';
+import { useGetSafeName } from '../../utils/useGetSafeName';
 import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
@@ -35,12 +34,7 @@ export const useFractalNode = (
 
   const lookupModules = useFractalModules();
 
-  const {
-    chain,
-    contracts: { fractalRegistry },
-  } = useNetworkConfig();
-
-  const publicClient = usePublicClient();
+  const { chain } = useNetworkConfig();
 
   const formatDAOQuery = useCallback(
     (result: { data?: DAOQueryQuery }, _daoAddress: Address) => {
@@ -77,11 +71,7 @@ export const useFractalNode = (
     onCompleted: async data => {
       if (!daoAddress) return;
       const graphNodeInfo = formatDAOQuery({ data }, daoAddress);
-      const daoName =
-        graphNodeInfo?.daoName ??
-        (await getSafeName(daoAddress, () =>
-          getSafeNameFallback(daoAddress, fractalRegistry, publicClient),
-        ));
+      const daoName = graphNodeInfo?.daoName ?? (await getSafeName(daoAddress));
 
       action.dispatch({
         type: NodeAction.SET_DAO_INFO,

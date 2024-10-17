@@ -2,21 +2,18 @@ import { Flex, Image, Show, Spacer, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { usePublicClient, useSwitchChain } from 'wagmi';
+import { useSwitchChain } from 'wagmi';
 import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuItem';
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
 import { createAccountSubstring } from '../../hooks/utils/useDisplayName';
-import { getSafeNameFallback, useGetSafeName } from '../../hooks/utils/useGetSafeName';
+import { useGetSafeName } from '../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';
 
 export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeMenuItemProps) {
-  const {
-    addressPrefix,
-    contracts: { fractalRegistry },
-  } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
 
   const { switchChain } = useSwitchChain({
@@ -27,22 +24,12 @@ export function SafeDisplayRow({ address, network, onClick, showAddress }: SafeM
     },
   });
 
-  const publicClient = usePublicClient();
-
   const { getSafeName } = useGetSafeName(getChainIdFromPrefix(network));
   const [safeName, setSafeName] = useState<string>();
 
   useEffect(() => {
-    const fetchSafeName = async () => {
-      setSafeName(
-        await getSafeName(address, () =>
-          getSafeNameFallback(address, fractalRegistry, publicClient),
-        ),
-      );
-    };
-
-    fetchSafeName();
-  }, [address, getSafeName, fractalRegistry, publicClient]);
+    getSafeName(address).then(setSafeName);
+  }, [address, getSafeName]);
 
   const { t } = useTranslation('dashboard');
 

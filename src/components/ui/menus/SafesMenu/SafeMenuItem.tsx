@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Address } from 'viem';
-import { usePublicClient, useSwitchChain } from 'wagmi';
+import { useSwitchChain } from 'wagmi';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import useAvatar from '../../../../hooks/utils/useAvatar';
-import { getSafeNameFallback, useGetSafeName } from '../../../../hooks/utils/useGetSafeName';
+import { useGetSafeName } from '../../../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getNetworkIcon } from '../../../../utils/url';
 import Avatar from '../../page/Header/Avatar';
@@ -20,12 +20,8 @@ export interface SafeMenuItemProps {
 
 export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
   const navigate = useNavigate();
-  const publicClient = usePublicClient();
 
-  const {
-    addressPrefix,
-    contracts: { fractalRegistry },
-  } = useNetworkConfig();
+  const { addressPrefix } = useNetworkConfig();
   const { switchChain } = useSwitchChain({
     mutation: {
       onSuccess: () => {
@@ -34,16 +30,12 @@ export function SafeMenuItem({ address, network }: SafeMenuItemProps) {
     },
   });
 
-  const { getSafeName } = useGetSafeName();
+  const { getSafeName } = useGetSafeName(getChainIdFromPrefix(network));
   const [safeName, setSafeName] = useState<string>();
 
   useEffect(() => {
-    if (!safeName) {
-      getSafeName(address, () => getSafeNameFallback(address, fractalRegistry, publicClient)).then(
-        setSafeName,
-      );
-    }
-  }, [address, fractalRegistry, getSafeName, publicClient, safeName]);
+    getSafeName(address).then(setSafeName);
+  }, [address, getSafeName]);
 
   // if by chance the safe name is an ENS name, let's attempt to get the avatar for that
   const avatarURL = useAvatar(safeName ?? '');

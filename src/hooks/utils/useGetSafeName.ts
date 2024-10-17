@@ -1,47 +1,19 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { useCallback } from 'react';
-import { Address, PublicClient, getContract } from 'viem';
+import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
+import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { demoData } from '../DAO/loaders/loadDemoData';
 import { createAccountSubstring } from './useDisplayName';
 
-export const getSafeNameFallback = async (
-  address: Address,
-  fractalRegistry: Address,
-  publicClient: PublicClient | undefined,
-) => {
-  if (!publicClient || !publicClient.chain) {
-    return;
-  }
-
-  const fractalRegistryContract = getContract({
-    abi: abis.FractalRegistry,
-    address: fractalRegistry,
-    client: publicClient,
-  });
-
-  const events = await fractalRegistryContract.getEvents.FractalNameUpdated(
-    { daoAddress: address },
-    { fromBlock: 0n },
-  );
-
-  const latestEvent = events.pop();
-
-  if (latestEvent?.args.daoName) {
-    return latestEvent.args.daoName;
-  } else if (publicClient.chain && demoData[publicClient.chain.id]) {
-    const demo = demoData[publicClient.chain.id][address];
-    if (demo && demo.name) {
-      return demo.name;
-    }
-  }
-};
-
 export const useGetSafeName = (chainId?: number) => {
   const publicClient = usePublicClient({ chainId });
+  const {
+    contracts: { fractalRegistry },
+  } = useNetworkConfig();
 
   const getSafeName = useCallback(
-    async (address: Address, getAccountNameFallback?: () => Promise<string | undefined>) => {
+    async (address: Address) => {
       if (!publicClient || !publicClient.chain) {
         throw new Error('Public client not available');
       }
@@ -59,13 +31,31 @@ export const useGetSafeName = (chainId?: number) => {
         return ensName;
       }
 
-      if (getAccountNameFallback) {
-        return (await getAccountNameFallback()) ?? createAccountSubstring(address);
+      const fractalRegistryContract = getContract({
+        abi: abis.FractalRegistry,
+        address: fractalRegistry,
+        client: publicClient,
+      });
+
+      const events = await fractalRegistryContract.getEvents.FractalNameUpdated(
+        { daoAddress: address },
+        { fromBlock: 0n },
+      );
+
+      const latestEvent = events.pop();
+
+      if (latestEvent?.args.daoName) {
+        return latestEvent.args.daoName;
+      } else if (publicClient.chain && demoData[publicClient.chain.id]) {
+        const demo = demoData[publicClient.chain.id][address];
+        if (demo && demo.name) {
+          return demo.name;
+        }
       }
 
       return createAccountSubstring(address);
     },
-    [publicClient],
+    [fractalRegistry, publicClient],
   );
 
   return { getSafeName };
