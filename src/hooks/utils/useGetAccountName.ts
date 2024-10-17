@@ -1,5 +1,5 @@
 import { abis } from '@fractal-framework/fractal-contracts';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { Address, PublicClient, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { demoData } from '../DAO/loaders/loadDemoData';
@@ -72,35 +72,17 @@ const getAccountName = async ({
   return createAccountSubstring(address);
 };
 
-const useGetAccountName = ({
-  address,
-  chainId,
-  getAccountNameFallback,
-}: {
-  address: Address;
-  getAccountNameFallback?: GetAccountNameFallback;
-  chainId?: number;
-}) => {
+const useGetAccountNameDeferred = (chainId?: number) => {
   const publicClient = usePublicClient({ chainId });
 
-  const [accountName, setAccountName] = useState<string>();
-  useEffect(() => {
-    getAccountName({ address, publicClient, getAccountNameFallback }).then(setAccountName);
-  }, [address, publicClient, getAccountNameFallback]);
+  const getAccountNameDeferred = useCallback(
+    (address: Address, getAccountNameFallback?: GetAccountNameFallback) => {
+      return getAccountName({ address, publicClient, getAccountNameFallback });
+    },
+    [publicClient],
+  );
 
-  return { accountName };
+  return { getAccountName: getAccountNameDeferred };
 };
 
-const useGetAccountNameDeferred = () => {
-  const publicClient = usePublicClient();
-
-  return {
-    getAccountName: useCallback(
-      (address: Address, getAccountNameFallback?: GetAccountNameFallback) =>
-        getAccountName({ address, publicClient, getAccountNameFallback }),
-      [publicClient],
-    ),
-  };
-};
-
-export { useGetAccountName, useGetAccountNameDeferred };
+export { useGetAccountNameDeferred };

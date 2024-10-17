@@ -1,10 +1,11 @@
 import { Box, Flex, Icon, Image, Text } from '@chakra-ui/react';
 import { CaretCircleRight, CaretRight } from '@phosphor-icons/react';
 import { formatDuration, intervalToDuration } from 'date-fns';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
+import { useGetAccountNameDeferred } from '../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix } from '../../../utils/url';
 import { Card } from '../../ui/cards/Card';
@@ -23,10 +24,23 @@ export function AvatarAndRoleName({
   paymentsCount?: number;
 }) {
   const { addressPrefix } = useNetworkConfig();
-  const { accountName } = useGetAccountName({
-    address: getAddress(wearerAddress || zeroAddress),
-    chainId: getChainIdFromPrefix(addressPrefix),
-  });
+
+  const { getAccountName } = useGetAccountNameDeferred(getChainIdFromPrefix(addressPrefix));
+  const [accountName, setAccountName] = useState<string>();
+
+  useEffect(() => {
+    if (!wearerAddress) {
+      setAccountName(undefined);
+      return;
+    }
+
+    const fetchAccountName = async () => {
+      setAccountName(await getAccountName(wearerAddress));
+    };
+
+    fetchAccountName();
+  }, [wearerAddress, getAccountName]);
+
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles']);
 
@@ -59,7 +73,7 @@ export function AvatarAndRoleName({
           textStyle="button-small"
           color="neutral-7"
         >
-          {wearerAddress ? accountName : t('unassigned')}
+          {accountName ?? t('unassigned')}
         </Text>
         {paymentsCount !== undefined && (
           <Flex
