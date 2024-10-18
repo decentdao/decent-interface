@@ -4,7 +4,7 @@ import { formatDuration, intervalToDuration } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
@@ -20,7 +20,7 @@ export function AvatarAndRoleName({
   name?: string;
   paymentsCount?: number;
 }) {
-  const { displayName } = useDisplayName(wearerAddress);
+  const { displayName } = useGetAccountName(wearerAddress);
 
   const avatarURL = useAvatar(wearerAddress || zeroAddress);
   const { t } = useTranslation(['roles']);

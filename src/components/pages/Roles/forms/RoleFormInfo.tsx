@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import useAddress from '../../../../hooks/utils/useAddress';
-import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -25,7 +25,7 @@ export default function RoleFormInfo() {
     }
   }, [isValidWearerAddress, resolvedWearerAddress, setFieldValue]);
 
-  const { displayName } = useDisplayName(values.roleEditing?.resolvedWearer);
+  const { displayName } = useGetAccountName(values.roleEditing?.resolvedWearer);
 
   return (
     <Box

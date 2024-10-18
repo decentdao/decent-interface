@@ -10,7 +10,7 @@ import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLin
 import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
 import { convertStreamIdToBigInt } from '../../../hooks/streams/useCreateSablierStream';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { formatCoin } from '../../../utils';
 import Avatar, { AvatarSize } from '../page/Header/Avatar';
@@ -41,7 +41,7 @@ export default function PaymentWithdrawModal({
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { t } = useTranslation(['roles', 'menu', 'common', 'modals']);
-  const { displayName: accountDisplayName } = useDisplayName(
+  const { displayName: accountDisplayName } = useGetAccountName(
     withdrawInformation.roleHatWearerAddress,
   );
   const avatarURL = useAvatar(accountDisplayName);

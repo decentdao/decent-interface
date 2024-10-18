@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { DecentTree, useRolesStore } from '../../../store/roles';
 import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
@@ -92,7 +92,7 @@ function RoleNameEditColumn({
 }
 
 function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
-  const { displayName: accountDisplayName } = useDisplayName(wearerAddress);
+  const { displayName: accountDisplayName } = useGetAccountName(wearerAddress);
   const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('roles');

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { formatUnits, Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { DAO_ROUTES } from '../../../../constants/routes';
-import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { Card } from '../../../ui/cards/Card';
@@ -31,7 +31,7 @@ function SendAssetsAction({
   onRemove: (index: number) => void;
 }) {
   const { t } = useTranslation('common');
-  const { displayName } = useDisplayName(action.destinationAddress);
+  const { displayName } = useGetAccountName(action.destinationAddress);
 
   return (
     <Card my="1rem">

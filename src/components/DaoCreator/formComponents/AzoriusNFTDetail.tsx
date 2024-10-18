@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, erc721Abi, getContract, isAddress } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { BigIntValuePair, ERC721TokenConfig } from '../../../types';
 import { BarLoader } from '../../ui/loaders/BarLoader';
 
@@ -27,7 +27,7 @@ export default function AzoriusNFTDetail({
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
 
-  const { displayName } = useDisplayName(tokenDetails?.address);
+  const { displayName } = useGetAccountName(tokenDetails?.address);
 
   useEffect(() => {
     const loadNFTDetails = async () => {

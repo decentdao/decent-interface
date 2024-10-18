@@ -4,7 +4,7 @@ import { Address, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { demoData } from '../DAO/loaders/loadDemoData';
-import { createAccountSubstring } from './useDisplayName';
+import { createAccountSubstring } from './useGetAccountName';
 
 export const useGetSafeName = (chainId?: number) => {
   const publicClient = usePublicClient({ chainId });

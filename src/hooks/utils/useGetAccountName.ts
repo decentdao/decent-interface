@@ -15,7 +15,7 @@ export const createAccountSubstring = (account: string) => {
  * display name for a DAO, use the useGetSafeName hook instead.
  * @todo Should switch to object for props
  */
-const useDisplayName = (account?: Address | null, truncate?: boolean) => {
+export const useGetAccountName = (account?: Address | null, truncate?: boolean) => {
   if (truncate === undefined) truncate = true;
 
   const { data: ensName } = useEnsName({
@@ -49,5 +49,3 @@ const useDisplayName = (account?: Address | null, truncate?: boolean) => {
 
   return { displayName, accountSubstring };
 };
-
-export default useDisplayName;

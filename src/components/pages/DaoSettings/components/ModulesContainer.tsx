@@ -1,7 +1,7 @@
 import { Flex, Text, Hide, Show } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { zeroAddress } from 'viem';
-import { createAccountSubstring } from '../../../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { FractalModuleType } from '../../../../types';
 import { DisplayAddress } from '../../../ui/links/DisplayAddress';

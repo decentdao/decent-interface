@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
-import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { MultisigProposal } from '../../../types';
 import { DEFAULT_DATE_TIME_FORMAT } from '../../../utils/numberFormats';
 import ContentBox from '../../ui/containers/ContentBox';

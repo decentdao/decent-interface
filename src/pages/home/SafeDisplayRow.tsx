@@ -7,7 +7,7 @@ import { SafeMenuItemProps } from '../../components/ui/menus/SafesMenu/SafeMenuI
 import Avatar from '../../components/ui/page/Header/Avatar';
 import { DAO_ROUTES } from '../../constants/routes';
 import useAvatar from '../../hooks/utils/useAvatar';
-import { createAccountSubstring } from '../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../hooks/utils/useGetAccountName';
 import { useGetSafeName } from '../../hooks/utils/useGetSafeName';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
 import { getChainIdFromPrefix, getChainName, getNetworkIcon } from '../../utils/url';

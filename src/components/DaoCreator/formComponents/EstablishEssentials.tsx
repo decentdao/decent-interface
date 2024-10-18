@@ -2,7 +2,7 @@ import { Box, Input, RadioGroup } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
 import { URL_DOCS_GOV_TYPES } from '../../../constants/url';
-import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { GovernanceType, ICreationStepProps, VotingStrategyType } from '../../../types';
