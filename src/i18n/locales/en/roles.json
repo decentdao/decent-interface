@@ -105,5 +105,7 @@
   "termedRoleConfirmation-2": "Queue up the next term at any time during the current term.",
   "termedRoleConfirmation-3": "Active payments will be cancelled. Any unclaimed funds will be refunded.",
   "termedRoleConfirmation-4": "New payment streams must be assigned to an active term.",
-  "termedRoleConfirmation-warning": "Please note: Terms are permanently applied to a role and cannot be removed."
+  "termedRoleConfirmation-warning": "Please note: Terms are permanently applied to a role and cannot be removed.",
+  "roleInfoErrorTermEndDateInvalid": "Invalid end date.",
+  "roleInfoErrorTermEndDateRequired": "End date is required."
 }
