@@ -151,7 +151,7 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
         ...functionArgs,
       );
     } else {
-      throw new Error('unsupported freeze voting type');
+      throw new Error('Unsupported freeze voting type');
     }
   }
 
@@ -188,13 +188,13 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   private setFreezeVotingTypeAndCallData() {
     if (this.parentStrategyType) {
-      if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
+      if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20 || this.parentStrategyType === VotingStrategyType.LINEAR_ERC20_HATS_WHITELISTING) {
         this.freezeVotingType = 'erc20';
         this.freezeVotingCallData = encodeFunctionData({
           abi: abis.ERC20FreezeVoting,
           functionName: 'owner',
         });
-      } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
+      } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721 || this.parentStrategyType === VotingStrategyType.LINEAR_ERC721_HATS_WHITELISTING) {
         this.freezeVotingType = 'erc721';
         this.freezeVotingCallData = encodeFunctionData({
           abi: abis.ERC721FreezeVoting,
@@ -213,16 +213,16 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private setFreezeVotingAddress() {
     let freezeVotingByteCodeLinear: Hex;
     if (this.parentStrategyType) {
-      if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20) {
+      if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20 || this.parentStrategyType === VotingStrategyType.LINEAR_ERC20_HATS_WHITELISTING) {
         freezeVotingByteCodeLinear = generateContractByteCodeLinear(
           this.freezeVotingErc20MasterCopy,
         );
-      } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721) {
+      } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721 || this.parentStrategyType === VotingStrategyType.LINEAR_ERC721_HATS_WHITELISTING) {
         freezeVotingByteCodeLinear = generateContractByteCodeLinear(
           this.freezeVotingErc721MasterCopy,
         );
       } else {
-        throw new Error('unknown voting parentStrategyType');
+        throw new Error('Unknown voting parentStrategyType');
       }
     } else {
       freezeVotingByteCodeLinear = generateContractByteCodeLinear(

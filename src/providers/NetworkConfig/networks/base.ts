@@ -6,7 +6,7 @@ import {
   getProxyFactoryDeployment,
   getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
-import { getAddress } from 'viem';
+import { getAddress, zeroAddress } from 'viem';
 import { base } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
@@ -62,7 +62,9 @@ export const baseConfig: NetworkConfig = {
     zodiacModuleProxyFactoryOld: getAddress(a.ModuleProxyFactory),
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
+    linearVotingErc20HatsWhitelistingMasterCopy: zeroAddress, // @todo - change to actual address once deployed
     linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
+    linearVotingErc721HatsWhitelistingMasterCopy: zeroAddress, // @todo - change to actual address once deployed
 
     moduleAzoriusMasterCopy: getAddress(a.Azorius),
     moduleFractalMasterCopy: getAddress(a.FractalModule),

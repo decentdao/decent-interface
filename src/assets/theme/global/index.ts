@@ -7,7 +7,6 @@ export default {
       background: 'neutral-1',
       backgroundRepeat: 'no-repeat',
       fontFamily: 'body',
-      // @todo
       color: 'white',
       height: '100%',
     },

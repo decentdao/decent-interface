@@ -64,7 +64,6 @@ import { BarLoader } from '../../../../../../components/ui/loaders/BarLoader';
 import PageHeader from '../../../../../../components/ui/page/Header/PageHeader';
 import Markdown from '../../../../../../components/ui/proposal/Markdown';
 import CeleryButtonWithIcon from '../../../../../../components/ui/utils/CeleryButtonWithIcon';
-import { CeleryTextLink } from '../../../../../../components/ui/utils/CeleryTextLink';
 import Divider from '../../../../../../components/ui/utils/Divider';
 import { useHeaderHeight } from '../../../../../../constants/common';
 import { BASE_ROUTES, DAO_ROUTES } from '../../../../../../constants/routes';
@@ -193,7 +192,7 @@ function ProposalDetails({
         <HStack justifyContent="space-between">
           <Text color="neutral-7">{t('proposalTemplateDescription')}</Text>
           {proposalMetadata.description && (
-            <CeleryTextLink
+            <CeleryButtonWithIcon
               onClick={() => setDescriptionCollapsed(prevState => !prevState)}
               text={t(descriptionCollapsed ? 'show' : 'hide', { ns: 'common' })}
             />
