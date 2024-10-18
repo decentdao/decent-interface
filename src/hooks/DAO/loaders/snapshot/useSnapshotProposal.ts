@@ -7,7 +7,7 @@ import {
   FractalProposal,
   FractalProposalState,
   SnapshotProposal,
-  InternalSnapshotVote,
+  DecentSnapshotVote,
   SnapshotWeightedVotingChoice,
 } from '../../../../types';
 import { createSnapshotGraphQlClient } from './';
@@ -102,7 +102,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
 
       const votesBreakdown: {
         [voteChoice: string]: {
-          votes: InternalSnapshotVote[];
+          votes: DecentSnapshotVote[];
           total: number;
         };
       } = {};
@@ -129,7 +129,7 @@ export default function useSnapshotProposal(proposal: FractalProposal | null | u
       const isClosed = snapshotProposal.state === FractalProposalState.CLOSED;
 
       if (!(isShielded && !isClosed)) {
-        votesQueryResult.forEach((vote: InternalSnapshotVote) => {
+        votesQueryResult.forEach((vote: DecentSnapshotVote) => {
           if (type === 'weighted') {
             const voteChoices = vote.choice as SnapshotWeightedVotingChoice;
             if (typeof voteChoices === 'number') {
