@@ -7,7 +7,7 @@ export function Card({ children, ...rest }: BoxProps) {
       _hover={{ backgroundColor: 'neutral-3' }}
       _active={{ backgroundColor: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
-      p={{ base: '1rem', lg: '1.5rem' }}
+      p="1rem"
       borderRadius="0.5rem"
       border="1px solid"
       borderColor="neutral-3"
