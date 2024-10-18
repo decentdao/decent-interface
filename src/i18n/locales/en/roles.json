@@ -107,5 +107,6 @@
   "termedRoleConfirmation-4": "New payment streams must be assigned to an active term.",
   "termedRoleConfirmation-warning": "Please note: Terms are permanently applied to a role and cannot be removed.",
   "roleInfoErrorTermEndDateInvalid": "Invalid end date.",
-  "roleInfoErrorTermEndDateRequired": "End date is required."
+  "roleInfoErrorTermEndDateRequired": "End date is required.",
+  "addTerm": "Add Term"
 }

@@ -81,8 +81,9 @@ function RoleTermMemberInput({ termIndex }: { termIndex: number }) {
   );
 }
 
-function RoleTermCreate({ termIndex }: { termIndex: number }) {
+function RoleTermCreate({ isNextTerm, termIndex }: { termIndex: number; isNextTerm: boolean }) {
   const { t } = useTranslation('roles');
+  const { setFieldValue } = useFormikContext<RoleFormValues>();
   return (
     <Box>
       <Box
@@ -109,7 +110,10 @@ function RoleTermCreate({ termIndex }: { termIndex: number }) {
         <RoleTermEndDateInput termIndex={termIndex} />
         <Button
           onClick={() => {
-            // @todo Add term
+            setFieldValue(
+              `roleEditing.roleTerms[${termIndex}].newStatus`,
+              !isNextTerm ? 'current' : 'next',
+            );
           }}
         >
           {t('Add Term')}
@@ -236,6 +240,7 @@ export default function RoleFormTerms() {
     [values.roleEditing?.roleTerms],
   );
 
+  // @dev shows the term form when there are no terms
   useEffect(() => {
     if (!roleFormTerms.length) {
       setShowAddTerm(true);
@@ -245,10 +250,11 @@ export default function RoleFormTerms() {
   const expiredTerms = roleFormTerms.filter(
     term => !!term.termEndDate && term.termEndDate < new Date(),
   );
+
   // {assumption}: only 2 terms should be unexpired at a time
   const terms = roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());
-  const currentTerm = terms[0];
-  const nextTerm = terms[1];
+  const [currentTerm, nextTerm] = terms;
+
   return (
     <Box>
       <Button
@@ -264,13 +270,18 @@ export default function RoleFormTerms() {
           as={Plus}
           boxSize="1rem"
         />
-        {t('Add term')}
+        {t('addTerm')}
       </Button>
       <Flex
         flexDir="column"
         gap={4}
       >
-        {showAddTerm && <RoleTermCreate termIndex={0} />}
+        {showAddTerm && (
+          <RoleTermCreate
+            termIndex={roleFormTerms.length}
+            isNextTerm={!!nextTerm}
+          />
+        )}
         <RoleTermRenderer
           roleTerm={nextTerm}
           termStatus="queued"
