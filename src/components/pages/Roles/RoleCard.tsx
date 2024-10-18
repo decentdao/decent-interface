@@ -252,6 +252,7 @@ export function RoleCardShort({
     <Card
       onClick={handleRoleClick}
       cursor="pointer"
+      my="0.5rem"
     >
       <Flex justifyContent="space-between">
         <Text
