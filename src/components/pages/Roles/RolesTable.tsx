@@ -91,7 +91,7 @@ function RoleNameEditColumn({
   );
 }
 
-function MemberColumn({ wearerAddress }: { wearerAddress: Address | undefined }) {
+function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
   const { displayName: accountDisplayName } = useDisplayName(wearerAddress);
   const avatarURL = useAvatar(accountDisplayName);
 
