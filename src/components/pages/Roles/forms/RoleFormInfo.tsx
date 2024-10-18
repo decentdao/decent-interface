@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import useAddress from '../../../../hooks/utils/useAddress';
+import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -16,13 +17,15 @@ export default function RoleFormInfo() {
   const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
     useAddress(roleWearerString);
 
-  const { setFieldValue } = useFormikContext<RoleFormValues>();
+  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
 
   useEffect(() => {
     if (isValidWearerAddress) {
       setFieldValue('roleEditing.resolvedWearer', resolvedWearerAddress);
     }
   }, [isValidWearerAddress, resolvedWearerAddress, setFieldValue]);
+
+  const { displayName } = useGetAccountName(values.roleEditing?.resolvedWearer, false);
 
   return (
     <Box
@@ -101,7 +104,7 @@ export default function RoleFormInfo() {
               labelColor="neutral-7"
             >
               <AddressInput
-                value={field.value}
+                value={displayName ?? field.value}
                 onBlur={() => {
                   setFieldTouched(field.name, true);
                 }}
