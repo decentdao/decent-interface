@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { CaretDown, CaretRight, Plus } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
@@ -224,34 +224,23 @@ export default function RoleFormTerms() {
   const [showAddTerm, setShowAddTerm] = useState(false);
   const { t } = useTranslation('roles');
   const { values } = useFormikContext<RoleFormValues>();
-  const roleFormTerms =
-    values.roleEditing?.roleTerms
-      ?.sort(
-        (a, b) => (a.termEndDate ?? new Date()).getTime() - (b.termEndDate ?? new Date()).getTime(),
-      )
-      .map((term, index) => ({ ...term, termNumber: index + 1 })) ||
-    [
-      // {
-      //   nominee: zeroAddress,
-      //   termEndDate: new Date('2024-10-10'),
-      // },
-      // {
-      //   nominee: zeroAddress,
-      //   termEndDate: new Date('2025-10-22'),
-      // },
-      // {
-      //   nominee: zeroAddress,
-      //   termEndDate: new Date('2026-10-27'),
-      // },
-      // {
-      //   nominee: zeroAddress,
-      //   termEndDate: new Date('2024-10-9'),
-      // },
-    ];
-  // .sort(
-  //   (a, b) => (a.termEndDate ?? new Date()).getTime() - (b.termEndDate ?? new Date()).getTime(),
-  // )
-  // .map((term, index) => ({ ...term, termNumber: index + 1 }));
+
+  const roleFormTerms = useMemo(
+    () =>
+      values.roleEditing?.roleTerms
+        ?.sort(
+          (a, b) =>
+            (a.termEndDate ?? new Date()).getTime() - (b.termEndDate ?? new Date()).getTime(),
+        )
+        .map((term, index) => ({ ...term, termNumber: index + 1 })) || [],
+    [values.roleEditing?.roleTerms],
+  );
+
+  useEffect(() => {
+    if (!roleFormTerms.length) {
+      setShowAddTerm(true);
+    }
+  }, [roleFormTerms]);
 
   const expiredTerms = roleFormTerms.filter(
     term => !!term.termEndDate && term.termEndDate < new Date(),
@@ -281,7 +270,7 @@ export default function RoleFormTerms() {
         flexDir="column"
         gap={4}
       >
-        {(showAddTerm || !roleFormTerms.length) && <RoleTermCreate termIndex={0} />}
+        {showAddTerm && <RoleTermCreate termIndex={0} />}
         <RoleTermRenderer
           roleTerm={nextTerm}
           termStatus="queued"
