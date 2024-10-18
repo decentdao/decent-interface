@@ -205,7 +205,7 @@ export function RoleCard({
 
 export function RoleCardEdit({
   name,
-  wearer,
+  wearerAddress,
   payments,
   editStatus,
   handleRoleClick,
@@ -219,7 +219,7 @@ export function RoleCardEdit({
     >
       <Flex justifyContent="space-between">
         <AvatarAndRoleName
-          wearerAddress={wearer}
+          wearerAddress={wearerAddress}
           name={name}
         />
         <Flex

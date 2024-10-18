@@ -39,18 +39,14 @@ export interface RoleProps {
   handleRoleClick: (hatId: Address) => void;
   hatId: Address;
   name: string;
-  wearerAddress: Address | undefined;
+  wearerAddress?: Address;
   paymentsCount?: number;
 }
 
 export interface RoleEditProps
-  extends Omit<
-    RoleProps,
-    'hatId' | 'wearerAddress' | 'handleRoleClick' | 'paymentsCount' | 'name'
-  > {
+  extends Omit<RoleProps, 'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name'> {
   name?: string;
   handleRoleClick: () => void;
-  wearer: Address | undefined;
   payments?: SablierPaymentFormValues[];
 }
 

@@ -184,7 +184,7 @@ function RolesEdit() {
                 <RoleCardEdit
                   key={hat.id}
                   name={hat.name}
-                  wearer={hat.resolvedWearer}
+                  wearerAddress={hat.resolvedWearer}
                   editStatus={hat.editedRole?.status}
                   handleRoleClick={() => {
                     setFieldValue('roleEditing', hat);

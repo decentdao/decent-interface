@@ -2,11 +2,9 @@ import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-
 import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Address, Hex, zeroAddress } from 'viem';
-import useAddress from '../../../hooks/utils/useAddress';
+import { Address, Hex } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentTree, useRolesStore } from '../../../store/roles';
 import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
@@ -93,20 +91,18 @@ function RoleNameEditColumn({
   );
 }
 
-function MemberColumn({ wearer }: { wearer: string | undefined }) {
-  const { chain } = useNetworkConfig();
-  const { address } = useAddress(wearer || zeroAddress);
-  const { displayName: accountDisplayName } = useDisplayName(address || null, true, chain.id);
+function MemberColumn({ wearerAddress }: { wearerAddress: Address | undefined }) {
+  const { displayName: accountDisplayName } = useDisplayName(wearerAddress);
   const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('roles');
   return (
     <Td width="60%">
       <Flex>
-        {address ? (
+        {wearerAddress ? (
           <Avatar
             size="icon"
-            address={address}
+            address={wearerAddress}
             url={avatarURL}
           />
         ) : (
@@ -121,7 +117,7 @@ function MemberColumn({ wearer }: { wearer: string | undefined }) {
           color="white-0"
           ml="0.5rem"
         >
-          {wearer ? accountDisplayName : t('unassigned')}
+          {wearerAddress ? accountDisplayName : t('unassigned')}
         </Text>
       </Flex>
     </Td>
@@ -191,7 +187,7 @@ export function RolesRow({
       >
         {name}
       </Td>
-      <MemberColumn wearer={wearerAddress} />
+      <MemberColumn wearerAddress={wearerAddress} />
       <PaymentsColumn paymentsCount={paymentsCount} />
     </Tr>
   );
@@ -199,7 +195,7 @@ export function RolesRow({
 
 export function RolesRowEdit({
   name,
-  wearer,
+  wearerAddress,
   editStatus,
   payments,
   handleRoleClick,
@@ -223,7 +219,7 @@ export function RolesRowEdit({
         roleName={name}
         editStatus={editStatus}
       />
-      <MemberColumn wearer={wearer} />
+      <MemberColumn wearerAddress={wearerAddress} />
       <PaymentsColumn paymentsCount={payments?.filter(p => p.isStreaming()).length || undefined} />
     </Tr>
   );
@@ -318,7 +314,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
             <RolesRowEdit
               key={role.id}
               name={role.name}
-              wearer={role.resolvedWearer}
+              wearerAddress={role.resolvedWearer}
               handleRoleClick={() => {
                 setFieldValue('roleEditing', role);
                 handleRoleClick(role.id);
