@@ -255,8 +255,8 @@ export default function RoleFormTerms() {
         variant="secondary"
         size="sm"
         mb={4}
+        isDisabled={showAddTerm || terms.length > 2 || !roleFormTerms.length}
         onClick={() => {
-          // @todo show add term form
           setShowAddTerm(true);
         }}
       >
