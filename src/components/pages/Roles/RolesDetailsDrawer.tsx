@@ -11,12 +11,12 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { List, PencilLine, User, X } from '@phosphor-icons/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BACKGROUND_SEMI_TRANSPARENT } from '../../../constants/common';
 import useAddress from '../../../hooks/utils/useAddress';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import { useGetAccountNameDeferred } from '../../../hooks/utils/useGetAccountName';
+import useDisplayName from '../../../hooks/utils/useDisplayName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   paymentSorterByActiveStatus,
@@ -61,13 +61,7 @@ export default function RolesDetailsDrawer({
   const { address: roleHatWearerAddress, isLoading: loadingRoleHatWearerAddress } =
     useAddress(roleHatWearer);
 
-  const { getAccountName } = useGetAccountNameDeferred();
-  const [accountDisplayName, setAccountDisplayName] = useState(roleHatWearer);
-  useEffect(() => {
-    if (!!roleHatWearerAddress) {
-      getAccountName(roleHatWearerAddress).then(setAccountDisplayName);
-    }
-  }, [getAccountName, roleHatWearerAddress]);
+  const { displayName } = useDisplayName(roleHatWearerAddress);
 
   const { t } = useTranslation(['roles']);
   const avatarURL = useAvatar(roleHatWearer);
@@ -170,7 +164,7 @@ export default function RolesDetailsDrawer({
                   textStyle="body-base"
                   color="white-0"
                 >
-                  {accountDisplayName}
+                  {displayName}
                 </Text>
               </Flex>
             </GridItem>
