@@ -1,6 +1,6 @@
 import { useLazyQuery } from '@apollo/client';
 import { useCallback } from 'react';
-import { isAddress, Address, getAddress } from 'viem';
+import { isAddress, getAddress } from 'viem';
 import { DAO, DAOQueryDocument, DAOQueryQuery } from '../../../../.graphclient';
 import { logError } from '../../../helpers/errorLogging';
 import { useSafeAPI } from '../../../providers/App/hooks/useSafeAPI';
@@ -25,8 +25,8 @@ export const useLoadDAONode = () => {
   });
 
   const formatDAOQuery = useCallback(
-    (result: { data?: DAOQueryQuery }, _daoAddress: Address) => {
-      const demo = loadDemoData(chain, _daoAddress, result);
+    (result: { data?: DAOQueryQuery }, safeAddress: string) => {
+      const demo = loadDemoData(chain, getAddress(safeAddress), result);
       if (!demo.data) {
         return;
       }
@@ -41,7 +41,7 @@ export const useLoadDAONode = () => {
             childNodes: mapChildNodes(dao as DAO),
           },
           daoName: name as string,
-          daoAddress: _daoAddress,
+          address: getAddress(safeAddress),
           daoSnapshotENS: snapshotENS as string,
         };
         return currentNode;
@@ -52,12 +52,13 @@ export const useLoadDAONode = () => {
   );
 
   const loadDao = useCallback(
-    async (daoAddress: string): Promise<FractalNode | WithError> => {
-      if (isAddress(daoAddress) && safeAPI) {
+    // Can't `safeAddress` safely be an `Address` type?
+    async (safeAddress: string): Promise<FractalNode | WithError> => {
+      if (isAddress(safeAddress) && safeAPI) {
         try {
           const graphNodeInfo = formatDAOQuery(
-            await getDAOInfo({ variables: { daoAddress } }),
-            daoAddress,
+            await getDAOInfo({ variables: { daoAddress: safeAddress } }),
+            safeAddress,
           );
           if (!graphNodeInfo) {
             logError('graphQL query failed');
@@ -66,11 +67,11 @@ export const useLoadDAONode = () => {
 
           // safeAPI.getSafeData expects a checksummed address here, so we gotta do getAddress,
           // even if `daoAddress` passes the isAddress check above
-          const checksummedAddress = getAddress(daoAddress);
+          const checksummedAddress = getAddress(safeAddress);
           const safeInfoWithGuard = await safeAPI.getSafeData(checksummedAddress);
 
           const node: FractalNode = Object.assign(graphNodeInfo, {
-            daoName: graphNodeInfo.daoName ?? (await getSafeName(daoAddress)),
+            daoName: graphNodeInfo.daoName ?? (await getSafeName(safeAddress)),
             safe: safeInfoWithGuard,
             fractalModules: await lookupModules(safeInfoWithGuard.modules),
           });

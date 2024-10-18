@@ -13,16 +13,16 @@ const useAddSigner = () => {
       newSigner,
       threshold,
       nonce,
-      daoAddress,
+      safeAddress,
       close,
     }: {
       newSigner: Address;
       threshold: number;
       nonce: number;
-      daoAddress: Address | null;
+      safeAddress: Address | null;
       close: () => void;
     }) => {
-      if (!daoAddress) {
+      if (!safeAddress) {
         return;
       }
       const description = 'Add Signer';
@@ -36,7 +36,7 @@ const useAddSigner = () => {
       const calldatas = [encodedAddOwner];
 
       const proposalData: ProposalExecuteData = {
-        targets: [daoAddress],
+        targets: [safeAddress],
         values: [0n],
         calldatas,
         metaData: {

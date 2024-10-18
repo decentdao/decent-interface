@@ -16,12 +16,12 @@ export function SettingsPage() {
 
   const { t } = useTranslation('breadcrumbs');
   const {
-    node: { daoAddress, daoName },
+    node: { safe, daoName },
   } = useFractal();
 
   const HEADER_HEIGHT = useHeaderHeight();
 
-  if (!daoAddress) {
+  if (!safe?.address) {
     return (
       <Center minH={`calc(100vh - ${HEADER_HEIGHT})`}>
         <BarLoader />

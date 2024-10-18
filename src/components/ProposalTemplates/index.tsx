@@ -6,6 +6,7 @@ import ProposalTemplateCard from './ProposalTemplateCard';
 
 export default function ProposalTemplates() {
   const {
+    node: { safe },
     governance: { proposalTemplates },
   } = useFractal();
 

@@ -25,7 +25,7 @@ export default function RoleFormTabs({
 }) {
   const { hatsTree } = useRolesStore();
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
   const navigate = useNavigate();
   const { addressPrefix } = useNetworkConfig();
@@ -55,7 +55,8 @@ export default function RoleFormTabs({
     }
   }, [setFieldValue, values.hats, values.roleEditing, hatId]);
 
-  if (!daoAddress) return null;
+  const safeAddress = safe?.address;
+  if (!safeAddress) return null;
 
   if (values.roleEditing?.roleEditingPaymentIndex !== undefined) {
     return <RoleFormPaymentStream formIndex={values.roleEditing?.roleEditingPaymentIndex} />;
@@ -103,7 +104,7 @@ export default function RoleFormTabs({
               blocker.reset();
             }
             setTimeout(() => {
-              navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
+              navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, safeAddress));
             }, 50);
           }}
         >

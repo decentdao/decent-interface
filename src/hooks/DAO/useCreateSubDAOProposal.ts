@@ -24,25 +24,32 @@ export const useCreateSubDAOProposal = () => {
   const { canUserCreateProposal } = useCanUserCreateProposal();
   const [build] = useBuildDAOTx();
   const {
-    node: { daoAddress },
+    node: { safe },
     governance,
   } = useFractal();
   const {
     contracts: { fractalRegistry, multiSendCallOnly },
   } = useNetworkConfig();
   const azoriusGovernance = governance as AzoriusGovernance;
+
+  const safeAddress = safe?.address;
+
   const proposeDao = useCallback(
     (
       daoData: AzoriusERC20DAO | AzoriusERC721DAO | SafeMultisigDAO | SubDAO,
       nonce: number | undefined,
-      successCallback: (addressPrefix: string, daoAddress: string) => void,
+      successCallback: (addressPrefix: string, safeAddress: string) => void,
     ) => {
       const propose = async () => {
-        if (!daoAddress) {
+        if (!safeAddress) {
           return;
         }
 
-        const builtSafeTx = await build(daoData, daoAddress, azoriusGovernance.votesToken?.address);
+        const builtSafeTx = await build(
+          daoData,
+          safeAddress,
+          azoriusGovernance.votesToken?.address,
+        );
         if (!builtSafeTx) {
           return;
         }
@@ -93,7 +100,7 @@ export const useCreateSubDAOProposal = () => {
     [
       azoriusGovernance.votesToken?.address,
       build,
-      daoAddress,
+      safeAddress,
       fractalRegistry,
       multiSendCallOnly,
       submitProposal,

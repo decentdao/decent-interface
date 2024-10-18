@@ -197,7 +197,6 @@ export type SafeWithNextNonce = SafeInfoResponseWithGuard & { address: Address; 
 
 export interface FractalNode {
   daoName: string | null;
-  daoAddress: Address | null;
   safe: SafeWithNextNonce | null;
   fractalModules: FractalModuleData[];
   nodeHierarchy: NodeHierarchy;
@@ -208,7 +207,9 @@ export interface FractalNode {
 }
 
 export interface Node
-  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {}
+  extends Omit<FractalNode, 'safe' | 'fractalModules' | 'isModulesLoaded' | 'isHierarchyLoaded'> {
+  address: Address;
+}
 
 export interface FractalModuleData {
   moduleAddress: Address;

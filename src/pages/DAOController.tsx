@@ -33,9 +33,9 @@ const useTemporaryProposals = () => {
 
 export default function DAOController() {
   const { t } = useTranslation('common');
-  const { errorLoading, wrongNetwork, invalidQuery, daoAddress, urlAddressPrefix } =
+  const { errorLoading, wrongNetwork, invalidQuery, safeAddress, urlAddressPrefix } =
     useDAOController();
-  useUpdateSafeData(daoAddress);
+  useUpdateSafeData(safeAddress);
 
   const { switchChain } = useSwitchChain({
     mutation: {
