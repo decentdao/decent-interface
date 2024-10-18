@@ -75,6 +75,7 @@ function RolesEdit() {
       hats: hats.map(hat => ({
         ...hat,
         resolvedWearer: hat.wearerAddress,
+        wearer: hat.wearerAddress,
       })),
       customNonce: safe?.nextNonce || 0,
       actions: [],
