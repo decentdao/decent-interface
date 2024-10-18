@@ -1,6 +1,6 @@
 import { GridItem, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { ProposalVote } from '../../../types';
 import { formatPercentage, formatCoin } from '../../../utils';
@@ -18,7 +18,7 @@ export default function ProposalERC20VoteItem({
   govTokenSymbol: string;
 }) {
   const { t } = useTranslation();
-  const { displayName } = useDisplayName(vote.voter);
+  const { displayName } = useGetAccountName(vote.voter);
   const {
     readOnly: { user },
   } = useFractal();

@@ -2,7 +2,7 @@ import { Box, Flex, Icon, IconButton, Text } from '@chakra-ui/react';
 import { PencilLine } from '@phosphor-icons/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Hex } from 'viem';
+import useAddress from '../../../hooks/utils/useAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   paymentSorterByActiveStatus,
@@ -14,15 +14,7 @@ import DraggableDrawer from '../../ui/containers/DraggableDrawer';
 import Divider from '../../ui/utils/Divider';
 import { AvatarAndRoleName } from './RoleCard';
 import { RolePaymentDetails } from './RolePaymentDetails';
-import { RoleDetailsDrawerRoleHatProp } from './types';
-
-interface RoleDetailsDrawerMobileProps {
-  roleHat: RoleDetailsDrawerRoleHatProp;
-  onOpen?: () => void;
-  onClose?: () => void;
-  isOpen?: boolean;
-  onEdit: (hatId: Hex) => void;
-}
+import { RoleDetailsDrawerProps } from './types';
 
 export default function RolesDetailsDrawerMobile({
   roleHat,
@@ -30,7 +22,7 @@ export default function RolesDetailsDrawerMobile({
   onOpen,
   isOpen = true,
   onEdit,
-}: RoleDetailsDrawerMobileProps) {
+}: RoleDetailsDrawerProps) {
   const {
     node: { daoAddress },
   } = useFractal();
@@ -48,6 +40,10 @@ export default function RolesDetailsDrawerMobile({
     [roleHat.payments],
   );
 
+  const roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
+
+  const { address: roleHatWearerAddress } = useAddress(roleHatWearer);
+
   if (!daoAddress || !hatsTree) return null;
 
   return (
@@ -61,7 +57,7 @@ export default function RolesDetailsDrawerMobile({
           mx="-0.5rem"
         >
           <AvatarAndRoleName
-            wearerAddress={roleHat.wearer}
+            wearerAddress={roleHatWearerAddress}
             name={roleHat.name}
           />
           <Flex
@@ -121,7 +117,7 @@ export default function RolesDetailsDrawerMobile({
                 key={index}
                 payment={payment}
                 roleHatSmartAddress={roleHat.smartAddress}
-                roleHatWearerAddress={roleHat.wearer}
+                roleHatWearerAddress={roleHatWearerAddress}
                 showWithdraw
               />
             ))}

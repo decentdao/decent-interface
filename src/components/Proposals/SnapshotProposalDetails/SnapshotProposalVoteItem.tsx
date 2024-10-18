@@ -1,7 +1,7 @@
 import { Flex, GridItem, Text } from '@chakra-ui/react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import {
   ExtendedSnapshotProposal,
@@ -17,7 +17,7 @@ interface ISnapshotProposalVoteItem {
 
 export default function SnapshotProposalVoteItem({ proposal, vote }: ISnapshotProposalVoteItem) {
   const { t } = useTranslation();
-  const { displayName } = useDisplayName(vote.voter);
+  const { displayName } = useGetAccountName(vote.voter);
   const {
     readOnly: { user },
   } = useFractal();

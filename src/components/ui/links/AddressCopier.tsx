@@ -2,7 +2,7 @@ import { ButtonProps } from '@chakra-ui/react';
 import { CopySimple } from '@phosphor-icons/react';
 import { Address } from 'viem';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import CeleryButtonWithIcon from '../utils/CeleryButtonWithIcon';
 
 interface AddressCopierProps extends ButtonProps {
@@ -14,7 +14,7 @@ interface AddressCopierProps extends ButtonProps {
  * icon to the right of it.
  */
 export default function AddressCopier({ address, ...rest }: AddressCopierProps) {
-  const { accountSubstring } = useDisplayName(address);
+  const { accountSubstring } = useGetAccountName(address);
   const copyToClipboard = useCopyText();
 
   return (

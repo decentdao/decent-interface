@@ -2,11 +2,9 @@ import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-
 import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Address, Hex, zeroAddress } from 'viem';
-import useAddress from '../../../hooks/utils/useAddress';
+import { Address, Hex } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { DecentTree, useRolesStore } from '../../../store/roles';
 import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
@@ -93,20 +91,18 @@ function RoleNameEditColumn({
   );
 }
 
-function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) {
-  const { chain } = useNetworkConfig();
-  const { address } = useAddress(wearerAddress || zeroAddress);
-  const { displayName: accountDisplayName } = useDisplayName(address || null, true, chain.id);
+function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
+  const { displayName: accountDisplayName } = useGetAccountName(wearerAddress);
   const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('roles');
   return (
     <Td width="60%">
       <Flex>
-        {address ? (
+        {wearerAddress ? (
           <Avatar
             size="icon"
-            address={address}
+            address={wearerAddress}
             url={avatarURL}
           />
         ) : (
@@ -263,7 +259,7 @@ export function RolesTable({
                 key={role.id.toString()}
                 hatId={role.id}
                 name={role.name}
-                wearerAddress={role.wearer}
+                wearerAddress={role.wearerAddress}
                 handleRoleClick={handleRoleClick}
                 paymentsCount={
                   role.payments === undefined
@@ -318,7 +314,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
             <RolesRowEdit
               key={role.id}
               name={role.name}
-              wearerAddress={role.wearer}
+              wearerAddress={role.resolvedWearer}
               handleRoleClick={() => {
                 setFieldValue('roleEditing', role);
                 handleRoleClick(role.id);
