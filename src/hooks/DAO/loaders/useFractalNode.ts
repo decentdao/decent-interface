@@ -9,7 +9,7 @@ import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfig
 import { useRolesStore } from '../../../store/roles';
 import { Node } from '../../../types';
 import { mapChildNodes } from '../../../utils/hierarchy';
-import { useGetDAONameDeferred } from '../useGetDAOName';
+import { useGetSafeName } from '../../utils/useGetSafeName';
 import { loadDemoData } from './loadDemoData';
 import { useFractalModules } from './useFractalModules';
 
@@ -31,17 +31,17 @@ export const useFractalNode = (
 
   const { action } = useFractal();
   const safeAPI = useSafeAPI();
-  const { getDAOName } = useGetDAONameDeferred();
+  const { getSafeName } = useGetSafeName();
 
   const lookupModules = useFractalModules();
 
-  const networkConfig = useNetworkConfig();
+  const { chain } = useNetworkConfig();
   const { resetHatsStore } = useRolesStore();
 
   const formatDAOQuery = useCallback(
     (result: { data?: DAOQueryQuery }) => {
       if (!safeAddress) return;
-      const demo = loadDemoData(networkConfig.chain, safeAddress, result);
+      const demo = loadDemoData(chain, safeAddress, result);
       if (!demo.data) {
         return;
       }
@@ -64,7 +64,7 @@ export const useFractalNode = (
       }
       return;
     },
-    [networkConfig.chain, safeAddress],
+    [chain, safeAddress],
   );
 
   const { subgraph } = useNetworkConfig();
@@ -74,10 +74,7 @@ export const useFractalNode = (
     onCompleted: async data => {
       if (!safeAddress) return;
       const graphNodeInfo = formatDAOQuery({ data });
-      const daoName = await getDAOName({
-        address: safeAddress,
-        registryName: graphNodeInfo?.daoName,
-      });
+      const daoName = graphNodeInfo?.daoName ?? (await getSafeName(safeAddress));
 
       action.dispatch({
         type: NodeAction.SET_DAO_INFO,

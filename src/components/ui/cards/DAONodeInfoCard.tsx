@@ -1,7 +1,7 @@
 import { Center, Flex, FlexProps, Link, Text, VStack } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { FractalGuardContracts, FractalNode, FreezeGuard } from '../../../types';
@@ -36,7 +36,7 @@ export function DAONodeInfoCard({ node, freezeGuard, guardContracts, ...rest }: 
   const { addressPrefix } = useNetworkConfig();
   // for non Fractal Safes
   const displayedAddress = node?.safe?.address;
-  const { displayName } = useDisplayName(displayedAddress);
+  const { displayName } = useGetAccountName(displayedAddress);
 
   // node hasn't loaded yet
   if (!node || !displayedAddress) {

@@ -7,7 +7,7 @@ import { usePublicClient, useWalletClient } from 'wagmi';
 import * as Yup from 'yup';
 import LockReleaseAbi from '../../../assets/abi/LockRelease';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useTransaction } from '../../../hooks/utils/useTransaction';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance, DecentGovernance } from '../../../types';
@@ -30,8 +30,10 @@ export function DelegateModal({ close }: { close: Function }) {
 
   const azoriusGovernance = governance as AzoriusGovernance;
   const decentGovernance = azoriusGovernance as DecentGovernance;
-  const delegateeDisplayName = useDisplayName(azoriusGovernance?.votesToken?.delegatee);
-  const lockedDelegateeDisplayName = useDisplayName(decentGovernance?.lockedVotesToken?.delegatee);
+  const delegateeDisplayName = useGetAccountName(azoriusGovernance?.votesToken?.delegatee);
+  const lockedDelegateeDisplayName = useGetAccountName(
+    decentGovernance?.lockedVotesToken?.delegatee,
+  );
   const [contractCall, pending] = useTransaction();
   const { addressValidationTest } = useValidationAddress();
   const { data: walletClient } = useWalletClient();

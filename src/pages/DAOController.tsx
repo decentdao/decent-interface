@@ -32,11 +32,23 @@ const useTemporaryProposals = () => {
 };
 
 export default function DAOController() {
+  const { t } = useTranslation('common');
   const { errorLoading, wrongNetwork, invalidQuery, safeAddress, urlAddressPrefix } =
     useDAOController();
   useUpdateSafeData(safeAddress);
 
-  const { switchChainAsync } = useSwitchChain();
+  const { switchChain } = useSwitchChain({
+    mutation: {
+      onSuccess: () => {
+        window.location.reload();
+      },
+      onError: error => {
+        if (error.name !== 'UserRejectedRequestError') {
+          toast.warning(t('automaticChainSwitchingErrorMessage'));
+        }
+      },
+    },
+  });
 
   const {
     node: { daoName },
@@ -45,18 +57,17 @@ export default function DAOController() {
   useTemporaryProposals();
 
   useEffect(() => {
-    async function switchChainToSafeChain() {
+    function switchChainToSafeChain() {
       if (urlAddressPrefix && wrongNetwork) {
         try {
-          await switchChainAsync({ chainId: getChainIdFromPrefix(urlAddressPrefix) });
-          window.location.reload();
+          switchChain({ chainId: getChainIdFromPrefix(urlAddressPrefix) });
         } catch (e) {
           logError(e);
         }
       }
     }
     switchChainToSafeChain();
-  }, [wrongNetwork, switchChainAsync, urlAddressPrefix]);
+  }, [wrongNetwork, switchChain, urlAddressPrefix]);
 
   useEffect(() => {
     if (daoName) {

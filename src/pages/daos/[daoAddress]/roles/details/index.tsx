@@ -36,14 +36,14 @@ export default function RoleDetails() {
     <>
       <Show below="md">
         <RolesDetailsDrawerMobile
-          roleHat={roleHat}
+          roleHat={{ ...roleHat, wearer: roleHat.wearerAddress }}
           onClose={handleDrawerClose}
           onEdit={handleEditRoleClick}
         />
       </Show>
       <Show above="md">
         <RolesDetailsDrawer
-          roleHat={roleHat}
+          roleHat={{ ...roleHat, wearer: roleHat.wearerAddress }}
           onClose={handleDrawerClose}
           onEdit={handleEditRoleClick}
         />

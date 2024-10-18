@@ -501,7 +501,6 @@ export default function useCreateRoles() {
             );
           }
 
-          // @todo: For all instances of `getAddress(formHat.wearer)` we should confirm that at this point, `formHat.wearer` is definitely an `Address` type.
           const originalHat = getHat(formHat.id);
           if (!originalHat) {
             throw new Error('Cannot find original hat');
@@ -511,7 +510,7 @@ export default function useCreateRoles() {
             calldata: encodeFunctionData({
               abi: HatsAbi,
               functionName: 'transferHat',
-              args: [BigInt(formHat.id), getAddress(originalHat.wearer), safeAddress],
+              args: [BigInt(formHat.id), originalHat.wearerAddress, safeAddress],
             }),
             targetAddress: hatsProtocol,
           });
@@ -530,7 +529,7 @@ export default function useCreateRoles() {
 
               const flushStreamTxCalldata = prepareFlushStreamTxs({
                 streamId: stream.streamId,
-                to: getAddress(originalHat.wearer),
+                to: getAddress(originalHat.wearerAddress),
                 smartAccount: formHat.smartAddress,
               });
 
@@ -611,7 +610,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), originalHat.wearer, safeAddress],
+                  args: [BigInt(formHat.id), originalHat.wearerAddress, safeAddress],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -625,7 +624,7 @@ export default function useCreateRoles() {
 
                 const flushStreamTxCalldata = prepareFlushStreamTxs({
                   streamId: stream.streamId,
-                  to: originalHat.wearer,
+                  to: originalHat.wearerAddress,
                   smartAccount: formHat.smartAddress,
                 });
 
@@ -646,7 +645,7 @@ export default function useCreateRoles() {
                 calldata: encodeFunctionData({
                   abi: HatsAbi,
                   functionName: 'transferHat',
-                  args: [BigInt(formHat.id), originalHat.wearer, newWearer],
+                  args: [BigInt(formHat.id), originalHat.wearerAddress, newWearer],
                 }),
                 targetAddress: hatsProtocol,
               });
@@ -674,7 +673,7 @@ export default function useCreateRoles() {
                   calldata: encodeFunctionData({
                     abi: HatsAbi,
                     functionName: 'transferHat',
-                    args: [BigInt(formHat.id), originalHat.wearer, safeAddress],
+                    args: [BigInt(formHat.id), originalHat.wearerAddress, safeAddress],
                   }),
                   targetAddress: hatsProtocol,
                 });
@@ -683,7 +682,7 @@ export default function useCreateRoles() {
                 if (stream.withdrawableAmount && stream.withdrawableAmount > 0n) {
                   const flushStreamTxCalldata = prepareFlushStreamTxs({
                     streamId: stream.streamId,
-                    to: originalHat.wearer,
+                    to: originalHat.wearerAddress,
                     smartAccount: formHat.smartAddress,
                   });
 
@@ -773,14 +772,20 @@ export default function useCreateRoles() {
       setSubmitting(true);
 
       // filter to hats that have been modified, or whose payments have been modified (ie includes `editedRole` prop)
-      const modifiedHats: RoleHatFormValueEdited[] = values.hats
-        .map(hat => {
-          if (hat.editedRole === undefined) {
-            return null;
-          }
-          return { ...hat, editedRole: hat.editedRole };
-        })
-        .filter(hat => hat !== null);
+      const modifiedHats: RoleHatFormValueEdited[] = (
+        await Promise.all(
+          values.hats.map(async hat => {
+            if (hat.editedRole === undefined) {
+              return null;
+            }
+            return {
+              ...hat,
+              editedRole: hat.editedRole,
+              wearer: hat.resolvedWearer,
+            };
+          }),
+        )
+      ).filter(hat => hat !== null);
 
       let proposalData: ProposalExecuteData;
       try {

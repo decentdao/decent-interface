@@ -1,7 +1,7 @@
 import { Box, Center, Flex, Link, Text } from '@chakra-ui/react';
 import { Link as RouterLink } from 'react-router-dom';
 import { DAO_ROUTES } from '../../../constants/routes';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { SnapshotButton } from '../badges/Snapshot';
@@ -28,7 +28,7 @@ export function DAOInfoCard() {
 
   // for non Fractal Safes
   const displayedAddress = node.safe?.address;
-  const { displayName } = useDisplayName(displayedAddress);
+  const { displayName } = useGetAccountName(displayedAddress);
 
   // node hasn't loaded yet
   if (!node || !displayedAddress) {

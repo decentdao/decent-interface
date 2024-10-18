@@ -72,7 +72,11 @@ function RolesEdit() {
         title: '',
         description: '',
       },
-      hats,
+      hats: hats.map(hat => ({
+        ...hat,
+        resolvedWearer: hat.wearerAddress,
+        wearer: hat.wearerAddress,
+      })),
       customNonce: safe?.nextNonce || 0,
       actions: [],
     };
@@ -181,7 +185,7 @@ function RolesEdit() {
                 <RoleCardEdit
                   key={hat.id}
                   name={hat.name}
-                  wearerAddress={hat.wearer}
+                  wearerAddress={hat.resolvedWearer}
                   editStatus={hat.editedRole?.status}
                   handleRoleClick={() => {
                     setFieldValue('roleEditing', hat);

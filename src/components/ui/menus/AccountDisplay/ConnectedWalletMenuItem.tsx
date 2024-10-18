@@ -3,7 +3,7 @@ import { CopySimple } from '@phosphor-icons/react';
 import { useTranslation } from 'react-i18next';
 import useAvatar from '../../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../../hooks/utils/useCopyText';
-import useDisplayName from '../../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import Avatar from '../../page/Header/Avatar';
 
@@ -16,7 +16,7 @@ export function ConnectedWalletMenuItem() {
     readOnly: { user },
   } = useFractal();
   const account = user.address;
-  const { displayName: accountDisplayName } = useDisplayName(account);
+  const { displayName: accountDisplayName } = useGetAccountName(account);
   const avatarURL = useAvatar(accountDisplayName);
   const copyTextToClipboard = useCopyText();
   const { t } = useTranslation('menu');

@@ -1,6 +1,6 @@
 import { GridItem, Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { AzoriusGovernance, ERC721ProposalVote } from '../../../types';
 import StatusBox from '../../ui/badges/StatusBox';
@@ -12,7 +12,7 @@ export default function ProposalERC721VoteItem({
   proposalId: string;
 }) {
   const { t } = useTranslation(['common', 'proposal']);
-  const { displayName } = useDisplayName(voter);
+  const { displayName } = useGetAccountName(voter);
   const {
     governance,
     readOnly: { user },

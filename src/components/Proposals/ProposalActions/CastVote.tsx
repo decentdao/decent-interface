@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { TOOLTIP_MAXW } from '../../../constants/common';
 import useSnapshotProposal from '../../../hooks/DAO/loaders/snapshot/useSnapshotProposal';
+import useCastSnapshotVote from '../../../hooks/DAO/proposal/useCastSnapshotVote';
 import useCastVote from '../../../hooks/DAO/proposal/useCastVote';
 import useCurrentBlockNumber from '../../../hooks/utils/useCurrentBlockNumber';
 import {
@@ -29,15 +30,15 @@ export function CastVote({ proposal }: { proposal: FractalProposal }) {
 
   const azoriusProposal = proposal as AzoriusProposal;
 
+  const { castVote, castVotePending } = useCastVote(proposal.proposalId);
+
   const {
-    castVote,
     castSnapshotVote,
     handleChangeSnapshotWeightedChoice,
     handleSelectSnapshotChoice,
     selectedChoice,
     snapshotWeightedChoice,
-    castVotePending,
-  } = useCastVote(proposal.proposalId, extendedSnapshotProposal);
+  } = useCastSnapshotVote(extendedSnapshotProposal);
 
   const { canVote, canVoteLoading, hasVoted, hasVotedLoading } = useVoteContext();
 
