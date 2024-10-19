@@ -25,7 +25,7 @@ export default function RoleFormInfo() {
     }
   }, [isValidWearerAddress, resolvedWearerAddress, setFieldValue]);
 
-  const { displayName } = useGetAccountName(values.roleEditing?.resolvedWearer);
+  const { displayName } = useGetAccountName(values.roleEditing?.resolvedWearer, false);
 
   return (
     <Box
