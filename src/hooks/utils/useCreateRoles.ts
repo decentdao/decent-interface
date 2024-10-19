@@ -58,6 +58,7 @@ export default function useCreateRoles() {
       keyValuePairs,
       sablierV2LockupLinear,
       decentHatsMasterCopy,
+      decentAutonomousAdminMasterCopy,
       zodiacModuleProxyFactory,
     },
   } = useNetworkConfig();
@@ -115,7 +116,7 @@ export default function useCreateRoles() {
         maxSupply: 1,
         details,
         imageURI: '',
-        isMutable: true,
+        isMutable: !isTermed,
         wearer: wearer,
         isTermed,
         termedParams,
@@ -193,6 +194,23 @@ export default function useCreateRoles() {
     },
     [],
   );
+  const parseRoleTermsFromFormRoleTerms = useCallback(
+    (formRoleTerms: { termEndDate?: Date; nominee?: string }[]) => {
+      return formRoleTerms.map(term => {
+        if (term.termEndDate === undefined) {
+          throw new Error('Term end date of added Role is undefined.');
+        }
+        if (term.nominee === undefined) {
+          throw new Error('Nominee of added Role is undefined.');
+        }
+        return {
+          termEndDateTs: BigInt(term.termEndDate.getTime() / 1000),
+          nominatedWearers: [getAddress(term.nominee)],
+        };
+      });
+    },
+    [],
+  );
 
   const createHatStructsForNewTreeFromRolesFormValues = useCallback(
     async (modifiedRoles: RoleHatFormValueEdited[]) => {
@@ -207,22 +225,29 @@ export default function useCreateRoles() {
           }
           const sablierPayments = parseSablierPaymentsFromFormRolePayments(role.payments ?? []);
 
+          const roleTerms = parseRoleTermsFromFormRoleTerms(role.roleTerms ?? []);
+
+          // @note for new termed roles, we set the first wearer to the first nominee
+          const wearer = role.isTermed
+            ? getAddress(roleTerms[0].nominatedWearers[0])
+            : getAddress(role.wearer);
+
           return createHatStructWithPayments(
             role.name,
             role.description,
-            getAddress(role.wearer),
+            wearer,
             sablierPayments,
             role.isTermed ?? false,
-            // @todo fix this
-            role.roleTerms?.map(term => ({
-              termEndDateTs: 0n,
-              nominatedWearers: [zeroAddress],
-            })) ?? [],
+            roleTerms,
           );
         }),
       );
     },
-    [createHatStructWithPayments, parseSablierPaymentsFromFormRolePayments],
+    [
+      createHatStructWithPayments,
+      parseSablierPaymentsFromFormRolePayments,
+      parseRoleTermsFromFormRoleTerms,
+    ],
   );
 
   const predictSmartAccount = useCallback(
@@ -248,10 +273,7 @@ export default function useCreateRoles() {
       if (!daoAddress) {
         throw new Error('Can not create top hat without DAO Address');
       }
-      // @todo remove when published to all networks
-      if (!decentHatsMasterCopy) {
-        throw new Error('Can not create top hat without DecentHatsV2MasterCopy');
-      }
+
       const enableModuleData = encodeFunctionData({
         abi: GnosisSafeL2,
         functionName: 'enableModule',
@@ -298,8 +320,8 @@ export default function useCreateRoles() {
         throw new Error('Could not find module');
       }
       const addedHats = await createHatStructsForNewTreeFromRolesFormValues(modifiedHats);
+      console.log('🚀 ~ addedHats:', addedHats);
       const createAndDeclareTreeData = encodeFunctionData({
-        // @note this should be lastest version of DecentHats
         // @todo replace with published abi from package
         abi: DecentHatsTempAbi,
         functionName: 'createAndDeclareTree',
@@ -316,8 +338,7 @@ export default function useCreateRoles() {
             hatsModuleFactory: HATS_MODULES_FACTORY_ADDRESS,
             hatsElectionEligibilityImplementation: getAddress(module.implementationAddress),
             moduleProxyFactory: zodiacModuleProxyFactory,
-            // @note this should be lastest version of DecentHats
-            decentAutonomousAdminMasterCopy: decentHatsMasterCopy,
+            decentAutonomousAdminMasterCopy: decentAutonomousAdminMasterCopy,
           },
         ],
       });
@@ -333,6 +354,7 @@ export default function useCreateRoles() {
       daoAddress,
       daoName,
       decentHatsMasterCopy,
+      decentAutonomousAdminMasterCopy,
       erc6551Registry,
       hatsAccount1ofNMasterCopy,
       hatsDetailsBuilder,
@@ -364,7 +386,6 @@ export default function useCreateRoles() {
         mutableArgs: [firstTermEnd],
       });
 
-      // @todo should this salt generation be the same as in DecentHats Contract?
       const salt = BigInt(generateSalt(encodedMutableArgs, getRandomBytes()));
       const createElectionEligibilityInstanceTx = {
         calldata: encodeFunctionData({
@@ -1114,7 +1135,7 @@ export default function useCreateRoles() {
 
       let proposalData: ProposalExecuteData;
       try {
-        if (!hatsTreeId) {
+        if (!!hatsTreeId) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
           // along with any other hats that are added.
 
