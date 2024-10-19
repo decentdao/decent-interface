@@ -51,8 +51,8 @@ export default [
                 type: 'uint256',
               },
               {
-                internalType: 'contract ISablierV2LockupLinear',
-                name: 'sablierV2LockupLinear',
+                internalType: 'contract ISablierV2Lockup',
+                name: 'sablierV2Lockup',
                 type: 'address',
               },
             ],

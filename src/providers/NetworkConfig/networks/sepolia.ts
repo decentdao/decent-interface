@@ -80,8 +80,8 @@ export const sepoliaConfig: NetworkConfig = {
 
     fractalRegistry: getAddress(a.FractalRegistry),
     keyValuePairs: getAddress(a.KeyValuePairs),
-    decentHatsMasterCopy: getAddress('0xaFdD339cE4Ed6638a5fba3147a2F0e4EF6d5f67a'),
-    decentAutonomousAdminMasterCopy: getAddress('0xd8784CEeC9cbA6c7eF31849Dd2c708c2AFc37b36'),
+    decentHatsMasterCopy: getAddress('0xb588Af5A2C5725caee72Be9DC6C776c8b5527915'),
+    decentAutonomousAdminMasterCopy: getAddress('0xCF9F5A1AD7dFFEE35a23d48848CD1Bc0Ccb6F74a'),
     decentSablierMasterCopy: getAddress(a.DecentSablierStreamManagement),
 
     hatsProtocol: '0x3bc1A0Ad72417f2d411118085256fC53CBdDd137',
