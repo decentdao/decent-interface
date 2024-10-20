@@ -3,28 +3,8 @@ import { DecentRoleHat } from '../../../store/roles/rolesStoreUtils';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 
-export interface RoleDetailsDrawerRoleHatProp
-  extends Omit<DecentRoleHat, 'payments' | 'smartAddress'> {
+interface RoleDetailsDrawerRoleHatProp extends Omit<DecentRoleHat, 'smartAddress'> {
   smartAddress?: Address;
-  payments?: {
-    contractAddress: Address;
-    streamId: string;
-    asset: {
-      address: Address;
-      name: string;
-      symbol: string;
-      decimals: number;
-      logo: string;
-    };
-    amount: BigIntValuePair;
-    startDate: Date;
-    endDate: Date;
-    cliffDate?: Date;
-    isStreaming: () => boolean;
-    isCancellable: () => boolean;
-    withdrawableAmount: bigint;
-    isCancelled: boolean;
-  }[];
 }
 
 export interface RoleDetailsDrawerEditingRoleHatProp
