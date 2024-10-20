@@ -20,7 +20,6 @@ import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligi
 
 import {
   EditBadgeStatus,
-  HATS_ADDRESS,
   HatStruct,
   HatStructWithPayments,
   RoleFormValues,
@@ -320,7 +319,6 @@ export default function useCreateRoles() {
         throw new Error('Could not find module');
       }
       const addedHats = await createHatStructsForNewTreeFromRolesFormValues(modifiedHats);
-      console.log('🚀 ~ addedHats:', addedHats);
       const createAndDeclareTreeData = encodeFunctionData({
         // @todo replace with published abi from package
         abi: DecentHatsTempAbi,
@@ -459,7 +457,7 @@ export default function useCreateRoles() {
     [createHatStruct, hatsProtocol],
   );
   const createNewTermedHatTxs = useCallback(
-    async (formRole: RoleHatFormValueEdited, adminHatId: bigint) => {
+    async (formRole: RoleHatFormValueEdited, adminHatId: bigint, topHatAccount: Address) => {
       if (formRole.name === undefined || formRole.description === undefined) {
         throw new Error('Name or description of added Role is undefined.');
       }
@@ -467,40 +465,31 @@ export default function useCreateRoles() {
       if (formRole.wearer === undefined) {
         throw new Error('Member of added Role is undefined.');
       }
-      if (formRole.roleTerms?.[0].termEndDate === undefined) {
-        throw new Error('Term end date of added Role is undefined.');
+      if (formRole.roleTerms === undefined || formRole.roleTerms.length === 0) {
+        throw new Error('Role terms of added Role is undefined.');
       }
-      if (formRole.roleTerms?.[0].nominee === undefined) {
-        throw new Error('Nominee of added Role is undefined.');
-      }
+      const roleTerms = parseRoleTermsFromFormRoleTerms(formRole.roleTerms);
 
       let firstWearer = getAddress(formRole.wearer);
       let txData: { calldata: Hex; targetAddress: Address }[] = [];
-      let eligibilityModule = HATS_ADDRESS;
 
       const { electionDeployModuleTx, predictedElectionEligibilityInstance } =
         await createEligibilityModuleTx(
           BigInt(formRole.id),
           // @todo fix this to be the correct term end date
-          BigInt(Date.now()),
+          roleTerms[0].termEndDateTs,
           adminHatId,
         );
       txData.push(electionDeployModuleTx);
-      eligibilityModule = predictedElectionEligibilityInstance;
-      firstWearer = getAddress(formRole.roleTerms[0].nominee);
+      const eligibilityModule = predictedElectionEligibilityInstance;
+      firstWearer = getAddress(roleTerms[0].nominatedWearers[0]);
 
       const hatStruct = await createHatStruct(
         formRole.name,
         formRole.description,
         getAddress(firstWearer),
         true,
-        [
-          {
-            // @todo fix this to be the correct term end date
-            termEndDateTs: BigInt(Date.now()),
-            nominatedWearers: [getAddress(formRole.roleTerms[0].nominee)],
-          },
-        ],
+        roleTerms,
       );
 
       txData.push({
@@ -511,41 +500,29 @@ export default function useCreateRoles() {
             adminHatId, // adminHatId
             hatStruct.details, // details
             hatStruct.maxSupply, // maxSupply
-            HATS_ADDRESS, // toggleModule
             eligibilityModule, // eligibilityModule
+            topHatAccount, // toggleModule
             !formRole.isTermed ? hatStruct.isMutable : false, // isMutable
             hatStruct.wearer, // wearer
           ],
         }),
         targetAddress: hatsProtocol,
       });
-      if (eligibilityModule !== HATS_ADDRESS) {
-        if (formRole.roleTerms?.[0].termEndDate === undefined) {
-          throw new Error('Term end date of added Role is undefined.');
-        }
-        // create transactions to start first term right away
-        txData.push({
-          calldata: encodeFunctionData({
-            abi: HatsElectionsEligibilityAbi,
-            functionName: 'elect',
-            // @todo fix this to be the correct term end date
-            args: [BigInt(Date.now()), [hatStruct.wearer]],
-          }),
-          targetAddress: eligibilityModule,
-        });
-        txData.push({
-          calldata: encodeFunctionData({
-            abi: HatsElectionsEligibilityAbi,
-            functionName: 'startNextTerm',
-            args: [],
-          }),
-          targetAddress: eligibilityModule,
-        });
-      }
+
+      // create transactions to start first term right away
+      txData.push({
+        calldata: encodeFunctionData({
+          abi: HatsElectionsEligibilityAbi,
+          functionName: 'elect',
+          // @todo fix this to be the correct term end date
+          args: [roleTerms[0].termEndDateTs, [hatStruct.wearer]],
+        }),
+        targetAddress: eligibilityModule,
+      });
 
       return txData;
     },
-    [createHatStruct, hatsProtocol, createEligibilityModuleTx],
+    [createHatStruct, hatsProtocol, createEligibilityModuleTx, parseRoleTermsFromFormRoleTerms],
   );
 
   const mintHatTx = useCallback(
@@ -707,7 +684,7 @@ export default function useCreateRoles() {
           });
           newHatCount++;
           if (formHat.isTermed) {
-            allTxs.push(...(await createNewTermedHatTxs(formHat, adminHatId)));
+            allTxs.push(...(await createNewTermedHatTxs(formHat, adminHatId, topHatAccount)));
           } else {
             allTxs.push(await createNewHatTx(formHat, adminHatId, topHatAccount));
           }
@@ -1135,7 +1112,7 @@ export default function useCreateRoles() {
 
       let proposalData: ProposalExecuteData;
       try {
-        if (!!hatsTreeId) {
+        if (!hatsTreeId) {
           // This safe has no top hat, so we prepare a proposal to create one. This will also create an admin hat,
           // along with any other hats that are added.
 
