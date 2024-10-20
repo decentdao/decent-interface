@@ -100,8 +100,7 @@ function Roles() {
                 key={roleHat.id}
                 name={roleHat.name}
                 wearerAddress={roleHat.wearerAddress}
-                hatId={roleHat.id}
-                handleRoleClick={handleNavigateToRole}
+                handleRoleClick={() => handleNavigateToRole(roleHat.id)}
                 paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}
               />
             ))}

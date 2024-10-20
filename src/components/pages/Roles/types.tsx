@@ -31,8 +31,7 @@ export interface SablierPaymentFormValues extends Partial<SablierPayment> {
 
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
-  handleRoleClick: (hatId: Address) => void;
-  hatId: Address;
+  handleRoleClick: () => void;
   name: string;
   wearerAddress?: Address;
   paymentsCount?: number;

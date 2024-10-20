@@ -159,13 +159,7 @@ function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
   );
 }
 
-export function RolesRow({
-  name,
-  wearerAddress,
-  paymentsCount,
-  handleRoleClick,
-  hatId,
-}: RoleProps) {
+export function RolesRow({ name, wearerAddress, paymentsCount, handleRoleClick }: RoleProps) {
   return (
     <Tr
       sx={{
@@ -178,7 +172,7 @@ export function RolesRow({
       _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
       cursor="pointer"
-      onClick={() => handleRoleClick(hatId)}
+      onClick={handleRoleClick}
     >
       <Td
         textStyle="body-base"
@@ -258,10 +252,9 @@ export function RolesTable({
             {hatsTree.roleHats.map(role => (
               <RolesRow
                 key={role.id.toString()}
-                hatId={role.id}
                 name={role.name}
                 wearerAddress={role.wearerAddress}
-                handleRoleClick={handleRoleClick}
+                handleRoleClick={() => handleRoleClick(role.id)}
                 paymentsCount={
                   role.payments === undefined
                     ? undefined
@@ -275,6 +268,7 @@ export function RolesTable({
     </Box>
   );
 }
+
 export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
   const { hatsTree } = useRolesStore();
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
