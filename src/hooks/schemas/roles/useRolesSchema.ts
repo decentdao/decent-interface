@@ -136,9 +136,9 @@ export const useRolesSchema = () => {
                         message: t('roleInfoErrorTermEndDateInvalid'),
                         test: (termEndDate, cxt) => {
                           if (!termEndDate || !cxt.from) return true;
-                          const [, { value: terms }] = cxt.from;
+                          const [, { value: role }] = cxt.from;
                           // remove the last element from terms and create a new array with the rest of the elements
-                          const previousTerms = terms.slice(0, -1);
+                          const previousTerms = role.roleTerms.slice(0, -1);
                           if (
                             previousTerms.every(
                               (term: { termEndDate: Date }) =>

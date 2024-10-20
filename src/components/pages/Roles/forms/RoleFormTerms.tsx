@@ -225,7 +225,7 @@ function RoleTermExpiredTerms({
 }
 
 export default function RoleFormTerms() {
-  const [showAddTerm, setShowAddTerm] = useState(false);
+  const [newTermIndex, setNewTermIndex] = useState<number>();
   const { t } = useTranslation('roles');
   const { values } = useFormikContext<RoleFormValues>();
 
@@ -243,7 +243,7 @@ export default function RoleFormTerms() {
   // @dev shows the term form when there are no terms
   useEffect(() => {
     if (!roleFormTerms.length) {
-      setShowAddTerm(true);
+      setNewTermIndex(0);
     }
   }, [roleFormTerms]);
 
@@ -261,9 +261,9 @@ export default function RoleFormTerms() {
         variant="secondary"
         size="sm"
         mb={4}
-        isDisabled={showAddTerm || terms.length > 2 || !roleFormTerms.length}
+        isDisabled={!!newTermIndex || terms.length > 2 || !roleFormTerms.length}
         onClick={() => {
-          setShowAddTerm(true);
+          setNewTermIndex(roleFormTerms.length + 1);
         }}
       >
         <Icon
@@ -276,9 +276,9 @@ export default function RoleFormTerms() {
         flexDir="column"
         gap={4}
       >
-        {showAddTerm && (
+        {newTermIndex && (
           <RoleTermCreate
-            termIndex={roleFormTerms.length + 1}
+            termIndex={newTermIndex}
             isNextTerm={!!nextTerm}
           />
         )}
