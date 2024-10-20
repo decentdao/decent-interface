@@ -15,15 +15,6 @@ export class DecentHatsError extends Error {
   }
 }
 
-export interface PredictAccountParams {
-  implementation: Address;
-  chainId: bigint;
-  tokenContract: Address;
-  tokenId: bigint;
-  registryAddress: Address;
-  publicClient: PublicClient;
-}
-
 interface DecentHat {
   id: Hex;
   prettyId: string;
@@ -144,7 +135,14 @@ export const initialHatsStore: RolesStoreData = {
   contextChainId: null,
 };
 
-export const predictAccountAddress = async (params: PredictAccountParams) => {
+export const predictAccountAddress = async (params: {
+  implementation: Address;
+  chainId: bigint;
+  tokenContract: Address;
+  tokenId: bigint;
+  registryAddress: Address;
+  publicClient: PublicClient;
+}) => {
   const { implementation, chainId, tokenContract, tokenId, registryAddress, publicClient } = params;
 
   const erc6551RegistryContract = getContract({
@@ -270,16 +268,16 @@ export const predictHatId = ({ adminHatId, hatsCount }: { adminHatId: Hex; hatsC
   return BigInt(`${adminLevelBinary}${newSiblingId}`.padEnd(66, '0'));
 };
 
-export const isActive = (payment: { isCancelled?: boolean; endDate?: Date }) => {
-  const now = new Date();
-  // A payment is active if it's not cancelled and its end date is in the future (or it doesn't have an end date yet)
-  return !payment.isCancelled && (payment.endDate === undefined || payment.endDate > now);
-};
-
 export const paymentSorterByActiveStatus = (
   a: { isCancelled?: boolean; endDate?: Date },
   b: { isCancelled?: boolean; endDate?: Date },
 ) => {
+  const isActive = (payment: { isCancelled?: boolean; endDate?: Date }) => {
+    const now = new Date();
+    // A payment is active if it's not cancelled and its end date is in the future (or it doesn't have an end date yet)
+    return !payment.isCancelled && (payment.endDate === undefined || payment.endDate > now);
+  };
+
   const aIsActive = isActive(a);
   const bIsActive = isActive(b);
 
@@ -293,6 +291,7 @@ export const paymentSorterByActiveStatus = (
   // If both are active or both inactive, maintain the current order
   return 0;
 };
+
 export const paymentSorterByStartDate = (a: { startDate?: Date }, b: { startDate?: Date }) => {
   if (!a?.startDate) return 1; // No start date, move this payment last
   if (!b?.startDate) return -1; // No start date, move b last
