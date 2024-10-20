@@ -128,8 +128,8 @@ function DecentDatePickerContainer({
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -271,8 +271,8 @@ export function DecentDatePicker({
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -364,8 +364,8 @@ export function DecentDatePickerRange({
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state

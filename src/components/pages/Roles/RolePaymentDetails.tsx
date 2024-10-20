@@ -82,8 +82,8 @@ interface RolePaymentDetailsProps {
     cliffDate?: Date;
     isCancelled: boolean;
     isCancelling?: boolean;
-    isStreaming: () => boolean;
-    isCancellable: () => boolean;
+    isStreaming: boolean;
+    isCancellable: boolean;
     withdrawableAmount?: bigint;
   };
   onClick?: () => void;
@@ -346,7 +346,7 @@ export function RolePaymentDetails({
                   alignItems="center"
                   gap="0.5rem"
                 >
-                  <GreenStreamingDot isStreaming={payment.isStreaming()} />
+                  <GreenStreamingDot isStreaming={payment.isStreaming} />
                   <Text
                     textStyle="label-small"
                     color="white-0"

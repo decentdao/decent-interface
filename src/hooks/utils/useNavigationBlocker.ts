@@ -33,8 +33,8 @@ interface RoleEditDetailsNavigationBlockerParams {
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state

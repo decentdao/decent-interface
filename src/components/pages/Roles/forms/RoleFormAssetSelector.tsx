@@ -65,8 +65,8 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -207,8 +207,8 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -257,8 +257,8 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                   cliffDate?: Date;
                   withdrawableAmount: bigint;
                   isCancelled: boolean;
-                  isStreaming: () => boolean;
-                  isCancellable: () => boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
                   isCancelling: boolean;
                 }[];
                 // form specific state
@@ -291,8 +291,8 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                   cliffDate?: Date;
                   withdrawableAmount: bigint;
                   isCancelled: boolean;
-                  isStreaming: () => boolean;
-                  isCancellable: () => boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
                   isCancelling: boolean;
                 }[];
                 // form specific state
@@ -467,8 +467,8 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                   cliffDate?: Date;
                   withdrawableAmount: bigint;
                   isCancelled: boolean;
-                  isStreaming: () => boolean;
-                  isCancellable: () => boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
                   isCancelling: boolean;
                 }[];
                 // form specific state
@@ -501,8 +501,8 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                   cliffDate?: Date;
                   withdrawableAmount: bigint;
                   isCancelled: boolean;
-                  isStreaming: () => boolean;
-                  isCancellable: () => boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
                   isCancelling: boolean;
                 }[];
                 // form specific state

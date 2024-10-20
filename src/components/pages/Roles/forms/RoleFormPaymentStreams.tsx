@@ -44,8 +44,8 @@ export function RoleFormPaymentStreams() {
         cliffDate?: Date;
         withdrawableAmount: bigint;
         isCancelled: boolean;
-        isStreaming: () => boolean;
-        isCancellable: () => boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
         isCancelling: boolean;
       }[];
       // form specific state
@@ -73,8 +73,8 @@ export function RoleFormPaymentStreams() {
         push: pushPayment,
       }: {
         push: (streamFormValue: {
-          isStreaming: () => boolean;
-          isCancellable: () => boolean;
+          isStreaming: boolean;
+          isCancellable: boolean;
           isCancelling?: boolean;
         }) => void;
       }) => (
@@ -86,8 +86,8 @@ export function RoleFormPaymentStreams() {
             iconSpacing={0}
             onClick={async () => {
               pushPayment({
-                isStreaming: () => false,
-                isCancellable: () => false,
+                isStreaming: false,
+                isCancellable: false,
                 isCancelling: false,
               });
               await validateForm();
@@ -99,16 +99,17 @@ export function RoleFormPaymentStreams() {
           <Box mt="0.5rem">
             {sortedPayments.map((payment, index) => {
               // @note don't render if form isn't valid
-              if (!payment.amount || !payment.asset || !payment.startDate || !payment.endDate)
-                return null;
+              // @note can we just get rid of this?
+              // if (!payment.amount || !payment.asset || !payment.startDate || !payment.endDate) {
+              //   return null;
+              // }
 
-              const canBeCancelled = payment.isCancellable();
               return (
                 <RolePaymentDetails
                   key={index}
-                  showCancel={canBeCancelled || !payment.isCancelling}
+                  showCancel={payment.isCancellable || !payment.isCancelling}
                   onClick={
-                    canBeCancelled
+                    payment.isCancellable
                       ? () => setFieldValue('roleEditing.roleEditingPaymentIndex', index)
                       : undefined
                   }
@@ -127,9 +128,9 @@ export function RoleFormPaymentStreams() {
                     endDate: payment.endDate,
                     startDate: payment.startDate,
                     cliffDate: payment.cliffDate,
-                    isCancelled: payment.isCancelled ?? false,
-                    isStreaming: payment.isStreaming ?? (() => false),
-                    isCancellable: payment.isCancellable ?? (() => false),
+                    isCancelled: payment.isCancelled,
+                    isStreaming: payment.isStreaming,
+                    isCancellable: payment.isCancellable,
                     isCancelling: payment.isCancelling,
                   }}
                 />
