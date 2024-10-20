@@ -1,5 +1,5 @@
 import { Address, Hex } from 'viem';
-import { DecentRoleHat } from '../../../store/roles';
+import { DecentRoleHat } from '../../../store/roles/rolesStoreUtils';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 

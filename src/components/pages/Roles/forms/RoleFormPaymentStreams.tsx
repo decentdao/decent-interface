@@ -4,10 +4,10 @@ import { FieldArray, useFormikContext } from 'formik';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  paymentSorterByWithdrawAmount,
-  paymentSorterByStartDate,
   paymentSorterByActiveStatus,
-} from '../../../../store/roles';
+  paymentSorterByStartDate,
+  paymentSorterByWithdrawAmount,
+} from '../../../../store/roles/rolesStoreUtils';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { RolePaymentDetails } from '../RolePaymentDetails';

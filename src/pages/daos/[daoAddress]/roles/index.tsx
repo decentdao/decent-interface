@@ -20,7 +20,7 @@ import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubm
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../../store/roles';
+import { useRolesStore } from '../../../../store/roles/useRolesStore';
 
 function Roles() {
   useEffect(() => {
