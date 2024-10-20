@@ -11,7 +11,7 @@ import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading } from './RolePageCard';
-import { EditBadgeStatus, RoleEditProps, RoleFormValues } from './types';
+import { EditBadgeStatus, RoleFormValues } from './types';
 
 function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -204,7 +204,15 @@ export function RolesRowEdit({
   editStatus,
   payments,
   handleRoleClick,
-}: RoleEditProps) {
+}: {
+  handleRoleClick: () => void;
+  name?: string;
+  editStatus?: EditBadgeStatus;
+  wearerAddress?: Address;
+  payments?: {
+    isStreaming: () => boolean;
+  }[];
+}) {
   const isRemovedRole = editStatus === EditBadgeStatus.Removed;
   return (
     <Tr
