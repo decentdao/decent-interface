@@ -11,7 +11,7 @@ import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading } from './RolePageCard';
-import { EditBadgeStatus, RoleFormValues } from './types';
+import { EditBadgeStatus, RoleHatFormValue } from './types';
 
 function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -289,7 +289,9 @@ export function RolesTable({
 
 export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
   const { hatsTree } = useRolesStore();
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<{
+    hats: RoleHatFormValue[];
+  }>();
   if (hatsTree === undefined) {
     return <RoleCardLoading />;
   }

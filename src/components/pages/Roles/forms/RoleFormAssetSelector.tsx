@@ -16,15 +16,16 @@ import { Field, FieldInputProps, FieldProps, FormikErrors, useFormikContext } fr
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { BigIntValuePair } from '../../../../types';
+import { BigIntValuePair, CreateProposalMetadata } from '../../../../types';
 import { formatCoin, formatUSD } from '../../../../utils';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
+import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import Divider from '../../../ui/utils/Divider';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
-import { RoleFormValues } from '../types';
+import { RoleHatFormValue } from '../types';
 
 function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; formIndex: number }) {
   const { t } = useTranslation('roles');
@@ -36,7 +37,9 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
       parseFloat(asset.balance) > 0 &&
       asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
   );
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<{
+    roleEditing?: RoleHatFormValue;
+  }>();
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
   if (fungibleAssetsWithBalance.length === 0) {
@@ -143,7 +146,9 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
 
 export function AssetSelector({ formIndex, disabled }: { formIndex: number; disabled?: boolean }) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<{
+    roleEditing?: RoleHatFormValue;
+  }>();
   const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
 
   return (
@@ -153,7 +158,18 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
         isDisabled={disabled}
       >
         <Field name={`roleEditing.payments[${formIndex}].asset`}>
-          {({ field }: FieldProps<string, RoleFormValues>) => (
+          {({
+            field,
+          }: FieldProps<
+            string,
+            {
+              proposalMetadata: CreateProposalMetadata;
+              hats: RoleHatFormValue[];
+              roleEditing?: RoleHatFormValue;
+              customNonce?: number;
+              actions: SendAssetsData[];
+            }
+          >) => (
             <Menu
               placement="bottom-end"
               offset={[0, 8]}
@@ -288,7 +304,16 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
             field,
             meta,
             form: { setFieldTouched },
-          }: FieldProps<BigIntValuePair, RoleFormValues>) => {
+          }: FieldProps<
+            BigIntValuePair,
+            {
+              proposalMetadata: CreateProposalMetadata;
+              hats: RoleHatFormValue[];
+              roleEditing?: RoleHatFormValue;
+              customNonce?: number;
+              actions: SendAssetsData[];
+            }
+          >) => {
             const paymentAmountBigIntError = meta.error as FormikErrors<BigIntValuePair>;
             const paymentAmountBigIntTouched = meta.touched;
             const inputDisabled = !values?.roleEditing?.payments?.[formIndex]?.asset || disabled;

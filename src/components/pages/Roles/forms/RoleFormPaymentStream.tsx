@@ -10,14 +10,16 @@ import { BigIntValuePair } from '../../../../types';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
-import { RoleFormValues, RoleHatFormValue } from '../types';
+import { RoleHatFormValue } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
 function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boolean }) {
   const { t } = useTranslation(['roles']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const payment = values?.roleEditing?.payments?.[formIndex];
+  const { values, setFieldValue } = useFormikContext<{
+    roleEditing?: RoleHatFormValue;
+  }>();
+  const payment = values.roleEditing?.payments?.[formIndex];
 
   // Show cliff date picker if both start and end dates are set and if there is at least a day between them
   const showCliffDatePicker =
@@ -42,8 +44,8 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
     }
   };
 
-  const selectedStartDate = values?.roleEditing?.payments?.[formIndex]?.startDate;
-  const selectedEndDate = values?.roleEditing?.payments?.[formIndex]?.endDate;
+  const selectedStartDate = values.roleEditing?.payments?.[formIndex]?.startDate;
+  const selectedEndDate = values.roleEditing?.payments?.[formIndex]?.endDate;
 
   return (
     <Box>
@@ -102,7 +104,9 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
 
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
-  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, errors, setFieldValue } = useFormikContext<{
+    roleEditing?: RoleHatFormValue;
+  }>();
   const { getPayment } = useRolesStore();
   const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
     ?.payments;

@@ -23,11 +23,11 @@ import RoleFormTabs from '../../../../../../components/pages/Roles/forms/RoleFor
 import {
   EditBadgeStatus,
   EditedRole,
-  RoleFormValues,
   RoleHatFormValue,
 } from '../../../../../../components/pages/Roles/types';
 import DraggableDrawer from '../../../../../../components/ui/containers/DraggableDrawer';
 import { ModalBase } from '../../../../../../components/ui/modals/ModalBase';
+import { SendAssetsData } from '../../../../../../components/ui/modals/SendAssetsModal';
 import {
   BACKGROUND_SEMI_TRANSPARENT,
   CARD_SHADOW,
@@ -39,11 +39,15 @@ import { useNavigationBlocker } from '../../../../../../hooks/utils/useNavigatio
 import { useFractal } from '../../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../../store/roles/useRolesStore';
+import { CreateProposalMetadata } from '../../../../../../types';
 import { UnsavedChangesWarningContent } from '../unsavedChangesWarningContent';
 
 function EditRoleMenu({ onRemove, hatId }: { hatId: Hex; onRemove: () => void }) {
   const { t } = useTranslation(['roles']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<{
+    hats: RoleHatFormValue[];
+    roleEditing?: RoleHatFormValue;
+  }>();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const hatIndex = values.hats.findIndex(h => h.id === hatId);
@@ -136,13 +140,25 @@ export default function RoleEditDetails() {
   const { getPayment } = useRolesStore();
   const { addressPrefix } = useNetworkConfig();
   const navigate = useNavigate();
-  const { values, setFieldValue, touched, setTouched } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue, touched, setTouched } = useFormikContext<{
+    proposalMetadata: CreateProposalMetadata;
+    hats: RoleHatFormValue[];
+    roleEditing?: RoleHatFormValue;
+    customNonce?: number;
+    actions: SendAssetsData[];
+  }>();
   const [searchParams] = useSearchParams();
   const hatEditingId = searchParams.get('hatId');
 
   const [wasRoleActuallyEdited, setWasRoleActuallyEdited] = useState(false);
 
-  const editRolesFormikContext = useFormikContext<RoleFormValues>();
+  const editRolesFormikContext = useFormikContext<{
+    proposalMetadata: CreateProposalMetadata;
+    hats: RoleHatFormValue[];
+    roleEditing?: RoleHatFormValue;
+    customNonce?: number;
+    actions: SendAssetsData[];
+  }>();
   const blocker = useNavigationBlocker({
     roleEditDetailsNavigationBlockerParams: { wasRoleActuallyEdited, ...editRolesFormikContext },
   });

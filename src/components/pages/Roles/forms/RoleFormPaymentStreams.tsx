@@ -11,11 +11,13 @@ import {
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { RolePaymentDetails } from '../RolePaymentDetails';
-import { RoleFormValues } from '../types';
+import { RoleHatFormValue } from '../types';
 
 export function RoleFormPaymentStreams() {
   const { t } = useTranslation(['roles']);
-  const { values, setFieldValue, validateForm } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue, validateForm } = useFormikContext<{
+    roleEditing?: RoleHatFormValue;
+  }>();
   const cancelModal = useDecentModal(ModalType.NONE);
   const payments = values.roleEditing?.payments;
 
