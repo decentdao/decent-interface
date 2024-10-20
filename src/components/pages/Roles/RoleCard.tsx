@@ -9,7 +9,7 @@ import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { EditBadgeStatus, RoleEditProps, RoleProps, SablierPaymentFormValues } from './types';
+import { EditBadgeStatus, RoleEditProps, SablierPaymentFormValues } from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -173,7 +173,13 @@ export function RoleCard({
   paymentsCount,
   editStatus,
   handleRoleClick,
-}: RoleProps) {
+}: {
+  editStatus?: EditBadgeStatus;
+  handleRoleClick: () => void;
+  name: string;
+  wearerAddress?: Address;
+  paymentsCount?: number;
+}) {
   return (
     <Card
       mb="1rem"
