@@ -1,7 +1,3 @@
-import { Address, Hex } from 'viem';
-import { DecentRoleHat } from '../../../store/roles/rolesStoreUtils';
-import { BigIntValuePair } from '../../../types';
-
 export enum EditBadgeStatus {
   Updated,
   New,
@@ -21,36 +17,4 @@ export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
 export interface EditedRole {
   fieldNames: string[];
   status: EditBadgeStatus;
-}
-
-export interface RoleHatFormValue
-  extends Partial<Omit<DecentRoleHat, 'id' | 'wearerAddress' | 'payments'>> {
-  id: Hex;
-  wearer?: string;
-  // Not a user-input field.
-  // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
-  resolvedWearer?: Address;
-  payments?: {
-    streamId: string;
-    contractAddress: Address;
-    asset: {
-      address: Address;
-      name: string;
-      symbol: string;
-      decimals: number;
-      logo: string;
-    };
-    amount: BigIntValuePair;
-    startDate: Date;
-    endDate: Date;
-    cliffDate?: Date;
-    withdrawableAmount: bigint;
-    isCancelled: boolean;
-    isStreaming: () => boolean;
-    isCancellable: () => boolean;
-    isCancelling: boolean;
-  }[];
-  // form specific state
-  editedRole?: EditedRole;
-  roleEditingPaymentIndex?: number;
 }

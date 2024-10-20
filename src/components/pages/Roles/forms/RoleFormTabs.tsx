@@ -3,12 +3,13 @@ import { useFormikContext } from 'formik';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Blocker, useNavigate } from 'react-router-dom';
-import { Hex } from 'viem';
+import { Address, Hex } from 'viem';
 import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
-import { EditBadgeStatus, RoleHatFormValue } from '../types';
+import { BigIntValuePair } from '../../../../types';
+import { EditBadgeStatus, EditedRole } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
 import { RoleFormPaymentStreams } from './RoleFormPaymentStreams';
@@ -20,7 +21,40 @@ export default function RoleFormTabs({
   blocker,
 }: {
   hatId: Hex;
-  pushRole: (roleHatFormValue: RoleHatFormValue) => void;
+  pushRole: (roleHatFormValue: {
+    prettyId?: string;
+    name?: string;
+    description?: string;
+    smartAddress?: Address;
+    id: Hex;
+    wearer?: string;
+    // Not a user-input field.
+    // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+    resolvedWearer?: Address;
+    payments?: {
+      streamId: string;
+      contractAddress: Address;
+      asset: {
+        address: Address;
+        name: string;
+        symbol: string;
+        decimals: number;
+        logo: string;
+      };
+      amount: BigIntValuePair;
+      startDate: Date;
+      endDate: Date;
+      cliffDate?: Date;
+      withdrawableAmount: bigint;
+      isCancelled: boolean;
+      isStreaming: () => boolean;
+      isCancellable: () => boolean;
+      isCancelling: boolean;
+    }[];
+    // form specific state
+    editedRole?: EditedRole;
+    roleEditingPaymentIndex?: number;
+  }) => void;
   blocker: Blocker;
 }) {
   const { hatsTree } = useRolesStore();
@@ -32,8 +66,74 @@ export default function RoleFormTabs({
   const { editedRoleData, isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
   const { t } = useTranslation(['roles']);
   const { values, errors, setFieldValue, setTouched } = useFormikContext<{
-    hats: RoleHatFormValue[];
-    roleEditing?: RoleHatFormValue;
+    hats: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }[];
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
   }>();
 
   useEffect(() => {
