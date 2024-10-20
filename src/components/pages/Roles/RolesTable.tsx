@@ -5,12 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { Address, Hex } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
-import { DecentTree, useRolesStore } from '../../../store/roles';
+import { DecentTree } from '../../../store/roles/rolesStoreUtils';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
+import { BigIntValuePair } from '../../../types';
 import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
 import { RoleCardLoading } from './RolePageCard';
-import { EditBadgeStatus, RoleEditProps, RoleFormValues, RoleProps } from './types';
+import { EditBadgeStatus, EditedRole } from './types';
 
 function RolesHeader() {
   const { t } = useTranslation(['roles']);
@@ -124,7 +126,7 @@ function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
   );
 }
 
-function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
+function PaymentsColumn({ paymentsCount }: { paymentsCount: number }) {
   const { t } = useTranslation('common');
   return (
     <Td
@@ -134,7 +136,7 @@ function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
       color="neutral-5"
       textStyle="body-base"
     >
-      {paymentsCount !== undefined ? (
+      {paymentsCount > 0 ? (
         <Box
           as="span"
           display="inline-block"
@@ -163,8 +165,12 @@ export function RolesRow({
   wearerAddress,
   paymentsCount,
   handleRoleClick,
-  hatId,
-}: RoleProps) {
+}: {
+  handleRoleClick: () => void;
+  name: string;
+  wearerAddress?: Address;
+  paymentsCount: number;
+}) {
   return (
     <Tr
       sx={{
@@ -177,7 +183,7 @@ export function RolesRow({
       _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
       cursor="pointer"
-      onClick={() => handleRoleClick(hatId)}
+      onClick={handleRoleClick}
     >
       <Td
         textStyle="body-base"
@@ -199,7 +205,15 @@ export function RolesRowEdit({
   editStatus,
   payments,
   handleRoleClick,
-}: RoleEditProps) {
+}: {
+  handleRoleClick: () => void;
+  name?: string;
+  editStatus?: EditBadgeStatus;
+  wearerAddress?: Address;
+  payments: {
+    isStreaming: boolean;
+  }[];
+}) {
   const isRemovedRole = editStatus === EditBadgeStatus.Removed;
   return (
     <Tr
@@ -220,7 +234,7 @@ export function RolesRowEdit({
         editStatus={editStatus}
       />
       <MemberColumn wearerAddress={wearerAddress} />
-      <PaymentsColumn paymentsCount={payments?.filter(p => p.isStreaming()).length || undefined} />
+      <PaymentsColumn paymentsCount={payments.filter(p => p.isStreaming).length} />
     </Tr>
   );
 }
@@ -257,15 +271,10 @@ export function RolesTable({
             {hatsTree.roleHats.map(role => (
               <RolesRow
                 key={role.id.toString()}
-                hatId={role.id}
                 name={role.name}
                 wearerAddress={role.wearerAddress}
-                handleRoleClick={handleRoleClick}
-                paymentsCount={
-                  role.payments === undefined
-                    ? undefined
-                    : role.payments.filter(p => p.isStreaming()).length || undefined
-                }
+                handleRoleClick={() => handleRoleClick(role.id)}
+                paymentsCount={role.payments.filter(p => p.isStreaming).length}
               />
             ))}
           </Tbody>
@@ -274,9 +283,45 @@ export function RolesTable({
     </Box>
   );
 }
+
 export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
   const { hatsTree } = useRolesStore();
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<{
+    hats: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }[];
+  }>();
   if (hatsTree === undefined) {
     return <RoleCardLoading />;
   }

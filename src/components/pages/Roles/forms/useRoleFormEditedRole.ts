@@ -1,7 +1,9 @@
 import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
-import { DecentTree } from '../../../../store/roles';
-import { EditedRole, EditBadgeStatus, RoleFormValues } from '../types';
+import { Address, Hex } from 'viem';
+import { DecentTree } from '../../../../store/roles/rolesStoreUtils';
+import { BigIntValuePair } from '../../../../types';
+import { EditedRole, EditBadgeStatus } from '../types';
 
 const addRemoveField = (fieldNames: string[], fieldName: string, hasChanges: boolean) => {
   if (fieldNames.includes(fieldName) && !hasChanges) {
@@ -13,7 +15,42 @@ const addRemoveField = (fieldNames: string[], fieldName: string, hasChanges: boo
 };
 
 export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | undefined | null }) {
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<{
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
+  }>();
   const existingRoleHat = useMemo(
     () =>
       hatsTree?.roleHats.find(role => !!values.roleEditing && role.id === values.roleEditing.id),

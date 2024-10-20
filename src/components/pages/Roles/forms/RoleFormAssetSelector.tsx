@@ -14,17 +14,19 @@ import {
 import { CaretDown, CheckCircle } from '@phosphor-icons/react';
 import { Field, FieldInputProps, FieldProps, FormikErrors, useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
+import { Address, Hex } from 'viem';
 import { CARD_SHADOW } from '../../../../constants/common';
 import { useFractal } from '../../../../providers/App/AppProvider';
-import { BigIntValuePair } from '../../../../types';
+import { BigIntValuePair, CreateProposalMetadata } from '../../../../types';
 import { formatCoin, formatUSD } from '../../../../utils';
 import { MOCK_MORALIS_ETH_ADDRESS } from '../../../../utils/address';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { BigIntInput } from '../../../ui/forms/BigIntInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
+import { SendAssetsData } from '../../../ui/modals/SendAssetsModal';
 import Divider from '../../../ui/utils/Divider';
 import { EaseOutComponent } from '../../../ui/utils/EaseOutComponent';
-import { RoleFormValues } from '../types';
+import { EditedRole } from '../types';
 
 function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; formIndex: number }) {
   const { t } = useTranslation('roles');
@@ -36,8 +38,43 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
       parseFloat(asset.balance) > 0 &&
       asset.tokenAddress.toLowerCase() !== MOCK_MORALIS_ETH_ADDRESS.toLowerCase(), // Can't stream native token
   );
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
+  const { values, setFieldValue } = useFormikContext<{
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
+  }>();
+  const selectedAsset = values.roleEditing?.payments[formIndex]?.asset;
 
   if (fungibleAssetsWithBalance.length === 0) {
     return (
@@ -143,8 +180,43 @@ function AssetsList({ field, formIndex }: { field: FieldInputProps<string>; form
 
 export function AssetSelector({ formIndex, disabled }: { formIndex: number; disabled?: boolean }) {
   const { t } = useTranslation(['roles', 'treasury', 'modals']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const selectedAsset = values.roleEditing?.payments?.[formIndex]?.asset;
+  const { values, setFieldValue } = useFormikContext<{
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
+  }>();
+  const selectedAsset = values.roleEditing?.payments[formIndex]?.asset;
 
   return (
     <>
@@ -153,7 +225,84 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
         isDisabled={disabled}
       >
         <Field name={`roleEditing.payments[${formIndex}].asset`}>
-          {({ field }: FieldProps<string, RoleFormValues>) => (
+          {({
+            field,
+          }: FieldProps<
+            string,
+            {
+              proposalMetadata: CreateProposalMetadata;
+              hats: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              }[];
+              roleEditing?: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              };
+              customNonce?: number;
+              actions: SendAssetsData[];
+            }
+          >) => (
             <Menu
               placement="bottom-end"
               offset={[0, 8]}
@@ -288,10 +437,85 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
             field,
             meta,
             form: { setFieldTouched },
-          }: FieldProps<BigIntValuePair, RoleFormValues>) => {
+          }: FieldProps<
+            BigIntValuePair,
+            {
+              proposalMetadata: CreateProposalMetadata;
+              hats: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              }[];
+              roleEditing?: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              };
+              customNonce?: number;
+              actions: SendAssetsData[];
+            }
+          >) => {
             const paymentAmountBigIntError = meta.error as FormikErrors<BigIntValuePair>;
             const paymentAmountBigIntTouched = meta.touched;
-            const inputDisabled = !values?.roleEditing?.payments?.[formIndex]?.asset || disabled;
+            const inputDisabled = !values?.roleEditing?.payments[formIndex]?.asset || disabled;
             return (
               <LabelWrapper
                 label={t('totalAmount')}
@@ -304,11 +528,11 @@ export function AssetSelector({ formIndex, disabled }: { formIndex: number; disa
                 <BigIntInput
                   isDisabled={inputDisabled}
                   value={field.value?.bigintValue}
-                  parentFormikValue={values?.roleEditing?.payments?.[formIndex]?.amount}
+                  parentFormikValue={values?.roleEditing?.payments[formIndex]?.amount}
                   onChange={valuePair => {
                     setFieldValue(field.name, valuePair, true);
                   }}
-                  decimalPlaces={values?.roleEditing?.payments?.[formIndex]?.asset?.decimals}
+                  decimalPlaces={values?.roleEditing?.payments[formIndex]?.asset?.decimals}
                   onBlur={() => {
                     setFieldTouched(field.name, true);
                   }}

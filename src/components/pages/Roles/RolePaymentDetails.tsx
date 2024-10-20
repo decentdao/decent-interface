@@ -10,7 +10,7 @@ import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { DAO_ROUTES } from '../../../constants/routes';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../store/roles';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { BigIntValuePair } from '../../../types';
 import { DEFAULT_DATE_FORMAT, formatCoin, formatUSD } from '../../../utils';
 import { ModalType } from '../../ui/modals/ModalProvider';
@@ -82,8 +82,8 @@ interface RolePaymentDetailsProps {
     cliffDate?: Date;
     isCancelled: boolean;
     isCancelling?: boolean;
-    isStreaming: () => boolean;
-    isCancellable: () => boolean;
+    isStreaming: boolean;
+    isCancellable: boolean;
     withdrawableAmount?: bigint;
   };
   onClick?: () => void;
@@ -346,7 +346,7 @@ export function RolePaymentDetails({
                   alignItems="center"
                   gap="0.5rem"
                 >
-                  <GreenStreamingDot isStreaming={payment.isStreaming()} />
+                  <GreenStreamingDot isStreaming={payment.isStreaming} />
                   <Text
                     textStyle="label-small"
                     color="white-0"

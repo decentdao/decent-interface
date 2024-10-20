@@ -6,10 +6,10 @@ import { formatUnits, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
-import { SablierPayment } from '../../../components/pages/Roles/types';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentHatsError, useRolesStore } from '../../../store/roles';
+import { DecentHatsError } from '../../../store/roles/rolesStoreUtils';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
 import { convertStreamIdToBigInt } from '../../streams/useCreateSablierStream';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
@@ -17,14 +17,8 @@ import { getValue, setValue } from '../../utils/cache/useLocalStorage';
 const hatsSubgraphClient = new HatsSubgraphClient({});
 
 const useHatsTree = () => {
-  const {
-    hatsTreeId,
-    contextChainId,
-    hatsTree,
-    streamsFetched,
-    setHatsTree,
-    updateRolesWithStreams,
-  } = useRolesStore();
+  const { hatsTreeId, contextChainId, hatsTree, setHatsTree, updateRolesWithStreams } =
+    useRolesStore();
 
   const ipfsClient = useIPFSClient();
   const {
@@ -153,116 +147,104 @@ const useHatsTree = () => {
   useEffect(() => {
     async function getHatsStreams() {
       if (
-        sablierSubgraph &&
-        hatsTree &&
-        hatsTree.roleHats.length > 0 &&
-        !streamsFetched &&
-        publicClient
+        sablierSubgraph === undefined ||
+        hatsTree === undefined ||
+        hatsTree === null ||
+        publicClient === undefined
       ) {
-        const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
-        const updatedHatsRoles = await Promise.all(
-          hatsTree.roleHats.map(async hat => {
-            // @todo role | check logic
-            if (hat.payments?.length) {
-              return hat;
-            }
-            const streamQueryResult = await apolloClient.query({
-              query: StreamsQueryDocument,
-              variables: { recipientAddress: hat.smartAddress },
-              context: { subgraphSpace: sablierSubgraph.space, subgraphSlug: sablierSubgraph.slug },
-            });
-
-            if (!streamQueryResult.error) {
-              if (!streamQueryResult.data.streams.length) {
-                return hat;
-              }
-
-              const lockupLinearStreams = streamQueryResult.data.streams.filter(
-                stream => stream.category === 'LockupLinear',
-              );
-              const formattedLinearStreams = lockupLinearStreams.map(lockupLinearStream => {
-                const parsedAmount = formatUnits(
-                  BigInt(lockupLinearStream.depositAmount),
-                  lockupLinearStream.asset.decimals,
-                );
-
-                const startDate = secondsTimestampToDate(lockupLinearStream.startTime);
-                const endDate = secondsTimestampToDate(lockupLinearStream.endTime);
-                const cliffDate = lockupLinearStream.cliff
-                  ? secondsTimestampToDate(lockupLinearStream.cliffTime)
-                  : undefined;
-
-                return {
-                  streamId: lockupLinearStream.id,
-                  contractAddress: lockupLinearStream.contract.address,
-                  asset: {
-                    address: getAddress(lockupLinearStream.asset.address),
-                    name: lockupLinearStream.asset.name,
-                    symbol: lockupLinearStream.asset.symbol,
-                    decimals: lockupLinearStream.asset.decimals,
-                    logo: '', // @todo - how do we get logo?
-                  },
-                  amount: {
-                    bigintValue: BigInt(lockupLinearStream.depositAmount),
-                    value: parsedAmount,
-                  },
-                  isCancelled: lockupLinearStream.canceled,
-                  startDate,
-                  endDate,
-                  cliffDate,
-                  isStreaming: () => {
-                    const start = !lockupLinearStream.cliff
-                      ? startDate.getTime()
-                      : cliffDate !== undefined
-                        ? cliffDate.getTime()
-                        : undefined;
-                    const end = endDate ? endDate.getTime() : undefined;
-                    const cancelled = lockupLinearStream.canceled;
-                    const now = new Date().getTime();
-
-                    return !cancelled && !!start && !!end && start <= now && end > now;
-                  },
-                  isCancellable: () =>
-                    !lockupLinearStream.canceled && !!endDate && endDate.getTime() > Date.now(),
-                };
-              });
-
-              const streamsWithCurrentWithdrawableAmounts: SablierPayment[] = await Promise.all(
-                formattedLinearStreams.map(async stream => {
-                  const streamContract = getContract({
-                    abi: SablierV2LockupLinearAbi,
-                    address: stream.contractAddress,
-                    client: publicClient,
-                  });
-                  const bigintStreamId = convertStreamIdToBigInt(stream.streamId);
-
-                  const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
-                    bigintStreamId,
-                  ]);
-                  return { ...stream, withdrawableAmount: newWithdrawableAmount };
-                }),
-              );
-
-              return { ...hat, payments: streamsWithCurrentWithdrawableAmounts };
-            } else {
-              return hat;
-            }
-          }),
-        );
-
-        updateRolesWithStreams(updatedHatsRoles);
+        return;
       }
+
+      const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
+
+      const updatedHatsRoles = await Promise.all(
+        hatsTree.roleHats.map(async hat => {
+          const streamQueryResult = await apolloClient.query({
+            query: StreamsQueryDocument,
+            variables: { recipientAddress: hat.smartAddress },
+            context: { subgraphSpace: sablierSubgraph.space, subgraphSlug: sablierSubgraph.slug },
+          });
+
+          if (streamQueryResult.error || streamQueryResult.data.streams.length === 0) {
+            return hat;
+          }
+
+          const lockupLinearStreams = streamQueryResult.data.streams.filter(
+            stream => stream.category === 'LockupLinear',
+          );
+
+          const formattedLinearStreams = lockupLinearStreams.map(lockupLinearStream => {
+            const parsedAmount = formatUnits(
+              BigInt(lockupLinearStream.depositAmount),
+              lockupLinearStream.asset.decimals,
+            );
+
+            const startDate = secondsTimestampToDate(lockupLinearStream.startTime);
+            const endDate = secondsTimestampToDate(lockupLinearStream.endTime);
+            const cliffDate = lockupLinearStream.cliff
+              ? secondsTimestampToDate(lockupLinearStream.cliffTime)
+              : undefined;
+
+            return {
+              streamId: lockupLinearStream.id,
+              contractAddress: getAddress(lockupLinearStream.contract.address),
+              asset: {
+                address: getAddress(lockupLinearStream.asset.address),
+                name: lockupLinearStream.asset.name,
+                symbol: lockupLinearStream.asset.symbol,
+                decimals: Number(lockupLinearStream.asset.decimals),
+                logo: '/images/coin-icon-default.svg',
+              },
+              amount: {
+                bigintValue: BigInt(lockupLinearStream.depositAmount),
+                value: parsedAmount,
+              },
+              isCancelled: lockupLinearStream.canceled,
+              startDate,
+              endDate,
+              cliffDate,
+              isStreaming: (() => {
+                const start = !lockupLinearStream.cliff
+                  ? startDate.getTime()
+                  : cliffDate !== undefined
+                    ? cliffDate.getTime()
+                    : undefined;
+                const end = endDate ? endDate.getTime() : undefined;
+                const now = Date.now();
+
+                return (
+                  !lockupLinearStream.canceled && !!start && !!end && start <= now && end > now
+                );
+              })(),
+              isCancellable: !lockupLinearStream.canceled && endDate.getTime() > Date.now(),
+            };
+          });
+
+          const streamsWithCurrentWithdrawableAmounts = await Promise.all(
+            formattedLinearStreams.map(async stream => {
+              const streamContract = getContract({
+                abi: SablierV2LockupLinearAbi,
+                address: stream.contractAddress,
+                client: publicClient,
+              });
+              const bigintStreamId = convertStreamIdToBigInt(stream.streamId);
+
+              const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
+                bigintStreamId,
+              ]);
+              return { ...stream, withdrawableAmount: newWithdrawableAmount };
+            }),
+          );
+
+          return { ...hat, payments: streamsWithCurrentWithdrawableAmounts };
+        }),
+      );
+
+      updateRolesWithStreams(updatedHatsRoles);
     }
 
     getHatsStreams();
-  }, [
-    apolloClient,
-    hatsTree,
-    sablierSubgraph,
-    updateRolesWithStreams,
-    streamsFetched,
-    publicClient,
-  ]);
+  }, [apolloClient, hatsTree, publicClient, sablierSubgraph, updateRolesWithStreams]);
 };
 
 export { useHatsTree };

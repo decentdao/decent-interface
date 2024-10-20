@@ -2,13 +2,15 @@ import { Box, FormControl } from '@chakra-ui/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, Hex } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
 import useAddress from '../../../../hooks/utils/useAddress';
 import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
+import { BigIntValuePair } from '../../../../types';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import { InputComponent, TextareaComponent } from '../../../ui/forms/InputComponent';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
-import { RoleFormValues } from '../types';
+import { EditedRole } from '../types';
 
 export default function RoleFormInfo() {
   const { t } = useTranslation('roles');
@@ -17,7 +19,42 @@ export default function RoleFormInfo() {
   const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
     useAddress(roleWearerString);
 
-  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
+  const { setFieldValue, values } = useFormikContext<{
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
+  }>();
 
   useEffect(() => {
     if (isValidWearerAddress) {
@@ -43,7 +80,49 @@ export default function RoleFormInfo() {
     >
       <FormControl>
         <Field name="roleEditing.name">
-          {({ field, form: { setFieldTouched }, meta }: FieldProps<string, RoleFormValues>) => (
+          {({
+            field,
+            form: { setFieldTouched },
+            meta,
+          }: FieldProps<
+            string,
+            {
+              roleEditing?: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              };
+            }
+          >) => (
             <InputComponent
               value={field.value}
               onChange={e => {
@@ -69,7 +148,49 @@ export default function RoleFormInfo() {
       </FormControl>
       <FormControl>
         <Field name="roleEditing.description">
-          {({ field, form: { setFieldTouched }, meta }: FieldProps<string, RoleFormValues>) => (
+          {({
+            field,
+            form: { setFieldTouched },
+            meta,
+          }: FieldProps<
+            string,
+            {
+              roleEditing?: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              };
+            }
+          >) => (
             <TextareaComponent
               value={field.value}
               onChange={e => {
@@ -96,7 +217,49 @@ export default function RoleFormInfo() {
       </FormControl>
       <FormControl>
         <Field name="roleEditing.wearer">
-          {({ field, form: { setFieldTouched }, meta }: FieldProps<string, RoleFormValues>) => (
+          {({
+            field,
+            form: { setFieldTouched },
+            meta,
+          }: FieldProps<
+            string,
+            {
+              roleEditing?: {
+                prettyId?: string;
+                name?: string;
+                description?: string;
+                smartAddress?: Address;
+                id: Hex;
+                wearer?: string;
+                // Not a user-input field.
+                // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+                resolvedWearer?: Address;
+                payments: {
+                  streamId: string;
+                  contractAddress: Address;
+                  asset: {
+                    address: Address;
+                    name: string;
+                    symbol: string;
+                    decimals: number;
+                    logo: string;
+                  };
+                  amount: BigIntValuePair;
+                  startDate: Date;
+                  endDate: Date;
+                  cliffDate?: Date;
+                  withdrawableAmount: bigint;
+                  isCancelled: boolean;
+                  isStreaming: boolean;
+                  isCancellable: boolean;
+                  isCancelling: boolean;
+                }[];
+                // form specific state
+                editedRole?: EditedRole;
+                roleEditingPaymentIndex?: number;
+              };
+            }
+          >) => (
             <LabelWrapper
               label={t('member')}
               errorMessage={meta.touched && meta.error ? meta.error : undefined}

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { DecentSignature } from '../../assets/theme/custom/icons/DecentSignature';
 import { BASE_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
-import { useRolesStore } from '../../store/roles';
+import { useRolesStore } from '../../store/roles/useRolesStore';
 import { MySafes } from './MySafes';
 
 export default function HomePage() {

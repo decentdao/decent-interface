@@ -1,10 +1,51 @@
-import { getContract, Hex, PublicClient } from 'viem';
+import { Tree } from '@hatsprotocol/sdk-v1-subgraph';
+import { Address, getContract, Hex, PublicClient } from 'viem';
 import { create } from 'zustand';
 import { SablierV2LockupLinearAbi } from '../../assets/abi/SablierV2LockupLinear';
 import { convertStreamIdToBigInt } from '../../hooks/streams/useCreateSablierStream';
-import { DecentRoleHat, initialHatsStore, RolesStore, sanitize } from './rolesStoreUtils';
+import { BigIntValuePair } from '../../types';
+import { DecentRoleHat, DecentTree, initialHatsStore, sanitize } from './rolesStoreUtils';
 
-const useRolesStore = create<RolesStore>()((set, get) => ({
+const useRolesStore = create<{
+  hatsTreeId: undefined | null | number;
+  hatsTree: undefined | null | DecentTree;
+  contextChainId: number | null;
+  getHat: (hatId: Hex) => DecentRoleHat | null;
+  getPayment: (
+    hatId: Hex,
+    streamId: string,
+  ) => {
+    streamId: string;
+    contractAddress: Address;
+    asset: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate: Date | undefined;
+    isStreaming: boolean;
+    isCancellable: boolean;
+    withdrawableAmount: bigint;
+    isCancelled: boolean;
+  } | null;
+  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
+  setHatsTree: (params: {
+    hatsTree: Tree | null | undefined;
+    chainId: bigint;
+    hatsProtocol: Address;
+    erc6551Registry: Address;
+    hatsAccountImplementation: Address;
+    publicClient: PublicClient;
+  }) => Promise<void>;
+  refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
+  updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
+  resetHatsStore: () => void;
+}>()((set, get) => ({
   ...initialHatsStore,
   getHat: hatId => {
     const matches = get().hatsTree?.roleHats.filter(h => h.id === hatId);
@@ -44,9 +85,9 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
       // if `hatsTreeId` is null or undefined,
       // set `hatsTree` to that same value
       if (typeof hatsTreeId !== 'number') {
-        return { hatsTreeId, hatsTree: hatsTreeId, streamsFetched: false, contextChainId: null };
+        return { hatsTreeId, hatsTree: hatsTreeId, contextChainId: null };
       }
-      return { hatsTreeId, streamsFetched: false, contextChainId };
+      return { hatsTreeId, contextChainId };
     }),
   setHatsTree: async params => {
     const hatsTree = await sanitize(
@@ -82,7 +123,7 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
           if (roleHat.id !== hatId) return roleHat;
           return {
             ...roleHat,
-            payments: roleHat.payments?.map(p =>
+            payments: roleHat.payments.map(p =>
               p.streamId === streamId ? { ...p, withdrawableAmount: newWithdrawableAmount } : p,
             ),
           };
@@ -99,7 +140,7 @@ const useRolesStore = create<RolesStore>()((set, get) => ({
       roleHats: updatedRoles,
     };
 
-    set(() => ({ hatsTree: updatedDecentTree, streamsFetched: true }));
+    set(() => ({ hatsTree: updatedDecentTree }));
   },
   resetHatsStore: () => set(() => initialHatsStore),
 }));
