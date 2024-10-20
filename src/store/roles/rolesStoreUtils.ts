@@ -1,6 +1,7 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
-import { Address, Hex, PublicClient, getContract } from 'viem';
+import { Address, Hex, PublicClient, getAddress, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
+import { HatsElectionsEligibilityAbi } from '../../assets/abi/HatsElectionsEligibilityAbi';
 import { SablierPayment } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
 
@@ -51,6 +52,8 @@ interface RolesStoreData {
 export interface DecentRoleHat extends DecentHat {
   wearer: Address;
   eligibility?: `0x${string}`;
+  roleTerms: { nominee: Address; termEndDate: Date }[];
+  isTermed: boolean;
 }
 
 export interface DecentTree {
@@ -243,7 +246,41 @@ export const sanitize = async (
       tokenId: BigInt(rawHat.id),
       publicClient,
     });
-
+    let roleTerms: {
+      nominee: Address;
+      termEndDate: Date;
+    }[] = [];
+    let isTermed: boolean = false;
+    if (rawHat.eligibility) {
+      // @dev check if the eligibility is an election contract
+      try {
+        const electionContract = getContract({
+          abi: HatsElectionsEligibilityAbi,
+          address: rawHat.eligibility,
+          client: publicClient,
+        });
+        const rawTerms = await electionContract.getEvents.ElectionCompleted({
+          fromBlock: 0n,
+        });
+        roleTerms = rawTerms.map(term => {
+          const nominee = term.args.winners?.[0];
+          const termEnd = term.args.termEnd;
+          if (!nominee) {
+            throw new Error('No nominee in the election');
+          }
+          if (!termEnd) {
+            throw new Error('No term end in the election');
+          }
+          return {
+            nominee: getAddress(nominee),
+            termEndDate: new Date(Number(termEnd.toString()) * 1000),
+          };
+        });
+        isTermed = true;
+      } catch {
+        console.error('Failed to get election terms or not a valid election contract');
+      }
+    }
     roleHats.push({
       id: rawHat.id,
       prettyId: rawHat.prettyId ?? '',
@@ -252,6 +289,8 @@ export const sanitize = async (
       wearer: rawHat.wearers![0].id,
       smartAddress: roleHatSmartAddress,
       eligibility: rawHat.eligibility,
+      roleTerms,
+      isTermed,
     });
   }
 

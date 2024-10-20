@@ -91,6 +91,19 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
             cause: roleHat,
           });
         }
+        const roleTerms =
+          roleHat.roleTerms?.map(term => {
+            if (!term.termEndDate || term.nominee === undefined || term.newStatus === undefined) {
+              throw new Error('Role term missing data', {
+                cause: term,
+              });
+            }
+            return {
+              termEndDate: term.termEndDate,
+              nominee: getAddress(term.nominee),
+              newStatus: term.newStatus,
+            };
+          }) || [];
         return {
           ...roleHat,
           editedRole: roleHat.editedRole,
@@ -98,6 +111,8 @@ export default function RoleFormCreateProposal({ close }: { close: () => void })
           name: roleHat.name,
           description: roleHat.description,
           wearer: getAddress(roleHat.wearer),
+          roleTerms,
+          isTermed: roleHat.isTermed ?? false,
           payments: roleHat.payments
             ? roleHat.payments.map(payment => {
                 if (!payment.startDate || !payment.endDate || !payment.amount || !payment.asset) {

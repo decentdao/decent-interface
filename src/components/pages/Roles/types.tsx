@@ -126,7 +126,7 @@ export interface DurationBreakdown {
 }
 
 export interface RoleHatFormValue
-  extends Partial<Omit<DecentRoleHat, 'id' | 'wearer' | 'payments'>> {
+  extends Partial<Omit<DecentRoleHat, 'id' | 'wearer' | 'payments' | 'roleTerms'>> {
   id: Hex;
   wearer?: string;
   payments?: SablierPaymentFormValues[];

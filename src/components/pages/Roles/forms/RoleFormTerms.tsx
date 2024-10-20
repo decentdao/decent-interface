@@ -95,7 +95,7 @@ function RoleTermCreate({ isNextTerm, termIndex }: { termIndex: number; isNextTe
         flexDirection="column"
         gap="1rem"
       >
-        <Text>{t('Term 1')}</Text>
+        <Text>{t('termNumber', { number: termIndex })}</Text>
       </Box>
       <Box
         p="1rem"
@@ -278,7 +278,7 @@ export default function RoleFormTerms() {
       >
         {showAddTerm && (
           <RoleTermCreate
-            termIndex={roleFormTerms.length}
+            termIndex={roleFormTerms.length + 1}
             isNextTerm={!!nextTerm}
           />
         )}
