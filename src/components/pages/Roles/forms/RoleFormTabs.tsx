@@ -64,35 +64,6 @@ export default function RoleFormTabs({
 
   return (
     <>
-      {/* <Button
-        variant="secondary"
-        size="sm"
-        onClick={() => {
-          setFieldValue('roleEditing', undefined);
-          const hats = values.hats.filter(hat => hat.id !== hatId);
-          const hardCodedTermedCole: RoleHatFormValueEdited = {
-            editedRole: {
-              status: EditBadgeStatus.New,
-              fieldNames: [],
-            },
-            id: hatId,
-            name: 'Termed Role',
-            description: 'A new Term Role',
-            wearer: '0x629750317d320B8bB4d48D345A6d699Cc855c4a6',
-            isTermed: true,
-            roleTerms: [
-              {
-                nominee: '0x629750317d320B8bB4d48D345A6d699Cc855c4a6',
-                termEndDateTs: Math.floor(Date.now() / 1000) + 2 * 24 * 60 * 60,
-              },
-            ],
-          };
-          setFieldValue(`hats`, [...hats, hardCodedTermedCole]);
-          navigate(DAO_ROUTES.rolesEdit.relative(addressPrefix, daoAddress));
-        }}
-      >
-        Add Reqular Role
-      </Button> */}
       <Tabs variant="twoTone">
         <TabList>
           <Tab>{t('roleInfo')}</Tab>
