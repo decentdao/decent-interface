@@ -3,34 +3,31 @@ import { DecentRoleHat } from '../../../store/roles/rolesStoreUtils';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 
-export interface SablierPaymentFormValues {
-  streamId?: string;
-  contractAddress?: Address;
-  asset?: {
-    address: Address;
-    name: string;
-    symbol: string;
-    decimals: number;
-    logo: string;
-  };
-  amount?: BigIntValuePair;
-  startDate?: Date;
-  endDate?: Date;
-  cliffDate?: Date | undefined;
-  withdrawableAmount?: bigint;
-  isCancelled?: boolean;
-
-  isStreaming: () => boolean;
-  isCancellable: () => boolean;
-  isCancelling?: boolean;
-}
-
 export interface RoleEditProps {
   handleRoleClick: () => void;
   name?: string;
   editStatus?: EditBadgeStatus;
   wearerAddress?: Address;
-  payments?: SablierPaymentFormValues[];
+  payments?: {
+    streamId?: string;
+    contractAddress?: Address;
+    asset?: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount?: BigIntValuePair;
+    startDate?: Date;
+    endDate?: Date;
+    cliffDate?: Date | undefined;
+    withdrawableAmount?: bigint;
+    isCancelled?: boolean;
+    isStreaming: () => boolean;
+    isCancellable: () => boolean;
+    isCancelling?: boolean;
+  }[];
 }
 
 export interface RoleDetailsDrawerRoleHatProp
@@ -111,7 +108,26 @@ export interface RoleHatFormValue
   // Not a user-input field.
   // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
   resolvedWearer?: Address;
-  payments?: SablierPaymentFormValues[];
+  payments?: {
+    streamId?: string;
+    contractAddress?: Address;
+    asset?: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount?: BigIntValuePair;
+    startDate?: Date;
+    endDate?: Date;
+    cliffDate?: Date | undefined;
+    withdrawableAmount?: bigint;
+    isCancelled?: boolean;
+    isStreaming: () => boolean;
+    isCancellable: () => boolean;
+    isCancelling?: boolean;
+  }[];
   // form specific state
   editedRole?: EditedRole;
   roleEditingPaymentIndex?: number;

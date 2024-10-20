@@ -2,11 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import * as Yup from 'yup';
-import {
-  RoleFormValues,
-  RoleHatFormValue,
-  SablierPaymentFormValues,
-} from '../../../components/pages/Roles/types';
+import { RoleFormValues, RoleHatFormValue } from '../../../components/pages/Roles/types';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { BigIntValuePair } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
@@ -34,13 +30,20 @@ export const useRolesSchema = () => {
 
           const currentPaymentIndex = currentRoleHat.roleEditingPaymentIndex;
           // get all current role's payments excluding this one.
-          const allCurrentRolePayments: SablierPaymentFormValues[] = (
-            currentRoleHat.payments ?? []
-          ).filter(
-            (_payment: SablierPaymentFormValues, index: number) =>
-              index !== currentPaymentIndex && !_payment.streamId,
+          const allCurrentRolePayments: {
+            amount?: BigIntValuePair;
+          }[] = (currentRoleHat.payments ?? []).filter(
+            (
+              _payment: {
+                streamId?: string;
+              },
+              index: number,
+            ) => index !== currentPaymentIndex && !_payment.streamId,
           );
-          const allHatPayments: SablierPaymentFormValues[] = formContext.hats
+          const allHatPayments: {
+            streamId?: string;
+            amount?: BigIntValuePair;
+          }[] = formContext.hats
             .filter((hat: RoleHatFormValue) => hat.id === currentRoleHat.id)
             .map((hat: RoleHatFormValue) => hat.payments ?? [])
             .flat();
