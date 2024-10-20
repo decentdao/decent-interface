@@ -54,16 +54,3 @@ export interface RoleHatFormValue
   editedRole?: EditedRole;
   roleEditingPaymentIndex?: number;
 }
-
-export interface RoleDetailsDrawerProps {
-  roleHat:
-    | (Omit<DecentRoleHat, 'smartAddress'> & { smartAddress?: Address })
-    | (Omit<DecentRoleHat, 'smartAddress' | 'wearerAddress'> & {
-        smartAddress?: Address;
-        wearer: string;
-      });
-  onOpen?: () => void;
-  onClose: () => void;
-  onEdit: (hatId: Hex) => void;
-  isOpen?: boolean;
-}
