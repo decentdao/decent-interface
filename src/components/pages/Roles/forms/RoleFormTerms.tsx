@@ -230,13 +230,7 @@ export default function RoleFormTerms() {
   const { values } = useFormikContext<RoleFormValues>();
 
   const roleFormTerms = useMemo(
-    () =>
-      values.roleEditing?.roleTerms
-        ?.sort(
-          (a, b) =>
-            (a.termEndDate ?? new Date()).getTime() - (b.termEndDate ?? new Date()).getTime(),
-        )
-        .map((term, index) => ({ ...term, termNumber: index + 1 })) || [],
+    () => values.roleEditing?.roleTerms || [],
     [values.roleEditing?.roleTerms],
   );
 

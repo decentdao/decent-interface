@@ -52,7 +52,7 @@ interface RolesStoreData {
 export interface DecentRoleHat extends DecentHat {
   wearer: Address;
   eligibility?: `0x${string}`;
-  roleTerms: { nominee: Address; termEndDate: Date }[];
+  roleTerms: { nominee: Address; termEndDate: Date; termNumber: number }[];
   isTermed: boolean;
 }
 
@@ -249,6 +249,7 @@ export const sanitize = async (
     let roleTerms: {
       nominee: Address;
       termEndDate: Date;
+      termNumber: number;
     }[] = [];
     let isTermed: boolean = false;
     if (rawHat.eligibility) {
@@ -262,20 +263,26 @@ export const sanitize = async (
         const rawTerms = await electionContract.getEvents.ElectionCompleted({
           fromBlock: 0n,
         });
-        roleTerms = rawTerms.map(term => {
-          const nominee = term.args.winners?.[0];
-          const termEnd = term.args.termEnd;
-          if (!nominee) {
-            throw new Error('No nominee in the election');
-          }
-          if (!termEnd) {
-            throw new Error('No term end in the election');
-          }
-          return {
-            nominee: getAddress(nominee),
-            termEndDate: new Date(Number(termEnd.toString()) * 1000),
-          };
-        });
+        roleTerms = rawTerms
+          .map(term => {
+            const nominee = term.args.winners?.[0];
+            const termEnd = term.args.termEnd;
+            if (!nominee) {
+              throw new Error('No nominee in the election');
+            }
+            if (!termEnd) {
+              throw new Error('No term end in the election');
+            }
+            return {
+              nominee: getAddress(nominee),
+              termEndDate: new Date(Number(termEnd.toString()) * 1000),
+            };
+          })
+          .sort(
+            (a, b) =>
+              (a.termEndDate ?? new Date()).getTime() - (b.termEndDate ?? new Date()).getTime(),
+          )
+          .map((term, index) => ({ ...term, termNumber: index + 1 }));
         isTermed = true;
       } catch {
         console.error('Failed to get election terms or not a valid election contract');

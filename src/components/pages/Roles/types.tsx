@@ -138,6 +138,7 @@ export interface RoleHatFormValue
     newStatus?: 'current' | 'next';
     nominee?: string;
     termEndDate?: Date;
+    termNumber: number;
   }[];
 }
 
