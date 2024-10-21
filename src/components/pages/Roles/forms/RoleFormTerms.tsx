@@ -264,9 +264,14 @@ export default function RoleFormTerms() {
     }
   }, [roleFormTerms]);
 
-  const expiredTerms = roleFormTerms.filter(
-    term => !!term.termEndDate && term.termEndDate < new Date(),
-  );
+  const expiredTerms = roleFormTerms
+    .filter(term => !!term.termEndDate && term.termEndDate < new Date())
+    .sort((a, b) => {
+      if (!a.termEndDate || !b.termEndDate) {
+        return 0;
+      }
+      return b.termEndDate.getTime() - a.termEndDate.getTime();
+    });
 
   // {assumption}: only 2 terms should be unexpired at a time
   const terms = roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());

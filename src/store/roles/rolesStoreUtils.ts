@@ -278,10 +278,7 @@ export const sanitize = async (
               termEndDate: new Date(Number(termEnd.toString()) * 1000),
             };
           })
-          .sort(
-            (a, b) =>
-              (a.termEndDate ?? new Date()).getTime() - (b.termEndDate ?? new Date()).getTime(),
-          )
+          .sort((a, b) => a.termEndDate.getTime() - b.termEndDate.getTime())
           .map((term, index) => ({ ...term, termNumber: index + 1 }));
         isTermed = true;
       } catch {
