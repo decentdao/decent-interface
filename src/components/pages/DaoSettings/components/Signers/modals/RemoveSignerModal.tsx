@@ -24,7 +24,7 @@ function RemoveSignerModal({
   currentThreshold: number;
 }) {
   const {
-    node: { daoAddress, safe },
+    node: { safe },
   } = useFractal();
   const [thresholdOptions, setThresholdOptions] = useState<number[]>();
   const [prevSigner, setPrevSigner] = useState<Address>();
@@ -51,7 +51,7 @@ function RemoveSignerModal({
     signerToRemove: selectedSigner,
     threshold: threshold,
     nonce: nonce,
-    daoAddress: daoAddress,
+    safeAddress: safe?.address ?? null,
   });
 
   const onSubmit = async () => {

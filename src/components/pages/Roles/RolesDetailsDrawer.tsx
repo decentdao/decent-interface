@@ -53,7 +53,7 @@ export default function RolesDetailsDrawer({
   onEdit,
 }: RoleDetailsDrawerProps) {
   const {
-    node: { daoAddress },
+    node: { safe },
   } = useFractal();
 
   const roleHatWearer = 'wearer' in roleHat ? roleHat.wearer : roleHat.wearerAddress;
@@ -77,7 +77,8 @@ export default function RolesDetailsDrawer({
     [roleHat.payments],
   );
 
-  if (!daoAddress) return null;
+  // @todo: confirm typing here
+  if (!safe?.address) return null;
 
   return (
     <Drawer

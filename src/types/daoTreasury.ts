@@ -7,7 +7,7 @@ export enum TokenEventType {
 
 export interface TokenEvent {
   transactionHash: string;
-  blockNumber: number;
+  blockNumber: number; // TODO: PROBABLY not being used. Remove?
   eventType: TokenEventType;
   blockTimestamp: number;
 }
