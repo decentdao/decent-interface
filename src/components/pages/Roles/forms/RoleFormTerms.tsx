@@ -104,7 +104,7 @@ function RoleTermCreate({
         justifyContent="space-between"
         w="full"
       >
-        <Text>{t('termNumber', { number: termIndex })}</Text>
+        <Text>{t('termNumber', { number: termIndex + 1 })}</Text>
         <IconButton
           variant="tertiary"
           size="icon-sm"
@@ -280,7 +280,7 @@ export default function RoleFormTerms() {
         mb={4}
         isDisabled={!!newTermIndex || terms.length > 2 || !roleFormTerms.length}
         onClick={() => {
-          setNewTermIndex(roleFormTerms.length + 1);
+          setNewTermIndex(roleFormTerms.length);
         }}
       >
         <Icon
