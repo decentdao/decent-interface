@@ -8,9 +8,10 @@ import {
   Flex,
   FormControl,
   Icon,
+  IconButton,
   Text,
 } from '@chakra-ui/react';
-import { CaretDown, CaretRight, Plus } from '@phosphor-icons/react';
+import { CaretDown, CaretRight, Plus, X } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -81,22 +82,44 @@ function RoleTermMemberInput({ termIndex }: { termIndex: number }) {
   );
 }
 
-function RoleTermCreate({ isNextTerm, termIndex }: { termIndex: number; isNextTerm: boolean }) {
+function RoleTermCreate({
+  onClose,
+  isNextTerm,
+  termIndex,
+}: {
+  termIndex: number;
+  isNextTerm: boolean;
+  onClose: () => void;
+}) {
   const { t } = useTranslation('roles');
-  const { setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
   return (
     <Box>
-      <Box
+      <Flex
         p="1rem"
         bg="neutral-2"
         boxShadow={DETAILS_BOX_SHADOW}
         borderTopRadius="0.5rem"
-        display="flex"
-        flexDirection="column"
         gap="1rem"
+        justifyContent="space-between"
+        w="full"
       >
         <Text>{t('termNumber', { number: termIndex })}</Text>
-      </Box>
+        <IconButton
+          variant="tertiary"
+          size="icon-sm"
+          aria-label="Close Drawer"
+          as={X}
+          onClick={() => {
+            // remove term from the form
+            setFieldValue(
+              'roleEditing.roleTerms',
+              values?.roleEditing?.roleTerms?.filter((_, index) => index !== termIndex),
+            );
+            onClose();
+          }}
+        />
+      </Flex>
       <Box
         p="1rem"
         bg="neutral-2"
@@ -274,6 +297,7 @@ export default function RoleFormTerms() {
           <RoleTermCreate
             termIndex={newTermIndex}
             isNextTerm={!!nextTerm}
+            onClose={() => setNewTermIndex(undefined)}
           />
         )}
         <RoleTermRenderer
