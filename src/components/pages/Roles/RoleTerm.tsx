@@ -71,27 +71,60 @@ function RoleTermHeaderStatus({
   termEndDate: Date;
   termStatus: RoleTermStatus;
 }) {
+  // @todo implement isReadyToStart
   const isReadyToStart = false;
   const { t } = useTranslation(['roles']);
   const dateDisplay = useDateTimeDisplay(termEndDate);
 
   const statusText = useMemo(() => {
+    const statusTextData = {
+      ended: {
+        text: t('ended'),
+        textColor: 'neutral-6',
+        iconColor: 'neutral-6',
+      },
+      inQueue: {
+        text: t('inQueue'),
+        textColor: 'neutral-7',
+        iconColor: 'lilac-0',
+      },
+      readyToStart: {
+        text: t('readyToStart'),
+        textColor: 'neutral-7',
+        iconColor: 'lilac-0',
+      },
+      active: {
+        text: dateDisplay,
+        textColor: 'neutral-7',
+        iconColor: 'lilac-0',
+      },
+      // @todo implement revoked tx
+      revoked: {
+        text: t('revoked'),
+        textColor: 'red-1',
+        iconColor: 'red-1',
+      },
+    };
     if (isReadyToStart) {
-      return t('Ready to start');
+      return statusTextData.readyToStart;
     }
     if (termStatus === 'expired') {
-      return t('expired');
+      return statusTextData.ended;
     }
     if (termStatus === 'queued') {
       // Next term
-      return t('inQueue');
+      return statusTextData.inQueue;
     }
     if (termStatus === 'current') {
       // time left
-      return dateDisplay;
+      return statusTextData.active;
     }
 
-    return;
+    return {
+      text: undefined,
+      textColor: undefined,
+      iconColor: undefined,
+    };
   }, [isReadyToStart, dateDisplay, termStatus, t]);
   return (
     <Flex
@@ -102,13 +135,13 @@ function RoleTermHeaderStatus({
         as={ClockCountdown}
         boxSize="1rem"
         weight="fill"
-        color="lilac-0"
+        color={statusText.iconColor}
       />
       <Text
         textStyle="label-small"
-        color="neutral-7"
+        color={statusText.textColor}
       >
-        {statusText}
+        {statusText.text}
       </Text>
     </Flex>
   );
