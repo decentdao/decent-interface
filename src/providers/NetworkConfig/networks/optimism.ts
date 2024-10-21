@@ -20,7 +20,6 @@ export const optimismConfig: NetworkConfig = {
   order: 15,
   chain,
   rpcEndpoint: `https://opt-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
-  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-optimism.safe.global',
   etherscanBaseURL: 'https://optimistic.etherscan.io/',
   etherscanAPIUrl: `https://api-optimistic.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_OPTIMISM_API_KEY}`,
@@ -95,6 +94,7 @@ export const optimismConfig: NetworkConfig = {
   },
   staking: {},
   moralis: {
+    chainSupported: true,
     deFiSupported: true,
   },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],

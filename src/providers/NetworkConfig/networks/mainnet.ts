@@ -20,7 +20,6 @@ export const mainnetConfig: NetworkConfig = {
   order: 0,
   chain,
   rpcEndpoint: `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
-  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
   etherscanBaseURL: 'https://etherscan.io',
   etherscanAPIUrl: `https://api.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_MAINNET_API_KEY}`,
@@ -101,6 +100,7 @@ export const mainnetConfig: NetworkConfig = {
     },
   },
   moralis: {
+    chainSupported: true,
     deFiSupported: true,
   },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],

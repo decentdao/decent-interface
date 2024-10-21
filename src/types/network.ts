@@ -4,7 +4,6 @@ import { GovernanceType } from './fractal';
 export type NetworkConfig = {
   order: number; // any arbitrary integer, used to "order" the networks in the dropdown
   chain: Chain;
-  moralisSupported: boolean;
   rpcEndpoint: string;
   safeBaseURL: string;
   etherscanBaseURL: string;
@@ -22,6 +21,7 @@ export type NetworkConfig = {
     slug: string;
   };
   moralis: {
+    chainSupported: boolean;
     deFiSupported: boolean;
   };
   contracts: {
