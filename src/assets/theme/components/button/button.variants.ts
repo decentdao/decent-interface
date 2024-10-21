@@ -45,20 +45,6 @@ const secondary = defineStyle({
   },
 });
 
-const secondaryRed = defineStyle({
-  border: '1px solid',
-  borderColor: 'red-1',
-  color: 'red-1',
-  _hover: {
-    borderColor: 'red-0',
-    color: 'red-0',
-  },
-  _active: {
-    borderColor: 'red-0',
-    color: 'red-0',
-  },
-});
-
 const tertiaryDisabled = {
   color: 'neutral-5',
 };
@@ -110,7 +96,6 @@ const stepper = defineStyle({
 const buttonVariants = {
   primary,
   secondary,
-  secondaryRed,
   tertiary,
   stepper,
 };
