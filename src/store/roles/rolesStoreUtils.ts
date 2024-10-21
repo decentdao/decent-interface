@@ -31,7 +31,7 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
-  eligibility?: `0x${string}`;
+  eligibility?: Address;
   payments?: SablierPayment[];
 }
 
@@ -51,7 +51,7 @@ interface RolesStoreData {
 
 export interface DecentRoleHat extends DecentHat {
   wearer: Address;
-  eligibility?: `0x${string}`;
+  eligibility?: Address;
   roleTerms: { nominee: Address; termEndDate: Date; termNumber: number }[];
   isTermed: boolean;
 }
