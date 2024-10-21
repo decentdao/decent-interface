@@ -1,5 +1,5 @@
 import { Box, Flex, Icon, Text } from '@chakra-ui/react';
-import { Calendar, ClockCountdown } from '@phosphor-icons/react';
+import { Calendar, ClockCountdown, Copy } from '@phosphor-icons/react';
 import { format } from 'date-fns';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
 import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
+import { useCopyText } from '../../../hooks/utils/useCopyText';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { getChainIdFromPrefix } from '../../../utils/url';
@@ -147,6 +148,7 @@ function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
     chainId: getChainIdFromPrefix(addressPrefix),
   });
   const avatarURL = useAvatar(memberAddress);
+  const copyToClipboard = useCopyText();
   return (
     <Flex flexDir="column">
       <Text
@@ -164,12 +166,24 @@ function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
           address={memberAddress}
           url={avatarURL}
         />
-        <Text
-          textStyle="label-base"
-          color="text-white"
+        <Flex
+          alignItems="center"
+          gap={2}
+          aria-label="Copy address"
+          onClick={() => copyToClipboard(memberAddress)}
         >
-          {accountDisplayName}
-        </Text>
+          <Text
+            textStyle="label-base"
+            color="white-0"
+          >
+            {accountDisplayName}
+          </Text>
+          <Icon
+            as={Copy}
+            boxSize="1rem"
+            color="white-0"
+          />
+        </Flex>
       </Flex>
     </Flex>
   );
