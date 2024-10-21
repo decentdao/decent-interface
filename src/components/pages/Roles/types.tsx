@@ -1,24 +1,19 @@
 import { Address, Hex } from 'viem';
-import { DecentRoleHat } from '../../../store/roles';
+import { DecentRoleHat } from '../../../store/roles/rolesStoreUtils';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 
-export interface SablierAsset {
-  address: Address;
-  name: string;
-  symbol: string;
-  decimals: number;
-  logo: string;
-}
-
-export interface BaseSablierStream {
+export interface SablierPayment {
   streamId: string;
   contractAddress: Address;
-  asset: SablierAsset;
+  asset: {
+    address: Address;
+    name: string;
+    symbol: string;
+    decimals: number;
+    logo: string;
+  };
   amount: BigIntValuePair;
-}
-
-export interface SablierPayment extends BaseSablierStream {
   startDate: Date;
   endDate: Date;
   cliffDate: Date | undefined;
@@ -36,8 +31,7 @@ export interface SablierPaymentFormValues extends Partial<SablierPayment> {
 
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
-  handleRoleClick: (hatId: Address) => void;
-  hatId: Address;
+  handleRoleClick: () => void;
   name: string;
   wearerAddress?: Address;
   paymentsCount?: number;
@@ -101,19 +95,9 @@ export interface HatStructWithPayments extends HatStruct {
   }[];
 }
 
-export interface HatStructWithId extends HatStruct {
-  id: Hex; // uint256 with padded zeros for the tree ID
-}
-
 export interface EditedRole {
   fieldNames: string[];
   status: EditBadgeStatus;
-}
-
-export interface DurationBreakdown {
-  years: number;
-  hours: number;
-  days: number;
 }
 
 export interface RoleHatFormValue
@@ -141,32 +125,6 @@ export interface RoleFormValues {
   actions: SendAssetsData[];
 }
 
-export type PreparedAddedHatsData = HatStruct & { id: bigint };
-
-export type PreparedMemberChangeData = {
-  id: Address;
-  currentWearer: Address;
-  newWearer: Address;
-};
-
-export type PreparedChangedRoleDetailsData = {
-  id: Hex;
-  details: string;
-};
-
-export type AddedHatsWithIds = {
-  id: bigint;
-  editedRole: EditedRole;
-  wearer: Address;
-  payments?: SablierPaymentFormValues[];
-  roleEditingPaymentIndex?: number;
-  prettyId?: string | undefined;
-  name?: string | undefined;
-  description?: string | undefined;
-  details: string;
-  formId: Hex;
-};
-
 export type PreparedNewStreamData = {
   recipient: Address;
   startDateTs: number;
@@ -174,17 +132,6 @@ export type PreparedNewStreamData = {
   cliffDateTs: number;
   totalAmount: bigint;
   assetAddress: Address;
-};
-
-/**
- * Prepared Stream data with streamId
- */
-export type PreparedEditedStreamData = PreparedNewStreamData & {
-  streamId: string;
-  roleHatId: bigint;
-  roleHatWearer: Address;
-  roleHatSmartAddress: Address;
-  streamContractAddress: Address;
 };
 
 export interface RoleDetailsDrawerProps {
