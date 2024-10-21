@@ -10,7 +10,6 @@ import { TopErrorFallback } from '../components/ui/utils/TopErrorFallback';
 import graphQLClient from '../graphql';
 import { useMigrate } from '../hooks/utils/cache/useMigrate';
 import { AppProvider } from './App/AppProvider';
-import EthersContextProvider from './Ethers';
 import { NetworkConfigProvider } from './NetworkConfig/NetworkConfigProvider';
 import { queryClient, wagmiConfig } from './NetworkConfig/web3-modal.config';
 
@@ -30,19 +29,17 @@ export default function Providers({ children }: { children: ReactNode }) {
           <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>
               <NetworkConfigProvider>
-                <EthersContextProvider>
-                  <AppProvider>
-                    <Toaster
-                      position="bottom-center"
-                      richColors
-                      pauseWhenPageIsHidden
-                      theme="dark"
-                      closeButton
-                      toastOptions={{ className: 'sonner-toast' }}
-                    />
-                    {children}
-                  </AppProvider>
-                </EthersContextProvider>
+                <AppProvider>
+                  <Toaster
+                    position="bottom-center"
+                    richColors
+                    pauseWhenPageIsHidden
+                    theme="dark"
+                    closeButton
+                    toastOptions={{ className: 'sonner-toast' }}
+                  />
+                  {children}
+                </AppProvider>
               </NetworkConfigProvider>
             </QueryClientProvider>
           </WagmiProvider>

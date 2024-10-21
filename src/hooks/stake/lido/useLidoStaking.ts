@@ -1,12 +1,12 @@
-import { getSTETHContract, getWithdrawalQueueContract } from '@lido-sdk/contracts';
 import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isHex } from 'viem';
+import { encodeFunctionData } from 'viem';
+import LidoStEthAbi from '../../../assets/abi/LidoStEthAbi';
+import LidoWithdrawalQueueAbi from '../../../assets/abi/LidoWithdrawalQueueAbi';
 import { useFractal } from '../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { ProposalExecuteData } from '../../../types';
 import useSubmitProposal from '../../DAO/proposal/useSubmitProposal';
-import useSignerOrProvider from '../../utils/useSignerOrProvider';
 
 export default function useLidoStaking() {
   const {
@@ -15,25 +15,22 @@ export default function useLidoStaking() {
   const {
     staking: { lido },
   } = useNetworkConfig();
-  const signerOrProvider = useSignerOrProvider();
   const { submitProposal } = useSubmitProposal();
   const { t } = useTranslation('proposal');
 
   const handleStake = useCallback(
     async (value: bigint) => {
-      if (!lido || !daoAddress || !signerOrProvider) {
+      if (!lido || !daoAddress) {
         // Means it is not supported on current network
         return;
       }
 
-      const stETHContract = getSTETHContract(lido.stETHContractAddress, signerOrProvider);
+      const encodedSubmit = encodeFunctionData({
+        abi: LidoStEthAbi,
+        functionName: 'submit',
+        args: [lido.rewardsAddress],
+      });
 
-      const encodedSubmit = stETHContract.interface.encodeFunctionData('submit', [
-        lido.rewardsAddress,
-      ]);
-      if (!isHex(encodedSubmit)) {
-        return;
-      }
       const proposalData: ProposalExecuteData = {
         metaData: {
           title: t('stakeWithLidoTitle'),
@@ -52,37 +49,28 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, signerOrProvider, daoAddress, safe, submitProposal, t],
+    [lido, daoAddress, safe, submitProposal, t],
   );
 
   const handleUnstake = useCallback(
     async (value: string) => {
-      if (!lido || !daoAddress || !signerOrProvider) {
+      if (!lido || !daoAddress) {
         // Means it is not supported on current network
         return;
       }
-      const stETHContract = getSTETHContract(lido.stETHContractAddress, signerOrProvider);
-      const withdrawalQueueContract = getWithdrawalQueueContract(
-        lido.withdrawalQueueContractAddress,
-        signerOrProvider,
-      );
 
-      const encodedApprove = stETHContract.interface.encodeFunctionData('approve', [
-        lido.withdrawalQueueContractAddress,
-        value,
-      ]);
+      const encodedApprove = encodeFunctionData({
+        abi: LidoStEthAbi,
+        functionName: 'approve',
+        args: [lido.withdrawalQueueContractAddress, BigInt(value)],
+      });
 
-      if (!isHex(encodedApprove)) {
-        return;
-      }
+      const encodedWithdraw = encodeFunctionData({
+        abi: LidoWithdrawalQueueAbi,
+        functionName: 'requestWithdrawals',
+        args: [[BigInt(value)], daoAddress],
+      });
 
-      const encodedWithdraw = withdrawalQueueContract.interface.encodeFunctionData(
-        'requestWithdrawals',
-        [[value], daoAddress],
-      );
-      if (!isHex(encodedWithdraw)) {
-        return;
-      }
       const proposalData: ProposalExecuteData = {
         metaData: {
           title: t('unstakeStEthTitle'),
@@ -102,27 +90,22 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t, signerOrProvider],
+    [lido, daoAddress, safe, submitProposal, t],
   );
 
   const handleClaimUnstakedETH = useCallback(
     async (nftId: bigint) => {
-      if (!lido || !daoAddress || !signerOrProvider) {
+      if (!lido || !daoAddress) {
         // Means it is not supported on current network
         return;
       }
 
-      const withdrawalQueueContract = getWithdrawalQueueContract(
-        lido.withdrawalQueueContractAddress,
-        signerOrProvider,
-      );
+      const encodedClaim = encodeFunctionData({
+        abi: LidoWithdrawalQueueAbi,
+        functionName: 'claimWithdrawal',
+        args: [nftId],
+      });
 
-      const encodedClaim = withdrawalQueueContract.interface.encodeFunctionData('claimWithdrawal', [
-        nftId,
-      ]);
-      if (!isHex(encodedClaim)) {
-        return;
-      }
       const proposalData: ProposalExecuteData = {
         metaData: {
           title: t('lidoWithdrawalTitle'),
@@ -141,7 +124,7 @@ export default function useLidoStaking() {
         failedToastMessage: t('proposalCreateFailureToastMessage'),
       });
     },
-    [lido, daoAddress, safe, submitProposal, t, signerOrProvider],
+    [lido, daoAddress, safe, submitProposal, t],
   );
 
   return { handleStake, handleUnstake, handleClaimUnstakedETH };

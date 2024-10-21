@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { erc20Abi, getContract, isAddress, zeroAddress } from 'viem';
 import { usePublicClient, useWalletClient } from 'wagmi';
-import { createAccountSubstring } from '../../../hooks/utils/useDisplayName';
+import { createAccountSubstring } from '../../../hooks/utils/useGetAccountName';
 import { ICreationStepProps, TokenCreationType } from '../../../types';
 import SupportTooltip from '../../ui/badges/SupportTooltip';
 import ContentBoxTitle from '../../ui/containers/ContentBox/ContentBoxTitle';
