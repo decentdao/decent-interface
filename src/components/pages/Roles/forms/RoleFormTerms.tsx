@@ -298,7 +298,7 @@ export default function RoleFormTerms() {
         flexDir="column"
         gap={4}
       >
-        {newTermIndex && (
+        {newTermIndex !== undefined && (
           <RoleTermCreate
             termIndex={newTermIndex}
             isNextTerm={!!nextTerm}
