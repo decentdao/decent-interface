@@ -184,7 +184,7 @@ const useHatsTree = () => {
                     name: lockupLinearStream.asset.name,
                     symbol: lockupLinearStream.asset.symbol,
                     decimals: lockupLinearStream.asset.decimals,
-                    logo: '',
+                    logo: '/images/coin-icon-default.svg',
                   },
                   amount: {
                     bigintValue: BigInt(lockupLinearStream.depositAmount),
