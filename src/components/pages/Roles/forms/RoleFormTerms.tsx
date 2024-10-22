@@ -30,7 +30,7 @@ function RoleTermEndDateInput({ termIndex }: { termIndex: number }) {
       <Field name={`roleEditing.roleTerms[${termIndex}].termEndDate`}>
         {({ field, meta, form: { setFieldValue } }: FieldProps<Date, RoleFormValues>) => (
           <LabelWrapper
-            label={t('Term End Date')}
+            label={t('termEndDate')}
             errorMessage={meta.touched && meta.error ? meta.error : undefined}
             isRequired
             labelColor="neutral-7"

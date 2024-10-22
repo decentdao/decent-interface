@@ -110,5 +110,6 @@
   "termedRoleConfirmation-warning": "Please note: Terms are permanently applied to a role and cannot be removed.",
   "roleInfoErrorTermEndDateInvalid": "Invalid end date.",
   "roleInfoErrorTermEndDateRequired": "End date is required.",
-  "addTerm": "Add Term"
+  "addTerm": "Add Term",
+  "termEndDate": "Term End Date"
 }
