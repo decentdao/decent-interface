@@ -173,13 +173,12 @@ export function RoleCard({
   paymentsCount,
   editStatus,
   handleRoleClick,
-  hatId,
 }: RoleProps) {
   return (
     <Card
       mb="1rem"
       cursor="pointer"
-      onClick={() => handleRoleClick(hatId)}
+      onClick={handleRoleClick}
     >
       <Flex justifyContent="space-between">
         <AvatarAndRoleName

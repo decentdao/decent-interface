@@ -22,7 +22,7 @@ import { useNavigationBlocker } from '../../../../../hooks/utils/useNavigationBl
 import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../../../store/roles';
+import { useRolesStore } from '../../../../../store/roles/useRolesStore';
 import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {

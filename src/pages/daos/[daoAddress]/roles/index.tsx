@@ -20,7 +20,7 @@ import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubm
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../../store/roles';
+import { useRolesStore } from '../../../../store/roles/useRolesStore';
 
 function Roles() {
   useEffect(() => {
@@ -100,8 +100,7 @@ function Roles() {
                 key={roleHat.id}
                 name={roleHat.name}
                 wearerAddress={roleHat.wearerAddress}
-                hatId={roleHat.id}
-                handleRoleClick={handleNavigateToRole}
+                handleRoleClick={() => handleNavigateToRole(roleHat.id)}
                 paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}
               />
             ))}
