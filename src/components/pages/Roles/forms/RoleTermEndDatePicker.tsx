@@ -9,10 +9,11 @@ import {
   MenuList,
   Show,
   useBreakpointValue,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { ArrowRight, CalendarBlank, CaretLeft, CaretRight } from '@phosphor-icons/react';
+import { CalendarBlank, CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { format } from 'date-fns';
-import { ReactNode, useState } from 'react';
+import { ReactNode } from 'react';
 import { Calendar } from 'react-calendar';
 import { useTranslation } from 'react-i18next';
 import { SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
@@ -45,33 +46,11 @@ function DateDisplayBox({ date }: { date: Date | undefined }) {
   );
 }
 
-function SelectedDateDisplay({
-  selectedDate,
-  selectedRange,
-  isRange,
-}: {
-  selectedDate: Date | undefined;
-  selectedRange: [DateOrNull, DateOrNull];
-  isRange?: boolean;
-}) {
-  return !isRange ? (
+function SelectedDateDisplay({ selectedDate }: { selectedDate: Date | undefined }) {
+  return (
     <Box ml="1rem">
-      <DateDisplayBox date={selectedDate} />{' '}
+      <DateDisplayBox date={selectedDate} />
     </Box>
-  ) : (
-    <Flex
-      gap="0.5rem"
-      alignItems="center"
-      mx="1rem"
-    >
-      <DateDisplayBox date={selectedRange[0] as Date} />
-      <Icon
-        as={ArrowRight}
-        boxSize="1.5rem"
-        color="lilac-0"
-      />
-      <DateDisplayBox date={selectedRange[1] as Date} />
-    </Flex>
   );
 }
 
@@ -88,19 +67,24 @@ function RoleTermEndDatePickerContainer({
   children,
   disabled,
   selectedDate,
+  isOpen,
+  onOpen,
+  onClose,
 }: {
   children: ReactNode[];
   disabled: boolean;
   selectedDate: Date | undefined;
+  isOpen: boolean;
+  onClose: () => void;
+  onOpen: () => void;
 }) {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
   const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
   return (
     <>
       <Show below="md">
         <Button
-          onClick={() => setIsDrawerOpen(true)}
+          onClick={onOpen}
           variant="unstyled"
           p="0"
           flex={1}
@@ -115,10 +99,10 @@ function RoleTermEndDatePickerContainer({
         </Button>
 
         <DraggableDrawer
-          isOpen={isDrawerOpen}
+          isOpen={isOpen}
           headerContent={undefined}
-          onOpen={() => {}}
-          onClose={() => setIsDrawerOpen(false)}
+          onOpen={onOpen}
+          onClose={onClose}
         >
           <Flex
             flexDir="column"
@@ -197,17 +181,16 @@ export function RoleTermEndDatePicker({
   const isTodaySelected = () => {
     return !!selectedDate ? isToday(selectedDate) : false;
   };
-
+  const { isOpen, onClose, onOpen } = useDisclosure();
   return (
     <RoleTermEndDatePickerContainer
       disabled={disabled}
       selectedDate={selectedDate}
+      isOpen={isOpen}
+      onClose={onClose}
+      onOpen={onOpen}
     >
-      <SelectedDateDisplay
-        selectedDate={selectedDate}
-        selectedRange={[null, null]}
-        isRange={false}
-      />
+      <SelectedDateDisplay selectedDate={selectedDate} />
       <Divider my="1.5rem" />
       {!disabled && (
         <Calendar
@@ -224,6 +207,7 @@ export function RoleTermEndDatePicker({
           onChange={(e: OnDateChangeValue) => {
             if (e instanceof Date) {
               onChange?.(e);
+              onClose();
             }
           }}
         />

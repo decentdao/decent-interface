@@ -27,8 +27,8 @@ function RoleTermEndDateInput({ termIndex }: { termIndex: number }) {
   const { t } = useTranslation('roles');
   return (
     <FormControl>
-      <Field name={`roleEditing.roleTerms[${termIndex}].termEndDateTs`}>
-        {({ field, meta }: FieldProps<Date, RoleFormValues>) => (
+      <Field name={`roleEditing.roleTerms[${termIndex}].termEndDate`}>
+        {({ field, meta, form: { setFieldValue } }: FieldProps<Date, RoleFormValues>) => (
           <LabelWrapper
             label={t('Term End Date')}
             errorMessage={meta.touched && meta.error ? meta.error : undefined}
@@ -36,7 +36,7 @@ function RoleTermEndDateInput({ termIndex }: { termIndex: number }) {
             labelColor="neutral-7"
           >
             <RoleTermEndDatePicker
-              onChange={field.onChange}
+              onChange={(date: Date) => setFieldValue(field.name, date)}
               disabled={false}
               // @todo Set minDate to the end of the previous term
               minDate={new Date()}
