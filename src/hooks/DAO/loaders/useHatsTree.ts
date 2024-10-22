@@ -2,15 +2,15 @@ import { useApolloClient } from '@apollo/client';
 import { HatsSubgraphClient, Tree } from '@hatsprotocol/sdk-v1-subgraph';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
-import { formatUnits, getAddress, getContract } from 'viem';
+import { Address, formatUnits, getAddress, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { StreamsQueryDocument } from '../../../../.graphclient';
 import { SablierV2LockupLinearAbi } from '../../../assets/abi/SablierV2LockupLinear';
-import { SablierPayment } from '../../../components/pages/Roles/types';
 import useIPFSClient from '../../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
 import { DecentHatsError } from '../../../store/roles/rolesStoreUtils';
 import { useRolesStore } from '../../../store/roles/useRolesStore';
+import { BigIntValuePair } from '../../../types';
 import { convertStreamIdToBigInt } from '../../streams/useCreateSablierStream';
 import { CacheExpiry, CacheKeys } from '../../utils/cache/cacheDefaults';
 import { getValue, setValue } from '../../utils/cache/useLocalStorage';
@@ -228,7 +228,25 @@ const useHatsTree = () => {
                 };
               });
 
-              const streamsWithCurrentWithdrawableAmounts: SablierPayment[] = await Promise.all(
+              const streamsWithCurrentWithdrawableAmounts: {
+                streamId: string;
+                contractAddress: Address;
+                asset: {
+                  address: Address;
+                  name: string;
+                  symbol: string;
+                  decimals: number;
+                  logo: string;
+                };
+                amount: BigIntValuePair;
+                startDate: Date;
+                endDate: Date;
+                cliffDate: Date | undefined;
+                isStreaming: () => boolean;
+                isCancellable: () => boolean;
+                withdrawableAmount: bigint;
+                isCancelled: boolean;
+              }[] = await Promise.all(
                 formattedLinearStreams.map(async stream => {
                   const streamContract = getContract({
                     abi: SablierV2LockupLinearAbi,

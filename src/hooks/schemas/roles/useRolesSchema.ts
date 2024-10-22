@@ -5,10 +5,10 @@ import * as Yup from 'yup';
 import {
   RoleFormValues,
   RoleHatFormValue,
-  SablierPayment,
   SablierPaymentFormValues,
 } from '../../../components/pages/Roles/types';
 import { useFractal } from '../../../providers/App/AppProvider';
+import { BigIntValuePair } from '../../../types';
 import { useValidationAddress } from '../common/useValidationAddress';
 
 export const useRolesSchema = () => {
@@ -87,7 +87,7 @@ export const useRolesSchema = () => {
                     .default(undefined)
                     .nullable()
                     .when({
-                      is: (payment: SablierPayment) => payment !== undefined,
+                      is: (payment: unknown) => payment !== undefined,
                       then: _paymentSchema =>
                         _paymentSchema
                           .shape({
