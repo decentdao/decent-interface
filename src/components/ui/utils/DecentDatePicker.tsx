@@ -16,10 +16,12 @@ import { ReactNode, useMemo, useState } from 'react';
 import { Calendar } from 'react-calendar';
 import { useTranslation } from 'react-i18next';
 import '../../../assets/css/Calendar.css';
+import { Address, Hex } from 'viem';
 import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
+import { BigIntValuePair } from '../../../types';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
 import { DatePickerTrigger } from '../../pages/Roles/DatePickerTrigger';
-import { RoleFormValues } from '../../pages/Roles/types';
+import { EditedRole } from '../../pages/Roles/types';
 import DraggableDrawer from '../containers/DraggableDrawer';
 import Divider from './Divider';
 
@@ -99,8 +101,43 @@ function DecentDatePickerContainer({
   disabled: boolean;
 }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { values } = useFormikContext<RoleFormValues>();
-  const selectedDate = values.roleEditing?.payments?.[formIndex]?.[type];
+  const { values } = useFormikContext<{
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
+  }>();
+  const selectedDate = values.roleEditing?.payments[formIndex]?.[type];
   const boxShadow = useBreakpointValue({ base: 'none', md: SEXY_BOX_SHADOW_T_T });
   const maxBoxW = useBreakpointValue({ base: '100%', md: '26.875rem' });
   return (
@@ -207,12 +244,47 @@ export function DecentDatePicker({
   formIndex: number;
   disabled: boolean;
 }) {
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<{
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
+  }>();
 
   const selectedDate = useMemo(() => {
     if (values.roleEditing?.roleEditingPaymentIndex === undefined) return null;
     const paymentIndex = values.roleEditing.roleEditingPaymentIndex;
-    return values.roleEditing?.payments?.[paymentIndex ?? 0]?.startDate ?? null;
+    return values.roleEditing?.payments[paymentIndex ?? 0]?.startDate ?? null;
   }, [values.roleEditing?.payments, values.roleEditing?.roleEditingPaymentIndex]);
 
   const isTodaySelected = () => {
@@ -265,21 +337,56 @@ export function DecentDatePickerRange({
   formIndex: number;
   disabled: boolean;
 }) {
-  const { values } = useFormikContext<RoleFormValues>();
+  const { values } = useFormikContext<{
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
+  }>();
 
   const selectedRange: [DateOrNull, DateOrNull] = useMemo(() => {
     if (values.roleEditing?.roleEditingPaymentIndex === undefined) return [null, null];
     const paymentIndex = values.roleEditing.roleEditingPaymentIndex;
     return [
-      values.roleEditing?.payments?.[paymentIndex]?.startDate ?? null,
-      values.roleEditing?.payments?.[paymentIndex]?.endDate ?? null,
+      values.roleEditing?.payments[paymentIndex]?.startDate ?? null,
+      values.roleEditing?.payments[paymentIndex]?.endDate ?? null,
     ];
   }, [values.roleEditing?.payments, values.roleEditing?.roleEditingPaymentIndex]);
 
   const isTodaySelected = () => {
     const paymentIndex = values.roleEditing?.roleEditingPaymentIndex;
-    const startDate = values.roleEditing?.payments?.[paymentIndex ?? 0]?.startDate;
-    const endDate = values.roleEditing?.payments?.[paymentIndex ?? 0]?.endDate;
+    const startDate = values.roleEditing?.payments[paymentIndex ?? 0]?.startDate;
+    const endDate = values.roleEditing?.payments[paymentIndex ?? 0]?.endDate;
     return (!!startDate && isToday(startDate)) || (!!endDate && isToday(endDate));
   };
   return (

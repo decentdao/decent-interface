@@ -5,11 +5,12 @@ import { useTranslation } from 'react-i18next';
 import { Address, getAddress, zeroAddress } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
+import { BigIntValuePair } from '../../../types';
 import { Card } from '../../ui/cards/Card';
 import EtherscanLink from '../../ui/links/EtherscanLink';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
-import { EditBadgeStatus, RoleEditProps, RoleProps, SablierPaymentFormValues } from './types';
+import { EditBadgeStatus } from './types';
 
 export function AvatarAndRoleName({
   wearerAddress,
@@ -18,7 +19,7 @@ export function AvatarAndRoleName({
 }: {
   wearerAddress: Address | undefined;
   name?: string;
-  paymentsCount?: number;
+  paymentsCount: number;
 }) {
   const { displayName } = useGetAccountName(wearerAddress);
 
@@ -56,7 +57,7 @@ export function AvatarAndRoleName({
         >
           {displayName ?? t('unassigned')}
         </Text>
-        {paymentsCount !== undefined && (
+        {paymentsCount > 0 && (
           <Flex
             mt="1rem"
             gap="0.25rem"
@@ -92,21 +93,33 @@ export function AvatarAndRoleName({
   );
 }
 
-function Payment({ payment }: { payment: SablierPaymentFormValues }) {
+function Payment({
+  payment,
+}: {
+  payment: {
+    asset: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate?: Date;
+  };
+}) {
   const { t } = useTranslation(['roles']);
   const format = ['years', 'days', 'hours'];
-  const endDate =
-    payment.endDate &&
-    payment.startDate &&
-    formatDuration(
-      intervalToDuration({
-        start: payment.startDate,
-        end: payment.endDate,
-      }),
-      { format },
-    );
+  const endDate = formatDuration(
+    intervalToDuration({
+      start: payment.startDate,
+      end: payment.endDate,
+    }),
+    { format },
+  );
   const cliffDate =
-    payment.startDate &&
     payment.cliffDate &&
     formatDuration(
       intervalToDuration({
@@ -135,13 +148,13 @@ function Payment({ payment }: { payment: SablierPaymentFormValues }) {
           my="0.5rem"
         >
           <Image
-            src={payment.asset?.logo}
+            src={payment.asset.logo}
             fallbackSrc="/images/coin-icon-default.svg"
-            alt={payment.asset?.symbol}
+            alt={payment.asset.symbol}
             w="1.25rem"
             h="1.25rem"
           />
-          {payment.amount?.value}
+          {payment.amount.value}
           <EtherscanLink
             color="white-0"
             _hover={{ bg: 'transparent' }}
@@ -152,7 +165,7 @@ function Payment({ payment }: { payment: SablierPaymentFormValues }) {
             type="token"
             wordBreak="break-word"
           >
-            {payment.asset?.symbol}
+            {payment.asset.symbol}
           </EtherscanLink>
           <Flex
             flexDir="column"
@@ -173,7 +186,13 @@ export function RoleCard({
   paymentsCount,
   editStatus,
   handleRoleClick,
-}: RoleProps) {
+}: {
+  editStatus?: EditBadgeStatus;
+  handleRoleClick: () => void;
+  name: string;
+  wearerAddress?: Address;
+  paymentsCount: number;
+}) {
   return (
     <Card
       mb="1rem"
@@ -203,7 +222,25 @@ export function RoleCardEdit({
   payments,
   editStatus,
   handleRoleClick,
-}: RoleEditProps) {
+}: {
+  handleRoleClick: () => void;
+  name?: string;
+  editStatus?: EditBadgeStatus;
+  wearerAddress?: Address;
+  payments: {
+    asset: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate?: Date;
+  }[];
+}) {
   const isRemovedRole = editStatus === EditBadgeStatus.Removed;
   return (
     <Card
@@ -215,6 +252,7 @@ export function RoleCardEdit({
         <AvatarAndRoleName
           wearerAddress={wearerAddress}
           name={name}
+          paymentsCount={0}
         />
         <Flex
           alignItems="center"

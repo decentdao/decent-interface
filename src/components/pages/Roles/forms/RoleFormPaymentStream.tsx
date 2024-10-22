@@ -4,20 +4,56 @@ import { addDays, addMinutes } from 'date-fns';
 import { FormikErrors, useFormikContext } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Address, Hex } from 'viem';
 import { CARD_SHADOW, isDevMode } from '../../../../constants/common';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { BigIntValuePair } from '../../../../types';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../../ui/modals/useDecentModal';
 import { DecentDatePicker } from '../../../ui/utils/DecentDatePicker';
-import { RoleFormValues, RoleHatFormValue } from '../types';
+import { EditedRole } from '../types';
 import { AssetSelector } from './RoleFormAssetSelector';
 import { SectionTitle } from './RoleFormSectionTitle';
 
 function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boolean }) {
   const { t } = useTranslation(['roles']);
-  const { values, setFieldValue } = useFormikContext<RoleFormValues>();
-  const payment = values?.roleEditing?.payments?.[formIndex];
+  const { values, setFieldValue } = useFormikContext<{
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
+  }>();
+  const payment = values.roleEditing?.payments[formIndex];
 
   // Show cliff date picker if both start and end dates are set and if there is at least a day between them
   const showCliffDatePicker =
@@ -42,8 +78,8 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
     }
   };
 
-  const selectedStartDate = values?.roleEditing?.payments?.[formIndex]?.startDate;
-  const selectedEndDate = values?.roleEditing?.payments?.[formIndex]?.endDate;
+  const selectedStartDate = values.roleEditing?.payments[formIndex]?.startDate;
+  const selectedEndDate = values.roleEditing?.payments[formIndex]?.endDate;
 
   return (
     <Box>
@@ -102,16 +138,85 @@ function FixedDate({ formIndex, disabled }: { formIndex: number; disabled: boole
 
 export default function RoleFormPaymentStream({ formIndex }: { formIndex: number }) {
   const { t } = useTranslation(['roles']);
-  const { values, errors, setFieldValue } = useFormikContext<RoleFormValues>();
+  const { values, errors, setFieldValue } = useFormikContext<{
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
+  }>();
   const { getPayment } = useRolesStore();
-  const roleEditingPaymentsErrors = (errors.roleEditing as FormikErrors<RoleHatFormValue>)
-    ?.payments;
+  const roleEditingPaymentsErrors = (
+    errors.roleEditing as FormikErrors<{
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: boolean;
+        isCancellable: boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    }>
+  )?.payments;
   const hatId = values.roleEditing?.id;
   const payment = useMemo(
-    () => values.roleEditing?.payments?.[formIndex],
+    () => values.roleEditing?.payments[formIndex],
     [formIndex, values.roleEditing?.payments],
   );
-  const streamId = values.roleEditing?.payments?.[formIndex]?.streamId;
+  const streamId = values.roleEditing?.payments[formIndex]?.streamId;
 
   const existingPayment = useMemo(
     () => (!!streamId && !!hatId ? getPayment(hatId, streamId) : undefined),
@@ -119,7 +224,7 @@ export default function RoleFormPaymentStream({ formIndex }: { formIndex: number
   );
 
   const canBeCancelled = existingPayment
-    ? existingPayment.isCancellable() && !payment?.isCancelling
+    ? existingPayment.isCancellable && !payment?.isCancelling
     : false;
 
   const cancelModal = useDecentModal(ModalType.NONE);

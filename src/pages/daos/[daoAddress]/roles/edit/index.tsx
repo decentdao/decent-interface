@@ -5,14 +5,15 @@ import { Formik } from 'formik';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Hex, toHex } from 'viem';
+import { Address, Hex, toHex } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RoleCardLoading } from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { EditBadgeStatus, RoleFormValues } from '../../../../../components/pages/Roles/types';
+import { EditBadgeStatus, EditedRole } from '../../../../../components/pages/Roles/types';
 import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
 import NoDataCard from '../../../../../components/ui/containers/NoDataCard';
 import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
+import { SendAssetsData } from '../../../../../components/ui/modals/SendAssetsModal';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { getRandomBytes } from '../../../../../helpers';
@@ -23,6 +24,7 @@ import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../store/roles/useRolesStore';
+import { BigIntValuePair, CreateProposalMetadata } from '../../../../../types';
 import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
@@ -42,7 +44,15 @@ function RolesEdit() {
   const navigate = useNavigate();
   const { createEditRolesProposal } = useCreateRoles();
 
-  function generateRoleProposalTitle({ formValues }: { formValues: RoleFormValues }) {
+  function generateRoleProposalTitle({
+    formValues,
+  }: {
+    formValues: {
+      hats: {
+        editedRole?: EditedRole;
+      }[];
+    };
+  }) {
     const filteredHats = formValues.hats.filter(hat => !!hat.editedRole);
     const addedHatsCount = filteredHats.filter(
       hat => hat.editedRole!.status === EditBadgeStatus.New,
@@ -65,7 +75,7 @@ function RolesEdit() {
     return [addedHatsText, updatedHatsText, removedHatsText].filter(Boolean).join('. ');
   }
 
-  const initialValues: RoleFormValues = useMemo(() => {
+  const initialValues = useMemo(() => {
     const hats = hatsTree?.roleHats || [];
     return {
       proposalMetadata: {
@@ -76,6 +86,10 @@ function RolesEdit() {
         ...hat,
         resolvedWearer: hat.wearerAddress,
         wearer: hat.wearerAddress,
+        payments: hat.payments.map(payment => ({
+          ...payment,
+          isCancelling: false,
+        })),
       })),
       customNonce: safe?.nextNonce || 0,
       actions: [],
@@ -96,7 +110,44 @@ function RolesEdit() {
   const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
 
   return (
-    <Formik<RoleFormValues>
+    <Formik<{
+      proposalMetadata: CreateProposalMetadata;
+      hats: {
+        prettyId?: string;
+        name?: string;
+        description?: string;
+        smartAddress?: Address;
+        id: Hex;
+        wearer?: string;
+        // Not a user-input field.
+        // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+        resolvedWearer?: Address;
+        payments: {
+          streamId: string;
+          contractAddress: Address;
+          asset: {
+            address: Address;
+            name: string;
+            symbol: string;
+            decimals: number;
+            logo: string;
+          };
+          amount: BigIntValuePair;
+          startDate: Date;
+          endDate: Date;
+          cliffDate?: Date;
+          withdrawableAmount: bigint;
+          isCancelled: boolean;
+          isStreaming: boolean;
+          isCancellable: boolean;
+          isCancelling: boolean;
+        }[];
+        // form specific state
+        editedRole?: EditedRole;
+        roleEditingPaymentIndex?: number;
+      }[];
+      actions: SendAssetsData[];
+    }>
       initialValues={initialValues}
       enableReinitialize
       validationSchema={rolesSchema}

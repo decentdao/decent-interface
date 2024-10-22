@@ -1,8 +1,8 @@
 import { Tree, Hat } from '@hatsprotocol/sdk-v1-subgraph';
 import { Address, Hex, PublicClient, getContract } from 'viem';
 import ERC6551RegistryAbi from '../../assets/abi/ERC6551RegistryAbi';
-import { SablierPayment } from '../../components/pages/Roles/types';
 import { ERC6551_REGISTRY_SALT } from '../../constants/common';
+import { BigIntValuePair } from '../../types';
 
 export class DecentHatsError extends Error {
   constructor(message: string) {
@@ -21,19 +21,30 @@ interface DecentHat {
   name: string;
   description: string;
   smartAddress: Address;
-  payments?: SablierPayment[];
+  payments: {
+    streamId: string;
+    contractAddress: Address;
+    asset: {
+      address: Address;
+      name: string;
+      symbol: string;
+      decimals: number;
+      logo: string;
+    };
+    amount: BigIntValuePair;
+    startDate: Date;
+    endDate: Date;
+    cliffDate: Date | undefined;
+    isStreaming: boolean;
+    isCancellable: boolean;
+    withdrawableAmount: bigint;
+    isCancelled: boolean;
+  }[];
 }
 
 interface DecentTopHat extends DecentHat {}
 
 interface DecentAdminHat extends DecentHat {}
-
-interface RolesStoreData {
-  hatsTreeId: undefined | null | number;
-  hatsTree: undefined | null | DecentTree;
-  streamsFetched: boolean;
-  contextChainId: number | null;
-}
 
 export interface DecentRoleHat extends DecentHat {
   wearerAddress: Address;
@@ -44,23 +55,6 @@ export interface DecentTree {
   adminHat: DecentAdminHat;
   roleHats: DecentRoleHat[];
   roleHatsTotalCount: number;
-}
-
-export interface RolesStore extends RolesStoreData {
-  getHat: (hatId: Hex) => DecentRoleHat | null;
-  getPayment: (hatId: Hex, streamId: string) => SablierPayment | null;
-  setHatsTreeId: (args: { contextChainId: number | null; hatsTreeId?: number | null }) => void;
-  setHatsTree: (params: {
-    hatsTree: Tree | null | undefined;
-    chainId: bigint;
-    hatsProtocol: Address;
-    erc6551Registry: Address;
-    hatsAccountImplementation: Address;
-    publicClient: PublicClient;
-  }) => Promise<void>;
-  refreshWithdrawableAmount: (hatId: Hex, streamId: string, publicClient: PublicClient) => void;
-  updateRolesWithStreams: (updatedRolesWithStreams: DecentRoleHat[]) => void;
-  resetHatsStore: () => void;
 }
 
 const appearsExactlyNumberOfTimes = (
@@ -128,10 +122,9 @@ const getHatMetadata = (hat: Hat) => {
   return metadata;
 };
 
-export const initialHatsStore: RolesStoreData = {
+export const initialHatsStore = {
   hatsTreeId: undefined,
   hatsTree: undefined,
-  streamsFetched: false,
   contextChainId: null,
 };
 
@@ -194,6 +187,7 @@ export const sanitize = async (
     name: topHatMetadata.name,
     description: topHatMetadata.description,
     smartAddress: topHatSmartAddress,
+    payments: [],
   };
 
   const rawAdminHat = getRawAdminHat(hatsTree.hats);
@@ -214,6 +208,7 @@ export const sanitize = async (
     name: adminHatMetadata.name,
     description: adminHatMetadata.description,
     smartAddress: adminHatSmartAddress,
+    payments: [],
   };
 
   const rawRoleHats = hatsTree.hats.filter(h => appearsExactlyNumberOfTimes(h.prettyId, '.', 2));
@@ -235,13 +230,18 @@ export const sanitize = async (
       publicClient,
     });
 
+    if (rawHat.wearers === undefined || rawHat.wearers.length === 0) {
+      throw new DecentHatsError('Role Hat is missing wearer');
+    }
+
     roleHats.push({
       id: rawHat.id,
       prettyId: rawHat.prettyId ?? '',
       name: hatMetadata.name,
       description: hatMetadata.description,
-      wearerAddress: rawHat.wearers![0].id,
+      wearerAddress: rawHat.wearers[0].id,
       smartAddress: roleHatSmartAddress,
+      payments: [],
     });
   }
 
