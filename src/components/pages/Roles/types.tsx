@@ -28,15 +28,12 @@ export const BadgeStatusColor: Record<EditBadgeStatus, string> = {
   [EditBadgeStatus.Removed]: 'red-1',
 };
 
-export interface HatStruct {
+export interface HatStructWithPayments {
   maxSupply: 1; // No more than this number of wearers. Hardcode to 1
   details: string; // IPFS url/hash to JSON { version: '1.0', data: { name, description, ...arbitraryData } }
   imageURI: string;
   isMutable: boolean; // true
   wearer: Address;
-}
-
-export interface HatStructWithPayments extends HatStruct {
   sablierParams: {
     sablier: Address;
     sender: Address;
