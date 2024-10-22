@@ -28,8 +28,8 @@ const useRolesStore = create<{
     startDate: Date;
     endDate: Date;
     cliffDate: Date | undefined;
-    isStreaming: () => boolean;
-    isCancellable: () => boolean;
+    isStreaming: boolean;
+    isCancellable: boolean;
     withdrawableAmount: bigint;
     isCancelled: boolean;
   } | null;

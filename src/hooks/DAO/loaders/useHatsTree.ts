@@ -146,96 +146,101 @@ const useHatsTree = () => {
 
   useEffect(() => {
     async function getHatsStreams() {
-      if (sablierSubgraph && hatsTree && publicClient) {
-        const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
-        const updatedHatsRoles = await Promise.all(
-          hatsTree.roleHats.map(async hat => {
-            const streamQueryResult = await apolloClient.query({
-              query: StreamsQueryDocument,
-              variables: { recipientAddress: hat.smartAddress },
-              context: { subgraphSpace: sablierSubgraph.space, subgraphSlug: sablierSubgraph.slug },
-            });
-
-            if (!streamQueryResult.error) {
-              if (!streamQueryResult.data.streams.length) {
-                return hat;
-              }
-
-              const lockupLinearStreams = streamQueryResult.data.streams.filter(
-                stream => stream.category === 'LockupLinear',
-              );
-              const formattedLinearStreams = lockupLinearStreams.map(lockupLinearStream => {
-                const parsedAmount = formatUnits(
-                  BigInt(lockupLinearStream.depositAmount),
-                  lockupLinearStream.asset.decimals,
-                );
-
-                const startDate = secondsTimestampToDate(lockupLinearStream.startTime);
-                const endDate = secondsTimestampToDate(lockupLinearStream.endTime);
-                const cliffDate = lockupLinearStream.cliff
-                  ? secondsTimestampToDate(lockupLinearStream.cliffTime)
-                  : undefined;
-
-                return {
-                  streamId: lockupLinearStream.id,
-                  contractAddress: lockupLinearStream.contract.address,
-                  asset: {
-                    address: getAddress(lockupLinearStream.asset.address),
-                    name: lockupLinearStream.asset.name,
-                    symbol: lockupLinearStream.asset.symbol,
-                    decimals: lockupLinearStream.asset.decimals,
-                    logo: '/images/coin-icon-default.svg',
-                  },
-                  amount: {
-                    bigintValue: BigInt(lockupLinearStream.depositAmount),
-                    value: parsedAmount,
-                  },
-                  isCancelled: lockupLinearStream.canceled,
-                  startDate,
-                  endDate,
-                  cliffDate,
-                  isStreaming: () => {
-                    const start = !lockupLinearStream.cliff
-                      ? startDate.getTime()
-                      : cliffDate !== undefined
-                        ? cliffDate.getTime()
-                        : undefined;
-                    const end = endDate ? endDate.getTime() : undefined;
-                    const cancelled = lockupLinearStream.canceled;
-                    const now = new Date().getTime();
-
-                    return !cancelled && !!start && !!end && start <= now && end > now;
-                  },
-                  isCancellable: () =>
-                    !lockupLinearStream.canceled && !!endDate && endDate.getTime() > Date.now(),
-                };
-              });
-
-              const streamsWithCurrentWithdrawableAmounts = await Promise.all(
-                formattedLinearStreams.map(async stream => {
-                  const streamContract = getContract({
-                    abi: SablierV2LockupLinearAbi,
-                    address: stream.contractAddress,
-                    client: publicClient,
-                  });
-                  const bigintStreamId = convertStreamIdToBigInt(stream.streamId);
-
-                  const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
-                    bigintStreamId,
-                  ]);
-                  return { ...stream, withdrawableAmount: newWithdrawableAmount };
-                }),
-              );
-
-              return { ...hat, payments: streamsWithCurrentWithdrawableAmounts };
-            } else {
-              return hat;
-            }
-          }),
-        );
-
-        updateRolesWithStreams(updatedHatsRoles);
+      if (
+        sablierSubgraph === undefined ||
+        hatsTree === undefined ||
+        hatsTree === null ||
+        publicClient === undefined
+      ) {
+        return;
       }
+
+      const secondsTimestampToDate = (ts: string) => new Date(Number(ts) * 1000);
+
+      const updatedHatsRoles = await Promise.all(
+        hatsTree.roleHats.map(async hat => {
+          const streamQueryResult = await apolloClient.query({
+            query: StreamsQueryDocument,
+            variables: { recipientAddress: hat.smartAddress },
+            context: { subgraphSpace: sablierSubgraph.space, subgraphSlug: sablierSubgraph.slug },
+          });
+
+          if (streamQueryResult.error || streamQueryResult.data.streams.length === 0) {
+            return hat;
+          }
+
+          const lockupLinearStreams = streamQueryResult.data.streams.filter(
+            stream => stream.category === 'LockupLinear',
+          );
+
+          const formattedLinearStreams = lockupLinearStreams.map(lockupLinearStream => {
+            const parsedAmount = formatUnits(
+              BigInt(lockupLinearStream.depositAmount),
+              lockupLinearStream.asset.decimals,
+            );
+
+            const startDate = secondsTimestampToDate(lockupLinearStream.startTime);
+            const endDate = secondsTimestampToDate(lockupLinearStream.endTime);
+            const cliffDate = lockupLinearStream.cliff
+              ? secondsTimestampToDate(lockupLinearStream.cliffTime)
+              : undefined;
+
+            return {
+              streamId: lockupLinearStream.id,
+              contractAddress: getAddress(lockupLinearStream.contract.address),
+              asset: {
+                address: getAddress(lockupLinearStream.asset.address),
+                name: lockupLinearStream.asset.name,
+                symbol: lockupLinearStream.asset.symbol,
+                decimals: Number(lockupLinearStream.asset.decimals),
+                logo: '/images/coin-icon-default.svg',
+              },
+              amount: {
+                bigintValue: BigInt(lockupLinearStream.depositAmount),
+                value: parsedAmount,
+              },
+              isCancelled: lockupLinearStream.canceled,
+              startDate,
+              endDate,
+              cliffDate,
+              isStreaming: (() => {
+                const start = !lockupLinearStream.cliff
+                  ? startDate.getTime()
+                  : cliffDate !== undefined
+                    ? cliffDate.getTime()
+                    : undefined;
+                const end = endDate ? endDate.getTime() : undefined;
+                const now = Date.now();
+
+                return (
+                  !lockupLinearStream.canceled && !!start && !!end && start <= now && end > now
+                );
+              })(),
+              isCancellable: !lockupLinearStream.canceled && endDate.getTime() > Date.now(),
+            };
+          });
+
+          const streamsWithCurrentWithdrawableAmounts = await Promise.all(
+            formattedLinearStreams.map(async stream => {
+              const streamContract = getContract({
+                abi: SablierV2LockupLinearAbi,
+                address: stream.contractAddress,
+                client: publicClient,
+              });
+              const bigintStreamId = convertStreamIdToBigInt(stream.streamId);
+
+              const newWithdrawableAmount = await streamContract.read.withdrawableAmountOf([
+                bigintStreamId,
+              ]);
+              return { ...stream, withdrawableAmount: newWithdrawableAmount };
+            }),
+          );
+
+          return { ...hat, payments: streamsWithCurrentWithdrawableAmounts };
+        }),
+      );
+
+      updateRolesWithStreams(updatedHatsRoles);
     }
 
     getHatsStreams();

@@ -35,8 +35,8 @@ interface DecentHat {
     startDate: Date;
     endDate: Date;
     cliffDate: Date | undefined;
-    isStreaming: () => boolean;
-    isCancellable: () => boolean;
+    isStreaming: boolean;
+    isCancellable: boolean;
     withdrawableAmount: bigint;
     isCancelled: boolean;
   }[];
@@ -230,12 +230,16 @@ export const sanitize = async (
       publicClient,
     });
 
+    if (rawHat.wearers === undefined || rawHat.wearers.length === 0) {
+      throw new DecentHatsError('Role Hat is missing wearer');
+    }
+
     roleHats.push({
       id: rawHat.id,
       prettyId: rawHat.prettyId ?? '',
       name: hatMetadata.name,
       description: hatMetadata.description,
-      wearerAddress: rawHat.wearers![0].id,
+      wearerAddress: rawHat.wearers[0].id,
       smartAddress: roleHatSmartAddress,
       payments: [],
     });
