@@ -274,11 +274,7 @@ export function RolesTable({
                 name={role.name}
                 wearerAddress={role.wearerAddress}
                 handleRoleClick={() => handleRoleClick(role.id)}
-                paymentsCount={
-                  role.payments === undefined
-                    ? undefined
-                    : role.payments.filter(p => p.isStreaming()).length || undefined
-                }
+                paymentsCount={role.payments?.filter(p => p.isStreaming()).length || undefined}
               />
             ))}
           </Tbody>
