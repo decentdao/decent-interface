@@ -17,7 +17,7 @@ interface RoleEditDetailsNavigationBlockerParams {
       // Not a user-input field.
       // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
       resolvedWearer?: Address;
-      payments?: {
+      payments: {
         streamId: string;
         contractAddress: Address;
         asset: {

@@ -71,6 +71,7 @@ export default function RolesDetailsDrawerMobile({
           <AvatarAndRoleName
             wearerAddress={roleHatWearerAddress}
             name={roleHat.name}
+            paymentsCount={0}
           />
           <Flex
             alignItems="center"

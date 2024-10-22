@@ -19,7 +19,7 @@ export function AvatarAndRoleName({
 }: {
   wearerAddress: Address | undefined;
   name?: string;
-  paymentsCount?: number;
+  paymentsCount: number;
 }) {
   const { displayName } = useGetAccountName(wearerAddress);
 
@@ -57,7 +57,7 @@ export function AvatarAndRoleName({
         >
           {displayName ?? t('unassigned')}
         </Text>
-        {paymentsCount !== undefined && (
+        {paymentsCount > 0 && (
           <Flex
             mt="1rem"
             gap="0.25rem"
@@ -191,7 +191,7 @@ export function RoleCard({
   handleRoleClick: () => void;
   name: string;
   wearerAddress?: Address;
-  paymentsCount?: number;
+  paymentsCount: number;
 }) {
   return (
     <Card
@@ -227,7 +227,7 @@ export function RoleCardEdit({
   name?: string;
   editStatus?: EditBadgeStatus;
   wearerAddress?: Address;
-  payments?: {
+  payments: {
     asset: {
       address: Address;
       name: string;
@@ -252,6 +252,7 @@ export function RoleCardEdit({
         <AvatarAndRoleName
           wearerAddress={wearerAddress}
           name={name}
+          paymentsCount={0}
         />
         <Flex
           alignItems="center"

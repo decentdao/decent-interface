@@ -86,7 +86,7 @@ function RolesEdit() {
         ...hat,
         resolvedWearer: hat.wearerAddress,
         wearer: hat.wearerAddress,
-        payments: hat.payments?.map(payment => ({
+        payments: hat.payments.map(payment => ({
           ...payment,
           isCancelling: false,
         })),
@@ -122,7 +122,7 @@ function RolesEdit() {
         // Not a user-input field.
         // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
         resolvedWearer?: Address;
-        payments?: {
+        payments: {
           streamId: string;
           contractAddress: Address;
           asset: {
