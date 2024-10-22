@@ -46,13 +46,6 @@ interface DecentTopHat extends DecentHat {}
 
 interface DecentAdminHat extends DecentHat {}
 
-interface RolesStoreData {
-  hatsTreeId: undefined | null | number;
-  hatsTree: undefined | null | DecentTree;
-  streamsFetched: boolean;
-  contextChainId: number | null;
-}
-
 export interface DecentRoleHat extends DecentHat {
   wearerAddress: Address;
 }
@@ -62,6 +55,13 @@ export interface DecentTree {
   adminHat: DecentAdminHat;
   roleHats: DecentRoleHat[];
   roleHatsTotalCount: number;
+}
+
+interface RolesStoreData {
+  hatsTreeId: undefined | null | number;
+  hatsTree: undefined | null | DecentTree;
+  streamsFetched: boolean;
+  contextChainId: number | null;
 }
 
 export interface RolesStore extends RolesStoreData {
