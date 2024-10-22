@@ -105,11 +105,13 @@ function RoleTermCreate({
         w="full"
       >
         <Text>{t('termNumber', { number: termIndex + 1 })}</Text>
+
         <IconButton
           variant="tertiary"
           size="icon-sm"
           aria-label="Close Drawer"
           as={X}
+          hidden={termIndex === 0}
           onClick={() => {
             // remove term from the form
             setFieldValue(
