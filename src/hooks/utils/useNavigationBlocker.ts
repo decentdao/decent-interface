@@ -1,11 +1,46 @@
 import { Blocker, useBlocker } from 'react-router-dom';
-import { RoleHatFormValue } from '../../components/pages/Roles/types';
+import { Address, Hex } from 'viem';
+import { EditedRole } from '../../components/pages/Roles/types';
 import { DAO_ROUTES } from '../../constants/routes';
+import { BigIntValuePair } from '../../types';
 
 interface RoleEditDetailsNavigationBlockerParams {
   wasRoleActuallyEdited: boolean;
   values: {
-    roleEditing?: RoleHatFormValue;
+    roleEditing?: {
+      prettyId?: string;
+      name?: string;
+      description?: string;
+      smartAddress?: Address;
+      id: Hex;
+      wearer?: string;
+      // Not a user-input field.
+      // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+      resolvedWearer?: Address;
+      payments?: {
+        streamId: string;
+        contractAddress: Address;
+        asset: {
+          address: Address;
+          name: string;
+          symbol: string;
+          decimals: number;
+          logo: string;
+        };
+        amount: BigIntValuePair;
+        startDate: Date;
+        endDate: Date;
+        cliffDate?: Date;
+        withdrawableAmount: bigint;
+        isCancelled: boolean;
+        isStreaming: () => boolean;
+        isCancellable: () => boolean;
+        isCancelling: boolean;
+      }[];
+      // form specific state
+      editedRole?: EditedRole;
+      roleEditingPaymentIndex?: number;
+    };
   };
   touched: any;
 }
