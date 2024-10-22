@@ -76,6 +76,10 @@ function RolesEdit() {
         ...hat,
         resolvedWearer: hat.wearerAddress,
         wearer: hat.wearerAddress,
+        payments: hat.payments?.map(payment => ({
+          ...payment,
+          isCancelling: false,
+        })),
       })),
       customNonce: safe?.nextNonce || 0,
       actions: [],
