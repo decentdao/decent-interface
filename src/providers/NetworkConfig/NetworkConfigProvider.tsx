@@ -23,7 +23,7 @@ export const useNetworkConfig = (chainId?: number) => {
 
 export const supportedNetworks = Object.values(networks).sort((a, b) => a.order - b.order);
 export const moralisSupportedChainIds = supportedNetworks
-  .filter(network => network.moralisSupported)
+  .filter(network => network.moralis.chainSupported)
   .map(network => network.chain.id);
 
 const getNetworkConfig = (chainId: number) => {

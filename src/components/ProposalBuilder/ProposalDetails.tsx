@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import '../../assets/css/Markdown.css';
 import { CreateProposalForm, ProposalBuilderMode } from '../../types/proposalBuilder';
 import Markdown from '../ui/proposal/Markdown';
-import { CeleryTextLink } from '../ui/utils/CeleryTextLink';
+import CeleryButtonWithIcon from '../ui/utils/CeleryButtonWithIcon';
 import Divider from '../ui/utils/Divider';
 
 export function TransactionValueContainer({ children }: PropsWithChildren<{}>) {
@@ -69,7 +69,7 @@ export default function ProposalTemplateDetails({
         <HStack justifyContent="space-between">
           <Text color="neutral-7">{t('proposalTemplateDescription')}</Text>
           {proposalMetadata.description && (
-            <CeleryTextLink
+            <CeleryButtonWithIcon
               onClick={() => setDescriptionCollapsed(prevState => !prevState)}
               text={t(descriptionCollapsed ? 'show' : 'hide', { ns: 'common' })}
             />

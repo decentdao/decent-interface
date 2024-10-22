@@ -5,7 +5,7 @@ import {
   getProxyFactoryDeployment,
   getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
-import { getAddress } from 'viem';
+import { getAddress, zeroAddress } from 'viem';
 import { sepolia } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
@@ -20,7 +20,6 @@ export const sepoliaConfig: NetworkConfig = {
   order: 30,
   chain,
   rpcEndpoint: `https://eth-sepolia.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
-  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-sepolia.safe.global',
   etherscanBaseURL: 'https://sepolia.etherscan.io',
   etherscanAPIUrl: `https://api-sepolia.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_SEPOLIA_API_KEY}`,
@@ -61,7 +60,9 @@ export const sepoliaConfig: NetworkConfig = {
     zodiacModuleProxyFactoryOld: getAddress(a.ModuleProxyFactory),
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
+    linearVotingErc20HatsWhitelistingMasterCopy: zeroAddress, // @todo - change to actual address once deployed
     linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
+    linearVotingErc721HatsWhitelistingMasterCopy: zeroAddress, // @todo - change to actual address once deployed
 
     moduleAzoriusMasterCopy: getAddress(a.Azorius),
     moduleFractalMasterCopy: getAddress(a.FractalModule),
@@ -93,6 +94,7 @@ export const sepoliaConfig: NetworkConfig = {
   },
   staking: {},
   moralis: {
+    chainSupported: true,
     deFiSupported: false,
   },
   createOptions: [

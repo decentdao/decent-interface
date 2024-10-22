@@ -5,7 +5,7 @@ import {
   getProxyFactoryDeployment,
   getSafeL2SingletonDeployment,
 } from '@safe-global/safe-deployments';
-import { getAddress } from 'viem';
+import { getAddress, zeroAddress } from 'viem';
 import { mainnet } from 'wagmi/chains';
 import { GovernanceType } from '../../../types';
 import { NetworkConfig } from '../../../types/network';
@@ -20,7 +20,6 @@ export const mainnetConfig: NetworkConfig = {
   order: 0,
   chain,
   rpcEndpoint: `https://eth-mainnet.g.alchemy.com/v2/${import.meta.env?.VITE_APP_ALCHEMY_API_KEY}`,
-  moralisSupported: true,
   safeBaseURL: 'https://safe-transaction-mainnet.safe.global',
   etherscanBaseURL: 'https://etherscan.io',
   etherscanAPIUrl: `https://api.etherscan.io/api?apikey=${import.meta.env?.VITE_APP_ETHERSCAN_MAINNET_API_KEY}`,
@@ -61,7 +60,9 @@ export const mainnetConfig: NetworkConfig = {
     zodiacModuleProxyFactoryOld: getAddress(a.ModuleProxyFactory),
 
     linearVotingErc20MasterCopy: getAddress(a.LinearERC20Voting),
+    linearVotingErc20HatsWhitelistingMasterCopy: zeroAddress, // @todo - change to actual address once deployed
     linearVotingErc721MasterCopy: getAddress(a.LinearERC721Voting),
+    linearVotingErc721HatsWhitelistingMasterCopy: zeroAddress, // @todo - change to actual address once deployed
 
     moduleAzoriusMasterCopy: getAddress(a.Azorius),
     moduleFractalMasterCopy: getAddress(a.FractalModule),
@@ -99,6 +100,7 @@ export const mainnetConfig: NetworkConfig = {
     },
   },
   moralis: {
+    chainSupported: true,
     deFiSupported: true,
   },
   createOptions: [GovernanceType.MULTISIG, GovernanceType.AZORIUS_ERC20],
