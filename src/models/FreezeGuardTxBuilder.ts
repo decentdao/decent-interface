@@ -188,13 +188,19 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
 
   private setFreezeVotingTypeAndCallData() {
     if (this.parentStrategyType) {
-      if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20 || this.parentStrategyType === VotingStrategyType.LINEAR_ERC20_HATS_WHITELISTING) {
+      if (
+        this.parentStrategyType === VotingStrategyType.LINEAR_ERC20 ||
+        this.parentStrategyType === VotingStrategyType.LINEAR_ERC20_HATS_WHITELISTING
+      ) {
         this.freezeVotingType = 'erc20';
         this.freezeVotingCallData = encodeFunctionData({
           abi: abis.ERC20FreezeVoting,
           functionName: 'owner',
         });
-      } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721 || this.parentStrategyType === VotingStrategyType.LINEAR_ERC721_HATS_WHITELISTING) {
+      } else if (
+        this.parentStrategyType === VotingStrategyType.LINEAR_ERC721 ||
+        this.parentStrategyType === VotingStrategyType.LINEAR_ERC721_HATS_WHITELISTING
+      ) {
         this.freezeVotingType = 'erc721';
         this.freezeVotingCallData = encodeFunctionData({
           abi: abis.ERC721FreezeVoting,
@@ -213,11 +219,17 @@ export class FreezeGuardTxBuilder extends BaseTxBuilder {
   private setFreezeVotingAddress() {
     let freezeVotingByteCodeLinear: Hex;
     if (this.parentStrategyType) {
-      if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC20 || this.parentStrategyType === VotingStrategyType.LINEAR_ERC20_HATS_WHITELISTING) {
+      if (
+        this.parentStrategyType === VotingStrategyType.LINEAR_ERC20 ||
+        this.parentStrategyType === VotingStrategyType.LINEAR_ERC20_HATS_WHITELISTING
+      ) {
         freezeVotingByteCodeLinear = generateContractByteCodeLinear(
           this.freezeVotingErc20MasterCopy,
         );
-      } else if (this.parentStrategyType === VotingStrategyType.LINEAR_ERC721 || this.parentStrategyType === VotingStrategyType.LINEAR_ERC721_HATS_WHITELISTING) {
+      } else if (
+        this.parentStrategyType === VotingStrategyType.LINEAR_ERC721 ||
+        this.parentStrategyType === VotingStrategyType.LINEAR_ERC721_HATS_WHITELISTING
+      ) {
         freezeVotingByteCodeLinear = generateContractByteCodeLinear(
           this.freezeVotingErc721MasterCopy,
         );

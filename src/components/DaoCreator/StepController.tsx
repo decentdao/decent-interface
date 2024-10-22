@@ -32,7 +32,7 @@ function StepController(props: Omit<ICreationStepProps, 'steps'>) {
   const { redirectToInitialStep } = useStepRedirect({ values, redirectOnMount: false });
 
   const steps = useMemo(() => {
-    const isMultisig = values.essentials.governance === GovernanceType.MULTISIG
+    const isMultisig = values.essentials.governance === GovernanceType.MULTISIG;
     const isERC20 = values.essentials.governance === GovernanceType.AZORIUS_ERC20;
     const isERC721 = values.essentials.governance === GovernanceType.AZORIUS_ERC721;
 

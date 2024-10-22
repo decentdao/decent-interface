@@ -10,7 +10,7 @@
   "governanceTokenSupplyLabel": "Total Supply",
   "noModulesAttached": "No modules attached",
   "noGuardAttached": "No guard attached",
-  "modulesTitle": "Modules",
+  "modulesTitle": "Modules & Guard",
   "guardTitle": "Guard",
   "modulesAndGuardsTitle": "Modules and Guards",
   "modulesAndGuardsDescription1": "Modules are added contracts that extend a Safe's capabilities.",
