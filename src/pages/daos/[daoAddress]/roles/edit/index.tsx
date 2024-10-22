@@ -9,10 +9,11 @@ import { Hex, toHex } from 'viem';
 import { RoleCardEdit } from '../../../../../components/pages/Roles/RoleCard';
 import { RoleCardLoading } from '../../../../../components/pages/Roles/RolePageCard';
 import { RolesEditTable } from '../../../../../components/pages/Roles/RolesTable';
-import { EditBadgeStatus, RoleFormValues } from '../../../../../components/pages/Roles/types';
+import { EditBadgeStatus, RoleHatFormValue } from '../../../../../components/pages/Roles/types';
 import DraggableDrawer from '../../../../../components/ui/containers/DraggableDrawer';
 import NoDataCard from '../../../../../components/ui/containers/NoDataCard';
 import { ModalBase } from '../../../../../components/ui/modals/ModalBase';
+import { SendAssetsData } from '../../../../../components/ui/modals/SendAssetsModal';
 import PageHeader from '../../../../../components/ui/page/Header/PageHeader';
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { getRandomBytes } from '../../../../../helpers';
@@ -23,6 +24,7 @@ import { analyticsEvents } from '../../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../../store/roles/useRolesStore';
+import { CreateProposalMetadata } from '../../../../../types';
 import { UnsavedChangesWarningContent } from './unsavedChangesWarningContent';
 
 function RolesEdit() {
@@ -42,7 +44,13 @@ function RolesEdit() {
   const navigate = useNavigate();
   const { createEditRolesProposal } = useCreateRoles();
 
-  function generateRoleProposalTitle({ formValues }: { formValues: RoleFormValues }) {
+  function generateRoleProposalTitle({
+    formValues,
+  }: {
+    formValues: {
+      hats: RoleHatFormValue[];
+    };
+  }) {
     const filteredHats = formValues.hats.filter(hat => !!hat.editedRole);
     const addedHatsCount = filteredHats.filter(
       hat => hat.editedRole!.status === EditBadgeStatus.New,
@@ -65,7 +73,7 @@ function RolesEdit() {
     return [addedHatsText, updatedHatsText, removedHatsText].filter(Boolean).join('. ');
   }
 
-  const initialValues: RoleFormValues = useMemo(() => {
+  const initialValues = useMemo(() => {
     const hats = hatsTree?.roleHats || [];
     return {
       proposalMetadata: {
@@ -100,7 +108,11 @@ function RolesEdit() {
   const showNoRolesCard = !hatsTreeLoading && (hatsTree === null || hatsTree.roleHats.length === 0);
 
   return (
-    <Formik<RoleFormValues>
+    <Formik<{
+      proposalMetadata: CreateProposalMetadata;
+      hats: RoleHatFormValue[];
+      actions: SendAssetsData[];
+    }>
       initialValues={initialValues}
       enableReinitialize
       validationSchema={rolesSchema}
