@@ -4,10 +4,10 @@ import { Field, FieldAttributes, FieldProps, Form, Formik } from 'formik';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Address, getAddress } from 'viem';
+import { usePublicClient } from 'wagmi';
 import * as Yup from 'yup';
 import { useValidationAddress } from '../../../hooks/schemas/common/useValidationAddress';
 import { useFractal } from '../../../providers/App/AppProvider';
-import { useEthersSigner } from '../../../providers/Ethers/hooks/useEthersSigner';
 import { BigIntValuePair, TokenBalance } from '../../../types';
 import { formatCoinFromAsset, formatCoinUnits } from '../../../utils/numberFormats';
 import { validateENSName } from '../../../utils/url';
@@ -45,7 +45,7 @@ export function SendAssetsModal({
     node: { safe },
     treasury: { assetsFungible },
   } = useFractal();
-  const signer = useEthersSigner();
+  const publicClient = usePublicClient();
   const { t } = useTranslation(['modals', 'common']);
 
   const fungibleAssetsWithBalance = assetsFungible.filter(asset => parseFloat(asset.balance) > 0);
@@ -73,8 +73,12 @@ export function SendAssetsModal({
 
   const handleSendAssetsSubmit = async (values: SendAssetsFormValues) => {
     let destAddress = values.destinationAddress;
-    if (validateENSName(values.destinationAddress) && signer) {
-      destAddress = await signer.resolveName(values.destinationAddress);
+    if (validateENSName(values.destinationAddress) && publicClient) {
+      const ensAddress = await publicClient.getEnsAddress({ name: values.destinationAddress });
+      if (ensAddress === null) {
+        throw new Error('Invalid ENS name');
+      }
+      destAddress = ensAddress;
     }
 
     sendAssetsData({

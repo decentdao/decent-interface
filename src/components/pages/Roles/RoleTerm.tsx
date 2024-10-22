@@ -6,12 +6,10 @@ import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../../constants/common';
 import { useDateTimeDisplay } from '../../../helpers/dateTime';
-import { useGetDAOName } from '../../../hooks/DAO/useGetDAOName';
 import useAvatar from '../../../hooks/utils/useAvatar';
 import { useCopyText } from '../../../hooks/utils/useCopyText';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
 import { DEFAULT_DATE_FORMAT } from '../../../utils';
-import { getChainIdFromPrefix } from '../../../utils/url';
 import Avatar from '../../ui/page/Header/Avatar';
 
 export type RoleTermStatus = 'current' | 'queued' | 'expired';
@@ -174,12 +172,7 @@ function RoleTermHeader({
 
 function RoleTermMemberAddress({ memberAddress }: { memberAddress: Address }) {
   const { t } = useTranslation(['roles']);
-
-  const { addressPrefix } = useNetworkConfig();
-  const { daoName: accountDisplayName } = useGetDAOName({
-    address: memberAddress,
-    chainId: getChainIdFromPrefix(addressPrefix),
-  });
+  const { displayName: accountDisplayName } = useGetAccountName(memberAddress);
   const avatarURL = useAvatar(memberAddress);
   const copyToClipboard = useCopyText();
   return (

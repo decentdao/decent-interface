@@ -1,7 +1,7 @@
 import { Text } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 import { Address } from 'viem';
-import useDisplayName from '../../hooks/utils/useDisplayName';
+import { useGetAccountName } from '../../hooks/utils/useGetAccountName';
 import EtherscanLink from '../ui/links/EtherscanLink';
 
 export function ActivityAddress({
@@ -13,7 +13,7 @@ export function ActivityAddress({
   isMe?: boolean;
   addComma?: boolean;
 }) {
-  const { displayName } = useDisplayName(address);
+  const { displayName } = useGetAccountName(address);
   const { t } = useTranslation();
   return (
     <EtherscanLink

@@ -5,7 +5,7 @@ import { FormikErrors, useFormikContext } from 'formik';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CARD_SHADOW, isDevMode } from '../../../../constants/common';
-import { useRolesStore } from '../../../../store/roles';
+import { useRolesStore } from '../../../../store/roles/useRolesStore';
 import { BigIntValuePair } from '../../../../types';
 import { ModalType } from '../../../ui/modals/ModalProvider';
 import { useDecentModal } from '../../../ui/modals/useDecentModal';

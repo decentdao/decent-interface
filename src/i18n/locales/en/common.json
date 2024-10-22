@@ -98,7 +98,7 @@
   "wrapToken": "Wrap Token",
   "unwrapToken": "Unwrap Token",
   "max": "Max",
-  "favoriteTooltip": "Toggle your favorite Safes. ",
+  "favoriteTooltip": "Toggle your favorite Safes.",
   "isMeSuffix": " (you)",
   "refresh": "Refresh",
   "invalidSafe1": "We couldn't find a Safe at this address on {{chain}}.",
@@ -116,5 +116,6 @@
   "none": "None",
   "ipfsLoadingErrorMessage": "Error fetching data from IPFS, please try again later.",
   "ipfsSavingErrorMessage": "Error saving data to IPFS, please try again later.",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "automaticChainSwitchingErrorMessage": "We couldn't automatically switch network to the Safe's netowrk. Please, try to switch network in your wallet application."
 }

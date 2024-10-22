@@ -18,10 +18,12 @@ import {
   WarningDiamond,
 } from '@phosphor-icons/react';
 import { Field, FieldProps, useFormikContext } from 'formik';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DecentHourGlass } from '../../../../assets/theme/custom/icons/DecentHourGlass';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
+import useAddress from '../../../../hooks/utils/useAddress';
+import { useGetAccountName } from '../../../../hooks/utils/useGetAccountName';
 import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
@@ -31,14 +33,24 @@ import RoleFormTerms from './RoleFormTerms';
 
 function RoleMemberWearerInput() {
   const { t } = useTranslation('roles');
+
+  const [roleWearerString, setRoleWearerString] = useState<string>('');
+  const { address: resolvedWearerAddress, isValid: isValidWearerAddress } =
+    useAddress(roleWearerString);
+
+  const { setFieldValue, values } = useFormikContext<RoleFormValues>();
+  const { displayName } = useGetAccountName(values.roleEditing?.resolvedWearer, false);
+
+  useEffect(() => {
+    if (isValidWearerAddress) {
+      setFieldValue('roleEditing.resolvedWearer', resolvedWearerAddress);
+    }
+  }, [isValidWearerAddress, resolvedWearerAddress, setFieldValue]);
+
   return (
     <FormControl>
       <Field name="roleEditing.wearer">
-        {({
-          field,
-          form: { setFieldValue, setFieldTouched },
-          meta,
-        }: FieldProps<string, RoleFormValues>) => (
+        {({ field, form: { setFieldTouched }, meta }: FieldProps<string, RoleFormValues>) => (
           <LabelWrapper
             label={t('member')}
             errorMessage={meta.touched && meta.error ? meta.error : undefined}
@@ -46,12 +58,14 @@ function RoleMemberWearerInput() {
             labelColor="neutral-7"
           >
             <AddressInput
-              value={field.value}
+              value={displayName ?? field.value}
               onBlur={() => {
                 setFieldTouched(field.name, true);
               }}
               onChange={e => {
-                setFieldValue(field.name, e.target.value);
+                const inputWearer = e.target.value;
+                setRoleWearerString(inputWearer);
+                setFieldValue(field.name, inputWearer);
               }}
             />
           </LabelWrapper>

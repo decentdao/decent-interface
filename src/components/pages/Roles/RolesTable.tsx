@@ -2,12 +2,11 @@ import { Box, Flex, Icon, Table, Tbody, Td, Text, Th, Thead, Tr } from '@chakra-
 import { PencilLine } from '@phosphor-icons/react';
 import { useFormikContext } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { Address, Hex, zeroAddress } from 'viem';
-import useAddress from '../../../hooks/utils/useAddress';
+import { Address, Hex } from 'viem';
 import useAvatar from '../../../hooks/utils/useAvatar';
-import useDisplayName from '../../../hooks/utils/useDisplayName';
-import { useNetworkConfig } from '../../../providers/NetworkConfig/NetworkConfigProvider';
-import { DecentTree, useRolesStore } from '../../../store/roles';
+import { useGetAccountName } from '../../../hooks/utils/useGetAccountName';
+import { DecentTree } from '../../../store/roles/rolesStoreUtils';
+import { useRolesStore } from '../../../store/roles/useRolesStore';
 import NoDataCard from '../../ui/containers/NoDataCard';
 import Avatar from '../../ui/page/Header/Avatar';
 import EditBadge from './EditBadge';
@@ -93,20 +92,18 @@ function RoleNameEditColumn({
   );
 }
 
-function MemberColumn({ wearerAddress }: { wearerAddress: string | undefined }) {
-  const { chain } = useNetworkConfig();
-  const { address } = useAddress(wearerAddress || zeroAddress);
-  const { displayName: accountDisplayName } = useDisplayName(address || null, true, chain.id);
+function MemberColumn({ wearerAddress }: { wearerAddress?: Address }) {
+  const { displayName: accountDisplayName } = useGetAccountName(wearerAddress);
   const avatarURL = useAvatar(accountDisplayName);
 
   const { t } = useTranslation('roles');
   return (
     <Td width="60%">
       <Flex>
-        {address ? (
+        {wearerAddress ? (
           <Avatar
             size="icon"
-            address={address}
+            address={wearerAddress}
             url={avatarURL}
           />
         ) : (
@@ -162,13 +159,7 @@ function PaymentsColumn({ paymentsCount }: { paymentsCount?: number }) {
   );
 }
 
-export function RolesRow({
-  name,
-  wearerAddress,
-  paymentsCount,
-  handleRoleClick,
-  hatId,
-}: RoleProps) {
+export function RolesRow({ name, wearerAddress, paymentsCount, handleRoleClick }: RoleProps) {
   return (
     <Tr
       sx={{
@@ -181,7 +172,7 @@ export function RolesRow({
       _active={{ bg: 'neutral-2', border: '1px solid', borderColor: 'neutral-3' }}
       transition="all ease-out 300ms"
       cursor="pointer"
-      onClick={() => handleRoleClick(hatId)}
+      onClick={handleRoleClick}
     >
       <Td
         textStyle="body-base"
@@ -261,10 +252,9 @@ export function RolesTable({
             {hatsTree.roleHats.map(role => (
               <RolesRow
                 key={role.id.toString()}
-                hatId={role.id}
                 name={role.name}
-                wearerAddress={role.wearer}
-                handleRoleClick={handleRoleClick}
+                wearerAddress={role.wearerAddress}
+                handleRoleClick={() => handleRoleClick(role.id)}
                 paymentsCount={
                   role.payments === undefined
                     ? undefined
@@ -278,6 +268,7 @@ export function RolesTable({
     </Box>
   );
 }
+
 export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: Hex) => void }) {
   const { hatsTree } = useRolesStore();
   const { values, setFieldValue } = useFormikContext<RoleFormValues>();
@@ -318,7 +309,7 @@ export function RolesEditTable({ handleRoleClick }: { handleRoleClick: (hatId: H
             <RolesRowEdit
               key={role.id}
               name={role.name}
-              wearerAddress={role.wearer}
+              wearerAddress={role.resolvedWearer}
               handleRoleClick={() => {
                 setFieldValue('roleEditing', role);
                 handleRoleClick(role.id);

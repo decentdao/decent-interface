@@ -7,6 +7,7 @@ import { RoleFormValues } from '../types';
 
 export default function RoleFormInfo() {
   const { t } = useTranslation('roles');
+
   return (
     <Box
       px={{ base: '1rem', md: 0 }}

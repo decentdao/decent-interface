@@ -1,6 +1,6 @@
 import { useFormikContext } from 'formik';
 import { useMemo } from 'react';
-import { DecentTree } from '../../../../store/roles';
+import { DecentTree } from '../../../../store/roles/rolesStoreUtils';
 import { EditedRole, EditBadgeStatus, RoleFormValues } from '../types';
 
 const addRemoveField = (fieldNames: string[], fieldName: string, hasChanges: boolean) => {
@@ -25,7 +25,7 @@ export function useRoleFormEditedRole({ hatsTree }: { hatsTree: DecentTree | und
     !!existingRoleHat && values.roleEditing?.description !== existingRoleHat.description;
 
   const isMemberUpdated =
-    !!existingRoleHat && values.roleEditing?.wearer !== existingRoleHat.wearer;
+    !!existingRoleHat && values.roleEditing?.resolvedWearer !== existingRoleHat.wearerAddress;
 
   const isPaymentsUpdated = useMemo(() => {
     if (!values.roleEditing || !values.roleEditing.payments) {

@@ -3,7 +3,7 @@ import { Box, Flex, Show, Text } from '@chakra-ui/react';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Outlet, useNavigate } from 'react-router-dom';
-import { Hex, zeroAddress } from 'viem';
+import { Hex } from 'viem';
 import { RoleCard } from '../../../../components/pages/Roles/RoleCard';
 import { RoleCardLoading } from '../../../../components/pages/Roles/RolePageCard';
 import { RolesTable } from '../../../../components/pages/Roles/RolesTable';
@@ -20,7 +20,7 @@ import { useCanUserCreateProposal } from '../../../../hooks/utils/useCanUserSubm
 import { analyticsEvents } from '../../../../insights/analyticsEvents';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../../store/roles';
+import { useRolesStore } from '../../../../store/roles/useRolesStore';
 
 function Roles() {
   useEffect(() => {
@@ -99,9 +99,8 @@ function Roles() {
               <RoleCard
                 key={roleHat.id}
                 name={roleHat.name}
-                wearerAddress={roleHat.wearer || zeroAddress}
-                hatId={roleHat.id}
-                handleRoleClick={handleNavigateToRole}
+                wearerAddress={roleHat.wearerAddress}
+                handleRoleClick={() => handleNavigateToRole(roleHat.id)}
                 paymentsCount={roleHat.payments?.filter(p => p.isStreaming()).length || undefined}
               />
             ))}

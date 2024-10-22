@@ -1,24 +1,19 @@
 import { Address, Hex } from 'viem';
-import { DecentRoleHat } from '../../../store/roles';
+import { DecentRoleHat } from '../../../store/roles/rolesStoreUtils';
 import { BigIntValuePair, CreateProposalMetadata } from '../../../types';
 import { SendAssetsData } from '../../ui/modals/SendAssetsModal';
 
-export interface SablierAsset {
-  address: Address;
-  name: string;
-  symbol: string;
-  decimals: number;
-  logo: string;
-}
-
-export interface BaseSablierStream {
+export interface SablierPayment {
   streamId: string;
   contractAddress: Address;
-  asset: SablierAsset;
+  asset: {
+    address: Address;
+    name: string;
+    symbol: string;
+    decimals: number;
+    logo: string;
+  };
   amount: BigIntValuePair;
-}
-
-export interface SablierPayment extends BaseSablierStream {
   startDate: Date;
   endDate: Date;
   cliffDate: Date | undefined;
@@ -36,21 +31,16 @@ export interface SablierPaymentFormValues extends Partial<SablierPayment> {
 
 export interface RoleProps {
   editStatus?: EditBadgeStatus;
-  handleRoleClick: (hatId: Address) => void;
-  hatId: Address;
+  handleRoleClick: () => void;
   name: string;
-  wearerAddress: Address | undefined;
+  wearerAddress?: Address;
   paymentsCount?: number;
 }
 
 export interface RoleEditProps
-  extends Omit<
-    RoleProps,
-    'hatId' | 'wearerAddress' | 'handleRoleClick' | 'paymentsCount' | 'name'
-  > {
+  extends Omit<RoleProps, 'hatId' | 'handleRoleClick' | 'paymentsCount' | 'name'> {
   name?: string;
   handleRoleClick: () => void;
-  wearerAddress: string | undefined;
   payments?: SablierPaymentFormValues[];
 }
 
@@ -61,6 +51,11 @@ export interface RoleDetailsDrawerRoleHatProp
     contractAddress?: Address;
     streamId?: string;
   })[];
+}
+
+export interface RoleDetailsDrawerEditingRoleHatProp
+  extends Omit<RoleDetailsDrawerRoleHatProp, 'wearerAddress'> {
+  wearer: string;
 }
 
 export enum EditBadgeStatus {
@@ -110,25 +105,18 @@ export interface HatStructWithPayments extends HatStruct {
   }[];
 }
 
-export interface HatStructWithId extends HatStruct {
-  id: Hex; // uint256 with padded zeros for the tree ID
-}
-
 export interface EditedRole {
   fieldNames: string[];
   status: EditBadgeStatus;
 }
 
-export interface DurationBreakdown {
-  years: number;
-  hours: number;
-  days: number;
-}
-
 export interface RoleHatFormValue
-  extends Partial<Omit<DecentRoleHat, 'id' | 'wearer' | 'payments' | 'roleTerms'>> {
+  extends Partial<Omit<DecentRoleHat, 'id' | 'wearerAddress' | 'payments' | 'roleTerms'>> {
   id: Hex;
   wearer?: string;
+  // Not a user-input field.
+  // `resolvedWearer` is auto-populated from the resolved address of `wearer` in case it's an ENS name.
+  resolvedWearer?: Address;
   payments?: SablierPaymentFormValues[];
   // form specific state
   editedRole?: EditedRole;
@@ -154,32 +142,6 @@ export interface RoleFormValues {
   actions: SendAssetsData[];
 }
 
-export type PreparedAddedHatsData = HatStruct & { id: bigint };
-
-export type PreparedMemberChangeData = {
-  id: Address;
-  currentWearer: Address;
-  newWearer: Address;
-};
-
-export type PreparedChangedRoleDetailsData = {
-  id: Hex;
-  details: string;
-};
-
-export type AddedHatsWithIds = {
-  id: bigint;
-  editedRole: EditedRole;
-  wearer: Address;
-  payments?: SablierPaymentFormValues[];
-  roleEditingPaymentIndex?: number;
-  prettyId?: string | undefined;
-  name?: string | undefined;
-  description?: string | undefined;
-  details: string;
-  formId: Hex;
-};
-
 export type PreparedNewStreamData = {
   recipient: Address;
   startDateTs: number;
@@ -189,15 +151,12 @@ export type PreparedNewStreamData = {
   assetAddress: Address;
 };
 
-/**
- * Prepared Stream data with streamId
- */
-export type PreparedEditedStreamData = PreparedNewStreamData & {
-  streamId: string;
-  roleHatId: bigint;
-  roleHatWearer: Address;
-  roleHatSmartAddress: Address;
-  streamContractAddress: Address;
-};
+// export const HATS_ADDRESS: Address = '0x0000000000000000000000000000000000004a75';
 
-export const HATS_ADDRESS: Address = '0x0000000000000000000000000000000000004a75';
+export interface RoleDetailsDrawerProps {
+  roleHat: RoleDetailsDrawerRoleHatProp | RoleDetailsDrawerEditingRoleHatProp;
+  onOpen?: () => void;
+  onClose: () => void;
+  onEdit: (hatId: Hex) => void;
+  isOpen?: boolean;
+}

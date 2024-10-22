@@ -1,12 +1,12 @@
 import { abis } from '@fractal-framework/fractal-contracts';
 import { hatIdToTreeId } from '@hatsprotocol/sdk-v1-core';
 import { useEffect } from 'react';
-import { GetContractEventsReturnType, getAddress, getContract } from 'viem';
+import { GetContractEventsReturnType, getContract } from 'viem';
 import { usePublicClient } from 'wagmi';
 import { logError } from '../../helpers/errorLogging';
 import { useFractal } from '../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../store/roles';
+import { useRolesStore } from '../../store/roles/useRolesStore';
 
 const getHatsTreeId = (
   events: GetContractEventsReturnType<typeof abis.KeyValuePairs> | undefined,
@@ -70,7 +70,7 @@ const useKeyValuePairs = () => {
 
     const keyValuePairsContract = getContract({
       abi: abis.KeyValuePairs,
-      address: getAddress(keyValuePairs),
+      address: keyValuePairs,
       client: publicClient,
     });
     keyValuePairsContract.getEvents
