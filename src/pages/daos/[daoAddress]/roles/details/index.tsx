@@ -5,7 +5,7 @@ import RolesDetailsDrawerMobile from '../../../../../components/pages/Roles/Role
 import { DAO_ROUTES } from '../../../../../constants/routes';
 import { useFractal } from '../../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../../providers/NetworkConfig/NetworkConfigProvider';
-import { useRolesStore } from '../../../../../store/roles';
+import { useRolesStore } from '../../../../../store/roles/useRolesStore';
 
 export default function RoleDetails() {
   const {

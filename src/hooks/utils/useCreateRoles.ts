@@ -23,13 +23,13 @@ import { DAO_ROUTES } from '../../constants/routes';
 import { useFractal } from '../../providers/App/AppProvider';
 import useIPFSClient from '../../providers/App/hooks/useIPFSClient';
 import { useNetworkConfig } from '../../providers/NetworkConfig/NetworkConfigProvider';
-import { predictHatId, useRolesStore } from '../../store/roles';
+import { useRolesStore } from '../../store/roles/useRolesStore';
 import { CreateProposalMetadata, ProposalExecuteData } from '../../types';
 import { SENTINEL_MODULE } from '../../utils/address';
 import { prepareSendAssetsActionData } from '../../utils/dao/prepareSendAssetsProposalData';
 import useSubmitProposal from '../DAO/proposal/useSubmitProposal';
 import useCreateSablierStream from '../streams/useCreateSablierStream';
-import { predictAccountAddress } from './../../store/roles/rolesStoreUtils';
+import { predictAccountAddress, predictHatId } from './../../store/roles/rolesStoreUtils';
 
 export default function useCreateRoles() {
   const {
