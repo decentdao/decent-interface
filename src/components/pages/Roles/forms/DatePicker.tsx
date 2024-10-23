@@ -45,6 +45,7 @@ function DateDisplayBox({ date }: { date: Date | undefined }) {
     </Flex>
   );
 }
+// RENAME: RoleTermEndDatePicker.tsx > DatePickerContainer
 
 function SelectedDateDisplay({ selectedDate }: { selectedDate: Date | undefined }) {
   return (
@@ -63,7 +64,7 @@ const isToday = (date: Date) => {
   );
 };
 
-function RoleTermEndDatePickerContainer({
+function DatePickerContainer({
   children,
   disabled,
   selectedDate,
@@ -165,7 +166,7 @@ function TodayBox({ isTodaySelected }: { isTodaySelected: () => boolean }) {
   );
 }
 
-export function RoleTermEndDatePicker({
+export function DatePicker({
   selectedDate,
   onChange,
   minDate,
@@ -183,7 +184,7 @@ export function RoleTermEndDatePicker({
   };
   const { isOpen, onClose, onOpen } = useDisclosure();
   return (
-    <RoleTermEndDatePickerContainer
+    <DatePickerContainer
       disabled={disabled}
       selectedDate={selectedDate}
       isOpen={isOpen}
@@ -212,6 +213,6 @@ export function RoleTermEndDatePicker({
           }}
         />
       )}
-    </RoleTermEndDatePickerContainer>
+    </DatePickerContainer>
   );
 }
