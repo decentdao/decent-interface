@@ -16,10 +16,10 @@ import { format } from 'date-fns';
 import { ReactNode } from 'react';
 import { Calendar } from 'react-calendar';
 import { useTranslation } from 'react-i18next';
-import { SEXY_BOX_SHADOW_T_T } from '../../../../constants/common';
-import { DEFAULT_DATE_FORMAT } from '../../../../utils';
-import DraggableDrawer from '../../../ui/containers/DraggableDrawer';
-import { DatePickerTrigger } from '../DatePickerTrigger';
+import { SEXY_BOX_SHADOW_T_T } from '../../../constants/common';
+import { DEFAULT_DATE_FORMAT } from '../../../utils';
+import { DatePickerTrigger } from '../../pages/Roles/DatePickerTrigger';
+import DraggableDrawer from '../containers/DraggableDrawer';
 
 type DateOrNull = Date | null;
 type OnDateChangeValue = DateOrNull | [DateOrNull, DateOrNull];

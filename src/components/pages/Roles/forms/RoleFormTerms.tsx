@@ -17,11 +17,11 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getAddress } from 'viem';
 import { DETAILS_BOX_SHADOW } from '../../../../constants/common';
+import { DatePicker } from '../../../ui/forms/DatePicker';
 import { AddressInput } from '../../../ui/forms/EthAddressInput';
 import LabelWrapper from '../../../ui/forms/LabelWrapper';
 import RoleTerm, { RoleTermStatus } from '../RoleTerm';
 import { RoleFormValues } from '../types';
-import { RoleTermEndDatePicker } from './RoleTermEndDatePicker';
 
 function RoleTermEndDateInput({ termIndex }: { termIndex: number }) {
   const { t } = useTranslation('roles');
@@ -35,7 +35,7 @@ function RoleTermEndDateInput({ termIndex }: { termIndex: number }) {
             isRequired
             labelColor="neutral-7"
           >
-            <RoleTermEndDatePicker
+            <DatePicker
               onChange={(date: Date) => setFieldValue(field.name, date)}
               disabled={false}
               // @todo Set minDate to the end of the previous term
