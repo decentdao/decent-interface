@@ -278,6 +278,9 @@ export default function RoleFormTerms() {
   // {assumption}: only 2 terms should be unexpired at a time
   const terms = roleFormTerms.filter(term => !!term.termEndDate && term.termEndDate >= new Date());
   const [currentTerm, nextTerm] = terms;
+  if (terms.length > 2) {
+    throw new Error('More than 2 terms are active');
+  }
 
   return (
     <Box>
@@ -303,7 +306,7 @@ export default function RoleFormTerms() {
         {newTermIndex !== undefined && (
           <RoleTermCreate
             termIndex={newTermIndex}
-            isNextTerm={!!nextTerm}
+            isNextTerm={!nextTerm}
             onClose={() => setNewTermIndex(undefined)}
           />
         )}
