@@ -1,5 +1,4 @@
 import { Button, Flex, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
-import { useFormikContext } from 'formik';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Blocker, useNavigate } from 'react-router-dom';
@@ -8,6 +7,7 @@ import { DAO_ROUTES } from '../../../../constants/routes';
 import { useFractal } from '../../../../providers/App/AppProvider';
 import { useNetworkConfig } from '../../../../providers/NetworkConfig/NetworkConfigProvider';
 import { useRolesStore } from '../../../../store/roles/useRolesStore';
+import { useTypesafeFormikContext } from '../../../../utils/Form';
 import { EditBadgeStatus, RoleFormValues, RoleHatFormValue } from '../types';
 import RoleFormInfo from './RoleFormInfo';
 import RoleFormPaymentStream from './RoleFormPaymentStream';
@@ -31,7 +31,9 @@ export default function RoleFormTabs({
   const { addressPrefix } = useNetworkConfig();
   const { editedRoleData, isRoleUpdated, existingRoleHat } = useRoleFormEditedRole({ hatsTree });
   const { t } = useTranslation(['roles']);
-  const { values, errors, setFieldValue, setTouched } = useFormikContext<RoleFormValues>();
+  const {
+    formik: { values, setFieldValue, errors, setTouched },
+  } = useTypesafeFormikContext<RoleFormValues>();
 
   useEffect(() => {
     if (values.hats.length && !values.roleEditing) {
